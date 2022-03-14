@@ -39,10 +39,7 @@ const getFieldContent = (
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
-	const type =
-		fieldMetadata.getType() === "FORMULA"
-			? fieldMetadata.getFormulaOptionsMetadata()?.return
-			: fieldMetadata.getType()
+	const type = fieldMetadata.getType()
 	const common = {
 		context,
 		mode,

@@ -66,8 +66,8 @@ type AutoNumberMetadata struct {
 
 // FormulaOptionsMetadata struct
 type FormulaOptionsMetadata struct {
-	Formula string `json:"formula" yaml:"formula,omitempty" uesio:"studio.formula"`
-	Return  string `json:"return" yaml:"return,omitempty" uesio:"studio.return"`
+	Formula    string `json:"formula" yaml:"formula,omitempty" uesio:"studio.formula"`
+	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
 }
 
 // Field struct

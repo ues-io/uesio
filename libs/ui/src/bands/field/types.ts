@@ -57,7 +57,7 @@ type ReferenceGroupMetadata = {
 
 type FormulaOptionsMetadata = {
 	formula: string
-	return: string
+	returntype: string
 }
 
 type FieldMetadata = {

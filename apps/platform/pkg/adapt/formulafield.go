@@ -12,16 +12,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-// FormulaFieldRequest type
-type FormulaFieldRequest struct {
-	Field *FieldMetadata
-}
-
-// ReferencedFormulaFieldRegistry type
-type ReferencedFormulaFieldRegistry map[string]*FormulaFieldRequest
-
 var (
-	uesioLanguage = gval.NewLanguage(
+	UesioLanguage = gval.NewLanguage(
 		gval.Full(),
 		gval.VariableSelector(func(path gval.Evaluables) gval.Evaluable {
 			return func(c context.Context, v interface{}) (interface{}, error) {
@@ -36,8 +28,13 @@ var (
 				}
 				id, err := item.GetField(fullId)
 				if err != nil {
-					return nil, err
+					return "{Missing Field}", nil
 				}
+
+				if id == nil {
+					return "{Missing Field}", nil
+				}
+
 				return id, nil
 
 			}
@@ -52,18 +49,6 @@ var (
 		}),
 	)
 )
-
-// Add function
-func (rr *ReferencedFormulaFieldRegistry) Add(fieldMetadata *FieldMetadata) *FormulaFieldRequest {
-
-	rgr := &FormulaFieldRequest{
-		Field: fieldMetadata,
-	}
-
-	(*rr)[fieldMetadata.GetFullName()] = rgr
-
-	return rgr
-}
 
 // NewFieldChanges function returns a template that can merge field changes
 func getTemplate(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
@@ -91,13 +76,12 @@ func getTemplate(templateString string, collectionMetadata *CollectionMetadata) 
 }
 
 func HandleFormulaFields(
-	referencedFormulaFields ReferencedFormulaFieldRegistry,
+	formulaFields map[string]*FieldMetadata,
 	collectionMetadata *CollectionMetadata,
 	item loadable.Item,
 ) error {
 
-	for _, ref := range referencedFormulaFields {
-		formulaField := ref.Field
+	for _, formulaField := range formulaFields {
 		formulaOptions := formulaField.FormulaOptions
 		if formulaOptions == nil {
 			return nil
@@ -106,7 +90,7 @@ func HandleFormulaFields(
 		if formula == "" {
 			return nil
 		}
-		value, err := uesioLanguage.Evaluate(formula, item)
+		value, err := UesioLanguage.Evaluate(formula, item)
 		if err != nil {
 			return err
 		}

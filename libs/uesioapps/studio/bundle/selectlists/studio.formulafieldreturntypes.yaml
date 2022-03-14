@@ -14,5 +14,3 @@ options:
     value: "MAP"
   - label: "Timestamp"
     value: "TIMESTAMP"
-  - label: "Email"
-    value: "EMAIL"

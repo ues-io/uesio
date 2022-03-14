@@ -49,8 +49,9 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		Namespace:              f.Namespace,
 		Createable:             !f.ReadOnly && f.Type != "AUTONUMBER",
 		Accessible:             true,
-		Updateable:             !f.ReadOnly && !f.CreateOnly && f.Type != "AUTONUMBER",
-		Type:                   f.Type,
+		Updateable:             GetUpdateable(f),
+		Type:                   GetType(f),
+		IsFromula:              f.Type == "FORMULA",
 		Label:                  GetFieldLabel(f, session),
 		ReferenceMetadata:      f.ReferenceMetadata,
 		ReferenceGroupMetadata: f.ReferenceGroupMetadata,
@@ -66,6 +67,17 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		SubType:                f.SubType,
 		ColumnName:             f.ColumnName,
 	}
+}
+
+func GetType(f *meta.Field) string {
+	if f.Type == "FORMULA" {
+		return f.FormulaOptions.ReturnType
+	}
+	return f.Type
+}
+
+func GetUpdateable(f *meta.Field) bool {
+	return !f.ReadOnly && !f.CreateOnly && f.Type != "AUTONUMBER" && f.Type != "FORMULA"
 }
 
 func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {

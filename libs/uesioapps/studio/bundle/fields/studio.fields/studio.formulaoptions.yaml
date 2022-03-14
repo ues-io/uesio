@@ -6,7 +6,7 @@ subfields:
   - name: studio.formula
     label: Formula
     type: TEXT
-  - name: studio.return
+  - name: studio.returntype
     label: Return Type
     type: SELECT
     selectList: studio.formulafieldreturntypes

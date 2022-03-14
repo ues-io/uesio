@@ -241,7 +241,7 @@ definition:
                                         - io.field:
                                             fieldId: studio.formulaoptions->studio.formula
                                         - io.field:
-                                            fieldId: studio.formulaoptions->studio.return
+                                            fieldId: studio.formulaoptions->studio.returntype
   panels:
     deleteField:
       uesio.type: io.dialog
