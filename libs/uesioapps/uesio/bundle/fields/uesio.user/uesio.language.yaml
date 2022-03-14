@@ -1,5 +1,5 @@
 name: language
-collection: uesio.users
+collection: uesio.user
 type: SELECT
 label: Language
 selectList: uesio.language

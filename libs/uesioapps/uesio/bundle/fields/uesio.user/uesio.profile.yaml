@@ -1,4 +1,4 @@
 name: profile
-collection: uesio.users
+collection: uesio.user
 type: "TEXT"
 label: "Profile"

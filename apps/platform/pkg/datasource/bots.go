@@ -116,7 +116,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
 	switch request.CollectionName {
-	case "uesio.users":
+	case "uesio.user":
 		clearUserCache(request, connection, session)
 	case "studio.sites":
 		clearHostCacheForSite(request, connection, session)

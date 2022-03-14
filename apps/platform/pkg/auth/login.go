@@ -30,7 +30,7 @@ func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
 	// Bump our permissions a bit so we can make the next two queries
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.users":       true,
+			"uesio.user":       true,
 			"uesio.userfiles":   true,
 			"uesio.loginmethod": true,
 		},

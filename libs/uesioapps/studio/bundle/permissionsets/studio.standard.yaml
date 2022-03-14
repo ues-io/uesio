@@ -146,4 +146,4 @@ collections:
   studio.views: true
   studio.workspaces: true
   uesio.userfiles: true
-  uesio.users: true
+  uesio.user: true
