@@ -82,10 +82,85 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 
 	return route, nil
 }
+func getCollectionRoute(r *http.Request, namespace, collection string, viewtype string, session *sess.Session) (*meta.Route, error) {
+	var routes meta.RouteCollection
+	err := bundle.LoadAll(&routes, namespace, meta.BundleConditions{
+		"studio.collection": namespace + "." + collection,
+		"studio.viewtype": viewtype,
+	}, session)
+
+	if err != nil {
+		return nil, err
+	}
+	return &routes[0], nil
+}
+
+func GetStringInBetween(str string, start string, end string) (result string) {
+	s := strings.Index(str, start)
+	if s == -1 {
+		return
+	}
+	s += len(start)
+	e := strings.Index(str[s:], end)
+	if e == -1 {
+		return
+	}
+	return str[s : s+e]
+}
+
+
+
+func CollectionRoute(viewType string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request)   {
+		vars := mux.Vars(r)
+		collectionName := vars["name"]
+		namespace := vars["namespace"]
+		id := vars["id"]
+	
+		session := middleware.GetSession(r)
+		workspace := session.GetWorkspace()
+		route, err := getCollectionRoute(r, namespace, collectionName, viewType, session)
+	
+		if err != nil {
+			logger.LogErrorWithTrace(r, err)
+			respondJSON(w, r, &RouteMergeData{
+				View:  "uesio.notfound",
+				Theme: "uesio.default",
+			})
+			return
+		}
+
+		// We need 1 param in the path to assign the id to when in detail view
+		if (viewType == "detail") {
+			paramsCount := strings.Count(route.Path, "{")
+			if paramsCount > 1 || paramsCount == 0  {
+				respondJSON(w, r, &RouteMergeData{
+					View:  "uesio.notfound",
+					Theme: "uesio.default",
+				})
+				return
+			}
+		}
+	
+
+		idParamName := GetStringInBetween(route.Path, "{", "}")
+		params := make(map[string]string)
+		params[idParamName] = id
+
+		respondJSON(w, r, &RouteMergeData{
+			View:      route.ViewRef,
+			Params:    params,
+			Namespace: route.Namespace,
+			Theme:     route.ThemeRef,
+			Path:      strings.Replace(route.Path, "{" + idParamName + "}", id, 1),
+			Workspace: GetWorkspaceMergeData(workspace),
+		})
+	
+	}
+}
 
 // Route is good
 func Route(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
 
 	namespace := vars["namespace"]
@@ -94,10 +169,10 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	workspace := session.GetWorkspace()
 
-	prefix := "/site/routes/" + namespace + "/"
+	prefix := "/site/routes/" + namespace + "/path/"
 
 	if workspace != nil {
-		prefix = "/workspace/" + workspace.GetAppID() + "/" + workspace.Name + "/routes/" + namespace + "/"
+		prefix = "/workspace/" + workspace.GetAppID() + "/" + workspace.Name + "/routes/" + namespace + "/path/"
 	}
 
 	route, err := getRoute(r, namespace, path, prefix, session)

@@ -2,3 +2,5 @@ name: opportunities
 path: opportunities
 view: crm.opportunities
 theme: crm.default
+collection: crm.opportunities
+viewtype: list

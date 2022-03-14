@@ -12,6 +12,18 @@ import {
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 
+type NavigateParams = {
+	namespace?: string
+} & (
+	| {
+			path: string
+	  }
+	| {
+			collection: string
+			id?: string
+	  }
+)
+
 type BotParams = {
 	[key: string]: string
 }
@@ -88,11 +100,19 @@ const platform = {
 	},
 	getRoute: async (
 		context: Context,
-		namespace: string,
-		route: string
+		params: NavigateParams
 	): Promise<RouteState> => {
 		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/routes/${namespace}/${route}`)
+		const suffix =
+			"path" in params
+				? `${params.namespace}/path/${context.merge(params.path)}`
+				: `collection/${params.namespace}/${
+						params.collection.split(".")[1]
+				  }/${params.id ? "detail" : "list"}${
+						params.id ? "/" + params.id : ""
+				  }`
+
+		const response = await fetch(`${prefix}/routes/${suffix}`)
 		if (response.status !== 200) {
 			throw new Error("Route Not Found")
 		}
@@ -348,6 +368,7 @@ export {
 	Platform,
 	BotResponse,
 	BotParams,
+	NavigateParams,
 	ConfigValueResponse,
 	SecretResponse,
 	FeatureFlagResponse,

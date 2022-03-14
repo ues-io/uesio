@@ -26,7 +26,9 @@ type Route struct {
 	Name      string            `uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Path      string            `yaml:"path" uesio:"studio.path"`
+	ViewType  string            `yaml:"viewtype" uesio:"studio.viewtype"`
 	ViewRef   string            `yaml:"view" uesio:"studio.view"`
+	Collection string         `yaml:"collection" uesio:"studio.collection"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
 	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	ThemeRef  string            `yaml:"theme" uesio:"studio.theme"`

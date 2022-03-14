@@ -2,3 +2,4 @@ name: accounts
 path: accounts
 view: crm.accounts
 theme: crm.default
+collection: crm.accounts

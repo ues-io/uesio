@@ -1,0 +1,4 @@
+name: collection
+collection: studio.routes
+type: TEXT
+label: Name
