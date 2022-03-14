@@ -2,3 +2,5 @@ name: contacts
 path: contacts
 view: crm.contacts
 theme: crm.default
+collection: crm.contacts
+viewtype: list

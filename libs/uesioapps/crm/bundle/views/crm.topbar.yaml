@@ -32,8 +32,8 @@ definition:
                               color: "#EEE"
                       - io.button:
                           signals:
-                            - path: leads
-                              signal: route/NAVIGATE
+                            - signal: "route/NAVIGATE"
+                              collection: crm.leads
                           text: Leads
                           uesio.variant: io.nav
                           uesio.styles:
@@ -41,7 +41,7 @@ definition:
                               color: "#EEE"
                       - io.button:
                           signals:
-                            - path: contacts
+                            - collection: crm.contacts
                               signal: route/NAVIGATE
                           text: Contacts
                           uesio.variant: io.nav
@@ -50,8 +50,8 @@ definition:
                               color: "#EEE"
                       - io.button:
                           signals:
-                            - path: accounts
-                              signal: route/NAVIGATE
+                            - signal: "route/NAVIGATE"
+                              collection: crm.accounts
                           text: Accounts
                           uesio.variant: io.nav
                           uesio.styles:
@@ -59,8 +59,8 @@ definition:
                               color: "#EEE"
                       - io.button:
                           signals:
-                            - path: opportunities
-                              signal: route/NAVIGATE
+                            - signal: "route/NAVIGATE"
+                              collection: crm.opportunities
                           text: Opportunities
                           uesio.variant: io.nav
                           uesio.styles:

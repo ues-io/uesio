@@ -49,8 +49,10 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 							workspace: event.state.workspace,
 						},
 					]),
-					event.state.path,
-					event.state.namespace,
+					{
+						path: event.state.path,
+						namespace: event.state.namespace,
+					},
 					true
 				)
 			)
