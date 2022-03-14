@@ -1,7 +1,0 @@
-name: formula
-collection: crm.accounts
-type: FORMULA
-label: My formula for Testing the formual Fields
-formulaOptions:
-  formula: ${crm.name}
-  return: "TEXT"
