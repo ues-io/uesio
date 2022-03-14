@@ -2,7 +2,7 @@ import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import loadViewOp from "../view/operations/load"
-import { NavigateParams } from "../../platform/platform"
+import { NavigateRequest } from "../../platform/platform"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -29,23 +29,15 @@ const getRouteUrlPrefix = (context: Context, namespace: string) => {
 const navigate =
 	(
 		context: Context,
-		params: NavigateParams,
+		request: NavigateRequest,
 		noPushState?: boolean
 	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
-		// provided, they want to navigate within the same namespace.
-		const namespace =
-			params.namespace || context.getViewDef()?.namespace || ""
-
 		dispatch(setLoading())
 
 		const workspace = context.getWorkspace()
 
-		const routeResponse = await platform.getRoute(context, {
-			...params,
-			namespace,
-		})
+		const routeResponse = await platform.getRoute(context, request)
 
 		if (!routeResponse) return context
 		const view = routeResponse.view
@@ -68,10 +60,10 @@ const navigate =
 		dispatch(setRoute(routeResponse))
 
 		if (!noPushState) {
-			const prefix = getRouteUrlPrefix(context, namespace)
+			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
 			window.history.pushState(
 				{
-					namespace,
+					namespace: routeResponse.namespace,
 					path: routeResponse.path,
 					workspace,
 				},

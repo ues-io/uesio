@@ -1,5 +1,9 @@
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
+import {
+	CollectionNavigateRequest,
+	PathNavigateRequest,
+} from "../../platform/platform"
 import operations from "./operations"
 
 // The key for the entire band
@@ -10,12 +14,11 @@ interface RedirectSignal extends SignalDefinition {
 	newtab?: boolean
 }
 
-interface NavigateSignal extends SignalDefinition {
-	path: string
-	namespace: string
-	collection: string
-	id: string
-}
+type PathNavigateSignal = SignalDefinition & PathNavigateRequest
+
+type CollectionNavigateSignal = SignalDefinition & CollectionNavigateRequest
+
+type NavigateSignal = PathNavigateSignal | CollectionNavigateSignal
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
