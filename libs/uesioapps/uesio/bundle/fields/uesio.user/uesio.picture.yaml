@@ -1,5 +1,5 @@
 name: picture
-collection: uesio.users
+collection: uesio.user
 type: FILE
 label: Profile picture
 file:

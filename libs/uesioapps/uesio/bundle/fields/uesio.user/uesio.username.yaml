@@ -1,5 +1,5 @@
 name: username
-collection: uesio.users
+collection: uesio.user
 type: "TEXT"
 label: "Username"
 required: true

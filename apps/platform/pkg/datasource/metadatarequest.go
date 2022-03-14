@@ -135,7 +135,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 			// If we only have one field and it's the uesio.id field, skip getting metadata
 			if len(collection[fieldKey]) == 1 {
-				_, ok := collection[fieldKey]["uesio.id"]
+				_, ok := collection[fieldKey][adapt.ID_FIELD]
 				if ok {
 					continue
 				}
