@@ -70,7 +70,7 @@ definition:
       collection: crm.contacts
       conditions:
         - field: uesio.id
-          param: contactid
+          param: recordid
           valueSource: PARAM
       fields:
         crm.account:
@@ -85,7 +85,7 @@ definition:
         uesio.updatedat:
         uesio.createdat:
   params:
-    contactid:
+    recordid:
       type: recordId
       required: true
       collection: crm.contacts

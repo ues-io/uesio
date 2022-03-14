@@ -92,6 +92,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controller.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controller.View, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/themes/{namespace}/{name}", controller.Theme, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/routes/collection/{namespace}/{name}/{viewtype}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/{namespace}/{name}/{viewtype}/{id}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/{namespace}/{route:.*}", controller.Route, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controller.ServeComponentPack(true), "GET")

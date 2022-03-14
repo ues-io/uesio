@@ -1,5 +1,5 @@
 name: lead_details
-path: lead/{leadid}
+path: lead/{recordid}
 view: crm.lead_details
 theme: crm.default
 collection: crm.leads

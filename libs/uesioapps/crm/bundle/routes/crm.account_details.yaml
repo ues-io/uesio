@@ -1,5 +1,5 @@
 name: account_details
-path: account/{accountid}
+path: account/{recordid}
 view: crm.account_details
 theme: crm.default
 collection: crm.accounts

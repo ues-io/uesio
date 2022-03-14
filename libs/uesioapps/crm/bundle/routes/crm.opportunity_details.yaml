@@ -1,5 +1,5 @@
 name: opportunity_details
-path: opportunity/{opportunityid}
+path: opportunity/{recordid}
 view: crm.opportunity_details
 theme: crm.default
 collection: crm.opportunities

@@ -59,7 +59,7 @@ definition:
       collection: crm.leads
       conditions:
         - field: uesio.id
-          param: leadid
+          param: recordid
           valueSource: PARAM
       fields:
         crm.firstname:

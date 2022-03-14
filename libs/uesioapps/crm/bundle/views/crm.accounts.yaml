@@ -43,8 +43,10 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: account/${uesio.id}
-                      signal: route/NAVIGATE
+                    - signal: route/NAVIGATE
+                      collection: crm.accounts
+                      viewtype: detail
+                      recordid: ${uesio.id}
                 - text: Delete
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS

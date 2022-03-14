@@ -63,7 +63,7 @@ definition:
       collection: crm.opportunities
       conditions:
         - field: uesio.id
-          param: opportunityid
+          param: recordid
           valueSource: PARAM
       fields:
         uesio.id:

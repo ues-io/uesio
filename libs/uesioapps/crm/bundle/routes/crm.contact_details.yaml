@@ -1,5 +1,5 @@
 name: contact_details
-path: contact/{contactid}
+path: contact/{recordid}
 view: crm.contact_details
 theme: crm.default
 collection: crm.contacts

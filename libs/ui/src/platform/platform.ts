@@ -54,7 +54,7 @@ type PathNavigateRequest = {
 
 type CollectionNavigateRequest = {
 	collection: string
-	viewtype: string
+	viewtype?: string
 	recordid?: string
 }
 
@@ -78,8 +78,7 @@ const isPathRouteRequest = (
 
 const isCollectionRouteRequest = (
 	request: NavigateRequest
-): request is CollectionNavigateRequest =>
-	"collection" in request && "viewtype" in request
+): request is CollectionNavigateRequest => "collection" in request
 
 const getRouteUrl = (context: Context, request: NavigateRequest) => {
 	const prefix = getPrefix(context)
@@ -94,9 +93,10 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 	}
 	if (isCollectionRouteRequest(request)) {
 		const [namespace, name] = parseKey(request.collection)
+		const viewtype = request.viewtype || "list"
 		return (
-			`${prefix}/routes/collection/${namespace}/${name}/${request.viewtype}` +
-			(request.recordid ? `/${request.recordid}` : "")
+			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
+			(request.recordid ? `/${context.merge(request.recordid)}` : "")
 		)
 	}
 	throw new Error("Not a valid Route Request")
