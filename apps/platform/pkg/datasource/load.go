@@ -24,7 +24,7 @@ var specialRefs = map[string]SpecialReferences{
 	},
 	"USER": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio.users",
+			Collection: "uesio.user",
 		},
 		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},

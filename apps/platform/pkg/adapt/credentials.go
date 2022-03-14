@@ -41,9 +41,9 @@ func (c *Credentials) GetTenantID() string {
 }
 
 func (c *Credentials) GetTenantIDForCollection(collectionKey string) string {
-	// If we're loading uesio.users from a workspace, always use the site
+	// If we're loading uesio.user from a workspace, always use the site
 	// tenant id, not the workspace tenant id. Since workspaces don't have users.
-	if collectionKey == "uesio.users" {
+	if collectionKey == "uesio.user" {
 		return c.GetSiteTenantID()
 	}
 	return c.GetTenantID()

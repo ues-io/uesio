@@ -32,7 +32,7 @@ definition:
           valueSource: PARAM
           param: sitename
     users:
-      collection: uesio.users
+      collection: uesio.user
       fields:
         uesio.id:
         uesio.firstname:
