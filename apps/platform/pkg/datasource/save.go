@@ -278,7 +278,6 @@ func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *s
 			return err
 		}
 
-		//Eval formula fields
 		err = EvalFormulaFields(op, collectionMetadata, connection, session)
 		if err != nil {
 			return err

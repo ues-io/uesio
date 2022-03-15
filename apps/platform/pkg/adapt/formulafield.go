@@ -27,11 +27,8 @@ var (
 					return nil, errors.New("Casting error in formula field: " + fullId)
 				}
 				id, err := item.GetField(fullId)
-				if err != nil {
-					return "{Missing Field}", nil
-				}
 
-				if id == nil {
+				if err != nil || id == nil {
 					return "{Missing Field}", nil
 				}
 
