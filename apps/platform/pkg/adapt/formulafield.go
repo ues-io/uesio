@@ -28,7 +28,11 @@ var (
 				}
 				id, err := item.GetField(fullId)
 
-				if err != nil || id == nil {
+				if err != nil {
+					return "{Invalid Field}", nil
+				}
+
+				if id == nil {
 					return "{Missing Field}", nil
 				}
 

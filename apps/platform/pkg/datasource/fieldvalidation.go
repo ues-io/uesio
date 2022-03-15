@@ -1,11 +1,13 @@
 package datasource
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/PaesslerAG/gval"
 	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -128,6 +130,50 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
+func getFormulaFields(formula string) loadable.Item {
+	fields := adapt.ChangeItem{FieldChanges: &adapt.Item{}}
+	var UesioTestLanguage = gval.NewLanguage(
+		adapt.UesioLanguage,
+		gval.VariableSelector(func(path gval.Evaluables) gval.Evaluable {
+			return func(c context.Context, v interface{}) (interface{}, error) {
+
+				keys, err := path.EvalStrings(c, v)
+
+				if err != nil {
+					return nil, err
+				}
+
+				if len(keys) == 2 {
+					fullId := strings.Join(keys, ".")
+					fields.FieldChanges.SetField(fullId, "Dummy Data") //we need the collection metadata here
+					return fullId, nil
+				}
+
+				return nil, nil
+
+			}
+		}),
+	)
+
+	UesioTestLanguage.Evaluate(formula, fields)
+
+	return fields.FieldChanges
+}
+
+func validateFormula(field *adapt.FieldMetadata, collectionMetadata *adapt.CollectionMetadata) validationFunc {
+	return func(change adapt.ChangeItem, isNew bool) error {
+		val, _ := change.FieldChanges.GetField(field.GetFullName())
+		lmap := val.(map[string]interface{})
+		formula := lmap["studio.formula"].(string)
+		fields := getFormulaFields(formula)
+		_, err := adapt.UesioLanguage.Evaluate(formula, fields)
+		if err != nil {
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Invalid formula: "+err.Error())
+		}
+		return nil
+	}
+}
+
 func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) validationFunc {
 
 	validations := []validationFunc{}
@@ -150,6 +196,9 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		}
 		if field.Type == "NUMBER" {
 			validations = append(validations, validateNumber(field))
+		}
+		if field.Type == "MAP" && field.GetFullName() == "studio.formulaoptions" {
+			validations = append(validations, validateFormula(field, collectionMetadata))
 		}
 	}
 
