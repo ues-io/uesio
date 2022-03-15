@@ -5,11 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"text/template"
 
 	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 var (
@@ -50,31 +48,6 @@ var (
 		}),
 	)
 )
-
-// NewFieldChanges function returns a template that can merge field changes
-func getTemplate(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
-		fieldMetadata, err := collectionMetadata.GetField(key)
-		if err != nil {
-			return nil, err
-		}
-		val, err := item.GetField(key)
-		if err != nil {
-			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
-		}
-		if IsReference(fieldMetadata.Type) {
-			key, err := GetReferenceKey(val)
-			if err != nil {
-				return nil, err
-			}
-			if key == "" {
-				return nil, errors.New("Bad Reference Key in template: " + templateString)
-			}
-			return key, nil
-		}
-		return val, nil
-	})
-}
 
 func HandleFormulaFields(
 	formulaFields map[string]*FieldMetadata,
