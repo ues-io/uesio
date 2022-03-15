@@ -51,7 +51,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		Accessible:             true,
 		Updateable:             GetUpdateable(f),
 		Type:                   GetType(f),
-		IsFromula:              f.Type == "FORMULA",
+		IsFormula:              f.Type == "FORMULA",
 		Label:                  GetFieldLabel(f, session),
 		ReferenceMetadata:      f.ReferenceMetadata,
 		ReferenceGroupMetadata: f.ReferenceGroupMetadata,

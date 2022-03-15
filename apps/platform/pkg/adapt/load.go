@@ -134,7 +134,7 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq.AddFields(field.Fields)
 		}
 
-		if fieldMetadata.IsFromula {
+		if fieldMetadata.IsFormula {
 			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
 		}
 

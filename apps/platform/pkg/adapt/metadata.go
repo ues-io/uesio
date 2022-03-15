@@ -112,7 +112,7 @@ type FieldMetadata struct {
 	SubFields              map[string]*FieldMetadata    `json:"subfields,omitempty"`
 	SubType                string                       `json:"subtype,omitempty"`
 	ColumnName             string                       `json:"-"`
-	IsFromula              bool                         `json:"-"`
+	IsFormula              bool                         `json:"-"`
 }
 
 // GetFullName function

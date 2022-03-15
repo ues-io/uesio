@@ -59,7 +59,7 @@ func getFormulaFunction(collectionMetadata *adapt.CollectionMetadata, session *s
 
 	populations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
-		if field.IsFromula {
+		if field.IsFormula {
 			populations = append(populations, populateFormulaField(field))
 		}
 	}
