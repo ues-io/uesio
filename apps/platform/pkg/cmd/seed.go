@@ -99,9 +99,19 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
+	var loginmethods meta.LoginMethodCollection
 	var configstorevalues meta.ConfigStoreValueCollection
 
-	err = populateSeedData(&apps, &bundles, &workspaces, &sites, &sitedomains, &users, &configstorevalues)
+	err = populateSeedData(
+		&apps,
+		&bundles,
+		&workspaces,
+		&sites,
+		&sitedomains,
+		&users,
+		&loginmethods,
+		&configstorevalues,
+	)
 	if err != nil {
 		return err
 	}
@@ -121,6 +131,7 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 
 	return datasource.SaveWithOptions([]datasource.SaveRequest{
 		getPlatformSeedSR(&users),
+		getPlatformSeedSR(&loginmethods),
 		getPlatformSeedSR(&apps),
 		getPlatformSeedSR(&bundles),
 		getPlatformSeedSR(&workspaces),

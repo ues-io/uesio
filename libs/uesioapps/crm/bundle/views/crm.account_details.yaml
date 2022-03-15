@@ -84,7 +84,7 @@ definition:
       collection: crm.accounts
       conditions:
         - field: uesio.id
-          param: accountid
+          param: recordid
           valueSource: PARAM
       fields:
         uesio.id:
@@ -98,7 +98,7 @@ definition:
             crm.lastname: null
             crm.firstname: null
   params:
-    accountid:
+    recordid:
       type: recordId
       required: true
       collection: crm.accounts

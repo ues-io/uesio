@@ -24,6 +24,7 @@ definition:
         studio.name:
         studio.path:
         studio.view:
+        studio.collection:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -136,6 +137,10 @@ definition:
                   fieldId: studio.theme
                   metadataType: "THEME"
                   label: "Theme"
+              - studio.metadatafield:
+                  fieldId: studio.collection
+                  metadataType: "COLLECTION"
+                  label: "Collection"
       actions:
         - io.button:
             uesio.variant: "io.primary"

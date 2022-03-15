@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/icza/session"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -41,14 +40,14 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 	}
 
 	fakeSession := sess.NewSession(nil, &meta.User{
-		ID:        "system_system",
+		ID:        "system",
 		FirstName: "Super",
 		LastName:  "Admin",
 		Profile:   "uesio.public",
 	}, site)
 	fakeSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.users":     true,
+			"uesio.user":      true,
 			"uesio.userfiles": true,
 		},
 	})
@@ -70,7 +69,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 
 func getUserFromSession(userid string, session *sess.Session) (*meta.User, error) {
 
-	if userid == "system_guest" {
+	if userid == "guest" {
 		return sess.GetPublicUser(session.GetSite()), nil
 	}
 	// Get Cache site info for the host
@@ -79,54 +78,14 @@ func getUserFromSession(userid string, session *sess.Session) (*meta.User, error
 		return cachedUser, nil
 	}
 
-	var user meta.User
+	user, err := GetUserByID(userid, session)
+	if err != nil {
+		return nil, err
+	}
 
-	err := datasource.PlatformLoadOne(
-		&user,
-		&datasource.PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: "uesio.firstname",
-				},
-				{
-					ID: "uesio.lastname",
-				},
-				{
-					ID: "uesio.profile",
-				},
-				{
-					ID: "uesio.federation_id",
-				},
-				{
-					ID: "uesio.federation_type",
-				},
-				{
-					ID: "uesio.picture",
-					Fields: []adapt.LoadRequestField{
-						{
-							ID: "uesio.id",
-						},
-					},
-				},
-				{
-					ID: "uesio.language",
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: "uesio.id",
-					Value: userid,
-				},
-			},
-		},
-		session,
-	)
+	err = SetUserCache(userid, session.GetSite().GetAppID(), user)
 	if err != nil {
 		return nil, err
 	}
-	err = SetUserCache(userid, session.GetSite().GetAppID(), &user)
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
+	return user, nil
 }

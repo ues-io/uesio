@@ -1,0 +1,30 @@
+[
+	{
+		"user": {
+			"id": "ben"
+		},
+		"federationid": "ben",
+		"federationtype": "mock"
+	},
+	{
+		"user": {
+			"id": "abel"
+		},
+		"federationid": "abel",
+		"federationtype": "mock"
+	},
+	{
+		"user": {
+			"id": "wessel"
+		},
+		"federationid": "wessel",
+		"federationtype": "mock"
+	},
+	{
+		"user": {
+			"id": "gregg"
+		},
+		"federationid": "gregg",
+		"federationtype": "mock"
+	}
+]

@@ -11,6 +11,7 @@ import {
 } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
+import { parseKey } from "../component/path"
 
 type BotParams = {
 	[key: string]: string
@@ -46,6 +47,19 @@ type JobResponse = {
 	id: string
 }
 
+type PathNavigateRequest = {
+	namespace: string
+	path: string
+}
+
+type CollectionNavigateRequest = {
+	collection: string
+	viewtype?: string
+	recordid?: string
+}
+
+type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
+
 const getPrefix = (context: Context) => {
 	const workspace = context.getWorkspace()
 	if (workspace && workspace.app && workspace.name) {
@@ -56,6 +70,36 @@ const getPrefix = (context: Context) => {
 		return `/siteadmin/${siteadmin.app}/${siteadmin.name}`
 	}
 	return "/site"
+}
+
+const isPathRouteRequest = (
+	request: NavigateRequest
+): request is PathNavigateRequest => "path" in request
+
+const isCollectionRouteRequest = (
+	request: NavigateRequest
+): request is CollectionNavigateRequest => "collection" in request
+
+const getRouteUrl = (context: Context, request: NavigateRequest) => {
+	const prefix = getPrefix(context)
+	if (isPathRouteRequest(request)) {
+		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
+		// provided, they want to navigate within the same namespace.
+		const namespace =
+			request.namespace || context.getViewDef()?.namespace || ""
+		return `${prefix}/routes/path/${namespace}/${context.merge(
+			request.path
+		)}`
+	}
+	if (isCollectionRouteRequest(request)) {
+		const [namespace, name] = parseKey(request.collection)
+		const viewtype = request.viewtype || "list"
+		return (
+			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
+			(request.recordid ? `/${context.merge(request.recordid)}` : "")
+		)
+	}
+	throw new Error("Not a valid Route Request")
 }
 
 const postJSON = (url: string, body?: Record<string, unknown>) =>
@@ -88,11 +132,10 @@ const platform = {
 	},
 	getRoute: async (
 		context: Context,
-		namespace: string,
-		route: string
+		request: NavigateRequest
 	): Promise<RouteState> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/routes/${namespace}/${route}`)
+		const routeUrl = getRouteUrl(context, request)
+		const response = await fetch(routeUrl)
 		if (response.status !== 200) {
 			throw new Error("Route Not Found")
 		}
@@ -351,5 +394,8 @@ export {
 	ConfigValueResponse,
 	SecretResponse,
 	FeatureFlagResponse,
+	PathNavigateRequest,
+	CollectionNavigateRequest,
+	NavigateRequest,
 	JobResponse,
 }

@@ -2,51 +2,51 @@
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "mock_MockBen"
+		"studio.member": "ben"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "mock_MockAbel"
+		"studio.member": "abel"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "mock_MockWessel"
+		"studio.member": "wessel"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "mock_MockGregg"
+		"studio.member": "gregg"
 	},
 	{
 		"studio.app": "cms",
 		"studio.team": "cms_maintainers",
-		"studio.member": "mock_MockBen"
+		"studio.member": "ben"
 	},
 	{
 		"studio.app": "cms",
 		"studio.team": "cms_maintainers",
-		"studio.member": "mock_MockAbel"
+		"studio.member": "abel"
 	},
 	{
 		"studio.app": "cms",
 		"studio.team": "cms_maintainers",
-		"studio.member": "mock_MockWessel"
+		"studio.member": "wessel"
 	},
 	{
 		"studio.app": "cms",
 		"studio.team": "cms_maintainers",
-		"studio.member": "mock_MockGregg"
+		"studio.member": "gregg"
 	},
 	{
 		"studio.app": "studio",
 		"studio.team": "studio_maintainers",
-		"studio.member": "mock_MockBen"
+		"studio.member": "ben"
 	},
 	{
 		"studio.app": "studio",
 		"studio.team": "studio_maintainers",
-		"studio.member": "mock_MockAbel"
+		"studio.member": "abel"
 	}
 ]

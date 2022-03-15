@@ -35,10 +35,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	return (
 		<>
 			{mock.mockUsers.map((user) => (
-				<LoginWrapper
-					key={user.lastname + user.firstname}
-					align={definition.align}
-				>
+				<LoginWrapper key={user} align={definition.align}>
 					<Button
 						context={context}
 						onClick={(): void => {
@@ -61,7 +58,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 								textTransform: "none",
 							},
 						}}
-						label={"Sign in as " + user.firstname}
+						label={"Sign in as " + user}
 					/>
 				</LoginWrapper>
 			))}

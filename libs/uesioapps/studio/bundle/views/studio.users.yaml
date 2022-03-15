@@ -32,12 +32,12 @@ definition:
           valueSource: PARAM
           param: sitename
     users:
-      collection: uesio.users
+      collection: uesio.user
       fields:
         uesio.id:
         uesio.firstname:
         uesio.lastname:
-        uesio.federation_id:
+        uesio.username:
         uesio.picture:
       init:
         query: false
@@ -99,7 +99,7 @@ definition:
                                       element: div
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.federation_id}"
+                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.username}"
                                 avatar:
                                   - io.avatar:
                                       image: $UserFile{uesio.picture}

@@ -1,4 +1,4 @@
 name: lastname
-collection: uesio.users
+collection: uesio.user
 type: "TEXT"
 label: "Last Name"

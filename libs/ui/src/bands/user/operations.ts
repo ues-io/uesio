@@ -20,8 +20,10 @@ async function responseRedirect(
 							site: context.getSite(),
 						},
 					]),
-					response.redirectRouteName,
-					response.redirectRouteNamespace
+					{
+						path: response.redirectRouteName,
+						namespace: response.redirectRouteNamespace,
+					}
 			  )
 	)
 	return context

@@ -1,5 +1,0 @@
-name: id
-collection: uesio.users
-type: "TEXT"
-label: "User ID"
-readOnly: true
