@@ -38,7 +38,6 @@ class Field {
 		}
 	}
 	getNumberMetadata = () => this.source.number || null
-	getFormulaOptionsMetadata = () => this.source.formulaoptions || null
 }
 
 export default Field
