@@ -163,7 +163,17 @@ func getFormulaFields(formula string) loadable.Item {
 func validateFormula(field *adapt.FieldMetadata, collectionMetadata *adapt.CollectionMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, _ := change.FieldChanges.GetField(field.GetFullName())
+
+		if val == nil {
+			return nil
+		}
+
 		lmap := val.(map[string]interface{})
+
+		if lmap == nil {
+			return nil
+		}
+
 		formula := lmap["studio.formula"].(string)
 		fields := getFormulaFields(formula)
 		_, err := adapt.UesioLanguage.Evaluate(formula, fields)
