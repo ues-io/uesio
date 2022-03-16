@@ -44,16 +44,36 @@ func (ci *ChangeItem) AddReadWriteToken(token string) {
 	ci.ReadWriteTokens = append(ci.ReadWriteTokens, token)
 }
 
-func (ci *ChangeItem) GetOwnerID() (string, error) {
-	ownerChange, err := ci.FieldChanges.GetField("uesio.owner")
-	if err != nil || ownerChange == nil {
-		oldOwner, err := ci.OldValues.GetField("uesio.owner")
-		if err != nil {
-			return "", err
-		}
-		return GetReferenceKey(oldOwner)
+func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
+	changeVal, err := ci.FieldChanges.GetField(fieldID)
+	if err == nil && changeVal != nil {
+		return changeVal, nil
 	}
-	return GetReferenceKey(ownerChange)
+	oldVal, err := ci.OldValues.GetField(fieldID)
+	if err != nil {
+		return nil, err
+	}
+	return oldVal, nil
+}
+
+func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {
+	return ci.FieldChanges.SetField(fieldID, value)
+}
+
+func (ci *ChangeItem) Loop(iter func(string, interface{}) error) error {
+	return ci.FieldChanges.Loop(iter)
+}
+
+func (ci *ChangeItem) Len() int {
+	return ci.FieldChanges.Len()
+}
+
+func (ci *ChangeItem) GetOwnerID() (string, error) {
+	ownerVal, err := ci.GetField("uesio.owner")
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(ownerVal)
 }
 
 // Lookup struct

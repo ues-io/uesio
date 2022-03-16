@@ -20,7 +20,7 @@ var (
 					return nil, err
 				}
 				fullId := strings.Join(keys, ".")
-				item, ok := v.(*Item)
+				item, ok := v.(loadable.Gettable)
 				if !ok {
 					return nil, errors.New("Casting error in formula field: " + fullId)
 				}
@@ -46,30 +46,62 @@ var (
 			valStr := fmt.Sprint(args[0])
 			return valStr, nil
 		}),
+		gval.Function("FIRST", func(args ...interface{}) (interface{}, error) {
+			valStr := fmt.Sprint(args[0])[0:1]
+			return valStr, nil
+		}),
 	)
 )
 
-func HandleFormulaFields(
-	formulaFields map[string]*FieldMetadata,
-	collectionMetadata *CollectionMetadata,
-	item loadable.Item,
-) error {
+type evalFunc func(item loadable.Item) error
 
-	for _, formulaField := range formulaFields {
-		formulaOptions := formulaField.FormulaOptions
-		if formulaOptions == nil {
-			return nil
-		}
-		formula := formulaOptions.Formula
-		if formula == "" {
-			return nil
-		}
-		value, err := UesioLanguage.Evaluate(formula, item)
+func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
+	return func(item loadable.Item) error {
+
+		value, err := exec(context.Background(), item)
 		if err != nil {
 			return err
 		}
-		item.SetField(formulaField.GetFullName(), value)
+
+		err = item.SetField(field.GetFullName(), value)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	}
+}
+
+func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
+
+	populations := []evalFunc{}
+	for _, field := range fields {
+		if field.IsFormula {
+			formulaMetadata := field.FormulaMetadata
+			if formulaMetadata == nil {
+				continue
+			}
+			expression := formulaMetadata.Expression
+			if expression == "" {
+				continue
+			}
+
+			exec, err := UesioLanguage.NewEvaluable(expression)
+			if err != nil {
+				continue
+			}
+			populations = append(populations, populateFormulaField(field, exec))
+		}
 	}
 
-	return nil
+	return func(item loadable.Item) error {
+		for _, population := range populations {
+			err := population(item)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
 }

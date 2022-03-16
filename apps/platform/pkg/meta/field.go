@@ -65,8 +65,8 @@ type AutoNumberMetadata struct {
 }
 
 // FormulaOptionsMetadata struct
-type FormulaOptionsMetadata struct {
-	Formula    string `json:"formula" yaml:"formula,omitempty" uesio:"studio.formula"`
+type FormulaMetadata struct {
+	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"studio.expression"`
 	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
 }
 
@@ -89,7 +89,7 @@ type Field struct {
 	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"studio.referencegroup"`
 	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"studio.validate"`
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
-	FormulaOptions         *FormulaOptionsMetadata `yaml:"formulaOptions,omitempty" uesio:"studio.formulaoptions"`
+	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"studio.formula"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
 	CreatedBy              *User                   `yaml:"-" uesio:"uesio.createdby"`

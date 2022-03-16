@@ -98,6 +98,11 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			return nil, nil, nil, nil, err
 		}
 
+		if fieldMetadata.IsFormula {
+			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
+			continue
+		}
+
 		err = fieldIDMap.AddField(fieldMetadata)
 		if err != nil {
 			return nil, nil, nil, nil, err
@@ -132,10 +137,6 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 				continue
 			}
 			refReq.AddFields(field.Fields)
-		}
-
-		if fieldMetadata.IsFormula {
-			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
 		}
 
 	}

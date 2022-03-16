@@ -38,6 +38,7 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.username:
+        uesio.initials:
         uesio.profile:
         uesio.picture:
         uesio.language:
@@ -137,6 +138,8 @@ definition:
                                             fieldId: uesio.firstname
                                         - io.field:
                                             fieldId: uesio.lastname
+                                        - io.field:
+                                            fieldId: uesio.initials
                                         - io.field:
                                             fieldId: uesio.username
                                         - io.field:

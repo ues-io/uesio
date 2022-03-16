@@ -117,6 +117,8 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	op.HasMoreBatches = false
 
+	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
+
 	for rows.Next() {
 		if op.BatchSize == index {
 			op.HasMoreBatches = true
@@ -129,7 +131,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 			return err
 		}
 
-		err = adapt.HandleFormulaFields(formulaFields, collectionMetadata, item)
+		err = formulaPopulations(item)
 		if err != nil {
 			return err
 		}

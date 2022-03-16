@@ -59,7 +59,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		NumberMetadata:         f.NumberMetadata,
 		ValidationMetadata:     f.ValidationMetadata,
 		AutoNumberMetadata:     f.AutoNumberMetadata,
-		FormulaOptions:         f.FormulaOptions,
+		FormulaMetadata:        f.FormulaMetadata,
 		SelectListMetadata:     GetSelectListMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
@@ -71,7 +71,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 
 func GetType(f *meta.Field) string {
 	if f.Type == "FORMULA" {
-		return f.FormulaOptions.ReturnType
+		return f.FormulaMetadata.ReturnType
 	}
 	return f.Type
 }

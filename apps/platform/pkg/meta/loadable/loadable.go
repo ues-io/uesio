@@ -11,10 +11,14 @@ type Group interface {
 	GetItems() interface{}
 }
 
+type Gettable interface {
+	GetField(string) (interface{}, error)
+}
+
 // Item interface
 type Item interface {
+	Gettable
 	SetField(string, interface{}) error
-	GetField(string) (interface{}, error)
 	Loop(iter func(string, interface{}) error) error
 	Len() int
 }
