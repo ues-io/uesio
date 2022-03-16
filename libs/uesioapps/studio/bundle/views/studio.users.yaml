@@ -31,6 +31,15 @@ definition:
         - field: studio.name
           valueSource: PARAM
           param: sitename
+    loginmethod:
+      collection: uesio.loginmethod
+      fields:
+        uesio.federation_type:
+        uesio.federation_id:
+        uesio.user:
+      init:
+        query: false
+        create: true
     users:
       collection: uesio.user
       fields:
@@ -41,6 +50,18 @@ definition:
         uesio.picture:
       init:
         query: false
+    newuser:
+      collection: uesio.user
+      fields:
+        uesio.id:
+        uesio.firstname:
+        uesio.lastname:
+        uesio.username:
+        uesio.picture:
+      init:
+        query: false
+        create: true
+
   events:
     onload:
       - signal: "wire/LOAD"
@@ -76,6 +97,13 @@ definition:
                 - io.titlebar:
                     uesio.variant: io.main
                     title: Users
+                    actions:
+                      - io.button:
+                          text: Add user
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newUser
+                          uesio.variant: io.secondary
                 - io.box:
                     uesio.variant: io.section
                     components:
@@ -105,3 +133,39 @@ definition:
                                       image: $UserFile{uesio.picture}
                                       text: "-"
   panels:
+    newUser:
+      uesio.type: io.dialog
+      title: Create a New User
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newuserlist
+            wire: newuser
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: uesio.firstname
+              - io.field:
+                  fieldId: uesio.lastname
+              - io.field:
+                  fieldId: uesio.username
+              - io.field:
+                  fieldId: uesio.picture
+
+      actions:
+        - io.button:
+            uesio.variant: io.secondary
+            text: Cancel
+            signals:
+              - signal: panel/TOGGLE
+                panel: newUser
+        - io.button:
+            uesio.variant: io.primary
+            text: confirm
+            signals:
+              - signal: user/SIGNUP
+                uesio.context:
+                  wire: newuser
+# // call signal with wire changes but not save wire,
+# // the backend will do the update to the users table
