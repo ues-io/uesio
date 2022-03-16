@@ -7,6 +7,7 @@ type User struct {
 	LastName  string            `uesio:"uesio.lastname"`
 	Profile   string            `uesio:"uesio.profile"`
 	Username  string            `uesio:"uesio.username"`
+	Initials  string            `uesio:"uesio.initials"`
 	Picture   *UserFileMetadata `uesio:"uesio.picture"`
 	Language  string            `uesio:"uesio.language"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`

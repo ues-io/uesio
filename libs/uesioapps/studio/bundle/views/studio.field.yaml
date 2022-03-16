@@ -49,7 +49,7 @@ definition:
         studio.languagelabel:
         studio.number:
         studio.subfields:
-        studio.formulaoptions:
+        studio.formula:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -239,9 +239,9 @@ definition:
                                           value: "FORMULA"
                                       components:
                                         - io.field:
-                                            fieldId: studio.formulaoptions->studio.formula
+                                            fieldId: studio.formula->studio.expression
                                         - io.field:
-                                            fieldId: studio.formulaoptions->studio.returntype
+                                            fieldId: studio.formula->studio.returntype
   panels:
     deleteField:
       uesio.type: io.dialog

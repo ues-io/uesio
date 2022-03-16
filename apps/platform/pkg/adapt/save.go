@@ -49,11 +49,16 @@ func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 	if err == nil && changeVal != nil {
 		return changeVal, nil
 	}
-	oldVal, err := ci.OldValues.GetField(fieldID)
-	if err != nil {
-		return nil, err
+
+	if ci.OldValues != nil {
+		oldVal, err := ci.OldValues.GetField(fieldID)
+		if err != nil {
+			return nil, err
+		}
+		return oldVal, nil
 	}
-	return oldVal, nil
+
+	return nil, nil
 }
 
 func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {

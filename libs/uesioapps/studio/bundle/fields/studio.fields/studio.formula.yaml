@@ -1,10 +1,10 @@
-name: formulaoptions
+name: formula
 collection: studio.fields
 type: MAP
-label: Reference Group Metadata
+label: Formula
 subfields:
-  - name: studio.formula
-    label: Formula
+  - name: studio.expression
+    label: Expression
     type: TEXT
   - name: studio.returntype
     label: Return Type
