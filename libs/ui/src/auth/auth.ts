@@ -1,11 +1,11 @@
 import { UserState } from "../bands/user/types"
-
-type LoginRequest = {
+import { SignalDefinition } from "../definition/signal"
+export type LoginRequest = {
 	type: string
 	token: string
 }
 
-type LoginResponse = LoginResponsePath | LoginResponseRedirect
+export type LoginResponse = LoginResponsePath | LoginResponseRedirect
 
 type LoginResponsePath = {
 	user: UserState
@@ -18,4 +18,14 @@ type LoginResponseRedirect = {
 	redirectRouteName: string
 }
 
-export { LoginRequest, LoginResponse }
+export interface SignupSignal extends SignalDefinition {
+	username: string
+	password: string
+	types: string
+	email: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SignupResponse = any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SignupRequest = any

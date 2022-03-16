@@ -1,6 +1,7 @@
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import operations from "./operations"
+import { SignupSignal } from "../../auth/auth"
 
 // The key for the entire band
 const USER_BAND = "user"
@@ -33,6 +34,12 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
 		label: "Logout",
+		properties: () => [],
+	},
+	[`${USER_BAND}/SIGNUP`]: {
+		dispatcher: (signal: SignupSignal, context: Context) =>
+			operations.signUp(context),
+		label: "Signup",
 		properties: () => [],
 	},
 }

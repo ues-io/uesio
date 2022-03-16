@@ -1,6 +1,11 @@
 import { LoadRequestBatch } from "../load/loadrequest"
 import { LoadResponseBatch } from "../load/loadresponse"
-import { LoginRequest, LoginResponse } from "../auth/auth"
+import {
+	LoginRequest,
+	LoginResponse,
+	SignupResponse,
+	SignupRequest,
+} from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
@@ -12,6 +17,7 @@ import {
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
+// import cognito from "../../../loginhelpers/src/cognito"
 
 type BotParams = {
 	[key: string]: string
@@ -339,6 +345,10 @@ const platform = {
 	},
 	logout: async (): Promise<LoginResponse> => {
 		const response = await postJSON("/site/auth/logout")
+		return response.json()
+	},
+	signUp: async (requestBody: SignupRequest): Promise<SignupResponse> => {
+		const response = await postJSON("/site/auth/signup", requestBody)
 		return response.json()
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {

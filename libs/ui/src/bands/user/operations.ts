@@ -48,7 +48,27 @@ const logout =
 		return responseRedirect(response, dispatch, context)
 	}
 
+const signUp =
+	(context: Context): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const wire = context.getWire()
+		if (!wire) return
+		const key = Object.keys(wire.source.data)[0]
+		const namespacedData = wire.source.data[key]
+		if (!namespacedData) return
+		const data = Object.keys(namespacedData).reduce((acc, v) => {
+			const newKey = v.replace("uesio.", "")
+			return { ...acc, [newKey]: namespacedData[v] }
+		}, {})
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = (await platform.signUp(data)) as any
+
+		return response
+	}
+
 export default {
 	login,
 	logout,
+	signUp,
 }
