@@ -64,7 +64,7 @@ type AutoNumberMetadata struct {
 	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
 }
 
-// FormulaOptionsMetadata struct
+// FormulaMetadata struct
 type FormulaMetadata struct {
 	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"studio.expression"`
 	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
