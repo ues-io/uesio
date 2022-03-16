@@ -107,10 +107,12 @@ type FieldMetadata struct {
 	FileMetadata           *meta.FileMetadata           `json:"file,omitempty"`
 	ValidationMetadata     *meta.ValidationMetadata     `json:"validate,omitempty"`
 	AutoNumberMetadata     *meta.AutoNumberMetadata     `json:"autonumber,omitempty"`
+	FormulaMetadata        *meta.FormulaMetadata        `json:"-"`
 	AutoPopulate           string                       `json:"autopopulate,omitempty"`
 	SubFields              map[string]*FieldMetadata    `json:"subfields,omitempty"`
 	SubType                string                       `json:"subtype,omitempty"`
 	ColumnName             string                       `json:"-"`
+	IsFormula              bool                         `json:"-"`
 }
 
 // GetFullName function

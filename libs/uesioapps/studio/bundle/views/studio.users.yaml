@@ -38,6 +38,7 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.username:
+        uesio.initials:
         uesio.picture:
       init:
         query: false
@@ -103,5 +104,5 @@ definition:
                                 avatar:
                                   - io.avatar:
                                       image: $UserFile{uesio.picture}
-                                      text: "-"
+                                      text: ${uesio.initials}
   panels:

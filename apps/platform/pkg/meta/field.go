@@ -64,6 +64,12 @@ type AutoNumberMetadata struct {
 	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
 }
 
+// FormulaOptionsMetadata struct
+type FormulaMetadata struct {
+	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"studio.expression"`
+	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
+}
+
 // Field struct
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio.id"`
@@ -83,6 +89,7 @@ type Field struct {
 	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"studio.referencegroup"`
 	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"studio.validate"`
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
+	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"studio.formula"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
 	CreatedBy              *User                   `yaml:"-" uesio:"uesio.createdby"`
@@ -115,6 +122,7 @@ func GetFieldTypes() map[string]bool {
 		"EMAIL":          true,
 		"AUTONUMBER":     true,
 		"REFERENCEGROUP": true,
+		"FORMULA":        true,
 	}
 }
 

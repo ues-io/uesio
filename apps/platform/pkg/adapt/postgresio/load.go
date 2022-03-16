@@ -44,7 +44,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	fieldMap, referencedCollections, referencedGroupCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -117,17 +117,27 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	op.HasMoreBatches = false
 
+	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
+
 	for rows.Next() {
 		if op.BatchSize == index {
 			op.HasMoreBatches = true
 			break
 		}
+
 		item = op.Collection.NewItem()
 		err := rows.Scan(scanners...)
 		if err != nil {
 			return err
 		}
+
+		err = formulaPopulations(item)
+		if err != nil {
+			return err
+		}
+
 		index++
+
 	}
 	err = rows.Err()
 	if err != nil {

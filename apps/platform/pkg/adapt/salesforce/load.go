@@ -19,7 +19,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 	//TO-DO referencedGroupCollections do something with it
-	fieldMap, referencedCollections, _, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, _, _, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}

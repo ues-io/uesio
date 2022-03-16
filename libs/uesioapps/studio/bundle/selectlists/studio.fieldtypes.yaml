@@ -30,3 +30,5 @@ options:
     value: "EMAIL"
   - label: "Auto Number"
     value: "AUTONUMBER"
+  - label: "Formula"
+    value: "FORMULA"
