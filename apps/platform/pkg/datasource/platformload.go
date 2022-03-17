@@ -59,7 +59,10 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 }
 
 func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	_, err := LoadWithOptions([]adapt.LoadOp{*op}, session, &LoadOptions{
+
+	ops := []adapt.LoadOp{*op}
+
+	_, err := LoadWithOptions(ops, session, &LoadOptions{
 		Connections: GetConnectionMap(connection),
 		Metadata:    GetConnectionMetadata(connection),
 	})
@@ -67,8 +70,8 @@ func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
 
-	if op.HasMoreBatches {
-		return doPlatformLoad(op, connection, session)
+	if ops[0].HasMoreBatches {
+		return doPlatformLoad(&ops[0], connection, session)
 	}
 
 	return nil
