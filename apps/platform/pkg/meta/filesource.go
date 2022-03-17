@@ -125,3 +125,8 @@ func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(fs)
 }
+
+// IsPublic function
+func (c *FileSource) IsPublic() bool {
+	return true
+}

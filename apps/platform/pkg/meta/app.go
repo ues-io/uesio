@@ -54,3 +54,8 @@ func (a *App) GetItemMeta() *ItemMeta {
 func (a *App) SetItemMeta(itemMeta *ItemMeta) {
 	a.itemMeta = itemMeta
 }
+
+// IsPublic function
+func (a *App) IsPublic() bool {
+	return true
+}

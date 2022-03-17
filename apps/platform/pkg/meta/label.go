@@ -111,3 +111,8 @@ func (l *Label) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(l)
 }
+
+// IsPublic function
+func (l *Label) IsPublic() bool {
+	return true
+}

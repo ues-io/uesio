@@ -135,3 +135,8 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(r)
 }
+
+// IsPublic function
+func (r *Route) IsPublic() bool {
+	return true
+}

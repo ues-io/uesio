@@ -6,3 +6,4 @@ recordChallengeTokens:
   - token: "${studio.app}"
     userAccessToken: "studio.teammember"
     access: readwrite
+public: true

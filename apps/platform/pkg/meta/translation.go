@@ -104,3 +104,8 @@ func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(t)
 }
+
+// IsPublic function
+func (t *Translation) IsPublic() bool {
+	return true
+}

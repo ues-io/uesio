@@ -156,3 +156,8 @@ func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(cp)
 }
+
+// IsPublic function
+func (c *ComponentPack) IsPublic() bool {
+	return true
+}

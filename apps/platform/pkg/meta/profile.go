@@ -136,3 +136,8 @@ func (p *Profile) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(p)
 }
+
+// IsPublic function
+func (p *Profile) IsPublic() bool {
+	return true
+}

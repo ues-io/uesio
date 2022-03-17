@@ -62,6 +62,10 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+	app := session.GetContextAppName()
+	if app != namespace && !item.IsPublic() {
+		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+	}
 
 	permSet := session.GetContextPermissions()
 

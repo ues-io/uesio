@@ -137,3 +137,8 @@ func (ufc *UserFileCollection) GetItemMeta() *ItemMeta {
 func (ufc *UserFileCollection) SetItemMeta(itemMeta *ItemMeta) {
 	ufc.itemMeta = itemMeta
 }
+
+// IsPublic function
+func (u *UserFileCollection) IsPublic() bool {
+	return true
+}

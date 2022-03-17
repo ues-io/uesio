@@ -129,3 +129,8 @@ func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(c)
 }
+
+// IsPublic function
+func (c *Credential) IsPublic() bool {
+	return true
+}

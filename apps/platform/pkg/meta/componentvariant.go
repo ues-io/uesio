@@ -126,3 +126,8 @@ func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(cv)
 }
+
+// IsPublic function
+func (c *ComponentVariant) IsPublic() bool {
+	return true
+}

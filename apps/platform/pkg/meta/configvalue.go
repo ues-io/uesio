@@ -125,3 +125,8 @@ func (cv *ConfigValue) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(cv)
 }
+
+// IsPublic function
+func (c *ConfigValue) IsPublic() bool {
+	return true
+}

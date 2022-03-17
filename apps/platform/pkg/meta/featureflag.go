@@ -122,3 +122,8 @@ func (ff *FeatureFlag) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(ff)
 }
+
+// IsPublic function
+func (c *FeatureFlag) IsPublic() bool {
+	return true
+}

@@ -25,6 +25,7 @@ definition:
         studio.namefield:
         studio.workspace:
         studio.datasource:
+        studio.public:
         uesio.updatedat:
         uesio.updatedby:
         uesio.createdat:
@@ -178,6 +179,9 @@ definition:
                                       fieldId: studio.datasource
                                       metadataType: "DATASOURCE"
                                       label: "Data Source"
+                                  - io.field:
+                                      fieldId: studio.public
+                                      displayAs: "TOGGLE"
                             - io.grid:
                                 templateColumns:
                                   xs: 1fr
@@ -278,6 +282,9 @@ definition:
                   fieldId: studio.datasource
                   metadataType: "DATASOURCE"
                   label: "Data Source"
+              - io.field:
+                  fieldId: studio.public
+                  displayAs: "TOGGLE"
       actions:
         - io.button:
             uesio.variant: "io.primary"

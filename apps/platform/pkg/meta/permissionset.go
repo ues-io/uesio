@@ -133,6 +133,11 @@ func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode(ps)
 }
 
+// IsPublic function
+func (ps *PermissionSet) IsPublic() bool {
+	return true
+}
+
 // HasPermission method
 func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	if check == nil {

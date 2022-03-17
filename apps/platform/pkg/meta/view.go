@@ -137,6 +137,11 @@ func (v *View) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode(v)
 }
 
+// IsPublic function
+func (v *View) IsPublic() bool {
+	return true
+}
+
 func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return

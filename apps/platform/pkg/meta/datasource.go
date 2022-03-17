@@ -125,3 +125,8 @@ func (ds *DataSource) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(ds)
 }
+
+// IsPublic function
+func (c *DataSource) IsPublic() bool {
+	return true
+}

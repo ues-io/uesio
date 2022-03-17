@@ -45,6 +45,7 @@ type CollectionMetadata struct {
 	Access                string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 	TableName             string                                 `json:"-"`
+	Public                bool                                   `json:"-"`
 }
 
 // GetField function

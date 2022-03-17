@@ -125,3 +125,8 @@ func (s *Secret) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(s)
 }
+
+// IsPublic function
+func (s *Secret) IsPublic() bool {
+	return true
+}

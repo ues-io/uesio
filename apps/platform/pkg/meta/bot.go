@@ -229,3 +229,8 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(b)
 }
+
+// IsPublic function
+func (c *Bot) IsPublic() bool {
+	return true
+}

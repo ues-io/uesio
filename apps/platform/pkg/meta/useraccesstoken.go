@@ -115,3 +115,8 @@ func (uat *UserAccessToken) GetItemMeta() *ItemMeta {
 func (uat *UserAccessToken) SetItemMeta(itemMeta *ItemMeta) {
 	uat.itemMeta = itemMeta
 }
+
+// IsPublic function
+func (u *UserAccessToken) IsPublic() bool {
+	return true
+}

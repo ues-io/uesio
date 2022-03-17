@@ -118,3 +118,8 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 	}
 	return node.Decode(sl)
 }
+
+// IsPublic function
+func (sl *SelectList) IsPublic() bool {
+	return true
+}
