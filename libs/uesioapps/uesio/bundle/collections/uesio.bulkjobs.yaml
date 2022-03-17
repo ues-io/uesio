@@ -1,3 +1,4 @@
 name: bulkjobs
 nameField: uesio.id
 idFormat: ${uesio.autoid}
+public: true
