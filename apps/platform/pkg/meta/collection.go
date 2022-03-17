@@ -158,5 +158,4 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 // IsPublic function
 func (c *Collection) IsPublic() bool {
 	return c.Public
-	//return true
 }

@@ -80,8 +80,10 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	fullCollectionName := item.GetCollectionName()
 	collectionName := meta.GetNameKeyPart(fullCollectionName)
 	app := session.GetContextAppName()
-	if app != namespace && !item.IsPublic() {
-		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+	if namespace != "uesio" {
+		if app != namespace && !item.IsPublic() {
+			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+		}
 	}
 
 	permSet := session.GetContextPermissions()
