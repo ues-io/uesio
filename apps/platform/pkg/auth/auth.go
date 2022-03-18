@@ -131,14 +131,14 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.user": true,
+			"uesio/uesio.user": true,
 		},
 	})
 
 	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	if defaultSiteProfile == "" {
-		defaultSiteProfile = "uesio.public"
+		defaultSiteProfile = "uesio/uesio.public"
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{
@@ -181,32 +181,32 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: "uesio.firstname",
+					ID: "uesio/uesio.firstname",
 				},
 				{
-					ID: "uesio.lastname",
+					ID: "uesio/uesio.lastname",
 				},
 				{
-					ID: "uesio.username",
+					ID: "uesio/uesio.username",
 				},
 				{
-					ID: "uesio.profile",
+					ID: "uesio/uesio.profile",
 				},
 				{
-					ID: "uesio.picture",
+					ID: "uesio/uesio.picture",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "uesio.id",
+							ID: adapt.ID_FIELD,
 						},
 					},
 				},
 				{
-					ID: "uesio.language",
+					ID: "uesio/uesio.language",
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: username,
 				},
 			},
@@ -227,11 +227,11 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.federation_type",
+					Field: "uesio/uesio.federation_type",
 					Value: claims.AuthType,
 				},
 				{
-					Field: "uesio.federation_id",
+					Field: "uesio/uesio.federation_id",
 					Value: claims.Subject,
 				},
 			},

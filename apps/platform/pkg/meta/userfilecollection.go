@@ -23,13 +23,13 @@ func NewUserFileCollection(key string) (*UserFileCollection, error) {
 
 // UserFileCollection struct
 type UserFileCollection struct {
-	ID         string `yaml:"-" uesio:"uesio.id"`
-	Name       string `yaml:"name" uesio:"studio.name"`
+	ID         string `yaml:"-" uesio:"uesio/uesio.id"`
+	Name       string `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string `yaml:"-" uesio:"-"`
 	FileSource string
 	Bucket     string     `yaml:"bucket"`
 	PathFormat string     `yaml:"pathFormat"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
 }
 
@@ -38,7 +38,6 @@ func (ufc *UserFileCollection) GetFileSource() string {
 	return ufc.FileSource
 }
 
-// GetPath function
 func (ufc *UserFileCollection) GetFilePath(userFile *UserFileMetadata) (string, error) {
 	template, err := templating.NewTemplateWithValidKeysOnly(ufc.PathFormat)
 	if err != nil {
@@ -110,7 +109,7 @@ func (ufc *UserFileCollection) GetKey() string {
 
 // GetPath function
 func (ufc *UserFileCollection) GetPath() string {
-	return ufc.GetKey() + ".yaml"
+	return ufc.Name + ".yaml"
 }
 
 // GetPermChecker function

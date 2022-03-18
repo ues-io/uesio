@@ -49,11 +49,11 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && isNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
-				"uesio.id":        user.ID,
-				"uesio.firstname": user.FirstName,
-				"uesio.lastname":  user.LastName,
-				"uesio.picture": map[string]interface{}{
-					"uesio.id": user.GetPictureID(),
+				adapt.ID_FIELD:          user.ID,
+				"uesio/uesio.firstname": user.FirstName,
+				"uesio/uesio.lastname":  user.LastName,
+				"uesio/uesio.picture": map[string]interface{}{
+					adapt.ID_FIELD: user.GetPictureID(),
 				},
 			})
 			if err != nil {

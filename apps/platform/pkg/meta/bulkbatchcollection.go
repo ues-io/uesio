@@ -11,7 +11,7 @@ type BulkBatchCollection []BulkBatch
 
 // GetName function
 func (bbc *BulkBatchCollection) GetName() string {
-	return "uesio.bulkbatches"
+	return "uesio/uesio.bulkbatches"
 }
 
 // GetFields function

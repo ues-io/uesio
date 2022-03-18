@@ -15,7 +15,7 @@ type FieldCollection []Field
 
 // GetName function
 func (fc *FieldCollection) GetName() string {
-	return "studio.fields"
+	return "uesio/studio.fields"
 }
 
 // GetFields function
@@ -32,35 +32,44 @@ func (fc *FieldCollection) NewItem() loadable.Item {
 // NewBundleableItemWithKey function
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, string(os.PathSeparator))
-	if len(keyArray) != 2 {
+	if len(keyArray) != 4 {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
-	namespace, name, err := ParseKey(keyArray[1])
+	namespace, name, err := ParseKey(keyArray[3])
 	if err != nil {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
 	*fc = append(*fc, Field{
-		CollectionRef: keyArray[0],
-		Namespace:     namespace,
+		CollectionRef: keyArray[0] + "/" + keyArray[1],
+		Namespace:     keyArray[2] + "/" + namespace,
 		Name:          name,
 	})
 	return &(*fc)[len(*fc)-1], nil
 }
 
 // GetKeyFromPath function
-func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
+	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 	if hasCollection {
-		if parts[0] != collectionKey {
+
+		collectionNS, collectionName, err := ParseKey(collectionKey)
+		if err != nil {
+			return "", err
+		}
+		nsUser, nsApp, err := ParseNamespace(collectionNS)
+		if err != nil {
+			return "", err
+		}
+		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != collectionName {
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
+	return filepath.Join(parts[0], parts[1]+"."+parts[2], namespace+"."+strings.TrimSuffix(parts[3], ".yaml")), nil
 }
 
 // GetItem function

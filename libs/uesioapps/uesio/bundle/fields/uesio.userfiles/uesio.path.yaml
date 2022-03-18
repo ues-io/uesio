@@ -1,5 +1,0 @@
-name: path
-collection: uesio.userfiles
-type: "TEXT"
-label: "Path"
-readOnly: true

@@ -34,6 +34,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 
 	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
 
 	if workspace == "" {
 		return errors.New("No Workspace provided for deployment")
@@ -90,7 +91,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 		path := filepath.Join(filepath.Join(dirParts[2:]...), fileName)
 
-		key, err := collection.GetKeyFromPath(path, nil)
+		key, err := collection.GetKeyFromPath(path, namespace, nil)
 		if err != nil {
 			return err
 		}
@@ -182,12 +183,12 @@ func Deploy(body []byte, session *sess.Session) error {
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			"uesio.id":              true,
-			"studio.loginroute":     true,
-			"studio.homeroute":      true,
-			"studio.defaultprofile": true,
-			"studio.publicprofile":  true,
-			"studio.defaulttheme":   true,
+			adapt.ID_FIELD:                true,
+			"uesio/studio.loginroute":     true,
+			"uesio/studio.homeroute":      true,
+			"uesio/studio.defaultprofile": true,
+			"uesio/studio.publicprofile":  true,
+			"uesio/studio.defaulttheme":   true,
 		},
 	})
 

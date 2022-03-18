@@ -1,8 +1,0 @@
-name: number
-collection: studio.fields
-type: MAP
-label: Number Metadata
-subfields:
-  - name: studio.decimals
-    label: Decimals
-    type: NUMBER

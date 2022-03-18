@@ -13,7 +13,7 @@ type SelectListCollection []SelectList
 
 // GetName function
 func (slc *SelectListCollection) GetName() string {
-	return "studio.selectlists"
+	return "uesio/studio.selectlists"
 }
 
 // GetFields function
@@ -41,8 +41,8 @@ func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (Bundleabl
 }
 
 // GetKeyFromPath function
-func (slc *SelectListCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (slc *SelectListCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

@@ -11,7 +11,7 @@ type CollectionCollection []Collection
 
 // GetName function
 func (cc *CollectionCollection) GetName() string {
-	return "studio.collections"
+	return "uesio/studio.collections"
 }
 
 // GetFields function
@@ -30,8 +30,8 @@ func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (Bundleable
 }
 
 // GetKeyFromPath function
-func (cc *CollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (cc *CollectionCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // NewItem function

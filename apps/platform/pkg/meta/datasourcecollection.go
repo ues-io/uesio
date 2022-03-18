@@ -11,7 +11,7 @@ type DataSourceCollection []DataSource
 
 // GetName function
 func (dsc *DataSourceCollection) GetName() string {
-	return "studio.datasources"
+	return "uesio/studio.datasources"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 }
 
 // GetKeyFromPath function
-func (dsc *DataSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (dsc *DataSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

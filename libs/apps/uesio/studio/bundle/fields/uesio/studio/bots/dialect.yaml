@@ -1,0 +1,4 @@
+name: dialect
+type: SELECT
+label: Dialect
+selectList: studio.botdialect

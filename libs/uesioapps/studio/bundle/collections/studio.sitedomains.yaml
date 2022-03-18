@@ -1,3 +1,0 @@
-name: sitedomains
-idFormat: "${studio.domain}_${studio.type}"
-nameField: studio.domain

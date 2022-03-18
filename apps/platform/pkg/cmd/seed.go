@@ -3,14 +3,12 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -69,24 +67,6 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func installBundles(session *sess.Session, bundleNames ...string) error {
-	sysbs := &systembundlestore.SystemBundleStore{}
-
-	for _, bundleName := range bundleNames {
-		err := datasource.CreateBundle(bundleName, "v0.0.1", "v0.0.1", "Seed Install: "+bundleName, sysbs, session)
-		if err != nil {
-			logger.LogError(errors.New("Bundle already installed: " + bundleName))
-			logger.LogError(err)
-			// Don't return error here because we're ok with this error
-		}
-		err = datasource.StoreBundleAssets(bundleName, "v0.0.1", "v0.0.1", sysbs, session)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func runSeeds(connection adapt.Connection, session *sess.Session) error {
 	err := connection.Migrate()
 	if err != nil {
@@ -119,12 +99,12 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 	var teams adapt.Collection
 	var teammembers adapt.Collection
 
-	err = getSeedDataFile(&teams, "studio.teams.json")
+	err = getSeedDataFile(&teams, "uesio/studio.teams.json")
 	if err != nil {
 		return err
 	}
 
-	err = getSeedDataFile(&teammembers, "studio.teammembers.json")
+	err = getSeedDataFile(&teammembers, "uesio/studio.teammembers.json")
 	if err != nil {
 		return err
 	}
@@ -138,8 +118,8 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
 		getPlatformSeedSR(&configstorevalues),
-		getSeedSR("studio.teams", &teams),
-		getSeedSR("studio.teammembers", &teammembers),
+		getSeedSR("uesio/studio.teams", &teams),
+		getSeedSR("uesio/studio.teammembers", &teammembers),
 	}, session, datasource.GetConnectionSaveOptions(connection))
 }
 

@@ -1,0 +1,5 @@
+name: member
+type: USER
+label: Member
+required: true
+createOnly: true

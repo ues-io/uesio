@@ -9,19 +9,19 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID              string              `yaml:"-" uesio:"uesio.id"`
-	Name            string              `yaml:"name" uesio:"studio.name"`
+	ID              string              `yaml:"-" uesio:"uesio/uesio.id"`
+	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace       string              `yaml:"-" uesio:"-"`
-	Workspace       *Workspace          `yaml:"-" uesio:"studio.workspace"`
-	Components      *ComponentsRegistry `yaml:"components" uesio:"studio.components"`
-	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"studio.runtimebundle"`
-	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"studio.buildtimebundle"`
+	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
+	Components      *ComponentsRegistry `yaml:"components" uesio:"uesio/studio.components"`
+	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.runtimebundle"`
+	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.buildtimebundle"`
 	itemMeta        *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy       *User               `yaml:"-" uesio:"uesio.createdby"`
-	Owner           *User               `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy       *User               `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt       int64               `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt       int64               `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy       *User               `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner           *User               `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy       *User               `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt       int64               `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt       int64               `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 type ComponentsRegistry struct {
@@ -71,7 +71,7 @@ func (cp *ComponentPack) GetBuilderComponentPackFilePath() string {
 
 // GetPath function
 func (cp *ComponentPack) GetPath() string {
-	return filepath.Join(cp.GetKey(), "pack.yaml")
+	return filepath.Join(cp.Name, "pack.yaml")
 }
 
 // GetPermChecker function

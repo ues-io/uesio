@@ -1,0 +1,4 @@
+name: minor
+type: "TEXT"
+label: "Minor version"
+readOnly: true

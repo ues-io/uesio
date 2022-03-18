@@ -1,4 +1,0 @@
-name: allowallcollections
-collection: studio.permissionsets
-type: CHECKBOX
-label: Allow all collections

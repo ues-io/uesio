@@ -22,22 +22,22 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
-	ID         string            `yaml:"-" uesio:"uesio.id"`
-	Name       string            `uesio:"studio.name"`
+	ID         string            `yaml:"-" uesio:"uesio/uesio.id"`
+	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
-	Path       string            `yaml:"path" uesio:"studio.path"`
-	ViewType   string            `yaml:"viewtype" uesio:"studio.viewtype"`
-	ViewRef    string            `yaml:"view" uesio:"studio.view"`
-	Collection string            `yaml:"collection" uesio:"studio.collection"`
+	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
+	ViewType   string            `yaml:"viewtype" uesio:"uesio/studio.viewtype"`
+	ViewRef    string            `yaml:"view" uesio:"uesio/studio.view"`
+	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
 	Params     map[string]string `yaml:"-" uesio:"-"`
-	Workspace  *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	ThemeRef   string            `yaml:"theme" uesio:"studio.theme"`
+	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
+	ThemeRef   string            `yaml:"theme" uesio:"uesio/studio.theme"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User             `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner      *User             `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy  *User             `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt  int64             `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt  int64             `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -68,7 +68,7 @@ func (r *Route) GetKey() string {
 
 // GetPath function
 func (r *Route) GetPath() string {
-	return r.GetKey() + ".yaml"
+	return r.Name + ".yaml"
 }
 
 // GetPermChecker function

@@ -125,7 +125,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 	for _, fileMetadata := range s3Result.Contents {
 		path := *fileMetadata.Key
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			continue

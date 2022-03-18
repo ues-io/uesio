@@ -28,6 +28,7 @@ type ChangeItem struct {
 	ReadTokens      []string
 	ReadWriteTokens []string
 	Autonumber      int
+	IsNew           bool
 }
 
 func (ci *ChangeItem) AddReadToken(token string) {

@@ -1,3 +1,0 @@
-name: labels
-idFormat: "${studio.workspace}_${studio.name}"
-nameField: studio.name

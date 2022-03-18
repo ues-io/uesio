@@ -1,0 +1,4 @@
+name: sitecollectiondataimport
+path: app/{appname}/site/{sitename}/import/{collectionname}
+view: uesio/studio.sitecollectiondataimport
+theme: uesio/studio.default

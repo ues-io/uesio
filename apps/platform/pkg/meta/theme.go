@@ -8,17 +8,17 @@ import (
 
 // Theme struct
 type Theme struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
+	ID         string     `yaml:"-" uesio:"uesio/uesio.id"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -49,7 +49,7 @@ func (t *Theme) GetKey() string {
 
 // GetPath function
 func (t *Theme) GetPath() string {
-	return t.GetKey() + ".yaml"
+	return t.Name + ".yaml"
 }
 
 // GetPermChecker function

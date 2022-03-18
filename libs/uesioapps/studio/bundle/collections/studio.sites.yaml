@@ -1,3 +1,0 @@
-name: sites
-idFormat: "${studio.name}_${studio.app}"
-nameField: studio.name

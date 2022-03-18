@@ -1,0 +1,4 @@
+name: sitecollectiondata
+path: app/{appname}/site/{sitename}/data/{collectionname}
+view: uesio/studio.sitecollectiondata
+theme: uesio/studio.default

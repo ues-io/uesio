@@ -9,20 +9,20 @@ import (
 
 // ComponentVariant struct
 type ComponentVariant struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
+	ID         string     `yaml:"-" uesio:"uesio/uesio.id"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
-	Component  string     `yaml:"component" uesio:"studio.component"`
-	Extends    string     `yaml:"extends" uesio:"studio.extends"`
-	Label      string     `yaml:"label" uesio:"studio.label"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
+	Component  string     `yaml:"component" uesio:"uesio/studio.component"`
+	Extends    string     `yaml:"extends" uesio:"uesio/studio.extends"`
+	Label      string     `yaml:"label" uesio:"uesio/studio.label"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -39,7 +39,7 @@ func (c *ComponentVariant) GetKey() string {
 }
 
 func (c *ComponentVariant) GetPath() string {
-	return filepath.Join(c.Component, c.Namespace+"."+c.Name) + ".yaml"
+	return filepath.Join(c.Component, c.Name) + ".yaml"
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {

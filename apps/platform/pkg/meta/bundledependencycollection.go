@@ -11,7 +11,7 @@ type BundleDependencyCollection []BundleDependency
 
 // GetName function
 func (bc *BundleDependencyCollection) GetName() string {
-	return "studio.bundledependencies"
+	return "uesio/studio.bundledependencies"
 }
 
 // GetFields function

@@ -8,16 +8,16 @@ import (
 )
 
 type FeatureFlag struct {
-	ID        string     `yaml:"-" uesio:"uesio.id"`
-	Name      string     `yaml:"name" uesio:"studio.name"`
+	ID        string     `yaml:"-" uesio:"uesio/uesio.id"`
+	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
-	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // NewFeatureFlag function
@@ -60,7 +60,7 @@ func (ff *FeatureFlag) GetKey() string {
 
 // GetPath function
 func (ff *FeatureFlag) GetPath() string {
-	return ff.GetKey() + ".yaml"
+	return ff.Name + ".yaml"
 }
 
 // GetPermChecker function

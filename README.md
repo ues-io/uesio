@@ -1,6 +1,6 @@
 # About Uesio
 
-![Uesio Logo](./libs/uesioapps/uesio/bundle/files/uesio.logo/file/uesioblack.png)
+![Uesio Logo](./libs/apps/uesio/uesio/bundle/files/uesio.logo/file/uesioblack.png)
 
 Uesio is a **low-code** application development platform.
 
@@ -155,13 +155,13 @@ npm run build-all
 ## Build a dedicated app (no watcher and no source map)
 
 ```
-cd ./libs/uesioapps/crm && uesio pack
+cd ./libs/apps/uesio/crm && uesio pack
 
 // or
-npm run nx -- build uesioapps-crm
+npm run nx -- build apps-uesio-crm
 
 // or, if you have nx globally
-nx build uesioapps-crm
+nx build apps-uesio-crm
 ```
 
 ## Build a dedicated app (with watcher and source map)
@@ -169,7 +169,7 @@ nx build uesioapps-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/uesioapps/uesio && uesio pack --develop
+cd ./libs/apps/uesio/uesio && uesio pack --develop
 ```
 
 # Watch mode
@@ -188,21 +188,21 @@ As a side note, the `dev` npm script does include this `watch-all` npm script.
 
 # Uesio apps deployment
 
-**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
+**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `apps` directory which is located under the `libs` folder.
 
 For plugging such an application into uesio, you have to deploy it, **obviously after having built it**. This deployment process is done by the `cli`.
 
 ```
-cd ./libs/uesioapps/crm && uesio deploy
+cd ./libs/apps/uesio/crm && uesio deploy
 
 // or
-npm run nx -- deploy uesioapps-crm
+npm run nx -- deploy apps-uesio-crm
 
 // or, if you have nx globally
-nx deploy uesioapps-crm
+nx deploy apps-uesio-crm
 ```
 
-The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
+The `uesio` lib under `apps/uesio` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
 
 An **app bundle** is a screenshot or version of a specific uesio app.
 

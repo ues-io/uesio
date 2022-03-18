@@ -5,5 +5,5 @@ type AppVersionCollection []AppVersion
 
 // GetName function
 func (a *AppVersionCollection) GetName() string {
-	return "studio.appversions"
+	return "uesio/studio.appversions"
 }

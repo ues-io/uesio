@@ -11,7 +11,7 @@ type SecretStoreValueCollection []SecretStoreValue
 
 // GetName function
 func (sc *SecretStoreValueCollection) GetName() string {
-	return "uesio.secretstorevalues"
+	return "uesio/uesio.secretstorevalues"
 }
 
 // GetFields function

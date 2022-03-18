@@ -11,7 +11,7 @@ type ConfigValueCollection []ConfigValue
 
 // GetName function
 func (cvc *ConfigValueCollection) GetName() string {
-	return "studio.configvalues"
+	return "uesio/studio.configvalues"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (Bundleab
 }
 
 // GetKeyFromPath function
-func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (cvc *ConfigValueCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

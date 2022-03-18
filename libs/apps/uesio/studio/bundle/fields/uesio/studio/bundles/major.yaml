@@ -1,0 +1,4 @@
+name: major
+type: "TEXT"
+label: "Major version"
+readOnly: true

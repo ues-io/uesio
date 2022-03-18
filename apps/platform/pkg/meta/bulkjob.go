@@ -2,16 +2,16 @@ package meta
 
 // BulkJob struct
 type BulkJob struct {
-	ID         string    `uesio:"uesio.id"`
-	AutoID     string    `uesio:"uesio.autoid"`
-	Spec       JobSpec   `uesio:"uesio.spec"`
-	Collection string    `uesio:"uesio.collection"`
+	ID         string    `uesio:"uesio/uesio.id"`
+	AutoID     string    `uesio:"uesio/uesio.autoid"`
+	Spec       JobSpec   `uesio:"uesio/uesio.spec"`
+	Collection string    `uesio:"uesio/uesio.collection"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner      *User     `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy  *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt  int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt  int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // JobSpec struct

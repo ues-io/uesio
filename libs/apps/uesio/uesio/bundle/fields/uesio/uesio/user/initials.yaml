@@ -1,0 +1,6 @@
+name: initials
+type: "FORMULA"
+label: "Initials"
+formula:
+  expression: "FIRST(uesio.firstname) + FIRST(uesio.lastname)"
+  returntype: "TEXT"

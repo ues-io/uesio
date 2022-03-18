@@ -1,0 +1,155 @@
+name: routes
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        uesio.id:
+        studio.name:
+        studio.app:
+          fields:
+            studio.color:
+      conditions:
+        - field: uesio.id
+          value: $Param{app}_$Param{workspacename}
+    routes:
+      collection: studio.routes
+      fields:
+        uesio.id:
+        studio.name:
+        studio.path:
+        studio.view:
+        studio.collection:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    newroute:
+      collection: studio.routes
+      fields:
+        uesio.id:
+        studio.name:
+        studio.workspace:
+        studio.path:
+        studio.view:
+        studio.theme:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: routes
+                      itemIcon: map
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: routes
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Routes
+                    subtitle: Not until we are lost do we begin to understand ourselves.
+                    actions:
+                      - io.group:
+                          components:
+                            - io.button:
+                                text: Create a New Route
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newRoute
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.deck:
+                          id: routesDeck
+                          wire: routes
+                          uesio.variant: io.section
+                          components:
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/routes/${studio.name}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.path} - ${studio.view}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: map
+  panels:
+    newRoute:
+      uesio.type: io.dialog
+      title: Create a New Route
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newroutelist
+            wire: newroute
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - io.field:
+                  fieldId: studio.path
+              - studio.metadatafield:
+                  fieldId: studio.view
+                  metadataType: "VIEW"
+                  label: "View"
+              - studio.metadatafield:
+                  fieldId: studio.theme
+                  metadataType: "THEME"
+                  label: "Theme"
+              - studio.metadatafield:
+                  fieldId: studio.collection
+                  metadataType: "COLLECTION"
+                  label: "Collection"
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newroute"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/routes/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newRoute"

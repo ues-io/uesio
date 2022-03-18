@@ -40,7 +40,7 @@ func GetAdapter(adapterType string, session *sess.Session) (Adapter, error) {
 	}
 	adapter, ok := adapterMap[mergedType]
 	if !ok {
-		return nil, errors.New("No adapter found of this type: " + adapterType)
+		return nil, errors.New("No adapter found of this type: " + mergedType)
 	}
 	return adapter, nil
 }

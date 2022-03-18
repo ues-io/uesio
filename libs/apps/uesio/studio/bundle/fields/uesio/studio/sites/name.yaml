@@ -1,0 +1,6 @@
+name: name
+type: "TEXT"
+label: "Name"
+createOnly: true
+validate:
+  type: METADATA

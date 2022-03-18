@@ -8,17 +8,17 @@ import (
 
 // Translation struct
 type Translation struct {
-	ID        string            `yaml:"-" uesio:"uesio.id"`
+	ID        string            `yaml:"-" uesio:"uesio/uesio.id"`
 	Namespace string            `yaml:"-" uesio:"-"`
-	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	Labels    map[string]string `yaml:"labels" uesio:"studio.labels"`
-	Language  string            `yaml:"language" uesio:"studio.language"`
+	Workspace *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
+	Labels    map[string]string `yaml:"labels" uesio:"uesio/studio.labels"`
+	Language  string            `yaml:"language" uesio:"uesio/studio.language"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 func (t *Translation) GetBundleGroup() BundleableGroup {

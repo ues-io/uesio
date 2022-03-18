@@ -1,3 +1,0 @@
-name: fields
-idFormat: "${studio.workspace}_${studio.collection}_${studio.name}"
-nameField: studio.name

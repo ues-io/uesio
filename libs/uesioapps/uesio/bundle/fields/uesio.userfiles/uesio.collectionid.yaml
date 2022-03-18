@@ -1,5 +1,0 @@
-name: collectionid
-collection: uesio.userfiles
-type: "TEXT"
-label: "Collection Id"
-readOnly: true

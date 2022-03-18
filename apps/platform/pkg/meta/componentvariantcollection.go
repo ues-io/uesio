@@ -15,7 +15,7 @@ type ComponentVariantCollection []ComponentVariant
 
 // GetName function
 func (cvc *ComponentVariantCollection) GetName() string {
-	return "studio.componentvariants"
+	return "uesio/studio.componentvariants"
 }
 
 // GetFields function
@@ -48,7 +48,7 @@ func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (Bun
 }
 
 // GetKeyFromPath function
-func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	componentKey, hasComponent := conditions["studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
@@ -60,7 +60,7 @@ func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, conditions Bu
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
+	return namespace + "." + filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
 }
 
 // GetItem function

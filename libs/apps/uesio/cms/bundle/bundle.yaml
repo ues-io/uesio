@@ -1,0 +1,11 @@
+name: cms
+loginRoute: uesio/uesio.login
+homeRoute: uesio/cms.home
+defaultProfile: uesio/uesio.standard
+defaultTheme: uesio/uesio.default
+publicProfile: uesio/uesio.public
+dependencies:
+  uesio/io:
+    version: v0.0.1
+  uesio/uesio:
+    version: v0.0.1

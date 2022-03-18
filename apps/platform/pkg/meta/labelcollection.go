@@ -13,7 +13,7 @@ type LabelCollection []Label
 
 // GetName function
 func (lc *LabelCollection) GetName() string {
-	return "studio.labels"
+	return "uesio/studio.labels"
 }
 
 // GetFields function
@@ -41,8 +41,8 @@ func (lc *LabelCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyFromPath function
-func (lc *LabelCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (lc *LabelCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

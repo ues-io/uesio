@@ -1,0 +1,3 @@
+name: userfiles
+idFormat: "${uesio/uesio.collectionid}_${uesio/uesio.recordid}_${uesio/uesio.type}_${uesio/uesio.name}"
+nameField: uesio/uesio.name

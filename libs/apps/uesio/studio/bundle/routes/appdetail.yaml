@@ -1,0 +1,4 @@
+name: appdetail
+path: app/{app:\w*\/\w*}
+view: studio.app
+theme: studio.default

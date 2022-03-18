@@ -1,4 +1,0 @@
-name: readonly
-collection: studio.fields
-type: CHECKBOX
-label: ReadOnly

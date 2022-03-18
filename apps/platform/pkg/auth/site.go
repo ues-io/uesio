@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -17,45 +18,45 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: "uesio.id",
+					ID: adapt.ID_FIELD,
 				},
 				{
-					ID: "studio.name",
+					ID: "uesio/studio.name",
 				},
 				{
-					ID: "studio.app",
+					ID: "uesio/studio.app",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "uesio.id",
+							ID: adapt.ID_FIELD,
 						},
 					},
 				},
 				{
-					ID: "studio.bundle",
+					ID: "uesio/studio.bundle",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "studio.app",
+							ID: "uesio/studio.app",
 							Fields: []adapt.LoadRequestField{
 								{
-									ID: "uesio.id",
+									ID: adapt.ID_FIELD,
 								},
 							},
 						},
 						{
-							ID: "studio.major",
+							ID: "uesio/studio.major",
 						},
 						{
-							ID: "studio.minor",
+							ID: "uesio/studio.minor",
 						},
 						{
-							ID: "studio.patch",
+							ID: "uesio/studio.patch",
 						},
 					},
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: siteid,
 				},
 			},
@@ -63,6 +64,7 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 		session,
 	)
 	if err != nil {
+		fmt.Println("Faillll hrrrrrr: " + siteid)
 		return nil, err
 	}
 	return &s, nil
@@ -75,16 +77,16 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: "studio.site",
+					ID: "uesio/studio.site",
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "studio.domain",
+					Field: "uesio/studio.domain",
 					Value: domain,
 				},
 				{
-					Field: "studio.type",
+					Field: "uesio/studio.type",
 					Value: domainType,
 				},
 			},
@@ -109,23 +111,23 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return querySite(siteDomain.Site, headlessSession)
+	return querySite(siteDomain.Site.ID, headlessSession)
 }
 
 func GetHeadlessSession() (*sess.Session, error) {
 	site := &meta.Site{
-		ID:   "prod_studio",
+		ID:   "prod_uesio/studio",
 		Name: "prod",
 		Bundle: &meta.Bundle{
 			App: &meta.App{
-				ID: "studio",
+				ID: "uesio/studio",
 			},
 			Major: "0",
 			Minor: "0",
 			Patch: "1",
 		},
 		App: &meta.App{
-			ID: "studio",
+			ID: "uesio/studio",
 		},
 	}
 	bundleDef, err := bundle.GetSiteAppBundle(site)
@@ -135,10 +137,10 @@ func GetHeadlessSession() (*sess.Session, error) {
 	site.SetAppBundle(bundleDef)
 
 	session := sess.NewSession(nil, &meta.User{
-		ID:        "system",
+		ID:        "uesio",
 		FirstName: "Super",
 		LastName:  "Admin",
-		Profile:   "uesio.public",
+		Profile:   "uesio/uesio.public",
 	}, site)
 
 	session.SetPermissions(&meta.PermissionSet{

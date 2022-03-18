@@ -4,21 +4,21 @@ package meta
 
 // UserFileMetadata struct
 type UserFileMetadata struct {
-	ID               string    `uesio:"uesio.id" json:"uesio.id"`
-	CollectionID     string    `uesio:"uesio.collectionid" json:"-"`
-	MimeType         string    `uesio:"uesio.mimetype" json:"uesio.mimetype"`
-	FieldID          string    `uesio:"uesio.fieldid" json:"-"`
-	FileCollectionID string    `uesio:"uesio.filecollectionid" json:"-"`
-	Name             string    `uesio:"uesio.name" json:"-"`
-	FileName         string    `uesio:"uesio.filename" json:"-"`
-	Path             string    `uesio:"uesio.path" json:"-"`
-	RecordID         string    `uesio:"uesio.recordid" json:"-"`
-	Type             string    `uesio:"uesio.type" json:"-"`
-	CreatedBy        *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner            *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy        *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt        int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt        int64     `yaml:"-" uesio:"uesio.createdat"`
+	ID               string    `uesio:"uesio/uesio.id" json:"uesio.id"`
+	CollectionID     string    `uesio:"uesio/uesio.collectionid" json:"-"`
+	MimeType         string    `uesio:"uesio/uesio.mimetype" json:"uesio.mimetype"`
+	FieldID          string    `uesio:"uesio/uesio.fieldid" json:"-"`
+	FileCollectionID string    `uesio:"uesio/uesio.filecollectionid" json:"-"`
+	Name             string    `uesio:"uesio/uesio.name" json:"-"`
+	FileName         string    `uesio:"uesio/uesio.filename" json:"-"`
+	Path             string    `uesio:"uesio/uesio.path" json:"-"`
+	RecordID         string    `uesio:"uesio/uesio.recordid" json:"-"`
+	Type             string    `uesio:"uesio/uesio.type" json:"-"`
+	CreatedBy        *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner            *User     `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy        *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt        int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt        int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
 	itemMeta         *ItemMeta `yaml:"-" uesio:"-"`
 }
 

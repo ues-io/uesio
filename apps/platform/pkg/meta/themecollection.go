@@ -13,7 +13,7 @@ type ThemeCollection []Theme
 
 // GetName function
 func (tc *ThemeCollection) GetName() string {
-	return "studio.themes"
+	return "uesio/studio.themes"
 }
 
 // GetFields function
@@ -41,8 +41,8 @@ func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyFromPath function
-func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

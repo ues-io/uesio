@@ -13,7 +13,7 @@ type SecretCollection []Secret
 
 // GetName function
 func (sc *SecretCollection) GetName() string {
-	return "studio.secrets"
+	return "uesio/studio.secrets"
 }
 
 // GetFields function
@@ -41,8 +41,8 @@ func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem
 }
 
 // GetKeyFromPath function
-func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

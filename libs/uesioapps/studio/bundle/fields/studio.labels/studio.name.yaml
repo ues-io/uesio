@@ -1,8 +1,0 @@
-name: name
-collection: studio.labels
-type: TEXT
-label: Label name
-required: true
-createOnly: true
-validate:
-  type: METADATA

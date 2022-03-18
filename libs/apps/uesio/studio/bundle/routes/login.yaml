@@ -1,0 +1,4 @@
+name: login
+path: login
+view: uesio/uesio.login
+theme: uesio/studio.default

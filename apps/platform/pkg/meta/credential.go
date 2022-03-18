@@ -26,17 +26,17 @@ type CredentialEntry struct {
 
 // Credential struct
 type Credential struct {
-	ID        string                     `yaml:"-" uesio:"uesio.id"`
-	Name      string                     `yaml:"name" uesio:"studio.name"`
+	ID        string                     `yaml:"-" uesio:"uesio/uesio.id"`
+	Name      string                     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string                     `yaml:"-" uesio:"-"`
-	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
-	Workspace *Workspace                 `yaml:"-" uesio:"studio.workspace"`
+	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"uesio/studio.entries"`
+	Workspace *Workspace                 `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta                  `yaml:"-" uesio:"-"`
-	CreatedBy *User                      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User                      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User                      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64                      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64                      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User                      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User                      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User                      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64                      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64                      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -67,7 +67,7 @@ func (c *Credential) GetKey() string {
 
 // GetPath function
 func (c *Credential) GetPath() string {
-	return c.GetKey() + ".yaml"
+	return c.Name + ".yaml"
 }
 
 // GetPermChecker function

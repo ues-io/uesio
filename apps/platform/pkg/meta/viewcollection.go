@@ -13,7 +13,7 @@ type ViewCollection []View
 
 // GetName function
 func (vc *ViewCollection) GetName() string {
-	return "studio.views"
+	return "uesio/studio.views"
 }
 
 // GetFields function
@@ -41,8 +41,8 @@ func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 }
 
 // GetKeyFromPath function
-func (vc *ViewCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (vc *ViewCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

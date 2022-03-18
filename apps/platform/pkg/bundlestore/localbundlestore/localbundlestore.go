@@ -103,7 +103,7 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 		if path == basePath {
 			return nil
 		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			return nil

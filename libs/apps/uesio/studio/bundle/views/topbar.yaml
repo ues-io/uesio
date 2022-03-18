@@ -1,0 +1,266 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+            height: 60px
+            backgroundColor: "#F2F2F2"
+        templateColumns: 58px 0fr 1fr 0fr
+        items:
+          # Uesio Logo
+          - io.griditem:
+              components:
+                - io.image:
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                        opacity: "0.8"
+                    file: uesio.logo
+                    height: 34px
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "home"
+          - io.griditem:
+              uesio.styles:
+                root:
+                  display: flex
+              components:
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: studio.apps
+                    id: appslist
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${studio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${uesio.id}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "${studio.color}"
+                                text: circle
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: studio.sites
+                    id: sitestag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["studio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/site/${studio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: public
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: studio.bundles
+                    id: sitestag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["studio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/bundle/${studio.major}/${studio.minor}/${studio.patch}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: v${["studio.app"]["uesio.id"]}.${studio.major}.${studio.minor}.${studio.patch}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: inventory_2
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: studio.teams
+                    id: teamstag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["studio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/teams/${studio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: groups
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: studio.workspaces
+                    id: workspaceapptag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["studio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: handyman
+                      - io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemType
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/$Param{itemType}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: $Param{itemType}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: $Param{itemIcon}
+                      - io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/$Param{itemType}/$Param{itemName}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: $Param{itemName}
+                                element: div
+                      - io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                            - type: paramIsSet
+                              param: subItemName
+                            - type: paramIsSet
+                              param: subItemType
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: $Param{subItemName}
+                                element: div
+          - io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: right
+              components:
+                - io.button:
+                    uesio.variant: io.nav
+                    text: Log Out
+                    signals:
+                      - signal: "user/LOGOUT"
+
+          # Avatar
+          - io.griditem:
+              components:
+                - io.avatar:
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                    text: $User{initials}
+                    image: $User{picture}

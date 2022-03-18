@@ -10,7 +10,7 @@ type LoginMethodCollection []LoginMethod
 
 // GetName function
 func (lmc *LoginMethodCollection) GetName() string {
-	return "uesio.loginmethod"
+	return "uesio/uesio.loginmethod"
 }
 
 // GetFields function

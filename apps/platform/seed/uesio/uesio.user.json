@@ -1,0 +1,49 @@
+[
+	{
+		"username": "system",
+		"firstname": "Super",
+		"lastname": "Admin",
+		"profile": "uesio/studio.standard",
+		"type": "PERSON"
+	},
+	{
+		"username": "uesio",
+		"profile": "uesio/studio.standard",
+		"type": "ORG"
+	},
+	{
+		"username": "guest",
+		"firstname": "Happy",
+		"lastname": "Guest",
+		"profile": "studio.public",
+		"type": "PERSON"
+	},
+	{
+		"username": "ben",
+		"firstname": "Ben",
+		"lastname": "Hubbard",
+		"profile": "uesio/studio.standard",
+		"type": "PERSON"
+	},
+	{
+		"username": "abel",
+		"firstname": "Abel",
+		"lastname": "Jimenez Molla",
+		"profile": "uesio/studio.standard",
+		"type": "PERSON"
+	},
+	{
+		"username": "wessel",
+		"firstname": "Wessel",
+		"lastname": "van der Plas",
+		"profile": "uesio/studio.standard",
+		"type": "PERSON"
+	},
+	{
+		"username": "gregg",
+		"firstname": "Gregg",
+		"lastname": "Baxter",
+		"profile": "uesio/studio.standard",
+		"type": "PERSON"
+	}
+]

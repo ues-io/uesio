@@ -4,15 +4,15 @@ import "fmt"
 
 // BundleDependency struct
 type BundleDependency struct {
-	ID        string     `uesio:"uesio.id"`
-	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
-	Bundle    *Bundle    `uesio:"studio.bundle"`
+	ID        string     `uesio:"uesio/uesio.id"`
+	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
+	Bundle    *Bundle    `uesio:"uesio/studio.bundle"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function

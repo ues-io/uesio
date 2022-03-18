@@ -1,4 +1,0 @@
-name: bucket
-collection: studio.filecollections
-type: TEXT
-label: Bucket Name

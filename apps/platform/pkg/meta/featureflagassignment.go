@@ -2,16 +2,16 @@ package meta
 
 // FeatureFlagAssignment struct
 type FeatureFlagAssignment struct {
-	ID        string    `uesio:"uesio.id"`
-	Key       string    `uesio:"uesio.key"`
-	Value     bool      `uesio:"uesio.value"`
-	User      string    `uesio:"uesio.user"`
+	ID        string    `uesio:"uesio/uesio.id"`
+	Key       string    `uesio:"uesio/uesio.key"`
+	Value     bool      `uesio:"uesio/uesio.value"`
+	User      string    `uesio:"uesio/uesio.user"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User     `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function

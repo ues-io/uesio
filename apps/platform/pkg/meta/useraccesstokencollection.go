@@ -12,7 +12,7 @@ type UserAccessTokenCollection []UserAccessToken
 
 // GetName function
 func (uatc *UserAccessTokenCollection) GetName() string {
-	return "studio.useraccesstokens"
+	return "uesio/studio.useraccesstokens"
 }
 
 // GetFields function
@@ -40,8 +40,8 @@ func (uatc *UserAccessTokenCollection) NewBundleableItemWithKey(key string) (Bun
 }
 
 // GetKeyFromPath function
-func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

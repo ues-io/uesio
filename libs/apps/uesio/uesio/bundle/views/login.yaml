@@ -1,0 +1,44 @@
+name: login
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: url($File{uesio/uesio.splash})
+            minHeight: 100vh
+        templateColumns:
+          xs: 1fr
+          md: 1fr 1fr
+          lg: 5fr 7fr
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: "#f3f3f3"
+              components:
+                - uesio/io.image:
+                    uesio.styles:
+                      root:
+                        margin: 60px
+                    file: uesio/uesio.logo
+                    height: 120px
+                    align: center
+                    signals:
+                      - signal: "route/REDIRECT"
+                        path: "https://$Site{domain}"
+                - uesio/uesio.logingoogle:
+                    text: Sign in with Google
+                    clientId: uesio/uesio.google_client_id
+                    align: center
+                - uesio/uesio.loginmock:
+                    text: Sign in with Mock
+                    align: center
+                - uesio/uesio.logincognito:
+                    text: Sign in with Email
+                    clientId: uesio/uesio.cognito_client_id
+                    poolId: uesio/uesio.cognito_pool_id
+                    align: center

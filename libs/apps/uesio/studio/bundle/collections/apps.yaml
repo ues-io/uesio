@@ -1,0 +1,8 @@
+name: apps
+idFormat: "${uesio/uesio.owner}/${uesio/studio.name}"
+nameField: uesio/studio.name
+access: "protected"
+recordChallengeTokens:
+  - token: "${uesio/uesio.id}"
+    userAccessToken: "uesio/studio.teammember"
+    access: readwrite

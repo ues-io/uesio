@@ -2,17 +2,17 @@ package meta
 
 // Site struct
 type Site struct {
-	ID        string  `uesio:"uesio.id"`
-	Name      string  `uesio:"studio.name"`
-	Bundle    *Bundle `uesio:"studio.bundle"`
-	App       *App    `uesio:"studio.app"`
+	ID        string  `uesio:"uesio/uesio.id"`
+	Name      string  `uesio:"uesio/studio.name"`
+	Bundle    *Bundle `uesio:"uesio/studio.bundle"`
+	App       *App    `uesio:"uesio/studio.app"`
 	bundleDef *BundleDef
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User     `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
 	Domain    string
 	Subdomain string
 }

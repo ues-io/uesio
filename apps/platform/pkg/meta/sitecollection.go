@@ -11,7 +11,7 @@ type SiteCollection []Site
 
 // GetName function
 func (sc *SiteCollection) GetName() string {
-	return "studio.sites"
+	return "uesio/studio.sites"
 }
 
 // GetFields function

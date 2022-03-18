@@ -15,7 +15,7 @@ type BotCollection []Bot
 
 // GetName function
 func (bc *BotCollection) GetName() string {
-	return "studio.bots"
+	return "uesio/studio.bots"
 }
 
 // GetFields function
@@ -40,7 +40,7 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 }
 
 // GetKeyFromPath function
-func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (bc *BotCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["studio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["studio.type"]]
 	parts := strings.Split(path, string(os.PathSeparator))
@@ -60,7 +60,7 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		if hasType && botType != botTypeKey {
 			return "", nil
 		}
-		return filepath.Join(botType, parts[1]), nil
+		return namespace + "." + filepath.Join(botType, parts[1]), nil
 	}
 	if botType == "beforesave" || botType == "aftersave" {
 		if partLength != 4 || parts[3] != "bot.yaml" {
@@ -72,7 +72,7 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		if hasCollection && parts[1] != collectionKey {
 			return "", nil
 		}
-		return filepath.Join(botType, parts[1], parts[2]), nil
+		return namespace + "." + filepath.Join(botType, parts[1], parts[2]), nil
 	}
 	return "", errors.New("Bad bundle conditions for bot: " + path)
 }

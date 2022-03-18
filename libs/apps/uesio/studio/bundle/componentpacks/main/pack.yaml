@@ -1,0 +1,99 @@
+name: main
+components:
+  view:
+    colorpicker:
+    addbundle:
+      utilities:
+        - io.grid
+        - io.tile
+        - io.selectfield
+        - io.button
+        - io.titlebar
+      variants:
+        - io.button.io.secondary
+        - io.button.io.primary
+        - io.selectfield.io.default
+        - io.tile.io.item
+        - io.titlebar.io.default
+    metadatafield:
+      utilities:
+        - io.textfield
+        - io.selectfield
+        - io.grid
+    codefield:
+      utilities:
+        - io.codefield
+    permissionpicker:
+      utilities:
+        - io.checkboxfield
+        - io.toggleswitch
+        - io.titlebar
+    configsecrets:
+      utilities:
+        - io.titlebar
+        - io.button
+        - io.textfield
+        - io.dialog
+      variants:
+        - io.button.io.secondary
+        - io.textfield.io.default
+        - io.titlebar.io.default
+    datamanager:
+      variants:
+        - io.table.io.default
+      utilities:
+        - io.table
+    collectionlist:
+      variants:
+        - io.tile.io.item
+      utilities:
+        - io.tile
+    dataimport:
+      variants:
+        - io.selectfield.io.default
+        - io.fieldlabel.io.default
+        - io.textfield.io.default
+      utilities:
+        - io.tile
+        - io.selectfield
+        - io.button
+        - io.icon
+        - io.grid
+    configfeatureflags:
+      utilities:
+        - io.titlebar
+        - io.button
+        - io.togglefield
+        - io.dialog
+      variants:
+        - io.button.io.secondary
+        - io.titlebar.io.default
+    translations:
+    preview:
+      utilities:
+        - io.textfield
+        - io.fieldwrapper
+        - io.autocomplete
+        - io.group
+        - io.button
+      variants:
+        - io.textfield.io.default
+        - io.button.io.primary
+        - io.autocomplete.io.default
+    previewbutton:
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.secondary
+    dataexport:
+      variants:
+        - io.button.io.primary
+      utilities:
+        - io.button
+    # Define a builder for the uesio runtime and slot
+    # uesio.runtime:
+    # uesio.view:
+  utility:
+    buildwrapper:
+    slotbuilder:
+

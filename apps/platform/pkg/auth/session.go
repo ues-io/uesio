@@ -43,12 +43,12 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 		ID:        "system",
 		FirstName: "Super",
 		LastName:  "Admin",
-		Profile:   "uesio.public",
+		Profile:   "uesio/uesio.public",
 	}, site)
 	fakeSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.user":      true,
-			"uesio.userfiles": true,
+			"uesio/uesio.user":      true,
+			"uesio/uesio.userfiles": true,
 		},
 	})
 

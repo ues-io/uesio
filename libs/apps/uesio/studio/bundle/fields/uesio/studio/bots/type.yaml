@@ -1,0 +1,4 @@
+name: type
+type: SELECT
+label: Bot type
+selectList: studio.bottype

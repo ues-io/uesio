@@ -30,7 +30,7 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field: "uesio.id",
+				Field: adapt.ID_FIELD,
 				Value: item.GetDBID(session.GetWorkspaceID()),
 			},
 		},
@@ -79,7 +79,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		}, &datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    "uesio.id",
+					Field:    adapt.ID_FIELD,
 					Value:    ids,
 					Operator: "IN",
 				},
@@ -90,7 +90,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 
 		if group.Len() != len(items) {
 			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField("uesio.id")
+				value, err := item.GetField(adapt.ID_FIELD)
 				if err != nil {
 					return ""
 				}
@@ -199,32 +199,32 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: "uesio.id",
+					ID: adapt.ID_FIELD,
 				},
 				{
-					ID: "studio.workspace",
+					ID: "uesio/studio.workspace",
 				},
 				{
-					ID: "studio.bundle",
+					ID: "uesio/studio.bundle",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "studio.app",
+							ID: "uesio/studio.app",
 						},
 						{
-							ID: "studio.major",
+							ID: "uesio/studio.major",
 						},
 						{
-							ID: "studio.minor",
+							ID: "uesio/studio.minor",
 						},
 						{
-							ID: "studio.patch",
+							ID: "uesio/studio.patch",
 						},
 					},
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    "studio.workspace",
+					Field:    "uesio/studio.workspace",
 					Value:    workspaceID,
 					Operator: "=",
 				},
@@ -251,7 +251,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: workspaceID,
 				},
 			},

@@ -1,5 +1,0 @@
-name: value
-collection: studio.labels
-type: TEXT
-label: Label value
-required: true

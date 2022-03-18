@@ -1,4 +1,0 @@
-name: federation_type
-collection: uesio.loginmethod
-type: "TEXT"
-label: "Federation Type"

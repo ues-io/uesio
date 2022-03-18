@@ -19,7 +19,7 @@ func (ffs *FeatureFlagStore) Get(key string, session *sess.Session) (*meta.Featu
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: key,
 				},
 			},

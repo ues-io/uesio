@@ -1,5 +1,0 @@
-name: type
-collection: uesio.userfiles
-type: "TEXT"
-label: "Type"
-readOnly: true

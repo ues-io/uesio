@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible-playbook.json": "file:///Users/ben/dev/uesio/libs/apps/uesio/studio/bundle/routes/site.yaml"
+    }
+}

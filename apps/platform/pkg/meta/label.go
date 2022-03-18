@@ -8,17 +8,17 @@ import (
 
 // Label struct
 type Label struct {
-	ID        string     `yaml:"-" uesio:"uesio.id"`
-	Name      string     `yaml:"name" uesio:"studio.name"`
-	Value     string     `yaml:"value" uesio:"studio.value"`
+	ID        string     `yaml:"-" uesio:"uesio/uesio.id"`
+	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
+	Value     string     `yaml:"value" uesio:"uesio/studio.value"`
 	Namespace string     `yaml:"-" uesio:"-"`
-	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -49,7 +49,7 @@ func (l *Label) GetKey() string {
 
 // GetPath function
 func (l *Label) GetPath() string {
-	return l.GetKey() + ".yaml"
+	return l.Name + ".yaml"
 }
 
 // GetPermChecker function

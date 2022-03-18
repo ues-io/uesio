@@ -15,7 +15,7 @@ type TranslationCollection []Translation
 
 // GetName function
 func (tc *TranslationCollection) GetName() string {
-	return "studio.translations"
+	return "uesio/studio.translations"
 }
 
 // GetFields function
@@ -43,10 +43,10 @@ func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (Bundleabl
 }
 
 // GetKeyFromPath function
-func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 
 	if conditions == nil {
-		return StandardKeyFromPath(path, conditions)
+		return StandardKeyFromPath(path, namespace, conditions)
 	}
 
 	if len(conditions) != 1 {

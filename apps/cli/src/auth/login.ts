@@ -123,7 +123,7 @@ const check = async (): Promise<User | null> => {
 	const result = (await response.json()) as AuthCheckResponse
 	const user = result.user
 	user.cookie = cookie
-	if (user && user.profile === "studio.standard") {
+	if (user && user.profile === "uesio/studio.standard") {
 		return user
 	}
 	return null

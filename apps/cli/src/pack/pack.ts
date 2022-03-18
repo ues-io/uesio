@@ -262,8 +262,7 @@ const handleErrors = (errors: webpack.StatsError[]) => {
 			// File
 			const pathArray = perFile[file][0].file?.split("/") || []
 			const path = pathArray.splice(-4).join("/")
-			const namespace =
-				pathArray[pathArray.indexOf("uesioapps") + 1] || "none"
+			const namespace = pathArray[pathArray.indexOf("apps") + 1] || "none"
 			console.log(
 				chalk`{bold.bgRed  E R R O R } {bold.bgBlue  ${namespace.toUpperCase()} } ${path} `
 			)

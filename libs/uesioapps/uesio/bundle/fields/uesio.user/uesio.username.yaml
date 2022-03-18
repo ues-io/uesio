@@ -1,6 +1,0 @@
-name: username
-collection: uesio.user
-type: "TEXT"
-label: "Username"
-required: true
-createOnly: true

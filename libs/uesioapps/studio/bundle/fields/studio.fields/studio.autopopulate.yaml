@@ -1,5 +1,0 @@
-name: autopopulate
-collection: studio.fields
-type: SELECT
-selectList: studio.autopopulatetypes
-label: Auto Populate

@@ -2,20 +2,21 @@ package meta
 
 // User struct
 type User struct {
-	ID        string            `uesio:"uesio.id"`
-	FirstName string            `uesio:"uesio.firstname"`
-	LastName  string            `uesio:"uesio.lastname"`
-	Profile   string            `uesio:"uesio.profile"`
-	Username  string            `uesio:"uesio.username"`
-	Initials  string            `uesio:"uesio.initials"`
-	Picture   *UserFileMetadata `uesio:"uesio.picture"`
-	Language  string            `uesio:"uesio.language"`
+	ID        string            `uesio:"uesio/uesio.id"`
+	FirstName string            `uesio:"uesio/uesio.firstname"`
+	LastName  string            `uesio:"uesio/uesio.lastname"`
+	Profile   string            `uesio:"uesio/uesio.profile"`
+	Username  string            `uesio:"uesio/uesio.username"`
+	Initials  string            `uesio:"uesio/uesio.initials"`
+	Type      string            `uesio:"uesio/uesio.type"`
+	Picture   *UserFileMetadata `uesio:"uesio/uesio.picture"`
+	Language  string            `uesio:"uesio/uesio.language"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 func (u *User) GetPictureID() string {

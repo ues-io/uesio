@@ -1,0 +1,4 @@
+name: description
+type: "TEXT"
+label: "Bundle Description"
+readOnly: true

@@ -21,25 +21,25 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	ID                  string          `yaml:"-" uesio:"uesio.id"`
-	Name                string          `yaml:"name" uesio:"studio.name"`
+	ID                  string          `yaml:"-" uesio:"uesio/uesio.id"`
+	Name                string          `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace           string          `yaml:"-" uesio:"-"`
-	NamedRefs           map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
-	ViewRefs            map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
-	CollectionRefs      map[string]bool `yaml:"collections" uesio:"studio.collectionrefs"`
-	RouteRefs           map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
-	FileRefs            map[string]bool `yaml:"files" uesio:"studio.filerefs"`
-	Workspace           *Workspace      `yaml:"-" uesio:"studio.workspace"`
-	AllowAllCollections bool            `yaml:"allowallcollections" uesio:"studio.allowallcollections"`
-	AllowAllViews       bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
-	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
-	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
+	NamedRefs           map[string]bool `yaml:"named" uesio:"uesio/studio.namedrefs"`
+	ViewRefs            map[string]bool `yaml:"views" uesio:"uesio/studio.viewrefs"`
+	CollectionRefs      map[string]bool `yaml:"collections" uesio:"uesio/studio.collectionrefs"`
+	RouteRefs           map[string]bool `yaml:"routes" uesio:"uesio/studio.routerefs"`
+	FileRefs            map[string]bool `yaml:"files" uesio:"uesio/studio.filerefs"`
+	Workspace           *Workspace      `yaml:"-" uesio:"uesio/studio.workspace"`
+	AllowAllCollections bool            `yaml:"allowallcollections" uesio:"uesio/studio.allowallcollections"`
+	AllowAllViews       bool            `yaml:"allowallviews" uesio:"uesio/studio.allowallviews"`
+	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
+	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
 	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy           *User           `yaml:"-" uesio:"uesio.createdby"`
-	Owner               *User           `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy           *User           `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt           int64           `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt           int64           `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy           *User           `yaml:"-" uesio:"uesio/uesio.createdby"`
+	Owner               *User           `yaml:"-" uesio:"uesio/uesio.owner"`
+	UpdatedBy           *User           `yaml:"-" uesio:"uesio/uesio.updatedby"`
+	UpdatedAt           int64           `yaml:"-" uesio:"uesio/uesio.updatedat"`
+	CreatedAt           int64           `yaml:"-" uesio:"uesio/uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -70,7 +70,7 @@ func (ps *PermissionSet) GetKey() string {
 
 // GetPath function
 func (ps *PermissionSet) GetPath() string {
-	return ps.GetKey() + ".yaml"
+	return ps.Name + ".yaml"
 }
 
 // GetPermChecker function

@@ -1,3 +1,0 @@
-name: bundles
-idFormat: "${studio.app}_v${studio.major}.${studio.minor}.${studio.patch}"
-nameField: uesio.id

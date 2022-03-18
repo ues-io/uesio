@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -200,10 +201,12 @@ func getVariantParts(key string) (string, string, string, error) {
 }
 
 func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
-	namespace, _, err := meta.ParseKey(key)
+	namespace, componentName, err := meta.ParseKey(key)
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("Key: " + key + " : ComponentNAme: " + componentName)
 
 	packsForNamespace, ok := packs[namespace]
 	if !ok {
@@ -216,7 +219,7 @@ func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]me
 	}
 
 	for _, pack := range packsForNamespace {
-		componentInfo, ok := pack.Components.ViewComponents[key]
+		componentInfo, ok := pack.Components.ViewComponents[componentName]
 		if ok {
 
 			deps.ComponentPacks[pack.GetKey()] = true
@@ -282,6 +285,11 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("HERE!!")
+	fmt.Println(componentsUsed)
+	fmt.Println("Blah")
+	fmt.Println(variantsUsed)
 
 	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {

@@ -2,6 +2,7 @@ package routing
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -36,6 +37,9 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	if path == "" {
 		return getHomeRoute(session)
 	}
+
+	fmt.Println("NAMESPACE")
+	fmt.Println(namespace)
 
 	err := bundle.LoadAll(&routes, namespace, nil, session)
 	if err != nil {

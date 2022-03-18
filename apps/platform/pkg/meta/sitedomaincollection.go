@@ -11,7 +11,7 @@ type SiteDomainCollection []SiteDomain
 
 // GetName function
 func (sdc *SiteDomainCollection) GetName() string {
-	return "studio.sitedomains"
+	return "uesio/studio.sitedomains"
 }
 
 // GetFields function
