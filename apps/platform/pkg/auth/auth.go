@@ -60,6 +60,7 @@ func RegisterAuthType(name string, authType AuthenticationType) {
 
 // AuthenticationClaims struct
 type AuthenticationClaims struct {
+	Username  string `json:"username"`
 	Subject   string `json:"subject"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
@@ -131,7 +132,8 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.user": true,
+			"uesio.user":      true,
+			"uesio.userfiles": true,
 		},
 	})
 
@@ -142,13 +144,34 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{
-		/*
-			FederationType: claims.AuthType,
-			FederationID:   claims.Subject,
-		*/
-		//Username: claims.Username,
-		Profile: defaultSiteProfile,
+		FirstName: claims.FirstName,
+		LastName:  claims.LastName,
+		Username:  claims.Username,
+		Profile:   defaultSiteProfile,
 	}, nil, nil, session)
+}
+func DeleteUser(claims *AuthenticationClaims, site *meta.Site) error {
+
+	// For now, just use a public session to do this.
+	// We'll need to rethink this later when we add security to collections/wires
+	session := sess.NewPublic(site)
+	session.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio.user":      true,
+			"uesio.userfiles": true,
+		},
+	})
+
+	defaultSiteProfile := site.GetAppBundle().DefaultProfile
+
+	if defaultSiteProfile == "" {
+		defaultSiteProfile = "uesio.public"
+	}
+
+	return datasource.PlatformDeleteOne(&meta.User{
+		Username: claims.Username,
+	}, nil, session)
+
 }
 
 /*

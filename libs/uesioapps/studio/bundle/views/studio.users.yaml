@@ -31,15 +31,6 @@ definition:
         - field: studio.name
           valueSource: PARAM
           param: sitename
-    loginmethod:
-      collection: uesio.loginmethod
-      fields:
-        uesio.federation_type:
-        uesio.federation_id:
-        uesio.user:
-      init:
-        query: false
-        create: true
     users:
       collection: uesio.user
       fields:

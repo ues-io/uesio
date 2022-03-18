@@ -348,7 +348,10 @@ const platform = {
 		return response.json()
 	},
 	signUp: async (requestBody: SignupRequest): Promise<SignupResponse> => {
-		const response = await postJSON("/site/auth/signup", requestBody)
+		const response = await postJSON(
+			"/site/auth/cognito/signup",
+			requestBody
+		)
 		return response.json()
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {

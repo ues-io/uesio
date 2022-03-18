@@ -145,8 +145,14 @@ func serve(cmd *cobra.Command, args []string) {
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
-	siteAPI(sr, "/auth/signup", controller.Signup).Methods("POST")
-	siteAPI(sr, "/auth/signup/confirm", controller.ConfirmSignup).Methods("POST")
+
+	// Cognito
+	siteAPI(sr, "/auth/cognito/signup", controller.Signup).Methods("POST")
+	siteAPI(sr, "/auth/cognito/signup/confirm", controller.ConfirmSignup).Methods("POST")
+	siteAPI(sr, "/auth/cognito/forgotpassword", controller.ForgotPassword).Methods("POST")
+	siteAPI(sr, "/auth/cognito/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
+	siteAPI(sr, "/auth/cognito/delete", controller.Delete).Methods("POST")
+
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
 	siteAPI(r, "/{route:.*}", controller.ServeLocalRoute).Methods("GET")
