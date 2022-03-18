@@ -13,3 +13,4 @@ files:
   uesio.logoword: true
   uesio.splash: true
   uesio.whitesplash: true
+public: true

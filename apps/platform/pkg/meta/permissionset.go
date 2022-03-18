@@ -40,6 +40,7 @@ type PermissionSet struct {
 	UpdatedBy           *User           `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt           int64           `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt           int64           `yaml:"-" uesio:"uesio.createdat"`
+	Public              bool            `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -135,7 +136,7 @@ func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (ps *PermissionSet) IsPublic() bool {
-	return true
+	return ps.Public
 }
 
 // HasPermission method

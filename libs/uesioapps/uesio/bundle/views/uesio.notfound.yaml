@@ -44,3 +44,4 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "login"
+public: true

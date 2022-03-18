@@ -33,6 +33,7 @@ type FileSource struct {
 	UpdatedBy   *User      `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt   int64      `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt   int64      `yaml:"-" uesio:"uesio.createdat"`
+	Public      bool       `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -127,6 +128,6 @@ func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
 }
 
 // IsPublic function
-func (c *FileSource) IsPublic() bool {
-	return true
+func (fs *FileSource) IsPublic() bool {
+	return fs.Public
 }

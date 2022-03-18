@@ -12,3 +12,4 @@ definition:
       fontSize: 10pt
     avatar:
       marginRight: 14px
+public: true

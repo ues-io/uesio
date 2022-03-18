@@ -7,3 +7,4 @@ definition:
       columnGap: "10px"
       alignItems: "center"
       margin: 10px 0
+public: true

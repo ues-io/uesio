@@ -1,0 +1,4 @@
+name: public
+collection: studio.configvalues
+type: CHECKBOX
+label: Public

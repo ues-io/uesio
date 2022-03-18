@@ -10,3 +10,4 @@ definition:
     nofileicon:
       fontSize: "24px"
       padding: "16px"
+public: true

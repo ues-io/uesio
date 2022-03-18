@@ -30,3 +30,4 @@ definition:
       padding: 16px
       color: "#777"
       fontSize: 10pt
+public: true

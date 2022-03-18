@@ -37,6 +37,7 @@ type Credential struct {
 	UpdatedBy *User                      `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt int64                      `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt int64                      `yaml:"-" uesio:"uesio.createdat"`
+	Public    bool                       `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -132,5 +133,5 @@ func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (c *Credential) IsPublic() bool {
-	return true
+	return c.Public
 }

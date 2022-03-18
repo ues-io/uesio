@@ -21,6 +21,7 @@ type Secret struct {
 	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	Public    bool       `yaml:"public" uesio:"studio.public"`
 }
 
 // NewSecret function
@@ -128,5 +129,5 @@ func (s *Secret) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (s *Secret) IsPublic() bool {
-	return true
+	return s.Public
 }

@@ -1,0 +1,4 @@
+name: public
+collection: studio.selectlists
+type: CHECKBOX
+label: Public

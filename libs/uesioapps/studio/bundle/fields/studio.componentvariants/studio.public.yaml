@@ -1,0 +1,4 @@
+name: public
+collection: studio.componentvariants
+type: CHECKBOX
+label: Public

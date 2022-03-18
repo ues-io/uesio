@@ -1,0 +1,4 @@
+name: public
+collection: studio.secrets
+type: CHECKBOX
+label: Public

@@ -12,3 +12,4 @@ definition:
     subtitle:
       fontSize: "10pt"
       color: "#777"
+public: true

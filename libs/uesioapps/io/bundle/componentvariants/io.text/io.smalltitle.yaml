@@ -8,3 +8,4 @@ definition:
       fontWeight: "500"
       fontSize: "10pt"
       lineHeight: "30pt"
+public: true

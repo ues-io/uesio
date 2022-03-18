@@ -38,6 +38,7 @@ type Route struct {
 	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
+	Public     bool              `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -138,5 +139,5 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (r *Route) IsPublic() bool {
-	return true
+	return r.Public
 }

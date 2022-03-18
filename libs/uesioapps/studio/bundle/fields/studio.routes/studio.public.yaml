@@ -1,0 +1,4 @@
+name: public
+collection: studio.routes
+type: CHECKBOX
+label: Public

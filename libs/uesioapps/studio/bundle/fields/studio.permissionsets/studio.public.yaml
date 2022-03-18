@@ -1,0 +1,4 @@
+name: public
+collection: studio.permissionsets
+type: CHECKBOX
+label: Public

@@ -1,3 +1,4 @@
 name: userfiles_bucket_name
 managedBy: app
 store: environment
+public: true

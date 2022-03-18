@@ -11,3 +11,4 @@ definition:
       "&:focus":
         outline: none
         background: "#ddd"
+public: true

@@ -1,0 +1,4 @@
+name: public
+collection: studio.views
+type: CHECKBOX
+label: Public

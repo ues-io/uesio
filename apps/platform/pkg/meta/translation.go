@@ -19,6 +19,7 @@ type Translation struct {
 	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
+	Public    bool              `yaml:"public" uesio:"studio.public"`
 }
 
 func (t *Translation) GetBundleGroup() BundleableGroup {
@@ -107,5 +108,5 @@ func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (t *Translation) IsPublic() bool {
-	return true
+	return t.Public
 }

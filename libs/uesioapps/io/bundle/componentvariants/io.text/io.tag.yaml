@@ -8,3 +8,4 @@ definition:
       fontSize: 8pt
       textTransform: uppercase
       display: inline
+public: true

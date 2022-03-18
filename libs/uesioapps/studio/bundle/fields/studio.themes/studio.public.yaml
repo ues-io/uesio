@@ -1,0 +1,4 @@
+name: public
+collection: studio.themes
+type: CHECKBOX
+label: Public

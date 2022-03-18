@@ -42,3 +42,4 @@ definition:
                     clientId: uesio.cognito_client_id
                     poolId: uesio.cognito_pool_id
                     align: center
+public: true

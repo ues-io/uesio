@@ -7,3 +7,4 @@ definition:
       color: "$Theme{color.primary}"
       fontSize: "9pt"
       cursor: "pointer"
+public: true

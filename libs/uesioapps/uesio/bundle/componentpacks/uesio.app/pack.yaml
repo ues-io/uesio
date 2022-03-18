@@ -1,4 +1,5 @@
 name: app
+public: true
 components:
   view:
     uesio.loginmock:

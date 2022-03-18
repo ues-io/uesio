@@ -1,2 +1,3 @@
 name: delete
 value: Delete
+public: true

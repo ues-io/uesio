@@ -1,0 +1,4 @@
+name: public
+collection: studio.componentpacks
+type: CHECKBOX
+label: Public

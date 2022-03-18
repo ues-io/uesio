@@ -1,0 +1,4 @@
+name: public
+collection: studio.filesources
+type: CHECKBOX
+label: Public

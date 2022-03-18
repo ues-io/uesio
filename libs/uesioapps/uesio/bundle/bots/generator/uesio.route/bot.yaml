@@ -15,3 +15,4 @@ params:
     prompt: select a theme
     type: METADATA
     metadataType: THEME
+public: true

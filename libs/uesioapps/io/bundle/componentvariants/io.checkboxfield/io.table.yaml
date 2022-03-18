@@ -12,3 +12,4 @@ definition:
     readonly:
       backgroundColor: "transparent"
       border: "none"
+public: true

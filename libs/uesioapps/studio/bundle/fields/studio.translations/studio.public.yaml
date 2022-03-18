@@ -1,0 +1,4 @@
+name: public
+collection: studio.translations
+type: CHECKBOX
+label: Public

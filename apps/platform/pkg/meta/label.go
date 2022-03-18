@@ -19,6 +19,7 @@ type Label struct {
 	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	Public    bool       `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -114,5 +115,5 @@ func (l *Label) UnmarshalYAML(node *yaml.Node) error {
 
 // IsPublic function
 func (l *Label) IsPublic() bool {
-	return true
+	return l.Public
 }

@@ -22,6 +22,7 @@ type ComponentPack struct {
 	UpdatedBy       *User               `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt       int64               `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt       int64               `yaml:"-" uesio:"uesio.createdat"`
+	Public          bool                `yaml:"public" uesio:"studio.public"`
 }
 
 type ComponentsRegistry struct {
@@ -158,6 +159,6 @@ func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
 }
 
 // IsPublic function
-func (c *ComponentPack) IsPublic() bool {
-	return true
+func (cp *ComponentPack) IsPublic() bool {
+	return cp.Public
 }

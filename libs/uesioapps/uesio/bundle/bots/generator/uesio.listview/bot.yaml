@@ -18,3 +18,4 @@ params:
     type: METADATAMULTI
     metadataType: FIELD
     grouping: $Answer{collection}
+public: true

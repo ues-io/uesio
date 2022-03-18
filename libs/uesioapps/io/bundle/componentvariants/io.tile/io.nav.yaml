@@ -13,3 +13,4 @@ definition:
     content:
       verticalAlign: middle
       fontSize: 10pt
+public: true

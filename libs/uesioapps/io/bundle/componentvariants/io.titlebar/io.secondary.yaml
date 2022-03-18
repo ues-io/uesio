@@ -11,3 +11,4 @@ definition:
       textTransform: uppercase
       fontSize: 11pt
       fontWeight: 400
+public: true

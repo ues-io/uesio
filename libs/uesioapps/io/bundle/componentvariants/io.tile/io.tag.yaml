@@ -11,3 +11,4 @@ definition:
       marginLeft: 8px
       fontSize: 10pt
       alignItems: center
+public: true

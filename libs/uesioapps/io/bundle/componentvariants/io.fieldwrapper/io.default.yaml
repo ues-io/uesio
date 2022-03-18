@@ -10,3 +10,4 @@ definition:
       display: grid
       gridTemplateColumns: "40% 60%"
       alignItems: center
+public: true

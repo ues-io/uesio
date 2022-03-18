@@ -1,0 +1,4 @@
+name: public
+collection: studio.credentials
+type: CHECKBOX
+label: Public

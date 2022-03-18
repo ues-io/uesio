@@ -1,0 +1,4 @@
+name: public
+collection: studio.featureflags
+type: CHECKBOX
+label: Public

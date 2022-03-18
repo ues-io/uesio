@@ -6,3 +6,4 @@ definition:
     root:
       color: "#444"
       fontSize: "9pt"
+public: true

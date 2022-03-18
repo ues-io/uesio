@@ -5,3 +5,4 @@ labels:
   io.edit: Modifica
   io.preview: Vedere
   io.save: Salva
+public: true

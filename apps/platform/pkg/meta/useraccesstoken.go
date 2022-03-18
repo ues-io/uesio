@@ -31,6 +31,7 @@ type UserAccessToken struct {
 	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
+	Public     bool              `yaml:"public" uesio:"studio.public"`
 }
 
 // GetCollectionName function
@@ -117,6 +118,6 @@ func (uat *UserAccessToken) SetItemMeta(itemMeta *ItemMeta) {
 }
 
 // IsPublic function
-func (u *UserAccessToken) IsPublic() bool {
-	return true
+func (uat *UserAccessToken) IsPublic() bool {
+	return uat.Public
 }

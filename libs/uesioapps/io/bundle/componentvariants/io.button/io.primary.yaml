@@ -17,3 +17,4 @@ definition:
         boxShadow: "0 0 6px #00000093"
     label:
       textTransform: uppercase
+public: true
