@@ -1,5 +1,13 @@
 import { FunctionComponent, useState } from "react"
-import { definition, styles, wire, context, hooks, component } from "@uesio/ui"
+import {
+	definition,
+	styles,
+	wire,
+	context,
+	hooks,
+	component,
+	collection,
+} from "@uesio/ui"
 import groupby from "lodash/groupBy"
 import keyby from "lodash/keyBy"
 
@@ -12,16 +20,16 @@ interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
 
-const Grid = component.registry.getUtility("io.grid")
-const Tile = component.registry.getUtility("io.tile")
-const Button = component.registry.getUtility("io.button")
-const SelectField = component.registry.getUtility("io.selectfield")
-const TitleBar = component.registry.getUtility("io.titlebar")
+const Grid = component.registry.getUtility("uesio/io.grid")
+const Tile = component.registry.getUtility("uesio/io.tile")
+const Button = component.registry.getUtility("uesio/io.button")
+const SelectField = component.registry.getUtility("uesio/io.selectfield")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
 
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
 	for (const record of records) {
-		if (record.source["uesio.id"] === id) {
+		if (record.source[collection.ID_FIELD] === id) {
 			return record
 		}
 	}
@@ -34,7 +42,7 @@ async function installBundle(
 	context: context.Context
 ) {
 	depWire.createRecord({
-		"studio.bundle": { "uesio.id": `${namespace}_${version}` },
+		"studio.bundle": { [collection.ID_FIELD]: `${namespace}_${version}` },
 		"studio.workspace": workspaceId,
 	})
 	await depWire.save(context)

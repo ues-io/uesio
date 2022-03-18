@@ -13,9 +13,9 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-const Grid = component.registry.getUtility("io.grid")
-const SelectField = component.registry.getUtility("io.selectfield")
-const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
+const Grid = component.registry.getUtility("uesio/io.grid")
+const SelectField = component.registry.getUtility("uesio/io.selectfield")
+const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 

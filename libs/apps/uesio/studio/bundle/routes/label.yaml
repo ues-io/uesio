@@ -1,4 +1,4 @@
 name: label
 path: app/{appname}/workspace/{workspacename}/labels/{labelname}
-view: studio.label
-theme: studio.default
+view: uesio/studio.label
+theme: uesio/studio.default

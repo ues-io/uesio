@@ -3,65 +3,65 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: studio.apps
+      collection: uesio/studio.apps
       fields:
-        uesio.id:
-        studio.name:
-        studio.description:
-        studio.color:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
       order:
-        - field: studio.name
+        - field: uesio/studio.name
           desc: false
     newapp:
-      collection: studio.apps
+      collection: uesio/studio.apps
       fields:
-        uesio.id:
-        studio.name:
-        studio.description:
-        studio.color:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
       init:
         query: false
         create: true
   # Components are how we describe the layout of our view
   components:
-    - io.grid:
-        uesio.variant: studio.mainlayout
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
         items:
-          - io.griditem:
-              uesio.variant: studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
               components:
-                - uesio.view:
-                    view: studio.topbar
-          - io.griditem:
-              uesio.variant: studio.leftbar
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
               components:
-                - io.titlebar:
-                    uesio.variant: io.nav
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
                     title: My Apps
                     actions:
-                      - io.button:
+                      - uesio/io.button:
                           icon: add
                           signals:
                             - signal: panel/TOGGLE
                               panel: newApp
-                - io.list:
+                - uesio/io.list:
                     id: appslist
                     wire: apps
                     components:
-                      - io.tile:
-                          uesio.variant: io.nav
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/${uesio.id}"
+                              path: "app/${uesio/core.id}"
                           content:
-                            - io.text:
+                            - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio.id}
+                                text: ${uesio/core.id}
                                 element: div
-                            - io.text:
-                                text: ${studio.description}
+                            - uesio/io.text:
+                                text: ${uesio/studio.description}
                                 element: div
                                 uesio.styles:
                                   root:
@@ -69,22 +69,22 @@ definition:
                                     color: "#777"
                                     lineHeight: 16pt
                           avatar:
-                            - io.text:
-                                uesio.variant: io.icon
-                                color: "${studio.color}"
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "${uesio/studio.color}"
                                 text: circle
-          - io.griditem:
-              uesio.variant: studio.content
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
               components:
-                - io.box:
+                - uesio/io.box:
                     uesio.styles:
                       root:
                         backgroundSize: cover
-                        backgroundImage: url($File{uesio.splash})
+                        backgroundImage: url($File{uesio/core.splash})
                         padding: 100px
                         height: 60px
                         color: "#FFFFFFC0"
-                - io.box:
+                - uesio/io.box:
                     uesio.styles:
                       root:
                         backgroundSize: cover
@@ -92,98 +92,98 @@ definition:
                         padding: 40px 100px
                         color: "#FFFFFFC0"
                     components:
-                      - io.box:
+                      - uesio/io.box:
                           uesio.styles:
                             root:
                               fontFamily: Gosha
                               fontSize: 40pt
                           components:
-                            - io.text:
+                            - uesio/io.text:
                                 text: "Get started with "
-                            - io.text:
+                            - uesio/io.text:
                                 color: white
                                 text: ues.io
-                      - io.box:
+                      - uesio/io.box:
                           uesio.styles:
                             root:
                               lineHeight: 30px
                               paddingTop: 10px
                           components:
-                            - io.text:
+                            - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: white
                                 text: "Build "
-                            - io.text:
+                            - uesio/io.text:
                                 text: "web appliations declaratively. "
-                            - io.text:
+                            - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: white
                                 text: "Reuse "
-                            - io.text:
+                            - uesio/io.text:
                                 text: "components from other apps. "
-                            - io.text:
+                            - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: white
                                 text: "Iterate "
-                            - io.text:
+                            - uesio/io.text:
                                 text: "quickly."
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns: 1fr 1fr
                     items:
-                      - io.griditem:
+                      - uesio/io.griditem:
                           uesio.styles:
                             root:
                               padding: 50px
                           components:
-                            - io.button:
-                                uesio.variant: io.secondary
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
                                 text: Latest Updates & News
-                            - io.text:
-                                uesio.variant: io.smallcontent
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.smallcontent
                                 text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
                                 element: div
-                      - io.griditem:
+                      - uesio/io.griditem:
                           uesio.styles:
                             root:
                               padding: 50px
                           components:
-                            - io.button:
-                                uesio.variant: io.secondary
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
                                 text: Learn ues.io
                                 signals:
                                   - signal: "route/REDIRECT"
                                     path: "https://docs.$Site{domain}"
-                            - io.text:
-                                uesio.variant: io.smallcontent
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.smallcontent
                                 text: Documentation - Learn the basic concepts of ues.io and how to navigate the studio.
                                 element: div
 
   panels:
     newApp:
-      uesio.type: io.dialog
+      uesio.type: uesio/io.dialog
       title: Create a New App
       width: 400px
       height: 500px
       components:
-        - uesio.view:
-            view: studio.appedit
+        - uesio/core.view:
+            view: uesio/studio.appedit
             uesio.context:
               wire: newapp
       actions:
-        - io.button:
-            uesio.variant: "io.primary"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
             text: "Save"
             signals:
               - signal: wire/SAVE
                 wires:
                   - "newapp"
               - signal: "route/NAVIGATE"
-                path: "app/${studio.name}"
-        - io.button:
-            uesio.variant: "io.secondary"
+                path: "app/${uesio/core.id}"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
             text: "Cancel"
             signals:
               - signal: "panel/TOGGLE"

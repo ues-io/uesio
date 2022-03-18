@@ -1,7 +1,7 @@
 [
 	{
 		"app": {
-			"id": "uesio/uesio"
+			"id": "uesio/core"
 		},
 		"description": "Uesio Base Functionality",
 		"major": "0",

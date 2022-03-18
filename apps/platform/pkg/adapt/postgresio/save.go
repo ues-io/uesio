@@ -149,13 +149,9 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 			change.Autonumber,
 		}, builder.Values...)
 
-		fmt.Println()
-		fmt.Println(" ----- ")
-		fmt.Println(query)
-		fmt.Println(params)
-
 		_, err = db.Exec(query, params...)
 		if err != nil {
+			fmt.Println("Failed: " + fullRecordID)
 			return err
 		}
 

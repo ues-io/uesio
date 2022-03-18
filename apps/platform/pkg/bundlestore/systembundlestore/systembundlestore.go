@@ -167,11 +167,7 @@ func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version strin
 }
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
-	}
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
 }
 

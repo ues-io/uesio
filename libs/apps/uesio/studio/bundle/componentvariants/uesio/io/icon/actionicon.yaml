@@ -1,0 +1,6 @@
+name: actionicon
+label: Action Icon
+definition:
+  uesio.styles:
+    root:
+      fontSize: 9pt

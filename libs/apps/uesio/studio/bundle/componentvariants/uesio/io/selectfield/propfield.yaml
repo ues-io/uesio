@@ -1,0 +1,16 @@
+name: propfield
+label: Property Field
+extends: uesio/io.default
+definition:
+  uesio.styles:
+    root:
+      "&:after":
+        right: "6px"
+        fontSize: "9pt"
+    input:
+      backgroundColor: white
+      fontSize: 9pt
+      padding: 4px 22px 4px 6px
+      borderRadius: 4px
+      border: "1px solid #00000022"
+      color: "#444"

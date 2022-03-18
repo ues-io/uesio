@@ -1,0 +1,9 @@
+name: expandpanel
+label: Expand Panel
+definition:
+  uesio.styles:
+    root:
+    content:
+      fontSize: 10pt
+      color: "#444"
+      fontWeight: 300

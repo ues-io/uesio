@@ -1,0 +1,12 @@
+name: secondary
+label: Primary
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: "#808B96"
+      padding: 10px
+    title:
+      color: "white"
+      textTransform: uppercase
+      fontSize: 11pt
+      fontWeight: 400

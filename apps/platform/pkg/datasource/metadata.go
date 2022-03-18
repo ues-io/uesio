@@ -129,7 +129,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	collectionMetadata = GetCollectionMetadata(collection)
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "id",
-		Namespace:  "uesio/uesio",
+		Namespace:  "uesio/core",
 		Createable: false,
 		Accessible: true,
 		Updateable: false,
@@ -138,7 +138,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "owner",
-		Namespace:    "uesio/uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -148,7 +148,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "createdby",
-		Namespace:    "uesio/uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -158,7 +158,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "updatedby",
-		Namespace:    "uesio/uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -168,7 +168,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "createdat",
-		Namespace:    "uesio/uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -178,7 +178,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "updatedat",
-		Namespace:    "uesio/uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -230,8 +230,6 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	fmt.Println("KEYS")
-	fmt.Println(keys)
 	err := bundle.LoadMany(fields, session)
 	if err != nil {
 		return fmt.Errorf("collection: %s : %v", collectionKey, err)

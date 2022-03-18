@@ -4,9 +4,9 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import PropertiesPane from "../propertiespane"
 
-const TitleBar = component.registry.getUtility("io.titlebar")
-const Button = component.registry.getUtility("io.button")
-const Icon = component.registry.getUtility("io.icon")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const Button = component.registry.getUtility("uesio/io.button")
+const Icon = component.registry.getUtility("uesio/io.icon")
 
 function getConditionTitle(condition: wire.WireConditionDefinition): string {
 	if (condition.valueSource === "VALUE" || !condition.valueSource) {

@@ -16,8 +16,8 @@ interface Props extends definition.BaseProps {
 	setLstate: Dispatch<SetStateAction<Record<string, string>>>
 }
 
-const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
-const AutoComplete = component.registry.getUtility("io.autocomplete")
+const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
+const AutoComplete = component.registry.getUtility("uesio/io.autocomplete")
 
 const PreviewItem: FunctionComponent<Props> = (props) => {
 	const { context, fieldKey, item, lstate, setLstate } = props

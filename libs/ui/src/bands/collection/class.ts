@@ -1,7 +1,7 @@
 import Field from "../field/class"
 import { FieldMetadata } from "../field/types"
 
-import { PlainCollection } from "./types"
+import { ID_FIELD, PlainCollection } from "./types"
 
 function getSubFieldMetadata(
 	fieldNameParts: string[],
@@ -50,7 +50,7 @@ class Collection {
 		return new Field(fieldMetadata)
 	}
 
-	getIdField = () => this.getField("uesio.id")
+	getIdField = () => this.getField(ID_FIELD)
 	getNameField = () => this.getField(this.source.nameField)
 }
 

@@ -1,3 +1,0 @@
-name: user
-idFormat: "${uesio/uesio.username}"
-nameField: uesio/uesio.id

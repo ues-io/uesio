@@ -2,16 +2,16 @@ package meta
 
 // App struct
 type App struct {
-	ID          string    `uesio:"uesio/uesio.id"`
+	ID          string    `uesio:"uesio/core.id"`
 	Name        string    `uesio:"uesio/studio.name"`
 	Description string    `uesio:"uesio/studio.description"`
 	Color       string    `uesio:"uesio/studio.color"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner       *User     `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy   *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy   *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt   int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt   int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function

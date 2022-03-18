@@ -9,7 +9,7 @@ import (
 
 // ComponentVariant struct
 type ComponentVariant struct {
-	ID         string     `yaml:"-" uesio:"uesio/uesio.id"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
@@ -18,11 +18,11 @@ type ComponentVariant struct {
 	Label      string     `yaml:"label" uesio:"uesio/studio.label"`
 	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -39,7 +39,9 @@ func (c *ComponentVariant) GetKey() string {
 }
 
 func (c *ComponentVariant) GetPath() string {
-	return filepath.Join(c.Component, c.Name) + ".yaml"
+	componentNamespace, componentName, _ := ParseKey(c.Component)
+	nsUser, appName, _ := ParseNamespace(componentNamespace)
+	return filepath.Join(nsUser, appName, componentName, c.Name) + ".yaml"
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {

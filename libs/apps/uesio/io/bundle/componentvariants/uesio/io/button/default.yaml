@@ -1,0 +1,9 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      "&:focus":
+        outline: none

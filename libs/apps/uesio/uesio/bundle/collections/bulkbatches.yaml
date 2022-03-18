@@ -1,3 +1,0 @@
-name: bulkbatches
-nameField: uesio/uesio.id
-idFormat: ${uesio/uesio.autoid}

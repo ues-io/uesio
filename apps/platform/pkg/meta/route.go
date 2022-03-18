@@ -22,7 +22,7 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
-	ID         string            `yaml:"-" uesio:"uesio/uesio.id"`
+	ID         string            `yaml:"-" uesio:"uesio/core.id"`
 	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
@@ -33,11 +33,11 @@ type Route struct {
 	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	ThemeRef   string            `yaml:"theme" uesio:"uesio/studio.theme"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -130,6 +130,14 @@ func (r *Route) SetItemMeta(itemMeta *ItemMeta) {
 
 func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, r.Name)
+	if err != nil {
+		return err
+	}
+	err = validateRequiredMetadataItem(node, "view")
+	if err != nil {
+		return err
+	}
+	err = validateRequiredMetadataItem(node, "theme")
 	if err != nil {
 		return err
 	}

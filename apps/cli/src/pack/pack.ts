@@ -21,7 +21,7 @@ interface WebpackError extends Error {
 const factory = ['import { component } from "@uesio/ui";']
 
 const getEntryFile = async (
-	bundleName: string,
+	namespace: string,
 	components: ComponentMap,
 	utilityComponents: ComponentMap
 ): Promise<string> => {
@@ -30,43 +30,41 @@ const getEntryFile = async (
 	const registrations = []
 
 	for (const key in components) {
-		const [, name] = key.split(".")
 		const hasDefinition = await fileExists(
-			path.resolve(`./bundle/components/view/${key}/${name}.tsx`)
+			path.resolve(`./bundle/components/view/${key}/${key}.tsx`)
 		)
 		if (hasDefinition) {
 			const hasSignals = await fileExists(
 				path.resolve(`./bundle/components/view/${key}/signals.ts`)
 			)
 			imports.push(
-				`import ${name} from "../../components/view/${key}/${name}";`
+				`import ${key} from "../../components/view/${key}/${key}";`
 			)
 
 			if (hasSignals) {
 				imports.push(
-					`import ${name}signals from "../../components/view/${key}/signals";`
+					`import ${key}signals from "../../components/view/${key}/signals";`
 				)
 			}
 			registrations.push(
-				`component.registry.register("${key}", ${name}${
-					hasSignals ? `, ${name}signals` : ""
+				`component.registry.register("${namespace}.${key}", ${key}${
+					hasSignals ? `, ${key}signals` : ""
 				});`
 			)
 		}
 	}
 
 	for (const key in utilityComponents) {
-		const [, name] = key.split(".")
 		const hasDefinition = await fileExists(
-			path.resolve(`./bundle/components/utility/${key}/${name}.tsx`)
+			path.resolve(`./bundle/components/utility/${key}/${key}.tsx`)
 		)
 		if (hasDefinition) {
 			imports.push(
-				`import ${name}_utility from "../../components/utility/${key}/${name}";`
+				`import ${key}_utility from "../../components/utility/${key}/${key}";`
 			)
 
 			registrations.push(
-				`component.registry.registerUtilityComponent("${key}", ${name}_utility);`
+				`component.registry.registerUtilityComponent("${namespace}.${key}", ${key}_utility);`
 			)
 		}
 	}
@@ -75,7 +73,7 @@ const getEntryFile = async (
 }
 
 const getBuilderEntryFile = async (
-	bundleName: string,
+	namespace: string,
 	components: ComponentMap
 ): Promise<string> => {
 	// Create Buildtime Entrypoint
@@ -84,9 +82,8 @@ const getBuilderEntryFile = async (
 	const builderRegistrations = []
 
 	for (const key in components) {
-		const [, name] = key.split(".")
-		const builderName = `${name}builder`
-		const propDefName = `${name}definition`
+		const builderName = `${key}builder`
+		const propDefName = `${key}definition`
 
 		const hasBuilder = await fileExists(
 			path.resolve(`./bundle/components/view/${key}/${builderName}.tsx`)
@@ -110,7 +107,7 @@ const getBuilderEntryFile = async (
 
 		if (hasDef || hasBuilder) {
 			builderRegistrations.push(
-				`component.registry.registerBuilder("${key}", ${
+				`component.registry.registerBuilder("${namespace}.${key}", ${
 					hasBuilder ? builderName : "undefined"
 				}, ${hasDef ? propDefName : "undefined"});`
 			)
@@ -125,7 +122,6 @@ const getBuilderEntryFile = async (
 const createEntryFiles = async (): Promise<EntryFileMap> => {
 	// Get the bundle name
 	const appName = await getApp()
-
 	const packDir = "./bundle/componentpacks"
 	const entries: EntryFileMap = {}
 
@@ -143,21 +139,20 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const components = yamlContents.components
 		const viewComponents = components.view
 		const utilityComponents = components.utility
-		const fullPackName = `${appName}.${packName}`
-		entries[fullPackName + "/runtime"] = path.resolve(
-			`./bundle/componentpacks/${fullPackName}/runtime.entry.ts`
+		entries[packName + "/runtime"] = path.resolve(
+			`./bundle/componentpacks/${packName}/runtime.entry.ts`
 		)
-		entries[fullPackName + "/builder"] = path.resolve(
-			`./bundle/componentpacks/${fullPackName}/builder.entry.ts`
+		entries[packName + "/builder"] = path.resolve(
+			`./bundle/componentpacks/${packName}/builder.entry.ts`
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${fullPackName}/runtime.entry.ts`),
+			path.resolve(packDir, `${packName}/runtime.entry.ts`),
 			await getEntryFile(appName, viewComponents, utilityComponents)
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${fullPackName}/builder.entry.ts`),
+			path.resolve(packDir, `${packName}/builder.entry.ts`),
 			await getBuilderEntryFile(appName, viewComponents)
 		)
 	}
@@ -185,7 +180,9 @@ const getWebpackConfig = (
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
 			alias: {
-				"@uesio/loginhelpers": path.resolve("../../loginhelpers/src"),
+				"@uesio/loginhelpers": path.resolve(
+					"../../../loginhelpers/src"
+				),
 			},
 		},
 		module: {

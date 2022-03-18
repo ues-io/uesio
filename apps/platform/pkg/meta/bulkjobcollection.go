@@ -11,7 +11,7 @@ type BulkJobCollection []BulkJob
 
 // GetName function
 func (bjc *BulkJobCollection) GetName() string {
-	return "uesio/uesio.bulkjobs"
+	return "uesio/core.bulkjobs"
 }
 
 // GetFields function

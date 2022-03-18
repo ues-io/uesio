@@ -124,8 +124,6 @@ func getConditions(
 
 	// UserTokens query
 	if collectionMetadata.Access == "protected" && userTokens != nil {
-		fmt.Println("TOK")
-		fmt.Println(userTokens)
 		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
 		values = append(values, pq.Array(userTokens))
 	}

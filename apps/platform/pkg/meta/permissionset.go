@@ -21,7 +21,7 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	ID                  string          `yaml:"-" uesio:"uesio/uesio.id"`
+	ID                  string          `yaml:"-" uesio:"uesio/core.id"`
 	Name                string          `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace           string          `yaml:"-" uesio:"-"`
 	NamedRefs           map[string]bool `yaml:"named" uesio:"uesio/studio.namedrefs"`
@@ -35,11 +35,11 @@ type PermissionSet struct {
 	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
 	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy           *User           `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner               *User           `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy           *User           `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt           int64           `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt           int64           `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy           *User           `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner               *User           `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy           *User           `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt           int64           `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt           int64           `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function

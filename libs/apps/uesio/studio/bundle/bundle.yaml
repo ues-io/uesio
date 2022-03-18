@@ -5,7 +5,7 @@ defaultProfile: uesio/studio.standard
 defaultTheme: uesio/studio.default
 publicProfile: uesio/studio.public
 dependencies:
-  uesio/uesio:
+  uesio/core:
     version: "v0.0.1"
   uesio/io:
     version: "v0.0.1"

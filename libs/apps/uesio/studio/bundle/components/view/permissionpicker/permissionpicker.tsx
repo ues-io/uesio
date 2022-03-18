@@ -10,8 +10,8 @@ interface Props extends definition.BaseProps {
 	definition: PermissionPickerDefinition
 }
 
-const CheckboxField = component.registry.getUtility("io.checkboxfield")
-const TitleBar = component.registry.getUtility("io.titlebar")
+const CheckboxField = component.registry.getUtility("uesio/io.checkboxfield")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
 
 const PermissionPicker: FunctionComponent<Props> = (props) => {
 	const {

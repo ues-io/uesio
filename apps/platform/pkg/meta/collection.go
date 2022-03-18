@@ -35,7 +35,7 @@ type TokenCondition struct {
 
 // Collection struct
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"uesio/uesio.id"`
+	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
@@ -43,11 +43,11 @@ type Collection struct {
 	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner                 *User                             `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
@@ -147,7 +147,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	err = setDefaultValue(node, "dataSource", "uesio/uesio.platform")
+	err = setDefaultValue(node, "dataSource", "uesio/core.platform")
 	if err != nil {
 		return err
 	}

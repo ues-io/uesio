@@ -1,9 +1,0 @@
-name: default
-component: io.link
-label: Default
-definition:
-  uesio.styles:
-    root:
-      color: "$Theme{color.primary}"
-      fontSize: "9pt"
-      cursor: "pointer"

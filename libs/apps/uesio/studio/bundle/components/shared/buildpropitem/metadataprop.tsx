@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, component, builder } from "@uesio/ui"
-import MetadataPicker from "../../utility/studio.metadatapicker/metadatapicker"
+import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
 
 interface MetadataPropRendererProps extends builder.PropRendererProps {
 	descriptor: builder.MetadataProp

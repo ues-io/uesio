@@ -47,7 +47,7 @@ const init = (
 	]
 }
 
-const Button = component.registry.getUtility("io.button")
+const Button = component.registry.getUtility("uesio/io.button")
 
 const DataExport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props

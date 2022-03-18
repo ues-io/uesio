@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, component, metadata } from "@uesio/ui"
-import MetadataPicker from "../../utility/studio.metadatapicker/metadatapicker"
+import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
 
 type MetadataFieldDefinition = {
 	fieldId: string

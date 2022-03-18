@@ -1,6 +1,6 @@
 # About Uesio
 
-![Uesio Logo](./libs/apps/uesio/uesio/bundle/files/uesio.logo/file/uesioblack.png)
+![Uesio Logo](./libs/apps/uesio/core/bundle/files/uesio.logo/file/uesioblack.png)
 
 Uesio is a **low-code** application development platform.
 
@@ -169,7 +169,7 @@ nx build apps-uesio-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/apps/uesio/uesio && uesio pack --develop
+cd ./libs/apps/uesio/core && uesio pack --develop
 ```
 
 # Watch mode

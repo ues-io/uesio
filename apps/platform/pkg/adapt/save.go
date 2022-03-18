@@ -75,7 +75,7 @@ func (ci *ChangeItem) Len() int {
 }
 
 func (ci *ChangeItem) GetOwnerID() (string, error) {
-	ownerVal, err := ci.GetField("uesio.owner")
+	ownerVal, err := ci.GetField("uesio/core.owner")
 	if err != nil {
 		return "", err
 	}

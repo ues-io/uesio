@@ -1,0 +1,14 @@
+name: nav
+label: Nav
+definition:
+  uesio.styles:
+    root:
+      padding: 10px 20px
+      color: "#444"
+      alignItems: center
+    selected:
+      backgroundColor: $Theme{color.primary}
+      color: white
+    content:
+      verticalAlign: middle
+      fontSize: 10pt

@@ -32,16 +32,16 @@ func (cvc *ComponentVariantCollection) NewItem() loadable.Item {
 // NewBundleableItemWithKey function
 func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, string(os.PathSeparator))
-	if len(keyArray) != 2 {
+	if len(keyArray) != 4 {
 		return nil, errors.New("Invalid Variant Key: " + key)
 	}
-	namespace, name, err := ParseKey(keyArray[1])
+	namespace, name, err := ParseKey(keyArray[3])
 	if err != nil {
 		return nil, errors.New("Invalid Variant Key: " + key)
 	}
 	*cvc = append(*cvc, ComponentVariant{
-		Component: keyArray[0],
-		Namespace: namespace,
+		Component: keyArray[0] + "/" + keyArray[1],
+		Namespace: keyArray[2] + "/" + namespace,
 		Name:      name,
 	})
 	return &(*cvc)[len(*cvc)-1], nil
@@ -51,16 +51,24 @@ func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (Bun
 func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	componentKey, hasComponent := conditions["studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
+	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 	if hasComponent {
-		if parts[0] != componentKey {
+		componentNS, componentName, err := ParseKey(componentKey)
+		if err != nil {
+			return "", err
+		}
+		nsUser, nsApp, err := ParseNamespace(componentNS)
+		if err != nil {
+			return "", err
+		}
+		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != componentName {
 			return "", nil
 		}
 	}
-	return namespace + "." + filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
+	return filepath.Join(parts[0], parts[1]+"."+parts[2], namespace+"."+strings.TrimSuffix(parts[3], ".yaml")), nil
 }
 
 // GetItem function

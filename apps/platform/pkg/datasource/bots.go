@@ -90,7 +90,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
 	switch request.CollectionName {
-	case "uesio/uesio.userfiles":
+	case "uesio/core.userfiles":
 		cleanUserFiles(request, connection, session)
 	}
 
@@ -116,7 +116,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
 	switch request.CollectionName {
-	case "uesio/uesio.user":
+	case "uesio/core.user":
 		clearUserCache(request, connection, session)
 	case "uesio/studio.sites":
 		clearHostCacheForSite(request, connection, session)

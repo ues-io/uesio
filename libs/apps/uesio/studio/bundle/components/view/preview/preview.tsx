@@ -18,10 +18,10 @@ interface Props extends definition.BaseProps {
 	definition: PreviewDefinition
 }
 
-const TextField = component.registry.getUtility("io.textfield")
-const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
-const Button = component.registry.getUtility("io.button")
-const Group = component.registry.getUtility("io.group")
+const TextField = component.registry.getUtility("uesio/io.textfield")
+const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
+const Button = component.registry.getUtility("uesio/io.button")
+const Group = component.registry.getUtility("uesio/io.group")
 
 const Preview: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props

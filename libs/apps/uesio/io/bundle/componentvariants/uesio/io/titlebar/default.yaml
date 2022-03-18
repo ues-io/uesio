@@ -1,0 +1,12 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+    title:
+      fontSize: 10pt
+      color: "#21242D"
+      fontWeight: bold
+    subtitle:
+      fontSize: 9pt
+      color: "#777"

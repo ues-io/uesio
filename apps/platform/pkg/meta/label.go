@@ -8,17 +8,17 @@ import (
 
 // Label struct
 type Label struct {
-	ID        string     `yaml:"-" uesio:"uesio/uesio.id"`
+	ID        string     `yaml:"-" uesio:"uesio/core.id"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Value     string     `yaml:"value" uesio:"uesio/studio.value"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function

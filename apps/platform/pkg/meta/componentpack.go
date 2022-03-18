@@ -9,7 +9,7 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID              string              `yaml:"-" uesio:"uesio/uesio.id"`
+	ID              string              `yaml:"-" uesio:"uesio/core.id"`
 	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace       string              `yaml:"-" uesio:"-"`
 	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -17,11 +17,11 @@ type ComponentPack struct {
 	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.runtimebundle"`
 	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.buildtimebundle"`
 	itemMeta        *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy       *User               `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner           *User               `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy       *User               `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt       int64               `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt       int64               `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy       *User               `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner           *User               `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy       *User               `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 type ComponentsRegistry struct {
@@ -61,12 +61,12 @@ func (cp *ComponentPack) GetKey() string {
 	return cp.Namespace + "." + cp.Name
 }
 
-func (cp *ComponentPack) GetComponentPackFilePath() string {
-	return filepath.Join(cp.GetKey(), "runtime.bundle.js")
-}
-
-func (cp *ComponentPack) GetBuilderComponentPackFilePath() string {
-	return filepath.Join(cp.GetKey(), "builder.bundle.js")
+func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
+	fileName := "runtime.bundle.js"
+	if buildMode {
+		fileName = "builder.bundle.js"
+	}
+	return filepath.Join(cp.Name, fileName)
 }
 
 // GetPath function

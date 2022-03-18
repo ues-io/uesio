@@ -7,7 +7,7 @@ interface Props extends definition.BaseProps {
 	setValue: (value: wire.PlainWireRecord) => void
 }
 
-const MapField = component.registry.getUtility("io.mapfield")
+const MapField = component.registry.getUtility("uesio/io.mapfield")
 
 const TranslationItem: FunctionComponent<Props> = (props) => {
 	const { context, namespace, value, setValue } = props

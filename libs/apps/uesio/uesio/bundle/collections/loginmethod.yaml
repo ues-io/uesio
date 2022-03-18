@@ -1,3 +1,0 @@
-name: loginmethod
-idFormat: "${uesio/uesio.federation_type}_${uesio/uesio.federation_id}"
-nameField: uesio/uesio.federation_id

@@ -128,11 +128,11 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for componentpacks
 			if metadataType == "componentpacks" {
 				cpack := collectionItem.(*meta.ComponentPack)
-				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath()] = FileRecord{
+				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
 					RecordID:  cpack.Name,
 					FieldName: "studio.runtimebundle",
 				}
-				fileNameMap[metadataType+":"+cpack.GetBuilderComponentPackFilePath()] = FileRecord{
+				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
 					RecordID:  cpack.Name,
 					FieldName: "studio.buildtimebundle",
 				}

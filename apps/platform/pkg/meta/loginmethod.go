@@ -1,16 +1,16 @@
 package meta
 
 type LoginMethod struct {
-	ID             string    `uesio:"uesio/uesio.id"`
-	FederationID   string    `uesio:"uesio/uesio.federation_id"`
-	FederationType string    `uesio:"uesio/uesio.federation_type"`
-	User           *User     `uesio:"uesio/uesio.user"`
+	ID             string    `uesio:"uesio/core.id"`
+	FederationID   string    `uesio:"uesio/core.federation_id"`
+	FederationType string    `uesio:"uesio/core.federation_type"`
+	User           *User     `uesio:"uesio/core.user"`
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy      *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner          *User     `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy      *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt      int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt      int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy      *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner          *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy      *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt      int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt      int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function

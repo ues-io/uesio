@@ -8,8 +8,8 @@ import WiresActions from "./wiresactions"
 import PanelsActions from "./panelsactions"
 import ParamsActions from "./paramsactions"
 
-const TabLabels = component.registry.getUtility("io.tablabels")
-const ScrollPanel = component.registry.getUtility("io.scrollpanel")
+const TabLabels = component.registry.getUtility("uesio/io.tablabels")
+const ScrollPanel = component.registry.getUtility("uesio/io.scrollpanel")
 
 const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props

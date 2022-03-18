@@ -6,7 +6,7 @@ import PropertiesPanel from "../../shared/propertiespanel"
 import CodePanel from "../../shared/codepanel"
 import ViewInfoPanel from "../../shared/viewinfopanel"
 
-const Grid = component.registry.getUtility("io.grid")
+const Grid = component.registry.getUtility("uesio/io.grid")
 
 import usePanels from "./usePanels"
 

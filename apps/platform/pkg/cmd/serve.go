@@ -97,6 +97,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/{namespace:\\w*\\/\\w*}/{route:.*}", controller.Route, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}/builder", controller.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}", controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/{invalidroute:.*}", http.NotFound, "GET")
 
 	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
@@ -108,7 +109,6 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace:\\w*\\/\\w*}/list/{grouping}", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
-	workspaceAPI(wr, "/metadata/{badapi:.*}", http.NotFound)
 
 	workspaceAPI(wr, "/bulk/job", controller.BulkJob).Methods("POST")
 	workspaceAPI(wr, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
@@ -127,6 +127,7 @@ func serve(cmd *cobra.Command, args []string) {
 	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 	versionAPI(vr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
 	versionAPI(vr, "/metadata/types/{type}/list/{grouping}", controller.MetadataList).Methods("GET")
+	versionAPI(vr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
@@ -142,6 +143,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
+	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")

@@ -1,5 +1,0 @@
-name: user
-type: REFERENCE
-label: User
-reference:
-  collection: uesio/uesio.user

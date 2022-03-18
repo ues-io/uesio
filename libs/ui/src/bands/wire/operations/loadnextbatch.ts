@@ -29,7 +29,8 @@ export default createAsyncThunk<
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
 		const requestWire = wiresRequestMap[wire.wire]
-		const [view, name] = wire.wire.split("/")
+		const [viewNsUser, viewName, name] = wire.wire.split("/")
+		const view = `${viewNsUser}/${viewName}`
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
 

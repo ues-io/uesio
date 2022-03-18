@@ -160,10 +160,7 @@ func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, ses
 }
 
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
-	}
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
 }
 

@@ -56,7 +56,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	return (
 		<>
 			<ComponentInternal
-				componentType="uesio.runtime"
+				componentType="uesio/core.runtime"
 				path=""
 				context={routeContext}
 			/>

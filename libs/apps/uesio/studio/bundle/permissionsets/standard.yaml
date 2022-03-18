@@ -145,5 +145,5 @@ collections:
   uesio/studio.translations: true
   uesio/studio.views: true
   uesio/studio.workspaces: true
-  uesio/uesio.userfiles: true
-  uesio/uesio.user: true
+  uesio/core.userfiles: true
+  uesio/core.user: true

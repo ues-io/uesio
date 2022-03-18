@@ -1,4 +1,4 @@
 name: public
 permissionSets:
   - uesio/docs.public
-  - uesio/uesio.public
+  - uesio/core.public

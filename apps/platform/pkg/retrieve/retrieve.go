@@ -46,13 +46,13 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 				if err != nil {
 					return err
 				}
-				itemStreams.AddFile(cp.GetBuilderComponentPackFilePath(), metadataType, builderStream)
+				itemStreams.AddFile(cp.GetComponentPackFilePath(true), metadataType, builderStream)
 
 				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
 				if err != nil {
 					return err
 				}
-				itemStreams.AddFile(cp.GetComponentPackFilePath(), metadataType, runtimeStream)
+				itemStreams.AddFile(cp.GetComponentPackFilePath(false), metadataType, runtimeStream)
 
 			}
 			// Special handling for bots

@@ -2,11 +2,11 @@ import { ChangeEvent, FunctionComponent, useState } from "react"
 
 import { hooks, component, styles, materialIcons, builder } from "@uesio/ui"
 
-const TextField = component.registry.getUtility("io.textfield")
-const Popper = component.registry.getUtility("io.popper")
-const IconButton = component.registry.getUtility("io.iconbutton")
-const TitleBar = component.registry.getUtility("io.titlebar")
-const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
+const TextField = component.registry.getUtility("uesio/io.textfield")
+const Popper = component.registry.getUtility("uesio/io.popper")
+const IconButton = component.registry.getUtility("uesio/io.iconbutton")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
 
 const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props

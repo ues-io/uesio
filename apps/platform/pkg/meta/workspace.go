@@ -2,7 +2,7 @@ package meta
 
 // Workspace struct
 type Workspace struct {
-	ID             string         `uesio:"uesio/uesio.id"`
+	ID             string         `uesio:"uesio/core.id"`
 	Name           string         `uesio:"uesio/studio.name"`
 	LoginRoute     string         `uesio:"uesio/studio.loginroute"`
 	HomeRoute      string         `uesio:"uesio/studio.homeroute"`
@@ -13,11 +13,11 @@ type Workspace struct {
 	Permissions    *PermissionSet `uesio:"-"`
 	bundleDef      *BundleDef
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy      *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner          *User     `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy      *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt      int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt      int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy      *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner          *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy      *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt      int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt      int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 func (w *Workspace) GetAppID() string {

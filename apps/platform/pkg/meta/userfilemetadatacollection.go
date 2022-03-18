@@ -11,7 +11,7 @@ type UserFileMetadataCollection []UserFileMetadata
 
 // GetName function
 func (ufmc *UserFileMetadataCollection) GetName() string {
-	return "uesio/uesio.userfiles"
+	return "uesio/core.userfiles"
 }
 
 // GetFields function

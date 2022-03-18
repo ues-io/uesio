@@ -5,10 +5,10 @@ import type monaco from "monaco-editor"
 
 const ANIMATION_DURATION = 3000
 
-const ScrollPanel = component.registry.getUtility("io.scrollpanel")
-const TitleBar = component.registry.getUtility("io.titlebar")
-const IconButton = component.registry.getUtility("io.iconbutton")
-const IOCodeField = component.registry.getUtility("io.codefield")
+const ScrollPanel = component.registry.getUtility("uesio/io.scrollpanel")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const IconButton = component.registry.getUtility("uesio/io.iconbutton")
+const IOCodeField = component.registry.getUtility("uesio/io.codefield")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)

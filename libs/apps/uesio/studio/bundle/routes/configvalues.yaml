@@ -1,4 +1,4 @@
 name: configvalues
 path: app/{appname}/workspace/{workspacename}/configvalues
-view: studio.configvalues
-theme: studio.default
+view: uesio/studio.configvalues
+theme: uesio/studio.default

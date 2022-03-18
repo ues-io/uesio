@@ -17,6 +17,7 @@ import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
+import { ID_FIELD } from "../collectionexports"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -157,7 +158,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			.getRecord()
 			?.getFieldValue<PlainWireRecord>(expression)
 		if (!file) return ""
-		const fileId = file["uesio.id"] as string
+		const fileId = file[ID_FIELD] as string
 		if (!fileId) return ""
 		return getUserFileURL(context, fileId)
 	},

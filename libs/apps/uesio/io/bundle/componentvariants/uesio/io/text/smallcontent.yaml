@@ -1,0 +1,8 @@
+name: smallcontent
+label: Small Content
+definition:
+  uesio.styles:
+    root:
+      color: "#555"
+      fontSize: "10pt"
+      lineHeight: "18pt"

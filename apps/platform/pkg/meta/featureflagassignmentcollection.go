@@ -11,7 +11,7 @@ type FeatureFlagAssignmentCollection []FeatureFlagAssignment
 
 // GetName function
 func (ffac *FeatureFlagAssignmentCollection) GetName() string {
-	return "uesio/uesio.featureflagassignments"
+	return "uesio/core.featureflagassignments"
 }
 
 // GetFields function

@@ -225,6 +225,22 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 	return nil
 }
 
+func validateRequiredMetadataItem(node *yaml.Node, property string) error {
+	value := getNodeValueAsString(node, property)
+	if value == "" {
+		return fmt.Errorf("Required Metadata Propety Missing: %s", property)
+	}
+	namespace, _, err := ParseKey(value)
+	if err != nil {
+		return fmt.Errorf("Invalid Metadata Property: %s, %s", property, value)
+	}
+	_, _, err = ParseNamespace(namespace)
+	if err != nil {
+		return fmt.Errorf("Invalid Namespace for Metadata Property: %s, %s", property, value)
+	}
+	return nil
+}
+
 func getNodeValueAsString(node *yaml.Node, key string) string {
 	keyNode, err := getMapNode(node, key)
 	if err != nil {

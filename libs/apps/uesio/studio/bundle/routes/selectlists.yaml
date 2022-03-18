@@ -1,4 +1,4 @@
 name: selectlists
 path: app/{appname}/workspace/{workspacename}/selectlists
-view: studio.selectlists
-theme: studio.default
+view: uesio/studio.selectlists
+theme: uesio/studio.default

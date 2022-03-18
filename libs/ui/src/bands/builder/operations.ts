@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../context/context"
 import { SaveResponseBatch } from "../../load/saveresponse"
+import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
 import { getMetadataListKey } from "./selectors"
@@ -72,7 +73,7 @@ const save = createAsyncThunk<
 			if (defState?.yaml) {
 				changes[defKey] = {
 					"studio.definition": defState.yaml.toString(),
-					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
+					[ID_FIELD]: `${workspace.app}_${workspace.name}_${defState.name}`,
 				}
 			}
 		}

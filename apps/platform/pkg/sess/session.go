@@ -51,7 +51,7 @@ func GetPublicUser(site *meta.Site) *meta.User {
 	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
 
 	if defaultSitePublicProfile == "" {
-		defaultSitePublicProfile = "uesio/uesio.public"
+		defaultSitePublicProfile = "uesio/core.public"
 	}
 	return &meta.User{
 		FirstName: "Guest",

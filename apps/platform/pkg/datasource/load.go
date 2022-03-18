@@ -18,15 +18,15 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio/uesio.userfiles",
+			Collection: "uesio/core.userfiles",
 		},
-		Fields: []string{"uesio/uesio.mimetype", "uesio/uesio.name"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.name"},
 	},
 	"USER": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio/uesio.user",
+			Collection: "uesio/core.user",
 		},
-		Fields: []string{"uesio/uesio.firstname", "uesio/uesio.lastname", "uesio/uesio.picture"},
+		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.picture"},
 	},
 }
 

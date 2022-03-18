@@ -2,17 +2,17 @@ package meta
 
 // BulkBatch struct
 type BulkBatch struct {
-	ID        string            `uesio:"uesio/uesio.id"`
-	AutoID    string            `uesio:"uesio/uesio.autoid"`
-	BulkJobID string            `uesio:"uesio/uesio.bulkjobid"`
-	Status    string            `uesio:"uesio/uesio.status"`
-	Result    *UserFileMetadata `yaml:"-" uesio:"uesio/uesio.result"`
+	ID        string            `uesio:"uesio/core.id"`
+	AutoID    string            `uesio:"uesio/core.autoid"`
+	BulkJobID string            `uesio:"uesio/core.bulkjobid"`
+	Status    string            `uesio:"uesio/core.status"`
+	Result    *UserFileMetadata `yaml:"-" uesio:"uesio/core.result"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function

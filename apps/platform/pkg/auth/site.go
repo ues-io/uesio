@@ -116,7 +116,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 
 func GetHeadlessSession() (*sess.Session, error) {
 	site := &meta.Site{
-		ID:   "prod_uesio/studio",
+		ID:   "uesio/studio_prod",
 		Name: "prod",
 		Bundle: &meta.Bundle{
 			App: &meta.App{
@@ -140,7 +140,7 @@ func GetHeadlessSession() (*sess.Session, error) {
 		ID:        "uesio",
 		FirstName: "Super",
 		LastName:  "Admin",
-		Profile:   "uesio/uesio.public",
+		Profile:   "uesio/core.public",
 	}, site)
 
 	session.SetPermissions(&meta.PermissionSet{

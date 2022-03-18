@@ -1,7 +1,7 @@
 import { FunctionComponent, ChangeEvent } from "react"
 import { definition, hooks, styles, component } from "@uesio/ui"
 
-const Button = component.registry.getUtility("io.button")
+const Button = component.registry.getUtility("uesio/io.button")
 
 type BulkjobDefinition = {
 	id: string

@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { component, builder } from "@uesio/ui"
 
-const TextField = component.registry.getUtility("io.textfield")
-const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
+const TextField = component.registry.getUtility("uesio/io.textfield")
+const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
 
 const KeyProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { path, descriptor, context, valueAPI } = props

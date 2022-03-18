@@ -1,4 +1,4 @@
 name: field
 path: app/{appname}/workspace/{workspacename}/collections/{collectionname}/fields/{fieldname}
-view: studio.field
-theme: studio.default
+view: uesio/studio.field
+theme: uesio/studio.default

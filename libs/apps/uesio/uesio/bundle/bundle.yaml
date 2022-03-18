@@ -1,9 +1,0 @@
-name: uesio/uesio
-loginRoute: uesio/uesio.login
-homeRoute: uesio/uesio.home
-defaultProfile: uesio/uesio.standard
-defaultTheme: uesio/uesio.default
-publicProfile: uesio/uesio.public
-dependencies:
-  uesio/io:
-    version: "v0.0.1"

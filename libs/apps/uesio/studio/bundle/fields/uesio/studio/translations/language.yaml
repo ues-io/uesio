@@ -1,7 +1,7 @@
 name: language
 type: SELECT
 label: Language
-selectList: uesio/uesio.language
+selectList: uesio/core.language
 required: true
 createOnly: true
 validate:

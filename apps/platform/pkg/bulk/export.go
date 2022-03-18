@@ -112,9 +112,9 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	details := fileadapt.FileDetails{
 		Name:         generateFileName(spec.Collection),
-		CollectionID: "uesio/uesio.bulkbatches",
+		CollectionID: "uesio/core.bulkbatches",
 		RecordID:     batch.ID,
-		FieldID:      "uesio/uesio.result",
+		FieldID:      "uesio/core.result",
 	}
 
 	data, err := collection.GetData()
@@ -131,8 +131,8 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 	batch.Status = "completed"
 	batch.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			adapt.ID_FIELD:       true,
-			"uesio/uesio.status": true,
+			adapt.ID_FIELD:      true,
+			"uesio/core.status": true,
 		},
 	})
 

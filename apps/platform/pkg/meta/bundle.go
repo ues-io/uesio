@@ -46,18 +46,18 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 
 // Bundle struct
 type Bundle struct {
-	ID          string    `uesio:"uesio/uesio.id"`
+	ID          string    `uesio:"uesio/core.id"`
 	Major       string    `uesio:"uesio/studio.major"`
 	Minor       string    `uesio:"uesio/studio.minor"`
 	Patch       string    `uesio:"uesio/studio.patch"`
 	App         *App      `uesio:"uesio/studio.app"`
 	Description string    `uesio:"uesio/studio.description"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner       *User     `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy   *User     `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy   *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt   int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt   int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 func (b *Bundle) GetVersionString() string {

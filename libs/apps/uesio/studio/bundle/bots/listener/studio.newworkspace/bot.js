@@ -5,7 +5,7 @@ function newworkspace(bot) {
 
 	var IoVersion = "uesio/io_" + bot.studio.getBundleLastVersion("uesio/io")
 	var UesioVersion =
-		"uesio/uesio_" + bot.studio.getBundleLastVersion("uesio/uesio")
+		"uesio/core_" + bot.studio.getBundleLastVersion("uesio/core")
 
 	bot.save("studio.workspaces", [
 		{

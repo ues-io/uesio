@@ -1,4 +1,4 @@
 name: standard
 permissionSets:
   - uesio/studio.standard
-  - uesio/uesio.public
+  - uesio/core.public

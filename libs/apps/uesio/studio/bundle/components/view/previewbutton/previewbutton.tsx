@@ -17,7 +17,7 @@ interface Props extends definition.BaseProps {
 	definition: PreviewDefinition
 }
 
-const Button = component.registry.getUtility("io.button")
+const Button = component.registry.getUtility("uesio/io.button")
 
 const PreviewButton: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props

@@ -1,3 +1,0 @@
-name: bulkjobs
-nameField: uesio/uesio.id
-idFormat: ${uesio/uesio.autoid}

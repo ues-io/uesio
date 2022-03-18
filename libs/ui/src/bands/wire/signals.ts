@@ -321,7 +321,7 @@ const signals: Record<string, SignalDescriptor> = {
 					const changes = wire.changes
 					const changeKeys = Object.keys(changes)
 					if (changeKeys.length === 1) {
-						const [, name] = wire.wire.split("/")
+						const [, , name] = wire.wire.split("/")
 						return context.addFrame({
 							record: changeKeys[0],
 							wire: name,

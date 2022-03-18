@@ -3,8 +3,8 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder, component, definition } from "@uesio/ui"
 import PropList from "./proplist"
 
-const TitleBar = component.registry.getUtility("io.titlebar")
-const ListField = component.registry.getUtility("io.listfield")
+const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const ListField = component.registry.getUtility("uesio/io.listfield")
 
 type StyleValue = {
 	key: string

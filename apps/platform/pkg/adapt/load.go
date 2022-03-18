@@ -60,7 +60,7 @@ func (fm *FieldsMap) GetKeys() []string {
 	return fieldIDs
 }
 
-var ID_FIELD = "uesio/uesio.id"
+var ID_FIELD = "uesio/core.id"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {

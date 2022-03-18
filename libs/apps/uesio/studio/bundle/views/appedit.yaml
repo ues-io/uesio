@@ -4,15 +4,15 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - io.list:
+    - uesio/io.list:
         id: editapplist
         mode: EDIT
         components:
-          - io.field:
-              fieldId: studio.name
-          - io.field:
-              fieldId: studio.description
-          - io.field:
-              fieldId: studio.color
-          - studio.colorpicker:
-              fieldId: studio.color
+          - uesio/io.field:
+              fieldId: uesio/studio.name
+          - uesio/io.field:
+              fieldId: uesio/studio.description
+          - uesio/io.field:
+              fieldId: uesio/studio.color
+          - uesio/studio.colorpicker:
+              fieldId: uesio/studio.color

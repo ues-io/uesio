@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 
-const Button = component.registry.getUtility("io.button")
-const Icon = component.registry.getUtility("io.icon")
+const Button = component.registry.getUtility("uesio/io.button")
+const Icon = component.registry.getUtility("uesio/io.icon")
 
 const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props

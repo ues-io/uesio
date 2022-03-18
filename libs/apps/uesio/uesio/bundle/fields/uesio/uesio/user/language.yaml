@@ -1,4 +1,0 @@
-name: language
-type: SELECT
-label: Language
-selectList: uesio/uesio.language

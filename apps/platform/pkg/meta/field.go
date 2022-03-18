@@ -72,7 +72,7 @@ type FormulaMetadata struct {
 
 // Field struct
 type Field struct {
-	ID                     string                  `yaml:"-" uesio:"uesio/uesio.id"`
+	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
 	CollectionRef          string                  `yaml:"collection" uesio:"uesio/studio.collection"`
 	Namespace              string                  `yaml:"-" uesio:"-"`
@@ -92,11 +92,11 @@ type Field struct {
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"uesio/studio.formula"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"uesio/studio.autopopulate"`
 	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
-	CreatedBy              *User                   `yaml:"-" uesio:"uesio/uesio.createdby"`
-	Owner                  *User                   `yaml:"-" uesio:"uesio/uesio.owner"`
-	UpdatedBy              *User                   `yaml:"-" uesio:"uesio/uesio.updatedby"`
-	UpdatedAt              int64                   `yaml:"-" uesio:"uesio/uesio.updatedat"`
-	CreatedAt              int64                   `yaml:"-" uesio:"uesio/uesio.createdat"`
+	CreatedBy              *User                   `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner                  *User                   `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy              *User                   `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt              int64                   `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt              int64                   `yaml:"-" uesio:"uesio/core.createdat"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" uesio:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" uesio:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"uesio/studio.languagelabel"`
@@ -262,7 +262,7 @@ func validateFileField(node *yaml.Node, fieldKey string) error {
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	return setDefaultValue(fileNode, "filecollection", "uesio/uesio.platform")
+	return setDefaultValue(fileNode, "filecollection", "uesio/core.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {

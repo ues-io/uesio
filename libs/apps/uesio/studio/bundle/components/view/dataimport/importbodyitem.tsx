@@ -10,8 +10,8 @@ interface Props extends definition.BaseProps {
 	field: collection.Field
 }
 
-const TextField = component.registry.getUtility("io.textfield")
-const SelectField = component.registry.getUtility("io.selectfield")
+const TextField = component.registry.getUtility("uesio/io.textfield")
+const SelectField = component.registry.getUtility("uesio/io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	const { context, csvOptions, setMapping, removeMapping, field, mapping } =

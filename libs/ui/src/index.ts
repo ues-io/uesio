@@ -22,8 +22,8 @@ import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
 // Register with the component registry so that it's not an explicit dependency
-register("uesio.runtime", RunMode)
-register("uesio.view", View)
+register("uesio/core.runtime", RunMode)
+register("uesio/core.view", View)
 
 export {
 	builder,

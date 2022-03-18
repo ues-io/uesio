@@ -26,8 +26,8 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &RouteMergeData{
-			View:  "uesio.notfound",
-			Theme: "uesio.default",
+			View:  "uesio/core.notfound",
+			Theme: "uesio/core.default",
 		})
 		return
 	}
@@ -63,8 +63,8 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &RouteMergeData{
-			View:  "uesio.notfound",
-			Theme: "uesio.default",
+			View:  "uesio/core.notfound",
+			Theme: "uesio/core.default",
 		})
 		return
 	}
@@ -82,10 +82,10 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 func getNotFoundRoute(path string) *meta.Route {
 	return &meta.Route{
-		ViewRef:   "uesio.notfound",
-		Namespace: "uesio",
+		ViewRef:   "uesio/core.notfound",
+		Namespace: "uesio/core",
 		Path:      path,
-		ThemeRef:  "uesio.default",
+		ThemeRef:  "uesio/core.default",
 	}
 }
 
