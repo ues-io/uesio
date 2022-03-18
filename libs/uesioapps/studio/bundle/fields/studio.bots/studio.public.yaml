@@ -1,0 +1,4 @@
+name: public
+collection: studio.bots
+type: CHECKBOX
+label: Public

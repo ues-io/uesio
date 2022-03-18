@@ -26,6 +26,7 @@ definition:
         studio.dialect:
         studio.collection:
         studio.content:
+        studio.public:
         uesio.updatedat:
         uesio.updatedby:
         uesio.createdat:
@@ -136,6 +137,9 @@ definition:
                                       fieldId: uesio.updatedby
                                   - io.field:
                                       fieldId: uesio.updatedat
+                                  - io.field:
+                                      fieldId: studio.public
+                                      displayAs: "TOGGLE"
                             - io.field:
                                 fieldId: studio.content
                                 id: botcontent
@@ -193,6 +197,9 @@ definition:
                         fieldId: studio.collection
                         metadataType: "COLLECTION"
                         label: "Collection"
+              - io.field:
+                  fieldId: studio.public
+                  displayAs: "TOGGLE"
       actions:
         - io.button:
             uesio.variant: "io.primary"

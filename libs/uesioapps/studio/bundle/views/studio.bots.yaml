@@ -37,6 +37,7 @@ definition:
         studio.dialect:
         studio.type:
         studio.content:
+        studio.public:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -133,6 +134,9 @@ definition:
                   fieldId: studio.dialect
               - io.field:
                   fieldId: studio.type
+              - io.field:
+                  fieldId: studio.public
+                  displayAs: "TOGGLE"
       actions:
         - io.button:
             uesio.variant: "io.primary"
