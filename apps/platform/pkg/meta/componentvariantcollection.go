@@ -1,9 +1,7 @@
 package meta
 
 import (
-	"errors"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -31,19 +29,11 @@ func (cvc *ComponentVariantCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
-	if len(keyArray) != 4 {
-		return nil, errors.New("Invalid Variant Key: " + key)
-	}
-	namespace, name, err := ParseKey(keyArray[3])
+	cv, err := NewComponentVariant(key)
 	if err != nil {
-		return nil, errors.New("Invalid Variant Key: " + key)
+		return nil, err
 	}
-	*cvc = append(*cvc, ComponentVariant{
-		Component: keyArray[0] + "/" + keyArray[1],
-		Namespace: keyArray[2] + "/" + namespace,
-		Name:      name,
-	})
+	*cvc = append(*cvc, *cv)
 	return &(*cvc)[len(*cvc)-1], nil
 }
 
@@ -68,7 +58,12 @@ func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace str
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], parts[1]+"."+parts[2], namespace+"."+strings.TrimSuffix(parts[3], ".yaml")), nil
+	cv := ComponentVariant{
+		Component: componentKey,
+		Namespace: namespace,
+		Name:      strings.TrimSuffix(parts[3], ".yaml"),
+	}
+	return cv.GetKey(), nil
 }
 
 // GetItem function

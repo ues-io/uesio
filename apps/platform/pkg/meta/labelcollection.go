@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
@@ -29,13 +28,13 @@ func (lc *LabelCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (lc *LabelCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Label Key: " + key)
 	}
 	*lc = append(*lc, Label{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*lc)[len(*lc)-1], nil
 }

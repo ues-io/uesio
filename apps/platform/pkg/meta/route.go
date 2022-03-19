@@ -63,7 +63,7 @@ func (r *Route) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (r *Route) GetKey() string {
-	return r.Namespace + "." + r.Name
+	return fmt.Sprintf("%s.%s", r.Namespace, r.Name)
 }
 
 // GetPath function

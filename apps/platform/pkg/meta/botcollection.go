@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -60,19 +59,40 @@ func (bc *BotCollection) GetKeyFromPath(path string, namespace string, condition
 		if hasType && botType != botTypeKey {
 			return "", nil
 		}
-		return namespace + "." + filepath.Join(botType, parts[1]), nil
+		bot := Bot{
+			Type:      botType,
+			Namespace: namespace,
+			Name:      parts[1],
+		}
+		return bot.GetKey(), nil
 	}
 	if botType == "beforesave" || botType == "aftersave" {
-		if partLength != 4 || parts[3] != "bot.yaml" {
+		if partLength != 6 || parts[5] != "bot.yaml" {
 			return "", nil
 		}
 		if hasType && botType != botTypeKey {
 			return "", nil
 		}
-		if hasCollection && parts[1] != collectionKey {
-			return "", nil
+		if hasCollection {
+			collectionNS, collectionName, err := ParseKey(collectionKey)
+			if err != nil {
+				return "", err
+			}
+			nsUser, nsApp, err := ParseNamespace(collectionNS)
+			if err != nil {
+				return "", err
+			}
+			if parts[1] != nsUser || parts[2] != nsApp || parts[3] != collectionName {
+				return "", nil
+			}
 		}
-		return namespace + "." + filepath.Join(botType, parts[1], parts[2]), nil
+		bot := Bot{
+			Type:          botType,
+			Namespace:     namespace,
+			Name:          parts[4],
+			CollectionRef: collectionKey,
+		}
+		return bot.GetKey(), nil
 	}
 	return "", errors.New("Bad bundle conditions for bot: " + path)
 }

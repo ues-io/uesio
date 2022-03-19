@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -12,7 +11,7 @@ import (
 
 // NewBot function
 func NewBot(key string) (*Bot, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
+	keyArray := strings.Split(key, ":")
 	keySize := len(keyArray)
 	if keySize != 3 && keySize != 2 {
 		return nil, errors.New("Invalid Bot Key: " + key)
@@ -129,11 +128,11 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 }
 
 func (b *Bot) GetBotFilePath() string {
-	return filepath.Join(b.GetKey(), "bot.js")
+	return filepath.Join(b.GetBasePath(), "bot.js")
 }
 
 func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
-	return filepath.Join(b.GetKey(), "templates", template)
+	return filepath.Join(b.GetBasePath(), "templates", template)
 }
 
 // GetCollectionName function
@@ -161,17 +160,23 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
 	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
-		return filepath.Join(botType, b.Namespace+"."+b.Name)
+		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
 	}
-	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)
+	return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
+}
+
+func (b *Bot) GetBasePath() string {
+	botType := GetBotTypes()[b.Type]
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+		return filepath.Join(botType, b.Name)
+	}
+	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)
+	nsUser, appName, _ := ParseNamespace(collectionNamespace)
+	return filepath.Join(botType, nsUser, appName, collectionName, b.Name)
 }
 
 func (b *Bot) GetPath() string {
-	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
-		return filepath.Join(botType, b.Name, "bot.yaml")
-	}
-	return filepath.Join(botType, b.CollectionRef, b.Name, "bot.yaml")
+	return filepath.Join(b.GetBasePath(), "bot.yaml")
 }
 
 // GetPermChecker function

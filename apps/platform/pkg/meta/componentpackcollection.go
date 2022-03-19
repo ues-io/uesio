@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"os"
-	"runtime/debug"
 	"strconv"
 	"strings"
 
@@ -31,15 +30,13 @@ func (cpc *ComponentPackCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
-		debug.PrintStack()
-
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
 	}
 	*cpc = append(*cpc, ComponentPack{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*cpc)[len(*cpc)-1], nil
 }

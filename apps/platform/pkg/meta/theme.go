@@ -44,7 +44,7 @@ func (t *Theme) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (t *Theme) GetKey() string {
-	return t.Namespace + "." + t.Name
+	return fmt.Sprintf("%s.%s", t.Namespace, t.Name)
 }
 
 // GetPath function

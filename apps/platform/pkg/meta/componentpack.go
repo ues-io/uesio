@@ -58,7 +58,7 @@ func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (cp *ComponentPack) GetKey() string {
-	return cp.Namespace + "." + cp.Name
+	return fmt.Sprintf("%s.%s", cp.Namespace, cp.Name)
 }
 
 func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {

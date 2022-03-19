@@ -44,7 +44,7 @@ func (l *Label) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (l *Label) GetKey() string {
-	return l.Namespace + "." + l.Name
+	return fmt.Sprintf("%s.%s", l.Namespace, l.Name)
 }
 
 // GetPath function

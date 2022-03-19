@@ -4,7 +4,7 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - io.grid:
+    - uesio/io.grid:
         uesio.styles:
           root:
             alignItems: center
@@ -12,34 +12,34 @@ definition:
             height: 100vh
             backgroundColor: "#F2F2F2"
         items:
-          - io.griditem:
+          - uesio/io.griditem:
               uesio.styles:
                 root:
                   textAlign: center
               components:
-                - io.text:
+                - uesio/io.text:
                     text: "😞"
                     uesio.styles:
                       root:
                         fontSize: 60pt
                         padding: 20px
                     element: div
-                - io.text:
+                - uesio/io.text:
                     text: "Nothing to see here."
                     uesio.styles:
                       root:
                         fontSize: 14pt
                         fontWeight: bold
                     element: div
-                - io.text:
+                - uesio/io.text:
                     text: "You may need to log in again"
                     uesio.styles:
                       root:
                         fontSize: 9pt
                         paddingBottom: 20pt
                     element: div
-                - io.button:
-                    uesio.variant: io.secondary
+                - uesio/io.button:
+                    uesio.variant: uesio/io.secondary
                     text: "Go To Login Page"
                     signals:
                       - signal: "route/NAVIGATE"

@@ -6,25 +6,25 @@ components:
     button:
     code:
       variants:
-        - uesio/io.fieldlabel.uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
     deck:
     dialog:
       variants:
-        - uesio/io.titlebar.uesio/io.dialog
+        - uesio/io.titlebar:uesio/io.dialog
     dialogplain:
     field:
       variants:
-        - uesio/io.textfield.uesio/io.default
-        - uesio/io.codefield.uesio/io.default
-        - uesio/io.userfield.uesio/io.default
-        - uesio/io.checkboxfield.uesio/io.default
-        - uesio/io.selectfield.uesio/io.default
-        - uesio/io.autocomplete.uesio/io.default
-        - uesio/io.fieldlabel.uesio/io.default
-        - uesio/io.fieldwrapper.uesio/io.default
-        - uesio/io.tile.uesio/io.default
-        - uesio/io.numberfield.uesio/io.default
-        - uesio/io.listfield.uesio/io.default
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.codefield:uesio/io.default
+        - uesio/io.userfield:uesio/io.default
+        - uesio/io.checkboxfield:uesio/io.default
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.autocomplete:uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.default
+        - uesio/io.tile:uesio/io.default
+        - uesio/io.numberfield:uesio/io.default
+        - uesio/io.listfield:uesio/io.default
     filter:
       variants:
         - uesio/io.selectfield.uesio/io.filter
@@ -37,18 +37,18 @@ components:
     searchbox:
     table:
       variants:
-        - uesio/io.textfield.uesio/io.table
-        - uesio/io.selectfield.uesio/io.table
-        - uesio/io.checkboxfield.uesio/io.table
-        - uesio/io.autocomplete.uesio/io.table
-        - uesio/io.table.uesio/io.default
-        - uesio/io.button.uesio/io.nav
-        - uesio/io.fileimage.uesio/io.table
-        - uesio/io.numberfield.uesio/io.table
+        - uesio/io.textfield:uesio/io.table
+        - uesio/io.selectfield:uesio/io.table
+        - uesio/io.checkboxfield:uesio/io.table
+        - uesio/io.autocomplete:uesio/io.table
+        - uesio/io.table:uesio/io.default
+        - uesio/io.button:uesio/io.nav
+        - uesio/io.fileimage:uesio/io.table
+        - uesio/io.numberfield:uesio/io.table
     text:
     tile:
       variants:
-        - uesio/io.text.uesio/io.icon
+        - uesio/io.text:uesio/io.icon
     titlebar:
   utility:
     alert:

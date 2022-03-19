@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
@@ -29,13 +28,13 @@ func (slc *SelectListCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid SelectList Key: " + key)
 	}
 	*slc = append(*slc, SelectList{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*slc)[len(*slc)-1], nil
 }

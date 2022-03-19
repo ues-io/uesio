@@ -58,7 +58,7 @@ func (ds *DataSource) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (ds *DataSource) GetKey() string {
-	return ds.Namespace + "." + ds.Name
+	return fmt.Sprintf("%s.%s", ds.Namespace, ds.Name)
 }
 
 // GetPath function

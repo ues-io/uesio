@@ -4,13 +4,13 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - io.list:
+    - uesio/io.list:
         components:
-          - io.titlebar:
-              uesio.variant: io.nav
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
               title: Data
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -18,16 +18,16 @@ definition:
                     value: bots
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/bots
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/bots
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Bots
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: smart_toy
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -35,16 +35,16 @@ definition:
                     value: collections
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/collections
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/collections
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Collections
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: list
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -52,16 +52,16 @@ definition:
                     value: datasources
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/datasources
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/datasources
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Data Sources
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: dynamic_feed
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -69,19 +69,19 @@ definition:
                     value: selectlists
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/selectlists
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/selectlists
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Select Lists
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: playlist_add_check
-          - io.titlebar:
-              uesio.variant: io.nav
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
               title: User Interface
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -89,16 +89,16 @@ definition:
                     value: components
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/components
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/components
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Components
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: widgets
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -106,16 +106,16 @@ definition:
                     value: routes
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/routes
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/routes
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Routes
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: map
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -123,16 +123,16 @@ definition:
                     value: themes
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/themes
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/themes
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Themes
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: palette
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -140,16 +140,16 @@ definition:
                     value: views
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/views
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/views
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Views
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: view_quilt
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -157,19 +157,19 @@ definition:
                     value: labels
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/labels
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/labels
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Labels
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: label
-          - io.titlebar:
-              uesio.variant: io.nav
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
               title: Admin
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -177,16 +177,16 @@ definition:
                     value: configvalues
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/configvalues
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/configvalues
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Config Values
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: tune
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -194,16 +194,16 @@ definition:
                     value: credentials
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/credentials
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/credentials
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Credentials
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: vpn_key
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -211,16 +211,16 @@ definition:
                     value: files
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/files
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/files
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Files
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: collections
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -228,16 +228,16 @@ definition:
                     value: permissionsets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissionsets
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/permissionsets
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Permission Sets
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: rule
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -245,16 +245,16 @@ definition:
                     value: profiles
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/profiles
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/profiles
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Profiles
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: group
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -262,16 +262,16 @@ definition:
                     value: secrets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/secrets
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/secrets
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Secrets
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: lock
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -279,16 +279,16 @@ definition:
                     value: featureflags
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/featureflags
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/featureflags
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Feature Flags
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: new_releases
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -296,11 +296,11 @@ definition:
                     value: translations
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/translations
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/translations
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Translations
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: translate

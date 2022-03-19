@@ -46,7 +46,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 
 	if (mode !== "EDIT") {
-		return <component.Component {...props} componentType="io.field" />
+		return <component.Component {...props} componentType="uesio/io.field" />
 	}
 
 	return (

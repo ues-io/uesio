@@ -4,92 +4,92 @@ components:
     colorpicker:
     addbundle:
       utilities:
-        - io.grid
-        - io.tile
-        - io.selectfield
-        - io.button
-        - io.titlebar
+        - uesio/io.grid
+        - uesio/io.tile
+        - uesio/io.selectfield
+        - uesio/io.button
+        - uesio/io.titlebar
       variants:
-        - io.button.io.secondary
-        - io.button.io.primary
-        - io.selectfield.io.default
-        - io.tile.io.item
-        - io.titlebar.io.default
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.button:uesio/io.primary
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.tile:uesio/io.item
+        - uesio/io.titlebar:uesio/io.default
     metadatafield:
       utilities:
-        - io.textfield
-        - io.selectfield
-        - io.grid
+        - uesio/io.textfield
+        - uesio/io.selectfield
+        - uesio/io.grid
     codefield:
       utilities:
-        - io.codefield
+        - uesio/io.codefield
     permissionpicker:
       utilities:
-        - io.checkboxfield
-        - io.toggleswitch
-        - io.titlebar
+        - uesio/io.checkboxfield
+        - uesio/io.toggleswitch
+        - uesio/io.titlebar
     configsecrets:
       utilities:
-        - io.titlebar
-        - io.button
-        - io.textfield
-        - io.dialog
+        - uesio/io.titlebar
+        - uesio/io.button
+        - uesio/io.textfield
+        - uesio/io.dialog
       variants:
-        - io.button.io.secondary
-        - io.textfield.io.default
-        - io.titlebar.io.default
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.titlebar:uesio/io.default
     datamanager:
       variants:
-        - io.table.io.default
+        - uesio/io.table:uesio/io.default
       utilities:
-        - io.table
+        - uesio/io.table
     collectionlist:
       variants:
-        - io.tile.io.item
+        - uesio/io.tile:uesio/io.item
       utilities:
-        - io.tile
+        - uesio/io.tile
     dataimport:
       variants:
-        - io.selectfield.io.default
-        - io.fieldlabel.io.default
-        - io.textfield.io.default
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.textfield:uesio/io.default
       utilities:
-        - io.tile
-        - io.selectfield
-        - io.button
-        - io.icon
-        - io.grid
+        - uesio/io.tile
+        - uesio/io.selectfield
+        - uesio/io.button
+        - uesio/io.icon
+        - uesio/io.grid
     configfeatureflags:
       utilities:
-        - io.titlebar
-        - io.button
-        - io.togglefield
-        - io.dialog
+        - uesio/io.titlebar
+        - uesio/io.button
+        - uesio/io.togglefield
+        - uesio/io.dialog
       variants:
-        - io.button.io.secondary
-        - io.titlebar.io.default
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.titlebar:uesio/io.default
     translations:
     preview:
       utilities:
-        - io.textfield
-        - io.fieldwrapper
-        - io.autocomplete
-        - io.group
-        - io.button
+        - uesio/io.textfield
+        - uesio/io.fieldwrapper
+        - uesio/io.autocomplete
+        - uesio/io.group
+        - uesio/io.button
       variants:
-        - io.textfield.io.default
-        - io.button.io.primary
-        - io.autocomplete.io.default
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.button:uesio/io.primary
+        - uesio/io.autocomplete:uesio/io.default
     previewbutton:
       utilities:
-        - io.button
+        - uesio/io.button
       variants:
-        - io.button.io.secondary
+        - uesio/io.button:io.secondary
     dataexport:
       variants:
-        - io.button.io.primary
+        - uesio/io.button:io.primary
       utilities:
-        - io.button
+        - uesio/io.button
     # Define a builder for the uesio runtime and slot
     # uesio.runtime:
     # uesio.view:

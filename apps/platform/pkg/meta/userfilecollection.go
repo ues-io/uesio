@@ -104,7 +104,7 @@ func (ufc *UserFileCollection) SetWorkspace(workspace string) {
 
 // GetKey function
 func (ufc *UserFileCollection) GetKey() string {
-	return ufc.Namespace + "." + ufc.Name
+	return fmt.Sprintf("%s.%s", ufc.Namespace, ufc.Name)
 }
 
 // GetPath function

@@ -51,7 +51,7 @@ func (sl *SelectList) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (sl *SelectList) GetKey() string {
-	return sl.Namespace + "." + sl.Name
+	return fmt.Sprintf("%s.%s", sl.Namespace, sl.Name)
 }
 
 // GetPath function

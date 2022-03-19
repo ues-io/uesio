@@ -58,7 +58,7 @@ func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (cv *ConfigValue) GetKey() string {
-	return cv.Namespace + "." + cv.Name
+	return fmt.Sprintf("%s.%s", cv.Namespace, cv.Name)
 }
 
 // GetPath function

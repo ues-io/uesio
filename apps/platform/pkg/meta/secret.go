@@ -58,7 +58,7 @@ func (s *Secret) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (s *Secret) GetKey() string {
-	return s.Namespace + "." + s.Name
+	return fmt.Sprintf("%s.%s", s.Namespace, s.Name)
 }
 
 // GetPath function

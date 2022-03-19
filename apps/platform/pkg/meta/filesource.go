@@ -58,7 +58,7 @@ func (fs *FileSource) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (fs *FileSource) GetKey() string {
-	return fs.Namespace + "." + fs.Name
+	return fmt.Sprintf("%s.%s", fs.Namespace, fs.Name)
 }
 
 // GetPath function

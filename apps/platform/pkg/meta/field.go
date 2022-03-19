@@ -149,7 +149,7 @@ func (f *Field) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (f *Field) GetKey() string {
-	return filepath.Join(f.CollectionRef, f.Namespace+"."+f.Name)
+	return fmt.Sprintf("%s:%s.%s", f.CollectionRef, f.Namespace, f.Name)
 }
 
 // GetPath function

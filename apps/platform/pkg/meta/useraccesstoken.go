@@ -56,7 +56,7 @@ func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (uat *UserAccessToken) GetKey() string {
-	return uat.Namespace + "." + uat.Name
+	return fmt.Sprintf("%s.%s", uat.Namespace, uat.Name)
 }
 
 // GetPath function

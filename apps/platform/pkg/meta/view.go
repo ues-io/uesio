@@ -45,7 +45,7 @@ func (v *View) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (v *View) GetKey() string {
-	return v.Namespace + "." + v.Name
+	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
 }
 
 // GetPath function
@@ -152,7 +152,7 @@ func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, u
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							(*usedVariants)[compName+"."+valueNode.Value] = true
+							(*usedVariants)[compName+":"+valueNode.Value] = true
 						}
 					}
 				}

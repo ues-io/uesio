@@ -59,7 +59,7 @@ func (f *File) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (f *File) GetKey() string {
-	return f.Namespace + "." + f.Name
+	return fmt.Sprintf("%s.%s", f.Namespace, f.Name)
 }
 
 // GetPath function

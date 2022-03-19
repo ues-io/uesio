@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -31,17 +30,17 @@ func (fc *FieldCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
-	if len(keyArray) != 4 {
+	keyArray := strings.Split(key, ":")
+	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
-	namespace, name, err := ParseKey(keyArray[3])
+	namespace, name, err := ParseKey(keyArray[1])
 	if err != nil {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
 	*fc = append(*fc, Field{
-		CollectionRef: keyArray[0] + "/" + keyArray[1],
-		Namespace:     keyArray[2] + "/" + namespace,
+		CollectionRef: keyArray[0],
+		Namespace:     namespace,
 		Name:          name,
 	})
 	return &(*fc)[len(*fc)-1], nil
@@ -56,7 +55,6 @@ func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditi
 		return "", nil
 	}
 	if hasCollection {
-
 		collectionNS, collectionName, err := ParseKey(collectionKey)
 		if err != nil {
 			return "", err
@@ -69,7 +67,12 @@ func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditi
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], parts[1]+"."+parts[2], namespace+"."+strings.TrimSuffix(parts[3], ".yaml")), nil
+	field := Field{
+		CollectionRef: collectionKey,
+		Namespace:     namespace,
+		Name:          strings.TrimSuffix(parts[3], ".yaml"),
+	}
+	return field.GetKey(), nil
 }
 
 // GetItem function

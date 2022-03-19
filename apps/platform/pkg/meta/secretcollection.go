@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
@@ -29,13 +28,13 @@ func (sc *SecretCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Secret Key: " + key)
 	}
 	*sc = append(*sc, Secret{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*sc)[len(*sc)-1], nil
 }

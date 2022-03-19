@@ -77,7 +77,7 @@ func (c *Collection) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (c *Collection) GetKey() string {
-	return c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
 // GetPath function

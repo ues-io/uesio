@@ -55,7 +55,7 @@ func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (ff *FeatureFlag) GetKey() string {
-	return ff.Namespace + "." + ff.Name
+	return fmt.Sprintf("%s.%s", ff.Namespace, ff.Name)
 }
 
 // GetPath function

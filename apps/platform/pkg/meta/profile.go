@@ -58,7 +58,7 @@ func (p *Profile) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (p *Profile) GetKey() string {
-	return p.Namespace + "." + p.Name
+	return fmt.Sprintf("%s.%s", p.Namespace, p.Name)
 }
 
 // GetPath function

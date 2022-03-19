@@ -62,7 +62,7 @@ func (c *Credential) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (c *Credential) GetKey() string {
-	return c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
 // GetPath function

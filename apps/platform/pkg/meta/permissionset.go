@@ -65,7 +65,7 @@ func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (ps *PermissionSet) GetKey() string {
-	return ps.Namespace + "." + ps.Name
+	return fmt.Sprintf("%s.%s", ps.Namespace, ps.Name)
 }
 
 // GetPath function

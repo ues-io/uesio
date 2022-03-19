@@ -1,11 +1,29 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/humandad/yaml"
 )
+
+func NewComponentVariant(key string) (*ComponentVariant, error) {
+	keyArray := strings.Split(key, ":")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Variant Key: " + key)
+	}
+	namespace, name, err := ParseKey(keyArray[1])
+	if err != nil {
+		return nil, errors.New("Invalid Variant Key: " + key)
+	}
+	return &ComponentVariant{
+		Component: keyArray[0],
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
 
 // ComponentVariant struct
 type ComponentVariant struct {
@@ -35,7 +53,7 @@ func (c *ComponentVariant) GetPermChecker() *PermissionSet {
 }
 
 func (c *ComponentVariant) GetKey() string {
-	return c.Component + "." + c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s:%s.%s", c.Component, c.Namespace, c.Name)
 }
 
 func (c *ComponentVariant) GetPath() string {
