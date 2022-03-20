@@ -1,69 +1,69 @@
 name: lead_details
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.list:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.list:
         id: leadList
         wire: leads
         mode: READ
         components:
-          - io.titlebar:
-              uesio.variant: io.main
-              title: ${crm.firstname} ${crm.lastname}
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: ${uesio/crm.firstname} ${uesio/crm.lastname}
               actions:
-                - io.group:
+                - uesio/io.group:
                     components:
-                      - io.button:
+                      - uesio/io.button:
                           signals:
                             - signal: component/io.list/TOGGLE_MODE
                               target: leadList
                           text: Edit
-                          uesio.variant: io.secondary
-                      - io.button:
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
                           signals:
                             - signal: wire/SAVE
                               wires:
                                 - leads
                           text: Save
-                          uesio.variant: io.secondary
-                      - io.button:
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: leads
                           text: Cancel
-                          uesio.variant: io.secondary
-          - io.box:
-              uesio.variant: io.section
+                          uesio.variant: uesio/io.secondary
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
               uesio.styles:
                 root:
                   padding: 40px
               components:
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns:
                       xs: 1fr
                       md: 1fr 1fr
                       lg: 1fr 1fr 1fr 1fr
                     columnGap: 10px
                     items:
-                      - io.field:
-                          fieldId: crm.firstname
-                      - io.field:
-                          fieldId: crm.lastname
-                      - io.field:
-                          fieldId: uesio.updatedat
-                      - io.field:
-                          fieldId: uesio.createdat
+                      - uesio/io.field:
+                          fieldId: uesio/crm.firstname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.lastname
+                      - uesio/io.field:
+                          fieldId: uesio/core.updatedat
+                      - uesio/io.field:
+                          fieldId: uesio/core.createdat
   wires:
     leads:
-      collection: crm.leads
+      collection: uesio/crm.leads
       conditions:
-        - field: uesio.id
+        - field: uesio/core.id
           param: recordid
           valueSource: PARAM
       fields:
-        crm.firstname:
-        uesio.id:
-        crm.lastname:
-        uesio.updatedat:
-        uesio.createdat:
+        uesio/crm.firstname:
+        uesio/core.id:
+        uesio/crm.lastname:
+        uesio/core.updatedat:
+        uesio/core.createdat:

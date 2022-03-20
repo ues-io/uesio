@@ -35,22 +35,22 @@ definition:
                     text: Mode
                     uesio.variant: uesio/io.secondary
     - uesio/io.box:
+        uesio.variant: uesio/io.section
         components:
           - uesio/io.deck:
               id: NewId
               mode: EDIT
               wire: contacts
-              templateColumns: 1fr 1fr 1fr 1fr
+              templateColumns: 1fr 1fr 1fr
               uesio.styles:
                 root:
-                  columnGap: 10px
-                  padding: 10px
+                  columnGap: 20px
+                  rowGap: 20px
+                  padding: 40px
               components:
                 - uesio/io.box:
                     uesio.styles:
                       root:
-                        marginTop: 20px
-                        marginBottom: 20px
                         alignItems: flex-start
                         border: "1px solid #ccc"
                         boxShadow: "0 0 6px #00000033"
@@ -79,7 +79,11 @@ definition:
                           text: View
                           icon: arrow_forward
                           uesio.variant: uesio/io.secondary
-                    uesio.variant: uesio/io.section
+                          signals:
+                            - signal: route/NAVIGATE
+                              collection: uesio/crm.contacts
+                              viewtype: detail
+                              recordid: ${uesio/core.id}
   wires:
     contacts:
       collection: uesio/crm.contacts

@@ -1,79 +1,79 @@
 name: opportunities
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.titlebar:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.titlebar:
         title: Opportunities
-        uesio.variant: io.main
+        uesio.variant: uesio/io.main
         actions:
-          - io.group:
+          - uesio/io.group:
               components:
-                - io.button:
+                - uesio/io.button:
                     signals:
                       - signal: wire/CREATE_RECORD
                         wire: opportunities
                     text: Create
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
                           - opportunities
                     text: Save
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: opportunities
                     text: Cancel
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: opportunitiesTable
                     text: Mode
-                    uesio.variant: io.secondary
-    - io.box:
+                    uesio.variant: uesio/io.secondary
+    - uesio/io.box:
         uesio.styles:
           root:
             padding: 40px
         components:
-          - io.table:
+          - uesio/io.table:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: opportunity/${uesio.id}
+                    - path: opportunity/${uesio/core.id}
                       signal: route/NAVIGATE
                 - text: Delete
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
-                - io.column:
-                    field: crm.name
-                - io.column:
-                    field: crm.description
-                - io.column:
-                    field: crm.status
-                - io.column:
-                    field: crm.account
-                - io.column:
-                    field: uesio.updatedat
-                - io.column:
-                    field: uesio.createdat
+                - uesio/io.column:
+                    field: uesio/crm.name
+                - uesio/io.column:
+                    field: uesio/crm.description
+                - uesio/io.column:
+                    field: uesio/crm.status
+                - uesio/io.column:
+                    field: uesio/crm.account
+                - uesio/io.column:
+                    field: uesio/core.updatedat
+                - uesio/io.column:
+                    field: uesio/core.createdat
               id: opportunitiesTable
               mode: EDIT
               wire: opportunities
   wires:
     opportunities:
-      collection: crm.opportunities
+      collection: uesio/crm.opportunities
       fields:
-        crm.name:
-        uesio.id:
-        crm.status:
-        crm.description:
-        crm.account:
+        uesio/crm.name:
+        uesio/core.id:
+        uesio/crm.status:
+        uesio/crm.description:
+        uesio/crm.account:
           fields:
-            crm.name:
-        uesio.updatedat:
-        uesio.createdat:
+            uesio/crm.name:
+        uesio/core.updatedat:
+        uesio/core.createdat:

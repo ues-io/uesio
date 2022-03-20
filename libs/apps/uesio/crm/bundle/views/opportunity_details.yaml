@@ -1,77 +1,77 @@
 name: opportunity_details
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.list:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.list:
         id: opportunityList
         wire: opportunities
         mode: READ
         components:
-          - io.titlebar:
-              uesio.variant: io.main
-              title: ${crm.name}
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: ${uesio/crm.name}
               actions:
-                - io.group:
+                - uesio/io.group:
                     components:
-                      - io.button:
+                      - uesio/io.button:
                           signals:
                             - signal: component/io.list/TOGGLE_MODE
                               target: opportunityList
                           text: Edit
-                          uesio.variant: io.secondary
-                      - io.button:
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
                           signals:
                             - signal: wire/SAVE
                               wires:
                                 - opportunities
                           text: Save
-                          uesio.variant: io.secondary
-                      - io.button:
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
                           signals:
                             - signal: wire/CANCEL
                               wire: opportunities
                           text: Cancel
-                          uesio.variant: io.secondary
-          - io.box:
-              uesio.variant: io.section
+                          uesio.variant: uesio/io.secondary
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
               uesio.styles:
                 root:
                   padding: 40px
               components:
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns:
                       xs: 1fr
                       md: 1fr 1fr
                       lg: 1fr 1fr 1fr 1fr
                     columnGap: 10px
                     items:
-                      - io.field:
-                          fieldId: crm.name
-                      - io.field:
-                          fieldId: crm.description
-                      - io.field:
-                          fieldId: crm.status
-                      - io.field:
-                          fieldId: crm.account
-                      - io.field:
-                          fieldId: uesio.updatedat
-                      - io.field:
-                          fieldId: uesio.createdat
+                      - uesio/io.field:
+                          fieldId: uesio/crm.name
+                      - uesio/io.field:
+                          fieldId: uesio/crm.description
+                      - uesio/io.field:
+                          fieldId: uesio/crm.status
+                      - uesio/io.field:
+                          fieldId: uesio/crm.account
+                      - uesio/io.field:
+                          fieldId: uesio/core.updatedat
+                      - uesio/io.field:
+                          fieldId: uesio/core.createdat
   wires:
     opportunities:
-      collection: crm.opportunities
+      collection: uesio/crm.opportunities
       conditions:
-        - field: uesio.id
+        - field: uesio/core.id
           param: recordid
           valueSource: PARAM
       fields:
-        uesio.id:
-        crm.name:
-        crm.account:
+        uesio/core.id:
+        uesio/crm.name:
+        uesio/crm.account:
           fields:
-            crm.name:
-        crm.description:
-        crm.status:
-        uesio.updatedat:
-        uesio.createdat:
+            uesio/crm.name:
+        uesio/crm.description:
+        uesio/crm.status:
+        uesio/core.updatedat:
+        uesio/core.createdat:

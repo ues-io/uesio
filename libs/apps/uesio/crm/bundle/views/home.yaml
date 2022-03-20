@@ -1,110 +1,110 @@
 name: home
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.box:
-        uesio.variant: io.section
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
         components:
-          - io.titlebar:
-              uesio.variant: io.section
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.section
               title: Recent Leads
-          - io.deck:
+          - uesio/io.deck:
               id: homeLeads
               wire: leads
-              uesio.variant: io.section
+              uesio.variant: uesio/io.section
               components:
-                - io.tile:
-                    uesio.variant: io.item
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.item
                     signals:
                       - signal: route/NAVIGATE
-                        path: lead/${uesio.id}
+                        path: lead/${uesio/core.id}
                     content:
-                      - io.text:
-                          text: ${crm.firstname} ${crm.lastname}
+                      - uesio/io.text:
+                          text: ${uesio/crm.firstname} ${uesio/crm.lastname}
                     avatar:
-                      - io.text:
-                          uesio.variant: io.icon
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
                           color: "#ccc"
                           text: emoji_people
-    - io.box:
-        uesio.variant: io.section
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
         components:
-          - io.titlebar:
-              uesio.variant: io.section
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.section
               title: Recent Accounts
-          - io.deck:
+          - uesio/io.deck:
               id: homeAccounts
               wire: accounts
-              uesio.variant: io.section
+              uesio.variant: uesio/io.section
               components:
-                - io.tile:
-                    uesio.variant: io.item
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.item
                     signals:
                       - signal: route/NAVIGATE
-                        path: account/${uesio.id}
+                        path: account/${uesio/core.id}
                     content:
-                      - io.text:
-                          text: ${crm.name}
+                      - uesio/io.text:
+                          text: ${uesio/crm.name}
                     avatar:
-                      - io.text:
-                          uesio.variant: io.icon
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
                           color: "#ccc"
                           text: business
-    - io.box:
-        uesio.variant: io.section
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
         components:
-          - io.titlebar:
-              uesio.variant: io.section
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.section
               title: Recent Contacts
-          - io.deck:
+          - uesio/io.deck:
               id: homeContacts
               wire: contacts
-              uesio.variant: io.section
+              uesio.variant: uesio/io.section
               components:
-                - io.tile:
-                    uesio.variant: io.item
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.item
                     signals:
                       - signal: route/NAVIGATE
-                        path: contact/${uesio.id}
+                        path: contact/${uesio/core.id}
                     content:
-                      - io.text:
-                          text: ${crm.firstname} ${crm.lastname}
+                      - uesio/io.text:
+                          text: ${uesio/crm.firstname} ${uesio/crm.lastname}
                     avatar:
-                      - io.text:
-                          uesio.variant: io.icon
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
                           color: "#ccc"
                           text: person
   wires:
     accounts:
-      collection: crm.accounts
+      collection: uesio/crm.accounts
       fields:
-        uesio.id:
-        crm.name:
-        uesio.updatedat:
+        uesio/core.id:
+        uesio/crm.name:
+        uesio/core.updatedat:
       limit: 4
       order:
-        - field: uesio.updatedat
+        - field: uesio/core.updatedat
           desc: true
     contacts:
-      collection: crm.contacts
+      collection: uesio/crm.contacts
       fields:
-        uesio.id:
-        crm.firstname:
-        crm.lastname:
-        uesio.updatedat:
+        uesio/core.id:
+        uesio/crm.firstname:
+        uesio/crm.lastname:
+        uesio/core.updatedat:
       limit: 4
       order:
-        - field: uesio.updatedat
+        - field: uesio/core.updatedat
           desc: true
     leads:
-      collection: crm.leads
+      collection: uesio/crm.leads
       fields:
-        uesio.id:
-        crm.firstname:
-        crm.lastname:
-        uesio.updatedat:
+        uesio/core.id:
+        uesio/crm.firstname:
+        uesio/crm.lastname:
+        uesio/core.updatedat:
       limit: 4
       order:
-        - field: uesio.updatedat
+        - field: uesio/core.updatedat
           desc: true
