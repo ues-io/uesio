@@ -3,20 +3,19 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/humandad/yaml"
 )
 
 // NewRoute function
 func NewRoute(key string) (*Route, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Route Key: " + key)
 	}
 	return &Route{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	}, nil
 }
 

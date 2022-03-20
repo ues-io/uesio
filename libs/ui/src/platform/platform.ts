@@ -350,11 +350,11 @@ const platform = {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				"uesio.jobtype": spec.jobtype,
-				"uesio.filetype": spec.filetype,
-				"uesio.collection": spec.collection,
-				"uesio.upsertkey": spec.upsertkey,
-				"uesio.mappings": spec.mappings,
+				jobtype: spec.jobtype,
+				filetype: spec.filetype,
+				collection: spec.collection,
+				upsertkey: spec.upsertkey,
+				mappings: spec.mappings,
 			}),
 		})
 		return response.json()

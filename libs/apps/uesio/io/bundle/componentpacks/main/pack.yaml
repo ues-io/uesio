@@ -27,7 +27,7 @@ components:
         - uesio/io.listfield:uesio/io.default
     filter:
       variants:
-        - uesio/io.selectfield.uesio/io.filter
+        - uesio/io.selectfield:uesio/io.filter
     grid:
     griditem:
     group:

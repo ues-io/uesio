@@ -1,4 +1,0 @@
-name: available_start_date
-collection: crm.services
-type: DATE
-label: Available Start Date

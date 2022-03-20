@@ -70,32 +70,32 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{io.preview}
+                                      text: $Label{uesio/io.preview}
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{app}/${uesio/studio.path}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{io.edit}
+                                      text: $Label{uesio/io.edit}
                                       signals:
                                         - signal: component/io.list/TOGGLE_MODE
                                           target: "routesDeck"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{io.save}
+                                      text: $Label{uesio/io.save}
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - "routes"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{io.cancel}
+                                      text: $Label{uesio/io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "routes"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: $Label{io.delete}
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE

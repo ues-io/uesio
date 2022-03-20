@@ -1,6 +1,0 @@
-name: related_event
-collection: crm.notes
-type: REFERENCE
-label: Related Event
-reference:
-  collection: crm.events

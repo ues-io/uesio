@@ -1,4 +1,0 @@
-name: has_opt_out_email
-collection: crm.leads
-type: CHECKBOX
-label: Opt Out Email

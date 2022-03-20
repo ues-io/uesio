@@ -1,6 +1,0 @@
-name: sub_total
-collection: crm.quotes
-type: NUMBER
-label: Sub Total
-number:
-  decimals: 0

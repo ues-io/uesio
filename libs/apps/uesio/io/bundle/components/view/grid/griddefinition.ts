@@ -35,7 +35,7 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 			uesio.builder.addDefinition(
 				dropNode,
 				{
-					"io.field": {
+					"uesio/io.field": {
 						fieldId: `${fieldNamespace}.${fieldName}`,
 					},
 				},

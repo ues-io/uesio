@@ -17,10 +17,10 @@ async function getSpec(
 
 	const spec: definition.Spec = {
 		jobtype: "import",
-		filetype: specData["uesio.filetype"] || "csv",
-		collection: specData["uesio.collection"],
-		upsertkey: specData["uesio.upsertkey"],
-		mappings: specData["uesio.mappings"],
+		filetype: specData.filetype || "csv",
+		collection: specData.collection,
+		upsertkey: specData.upsertkey,
+		mappings: specData.mappings,
 	}
 
 	if (collection) {
@@ -35,11 +35,11 @@ async function getSpec(
 
 function getSpecString(spec: definition.Spec) {
 	return JSON.stringify({
-		"uesio.jobtype": spec.jobtype,
-		"uesio.filetype": spec.filetype,
-		"uesio.collection": spec.collection,
-		"uesio.upsertkey": spec.upsertkey,
-		"uesio.mappings": spec.mappings,
+		jobtype: spec.jobtype,
+		filetype: spec.filetype,
+		collection: spec.collection,
+		upsertkey: spec.upsertkey,
+		mappings: spec.mappings,
 	})
 }
 

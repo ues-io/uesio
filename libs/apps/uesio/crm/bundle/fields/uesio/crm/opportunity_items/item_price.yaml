@@ -1,0 +1,5 @@
+name: item_price
+type: NUMBER
+label: Item Price
+number:
+  decimals: 2

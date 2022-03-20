@@ -1,6 +1,0 @@
-name: converted_to_account
-collection: crm.leads
-type: REFERENCE
-label: Converted To Account
-reference:
-  collection: crm.accounts

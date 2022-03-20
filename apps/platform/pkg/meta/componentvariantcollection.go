@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -59,7 +60,7 @@ func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace str
 		}
 	}
 	cv := ComponentVariant{
-		Component: componentKey,
+		Component: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
 		Namespace: namespace,
 		Name:      strings.TrimSuffix(parts[3], ".yaml"),
 	}

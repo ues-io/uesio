@@ -148,11 +148,11 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		Labels:            labels,
 	}
 
-	for _, packs := range packsByNamespace {
+	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
 			deps.ComponentPacks[pack.GetKey()] = true
 			for key := range pack.Components.ViewComponents {
-				err := getDepsForComponent(key, &deps, packsByNamespace, session)
+				err := getDepsForComponent(namespace+"."+key, &deps, packsByNamespace, session)
 				if err != nil {
 					return nil, err
 				}

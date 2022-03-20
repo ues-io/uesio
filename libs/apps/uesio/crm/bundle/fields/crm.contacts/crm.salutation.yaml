@@ -1,5 +1,0 @@
-name: salutation
-collection: crm.contacts
-type: SELECT
-label: Salutation
-selectList: crm.salutation

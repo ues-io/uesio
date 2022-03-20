@@ -1,89 +1,89 @@
 name: accounts
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.titlebar:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.titlebar:
         title: Accounts
-        uesio.variant: io.main
+        uesio.variant: uesio/io.main
         actions:
-          - io.group:
+          - uesio/io.group:
               components:
-                - io.button:
+                - uesio/io.button:
                     signals:
                       - signal: wire/CREATE_RECORD
                         wire: accounts
                     text: Create
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
                           - accounts
                     text: Save
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: accounts
                     text: Cancel
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: accountsTable
                     text: Mode
-                    uesio.variant: io.secondary
-    - io.box:
+                    uesio.variant: uesio/io.secondary
+    - uesio/io.box:
         uesio.styles:
           root:
             padding: 40px
         components:
-          - io.table:
+          - uesio/io.table:
               rowactions:
                 - text: Edit
                   signals:
                     - signal: route/NAVIGATE
-                      collection: crm.accounts
+                      collection: uesio/crm.accounts
                       viewtype: detail
-                      recordid: ${uesio.id}
+                      recordid: ${uesio/core.id}
                 - text: Delete
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
-                - io.column:
-                    field: crm.contacts
-                - io.column:
-                    field: crm.externalid
-                - io.column:
-                    field: crm.name
-                - io.column:
-                    field: crm.description
-                - io.column:
-                    field: crm.no_of_employees
-                - io.column:
-                    field: uesio.createdat
-                - io.column:
-                    field: uesio.updatedat
+                - uesio/io.column:
+                    field: uesio/crm.contacts
+                - uesio/io.column:
+                    field: uesio/crm.externalid
+                - uesio/io.column:
+                    field: uesio/crm.name
+                - uesio/io.column:
+                    field: uesio/crm.description
+                - uesio/io.column:
+                    field: uesio/crm.no_of_employees
+                - uesio/io.column:
+                    field: uesio/core.createdat
+                - uesio/io.column:
+                    field: uesio/core.updatedat
               id: accountsTable
               mode: EDIT
               wire: accounts
   wires:
     accounts:
-      collection: crm.accounts
+      collection: uesio/crm.accounts
       order:
-        - field: crm.name
+        - field: uesio/crm.name
           desc: false
-        - field: uesio.createdat
+        - field: uesio/core.createdat
           desc: false
       fields:
-        crm.description: null
-        uesio.id: null
-        crm.name: null
-        crm.externalid: null
-        crm.no_of_employees: null
-        uesio.createdat: null
-        uesio.updatedat: null
-        crm.contacts:
+        uesio/crm.description: null
+        uesio/core.id: null
+        uesio/crm.name: null
+        uesio/crm.externalid: null
+        uesio/crm.no_of_employees: null
+        uesio/core.createdat: null
+        uesio/core.updatedat: null
+        uesio/crm.contacts:
           fields:
-            crm.lastname: null
+            uesio/crm.lastname: null

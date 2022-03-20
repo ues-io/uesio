@@ -1,4 +1,0 @@
-name: shipping_zip
-collection: crm.accounts
-type: TEXT
-label: Shipping ZIP

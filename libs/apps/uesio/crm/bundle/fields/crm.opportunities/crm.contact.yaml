@@ -1,6 +1,0 @@
-name: contact
-collection: crm.opportunities
-type: REFERENCE
-label: Contact
-reference:
-  collection: crm.contacts

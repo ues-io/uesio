@@ -51,12 +51,12 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const columnsToDisplay = definition.columns?.filter((columnDef) =>
 		component.shouldDisplay(
 			context,
-			columnDef["io.column"] as definition.DefinitionMap
+			columnDef["uesio/io.column"] as definition.DefinitionMap
 		)
 	)
 
 	const columns = columnsToDisplay.map((columnDef) => {
-		const column = columnDef["io.column"] as ColumnDefinition
+		const column = columnDef["uesio/io.column"] as ColumnDefinition
 		const fieldId = column.field
 		const fieldMetadata = collection.getField(fieldId)
 		return {
@@ -77,23 +77,23 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		})
 		return {
 			cells: columnsToDisplay?.map((columnDef) => {
-				const column = columnDef["io.column"] as ColumnDefinition
+				const column = columnDef["uesio/io.column"] as ColumnDefinition
 				return column.components ? (
 					<component.Slot
 						definition={column}
 						listName="components"
-						path={`${path}["columns"]["${index}"]["io.column"]`}
+						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
 						accepts={["uesio.context"]}
 						direction="horizontal"
 						context={recordContext}
 					/>
 				) : (
 					<component.Component
-						componentType="io.field"
+						componentType="uesio/io.field"
 						definition={{
 							fieldId: column.field,
 							labelPosition: "none",
-							"uesio.variant": "io.table",
+							"uesio.variant": "uesio/io.table",
 						}}
 						index={index}
 						path={`${path}["columns"]["${index}"]`}
@@ -115,7 +115,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 						return (
 							<Button
 								key={action.text + i}
-								variant="io.nav"
+								variant="uesio/io.nav"
 								className="rowaction"
 								label={action.text}
 								context={recordContext}

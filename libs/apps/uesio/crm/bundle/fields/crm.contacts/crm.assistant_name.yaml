@@ -1,6 +1,0 @@
-name: assistant_name
-collection: crm.contacts
-type: REFERENCE
-label: Assistant Name
-reference:
-  collection: crm.contacts

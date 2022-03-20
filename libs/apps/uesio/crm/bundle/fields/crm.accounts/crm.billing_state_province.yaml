@@ -1,4 +1,0 @@
-name: billing_state_province
-collection: crm.accounts
-type: TEXT
-label: Billing State

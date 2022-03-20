@@ -1,42 +1,42 @@
 name: contacts
 definition:
   components:
-    - uesio.view:
-        view: crm.topbar
-    - io.titlebar:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.titlebar:
         title: Contacts
-        uesio.variant: io.main
+        uesio.variant: uesio/io.main
         actions:
-          - io.group:
+          - uesio/io.group:
               components:
-                - io.button:
+                - uesio/io.button:
                     signals:
                       - signal: wire/CREATE_RECORD
                         wire: contacts
                     text: Create
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
                           - contacts
                     text: Save
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: contacts
                     text: Cancel
-                    uesio.variant: io.secondary
-                - io.button:
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: contactsTable
                     text: Mode
-                    uesio.variant: io.secondary
-    - io.box:
+                    uesio.variant: uesio/io.secondary
+    - uesio/io.box:
         components:
-          - io.deck:
+          - uesio/io.deck:
               id: NewId
               mode: EDIT
               wire: contacts
@@ -46,7 +46,7 @@ definition:
                   columnGap: 10px
                   padding: 10px
               components:
-                - io.box:
+                - uesio/io.box:
                     uesio.styles:
                       root:
                         marginTop: 20px
@@ -59,43 +59,40 @@ definition:
                     templateColumns: 180px 1fr 1fr
                     columnGap: 10px
                     components:
-                      - io.field:
-                          fieldId: crm.image
+                      - uesio/io.field:
+                          fieldId: uesio/crm.image
                           displayAs: IMAGE
                           uesio.styles:
                             root:
                               max-height: 200px
-                          uesio.variant: io.
                           label: null
                           labelPosition: none
-                      - io.field:
-                          fieldId: crm.firstname
-                      - io.field:
-                          fieldId: crm.lastname
-                      - io.field:
-                          fieldId: crm.email
-                      - io.field:
-                          fieldId: crm.account
-                      - io.button:
+                      - uesio/io.field:
+                          fieldId: uesio/crm.firstname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.lastname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.email
+                      - uesio/io.field:
+                          fieldId: uesio/crm.account
+                      - uesio/io.button:
                           text: View
                           icon: arrow_forward
-                          uesio.variant: io.secondary
-                          uesio.styles:
-                            root: {}
-                    uesio.variant: io.section
+                          uesio.variant: uesio/io.secondary
+                    uesio.variant: uesio/io.section
   wires:
     contacts:
-      collection: crm.contacts
+      collection: uesio/crm.contacts
       fields:
-        crm.account:
+        uesio/crm.account:
           fields:
-            crm.name: null
-        crm.birthdate: null
-        crm.firstname: null
-        crm.gender: null
-        uesio.id: null
-        crm.lastname: null
-        crm.email: null
-        uesio.updatedat: null
-        uesio.createdat: null
-        crm.image: null
+            uesio/crm.name: null
+        uesio/crm.birthdate: null
+        uesio/crm.firstname: null
+        uesio/crm.gender: null
+        uesio/core.id: null
+        uesio/crm.lastname: null
+        uesio/crm.email: null
+        uesio/core.updatedat: null
+        uesio/core.createdat: null
+        uesio/crm.image: null

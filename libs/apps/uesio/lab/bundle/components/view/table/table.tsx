@@ -235,17 +235,17 @@ const Table: FC<TableProps> = (props) => {
 														{/* Fields */}
 														{fieldComponentKey && (
 															<component.Component
-																componentType="io.field"
+																componentType="uesio/io.field"
 																definition={{
 																	fieldId:
 																		fieldComponentKey[
-																			"io.field"
+																			"uesio/io.field"
 																		]
 																			?.fieldId,
 																	labelPosition:
 																		"none",
 																	"uesio.variant":
-																		"io.table",
+																		"uesio/io.table",
 																}}
 																path={path}
 																context={rowContext.addFrame(
@@ -269,7 +269,7 @@ const Table: FC<TableProps> = (props) => {
 																			Object.keys(
 																				k
 																			)[0] !==
-																			"io.field"
+																			"uesio/io.field"
 																	),
 																],
 															}}

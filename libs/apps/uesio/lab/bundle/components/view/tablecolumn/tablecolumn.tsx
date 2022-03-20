@@ -58,12 +58,15 @@ const TableColumn: FC<T> = (props) => {
 			const componentName = Object.keys(c)[0]
 			return /(io.field)$/.test(componentName)
 		}) as {
-			"io.field": {
+			"uesio/io.field": {
 				fieldId: string
 			}
 		}
 		if (!field) return ""
-		return collection.getField(field["io.field"]?.fieldId)?.getLabel() || ""
+		return (
+			collection.getField(field["uesio/io.field"]?.fieldId)?.getLabel() ||
+			""
+		)
 	}
 
 	const onMouseDown =

@@ -70,7 +70,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			uesio.builder.addDefinition(
 				dropNode + '["columns"]',
 				{
-					"io.column": {
+					"uesio/io.column": {
 						field: `${fieldNamespace}.${fieldName}`,
 					},
 				},

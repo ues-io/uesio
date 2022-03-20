@@ -1,16 +1,16 @@
 {
-	"uesio.jobtype": "export",
-	"uesio.collection": "crm.contacts",
-	"uesio.filetype": "csv",
-	"uesio.upsertkey": "crm.externalid",
-	"uesio.mappings": {
-		"crm.account": {
-			"matchfield": "crm.externalid"
+	"jobtype": "export",
+	"collection": "uesio/crm.contacts",
+	"filetype": "csv",
+	"upsertkey": "uesio/crm.externalid",
+	"mappings": {
+		"uesio/crm.account": {
+			"matchfield": "uesio/crm.externalid"
 		},
-		"crm.externalid": null,
-		"crm.firstname": null,
-		"crm.lastname": null,
-		"crm.gender": null,
-		"crm.email": null
+		"uesio/crm.externalid": null,
+		"uesio/crm.firstname": null,
+		"uesio/crm.lastname": null,
+		"uesio/crm.gender": null,
+		"uesio/crm.email": null
 	}
 }

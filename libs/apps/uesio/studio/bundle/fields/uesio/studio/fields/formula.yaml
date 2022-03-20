@@ -8,4 +8,4 @@ subfields:
   - name: studio.returntype
     label: Return Type
     type: SELECT
-    selectList: studio.formulafieldreturntypes
+    selectList: uesio/studio.formulafieldreturntypes

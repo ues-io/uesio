@@ -1,6 +1,0 @@
-name: quantity
-collection: crm.opportunity_items
-type: NUMBER
-label: Quantity
-number:
-  decimals: 0

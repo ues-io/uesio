@@ -88,7 +88,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 
 	return (
 		<component.Component
-			componentType="io.table"
+			componentType="uesio/io.table"
 			definition={{
 				id: "collectionDataTable",
 				wire: "collectionData",
@@ -106,7 +106,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 					},
 				],
 				columns: Object.keys(fieldsMeta).map((record) => ({
-					["io.column"]: {
+					["uesio/io.column"]: {
 						field: `${record}`,
 					},
 				})),

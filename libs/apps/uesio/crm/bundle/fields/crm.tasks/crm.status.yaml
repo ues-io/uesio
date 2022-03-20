@@ -1,5 +1,0 @@
-name: status
-collection: crm.tasks
-type: SELECT
-label: Status
-selectList: crm.task_status

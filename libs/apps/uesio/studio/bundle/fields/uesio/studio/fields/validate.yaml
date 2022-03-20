@@ -5,7 +5,7 @@ subfields:
   - name: studio.type
     label: Validation
     type: SELECT
-    selectList: studio.fieldvalidatetypes
+    selectList: uesio/studio.fieldvalidatetypes
   - name: studio.regex
     label: Regex
     type: TEXT

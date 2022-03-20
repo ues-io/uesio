@@ -1,5 +1,0 @@
-name: externalid
-collection: crm.accounts
-type: TEXT
-label: External ID
-readOnly: true

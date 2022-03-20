@@ -1,6 +1,0 @@
-name: related_task
-collection: crm.comments
-type: REFERENCE
-label: Related Task
-reference:
-  collection: crm.tasks

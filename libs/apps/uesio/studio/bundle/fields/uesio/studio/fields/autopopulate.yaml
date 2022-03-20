@@ -1,4 +1,4 @@
 name: autopopulate
 type: SELECT
-selectList: studio.autopopulatetypes
+selectList: uesio/studio.autopopulatetypes
 label: Auto Populate

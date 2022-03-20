@@ -1,6 +1,0 @@
-name: converted_opportunity
-collection: crm.leads
-type: REFERENCE
-label: Converted Opportunity
-reference:
-  collection: crm.opportunities

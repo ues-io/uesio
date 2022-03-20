@@ -1,6 +1,0 @@
-name: tax_rate
-collection: crm.products
-type: NUMBER
-label: Tax Rate
-number:
-  decimals: 0
