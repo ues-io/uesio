@@ -8,17 +8,17 @@ import (
 
 // Theme struct
 type Theme struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -44,12 +44,12 @@ func (t *Theme) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (t *Theme) GetKey() string {
-	return t.Namespace + "." + t.Name
+	return fmt.Sprintf("%s.%s", t.Namespace, t.Name)
 }
 
 // GetPath function
 func (t *Theme) GetPath() string {
-	return t.GetKey() + ".yaml"
+	return t.Name + ".yaml"
 }
 
 // GetPermChecker function
@@ -59,7 +59,7 @@ func (t *Theme) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
@@ -75,7 +75,7 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&t.Definition)
 		if err != nil {
 			return nil, err

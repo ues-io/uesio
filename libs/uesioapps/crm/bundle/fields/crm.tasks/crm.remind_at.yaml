@@ -1,4 +1,0 @@
-name: remind_at
-collection: crm.tasks
-type: TIMESTAMP
-label: Remind At

@@ -51,7 +51,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 // AddCollection function
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return fmt.Errorf("adding collection: %s", collectionName)
+		return fmt.Errorf("Tried to add blank collection")
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}
@@ -133,7 +133,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		if adapt.IsReference(fieldMetadata.Type) {
 
-			// If we only have one field and it's the uesio.id field, skip getting metadata
+			// If we only have one field and it's the id field, skip getting metadata
 			if len(collection[fieldKey]) == 1 {
 				_, ok := collection[fieldKey][adapt.ID_FIELD]
 				if ok {
@@ -227,7 +227,9 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
-		Options: mr.Options,
+		Options: &MetadataRequestOptions{
+			LoadAllFields: false,
+		},
 	}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {

@@ -1,4 +1,0 @@
-name: createonly
-collection: studio.fields
-type: CHECKBOX
-label: CreateOnly

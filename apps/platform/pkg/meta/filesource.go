@@ -21,18 +21,18 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID          string     `yaml:"-" uesio:"uesio.id"`
-	Name        string     `uesio:"studio.name"`
+	ID          string     `yaml:"-" uesio:"uesio/core.id"`
+	Name        string     `uesio:"uesio/studio.name"`
 	Namespace   string     `yaml:"-" uesio:"-"`
 	Type        string     `yaml:"type,omitempty" uesio:"-"`
-	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Credentials string     `yaml:"credentials" uesio:"uesio/studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy   *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner       *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy   *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt   int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt   int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy   *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner       *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy   *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -58,12 +58,12 @@ func (fs *FileSource) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (fs *FileSource) GetKey() string {
-	return fs.Namespace + "." + fs.Name
+	return fmt.Sprintf("%s.%s", fs.Namespace, fs.Name)
 }
 
 // GetPath function
 func (fs *FileSource) GetPath() string {
-	return fs.GetKey() + ".yaml"
+	return fs.Name + ".yaml"
 }
 
 // GetPermChecker function

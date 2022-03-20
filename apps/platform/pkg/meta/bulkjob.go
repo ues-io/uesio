@@ -2,25 +2,25 @@ package meta
 
 // BulkJob struct
 type BulkJob struct {
-	ID         string    `uesio:"uesio.id"`
-	AutoID     string    `uesio:"uesio.autoid"`
-	Spec       JobSpec   `uesio:"uesio.spec"`
-	Collection string    `uesio:"uesio.collection"`
+	ID         string    `uesio:"uesio/core.id"`
+	AutoID     string    `uesio:"uesio/core.autoid"`
+	Spec       JobSpec   `uesio:"uesio/core.spec"`
+	Collection string    `uesio:"uesio/core.collection"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // JobSpec struct
 type JobSpec struct {
-	JobType    string                  `json:"uesio.jobtype" uesio:"uesio.jobtype"`
-	FileType   string                  `json:"uesio.filetype" uesio:"uesio.filetype"`
-	Collection string                  `json:"uesio.collection" uesio:"uesio.collection"`
-	UpsertKey  string                  `json:"uesio.upsertkey" uesio:"uesio.upsertkey"`
-	Mappings   map[string]FieldMapping `json:"uesio.mappings" uesio:"uesio.mappings"`
+	JobType    string                  `json:"jobtype" uesio:"uesio/core.jobtype"`
+	FileType   string                  `json:"filetype" uesio:"uesio/core.filetype"`
+	Collection string                  `json:"collection" uesio:"uesio/core.collection"`
+	UpsertKey  string                  `json:"upsertkey" uesio:"uesio/core.upsertkey"`
+	Mappings   map[string]FieldMapping `json:"mappings" uesio:"uesio/core.mappings"`
 }
 
 // FieldMapping struct

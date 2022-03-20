@@ -1,0 +1,3 @@
+name: teammembers
+idFormat: "${uesio/studio.team}_${uesio/studio.member}"
+nameField: uesio/studio.member

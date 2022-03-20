@@ -5,7 +5,7 @@ import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import { remove as removeNotification } from "../bands/notification"
 
-const Alert = getUtility("io.alert")
+const Alert = getUtility("uesio/io.alert")
 
 const NotificationArea: FunctionComponent<BaseProps> = (props) => {
 	const notifications = useNotifications()

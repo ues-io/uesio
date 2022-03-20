@@ -11,7 +11,7 @@ type RouteCollection []Route
 
 // GetName function
 func (rc *RouteCollection) GetName() string {
-	return "studio.routes"
+	return "uesio/studio.routes"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyFromPath function
-func (rc *RouteCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (rc *RouteCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

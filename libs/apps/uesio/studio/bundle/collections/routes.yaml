@@ -1,0 +1,3 @@
+name: routes
+idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
+nameField: uesio/studio.name

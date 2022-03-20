@@ -19,7 +19,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: userFileID,
 				},
 			},

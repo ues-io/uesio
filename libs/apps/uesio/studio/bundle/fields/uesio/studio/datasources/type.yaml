@@ -1,0 +1,5 @@
+name: type
+type: SELECT
+selectList: studio.datasourcetypes
+label: Type
+required: true

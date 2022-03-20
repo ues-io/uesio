@@ -9,21 +9,23 @@ const parseKey = (fullName: string): [string, string] => {
 	return [namespace, name]
 }
 
-// io.button.io.nav ==> [io, button, io, nav]
+// io.button:io.nav ==> [io, button, io, nav]
 const parseVariantKey = (
 	fullName: string
 ): [string, string, string, string] => {
 	if (!fullName) return ["", "", "", ""]
-	const [componentNamespace, componentName, variantNamespace, variantName] =
-		fullName.split(".", 4)
+	const [component, variant] = fullName.split(":", 2)
+	const [componentNamespace, componentName] = parseKey(component)
+	const [variantNamespace, variantName] = parseKey(variant)
 	return [componentNamespace, componentName, variantNamespace, variantName]
 }
 
-// io.button.io.nav ==> [io, button, io, nav]
+// io.button:io.nav ==> [io, button, io, nav]
 const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	if (!fullName) return ["", "", "", ""]
-	const [collectionNamespace, collectionName, fieldNamespace, fieldName] =
-		fullName.split(".", 4)
+	const [collection, field] = fullName.split(":", 2)
+	const [collectionNamespace, collectionName] = parseKey(collection)
+	const [fieldNamespace, fieldName] = parseKey(field)
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
 }
 

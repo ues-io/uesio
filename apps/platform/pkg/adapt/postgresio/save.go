@@ -8,10 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 type ParamCounter struct {
@@ -117,22 +115,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		return err
 	}
 
-	// Process Inserts
-	idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
-	if err != nil {
-		return err
-	}
-
 	for _, change := range *request.Inserts {
-
-		newID, err := templating.Execute(idTemplate, change.FieldChanges)
-		if err != nil {
-			return err
-		}
-
-		if newID == "" {
-			newID = uuid.New().String()
-		}
 
 		builder := NewValueBuilder(4)
 
@@ -155,15 +138,10 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 			return err
 		}
 
-		err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
-		if err != nil {
-			return err
-		}
-
-		builder.add(adapt.ID_FIELD, newID, "text")
+		builder.add(adapt.ID_FIELD, change.IDValue, "text")
 
 		query := fmt.Sprintf("INSERT INTO public.data (id,collection,autonumber,fields) VALUES ($1,$2,$3,jsonb_build_object(%s))", builder.build())
-		fullRecordID := collectionName + ":" + newID
+		fullRecordID := collectionName + ":" + change.IDValue
 
 		params := append([]interface{}{
 			fullRecordID,
@@ -173,6 +151,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 		_, err = db.Exec(query, params...)
 		if err != nil {
+			fmt.Println("Failed: " + fullRecordID)
 			return err
 		}
 

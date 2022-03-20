@@ -1,6 +1,0 @@
-name: user
-collection: uesio.loginmethod
-type: REFERENCE
-label: User
-reference:
-  collection: uesio.user

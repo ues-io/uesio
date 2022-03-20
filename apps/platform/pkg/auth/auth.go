@@ -131,14 +131,14 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.user": true,
+			"uesio/core.user": true,
 		},
 	})
 
 	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	if defaultSiteProfile == "" {
-		defaultSiteProfile = "uesio.public"
+		defaultSiteProfile = "uesio/core.public"
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{
@@ -181,32 +181,32 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: "uesio.firstname",
+					ID: "uesio/core.firstname",
 				},
 				{
-					ID: "uesio.lastname",
+					ID: "uesio/core.lastname",
 				},
 				{
-					ID: "uesio.username",
+					ID: "uesio/core.username",
 				},
 				{
-					ID: "uesio.profile",
+					ID: "uesio/core.profile",
 				},
 				{
-					ID: "uesio.picture",
+					ID: "uesio/core.picture",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "uesio.id",
+							ID: adapt.ID_FIELD,
 						},
 					},
 				},
 				{
-					ID: "uesio.language",
+					ID: "uesio/core.language",
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: adapt.ID_FIELD,
 					Value: username,
 				},
 			},
@@ -227,11 +227,11 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio.federation_type",
+					Field: "uesio/core.federation_type",
 					Value: claims.AuthType,
 				},
 				{
-					Field: "uesio.federation_id",
+					Field: "uesio/core.federation_id",
 					Value: claims.Subject,
 				},
 			},
@@ -241,7 +241,7 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for claims: "+claims.Subject, logger.INFO)
+			logger.Log("Could not find login method for claims: "+claims.Subject+":"+claims.AuthType, logger.INFO)
 			return nil, nil
 		}
 		return nil, err

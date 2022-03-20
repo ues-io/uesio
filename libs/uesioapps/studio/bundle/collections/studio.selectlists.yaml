@@ -1,3 +1,0 @@
-name: selectlists
-idFormat: "${studio.workspace}_${studio.name}"
-nameField: studio.name

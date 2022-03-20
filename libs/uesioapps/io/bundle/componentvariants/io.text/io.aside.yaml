@@ -1,8 +1,0 @@
-name: aside
-component: io.text
-label: Aside
-definition:
-  uesio.styles:
-    root:
-      color: "#444"
-      fontSize: "9pt"

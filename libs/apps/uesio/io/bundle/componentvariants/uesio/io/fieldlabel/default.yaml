@@ -1,0 +1,9 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      textAlign: left
+      fontSize: 10pt
+      paddingBottom: 4px
+      color: "#444"

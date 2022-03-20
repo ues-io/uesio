@@ -21,7 +21,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	var translations meta.TranslationCollection
 	if userLanguage != "" {
 		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
-			"studio.language": userLanguage,
+			"uesio/studio.language": userLanguage,
 		}, session)
 
 		if err != nil {

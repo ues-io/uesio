@@ -1,4 +1,0 @@
-name: account_type
-collection: crm.accounts
-type: TEXT
-label: Account Type

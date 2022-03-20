@@ -1,0 +1,4 @@
+name: collectiondata
+path: app/{appname}/workspace/{workspacename}/data/{collectionname}
+view: uesio/studio.collectiondata
+theme: uesio/studio.default

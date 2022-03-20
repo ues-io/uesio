@@ -1,0 +1,6 @@
+name: teammember
+type: "lookup"
+collection: uesio/studio.teammembers
+conditions:
+  - field: "uesio/studio.member"
+token: "${uesio/studio.app}"

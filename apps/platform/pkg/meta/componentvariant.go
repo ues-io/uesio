@@ -1,28 +1,46 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/humandad/yaml"
 )
 
+func NewComponentVariant(key string) (*ComponentVariant, error) {
+	keyArray := strings.Split(key, ":")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Variant Key: " + key)
+	}
+	namespace, name, err := ParseKey(keyArray[1])
+	if err != nil {
+		return nil, errors.New("Invalid Variant Key: " + key)
+	}
+	return &ComponentVariant{
+		Component: keyArray[0],
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
 // ComponentVariant struct
 type ComponentVariant struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
-	Component  string     `yaml:"component" uesio:"studio.component"`
-	Extends    string     `yaml:"extends" uesio:"studio.extends"`
-	Label      string     `yaml:"label" uesio:"studio.label"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
+	Component  string     `yaml:"component" uesio:"uesio/studio.component"`
+	Extends    string     `yaml:"extends" uesio:"uesio/studio.extends"`
+	Label      string     `yaml:"label" uesio:"uesio/studio.label"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -35,11 +53,13 @@ func (c *ComponentVariant) GetPermChecker() *PermissionSet {
 }
 
 func (c *ComponentVariant) GetKey() string {
-	return c.Component + "." + c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s:%s.%s", c.Component, c.Namespace, c.Name)
 }
 
 func (c *ComponentVariant) GetPath() string {
-	return filepath.Join(c.Component, c.Namespace+"."+c.Name) + ".yaml"
+	componentNamespace, componentName, _ := ParseKey(c.Component)
+	nsUser, appName, _ := ParseNamespace(componentNamespace)
+	return filepath.Join(nsUser, appName, componentName, c.Name) + ".yaml"
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {
@@ -73,7 +93,7 @@ func (c *ComponentVariant) GetCollection() CollectionableGroup {
 
 // SetField function
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
@@ -89,7 +109,7 @@ func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (v *ComponentVariant) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
 		if err != nil {
 			return nil, err

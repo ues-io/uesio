@@ -1,4 +1,0 @@
-name: start_date_time
-collection: crm.events
-type: TIMESTAMP
-label: Start Date Time

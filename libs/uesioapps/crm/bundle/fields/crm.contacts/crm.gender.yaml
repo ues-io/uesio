@@ -1,6 +1,0 @@
-name: gender
-collection: crm.contacts
-type: SELECT
-label: Gender
-lanuageLabel: crm.gender
-selectList: crm.gender

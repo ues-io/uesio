@@ -1,0 +1,13 @@
+name: table
+label: Table
+definition:
+  uesio.styles:
+    input:
+      backgroundColor: transparent
+      padding: 16px
+      "&:focus":
+        outline: none
+        background: "#ddd"
+    readonly:
+      backgroundColor: "transparent"
+      border: "none"

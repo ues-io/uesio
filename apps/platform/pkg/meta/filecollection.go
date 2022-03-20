@@ -14,7 +14,7 @@ type FileCollection []File
 
 // GetName function
 func (fc *FileCollection) GetName() string {
-	return "studio.files"
+	return "uesio/studio.files"
 }
 
 // GetFields function
@@ -39,7 +39,7 @@ func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 }
 
 // GetKeyFromPath function
-func (fc *FileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (fc *FileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	if len(conditions) > 0 {
 		return "", errors.New("Conditions not allowed for files")
 	}
@@ -48,7 +48,7 @@ func (fc *FileCollection) GetKeyFromPath(path string, conditions BundleCondition
 		// Ignore this file
 		return "", nil
 	}
-	return parts[0], nil
+	return namespace + "." + parts[0], nil
 }
 
 // GetItem function

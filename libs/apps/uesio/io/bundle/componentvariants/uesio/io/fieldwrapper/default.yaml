@@ -1,0 +1,11 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      color: black
+      padding: 10px 0
+    labelLeft:
+      display: grid
+      gridTemplateColumns: "40% 60%"
+      alignItems: center

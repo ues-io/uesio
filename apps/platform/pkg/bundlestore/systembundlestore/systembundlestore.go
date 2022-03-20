@@ -21,7 +21,7 @@ type SystemBundleStore struct {
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
-	return filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
+	return filepath.Join("..", "..", "libs", "apps", namespace, "bundle")
 }
 
 func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
@@ -38,7 +38,7 @@ func getStream(namespace string, version string, objectname string, filename str
 	}, nil
 }
 
-func getFileKeys(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
+func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
 
 	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
@@ -54,7 +54,7 @@ func getFileKeys(basePath string, group meta.BundleableGroup, conditions meta.Bu
 		if path == basePath {
 			return nil
 		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			return nil
@@ -131,7 +131,7 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
 
-	keys, err := getFileKeys(basePath, group, conditions)
+	keys, err := getFileKeys(basePath, namespace, group, conditions)
 	if err != nil {
 		return err
 	}
@@ -167,11 +167,7 @@ func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version strin
 }
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
-	}
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
 }
 

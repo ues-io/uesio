@@ -1,4 +1,0 @@
-name: recurring_activity
-collection: crm.events
-type: CHECKBOX
-label: Recurring Activity

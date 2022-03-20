@@ -1,3 +1,0 @@
-name: filecollections
-idFormat: "${studio.name}"
-nameField: studio.name

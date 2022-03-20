@@ -1,0 +1,5 @@
+name: discount
+type: NUMBER
+label: Discount
+number:
+  decimals: 0

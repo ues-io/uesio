@@ -1,4 +1,0 @@
-name: account
-collection: crm.leads
-type: TEXT
-label: Account Name

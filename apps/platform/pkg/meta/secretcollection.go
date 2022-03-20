@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
@@ -13,7 +12,7 @@ type SecretCollection []Secret
 
 // GetName function
 func (sc *SecretCollection) GetName() string {
-	return "studio.secrets"
+	return "uesio/studio.secrets"
 }
 
 // GetFields function
@@ -29,20 +28,20 @@ func (sc *SecretCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Secret Key: " + key)
 	}
 	*sc = append(*sc, Secret{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*sc)[len(*sc)-1], nil
 }
 
 // GetKeyFromPath function
-func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

@@ -1,4 +1,0 @@
-name: lastname
-collection: uesio.user
-type: "TEXT"
-label: "Last Name"

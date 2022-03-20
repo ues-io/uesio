@@ -39,21 +39,21 @@ func Bundle(w http.ResponseWriter, r *http.Request) {
 		&datasource.PlatformLoadOptions{
 			Orders: []adapt.LoadRequestOrder{
 				{
-					Field: "studio.major",
+					Field: "uesio/studio.major",
 					Desc:  true,
 				},
 				{
-					Field: "studio.minor",
+					Field: "uesio/studio.minor",
 					Desc:  true,
 				},
 				{
-					Field: "studio.patch",
+					Field: "uesio/studio.patch",
 					Desc:  true,
 				},
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "studio.app",
+					Field: "uesio/studio.app",
 					Value: app,
 				},
 			},

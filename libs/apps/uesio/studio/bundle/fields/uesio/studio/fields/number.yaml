@@ -1,0 +1,7 @@
+name: number
+type: MAP
+label: Number Metadata
+subfields:
+  - name: studio.decimals
+    label: Decimals
+    type: NUMBER

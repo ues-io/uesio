@@ -47,7 +47,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	GetKeyFromPath(string, BundleConditions) (string, error)
+	GetKeyFromPath(string, string, BundleConditions) (string, error)
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
 
@@ -73,13 +73,21 @@ func ParseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
+func ParseNamespace(namespace string) (string, string, error) {
+	keyArray := strings.Split(namespace, "/")
+	if len(keyArray) != 2 {
+		return "", "", errors.New("Invalid Namespace: " + namespace)
+	}
+	return keyArray[0], keyArray[1], nil
+}
+
 // GetNameKeyPart function
 func GetNameKeyPart(key string) string {
 	_, name, _ := ParseKey(key)
 	return name
 }
 
-func StandardKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func StandardKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	if len(conditions) > 0 {
 		return "", errors.New("Conditions not allowed for this type")
 	}
@@ -88,7 +96,7 @@ func StandardKeyFromPath(path string, conditions BundleConditions) (string, erro
 		// Ignore this file
 		return "", nil
 	}
-	return strings.TrimSuffix(path, ".yaml"), nil
+	return namespace + "." + strings.TrimSuffix(path, ".yaml"), nil
 }
 
 // StandardGetFields function
@@ -213,6 +221,22 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 	}
 	if !IsValidMetadataName(name) {
 		return fmt.Errorf("Failed metadata validation, no capital letters or special characters allowed: %s", name)
+	}
+	return nil
+}
+
+func validateRequiredMetadataItem(node *yaml.Node, property string) error {
+	value := getNodeValueAsString(node, property)
+	if value == "" {
+		return fmt.Errorf("Required Metadata Propety Missing: %s", property)
+	}
+	namespace, _, err := ParseKey(value)
+	if err != nil {
+		return fmt.Errorf("Invalid Metadata Property: %s, %s", property, value)
+	}
+	_, _, err = ParseNamespace(namespace)
+	if err != nil {
+		return fmt.Errorf("Invalid Namespace for Metadata Property: %s, %s", property, value)
 	}
 	return nil
 }

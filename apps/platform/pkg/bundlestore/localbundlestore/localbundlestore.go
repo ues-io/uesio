@@ -103,7 +103,7 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 		if path == basePath {
 			return nil
 		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			return nil
@@ -150,11 +150,7 @@ func (b *LocalBundleStore) GetGenerateBotTemplateStream(template, version string
 }
 
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
-	}
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
 }
 

@@ -1,0 +1,4 @@
+name: bots
+path: app/{appname}/workspace/{workspacename}/bots
+view: uesio/studio.bots
+theme: uesio/studio.default

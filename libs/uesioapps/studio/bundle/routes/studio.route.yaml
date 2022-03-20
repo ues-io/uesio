@@ -1,4 +1,0 @@
-name: route
-path: app/{appname}/workspace/{workspacename}/routes/{routename}
-view: studio.route
-theme: studio.default

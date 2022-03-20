@@ -1,0 +1,6 @@
+name: contacts
+path: contacts
+view: uesio/crm.contacts
+theme: uesio/crm.default
+collection: uesio/crm.contacts
+viewtype: list

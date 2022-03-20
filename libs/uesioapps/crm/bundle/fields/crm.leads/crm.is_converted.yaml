@@ -1,4 +1,0 @@
-name: is_converted
-collection: crm.leads
-type: CHECKBOX
-label: Is Converted

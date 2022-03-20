@@ -11,7 +11,7 @@ type ProfileCollection []Profile
 
 // GetName function
 func (pc *ProfileCollection) GetName() string {
-	return "studio.profiles"
+	return "uesio/studio.profiles"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableIte
 }
 
 // GetKeyFromPath function
-func (pc *ProfileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (pc *ProfileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

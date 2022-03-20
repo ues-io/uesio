@@ -1,6 +1,0 @@
-name: logo
-collection: crm.accounts
-type: FILE
-label: Logo
-file:
-  accept: IMAGE

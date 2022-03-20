@@ -11,7 +11,7 @@ type UserCollection []User
 
 // GetName function
 func (uc *UserCollection) GetName() string {
-	return "uesio.user"
+	return "uesio/core.user"
 }
 
 // GetFields function

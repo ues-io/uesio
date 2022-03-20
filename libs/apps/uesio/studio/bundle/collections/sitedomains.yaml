@@ -1,0 +1,3 @@
+name: sitedomains
+idFormat: "${uesio/studio.domain}_${uesio/studio.type}"
+nameField: uesio/studio.domain

@@ -23,84 +23,84 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 
 //ValidationMetadata struct
 type ValidationMetadata struct {
-	Type  string `json:"type" yaml:"type,omitempty" uesio:"studio.type"`
-	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"studio.regex"`
+	Type  string `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`
+	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"uesio/studio.regex"`
 }
 
 // SubField struct
 type SubField struct {
-	Name       string `yaml:"name,omitempty" uesio:"studio.name"`
-	Label      string `yaml:"label,omitempty" uesio:"studio.label"`
-	Type       string `yaml:"type,omitempty" uesio:"studio.type"`
-	SelectList string `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
+	Name       string `yaml:"name,omitempty" uesio:"uesio/studio.name"`
+	Label      string `yaml:"label,omitempty" uesio:"uesio/studio.label"`
+	Type       string `yaml:"type,omitempty" uesio:"uesio/studio.type"`
+	SelectList string `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
 }
 
 // NumberMetadata struct
 type NumberMetadata struct {
-	Decimals int `json:"decimals" uesio:"studio.decimals"`
+	Decimals int `json:"decimals" uesio:"uesio/studio.decimals"`
 }
 
 // FileMetadata type
 type FileMetadata struct {
-	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"studio.accept"`
-	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
+	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"uesio/studio.accept"`
+	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"uesio/studio.filecollection"`
 }
 
 // ReferenceMetadata type
 type ReferenceMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
+	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 }
 
 // ReferenceMetadata type
 type ReferenceGroupMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
-	Field      string `json:"field" yaml:"field,omitempty" uesio:"studio.field"`
-	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"studio.ondelete"`
+	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
+	Field      string `json:"field" yaml:"field,omitempty" uesio:"uesio/studio.field"`
+	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"uesio/studio.ondelete"`
 }
 
 // AutoNumberMetadata struct
 type AutoNumberMetadata struct {
-	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"studio.prefix"`
-	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
+	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"uesio/studio.prefix"`
+	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"uesio/studio.leadingzeros"`
 }
 
 // FormulaMetadata struct
 type FormulaMetadata struct {
-	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"studio.expression"`
-	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
+	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"uesio/studio.expression"`
+	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"uesio/studio.returntype"`
 }
 
 // Field struct
 type Field struct {
-	ID                     string                  `yaml:"-" uesio:"uesio.id"`
-	Name                   string                  `yaml:"name" uesio:"studio.name"`
-	CollectionRef          string                  `yaml:"collection" uesio:"studio.collection"`
+	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
+	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
+	CollectionRef          string                  `yaml:"collection" uesio:"uesio/studio.collection"`
 	Namespace              string                  `yaml:"-" uesio:"-"`
-	Type                   string                  `yaml:"type" uesio:"studio.type"`
-	Label                  string                  `yaml:"label" uesio:"studio.label"`
-	ReadOnly               bool                    `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
-	CreateOnly             bool                    `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
-	SelectList             string                  `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
-	Workspace              *Workspace              `yaml:"-" uesio:"studio.workspace"`
-	Required               bool                    `yaml:"required,omitempty" uesio:"studio.required"`
-	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" uesio:"studio.number"`
-	FileMetadata           *FileMetadata           `yaml:"file,omitempty" uesio:"studio.file"`
-	ReferenceMetadata      *ReferenceMetadata      `yaml:"reference,omitempty" uesio:"studio.reference"`
-	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"studio.referencegroup"`
-	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"studio.validate"`
-	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
-	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"studio.formula"`
-	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
+	Type                   string                  `yaml:"type" uesio:"uesio/studio.type"`
+	Label                  string                  `yaml:"label" uesio:"uesio/studio.label"`
+	ReadOnly               bool                    `yaml:"readOnly,omitempty" uesio:"uesio/studio.readonly"`
+	CreateOnly             bool                    `yaml:"createOnly,omitempty" uesio:"uesio/studio.createonly"`
+	SelectList             string                  `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
+	Workspace              *Workspace              `yaml:"-" uesio:"uesio/studio.workspace"`
+	Required               bool                    `yaml:"required,omitempty" uesio:"uesio/studio.required"`
+	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" uesio:"uesio/studio.number"`
+	FileMetadata           *FileMetadata           `yaml:"file,omitempty" uesio:"uesio/studio.file"`
+	ReferenceMetadata      *ReferenceMetadata      `yaml:"reference,omitempty" uesio:"uesio/studio.reference"`
+	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"uesio/studio.referencegroup"`
+	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"uesio/studio.validate"`
+	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"uesio/studio.autonumber"`
+	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"uesio/studio.formula"`
+	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"uesio/studio.autopopulate"`
 	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
-	CreatedBy              *User                   `yaml:"-" uesio:"uesio.createdby"`
-	Owner                  *User                   `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy              *User                   `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt              int64                   `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt              int64                   `yaml:"-" uesio:"uesio.createdat"`
-	SubFields              []SubField              `yaml:"subfields,omitempty" uesio:"studio.subfields"`
-	SubType                string                  `yaml:"subtype,omitempty" uesio:"studio.subtype"`
-	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"studio.languagelabel"`
-	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"studio.columnname"`
+	CreatedBy              *User                   `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner                  *User                   `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy              *User                   `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt              int64                   `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt              int64                   `yaml:"-" uesio:"uesio/core.createdat"`
+	SubFields              []SubField              `yaml:"subfields,omitempty" uesio:"uesio/studio.subfields"`
+	SubType                string                  `yaml:"subtype,omitempty" uesio:"uesio/studio.subtype"`
+	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"uesio/studio.languagelabel"`
+	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"uesio/studio.columnname"`
 }
 
 // GetFieldTypes function
@@ -149,12 +149,14 @@ func (f *Field) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (f *Field) GetKey() string {
-	return filepath.Join(f.CollectionRef, f.Namespace+"."+f.Name)
+	return fmt.Sprintf("%s:%s.%s", f.CollectionRef, f.Namespace, f.Name)
 }
 
 // GetPath function
 func (f *Field) GetPath() string {
-	return f.GetKey() + ".yaml"
+	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
+	nsUser, appName, _ := ParseNamespace(collectionNamespace)
+	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
 // GetPermChecker function
@@ -219,10 +221,14 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
 	}
-	collection := getNodeValueAsString(node, "collection")
-	if f.CollectionRef != collection {
-		return errors.New("Invalid Collection Value for Field: " + f.GetKey() + " : " + collection)
+	if f.CollectionRef == "" {
+		return errors.New("Invalid Collection Value for Field: " + f.GetKey())
 	}
+	err = setMapNode(node, "collection", f.CollectionRef)
+	if err != nil {
+		return err
+	}
+
 	if fieldType == "REFERENCE" {
 		err := validateReferenceField(node, f.GetKey())
 		if err != nil {
@@ -256,7 +262,7 @@ func validateFileField(node *yaml.Node, fieldKey string) error {
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	return setDefaultValue(fileNode, "filecollection", "uesio.platform")
+	return setDefaultValue(fileNode, "filecollection", "uesio/core.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {

@@ -1,6 +1,0 @@
-name: no_employees
-collection: crm.leads
-type: NUMBER
-label: No. of Employess
-number:
-  decimals: 0

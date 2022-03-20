@@ -1,6 +1,0 @@
-name: app
-collection: studio.bundles
-type: REFERENCE
-label: App
-reference:
-  collection: studio.apps

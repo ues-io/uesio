@@ -1,4 +1,0 @@
-name: product_code
-collection: crm.products
-type: TEXT
-label: Product Code

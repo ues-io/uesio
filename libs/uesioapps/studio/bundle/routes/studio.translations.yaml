@@ -1,4 +1,0 @@
-name: translations
-path: app/{appname}/workspace/{workspacename}/translations
-view: studio.translations
-theme: studio.default

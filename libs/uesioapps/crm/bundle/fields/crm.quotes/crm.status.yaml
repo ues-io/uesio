@@ -1,5 +1,0 @@
-name: status
-collection: crm.quotes
-type: SELECT
-label: Status
-selectList: crm.status

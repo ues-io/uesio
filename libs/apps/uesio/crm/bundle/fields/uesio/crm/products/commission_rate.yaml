@@ -1,0 +1,5 @@
+name: commission_rate
+type: NUMBER
+label: Commission Rate
+number:
+  decimals: 0

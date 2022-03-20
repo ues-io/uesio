@@ -3,7 +3,7 @@ import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
-import { PlainCollection } from "../../collection/types"
+import { ID_FIELD, PlainCollection } from "../../collection/types"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -72,7 +72,7 @@ const getDefaultRecord = (
 				fieldMetadata.reference?.collection
 			) {
 				defaultRecord[defaultItem.field] = {
-					["uesio.id"]: value,
+					[ID_FIELD]: value,
 				}
 				return
 			}

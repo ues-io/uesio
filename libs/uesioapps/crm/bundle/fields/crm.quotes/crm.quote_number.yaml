@@ -1,6 +1,0 @@
-name: quote_number
-collection: crm.quotes
-type: NUMBER
-label: Quote Number
-number:
-  decimals: 0

@@ -1,0 +1,31 @@
+name: app
+components:
+  view:
+    loginmock:
+      configvalues:
+        - uesio/core.mock_auth
+      utilities:
+        - uesio/io.button
+      variants:
+        - uesio/io.button:uesio/io.secondary
+    logingoogle:
+      configvalues:
+        - uesio/core.google_client_id
+      utilities:
+        - uesio/io.button
+      variants:
+        - uesio/io.button:uesio/io.secondary
+    logincognito:
+      utilities:
+        - uesio/io.button
+      variants:
+        - uesio/io.button:uesio/io.primary
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.text:uesio/io.aside
+        - uesio/io.link:uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.default
+      configvalues:
+        - uesio/core.cognito_pool_id
+        - uesio/core.cognito_client_id

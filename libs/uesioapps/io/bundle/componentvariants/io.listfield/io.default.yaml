@@ -1,9 +1,0 @@
-name: default
-component: io.listfield
-label: Default
-definition:
-  uesio.styles:
-    row:
-      columnGap: "10px"
-      alignItems: "center"
-      margin: 10px 0

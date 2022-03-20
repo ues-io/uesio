@@ -72,10 +72,16 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if namespace == "" {
 		return nil, errors.New("Could not get bundlestore: No namespace provided")
 	}
+
+	_, _, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return nil, err
+	}
+
 	if session.GetWorkspaceApp() == namespace {
 		return GetBundleStoreByType("workspace")
 	}
-	if namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "lab" || namespace == "docs" || namespace == "web" {
+	if namespace == "uesio/core" || namespace == "uesio/studio" || namespace == "uesio/io" || namespace == "uesio/lab" || namespace == "uesio/docs" || namespace == "uesio/web" {
 		return GetBundleStoreByType("system")
 	}
 

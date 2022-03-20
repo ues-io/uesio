@@ -111,6 +111,7 @@ func HandleUpsertLookup(
 				return err
 			}
 			change.IDValue = idValue.(string)
+			change.IsNew = false
 			*op.Updates = append(*op.Updates, change)
 		} else {
 			newInserts = append(newInserts, change)

@@ -1,0 +1,4 @@
+name: user
+path: app/{appname}/site/{sitename}/users/{userid}
+view: uesio/studio.user
+theme: uesio/studio.default

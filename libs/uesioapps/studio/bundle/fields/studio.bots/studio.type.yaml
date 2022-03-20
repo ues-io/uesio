@@ -1,5 +1,0 @@
-name: type
-collection: studio.bots
-type: SELECT
-label: Bot type
-selectList: studio.bottype

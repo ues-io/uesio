@@ -1,4 +1,0 @@
-name: comment_body
-collection: crm.comments
-type: LONGTEXT
-label: Comment Body

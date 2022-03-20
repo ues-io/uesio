@@ -11,7 +11,7 @@ type UserFileCollectionCollection []UserFileCollection
 
 // GetName function
 func (ufcc *UserFileCollectionCollection) GetName() string {
-	return "studio.filecollections"
+	return "uesio/studio.filecollections"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (ufcc *UserFileCollectionCollection) NewBundleableItemWithKey(key string) (
 }
 
 // GetKeyFromPath function
-func (ufcc *UserFileCollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (ufcc *UserFileCollectionCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

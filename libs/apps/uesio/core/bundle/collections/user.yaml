@@ -1,0 +1,3 @@
+name: user
+idFormat: "${uesio/core.username}"
+nameField: uesio/core.id

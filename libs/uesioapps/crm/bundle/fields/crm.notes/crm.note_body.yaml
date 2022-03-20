@@ -1,4 +1,0 @@
-name: note_body
-collection: crm.notes
-type: LONGTEXT
-label: Note Body

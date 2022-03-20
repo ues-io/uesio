@@ -47,8 +47,11 @@ var (
 			return valStr, nil
 		}),
 		gval.Function("FIRST", func(args ...interface{}) (interface{}, error) {
-			valStr := fmt.Sprint(args[0])[0:1]
-			return valStr, nil
+			valStr := fmt.Sprint(args[0])
+			if valStr == "" {
+				return "", nil
+			}
+			return valStr[0:1], nil
 		}),
 	)
 )

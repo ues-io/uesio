@@ -35,23 +35,23 @@ type TokenCondition struct {
 
 // Collection struct
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"uesio.id"`
-	Name                  string                            `yaml:"name" uesio:"studio.name"`
+	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
+	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
-	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
-	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
-	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
+	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
+	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"uesio/studio.idformat"`
+	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`
-	Owner                 *User                             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"uesio.createdat"`
+	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
-	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
+	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
-	TableName             string                            `yaml:"tablename,omitempty" uesio:"studio.tablename"`
+	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 }
 
 // GetCollectionName function
@@ -77,12 +77,12 @@ func (c *Collection) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (c *Collection) GetKey() string {
-	return c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
 // GetPath function
 func (c *Collection) GetPath() string {
-	return c.GetKey() + ".yaml"
+	return c.Name + ".yaml"
 }
 
 // GetPermChecker function
@@ -147,7 +147,7 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	err = setDefaultValue(node, "dataSource", "uesio.platform")
+	err = setDefaultValue(node, "dataSource", "uesio/core.platform")
 	if err != nil {
 		return err
 	}

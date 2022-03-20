@@ -2,8 +2,8 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -15,7 +15,7 @@ type BotCollection []Bot
 
 // GetName function
 func (bc *BotCollection) GetName() string {
-	return "studio.bots"
+	return "uesio/studio.bots"
 }
 
 // GetFields function
@@ -40,9 +40,9 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 }
 
 // GetKeyFromPath function
-func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["studio.collection"]
-	botTypeKey, hasType := GetBotTypes()[conditions["studio.type"]]
+func (bc *BotCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	collectionKey, hasCollection := conditions["uesio/studio.collection"]
+	botTypeKey, hasType := GetBotTypes()[conditions["uesio/studio.type"]]
 	parts := strings.Split(path, string(os.PathSeparator))
 	partLength := len(parts)
 	if partLength < 1 {
@@ -60,19 +60,40 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		if hasType && botType != botTypeKey {
 			return "", nil
 		}
-		return filepath.Join(botType, parts[1]), nil
+		bot := Bot{
+			Type:      strings.ToUpper(botType),
+			Namespace: namespace,
+			Name:      parts[1],
+		}
+		return bot.GetKey(), nil
 	}
 	if botType == "beforesave" || botType == "aftersave" {
-		if partLength != 4 || parts[3] != "bot.yaml" {
+		if partLength != 6 || parts[5] != "bot.yaml" {
 			return "", nil
 		}
 		if hasType && botType != botTypeKey {
 			return "", nil
 		}
-		if hasCollection && parts[1] != collectionKey {
-			return "", nil
+		if hasCollection {
+			collectionNS, collectionName, err := ParseKey(collectionKey)
+			if err != nil {
+				return "", err
+			}
+			nsUser, nsApp, err := ParseNamespace(collectionNS)
+			if err != nil {
+				return "", err
+			}
+			if parts[1] != nsUser || parts[2] != nsApp || parts[3] != collectionName {
+				return "", nil
+			}
 		}
-		return filepath.Join(botType, parts[1], parts[2]), nil
+		bot := Bot{
+			Type:          strings.ToUpper(botType),
+			Namespace:     namespace,
+			Name:          parts[4],
+			CollectionRef: fmt.Sprintf("%s/%s.%s", parts[1], parts[2], parts[3]),
+		}
+		return bot.GetKey(), nil
 	}
 	return "", errors.New("Bad bundle conditions for bot: " + path)
 }

@@ -4,6 +4,7 @@ import { Context } from "../context/context"
 import WireRecord from "../bands/wirerecord/class"
 import { useEffect, useState } from "react"
 import { PlainWireRecord } from "../wireexports"
+import { ID_FIELD } from "../collectionexports"
 
 const getURL = (context: Context, namespace: string, name: string) =>
 	getPlatform().getFileURL(context, namespace, name)
@@ -55,7 +56,7 @@ class FileAPI {
 			const userFile = record.getFieldValue<PlainWireRecord | undefined>(
 				fieldId
 			)
-			const userFileId = userFile?.["uesio.id"] as string
+			const userFileId = userFile?.[ID_FIELD] as string
 			const fileUrl = getUserFileURL(context, userFileId, true)
 			if (!fileUrl) {
 				setContent("")

@@ -11,7 +11,7 @@ type CredentialCollection []Credential
 
 // GetName function
 func (cc *CredentialCollection) GetName() string {
-	return "studio.credentials"
+	return "uesio/studio.credentials"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (cc *CredentialCollection) NewBundleableItemWithKey(key string) (Bundleable
 }
 
 // GetKeyFromPath function
-func (cc *CredentialCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (cc *CredentialCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

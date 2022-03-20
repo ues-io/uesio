@@ -34,6 +34,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 
 	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
 
 	if workspace == "" {
 		return errors.New("No Workspace provided for deployment")
@@ -90,7 +91,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 		path := filepath.Join(filepath.Join(dirParts[2:]...), fileName)
 
-		key, err := collection.GetKeyFromPath(path, nil)
+		key, err := collection.GetKeyFromPath(path, namespace, nil)
 		if err != nil {
 			return err
 		}
@@ -111,7 +112,7 @@ func Deploy(body []byte, session *sess.Session) error {
 				file := collectionItem.(*meta.File)
 				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
 					RecordID:  file.Name,
-					FieldName: "studio.content",
+					FieldName: "uesio/studio.content",
 				}
 			}
 
@@ -120,20 +121,20 @@ func Deploy(body []byte, session *sess.Session) error {
 				bot := collectionItem.(*meta.Bot)
 				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
 					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
-					FieldName: "studio.content",
+					FieldName: "uesio/studio.content",
 				}
 			}
 
 			// Special handling for componentpacks
 			if metadataType == "componentpacks" {
 				cpack := collectionItem.(*meta.ComponentPack)
-				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath()] = FileRecord{
+				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
 					RecordID:  cpack.Name,
-					FieldName: "studio.runtimebundle",
+					FieldName: "uesio/studio.runtimebundle",
 				}
-				fileNameMap[metadataType+":"+cpack.GetBuilderComponentPackFilePath()] = FileRecord{
+				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
 					RecordID:  cpack.Name,
-					FieldName: "studio.buildtimebundle",
+					FieldName: "uesio/studio.buildtimebundle",
 				}
 			}
 
@@ -182,12 +183,12 @@ func Deploy(body []byte, session *sess.Session) error {
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			"uesio.id":              true,
-			"studio.loginroute":     true,
-			"studio.homeroute":      true,
-			"studio.defaultprofile": true,
-			"studio.publicprofile":  true,
-			"studio.defaulttheme":   true,
+			adapt.ID_FIELD:                true,
+			"uesio/studio.loginroute":     true,
+			"uesio/studio.homeroute":      true,
+			"uesio/studio.defaultprofile": true,
+			"uesio/studio.publicprofile":  true,
+			"uesio/studio.defaulttheme":   true,
 		},
 	})
 
@@ -265,7 +266,7 @@ func applyDeploy(
 
 		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
 			Name:         fileStream.FileName,
-			CollectionID: "studio." + fileStream.Type,
+			CollectionID: "uesio/studio." + fileStream.Type,
 			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
 			FieldID:      fileRecord.FieldName,
 		}, connection, session.RemoveWorkspaceContext())

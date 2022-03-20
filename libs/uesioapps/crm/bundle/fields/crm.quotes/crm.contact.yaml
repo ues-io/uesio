@@ -1,6 +1,0 @@
-name: contact
-collection: crm.quotes
-type: REFERENCE
-label: Contact
-reference:
-  collection: crm.contacts

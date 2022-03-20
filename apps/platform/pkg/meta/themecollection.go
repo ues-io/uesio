@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
@@ -13,7 +12,7 @@ type ThemeCollection []Theme
 
 // GetName function
 func (tc *ThemeCollection) GetName() string {
-	return "studio.themes"
+	return "uesio/studio.themes"
 }
 
 // GetFields function
@@ -29,20 +28,20 @@ func (tc *ThemeCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Theme Key: " + key)
 	}
 	*tc = append(*tc, Theme{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*tc)[len(*tc)-1], nil
 }
 
 // GetKeyFromPath function
-func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

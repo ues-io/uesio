@@ -1,0 +1,9 @@
+name: footertext
+label: Footer Text
+definition:
+  uesio.styles:
+    root:
+      color: "#888"
+      fontSize: 9pt
+      fontWeight: 300
+      whiteSpace: nowrap

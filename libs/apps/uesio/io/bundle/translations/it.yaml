@@ -1,0 +1,7 @@
+language: it
+labels:
+  uesio/io.cancel: Annula
+  uesio/io.delete: Elimina
+  uesio/io.edit: Modifica
+  uesio/io.preview: Vedere
+  uesio/io.save: Salva

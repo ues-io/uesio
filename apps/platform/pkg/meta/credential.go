@@ -20,23 +20,23 @@ func NewCredential(key string) (*Credential, error) {
 }
 
 type CredentialEntry struct {
-	Type  string `yaml:"type" uesio:"studio.type"`
-	Value string `yaml:"value" uesio:"studio.value"`
+	Type  string `yaml:"type" uesio:"uesio/studio.type"`
+	Value string `yaml:"value" uesio:"uesio/studio.value"`
 }
 
 // Credential struct
 type Credential struct {
-	ID        string                     `yaml:"-" uesio:"uesio.id"`
-	Name      string                     `yaml:"name" uesio:"studio.name"`
+	ID        string                     `yaml:"-" uesio:"uesio/core.id"`
+	Name      string                     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string                     `yaml:"-" uesio:"-"`
-	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
-	Workspace *Workspace                 `yaml:"-" uesio:"studio.workspace"`
+	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"uesio/studio.entries"`
+	Workspace *Workspace                 `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta                  `yaml:"-" uesio:"-"`
-	CreatedBy *User                      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User                      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User                      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64                      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64                      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User                      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner     *User                      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy *User                      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt int64                      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt int64                      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -62,12 +62,12 @@ func (c *Credential) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (c *Credential) GetKey() string {
-	return c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
 // GetPath function
 func (c *Credential) GetPath() string {
-	return c.GetKey() + ".yaml"
+	return c.Name + ".yaml"
 }
 
 // GetPermChecker function

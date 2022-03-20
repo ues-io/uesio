@@ -1,3 +1,0 @@
-name: teammembers
-idFormat: "${studio.team}_${studio.member}"
-nameField: studio.member

@@ -1,6 +1,0 @@
-name: picture
-collection: uesio.user
-type: FILE
-label: Profile picture
-file:
-  accept: IMAGE

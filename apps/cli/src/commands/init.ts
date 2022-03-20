@@ -63,7 +63,7 @@ export default class Init extends Command {
 		}
 
 		const response = await post(
-			`version/uesio/uesio/v0.0.1/metadata/generate/init`,
+			`version/uesio/core/v0.0.1/metadata/generate/init`,
 			JSON.stringify({ name }),
 			user.cookie
 		)

@@ -1,0 +1,69 @@
+name: lead_details
+definition:
+  components:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.list:
+        id: leadList
+        wire: leads
+        mode: READ
+        components:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.main
+              title: ${uesio/crm.firstname} ${uesio/crm.lastname}
+              actions:
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          signals:
+                            - signal: component/io.list/TOGGLE_MODE
+                              target: leadList
+                          text: Edit
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - leads
+                          text: Save
+                          uesio.variant: uesio/io.secondary
+                      - uesio/io.button:
+                          signals:
+                            - signal: wire/CANCEL
+                              wire: leads
+                          text: Cancel
+                          uesio.variant: uesio/io.secondary
+          - uesio/io.box:
+              uesio.variant: uesio/io.section
+              uesio.styles:
+                root:
+                  padding: 40px
+              components:
+                - uesio/io.grid:
+                    templateColumns:
+                      xs: 1fr
+                      md: 1fr 1fr
+                      lg: 1fr 1fr 1fr 1fr
+                    columnGap: 10px
+                    items:
+                      - uesio/io.field:
+                          fieldId: uesio/crm.firstname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.lastname
+                      - uesio/io.field:
+                          fieldId: uesio/core.updatedat
+                      - uesio/io.field:
+                          fieldId: uesio/core.createdat
+  wires:
+    leads:
+      collection: uesio/crm.leads
+      conditions:
+        - field: uesio/core.id
+          param: recordid
+          valueSource: PARAM
+      fields:
+        uesio/crm.firstname:
+        uesio/core.id:
+        uesio/crm.lastname:
+        uesio/core.updatedat:
+        uesio/core.createdat:

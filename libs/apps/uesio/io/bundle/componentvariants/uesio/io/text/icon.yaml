@@ -1,0 +1,7 @@
+name: icon
+label: Icon
+definition:
+  uesio.styles:
+    root:
+      fontFamily: Material Icons
+      verticalAlign: middle

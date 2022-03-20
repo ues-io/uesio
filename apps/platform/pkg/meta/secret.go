@@ -9,18 +9,18 @@ import (
 
 // Secret struct
 type Secret struct {
-	ID        string     `yaml:"-" uesio:"uesio.id"`
-	Name      string     `yaml:"name" uesio:"studio.name"`
+	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
-	Store     string     `yaml:"store,omitempty" uesio:"studio.store"`
-	ManagedBy string     `yaml:"managedBy" uesio:"studio.managedby"`
-	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Store     string     `yaml:"store,omitempty" uesio:"uesio/studio.store"`
+	ManagedBy string     `yaml:"managedBy" uesio:"uesio/studio.managedby"`
+	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // NewSecret function
@@ -58,12 +58,12 @@ func (s *Secret) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (s *Secret) GetKey() string {
-	return s.Namespace + "." + s.Name
+	return fmt.Sprintf("%s.%s", s.Namespace, s.Name)
 }
 
 // GetPath function
 func (s *Secret) GetPath() string {
-	return s.GetKey() + ".yaml"
+	return s.Name + ".yaml"
 }
 
 // GetPermChecker function

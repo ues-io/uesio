@@ -8,23 +8,23 @@ import (
 
 // SelectListOption struct
 type SelectListOption struct {
-	Label string `uesio:"studio.label" json:"label"`
-	Value string `uesio:"studio.value" json:"value"`
+	Label string `uesio:"uesio/studio.label" json:"label"`
+	Value string `uesio:"uesio/studio.value" json:"value"`
 }
 
 // SelectList struct
 type SelectList struct {
-	ID               string             `yaml:"-" uesio:"uesio.id"`
-	Name             string             `yaml:"name" uesio:"studio.name"`
+	ID               string             `yaml:"-" uesio:"uesio/core.id"`
+	Name             string             `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace        string             `yaml:"-" uesio:"-"`
-	Options          []SelectListOption `yaml:"options" uesio:"studio.options"`
-	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" uesio:"studio.blank_option_label"`
-	Workspace        *Workspace         `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy        *User              `yaml:"-" uesio:"uesio.createdby"`
-	Owner            *User              `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy        *User              `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt        int64              `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt        int64              `yaml:"-" uesio:"uesio.createdat"`
+	Options          []SelectListOption `yaml:"options" uesio:"uesio/studio.options"`
+	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" uesio:"uesio/studio.blank_option_label"`
+	Workspace        *Workspace         `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy        *User              `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner            *User              `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy        *User              `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt        int64              `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt        int64              `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
 }
 
@@ -51,12 +51,12 @@ func (sl *SelectList) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (sl *SelectList) GetKey() string {
-	return sl.Namespace + "." + sl.Name
+	return fmt.Sprintf("%s.%s", sl.Namespace, sl.Name)
 }
 
 // GetPath function
 func (sl *SelectList) GetPath() string {
-	return sl.GetKey() + ".yaml"
+	return sl.Name + ".yaml"
 }
 
 // GetPermChecker function

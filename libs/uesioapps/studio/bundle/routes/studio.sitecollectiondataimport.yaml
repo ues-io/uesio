@@ -1,4 +1,0 @@
-name: sitecollectiondataimport
-path: app/{appname}/site/{sitename}/import/{collectionname}
-view: studio.sitecollectiondataimport
-theme: studio.default

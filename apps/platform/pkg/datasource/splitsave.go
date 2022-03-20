@@ -41,6 +41,7 @@ func (ol *OpList) addInsert(item loadable.Item, recordKey string) {
 	*ol.List[currentIndex].Inserts = append(*ol.List[currentIndex].Inserts, adapt.ChangeItem{
 		FieldChanges: item,
 		RecordKey:    recordKey,
+		IsNew:        true,
 	})
 }
 

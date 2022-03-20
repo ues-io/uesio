@@ -21,18 +21,18 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string     `yaml:"-" uesio:"uesio.id"`
-	Name        string     `yaml:"name" uesio:"studio.name"`
+	ID          string     `yaml:"-" uesio:"uesio/core.id"`
+	Name        string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace   string     `yaml:"-" uesio:"-"`
-	Type        string     `yaml:"type" uesio:"studio.type"`
-	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Type        string     `yaml:"type" uesio:"uesio/studio.type"`
+	Credentials string     `yaml:"credentials" uesio:"uesio/studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy   *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner       *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy   *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt   int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt   int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy   *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner       *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy   *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -58,12 +58,12 @@ func (ds *DataSource) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (ds *DataSource) GetKey() string {
-	return ds.Namespace + "." + ds.Name
+	return fmt.Sprintf("%s.%s", ds.Namespace, ds.Name)
 }
 
 // GetPath function
 func (ds *DataSource) GetPath() string {
-	return ds.GetKey() + ".yaml"
+	return ds.Name + ".yaml"
 }
 
 // GetPermChecker function

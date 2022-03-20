@@ -129,7 +129,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	collectionMetadata = GetCollectionMetadata(collection)
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "id",
-		Namespace:  "uesio",
+		Namespace:  "uesio/core",
 		Createable: false,
 		Accessible: true,
 		Updateable: false,
@@ -138,7 +138,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "owner",
-		Namespace:    "uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -148,7 +148,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "createdby",
-		Namespace:    "uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -158,7 +158,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "updatedby",
-		Namespace:    "uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -168,7 +168,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "createdat",
-		Namespace:    "uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -178,7 +178,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "updatedat",
-		Namespace:    "uesio",
+		Namespace:    "uesio/core",
 		Createable:   false,
 		Accessible:   true,
 		Updateable:   false,
@@ -197,10 +197,14 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
-		"studio.collection": collectionKey,
+		"uesio/studio.collection": collectionKey,
 	}, session)
 	if err != nil {
 		return err
+	}
+
+	if len(fields) == 0 {
+		return errors.New("No fields found for collection")
 	}
 
 	for _, field := range fields {

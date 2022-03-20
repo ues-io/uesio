@@ -1,4 +1,0 @@
-name: team
-path: app/{appname}/teams/{teamname}
-view: studio.team
-theme: studio.default

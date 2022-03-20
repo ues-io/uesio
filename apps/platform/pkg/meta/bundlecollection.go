@@ -11,7 +11,7 @@ type BundleCollection []Bundle
 
 // GetName function
 func (bc *BundleCollection) GetName() string {
-	return "studio.bundles"
+	return "uesio/studio.bundles"
 }
 
 // GetFields function

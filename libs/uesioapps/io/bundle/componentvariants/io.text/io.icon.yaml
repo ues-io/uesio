@@ -1,8 +1,0 @@
-name: icon
-component: io.text
-label: Icon
-definition:
-  uesio.styles:
-    root:
-      fontFamily: Material Icons
-      verticalAlign: middle

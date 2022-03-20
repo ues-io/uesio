@@ -1,0 +1,9 @@
+name: smalltitle
+label: Small Title
+definition:
+  uesio.styles:
+    root:
+      color: "#21242D"
+      fontWeight: "500"
+      fontSize: "10pt"
+      lineHeight: "30pt"

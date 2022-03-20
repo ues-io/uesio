@@ -9,19 +9,19 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID              string              `yaml:"-" uesio:"uesio.id"`
-	Name            string              `yaml:"name" uesio:"studio.name"`
+	ID              string              `yaml:"-" uesio:"uesio/core.id"`
+	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace       string              `yaml:"-" uesio:"-"`
-	Workspace       *Workspace          `yaml:"-" uesio:"studio.workspace"`
-	Components      *ComponentsRegistry `yaml:"components" uesio:"studio.components"`
-	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"studio.runtimebundle"`
-	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"studio.buildtimebundle"`
+	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
+	Components      *ComponentsRegistry `yaml:"components" uesio:"uesio/studio.components"`
+	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.runtimebundle"`
+	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.buildtimebundle"`
 	itemMeta        *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy       *User               `yaml:"-" uesio:"uesio.createdby"`
-	Owner           *User               `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy       *User               `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt       int64               `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt       int64               `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy       *User               `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner           *User               `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy       *User               `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 type ComponentsRegistry struct {
@@ -58,20 +58,20 @@ func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (cp *ComponentPack) GetKey() string {
-	return cp.Namespace + "." + cp.Name
+	return fmt.Sprintf("%s.%s", cp.Namespace, cp.Name)
 }
 
-func (cp *ComponentPack) GetComponentPackFilePath() string {
-	return filepath.Join(cp.GetKey(), "runtime.bundle.js")
-}
-
-func (cp *ComponentPack) GetBuilderComponentPackFilePath() string {
-	return filepath.Join(cp.GetKey(), "builder.bundle.js")
+func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
+	fileName := "runtime.bundle.js"
+	if buildMode {
+		fileName = "builder.bundle.js"
+	}
+	return filepath.Join(cp.Name, fileName)
 }
 
 // GetPath function
 func (cp *ComponentPack) GetPath() string {
-	return filepath.Join(cp.GetKey(), "pack.yaml")
+	return filepath.Join(cp.Name, "pack.yaml")
 }
 
 // GetPermChecker function
@@ -81,7 +81,7 @@ func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.components" {
+	if fieldName == "uesio/studio.components" {
 		if value == nil {
 			cp.Components = &ComponentsRegistry{}
 			return nil
@@ -100,7 +100,7 @@ func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.components" {
+	if fieldName == "uesio/studio.components" {
 
 		bytes, err := yaml.Marshal(&cp.Components)
 		if err != nil {

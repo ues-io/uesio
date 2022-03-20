@@ -1,0 +1,5 @@
+name: supplier
+type: REFERENCE
+label: Supplier
+reference:
+  collection: uesio/crm.accounts

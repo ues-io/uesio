@@ -1,0 +1,8 @@
+name: workspaces
+idFormat: "${uesio/studio.app}_${uesio/studio.name}"
+nameField: uesio/studio.name
+access: "protected"
+recordChallengeTokens:
+  - token: "${uesio/studio.app}"
+    userAccessToken: "uesio/studio.teammember"
+    access: readwrite

@@ -1,4 +1,0 @@
-name: end_date_time
-collection: crm.events
-type: TIMESTAMP
-label: End Date Time

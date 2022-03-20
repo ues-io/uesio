@@ -1,0 +1,14 @@
+[
+	{
+		"uesio/studio.app": "uesio/crm",
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": "uesio/cms",
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": "uesio/studio",
+		"uesio/studio.name": "maintainers"
+	}
+]

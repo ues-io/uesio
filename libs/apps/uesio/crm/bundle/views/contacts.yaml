@@ -1,0 +1,102 @@
+name: contacts
+definition:
+  components:
+    - uesio/core.view:
+        view: uesio/crm.topbar
+    - uesio/io.titlebar:
+        title: Contacts
+        uesio.variant: uesio/io.main
+        actions:
+          - uesio/io.group:
+              components:
+                - uesio/io.button:
+                    signals:
+                      - signal: wire/CREATE_RECORD
+                        wire: contacts
+                    text: Create
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
+                    signals:
+                      - signal: wire/SAVE
+                        wires:
+                          - contacts
+                    text: Save
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
+                    signals:
+                      - signal: wire/CANCEL
+                        wire: contacts
+                    text: Cancel
+                    uesio.variant: uesio/io.secondary
+                - uesio/io.button:
+                    signals:
+                      - signal: component/io.table/TOGGLE_MODE
+                        target: contactsTable
+                    text: Mode
+                    uesio.variant: uesio/io.secondary
+    - uesio/io.box:
+        uesio.variant: uesio/io.section
+        components:
+          - uesio/io.deck:
+              id: NewId
+              mode: EDIT
+              wire: contacts
+              templateColumns: 1fr 1fr 1fr
+              uesio.styles:
+                root:
+                  columnGap: 20px
+                  rowGap: 20px
+                  padding: 40px
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        alignItems: flex-start
+                        border: "1px solid #ccc"
+                        boxShadow: "0 0 6px #00000033"
+                        padding: 15px
+                        min-height: 240px
+                    templateColumns: 180px 1fr 1fr
+                    columnGap: 10px
+                    components:
+                      - uesio/io.field:
+                          fieldId: uesio/crm.image
+                          displayAs: IMAGE
+                          uesio.styles:
+                            root:
+                              max-height: 200px
+                          label: null
+                          labelPosition: none
+                      - uesio/io.field:
+                          fieldId: uesio/crm.firstname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.lastname
+                      - uesio/io.field:
+                          fieldId: uesio/crm.email
+                      - uesio/io.field:
+                          fieldId: uesio/crm.account
+                      - uesio/io.button:
+                          text: View
+                          icon: arrow_forward
+                          uesio.variant: uesio/io.secondary
+                          signals:
+                            - signal: route/NAVIGATE
+                              collection: uesio/crm.contacts
+                              viewtype: detail
+                              recordid: ${uesio/core.id}
+  wires:
+    contacts:
+      collection: uesio/crm.contacts
+      fields:
+        uesio/crm.account:
+          fields:
+            uesio/crm.name: null
+        uesio/crm.birthdate: null
+        uesio/crm.firstname: null
+        uesio/crm.gender: null
+        uesio/core.id: null
+        uesio/crm.lastname: null
+        uesio/crm.email: null
+        uesio/core.updatedat: null
+        uesio/core.createdat: null
+        uesio/crm.image: null

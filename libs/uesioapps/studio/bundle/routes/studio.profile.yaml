@@ -1,4 +1,0 @@
-name: profile
-path: app/{appname}/workspace/{workspacename}/profiles/{profilename}
-view: studio.profile
-theme: studio.default

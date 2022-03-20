@@ -3,41 +3,40 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/humandad/yaml"
 )
 
 // NewRoute function
 func NewRoute(key string) (*Route, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Route Key: " + key)
 	}
 	return &Route{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	}, nil
 }
 
 // Route struct
 type Route struct {
-	ID         string            `yaml:"-" uesio:"uesio.id"`
-	Name       string            `uesio:"studio.name"`
+	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
-	Path       string            `yaml:"path" uesio:"studio.path"`
-	ViewType   string            `yaml:"viewtype" uesio:"studio.viewtype"`
-	ViewRef    string            `yaml:"view" uesio:"studio.view"`
-	Collection string            `yaml:"collection" uesio:"studio.collection"`
+	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
+	ViewType   string            `yaml:"viewtype" uesio:"uesio/studio.viewtype"`
+	ViewRef    string            `yaml:"view" uesio:"uesio/studio.view"`
+	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
 	Params     map[string]string `yaml:"-" uesio:"-"`
-	Workspace  *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	ThemeRef   string            `yaml:"theme" uesio:"studio.theme"`
+	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
+	ThemeRef   string            `yaml:"theme" uesio:"uesio/studio.theme"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -63,12 +62,12 @@ func (r *Route) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (r *Route) GetKey() string {
-	return r.Namespace + "." + r.Name
+	return fmt.Sprintf("%s.%s", r.Namespace, r.Name)
 }
 
 // GetPath function
 func (r *Route) GetPath() string {
-	return r.GetKey() + ".yaml"
+	return r.Name + ".yaml"
 }
 
 // GetPermChecker function
@@ -130,6 +129,18 @@ func (r *Route) SetItemMeta(itemMeta *ItemMeta) {
 
 func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, r.Name)
+	if err != nil {
+		return err
+	}
+	err = validateRequiredMetadataItem(node, "view")
+	if err != nil {
+		return err
+	}
+	err = setDefaultValue(node, "theme", "uesio/core.default")
+	if err != nil {
+		return err
+	}
+	err = validateRequiredMetadataItem(node, "theme")
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -104,6 +105,15 @@ func getConditions(
 		conditionValue := condition.Value
 
 		if condition.Operator == "IN" {
+			conditions, ok := conditionValue.([]string)
+			if !ok {
+				return nil, nil, errors.New("Invalid IN condition value")
+			}
+			if len(conditions) == 1 {
+				conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
+				values = append(values, conditions[0])
+				continue
+			}
 			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
 			values = append(values, pq.Array(conditionValue))
 		} else {

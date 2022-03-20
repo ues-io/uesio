@@ -1,0 +1,3 @@
+name: readonly
+type: CHECKBOX
+label: ReadOnly

@@ -1,0 +1,7 @@
+name: reference
+type: MAP
+label: Reference Metadata
+subfields:
+  - name: studio.collection
+    label: Collection
+    type: TEXT

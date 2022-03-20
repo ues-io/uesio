@@ -11,7 +11,7 @@ type FeatureFlagCollection []FeatureFlag
 
 // GetName function
 func (ffc *FeatureFlagCollection) GetName() string {
-	return "studio.featureflags"
+	return "uesio/studio.featureflags"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (ffc *FeatureFlagCollection) NewBundleableItemWithKey(key string) (Bundleab
 }
 
 // GetKeyFromPath function
-func (ffc *FeatureFlagCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (ffc *FeatureFlagCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

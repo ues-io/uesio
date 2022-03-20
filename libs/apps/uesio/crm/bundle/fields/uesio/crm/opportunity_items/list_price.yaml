@@ -1,0 +1,5 @@
+name: list_price
+type: NUMBER
+label: List Price
+number:
+  decimals: 2

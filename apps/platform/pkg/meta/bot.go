@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -12,7 +11,7 @@ import (
 
 // NewBot function
 func NewBot(key string) (*Bot, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
+	keyArray := strings.Split(key, ":")
 	keySize := len(keyArray)
 	if keySize != 3 && keySize != 2 {
 		return nil, errors.New("Invalid Bot Key: " + key)
@@ -74,31 +73,31 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParam struct {
-	Name         string `yaml:"name" uesio:"studio.name" json:"name"`
-	Prompt       string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
-	Type         string `yaml:"type" uesio:"studio.type" json:"type"`
-	MetadataType string `yaml:"metadataType" uesio:"studio.metadatatype" json:"metadataType"`
-	Grouping     string `yaml:"grouping" uesio:"studio.grouping" json:"grouping"`
-	Default      string `yaml:"default" uesio:"studio.default" json:"default"`
+	Name         string `yaml:"name" uesio:"uesio/studio.name" json:"name"`
+	Prompt       string `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
+	Type         string `yaml:"type" uesio:"uesio/studio.type" json:"type"`
+	MetadataType string `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
+	Grouping     string `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
+	Default      string `yaml:"default" uesio:"uesio/studio.default" json:"default"`
 }
 
 // Bot struct
 type Bot struct {
-	ID            string            `yaml:"-" uesio:"uesio.id"`
-	Name          string            `yaml:"name" uesio:"studio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" uesio:"studio.collection"`
+	ID            string            `yaml:"-" uesio:"uesio/core.id"`
+	Name          string            `yaml:"name" uesio:"uesio/studio.name"`
+	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 	Namespace     string            `yaml:"-" uesio:"-"`
-	Type          string            `yaml:"type" uesio:"studio.type"`
-	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
-	Params        []BotParam        `yaml:"params" uesio:"studio.params"`
-	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
+	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
+	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
+	Params        []BotParam        `yaml:"params" uesio:"uesio/studio.params"`
+	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy     *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner         *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy     *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt     int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt     int64             `yaml:"-" uesio:"uesio.createdat"`
+	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy     *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner         *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy     *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
 }
 
@@ -129,11 +128,11 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 }
 
 func (b *Bot) GetBotFilePath() string {
-	return filepath.Join(b.GetKey(), "bot.js")
+	return filepath.Join(b.GetBasePath(), "bot.js")
 }
 
 func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
-	return filepath.Join(b.GetKey(), "templates", template)
+	return filepath.Join(b.GetBasePath(), "templates", template)
 }
 
 // GetCollectionName function
@@ -161,13 +160,23 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
 	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
-		return filepath.Join(botType, b.Namespace+"."+b.Name)
+		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
 	}
-	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)
+	return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
+}
+
+func (b *Bot) GetBasePath() string {
+	botType := GetBotTypes()[b.Type]
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+		return filepath.Join(botType, b.Name)
+	}
+	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)
+	nsUser, appName, _ := ParseNamespace(collectionNamespace)
+	return filepath.Join(botType, nsUser, appName, collectionName, b.Name)
 }
 
 func (b *Bot) GetPath() string {
-	return filepath.Join(b.GetKey(), "bot.yaml")
+	return filepath.Join(b.GetBasePath(), "bot.yaml")
 }
 
 // GetPermChecker function

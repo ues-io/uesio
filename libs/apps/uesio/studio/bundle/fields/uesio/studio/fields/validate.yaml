@@ -1,0 +1,11 @@
+name: validate
+type: MAP
+label: Validate
+subfields:
+  - name: studio.type
+    label: Validation
+    type: SELECT
+    selectList: uesio/studio.fieldvalidatetypes
+  - name: studio.regex
+    label: Regex
+    type: TEXT

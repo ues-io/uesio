@@ -17,20 +17,20 @@ func NewUserAccessToken(key string) (*UserAccessToken, error) {
 }
 
 type UserAccessToken struct {
-	ID         string            `yaml:"-" uesio:"uesio.id"`
-	Name       string            `yaml:"name" uesio:"studio.name"`
+	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	Name       string            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
-	Type       string            `yaml:"type" uesio:"studio.type"`
-	Collection string            `yaml:"collection" uesio:"studio.collection"`
+	Type       string            `yaml:"type" uesio:"uesio/studio.type"`
+	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
 	Conditions []*TokenCondition `yaml:"conditions"`
 	Token      string            `yaml:"token"`
-	Workspace  *Workspace        `yaml:"-" uesio:"studio.workspace"`
+	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -56,12 +56,12 @@ func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (uat *UserAccessToken) GetKey() string {
-	return uat.Namespace + "." + uat.Name
+	return fmt.Sprintf("%s.%s", uat.Namespace, uat.Name)
 }
 
 // GetPath function
 func (uat *UserAccessToken) GetPath() string {
-	return uat.GetKey() + ".yaml"
+	return uat.Name + ".yaml"
 }
 
 // GetPermChecker function

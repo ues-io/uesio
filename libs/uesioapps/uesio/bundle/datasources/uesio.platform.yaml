@@ -1,3 +1,0 @@
-name: platform
-type: ${uesio.platform_datasource_type}
-credentials: ${uesio.platform_datasource_credentials}

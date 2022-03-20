@@ -65,6 +65,11 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
 
+	_, _, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return "", errors.New("Bad namespace: " + namespace)
+	}
+
 	if appName == namespace {
 		// We always have a license to our own app.
 		return appVersion, nil
@@ -129,6 +134,7 @@ func HasAny(group meta.BundleableGroup, namespace string, conditions meta.Bundle
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
+		fmt.Println("Failed Load All: " + group.GetName())
 		return err
 	}
 	return bs.GetAllItems(group, namespace, version, conditions, session)
@@ -148,6 +154,10 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 	for namespace, items := range coalated {
 		version, bs, err := GetBundleStoreWithVersion(namespace, session)
 		if err != nil {
+			fmt.Println("Failed load many")
+			for _, item := range items {
+				fmt.Println(item.GetKey())
+			}
 			return err
 		}
 
@@ -163,6 +173,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
+		fmt.Println("Failed Lone ONe: " + item.GetKey())
 		return err
 	}
 	return bs.GetItem(item, version, session)

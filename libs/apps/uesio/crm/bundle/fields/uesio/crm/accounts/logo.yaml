@@ -1,0 +1,5 @@
+name: logo
+type: FILE
+label: Logo
+file:
+  accept: IMAGE

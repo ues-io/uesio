@@ -1,6 +1,0 @@
-name: related_contact
-collection: crm.comments
-type: REFERENCE
-label: Related Contact
-reference:
-  collection: crm.contacts

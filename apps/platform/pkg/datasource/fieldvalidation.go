@@ -6,22 +6,24 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-type validationFunc func(change adapt.ChangeItem, isNew bool) error
+type validationFunc func(change adapt.ChangeItem) error
 
 type referenceValidationFunc func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry)
 
 func preventUpdate(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
-		if isNew {
+	return func(change adapt.ChangeItem) error {
+		if change.IsNew {
 			return nil
 		}
 
@@ -52,9 +54,9 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateRequired(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if (isNew && err != nil) || val == "" {
+		if (change.IsNew && err != nil) || val == "" {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
 		}
 		return nil
@@ -62,7 +64,7 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateEmail(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
@@ -76,11 +78,11 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
 	if err != nil {
-		return func(change adapt.ChangeItem, isNew bool) error {
+		return func(change adapt.ChangeItem) error {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
 	}
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
@@ -90,7 +92,7 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
@@ -100,7 +102,7 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		_, isFloat := val.(float64)
 		_, isInt := val.(int64)
@@ -153,10 +155,10 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		}
 	}
 
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change adapt.ChangeItem) error {
 		var errorList error
 		for _, validation := range validations {
-			err := validation(change, isNew)
+			err := validation(change)
 			if err != nil {
 				errorList = multierror.Append(errorList, err)
 			}
@@ -187,7 +189,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 				}
 
 				// Special exception for the system user
-				if collectionMetadata.GetFullName() == "uesio.user" && foreignKeyString == "system" {
+				if collectionMetadata.GetFullName() == "uesio/core.user" && foreignKeyString == "uesio" {
 					return
 				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
@@ -211,23 +213,46 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 
 	referenceRegistry := &adapt.ReferenceRegistry{}
 
+	// Process Inserts
+	idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
+	if err != nil {
+		return err
+	}
+
 	if op.Inserts != nil {
-		for _, insert := range *op.Inserts {
-			err := fieldValidations(insert, true)
+		for i := range *op.Inserts {
+			// This is kind of randomly placed, but we want to populate new field id here
+			newID, err := templating.Execute(idTemplate, (*op.Inserts)[i].FieldChanges)
 			if err != nil {
 				return err
 			}
-			referenceValidations(insert, referenceRegistry)
+
+			if newID == "" {
+				newID = uuid.New().String()
+			}
+
+			err = (*op.Inserts)[i].FieldChanges.SetField(adapt.ID_FIELD, newID)
+			if err != nil {
+				return err
+			}
+
+			(*op.Inserts)[i].IDValue = newID
+
+			err = fieldValidations((*op.Inserts)[i])
+			if err != nil {
+				return err
+			}
+			referenceValidations((*op.Inserts)[i], referenceRegistry)
 		}
 	}
 
 	if op.Updates != nil {
-		for _, update := range *op.Updates {
-			err := fieldValidations(update, false)
+		for i := range *op.Updates {
+			err := fieldValidations((*op.Updates)[i])
 			if err != nil {
 				return err
 			}
-			referenceValidations(update, referenceRegistry)
+			referenceValidations((*op.Updates)[i], referenceRegistry)
 		}
 	}
 
@@ -249,12 +274,12 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 			Collection:     results,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    "uesio.id",
+					Field:    adapt.ID_FIELD,
 					Operator: "IN",
 					Value:    ids,
 				},
 			},
-			Fields: []adapt.LoadRequestField{{ID: "uesio.id"}},
+			Fields: []adapt.LoadRequestField{{ID: adapt.ID_FIELD}},
 			Query:  true,
 		}}
 		for _, op := range ops {
@@ -265,7 +290,7 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 		}
 		if idCount != results.Len() {
 			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {
-				value, err := item.GetField("uesio.id")
+				value, err := item.GetField(adapt.ID_FIELD)
 				if err != nil {
 					return ""
 				}

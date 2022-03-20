@@ -11,7 +11,7 @@ type FileSourceCollection []FileSource
 
 // GetName function
 func (fsc *FileSourceCollection) GetName() string {
-	return "studio.filesources"
+	return "uesio/studio.filesources"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 }
 
 // GetKeyFromPath function
-func (fsc *FileSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (fsc *FileSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

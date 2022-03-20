@@ -1,4 +1,0 @@
-name: firstname
-collection: crm.leads
-type: TEXT
-label: First Name

@@ -9,17 +9,17 @@ import (
 
 // View struct
 type View struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 // GetCollectionName function
@@ -45,12 +45,12 @@ func (v *View) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (v *View) GetKey() string {
-	return v.Namespace + "." + v.Name
+	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
 }
 
 // GetPath function
 func (v *View) GetPath() string {
-	return v.GetKey() + ".yaml"
+	return v.Name + ".yaml"
 }
 
 // GetPermChecker function
@@ -65,7 +65,7 @@ func (v *View) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (v *View) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
@@ -82,7 +82,7 @@ func (v *View) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (v *View) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
 		if err != nil {
 			return nil, err
@@ -152,7 +152,7 @@ func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, u
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							(*usedVariants)[compName+"."+valueNode.Value] = true
+							(*usedVariants)[compName+":"+valueNode.Value] = true
 						}
 					}
 				}

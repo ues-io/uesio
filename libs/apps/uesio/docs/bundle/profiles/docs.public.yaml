@@ -1,0 +1,4 @@
+name: public
+permissionSets:
+  - uesio/docs.public
+  - uesio/core.public

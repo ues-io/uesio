@@ -1,7 +1,0 @@
-name: leftbar
-component: io.griditem
-label: Left Bar
-definition:
-  uesio.styles:
-    root:
-      backgroundColor: white

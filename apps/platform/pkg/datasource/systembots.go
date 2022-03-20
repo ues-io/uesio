@@ -62,7 +62,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 	err := PlatformLoad(&domains, &PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:    "studio.site",
+				Field:    "uesio/studio.site",
 				Value:    ids,
 				Operator: "IN",
 			},
@@ -74,7 +74,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 	}
 	domainIds := []string{}
 	err = domains.Loop(func(item loadable.Item, index string) error {
-		id, err := item.GetField("uesio.id")
+		id, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err
 		}
@@ -103,7 +103,7 @@ func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session 
 	err := PlatformLoad(&ufmc, &PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:    "uesio.id",
+				Field:    adapt.ID_FIELD,
 				Value:    ids,
 				Operator: "IN",
 			},

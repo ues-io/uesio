@@ -11,7 +11,7 @@ type PermissionSetCollection []PermissionSet
 
 // GetName function
 func (pc *PermissionSetCollection) GetName() string {
-	return "studio.permissionsets"
+	return "uesio/studio.permissionsets"
 }
 
 // GetFields function
@@ -36,8 +36,8 @@ func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (Bundlea
 }
 
 // GetKeyFromPath function
-func (pc *PermissionSetCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (pc *PermissionSetCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 // GetItem function

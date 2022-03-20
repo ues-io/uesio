@@ -1,4 +1,0 @@
-name: label
-path: app/{appname}/workspace/{workspacename}/labels/{labelname}
-view: studio.label
-theme: studio.default

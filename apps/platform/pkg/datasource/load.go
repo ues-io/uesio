@@ -18,15 +18,15 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio.userfiles",
+			Collection: "uesio/core.userfiles",
 		},
-		Fields: []string{"uesio.mimetype", "uesio.name"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.name"},
 	},
 	"USER": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio.user",
+			Collection: "uesio/core.user",
 		},
-		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
+		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.picture"},
 	},
 }
 
@@ -124,15 +124,6 @@ func getMetadataForLoad(
 					})
 				}
 			}
-
-			// If the reference to a different data source, we'll
-			// need to do a whole new approach to reference fields.
-			if collectionMetadata.DataSource != "uesio.platform" {
-				op.ReferencedCollections = adapt.ReferenceRegistry{}
-				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
-				refCol.AddReference(fieldMetadata)
-				refCol.AddFields(op.Fields[i].Fields)
-			}
 		}
 
 		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.Collection != "" {
@@ -146,7 +137,7 @@ func getMetadataForLoad(
 						ID: refCollectionMetadata.NameField,
 					},
 					{
-						ID: "uesio.id",
+						ID: adapt.ID_FIELD,
 					},
 				}
 
@@ -197,7 +188,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 
 	// Loop over the ops and batch per data source
 	for i := range ops {
-		// Verify that the uesio.id field is present
+		// Verify that the id field is present
 		hasIDField := false
 		for j := range ops[i].Fields {
 			if ops[i].Fields[j].ID == adapt.ID_FIELD {

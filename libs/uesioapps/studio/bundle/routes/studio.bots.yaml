@@ -1,4 +1,0 @@
-name: bots
-path: app/{appname}/workspace/{workspacename}/bots
-view: studio.bots
-theme: studio.default

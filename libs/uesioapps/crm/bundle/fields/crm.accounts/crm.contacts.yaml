@@ -1,8 +1,0 @@
-name: contacts
-collection: crm.accounts
-type: REFERENCEGROUP
-label: Contacts
-referenceGroup:
-  collection: crm.contacts
-  field: crm.account
-  onDelete: CASCADE

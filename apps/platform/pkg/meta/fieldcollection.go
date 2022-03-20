@@ -2,8 +2,8 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -15,7 +15,7 @@ type FieldCollection []Field
 
 // GetName function
 func (fc *FieldCollection) GetName() string {
-	return "studio.fields"
+	return "uesio/studio.fields"
 }
 
 // GetFields function
@@ -31,7 +31,7 @@ func (fc *FieldCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
+	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
@@ -48,19 +48,32 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyFromPath function
-func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["studio.collection"]
+func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
+	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 	if hasCollection {
-		if parts[0] != collectionKey {
+		collectionNS, collectionName, err := ParseKey(collectionKey)
+		if err != nil {
+			return "", err
+		}
+		nsUser, nsApp, err := ParseNamespace(collectionNS)
+		if err != nil {
+			return "", err
+		}
+		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != collectionName {
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
+	field := Field{
+		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
+		Namespace:     namespace,
+		Name:          strings.TrimSuffix(parts[3], ".yaml"),
+	}
+	return field.GetKey(), nil
 }
 
 // GetItem function

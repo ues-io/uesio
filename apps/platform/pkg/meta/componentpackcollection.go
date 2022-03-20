@@ -14,7 +14,7 @@ type ComponentPackCollection []ComponentPack
 
 // GetName function
 func (cpc *ComponentPackCollection) GetName() string {
-	return "studio.componentpacks"
+	return "uesio/studio.componentpacks"
 }
 
 // GetFields function
@@ -30,19 +30,19 @@ func (cpc *ComponentPackCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
 	}
 	*cpc = append(*cpc, ComponentPack{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
+		Namespace: namespace,
+		Name:      name,
 	})
 	return &(*cpc)[len(*cpc)-1], nil
 }
 
 // GetKeyFromPath function
-func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (cpc *ComponentPackCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	if len(conditions) > 0 {
 		return "", errors.New("Conditions not allowed for component packs")
 	}
@@ -51,7 +51,7 @@ func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions Bundl
 		// Ignore this file
 		return "", nil
 	}
-	return parts[0], nil
+	return namespace + "." + parts[0], nil
 }
 
 // GetItem function

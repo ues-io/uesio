@@ -1,4 +1,0 @@
-name: collectionexportbatches
-path: app/{appname}/workspace/{workspacename}/export/{collectionname}/{jobid}/batches
-view: studio.collectionexportbatches
-theme: studio.default

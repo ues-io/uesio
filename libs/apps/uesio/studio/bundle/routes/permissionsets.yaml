@@ -1,0 +1,4 @@
+name: permissionsets
+path: app/{appname}/workspace/{workspacename}/permissionsets
+view: uesio/studio.permissionsets
+theme: uesio/studio.default

@@ -148,11 +148,11 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		Labels:            labels,
 	}
 
-	for _, packs := range packsByNamespace {
+	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
 			deps.ComponentPacks[pack.GetKey()] = true
 			for key := range pack.Components.ViewComponents {
-				err := getDepsForComponent(key, &deps, packsByNamespace, session)
+				err := getDepsForComponent(namespace+"."+key, &deps, packsByNamespace, session)
 				if err != nil {
 					return nil, err
 				}
@@ -175,32 +175,21 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 }
 
 func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, error) {
-	namespace, name, component, err := getVariantParts(key)
-	if err != nil {
-		return nil, errors.New("Invalid variant key: " + key)
-	}
-	variantDep := meta.ComponentVariant{
-		Namespace: namespace,
-		Name:      name,
-		Component: component,
-	}
-	err = bundle.Load(&variantDep, session)
-	if err != nil {
-		return nil, errors.New("Failed to load variant: " + key + err.Error())
-	}
-	return &variantDep, nil
-}
 
-func getVariantParts(key string) (string, string, string, error) {
-	partsOfKey := strings.Split(key, ".")
-	if len(partsOfKey) != 4 {
-		return "", "", "", errors.New("Invalid variant key: " + key)
+	variantDep, err := meta.NewComponentVariant(key)
+	if err != nil {
+		return nil, err
 	}
-	return partsOfKey[2], partsOfKey[3], partsOfKey[0] + "." + partsOfKey[1], nil
+
+	err = bundle.Load(variantDep, session)
+	if err != nil {
+		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
+	}
+	return variantDep, nil
 }
 
 func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
-	namespace, _, err := meta.ParseKey(key)
+	namespace, componentName, err := meta.ParseKey(key)
 	if err != nil {
 		return err
 	}
@@ -216,7 +205,7 @@ func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]me
 	}
 
 	for _, pack := range packsForNamespace {
-		componentInfo, ok := pack.Components.ViewComponents[key]
+		componentInfo, ok := pack.Components.ViewComponents[componentName]
 		if ok {
 
 			deps.ComponentPacks[pack.GetKey()] = true
@@ -258,11 +247,7 @@ func addVariantDep(deps *ViewDependencies, key string, session *sess.Session) er
 		return err
 	}
 	if variantDep.Extends != "" {
-		_, _, component, err := getVariantParts(key)
-		if err != nil {
-			return errors.New("Invalid variant key: " + key)
-		}
-		err = addVariantDep(deps, component+"."+variantDep.Extends, session)
+		err = addVariantDep(deps, variantDep.Component+":"+variantDep.Extends, session)
 		if err != nil {
 			return err
 		}

@@ -1,5 +1,0 @@
-name: rating
-collection: crm.accounts
-type: SELECT
-label: Rating
-selectList: crm.rating
