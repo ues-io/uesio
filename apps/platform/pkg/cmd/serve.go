@@ -97,7 +97,6 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/{namespace:\\w*\\/\\w*}/{route:.*}", controller.Route, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}/builder", controller.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}", controller.ServeComponentPack(false), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/{invalidroute:.*}", http.NotFound, "GET")
 
 	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
@@ -122,6 +121,7 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	workspaceAPI(wr, "/featureflags", controller.FeatureFlag).Methods("GET")
 	workspaceAPI(wr, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
+	workspaceAPI(wr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	versionAPI(vr, "/metadata/generate/{name}", controller.Generate).Methods("POST")
 	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
@@ -149,6 +149,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
+	siteAPI(sr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 	siteAPI(r, "/{route:.*}", controller.ServeLocalRoute).Methods("GET")
 
 	port := os.Getenv("PORT")

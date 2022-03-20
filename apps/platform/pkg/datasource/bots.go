@@ -56,8 +56,8 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionName,
-		"studio.type":       botType,
+		"uesio/studio.collection": collectionName,
+		"uesio/studio.type":       botType,
 	}, session)
 	if err != nil {
 		return err

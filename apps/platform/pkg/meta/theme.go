@@ -59,7 +59,7 @@ func (t *Theme) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
@@ -75,7 +75,7 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&t.Definition)
 		if err != nil {
 			return nil, err

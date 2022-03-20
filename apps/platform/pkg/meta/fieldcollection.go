@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -48,7 +49,7 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 
 // GetKeyFromPath function
 func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["studio.collection"]
+	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
@@ -68,7 +69,7 @@ func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditi
 		}
 	}
 	field := Field{
-		CollectionRef: collectionKey,
+		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
 		Namespace:     namespace,
 		Name:          strings.TrimSuffix(parts[3], ".yaml"),
 	}

@@ -1,13 +1,13 @@
-name: web
-loginRoute: uesio.login
-homeRoute: web.home
-defaultProfile: web.public
-defaultTheme: crm.default
-publicProfile: web.public
+name: uesio/web
+loginRoute: uesio/core.login
+homeRoute: uesio/web.home
+defaultProfile: uesio/web.public
+defaultTheme: uesio/crm.default
+publicProfile: uesio/web.public
 dependencies:
-  crm:
+  uesio/crm:
     version: v0.0.1
-  io:
+  uesio/io:
     version: v0.0.1
-  uesio:
+  uesio/core:
     version: v0.0.1

@@ -59,7 +59,7 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, c
 		return "", nil
 	}
 
-	requestedLanguage := conditions["studio.language"]
+	requestedLanguage := conditions["uesio/studio.language"]
 	language := strings.TrimSuffix(path, ".yaml")
 
 	if requestedLanguage != language {

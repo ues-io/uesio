@@ -23,51 +23,51 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 
 //ValidationMetadata struct
 type ValidationMetadata struct {
-	Type  string `json:"type" yaml:"type,omitempty" uesio:"studio.type"`
-	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"studio.regex"`
+	Type  string `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`
+	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"uesio/studio.regex"`
 }
 
 // SubField struct
 type SubField struct {
-	Name       string `yaml:"name,omitempty" uesio:"studio.name"`
-	Label      string `yaml:"label,omitempty" uesio:"studio.label"`
-	Type       string `yaml:"type,omitempty" uesio:"studio.type"`
-	SelectList string `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
+	Name       string `yaml:"name,omitempty" uesio:"uesio/studio.name"`
+	Label      string `yaml:"label,omitempty" uesio:"uesio/studio.label"`
+	Type       string `yaml:"type,omitempty" uesio:"uesio/studio.type"`
+	SelectList string `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
 }
 
 // NumberMetadata struct
 type NumberMetadata struct {
-	Decimals int `json:"decimals" uesio:"studio.decimals"`
+	Decimals int `json:"decimals" uesio:"uesio/studio.decimals"`
 }
 
 // FileMetadata type
 type FileMetadata struct {
-	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"studio.accept"`
-	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
+	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"uesio/studio.accept"`
+	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"uesio/studio.filecollection"`
 }
 
 // ReferenceMetadata type
 type ReferenceMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
+	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 }
 
 // ReferenceMetadata type
 type ReferenceGroupMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
-	Field      string `json:"field" yaml:"field,omitempty" uesio:"studio.field"`
-	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"studio.ondelete"`
+	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
+	Field      string `json:"field" yaml:"field,omitempty" uesio:"uesio/studio.field"`
+	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"uesio/studio.ondelete"`
 }
 
 // AutoNumberMetadata struct
 type AutoNumberMetadata struct {
-	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"studio.prefix"`
-	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
+	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"uesio/studio.prefix"`
+	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"uesio/studio.leadingzeros"`
 }
 
 // FormulaMetadata struct
 type FormulaMetadata struct {
-	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"studio.expression"`
-	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"studio.returntype"`
+	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"uesio/studio.expression"`
+	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"uesio/studio.returntype"`
 }
 
 // Field struct

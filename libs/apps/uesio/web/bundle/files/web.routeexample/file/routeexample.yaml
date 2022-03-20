@@ -1,4 +1,0 @@
-name: myroute
-path: myroutepath
-view: web.myview
-theme: uesio.default

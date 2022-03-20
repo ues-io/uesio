@@ -1,9 +1,0 @@
-name: public
-named: {}
-views: {}
-routes:
-  crm.login: true
-files: {}
-allowallviews: false
-allowallroutes: false
-allowallfiles: false

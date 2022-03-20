@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -40,8 +41,8 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 
 // GetKeyFromPath function
 func (bc *BotCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["studio.collection"]
-	botTypeKey, hasType := GetBotTypes()[conditions["studio.type"]]
+	collectionKey, hasCollection := conditions["uesio/studio.collection"]
+	botTypeKey, hasType := GetBotTypes()[conditions["uesio/studio.type"]]
 	parts := strings.Split(path, string(os.PathSeparator))
 	partLength := len(parts)
 	if partLength < 1 {
@@ -60,7 +61,7 @@ func (bc *BotCollection) GetKeyFromPath(path string, namespace string, condition
 			return "", nil
 		}
 		bot := Bot{
-			Type:      botType,
+			Type:      strings.ToUpper(botType),
 			Namespace: namespace,
 			Name:      parts[1],
 		}
@@ -87,10 +88,10 @@ func (bc *BotCollection) GetKeyFromPath(path string, namespace string, condition
 			}
 		}
 		bot := Bot{
-			Type:          botType,
+			Type:          strings.ToUpper(botType),
 			Namespace:     namespace,
 			Name:          parts[4],
-			CollectionRef: collectionKey,
+			CollectionRef: fmt.Sprintf("%s/%s.%s", parts[1], parts[2], parts[3]),
 		}
 		return bot.GetKey(), nil
 	}

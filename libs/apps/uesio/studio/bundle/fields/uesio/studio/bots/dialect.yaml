@@ -1,4 +1,4 @@
 name: dialect
 type: SELECT
 label: Dialect
-selectList: studio.botdialect
+selectList: uesio/studio.botdialect

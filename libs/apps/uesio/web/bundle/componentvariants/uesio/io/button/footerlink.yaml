@@ -1,0 +1,10 @@
+name: footerlink
+label: Footer Link
+definition:
+  uesio.styles:
+    root:
+      color: "#888"
+      fontSize: 9pt
+      fontWeight: 300
+      whiteSpace: nowrap
+      backgroundColor: transparent

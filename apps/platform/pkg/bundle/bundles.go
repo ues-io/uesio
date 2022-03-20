@@ -154,6 +154,10 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 	for namespace, items := range coalated {
 		version, bs, err := GetBundleStoreWithVersion(namespace, session)
 		if err != nil {
+			fmt.Println("Failed load many")
+			for _, item := range items {
+				fmt.Println(item.GetKey())
+			}
 			return err
 		}
 
@@ -169,6 +173,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
+		fmt.Println("Failed Lone ONe: " + item.GetKey())
 		return err
 	}
 	return bs.GetItem(item, version, session)

@@ -1,0 +1,10 @@
+name: teamtextname
+label: Team Text Name
+definition:
+  uesio.styles:
+    root:
+      fontSize: 12pt
+      color: "#020202"
+      text-align: center
+      padding-bottom: 10px
+  element: div

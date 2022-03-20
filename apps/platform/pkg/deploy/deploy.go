@@ -112,7 +112,7 @@ func Deploy(body []byte, session *sess.Session) error {
 				file := collectionItem.(*meta.File)
 				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
 					RecordID:  file.Name,
-					FieldName: "studio.content",
+					FieldName: "uesio/studio.content",
 				}
 			}
 
@@ -121,7 +121,7 @@ func Deploy(body []byte, session *sess.Session) error {
 				bot := collectionItem.(*meta.Bot)
 				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
 					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
-					FieldName: "studio.content",
+					FieldName: "uesio/studio.content",
 				}
 			}
 
@@ -130,11 +130,11 @@ func Deploy(body []byte, session *sess.Session) error {
 				cpack := collectionItem.(*meta.ComponentPack)
 				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
 					RecordID:  cpack.Name,
-					FieldName: "studio.runtimebundle",
+					FieldName: "uesio/studio.runtimebundle",
 				}
 				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
 					RecordID:  cpack.Name,
-					FieldName: "studio.buildtimebundle",
+					FieldName: "uesio/studio.buildtimebundle",
 				}
 			}
 
@@ -266,7 +266,7 @@ func applyDeploy(
 
 		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
 			Name:         fileStream.FileName,
-			CollectionID: "studio." + fileStream.Type,
+			CollectionID: "uesio/studio." + fileStream.Type,
 			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
 			FieldID:      fileRecord.FieldName,
 		}, connection, session.RemoveWorkspaceContext())

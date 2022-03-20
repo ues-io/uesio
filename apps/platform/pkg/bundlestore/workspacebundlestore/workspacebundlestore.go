@@ -124,7 +124,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
-			Field: "studio.workspace",
+			Field: "uesio/studio.workspace",
 			Value: session.GetWorkspaceID(),
 		},
 	}

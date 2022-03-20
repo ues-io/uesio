@@ -8,8 +8,8 @@ import (
 
 // SelectListOption struct
 type SelectListOption struct {
-	Label string `uesio:"studio.label" json:"label"`
-	Value string `uesio:"studio.value" json:"value"`
+	Label string `uesio:"uesio/studio.label" json:"label"`
+	Value string `uesio:"uesio/studio.value" json:"value"`
 }
 
 // SelectList struct

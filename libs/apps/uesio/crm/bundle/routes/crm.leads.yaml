@@ -1,6 +1,0 @@
-name: leads
-path: leads
-view: crm.leads
-theme: crm.default
-collection: crm.leads
-viewtype: list

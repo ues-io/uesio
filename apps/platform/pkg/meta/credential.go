@@ -20,8 +20,8 @@ func NewCredential(key string) (*Credential, error) {
 }
 
 type CredentialEntry struct {
-	Type  string `yaml:"type" uesio:"studio.type"`
-	Value string `yaml:"value" uesio:"studio.value"`
+	Type  string `yaml:"type" uesio:"uesio/studio.type"`
+	Value string `yaml:"value" uesio:"uesio/studio.value"`
 }
 
 // Credential struct

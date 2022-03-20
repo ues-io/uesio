@@ -39,7 +39,7 @@ func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (Bun
 
 // GetKeyFromPath function
 func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	componentKey, hasComponent := conditions["studio.component"]
+	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file

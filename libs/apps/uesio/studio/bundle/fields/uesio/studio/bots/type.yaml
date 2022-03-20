@@ -1,4 +1,4 @@
 name: type
 type: SELECT
 label: Bot type
-selectList: studio.bottype
+selectList: uesio/studio.bottype

@@ -14,13 +14,13 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session) e
 	perms := session.GetPermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppID() != "studio" {
+	if site.GetAppID() != "uesio/studio" {
 		return errors.New("this site does not allow working with workspaces")
 	}
 	// 2. we should have a profile that allows modifying workspaces
 	if !perms.HasPermission(&meta.PermissionSet{
 		NamedRefs: map[string]bool{
-			"workspace_admin": true,
+			"uesio/studio.workspace_admin": true,
 		},
 	}) {
 		return errors.New("your profile does not allow you to work with workspaces")

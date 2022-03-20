@@ -183,7 +183,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 
 	err = bundle.Load(variantDep, session)
 	if err != nil {
-		return nil, errors.New("Failed to load variant: " + key + err.Error())
+		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
 	}
 	return variantDep, nil
 }

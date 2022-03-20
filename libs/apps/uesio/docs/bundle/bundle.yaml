@@ -1,11 +1,11 @@
-name: docs
-loginRoute: docs.login
-homeRoute: docs.home
-defaultProfile: docs.public
-defaultTheme: uesio.default
-publicProfile: docs.public
+name: uesio/docs
+loginRoute: uesio/docs.login
+homeRoute: uesio/docs.home
+defaultProfile: uesio/docs.public
+defaultTheme: uesio/uesio.default
+publicProfile: uesio/docs.public
 dependencies:
-  io:
+  uesio/io:
     version: v0.0.1
-  uesio:
+  uesio/core:
     version: v0.0.1

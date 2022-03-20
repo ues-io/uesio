@@ -137,6 +137,10 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
+	err = setDefaultValue(node, "theme", "uesio/core.default")
+	if err != nil {
+		return err
+	}
 	err = validateRequiredMetadataItem(node, "theme")
 	if err != nil {
 		return err
