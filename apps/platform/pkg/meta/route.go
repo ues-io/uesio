@@ -25,9 +25,9 @@ type Route struct {
 	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
-	ViewType   string            `yaml:"viewtype" uesio:"uesio/studio.viewtype"`
+	ViewType   string            `yaml:"viewtype,omitempty" uesio:"uesio/studio.viewtype"`
 	ViewRef    string            `yaml:"view" uesio:"uesio/studio.view"`
-	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
+	Collection string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 	Params     map[string]string `yaml:"-" uesio:"-"`
 	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	ThemeRef   string            `yaml:"theme" uesio:"uesio/studio.theme"`
