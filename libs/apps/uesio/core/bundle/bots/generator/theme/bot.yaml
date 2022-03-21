@@ -17,3 +17,4 @@ params:
     prompt: info color
   - name: success
     prompt: success color
+public: true

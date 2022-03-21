@@ -9,3 +9,4 @@ definition:
       fontWeight: 300
       lineHeight: 24pt
       maxWidth: 766px
+public: true

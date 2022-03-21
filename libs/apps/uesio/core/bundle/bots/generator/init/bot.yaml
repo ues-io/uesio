@@ -5,3 +5,4 @@ params:
   - name: name
     prompt: App Name
     type: METADATANAME
+public: true

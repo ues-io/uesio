@@ -1,4 +1,5 @@
 name: login
+public: true
 definition:
   # Wires are how we pull in data
   wires:
