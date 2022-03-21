@@ -26,6 +26,7 @@ type SelectList struct {
 	UpdatedAt        int64              `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt        int64              `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
+	Public           bool               `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function
@@ -117,4 +118,8 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(sl)
+}
+
+func (sl *SelectList) IsPublic() bool {
+	return sl.Public
 }

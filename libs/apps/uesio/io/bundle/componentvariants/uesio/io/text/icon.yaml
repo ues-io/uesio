@@ -5,3 +5,4 @@ definition:
     root:
       fontFamily: Material Icons
       verticalAlign: middle
+public: true

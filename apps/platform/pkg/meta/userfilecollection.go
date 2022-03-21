@@ -31,6 +31,7 @@ type UserFileCollection struct {
 	PathFormat string     `yaml:"pathFormat"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetFileSource function
@@ -135,4 +136,8 @@ func (ufc *UserFileCollection) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (ufc *UserFileCollection) SetItemMeta(itemMeta *ItemMeta) {
 	ufc.itemMeta = itemMeta
+}
+
+func (ufc *UserFileCollection) IsPublic() bool {
+	return ufc.Public
 }

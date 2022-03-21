@@ -29,7 +29,7 @@ type LoadRequestBatch struct {
 
 // LoadResponseBatch struct
 type LoadResponseBatch struct {
-	Wires       []adapt.LoadOp                       `json:"wires"`
+	Wires       []*adapt.LoadOp                      `json:"wires"`
 	Collections map[string]*adapt.CollectionMetadata `json:"collections"`
 }
 
@@ -48,11 +48,11 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	ops := make([]adapt.LoadOp, len(loadRequestBatch.Wires))
+	ops := make([]*adapt.LoadOp, len(loadRequestBatch.Wires))
 
 	for i := range loadRequestBatch.Wires {
 		wire := loadRequestBatch.Wires[i]
-		ops[i] = adapt.LoadOp{
+		ops[i] = &adapt.LoadOp{
 			WireName:       wire.Wire,
 			CollectionName: wire.Collection,
 			Collection:     &adapt.Collection{},

@@ -1,3 +1,4 @@
 name: userfiles
 idFormat: "${uesio/core.collectionid}_${uesio/core.recordid}_${uesio/core.type}_${uesio/core.name}"
 nameField: uesio/core.name
+public: true

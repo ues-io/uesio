@@ -89,7 +89,7 @@ type Bot struct {
 	Namespace     string            `yaml:"-" uesio:"-"`
 	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
 	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
-	Params        []BotParam        `yaml:"params" uesio:"uesio/studio.params"`
+	Params        []BotParam        `yaml:"params,omitempty" uesio:"uesio/studio.params"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -99,6 +99,7 @@ type Bot struct {
 	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
+	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetBotTypes function
@@ -237,4 +238,8 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(b)
+}
+
+func (b *Bot) IsPublic() bool {
+	return b.Public
 }

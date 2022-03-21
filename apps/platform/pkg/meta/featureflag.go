@@ -18,6 +18,7 @@ type FeatureFlag struct {
 	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // NewFeatureFlag function
@@ -121,4 +122,8 @@ func (ff *FeatureFlag) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(ff)
+}
+
+func (ff *FeatureFlag) IsPublic() bool {
+	return ff.Public
 }

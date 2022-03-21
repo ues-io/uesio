@@ -7,21 +7,21 @@ import { User } from "../auth/login"
 
 class SiteDomain {
 	static getCollectionName(): string {
-		return "studio.sitedomains"
+		return "uesio/studio.sitedomains"
 	}
 	static getFields() {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.domain",
+				id: "uesio/studio.domain",
 			},
 			{
-				id: "studio.site",
+				id: "uesio/studio.site",
 			},
 			{
-				id: "studio.type",
+				id: "uesio/studio.type",
 			},
 		]
 	}
@@ -57,9 +57,9 @@ class SiteDomain {
 			user,
 			createChange([
 				{
-					"studio.site": responses.siteName + "_" + app,
-					"studio.domain": responses.domain,
-					"studio.type": responses.type,
+					"uesio/studio.site": responses.siteName + "_" + app,
+					"uesio/studio.domain": responses.domain,
+					"uesio/studio.type": responses.type,
 				},
 			])
 		)

@@ -21,6 +21,7 @@ type ConfigValue struct {
 	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // NewConfigValue function
@@ -124,4 +125,7 @@ func (cv *ConfigValue) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(cv)
+}
+func (cv *ConfigValue) IsPublic() bool {
+	return cv.Public
 }

@@ -34,6 +34,7 @@ type File struct {
 	UpdatedBy *User             `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt int64             `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
+	Public    bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function
@@ -135,4 +136,8 @@ func (f *File) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(f)
+}
+
+func (f *File) IsPublic() bool {
+	return f.Public
 }

@@ -7,3 +7,4 @@ definition:
       fontSize: 10pt
       paddingBottom: 4px
       color: "#444"
+public: true

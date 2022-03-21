@@ -79,7 +79,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	namespace := item.GetNamespace()
 	fullCollectionName := item.GetCollectionName()
 	collectionName := meta.GetNameKeyPart(fullCollectionName)
-
+	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
@@ -90,6 +90,9 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
 
 	if ok {
+		if app != namespace && !cachedItem.IsPublic() {
+			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+		}
 		meta.Copy(item, cachedItem)
 		return nil
 	}
@@ -102,6 +105,9 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	err = bundlestore.DecodeYAML(item, stream)
 	if err != nil {
 		return err
+	}
+	if app != namespace && !item.IsPublic() {
+		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
 	}
 	bundle.AddItemToCache(item, namespace, version)
 	return nil

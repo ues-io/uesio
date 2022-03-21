@@ -5,3 +5,4 @@ params:
   - name: name
     prompt: View name
     type: METADATANAME
+public: true

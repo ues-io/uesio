@@ -16,3 +16,4 @@ definition:
       opacity: "80%"
       marginTop: 4px
       fontSize: 7pt
+public: true

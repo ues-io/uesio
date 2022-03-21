@@ -1,3 +1,4 @@
 name: google_project_id
 managedBy: app
 store: environment
+public: true

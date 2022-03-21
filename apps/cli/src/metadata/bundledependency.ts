@@ -9,21 +9,21 @@ const UESIO_STUDIO_WORKSPACE = "workspace"
 const UESIO_ADD_DEPENDENCY = "metadata/adddependency"
 class BundleDependency {
 	static getCollectionName(): string {
-		return "studio.bundledependencies"
+		return "uesio/studio.bundledependencies"
 	}
 	static getFields() {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.bundlename",
+				id: "uesio/studio.bundlename",
 			},
 			{
-				id: "studio.bundleversion",
+				id: "uesio/studio.bundleversion",
 			},
 			{
-				id: "studio.workspaceid",
+				id: "uesio/studio.workspaceid",
 			},
 		]
 	}

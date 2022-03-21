@@ -47,7 +47,7 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	session *sess.Session,
 ) error {
 	collectionKey := op.CollectionName
@@ -160,13 +160,13 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
-func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
+func Load(ops []*adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
 	return LoadWithOptions(ops, session, &LoadOptions{
 		CheckPermissions: true,
 	})
 }
 
-func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+func LoadWithOptions(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
 	}
@@ -203,7 +203,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		}
 
 		op := ops[i]
-		err := getMetadataForLoad(&op, metadataResponse, ops, session)
+		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -225,7 +225,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Query {
-			batch = append(batch, &ops[i])
+			batch = append(batch, ops[i])
 		}
 		collated[dsKey] = batch
 	}

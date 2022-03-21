@@ -1,3 +1,4 @@
 name: configstorevalues
 idFormat: "${uesio/core.key}"
 nameField: uesio/core.key
+public: true

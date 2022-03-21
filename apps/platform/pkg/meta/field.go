@@ -74,7 +74,7 @@ type FormulaMetadata struct {
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
-	CollectionRef          string                  `yaml:"collection" uesio:"uesio/studio.collection"`
+	CollectionRef          string                  `yaml:"-" uesio:"uesio/studio.collection"`
 	Namespace              string                  `yaml:"-" uesio:"-"`
 	Type                   string                  `yaml:"type" uesio:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" uesio:"uesio/studio.label"`
@@ -295,4 +295,7 @@ func validateReferenceField(node *yaml.Node, fieldKey string) error {
 		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : No collection provided")
 	}
 	return nil
+}
+func (c *Field) IsPublic() bool {
+	return true
 }

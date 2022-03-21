@@ -123,7 +123,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				})
 			}
 			lookupResults := &adapt.Collection{}
-			var loadOps = []adapt.LoadOp{{
+			var loadOps = []*adapt.LoadOp{{
 				CollectionName: uat.Collection,
 				WireName:       "foo",
 				Collection:     lookupResults,
