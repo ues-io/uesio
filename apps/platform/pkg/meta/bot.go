@@ -89,7 +89,7 @@ type Bot struct {
 	Namespace     string            `yaml:"-" uesio:"-"`
 	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
 	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
-	Params        []BotParam        `yaml:"params" uesio:"uesio/studio.params"`
+	Params        []BotParam        `yaml:"params,omitempty" uesio:"uesio/studio.params"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
