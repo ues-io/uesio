@@ -1,3 +1,4 @@
 name: loginmethod
 idFormat: "${uesio/core.federation_type}_${uesio/core.federation_id}"
 nameField: uesio/core.federation_id
+public: true

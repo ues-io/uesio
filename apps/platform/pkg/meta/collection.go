@@ -52,7 +52,7 @@ type Collection struct {
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
-	Public                bool                              `yaml:"public" uesio:"uesio/studio.public"`
+	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function

@@ -1,3 +1,4 @@
 name: db_port
 managedBy: app
 store: environment
+public: true

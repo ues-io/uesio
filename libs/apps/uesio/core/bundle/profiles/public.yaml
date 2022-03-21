@@ -1,3 +1,4 @@
 name: public
 permissionSets:
   - uesio/core.public
+public: true

@@ -31,7 +31,7 @@ type UserFileCollection struct {
 	PathFormat string     `yaml:"pathFormat"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	Public     bool       `yaml:"public" uesio:"uesio/studio.public"`
+	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetFileSource function

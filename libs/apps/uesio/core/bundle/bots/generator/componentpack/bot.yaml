@@ -9,3 +9,4 @@ params:
     prompt: components
     type: METADATAMULTI
     metadataType: COMPONENT
+public: true

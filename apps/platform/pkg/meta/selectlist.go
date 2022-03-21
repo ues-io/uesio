@@ -26,7 +26,7 @@ type SelectList struct {
 	UpdatedAt        int64              `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt        int64              `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
-	Public           bool               `yaml:"public" uesio:"uesio/studio.public"`
+	Public           bool               `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function

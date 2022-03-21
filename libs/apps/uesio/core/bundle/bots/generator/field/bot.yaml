@@ -14,3 +14,4 @@ params:
     type: FIELDTYPE
   - name: label
     prompt: Label
+public: true

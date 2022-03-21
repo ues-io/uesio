@@ -1,3 +1,4 @@
 name: aws_region
 managedBy: app
 store: environment
+public: true
