@@ -19,6 +19,7 @@ type Theme struct {
 	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public     bool       `yaml:"public" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function
@@ -128,4 +129,8 @@ func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(t)
+}
+
+func (t *Theme) IsPublic() bool {
+	return t.Public
 }

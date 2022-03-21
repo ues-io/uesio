@@ -41,6 +41,7 @@ type ComponentVariant struct {
 	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public     bool       `yaml:"public" uesio:"uesio/studio.public"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -145,4 +146,8 @@ func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(cv)
+}
+
+func (cv *ComponentVariant) IsPublic() bool {
+	return cv.Public
 }
