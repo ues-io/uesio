@@ -3,75 +3,75 @@ definition:
   # Wires are how we pull in data
   wires:
     workspaces:
-      collection: studio.workspaces
+      collection: uesio/studio.workspaces
       fields:
-        uesio.id:
-        studio.name:
-        studio.app:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
           fields:
-            studio.color:
+            uesio/studio.color:
       conditions:
-        - field: studio.app
+        - field: uesio/studio.app
           valueSource: PARAM
           param: appname
-        - field: studio.name
+        - field: uesio/studio.name
           valueSource: PARAM
           param: workspacename
     files:
-      collection: studio.files
+      collection: uesio/studio.files
       fields:
-        uesio.id:
-        studio.name:
-        studio.content:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.content:
       conditions:
-        - field: studio.workspace
+        - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: uesio.id
-        - field: studio.name
+          lookupField: uesio/core.id
+        - field: uesio/studio.name
           valueSource: PARAM
           param: filename
   # Components are how we describe the layout of our view
   components:
-    - io.grid:
-        uesio.variant: studio.mainlayout
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
         items:
-          - io.griditem:
-              uesio.variant: studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
               components:
-                - uesio.view:
-                    view: studio.topbar
+                - uesio/core.view:
+                    view: uesio/studio.topbar
                     uesio.context:
                       wire: workspaces
                     params:
                       itemType: files
                       itemIcon: collections
                       itemName: $Param{filename}
-          - io.griditem:
-              uesio.variant: studio.leftbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
               components:
-                - uesio.view:
+                - uesio/core.view:
                     uesio.context:
                       wire: workspaces
-                    view: studio.workspacenav
+                    view: uesio/studio.workspacenav
                     params:
                       selected: files
-          - io.griditem:
-              uesio.variant: studio.content
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
               components:
-                - io.list:
+                - uesio/io.list:
                     id: filesDeck
                     wire: files
                     mode: READ
                     components:
-                      - io.titlebar:
-                          uesio.variant: io.main
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
                           title: File - ${studio.name}
                           actions:
-                            - io.group:
+                            - uesio/io.group:
                                 components:
-                                  - io.button:
-                                      uesio.variant: io.secondary
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: "Delete"
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
@@ -80,21 +80,21 @@ definition:
                                             - "files"
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
-                      - io.box:
-                          uesio.variant: io.section
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
                           uesio.styles:
                             root:
                               padding: 40px
                           components:
-                            - io.grid:
+                            - uesio/io.grid:
                                 templateColumns:
                                   xs: 1fr
                                   md: 1fr 1fr
                                   lg: 1fr 1fr 1fr 1fr
                                 columnGap: 10px
                                 items:
-                                  - io.field:
-                                      fieldId: studio.name
-                            - io.field:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.name
+                            - uesio/io.field:
                                 displayAs: PREVIEW
-                                fieldId: studio.content
+                                fieldId: uesio/studio.content

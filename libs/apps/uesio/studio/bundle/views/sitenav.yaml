@@ -4,13 +4,13 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - io.list:
+    - uesio/io.list:
         components:
-          - io.titlebar:
-              uesio.variant: io.nav
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
               title: Site Admin
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -18,16 +18,16 @@ definition:
                     value: users
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/site/${studio.name}/users
+                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/users
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Users
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: person
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -35,16 +35,16 @@ definition:
                     value: domains
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/site/${studio.name}/domains
+                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/domains
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Domains
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: verified_user
-          - io.tile:
-              uesio.variant: io.nav
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
                   - type: paramIsValue
@@ -52,11 +52,11 @@ definition:
                     value: sitecollections
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/site/${studio.name}/collections
+                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/collections
               content:
-                - io.text:
+                - uesio/io.text:
                     text: Collections
               avatar:
-                - io.text:
-                    uesio.variant: io.icon
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
                     text: list

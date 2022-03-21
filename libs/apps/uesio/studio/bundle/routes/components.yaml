@@ -1,4 +1,4 @@
 name: components
-path: app/{appname}/workspace/{workspacename}/components
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/components
 view: uesio/studio.components
 theme: uesio/studio.default

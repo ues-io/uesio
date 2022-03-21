@@ -65,7 +65,7 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["studio.app"]["uesio.id"]}
+                                text: ${["studio.app"]["uesio/core.id"]}
                                 element: div
                           avatar:
                             - uesio/io.text:

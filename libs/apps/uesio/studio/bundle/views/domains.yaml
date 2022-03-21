@@ -3,113 +3,113 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: studio.apps
+      collection: uesio/studio.apps
       fields:
-        uesio.id:
-        studio.name:
-        studio.description:
-        studio.color:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
       conditions:
-        - field: studio.name
+        - field: uesio/studio.name
           valueSource: PARAM
           param: appname
     sites:
-      collection: studio.sites
+      collection: uesio/studio.sites
       fields:
-        uesio.id:
-        studio.name:
-        studio.bundle:
-        studio.app:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.bundle:
+        uesio/studio.app:
           fields:
-            uesio.id:
-            studio.name:
-            studio.color:
+            uesio/core.id:
+            uesio/studio.name:
+            uesio/studio.color:
       conditions:
-        - field: studio.app
+        - field: uesio/studio.app
           valueSource: PARAM
           param: appname
-        - field: studio.name
+        - field: uesio/studio.name
           valueSource: PARAM
           param: sitename
     domains:
-      collection: studio.sitedomains
+      collection: uesio/studio.sitedomains
       fields:
-        uesio.id:
-        studio.type:
-        studio.domain:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.domain:
       conditions:
-        - field: studio.site
+        - field: uesio/studio.site
           valueSource: VALUE
           value: $Param{sitename}_$Param{appname}
     newdomain:
-      collection: studio.sitedomains
+      collection: uesio/studio.sitedomains
       fields:
-        uesio.id:
-        studio.type:
-        studio.domain:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.domain:
       init:
         query: false
         create: true
       defaults:
-        - field: studio.site
+        - field: uesio/studio.site
           valueSource: VALUE
           value: $Param{sitename}_$Param{appname}
-        - field: studio.type
+        - field: uesio/studio.type
           valueSource: VALUE
           value: subdomain
   # Components are how we describe the layout of our view
   components:
-    - io.grid:
-        uesio.variant: studio.mainlayout
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
         items:
-          - io.griditem:
-              uesio.variant: studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
               components:
-                - uesio.view:
-                    view: studio.topbar
+                - uesio/core.view:
+                    view: uesio/studio.topbar
                     uesio.context:
                       wire: sites
-          - io.griditem:
-              uesio.variant: studio.leftbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
               components:
-                - uesio.view:
-                    view: studio.sitenav
+                - uesio/core.view:
+                    view: uesio/studio.sitenav
                     uesio.context:
                       wire: sites
                     params:
                       selected: domains
-          - io.griditem:
-              uesio.variant: studio.content
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
               components:
-                - io.titlebar:
-                    uesio.variant: io.main
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
                     title: Domains
                     subtitle: Add a domain to this site.
                     actions:
-                      - io.group:
+                      - uesio/io.group:
                           components:
-                            - io.button:
+                            - uesio/io.button:
                                 text: "Add a Domain"
-                                uesio.variant: io.secondary
+                                uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newDomain"
-                - io.box:
-                    uesio.variant: io.section
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     components:
-                      - io.deck:
+                      - uesio/io.deck:
                           id: domainslist
                           wire: domains
-                          uesio.variant: io.section
+                          uesio.variant: uesio/io.section
                           components:
-                            - io.tile:
-                                uesio.variant: io.item
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
                                 content:
-                                  - io.text:
+                                  - uesio/io.text:
                                       text: ${studio.type} ${studio.domain}
                                 avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
                                       color: "#ccc"
                                       text: verified_user
                                 signals:
@@ -118,21 +118,21 @@ definition:
                                     newtab: true
   panels:
     newDomain:
-      uesio.type: io.dialog
+      uesio.type: uesio/io.dialog
       title: Add a Domain
       width: 400px
       height: 500px
       components:
-        - io.list:
+        - uesio/io.list:
             id: newdomainlist
             wire: newdomain
             mode: EDIT
             components:
-              - io.field:
-                  fieldId: studio.domain
+              - uesio/io.field:
+                  fieldId: uesio/studio.domain
       actions:
-        - io.button:
-            uesio.variant: "io.primary"
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
             text: "Save"
             signals:
               - signal: wire/SAVE
@@ -147,8 +147,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - domains
-        - io.button:
-            uesio.variant: "io.secondary"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
             text: "Cancel"
             signals:
               - signal: "panel/TOGGLE"
