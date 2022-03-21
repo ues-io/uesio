@@ -25,6 +25,7 @@ definition:
         studio.path:
         studio.view:
         studio.theme:
+        studio.public:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -130,3 +131,6 @@ definition:
                                       fieldId: studio.theme
                                       metadataType: "THEME"
                                       label: "Theme"
+                                  - io.field:
+                                      fieldId: studio.public
+                                      displayAs: "TOGGLE"

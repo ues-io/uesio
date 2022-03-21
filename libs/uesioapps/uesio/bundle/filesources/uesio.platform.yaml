@@ -1,3 +1,4 @@
 name: platform
 type: ${uesio.platform_filesource_type}
 credentials: ${uesio.platform_filesource_credentials}
+public: true
