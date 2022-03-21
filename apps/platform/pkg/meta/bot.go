@@ -99,6 +99,7 @@ type Bot struct {
 	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
+	Public        bool              `yaml:"public" uesio:"uesio/studio.public"`
 }
 
 // GetBotTypes function
@@ -237,4 +238,8 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(b)
+}
+
+func (b *Bot) IsPublic() bool {
+	return b.Public
 }

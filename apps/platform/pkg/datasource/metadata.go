@@ -28,6 +28,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Access:                e.Access,
 		RecordChallengeTokens: e.RecordChallengeTokens,
 		TableName:             e.TableName,
+		Public:                e.Public,
 	}
 }
 

@@ -52,6 +52,7 @@ type Collection struct {
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
+	Public                bool                              `yaml:"public" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function
@@ -152,4 +153,8 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(c)
+}
+
+func (c *Collection) IsPublic() bool {
+	return c.Public
 }

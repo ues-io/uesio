@@ -20,6 +20,7 @@ type View struct {
 	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public     bool       `yaml:"public" uesio:"uesio/studio.public"`
 }
 
 // GetCollectionName function
@@ -127,6 +128,10 @@ func (v *View) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
+}
+
+func (v *View) IsPublic() bool {
+	return v.Public
 }
 
 func (v *View) UnmarshalYAML(node *yaml.Node) error {

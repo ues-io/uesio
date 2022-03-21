@@ -296,3 +296,6 @@ func validateReferenceField(node *yaml.Node, fieldKey string) error {
 	}
 	return nil
 }
+func (c *Field) IsPublic() bool {
+	return true
+}

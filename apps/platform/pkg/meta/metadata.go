@@ -62,6 +62,7 @@ type BundleableItem interface {
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)
+	IsPublic() bool
 }
 
 // ParseKey function
