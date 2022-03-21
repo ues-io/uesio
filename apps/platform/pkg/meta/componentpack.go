@@ -22,7 +22,7 @@ type ComponentPack struct {
 	UpdatedBy       *User               `yaml:"-" uesio:"uesio/core.updatedby"`
 	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
-	Public          bool                `yaml:"public" uesio:"uesio/studio.public"`
+	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 type ComponentsRegistry struct {
