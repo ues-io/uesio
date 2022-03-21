@@ -1,5 +1,5 @@
 name: type
 type: SELECT
-selectList: studio.datasourcetypes
+selectList: uesio/studio.datasourcetypes
 label: Type
 required: true
