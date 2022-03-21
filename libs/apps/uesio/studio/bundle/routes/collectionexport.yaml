@@ -1,4 +1,4 @@
 name: collectionexport
-path: app/{appname}/workspace/{workspacename}/export/{collectionname}
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/export/{collectionname}
 view: uesio/studio.collectionexport
 theme: uesio/studio.default

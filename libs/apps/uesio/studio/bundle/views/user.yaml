@@ -3,38 +3,38 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: studio.apps
+      collection: uesio/studio.apps
       fields:
-        uesio.id:
-        studio.name:
-        studio.description:
-        studio.color:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
       conditions:
-        - field: studio.name
+        - field: uesio/studio.name
           valueSource: PARAM
           param: appname
     sites:
-      collection: studio.sites
+      collection: uesio/studio.sites
       fields:
-        uesio.id:
-        studio.name:
-        studio.bundle:
-        studio.app:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.bundle:
+        uesio/studio.app:
           fields:
-            uesio.id:
-            studio.name:
-            studio.color:
+            uesio/core.id:
+            uesio/studio.name:
+            uesio/studio.color:
       conditions:
-        - field: studio.app
+        - field: uesio/studio.app
           valueSource: PARAM
           param: appname
-        - field: studio.name
+        - field: uesio/studio.name
           valueSource: PARAM
           param: sitename
     users:
       collection: uesio.user
       fields:
-        uesio.id:
+        uesio/core.id:
         uesio.firstname:
         uesio.lastname:
         uesio.username:
@@ -58,47 +58,47 @@ definition:
         wires:
           - users
   components:
-    - io.grid:
-        uesio.variant: studio.mainlayout
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
         items:
-          - io.griditem:
-              uesio.variant: studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
               components:
-                - uesio.view:
-                    view: studio.topbar
+                - uesio/core.view:
+                    view: uesio/studio.topbar
                     uesio.context:
                       wire: sites
-          - io.griditem:
-              uesio.variant: studio.leftbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
               components:
-                - uesio.view:
-                    view: studio.sitenav
+                - uesio/core.view:
+                    view: uesio/studio.sitenav
                     uesio.context:
                       wire: sites
                     params:
                       selected: users
-          - io.griditem:
-              uesio.variant: studio.content
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
               components:
-                - io.list:
+                - uesio/io.list:
                     id: userDeck
                     wire: users
                     mode: READ
                     components:
-                      - io.titlebar:
-                          uesio.variant: io.main
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
                           title: User - ${uesio.firstname} ${uesio.lastname}
                           actions:
-                            - io.group:
+                            - uesio/io.group:
                                 components:
-                                  - io.button:
-                                      uesio.variant: io.secondary
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: "Edit"
                                       signals:
                                         - signal: component/io.list/TOGGLE_MODE
                                           target: "userDeck"
-                                  - io.button:
-                                      uesio.variant: io.secondary
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: "Save"
                                       signals:
                                         - signal: wire/SAVE
@@ -108,55 +108,55 @@ definition:
                                               app: $Param{appname}
                                           wires:
                                             - "users"
-                                  - io.button:
-                                      uesio.variant: io.secondary
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "users"
-                      - io.box:
-                          uesio.variant: io.section
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
                           uesio.styles:
                             root:
                               padding: 40px
                           components:
-                            - io.grid:
+                            - uesio/io.grid:
                                 templateColumns:
                                   sm: 1fr
                                   md: 1fr 1fr
                                   lg: 1fr 3fr
                                 columnGap: 40px
                                 items:
-                                  - io.griditem:
+                                  - uesio/io.griditem:
                                       components:
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.picture
                                             displayAs: IMAGE
-                                  - io.griditem:
+                                  - uesio/io.griditem:
                                       components:
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.firstname
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.lastname
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.initials
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.username
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.profile
-                                        - io.field:
+                                        - uesio/io.field:
                                             fieldId: uesio.language
-                      - io.box:
-                          uesio.variant: io.section
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
                           components:
-                            - io.titlebar:
-                                uesio.variant: io.section
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
                                 title: Feature Flags
-                            - io.box:
+                            - uesio/io.box:
                                 uesio.styles:
                                   root:
                                     padding: 40px
                                 components:
-                                  - studio.configfeatureflags:
-                                      user: ${uesio.id}
+                                  - uesio/studio.configfeatureflags:
+                                      user: ${uesio/core.id}
   panels:

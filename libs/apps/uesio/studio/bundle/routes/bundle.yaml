@@ -1,4 +1,4 @@
 name: bundle
-path: app/{appname}/bundle/{major}/{minor}/{patch}
+path: app/{app:\w*\/\w*}/bundle/{major}/{minor}/{patch}
 view: uesio/studio.bundle
 theme: uesio/studio.default

@@ -1,4 +1,4 @@
 name: translation
-path: app/{appname}/workspace/{workspacename}/translations/{translationname}
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/translations/{translationname}
 view: uesio/studio.translation
 theme: uesio/studio.default

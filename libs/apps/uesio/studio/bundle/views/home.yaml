@@ -158,7 +158,7 @@ definition:
                                     path: "https://docs.$Site{domain}"
                             - uesio/io.text:
                                 uesio.variant: uesio/io.smallcontent
-                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the studio.
+                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
                                 element: div
 
   panels:

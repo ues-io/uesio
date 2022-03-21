@@ -1,4 +1,4 @@
 name: site
-path: app/{appname}/site/{sitename}
+path: app/{app:\w*\/\w*}/site/{sitename}
 view: uesio/studio.site
 theme: uesio/studio.default

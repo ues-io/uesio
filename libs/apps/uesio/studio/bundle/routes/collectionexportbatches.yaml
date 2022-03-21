@@ -1,4 +1,4 @@
 name: collectionexportbatches
-path: app/{appname}/workspace/{workspacename}/export/{collectionname}/{jobid}/batches
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/export/{collectionname}/{jobid}/batches
 view: uesio/studio.collectionexportbatches
 theme: uesio/studio.default

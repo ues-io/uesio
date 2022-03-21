@@ -1,4 +1,4 @@
 name: collection
-path: app/{appname}/workspace/{workspacename}/collections/{collectionname}
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/collections/{collectionname}
 view: uesio/studio.collection
 theme: uesio/studio.default

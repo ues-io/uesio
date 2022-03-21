@@ -1,4 +1,4 @@
 name: team
-path: app/{appname}/teams/{teamname}
+path: app/{app:\w*\/\w*}/teams/{teamname}
 view: uesio/studio.team
 theme: uesio/studio.default
