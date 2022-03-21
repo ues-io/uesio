@@ -59,7 +59,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 }
 
 func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	_, err := LoadWithOptions([]adapt.LoadOp{*op}, session, &LoadOptions{
+	_, err := LoadWithOptions([]*adapt.LoadOp{op}, session, &LoadOptions{
 		Connections: GetConnectionMap(connection),
 		Metadata:    GetConnectionMetadata(connection),
 	})
