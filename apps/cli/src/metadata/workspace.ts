@@ -7,25 +7,25 @@ import { User } from "../auth/login"
 
 class Workspace {
 	static getCollectionName(): string {
-		return "studio.workspaces"
+		return "uesio/studio.workspaces"
 	}
 	static getFields() {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.name",
+				id: "uesio/studio.name",
 			},
 		]
 	}
 	static getColumns(): TableColumn[] {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.name",
+				id: "uesio/studio.name",
 			},
 		]
 	}
@@ -47,8 +47,8 @@ class Workspace {
 			user,
 			createChange([
 				{
-					"studio.name": responses.name,
-					"studio.app": app,
+					"uesio/studio.name": responses.name,
+					"uesio/studio.app": app,
 				},
 			])
 		)

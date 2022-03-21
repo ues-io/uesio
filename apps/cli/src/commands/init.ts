@@ -31,7 +31,7 @@ export default class Init extends Command {
 		const workspaceMetadata = getMetadataByTypePlural("workspaces")
 		const appresponse = await load(appMetadata, user)
 		const appNames = appresponse.wires[0].data?.map(
-			(app) => app["uesio.id"]
+			(app) => app["uesio/core.id"]
 		)
 
 		if (!appNames) {
@@ -43,9 +43,9 @@ export default class Init extends Command {
 				user,
 				createChange([
 					{
-						"studio.name": name,
-						"studio.description": "A new app",
-						"studio.color": "#00FF00",
+						"uesio/studio.name": name,
+						"uesio/studio.description": "A new app",
+						"uesio/studio.color": "#00FF00",
 					},
 				])
 			)
@@ -54,8 +54,8 @@ export default class Init extends Command {
 				user,
 				createChange([
 					{
-						"studio.name": "dev",
-						"studio.app": name,
+						"uesio/studio.name": "dev",
+						"uesio/studio.app": name,
 					},
 				])
 			)
