@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -39,11 +40,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vars := mux.Vars(r)
+	authType := vars["auth"]
+
 	// 3. Get siteName from context
 	s := middleware.GetSession(r)
 	site := s.GetSite()
 
-	user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
+	user, err := auth.Login(authType, loginRequest.Token, s)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

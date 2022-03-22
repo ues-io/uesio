@@ -48,7 +48,7 @@ var authTypeMap = map[string]AuthenticationType{}
 func getAuthType(authTypeName string) (AuthenticationType, error) {
 	authType, ok := authTypeMap[authTypeName]
 	if !ok {
-		return nil, errors.New("No adapter found of this type: " + authTypeName)
+		return nil, errors.New("No adapter found of this auth type: " + authTypeName)
 	}
 	return authType, nil
 }
@@ -227,7 +227,7 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.federation_type",
+					Field: "uesio/core.auth_method",
 					Value: claims.AuthType,
 				},
 				{
