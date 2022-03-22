@@ -39,7 +39,7 @@ definition:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: installedapp
-          lookupField: uesio/studio.bundle->studio.app->uesio/core.id
+          lookupField: uesio/studio.bundle->uesio/studio.app->uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

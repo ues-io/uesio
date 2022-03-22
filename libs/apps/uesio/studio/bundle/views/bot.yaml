@@ -25,7 +25,7 @@ definition:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -125,7 +125,7 @@ definition:
                                       metadataType: "COLLECTION"
                                       label: "Collection"
                                   - uesio/io.field:
-                                      fieldId: uesio.createdby
+                                      fieldId: uesio/core.createdby
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdat
                                   - uesio/io.field:
