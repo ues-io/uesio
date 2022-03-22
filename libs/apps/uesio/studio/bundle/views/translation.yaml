@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     translations:
       collection: uesio/studio.translations
       fields:
@@ -77,7 +73,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Translation - ${studio.language}
+                          title: Translation - ${uesio/studio.language}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -97,7 +93,7 @@ definition:
                                           wires:
                                             - "translations"
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/translations"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/translations"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     installedapp:
       collection: uesio/studio.bundledependencies
       fields:
@@ -29,7 +25,7 @@ definition:
             uesio/studio.patch:
       conditions:
         - field: uesio/studio.workspace
-          value: $Param{appname}_$Param{workspacename}
+          value: $Param{app}_$Param{workspacename}
         - field: uesio/core.id
           value: $Param{bundledep}
     versions:
@@ -77,7 +73,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Bundle - ${["studio.bundle"]["studio.app"]["uesio/core.id"]} v${["studio.bundle"]["studio.major"]}.${["studio.bundle"]["studio.minor"]}.${["studio.bundle"]["studio.patch"]}
+                          title: Bundle - ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -90,7 +86,7 @@ definition:
                                           wires:
                                             - "installedapp"
                                         - signal: "route/NAVIGATE"
-                                          path: app/$Param{appname}/workspace/$Param{workspacename}
+                                          path: app/$Param{app}/workspace/$Param{workspacename}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:
@@ -121,4 +117,4 @@ definition:
                                 uesio.variant: uesio/io.item
                                 content:
                                   - uesio/io.text:
-                                      text: "v${studio.major}.${studio.minor}.${studio.patch}"
+                                      text: "v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}"

@@ -13,7 +13,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 		<ScrollPanel
 			context={context}
 			className={className}
-			variant="studio.verticalnav"
+			variant="uesio/studio.verticalnav"
 		>
 			<IconButton
 				context={context}
@@ -21,7 +21,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				tooltipPlacement="left"
 				disabled={!hasChanges}
 				icon="save"
-				variant="studio.sidebar"
+				variant="uesio/studio.sidebar"
 				onClick={() => {
 					uesio.builder.save()
 				}}
@@ -32,7 +32,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				tooltipPlacement="left"
 				disabled={!hasChanges}
 				icon="cancel"
-				variant="studio.sidebar"
+				variant="uesio/studio.sidebar"
 				onClick={() => {
 					uesio.builder.cancel()
 				}}
@@ -42,7 +42,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				label="Code"
 				tooltipPlacement="left"
 				icon="code"
-				variant="studio.sidebar"
+				variant="uesio/studio.sidebar"
 				onClick={uesio.signal.getHandler([
 					{
 						signal: "component/uesio.runtime/TOGGLE_CODE",
@@ -54,7 +54,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				label="View Detail"
 				tooltipPlacement="left"
 				icon="list"
-				variant="studio.sidebar"
+				variant="uesio/studio.sidebar"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()
 					const route = props.context.getRoute()

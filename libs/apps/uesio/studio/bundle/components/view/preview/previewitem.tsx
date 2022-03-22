@@ -54,7 +54,7 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 		<FieldWrapper context={context} label={fieldKey} key={fieldKey}>
 			<AutoComplete
 				context={context}
-				variant="io.default"
+				variant="uesio/io.default"
 				value={lstate[fieldKey]}
 				setValue={(value: wire.PlainWireRecord) => {
 					const idValue = value && (value[col.ID_FIELD] as string)

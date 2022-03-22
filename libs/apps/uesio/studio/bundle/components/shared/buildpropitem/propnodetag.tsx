@@ -69,7 +69,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			data-type={draggable}
 		>
 			<Tile
-				variant="io.tile.studio.propnodetag"
+				variant="uesio/io.tile:uesio/studio.propnodetag"
 				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}

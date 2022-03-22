@@ -287,7 +287,7 @@ func (s *Session) GetContextAppBundle() *meta.BundleDef {
 func (s *Session) GetDefaultTheme() string {
 	defaultTheme := s.GetContextAppBundle().DefaultTheme
 	if defaultTheme == "" {
-		return "uesio.default"
+		return "uesio/core.default"
 	}
 	return defaultTheme
 }

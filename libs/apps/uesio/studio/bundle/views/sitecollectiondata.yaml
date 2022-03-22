@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     sites:
       collection: uesio/studio.sites
       fields:
@@ -25,12 +25,8 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: sitename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -65,7 +61,7 @@ definition:
                             - uesio/io.button:
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/import/$Param{collectionname}"
+                                    path: "app/$Param{app}/site/$Param{sitename}/import/$Param{collectionname}"
                                 text: Import Data
                                 uesio.variant: uesio/io.secondary
                 - uesio/io.box:
@@ -76,5 +72,5 @@ definition:
                     components:
                       - uesio/studio.datamanager:
                           collectionId: $Param{collectionname}
-                          namespace: $Param{appname}
+                          namespace: $Param{app}
                           usage: site

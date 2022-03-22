@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     collections:
       collection: uesio/studio.collections
       fields:
@@ -47,7 +43,7 @@ definition:
           desc: true
       conditions:
         - field: uesio.collection
-          value: $Param{appname}.$Param{collectionname}
+          value: $Param{app}.$Param{collectionname}
       init:
         query: false
   events:
@@ -56,7 +52,7 @@ definition:
         uesio.context:
           workspace:
             name: $Param{workspacename}
-            app: $Param{appname}
+            app: $Param{app}
         wires:
           - bulkjobs
 
@@ -95,13 +91,13 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: ${studio.name} - Jobs
+                          title: ${uesio/studio.name} - Jobs
                           actions:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.dataexport:
                                       collectionId: $Param{collectionname}
-                                      namespace: $Param{appname}
+                                      namespace: $Param{app}
                                       usage: workspace
                                       wireName: "bulkjobs"
                                   - uesio/io.button:
@@ -109,7 +105,7 @@ definition:
                                       text: "Collection Config"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
@@ -122,7 +118,7 @@ definition:
                                       uesio.variant: uesio/io.item
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio/core.id}/batches"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio/core.id}/batches"
                                       content:
                                         - uesio/io.field:
                                             fieldId: uesio/core.id

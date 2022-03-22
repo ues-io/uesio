@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     collections:
       collection: uesio/studio.collections
       fields:
@@ -52,7 +48,7 @@ definition:
           lookupField: uesio/core.id
         - field: uesio/studio.datasource
           valueSource: VALUE
-          value: "uesio.platform"
+          value: "uesio/core.platform"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -105,10 +101,10 @@ definition:
                                 uesio.variant: uesio/io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
-                                      text: ${studio.name}
+                                      text: ${uesio/studio.name}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -136,14 +132,14 @@ definition:
             text: "Save"
             signals:
               - signal: "bot/CALL"
-                bot: "studio.newcollection"
+                bot: "uesio/studio.newcollection"
                 params:
-                  name: ${studio.name}
-                  datasource: ${studio.datasource}
+                  name: ${uesio/studio.name}
+                  datasource: ${uesio/studio.datasource}
                   workspace: $Param{workspacename}
-                  app: $Param{appname}
+                  app: $Param{app}
               - signal: "route/NAVIGATE"
-                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

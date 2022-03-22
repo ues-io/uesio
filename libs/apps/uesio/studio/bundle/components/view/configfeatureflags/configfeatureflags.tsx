@@ -15,7 +15,7 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const user = definition?.user ? definition?.user : ""
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const siteName = view?.params?.sitename
 
 	let newContext = props.context

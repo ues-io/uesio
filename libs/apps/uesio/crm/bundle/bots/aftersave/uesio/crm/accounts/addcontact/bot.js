@@ -1,15 +1,15 @@
 function addcontact(bot) {
 	/*
 	bot.inserts.get().forEach(function (result) {
-		var accountId = result.get("uesio.id")
-		bot.save("crm.contacts", [
+		var accountId = result.get("uesio/core.id")
+		bot.save("uesio/crm.contacts", [
 			{
-				"crm.firstname": "George",
-				"crm.lastname": "Washington",
-				"crm.account": {
-					"uesio.id": accountId,
+				"uesio/crm.firstname": "George",
+				"uesio/crm.lastname": "Washington",
+				"uesio/crm.account": {
+					"uesio/core.id": accountId,
 				},
-				"crm.email": "george.washington@gmail.com",
+				"uesio/crm.email": "george.washington@gmail.com",
 			},
 		])
 	})

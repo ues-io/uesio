@@ -24,7 +24,7 @@ export default (title: string, actions: string[]) =>
 				type: "METADATA",
 				metadataType: "COMPONENTVARIANT",
 				label: "Variant",
-				groupingValue: "io.button",
+				groupingValue: "uesio/io.button",
 			},
 			{
 				name: "actions",

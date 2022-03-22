@@ -19,7 +19,7 @@ const init = (
 	context: context.Context
 ): [string, context.Context] => {
 	const view = context.getView()
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const siteName = view?.params?.sitename
 	const workspaceName = view?.params?.workspacename
 	if (usage === "site") {
@@ -98,7 +98,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	return (
 		<Button
 			context={newContext}
-			variant={"io.primary"}
+			variant={"uesio/io.primary"}
 			onClick={triggerExport}
 			label={"EXPORT " + definition?.collectionId}
 		/>

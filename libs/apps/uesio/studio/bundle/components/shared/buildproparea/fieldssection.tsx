@@ -64,7 +64,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	return (
 		<>
 			<TitleBar
-				variant="studio.propsubsection"
+				variant="uesio/studio.propsubsection"
 				title={""}
 				context={context}
 				actions={

@@ -13,7 +13,7 @@ function newcollection(bot) {
 			"uesio/studio.namefield": app + ".name",
 		},
 	])
-	bot.save("studio.fields", [
+	bot.save("uesio/studio.fields", [
 		{
 			"uesio/studio.collection": app + "." + collection,
 			"uesio/studio.label": "Name",

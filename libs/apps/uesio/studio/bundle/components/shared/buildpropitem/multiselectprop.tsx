@@ -20,14 +20,14 @@ const MultiSelectProp: FunctionComponent<SelectPropRendererProps> = ({
 		labelPosition="left"
 		label={descriptor.label}
 		context={context}
-		variant="studio.propfield"
+		variant="uesio/studio.propfield"
 	>
 		<MultiSelectField
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			options={descriptor.options}
 			context={context}
-			variant="studio.propfield"
+			variant="uesio/studio.propfield"
 		/>
 	</FieldWrapper>
 )

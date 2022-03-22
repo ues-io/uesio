@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     views:
       collection: uesio/studio.views
       fields:
@@ -67,7 +63,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: View - ${studio.name}
+                          title: View - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -78,7 +74,7 @@ definition:
                                       text: "Build"
                                       signals:
                                         - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${studio.name}/edit"
+                                          path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
@@ -101,7 +97,7 @@ definition:
                                           wires:
                                             - "views"
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/views"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

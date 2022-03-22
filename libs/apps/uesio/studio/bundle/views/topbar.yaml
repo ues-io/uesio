@@ -65,7 +65,7 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["studio.app"]["uesio/core.id"]}
+                                text: ${["uesio/studio.app"]["uesio/core.id"]}
                                 element: div
                           avatar:
                             - uesio/io.text:
@@ -75,7 +75,7 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${studio.name}
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -152,7 +152,7 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${studio.name}
+                                text: ${uesio/studio.name}
                                 element: div
                           avatar:
                             - uesio/io.text:

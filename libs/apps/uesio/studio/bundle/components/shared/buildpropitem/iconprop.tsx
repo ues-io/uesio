@@ -71,7 +71,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 				labelPosition="left"
 				label={descriptor.label}
 				context={context}
-				variant="studio.propfield"
+				variant="uesio/studio.propfield"
 			>
 				<div className={classes.iconfield}>
 					<TextField
@@ -79,7 +79,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 						label={descriptor.label}
 						setValue={(value: string) => valueAPI.set(path, value)}
 						context={context}
-						variant="studio.propfield"
+						variant="uesio/studio.propfield"
 					/>
 					<IconButton
 						className={classes.iconpreview}
@@ -104,13 +104,13 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 				>
 					<TitleBar
 						title={"Icons"}
-						variant="io.primary"
+						variant="uesio/io.primary"
 						subtitle={"Material Icons"}
 						actions={
 							props.path && (
 								<IconButton
 									context={context}
-									variant="studio.buildtitle"
+									variant="uesio/studio.buildtitle"
 									icon="close"
 									onClick={() => uesio.builder.unSelectNode()}
 								/>

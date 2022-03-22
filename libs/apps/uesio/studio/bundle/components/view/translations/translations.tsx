@@ -26,7 +26,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 	}
 
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 
 	if (appName) {
 		if (workspaceName) {

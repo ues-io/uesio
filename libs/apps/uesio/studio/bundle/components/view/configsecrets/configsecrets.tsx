@@ -11,7 +11,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	const { context } = props
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const siteName = view?.params?.sitename
 
 	let newContext = props.context
@@ -93,7 +93,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 								onClick={() =>
 									handleClickOpen(key, isSecret ? "" : value)
 								}
-								variant="io.secondary"
+								variant="uesio/io.secondary"
 								context={context}
 								label={`Set${
 									response.managedby === "app"
@@ -117,7 +117,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 							<Button
 								label="Set"
 								onClick={handleSet}
-								variant="io.secondary"
+								variant="uesio/io.secondary"
 								context={context}
 							/>
 						}

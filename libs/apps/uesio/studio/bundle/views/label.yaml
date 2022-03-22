@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     labels:
       collection: uesio/studio.labels
       fields:
@@ -67,7 +63,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Label - ${studio.name}
+                          title: Label - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -99,7 +95,7 @@ definition:
                                           wires:
                                             - "labels"
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/labels"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/labels"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

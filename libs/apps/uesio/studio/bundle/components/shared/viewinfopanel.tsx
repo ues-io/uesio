@@ -27,7 +27,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		<ScrollPanel
 			header={
 				<TabLabels
-					variant="studio.mainsection"
+					variant="uesio/studio.mainsection"
 					selectedTab={selectedTab}
 					setSelectedTab={setSelectedTab}
 					tabs={[

@@ -49,8 +49,8 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			setValue={(value) => valueAPI.set(path, value)}
 			context={context}
 			grouping={getGrouping()}
-			selectVariant="studio.propfield"
-			fieldWrapperVariant="studio.propfield"
+			selectVariant="uesio/studio.propfield"
+			fieldWrapperVariant="uesio/studio.propfield"
 		/>
 	)
 }

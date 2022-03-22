@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     teams:
       collection: uesio/studio.teams
       fields:
@@ -26,7 +26,7 @@ definition:
       conditions:
         - field: uesio/studio.app
           valueSource: PARAM
-          param: appname
+          param: app
         - field: uesio/studio.name
           valueSource: PARAM
           param: teamname
@@ -44,9 +44,9 @@ definition:
       conditions:
         - field: uesio/studio.app
           valueSource: PARAM
-          param: appname
+          param: app
         - field: uesio/studio.team
-          value: $Param{appname}_$Param{teamname}
+          value: $Param{app}_$Param{teamname}
     newteammember:
       collection: uesio/studio.teammembers
       fields:
@@ -90,7 +90,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Team - ${studio.name}
+                          title: Team - ${uesio/studio.name}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -147,7 +147,7 @@ definition:
               - uesio/io.field:
                   fieldId: uesio/studio.member
                   reference:
-                    template: "${uesio.firstname} ${uesio.lastname}"
+                    template: "${uesio/core.firstname} ${uesio/core.lastname}"
                     searchFields:
                       - uesio.firstname
                       - uesio.lastname
@@ -160,7 +160,7 @@ definition:
                       - uesio/io.tile:
                           content:
                             - uesio/io.text:
-                                text: ${uesio.firstname} ${uesio.lastname}
+                                text: ${uesio/core.firstname} ${uesio/core.lastname}
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/core.id}
@@ -171,7 +171,7 @@ definition:
                                 element: div
                           avatar:
                             - uesio/io.avatar:
-                                image: $UserFile{uesio.picture}
+                                image: $UserFile{uesio/core.picture}
                                 text: "-"
       actions:
         - uesio/io.button:

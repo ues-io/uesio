@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     sites:
       collection: uesio/studio.sites
       fields:
@@ -25,21 +25,17 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: sitename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
     users:
-      collection: uesio.user
+      collection: uesio/core.user
       fields:
         uesio/core.id:
-        uesio.firstname:
-        uesio.lastname:
-        uesio.username:
-        uesio.initials:
-        uesio.picture:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.picture:
       init:
         query: false
   events:
@@ -48,7 +44,7 @@ definition:
         uesio.context:
           siteadmin:
             name: $Param{sitename}
-            app: $Param{appname}
+            app: $Param{app}
         wires:
           - users
   components:
@@ -89,7 +85,7 @@ definition:
                                 uesio.variant: uesio/io.item
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio.firstname} ${uesio.lastname}
+                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
                                       element: div
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
@@ -100,9 +96,9 @@ definition:
                                       element: div
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.username}"
+                                    path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
                                 avatar:
                                   - uesio/io.avatar:
-                                      image: $UserFile{uesio.picture}
-                                      text: ${uesio.initials}
+                                      image: $UserFile{uesio/core.picture}
+                                      text: ${uesio/core.initials}
   panels:

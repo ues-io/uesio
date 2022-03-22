@@ -52,18 +52,18 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 	return (
 		<>
 			<TitleBar
-				variant="studio.propsubsection"
+				variant="uesio/studio.propsubsection"
 				title={""}
 				context={context}
 				actions={
 					<Button
 						context={context}
-						variant="studio.actionbutton"
+						variant="uesio/studio.actionbutton"
 						icon={
 							<Icon
 								context={context}
 								icon="add"
-								variant="studio.actionicon"
+								variant="uesio/studio.actionicon"
 							/>
 						}
 						label="New Ordering"

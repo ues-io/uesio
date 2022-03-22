@@ -15,10 +15,10 @@ const TextProp: FunctionComponent<builder.PropRendererProps> = ({
 		labelPosition="left"
 		label={descriptor.label}
 		context={context}
-		variant="studio.propfield"
+		variant="uesio/studio.propfield"
 	>
 		<TextField
-			variant="studio.propfield"
+			variant="uesio/studio.propfield"
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			context={context}

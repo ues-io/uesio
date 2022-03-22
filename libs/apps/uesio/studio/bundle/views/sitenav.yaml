@@ -18,7 +18,7 @@ definition:
                     value: users
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/users
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/users
               content:
                 - uesio/io.text:
                     text: Users
@@ -35,7 +35,7 @@ definition:
                     value: domains
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/domains
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/domains
               content:
                 - uesio/io.text:
                     text: Domains
@@ -52,7 +52,7 @@ definition:
                     value: sitecollections
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio/core.id"]}/site/${studio.name}/collections
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/collections
               content:
                 - uesio/io.text:
                     text: Collections

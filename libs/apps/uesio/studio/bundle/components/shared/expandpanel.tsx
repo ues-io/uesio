@@ -45,10 +45,10 @@ const ExpandPanel: FunctionComponent<Props> = ({
 						)}
 					</>
 				}
-				variant="studio.expandpanel"
+				variant="uesio/studio.expandpanel"
 			/>
 		}
-		variant="studio.expandpanel"
+		variant="uesio/studio.expandpanel"
 	>
 		{children}
 	</IOExpandPanel>

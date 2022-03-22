@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     views:
       collection: uesio/studio.views
       fields:
@@ -98,10 +94,10 @@ definition:
                                 uesio.variant: uesio/io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/views/${studio.name}"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
-                                      text: ${studio.name}
+                                      text: ${uesio/studio.name}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -130,7 +126,7 @@ definition:
                 wires:
                   - "newview"
               - signal: "route/NAVIGATE"
-                path: "app/$Param{appname}/workspace/$Param{workspacename}/views/${studio.name}"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

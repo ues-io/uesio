@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     bundles:
       collection: uesio/studio.bundles
       fields:
@@ -29,7 +29,7 @@ definition:
       conditions:
         - field: uesio/studio.app
           valueSource: PARAM
-          param: appname
+          param: app
         - field: uesio/studio.major
           valueSource: PARAM
           param: major
@@ -64,7 +64,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Bundle - v${studio.major}.${studio.minor}.${studio.patch}
+                          title: Bundle - v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

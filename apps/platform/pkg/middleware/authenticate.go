@@ -55,7 +55,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		err := auth.AddSiteAdminContext(appName, siteName, GetSession(r))
 		if err != nil {
 			logger.LogError(err)
-			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Failed querying site admin: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		next.ServeHTTP(w, r)

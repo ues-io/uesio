@@ -34,12 +34,12 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 				<>
 					<TitleBar
 						title={propsDef.title || "Properties"}
-						variant="io.primary"
+						variant="uesio/io.primary"
 						subtitle={subtitle}
 						actions={
 							props.path && (
 								<IconButton
-									variant="studio.buildtitle"
+									variant="uesio/studio.buildtitle"
 									context={context}
 									icon="close"
 									onClick={() => uesio.builder.unSelectNode()}
@@ -50,7 +50,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					/>
 					{propsDef.sections && (
 						<TabLabels
-							variant="studio.mainsection"
+							variant="uesio/studio.mainsection"
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={[{ id: "", label: "", icon: "home" }].concat(

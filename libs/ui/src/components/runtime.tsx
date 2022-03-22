@@ -20,7 +20,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	)
 
 	// This tells us to load in the studio main component pack if we're in buildmode
-	const deps = buildMode ? ["studio.main", "io.main"] : []
+	const deps = buildMode ? ["uesio/studio.main", "uesio/io.main"] : []
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
 
 	useEffect(() => {

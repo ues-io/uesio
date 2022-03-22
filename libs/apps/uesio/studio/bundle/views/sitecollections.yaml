@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     sites:
       collection: uesio/studio.sites
       fields:
@@ -25,12 +25,8 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: sitename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

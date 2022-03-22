@@ -15,13 +15,13 @@ const NumberProp: FunctionComponent<builder.PropRendererProps> = ({
 		labelPosition="left"
 		label={descriptor.label}
 		context={context}
-		variant="studio.propfield"
+		variant="uesio/studio.propfield"
 	>
 		<NumberField
 			value={valueAPI.get(path)}
 			setValue={(value: number | null): void => valueAPI.set(path, value)}
 			context={context}
-			variant="io.textfield.studio.propfield"
+			variant="uesio/io.textfield:uesio/studio.propfield"
 		/>
 	</FieldWrapper>
 )

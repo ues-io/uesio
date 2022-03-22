@@ -70,7 +70,7 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 		>
 			<Button
 				context={context}
-				variant={"io.secondary"}
+				variant={"uesio/io.secondary"}
 				onClick={() => fileInput.current?.click()}
 				label={"choose file"}
 			/>

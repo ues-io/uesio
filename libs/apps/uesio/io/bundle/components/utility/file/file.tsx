@@ -27,7 +27,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const view = context.getView()
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const workspaceName = view?.params?.workspacename
 	const newContext =
 		!appName || !workspaceName
