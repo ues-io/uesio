@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     collections:
       collection: uesio/studio.collections
       fields:
@@ -47,7 +43,7 @@ definition:
         uesio/studio.reference:
       conditions:
         - field: uesio/studio.collection
-          value: $Param{appname}.$Param{collectionname}
+          value: $Param{app}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -56,7 +52,7 @@ definition:
         - field: uesio/studio.collection
           valueSource: LOOKUP
           lookupWire: collections
-          lookupTemplate: $Param{appname}.$Param{collectionname}
+          lookupTemplate: $Param{app}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -96,7 +92,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Collection - ${studio.name}
+                          title: Collection - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -105,7 +101,7 @@ definition:
                                       text: "Collection Configuration"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:
@@ -116,9 +112,9 @@ definition:
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
-                                    app: $Param{appname}
+                                    app: $Param{app}
                                 components:
                                   - uesio/studio.dataimport:
                                       collectionId: $Param{collectionname}
-                                      namespace: $Param{appname}
+                                      namespace: $Param{app}
                                       usage: workspace

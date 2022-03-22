@@ -44,7 +44,11 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 				definition={definition}
 				listName="items"
 				path={props.path}
-				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
+				accepts={[
+					"uesio/io.griditem",
+					"uesio.standalone",
+					"uesio.field",
+				]}
 				context={context}
 			/>
 		</IOGrid>

@@ -31,12 +31,12 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		<div className={classes.wrapper}>
 			<Button
 				context={context}
-				variant="studio.actionbutton"
+				variant="uesio/studio.actionbutton"
 				icon={
 					<Icon
 						context={context}
 						icon="add"
-						variant="studio.actionicon"
+						variant="uesio/studio.actionicon"
 					/>
 				}
 				label="New Parameter"

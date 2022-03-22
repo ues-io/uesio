@@ -30,7 +30,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const viewName = view?.params?.viewname
 
 	const newContext =
@@ -109,7 +109,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 						key={key + index}
 					>
 						<TextField
-							variant="io.default"
+							variant="uesio/io.default"
 							value={lstate[key]}
 							setValue={(value: string) =>
 								setLstate({
@@ -143,7 +143,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 			>
 				<Button
 					context={newContext}
-					variant="io.primary"
+					variant="uesio/io.primary"
 					label="Preview"
 					onClick={() => {
 						let getParams = "?"

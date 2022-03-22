@@ -23,7 +23,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const wire = uesio.wire.useWire(wireName || "")
 
 	if (!wire || !record || !workspaceName || !appName) {

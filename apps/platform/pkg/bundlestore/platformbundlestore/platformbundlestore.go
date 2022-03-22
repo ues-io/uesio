@@ -48,7 +48,7 @@ func getStream(namespace string, version string, objectname string, filename str
 		return nil, err
 	}
 
-	credentials, err := adapt.GetCredentials("uesio.aws", fakeSession)
+	credentials, err := adapt.GetCredentials("uesio/core.aws", fakeSession)
 	if err != nil {
 		return nil, err
 	}

@@ -26,7 +26,7 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const viewName = view?.params?.viewname
 	let newContext = props.context
 	if (appName) {
@@ -59,7 +59,7 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 			{params ? (
 				<Button
 					context={newContext}
-					variant="io.secondary"
+					variant="uesio/io.secondary"
 					label="Preview"
 					path={props.path}
 					onClick={() => {
@@ -69,7 +69,7 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 			) : (
 				<Button
 					context={newContext}
-					variant="io.secondary"
+					variant="uesio/io.secondary"
 					label="Preview"
 					onClick={() => {
 						uesio.signal.run(

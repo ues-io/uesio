@@ -94,7 +94,7 @@ definition:
                                 uesio.variant: uesio/io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${studio.name}"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.name}

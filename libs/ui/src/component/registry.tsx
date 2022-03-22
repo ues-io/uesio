@@ -147,7 +147,7 @@ const getUtility =
 		})
 	}
 
-const BuildWrapper = getUtility("studio.buildwrapper")
+const BuildWrapper = getUtility("uesio/studio.buildwrapper")
 
 const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)

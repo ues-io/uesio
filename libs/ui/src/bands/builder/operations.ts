@@ -72,7 +72,7 @@ const save = createAsyncThunk<
 			}
 			if (defState?.yaml) {
 				changes[defKey] = {
-					"studio.definition": defState.yaml.toString(),
+					"uesio/studio.definition": defState.yaml.toString(),
 					[ID_FIELD]: `${workspace.app}_${workspace.name}_${defState.name}`,
 				}
 			}
@@ -82,7 +82,7 @@ const save = createAsyncThunk<
 		wires: [
 			{
 				wire: "saveview",
-				collection: "studio.views",
+				collection: "uesio/studio.views",
 				changes,
 				deletes: {},
 			},

@@ -46,14 +46,14 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	)
 
 	const builderTheme = uesio.theme.useTheme(
-		"studio.default",
+		"uesio/studio.default",
 		new ctx.Context()
 	)
 	if (!scriptResult.loaded || !def || !builderTheme)
 		return <Canvas context={context} />
 
 	const builderContext = context.addFrame({
-		theme: "studio.default",
+		theme: "uesio/studio.default",
 	})
 	const canvasContext = context.addFrame({
 		mediaOffset:

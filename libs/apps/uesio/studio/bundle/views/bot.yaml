@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     bots:
       collection: uesio/studio.bots
       fields:
@@ -73,7 +69,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Bot - ${studio.name}
+                          title: Bot - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -159,7 +155,7 @@ definition:
                 wires:
                   - "bots"
               - signal: "route/NAVIGATE"
-                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/bots"
         - uesio/io.button:
             text: Cancel
             uesio.variant: uesio/io.secondary

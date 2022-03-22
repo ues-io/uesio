@@ -10,9 +10,9 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/studio.name
+        - field: uesio/core.id
           valueSource: PARAM
-          param: appname
+          param: app
     sites:
       collection: uesio/studio.sites
       fields:
@@ -25,12 +25,8 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: sitename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
     domains:
       collection: uesio/studio.sitedomains
       fields:
@@ -40,7 +36,7 @@ definition:
       conditions:
         - field: uesio/studio.site
           valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
+          value: $Param{app}_$Param{sitename}
     newdomain:
       collection: uesio/studio.sitedomains
       fields:
@@ -53,7 +49,7 @@ definition:
       defaults:
         - field: uesio/studio.site
           valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
+          value: $Param{app}_$Param{sitename}
         - field: uesio/studio.type
           valueSource: VALUE
           value: subdomain
@@ -106,7 +102,7 @@ definition:
                                 uesio.variant: uesio/io.item
                                 content:
                                   - uesio/io.text:
-                                      text: ${studio.type} ${studio.domain}
+                                      text: ${uesio/studio.type} ${uesio/studio.domain}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -114,7 +110,7 @@ definition:
                                       text: verified_user
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://${studio.domain}.$Site{domain}"
+                                    path: "https://${uesio/studio.domain}.$Site{domain}"
                                     newtab: true
   panels:
     newDomain:

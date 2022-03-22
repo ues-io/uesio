@@ -75,7 +75,11 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 						handleChange(e.target.files, uesio, jobId)
 					}
 				/>
-				<Button label={label} context={context} variant="io.secondary">
+				<Button
+					label={label}
+					context={context}
+					variant="uesio/io.secondary"
+				>
 					{label}
 				</Button>
 			</label>

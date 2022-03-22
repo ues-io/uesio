@@ -157,7 +157,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 				<div>
 					<Button
 						context={context}
-						variant={"io.secondary"}
+						variant={"uesio/io.secondary"}
 						onClick={() => {
 							isValidMapping() && file && upload(file)
 						}}

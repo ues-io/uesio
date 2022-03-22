@@ -11,12 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/studio.app
-          valueSource: PARAM
-          param: appname
-        - field: uesio/studio.name
-          valueSource: PARAM
-          param: workspacename
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     permissionsets:
       collection: uesio/studio.permissionsets
       fields:
@@ -121,7 +117,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Permission Set - ${studio.name}
+                          title: Permission Set - ${uesio/studio.name}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -153,7 +149,7 @@ definition:
                                           wires:
                                             - "permissionsets"
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionsets"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/permissionsets"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

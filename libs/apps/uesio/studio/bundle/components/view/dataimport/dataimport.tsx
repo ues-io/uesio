@@ -22,7 +22,7 @@ const init = (
 ): [string, context.Context] => {
 	if (usage === "site") {
 		const view = context.getView()
-		const appName = view?.params?.appname
+		const appName = view?.params?.app
 		const siteName = view?.params?.sitename
 		return [
 			collectionMrg,

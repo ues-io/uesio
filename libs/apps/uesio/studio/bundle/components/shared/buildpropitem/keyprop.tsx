@@ -13,10 +13,10 @@ const KeyProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 			labelPosition="left"
 			label={descriptor.label}
 			context={context}
-			variant="studio.propfield"
+			variant="uesio/studio.propfield"
 		>
 			<TextField
-				variant="studio.propfield"
+				variant="uesio/studio.propfield"
 				value={key}
 				setValue={(value: string): void =>
 					valueAPI.changeKey(path, value)

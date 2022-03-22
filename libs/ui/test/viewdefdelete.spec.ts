@@ -11,12 +11,12 @@ test("viewdef delete component", () => {
 			definition: {
 				components: [
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button1",
 						},
 					},
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button2",
 						},
 					},
@@ -34,7 +34,7 @@ test("viewdef delete component", () => {
 			definition: {
 				components: [
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button1",
 						},
 					},

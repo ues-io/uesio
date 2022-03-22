@@ -32,8 +32,8 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)
-	const fileName = userFile?.["uesio.name"] as string
-	const mimeType = userFile?.["uesio.mimetype"] as string
+	const fileName = userFile?.["uesio/core.name"] as string
+	const mimeType = userFile?.["uesio/core.mimetype"] as string
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
 	const componentId = id || path || ""

@@ -19,7 +19,7 @@ const init = (
 ): [string, string, context.Context] => {
 	if (usage === "site") {
 		const view = context.getView()
-		const appName = view?.params?.appname
+		const appName = view?.params?.app
 		const siteName = view?.params?.sitename
 		const [namespace] = component.path.parseKey(collectionMrg)
 		return [

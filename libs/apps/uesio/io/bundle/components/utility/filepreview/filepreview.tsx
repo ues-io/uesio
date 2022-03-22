@@ -16,7 +16,7 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)
-	const mimeType = userFile?.["uesio.mimetype"] as string
+	const mimeType = userFile?.["uesio/core.mimetype"] as string
 	if (!mimeType) return <File {...props} />
 
 	const mime = mimeType.slice(0, mimeType.indexOf("/"))

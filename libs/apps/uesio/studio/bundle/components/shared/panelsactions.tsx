@@ -31,12 +31,12 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		<div className={classes.wrapper}>
 			<Button
 				context={context}
-				variant="studio.actionbutton"
+				variant="uesio/studio.actionbutton"
 				icon={
 					<Icon
 						context={context}
 						icon="add"
-						variant="studio.actionicon"
+						variant="uesio/studio.actionicon"
 					/>
 				}
 				label="New Panel"
@@ -44,7 +44,7 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					uesio.builder.addDefinitionPair(
 						path,
 						{
-							"uesio.type": "io.dialog",
+							"uesio.type": "uesio/io.dialog",
 							components: [],
 						},
 						"newpanel" + (Math.floor(Math.random() * 60) + 1),

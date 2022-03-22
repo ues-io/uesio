@@ -38,7 +38,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 				{Object.keys(collections).map((collection) => (
 					<Tile
 						key={collection}
-						variant="io.tile.io.item"
+						variant="uesio/io.tile:uesio/io.item"
 						onClick={(): void => {
 							uesio.signal.run(
 								{
@@ -68,7 +68,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
 	const view = context.getView()
-	const appName = view?.params?.appname
+	const appName = view?.params?.app
 	const siteName = view?.params?.sitename
 
 	const newContext = props.context.addFrame({

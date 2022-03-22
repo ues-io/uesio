@@ -32,8 +32,8 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 		fieldId
 	)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	//const fileName = userFile?.["uesio.name"] as string
-	//const mimeType = userFile?.["uesio.mimetype"] as string
+	//const fileName = userFile?.["uesio/core.name"] as string
+	//const mimeType = userFile?.["uesio/core.mimetype"] as string
 	const accept = fieldMetadata.getAccept()
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
 

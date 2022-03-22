@@ -42,8 +42,10 @@ async function installBundle(
 	context: context.Context
 ) {
 	depWire.createRecord({
-		"studio.bundle": { [collection.ID_FIELD]: `${namespace}_${version}` },
-		"studio.workspace": workspaceId,
+		"uesio/studio.bundle": {
+			[collection.ID_FIELD]: `${namespace}_${version}`,
+		},
+		"uesio/studio.workspace": workspaceId,
 	})
 	await depWire.save(context)
 	return depWire.load(context)
@@ -101,17 +103,19 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	const depWire = uesio.wire.useWire(currentdependencies || "")
 	const route = context.getRoute()
 	if (!depWire || !route) return null
-	const appName = route.params?.appname
+	const appName = route.params?.app
 
 	const workspaceId = `${appName}_${route.params?.workspacename}`
 	const bundles = uesio.wire
 		.useWire(installablebundleswire || "")
 		?.getData()
 		.map((record) => {
-			const namespace = record.getFieldValue("studio.app->uesio.id")
-			const major = record.getFieldValue("studio.major")
-			const minor = record.getFieldValue("studio.minor")
-			const patch = record.getFieldValue("studio.patch")
+			const namespace = record.getFieldValue(
+				"uesio/studio.app->uesio/core.id"
+			)
+			const major = record.getFieldValue("uesio/studio.major")
+			const minor = record.getFieldValue("uesio/studio.minor")
+			const patch = record.getFieldValue("uesio/studio.patch")
 			// We don't want to see ourselves, uesio or studio
 			if (namespace === appName || namespace === "studio") return null
 			const version = `v${major}.${minor}.${patch}`
@@ -125,14 +129,15 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	const bundleNamespaces = Object.keys(bundleGrouping)
 	const currentBundleVersions = keyby(
 		deps.map((dep) => {
-			const bundleInfo =
-				dep.getFieldValue<wire.PlainWireRecord>("studio.bundle")
+			const bundleInfo = dep.getFieldValue<wire.PlainWireRecord>(
+				"uesio/studio.bundle"
+			)
 			return {
-				namespace: bundleInfo["studio.app"],
-				version: `v${bundleInfo["studio.major"]}.${bundleInfo["studio.minor"]}.${bundleInfo["studio.patch"]}`,
+				namespace: bundleInfo["uesio/studio.app"],
+				version: `v${bundleInfo["uesio/studio.major"]}.${bundleInfo["uesio/studio.minor"]}.${bundleInfo["uesio/studio.patch"]}`,
 			}
 		}),
-		"['namespace']['uesio.id']"
+		"['namespace']['uesio/core.id']"
 	)
 
 	return (
@@ -154,7 +159,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				const installedIsCurrent = installedVersion === selectedVersion
 				let actionButton = (
 					<Button
-						variant="io.primary"
+						variant="uesio/io.primary"
 						context={context}
 						label="Install"
 						onClick={() =>
@@ -172,7 +177,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					if (installedIsCurrent) {
 						actionButton = (
 							<Button
-								variant="io.secondary"
+								variant="uesio/io.secondary"
 								context={context}
 								label="Uninstall"
 								onClick={() =>
@@ -189,7 +194,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					} else {
 						actionButton = (
 							<Button
-								variant="io.primary"
+								variant="uesio/io.primary"
 								context={context}
 								label="Update"
 								onClick={() =>
@@ -210,7 +215,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					<Tile
 						key={namespace}
 						context={context}
-						variant="io.item"
+						variant="uesio/io.item"
 						styles={{
 							root: {
 								alignItems: "top",

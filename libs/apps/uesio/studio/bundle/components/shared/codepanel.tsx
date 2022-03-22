@@ -103,12 +103,12 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		<ScrollPanel
 			header={
 				<TitleBar
-					variant="io.primary"
+					variant="uesio/io.primary"
 					title={"code"}
 					actions={
 						<IconButton
 							context={context}
-							variant="studio.buildtitle"
+							variant="uesio/studio.buildtitle"
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{

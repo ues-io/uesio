@@ -31,7 +31,7 @@ const Field: FunctionComponent<FilterProps> = (props) => {
 						fieldMetadata.getSelectMetadata()?.options || [],
 						"Any " + fieldMetadata.getLabel()
 					)}
-					variant={"io.filter"}
+					variant={"uesio/io.filter"}
 					setValue={(value: string) => {
 						uesio.signal.runMany(
 							[

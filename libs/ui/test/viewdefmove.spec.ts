@@ -11,12 +11,12 @@ test("viewdef move component", () => {
 			definition: {
 				components: [
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button1",
 						},
 					},
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button2",
 						},
 					},
@@ -35,12 +35,12 @@ test("viewdef move component", () => {
 			definition: {
 				components: [
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button2",
 						},
 					},
 					{
-						"io.button": {
+						"uesio/io.button": {
 							text: "button1",
 						},
 					},
@@ -105,15 +105,15 @@ test("viewdef move component different parent", () => {
 			definition: {
 				components: [
 					{
-						"io.group": {
+						"uesio/io.group": {
 							components: [
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button1",
 									},
 								},
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button2",
 									},
 								},
@@ -121,15 +121,15 @@ test("viewdef move component different parent", () => {
 						},
 					},
 					{
-						"io.group": {
+						"uesio/io.group": {
 							components: [
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button3",
 									},
 								},
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button4",
 									},
 								},
@@ -142,9 +142,9 @@ test("viewdef move component different parent", () => {
 			},
 		},
 		{
-			toPath: `["components"]["1"]["io.group"]["components"]["0"]`,
-			fromPath: `["components"]["0"]["io.group"]["components"]["0"]`,
-			selectKey: "io.button",
+			toPath: `["components"]["1"]["uesio/io.group"]["components"]["0"]`,
+			fromPath: `["components"]["0"]["uesio/io.group"]["components"]["0"]`,
+			selectKey: "uesio/io.button",
 		},
 		{
 			name: "name",
@@ -152,10 +152,10 @@ test("viewdef move component different parent", () => {
 			definition: {
 				components: [
 					{
-						"io.group": {
+						"uesio/io.group": {
 							components: [
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button2",
 									},
 								},
@@ -163,20 +163,20 @@ test("viewdef move component different parent", () => {
 						},
 					},
 					{
-						"io.group": {
+						"uesio/io.group": {
 							components: [
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button1",
 									},
 								},
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button3",
 									},
 								},
 								{
-									"io.button": {
+									"uesio/io.button": {
 										text: "button4",
 									},
 								},
