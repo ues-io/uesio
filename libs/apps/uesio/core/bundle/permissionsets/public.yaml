@@ -1,4 +1,5 @@
 name: public
+public: true
 named:
 views:
   uesio/core.login: true
@@ -13,4 +14,6 @@ files:
   uesio/core.logoword: true
   uesio/core.splash: true
   uesio/core.whitesplash: true
-public: true
+collections:
+  uesio/core.bulkjobs: true
+  uesio/core.bulkbatches: true
