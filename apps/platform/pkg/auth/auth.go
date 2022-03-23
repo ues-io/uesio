@@ -219,6 +219,20 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	return &user, nil
 }
 
+func getAuthMethod(session *sess.Session, key string) (*meta.AuthMethod, error) {
+	authMethod, err := meta.NewAuthMethod(key)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(authMethod, session)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return authMethod, nil
+}
+
 func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod

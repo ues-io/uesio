@@ -9,19 +9,24 @@ import (
 
 // Login func
 func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
-	// 2. Get the authentication type
-	authType, err := getAuthType(loginType)
+
+	// 1. Get the authentication method and its type
+	authMethod, err := getAuthMethod(session, loginType)
 	if err != nil {
-		return nil, errors.New("Invalid auth type")
+		return nil, errors.New("authmethod not found")
+	}
+	authType, err := getAuthType(authMethod.Type)
+	if err != nil {
+		return nil, errors.New("no handler found for this authmethod")
 	}
 
-	// 4. Verify
+	// 2. Verify
 	err = authType.Verify(token, session)
 	if err != nil {
 		return nil, errors.New("JWT Verification failed: " + err.Error())
 	}
 
-	// 5. Decode
+	// 3. Decode
 	claims, err := authType.Decode(token, session)
 	if err != nil {
 		return nil, errors.New("Cant parse JWT: " + err.Error())
@@ -30,25 +35,26 @@ func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
 	// Bump our permissions a bit so we can make the next two queries
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio/core.user":        true,
-			"uesio/core.userfiles":   true,
-			"uesio/core.loginmethod": true,
+			"uesio/core.user":          true,
+			"uesio/core.userfiles":     true,
+			"uesio/core.loginmethod":   true,
+			"uesio/studio.authmethods": true,
 		},
 	})
 
-	// 6. Check for Existing User
+	// 4. Check for Existing User
 	loginmethod, err := GetLoginMethod(claims, session)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
 	if loginmethod == nil {
-		return nil, errors.New("No Login Method found that matches your claims")
+		return nil, errors.New("no Login Method found that matches your claims")
 	}
 
 	user, err := GetUserByID(loginmethod.User.ID, session)
 	if err != nil {
-		return nil, errors.New("Failed Getting User Data: " + err.Error())
+		return nil, errors.New("failed Getting user Data: " + err.Error())
 	}
 
 	/*

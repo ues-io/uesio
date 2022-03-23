@@ -66,6 +66,23 @@ definition:
                 selected:
                   - type: paramIsValue
                     param: selected
+                    value: authmethods
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/authmethods
+              content:
+                - uesio/io.text:
+                    text: Auth Methods
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: dynamic_feed
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
                     value: selectlists
               signals:
                 - signal: "route/NAVIGATE"

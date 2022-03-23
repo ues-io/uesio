@@ -14,6 +14,7 @@ import (
 )
 
 // LoginRequest struct
+// TODO: remove Type
 type LoginRequest struct {
 	Type  string
 	Token string
@@ -41,13 +42,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	authType := vars["auth"]
+	// authMethodParam := vars["authmethod"]
+	authMethodParam := vars["authmethod"]
 
 	// 3. Get siteName from context
 	s := middleware.GetSession(r)
 	site := s.GetSite()
 
-	user, err := auth.Login(authType, loginRequest.Token, s)
+	user, err := auth.Login(authMethodParam, loginRequest.Token, s)
+	// user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
