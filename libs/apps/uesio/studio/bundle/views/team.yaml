@@ -37,9 +37,9 @@ definition:
         uesio/studio.app:
         uesio/studio.member:
           fields:
-            uesio.firstname:
-            uesio.lastname:
-            uesio.picture:
+            uesio/core.firstname:
+            uesio/core.lastname:
+            uesio/core.picture:
         uesio/studio.team:
       conditions:
         - field: uesio/studio.app
@@ -149,13 +149,13 @@ definition:
                   reference:
                     template: "${uesio/core.firstname} ${uesio/core.lastname}"
                     searchFields:
-                      - uesio.firstname
-                      - uesio.lastname
-                      - uesio.picture
+                      - uesio/core.firstname
+                      - uesio/core.lastname
+                      - uesio/core.picture
                     returnFields:
-                      - uesio.firstname
-                      - uesio.lastname
-                      - uesio.picture
+                      - uesio/core.firstname
+                      - uesio/core.lastname
+                      - uesio/core.picture
                     components:
                       - uesio/io.tile:
                           content:

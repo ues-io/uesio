@@ -78,7 +78,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.edit}
                                       signals:
-                                        - signal: component/io.list/TOGGLE_MODE
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: "routesDeck"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary

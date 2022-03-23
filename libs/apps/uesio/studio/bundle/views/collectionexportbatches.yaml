@@ -24,7 +24,7 @@ definition:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -33,15 +33,15 @@ definition:
         - field: uesio/studio.name
           value: $Param{collectionname}
     bulkbatches:
-      collection: uesio.bulkbatches
+      collection: uesio/core.bulkbatches
       fields:
         uesio/core.id:
-        uesio.bulkjobid:
-        uesio.result:
-        uesio.status:
+        uesio/core.bulkjobid:
+        uesio/core.result:
+        uesio/core.status:
         uesio/core.createdat:
       conditions:
-        - field: uesio.bulkjobid
+        - field: uesio/core.bulkjobid
           value: $Param{jobid}
       init:
         query: false
@@ -114,9 +114,9 @@ definition:
                                         - uesio/io.field:
                                             fieldId: uesio/core.createdat
                                         - uesio/io.field:
-                                            fieldId: uesio.status
+                                            fieldId: uesio/core.status
                                         - uesio/io.field:
                                             uesio.display:
-                                              - field: uesio.status
+                                              - field: uesio/core.status
                                                 value: "completed"
-                                            fieldId: uesio.result
+                                            fieldId: uesio/core.result

@@ -3,9 +3,9 @@ type: LIST
 label: Options
 subtype: MAP
 subfields:
-  - name: studio.label
+  - name: uesio/studio.label
     type: TEXT
     label: Label
-  - name: studio.value
+  - name: uesio/studio.value
     type: TEXT
     label: Value

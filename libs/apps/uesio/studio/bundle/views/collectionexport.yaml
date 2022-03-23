@@ -24,7 +24,7 @@ definition:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -33,16 +33,16 @@ definition:
         - field: uesio/studio.name
           value: $Param{collectionname}
     bulkjobs:
-      collection: uesio.bulkjobs
+      collection: uesio/core.bulkjobs
       fields:
         uesio/core.id:
-        uesio.collection:
+        uesio/core.collection:
         uesio/core.createdat:
       order:
         - field: uesio/core.createdat
           desc: true
       conditions:
-        - field: uesio.collection
+        - field: uesio/core.collection
           value: $Param{app}.$Param{collectionname}
       init:
         query: false

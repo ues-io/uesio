@@ -39,14 +39,14 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const componentId = id || path || ""
 	const currentValue = uesio.component.useExternalState<FieldState>(
 		context.getViewId() || "",
-		"io.field",
+		"uesio/io.field",
 		componentId
 	)
 
 	useEffect(() => {
 		uesio.signal.run(
 			{
-				signal: "component/io.field/INIT_FILE",
+				signal: "component/uesio/io.field/INIT_FILE",
 				target: componentId,
 				value: fileContent,
 				recordId: record.getIdFieldValue(),
@@ -65,7 +65,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 			setValue={(value: string) => {
 				uesio.signal.run(
 					{
-						signal: "component/io.field/SET_FILE",
+						signal: "component/uesio/io.field/SET_FILE",
 						target: componentId,
 						value,
 					},
