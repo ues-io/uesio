@@ -1,0 +1,4 @@
+name: pluralname
+type: TEXT
+label: Plural Name
+required: true
