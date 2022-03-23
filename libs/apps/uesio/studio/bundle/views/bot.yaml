@@ -25,7 +25,7 @@ definition:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -77,7 +77,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
                                       signals:
-                                        - signal: component/io.field/SAVE_FILE
+                                        - signal: component/uesio/io.field/SAVE_FILE
                                           target: botcontent
                                         - signal: wire/LOAD
                                           wires:
@@ -87,7 +87,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
-                                        - signal: component/io.field/CANCEL_FILE
+                                        - signal: component/uesio/io.field/CANCEL_FILE
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
@@ -125,7 +125,7 @@ definition:
                                       metadataType: "COLLECTION"
                                       label: "Collection"
                                   - uesio/io.field:
-                                      fieldId: uesio.createdby
+                                      fieldId: uesio/core.createdby
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdat
                                   - uesio/io.field:

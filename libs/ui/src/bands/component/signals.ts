@@ -15,9 +15,11 @@ export default {
 		(signal: ComponentSignal, context: Context): ThunkFunc =>
 		(dispatch, getState, platform) => {
 			const { target: signalTarget, signal: signalName } = signal
-			const [band, scope, type] = signalName.split("/")
-			if (band !== "component" || !scope || !type) return context
+			const [band, owner, component, type] = signalName.split("/")
+			if (band !== "component" || (!owner && !component) || !type)
+				return context
 
+			const scope = `${owner}/${component}`
 			const handler = getSignal(scope, type)
 			const viewId = context.getViewId()
 			const target = signalTarget || handler.target || ""

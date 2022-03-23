@@ -35,7 +35,7 @@ definition:
                     uesio.variant: io.secondary
                 - io.button:
                     signals:
-                      - signal: component/io.table/TOGGLE_MODE
+                      - signal: component/uesio/io.table/TOGGLE_MODE
                         target: table1
                     text: Mode
                     uesio.variant: io.secondary

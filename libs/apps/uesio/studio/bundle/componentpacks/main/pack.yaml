@@ -84,10 +84,10 @@ components:
       utilities:
         - uesio/io.button
       variants:
-        - uesio/io.button:io.secondary
+        - uesio/io.button:uesio/io.secondary
     dataexport:
       variants:
-        - uesio/io.button:io.primary
+        - uesio/io.button:uesio/io.primary
       utilities:
         - uesio/io.button
     # Define a builder for the uesio runtime and slot
