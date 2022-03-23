@@ -24,7 +24,7 @@ definition:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP

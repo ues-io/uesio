@@ -110,7 +110,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Edit"
                                       signals:
-                                        - signal: component/io.list/TOGGLE_MODE
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: "fieldsDeck"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary

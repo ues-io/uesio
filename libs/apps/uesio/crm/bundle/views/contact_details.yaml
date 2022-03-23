@@ -17,7 +17,7 @@ definition:
                     components:
                       - uesio/io.button:
                           signals:
-                            - signal: component/io.list/TOGGLE_MODE
+                            - signal: component/uesio/io.list/TOGGLE_MODE
                               target: contactList
                           text: Edit
                           uesio.variant: uesio/io.secondary

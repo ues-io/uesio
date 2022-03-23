@@ -185,7 +185,7 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - uesio/io.field:
-                                      fieldId: uesio.createdby
+                                      fieldId: uesio/core.createdby
                                   - uesio/io.field:
                                       fieldId: uesio/core.createdat
                                   - uesio/io.field:
