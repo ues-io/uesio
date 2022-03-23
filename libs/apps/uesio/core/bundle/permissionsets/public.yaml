@@ -15,5 +15,5 @@ files:
   uesio/core.splash: true
   uesio/core.whitesplash: true
 collections:
-  uesio/core.bulkjobs: true
+  uesio/core.bulkjob: true
   uesio/core.bulkbatches: true
