@@ -333,8 +333,15 @@ const platform = {
 		})
 		return response.json()
 	},
-	login: async (requestBody: LoginRequest): Promise<LoginResponse> => {
-		const response = await postJSON("/site/auth/login", requestBody)
+	login: async (
+		authMethod: string,
+		requestBody: LoginRequest
+	): Promise<LoginResponse> => {
+		const [namespace, name] = parseKey(authMethod)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/tokenlogin`,
+			requestBody
+		)
 		return response.json()
 	},
 	logout: async (): Promise<LoginResponse> => {

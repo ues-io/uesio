@@ -112,7 +112,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	details := fileadapt.FileDetails{
 		Name:         generateFileName(spec.Collection),
-		CollectionID: "uesio/core.bulkbatches",
+		CollectionID: "uesio/core.bulkbatch",
 		RecordID:     batch.ID,
 		FieldID:      "uesio/core.result",
 	}

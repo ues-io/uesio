@@ -1,4 +1,4 @@
-name: bulkbatches
+name: bulkbatch
 nameField: uesio/core.id
 idFormat: ${uesio/core.autoid}
 public: true

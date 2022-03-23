@@ -37,6 +37,7 @@ type TokenCondition struct {
 type Collection struct {
 	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
+	PluralName            string                            `yaml:"pluralName" uesio:"uesio/studio.pluralname"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
 	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"uesio/studio.idformat"`

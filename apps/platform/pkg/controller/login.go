@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -13,6 +14,7 @@ import (
 )
 
 // LoginRequest struct
+// TODO: remove Type
 type LoginRequest struct {
 	Type  string
 	Token string
@@ -26,8 +28,7 @@ type LoginResponse struct {
 	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
 }
 
-// Login is good
-func Login(w http.ResponseWriter, r *http.Request) {
+func TokenLogin(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
 	var loginRequest LoginRequest
@@ -39,11 +40,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vars := mux.Vars(r)
+	authMethodNamespace := vars["namespace"]
+	authMethodName := vars["name"]
+
 	// 3. Get siteName from context
 	s := middleware.GetSession(r)
 	site := s.GetSite()
 
-	user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
+	user, err := auth.TokenLogin(authMethodNamespace+"."+authMethodName, loginRequest.Token, s)
+	// user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

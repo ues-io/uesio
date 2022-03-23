@@ -48,7 +48,7 @@ var authTypeMap = map[string]AuthenticationType{}
 func getAuthType(authTypeName string) (AuthenticationType, error) {
 	authType, ok := authTypeMap[authTypeName]
 	if !ok {
-		return nil, errors.New("No adapter found of this type: " + authTypeName)
+		return nil, errors.New("No adapter found of this auth type: " + authTypeName)
 	}
 	return authType, nil
 }
@@ -63,7 +63,6 @@ type AuthenticationClaims struct {
 	Subject   string `json:"subject"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
-	AuthType  string `json:"authType"`
 	Email     string `json:"email"`
 }
 
@@ -219,7 +218,21 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	return &user, nil
 }
 
-func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.LoginMethod, error) {
+func getAuthMethod(session *sess.Session, key string) (*meta.AuthMethod, error) {
+	authMethod, err := meta.NewAuthMethod(key)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(authMethod, session)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return authMethod, nil
+}
+
+func GetLoginMethod(claims *AuthenticationClaims, authMethod *meta.AuthMethod, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -227,8 +240,8 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.federation_type",
-					Value: claims.AuthType,
+					Field: "uesio/core.auth_method",
+					Value: authMethod.GetKey(),
 				},
 				{
 					Field: "uesio/core.federation_id",
@@ -241,7 +254,7 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for claims: "+claims.Subject+":"+claims.AuthType, logger.INFO)
+			logger.Log("Could not find login method for claims: "+claims.Subject+":"+authMethod.ID, logger.INFO)
 			return nil, nil
 		}
 		return nil, err

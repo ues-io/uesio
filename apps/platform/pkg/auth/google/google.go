@@ -36,7 +36,6 @@ func (a *Auth) Decode(token string, session *sess.Session) (*auth.Authentication
 		Subject:   claimSet.Sub,
 		FirstName: claimSet.GivenName,
 		LastName:  claimSet.FamilyName,
-		AuthType:  "google",
 		Email:     claimSet.Email,
 	}, nil
 }
