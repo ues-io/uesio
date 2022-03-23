@@ -15,6 +15,7 @@ func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
 	if err != nil {
 		return nil, errors.New("authmethod not found")
 	}
+
 	authType, err := getAuthType(authMethod.Type)
 	if err != nil {
 		return nil, errors.New("no handler found for this authmethod")
@@ -35,15 +36,14 @@ func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
 	// Bump our permissions a bit so we can make the next two queries
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio/core.user":          true,
-			"uesio/core.userfiles":     true,
-			"uesio/core.loginmethod":   true,
-			"uesio/studio.authmethods": true,
+			"uesio/core.user":        true,
+			"uesio/core.userfiles":   true,
+			"uesio/core.loginmethod": true,
 		},
 	})
 
 	// 4. Check for Existing User
-	loginmethod, err := GetLoginMethod(claims, session)
+	loginmethod, err := GetLoginMethod(claims, authMethod, session)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}

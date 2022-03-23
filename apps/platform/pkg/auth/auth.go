@@ -63,7 +63,6 @@ type AuthenticationClaims struct {
 	Subject   string `json:"subject"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
-	AuthType  string `json:"authType"`
 	Email     string `json:"email"`
 }
 
@@ -233,7 +232,7 @@ func getAuthMethod(session *sess.Session, key string) (*meta.AuthMethod, error) 
 	return authMethod, nil
 }
 
-func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.LoginMethod, error) {
+func GetLoginMethod(claims *AuthenticationClaims, authMethod *meta.AuthMethod, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -242,7 +241,7 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/core.auth_method",
-					Value: claims.AuthType,
+					Value: authMethod.GetKey(),
 				},
 				{
 					Field: "uesio/core.federation_id",
@@ -255,7 +254,7 @@ func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for claims: "+claims.Subject+":"+claims.AuthType, logger.INFO)
+			logger.Log("Could not find login method for claims: "+claims.Subject+":"+authMethod.ID, logger.INFO)
 			return nil, nil
 		}
 		return nil, err

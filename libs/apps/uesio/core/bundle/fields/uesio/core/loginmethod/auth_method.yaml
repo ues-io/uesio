@@ -1,5 +1,3 @@
 name: auth_method
-type: REFERENCE
-label: "Auth Method"
-reference:
-  collection: uesio/studio.authmethods
+type: TEXT
+label: Auth Method
