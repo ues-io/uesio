@@ -1,4 +1,4 @@
-name: bulkjobs
+name: bulkjob
 nameField: uesio/core.id
 idFormat: ${uesio/core.autoid}
 public: true

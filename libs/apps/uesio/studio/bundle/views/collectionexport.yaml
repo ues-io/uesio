@@ -33,7 +33,7 @@ definition:
         - field: uesio/studio.name
           value: $Param{collectionname}
     bulkjobs:
-      collection: uesio/core.bulkjobs
+      collection: uesio/core.bulkjob
       fields:
         uesio/core.id:
         uesio/core.collection:
