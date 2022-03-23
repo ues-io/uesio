@@ -7,21 +7,26 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Login func
-func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
-	// 2. Get the authentication type
-	authType, err := getAuthType(loginType)
+func TokenLogin(loginType, token string, session *sess.Session) (*meta.User, error) {
+
+	// 1. Get the authentication method and its type
+	authMethod, err := getAuthMethod(session, loginType)
 	if err != nil {
-		return nil, errors.New("Invalid auth type")
+		return nil, errors.New("authmethod not found")
 	}
 
-	// 4. Verify
+	authType, err := getAuthType(authMethod.Type)
+	if err != nil {
+		return nil, errors.New("no handler found for this authmethod")
+	}
+
+	// 2. Verify
 	err = authType.Verify(token, session)
 	if err != nil {
 		return nil, errors.New("JWT Verification failed: " + err.Error())
 	}
 
-	// 5. Decode
+	// 3. Decode
 	claims, err := authType.Decode(token, session)
 	if err != nil {
 		return nil, errors.New("Cant parse JWT: " + err.Error())
@@ -36,19 +41,19 @@ func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
 		},
 	})
 
-	// 6. Check for Existing User
-	loginmethod, err := GetLoginMethod(claims, session)
+	// 4. Check for Existing User
+	loginmethod, err := GetLoginMethod(claims, authMethod, session)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}
 
 	if loginmethod == nil {
-		return nil, errors.New("No Login Method found that matches your claims")
+		return nil, errors.New("no Login Method found that matches your claims")
 	}
 
 	user, err := GetUserByID(loginmethod.User.ID, session)
 	if err != nil {
-		return nil, errors.New("Failed Getting User Data: " + err.Error())
+		return nil, errors.New("failed Getting user Data: " + err.Error())
 	}
 
 	/*

@@ -1,7 +1,6 @@
 import { UserState } from "../bands/user/types"
 
 type LoginRequest = {
-	type: string
 	token: string
 }
 
