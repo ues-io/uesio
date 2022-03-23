@@ -7,8 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Login func
-func Login(loginType, token string, session *sess.Session) (*meta.User, error) {
+func TokenLogin(loginType, token string, session *sess.Session) (*meta.User, error) {
 
 	// 1. Get the authentication method and its type
 	authMethod, err := getAuthMethod(session, loginType)

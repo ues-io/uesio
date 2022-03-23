@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -59,6 +60,10 @@ func siteAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	return router.Path("").HandlerFunc(f)
 }
 
+func getNSParam(paramName string) string {
+	return fmt.Sprintf("{%s:\\w*\\/\\w*}", paramName)
+}
+
 func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
@@ -73,11 +78,11 @@ func serve(cmd *cobra.Command, args []string) {
 	r.HandleFunc("/health", controller.Health).Methods("GET")
 
 	// The workspace router
-	wr := r.PathPrefix("/workspace/{app:\\w*\\/\\w*}/{workspace}").Subrouter()
+	wr := r.PathPrefix("/workspace/" + getNSParam("app") + "/{workspace}").Subrouter()
 	// The version router
-	vr := r.PathPrefix("/version/{app:\\w*\\/\\w*}/{namespace:\\w*\\/\\w*}/{version}").Subrouter()
+	vr := r.PathPrefix("/version/" + getNSParam("app") + "/" + getNSParam("namespace") + "/{version}").Subrouter()
 	// The site admin router
-	sar := r.PathPrefix("/siteadmin/{app:\\w*\\/\\w*}/{site}").Subrouter()
+	sar := r.PathPrefix("/siteadmin/" + getNSParam("app") + "/{site}").Subrouter()
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
 
@@ -86,34 +91,34 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace:\\w*\\/\\w*}/{name}", controller.CallListenerBot, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/{namespace:\\w*\\/\\w*}/{name}", controller.GetBotParams, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/files/{namespace:\\w*\\/\\w*}/{name}", controller.ServeFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/app/{namespace:\\w*\\/\\w*}/{route:.*}", controller.ServeRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/views/{namespace:\\w*\\/\\w*}/{name}", controller.View, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/themes/{namespace:\\w*\\/\\w*}/{name}", controller.Theme, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/collection/{namespace:\\w*\\/\\w*}/{name}/{viewtype}", controller.CollectionRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/collection/{namespace:\\w*\\/\\w*}/{name}/{viewtype}/{id}", controller.CollectionRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/path/{namespace:\\w*\\/\\w*}/{route:.*}", controller.Route, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}/builder", controller.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace:\\w*\\/\\w*}/{name}", controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/bots/call/"+getNSParam("namespace")+"/{name}", controller.CallListenerBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/"+getNSParam("namespace")+"/{name}", controller.GetBotParams, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/files/"+getNSParam("namespace")+"/{name}", controller.ServeFile, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/app/"+getNSParam("namespace")+"/{route:.*}", controller.ServeRoute, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/views/"+getNSParam("namespace")+"/{name}", controller.View, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/themes/"+getNSParam("namespace")+"/{name}", controller.Theme, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getNSParam("namespace")+"/{name}/{viewtype}", controller.CollectionRoute, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getNSParam("namespace")+"/{name}/{viewtype}/{id}", controller.CollectionRoute, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}/builder", controller.ServeComponentPack(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}", controller.ServeComponentPack(false), "GET")
 
 	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/generate/{namespace:\\w*\\/\\w*}/{name}", controller.Generate).Methods("POST")
+	workspaceAPI(wr, "/metadata/generate/"+getNSParam("namespace")+"/{name}", controller.Generate).Methods("POST")
 
 	workspaceAPI(wr, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace:\\w*\\/\\w*}/list", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace:\\w*\\/\\w*}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
+	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 
 	workspaceAPI(wr, "/bulk/job", controller.BulkJob).Methods("POST")
 	workspaceAPI(wr, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
 
-	workspaceAPI(wr, "/views/{namespace:\\w*\\/\\w*}/{name}/preview", controller.ViewPreview(false)).Methods("GET")
-	workspaceAPI(wr, "/views/{namespace:\\w*\\/\\w*}/{name}/edit", controller.ViewPreview(true)).Methods("GET")
+	workspaceAPI(wr, "/views/"+getNSParam("namespace")+"/{name}/preview", controller.ViewPreview(false)).Methods("GET")
+	workspaceAPI(wr, "/views/"+getNSParam("namespace")+"/{name}/edit", controller.ViewPreview(true)).Methods("GET")
 
 	workspaceAPI(wr, "/configvalues", controller.ConfigValues).Methods("GET")
 	workspaceAPI(wr, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
@@ -137,8 +142,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
 	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 	siteAdminAPI(sar, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace:\\w*\\/\\w*}/list", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace:\\w*\\/\\w*}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
 	siteAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
@@ -146,8 +151,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
-	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
-	siteAPI(sr, "/auth/{authmethod:\\w+\\/\\w+\\.\\w+}/login", controller.Login).Methods("POST")
+	siteAPI(sr, "/auth/"+getNSParam("namespace")+"/{name}/tokenlogin", controller.TokenLogin).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
 	siteAPI(sr, "/{invalidroute:.*}", http.NotFound).Methods("GET")

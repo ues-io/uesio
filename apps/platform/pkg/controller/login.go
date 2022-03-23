@@ -28,8 +28,7 @@ type LoginResponse struct {
 	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
 }
 
-// Login is good
-func Login(w http.ResponseWriter, r *http.Request) {
+func TokenLogin(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
 	var loginRequest LoginRequest
@@ -42,14 +41,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	// authMethodParam := vars["authmethod"]
-	authMethodParam := vars["authmethod"]
+	authMethodNamespace := vars["namespace"]
+	authMethodName := vars["name"]
 
 	// 3. Get siteName from context
 	s := middleware.GetSession(r)
 	site := s.GetSite()
 
-	user, err := auth.Login(authMethodParam, loginRequest.Token, s)
+	user, err := auth.TokenLogin(authMethodNamespace+"."+authMethodName, loginRequest.Token, s)
 	// user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
