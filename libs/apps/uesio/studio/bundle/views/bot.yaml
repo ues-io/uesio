@@ -77,7 +77,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
                                       signals:
-                                        - signal: component/io.field/SAVE_FILE
+                                        - signal: component/uesio/io.field/SAVE_FILE
                                           target: botcontent
                                         - signal: wire/LOAD
                                           wires:
@@ -87,7 +87,7 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
-                                        - signal: component/io.field/CANCEL_FILE
+                                        - signal: component/uesio/io.field/CANCEL_FILE
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
