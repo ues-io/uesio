@@ -18,13 +18,14 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.pluralname:
         uesio/studio.namefield:
         uesio/studio.workspace:
         uesio/studio.datasource:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
-        uesio.createdby:
+        uesio/core.createdby:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -166,6 +167,8 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.pluralname
                                   - uesio/studio.metadatafield:
                                       fieldId: uesio/studio.namefield
                                       metadataType: "FIELD"
@@ -264,6 +267,8 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.pluralname
               - uesio/studio.metadatafield:
                   fieldId: uesio/studio.namefield
                   metadataType: "FIELD"
