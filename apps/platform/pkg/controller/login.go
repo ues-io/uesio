@@ -56,6 +56,8 @@ func TokenLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// If we had an old session, remove it.
+	w.Header().Del("set-cookie")
 	session := sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer

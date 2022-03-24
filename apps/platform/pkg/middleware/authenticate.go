@@ -31,12 +31,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		// If we didn't have a session from the browser, add it now.
 		if browserSession == nil {
-			// Don't add the session cookie for the login route
-			// This is because the login controller itself is
-			// adding a new cookie for the user logging in
-			if r.URL.Path != "/site/auth/login" {
-				session.Add(*s.GetBrowserSession(), w)
-			}
+			session.Add(*s.GetBrowserSession(), w)
 		} else if browserSession != nil && browserSession != *s.GetBrowserSession() {
 			// If we got a different session than the one we started with,
 			// logout the old one
