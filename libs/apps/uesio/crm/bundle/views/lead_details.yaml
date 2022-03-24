@@ -25,7 +25,7 @@ definition:
                             - signal: wire/SAVE
                               wires:
                                 - leads
-                          text: Save it
+                          text: Save
                           uesio.variant: uesio/io.secondary
                       - uesio/io.button:
                           signals:
