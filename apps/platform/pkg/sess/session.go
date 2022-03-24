@@ -325,5 +325,8 @@ func (s *Session) GetContextPermissions() *meta.PermissionSet {
 	if s.workspace != nil {
 		return s.workspace.Permissions
 	}
+	if s.siteadmin != nil {
+		return s.siteadmin.Permissions
+	}
 	return s.permissions
 }
