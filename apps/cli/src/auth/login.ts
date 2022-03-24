@@ -2,17 +2,12 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
-import type { platform } from "@uesio/ui"
+import { platform, component } from "#uesio/ui"
 
 // Using # here because it's a subpath import
 import { cognito, mock } from "#uesio/loginhelpers"
 
-const MOCK_LOGIN = "mock"
-const GOOGLE_LOGIN = "google"
-const EMAIL_LOGIN = "cognito"
-
 type AuthHandlerResponse = {
-	type: string
 	token: string
 }
 
@@ -37,15 +32,11 @@ type AuthHandlers = {
 const SESSION_KEY = "sessid"
 
 const authHandlers = {
-	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
-		type: MOCK_LOGIN,
+	["uesio/core.mock"]: async (): Promise<AuthHandlerResponse> => ({
 		// TODO: actually read from seeds and allow mock login as all users
 		token: mock.getMockToken("ben"),
 	}),
-	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
-		throw new Error("Google Auth is not yet supported.")
-	},
-	[EMAIL_LOGIN]: async (): Promise<AuthHandlerResponse> => {
+	["uesio/core.platform"]: async (): Promise<AuthHandlerResponse> => {
 		const responses = await inquirer.prompt([
 			{
 				name: "username",
@@ -94,7 +85,6 @@ const authHandlers = {
 		})
 
 		return {
-			type: EMAIL_LOGIN,
 			token: accessToken as string,
 		}
 	},
@@ -107,6 +97,7 @@ const getCookie = async (): Promise<string | null> => {
 
 const getSessionIdFromResponse = (response: Response): string => {
 	const cookie = response.headers.raw()["set-cookie"][0]
+	console.log(response.headers.raw()["set-cookie"])
 	const sessionPart = cookie.split("; ")[0]
 	const sessionArray = sessionPart.split(`${SESSION_KEY}=`)
 	return sessionArray[1]
@@ -123,14 +114,17 @@ const check = async (): Promise<User | null> => {
 	const result = (await response.json()) as AuthCheckResponse
 	const user = result.user
 	user.cookie = cookie
+	console.log(result)
+	console.log(result.user)
 	if (user && user.profile === "uesio/studio.standard") {
 		return user
 	}
+	console.log("Norpe")
 	return null
 }
 
-const login = async (authType: string): Promise<User> => {
-	const handler = authHandlers[authType]
+const login = async (authMethod: string): Promise<User> => {
+	const handler = authHandlers[authMethod]
 	if (!handler) {
 		throw new Error("That auth type is not yet supported.")
 	}
@@ -138,8 +132,10 @@ const login = async (authType: string): Promise<User> => {
 
 	const cookie = await getCookie()
 
+	const [namespace, name] = component.path.parseKey(authMethod)
+
 	const response = await post(
-		"site/auth/login",
+		`site/auth/${namespace}/${name}/tokenlogin`,
 		JSON.stringify(authHandlerResponse),
 		cookie
 	)
@@ -175,9 +171,11 @@ const authorize = async (): Promise<User> => {
 				message: "Select a Login Method",
 				type: "list",
 				choices: [
-					{ name: "Sign in with Google", value: GOOGLE_LOGIN },
-					{ name: "Mock Login", value: MOCK_LOGIN },
-					{ name: "Sign in with Email", value: EMAIL_LOGIN },
+					{ name: "Mock Login", value: "uesio/core.mock" },
+					{
+						name: "Sign in with Email",
+						value: "uesio/core.platform",
+					},
 				],
 			},
 		])

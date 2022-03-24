@@ -32,6 +32,7 @@ func (s *RedisSessionStore) Get(id string) session.Session {
 	value, err := redis.String(conn.Do("GET", getSessionKey(id)))
 	if err != nil {
 		fmt.Println("Error Getting session: " + id)
+		return nil
 	}
 	newSess := session.NewSession()
 	err = json.Unmarshal([]byte(value), &newSess)
