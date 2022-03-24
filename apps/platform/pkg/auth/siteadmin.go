@@ -32,6 +32,15 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 		return err
 	}
 
+	// For now give siteadmin users access to everything.
+	// Get the siteadmin permissions and set them on the session
+	siteadmin.Permissions = &meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+	}
+
 	if siteadmin.Bundle == nil {
 		return errors.New("No Bundle found for site to administer")
 	}

@@ -1,4 +1,4 @@
-name: configstorevalues
+name: featureflagassignment
 idFormat: "${uesio/core.key}"
 nameField: uesio/core.key
 public: true
