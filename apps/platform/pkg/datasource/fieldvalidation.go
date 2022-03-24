@@ -167,8 +167,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 	}
 }
 
-func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadata) referenceValidationFunc {
-
+func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) referenceValidationFunc {
 	validations := []referenceValidationFunc{}
 	for i := range collectionMetadata.Fields {
 		field := collectionMetadata.Fields[i]
@@ -176,7 +175,8 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 			validations = append(validations, func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
 				referencedCollection := field.ReferenceMetadata.Collection
 				request := registry.Get(referencedCollection)
-				foreignKey, err := change.FieldChanges.GetField(field.GetFullName())
+				fieldName := field.GetFullName()
+				foreignKey, err := change.FieldChanges.GetField(fieldName)
 				if err != nil {
 					return
 				}
@@ -189,7 +189,13 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 				}
 
 				// Special exception for the system user
-				if collectionMetadata.GetFullName() == "uesio/core.user" && foreignKeyString == "uesio" {
+				if collectionMetadata.GetFullName() == "uesio/core.user" && referencedCollection == "uesio/core.user" && foreignKeyString == "uesio" {
+					return
+				}
+				// Special exception for the siteadmin context
+				siteadmin := session.GetSiteAdmin()
+				isBuiltinUserField := fieldName == "uesio/core.owner" || fieldName == "uesio/core.createdby" || fieldName == "uesio/core.updatedby"
+				if siteadmin != nil && referencedCollection == "uesio/core.user" && isBuiltinUserField {
 					return
 				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
@@ -209,7 +215,7 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
-	referenceValidations := getReferenceValidationsFunction(collectionMetadata)
+	referenceValidations := getReferenceValidationsFunction(collectionMetadata, session)
 
 	referenceRegistry := &adapt.ReferenceRegistry{}
 
