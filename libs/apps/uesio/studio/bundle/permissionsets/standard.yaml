@@ -123,7 +123,7 @@ files:
 collections:
   uesio/studio.authmethod: true
   uesio/studio.app: true
-  uesio/studio.bots: true
+  uesio/studio.bot: true
   uesio/studio.bundledependencies: true
   uesio/studio.bundles: true
   uesio/studio.collections: true

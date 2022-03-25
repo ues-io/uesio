@@ -15,7 +15,7 @@ type BotCollection []Bot
 
 // GetName function
 func (bc *BotCollection) GetName() string {
-	return "uesio/studio.bots"
+	return "uesio/studio.bot"
 }
 
 // GetFields function
