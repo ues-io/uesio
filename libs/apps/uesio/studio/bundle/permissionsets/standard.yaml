@@ -121,7 +121,7 @@ routes:
   uesio/studio.collectionexportbatches: true
 files:
 collections:
-  uesio/studio.authmethods: true
+  uesio/studio.authmethod: true
   uesio/studio.app: true
   uesio/studio.bots: true
   uesio/studio.bundledependencies: true

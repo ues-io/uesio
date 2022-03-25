@@ -1,4 +1,4 @@
-name: authmethods
+name: authmethod
 idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
 nameField: uesio/studio.name
 label: auth method
