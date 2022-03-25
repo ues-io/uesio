@@ -49,6 +49,7 @@ definition:
                     items:
                       - uesio/io.field:
                           fieldId: uesio/crm.logo
+                          displayAs: IMAGE
                       - uesio/io.field:
                           fieldId: uesio/core.id
                       - uesio/io.field:
