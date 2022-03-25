@@ -2,3 +2,5 @@ name: configstorevalue
 idFormat: "${uesio/core.key}"
 nameField: uesio/core.key
 public: true
+label: config store value
+pluralLabel: config store values

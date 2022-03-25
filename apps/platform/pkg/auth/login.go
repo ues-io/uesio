@@ -36,7 +36,7 @@ func TokenLogin(loginType, token string, session *sess.Session) (*meta.User, err
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
 			"uesio/core.user":        true,
-			"uesio/core.userfiles":   true,
+			"uesio/core.userfile":    true,
 			"uesio/core.loginmethod": true,
 		},
 	})

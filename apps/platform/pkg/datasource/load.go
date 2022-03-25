@@ -18,7 +18,7 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio/core.userfiles",
+			Collection: "uesio/core.userfile",
 		},
 		Fields: []string{"uesio/core.mimetype", "uesio/core.name"},
 	},

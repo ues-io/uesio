@@ -25,7 +25,7 @@ func getCascadeDeletes(
 				// This is kind of a weird cascaded delete where we delete the parent
 				// if the child is deleted. This is not typical. Usually it's the
 				// other way around, but we're offering this feature because we
-				// need it ourselves for userfiles.
+				// need it ourselves for userfile.
 				referencedCollection := referenceMetadata.Collection
 
 				// Get the ids that we need to delete

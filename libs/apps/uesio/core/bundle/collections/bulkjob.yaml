@@ -2,3 +2,5 @@ name: bulkjob
 nameField: uesio/core.id
 idFormat: ${uesio/core.autoid}
 public: true
+label: bulkjob
+pluralLabel: bulk jobs

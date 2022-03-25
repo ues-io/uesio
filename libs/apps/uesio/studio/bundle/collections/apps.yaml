@@ -6,3 +6,5 @@ recordChallengeTokens:
   - token: "${uesio/core.id}"
     userAccessToken: "uesio/studio.teammember"
     access: readwrite
+label: app
+pluralLabel: apps

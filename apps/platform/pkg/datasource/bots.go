@@ -90,7 +90,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
 	switch request.CollectionName {
-	case "uesio/core.userfiles":
+	case "uesio/core.userfile":
 		cleanUserFiles(request, connection, session)
 	}
 

@@ -1,2 +1,4 @@
 name: pricebook_entries
 nameField: uesio/crm.name
+label: pricebook entry
+pluralLabel: pricebook entries

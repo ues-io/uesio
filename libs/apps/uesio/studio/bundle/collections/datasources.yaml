@@ -1,3 +1,5 @@
 name: datasources
 idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
 nameField: uesio/studio.name
+label: data source
+pluralLabel: data sources
