@@ -1,4 +1,4 @@
-name: apps
+name: app
 idFormat: "${uesio/core.owner}/${uesio/studio.name}"
 nameField: uesio/studio.name
 access: "protected"

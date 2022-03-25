@@ -122,7 +122,7 @@ routes:
 files:
 collections:
   uesio/studio.authmethods: true
-  uesio/studio.apps: true
+  uesio/studio.app: true
   uesio/studio.bots: true
   uesio/studio.bundledependencies: true
   uesio/studio.bundles: true

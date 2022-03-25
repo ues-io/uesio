@@ -2,5 +2,5 @@ name: app
 type: REFERENCE
 label: App
 reference:
-  collection: uesio/studio.apps
+  collection: uesio/studio.app
 required: true

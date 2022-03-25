@@ -33,7 +33,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.apps
+                        collection: uesio/studio.app
                     id: appslist
                     components:
                       - uesio/io.tile:
