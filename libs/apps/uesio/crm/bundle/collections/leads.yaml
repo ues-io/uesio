@@ -1,2 +1,4 @@
 name: leads
 nameField: uesio/crm.lastname
+label: lead
+pluralLabel: leads

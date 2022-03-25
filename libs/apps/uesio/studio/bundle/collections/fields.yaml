@@ -1,3 +1,5 @@
 name: fields
 idFormat: "${uesio/studio.workspace}_${uesio/studio.collection}_${uesio/studio.name}"
 nameField: uesio/studio.name
+label: feature flag
+pluralLabel: feature flags

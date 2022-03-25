@@ -1,2 +1,4 @@
 name: articles
 nameField: uesio/core.id
+label: article
+pluralLabel: articles
