@@ -13,7 +13,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     authmethods:
-      collection: uesio/studio.authmethods
+      collection: uesio/studio.authmethod
       fields:
         uesio/core.id:
         uesio/studio.name:
