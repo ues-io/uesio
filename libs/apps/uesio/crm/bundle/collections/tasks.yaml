@@ -1,2 +1,4 @@
 name: tasks
 nameField: uesio/crm.name
+label: task
+pluralLabel: tasks

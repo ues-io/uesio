@@ -1,2 +1,4 @@
 name: notes
 nameField: uesio/crm.name
+label: note
+pluralLabel: notes

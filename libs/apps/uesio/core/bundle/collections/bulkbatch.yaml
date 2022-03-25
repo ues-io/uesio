@@ -2,3 +2,5 @@ name: bulkbatch
 nameField: uesio/core.id
 idFormat: ${uesio/core.autoid}
 public: true
+label: bulk batch
+pluralLabel: bulk batches

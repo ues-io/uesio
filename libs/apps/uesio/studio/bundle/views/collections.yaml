@@ -18,6 +18,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.plurallabel:
         uesio/core.updatedat:
       conditions:
         - field: uesio/studio.workspace
@@ -29,6 +30,8 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.label:
+        uesio/studio.plurallabel:
         uesio/studio.workspace:
         uesio/studio.datasource:
         uesio/studio.namefield:
@@ -104,7 +107,7 @@ definition:
                                     path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/studio.name}
+                                      text: ${uesio/studio.plurallabel}
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -124,6 +127,10 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.label
+              - uesio/io.field:
+                  fieldId: uesio/studio.plurallabel
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

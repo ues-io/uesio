@@ -1,2 +1,4 @@
 name: comments
 nameField: uesio/crm.name
+label: comment
+pluralLabel: comments
