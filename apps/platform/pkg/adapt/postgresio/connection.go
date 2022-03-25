@@ -1,24 +1,26 @@
 package postgresio
 
 import (
-	"database/sql"
+	"context"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 type QueryAble interface {
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Prepare(query string) (*sql.Stmt, error)
-	Query(query string, args ...interface{}) (*sql.Rows, error)
-	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, optionsAndArgs ...interface{}) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, optionsAndArgs ...interface{}) pgx.Row
 }
 
 type Connection struct {
 	metadata    *adapt.MetadataCache
 	credentials *adapt.Credentials
 	tokens      []string
-	client      *sql.DB
-	transaction *sql.Tx
+	client      *pgxpool.Pool
+	transaction pgx.Tx
 	datasource  string
 }
 
@@ -39,7 +41,7 @@ func (c *Connection) SetMetadata(metadata *adapt.MetadataCache) {
 }
 
 func (c *Connection) BeginTransaction() error {
-	txn, err := c.client.Begin()
+	txn, err := c.client.Begin(context.Background())
 	if err != nil {
 		return err
 	}
@@ -48,14 +50,14 @@ func (c *Connection) BeginTransaction() error {
 }
 func (c *Connection) CommitTransaction() error {
 	if c.transaction != nil {
-		return c.transaction.Commit()
+		return c.transaction.Commit(context.Background())
 	}
 	return nil
 }
 
 func (c *Connection) RollbackTransaction() error {
 	if c.transaction != nil {
-		return c.transaction.Rollback()
+		return c.transaction.Rollback(context.Background())
 	}
 	return nil
 }

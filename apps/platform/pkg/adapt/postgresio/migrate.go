@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -9,7 +10,7 @@ func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
 	db := c.GetClient()
 
-	_, err := db.Exec(`
+	_, err := db.Exec(context.Background(), `
 		create table if not exists public.data
 		(
 			id         varchar(255) not null constraint data_pk primary key,

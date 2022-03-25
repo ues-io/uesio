@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
@@ -149,7 +150,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 			change.Autonumber,
 		}, builder.Values...)
 
-		_, err = db.Exec(query, params...)
+		_, err = db.Exec(context.Background(), query, params...)
 		if err != nil {
 			fmt.Println("Failed: " + fullRecordID)
 			return err
@@ -199,7 +200,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		}, builder.Values...)
 
 		query := fmt.Sprintf("UPDATE public.data SET fields = fields || jsonb_build_object(%s) WHERE id = $1 and collection = $2", builder.build())
-		_, err = db.Exec(query, params...)
+		_, err = db.Exec(context.Background(), query, params...)
 		if err != nil {
 			return err
 		}
@@ -216,7 +217,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		}
 
 		query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
-		_, err = db.Exec(query, []interface{}{
+		_, err = db.Exec(context.Background(), query, []interface{}{
 			collectionName + ":" + delete.IDValue,
 			collectionName,
 		}...)
@@ -231,7 +232,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 			deleteIDs = append(deleteIDs, key)
 		}
 		query := "DELETE FROM public.tokens WHERE recordid = ANY($1)"
-		_, err = db.Exec(query, []interface{}{
+		_, err = db.Exec(context.Background(), query, []interface{}{
 			pq.Array(deleteIDs),
 		}...)
 		if err != nil {
@@ -241,7 +242,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		for key, tokens := range recordsIDsList {
 			for _, token := range tokens {
 				query := "INSERT INTO public.tokens (recordid,token,readonly) VALUES ($1,$2,$3)"
-				_, err = db.Exec(query, []interface{}{
+				_, err = db.Exec(context.Background(), query, []interface{}{
 					key,
 					token,
 					false,

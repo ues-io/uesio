@@ -1,6 +1,7 @@
 package postgresio
 
 import (
+	"context"
 	"errors"
 	"strconv"
 	"strings"
@@ -91,13 +92,13 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
-	rows, err := db.Query(loadQuery, values...)
+	rows, err := db.Query(context.Background(), loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
 	}
 	defer rows.Close()
 
-	cols, err := rows.Columns()
+	cols := rows.FieldDescriptions()
 	if err != nil {
 		return errors.New("Failed to load columns in PostgreSQL:" + err.Error())
 	}
@@ -106,10 +107,10 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 	index := 0
 	scanners := make([]interface{}, len(cols))
 
-	for i, name := range cols {
+	for i, col := range cols {
 		scanners[i] = &DataScanner{
 			Item:       &item,
-			Field:      fieldMap[name],
+			Field:      fieldMap[string(col.Name)],
 			References: &referencedCollections,
 			Index:      &index,
 		}
