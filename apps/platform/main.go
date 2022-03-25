@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt/salesforce"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
-	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -43,12 +42,12 @@ func init() {
 	adapt.RegisterAdapter("uesio.salesforce", &salesforce.Adapter{})
 
 	// Authentication Types
-	auth.RegisterAuthType("google", &google.Auth{})
+	// auth.RegisterAuthType("google", &google.Auth{})
+	auth.RegisterAuthType("cognito", &cognito.Auth{})
 	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})
 	}
-	auth.RegisterAuthType("cognito", &cognito.Auth{})
 
 	// File Adapters
 	fileadapt.RegisterFileAdapter("uesio.gcpstorage", &gcpstorage.FileAdapter{})

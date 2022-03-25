@@ -37,10 +37,9 @@ func init() {
 	session.Global = session.NewCookieManagerOptions(store, options)
 }
 
-// AuthenticationType interface
 type AuthenticationType interface {
-	Verify(string, *sess.Session) error
-	Decode(string, *sess.Session) (*AuthenticationClaims, error)
+	Verify(string, string, *sess.Session) error
+	Decode(string, string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 var authTypeMap = map[string]AuthenticationType{}
@@ -48,7 +47,7 @@ var authTypeMap = map[string]AuthenticationType{}
 func getAuthType(authTypeName string) (AuthenticationType, error) {
 	authType, ok := authTypeMap[authTypeName]
 	if !ok {
-		return nil, errors.New("No adapter found of this auth type: " + authTypeName)
+		return nil, errors.New("auth type not found: " + authTypeName)
 	}
 	return authType, nil
 }

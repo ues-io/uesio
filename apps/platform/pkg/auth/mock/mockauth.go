@@ -12,12 +12,12 @@ type Auth struct {
 }
 
 // Verify function
-func (a *Auth) Verify(token string, session *sess.Session) error {
+func (a *Auth) Verify(token string, credentialsKey string, session *sess.Session) error {
 	return nil
 }
 
 // Decode function
-func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (a *Auth) Decode(token string, credentialsKey string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	claim := auth.AuthenticationClaims{}
 	err := json.Unmarshal([]byte(token), &claim)
 	if err != nil {
