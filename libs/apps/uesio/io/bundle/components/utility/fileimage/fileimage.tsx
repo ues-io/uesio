@@ -96,6 +96,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 				recordId,
 				fieldId
 			)
+			console.log(fieldId, fileId)
 			record.set(fieldId, fileId)
 		}
 	}
