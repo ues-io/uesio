@@ -22,7 +22,7 @@ type Exportable interface {
 
 func loadData(op *adapt.LoadOp, session *sess.Session) error {
 
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session)
+	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
 	if err != nil {
 		return err
 	}
