@@ -130,7 +130,7 @@ collections:
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
-  uesio/studio.credentials: true
+  uesio/studio.credential: true
   uesio/studio.datasources: true
   uesio/studio.featureflags: true
   uesio/studio.fields: true
