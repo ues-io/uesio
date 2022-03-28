@@ -3,11 +3,27 @@ package postgresio
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
-	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
+
+type ParamCounter struct {
+	Counter int
+}
+
+func (pc *ParamCounter) get() string {
+	count := "$" + strconv.Itoa(pc.Counter)
+	pc.Counter++
+	return count
+}
+
+func NewParamCounter(start int) *ParamCounter {
+	return &ParamCounter{
+		Counter: start,
+	}
+}
 
 func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string) ([]string, []interface{}, error) {
 	if condition.Operator != "IN" {
@@ -23,7 +39,7 @@ func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionNa
 	for i, v := range values {
 		appendedValues[i] = fmt.Sprintf("%s:%s", collectionName, v)
 	}
-	return []string{"id = ANY($1)"}, []interface{}{pq.Array(appendedValues)}, nil
+	return []string{"id = ANY($1)"}, []interface{}{appendedValues}, nil
 }
 
 func getConditions(
@@ -115,7 +131,7 @@ func getConditions(
 				continue
 			}
 			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
-			values = append(values, pq.Array(conditionValue))
+			values = append(values, conditionValue)
 		} else {
 			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
 			values = append(values, conditionValue)
@@ -125,7 +141,7 @@ func getConditions(
 	// UserTokens query
 	if collectionMetadata.Access == "protected" && userTokens != nil {
 		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
-		values = append(values, pq.Array(userTokens))
+		values = append(values, userTokens)
 	}
 
 	return conditionStrings, values, nil

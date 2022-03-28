@@ -97,7 +97,6 @@ const getCookie = async (): Promise<string | null> => {
 
 const getSessionIdFromResponse = (response: Response): string => {
 	const cookie = response.headers.raw()["set-cookie"][0]
-	console.log(response.headers.raw()["set-cookie"])
 	const sessionPart = cookie.split("; ")[0]
 	const sessionArray = sessionPart.split(`${SESSION_KEY}=`)
 	return sessionArray[1]
@@ -114,12 +113,9 @@ const check = async (): Promise<User | null> => {
 	const result = (await response.json()) as AuthCheckResponse
 	const user = result.user
 	user.cookie = cookie
-	console.log(result)
-	console.log(result.user)
 	if (user && user.profile === "uesio/studio.standard") {
 		return user
 	}
-	console.log("Norpe")
 	return null
 }
 
