@@ -22,7 +22,7 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
     dependencies:
-      collection: uesio/studio.bundledependencies
+      collection: uesio/studio.bundledependency
       fields:
         uesio/core.id:
         uesio/studio.bundle:

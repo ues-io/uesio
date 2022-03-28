@@ -19,7 +19,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     installedapps:
-      collection: uesio/studio.bundledependencies
+      collection: uesio/studio.bundledependency
       fields:
         uesio/core.id:
         uesio/studio.bundle:

@@ -16,7 +16,7 @@ function newworkspace(bot) {
 		},
 	])
 
-	bot.save("uesio/studio.bundledependencies", [
+	bot.save("uesio/studio.bundledependency", [
 		{
 			"uesio/studio.bundle": {
 				"uesio/core.id": UesioVersion,
