@@ -131,7 +131,7 @@ collections:
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
   uesio/studio.credential: true
-  uesio/studio.datasources: true
+  uesio/studio.datasource: true
   uesio/studio.featureflags: true
   uesio/studio.fields: true
   uesio/studio.filecollections: true

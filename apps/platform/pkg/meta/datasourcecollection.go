@@ -11,7 +11,7 @@ type DataSourceCollection []DataSource
 
 // GetName function
 func (dsc *DataSourceCollection) GetName() string {
-	return "uesio/studio.datasources"
+	return "uesio/studio.datasource"
 }
 
 // GetFields function

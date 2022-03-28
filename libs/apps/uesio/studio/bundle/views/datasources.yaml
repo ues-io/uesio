@@ -14,7 +14,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     datasources:
-      collection: uesio/studio.datasources
+      collection: uesio/studio.datasource
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -25,7 +25,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     newdatasource:
-      collection: uesio/studio.datasources
+      collection: uesio/studio.datasource
       fields:
         uesio/core.id:
         uesio/studio.name:
