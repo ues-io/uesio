@@ -11,7 +11,7 @@ type CollectionCollection []Collection
 
 // GetName function
 func (cc *CollectionCollection) GetName() string {
-	return "uesio/studio.collections"
+	return "uesio/studio.collection"
 }
 
 // GetFields function

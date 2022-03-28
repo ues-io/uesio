@@ -50,7 +50,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     collections:
-      collection: uesio/studio.collections
+      collection: uesio/studio.collection
       fields:
         uesio/core.id:
         uesio/studio.name:

@@ -5,7 +5,7 @@ function newcollection(bot) {
 	var workspace = bot.params.get("workspace")
 	var workspaceId = app + "_" + workspace
 
-	bot.save("uesio/studio.collections", [
+	bot.save("uesio/studio.collection", [
 		{
 			"uesio/studio.name": collection,
 			"uesio/studio.datasource": datasource,
