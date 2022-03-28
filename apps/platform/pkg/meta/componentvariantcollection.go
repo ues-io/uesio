@@ -14,7 +14,7 @@ type ComponentVariantCollection []ComponentVariant
 
 // GetName function
 func (cvc *ComponentVariantCollection) GetName() string {
-	return "uesio/studio.componentvariants"
+	return "uesio/studio.componentvariant"
 }
 
 // GetFields function

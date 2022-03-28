@@ -26,7 +26,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		conditions["uesio/studio.collection"] = grouping
 	} else if metadatatype == "bot" {
 		conditions["uesio/studio.type"] = grouping
-	} else if metadatatype == "componentvariants" {
+	} else if metadatatype == "componentvariant" {
 		conditions["uesio/studio.component"] = grouping
 	}
 
