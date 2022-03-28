@@ -117,7 +117,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			}
 
 			// Special handling for bots
-			if metadataType == "bots" {
+			if metadataType == "bot" {
 				bot := collectionItem.(*meta.Bot)
 				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
 					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,

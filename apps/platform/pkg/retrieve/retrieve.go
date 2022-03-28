@@ -56,7 +56,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 			}
 			// Special handling for bots
-			if metadataType == "bots" {
+			if metadataType == "bot" {
 				bot := item.(*meta.Bot)
 
 				stream, err := bs.GetBotStream(version, bot, session)

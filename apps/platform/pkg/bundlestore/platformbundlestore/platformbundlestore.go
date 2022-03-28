@@ -171,11 +171,11 @@ func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode b
 }
 
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath(), session)
+	return getStream(bot.Namespace, version, "bot", bot.GetBotFilePath(), session)
 }
 
 func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
+	return getStream(bot.Namespace, version, "bot", bot.GetGenerateBotTemplateFilePath(template), session)
 }
 
 // StoreItems function

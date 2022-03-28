@@ -148,11 +148,11 @@ func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, sessio
 }
 
 func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
+	return getStream(bot.Namespace, version, "bot", bot.GetBotFilePath())
 }
 
 func (b *LocalBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
+	return getStream(bot.Namespace, version, "bot", bot.GetGenerateBotTemplateFilePath(template))
 }
 
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {

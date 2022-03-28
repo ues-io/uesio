@@ -165,11 +165,11 @@ func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, sessi
 }
 
 func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
+	return getStream(bot.Namespace, version, "bot", bot.GetBotFilePath())
 }
 
 func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
+	return getStream(bot.Namespace, version, "bot", bot.GetGenerateBotTemplateFilePath(template))
 }
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
