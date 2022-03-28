@@ -11,7 +11,7 @@ type PermissionSetCollection []PermissionSet
 
 // GetName function
 func (pc *PermissionSetCollection) GetName() string {
-	return "uesio/studio.permissionsets"
+	return "uesio/studio.permissionset"
 }
 
 // GetFields function

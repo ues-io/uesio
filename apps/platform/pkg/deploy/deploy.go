@@ -108,7 +108,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			}
 
 			// Special handling for files
-			if metadataType == "files" {
+			if metadataType == "file" {
 				file := collectionItem.(*meta.File)
 				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
 					RecordID:  file.Name,

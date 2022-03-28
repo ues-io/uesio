@@ -11,7 +11,7 @@ type UserFileCollectionCollection []UserFileCollection
 
 // GetName function
 func (ufcc *UserFileCollectionCollection) GetName() string {
-	return "uesio/studio.filecollections"
+	return "uesio/studio.filecollection"
 }
 
 // GetFields function

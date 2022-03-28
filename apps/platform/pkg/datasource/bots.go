@@ -118,9 +118,9 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	switch request.CollectionName {
 	case "uesio/core.user":
 		clearUserCache(request, connection, session)
-	case "uesio/studio.sites":
+	case "uesio/studio.site":
 		clearHostCacheForSite(request, connection, session)
-	case "uesio/studio.sitedomains":
+	case "uesio/studio.sitedomain":
 		clearHostCacheForDomain(request, connection, session)
 	}
 

@@ -162,7 +162,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 }
 
 func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
+	return getStream(file.Namespace, version, "file", file.GetFilePath(), session)
 }
 
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {

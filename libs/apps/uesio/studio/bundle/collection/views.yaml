@@ -1,5 +1,0 @@
-name: views
-idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: view
-pluralLabel: views

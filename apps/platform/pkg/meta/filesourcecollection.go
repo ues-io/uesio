@@ -11,7 +11,7 @@ type FileSourceCollection []FileSource
 
 // GetName function
 func (fsc *FileSourceCollection) GetName() string {
-	return "uesio/studio.filesources"
+	return "uesio/studio.filesource"
 }
 
 // GetFields function

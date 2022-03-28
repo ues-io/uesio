@@ -1,0 +1,155 @@
+name: routes
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    routes:
+      collection: uesio/studio.route
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.path:
+        uesio/studio.view:
+        uesio/studio.collection:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+    newroute:
+      collection: uesio/studio.route
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.workspace:
+        uesio/studio.path:
+        uesio/studio.view:
+        uesio/studio.theme:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: routes
+                      itemIcon: map
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+                    params:
+                      selected: routes
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Routes
+                    subtitle: Not until we are lost do we begin to understand ourselves.
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: Create a New Route
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newRoute
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          id: routesDeck
+                          wire: routes
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/routes/${uesio/studio.name}"
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.path} - ${uesio/studio.view}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: map
+  panels:
+    newRoute:
+      uesio.type: uesio/io.dialog
+      title: Create a New Route
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newroutelist
+            wire: newroute
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.path
+              - uesio/studio.metadatafield:
+                  fieldId: uesio/studio.view
+                  metadataType: "VIEW"
+                  label: "View"
+              - uesio/studio.metadatafield:
+                  fieldId: uesio/studio.theme
+                  metadataType: "THEME"
+                  label: "Theme"
+              - uesio/studio.metadatafield:
+                  fieldId: uesio/studio.collection
+                  metadataType: "COLLECTION"
+                  label: "Collection"
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newroute"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/routes/${uesio/studio.name}"
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newRoute"

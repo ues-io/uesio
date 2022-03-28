@@ -82,7 +82,7 @@ const save = createAsyncThunk<
 		wires: [
 			{
 				wire: "saveview",
-				collection: "uesio/studio.views",
+				collection: "uesio/studio.view",
 				changes,
 				deletes: {},
 			},

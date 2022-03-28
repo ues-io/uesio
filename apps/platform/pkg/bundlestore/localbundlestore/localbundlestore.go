@@ -144,7 +144,7 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 }
 
 func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath())
+	return getStream(file.Namespace, version, "file", file.GetFilePath())
 }
 
 func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

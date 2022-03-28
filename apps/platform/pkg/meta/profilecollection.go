@@ -11,7 +11,7 @@ type ProfileCollection []Profile
 
 // GetName function
 func (pc *ProfileCollection) GetName() string {
-	return "uesio/studio.profiles"
+	return "uesio/studio.profile"
 }
 
 // GetFields function

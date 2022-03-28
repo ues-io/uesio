@@ -12,7 +12,7 @@ type LabelCollection []Label
 
 // GetName function
 func (lc *LabelCollection) GetName() string {
-	return "uesio/studio.labels"
+	return "uesio/studio.label"
 }
 
 // GetFields function

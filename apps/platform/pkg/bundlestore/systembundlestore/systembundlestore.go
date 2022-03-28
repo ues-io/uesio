@@ -161,7 +161,7 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 }
 
 func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath())
+	return getStream(file.Namespace, version, "file", file.GetFilePath())
 }
 
 func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

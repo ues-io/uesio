@@ -15,7 +15,7 @@ type TranslationCollection []Translation
 
 // GetName function
 func (tc *TranslationCollection) GetName() string {
-	return "uesio/studio.translations"
+	return "uesio/studio.translation"
 }
 
 // GetFields function

@@ -69,7 +69,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			}
 
 			// Special handling for files
-			if metadataType == "files" {
+			if metadataType == "file" {
 				file := item.(*meta.File)
 
 				if file.Content != nil {
