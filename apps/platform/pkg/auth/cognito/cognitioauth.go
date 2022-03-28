@@ -66,7 +66,6 @@ func (a *Auth) Decode(token string, credentials string, session *sess.Session) (
 		return nil, err
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
-
 	return &auth.AuthenticationClaims{
 		Subject:   claims["sub"].(string),
 		FirstName: claims["given_name"].(string),
