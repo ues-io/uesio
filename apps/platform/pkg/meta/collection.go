@@ -154,6 +154,10 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
+	err = setDefaultValue(node, "nameField", "uesio/core.id")
+	if err != nil {
+		return err
+	}
 	return node.Decode(c)
 }
 

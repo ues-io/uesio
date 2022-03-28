@@ -2,97 +2,83 @@ package postgresio
 
 import (
 	"context"
-	"database/sql/driver"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 
-	"github.com/lib/pq"
+	"github.com/francoispqt/gojay"
+	"github.com/jackc/pgx/v4"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-type ParamCounter struct {
-	Counter int
+const INSERT_QUERY = "INSERT INTO public.data (id,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5)"
+const UPDATE_QUERY = "UPDATE public.data SET fields = fields || $3 WHERE id = $1 and collection = $2"
+const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2"
+const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2"
+const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
+
+type DataMarshaler struct {
+	Data     loadable.Item
+	Metadata *adapt.CollectionMetadata
 }
 
-func (pc *ParamCounter) get() string {
-	count := "$" + strconv.Itoa(pc.Counter)
-	pc.Counter++
-	return count
-}
+func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
-func NewParamCounter(start int) *ParamCounter {
-	return &ParamCounter{
-		Counter: start,
-	}
-}
-
-type ValueBuilder struct {
-	Start        int
-	QueryParts   []string
-	Values       []interface{}
-	ParamCounter *ParamCounter
-}
-
-func (vb *ValueBuilder) add(key string, value interface{}, pgType string) {
-	vb.QueryParts = append(vb.QueryParts, fmt.Sprintf("'%s',%s::%s", key, vb.ParamCounter.get(), pgType))
-	vb.Values = append(vb.Values, value)
-}
-
-func (vb *ValueBuilder) build() string {
-	return strings.Join(vb.QueryParts, ",")
-}
-
-func NewValueBuilder(start int) *ValueBuilder {
-	return &ValueBuilder{
-		QueryParts:   []string{},
-		Values:       []interface{}{},
-		ParamCounter: NewParamCounter(start),
-	}
-}
-
-func getPGType(field *adapt.FieldMetadata) string {
-	switch field.Type {
-	case "MAP", "LIST", "MULTISELECT":
-		return "jsonb"
-	case "TIMESTAMP":
-		return "bigint"
-	case "NUMBER":
-		return "numeric"
-	case "CHECKBOX":
-		return "boolean"
-	default:
-		return "text"
-	}
-}
-
-type DataValuer struct {
-	Data  interface{}
-	Field *adapt.FieldMetadata
-}
-
-func (dv DataValuer) Value() (driver.Value, error) {
-	fieldMetadata := dv.Field
-	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" || fieldMetadata.Type == "MULTISELECT" {
-		jsonValue, err := json.Marshal(dv.Data)
+	err := dm.Data.Loop(func(fieldID string, value interface{}) error {
+		fieldMetadata, err := dm.Metadata.GetField(fieldID)
 		if err != nil {
-			return nil, errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
+			return err
 		}
-		return jsonValue, nil
+
+		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" || fieldMetadata.Type == "MULTISELECT" {
+			jsonValue, err := json.Marshal(value)
+			if err != nil {
+				return errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
+			}
+			ej := gojay.EmbeddedJSON(jsonValue)
+			enc.AddEmbeddedJSONKey(fieldID, &ej)
+			return nil
+		}
+
+		if adapt.IsReference(fieldMetadata.Type) {
+			refValue, err := adapt.GetReferenceKey(value)
+			if err != nil {
+				return errors.New("Error converting reference field: " + fieldMetadata.GetFullName() + " : " + err.Error())
+			}
+			if refValue == "" {
+				return nil
+			}
+			enc.StringKey(fieldID, refValue)
+			return nil
+		}
+
+		if fieldMetadata.Type == "TIMESTAMP" {
+			enc.Int64Key(fieldID, value.(int64))
+			return nil
+		}
+
+		if fieldMetadata.Type == "NUMBER" {
+			enc.Float64Key(fieldID, value.(float64))
+			return nil
+		}
+
+		if fieldMetadata.Type == "CHECKBOX" {
+			enc.BoolKey(fieldID, value.(bool))
+			return nil
+		}
+
+		enc.StringKey(fieldID, value.(string))
+
+		return nil
+	})
+	if err != nil {
+		fmt.Println("Got this dumb error: " + err.Error())
 	}
-	if adapt.IsReference(fieldMetadata.Type) {
-		refValue, err := adapt.GetReferenceKey(dv.Data)
-		if err != nil {
-			return nil, errors.New("Error converting reference field: " + fieldMetadata.GetFullName() + " : " + err.Error())
-		}
-		if refValue == "" {
-			return nil, nil
-		}
-		return refValue, nil
-	}
-	return dv.Data, nil
+}
+
+func (dm *DataMarshaler) IsNil() bool {
+	return dm == nil
 }
 
 // Save function
@@ -116,45 +102,23 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		return err
 	}
 
+	batch := &pgx.Batch{}
+
 	for _, change := range *request.Inserts {
 
-		builder := NewValueBuilder(4)
+		marshaler := &DataMarshaler{
+			Data:     change.FieldChanges,
+			Metadata: collectionMetadata,
+		}
 
-		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-			fieldMetadata, err := collectionMetadata.GetField(fieldID)
-			if err != nil {
-				return err
-			}
-			if fieldID == adapt.ID_FIELD {
-				// Don't set the id field here
-				return nil
-			}
-			builder.add(fieldID, DataValuer{
-				Data:  value,
-				Field: fieldMetadata,
-			}, getPGType(fieldMetadata))
-			return nil
-		})
+		fieldJSON, err := gojay.MarshalJSONObject(marshaler)
 		if err != nil {
 			return err
 		}
 
-		builder.add(adapt.ID_FIELD, change.IDValue, "text")
+		fullRecordID := fmt.Sprintf("%s:%s", collectionName, change.IDValue)
 
-		query := fmt.Sprintf("INSERT INTO public.data (id,collection,autonumber,fields) VALUES ($1,$2,$3,jsonb_build_object(%s))", builder.build())
-		fullRecordID := collectionName + ":" + change.IDValue
-
-		params := append([]interface{}{
-			fullRecordID,
-			collectionName,
-			change.Autonumber,
-		}, builder.Values...)
-
-		_, err = db.Exec(context.Background(), query, params...)
-		if err != nil {
-			fmt.Println("Failed: " + fullRecordID)
-			return err
-		}
+		batch.Queue(INSERT_QUERY, fullRecordID, collectionName, tenantID, change.Autonumber, fieldJSON)
 
 		if collectionMetadata.Access == "protected" {
 			recordsIDsList[fullRecordID] = change.ReadWriteTokens
@@ -164,95 +128,71 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	for _, change := range *request.Updates {
 
-		if change.IDValue == "" {
-			continue
+		marshaler := &DataMarshaler{
+			Data:     change.FieldChanges,
+			Metadata: collectionMetadata,
 		}
 
-		builder := NewValueBuilder(3)
-
-		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-			fieldMetadata, err := collectionMetadata.GetField(fieldID)
-			if err != nil {
-				return err
-			}
-			if fieldID == adapt.ID_FIELD {
-				// Don't set the id field here
-				return nil
-			}
-			if fieldMetadata.AutoPopulate == "CREATE" {
-				return nil
-			}
-			builder.add(fieldID, DataValuer{
-				Data:  value,
-				Field: fieldMetadata,
-			}, getPGType(fieldMetadata))
-			return nil
-		})
+		fieldJSON, err := gojay.MarshalJSONObject(marshaler)
 		if err != nil {
 			return err
 		}
 
-		fullRecordID := collectionName + ":" + change.IDValue
+		fullRecordID := fmt.Sprintf("%s:%s", collectionName, change.IDValue)
 
-		params := append([]interface{}{
-			fullRecordID,
-			collectionName,
-		}, builder.Values...)
-
-		query := fmt.Sprintf("UPDATE public.data SET fields = fields || jsonb_build_object(%s) WHERE id = $1 and collection = $2", builder.build())
-		_, err = db.Exec(context.Background(), query, params...)
-		if err != nil {
-			return err
-		}
+		batch.Queue(UPDATE_QUERY, fullRecordID, collectionName, fieldJSON)
 
 		if collectionMetadata.Access == "protected" {
 			recordsIDsList[fullRecordID] = change.ReadWriteTokens
 		}
 	}
 
-	for _, delete := range *request.Deletes {
-
-		if delete.IDValue == "" {
-			continue
+	deleteCount := len(*request.Deletes)
+	if deleteCount > 0 {
+		deleteIDs := make([]string, deleteCount)
+		for i, delete := range *request.Deletes {
+			deleteIDs[i] = fmt.Sprintf("%s:%s", collectionName, delete.IDValue)
 		}
-
-		query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
-		_, err = db.Exec(context.Background(), query, []interface{}{
-			collectionName + ":" + delete.IDValue,
-			collectionName,
-		}...)
-		if err != nil {
-			return err
-		}
+		fmt.Println(deleteIDs)
+		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
 
-	if len(recordsIDsList) > 0 {
-		deleteIDs := []string{}
+	tokenInsertCount := len(recordsIDsList)
+
+	if tokenInsertCount > 0 {
+		tokenDeleteIDs := make([]string, tokenInsertCount)
+		i := 0
 		for key := range recordsIDsList {
-			deleteIDs = append(deleteIDs, key)
+			tokenDeleteIDs[i] = key
+			i++
 		}
-		query := "DELETE FROM public.tokens WHERE recordid = ANY($1)"
-		_, err = db.Exec(context.Background(), query, []interface{}{
-			pq.Array(deleteIDs),
-		}...)
-		if err != nil {
-			return err
-		}
+
+		batch.Queue(TOKEN_DELETE_QUERY, tokenDeleteIDs, collectionName)
 
 		for key, tokens := range recordsIDsList {
 			for _, token := range tokens {
-				query := "INSERT INTO public.tokens (recordid,token,readonly) VALUES ($1,$2,$3)"
-				_, err = db.Exec(context.Background(), query, []interface{}{
+				batch.Queue(
+					TOKEN_INSERT_QUERY,
 					key,
 					token,
+					collectionName,
+					tenantID,
 					false,
-				}...)
-				if err != nil {
-					return err
-				}
+				)
 			}
 		}
 	}
+
+	results := db.SendBatch(context.Background(), batch)
+	execCount := batch.Len()
+	for i := 0; i < execCount; i++ {
+		_, err := results.Exec()
+		if err != nil {
+			results.Close()
+			return err
+		}
+	}
+	results.Close()
 
 	return nil
 }

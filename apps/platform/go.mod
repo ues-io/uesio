@@ -13,6 +13,7 @@ require (
 	github.com/dop251/goja v0.0.0-20210810150349-acd0507c3d6f
 	github.com/fatih/color v1.13.0
 	github.com/felixge/httpsnoop v1.0.2
+	github.com/francoispqt/gojay v1.2.13
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/gomodule/redigo v1.8.5
 	github.com/google/uuid v1.3.0
@@ -22,7 +23,6 @@ require (
 	github.com/icza/session v1.2.0
 	github.com/jackc/pgconn v1.11.0
 	github.com/jackc/pgx/v4 v4.15.0
-	github.com/lib/pq v1.10.2
 	github.com/simpleforce/simpleforce v0.0.0-20211207104336-af9d9a281fea
 	github.com/spf13/cobra v1.1.3
 	golang.org/x/text v0.3.6
