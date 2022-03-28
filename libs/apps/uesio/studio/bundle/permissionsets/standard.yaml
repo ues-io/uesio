@@ -132,7 +132,7 @@ collections:
   uesio/studio.configvalue: true
   uesio/studio.credential: true
   uesio/studio.datasource: true
-  uesio/studio.featureflags: true
+  uesio/studio.featureflag: true
   uesio/studio.fields: true
   uesio/studio.filecollections: true
   uesio/studio.files: true
