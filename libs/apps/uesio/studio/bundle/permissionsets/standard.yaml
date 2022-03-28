@@ -129,7 +129,7 @@ collections:
   uesio/studio.collection: true
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true
-  uesio/studio.configvalues: true
+  uesio/studio.configvalue: true
   uesio/studio.credentials: true
   uesio/studio.datasources: true
   uesio/studio.featureflags: true

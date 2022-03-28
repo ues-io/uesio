@@ -14,7 +14,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     configvalues:
-      collection: uesio/studio.configvalues
+      collection: uesio/studio.configvalue
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -24,7 +24,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     newconfigvalue:
-      collection: uesio/studio.configvalues
+      collection: uesio/studio.configvalue
       fields:
         uesio/core.id:
         uesio/studio.name:
