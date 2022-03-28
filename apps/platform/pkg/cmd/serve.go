@@ -100,8 +100,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getNSParam("namespace")+"/{name}/{viewtype}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getNSParam("namespace")+"/{name}/{viewtype}/{id}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}/builder", controller.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}", controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpack/"+getNSParam("namespace")+"/{name}/builder", controller.ServeComponentPack(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpack/"+getNSParam("namespace")+"/{name}", controller.ServeComponentPack(false), "GET")
 
 	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")

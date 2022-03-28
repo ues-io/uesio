@@ -126,7 +126,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			}
 
 			// Special handling for componentpacks
-			if metadataType == "componentpacks" {
+			if metadataType == "componentpack" {
 				cpack := collectionItem.(*meta.ComponentPack)
 				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
 					RecordID:  cpack.Name,

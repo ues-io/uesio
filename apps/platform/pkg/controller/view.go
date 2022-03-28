@@ -103,7 +103,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	packs := map[string]meta.ComponentPackCollection{}
 	namespaces := session.GetContextNamespaces()
 	for namespace := range namespaces {
-		groupAbstract, err := meta.GetBundleableGroupFromType("componentpacks")
+		groupAbstract, err := meta.GetBundleableGroupFromType("componentpack")
 		if err != nil {
 			return nil, err
 		}

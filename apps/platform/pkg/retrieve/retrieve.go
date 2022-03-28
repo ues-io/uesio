@@ -40,7 +40,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 			path := item.(meta.BundleableItem).GetPath()
 			// Grabs the componentpack javascript files
-			if metadataType == "componentpacks" {
+			if metadataType == "componentpack" {
 				cp := item.(*meta.ComponentPack)
 				builderStream, err := bs.GetComponentPackStream(version, true, cp, session)
 				if err != nil {

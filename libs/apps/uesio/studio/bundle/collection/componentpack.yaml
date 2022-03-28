@@ -1,4 +1,4 @@
-name: componentpacks
+name: componentpack
 idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
 nameField: uesio/studio.name
 label: component pack

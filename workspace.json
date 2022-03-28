@@ -267,8 +267,8 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "outputs": [
-            "libs/apps/uesio/io/bundle/componentpacks/main/builder.bundle.js",
-            "libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
+            "libs/apps/uesio/io/bundle/componentpack/main/builder.bundle.js",
+            "libs/apps/uesio/io/bundle/componentpack/main/runtime.bundle.js"
           ],
           "options": {
             "command": "./../../../../apps/cli/bin/run pack",
@@ -305,8 +305,8 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "outputs": [
-            "libs/apps/uesio/lab/bundle/componentpacks/main/builder.bundle.js",
-            "libs/apps/uesio/lab/bundle/componentpacks/main/runtime.bundle.js"
+            "libs/apps/uesio/lab/bundle/componentpack/main/builder.bundle.js",
+            "libs/apps/uesio/lab/bundle/componentpack/main/runtime.bundle.js"
           ],
           "options": {
             "command": "./../../../../apps/cli/bin/run pack",
@@ -343,8 +343,8 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "outputs": [
-            "libs/apps/uesio/studio/bundle/componentpacks/main/builder.bundle.js",
-            "libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
+            "libs/apps/uesio/studio/bundle/componentpack/main/builder.bundle.js",
+            "libs/apps/uesio/studio/bundle/componentpack/main/runtime.bundle.js"
           ],
           "options": {
             "command": "./../../../../apps/cli/bin/run pack",
@@ -381,8 +381,8 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "outputs": [
-            "libs/apps/uesio/core/bundle/componentpacks/app/builder.bundle.js",
-            "libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
+            "libs/apps/uesio/core/bundle/componentpack/app/builder.bundle.js",
+            "libs/apps/uesio/core/bundle/componentpack/app/runtime.bundle.js"
           ],
           "options": {
             "command": "./../../../../apps/cli/bin/run pack",

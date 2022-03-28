@@ -239,7 +239,7 @@ const platform = {
 	) => {
 		const prefix = getPrefix(context)
 		const buildModeSuffix = buildMode ? "/builder" : ""
-		return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
+		return `${prefix}/componentpack/${namespace}/${name}${buildModeSuffix}`
 	},
 	getMetadataList: async (
 		context: Context,

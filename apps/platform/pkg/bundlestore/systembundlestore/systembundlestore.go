@@ -174,7 +174,7 @@ func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version strin
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
+	return getStream(componentPack.Namespace, version, "componentpack", fileName)
 }
 
 // StoreItems function

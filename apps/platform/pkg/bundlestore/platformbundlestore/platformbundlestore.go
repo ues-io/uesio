@@ -167,7 +167,7 @@ func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, ses
 
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
+	return getStream(componentPack.Namespace, version, "componentpack", fileName, session)
 }
 
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

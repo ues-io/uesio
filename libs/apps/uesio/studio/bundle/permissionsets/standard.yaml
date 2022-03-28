@@ -127,7 +127,7 @@ collections:
   uesio/studio.bundledependency: true
   uesio/studio.bundle: true
   uesio/studio.collection: true
-  uesio/studio.componentpacks: true
+  uesio/studio.componentpack: true
   uesio/studio.componentvariants: true
   uesio/studio.configvalues: true
   uesio/studio.credentials: true

@@ -122,7 +122,7 @@ const getBuilderEntryFile = async (
 const createEntryFiles = async (): Promise<EntryFileMap> => {
 	// Get the bundle name
 	const appName = await getApp()
-	const packDir = "./bundle/componentpacks"
+	const packDir = "./bundle/componentpack"
 	const entries: EntryFileMap = {}
 
 	const files = await fs.readdir(path.resolve(packDir)).catch(() => [])
@@ -140,10 +140,10 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const viewComponents = components.view
 		const utilityComponents = components.utility
 		entries[packName + "/runtime"] = path.resolve(
-			`./bundle/componentpacks/${packName}/runtime.entry.ts`
+			`./bundle/componentpack/${packName}/runtime.entry.ts`
 		)
 		entries[packName + "/builder"] = path.resolve(
-			`./bundle/componentpacks/${packName}/builder.entry.ts`
+			`./bundle/componentpack/${packName}/builder.entry.ts`
 		)
 
 		await fs.writeFile(
@@ -216,7 +216,7 @@ const getWebpackConfig = (
 		mode: dev ? "development" : "production",
 		entry: entries,
 		output: {
-			path: path.resolve("./bundle/componentpacks"),
+			path: path.resolve("./bundle/componentpack"),
 			filename: "[name].bundle.js",
 		},
 		node: false,
