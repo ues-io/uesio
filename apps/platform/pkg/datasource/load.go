@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -31,9 +32,8 @@ var specialRefs = map[string]SpecialReferences{
 }
 
 type LoadOptions struct {
-	CheckPermissions bool
-	Connections      map[string]adapt.Connection
-	Metadata         *adapt.MetadataCache
+	Connections map[string]adapt.Connection
+	Metadata    *adapt.MetadataCache
 }
 
 func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
@@ -42,6 +42,41 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 		subFields[subField.ID] = *getSubFields(subField.Fields)
 	}
 	return &subFields
+}
+
+func processLookupConditions(
+	op *adapt.LoadOp,
+	metadata *adapt.MetadataCache,
+	ops []*adapt.LoadOp,
+) error {
+
+	for i, condition := range op.Conditions {
+
+		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
+
+			// Look through the previous wires to find the one to look up on.
+			var lookupOp *adapt.LoadOp
+			for _, lop := range ops {
+				if lop.WireName == condition.LookupWire {
+					lookupOp = lop
+					break
+				}
+			}
+
+			if lookupOp.Collection.Len() != 1 {
+				return errors.New("Must lookup on wires with only one record")
+			}
+
+			value, err := lookupOp.Collection.GetItem(0).GetField(condition.LookupField)
+			if err != nil {
+				return err
+			}
+			op.Conditions[i].Value = value
+			op.Conditions[i].ValueSource = ""
+		}
+	}
+
+	return nil
 }
 
 func getMetadataForLoad(
@@ -160,13 +195,7 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
-func Load(ops []*adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	return LoadWithOptions(ops, session, &LoadOptions{
-		CheckPermissions: true,
-	})
-}
-
-func LoadWithOptions(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
 	if options == nil {
 		options = &LoadOptions{}
 	}
@@ -176,7 +205,6 @@ func LoadWithOptions(ops []*adapt.LoadOp, session *sess.Session, options *LoadOp
 	if options.Metadata != nil {
 		metadataResponse = options.Metadata
 	}
-	checkPermissions := options.CheckPermissions
 
 	if !session.HasLabels() {
 		labels, err := translate.GetTranslatedLabels(session)
@@ -230,20 +258,15 @@ func LoadWithOptions(ops []*adapt.LoadOp, session *sess.Session, options *LoadOp
 		collated[dsKey] = batch
 	}
 
-	if checkPermissions {
-		err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
-			Metadata:    metadataResponse,
-			Connections: options.Connections,
-		}, session)
-		if err != nil {
-			return nil, err
-		}
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:    metadataResponse,
+		Connections: options.Connections,
+	}, session)
+	if err != nil {
+		return nil, err
 	}
 
-	var tokens []string
-	if checkPermissions {
-		tokens = session.GetTokens()
-	}
+	tokens := session.GetTokens()
 
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
@@ -255,16 +278,12 @@ func LoadWithOptions(ops []*adapt.LoadOp, session *sess.Session, options *LoadOp
 
 		for _, op := range batch {
 
-			for i := range op.Conditions {
-				value, err := adapt.GetConditionValue(op.Conditions[i], op, metadataResponse, batch)
-				if err != nil {
-					return nil, err
-				}
-				op.Conditions[i].Value = value
-				op.Conditions[i].ValueSource = ""
+			err := processLookupConditions(op, metadataResponse, batch)
+			if err != nil {
+				return nil, err
 			}
 
-			err := connection.Load(op)
+			err = connection.Load(op)
 			if err != nil {
 				return nil, err
 			}

@@ -65,7 +65,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	metadata, err := datasource.Load(ops, session)
+	metadata, err := datasource.Load(ops, session, nil)
 	if err != nil {
 		msg := "Load Failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

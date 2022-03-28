@@ -122,25 +122,33 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 					Operator: "=",
 				})
 			}
+
 			lookupResults := &adapt.Collection{}
-			var loadOps = []*adapt.LoadOp{{
+			var loadOp = &adapt.LoadOp{
 				CollectionName: uat.Collection,
 				WireName:       "foo",
 				Collection:     lookupResults,
 				Conditions:     loadConditions,
 				Fields:         fields,
 				Query:          true,
-			}}
-			loadMetadata, err := LoadWithOptions(loadOps, session, &LoadOptions{
-				CheckPermissions: false,
-				Metadata:         loadOptions.Metadata,
-				Connections:      loadOptions.Connections,
-			})
+			}
+
+			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session)
 			if err != nil {
 				return err
 			}
 
-			loadCollectionMetadata, err := loadMetadata.GetCollection(uat.Collection)
+			loadCollectionMetadata, err := loadOptions.Metadata.GetCollection(uat.Collection)
+			if err != nil {
+				return err
+			}
+
+			connection, err := GetConnection(loadCollectionMetadata.DataSource, session.GetTokens(), loadOptions.Metadata, session, loadOptions.Connections)
+			if err != nil {
+				return err
+			}
+
+			err = connection.Load(loadOp)
 			if err != nil {
 				return err
 			}

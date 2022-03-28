@@ -112,12 +112,6 @@ func getConditions(
 		}
 		fieldName := getFieldName(fieldMetadata)
 
-		/*
-			conditionValue, err := adapt.GetConditionValue(condition, op, metadata, ops)
-			if err != nil {
-				return nil, nil, err
-			}
-		*/
 		conditionValue := condition.Value
 
 		if condition.Operator == "IN" {
