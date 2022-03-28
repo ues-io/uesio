@@ -30,7 +30,7 @@ definition:
           valueSource: PARAM
           param: collectionname
     fields:
-      collection: uesio/studio.fields
+      collection: uesio/studio.field
       fields:
         uesio/core.id:
         uesio/studio.name:

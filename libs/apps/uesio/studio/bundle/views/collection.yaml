@@ -35,7 +35,7 @@ definition:
         - field: uesio/studio.name
           value: $Param{collectionname}
     fields:
-      collection: uesio/studio.fields
+      collection: uesio/studio.field
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -63,7 +63,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     newfield:
-      collection: uesio/studio.fields
+      collection: uesio/studio.field
       fields:
         uesio/core.id:
         uesio/studio.name:

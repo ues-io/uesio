@@ -34,7 +34,7 @@ definition:
         - field: uesio/studio.name
           value: $Param{collectionname}
     fields:
-      collection: uesio/studio.fields
+      collection: uesio/studio.field
       fields:
         uesio/core.id:
         uesio/studio.name:

@@ -133,7 +133,7 @@ collections:
   uesio/studio.credential: true
   uesio/studio.datasource: true
   uesio/studio.featureflag: true
-  uesio/studio.fields: true
+  uesio/studio.field: true
   uesio/studio.filecollections: true
   uesio/studio.files: true
   uesio/studio.filesources: true

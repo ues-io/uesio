@@ -15,7 +15,7 @@ type FieldCollection []Field
 
 // GetName function
 func (fc *FieldCollection) GetName() string {
-	return "uesio/studio.fields"
+	return "uesio/studio.field"
 }
 
 // GetFields function
