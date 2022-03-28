@@ -14,7 +14,7 @@ definition:
           valueSource: PARAM
           param: app
     bundles:
-      collection: uesio/studio.bundles
+      collection: uesio/studio.bundle
       fields:
         uesio/core.id:
         uesio/studio.major:

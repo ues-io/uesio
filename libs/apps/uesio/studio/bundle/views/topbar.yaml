@@ -90,7 +90,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.bundles
+                        collection: uesio/studio.bundle
                     id: sitestag
                     components:
                       - uesio/io.tile:

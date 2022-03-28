@@ -2,4 +2,4 @@ name: bundle
 type: REFERENCE
 label: Bundle
 reference:
-  collection: uesio/studio.bundles
+  collection: uesio/studio.bundle
