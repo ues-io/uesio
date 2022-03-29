@@ -1,8 +1,6 @@
 package localbundlestore
 
 import (
-	"bufio"
-	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -10,6 +8,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -26,16 +25,12 @@ func getBasePath(namespace, version string) string {
 
 func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-
-	file, err := os.Open(filePath)
+	fileAdapter := &localfiles.FileAdapter{}
+	conn, err := fileAdapter.GetFileConnection(nil)
 	if err != nil {
 		return nil, err
 	}
-	reader := bufio.NewReader(file)
-	return bundlestore.ItemResponse{
-		Reader: reader,
-		Closer: file,
-	}, nil
+	return conn.Download(filePath)
 }
 
 // GetItem function
@@ -173,24 +168,14 @@ func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStre
 
 func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
-	directory := filepath.Dir(fullFilePath)
 
-	err := os.MkdirAll(directory, 0744)
+	fileAdapter := &localfiles.FileAdapter{}
+	conn, err := fileAdapter.GetFileConnection(nil)
 	if err != nil {
 		return err
 	}
 
-	outFile, err := os.Create(fullFilePath)
-	if err != nil {
-		return errors.New("Error Creating File: " + err.Error())
-	}
-	defer outFile.Close()
-	_, err = io.Copy(outFile, itemStream.File)
-	if err != nil {
-		return errors.New("Error Writing File: " + err.Error())
-	}
-
-	return nil
+	return conn.Upload(itemStream.File, fullFilePath)
 }
 
 // GetBundleDef function

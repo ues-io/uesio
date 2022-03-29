@@ -30,12 +30,17 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&userFile, session)
+	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.CollectionID, session)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	content, err := adapter.Download(bucket, userFile.Path, credentials)
+	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	content, err := conn.Download(userFile.Path)
 	if err != nil {
 		return nil, nil, err
 	}

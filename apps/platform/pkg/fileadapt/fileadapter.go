@@ -13,9 +13,17 @@ import (
 
 // FileAdapter interface
 type FileAdapter interface {
-	Upload(fileData io.Reader, bucket string, path string, creds *adapt.Credentials) error
-	Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error)
-	Delete(bucket, path string, credentials *adapt.Credentials) error
+	//Upload(fileData io.Reader, bucket string, path string, creds *adapt.Credentials) error
+	//Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error)
+	//Delete(bucket, path string, credentials *adapt.Credentials) error
+	GetFileConnection(*adapt.Credentials) (FileConnection, error)
+}
+
+type FileConnection interface {
+	Upload(fileData io.Reader, path string) error
+	Download(path string) (io.ReadCloser, error)
+	Delete(path string) error
+	List(path string) ([]string, error)
 }
 
 var adapterMap = map[string]FileAdapter{}
@@ -69,26 +77,25 @@ func GetFileCollectionID(collectionMetadata *adapt.CollectionMetadata, fieldMeta
 	return fieldMetadata.FileMetadata.FileCollection, nil
 }
 
-func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Session) (FileAdapter, string, *adapt.Credentials, error) {
-
-	ufc, fs, err := GetFileSourceAndCollection(userFile.FileCollectionID, session)
+func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnection, error) {
+	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, err
 	}
-
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
+	err = bundle.Load(fs, session)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, err
 	}
 
 	fileAdapter, err := GetFileAdapter(fs.Type, session)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, err
 	}
 	credentials, err := adapt.GetCredentials(fs.Credentials, session)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, err
 	}
 
-	return fileAdapter, bucket, credentials, nil
+	return fileAdapter.GetFileConnection(credentials)
+
 }

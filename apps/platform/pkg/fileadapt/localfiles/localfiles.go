@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 )
 
 // FileAdapter struct
@@ -25,41 +26,28 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-// Delete function
-func (a *FileAdapter) Delete(bucket, path string, credentials *adapt.Credentials) error {
-	fullFilePath := filepath.Join("userfiles", bucket, path)
-	err := os.Remove(fullFilePath)
-	if err != nil {
-		return errors.New("Error Reading File: " + err.Error())
-	}
-	// Now remove subfolders if they're empty
-	removeEmptyDir(filepath.Dir(fullFilePath))
-	return nil
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
+	return &Connection{}, nil
 }
 
-// Download function
-func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
-	fullFilePath := filepath.Join("userfiles", bucket, path)
-	outFile, err := os.Open(fullFilePath)
-	if err != nil {
-		return nil, errors.New("Error Reading File: " + err.Error())
-	}
-	return outFile, nil
+type Connection struct {
+	credentials *adapt.Credentials
 }
 
-// Upload function
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
+func (c *Connection) List(path string) ([]string, error) {
+	return nil, nil
+}
 
-	fullFilePath := filepath.Join("userfiles", bucket, path)
+func (c *Connection) Upload(fileData io.Reader, path string) error {
 
-	directory := filepath.Dir(fullFilePath)
+	directory := filepath.Dir(path)
 
 	err := os.MkdirAll(directory, 0744)
 	if err != nil {
 		return err
 	}
 
-	outFile, err := os.Create(fullFilePath)
+	outFile, err := os.Create(path)
 	if err != nil {
 		return errors.New("Error Creating File: " + err.Error())
 	}
@@ -69,5 +57,23 @@ func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credential
 		return errors.New("Error Writing File: " + err.Error())
 	}
 
+	return nil
+}
+
+func (c *Connection) Download(path string) (io.ReadCloser, error) {
+	outFile, err := os.Open(path)
+	if err != nil {
+		return nil, errors.New("Error Reading File: " + err.Error())
+	}
+	return outFile, nil
+}
+
+func (c *Connection) Delete(path string) error {
+	err := os.Remove(path)
+	if err != nil {
+		return errors.New("Error Reading File: " + err.Error())
+	}
+	// Now remove subfolders if they're empty
+	removeEmptyDir(filepath.Dir(path))
 	return nil
 }

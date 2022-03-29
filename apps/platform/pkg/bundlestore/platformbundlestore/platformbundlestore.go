@@ -43,17 +43,22 @@ func getStream(namespace string, version string, objectname string, filename str
 
 	fileAdapter := &s3.FileAdapter{}
 
-	fakeSession, err := auth.GetHeadlessSession()
+	fakeSession, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return nil, err
 	}
 
-	credentials, err := adapt.GetCredentials("uesio/core.aws", fakeSession)
+	credentials, err := adapt.GetCredentials("uesio.aws", fakeSession)
 	if err != nil {
 		return nil, err
 	}
 
-	return fileAdapter.Download(BUNDLE_STORE_BUCKET_NAME, filePath, credentials)
+	conn, err := fileAdapter.GetFileConnection(credentials)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn.Download(filePath)
 
 }
 
@@ -124,13 +129,18 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 		return err
 	}
 
-	s3Result, err := fileAdapter.List(BUNDLE_STORE_BUCKET_NAME, basePath, credentials)
+	conn, err := fileAdapter.GetFileConnection(credentials)
 	if err != nil {
 		return err
 	}
 
-	for _, fileMetadata := range s3Result.Contents {
-		path := *fileMetadata.Key
+	paths, err := conn.List(basePath)
+	if err != nil {
+		return err
+	}
+
+	for _, path := range paths {
+
 		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
@@ -199,7 +209,12 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 		return err
 	}
 
-	err = fileAdapter.Upload(itemStream.File, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
+	conn, err := fileAdapter.GetFileConnection(credentials)
+	if err != nil {
+		return err
+	}
+
+	err = conn.Upload(itemStream.File, fullFilePath)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}

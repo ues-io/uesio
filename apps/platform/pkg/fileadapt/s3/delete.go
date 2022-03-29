@@ -6,19 +6,12 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) Delete(bucket string, path string, credentials *adapt.Credentials) error {
+func (c *Connection) Delete(path string) error {
 
-	ctx := context.TODO()
-	client, err := getS3Client(ctx, credentials)
-	if err != nil {
-		return errors.New("invalid FileAdapterCredentials specified: " + err.Error())
-	}
-
-	_, err = client.DeleteObject(ctx, &s3.DeleteObjectInput{
-		Bucket: aws.String(bucket),
+	_, err := c.client.DeleteObject(context.Background(), &s3.DeleteObjectInput{
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
 
@@ -27,5 +20,4 @@ func (a *FileAdapter) Delete(bucket string, path string, credentials *adapt.Cred
 	}
 
 	return nil
-
 }

@@ -1,7 +1,6 @@
 package systembundlestore
 
 import (
-	"bufio"
 	"errors"
 	"io"
 	"os"
@@ -26,16 +25,7 @@ func getBasePath(namespace, version string) string {
 
 func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	reader := bufio.NewReader(file)
-	return bundlestore.ItemResponse{
-		Reader: reader,
-		Closer: file,
-	}, nil
+	return os.Open(filePath)
 }
 
 func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
