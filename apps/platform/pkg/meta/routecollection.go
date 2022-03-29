@@ -14,6 +14,11 @@ func (rc *RouteCollection) GetName() string {
 	return "uesio/studio.routes"
 }
 
+// GetBundleFolderName function
+func (rc *RouteCollection) GetBundleFolderName() string {
+	return "routes"
+}
+
 // GetFields function
 func (rc *RouteCollection) GetFields() []string {
 	return StandardGetFields(&Route{})

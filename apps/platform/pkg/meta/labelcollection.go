@@ -15,6 +15,11 @@ func (lc *LabelCollection) GetName() string {
 	return "uesio/studio.labels"
 }
 
+// GetBundleFolderName function
+func (lc *LabelCollection) GetBundleFolderName() string {
+	return "labels"
+}
+
 // GetFields function
 func (lc *LabelCollection) GetFields() []string {
 	return StandardGetFields(&Label{})

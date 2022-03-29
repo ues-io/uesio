@@ -18,6 +18,11 @@ func (tc *TranslationCollection) GetName() string {
 	return "uesio/studio.translations"
 }
 
+// GetBundleFolderName function
+func (tc *TranslationCollection) GetBundleFolderName() string {
+	return "translations"
+}
+
 // GetFields function
 func (tc *TranslationCollection) GetFields() []string {
 	return StandardGetFields(&Translation{})

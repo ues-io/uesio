@@ -15,6 +15,11 @@ func (slc *SelectListCollection) GetName() string {
 	return "uesio/studio.selectlists"
 }
 
+// GetBundleFolderName function
+func (slc *SelectListCollection) GetBundleFolderName() string {
+	return "selectlists"
+}
+
 // GetFields function
 func (slc *SelectListCollection) GetFields() []string {
 	return StandardGetFields(&SelectList{})

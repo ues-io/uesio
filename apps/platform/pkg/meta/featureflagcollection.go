@@ -14,6 +14,11 @@ func (ffc *FeatureFlagCollection) GetName() string {
 	return "uesio/studio.featureflags"
 }
 
+// GetBundleFolderName function
+func (ffc *FeatureFlagCollection) GetBundleFolderName() string {
+	return "featureflags"
+}
+
 // GetFields function
 func (ffc *FeatureFlagCollection) GetFields() []string {
 	return StandardGetFields(&FeatureFlag{})

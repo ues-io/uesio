@@ -18,6 +18,11 @@ func (bc *BotCollection) GetName() string {
 	return "uesio/studio.bots"
 }
 
+// GetBundleFolderName function
+func (bc *BotCollection) GetBundleFolderName() string {
+	return "bots"
+}
+
 // GetFields function
 func (bc *BotCollection) GetFields() []string {
 	return StandardGetFields(&Bot{})

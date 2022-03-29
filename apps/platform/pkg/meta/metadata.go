@@ -47,6 +47,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
+	GetBundleFolderName() string
 	GetKeyFromPath(string, string, BundleConditions) (string, error)
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
@@ -80,12 +81,6 @@ func ParseNamespace(namespace string) (string, string, error) {
 		return "", "", errors.New("Invalid Namespace: " + namespace)
 	}
 	return keyArray[0], keyArray[1], nil
-}
-
-// GetNameKeyPart function
-func GetNameKeyPart(key string) string {
-	_, name, _ := ParseKey(key)
-	return name
 }
 
 func StandardKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
@@ -151,27 +146,27 @@ func StandardItemLen(item CollectionableItem) int {
 type BundleableFactory func() BundleableGroup
 
 var bundleableGroupMap = map[string]BundleableFactory{
-	GetNameKeyPart((&SecretCollection{}).GetName()):             func() BundleableGroup { return &SecretCollection{} },
-	GetNameKeyPart((&ProfileCollection{}).GetName()):            func() BundleableGroup { return &ProfileCollection{} },
-	GetNameKeyPart((&PermissionSetCollection{}).GetName()):      func() BundleableGroup { return &PermissionSetCollection{} },
-	GetNameKeyPart((&ConfigValueCollection{}).GetName()):        func() BundleableGroup { return &ConfigValueCollection{} },
-	GetNameKeyPart((&DataSourceCollection{}).GetName()):         func() BundleableGroup { return &DataSourceCollection{} },
-	GetNameKeyPart((&FileSourceCollection{}).GetName()):         func() BundleableGroup { return &FileSourceCollection{} },
-	GetNameKeyPart((&FileCollection{}).GetName()):               func() BundleableGroup { return &FileCollection{} },
-	GetNameKeyPart((&FieldCollection{}).GetName()):              func() BundleableGroup { return &FieldCollection{} },
-	GetNameKeyPart((&BotCollection{}).GetName()):                func() BundleableGroup { return &BotCollection{} },
-	GetNameKeyPart((&CollectionCollection{}).GetName()):         func() BundleableGroup { return &CollectionCollection{} },
-	GetNameKeyPart((&SelectListCollection{}).GetName()):         func() BundleableGroup { return &SelectListCollection{} },
-	GetNameKeyPart((&RouteCollection{}).GetName()):              func() BundleableGroup { return &RouteCollection{} },
-	GetNameKeyPart((&ViewCollection{}).GetName()):               func() BundleableGroup { return &ViewCollection{} },
-	GetNameKeyPart((&ThemeCollection{}).GetName()):              func() BundleableGroup { return &ThemeCollection{} },
-	GetNameKeyPart((&CredentialCollection{}).GetName()):         func() BundleableGroup { return &CredentialCollection{} },
-	GetNameKeyPart((&ComponentPackCollection{}).GetName()):      func() BundleableGroup { return &ComponentPackCollection{} },
-	GetNameKeyPart((&ComponentVariantCollection{}).GetName()):   func() BundleableGroup { return &ComponentVariantCollection{} },
-	GetNameKeyPart((&UserFileCollectionCollection{}).GetName()): func() BundleableGroup { return &UserFileCollectionCollection{} },
-	GetNameKeyPart((&FeatureFlagCollection{}).GetName()):        func() BundleableGroup { return &FeatureFlagCollection{} },
-	GetNameKeyPart((&LabelCollection{}).GetName()):              func() BundleableGroup { return &LabelCollection{} },
-	GetNameKeyPart((&TranslationCollection{}).GetName()):        func() BundleableGroup { return &TranslationCollection{} },
+	(&SecretCollection{}).GetBundleFolderName():             func() BundleableGroup { return &SecretCollection{} },
+	(&ProfileCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ProfileCollection{} },
+	(&PermissionSetCollection{}).GetBundleFolderName():      func() BundleableGroup { return &PermissionSetCollection{} },
+	(&ConfigValueCollection{}).GetBundleFolderName():        func() BundleableGroup { return &ConfigValueCollection{} },
+	(&DataSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &DataSourceCollection{} },
+	(&FileSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &FileSourceCollection{} },
+	(&FileCollection{}).GetBundleFolderName():               func() BundleableGroup { return &FileCollection{} },
+	(&FieldCollection{}).GetBundleFolderName():              func() BundleableGroup { return &FieldCollection{} },
+	(&BotCollection{}).GetBundleFolderName():                func() BundleableGroup { return &BotCollection{} },
+	(&CollectionCollection{}).GetBundleFolderName():         func() BundleableGroup { return &CollectionCollection{} },
+	(&SelectListCollection{}).GetBundleFolderName():         func() BundleableGroup { return &SelectListCollection{} },
+	(&RouteCollection{}).GetBundleFolderName():              func() BundleableGroup { return &RouteCollection{} },
+	(&ViewCollection{}).GetBundleFolderName():               func() BundleableGroup { return &ViewCollection{} },
+	(&ThemeCollection{}).GetBundleFolderName():              func() BundleableGroup { return &ThemeCollection{} },
+	(&CredentialCollection{}).GetBundleFolderName():         func() BundleableGroup { return &CredentialCollection{} },
+	(&ComponentPackCollection{}).GetBundleFolderName():      func() BundleableGroup { return &ComponentPackCollection{} },
+	(&ComponentVariantCollection{}).GetBundleFolderName():   func() BundleableGroup { return &ComponentVariantCollection{} },
+	(&UserFileCollectionCollection{}).GetBundleFolderName(): func() BundleableGroup { return &UserFileCollectionCollection{} },
+	(&FeatureFlagCollection{}).GetBundleFolderName():        func() BundleableGroup { return &FeatureFlagCollection{} },
+	(&LabelCollection{}).GetBundleFolderName():              func() BundleableGroup { return &LabelCollection{} },
+	(&TranslationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &TranslationCollection{} },
 }
 
 // GetBundleableGroupFromType function

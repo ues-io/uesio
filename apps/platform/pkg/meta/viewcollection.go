@@ -15,6 +15,11 @@ func (vc *ViewCollection) GetName() string {
 	return "uesio/studio.views"
 }
 
+// GetBundleFolderName function
+func (vc *ViewCollection) GetBundleFolderName() string {
+	return "views"
+}
+
 // GetFields function
 func (vc *ViewCollection) GetFields() []string {
 	return StandardGetFields(&View{})

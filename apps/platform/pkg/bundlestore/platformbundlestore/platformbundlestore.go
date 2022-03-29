@@ -61,7 +61,7 @@ func getStream(namespace string, version string, objectname string, filename str
 func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
-	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+	collectionName := item.GetBundleGroup().GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -115,7 +115,7 @@ func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version 
 
 func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}
 
 	fileAdapter := &s3.FileAdapter{}

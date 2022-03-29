@@ -14,6 +14,11 @@ func (dsc *DataSourceCollection) GetName() string {
 	return "uesio/studio.datasources"
 }
 
+// GetBundleFolderName function
+func (dsc *DataSourceCollection) GetBundleFolderName() string {
+	return "datasources"
+}
+
 // GetFields function
 func (dsc *DataSourceCollection) GetFields() []string {
 	return StandardGetFields(&DataSource{})

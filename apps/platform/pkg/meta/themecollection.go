@@ -15,6 +15,11 @@ func (tc *ThemeCollection) GetName() string {
 	return "uesio/studio.themes"
 }
 
+// GetBundleFolderName function
+func (tc *ThemeCollection) GetBundleFolderName() string {
+	return "themes"
+}
+
 // GetFields function
 func (tc *ThemeCollection) GetFields() []string {
 	return StandardGetFields(&Theme{})

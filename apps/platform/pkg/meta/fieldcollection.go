@@ -18,6 +18,11 @@ func (fc *FieldCollection) GetName() string {
 	return "uesio/studio.fields"
 }
 
+// GetBundleFolderName function
+func (fc *FieldCollection) GetBundleFolderName() string {
+	return "fields"
+}
+
 // GetFields function
 func (fc *FieldCollection) GetFields() []string {
 	return StandardGetFields(&Field{})

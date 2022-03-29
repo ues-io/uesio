@@ -17,6 +17,11 @@ func (fc *FileCollection) GetName() string {
 	return "uesio/studio.files"
 }
 
+// GetBundleFolderName function
+func (fc *FileCollection) GetBundleFolderName() string {
+	return "files"
+}
+
 // GetFields function
 func (fc *FileCollection) GetFields() []string {
 	return StandardGetFields(&File{})

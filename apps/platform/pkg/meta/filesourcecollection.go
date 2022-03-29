@@ -14,6 +14,11 @@ func (fsc *FileSourceCollection) GetName() string {
 	return "uesio/studio.filesources"
 }
 
+// GetBundleFolderName function
+func (fsc *FileSourceCollection) GetBundleFolderName() string {
+	return "filesources"
+}
+
 // GetFields function
 func (fsc *FileSourceCollection) GetFields() []string {
 	return StandardGetFields(&FileSource{})

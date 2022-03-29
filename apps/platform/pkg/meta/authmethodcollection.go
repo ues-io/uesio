@@ -14,6 +14,11 @@ func (amc *AuthMethodCollection) GetName() string {
 	return "uesio/studio.authmethods"
 }
 
+// GetBundleFolderName function
+func (amc *AuthMethodCollection) GetBundleFolderName() string {
+	return "authmethods"
+}
+
 // GetFields function
 func (amc *AuthMethodCollection) GetFields() []string {
 	return StandardGetFields(&AuthMethod{})

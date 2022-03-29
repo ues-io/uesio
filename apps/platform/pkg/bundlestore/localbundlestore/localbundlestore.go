@@ -42,7 +42,7 @@ func getStream(namespace string, version string, objectname string, filename str
 func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
-	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+	collectionName := item.GetBundleGroup().GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -99,7 +99,7 @@ func (b *LocalBundleStore) GetManyItems(items []meta.BundleableItem, version str
 func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}
 	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

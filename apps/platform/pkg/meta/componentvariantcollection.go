@@ -17,6 +17,11 @@ func (cvc *ComponentVariantCollection) GetName() string {
 	return "uesio/studio.componentvariants"
 }
 
+// GetBundleFolderName function
+func (cvc *ComponentVariantCollection) GetBundleFolderName() string {
+	return "componentvariants"
+}
+
 // GetFields function
 func (cvc *ComponentVariantCollection) GetFields() []string {
 	return StandardGetFields(&ComponentVariant{})

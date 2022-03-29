@@ -56,7 +56,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 	workspace := session.GetWorkspaceID()
 	namespace := session.GetWorkspaceApp()
 	for _, item := range items {
-		collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+		collectionName := item.GetBundleGroup().GetBundleFolderName()
 		dbID := item.GetDBID(workspace)
 		item.SetNamespace(namespace)
 		_, ok := collectionIDs[collectionName]

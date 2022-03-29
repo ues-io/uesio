@@ -14,6 +14,11 @@ func (uatc *UserAccessTokenCollection) GetName() string {
 	return "uesio/studio.useraccesstokens"
 }
 
+// GetBundleFolderName function
+func (uatc *UserAccessTokenCollection) GetBundleFolderName() string {
+	return "useraccesstokens"
+}
+
 // GetFields function
 func (uatc *UserAccessTokenCollection) GetFields() []string {
 	return StandardGetFields(&UserAccessToken{})

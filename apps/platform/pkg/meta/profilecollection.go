@@ -14,6 +14,11 @@ func (pc *ProfileCollection) GetName() string {
 	return "uesio/studio.profiles"
 }
 
+// GetBundleFolderName function
+func (pc *ProfileCollection) GetBundleFolderName() string {
+	return "profiles"
+}
+
 // GetFields function
 func (pc *ProfileCollection) GetFields() []string {
 	return StandardGetFields(&Profile{})

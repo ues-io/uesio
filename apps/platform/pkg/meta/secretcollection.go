@@ -15,6 +15,11 @@ func (sc *SecretCollection) GetName() string {
 	return "uesio/studio.secrets"
 }
 
+// GetBundleFolderName function
+func (sc *SecretCollection) GetBundleFolderName() string {
+	return "secrets"
+}
+
 // GetFields function
 func (sc *SecretCollection) GetFields() []string {
 	return StandardGetFields(&Secret{})

@@ -14,6 +14,11 @@ func (cc *CredentialCollection) GetName() string {
 	return "uesio/studio.credentials"
 }
 
+// GetBundleFolderName function
+func (cc *CredentialCollection) GetBundleFolderName() string {
+	return "credentials"
+}
+
 // GetFields function
 func (cc *CredentialCollection) GetFields() []string {
 	return StandardGetFields(&Credential{})

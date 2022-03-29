@@ -14,6 +14,11 @@ func (ufcc *UserFileCollectionCollection) GetName() string {
 	return "uesio/studio.filecollections"
 }
 
+// GetBundleFolderName function
+func (ufcc *UserFileCollectionCollection) GetBundleFolderName() string {
+	return "filecollections"
+}
+
 // GetFields function
 func (ufcc *UserFileCollectionCollection) GetFields() []string {
 	return StandardGetFields(&UserFileCollection{})
