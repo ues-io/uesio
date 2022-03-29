@@ -1,5 +1,0 @@
-name: files
-idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: file
-pluralLabel: files

@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     workspaces:
-      collection: uesio/studio.workspaces
+      collection: uesio/studio.workspace
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     translations:
-      collection: uesio/studio.translations
+      collection: uesio/studio.translation
       fields:
         uesio/core.id:
         uesio/studio.language:
@@ -24,7 +24,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     newtranslation:
-      collection: uesio/studio.translations
+      collection: uesio/studio.translation
       fields:
         uesio/core.id:
         uesio/studio.language:

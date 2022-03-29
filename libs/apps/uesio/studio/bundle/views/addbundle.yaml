@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     workspaces:
-      collection: uesio/studio.workspaces
+      collection: uesio/studio.workspace
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     installablebundles:
-      collection: uesio/studio.bundles
+      collection: uesio/studio.bundle
       fields:
         uesio/core.id:
         uesio/studio.app:
@@ -22,7 +22,7 @@ definition:
         uesio/studio.minor:
         uesio/studio.patch:
     dependencies:
-      collection: uesio/studio.bundledependencies
+      collection: uesio/studio.bundledependency
       fields:
         uesio/core.id:
         uesio/studio.bundle:

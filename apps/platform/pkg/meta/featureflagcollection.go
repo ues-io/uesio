@@ -11,7 +11,12 @@ type FeatureFlagCollection []FeatureFlag
 
 // GetName function
 func (ffc *FeatureFlagCollection) GetName() string {
-	return "uesio/studio.featureflags"
+	return "uesio/studio.featureflag"
+}
+
+// GetBundleFolderName function
+func (ffc *FeatureFlagCollection) GetBundleFolderName() string {
+	return "featureflags"
 }
 
 // GetFields function

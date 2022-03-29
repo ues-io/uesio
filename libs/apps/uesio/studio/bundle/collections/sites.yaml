@@ -1,5 +1,0 @@
-name: sites
-idFormat: "${uesio/studio.app}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: site
-pluralLabel: sites

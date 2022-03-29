@@ -14,7 +14,12 @@ type FileCollection []File
 
 // GetName function
 func (fc *FileCollection) GetName() string {
-	return "uesio/studio.files"
+	return "uesio/studio.file"
+}
+
+// GetBundleFolderName function
+func (fc *FileCollection) GetBundleFolderName() string {
+	return "files"
 }
 
 // GetFields function

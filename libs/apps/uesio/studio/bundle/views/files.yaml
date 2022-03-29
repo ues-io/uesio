@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     workspaces:
-      collection: uesio/studio.workspaces
+      collection: uesio/studio.workspace
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
     files:
-      collection: uesio/studio.files
+      collection: uesio/studio.file
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -30,7 +30,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio/core.id
     newfile:
-      collection: uesio/studio.files
+      collection: uesio/studio.file
       fields:
         uesio/core.id:
         uesio/studio.name:

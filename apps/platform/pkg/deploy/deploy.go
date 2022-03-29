@@ -110,7 +110,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for files
 			if metadataType == "files" {
 				file := collectionItem.(*meta.File)
-				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
+				fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
 					RecordID:  file.Name,
 					FieldName: "uesio/studio.content",
 				}
@@ -119,7 +119,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for bots
 			if metadataType == "bots" {
 				bot := collectionItem.(*meta.Bot)
-				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
+				fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
 					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
 					FieldName: "uesio/studio.content",
 				}
@@ -128,11 +128,11 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for componentpacks
 			if metadataType == "componentpacks" {
 				cpack := collectionItem.(*meta.ComponentPack)
-				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
+				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
 					RecordID:  cpack.Name,
 					FieldName: "uesio/studio.runtimebundle",
 				}
-				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
+				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
 					RecordID:  cpack.Name,
 					FieldName: "uesio/studio.buildtimebundle",
 				}
@@ -148,7 +148,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			return err
 		}
 		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
-			Type:     metadataType,
+			Type:     collection.GetName(),
 			FileName: fileName,
 			Path:     path,
 			Data:     f,
@@ -266,7 +266,7 @@ func applyDeploy(
 
 		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
 			Name:         fileStream.FileName,
-			CollectionID: "uesio/studio." + fileStream.Type,
+			CollectionID: fileStream.Type,
 			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
 			FieldID:      fileRecord.FieldName,
 		}, connection, session.RemoveWorkspaceContext())

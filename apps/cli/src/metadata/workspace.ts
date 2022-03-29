@@ -7,7 +7,7 @@ import { User } from "../auth/login"
 
 class Workspace {
 	static getCollectionName(): string {
-		return "uesio/studio.workspaces"
+		return "uesio/studio.workspace"
 	}
 	static getFields() {
 		return [

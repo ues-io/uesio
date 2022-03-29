@@ -1,5 +1,0 @@
-name: teammembers
-idFormat: "${uesio/studio.team}_${uesio/studio.member}"
-nameField: uesio/studio.member
-label: team member
-pluralLabel: team members

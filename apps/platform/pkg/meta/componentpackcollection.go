@@ -14,7 +14,12 @@ type ComponentPackCollection []ComponentPack
 
 // GetName function
 func (cpc *ComponentPackCollection) GetName() string {
-	return "uesio/studio.componentpacks"
+	return "uesio/studio.componentpack"
+}
+
+// GetBundleFolderName function
+func (cpc *ComponentPackCollection) GetBundleFolderName() string {
+	return "componentpacks"
 }
 
 // GetFields function

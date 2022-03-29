@@ -12,7 +12,12 @@ type ThemeCollection []Theme
 
 // GetName function
 func (tc *ThemeCollection) GetName() string {
-	return "uesio/studio.themes"
+	return "uesio/studio.theme"
+}
+
+// GetBundleFolderName function
+func (tc *ThemeCollection) GetBundleFolderName() string {
+	return "themes"
 }
 
 // GetFields function
