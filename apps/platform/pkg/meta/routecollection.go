@@ -11,7 +11,7 @@ type RouteCollection []Route
 
 // GetName function
 func (rc *RouteCollection) GetName() string {
-	return "uesio/studio.routes"
+	return "uesio/studio.route"
 }
 
 // GetBundleFolderName function

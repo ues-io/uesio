@@ -1,5 +1,0 @@
-name: filecollections
-idFormat: "${uesio/studio.name}"
-nameField: uesio/studio.name
-label: file collection
-pluralLabel: file collections

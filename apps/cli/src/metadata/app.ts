@@ -18,7 +18,7 @@ const colors = [
 
 class App {
 	static getCollectionName(): string {
-		return "uesio/studio.apps"
+		return "uesio/studio.app"
 	}
 	static getFields() {
 		return [

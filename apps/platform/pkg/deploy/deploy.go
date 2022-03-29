@@ -25,6 +25,13 @@ type FileRecord struct {
 	FieldName string
 }
 
+func getType(metadataType string) string {
+	if metadataType == "bots" {
+		return "bot"
+	}
+	return "file"
+}
+
 // Deploy func
 func Deploy(body []byte, session *sess.Session) error {
 
@@ -110,7 +117,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for files
 			if metadataType == "files" {
 				file := collectionItem.(*meta.File)
-				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
+				fileNameMap["file"+":"+file.GetFilePath()] = FileRecord{
 					RecordID:  file.Name,
 					FieldName: "uesio/studio.content",
 				}
@@ -119,7 +126,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for bots
 			if metadataType == "bots" {
 				bot := collectionItem.(*meta.Bot)
-				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
+				fileNameMap["bot"+":"+bot.GetBotFilePath()] = FileRecord{
 					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
 					FieldName: "uesio/studio.content",
 				}
@@ -148,7 +155,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			return err
 		}
 		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
-			Type:     metadataType,
+			Type:     getType(metadataType),
 			FileName: fileName,
 			Path:     path,
 			Data:     f,

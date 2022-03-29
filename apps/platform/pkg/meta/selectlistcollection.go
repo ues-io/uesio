@@ -12,7 +12,7 @@ type SelectListCollection []SelectList
 
 // GetName function
 func (slc *SelectListCollection) GetName() string {
-	return "uesio/studio.selectlists"
+	return "uesio/studio.selectlist"
 }
 
 // GetBundleFolderName function

@@ -8,7 +8,7 @@ import { User } from "../auth/login"
 
 class Site {
 	static getCollectionName(): string {
-		return "uesio/studio.sites"
+		return "uesio/studio.site"
 	}
 	static getFields() {
 		return [

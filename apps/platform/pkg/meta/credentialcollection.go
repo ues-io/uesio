@@ -11,7 +11,7 @@ type CredentialCollection []Credential
 
 // GetName function
 func (cc *CredentialCollection) GetName() string {
-	return "uesio/studio.credentials"
+	return "uesio/studio.credential"
 }
 
 // GetBundleFolderName function

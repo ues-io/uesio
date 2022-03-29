@@ -33,7 +33,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.apps
+                        collection: uesio/studio.app
                     id: appslist
                     components:
                       - uesio/io.tile:
@@ -54,7 +54,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.sites
+                        collection: uesio/studio.site
                     id: sitestag
                     components:
                       - uesio/io.tile:
@@ -90,7 +90,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.bundles
+                        collection: uesio/studio.bundle
                     id: sitestag
                     components:
                       - uesio/io.tile:
@@ -126,7 +126,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.teams
+                        collection: uesio/studio.team
                     id: teamstag
                     components:
                       - uesio/io.tile:
@@ -162,7 +162,7 @@ definition:
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio/studio.workspaces
+                        collection: uesio/studio.workspace
                     id: workspaceapptag
                     components:
                       - uesio/io.tile:

@@ -121,35 +121,35 @@ routes:
   uesio/studio.collectionexportbatches: true
 files:
 collections:
-  uesio/studio.authmethods: true
-  uesio/studio.apps: true
-  uesio/studio.bots: true
-  uesio/studio.bundledependencies: true
-  uesio/studio.bundles: true
-  uesio/studio.collections: true
-  uesio/studio.componentpacks: true
-  uesio/studio.componentvariants: true
-  uesio/studio.configvalues: true
-  uesio/studio.credentials: true
-  uesio/studio.datasources: true
-  uesio/studio.featureflags: true
-  uesio/studio.fields: true
-  uesio/studio.filecollections: true
-  uesio/studio.files: true
-  uesio/studio.filesources: true
-  uesio/studio.labels: true
-  uesio/studio.permissionsets: true
-  uesio/studio.profiles: true
-  uesio/studio.routes: true
-  uesio/studio.secrets: true
-  uesio/studio.selectlists: true
-  uesio/studio.sitedomains: true
-  uesio/studio.sites: true
-  uesio/studio.teammembers: true
-  uesio/studio.teams: true
-  uesio/studio.themes: true
-  uesio/studio.translations: true
-  uesio/studio.views: true
-  uesio/studio.workspaces: true
+  uesio/studio.authmethod: true
+  uesio/studio.app: true
+  uesio/studio.bot: true
+  uesio/studio.bundledependency: true
+  uesio/studio.bundle: true
+  uesio/studio.collection: true
+  uesio/studio.componentpack: true
+  uesio/studio.componentvariant: true
+  uesio/studio.configvalue: true
+  uesio/studio.credential: true
+  uesio/studio.datasource: true
+  uesio/studio.featureflag: true
+  uesio/studio.field: true
+  uesio/studio.filecollection: true
+  uesio/studio.file: true
+  uesio/studio.filesource: true
+  uesio/studio.label: true
+  uesio/studio.permissionset: true
+  uesio/studio.profile: true
+  uesio/studio.route: true
+  uesio/studio.secret: true
+  uesio/studio.selectlist: true
+  uesio/studio.sitedomain: true
+  uesio/studio.site: true
+  uesio/studio.teammember: true
+  uesio/studio.team: true
+  uesio/studio.theme: true
+  uesio/studio.translation: true
+  uesio/studio.view: true
+  uesio/studio.workspace: true
   uesio/core.userfile: true
   uesio/core.user: true

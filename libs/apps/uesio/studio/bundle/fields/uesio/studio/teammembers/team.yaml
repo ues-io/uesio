@@ -1,6 +1,0 @@
-name: team
-type: REFERENCE
-label: Team
-reference:
-  collection: uesio/studio.teams
-required: true

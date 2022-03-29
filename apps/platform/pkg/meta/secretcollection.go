@@ -12,7 +12,7 @@ type SecretCollection []Secret
 
 // GetName function
 func (sc *SecretCollection) GetName() string {
-	return "uesio/studio.secrets"
+	return "uesio/studio.secret"
 }
 
 // GetBundleFolderName function

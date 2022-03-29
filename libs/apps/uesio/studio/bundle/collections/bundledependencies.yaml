@@ -1,4 +1,0 @@
-name: bundledependencies
-idFormat: "${uesio/studio.workspace}_${uesio/studio.bundle}"
-label: bundle dependency
-pluralLabel: bundle dependencies

@@ -11,7 +11,7 @@ type AppCollection []App
 
 // GetName function
 func (ac *AppCollection) GetName() string {
-	return "uesio/studio.apps"
+	return "uesio/studio.app"
 }
 
 // GetFields function

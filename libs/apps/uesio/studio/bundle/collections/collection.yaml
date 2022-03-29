@@ -1,0 +1,5 @@
+name: collection
+idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
+nameField: uesio/studio.name
+label: collection
+pluralLabel: collections
