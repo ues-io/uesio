@@ -1,5 +1,0 @@
-name: profiles
-idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: profile
-pluralLabel: profiles

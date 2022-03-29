@@ -11,7 +11,12 @@ type CollectionCollection []Collection
 
 // GetName function
 func (cc *CollectionCollection) GetName() string {
-	return "uesio/studio.collections"
+	return "uesio/studio.collection"
+}
+
+// GetBundleFolderName function
+func (cc *CollectionCollection) GetBundleFolderName() string {
+	return "collections"
 }
 
 // GetFields function

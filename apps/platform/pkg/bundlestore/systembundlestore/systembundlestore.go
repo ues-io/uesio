@@ -68,7 +68,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	fullCollectionName := item.GetCollectionName()
-	collectionName := meta.GetNameKeyPart(fullCollectionName)
+	collectionName := item.GetBundleGroup().GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -125,7 +125,7 @@ func (b *SystemBundleStore) GetManyItems(items []meta.BundleableItem, version st
 func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 
 	keys, err := getFileKeys(basePath, namespace, group, conditions)
 	if err != nil {

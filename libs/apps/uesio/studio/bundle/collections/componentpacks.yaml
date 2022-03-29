@@ -1,5 +1,0 @@
-name: componentpacks
-idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: component pack
-pluralLabel: component packs

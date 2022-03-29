@@ -11,7 +11,12 @@ type ProfileCollection []Profile
 
 // GetName function
 func (pc *ProfileCollection) GetName() string {
-	return "uesio/studio.profiles"
+	return "uesio/studio.profile"
+}
+
+// GetBundleFolderName function
+func (pc *ProfileCollection) GetBundleFolderName() string {
+	return "profiles"
 }
 
 // GetFields function

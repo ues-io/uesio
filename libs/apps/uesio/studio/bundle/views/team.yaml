@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio/studio.apps
+      collection: uesio/studio.app
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
           valueSource: PARAM
           param: app
     teams:
-      collection: uesio/studio.teams
+      collection: uesio/studio.team
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -31,7 +31,7 @@ definition:
           valueSource: PARAM
           param: teamname
     teammembers:
-      collection: uesio/studio.teammembers
+      collection: uesio/studio.teammember
       fields:
         uesio/core.id:
         uesio/studio.app:
@@ -48,7 +48,7 @@ definition:
         - field: uesio/studio.team
           value: $Param{app}_$Param{teamname}
     newteammember:
-      collection: uesio/studio.teammembers
+      collection: uesio/studio.teammember
       fields:
         uesio/core.id:
         uesio/studio.member:

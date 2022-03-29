@@ -12,7 +12,12 @@ type ViewCollection []View
 
 // GetName function
 func (vc *ViewCollection) GetName() string {
-	return "uesio/studio.views"
+	return "uesio/studio.view"
+}
+
+// GetBundleFolderName function
+func (vc *ViewCollection) GetBundleFolderName() string {
+	return "views"
 }
 
 // GetFields function

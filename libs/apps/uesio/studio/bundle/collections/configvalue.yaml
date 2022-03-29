@@ -1,0 +1,5 @@
+name: configvalue
+idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
+nameField: uesio/studio.name
+label: config value
+pluralLabel: config values

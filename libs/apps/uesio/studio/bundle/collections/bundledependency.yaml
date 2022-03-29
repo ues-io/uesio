@@ -1,0 +1,5 @@
+name: bundledependency
+idFormat: "${uesio/studio.workspace}_${uesio/studio.bundle}"
+nameField: uesio/core.id
+label: bundle dependency
+pluralLabel: bundle dependencies

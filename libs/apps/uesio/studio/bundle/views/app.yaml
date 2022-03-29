@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio/studio.apps
+      collection: uesio/studio.app
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
           valueSource: PARAM
           param: app
     workspaces:
-      collection: uesio/studio.workspaces
+      collection: uesio/studio.workspace
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -23,7 +23,7 @@ definition:
           valueSource: PARAM
           param: app
     bundles:
-      collection: uesio/studio.bundles
+      collection: uesio/studio.bundle
       fields:
         uesio/core.id:
         uesio/studio.major:
@@ -35,7 +35,7 @@ definition:
           valueSource: PARAM
           param: app
     sites:
-      collection: uesio/studio.sites
+      collection: uesio/studio.site
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -44,7 +44,7 @@ definition:
           valueSource: PARAM
           param: app
     teams:
-      collection: uesio/studio.teams
+      collection: uesio/studio.team
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -54,7 +54,7 @@ definition:
           valueSource: PARAM
           param: app
     newworkspace:
-      collection: uesio/studio.workspaces
+      collection: uesio/studio.workspace
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -67,7 +67,7 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
     newsite:
-      collection: uesio/studio.sites
+      collection: uesio/studio.site
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -84,7 +84,7 @@ definition:
           lookupWire: bundles
           lookupField: uesio/core.id
     newteam:
-      collection: uesio/studio.teams
+      collection: uesio/studio.team
       fields:
         uesio/core.id:
         uesio/studio.name:

@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio/studio.apps
+      collection: uesio/studio.app
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
           valueSource: PARAM
           param: app
     bundles:
-      collection: uesio/studio.bundles
+      collection: uesio/studio.bundle
       fields:
         uesio/core.id:
         uesio/studio.major:

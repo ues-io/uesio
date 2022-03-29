@@ -1,4 +1,0 @@
-name: bundles
-idFormat: "${uesio/studio.app}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}"
-label: bundle
-pluralLabel: bundles

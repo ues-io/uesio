@@ -99,12 +99,12 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 	var teams adapt.Collection
 	var teammembers adapt.Collection
 
-	err = getSeedDataFile(&teams, "uesio/studio.teams.json")
+	err = getSeedDataFile(&teams, "uesio/studio.team.json")
 	if err != nil {
 		return err
 	}
 
-	err = getSeedDataFile(&teammembers, "uesio/studio.teammembers.json")
+	err = getSeedDataFile(&teammembers, "uesio/studio.teammember.json")
 	if err != nil {
 		return err
 	}
@@ -118,8 +118,8 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
 		getPlatformSeedSR(&configstorevalues),
-		getSeedSR("uesio/studio.teams", &teams),
-		getSeedSR("uesio/studio.teammembers", &teammembers),
+		getSeedSR("uesio/studio.team", &teams),
+		getSeedSR("uesio/studio.teammember", &teammembers),
 	}, session, datasource.GetConnectionSaveOptions(connection))
 }
 

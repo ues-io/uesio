@@ -11,7 +11,12 @@ type ConfigValueCollection []ConfigValue
 
 // GetName function
 func (cvc *ConfigValueCollection) GetName() string {
-	return "uesio/studio.configvalues"
+	return "uesio/studio.configvalue"
+}
+
+// GetBundleFolderName function
+func (cvc *ConfigValueCollection) GetBundleFolderName() string {
+	return "configvalues"
 }
 
 // GetFields function

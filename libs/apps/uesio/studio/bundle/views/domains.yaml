@@ -3,7 +3,7 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio/studio.apps
+      collection: uesio/studio.app
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -14,7 +14,7 @@ definition:
           valueSource: PARAM
           param: app
     sites:
-      collection: uesio/studio.sites
+      collection: uesio/studio.site
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -28,7 +28,7 @@ definition:
         - field: uesio/core.id
           value: $Param{app}_$Param{sitename}
     domains:
-      collection: uesio/studio.sitedomains
+      collection: uesio/studio.sitedomain
       fields:
         uesio/core.id:
         uesio/studio.type:
@@ -38,7 +38,7 @@ definition:
           valueSource: VALUE
           value: $Param{app}_$Param{sitename}
     newdomain:
-      collection: uesio/studio.sitedomains
+      collection: uesio/studio.sitedomain
       fields:
         uesio/core.id:
         uesio/studio.type:

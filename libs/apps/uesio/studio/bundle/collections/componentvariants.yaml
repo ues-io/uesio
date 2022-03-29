@@ -1,5 +1,0 @@
-name: componentvariants
-idFormat: "${uesio/studio.workspace}_${uesio/studio.component}_${uesio/studio.name}"
-nameField: uesio/studio.name
-label: component variant
-pluralLabel: component variants
