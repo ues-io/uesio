@@ -12,11 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// FileAdapter interface
 type FileAdapter interface {
-	//Upload(fileData io.Reader, bucket string, path string, creds *adapt.Credentials) error
-	//Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error)
-	//Delete(bucket, path string, credentials *adapt.Credentials) error
 	GetFileConnection(*adapt.Credentials) (FileConnection, error)
 }
 
@@ -29,7 +25,6 @@ type FileConnection interface {
 
 var adapterMap = map[string]FileAdapter{}
 
-// GetFileAdapter gets an adapter of a certain type
 func GetFileAdapter(adapterType string, session *sess.Session) (FileAdapter, error) {
 	mergedType, err := configstore.Merge(adapterType, session)
 	if err != nil {
@@ -42,7 +37,6 @@ func GetFileAdapter(adapterType string, session *sess.Session) (FileAdapter, err
 	return adapter, nil
 }
 
-// RegisterFileAdapter function
 func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
@@ -105,5 +99,4 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 	}
 
 	return fileAdapter.GetFileConnection(credentials)
-
 }
