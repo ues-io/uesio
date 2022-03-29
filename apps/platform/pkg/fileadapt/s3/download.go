@@ -10,20 +10,15 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
+func (c *Connection) Download(path string) (io.ReadCloser, error) {
 	ctx := context.Background()
-	client, err := getS3Client(ctx, credentials)
-	if err != nil {
-		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
-	}
 
-	downloader := manager.NewDownloader(client)
+	downloader := manager.NewDownloader(c.client)
 
-	head, err := client.HeadObject(ctx, &s3.HeadObjectInput{
-		Bucket: aws.String(bucket),
+	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
 
@@ -35,7 +30,7 @@ func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentia
 	w := manager.NewWriteAtBuffer(buf)
 
 	input := &s3.GetObjectInput{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	}
 

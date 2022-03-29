@@ -14,7 +14,7 @@ type SecretStore struct {
 // Get function
 func (ss *SecretStore) Get(key string) (string, error) {
 	var s meta.SecretStoreValue
-	session, err := auth.GetHeadlessSession()
+	session, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +42,7 @@ func (ss *SecretStore) Set(key, value string) error {
 		Key:   key,
 		Value: value,
 	}
-	session, err := auth.GetHeadlessSession()
+	session, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return err
 	}

@@ -56,7 +56,3 @@ func getStringWithDefault(field string, defaultField string) string {
 	}
 	return defaultField
 }
-
-type DataFunc func(fieldMetadata *FieldMetadata) (interface{}, error)
-
-type FieldNameFunc func(*FieldMetadata) (string, error)

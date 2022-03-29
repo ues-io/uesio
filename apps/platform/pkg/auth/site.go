@@ -100,7 +100,7 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 }
 
 func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
-	headlessSession, err := GetHeadlessSession()
+	headlessSession, err := GetStudioAdminSession()
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	return querySite(siteDomain.Site.ID, headlessSession)
 }
 
-func GetHeadlessSession() (*sess.Session, error) {
+func GetStudioAdminSession() (*sess.Session, error) {
 	site := &meta.Site{
 		ID:   "uesio/studio_prod",
 		Name: "prod",

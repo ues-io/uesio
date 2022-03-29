@@ -5,8 +5,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 )
 
 // FileAdapter struct
@@ -25,41 +27,54 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-// Delete function
-func (a *FileAdapter) Delete(bucket, path string, credentials *adapt.Credentials) error {
-	fullFilePath := filepath.Join("userfiles", bucket, path)
-	err := os.Remove(fullFilePath)
-	if err != nil {
-		return errors.New("Error Reading File: " + err.Error())
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
+	bucket, ok := (*credentials)["bucket"]
+	if !ok {
+		return nil, errors.New("No bucket provided in credentials")
 	}
-	// Now remove subfolders if they're empty
-	removeEmptyDir(filepath.Dir(fullFilePath))
-	return nil
+	return &Connection{
+		bucket: bucket,
+	}, nil
 }
 
-// Download function
-func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
-	fullFilePath := filepath.Join("userfiles", bucket, path)
-	outFile, err := os.Open(fullFilePath)
-	if err != nil {
-		return nil, errors.New("Error Reading File: " + err.Error())
-	}
-	return outFile, nil
+type Connection struct {
+	credentials *adapt.Credentials
+	bucket      string
 }
 
-// Upload function
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
+func (c *Connection) List(dirPath string) ([]string, error) {
+	paths := []string{}
+	basePath := filepath.Join(c.bucket, dirPath) + string(os.PathSeparator)
+	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			// Ignore walking errors
+			return nil
+		}
+		if path == basePath {
+			return nil
+		}
+		paths = append(paths, strings.TrimPrefix(path, basePath))
 
-	fullFilePath := filepath.Join("userfiles", bucket, path)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return paths, nil
+}
 
-	directory := filepath.Dir(fullFilePath)
+func (c *Connection) Upload(fileData io.Reader, path string) error {
+
+	fullPath := filepath.Join(c.bucket, path)
+
+	directory := filepath.Dir(fullPath)
 
 	err := os.MkdirAll(directory, 0744)
 	if err != nil {
 		return err
 	}
 
-	outFile, err := os.Create(fullFilePath)
+	outFile, err := os.Create(fullPath)
 	if err != nil {
 		return errors.New("Error Creating File: " + err.Error())
 	}
@@ -69,5 +84,25 @@ func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credential
 		return errors.New("Error Writing File: " + err.Error())
 	}
 
+	return nil
+}
+
+func (c *Connection) Download(path string) (io.ReadCloser, error) {
+	fullPath := filepath.Join(c.bucket, path)
+	outFile, err := os.Open(fullPath)
+	if err != nil {
+		return nil, errors.New("Error Reading File: " + err.Error())
+	}
+	return outFile, nil
+}
+
+func (c *Connection) Delete(path string) error {
+	fullPath := filepath.Join(c.bucket, path)
+	err := os.Remove(fullPath)
+	if err != nil {
+		return errors.New("Error Reading File: " + err.Error())
+	}
+	// Now remove subfolders if they're empty
+	removeEmptyDir(filepath.Dir(fullPath))
 	return nil
 }

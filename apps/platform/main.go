@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
@@ -67,7 +66,6 @@ func init() {
 	featureflagstore.RegisterFeatureFlagStore("platform", &ffsp.FeatureFlagStore{})
 
 	// Bundle Stores
-	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
 	bundlestore.RegisterBundleStore("system", &systembundlestore.SystemBundleStore{})
 	bundlestore.RegisterBundleStore("workspace", &workspacebundlestore.WorkspaceBundleStore{})
 	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})

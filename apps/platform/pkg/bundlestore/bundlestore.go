@@ -3,8 +3,6 @@ package bundlestore
 import (
 	"errors"
 	"io"
-	"log"
-	"os"
 
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -12,17 +10,6 @@ import (
 )
 
 var bundleStoreMap = map[string]BundleStore{}
-
-// System variables
-var BUNDLE_STORE_TYPE string
-
-func init() {
-	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_TYPE")
-	if !ok {
-		log.Fatal("Could not get environment variable: UESIO_BUNDLE_STORE_TYPE")
-	}
-	BUNDLE_STORE_TYPE = val
-}
 
 // RegisterBundleStore function
 func RegisterBundleStore(name string, store BundleStore) {
@@ -85,7 +72,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return GetBundleStoreByType("system")
 	}
 
-	return GetBundleStoreByType(BUNDLE_STORE_TYPE)
+	return GetBundleStoreByType("platform")
 }
 
 // DecodeYAML function

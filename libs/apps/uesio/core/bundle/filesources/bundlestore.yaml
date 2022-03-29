@@ -1,0 +1,4 @@
+name: bundlestore
+type: ${uesio/core.platform_bundlestore_type}
+credentials: ${uesio/core.platform_bundlestore_credentials}
+public: true

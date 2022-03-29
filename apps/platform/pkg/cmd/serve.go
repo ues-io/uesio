@@ -87,7 +87,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sr := r.PathPrefix("/site").Subrouter()
 
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controller.UploadUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/delete/{fileid}", controller.DeleteUserFile, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/userfiles/delete/{fileid:.*}", controller.DeleteUserFile, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
@@ -165,6 +165,7 @@ func serve(cmd *cobra.Command, args []string) {
 	// Verify that required environment variables are set.
 	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
 	platformFSType := os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE")
+	platformBSType := os.Getenv("UESIO_PLATFORM_BUNDLESTORE_TYPE")
 
 	if platformDSType == "" {
 		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
@@ -172,6 +173,10 @@ func serve(cmd *cobra.Command, args []string) {
 
 	if platformFSType == "" {
 		logger.Log("No Platform File Source Type Specified", logger.ERROR)
+	}
+
+	if platformBSType == "" {
+		logger.Log("No Platform Bundle Source Type Specified", logger.ERROR)
 	}
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")

@@ -34,6 +34,7 @@ var siteTenantIDKey = "uesio.sitetenantid"
 
 func (c *Credentials) SetTenantID(session *sess.Session) {
 	(*c)[tenantIDKey] = session.GetTenantID()
+	(*c)[siteTenantIDKey] = session.GetSiteTenantID()
 }
 
 func (c *Credentials) GetTenantID() string {
@@ -49,10 +50,6 @@ func (c *Credentials) GetTenantIDForCollection(collectionKey string) string {
 	return c.GetTenantID()
 }
 
-func (c *Credentials) SetSiteTenantID(session *sess.Session) {
-	(*c)[siteTenantIDKey] = session.GetSiteTenantID()
-}
-
 func (c *Credentials) GetSiteTenantID() string {
 	return (*c)[siteTenantIDKey]
 }
@@ -63,7 +60,6 @@ func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
 
 	// Always add the tenant id to credentials
 	credmap.SetTenantID(session)
-	credmap.SetSiteTenantID(session)
 
 	mergedKey, err := configstore.Merge(key, session)
 	if err != nil {

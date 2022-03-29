@@ -127,7 +127,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
-	session, err := auth.GetHeadlessSession()
+	session, err := auth.GetStudioAdminSession()
 	if err != nil {
 		logger.LogError(err)
 		return

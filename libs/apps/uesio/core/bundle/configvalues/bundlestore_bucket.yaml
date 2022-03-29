@@ -1,0 +1,4 @@
+name: bundlestore_bucket
+managedBy: app
+store: environment
+public: true

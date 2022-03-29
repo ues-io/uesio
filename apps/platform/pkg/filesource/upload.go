@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -118,19 +117,11 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, connection adapt.
 		return nil, err
 	}
 
-	fileAdapter, err := fileadapt.GetFileAdapter(fs.Type, session)
+	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := adapt.GetCredentials(fs.Credentials, session)
-	if err != nil {
-		return nil, err
-	}
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
-	if err != nil {
-		return nil, err
-	}
-	err = fileAdapter.Upload(fileBody, bucket, path, credentials)
+	err = conn.Upload(fileBody, path)
 	if err != nil {
 		return nil, err
 	}

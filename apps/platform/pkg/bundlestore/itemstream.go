@@ -42,9 +42,3 @@ type ReadItemStream struct {
 	Path     string
 	Data     io.ReadCloser
 }
-
-// ItemResponse struct
-type ItemResponse struct {
-	io.Reader
-	io.Closer
-}

@@ -4,9 +4,9 @@ package meta
 
 // UserFileMetadata struct
 type UserFileMetadata struct {
-	ID               string    `uesio:"uesio/core.id" json:"uesio.id"`
+	ID               string    `uesio:"uesio/core.id" json:"uesio/core.id"`
 	CollectionID     string    `uesio:"uesio/core.collectionid" json:"-"`
-	MimeType         string    `uesio:"uesio/core.mimetype" json:"uesio.mimetype"`
+	MimeType         string    `uesio:"uesio/core.mimetype" json:"uesio/core.mimetype"`
 	FieldID          string    `uesio:"uesio/core.fieldid" json:"-"`
 	FileCollectionID string    `uesio:"uesio/core.filecollectionid" json:"-"`
 	Name             string    `uesio:"uesio/core.name" json:"-"`
@@ -14,12 +14,12 @@ type UserFileMetadata struct {
 	Path             string    `uesio:"uesio/core.path" json:"-"`
 	RecordID         string    `uesio:"uesio/core.recordid" json:"-"`
 	Type             string    `uesio:"uesio/core.type" json:"-"`
-	CreatedBy        *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner            *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy        *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta         *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy        *User     `yaml:"-" uesio:"uesio/core.createdby" json:"-"`
+	Owner            *User     `yaml:"-" uesio:"uesio/core.owner" json:"-"`
+	UpdatedBy        *User     `yaml:"-" uesio:"uesio/core.updatedby" json:"-"`
+	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat" json:"-"`
+	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat" json:"-"`
+	itemMeta         *ItemMeta `yaml:"-" uesio:"-" json:"-"`
 }
 
 // GetCollectionName function

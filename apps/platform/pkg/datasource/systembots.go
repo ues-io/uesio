@@ -116,11 +116,17 @@ func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session 
 
 	for i := range ufmc {
 		ufm := ufmc[i]
-		adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&ufm, session)
+
+		_, fs, err := fileadapt.GetFileSourceAndCollection(ufm.FileCollectionID, session)
 		if err != nil {
 			return err
 		}
-		err = adapter.Delete(bucket, ufm.Path, credentials)
+		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+		if err != nil {
+			return err
+		}
+
+		err = conn.Delete(ufm.Path)
 		if err != nil {
 			return err
 		}

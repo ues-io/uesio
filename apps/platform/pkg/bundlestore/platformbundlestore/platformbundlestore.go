@@ -3,16 +3,14 @@ package platformbundlestore
 import (
 	"errors"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -22,38 +20,30 @@ import (
 type PlatformBundleStore struct {
 }
 
-// System variables
-var BUNDLE_STORE_BUCKET_NAME string
+func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
 
-func init() {
-	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_BUCKET_NAME")
-	if !ok {
-		log.Fatal("Could not get environment variable: UESIO_BUNDLE_STORE_BUCKET_NAME")
+	fakeSession, err := auth.GetStudioAdminSession()
+	if err != nil {
+		return nil, err
 	}
-	BUNDLE_STORE_BUCKET_NAME = val
+
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", fakeSession)
+
 }
 
 func getBasePath(namespace, version string) string {
-	// We're ignoring the version here because we always get the latest
 	return filepath.Join(namespace, version, "bundle")
 }
 
 func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (io.ReadCloser, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
-	fileAdapter := &s3.FileAdapter{}
-
-	fakeSession, err := auth.GetHeadlessSession()
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return nil, err
 	}
 
-	credentials, err := adapt.GetCredentials("uesio/core.aws", fakeSession)
-	if err != nil {
-		return nil, err
-	}
-
-	return fileAdapter.Download(BUNDLE_STORE_BUCKET_NAME, filePath, credentials)
+	return conn.Download(filePath)
 
 }
 
@@ -118,19 +108,18 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}
 
-	fileAdapter := &s3.FileAdapter{}
-	credentials, err := adapt.GetCredentials("uesio.aws", session)
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return err
 	}
 
-	s3Result, err := fileAdapter.List(BUNDLE_STORE_BUCKET_NAME, basePath, credentials)
+	paths, err := conn.List(basePath)
 	if err != nil {
 		return err
 	}
 
-	for _, fileMetadata := range s3Result.Contents {
-		path := *fileMetadata.Key
+	for _, path := range paths {
+
 		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
@@ -192,14 +181,12 @@ func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemS
 func storeItem(namespace string, version string, itemStream bundlestore.ItemStream, session *sess.Session) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 
-	fileAdapter := &s3.FileAdapter{}
-
-	credentials, err := adapt.GetCredentials("uesio.aws", session)
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return err
 	}
 
-	err = fileAdapter.Upload(itemStream.File, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
+	err = conn.Upload(itemStream.File, fullFilePath)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}

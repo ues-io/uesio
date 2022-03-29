@@ -6,22 +6,16 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) List(bucket, path string, credentials *adapt.Credentials) (*s3.ListObjectsV2Output, error) {
-	ctx := context.Background()
-	client, err := getS3Client(ctx, credentials)
-	if err != nil {
-		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
-	}
+func (c *Connection) List(path string) ([]string, error) {
 
 	input := &s3.ListObjectsV2Input{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(c.bucket),
 		Prefix: aws.String(path),
 	}
 
-	result, err := client.ListObjectsV2(ctx, input)
+	result, err := c.client.ListObjectsV2(context.Background(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -30,6 +24,12 @@ func (a *FileAdapter) List(bucket, path string, credentials *adapt.Credentials) 
 		return nil, errors.New("S3 Limit exceeded")
 	}
 
-	return result, nil
+	var paths = make([]string, len(result.Contents))
+
+	for i, fileMetadata := range result.Contents {
+		paths[i] = *fileMetadata.Key
+	}
+
+	return paths, nil
 
 }
