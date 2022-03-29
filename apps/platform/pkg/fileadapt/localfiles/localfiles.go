@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -27,27 +28,53 @@ func removeEmptyDir(path string) {
 }
 
 func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
-	return &Connection{}, nil
+	bucket, ok := (*credentials)["bucket"]
+	if !ok {
+		return nil, errors.New("No bucket provided in credentials")
+	}
+	return &Connection{
+		bucket: bucket,
+	}, nil
 }
 
 type Connection struct {
 	credentials *adapt.Credentials
+	bucket      string
 }
 
-func (c *Connection) List(path string) ([]string, error) {
-	return nil, nil
+func (c *Connection) List(dirPath string) ([]string, error) {
+	paths := []string{}
+	basePath := filepath.Join(c.bucket, dirPath) + string(os.PathSeparator)
+	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			// Ignore walking errors
+			return nil
+		}
+		if path == basePath {
+			return nil
+		}
+		paths = append(paths, strings.TrimPrefix(path, basePath))
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return paths, nil
 }
 
 func (c *Connection) Upload(fileData io.Reader, path string) error {
 
-	directory := filepath.Dir(path)
+	fullPath := filepath.Join(c.bucket, path)
+
+	directory := filepath.Dir(fullPath)
 
 	err := os.MkdirAll(directory, 0744)
 	if err != nil {
 		return err
 	}
 
-	outFile, err := os.Create(path)
+	outFile, err := os.Create(fullPath)
 	if err != nil {
 		return errors.New("Error Creating File: " + err.Error())
 	}
@@ -61,7 +88,8 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 }
 
 func (c *Connection) Download(path string) (io.ReadCloser, error) {
-	outFile, err := os.Open(path)
+	fullPath := filepath.Join(c.bucket, path)
+	outFile, err := os.Open(fullPath)
 	if err != nil {
 		return nil, errors.New("Error Reading File: " + err.Error())
 	}
@@ -69,11 +97,12 @@ func (c *Connection) Download(path string) (io.ReadCloser, error) {
 }
 
 func (c *Connection) Delete(path string) error {
-	err := os.Remove(path)
+	fullPath := filepath.Join(c.bucket, path)
+	err := os.Remove(fullPath)
 	if err != nil {
 		return errors.New("Error Reading File: " + err.Error())
 	}
 	// Now remove subfolders if they're empty
-	removeEmptyDir(filepath.Dir(path))
+	removeEmptyDir(filepath.Dir(fullPath))
 	return nil
 }

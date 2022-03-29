@@ -30,7 +30,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.CollectionID, session)
+	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.FileCollectionID, session)
 	if err != nil {
 		return nil, nil, err
 	}
