@@ -11,7 +11,7 @@ type UserAccessTokenCollection []UserAccessToken
 
 // GetName function
 func (uatc *UserAccessTokenCollection) GetName() string {
-	return "uesio/studio.useraccesstokens"
+	return "uesio/studio.useraccesstoken"
 }
 
 // GetBundleFolderName function
