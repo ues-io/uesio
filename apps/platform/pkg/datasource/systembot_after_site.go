@@ -7,8 +7,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) {
-	clearHostCacheForSite(request, connection, session)
+func runSiteAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return clearHostCacheForSite(request, connection, session)
 }
 
 func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {

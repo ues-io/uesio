@@ -128,18 +128,26 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
+
+	var botFunction BotFunc
+
 	switch request.CollectionName {
 	case "uesio/core.user":
-		runUserAfterSaveBot(request, connection, session)
+		botFunction = runUserAfterSaveBot
 	case "uesio/studio.site":
-		runSiteAfterSaveBot(request, connection, session)
+		botFunction = runSiteAfterSaveBot
 	case "uesio/studio.sitedomain":
-		runDomainAfterSaveSiteBot(request, connection, session)
+		botFunction = runDomainAfterSaveSiteBot
+	}
+
+	err := botFunction(request, connection, session)
+	if err != nil {
+		return err
 	}
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err = runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI, session)
 	}, session)
 	if err != nil {

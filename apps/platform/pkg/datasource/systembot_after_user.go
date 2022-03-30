@@ -6,8 +6,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runUserAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) {
-	clearUserCache(request, connection, session)
+func runUserAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return clearUserCache(request, connection, session)
 }
 
 func clearUserCache(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
