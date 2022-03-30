@@ -19,6 +19,8 @@ type BotDialect interface {
 	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI, session *sess.Session) error
 }
 
+type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+
 var botDialectMap = map[string]BotDialect{}
 
 // RegisterBotDialect function
@@ -89,27 +91,25 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
+
+	var botFunction BotFunc
+
 	switch request.CollectionName {
 	case "uesio/core.userfile":
-		err := runUserFileBeforeSaveBot(request, connection, session)
-		if err != nil {
-			return err
-		}
+		botFunction = runUserFileBeforeSaveBot
 	case "uesio/studio.field":
-		err := runFieldBeforeSaveBot(request, connection, session)
-		if err != nil {
-			return err
-		}
+		botFunction = runFieldBeforeSaveBot
 	case "uesio/studio.view":
-		err := runViewBeforeSaveBot(request, connection, session)
-		if err != nil {
-			return err
-		}
+		botFunction = runViewBeforeSaveBot
+	}
+	err := botFunction(request, connection, session)
+	if err != nil {
+		return err
 	}
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err = runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI, session)
 	}, session)
 	if err != nil {
