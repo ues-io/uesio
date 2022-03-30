@@ -6,7 +6,7 @@ import operations from "./operations"
 const USER_BAND = "user"
 
 interface LoginSignal extends SignalDefinition {
-	authMethod: string
+	authSource: string
 	token: string
 }
 
@@ -14,7 +14,7 @@ interface LoginSignal extends SignalDefinition {
 const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
-			operations.login(context, signal.authMethod, signal.token),
+			operations.login(context, signal.authSource, signal.token),
 		label: "Login",
 		properties: () => [
 			{

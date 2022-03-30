@@ -4,27 +4,27 @@
 			"id": "ben"
 		},
 		"federationid": "ben",
-		"authmethod": "uesio/core.mock"
+		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
 			"id": "abel"
 		},
 		"federationid": "abel",
-		"authmethod": "uesio/core.mock"
+		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
 			"id": "wessel"
 		},
 		"federationid": "wessel",
-		"authmethod": "uesio/core.mock"
+		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
 			"id": "gregg"
 		},
 		"federationid": "gregg",
-		"authmethod": "uesio/core.mock"
+		"authsource": "uesio/core.mock"
 	}
 ]

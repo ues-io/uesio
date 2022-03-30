@@ -1,5 +1,5 @@
 name: type
 type: SELECT
-selectList: uesio/studio.authmethodtypes
+selectList: uesio/studio.authsourcetypes
 label: Type
 required: true

@@ -1,4 +1,4 @@
-name: authmethodtypes
+name: authsourcetypes
 options:
   - label: "Cognito"
     value: "cognito"

@@ -61,6 +61,10 @@ func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
 	// Always add the tenant id to credentials
 	credmap.SetTenantID(session)
 
+	if key == "" {
+		return &credmap, nil
+	}
+
 	mergedKey, err := configstore.Merge(key, session)
 	if err != nil {
 		return nil, err

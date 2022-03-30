@@ -14,9 +14,9 @@ class PlatformAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
-	login = (authMethod: string, request: LoginRequest) =>
+	login = (authSource: string, request: LoginRequest) =>
 		this.dispatcher((dispatch, getState, platform) =>
-			platform.login(authMethod, request)
+			platform.login(authSource, request)
 		)
 
 	loadData = (context: Context, request: LoadRequestBatch) =>

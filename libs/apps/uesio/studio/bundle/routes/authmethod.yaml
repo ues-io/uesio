@@ -1,4 +1,0 @@
-name: authmethod
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/authmethods/{authmethodname}
-view: uesio/studio.authmethod
-theme: uesio/studio.default

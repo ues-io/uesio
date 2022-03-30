@@ -1,4 +1,4 @@
-name: authmethods
+name: authsources
 definition:
   # Wires are how we pull in data
   wires:
@@ -13,8 +13,8 @@ definition:
       conditions:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
-    authmethods:
-      collection: uesio/studio.authmethod
+    authsources:
+      collection: uesio/studio.authsource
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -24,8 +24,8 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    newauthmethod:
-      collection: uesio/studio.authmethod
+    newauthsource:
+      collection: uesio/studio.authsource
       fields:
         uesio/core.id:
         uesio/studio.name:
@@ -57,7 +57,7 @@ definition:
                     uesio.context:
                       wire: workspaces
                     params:
-                      itemType: authmethods
+                      itemType: authsources
                       itemIcon: dynamic_feed
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
@@ -67,7 +67,7 @@ definition:
                       wire: workspaces
                     view: uesio/studio.workspacenav
                     params:
-                      selected: authmethods
+                      selected: authsources
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -83,20 +83,20 @@ definition:
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
-                                    panel: newAuthMethod
+                                    panel: newAuthSource
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: authmethodsDeck
-                          wire: authmethods
+                          id: authsourcesDeck
+                          wire: authsources
                           uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/authmethods/${uesio/studio.name}"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/authsources/${uesio/studio.name}"
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/studio.type} - ${uesio/studio.name}
@@ -106,15 +106,15 @@ definition:
                                       color: "#ccc"
                                       text: dynamic_feed
   panels:
-    newAuthMethod:
+    newAuthSource:
       uesio.type: uesio/io.dialog
       title: Create a New Data Source
       width: 400px
       height: 500px
       components:
         - uesio/io.list:
-            id: newauthmethod
-            wire: newauthmethod
+            id: newauthsource
+            wire: newauthsource
             mode: EDIT
             components:
               - uesio/io.field:
@@ -130,12 +130,12 @@ definition:
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newauthmethod"
+                  - "newauthsource"
               - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/$Param{workspacename}/authmethods/${uesio/studio.name}"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/authsources/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"
             signals:
               - signal: "panel/TOGGLE"
-                panel: "newAuthMethod"
+                panel: "newAuthSource"

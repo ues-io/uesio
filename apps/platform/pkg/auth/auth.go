@@ -37,10 +37,33 @@ func init() {
 	session.Global = session.NewCookieManagerOptions(store, options)
 }
 
-// AuthenticationType interface
 type AuthenticationType interface {
+	GetAuthConnection(*adapt.Credentials) (AuthConnection, error)
+	//Verify(string, *sess.Session) error
+	//Decode(string, *sess.Session) (*AuthenticationClaims, error)
+}
+
+type AuthConnection interface {
 	Verify(string, *sess.Session) error
 	Decode(string, *sess.Session) (*AuthenticationClaims, error)
+}
+
+func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
+	authSource, err := getAuthSource(authSourceID, session)
+	if err != nil {
+		return nil, err
+	}
+
+	authType, err := getAuthType(authSource.Type)
+	if err != nil {
+		return nil, err
+	}
+	credentials, err := adapt.GetCredentials(authSource.Credentials, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return authType.GetAuthConnection(credentials)
 }
 
 var authTypeMap = map[string]AuthenticationType{}
@@ -218,21 +241,21 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	return &user, nil
 }
 
-func getAuthMethod(session *sess.Session, key string) (*meta.AuthMethod, error) {
-	authMethod, err := meta.NewAuthMethod(key)
+func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {
+	authSource, err := meta.NewAuthSource(key)
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(authMethod, session)
+	err = bundle.Load(authSource, session)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return authMethod, nil
+	return authSource, nil
 }
 
-func GetLoginMethod(claims *AuthenticationClaims, authMethod *meta.AuthMethod, session *sess.Session) (*meta.LoginMethod, error) {
+func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod
 	err := datasource.PlatformLoadOne(
@@ -240,8 +263,8 @@ func GetLoginMethod(claims *AuthenticationClaims, authMethod *meta.AuthMethod, s
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: "uesio/core.auth_method",
-					Value: authMethod.GetKey(),
+					Field: "uesio/core.auth_source",
+					Value: authSourceID,
 				},
 				{
 					Field: "uesio/core.federation_id",
@@ -254,7 +277,7 @@ func GetLoginMethod(claims *AuthenticationClaims, authMethod *meta.AuthMethod, s
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find login method for claims: "+claims.Subject+":"+authMethod.ID, logger.INFO)
+			logger.Log("Could not find login method for claims: "+claims.Subject+":"+authSourceID, logger.INFO)
 			return nil, nil
 		}
 		return nil, err

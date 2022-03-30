@@ -119,8 +119,8 @@ const check = async (): Promise<User | null> => {
 	return null
 }
 
-const login = async (authMethod: string): Promise<User> => {
-	const handler = authHandlers[authMethod]
+const login = async (authSource: string): Promise<User> => {
+	const handler = authHandlers[authSource]
 	if (!handler) {
 		throw new Error("That auth type is not yet supported.")
 	}
@@ -128,7 +128,7 @@ const login = async (authMethod: string): Promise<User> => {
 
 	const cookie = await getCookie()
 
-	const [namespace, name] = component.path.parseKey(authMethod)
+	const [namespace, name] = component.path.parseKey(authSource)
 
 	const response = await post(
 		`site/auth/${namespace}/${name}/tokenlogin`,

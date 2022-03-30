@@ -30,9 +30,9 @@ async function responseRedirect(
 }
 
 const login =
-	(context: Context, authMethod: string, token: string): ThunkFunc =>
+	(context: Context, authSource: string, token: string): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		const response = await platform.login(authMethod, {
+		const response = await platform.login(authSource, {
 			token,
 		})
 		dispatch(setUser(response.user))

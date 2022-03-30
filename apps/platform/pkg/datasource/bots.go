@@ -102,14 +102,16 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	case "uesio/studio.view":
 		botFunction = runViewBeforeSaveBot
 	}
-	err := botFunction(request, connection, session)
-	if err != nil {
-		return err
+	if botFunction != nil {
+		err := botFunction(request, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err = runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI, session)
 	}, session)
 	if err != nil {
@@ -140,14 +142,16 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runDomainAfterSaveSiteBot
 	}
 
-	err := botFunction(request, connection, session)
-	if err != nil {
-		return err
+	if botFunction != nil {
+		err := botFunction(request, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err = runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI, session)
 	}, session)
 	if err != nil {

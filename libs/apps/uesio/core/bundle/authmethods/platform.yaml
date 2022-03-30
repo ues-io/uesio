@@ -1,4 +1,0 @@
-name: platform
-type: ${uesio/core.platform_authmethod_type}
-credentials: ${uesio/core.platform_authmethod_credentials}
-public: true
