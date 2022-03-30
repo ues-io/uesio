@@ -19,6 +19,8 @@ type BotDialect interface {
 	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI, session *sess.Session) error
 }
 
+type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+
 var botDialectMap = map[string]BotDialect{}
 
 // RegisterBotDialect function
@@ -89,14 +91,25 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
+
+	var botFunction BotFunc
+
 	switch request.CollectionName {
 	case "uesio/core.userfile":
-		cleanUserFiles(request, connection, session)
+		botFunction = runUserFileBeforeSaveBot
+	case "uesio/studio.field":
+		botFunction = runFieldBeforeSaveBot
+	case "uesio/studio.view":
+		botFunction = runViewBeforeSaveBot
+	}
+	err := botFunction(request, connection, session)
+	if err != nil {
+		return err
 	}
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err = runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI, session)
 	}, session)
 	if err != nil {
@@ -115,18 +128,26 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
+
+	var botFunction BotFunc
+
 	switch request.CollectionName {
 	case "uesio/core.user":
-		clearUserCache(request, connection, session)
-	case "uesio/studio.sites":
-		clearHostCacheForSite(request, connection, session)
-	case "uesio/studio.sitedomains":
-		clearHostCacheForDomain(request, connection, session)
+		botFunction = runUserAfterSaveBot
+	case "uesio/studio.site":
+		botFunction = runSiteAfterSaveBot
+	case "uesio/studio.sitedomain":
+		botFunction = runDomainAfterSaveSiteBot
+	}
+
+	err := botFunction(request, connection, session)
+	if err != nil {
+		return err
 	}
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err = runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI, session)
 	}, session)
 	if err != nil {
