@@ -7,8 +7,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) {
-	cleanUserFiles(request, connection, session)
+func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return cleanUserFiles(request, connection, session)
 }
 
 func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {

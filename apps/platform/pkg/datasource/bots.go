@@ -91,11 +91,20 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// to use regular bots here
 	switch request.CollectionName {
 	case "uesio/core.userfile":
-		runUserFileBeforeSaveBot(request, connection, session)
+		err := runUserFileBeforeSaveBot(request, connection, session)
+		if err != nil {
+			return err
+		}
 	case "uesio/studio.field":
-		runFieldBeforeSaveBot(request, connection, session)
+		err := runFieldBeforeSaveBot(request, connection, session)
+		if err != nil {
+			return err
+		}
 	case "uesio/studio.view":
-		runViewBeforeSaveBot(request, connection, session)
+		err := runViewBeforeSaveBot(request, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)

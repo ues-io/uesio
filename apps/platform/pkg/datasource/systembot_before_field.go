@@ -1,59 +1,51 @@
 package datasource
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) {
+func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	return fieldCheck(request, connection, session)
+}
+
+func isValidField(change adapt.ChangeItem) error {
+
+	ftype, err := change.GetField("uesio/studio.type")
+
+	if err != nil {
+		return errors.New("Field: Type is required")
+	}
+
+	if ftype == "REFERENCE" {
+		referencedCollection, _ := change.GetField("uesio/studio.reference")
+		if referencedCollection == nil {
+			return errors.New("Field: Referenced Collection is required")
+		}
+	}
+
+	return nil
 
 }
 
 func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	println(request)
+	for i := range *request.Inserts {
+		err := isValidField((*request.Inserts)[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	for i := range *request.Updates {
+		err := isValidField((*request.Updates)[i])
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 
-	// ids := []string{}
-	// for i := range *request.Deletes {
-	// 	ids = append(ids, (*request.Deletes)[i].IDValue)
-	// }
-
-	// if len(ids) == 0 {
-	// 	return nil
-	// }
-	// // Load all the userfile records
-	// ufmc := meta.UserFileMetadataCollection{}
-	// err := PlatformLoad(&ufmc, &PlatformLoadOptions{
-	// 	Conditions: []adapt.LoadRequestCondition{
-	// 		{
-	// 			Field:    adapt.ID_FIELD,
-	// 			Value:    ids,
-	// 			Operator: "IN",
-	// 		},
-	// 	},
-	// 	Connection: connection,
-	// }, session)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// for i := range ufmc {
-	// 	ufm := ufmc[i]
-
-	// 	_, fs, err := fileadapt.GetFileSourceAndCollection(ufm.FileCollectionID, session)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	err = conn.Delete(ufm.Path)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
-	// return nil
 }
