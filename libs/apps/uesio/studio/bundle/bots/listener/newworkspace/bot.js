@@ -7,7 +7,7 @@ function newworkspace(bot) {
 	var UesioVersion =
 		"uesio/core_" + bot.studio.getBundleLastVersion("uesio/core")
 
-	bot.save("uesio/studio.workspaces", [
+	bot.save("uesio/studio.workspace", [
 		{
 			"uesio/studio.name": workspace,
 			"uesio/studio.app": {
@@ -16,7 +16,7 @@ function newworkspace(bot) {
 		},
 	])
 
-	bot.save("uesio/studio.bundledependencies", [
+	bot.save("uesio/studio.bundledependency", [
 		{
 			"uesio/studio.bundle": {
 				"uesio/core.id": UesioVersion,
