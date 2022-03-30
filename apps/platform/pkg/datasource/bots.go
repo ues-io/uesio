@@ -91,7 +91,11 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	// to use regular bots here
 	switch request.CollectionName {
 	case "uesio/core.userfile":
-		cleanUserFiles(request, connection, session)
+		runUserFileBeforeSaveBot(request, connection, session)
+	case "uesio/studio.field":
+		runFieldBeforeSaveBot(request, connection, session)
+	case "uesio/studio.view":
+		runViewBeforeSaveBot(request, connection, session)
 	}
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
@@ -117,11 +121,11 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	// to use regular bots here
 	switch request.CollectionName {
 	case "uesio/core.user":
-		clearUserCache(request, connection, session)
-	case "uesio/studio.sites":
-		clearHostCacheForSite(request, connection, session)
-	case "uesio/studio.sitedomains":
-		clearHostCacheForDomain(request, connection, session)
+		runUserAfterSaveBot(request, connection, session)
+	case "uesio/studio.site":
+		runSiteAfterSaveBot(request, connection, session)
+	case "uesio/studio.sitedomain":
+		runDomainAfterSaveSiteBot(request, connection, session)
 	}
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
