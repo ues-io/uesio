@@ -146,7 +146,7 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
 + <button onClick={(): void => {
 +   uesio.signal.run(
         {
-            signal: "user/LOGIN",
+            signal: "user/LOGINTOKEN",
             type: "mock",
             token: "mockToken",
         },

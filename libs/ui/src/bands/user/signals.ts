@@ -12,9 +12,9 @@ interface LoginSignal extends SignalDefinition {
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
-	[`${USER_BAND}/LOGIN`]: {
+	[`${USER_BAND}/LOGINTOKEN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
-			operations.login(context, signal.authSource, signal.token),
+			operations.loginToken(context, signal.authSource, signal.token),
 		label: "Login",
 		properties: () => [
 			{

@@ -333,7 +333,7 @@ const platform = {
 		})
 		return response.json()
 	},
-	login: async (
+	loginToken: async (
 		authSource: string,
 		requestBody: LoginRequest
 	): Promise<LoginResponse> => {
