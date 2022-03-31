@@ -25,7 +25,7 @@ definition:
                     avatar:
                       - uesio/io.text:
                           uesio.variant: uesio/io.icon
-                          color: "#ccc"
+                          color: "#cccccc"
                           text: emoji_people
     - uesio/io.box:
         uesio.variant: uesio/io.section

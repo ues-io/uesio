@@ -102,6 +102,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	case "uesio/studio.view":
 		botFunction = runViewBeforeSaveBot
 	}
+
 	if botFunction != nil {
 		err := botFunction(request, connection, session)
 		if err != nil {
