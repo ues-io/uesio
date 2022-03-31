@@ -111,7 +111,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 				const accessToken = result.getIdToken().getJwtToken()
 				uesio.signal.run(
 					{
-						signal: "user/LOGIN",
+						signal: "user/LOGINTOKEN",
 						type: "cognito",
 						token: accessToken,
 					},

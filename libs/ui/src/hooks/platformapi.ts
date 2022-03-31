@@ -1,5 +1,4 @@
 import { Dispatcher } from "../store/store"
-import { LoginRequest } from "../auth/auth"
 import { Uesio } from "./hooks"
 import { LoadRequestBatch } from "../load/loadrequest"
 import { Context } from "../context/context"
@@ -13,11 +12,6 @@ class PlatformAPI {
 
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
-
-	login = (authSource: string, request: LoginRequest) =>
-		this.dispatcher((dispatch, getState, platform) =>
-			platform.login(authSource, request)
-		)
 
 	loadData = (context: Context, request: LoadRequestBatch) =>
 		this.dispatcher((dispatch, getState, platform) =>
