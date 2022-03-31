@@ -310,10 +310,10 @@ definition:
                 selected:
                   - type: paramIsValue
                     param: selected
-                    value: authmethods
+                    value: authsources
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/authmethods
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/authsources
               content:
                 - uesio/io.text:
                     text: Auth Methods

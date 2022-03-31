@@ -59,12 +59,12 @@ views:
   uesio/studio.translation: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
-  uesio/studio.authmethods: true
-  uesio/studio.authmethod: true
+  uesio/studio.authsources: true
+  uesio/studio.authsource: true
 
 routes:
-  uesio/studio.authmethods: true
-  uesio/studio.authmethod: true
+  uesio/studio.authsources: true
+  uesio/studio.authsource: true
   uesio/studio.addbundle: true
   uesio/studio.appdetail: true
   uesio/studio.bot: true
@@ -121,7 +121,7 @@ routes:
   uesio/studio.collectionexportbatches: true
 files:
 collections:
-  uesio/studio.authmethod: true
+  uesio/studio.authsource: true
   uesio/studio.app: true
   uesio/studio.bot: true
   uesio/studio.bundledependency: true

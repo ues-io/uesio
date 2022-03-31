@@ -2,17 +2,26 @@ package google
 
 import (
 	verifier "github.com/futurenda/google-auth-id-token-verifier"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Auth struct
-type Auth struct {
+type Auth struct{}
+
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+
+	return &Connection{
+		credentials: credentials,
+	}, nil
 }
 
-// Verify function
-func (a *Auth) Verify(token string, session *sess.Session) error {
+type Connection struct {
+	credentials *adapt.Credentials
+}
+
+func (c *Connection) Verify(token string, session *sess.Session) error {
 	v := verifier.Verifier{}
 
 	aud, err := configstore.GetValueFromKey("uesio.google_client_id", session)
@@ -25,8 +34,7 @@ func (a *Auth) Verify(token string, session *sess.Session) error {
 	})
 }
 
-// Decode function
-func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	claimSet, err := verifier.Decode(token)
 	if err != nil {
 		return nil, err

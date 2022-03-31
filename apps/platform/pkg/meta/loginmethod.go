@@ -3,7 +3,7 @@ package meta
 type LoginMethod struct {
 	ID           string    `uesio:"uesio/core.id"`
 	FederationID string    `uesio:"uesio/core.federation_id"`
-	AuthMethod   string    `uesio:"uesio/core.auth_method"`
+	AuthSource   string    `uesio:"uesio/core.auth_source"`
 	User         *User     `uesio:"uesio/core.user"`
 	itemMeta     *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy    *User     `yaml:"-" uesio:"uesio/core.createdby"`

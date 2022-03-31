@@ -1,0 +1,4 @@
+name: authsource
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/authsources/{authsourcename}
+view: uesio/studio.authsource
+theme: uesio/studio.default

@@ -26,6 +26,9 @@ func GetRedisConn() redis.Conn {
 }
 
 func DeleteKeys(keys []string) error {
+	if len(keys) == 0 {
+		return nil
+	}
 	conn := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)

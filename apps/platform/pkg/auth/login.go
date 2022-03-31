@@ -7,27 +7,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func TokenLogin(loginType, token string, session *sess.Session) (*meta.User, error) {
+func TokenLogin(authSourceID, token string, session *sess.Session) (*meta.User, error) {
 
-	// 1. Get the authentication method and its type
-	authMethod, err := getAuthMethod(session, loginType)
+	conn, err := GetAuthConnection(authSourceID, session)
 	if err != nil {
-		return nil, errors.New("authmethod not found")
-	}
-
-	authType, err := getAuthType(authMethod.Type)
-	if err != nil {
-		return nil, errors.New("no handler found for this authmethod")
+		return nil, err
 	}
 
 	// 2. Verify
-	err = authType.Verify(token, session)
+	err = conn.Verify(token, session)
 	if err != nil {
 		return nil, errors.New("JWT Verification failed: " + err.Error())
 	}
 
 	// 3. Decode
-	claims, err := authType.Decode(token, session)
+	claims, err := conn.Decode(token, session)
 	if err != nil {
 		return nil, errors.New("Cant parse JWT: " + err.Error())
 	}
@@ -42,7 +36,7 @@ func TokenLogin(loginType, token string, session *sess.Session) (*meta.User, err
 	})
 
 	// 4. Check for Existing User
-	loginmethod, err := GetLoginMethod(claims, authMethod, session)
+	loginmethod, err := GetLoginMethod(claims, authSourceID, session)
 	if err != nil {
 		return nil, errors.New("Failed Getting Login Method Data: " + err.Error())
 	}

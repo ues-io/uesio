@@ -2,21 +2,30 @@ package cognito
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Auth struct
-type Auth struct {
+type Auth struct{}
+
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+
+	return &Connection{
+		credentials: credentials,
+	}, nil
 }
 
-// Verify function
-func (a *Auth) Verify(token string, session *sess.Session) error {
+type Connection struct {
+	credentials *adapt.Credentials
+}
+
+func (c *Connection) Verify(token string, session *sess.Session) error {
 	return nil
 }
 
 // Decode function
-func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	// TODO: Actually verify the token
 	parser := jwt.Parser{}
 	tokenObj, _, err := parser.ParseUnverified(token, jwt.MapClaims{})
