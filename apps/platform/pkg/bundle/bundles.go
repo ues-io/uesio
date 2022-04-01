@@ -210,3 +210,34 @@ func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess
 	}
 	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
 }
+
+func IsValid(items []meta.BundleableItem, session *sess.Session) error {
+
+	// Coalate items into same namespace
+	coalated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := coalated[namespace]
+		if !ok {
+			coalated[namespace] = []meta.BundleableItem{}
+		}
+		coalated[namespace] = append(coalated[namespace], item)
+	}
+	for namespace, items := range coalated {
+		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		if err != nil {
+			fmt.Println("Failed IsValid: " + err.Error())
+			for _, item := range items {
+				fmt.Println(item.GetKey())
+			}
+			return err
+		}
+
+		_, err = bs.HasAnyItems(items, version, session)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
