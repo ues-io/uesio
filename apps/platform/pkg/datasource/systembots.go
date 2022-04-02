@@ -10,11 +10,11 @@ import (
 
 func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	keys := []string{}
-	for i := range *request.Updates {
-		keys = append(keys, (*request.Updates)[i].IDValue)
+	for i := range request.Updates {
+		keys = append(keys, request.Updates[i].IDValue)
 	}
-	for i := range *request.Deletes {
-		keys = append(keys, (*request.Deletes)[i].IDValue)
+	for i := range request.Deletes {
+		keys = append(keys, request.Deletes[i].IDValue)
 	}
 	return keys
 }

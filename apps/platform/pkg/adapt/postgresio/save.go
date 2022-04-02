@@ -104,7 +104,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	batch := &pgx.Batch{}
 
-	for _, change := range *request.Inserts {
+	for _, change := range request.Inserts {
 
 		marshaler := &DataMarshaler{
 			Data:     change.FieldChanges,
@@ -126,7 +126,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	}
 
-	for _, change := range *request.Updates {
+	for _, change := range request.Updates {
 
 		marshaler := &DataMarshaler{
 			Data:     change.FieldChanges,
@@ -147,10 +147,10 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		}
 	}
 
-	deleteCount := len(*request.Deletes)
+	deleteCount := len(request.Deletes)
 	if deleteCount > 0 {
 		deleteIDs := make([]string, deleteCount)
-		for i, delete := range *request.Deletes {
+		for i, delete := range request.Deletes {
 			deleteIDs[i] = fmt.Sprintf("%s:%s", collectionName, delete.IDValue)
 		}
 		fmt.Println(deleteIDs)

@@ -232,12 +232,7 @@ func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *s
 			return err
 		}
 
-		autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
-		if err != nil {
-			return err
-		}
-
-		err = Populate(op, collectionMetadata, autonumber, session)
+		err = Populate(op, connection, session)
 		if err != nil {
 			return err
 		}
