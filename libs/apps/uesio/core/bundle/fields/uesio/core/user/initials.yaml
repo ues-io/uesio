@@ -2,5 +2,5 @@ name: initials
 type: "FORMULA"
 label: "Initials"
 formula:
-  expression: "FIRST(uesio.firstname) + FIRST(uesio.lastname)"
+  expression: "FIRST(uesio/core.firstname) + FIRST(uesio/core.lastname)"
   returntype: "TEXT"
