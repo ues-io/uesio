@@ -8,6 +8,7 @@ import (
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -39,13 +40,12 @@ func init() {
 
 type AuthenticationType interface {
 	GetAuthConnection(*adapt.Credentials) (AuthConnection, error)
-	//Verify(string, *sess.Session) error
-	//Decode(string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 type AuthConnection interface {
 	Verify(string, *sess.Session) error
 	Decode(string, *sess.Session) (*AuthenticationClaims, error)
+	Login(string, string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -54,7 +54,7 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 		return nil, err
 	}
 
-	authType, err := getAuthType(authSource.Type)
+	authType, err := getAuthType(authSource.Type, session)
 	if err != nil {
 		return nil, err
 	}
@@ -68,10 +68,14 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 
 var authTypeMap = map[string]AuthenticationType{}
 
-func getAuthType(authTypeName string) (AuthenticationType, error) {
-	authType, ok := authTypeMap[authTypeName]
+func getAuthType(authTypeName string, session *sess.Session) (AuthenticationType, error) {
+	mergedType, err := configstore.Merge(authTypeName, session)
+	if err != nil {
+		return nil, err
+	}
+	authType, ok := authTypeMap[mergedType]
 	if !ok {
-		return nil, errors.New("No adapter found of this auth type: " + authTypeName)
+		return nil, errors.New("No adapter found of this auth type: " + mergedType)
 	}
 	return authType, nil
 }

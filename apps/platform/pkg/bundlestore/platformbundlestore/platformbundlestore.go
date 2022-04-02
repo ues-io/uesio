@@ -57,7 +57,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
+		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)

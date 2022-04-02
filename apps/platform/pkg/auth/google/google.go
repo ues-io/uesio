@@ -1,6 +1,8 @@
 package google
 
 import (
+	"errors"
+
 	verifier "github.com/futurenda/google-auth-id-token-verifier"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -46,4 +48,8 @@ func (c *Connection) Decode(token string, session *sess.Session) (*auth.Authenti
 		LastName:  claimSet.FamilyName,
 		Email:     claimSet.Email,
 	}, nil
+}
+
+func (c *Connection) Login(username string, password string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	return nil, errors.New("Login not Supported for google")
 }

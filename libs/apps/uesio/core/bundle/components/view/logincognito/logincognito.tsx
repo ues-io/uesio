@@ -104,26 +104,15 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	function logIn(username: string, password: string): void {
-		const authenticationDetails = cognito.getAuthDetails(username, password)
-		const cognitoUser = cognito.getUser(username, pool)
-		cognitoUser.authenticateUser(authenticationDetails, {
-			onSuccess: (result) => {
-				const accessToken = result.getIdToken().getJwtToken()
-				uesio.signal.run(
-					{
-						signal: "user/LOGINTOKEN",
-						type: "cognito",
-						token: accessToken,
-					},
-					context
-				)
+		uesio.signal.run(
+			{
+				signal: "user/LOGIN",
+				authSource: "uesio/core.platform",
+				username,
+				password,
 			},
-
-			onFailure: (err) => {
-				const message = err.message || JSON.stringify(err)
-				uesio.notification.addError(message, context, path)
-			},
-		})
+			context
+		)
 	}
 
 	function confirm(verificationCode: string): void {

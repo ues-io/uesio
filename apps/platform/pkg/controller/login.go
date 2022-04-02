@@ -13,14 +13,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// LoginRequest struct
-// TODO: remove Type
-type LoginRequest struct {
-	Type  string
+type LoginTokenRequest struct {
 	Token string
 }
 
-// LoginResponse struct
+type LoginRequest struct {
+	Username string
+	Password string
+}
+
 type LoginResponse struct {
 	User                   *UserMergeData `json:"user"`
 	RedirectPath           string         `json:"redirectPath,omitempty"`
@@ -28,33 +29,13 @@ type LoginResponse struct {
 	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
 }
 
-func TokenLogin(w http.ResponseWriter, r *http.Request) {
-
-	// 1. Parse the request object.
-	var loginRequest LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	vars := mux.Vars(r)
+func getAuthSourceID(vars map[string]string) string {
 	authSourceNamespace := vars["namespace"]
 	authSourceName := vars["name"]
+	return authSourceNamespace + "." + authSourceName
+}
 
-	// 3. Get siteName from context
-	s := middleware.GetSession(r)
-	site := s.GetSite()
-
-	user, err := auth.TokenLogin(authSourceNamespace+"."+authSourceName, loginRequest.Token, s)
-	// user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+func makeLoginResponse(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) {
 
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
@@ -93,5 +74,55 @@ func TokenLogin(w http.ResponseWriter, r *http.Request) {
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
 	})
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+
+	var loginRequest LoginRequest
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	s := middleware.GetSession(r)
+	site := s.GetSite()
+
+	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest.Username, loginRequest.Password, s)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	makeLoginResponse(w, r, user, site)
+
+}
+
+func TokenLogin(w http.ResponseWriter, r *http.Request) {
+
+	var loginTokenRequest LoginTokenRequest
+	err := json.NewDecoder(r.Body).Decode(&loginTokenRequest)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	// 3. Get siteName from context
+	s := middleware.GetSession(r)
+	site := s.GetSite()
+
+	user, err := auth.TokenLogin(getAuthSourceID(mux.Vars(r)), loginTokenRequest.Token, s)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	makeLoginResponse(w, r, user, site)
 
 }

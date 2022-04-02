@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	cloud.google.com/go/storage v1.16.0
-	github.com/aws/aws-sdk-go-v2 v1.8.0
+	github.com/aws/aws-sdk-go-v2 v1.16.2
 	github.com/aws/aws-sdk-go-v2/config v1.6.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.3.2
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.4.0
@@ -30,6 +30,9 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.9 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.15.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -50,7 +53,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.3.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.6.1 // indirect
-	github.com/aws/smithy-go v1.7.0 // indirect
+	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
