@@ -2,6 +2,7 @@ package mock
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -32,4 +33,8 @@ func (c *Connection) Decode(token string, session *sess.Session) (*auth.Authenti
 		return nil, err
 	}
 	return &claim, nil
+}
+
+func (c *Connection) Login(username string, password string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	return nil, errors.New("Login not Supported for mock")
 }
