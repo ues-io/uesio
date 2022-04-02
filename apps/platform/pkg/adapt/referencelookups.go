@@ -42,11 +42,7 @@ func HandleReferenceLookups(
 
 	for index, lookupResponse := range lookupRequests {
 		lookup := op.Options.Lookups[index]
-		err := mergeReferenceLookupResponse(lookupResponse, lookup, op.Inserts, collectionMetadata, metadata)
-		if err != nil {
-			return err
-		}
-		err = mergeReferenceLookupResponse(lookupResponse, lookup, op.Updates, collectionMetadata, metadata)
+		err := mergeReferenceLookupResponse(lookupResponse, lookup, op, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}
@@ -84,10 +80,10 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 
 	// Go through all the changes and get a list of the upsert keys
 	ids := []string{}
-	for _, change := range *request.Inserts {
+	request.LoopChanges(func(change *ChangeItem) error {
 		matchKeyValue, err := change.FieldChanges.GetField(lookup.RefField)
 		if err != nil {
-			continue
+			return nil
 		}
 
 		matchKeyValueItem := Item(matchKeyValue.(map[string]interface{}))
@@ -96,47 +92,21 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		// if so, we can just skip checking for it.
 		idFieldValue, err := matchKeyValueItem.GetField(ID_FIELD)
 		if err == nil && idFieldValue != "" {
-			continue
+			return nil
 		}
 
 		referenceKeyValue, err := templating.Execute(template, &matchKeyValueItem)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if referenceKeyValue == "" {
-			continue
+			return nil
 		}
 
 		ids = append(ids, referenceKeyValue)
-	}
-
-	for _, change := range *request.Updates {
-		matchKeyValue, err := change.FieldChanges.GetField(lookup.RefField)
-		if err != nil {
-			continue
-		}
-
-		matchKeyValueItem := Item(matchKeyValue.(map[string]interface{}))
-
-		// check to see if this item already has its id field set.
-		// if so, we can just skip checking for it.
-		idFieldValue, err := matchKeyValueItem.GetField(ID_FIELD)
-		if err == nil && idFieldValue != "" {
-			continue
-		}
-
-		referenceKeyValue, err := templating.Execute(template, &matchKeyValueItem)
-		if err != nil {
-			return nil, err
-		}
-
-		if referenceKeyValue == "" {
-			continue
-		}
-
-		ids = append(ids, referenceKeyValue)
-	}
+		return nil
+	})
 
 	if len(ids) == 0 {
 		return nil, nil
@@ -165,7 +135,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 	}, nil
 }
 
-func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItems, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, saveOp *SaveOp, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	lookupField := lookup.RefField
 
@@ -185,8 +155,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		return err
 	}
 
-	for _, change := range *changes {
-
+	return saveOp.LoopChanges(func(change *ChangeItem) error {
 		keyRefInterface, err := change.FieldChanges.GetField(lookupField)
 		if err != nil {
 			return err
@@ -212,7 +181,8 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 				return err
 			}
 		}
+		return nil
 
-	}
-	return nil
+	})
+
 }

@@ -10,88 +10,30 @@ import (
 )
 
 func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return fieldCheck(request, connection, session)
-}
-
-func GetWorkspaceID(change adapt.ChangeItem) (string, error) {
-	ws, err := change.GetField("uesio/studio.workspace->uesio/core.id")
-	if err != nil {
-		return "", err
-	}
-	wsStr, ok := ws.(string)
-	if !ok {
-		return "", errors.New("could not get workspace id")
-	}
-	return wsStr, nil
-}
-
-func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
 	collectionKeys := map[string]bool{}
 	var workspaceID string
 
-	for i := range *request.Inserts {
-		change := (*request.Inserts)[i]
-
-		currentWorkspaceID, err := GetWorkspaceID(change)
+	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+		err := checkWorkspaceID(&workspaceID, change)
 		if err != nil {
 			return err
 		}
 
-		if i != 0 && currentWorkspaceID != workspaceID {
-			return errors.New("Can't change different WS or APPS")
-		}
-		if i == 0 {
-			workspaceID = currentWorkspaceID
-		}
-
-		ftype, err := change.GetField("uesio/studio.type")
-		if err != nil {
+		ftype, err := change.GetFieldAsString("uesio/studio.type")
+		if err != nil || ftype == "" {
 			return errors.New("Field: Type is required")
 		}
 		if ftype == "REFERENCE" {
-			referencedCollection, _ := change.GetField("uesio/studio.reference->uesio/studio.collection")
-			if referencedCollection == nil {
+			referencedCollection, _ := change.GetFieldAsString("uesio/studio.reference->uesio/studio.collection")
+			if referencedCollection == "" {
 				return errors.New("Field: Referenced Collection is required")
 			}
-			referencedCollectionValue := referencedCollection.(string)
-			if referencedCollectionValue == "" {
-				return errors.New("Field: Referenced Collection is required")
-			}
-			collectionKeys[referencedCollectionValue] = true
+			collectionKeys[referencedCollection] = true
 		}
-	}
-
-	for i := range *request.Updates {
-		change := (*request.Updates)[i]
-		currentWorkspaceID, err := GetWorkspaceID(change)
-		if err != nil {
-			return err
-		}
-
-		if i != 0 && currentWorkspaceID != workspaceID {
-			return errors.New("Can't change different WS or APPS")
-		}
-		if i == 0 {
-			workspaceID = currentWorkspaceID
-		}
-
-		ftype, err := change.GetField("uesio/studio.type")
-		if err != nil {
-			return errors.New("Field: Type is required")
-		}
-		if ftype == "REFERENCE" {
-			referencedCollection, _ := change.GetField("uesio/studio.reference->studio.collection")
-			if referencedCollection == nil {
-				return errors.New("Field: Referenced Collection is required")
-			}
-			referencedCollectionValue := referencedCollection.(string)
-			if referencedCollectionValue == "" {
-				return errors.New("Field: Referenced Collection is required")
-			}
-			collectionKeys[referencedCollectionValue] = true
-		}
-
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
 	if len(collectionKeys) > 0 {
@@ -124,5 +66,23 @@ func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *ses
 			}
 		*/
 	}
+	return nil
+}
+
+func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error {
+
+	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
+	if err != nil {
+		return err
+	}
+
+	if *currentWorkspace == "" {
+		*currentWorkspace = workspaceID
+	}
+
+	if *currentWorkspace != workspaceID {
+		return errors.New("Can't change different WS or APPS")
+	}
+
 	return nil
 }

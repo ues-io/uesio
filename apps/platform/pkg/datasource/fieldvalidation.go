@@ -226,9 +226,9 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 	}
 
 	if op.Inserts != nil {
-		for i := range *op.Inserts {
+		for i := range op.Inserts {
 			// This is kind of randomly placed, but we want to populate new field id here
-			newID, err := templating.Execute(idTemplate, (*op.Inserts)[i].FieldChanges)
+			newID, err := templating.Execute(idTemplate, op.Inserts[i].FieldChanges)
 			if err != nil {
 				return err
 			}
@@ -237,28 +237,28 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 				newID = uuid.New().String()
 			}
 
-			err = (*op.Inserts)[i].FieldChanges.SetField(adapt.ID_FIELD, newID)
+			err = op.Inserts[i].FieldChanges.SetField(adapt.ID_FIELD, newID)
 			if err != nil {
 				return err
 			}
 
-			(*op.Inserts)[i].IDValue = newID
+			op.Inserts[i].IDValue = newID
 
-			err = fieldValidations((*op.Inserts)[i])
+			err = fieldValidations(op.Inserts[i])
 			if err != nil {
 				return err
 			}
-			referenceValidations((*op.Inserts)[i], referenceRegistry)
+			referenceValidations(op.Inserts[i], referenceRegistry)
 		}
 	}
 
 	if op.Updates != nil {
-		for i := range *op.Updates {
-			err := fieldValidations((*op.Updates)[i])
+		for i := range op.Updates {
+			err := fieldValidations(op.Updates[i])
 			if err != nil {
 				return err
 			}
-			referenceValidations((*op.Updates)[i], referenceRegistry)
+			referenceValidations(op.Updates[i], referenceRegistry)
 		}
 	}
 

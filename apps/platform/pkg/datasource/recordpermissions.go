@@ -15,13 +15,13 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 		return nil
 	}
 
-	for i := range *op.Inserts {
-		insert := &(*op.Inserts)[i]
+	for i := range op.Inserts {
+		insert := &op.Inserts[i]
 		insert.AddReadWriteToken("uesio.owner:" + session.GetUserID())
 	}
 
-	for i := range *op.Updates {
-		update := &(*op.Updates)[i]
+	for i := range op.Updates {
+		update := &op.Updates[i]
 		ownerID, err := update.GetOwnerID()
 		if err != nil {
 			return err
@@ -36,8 +36,8 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 			return err
 		}
 		// Loop over each insert and update and fill in token values
-		for i := range *op.Updates {
-			update := &(*op.Updates)[i]
+		for i := range op.Updates {
+			update := &op.Updates[i]
 			tokenValue, err := templating.Execute(tokenTemplate, update.FieldChanges)
 			if err != nil {
 				tokenValue, err = templating.Execute(tokenTemplate, update.OldValues)
@@ -54,8 +54,8 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 			}
 		}
 
-		for i := range *op.Inserts {
-			insert := &(*op.Inserts)[i]
+		for i := range op.Inserts {
+			insert := &op.Inserts[i]
 			tokenValue, err := templating.Execute(tokenTemplate, insert.FieldChanges)
 			if err != nil {
 				return err

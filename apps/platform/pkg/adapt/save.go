@@ -11,10 +11,30 @@ import (
 type SaveOp struct {
 	CollectionName string
 	WireName       string
-	Inserts        *ChangeItems
-	Updates        *ChangeItems
-	Deletes        *ChangeItems
+	Inserts        ChangeItems
+	Updates        ChangeItems
+	Deletes        ChangeItems
 	Options        *SaveOptions
+}
+
+func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
+	if op.Inserts != nil {
+		for i := range op.Inserts {
+			err := changeFunc(&op.Inserts[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if op.Updates != nil {
+		for i := range op.Updates {
+			err := changeFunc(&op.Updates[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 type ChangeItems []ChangeItem
@@ -43,6 +63,18 @@ func (ci *ChangeItem) AddReadWriteToken(token string) {
 		ci.ReadWriteTokens = []string{}
 	}
 	ci.ReadWriteTokens = append(ci.ReadWriteTokens, token)
+}
+
+func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", errors.New("Could not get value as string")
+	}
+	return valueString, nil
 }
 
 func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {

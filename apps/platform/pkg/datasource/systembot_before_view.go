@@ -10,8 +10,8 @@ func runViewBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 }
 
 func processView(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	for i := range *request.Inserts {
-		err := addViewDefaultDefinition((*request.Inserts)[i])
+	for i := range request.Inserts {
+		err := addViewDefaultDefinition(request.Inserts[i])
 		if err != nil {
 			return err
 		}

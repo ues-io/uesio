@@ -14,8 +14,8 @@ func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection
 func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	ids := []string{}
-	for i := range *request.Deletes {
-		ids = append(ids, (*request.Deletes)[i].IDValue)
+	for i := range request.Deletes {
+		ids = append(ids, request.Deletes[i].IDValue)
 	}
 
 	if len(ids) == 0 {
