@@ -3,6 +3,8 @@ package datasource
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -37,11 +39,15 @@ func GetConnection(dataSourceKey string, tokens []string, metadata *adapt.Metada
 	}
 
 	adapterType := datasource.Type
-	adapter, err := adapt.GetAdapter(adapterType, session)
+	mergedType, err := configstore.Merge(adapterType, session)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := adapt.GetCredentials(datasource.Credentials, session)
+	adapter, err := adapt.GetAdapter(mergedType, session)
+	if err != nil {
+		return nil, err
+	}
+	credentials, err := creds.GetCredentials(datasource.Credentials, session)
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -211,7 +212,7 @@ func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess
 	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
 }
 
-func IsValid(items []meta.BundleableItem, session *sess.Session) error {
+func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
 
 	// Coalate items into same namespace
 	coalated := map[string][]meta.BundleableItem{}
@@ -233,7 +234,7 @@ func IsValid(items []meta.BundleableItem, session *sess.Session) error {
 			return err
 		}
 
-		_, err = bs.HasAnyItems(items, version, session)
+		_, err = bs.HasAnyItems(items, version, session, connection)
 		if err != nil {
 			return err
 		}
