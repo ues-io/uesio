@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -58,7 +59,7 @@ func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnecti
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := adapt.GetCredentials(authSource.Credentials, session)
+	credentials, err := creds.GetCredentials(authSource.Credentials, session)
 	if err != nil {
 		return nil, err
 	}

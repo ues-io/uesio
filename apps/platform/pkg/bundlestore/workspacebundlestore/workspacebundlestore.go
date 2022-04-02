@@ -271,7 +271,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	return &by, nil
 }
 
-func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session) (bool, error) {
+func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
 
 	if session.GetWorkspace() == nil {
 		return true, errors.New("Workspace bundle store, needs a workspace in context")
@@ -303,6 +303,7 @@ func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version 
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
+			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.ID_FIELD,

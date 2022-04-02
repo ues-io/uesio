@@ -7,7 +7,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// NewCollection function
 func NewCollection(key string) (*Collection, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -17,6 +16,20 @@ func NewCollection(key string) (*Collection, error) {
 		Name:      name,
 		Namespace: namespace,
 	}, nil
+}
+
+func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newCollection, err := NewCollection(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newCollection)
+	}
+
+	return items, nil
 }
 
 type RecordChallengeTokenDefinition struct {

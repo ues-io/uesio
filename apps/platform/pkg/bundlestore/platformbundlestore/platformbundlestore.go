@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -210,7 +211,7 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 	return &by, nil
 }
 
-func (b *PlatformBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session) (bool, error) {
+func (b *PlatformBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
 	for _, item := range items {
 		err := b.GetItem(item, version, session)
 		if err != nil {

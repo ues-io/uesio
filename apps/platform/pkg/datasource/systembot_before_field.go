@@ -2,10 +2,11 @@ package datasource
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -36,37 +37,33 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		return err
 	}
 
-	if len(collectionKeys) > 0 {
-		//This creates a copy of the session
-		//wsSession := session.RemoveWorkspaceContext()
-
-		idSplit := strings.Split(workspaceID, "_")
-
-		fmt.Println("Doing this")
-		fmt.Println("app: " + idSplit[0])
-		fmt.Println("workspace: " + idSplit[1])
-
-		fmt.Println("Should Check Keys:")
-		fmt.Println(collectionKeys)
-
-		/*
-			for key := range collectionKeys {
-				newCollection, _ := meta.NewCollection(key)
-				items = append(items, newCollection)
-			}
-
-			err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession)
-			if err != nil {
-				println(err.Error())
-			}
-
-			err = bundle.IsValid(items, wsSession)
-			if err != nil {
-				return err
-			}
-		*/
+	items, err := meta.NewCollections(collectionKeys)
+	if err != nil {
+		return err
 	}
-	return nil
+
+	return checkValidItems(workspaceID, items, session, connection)
+
+}
+
+func checkValidItems(workspaceID string, items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	//This creates a copy of the session
+	wsSession := session.RemoveWorkspaceContext()
+	idSplit := strings.Split(workspaceID, "_")
+
+	err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession)
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	return bundle.IsValid(items, wsSession, connection)
+
 }
 
 func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error {
