@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
+	"unicode"
 
 	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -19,19 +19,18 @@ var (
 				if err != nil {
 					return nil, err
 				}
-				fullId := strings.Join(keys, ".")
+				fullId := keys[0]
 				item, ok := v.(loadable.Gettable)
 				if !ok {
 					return nil, errors.New("Casting error in formula field: " + fullId)
 				}
 				id, err := item.GetField(fullId)
-
 				if err != nil {
-					return "{Invalid Field}", nil
+					return "", nil
 				}
 
 				if id == nil {
-					return "{Missing Field}", nil
+					return "", nil
 				}
 
 				return id, nil
@@ -52,6 +51,13 @@ var (
 				return "", nil
 			}
 			return valStr[0:1], nil
+		}),
+		gval.Init(func(ctx context.Context, parser *gval.Parser) (gval.Evaluable, error) {
+			parser.SetIsIdentRuneFunc(func(r rune, pos int) bool {
+				return unicode.IsLetter(r) || r == '_' ||
+					(pos > 0 && (unicode.IsDigit(r) || r == '.' || r == '/'))
+			})
+			return parser.ParseExpression(ctx)
 		}),
 	)
 )
