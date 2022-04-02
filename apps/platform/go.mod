@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.6.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.3.2
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.4.0
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.15.3
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.12.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dop251/goja v0.0.0-20210810150349-acd0507c3d6f
@@ -32,7 +33,6 @@ require (
 require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.9 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.15.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
