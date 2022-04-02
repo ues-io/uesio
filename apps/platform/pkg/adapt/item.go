@@ -26,17 +26,18 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 		return value, nil
 	}
 
-	subFieldMap, err := i.GetField(names[0])
-	if err != nil {
-		return nil, err
+	var value interface{}
+	value = *i
+
+	for _, name := range names {
+		var err error
+		value, err = GetFieldValue(value, name)
+		if err != nil {
+			return nil, errors.New("Field not found: " + fieldName)
+		}
 	}
 
-	lmap, ok := subFieldMap.(map[string]interface{})
-	if !ok {
-		return nil, errors.New("SubField is not a map")
-	}
-
-	return lmap[names[1]], nil
+	return value, nil
 }
 
 func (i *Item) Loop(iter func(string, interface{}) error) error {

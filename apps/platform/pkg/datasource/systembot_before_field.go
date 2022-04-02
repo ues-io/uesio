@@ -2,11 +2,10 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -14,36 +13,36 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 	return fieldCheck(request, connection, session)
 }
 
-func GetWorkspaceName(change adapt.ChangeItem) string {
-	ws, _ := change.GetField("uesio/studio.workspace->uesio/core.id")
-	wsStr := ws.(string)
-	underscorePos := strings.Index(wsStr, "_") + 1
-	return wsStr[underscorePos:]
-}
-
-func GetAppName(change adapt.ChangeItem) string {
-	ws, _ := change.GetField("uesio/studio.collection")
-	wsStr := ws.(string)
-	dotPos := strings.Index(wsStr, ".")
-	return wsStr[0:dotPos]
+func GetWorkspaceID(change adapt.ChangeItem) (string, error) {
+	ws, err := change.GetField("uesio/studio.workspace->uesio/core.id")
+	if err != nil {
+		return "", err
+	}
+	wsStr, ok := ws.(string)
+	if !ok {
+		return "", errors.New("could not get workspace id")
+	}
+	return wsStr, nil
 }
 
 func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	items := []meta.BundleableItem{}
-	appName := ""
-	wsName := ""
+	collectionKeys := map[string]bool{}
+	var workspaceID string
 
 	for i := range *request.Inserts {
 		change := (*request.Inserts)[i]
 
-		if i != 0 {
-			if GetAppName(change) != appName || GetWorkspaceName(change) != wsName {
-				return errors.New("Can't change different WS or APPS")
-			}
-		} else {
-			appName = GetAppName(change)
-			wsName = GetWorkspaceName(change)
+		currentWorkspaceID, err := GetWorkspaceID(change)
+		if err != nil {
+			return err
+		}
+
+		if i != 0 && currentWorkspaceID != workspaceID {
+			return errors.New("Can't change different WS or APPS")
+		}
+		if i == 0 {
+			workspaceID = currentWorkspaceID
 		}
 
 		ftype, err := change.GetField("uesio/studio.type")
@@ -51,7 +50,7 @@ func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *ses
 			return errors.New("Field: Type is required")
 		}
 		if ftype == "REFERENCE" {
-			referencedCollection, _ := change.GetField("uesio/studio.reference->studio.collection")
+			referencedCollection, _ := change.GetField("uesio/studio.reference->uesio/studio.collection")
 			if referencedCollection == nil {
 				return errors.New("Field: Referenced Collection is required")
 			}
@@ -59,23 +58,22 @@ func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *ses
 			if referencedCollectionValue == "" {
 				return errors.New("Field: Referenced Collection is required")
 			}
-			newCollection, _ := meta.NewCollection(referencedCollectionValue)
-			items = append(items, newCollection)
+			collectionKeys[referencedCollectionValue] = true
 		}
 	}
 
 	for i := range *request.Updates {
 		change := (*request.Updates)[i]
-		appName = GetAppName(change)
-		wsName = GetWorkspaceName(change)
+		currentWorkspaceID, err := GetWorkspaceID(change)
+		if err != nil {
+			return err
+		}
 
-		if i != 0 {
-			if GetAppName(change) != appName || GetWorkspaceName(change) != wsName {
-				return errors.New("Can't change different WS or APPS")
-			}
-		} else {
-			appName = GetAppName(change)
-			wsName = GetWorkspaceName(change)
+		if i != 0 && currentWorkspaceID != workspaceID {
+			return errors.New("Can't change different WS or APPS")
+		}
+		if i == 0 {
+			workspaceID = currentWorkspaceID
 		}
 
 		ftype, err := change.GetField("uesio/studio.type")
@@ -91,25 +89,40 @@ func fieldCheck(request *adapt.SaveOp, connection adapt.Connection, session *ses
 			if referencedCollectionValue == "" {
 				return errors.New("Field: Referenced Collection is required")
 			}
-			newCollection, _ := meta.NewCollection(referencedCollectionValue)
-			items = append(items, newCollection)
+			collectionKeys[referencedCollectionValue] = true
 		}
 
 	}
 
-	if items != nil {
+	if len(collectionKeys) > 0 {
 		//This creates a copy of the session
-		wsSession := session.RemoveWorkspaceContext()
+		//wsSession := session.RemoveWorkspaceContext()
 
-		err := AddWorkspaceContext(appName, wsName, wsSession)
-		if err != nil {
-			println(err.Error())
-		}
+		idSplit := strings.Split(workspaceID, "_")
 
-		err = bundle.IsValid(items, wsSession)
-		if err != nil {
-			return err
-		}
+		fmt.Println("Doing this")
+		fmt.Println("app: " + idSplit[0])
+		fmt.Println("workspace: " + idSplit[1])
+
+		fmt.Println("Should Check Keys:")
+		fmt.Println(collectionKeys)
+
+		/*
+			for key := range collectionKeys {
+				newCollection, _ := meta.NewCollection(key)
+				items = append(items, newCollection)
+			}
+
+			err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession)
+			if err != nil {
+				println(err.Error())
+			}
+
+			err = bundle.IsValid(items, wsSession)
+			if err != nil {
+				return err
+			}
+		*/
 	}
 	return nil
 }

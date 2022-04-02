@@ -59,6 +59,9 @@ func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 		return oldVal, nil
 	}
 
+	if err != nil {
+		return nil, errors.New("Could not get field from change item: " + err.Error())
+	}
 	return nil, nil
 }
 
@@ -101,6 +104,24 @@ type SaveOptions struct {
 	Lookups []Lookup
 }
 
+func GetFieldValue(value interface{}, key string) (interface{}, error) {
+	valueMap, ok := value.(map[string]interface{})
+	if ok {
+		fk, ok := valueMap[key]
+		if !ok {
+			return "", errors.New("could not get map property: " + key)
+		}
+		return fk, nil
+	}
+
+	valueItem, ok := value.(Item)
+	if ok {
+		return valueItem.GetField(key)
+	}
+
+	return nil, errors.New("not a valid map or item")
+}
+
 func GetReferenceKey(value interface{}) (string, error) {
 	if value == nil {
 		return "", nil
@@ -111,26 +132,12 @@ func GetReferenceKey(value interface{}) (string, error) {
 		return valueString, nil
 	}
 
-	valueMap, ok := value.(map[string]interface{})
-	if ok {
-		fk, ok := valueMap[ID_FIELD]
-		if !ok {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
+	fk, err := GetFieldValue(value, ID_FIELD)
+	if err != nil {
+		return "", err
 	}
 
-	valueItem, ok := value.(Item)
-	if ok {
-		fk, err := valueItem.GetField(ID_FIELD)
-		if err != nil {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
-
-	}
-
-	return "", errors.New("Bad foreign key")
+	return GetReferenceKey(fk)
 }
 
 // NewFieldChanges function returns a template that can merge field changes
