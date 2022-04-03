@@ -48,8 +48,8 @@ const login =
 	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		const response = await platform.login(authSource, {
-			username,
-			password,
+			username: context.merge(username),
+			password: context.merge(password),
 		})
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)

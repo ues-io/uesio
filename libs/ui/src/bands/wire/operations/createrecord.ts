@@ -8,8 +8,13 @@ export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch, getState) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
+		const viewDef = context.getViewDef()
+		if (!viewDef) return context
+		const wireDef = viewDef.definition?.wires?.[wirename]
+		if (!wireDef) return context
 		const recordId = nanoid()
 		const state = getState()
+
 		dispatch(
 			createRecord({
 				recordId,
@@ -18,7 +23,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 					state.wire.entities,
 					state.collection.entities,
 					viewId,
-					wirename
+					wireDef
 				),
 				entity: `${viewId}/${wirename}`,
 			})

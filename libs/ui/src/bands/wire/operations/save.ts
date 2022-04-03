@@ -22,7 +22,8 @@ export default createAsyncThunk<
 	const saveRequest = {
 		wires: wiresToSave.flatMap((wire) => {
 			const wiredef = getWireDef(wire)
-			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)
+			if (!wiredef || !wire || wiredef.viewOnly)
+				throw new Error("Invalid Wire: " + wire)
 			const wireId = getFullWireId(wire.view, wire.name)
 			// Check to see if we need to go to the serve
 			if (

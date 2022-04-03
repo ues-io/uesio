@@ -2,18 +2,20 @@ import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
 
 type PlainWire = {
-	name: string
-	conditions: WireConditionState[]
-	query: boolean
-	data: Record<string, PlainWireRecord>
 	batchid: string
-	view: string
-	original: Record<string, PlainWireRecord>
+	batchnumber: number
 	changes: Record<string, PlainWireRecord>
+	collection: string
+	conditions: WireConditionState[]
+	data: Record<string, PlainWireRecord>
 	deletes: Record<string, PlainWireRecord>
 	error?: string
-	batchnumber: number
 	more?: boolean
+	name: string
+	original: Record<string, PlainWireRecord>
+	query: boolean
+	view: string
+	viewOnly?: boolean
 }
 
 export { PlainWire }
