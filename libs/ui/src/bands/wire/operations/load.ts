@@ -49,6 +49,8 @@ function getWireRequest(
 	const fullWireId = getFullWireId(wire.view, wire.name)
 	const wiredef = getWireDef(wire)
 	if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+	if (wiredef.viewOnly)
+		throw new Error("Cannot get request for viewOnly wire: " + wire.name)
 	return {
 		wire: fullWireId,
 		query: wire.query,
@@ -71,8 +73,15 @@ export default createAsyncThunk<
 >("wire/load", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+	const loadRequests = wiresToLoad
+		.filter((wire) => !wire.viewOnly)
+		.map((wire) => getWireRequest(wire, 0, context))
+
+	if (!loadRequests.length) {
+		return [[], {}]
+	}
 	const response = await api.extra.loadData(context, {
-		wires: wiresToLoad.map((wire) => getWireRequest(wire, 0, context)),
+		wires: loadRequests,
 	})
 
 	// Add the local ids
@@ -87,7 +96,10 @@ export default createAsyncThunk<
 		const changes: Record<string, PlainWireRecord> = {}
 
 		const wireDef = getWireDefFromWireName(view, name)
-		const autoCreateRecord = !!wireDef?.init?.create
+
+		if (!wireDef) throw new Error("No wiredef found")
+		if (wireDef.viewOnly) throw new Error("Cannot load viewOnly wire")
+		const autoCreateRecord = !!wireDef.init?.create
 
 		if (autoCreateRecord) {
 			wire.data?.push(
@@ -96,7 +108,7 @@ export default createAsyncThunk<
 					wiresResponse,
 					response.collections,
 					view,
-					name
+					wireDef
 				)
 			)
 		}
@@ -123,6 +135,7 @@ export default createAsyncThunk<
 			more: wire.more,
 			error: undefined,
 			conditions: requestWire.conditions,
+			collection: wireDef.collection,
 		}
 	}
 

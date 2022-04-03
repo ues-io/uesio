@@ -355,7 +355,7 @@ class Context {
 		const wire = new Wire(plainWire)
 		const plainCollection = collectionSelectors.selectById(
 			state,
-			wireDef.collection
+			plainWire?.collection || ""
 		)
 		if (!plainCollection) return undefined
 		const collection = new Collection(plainCollection)

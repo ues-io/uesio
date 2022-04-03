@@ -25,7 +25,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 					state.wire.entities,
 					state.collection.entities,
 					viewId,
-					wirename
+					wireDef
 				)
 			)
 		}

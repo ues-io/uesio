@@ -18,7 +18,7 @@ import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
 import { ThunkFunc } from "../../store/store"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { WireDefinition } from "../../definition/wire"
+import { RegularWireDefinition } from "../../definition/wire"
 import {
 	WireConditionDefinition,
 	WireConditionState,
@@ -211,7 +211,9 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				filter: (def: Definition) =>
-					Boolean(def && (<WireDefinition>def).conditions?.length),
+					Boolean(
+						def && (<RegularWireDefinition>def).conditions?.length
+					),
 				label: "Wire",
 			},
 			{
