@@ -26,7 +26,7 @@ type ViewOnlyWireDefinition = WireDefinitionBase & {
 }
 
 type RegularWireDefinition = WireDefinitionBase & {
-	viewOnly: false | undefined
+	viewOnly?: false
 	fields: WireFieldDefinitionMap
 	collection: string
 	order?: WireOrderDescription[]
