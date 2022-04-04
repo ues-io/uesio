@@ -25,7 +25,7 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return errors.New("Field: Type is required")
 		}
 		if ftype == "REFERENCE" {
-			referencedCollection, _ := change.GetFieldAsString("uesio/studio.reference->uesio/studio.collection")
+			referencedCollection, _ := change.GetFieldAsString("uesio/studio.reference->studio.collection")
 			if referencedCollection == "" {
 				return errors.New("Field: Referenced Collection is required")
 			}
