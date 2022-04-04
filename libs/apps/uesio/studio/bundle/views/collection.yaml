@@ -325,7 +325,7 @@ definition:
                       value: "REFERENCE"
                   components:
                     - uesio/studio.metadatafield:
-                        fieldId: uesio/studio.reference->studio.collection
+                        fieldId: uesio/studio.reference->uesio/studio.collection
                         metadataType: "COLLECTION"
                         label: "Ref. Collection"
               - uesio/io.box:

@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	collectionKeys := map[string]bool{}
 	allKeys := map[string]map[string]bool{}
 	var workspaceID string
@@ -18,17 +18,38 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return err
 		}
 
-		ftype, err := change.GetFieldAsString("uesio/studio.type")
-		if err != nil || ftype == "" {
-			return errors.New("Field: Type is required")
+		btype, err := change.GetFieldAsString("uesio/studio.type")
+		if err != nil {
+			return err
 		}
-		if ftype == "REFERENCE" {
-			referencedCollection, _ := change.GetFieldAsString("uesio/studio.reference->uesio/studio.collection")
-			if referencedCollection == "" {
-				return errors.New("Field: Referenced Collection is required")
-			}
-			collectionKeys[referencedCollection] = true
+
+		if err = isRequired(btype, "Bot", "Type"); err != nil {
+			return err
 		}
+
+		dialect, err := change.GetFieldAsString("uesio/studio.dialect")
+		if err != nil {
+			return err
+		}
+
+		if err = isRequired(dialect, "Bot", "Dialect"); err != nil {
+			return err
+		}
+
+		collection, err := change.GetFieldAsString("uesio/studio.collection")
+		if err != nil {
+			return err
+		}
+
+		err = botTypeSC(btype, collection)
+		if err != nil {
+			return err
+		}
+
+		if collection != "" {
+			collectionKeys[collection] = true
+		}
+
 		return nil
 	})
 	if err != nil {
@@ -46,7 +67,7 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 }
 
-func fieldTypeSC(botType, collection string) error {
+func botTypeSC(botType, collection string) error {
 
 	switch botType {
 	case "LISTENER":

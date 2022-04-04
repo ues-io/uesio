@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/humandad/yaml"
@@ -20,6 +21,31 @@ type Theme struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func NewTheme(key string) (*Theme, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Theme: " + key)
+	}
+	return &Theme{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newTheme, err := NewTheme(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newTheme)
+	}
+
+	return items, nil
 }
 
 // GetCollectionName function
