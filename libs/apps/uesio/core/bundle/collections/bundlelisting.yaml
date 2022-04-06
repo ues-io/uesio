@@ -1,0 +1,5 @@
+name: bundlelisting
+idFormat: ${uesio/core.owner}/${uesio/core.name}
+public: true
+label: bundlelisting
+pluralLabel: Bundle Listings

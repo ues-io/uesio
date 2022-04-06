@@ -1,0 +1,186 @@
+name: bundlestore
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    installablebundles:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+
+    bundlelistings:
+      collection: uesio/core.bundlelisting
+      init:
+        query: true
+        create: false
+      fields:
+        uesio/core.id:
+        uesio/core.name:
+        uesio/core.color:
+        uesio/core.icon:
+        uesio/core.description:
+
+    dependencies:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.workspace
+          value: $Param{app}_$Param{workspacename}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Add a Bundle
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                        display: grid
+                        grid-template-columns: 1fr 1fr 1fr;
+                        column-gap: 8px;
+
+                    components:
+                      - uesio/io.list:
+                          wire: bundlelistings
+                          id: bundleListingList
+                          mode: READ
+                          components:
+                            - uesio/io.box:
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          background: "#eee"
+                                          background-color: ${uesio/core.color}
+                                          padding-top: 50%;
+                                          display: flex
+                                          alignItems: center
+                                          justifyContent: center
+                                          color: "#000"
+                                          position: relative
+                                      components:
+                                        - uesio/io.button:
+                                            signals:
+                                              - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
+                                                signal: route/NAVIGATE
+                                            uesio.styles:
+                                              root:
+                                                inset: 0 0 0 0
+                                                position: absolute
+                                                fontSize: 4em
+                                            icon: ${uesio/core.icon}
+
+                                  - uesio/io.text:
+                                      text: ${uesio/core.name}
+                                      element: p
+                                      uesio.styles:
+                                        root:
+                                          font-weight: bold
+
+                                  - uesio/io.text:
+                                      uesio.display:
+                                        - type: existsInWire
+                                          wire: dependencies
+                                      # uesio.context:
+                                      #   wire: dependencies
+                                      text: ${}
+
+                                  - uesio/io.text:
+                                      text: ${uesio/core.description}
+                                      element: p
+
+                                  - uesio/io.avatar:
+                                      uesio.styles:
+                                        root:
+                                          margin: 0 16px
+                                      text: ${uesio/core.owner}
+                                      # image: $User{picture}
+
+                            - uesio/io.box:
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                components:
+                                  - uesio/io.text:
+                                      text: "${uesio/core.id}"
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.owner
+                                  - uesio/io.field:
+                                      fieldId: uesio/core.description
+                            # Save
+                            - uesio/io.button:
+                                text: Save
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: EDIT
+                                uesio.variant: uesio/io.primary
+                                signals:
+                                  - signal: wire/SAVE
+                                    wire: bundlelistings
+                      # - uesio/io.button:
+                      #     uesio.variant: uesio/io.primary
+                      #     text: "toggle mode"
+                      #     uesio.styles:
+                      #       root:
+                      #         display: "block"
+                      #     signals:
+                      #       - signal: component/uesio/io.list/TOGGLE_MODE
+                      #         target: bundleListingList
+
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    components:
+                      - uesio/studio.addbundle:
+                          installablebundleswire: "installablebundles"
+                          currentdependencies: "dependencies"

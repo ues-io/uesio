@@ -1,0 +1,114 @@
+name: bundlelisting
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          valueSource: PARAM
+          param: app
+
+    listing:
+      collection: uesio/core.bundlelisting
+      fields:
+        uesio/core.id:
+        uesio/core.name:
+        uesio/core.description:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{id}
+
+    versions:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.app
+          value: $Param{id}
+
+    dependencies:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch: uesio/studio.workspace
+      conditions:
+        - field: uesio/studio.workspace
+          value: $Param{app}_$Param{workspacename}
+
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: bundles
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.list:
+                    wire: listing
+                    mode: READ
+                    id: listingList
+                    components:
+                      - uesio/io.text:
+                          element: h2
+                          text: ${uesio/core.id}
+                      - uesio/io.text:
+                          element: p
+                          text: ${uesio/core.description}
+                - uesio/io.text:
+                    text: versions
+                    element: h3
+                - uesio/io.list:
+                    wire: versions
+                    mode: READ
+                    id: versionsList
+                    components:
+                      - uesio/io.text:
+                          text: ${uesio/core.id}
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.primary
+                          text: install
+                          signals:
+                            - signal: record/CREATE
+                              wire: dependencies
+
+                            - signal: record/UPDATE
+                              wire: dependencies
+                              field:
+
+                - uesio/io.text:
+                    text: Current App Dependencies
+                    element: h3
+                - uesio/io.list:
+                    wire: dependencies
+                    mode: READ
+                    id: dependenciesList
+                    components:
+                      - uesio/io.text:
+                          element: li
+                          text: ${uesio/core.id}
