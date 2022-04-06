@@ -200,18 +200,80 @@ func Deploy(body []byte, session *sess.Session) error {
 				Upsert: &adapt.UpsertOptions{},
 			},
 		},
+		{
+			Collection: dep["collections"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["selectlists"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["fields"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["routes"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["themes"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["files"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["bots"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["views"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["permissionsets"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: dep["profiles"],
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
 	}
-	for _, collection := range dep {
-		length := collection.Len()
-		if length > 0 {
-			saves = append(saves, datasource.PlatformSaveRequest{
-				Collection: collection,
-				Options: &adapt.SaveOptions{
-					Upsert: &adapt.UpsertOptions{},
-				},
-			})
-		}
-	}
+
+	// for key, collection := range dep {
+	// 	length := collection.Len()
+	// 	if length > 0 {
+	// 		println(key, collection.GetName())
+	// 		saves = append(saves, datasource.PlatformSaveRequest{
+	// 			Collection: collection,
+	// 			Options: &adapt.SaveOptions{
+	// 				Upsert: &adapt.UpsertOptions{},
+	// 			},
+	// 		})
+	// 	}
+	// }
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
 	if err != nil {

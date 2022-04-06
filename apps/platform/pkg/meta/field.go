@@ -21,6 +21,20 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 	}, nil
 }
 
+func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newField, err := NewField(collectionKey, key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newField)
+	}
+
+	return items, nil
+}
+
 //ValidationMetadata struct
 type ValidationMetadata struct {
 	Type  string `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`

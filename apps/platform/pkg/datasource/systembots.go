@@ -56,9 +56,6 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 	if err != nil {
 		return err
 	}
-	if err != nil {
-		return err
-	}
 	return bundle.IsValid(items, wsSession, connection)
 
 }
@@ -67,7 +64,7 @@ func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error 
 
 	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
 	if err != nil {
-		return err
+		return err //if error workspaceID, err := change.GetFieldAsString("uesio/studio.workspace")
 	}
 
 	if *currentWorkspace == "" {
@@ -109,7 +106,6 @@ func getAllItems(allKeys map[string]map[string]bool) ([]meta.BundleableItem, err
 	if themeItems != nil {
 		all = append(all, themeItems...)
 	}
-
 	return all, nil
 }
 

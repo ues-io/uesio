@@ -1,8 +1,6 @@
 package datasource
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -36,17 +34,30 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		collection, err := change.GetFieldAsString("uesio/studio.collection")
-		if err != nil {
-			return err
-		}
+		switch btype {
+		case "LISTENER":
+			change.SetField("uesio/studio.collection", "uesio/studio.listener")
 
-		err = botTypeSC(btype, collection)
-		if err != nil {
-			return err
-		}
+		case "AFTERSAVE":
+			collection, err := change.GetFieldAsString("uesio/studio.collection")
+			if err != nil {
+				return err
+			}
+			if err := isRequired(collection, "Bot", "Collection"); err != nil {
+				return err
+			}
 
-		if collection != "" {
+			collectionKeys[collection] = true
+
+		case "BEFORESAVE":
+			collection, err := change.GetFieldAsString("uesio/studio.collection")
+			if err != nil {
+				return err
+			}
+			if err := isRequired(collection, "Bot", "Collection"); err != nil {
+				return err
+			}
+
 			collectionKeys[collection] = true
 		}
 
@@ -64,26 +75,5 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 	}
 
 	return checkValidItems(workspaceID, items, session, connection)
-
-}
-
-func botTypeSC(botType, collection string) error {
-
-	switch botType {
-	case "LISTENER":
-		if collection != "" {
-			return errors.New("Bot: The collection field is not required for bots of type Listener")
-		}
-	case "AFTERSAVE":
-		if err := isRequired(collection, "Bot", "Collection"); err != nil {
-			return err
-		}
-	case "BEFORESAVE":
-		if err := isRequired(collection, "Bot", "Collection"); err != nil {
-			return err
-		}
-	}
-
-	return nil
 
 }

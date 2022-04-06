@@ -235,9 +235,9 @@ definition:
                                           value: "FORMULA"
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/studio.formula->studio.expression
+                                            fieldId: uesio/studio.formula->uesio/studio.expression
                                         - uesio/io.field:
-                                            fieldId: uesio/studio.formula->studio.returntype
+                                            fieldId: uesio/studio.formula->uesio/studio.returntype
   panels:
     deleteField:
       uesio.type: uesio/io.dialog
