@@ -74,37 +74,38 @@ const handleMergeError = ({
 	expression: string
 	error: Error
 	viewDefId: string
-}) => {
-	const title = "Error in Template merge"
-	const getErrorFeedback = () => {
-		const missingMergeType = {
-			msg: "mergeType is undefined",
-		}
-		const invalidMergeType = {
-			msg: `${mergeType} is not a valid mergeType.`,
-			validMergeTypes: Object.keys(handlers),
-		}
-		const noValue = {
-			msg: "No value found",
-			mergeType,
-		}
-		if (!mergeType) return missingMergeType
-		if (!(mergeType in handlers)) return invalidMergeType
-		if (error.message === "noValue") return noValue
+}) =>
+	// const title = "Error in Template merge"
+	// const getErrorFeedback = () => {
+	// 	const missingMergeType = {
+	// 		msg: "mergeType is undefined",
+	// 	}
+	// 	const invalidMergeType = {
+	// 		msg: `${mergeType} is not a valid mergeType.`,
+	// 		validMergeTypes: Object.keys(handlers),
+	// 	}
+	// 	const noValue = {
+	// 		msg: "No value found",
+	// 		mergeType,
+	// 	}
+	// 	if (!mergeType) return missingMergeType
+	// 	if (!(mergeType in handlers)) return invalidMergeType
+	// 	if (error.message === "noValue") return noValue
 
-		return {
-			mergeType,
-			expression,
-			viewDefId,
-		}
-	}
+	// 	return {
+	// 		mergeType,
+	// 		expression,
+	// 		viewDefId,
+	// 	}
+	// }
 
-	return console.log(title, { ...getErrorFeedback(), viewDefId, expression })
-}
+	// return console.log(title, { ...getErrorFeedback(), viewDefId, expression })
+	null
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
+
 		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
 	},
@@ -227,6 +228,8 @@ class Context {
 	}
 
 	stack: ContextFrame[]
+
+	getWireById = (id: string) => getWire(this.getViewDefId() + "()", id)
 
 	getRecordId = () => this.stack.find((frame) => frame?.record)?.record
 

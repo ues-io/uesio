@@ -1,3 +1,5 @@
+// import { useWire } from "../bands/wire/selectors"
+import { get } from "lodash"
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
 
@@ -48,6 +50,13 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type FindInWireCondition = {
+	type: "findInWire"
+	wire: string
+	field: string
+	value: string
+}
+
 type DisplayCondition =
 	| HasNoValueCondition
 	| HasValueCondition
@@ -58,6 +67,7 @@ type DisplayCondition =
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| FindInWireCondition
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -68,6 +78,17 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "paramIsSet") {
 		return !!context.getView()?.params?.[condition.param]
+	}
+
+	if (condition.type === "findInWire") {
+		const wire = context.getWireById(condition.wire)
+		if (!wire) return false
+		const data = wire.data
+		const path = condition.field.split("->")
+		// loop over the data to check if we find the value at path
+		return Object.keys(data).find(
+			(k) => get(data[k], path) === context.merge(condition.value)
+		)
 	}
 
 	if (condition.type === "fieldMode") {

@@ -128,7 +128,7 @@ collections:
   uesio/studio.bot: true
   uesio/studio.bundledependency: true
   uesio/studio.bundle: true
-  uesio/core.bundlelisting: true
+  uesio/studio.bundlelisting: true
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true

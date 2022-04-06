@@ -23,16 +23,16 @@ definition:
         uesio/studio.patch:
 
     bundlelistings:
-      collection: uesio/core.bundlelisting
+      collection: uesio/studio.bundlelisting
       init:
         query: true
         create: false
       fields:
         uesio/core.id:
-        uesio/core.name:
-        uesio/core.color:
-        uesio/core.icon:
-        uesio/core.description:
+        uesio/studio.name:
+        uesio/studio.color:
+        uesio/studio.icon:
+        uesio/studio.description:
 
     dependencies:
       collection: uesio/studio.bundledependency
@@ -94,30 +94,10 @@ definition:
                                     mode: READ
                                 components:
                                   - uesio/io.box:
-                                      uesio.styles:
-                                        root:
-                                          background: "#eee"
-                                          background-color: ${uesio/core.color}
-                                          padding-top: 50%;
-                                          display: flex
-                                          alignItems: center
-                                          justifyContent: center
-                                          color: "#000"
-                                          position: relative
-                                      components:
-                                        - uesio/io.button:
-                                            signals:
-                                              - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
-                                                signal: route/NAVIGATE
-                                            uesio.styles:
-                                              root:
-                                                inset: 0 0 0 0
-                                                position: absolute
-                                                fontSize: 4em
-                                            icon: ${uesio/core.icon}
+                                      uesio.variant: uesio/studio.bundlelistingvisual
 
                                   - uesio/io.text:
-                                      text: ${uesio/core.name}
+                                      text: ${uesio/studio.name}
                                       element: p
                                       uesio.styles:
                                         root:
@@ -127,9 +107,9 @@ definition:
                                       uesio.display:
                                         - type: existsInWire
                                           wire: dependencies
-                                      # uesio.context:
-                                      #   wire: dependencies
-                                      text: ${}
+                                          field: uesio/studio.bundle->uesio/studio.app
+                                          value: ${uesio/core.id}
+                                      text: Installed
 
                                   - uesio/io.text:
                                       text: ${uesio/core.description}
