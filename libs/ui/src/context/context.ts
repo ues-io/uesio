@@ -347,9 +347,14 @@ class Context {
 		return new Context(this.stack.slice(index))
 	}
 
-	getWire = () => {
+	getWire = (id?: string) => {
 		const state = getStore().getState()
-		const plainWire = this.getPlainWire()
+		const ctx = id
+			? this
+			: this.addFrame({
+					wire: id,
+			  })
+		const plainWire = ctx.getPlainWire()
 		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)

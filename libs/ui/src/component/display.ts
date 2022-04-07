@@ -1,14 +1,34 @@
+// import { useWire } from "../bands/wire/selectors"
+import { get } from "lodash"
+import { context } from ".."
+
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
 
 type FieldEqualsValueCondition = {
 	type: "fieldEquals" | undefined
 	field: string
+	wire?: string
 	value: string
 }
 
 type FieldNotEqualsValueCondition = {
 	type: "fieldNotEquals"
+	field: string
+	wire?: string
+	value: string
+}
+
+type WireHasRecordCondition = {
+	type: "wireHasRecord"
+	wire?: string
+	field: string
+	value: string
+}
+
+type WireDoesNotHaveRecordCondition = {
+	type: "wireDoesNotHaveRecord"
+	wire?: string
 	field: string
 	value: string
 }
@@ -48,6 +68,11 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type WireHasDataCondition = {
+	type: "wireHasData"
+	wire?: string
+}
+
 type DisplayCondition =
 	| HasNoValueCondition
 	| HasValueCondition
@@ -58,6 +83,28 @@ type DisplayCondition =
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| WireHasRecordCondition
+	| WireDoesNotHaveRecordCondition
+	| WireHasDataCondition
+
+const wireHasRecordConditionCheck = (
+	context: context.Context,
+	field: string,
+	value: string,
+	wireName?: string
+) => {
+	const newContext = context.addFrame({
+		wire: wireName,
+	})
+	const wire = newContext.getWire()
+	if (!wire) return false
+	const data = wire.getData()
+	const path = field.split("->")
+	// loop over the records to check if we find the value at path
+	return data.some(
+		(r) => get(r, ["source", ...path]) === context.merge(value)
+	)
+}
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -68,6 +115,25 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "paramIsSet") {
 		return !!context.getView()?.params?.[condition.param]
+	}
+
+	if (
+		condition.type === "wireHasRecord" ||
+		condition.type === "wireDoesNotHaveRecord"
+	) {
+		const answer = wireHasRecordConditionCheck(
+			context,
+			condition.field,
+			condition.value,
+			condition.wire
+		)
+		return condition.type === "wireHasRecord" ? answer : !answer
+	}
+
+	if (condition.type === "wireHasData") {
+		const wire = context.getWire(condition.wire)
+		if (!wire) return false
+		return !wire.getData().length
 	}
 
 	if (condition.type === "fieldMode") {
@@ -90,7 +156,12 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "paramIsValue")
 		return context.getView()?.params?.[condition.param] === compareToValue
 
-	const value = context.getRecord()?.getFieldValue(condition.field)
+	const ctx = condition.wire
+		? context
+		: context.addFrame({
+				wire: condition.wire,
+		  })
+	const value = ctx.getRecord()?.getFieldValue(condition.field)
 
 	if (condition.type === "fieldNotEquals") return value !== compareToValue
 	return value === compareToValue
