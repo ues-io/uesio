@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -21,6 +22,31 @@ type View struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func NewView(key string) (*View, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for View: " + key)
+	}
+	return &View{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewViews(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newView, err := NewView(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newView)
+	}
+
+	return items, nil
 }
 
 // GetCollectionName function

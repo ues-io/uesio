@@ -192,25 +192,56 @@ func Deploy(body []byte, session *sess.Session) error {
 		},
 	})
 
+	upsertOptions := &adapt.SaveOptions{
+		Upsert: &adapt.UpsertOptions{},
+	}
+
 	saves := []datasource.PlatformSaveRequest{
 		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
 		{
 			Collection: &deps,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
-	}
-	for _, collection := range dep {
-		length := collection.Len()
-		if length > 0 {
-			saves = append(saves, datasource.PlatformSaveRequest{
-				Collection: collection,
-				Options: &adapt.SaveOptions{
-					Upsert: &adapt.UpsertOptions{},
-				},
-			})
-		}
+		{
+			Collection: dep["collections"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["selectlists"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["fields"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["themes"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["routes"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["files"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["bots"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["views"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["permissionsets"],
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["profiles"],
+			Options:    upsertOptions,
+		},
 	}
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
