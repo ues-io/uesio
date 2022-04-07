@@ -39,6 +39,15 @@ definition:
         - field: uesio/studio.app
           value: $Param{id}
 
+    bundles:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+
     dependencies:
       collection: uesio/studio.bundledependency
       fields:
@@ -116,9 +125,12 @@ definition:
                                             uesio.variant: uesio/io.primary
                                             text: update
                                             signals:
-                                              - signal: notification/ADD
-                                                text: install ${uesio/core.id} into $Param{app}_$Param{workspacename}
-                                                severity: success
+                                              - signal: "bot/CALL"
+                                                bot: "uesio/studio.addbundle"
+                                                params:
+                                                  bundle: ${uesio/core.id}
+                                                  workspace: $Param{workspacename}
+                                                  app: $Param{app}
 
                             - uesio/io.box:
                                 uesio.styles:
@@ -148,18 +160,36 @@ definition:
                       - uesio/io.text:
                           text: Markdown content here
                           element: p
-                # Section Pricing
-                - uesio/io.image:
-                    uesio.styles:
-                      inner:
-                        display: block
-                        max-width: "100%"
-                    src: https://res.cloudinary.com/dzcerydps/image/upload/v1649245783/bundlepricing_xpy9wn.png
 
                   # Section versions
                 - uesio/io.text:
                     text: versions
                     element: h3
+                - uesio/io.list:
+                    wire: versions
+                    mode: READ
+                    id: versionsList
+                    components:
+                      - uesio/io.text:
+                          text: ${uesio/core.id}
+                      - uesio/io.text:
+                          text: installed
+                          uesio.display:
+                            - type: findInWire
+                              wire: dependencies
+                              field: uesio/studio.bundle->uesio/core.id
+                              value: ${uesio/core.id}
+                      - uesio/io.button:
+                          text: install ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                          uesio.variant: uesio/io.primary
+                          signals:
+                            - signal: "bot/CALL"
+                              bot: "uesio/studio.addbundle"
+                              params:
+                                bundle: ${uesio/core.id}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                workspace: $Param{workspacename}
+                                app: $Param{app}
+
                 - uesio/io.box:
                     uesio.styles:
                       root:
@@ -232,21 +262,23 @@ definition:
                                   - uesio/io.button:
                                       text: install version ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
                                       uesio.variant: uesio/io.primary
+                                      uesio.display:
+                                        - type: findInWire
+                                          wire: dependencies
+                                          field: uesio/studio.bundle->uesio/core.id
+                                          value: ${uesio/core.id}
+
                                       signals:
-                                        - signal: notification/ADD
-                                          text: install ${uesio/core.id} version ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch} into $Param{app}_$Param{workspacename}
-                                          severity: success
+                                        - signal: "bot/CALL"
+                                          bot: "uesio/studio.addbundle"
+                                          params:
+                                            bundle: ${uesio/core.id}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                            workspace: $Param{workspacename}
+                                            app: $Param{app}
                                   - uesio/io.text:
                                       text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                                       element: p
 
-                - uesio/io.list:
-                    wire: versions
-                    mode: READ
-                    id: versionsList
-                    components:
-                      - uesio/io.text:
-                          text: ${uesio/studio.id}
                       # - uesio/io.button:
                       #     uesio.variant: uesio/io.primary
                       #     text: install
@@ -266,14 +298,14 @@ definition:
                       # valueSource: VALUE
                       # value: "uesio/core.platform"
 
-                # - uesio/io.text:
-                #     text: Current App Dependencies
-                #     element: h3
-                # - uesio/io.list:
-                #     wire: dependencies
-                #     mode: READ
-                #     id: dependenciesList
-                #     components:
-                #       - uesio/io.text:
-                #           element: li
-                #           text: ${uesio/core.id}
+                - uesio/io.text:
+                    text: Current App Dependencies
+                    element: h3
+                - uesio/io.list:
+                    wire: bundles
+                    mode: READ
+                    id: dependenciesList
+                    components:
+                      - uesio/io.text:
+                          element: li
+                          text: ${uesio/core.id}
