@@ -24,10 +24,10 @@ func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 }
 
 // GetAppBundle function
-func GetAppBundle(session *sess.Session) (*meta.BundleDef, error) {
+func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
-	return getAppBundleInternal(appName, appVersion, session)
+	return getAppBundleInternal(appName, appVersion, session, connection)
 }
 
 // GetSiteAppBundle gets the app bundle for the site without regard for the workspace
@@ -36,7 +36,7 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session)
+	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session, nil)
 }
 
 func ClearAppBundleCache(session *sess.Session) {
@@ -45,13 +45,13 @@ func ClearAppBundleCache(session *sess.Session) {
 	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
 }
 
-func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*meta.BundleDef, error) {
+func getAppBundleInternal(appName, appVersion string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetBundleStore(appName, session)
 	if err != nil {
 		return nil, err
 	}
-	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session)
+	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session, connection)
 	if err != nil {
 		return nil, err
 	}

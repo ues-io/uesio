@@ -33,7 +33,7 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 		var err error
 		value, err = GetFieldValue(value, name)
 		if err != nil {
-			return nil, errors.New("Field not found: " + fieldName)
+			return nil, errors.New("Field Path not found: " + fieldName)
 		}
 	}
 

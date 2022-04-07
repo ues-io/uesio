@@ -36,7 +36,6 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 		switch btype {
 		case "LISTENER":
-			change.SetField("uesio/studio.collection", "uesio/studio.listener")
 
 		case "AFTERSAVE":
 			collection, err := change.GetFieldAsString("uesio/studio.collection")

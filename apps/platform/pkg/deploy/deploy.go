@@ -219,6 +219,10 @@ func Deploy(body []byte, session *sess.Session) error {
 			Options:    upsertOptions,
 		},
 		{
+			Collection: dep["views"],
+			Options:    upsertOptions,
+		},
+		{
 			Collection: dep["routes"],
 			Options:    upsertOptions,
 		},
@@ -228,10 +232,6 @@ func Deploy(body []byte, session *sess.Session) error {
 		},
 		{
 			Collection: dep["bots"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["views"],
 			Options:    upsertOptions,
 		},
 		{

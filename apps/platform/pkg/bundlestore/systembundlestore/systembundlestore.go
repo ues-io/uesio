@@ -174,7 +174,7 @@ func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStr
 }
 
 // GetBundleDef function
-func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml")
 	if err != nil {

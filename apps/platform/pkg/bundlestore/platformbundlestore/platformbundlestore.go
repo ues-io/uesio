@@ -196,7 +196,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 }
 
 // GetBundleDef function
-func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml", session)
 	if err != nil {
