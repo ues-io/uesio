@@ -189,7 +189,7 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 }
 
 // GetBundleDef function
-func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
@@ -197,6 +197,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: adapt.ID_FIELD,
@@ -249,6 +250,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	err = datasource.PlatformLoadOne(
 		&workspace,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.ID_FIELD,

@@ -52,7 +52,7 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 	wsSession := session.RemoveWorkspaceContext()
 	idSplit := strings.Split(workspaceID, "_")
 
-	err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession)
+	err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession, connection)
 	if err != nil {
 		return err
 	}
