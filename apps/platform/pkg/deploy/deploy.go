@@ -192,88 +192,57 @@ func Deploy(body []byte, session *sess.Session) error {
 		},
 	})
 
+	upsertOptions := &adapt.SaveOptions{
+		Upsert: &adapt.UpsertOptions{},
+	}
+
 	saves := []datasource.PlatformSaveRequest{
 		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
 		{
 			Collection: &deps,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["collections"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["selectlists"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["fields"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: dep["routes"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["themes"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
+		},
+		{
+			Collection: dep["routes"],
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["files"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["bots"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["views"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["permissionsets"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 		{
 			Collection: dep["profiles"],
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
+			Options:    upsertOptions,
 		},
 	}
-
-	// for key, collection := range dep {
-	// 	length := collection.Len()
-	// 	if length > 0 {
-	// 		println(key, collection.GetName())
-	// 		saves = append(saves, datasource.PlatformSaveRequest{
-	// 			Collection: collection,
-	// 			Options: &adapt.SaveOptions{
-	// 				Upsert: &adapt.UpsertOptions{},
-	// 			},
-	// 		})
-	// 	}
-	// }
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
 	if err != nil {
