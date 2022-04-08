@@ -133,7 +133,7 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "wireHasData") {
 		const wire = context.getWire(condition.wire)
 		if (!wire) return false
-		return !wire.getData().length
+		return !!wire.getData().length
 	}
 
 	if (condition.type === "fieldMode") {
@@ -164,7 +164,10 @@ function should(condition: DisplayCondition, context: Context) {
 	const value = ctx.getRecord()?.getFieldValue(condition.field)
 
 	if (condition.type === "fieldNotEquals") return value !== compareToValue
-	return value === compareToValue
+	if (condition.type === "fieldEquals") return value === compareToValue
+
+	console.warn(`Unknown display condition type: ${condition.type}`)
+	return true
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
