@@ -6,7 +6,8 @@
 		"description": "Uesio Base Functionality",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	},
 	{
 		"app": {
@@ -15,7 +16,8 @@
 		"description": "The Uesio Configuration App",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	},
 	{
 		"app": {
@@ -24,7 +26,8 @@
 		"description": "Base Uesio Components",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	},
 	{
 		"app": {
@@ -33,7 +36,8 @@
 		"description": "Experimental Components",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	},
 	{
 		"app": {
@@ -42,7 +46,8 @@
 		"description": "Uesio Docs",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	},
 	{
 		"app": {
@@ -51,6 +56,7 @@
 		"description": "Uesio Website",
 		"major": "0",
 		"minor": "0",
-		"patch": "1"
+		"patch": "1",
+		"version": "0.0.1"
 	}
 ]
