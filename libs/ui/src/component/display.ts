@@ -93,10 +93,7 @@ const wireHasRecordConditionCheck = (
 	value: string,
 	wireName?: string
 ) => {
-	const newContext = context.addFrame({
-		wire: wireName,
-	})
-	const wire = newContext.getWire()
+	const wire = context.getWire(wireName)
 	if (!wire) return false
 	const data = wire.getData()
 	const path = field.split("->")
