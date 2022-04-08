@@ -42,7 +42,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 								root: classes.icon,
 							}}
 							context={context}
-							icon={definition.icon}
+							icon={context.merge(definition.icon)}
 						/>
 					) : undefined
 				}
