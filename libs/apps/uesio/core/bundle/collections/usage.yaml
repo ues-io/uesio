@@ -1,0 +1,5 @@
+name: usage
+idFormat: ${uesio/core.autoid}
+public: true
+label: usage
+pluralLabel: usages
