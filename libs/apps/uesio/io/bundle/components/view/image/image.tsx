@@ -39,7 +39,7 @@ const Image: FC<ImageProps> = (props) => {
 								context,
 								definition.file
 						  )
-						: definition.src
+						: context.merge(definition.src)
 				}
 				loading={definition.loading}
 				alt={definition.alt}
