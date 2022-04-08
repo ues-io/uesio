@@ -7,6 +7,7 @@ type ImageDefinition = {
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"
 	alt: string
+	src?: string
 }
 
 interface ImageProps extends definition.BaseProps {
@@ -24,6 +25,11 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "METADATA",
 			metadataType: "FILE",
 			label: "File",
+		},
+		{
+			name: "src",
+			type: "TEXT",
+			label: "url",
 		},
 		{
 			name: "alt",

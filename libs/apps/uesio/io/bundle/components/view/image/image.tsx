@@ -22,13 +22,6 @@ const Image: FC<ImageProps> = (props) => {
 		props
 	)
 	const uesio = hooks.useUesio(props)
-	const fileFullName = definition?.file
-
-	if (!fileFullName) {
-		return null
-	}
-
-	const fileUrl = uesio.file.getURLFromFullName(context, fileFullName)
 
 	return (
 		<div
@@ -40,7 +33,14 @@ const Image: FC<ImageProps> = (props) => {
 		>
 			<img
 				className={classes.inner}
-				src={fileUrl}
+				src={
+					definition.file
+						? uesio.file.getURLFromFullName(
+								context,
+								definition.file
+						  )
+						: context.merge(definition.src)
+				}
 				loading={definition.loading}
 				alt={definition.alt}
 			/>
