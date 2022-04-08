@@ -45,10 +45,9 @@ func getFieldsInExpression(expression string) (loadable.Item, map[string]bool) {
 }
 
 func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	collectionKeys := map[string]bool{}
-	allKeys := map[string]map[string]bool{}
+
+	depMap := MetadataDependencyMap{}
 	var workspaceID string
-	var items []meta.BundleableItem
 
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 		err := checkWorkspaceID(&workspaceID, change)
@@ -61,44 +60,31 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return err
 		}
 
-		if err = isRequired(ftype, "Field", "Type"); err != nil {
-			return err
+		_, ok := meta.GetFieldTypes()[ftype]
+		if !ok {
+			return errors.New("Invalid Field Type for Field: " + ftype)
 		}
 
-		collection, err := change.GetFieldAsString("uesio/studio.collection")
+		err = depMap.AddRequired(change, "collection", "uesio/studio.collection")
 		if err != nil {
-			return err
-		}
-
-		if err = isRequired(ftype, "Field", "Collection"); err != nil {
 			return err
 		}
 
 		switch ftype {
 		case "REFERENCE":
-			referencedCollection, err := change.GetFieldAsString("uesio/studio.reference->uesio/studio.collection")
+			err = depMap.AddRequired(change, "collection", "uesio/studio.reference->uesio/studio.collection")
 			if err != nil {
 				return err
 			}
-			if err = isRequired(referencedCollection, "Field", "Referenced Collection"); err != nil {
-				return err
-			}
-			collectionKeys[referencedCollection] = true
 		case "FORMULA":
 
-			expression, err := change.GetFieldAsString("uesio/studio.formula->uesio/studio.expression")
+			expression, err := requireValue(change, "uesio/studio.formula->uesio/studio.expression")
 			if err != nil {
-				return err
-			}
-			if err = isRequired(expression, "Field", "Expression"); err != nil {
 				return err
 			}
 
-			returntype, err := change.GetFieldAsString("uesio/studio.formula->uesio/studio.returntype")
+			_, err = requireValue(change, "uesio/studio.formula->uesio/studio.returntype")
 			if err != nil {
-				return err
-			}
-			if err = isRequired(returntype, "Field", "Return type"); err != nil {
 				return err
 			}
 
@@ -109,14 +95,10 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			}
 
 			//make sure that the field in the expression are valid
-
-			fieldItems, err := meta.NewFields(fieldKeys, collection)
+			err = depMap.AddMap(fieldKeys, "field")
 			if err != nil {
 				return err
 			}
-
-			items = append(items, fieldItems...)
-
 		}
 
 		return nil
@@ -125,13 +107,10 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		return err
 	}
 
-	allKeys["collection"] = collectionKeys
-	allitems, err := getAllItems(allKeys)
+	items, err := depMap.GetItems()
 	if err != nil {
 		return err
 	}
-
-	items = append(items, allitems...)
 
 	return checkValidItems(workspaceID, items, session, connection)
 
