@@ -35,6 +35,7 @@ definition:
         uesio/studio.major:
         uesio/studio.minor:
         uesio/studio.patch:
+        uesio/studio.version:
       conditions:
         - field: uesio/studio.app
           value: $Param{id}
@@ -43,6 +44,7 @@ definition:
       collection: uesio/studio.bundle
       fields:
         uesio/core.id:
+        uesio/studio.version:
         uesio/studio.app:
         uesio/studio.major:
         uesio/studio.minor:
@@ -120,7 +122,12 @@ definition:
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: uninstall
-                                            signals:
+                                            uesio.display:
+                                              - type: wireHasRecord
+                                                wire: dependencies
+                                                field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
+                                                value: ${uesio/core.id}
+
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.primary
                                             text: update
@@ -175,7 +182,7 @@ definition:
                       - uesio/io.text:
                           text: installed
                           uesio.display:
-                            - type: findInWire
+                            - type: wireHasRecord
                               wire: dependencies
                               field: uesio/studio.bundle->uesio/core.id
                               value: ${uesio/core.id}
@@ -257,13 +264,13 @@ definition:
                                 id: versionsList
                                 components:
                                   - uesio/io.text:
-                                      text: changelog v ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                      text: changelog v ${uesio/studio.version}
                                       element: h3
                                   - uesio/io.button:
-                                      text: install version ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                      text: install v${uesio/studio.version}
                                       uesio.variant: uesio/io.primary
                                       uesio.display:
-                                        - type: findInWire
+                                        - type: wireHasRecord
                                           wire: dependencies
                                           field: uesio/studio.bundle->uesio/core.id
                                           value: ${uesio/core.id}
@@ -272,7 +279,7 @@ definition:
                                         - signal: "bot/CALL"
                                           bot: "uesio/studio.addbundle"
                                           params:
-                                            bundle: ${uesio/core.id}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                            bundle: ${uesio/studio.version}
                                             workspace: $Param{workspacename}
                                             app: $Param{app}
                                   - uesio/io.text:
@@ -308,4 +315,4 @@ definition:
                     components:
                       - uesio/io.text:
                           element: li
-                          text: ${uesio/core.id}
+                          text: ${uesio/studio.version}
