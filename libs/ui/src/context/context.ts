@@ -350,10 +350,10 @@ class Context {
 	getWire = (id?: string) => {
 		const state = getStore().getState()
 		const ctx = id
-			? this
-			: this.addFrame({
+			? this.addFrame({
 					wire: id,
 			  })
+			: this
 		const plainWire = ctx.getPlainWire()
 		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
