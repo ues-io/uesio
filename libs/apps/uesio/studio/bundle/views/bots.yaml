@@ -33,11 +33,6 @@ definition:
         uesio/studio.dialect:
         uesio/studio.type:
         uesio/studio.content:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
       init:
         query: false
         create: true
@@ -121,14 +116,20 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-              - uesio/studio.metadatafield:
-                  fieldId: uesio/studio.collection
-                  metadataType: "COLLECTION"
-                  label: "Collection"
-              - uesio/io.field:
-                  fieldId: uesio/studio.dialect
               - uesio/io.field:
                   fieldId: uesio/studio.type
+              - uesio/io.field:
+                  fieldId: uesio/studio.dialect
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "LISTENER"
+                      type: "fieldNotEquals"
+                  components:
+                    - uesio/studio.metadatafield:
+                        fieldId: uesio/studio.collection
+                        metadataType: "COLLECTION"
+                        label: "Collection"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
