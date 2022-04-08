@@ -105,62 +105,22 @@ definition:
 
                                   - uesio/io.text:
                                       uesio.display:
-                                        - type: existsInWire
+                                        - type: wireHasRecord
                                           wire: dependencies
                                           field: uesio/studio.bundle->uesio/studio.app
                                           value: ${uesio/core.id}
                                       text: Installed
 
                                   - uesio/io.text:
-                                      text: ${uesio/core.description}
+                                      text: ${uesio/studio.description}
                                       element: p
 
-                                  - uesio/io.avatar:
-                                      uesio.styles:
-                                        root:
-                                          margin: 0 16px
-                                      text: ${uesio/core.owner}
-                                      # image: $User{picture}
-
-                            - uesio/io.box:
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: EDIT
-                                components:
-                                  - uesio/io.text:
-                                      text: "${uesio/core.id}"
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.name
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.owner
-                                  - uesio/io.field:
-                                      fieldId: uesio/core.description
-                            # Save
-                            - uesio/io.button:
-                                text: Save
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: EDIT
-                                uesio.variant: uesio/io.primary
-                                signals:
-                                  - signal: wire/SAVE
-                                    wire: bundlelistings
-                      # - uesio/io.button:
-                      #     uesio.variant: uesio/io.primary
-                      #     text: "toggle mode"
-                      #     uesio.styles:
-                      #       root:
-                      #         display: "block"
-                      #     signals:
-                      #       - signal: component/uesio/io.list/TOGGLE_MODE
-                      #         target: bundleListingList
-
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
-                    components:
-                      - uesio/studio.addbundle:
-                          installablebundleswire: "installablebundles"
-                          currentdependencies: "dependencies"
+                # - uesio/io.box:
+                #     uesio.variant: uesio/io.section
+                #     uesio.styles:
+                #       root:
+                #         padding: 40px
+                #     components:
+                #       - uesio/studio.addbundle:
+                #           installablebundleswire: "installablebundles"
+                #           currentdependencies: "dependencies"

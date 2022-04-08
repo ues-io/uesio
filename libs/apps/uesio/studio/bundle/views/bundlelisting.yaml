@@ -2,6 +2,17 @@ name: bundlelisting
 definition:
   # Wires are how we pull in data
   wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
     apps:
       collection: uesio/studio.app
       fields:
@@ -39,6 +50,26 @@ definition:
       conditions:
         - field: uesio/studio.app
           value: $Param{id}
+      order:
+        - field: uesio/core.id
+          desc: true
+
+    latestversion:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+        uesio/studio.version:
+      conditions:
+        - field: uesio/studio.app
+          value: $Param{id}
+      order:
+        - field: uesio/core.id
+          desc: true
+      batchsize: 1
 
     bundles:
       collection: uesio/studio.bundle
@@ -81,182 +112,146 @@ definition:
                 - uesio/core.view:
                     view: uesio/studio.topbar
                     uesio.context:
-                      wire: bundles
+                      wire: workspaces
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
-                - uesio/io.list:
-                    wire: listing
-                    mode: READ
-                    id: listingList
-                    components:
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              display: grid
-                              grid-template-columns: 1fr 1fr
-                          components:
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    display: flex
-                                    flex-flow: column
-                                components:
-                                  - uesio/io.text:
-                                      element: h2
-                                      text: ${uesio/core.id}
-                                  - uesio/io.text:
-                                      element: p
-                                      text: by ${uesio/studio.owner}
-                                  - uesio/io.text:
-                                      element: p
-                                      text: ${uesio/studio.description}
-                                  - uesio/io.group:
-                                      uesio.styles:
-                                        root:
-                                          margin-top: auto
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: uninstall
-                                            uesio.display:
-                                              - type: wireHasRecord
-                                                wire: dependencies
-                                                field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
-                                                value: ${uesio/core.id}
-
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.primary
-                                            text: update
-                                            signals:
-                                              - signal: "bot/CALL"
-                                                bot: "uesio/studio.addbundle"
-                                                params:
-                                                  bundle: ${uesio/core.id}
-                                                  workspace: $Param{workspacename}
-                                                  app: $Param{app}
-
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    background: "#eee"
-                                    background-color: ${uesio/studio.color}
-                                    padding-top: 50%;
-                                    display: flex
-                                    alignItems: center
-                                    justifyContent: center
-                                    color: "#000"
-                                    position: relative
-                                components:
-                                  - uesio/io.button:
-                                      uesio.styles:
-                                        root:
-                                          inset: 0 0 0 0
-                                          position: absolute
-                                          fontSize: 4em
-                                      icon: ${uesio/studio.icon}
-                # Section Description
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Add a Bundle
                 - uesio/io.box:
-                    components:
-                      - uesio/io.text:
-                          text: Description
-                          element: h2
-                      - uesio/io.text:
-                          text: Markdown content here
-                          element: p
-
-                  # Section versions
-                - uesio/io.text:
-                    text: versions
-                    element: h3
-                - uesio/io.list:
-                    wire: versions
-                    mode: READ
-                    id: versionsList
-                    components:
-                      - uesio/io.text:
-                          text: ${uesio/core.id}
-                      - uesio/io.text:
-                          text: installed
-                          uesio.display:
-                            - type: wireHasRecord
-                              wire: dependencies
-                              field: uesio/studio.bundle->uesio/core.id
-                              value: ${uesio/core.id}
-                      - uesio/io.button:
-                          text: install ${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
-                          uesio.variant: uesio/io.primary
-                          signals:
-                            - signal: "bot/CALL"
-                              bot: "uesio/studio.addbundle"
-                              params:
-                                bundle: ${uesio/core.id}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
-                                workspace: $Param{workspacename}
-                                app: $Param{app}
-
-                - uesio/io.box:
+                    uesio.variant: uesio/io.section
                     uesio.styles:
                       root:
-                        display: grid;
-                        grid-template-columns: 1fr 3fr
+                        padding: 40px
+
                     components:
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              border: "1px solid #f7f7"
-                              padding: 15px
-
+                      - uesio/io.list:
+                          wire: listing
+                          mode: READ
+                          id: listingList
                           components:
-                            # - uesio/io.list:
-                            #     wire: versions
-                            #     mode: READ
-                            #     id: versionsList
-                            #     components:
-                            #       - uesio/io.text:
-                            #           text: ${uesio/core.id}
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
-                                    border-bottom: "1px solid #f7f7"
-
+                                    display: grid
+                                    grid-template-columns: 1fr 1fr
                                 components:
-                                  - uesio/io.text:
-                                      text: version 1.0.4
-                                      element: p
-
-                            - uesio/io.box:
-                                components:
-                                  - uesio/io.text:
-                                      text: version 1.0.3
-                                      element: p
+                                  - uesio/io.box:
                                       uesio.styles:
                                         root:
-                                          marginBottom: "0"
-                                  - uesio/io.text:
+                                          display: flex
+                                          flex-flow: column
+                                      components:
+                                        - uesio/io.text:
+                                            element: h2
+                                            text: ${uesio/core.id}
+                                        - uesio/io.text:
+                                            element: p
+                                            text: by ${uesio/studio.owner}
+                                        - uesio/io.text:
+                                            element: p
+                                            text: ${uesio/studio.description}
+                                        - uesio/io.group:
+                                            uesio.styles:
+                                              root:
+                                                margin-top: auto
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.secondary
+                                                  text: uninstall
+                                                  uesio.display:
+                                                    - type: wireHasRecord
+                                                      wire: dependencies
+                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
+                                                      value: ${uesio/core.id}
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.primary
+                                                  text: Install ${uesio/core.id}
+                                                  signals:
+                                                    - signal: "bot/CALL"
+                                                      bot: "uesio/studio.addbundle"
+                                                      params:
+                                                        bundle: ${uesio/core.id}
+                                                        workspace: $Param{workspacename}
+                                                        app: $Param{app}
+                                                  uesio.display:
+                                                    - type: wireDoesNotHaveRecord
+                                                      wire: dependencies
+                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
+                                                      value: ${uesio/core.id}
+
+                                              # Update Button, check if this listing is installed
+                                              - uesio/io.box:
+                                                  uesio.display:
+                                                    - type: wireHasRecord
+                                                      wire: dependencies
+                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
+                                                      value: ${uesio/core.id}
+                                                  components:
+                                                    - uesio/io.list:
+                                                        wire: latestversion
+                                                        mode: READ
+                                                        id: latestversionlist
+                                                        components:
+                                                          - uesio/io.button:
+                                                              uesio.variant: uesio/io.primary
+                                                              text: update
+                                                              uesio.display:
+                                                                - type: wireDoesNotHaveRecord
+                                                                  wire: dependencies
+                                                                  field: uesio/core.id
+                                                                  value: uesio/core.id
+                                                              signals:
+                                                                - signal: "bot/CALL"
+                                                                  bot: "uesio/studio.addbundle"
+                                                                  params:
+                                                                    bundle: ${uesio/core.id}
+                                                                    workspace: $Param{workspacename}
+                                                                    app: $Param{app}
+
+                                  - uesio/io.box:
                                       uesio.styles:
                                         root:
-                                          marginTop: "0"
-                                          opacity: 0.6
-                                      text: installed
-                                      element: p
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    border-top: "1px solid #f7f7"
-
-                                components:
-                                  - uesio/io.text:
-                                      text: version 1.0.2
-                                      element: p
-
+                                          background: "#eee"
+                                          background-color: ${uesio/studio.color}
+                                          padding-top: 50%;
+                                          display: flex
+                                          alignItems: center
+                                          justifyContent: center
+                                          color: "#000"
+                                          position: relative
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.styles:
+                                              root:
+                                                inset: 0 0 0 0
+                                                position: absolute
+                                                fontSize: 4em
+                                            icon: ${uesio/studio.icon}
+                      # Section Description
                       - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              border: "1px solid #f7f7"
-                              padding: 15px
+                          components:
+                            - uesio/io.text:
+                                text: Description
+                                element: h2
+                            - uesio/io.text:
+                                text: Markdown content here
+                                element: p
+
+                        # Section versions
+                      - uesio/io.text:
+                          text: versions
+                          element: h3
+                      - uesio/io.group:
                           components:
                             - uesio/io.list:
                                 wire: versions
@@ -264,55 +259,28 @@ definition:
                                 id: versionsList
                                 components:
                                   - uesio/io.text:
-                                      text: changelog v ${uesio/studio.version}
-                                      element: h3
-                                  - uesio/io.button:
-                                      text: install v${uesio/studio.version}
-                                      uesio.variant: uesio/io.primary
+                                      text: ${uesio/core.id}
+                                      element: p
+                                  - uesio/io.text:
+                                      text: installed
+                                      element: p
                                       uesio.display:
                                         - type: wireHasRecord
                                           wire: dependencies
                                           field: uesio/studio.bundle->uesio/core.id
                                           value: ${uesio/core.id}
-
+                                  - uesio/io.button:
+                                      text: install ${uesio/studio.version}
+                                      uesio.variant: uesio/io.primary
+                                      uesio.display:
+                                        - type: wireDoesNotHaveRecord
+                                          wire: dependencies
+                                          field: uesio/studio.bundle->uesio/core.id
+                                          value: ${uesio/core.id}
                                       signals:
                                         - signal: "bot/CALL"
                                           bot: "uesio/studio.addbundle"
                                           params:
-                                            bundle: ${uesio/studio.version}
+                                            bundle: ${uesio/core.id}_v${uesio/studio.version}
                                             workspace: $Param{workspacename}
                                             app: $Param{app}
-                                  - uesio/io.text:
-                                      text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                      element: p
-
-                      # - uesio/io.button:
-                      #     uesio.variant: uesio/io.primary
-                      #     text: install
-                      #     signals:
-                      #       - signal: record/CREATE
-                      #         wire: dependencies
-
-                      #         # How do we pass data from other wires in here?
-                      #       - signal: record/UPDATE
-                      #         wire: dependencies
-                      #         field: uesio/studio.bundle
-                      #         uesio.context:
-                      #           wire: versions
-                      #         value: $Record{versions, uesio/core.id}
-                      # copied from wire
-
-                      # valueSource: VALUE
-                      # value: "uesio/core.platform"
-
-                - uesio/io.text:
-                    text: Current App Dependencies
-                    element: h3
-                - uesio/io.list:
-                    wire: bundles
-                    mode: READ
-                    id: dependenciesList
-                    components:
-                      - uesio/io.text:
-                          element: li
-                          text: ${uesio/studio.version}
