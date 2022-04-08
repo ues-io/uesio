@@ -6,8 +6,7 @@ import (
 )
 
 func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	collectionKeys := map[string]bool{}
-	allKeys := map[string]map[string]bool{}
+	depMap := MetadataDependencyMap{}
 	var workspaceID string
 
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
@@ -16,48 +15,24 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 			return err
 		}
 
-		btype, err := change.GetFieldAsString("uesio/studio.type")
+		btype, err := requireValue(change, "uesio/studio.type")
 		if err != nil {
 			return err
 		}
 
-		if err = isRequired(btype, "Bot", "Type"); err != nil {
-			return err
-		}
-
-		dialect, err := change.GetFieldAsString("uesio/studio.dialect")
+		_, err = requireValue(change, "uesio/studio.dialect")
 		if err != nil {
-			return err
-		}
-
-		if err = isRequired(dialect, "Bot", "Dialect"); err != nil {
 			return err
 		}
 
 		switch btype {
 		case "LISTENER":
 
-		case "AFTERSAVE":
-			collection, err := change.GetFieldAsString("uesio/studio.collection")
+		case "AFTERSAVE", "BEFORESAVE":
+			depMap.AddRequired(change, "collection", "uesio/studio.collection")
 			if err != nil {
 				return err
 			}
-			if err := isRequired(collection, "Bot", "Collection"); err != nil {
-				return err
-			}
-
-			collectionKeys[collection] = true
-
-		case "BEFORESAVE":
-			collection, err := change.GetFieldAsString("uesio/studio.collection")
-			if err != nil {
-				return err
-			}
-			if err := isRequired(collection, "Bot", "Collection"); err != nil {
-				return err
-			}
-
-			collectionKeys[collection] = true
 		}
 
 		return nil
@@ -66,9 +41,7 @@ func runBotBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 		return err
 	}
 
-	allKeys["collection"] = collectionKeys
-
-	items, err := getAllItems(allKeys)
+	items, err := depMap.GetItems()
 	if err != nil {
 		return err
 	}

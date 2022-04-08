@@ -11,6 +11,9 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 
 	var workspaceID string
 
+	fieldChanges := adapt.Collection{}
+	collectionChanges := adapt.Collection{}
+
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		err := checkWorkspaceID(&workspaceID, change)
@@ -23,80 +26,31 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 			return err
 		}
 
-		if err = isRequired(name, "Collection", "Name"); err != nil {
-			return err
-		}
-
-		label, err := change.GetFieldAsString("uesio/studio.label")
-		if err != nil {
-			return err
-		}
-
-		if err = isRequired(label, "Collection", "Label"); err != nil {
-			return err
-		}
-
-		plabel, err := change.GetFieldAsString("uesio/studio.plurallabel")
-		if err != nil {
-			return err
-		}
-
-		if err = isRequired(plabel, "Collection", "Plural Label"); err != nil {
-			return err
-		}
-
 		//Creates Default Name Field for collection
 		if change.IsNew {
 
 			//TO-DO Nice way of doing
 			idParts := strings.Split(workspaceID, "_")
 			fieldCollection := idParts[0] + "." + name
-			fieldItem := adapt.Item{}
-			workspace := map[string]interface{}{
-				"uesio/core.id": workspaceID,
+			fieldItem := adapt.Item{
+				"uesio/studio.name":       "name",
+				"uesio/studio.type":       "TEXT",
+				"uesio/studio.label":      "Name",
+				"uesio/studio.collection": fieldCollection,
+				"uesio/studio.workspace": map[string]interface{}{
+					"uesio/core.id": workspaceID,
+				},
 			}
-			fieldItem.SetField("uesio/studio.name", "name")
-			fieldItem.SetField("uesio/studio.type", "TEXT")
-			fieldItem.SetField("uesio/studio.label", "Name")
-			fieldItem.SetField("uesio/studio.collection", fieldCollection)
-			fieldItem.SetField("uesio/studio.workspace", workspace)
 
-			fieldChanges := adapt.Collection{}
 			fieldChanges = append(fieldChanges, fieldItem)
 
-			//Update Collection
-			collectionId, err := change.GetField("uesio/core.id")
-			if err != nil {
-				return err
-			}
-			collectionItem := adapt.Item{}
-			collectionChanges := adapt.Collection{}
 			namefield := idParts[0] + ".name"
-
-			collectionItem.SetField("uesio/studio.namefield", namefield)
-			collectionItem.SetField("uesio/core.id", collectionId)
+			collectionItem := adapt.Item{
+				"uesio/studio.namefield": namefield,
+				"uesio/core.id":          change.IDValue,
+			}
 
 			collectionChanges = append(collectionChanges, collectionItem)
-
-			requests := []SaveRequest{
-				{
-					Collection: "uesio/studio.field",
-					Wire:       "defaultnamefield",
-					Changes:    &fieldChanges,
-				},
-				{
-					Collection: "uesio/studio.collection",
-					Wire:       "defaultnamefieldcoll",
-					Changes:    &collectionChanges,
-				},
-			}
-
-			err = SaveWithOptions(requests, session, GetConnectionSaveOptions(connection))
-
-			if err != nil {
-				return err
-			}
-
 		}
 
 		return nil
@@ -105,5 +59,17 @@ func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connectio
 		return err
 	}
 
-	return nil
+	return SaveWithOptions([]SaveRequest{
+		{
+			Collection: "uesio/studio.field",
+			Wire:       "defaultnamefield",
+			Changes:    &fieldChanges,
+		},
+		{
+			Collection: "uesio/studio.collection",
+			Wire:       "defaultnamefieldcoll",
+			Changes:    &collectionChanges,
+		},
+	}, session, GetConnectionSaveOptions(connection))
+
 }
