@@ -6,7 +6,6 @@ type ImageDefinition = {
 	align?: "left" | "center" | "right"
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"
-	src?: string
 	alt: string
 }
 
@@ -25,11 +24,6 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "METADATA",
 			metadataType: "FILE",
 			label: "File",
-		},
-		{
-			name: "src",
-			type: "TEXT",
-			label: "External src",
 		},
 		{
 			name: "alt",
