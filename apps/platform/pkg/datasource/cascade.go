@@ -30,10 +30,10 @@ func getCascadeDeletes(
 
 				// Get the ids that we need to delete
 
-				if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
+				if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
 					continue
 				}
-				for _, deletion := range *wire.Deletes {
+				for _, deletion := range wire.Deletes {
 					item := deletion.OldValues
 					refInterface, err := item.GetField(field.GetFullName())
 					if err != nil {
@@ -78,12 +78,12 @@ func getCascadeDeletes(
 
 				referencedCollection := referenceGroupMetadata.Collection
 
-				if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
+				if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
 					continue
 				}
 
 				ids := []string{}
-				for _, deletion := range *wire.Deletes {
+				for _, deletion := range wire.Deletes {
 
 					item := deletion.OldValues
 					refInterface, err := item.GetField(adapt.ID_FIELD)

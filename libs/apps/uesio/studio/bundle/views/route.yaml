@@ -21,6 +21,7 @@ definition:
         uesio/studio.path:
         uesio/studio.view:
         uesio/studio.theme:
+        uesio/studio.collection:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -126,3 +127,7 @@ definition:
                                       fieldId: uesio/studio.theme
                                       metadataType: "THEME"
                                       label: "Theme"
+                                  - uesio/studio.metadatafield:
+                                      fieldId: uesio/studio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"

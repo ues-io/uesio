@@ -26,6 +26,14 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 		objValue := reflectValue(obj)
 		objKind := objValue.Kind()
 		objType := objValue.Type()
+		if objKind == reflect.Map {
+			mapValue := objValue.MapIndex(reflect.ValueOf(name))
+			if !mapValue.IsValid() {
+				return nil, errors.New("bad value here")
+			}
+			obj = mapValue.Interface()
+			continue
+		}
 		if objKind != reflect.Struct && objKind != reflect.Ptr {
 			return nil, errors.New("Cannot use GetField on a non-struct interface")
 		}

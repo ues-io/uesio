@@ -34,7 +34,7 @@ func HandleUpsertLookup(
 
 	// Go through all the changes and get a list of the upsert keys
 	ids := []string{}
-	for _, change := range *op.Inserts {
+	for _, change := range op.Inserts {
 		upsertKeyStringValue, err := templating.Execute(template, change.FieldChanges)
 		if err != nil {
 			continue
@@ -92,7 +92,7 @@ func HandleUpsertLookup(
 	}
 
 	newInserts := ChangeItems{}
-	for _, change := range *op.Inserts {
+	for _, change := range op.Inserts {
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
@@ -112,13 +112,13 @@ func HandleUpsertLookup(
 			}
 			change.IDValue = idValue.(string)
 			change.IsNew = false
-			*op.Updates = append(*op.Updates, change)
+			op.Updates = append(op.Updates, change)
 		} else {
 			newInserts = append(newInserts, change)
 		}
 
 	}
-	*op.Inserts = newInserts
+	op.Inserts = newInserts
 	return nil
 
 }

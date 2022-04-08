@@ -4,14 +4,14 @@ import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // InsertsAPI type
 type InsertsAPI struct {
-	inserts *adapt.ChangeItems
+	op *adapt.SaveOp
 }
 
 // Get function
 func (c *InsertsAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	for _, insert := range *c.inserts {
+	for _, insert := range c.op.Inserts {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
 			change: insert,
 		})

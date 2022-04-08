@@ -1,22 +1,40 @@
 import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
-
+import { FieldType } from "../bands/field/types"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
 
-type WireDefinition = {
-	collection: string
-	fields: WireFieldDefinitionMap
-	conditions?: WireConditionDefinition[]
+type ViewOnlyField = {
+	label: string
+	required: boolean
+	type: FieldType // get better type
+}
+
+type WireDefinitionBase = {
 	defaults?: WireDefault[]
-	order?: WireOrderDescription[]
-	batchsize?: number
 	init?: {
 		query?: boolean
 		create?: boolean
 	}
+	viewOnly?: boolean
 }
+
+type ViewOnlyWireDefinition = WireDefinitionBase & {
+	viewOnly: true
+	fields: Record<string, ViewOnlyField>
+}
+
+type RegularWireDefinition = WireDefinitionBase & {
+	viewOnly?: false
+	fields: WireFieldDefinitionMap
+	collection: string
+	order?: WireOrderDescription[]
+	batchsize?: number
+	conditions?: WireConditionDefinition[]
+}
+
+type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition
 
 type WireFieldDefinitionMap = {
 	[key: string]: WireFieldDefinition
@@ -40,4 +58,6 @@ export {
 	WireDefinitionMap,
 	WireFieldDefinition,
 	WireFieldDefinitionMap,
+	RegularWireDefinition,
+	ViewOnlyWireDefinition,
 }

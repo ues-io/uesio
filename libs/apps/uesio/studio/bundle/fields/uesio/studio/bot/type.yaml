@@ -2,3 +2,4 @@ name: type
 type: SELECT
 label: Bot type
 selectList: uesio/studio.bottype
+required: true

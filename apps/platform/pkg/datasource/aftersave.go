@@ -20,13 +20,13 @@ type AfterSaveAPI struct {
 func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Inserts: &InsertsAPI{
-			inserts: request.Inserts,
+			op: request,
 		},
 		Updates: &UpdatesAPI{
-			updates: request.Updates,
+			op: request,
 		},
 		Deletes: &DeletesAPI{
-			deletes: request.Deletes,
+			op: request,
 		},
 		session: session,
 	}

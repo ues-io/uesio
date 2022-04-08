@@ -20,10 +20,10 @@ func HandleOldValuesLookup(
 
 	// Go through all the changes and get a list of the upsert keys
 	ids := []string{}
-	for _, change := range *op.Updates {
+	for _, change := range op.Updates {
 		ids = append(ids, change.IDValue)
 	}
-	for _, change := range *op.Deletes {
+	for _, change := range op.Deletes {
 		ids = append(ids, change.IDValue)
 	}
 
@@ -56,19 +56,19 @@ func HandleOldValuesLookup(
 		return err
 	}
 
-	for index, change := range *op.Updates {
+	for index, change := range op.Updates {
 		oldValues, ok := oldValuesLookup[change.IDValue]
 		if !ok {
 			return err
 		}
-		(*op.Updates)[index].OldValues = oldValues
+		op.Updates[index].OldValues = oldValues
 	}
-	for index, change := range *op.Deletes {
+	for index, change := range op.Deletes {
 		oldValues, ok := oldValuesLookup[change.IDValue]
 		if !ok {
 			return err
 		}
-		(*op.Deletes)[index].OldValues = oldValues
+		op.Deletes[index].OldValues = oldValues
 	}
 
 	return nil

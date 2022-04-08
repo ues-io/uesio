@@ -97,14 +97,23 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 	}
 }
 
-func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, autonumberStart int, session *sess.Session) error {
+func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
+	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	autonumberStart, err := getAutonumber(len(op.Inserts), connection, collectionMetadata)
+	if err != nil {
+		return err
+	}
 	fieldPopulations := getPopulationFunction(collectionMetadata, session)
 
 	if op.Inserts != nil {
-		for i := range *op.Inserts {
-			(*op.Inserts)[i].Autonumber = autonumberStart + i
-			err := fieldPopulations((*op.Inserts)[i])
+		for i := range op.Inserts {
+			op.Inserts[i].Autonumber = autonumberStart + i
+			err := fieldPopulations(op.Inserts[i])
 			if err != nil {
 				return err
 			}
@@ -112,8 +121,8 @@ func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, au
 	}
 
 	if op.Updates != nil {
-		for i := range *op.Updates {
-			err := fieldPopulations((*op.Updates)[i])
+		for i := range op.Updates {
+			err := fieldPopulations(op.Updates[i])
 			if err != nil {
 				return err
 			}

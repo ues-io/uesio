@@ -11,10 +11,30 @@ import (
 type SaveOp struct {
 	CollectionName string
 	WireName       string
-	Inserts        *ChangeItems
-	Updates        *ChangeItems
-	Deletes        *ChangeItems
+	Inserts        ChangeItems
+	Updates        ChangeItems
+	Deletes        ChangeItems
 	Options        *SaveOptions
+}
+
+func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
+	if op.Inserts != nil {
+		for i := range op.Inserts {
+			err := changeFunc(&op.Inserts[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if op.Updates != nil {
+		for i := range op.Updates {
+			err := changeFunc(&op.Updates[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 type ChangeItems []ChangeItem
@@ -45,6 +65,18 @@ func (ci *ChangeItem) AddReadWriteToken(token string) {
 	ci.ReadWriteTokens = append(ci.ReadWriteTokens, token)
 }
 
+func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", errors.New("Could not get value as string")
+	}
+	return valueString, nil
+}
+
 func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 	changeVal, err := ci.FieldChanges.GetField(fieldID)
 	if err == nil && changeVal != nil {
@@ -59,6 +91,9 @@ func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 		return oldVal, nil
 	}
 
+	if err != nil {
+		return nil, errors.New("Could not get field from change item: " + err.Error())
+	}
 	return nil, nil
 }
 
@@ -101,6 +136,24 @@ type SaveOptions struct {
 	Lookups []Lookup
 }
 
+func GetFieldValue(value interface{}, key string) (interface{}, error) {
+	valueMap, ok := value.(map[string]interface{})
+	if ok {
+		fk, ok := valueMap[key]
+		if !ok {
+			return "", errors.New("could not get map property: " + key)
+		}
+		return fk, nil
+	}
+
+	valueItem, ok := value.(Item)
+	if ok {
+		return valueItem.GetField(key)
+	}
+
+	return nil, errors.New("not a valid map or item")
+}
+
 func GetReferenceKey(value interface{}) (string, error) {
 	if value == nil {
 		return "", nil
@@ -111,26 +164,12 @@ func GetReferenceKey(value interface{}) (string, error) {
 		return valueString, nil
 	}
 
-	valueMap, ok := value.(map[string]interface{})
-	if ok {
-		fk, ok := valueMap[ID_FIELD]
-		if !ok {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
+	fk, err := GetFieldValue(value, ID_FIELD)
+	if err != nil {
+		return "", err
 	}
 
-	valueItem, ok := value.(Item)
-	if ok {
-		fk, err := valueItem.GetField(ID_FIELD)
-		if err != nil {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
-
-	}
-
-	return "", errors.New("Bad foreign key")
+	return GetReferenceKey(fk)
 }
 
 // NewFieldChanges function returns a template that can merge field changes

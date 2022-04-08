@@ -26,9 +26,9 @@ func (ol *OpList) getCurrentIndex() int {
 		ol.List = append(ol.List, &adapt.SaveOp{
 			CollectionName: ol.CollectionName,
 			WireName:       ol.WireName,
-			Inserts:        &adapt.ChangeItems{},
-			Updates:        &adapt.ChangeItems{},
-			Deletes:        &adapt.ChangeItems{},
+			Inserts:        adapt.ChangeItems{},
+			Updates:        adapt.ChangeItems{},
+			Deletes:        adapt.ChangeItems{},
 			Options:        ol.Options,
 		})
 	}
@@ -38,7 +38,7 @@ func (ol *OpList) getCurrentIndex() int {
 
 func (ol *OpList) addInsert(item loadable.Item, recordKey string) {
 	currentIndex := ol.getCurrentIndex()
-	*ol.List[currentIndex].Inserts = append(*ol.List[currentIndex].Inserts, adapt.ChangeItem{
+	ol.List[currentIndex].Inserts = append(ol.List[currentIndex].Inserts, adapt.ChangeItem{
 		FieldChanges: item,
 		RecordKey:    recordKey,
 		IsNew:        true,
@@ -47,7 +47,7 @@ func (ol *OpList) addInsert(item loadable.Item, recordKey string) {
 
 func (ol *OpList) addUpdate(item loadable.Item, recordKey string, idValue string) {
 	currentIndex := ol.getCurrentIndex()
-	*ol.List[currentIndex].Updates = append(*ol.List[currentIndex].Updates, adapt.ChangeItem{
+	ol.List[currentIndex].Updates = append(ol.List[currentIndex].Updates, adapt.ChangeItem{
 		IDValue:      idValue,
 		FieldChanges: item,
 		RecordKey:    recordKey,
@@ -56,7 +56,7 @@ func (ol *OpList) addUpdate(item loadable.Item, recordKey string, idValue string
 
 func (ol *OpList) addDelete(item loadable.Item, idValue string) {
 	currentIndex := ol.getCurrentIndex()
-	*ol.List[currentIndex].Deletes = append(*ol.List[currentIndex].Deletes, adapt.ChangeItem{
+	ol.List[currentIndex].Deletes = append(ol.List[currentIndex].Deletes, adapt.ChangeItem{
 		FieldChanges: item,
 		IDValue:      idValue,
 	})

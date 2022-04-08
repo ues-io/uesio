@@ -1,14 +1,15 @@
-package auth
+package datasource
 
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddWorkspaceContext(appName, workspaceName string, session *sess.Session) error {
+func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, connection adapt.Connection) error {
 
 	site := session.GetSite()
 	perms := session.GetPermissions()
@@ -45,7 +46,7 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session) e
 
 	session.AddWorkspaceContext(workspace)
 
-	bundleDef, err := bundle.GetAppBundle(session)
+	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}

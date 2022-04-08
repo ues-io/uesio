@@ -4,6 +4,7 @@ import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD, PlainCollection } from "../../collection/types"
+import { WireDefinition } from "../../../definition/wire"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -54,14 +55,11 @@ const getDefaultRecord = (
 	wires: Dictionary<PlainWire>,
 	collections: Dictionary<PlainCollection>,
 	viewId: string,
-	wireName: string
+	wireDef: WireDefinition
 ): PlainWireRecord => {
-	const viewDef = context.getViewDef()
-	if (!viewDef) return {}
-	const wire = viewDef.definition?.wires?.[wireName]
-	if (!wire) return {}
-	const defaults = wire.defaults
-	const collection = collections[wire.collection]
+	const collectionName = wireDef.viewOnly ? "blah" : wireDef.collection
+	const collection = collections[collectionName]
+	const defaults = wireDef.defaults
 	const defaultRecord: PlainWireRecord = {}
 	defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)

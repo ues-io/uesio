@@ -120,7 +120,11 @@ const wireHelper: FC<T> = (props) => {
 			return "Tables need to be connected to a wire, select one."
 		const wireDef = wiresInDef && wiresInDef[parentDef.wire]
 		const collection = collectionState(
-			(wiresInDef && wireDef && wireDef?.collection) || ""
+			(wiresInDef &&
+				wireDef &&
+				!wireDef.viewOnly &&
+				wireDef?.collection) ||
+				""
 		)
 		if (collection === "missing" || collection === "incomplete")
 			return copy.collection

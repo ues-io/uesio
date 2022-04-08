@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
@@ -62,7 +63,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
-		err := auth.AddWorkspaceContext(appName, workspaceName, GetSession(r))
+		err := datasource.AddWorkspaceContext(appName, workspaceName, GetSession(r), nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)

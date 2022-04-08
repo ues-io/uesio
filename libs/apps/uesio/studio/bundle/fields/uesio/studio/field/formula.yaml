@@ -2,10 +2,10 @@ name: formula
 type: MAP
 label: Formula
 subfields:
-  - name: studio.expression
+  - name: uesio/studio.expression
     label: Expression
     type: TEXT
-  - name: studio.returntype
+  - name: uesio/studio.returntype
     label: Return Type
     type: SELECT
     selectList: uesio/studio.formulafieldreturntypes

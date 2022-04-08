@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
@@ -49,6 +49,8 @@ type ResetWirePayload = {
 	changes: Record<string, PlainWireRecord>
 } & EntityPayload
 
+type InitPayload = [PlainWire[], Record<string, PlainCollection>]
+
 const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
@@ -95,7 +97,10 @@ const wireSlice = createSlice({
 			state.changes = {}
 			state.deletes = {}
 		}),
-		init: wireAdapter.upsertMany,
+		init: (
+			state: EntityState<PlainWire>,
+			action: PayloadAction<InitPayload>
+		) => wireAdapter.upsertMany(state, action.payload[0]),
 		empty: createEntityReducer<EntityPayload, PlainWire>((state) => {
 			state.data = {}
 			state.changes = {}

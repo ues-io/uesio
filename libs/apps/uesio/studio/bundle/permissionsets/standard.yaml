@@ -156,3 +156,4 @@ collections:
   uesio/studio.workspace: true
   uesio/core.userfile: true
   uesio/core.user: true
+  uesio/core.loginmethod: true

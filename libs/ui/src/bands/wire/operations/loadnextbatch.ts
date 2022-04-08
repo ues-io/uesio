@@ -58,6 +58,7 @@ export default createAsyncThunk<
 			more: wire.more,
 			error: undefined,
 			conditions: requestWire.conditions,
+			collection: wire.collection,
 		}
 	}
 

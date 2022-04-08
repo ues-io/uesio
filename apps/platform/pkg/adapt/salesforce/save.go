@@ -38,7 +38,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		return err
 	}
 
-	for _, change := range *request.Inserts {
+	for _, change := range request.Inserts {
 
 		newID, err := templating.Execute(idTemplate, change.FieldChanges)
 		if err != nil {
@@ -63,7 +63,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	}
 
-	for _, change := range *request.Updates {
+	for _, change := range request.Updates {
 
 		if change.IDValue == "" {
 			continue
@@ -94,7 +94,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		}
 	}
 
-	for _, delete := range *request.Deletes {
+	for _, delete := range request.Deletes {
 
 		if delete.IDValue == "" {
 			continue

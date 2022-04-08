@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -23,10 +24,10 @@ func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 }
 
 // GetAppBundle function
-func GetAppBundle(session *sess.Session) (*meta.BundleDef, error) {
+func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
-	return getAppBundleInternal(appName, appVersion, session)
+	return getAppBundleInternal(appName, appVersion, session, connection)
 }
 
 // GetSiteAppBundle gets the app bundle for the site without regard for the workspace
@@ -35,7 +36,7 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session)
+	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session, nil)
 }
 
 func ClearAppBundleCache(session *sess.Session) {
@@ -44,13 +45,13 @@ func ClearAppBundleCache(session *sess.Session) {
 	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
 }
 
-func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*meta.BundleDef, error) {
+func getAppBundleInternal(appName, appVersion string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetBundleStore(appName, session)
 	if err != nil {
 		return nil, err
 	}
-	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session)
+	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -209,4 +210,35 @@ func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess
 		return nil, err
 	}
 	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
+}
+
+func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
+
+	// Coalate items into same namespace
+	coalated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := coalated[namespace]
+		if !ok {
+			coalated[namespace] = []meta.BundleableItem{}
+		}
+		coalated[namespace] = append(coalated[namespace], item)
+	}
+	for namespace, items := range coalated {
+		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		if err != nil {
+			fmt.Println("Failed IsValid: " + err.Error())
+			for _, item := range items {
+				fmt.Println(item.GetKey())
+			}
+			return err
+		}
+
+		_, err = bs.HasAnyItems(items, version, session, connection)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
 }

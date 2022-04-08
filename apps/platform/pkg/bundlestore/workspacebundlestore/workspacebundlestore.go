@@ -189,7 +189,7 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 }
 
 // GetBundleDef function
-func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
@@ -197,6 +197,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: adapt.ID_FIELD,
@@ -249,6 +250,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	err = datasource.PlatformLoadOne(
 		&workspace,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.ID_FIELD,
@@ -269,4 +271,75 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.DefaultTheme = workspace.DefaultTheme
 
 	return &by, nil
+}
+
+func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
+
+	if session.GetWorkspace() == nil {
+		return true, errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
+	collectionIDs := map[string][]string{}
+	itemMap := map[string]meta.BundleableItem{}
+	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
+	for _, item := range items {
+		collectionName := item.GetBundleGroup().GetBundleFolderName()
+		dbID := item.GetDBID(workspace)
+		item.SetNamespace(namespace)
+		_, ok := collectionIDs[collectionName]
+		if !ok {
+			collectionIDs[collectionName] = []string{}
+		}
+
+		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
+		itemMap[collectionName+":"+dbID] = item
+	}
+	for collectionName, ids := range collectionIDs {
+		group, err := meta.GetBundleableGroupFromType(collectionName)
+		if err != nil {
+			return true, err
+		}
+
+		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+			Collection: group,
+			Namespace:  namespace,
+		}, &datasource.PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    adapt.ID_FIELD,
+					Value:    ids,
+					Operator: "IN",
+				},
+			}}, session.RemoveWorkspaceContext())
+		if err != nil {
+			return true, err
+		}
+
+		if group.Len() != len(items) {
+			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
+				value, err := item.GetField(adapt.ID_FIELD)
+				if err != nil {
+					return ""
+				}
+				return value.(string)
+			}, ids)
+			if err != nil {
+				return true, err
+			}
+			if len(badValues) > 0 {
+				return true, errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+			}
+		}
+
+		return true, group.Loop(func(item loadable.Item, _ string) error {
+			bundleable := item.(meta.BundleableItem)
+			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
+			meta.Copy(match, item)
+			return nil
+		})
+
+	}
+	return true, nil
 }

@@ -5,6 +5,7 @@ import get from "./operations/get"
 import { PlainWire } from "../wire/types"
 import collectionAdapter from "./adapter"
 import { LoadResponseBatch } from "../../load/loadresponse"
+import { init as initWire } from "../wire"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
@@ -44,6 +45,17 @@ const collectionSlice = createSlice({
 
 		builder.addCase(
 			wireLoadOp.fulfilled,
+			(
+				state,
+				{
+					payload: [, collections],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
+			) => {
+				mergeCollection(state, collections)
+			}
+		)
+		builder.addCase(
+			initWire,
 			(
 				state,
 				{

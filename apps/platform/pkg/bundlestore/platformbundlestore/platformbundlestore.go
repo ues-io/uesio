@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -57,7 +58,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
+		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
@@ -195,7 +196,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 }
 
 // GetBundleDef function
-func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml", session)
 	if err != nil {
@@ -208,4 +209,14 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 		return nil, err
 	}
 	return &by, nil
+}
+
+func (b *PlatformBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return true, err
+		}
+	}
+	return true, nil
 }
