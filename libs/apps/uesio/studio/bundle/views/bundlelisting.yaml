@@ -252,35 +252,48 @@ definition:
                           text: versions
                           element: h3
                       - uesio/io.group:
+                          uesio.styles:
+                            root:
+                              border-left: "1px solid #eee"
+
                           components:
                             - uesio/io.list:
                                 wire: versions
                                 mode: READ
                                 id: versionsList
                                 components:
-                                  - uesio/io.text:
-                                      text: ${uesio/core.id}
-                                      element: p
-                                  - uesio/io.text:
-                                      text: installed
-                                      element: p
-                                      uesio.display:
-                                        - type: wireHasRecord
-                                          wire: dependencies
-                                          field: uesio/studio.bundle->uesio/core.id
-                                          value: ${uesio/core.id}
-                                  - uesio/io.button:
-                                      text: install ${uesio/studio.version}
-                                      uesio.variant: uesio/io.primary
-                                      uesio.display:
-                                        - type: wireDoesNotHaveRecord
-                                          wire: dependencies
-                                          field: uesio/studio.bundle->uesio/core.id
-                                          value: ${uesio/core.id}
-                                      signals:
-                                        - signal: "bot/CALL"
-                                          bot: "uesio/studio.addbundle"
-                                          params:
-                                            bundle: ${uesio/core.id}_v${uesio/studio.version}
-                                            workspace: $Param{workspacename}
-                                            app: $Param{app}
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          padding: 15px
+                                          border-right: "1px solid #eee"
+                                          display: flex
+                                          justifyContent: center
+                                          flexFlow: column
+                                      components:
+                                        - uesio/io.text:
+                                            text: ${uesio/core.id}
+                                            element: p
+                                        - uesio/io.text:
+                                            text: installed
+                                            element: p
+                                            uesio.display:
+                                              - type: wireHasRecord
+                                                wire: dependencies
+                                                field: uesio/studio.bundle->uesio/core.id
+                                                value: ${uesio/core.id}
+                                        - uesio/io.button:
+                                            text: install ${uesio/studio.version}
+                                            uesio.variant: uesio/io.primary
+                                            uesio.display:
+                                              - type: wireDoesNotHaveRecord
+                                                wire: dependencies
+                                                field: uesio/studio.bundle->uesio/core.id
+                                                value: ${uesio/core.id}
+                                            signals:
+                                              - signal: "bot/CALL"
+                                                bot: "uesio/studio.addbundle"
+                                                params:
+                                                  bundle: ${uesio/core.id}_v${uesio/studio.version}
+                                                  workspace: $Param{workspacename}
+                                                  app: $Param{app}
