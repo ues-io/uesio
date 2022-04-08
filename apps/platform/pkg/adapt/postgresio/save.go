@@ -59,7 +59,14 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 		}
 
 		if fieldMetadata.Type == "NUMBER" {
-			enc.Float64Key(fieldID, value.(float64))
+			switch v := value.(type) {
+			case int64:
+				enc.Int64Key(fieldID, v)
+			case float64:
+				enc.Float64Key(fieldID, v)
+			default:
+				return fmt.Errorf("Error converting number field: Invalid Type %T", v)
+			}
 			return nil
 		}
 
