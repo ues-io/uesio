@@ -23,7 +23,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	case "TIMESTAMP":
 		return "(fields->>'" + fieldName + "')::bigint"
 	case "NUMBER":
-		return "(fields->>'" + fieldName + "')::numeric"
+		return "fields->'" + fieldName + "'"
 	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"

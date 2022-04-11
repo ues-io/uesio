@@ -6,10 +6,8 @@ import (
 )
 
 func runRouteBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	collectionKeys := map[string]bool{}
-	viewKeys := map[string]bool{}
-	themeKeys := map[string]bool{}
-	allKeys := map[string]map[string]bool{}
+
+	depMap := MetadataDependencyMap{}
 
 	var workspaceID string
 
@@ -19,38 +17,23 @@ func runRouteBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return err
 		}
 
-		collection, _ := change.GetFieldAsString("uesio/studio.collection")
-
-		if collection != "" {
-			collectionKeys[collection] = true
-		}
-
-		view, err := change.GetFieldAsString("uesio/studio.view")
+		err = depMap.AddOptional(change, "collection", "uesio/studio.collection")
 		if err != nil {
 			return err
 		}
-		if view != "" {
-			viewKeys[view] = true
-		}
-		theme, err := change.GetFieldAsString("uesio/studio.theme")
+
+		err = depMap.AddRequired(change, "view", "uesio/studio.view")
 		if err != nil {
 			return err
 		}
-		if theme != "" {
-			themeKeys[theme] = true
-		}
 
-		return nil
+		return depMap.AddRequired(change, "theme", "uesio/studio.theme")
 	})
 	if err != nil {
 		return err
 	}
 
-	allKeys["collection"] = collectionKeys
-	allKeys["view"] = viewKeys
-	allKeys["theme"] = themeKeys
-
-	items, err := getAllItems(allKeys)
+	items, err := depMap.GetItems()
 	if err != nil {
 		return err
 	}
