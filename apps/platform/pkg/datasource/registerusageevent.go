@@ -11,6 +11,10 @@ import (
 //site, user, day, actiontype, metadatatype, metadataname,
 func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, connection adapt.Connection) error {
 
+	if user == "uesio" {
+		return nil
+	}
+
 	credentials := connection.GetCredentials()
 	// Connect to redis and increment the counter
 	conn := cache.GetRedisConn()

@@ -35,7 +35,7 @@ func getNewValue(change *adapt.ChangeItem) float64 {
 
 }
 
-func runUsageAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runUsageBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 

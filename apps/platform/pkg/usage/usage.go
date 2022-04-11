@@ -26,6 +26,10 @@ func RunJob() error {
 		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 	}
 
+	if len(keys) == 0 {
+		return nil
+	}
+
 	keyArgs := redis.Args{}.AddFlat(keys)
 
 	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
@@ -61,29 +65,31 @@ func RunJob() error {
 		changes = append(changes, usageItem)
 	}
 
-	requests := []datasource.SaveRequest{
-		{
-			Collection: "uesio/core.usage",
-			Wire:       "CoolWireName",
-			Changes:    &changes,
-			Options:    &adapt.SaveOptions{Upsert: &adapt.UpsertOptions{}},
-		},
-	}
+	if len(changes) > 0 {
+		requests := []datasource.SaveRequest{
+			{
+				Collection: "uesio/core.usage",
+				Wire:       "CoolWireName",
+				Changes:    &changes,
+				Options:    &adapt.SaveOptions{Upsert: &adapt.UpsertOptions{}},
+			},
+		}
 
-	session, err := auth.GetStudioAdminSession()
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
-	connection, err := datasource.GetPlatformConnection(session)
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
+		session, err := auth.GetStudioAdminSession()
+		if err != nil {
+			logger.LogError(err)
+			return err
+		}
+		connection, err := datasource.GetPlatformConnection(session)
+		if err != nil {
+			logger.LogError(err)
+			return err
+		}
 
-	err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
-	if err != nil {
-		return errors.New("Failed to update usage events: " + err.Error())
+		err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+		if err != nil {
+			return errors.New("Failed to update usage events: " + err.Error())
+		}
 	}
 
 	return nil

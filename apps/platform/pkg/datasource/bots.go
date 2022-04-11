@@ -107,6 +107,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runCollectionBeforeSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotBeforeSaveBot
+	case "uesio/core.usage":
+		botFunction = runUsageBeforeSaveBot
 	}
 
 	if botFunction != nil {
@@ -149,8 +151,6 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runDomainAfterSaveSiteBot
 	case "uesio/studio.collection":
 		botFunction = runCollectionAfterSaveBot
-	case "uesio/core.usage":
-		botFunction = runUsageAfterSaveBot
 	}
 
 	if botFunction != nil {
