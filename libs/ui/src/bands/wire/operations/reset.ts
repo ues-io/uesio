@@ -18,6 +18,9 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		const state = getState()
 		const dataArray = []
 
+		const wire = state.wire.entities[wirename]
+		if (!wire) return context
+
 		if (autoCreateRecord) {
 			dataArray.push(
 				getDefaultRecord(
@@ -25,7 +28,8 @@ export default (context: Context, wirename: string): ThunkFunc =>
 					state.wire.entities,
 					state.collection.entities,
 					viewId,
-					wireDef
+					wireDef,
+					wire.collection
 				)
 			)
 		}

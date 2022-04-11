@@ -94,7 +94,16 @@ const initializeViewOnlyWire = (
 	const autoCreateRecord = !!wireDef.init?.create
 
 	if (autoCreateRecord) {
-		dataArray.push(getDefaultRecord(context, {}, metadata, viewId, wireDef))
+		dataArray.push(
+			getDefaultRecord(
+				context,
+				{},
+				metadata,
+				viewId,
+				wireDef,
+				collectionFullname
+			)
+		)
 	}
 	dataArray.forEach((item) => {
 		const localId = nanoid()

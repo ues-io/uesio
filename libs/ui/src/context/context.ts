@@ -237,7 +237,9 @@ class Context {
 		if (!times) {
 			return this
 		}
-		const index = this.stack.findIndex((frame) => frame?.record)
+		const index = this.stack.findIndex(
+			(frame) => frame?.record || frame?.wire
+		)
 		if (index === -1) {
 			return new Context()
 		}
@@ -251,34 +253,22 @@ class Context {
 
 		// if we don't have a record id in context return the first
 		if (!recordFrame) {
-			const wire = this.getWire()
-			if (!wire) {
-				return undefined
-			}
-			const size = wire.getSize()
-			if (!size) {
-				throw new Error(
-					"No record provided for context and zero records exist"
-				)
-			}
-			if (size > 1) {
-				throw new Error(
-					"No record provided for context and multiple records exist"
-				)
-			}
-			return wire?.getFirstRecord()
+			return undefined
+		}
+		if (recordFrame.recordData) {
+			return new WireRecord(recordFrame.recordData, "", new Wire())
 		}
 
-		const recordData = recordFrame.getRecordData()
-		if (recordData) {
-			return new WireRecord(recordData, "", new Wire())
+		const wire = this.getWire()
+		if (!wire) {
+			return undefined
 		}
 
-		const recordId = recordFrame.getRecordId()
+		if (recordFrame.record) {
+			return wire.getRecord(recordFrame.record)
+		}
 
-		const wire = recordFrame.getWire()
-
-		return recordId ? wire?.getRecord(recordId) : undefined
+		return undefined
 	}
 
 	getViewId = () => this.stack.find((frame) => frame?.view)?.view
@@ -333,18 +323,11 @@ class Context {
 	}
 
 	findRecordFrame = () => {
-		const recordDataIndex = this.stack.findIndex(
-			(frame) => frame?.recordData
+		const index = this.stack.findIndex(
+			(frame) => frame?.recordData || frame?.record || frame?.wire
 		)
-		if (recordDataIndex >= 0) {
-			return new Context(this.stack.slice(recordDataIndex))
-		}
-
-		const index = this.stack.findIndex((frame) => frame?.record)
-		if (index < 0) {
-			return undefined
-		}
-		return new Context(this.stack.slice(index))
+		if (index === undefined) return undefined
+		return this.stack[index]
 	}
 
 	getWire = () => {

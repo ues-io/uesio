@@ -55,9 +55,9 @@ const getDefaultRecord = (
 	wires: Dictionary<PlainWire>,
 	collections: Dictionary<PlainCollection>,
 	viewId: string,
-	wireDef: WireDefinition
+	wireDef: WireDefinition,
+	collectionName: string
 ): PlainWireRecord => {
-	const collectionName = wireDef.viewOnly ? "blah" : wireDef.collection
 	const collection = collections[collectionName]
 	const defaults = wireDef.defaults
 	const defaultRecord: PlainWireRecord = {}
