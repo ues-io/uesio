@@ -24,7 +24,7 @@ export default (
 			updateRecord({
 				recordId,
 				record: context.merge(value),
-				entity: `${viewId}/${wirename}`,
+				entity: `${viewId}/${wirename || context.getWireId()}`,
 				path: [field],
 			})
 		)

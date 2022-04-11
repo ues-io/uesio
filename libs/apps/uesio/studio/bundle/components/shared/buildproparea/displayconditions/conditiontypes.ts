@@ -2,17 +2,17 @@ type IParamIsSet = {
 	type: "paramIsSet"
 	param: string
 }
-type IParamIsValue = {
-	type: "paramIsValue"
+type IParamValue = {
+	type: "paramValue"
 	param: string
 	value: string
 }
-type IFieldIsValue = {
-	type: "fieldIsValue"
+type IFieldValue = {
+	type: "fieldValue"
 	field: string
 	value: string
 }
 
-export type Condition = IParamIsSet | IParamIsValue | IFieldIsValue
+export type Condition = IParamIsSet | IParamValue | IFieldValue
 
 export default Condition

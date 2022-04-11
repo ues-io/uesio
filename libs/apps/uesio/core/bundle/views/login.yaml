@@ -9,11 +9,12 @@ definition:
         uesio/viewonly.username:
           label: Username
           type: TEXT
-          required: true
         uesio/viewonly.password:
           label: Password
           type: TEXT
-          required: true
+        uesio/viewonly.method:
+          label: Method
+          type: TEXT
       init:
         create: true
   # Components are how we describe the layout of our view
@@ -49,12 +50,11 @@ definition:
                     clientId: uesio/core.google_client_id
                     align: center
                 - uesio/core.loginmock:
+                    uesio.display:
+                      - wire: credentials
+                        field: uesio/viewonly.method
+                        value: ""
                     text: Sign in with Mock
-                    align: center
-                - uesio/core.logincognito:
-                    text: Sign in with Email
-                    clientId: uesio/core.cognito_client_id
-                    poolId: uesio/core.cognito_pool_id
                     align: center
                 - uesio/io.box:
                     uesio.styles:
@@ -68,20 +68,47 @@ definition:
                           wire: credentials
                           mode: EDIT
                           components:
-                            - uesio/io.field:
-                                fieldId: uesio/viewonly.username
-                            - uesio/io.field:
-                                fieldId: uesio/viewonly.password
-                            - uesio/io.group:
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/viewonly.method
+                                    value: ""
                                 components:
                                   - uesio/io.button:
+                                      text: Sign in with Email
                                       uesio.variant: uesio/io.primary
-                                      text: Sign In
+                                      uesio.styles:
+                                        root:
+                                          width: 210px
+                                        label:
+                                          textTransform: none
                                       signals:
-                                        - signal: user/LOGIN
-                                          authSource: uesio/core.platform
-                                          username: ${uesio/viewonly.username}
-                                          password: ${uesio/viewonly.password}
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: Cancel
+                                        - signal: wire/UPDATE_RECORD
+                                          field: uesio/viewonly.method
+                                          value: email
+                            - uesio/io.box:
+                                uesio.display:
+                                  - field: uesio/viewonly.method
+                                    value: email
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.username
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.password
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.primary
+                                            text: Sign In
+                                            signals:
+                                              - signal: user/LOGIN
+                                                authSource: uesio/core.platform
+                                                username: ${uesio/viewonly.username}
+                                                password: ${uesio/viewonly.password}
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.secondary
+                                            text: Cancel
+                                            signals:
+                                              - signal: wire/UPDATE_RECORD
+                                                wire: credentials
+                                                field: uesio/viewonly.method
+                                                value:

@@ -16,11 +16,11 @@ export const properties: builder.PropDescriptor[] = [
 			},
 			{
 				label: "Field equals",
-				value: "fieldIsValue",
+				value: "fieldValue",
 			},
 			{
 				label: "Param equals",
-				value: "paramIsValue",
+				value: "paramValue",
 			},
 		],
 	},
@@ -34,7 +34,7 @@ export const properties: builder.PropDescriptor[] = [
 		display: [
 			{
 				property: "type",
-				values: ["fieldIsValue"],
+				values: ["fieldValue"],
 			},
 		],
 	},
@@ -45,7 +45,7 @@ export const properties: builder.PropDescriptor[] = [
 		display: [
 			{
 				property: "type",
-				values: ["paramIsValue", "paramIsSet"],
+				values: ["paramValue", "paramIsSet"],
 			},
 		],
 	},
@@ -56,7 +56,7 @@ export const properties: builder.PropDescriptor[] = [
 		display: [
 			{
 				property: "type",
-				values: ["paramIsValue", "fieldIsValue"],
+				values: ["paramValue", "fieldValue"],
 			},
 		],
 	},

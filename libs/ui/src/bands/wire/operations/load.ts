@@ -108,7 +108,8 @@ export default createAsyncThunk<
 					wiresResponse,
 					response.collections,
 					view,
-					wireDef
+					wireDef,
+					wireDef.collection
 				)
 			)
 		}

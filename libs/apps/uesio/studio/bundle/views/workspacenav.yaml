@@ -13,7 +13,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: bots
               signals:
@@ -30,7 +30,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: collections
               signals:
@@ -47,7 +47,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: datasources
               signals:
@@ -64,7 +64,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: selectlists
               signals:
@@ -84,7 +84,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: components
               signals:
@@ -101,7 +101,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: routes
               signals:
@@ -118,7 +118,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: themes
               signals:
@@ -135,7 +135,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: views
               signals:
@@ -152,7 +152,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: labels
               signals:
@@ -172,7 +172,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: configvalues
               signals:
@@ -189,7 +189,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: credentials
               signals:
@@ -206,7 +206,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: files
               signals:
@@ -223,7 +223,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: permissionsets
               signals:
@@ -240,7 +240,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: profiles
               signals:
@@ -257,7 +257,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: secrets
               signals:
@@ -274,7 +274,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: featureflags
               signals:
@@ -291,7 +291,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: translations
               signals:
@@ -308,7 +308,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: authsources
               signals:
