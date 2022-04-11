@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/cache"
 )
 
-//site, user, day, actiontype, metadatatype, metadataname,
 func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, connection adapt.Connection) error {
 
 	if user == "uesio" {
