@@ -1,6 +1,0 @@
-name: autoid
-type: "AUTONUMBER"
-label: "Auto ID"
-autonumber:
-  prefix: "Usage"
-  leadingZeros: 4

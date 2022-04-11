@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -53,7 +52,7 @@ func RunJob() error {
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/core.site", keyParts[2])
 		usageItem.SetField("uesio/core.user", keyParts[3])
-		usageItem.SetField("uesio/core.day", time.Now().Unix())
+		usageItem.SetField("uesio/core.day", keyParts[4])
 		usageItem.SetField("uesio/core.actiontype", keyParts[5])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[6])
 		usageItem.SetField("uesio/core.metadataname", keyParts[7])
