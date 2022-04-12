@@ -25,6 +25,8 @@ type FileRecord struct {
 	FieldName string
 }
 
+var OrderedItems = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles"}
+
 // Deploy func
 func Deploy(body []byte, session *sess.Session) error {
 
@@ -280,68 +282,13 @@ func readZipFile(zf *zip.File, item meta.BundleableItem) error {
 }
 
 func getSaveRequestsInOrder(saves []datasource.PlatformSaveRequest, dep map[string]meta.BundleableGroup, upsertOptions *adapt.SaveOptions) []datasource.PlatformSaveRequest {
-
-	if dep["collections"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["collections"],
-			Options:    upsertOptions,
-		})
+	for _, element := range OrderedItems {
+		if dep[element] != nil {
+			saves = append(saves, datasource.PlatformSaveRequest{
+				Collection: dep[element],
+				Options:    upsertOptions,
+			})
+		}
 	}
-	if dep["selectlists"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["selectlists"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["fields"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["fields"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["themes"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["themes"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["views"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["views"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["routes"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["routes"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["files"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["files"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["bots"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["bots"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["permissionsets"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["permissionsets"],
-			Options:    upsertOptions,
-		})
-	}
-	if dep["profiles"] != nil {
-		saves = append(saves, datasource.PlatformSaveRequest{
-			Collection: dep["profiles"],
-			Options:    upsertOptions,
-		})
-	}
-
 	return saves
-
 }
