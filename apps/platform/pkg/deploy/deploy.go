@@ -25,6 +25,8 @@ type FileRecord struct {
 	FieldName string
 }
 
+var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles"}
+
 // Deploy func
 func Deploy(body []byte, session *sess.Session) error {
 
@@ -205,46 +207,15 @@ func Deploy(body []byte, session *sess.Session) error {
 			Collection: &deps,
 			Options:    upsertOptions,
 		},
-		{
-			Collection: dep["collections"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["selectlists"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["fields"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["themes"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["views"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["routes"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["files"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["bots"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["permissionsets"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["profiles"],
-			Options:    upsertOptions,
-		},
+	}
+
+	for _, element := range ORDERED_ITEMS {
+		if dep[element] != nil {
+			saves = append(saves, datasource.PlatformSaveRequest{
+				Collection: dep[element],
+				Options:    upsertOptions,
+			})
+		}
 	}
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
