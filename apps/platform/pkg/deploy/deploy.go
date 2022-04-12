@@ -202,47 +202,9 @@ func Deploy(body []byte, session *sess.Session) error {
 			Collection: &deps,
 			Options:    upsertOptions,
 		},
-		{
-			Collection: dep["collections"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["selectlists"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["fields"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["themes"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["views"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["routes"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["files"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["bots"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["permissionsets"],
-			Options:    upsertOptions,
-		},
-		{
-			Collection: dep["profiles"],
-			Options:    upsertOptions,
-		},
 	}
+
+	saves = getSaveRequestsInOrder(saves, dep, upsertOptions)
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
 	if err != nil {
@@ -315,4 +277,71 @@ func readZipFile(zf *zip.File, item meta.BundleableItem) error {
 	}
 	defer f.Close()
 	return yaml.NewDecoder(f).Decode(item)
+}
+
+func getSaveRequestsInOrder(saves []datasource.PlatformSaveRequest, dep map[string]meta.BundleableGroup, upsertOptions *adapt.SaveOptions) []datasource.PlatformSaveRequest {
+
+	if dep["collections"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["collections"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["selectlists"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["selectlists"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["fields"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["fields"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["themes"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["themes"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["views"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["views"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["routes"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["routes"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["files"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["files"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["bots"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["bots"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["permissionsets"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["permissionsets"],
+			Options:    upsertOptions,
+		})
+	}
+	if dep["profiles"] != nil {
+		saves = append(saves, datasource.PlatformSaveRequest{
+			Collection: dep["profiles"],
+			Options:    upsertOptions,
+		})
+	}
+
+	return saves
+
 }
