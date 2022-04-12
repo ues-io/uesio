@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/humandad/yaml"
@@ -27,6 +28,31 @@ type SelectList struct {
 	CreatedAt        int64              `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
 	Public           bool               `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func NewSelectList(key string) (*SelectList, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for SelectList: " + key)
+	}
+	return &SelectList{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newSelectList, err := NewSelectList(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newSelectList)
+	}
+
+	return items, nil
 }
 
 // GetCollectionName function

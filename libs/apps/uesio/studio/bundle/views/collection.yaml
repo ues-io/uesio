@@ -359,7 +359,7 @@ definition:
                       value: "NUMBER"
                   components:
                     - uesio/io.field:
-                        fieldId: uesio/studio.number->studio.decimals
+                        fieldId: uesio/studio.number->uesio/studio.decimals
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
