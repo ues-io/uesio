@@ -13,7 +13,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: users
               signals:
@@ -30,7 +30,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: domains
               signals:
@@ -47,7 +47,7 @@ definition:
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
-                  - type: paramIsValue
+                  - type: paramValue
                     param: selected
                     value: sitecollections
               signals:

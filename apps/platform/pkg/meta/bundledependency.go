@@ -6,6 +6,7 @@ import "fmt"
 type BundleDependency struct {
 	ID        string     `uesio:"uesio/core.id"`
 	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
+	App       *App       `yaml:"-" uesio:"uesio/studio.app"`
 	Bundle    *Bundle    `uesio:"uesio/studio.bundle"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
 	CreatedBy *User      `yaml:"-" uesio:"uesio/core.createdby"`

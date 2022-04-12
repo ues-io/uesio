@@ -162,12 +162,21 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-function render(
-	loader: FunctionComponent<BaseProps>,
-	componentType: string,
-	props: BaseProps
+function renderUtility(
+	loader: FunctionComponent<UtilityPropsPlus>,
+	props: UtilityPropsPlus
 ) {
-	const { context, definition } = props
+	const Loader = loader
+	loader.displayName = props.componentType as string
+	return <Loader {...props} />
+}
+
+const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+	const { componentType, context, definition } = props
+	if (!componentType) return <NotFound {...props} />
+	const loader =
+		getLoader(componentType, !!context.getBuildMode()) || NotFound
+
 	if (!shouldDisplay(context, definition)) return null
 	const mergedDefinition = mergeContextVariants(
 		definition,
@@ -182,23 +191,6 @@ function render(
 			mergedDefinition?.["uesio.context"] as ContextFrame
 		),
 	})
-}
-
-function renderUtility(
-	loader: FunctionComponent<UtilityPropsPlus>,
-	props: UtilityPropsPlus
-) {
-	const Loader = loader
-	loader.displayName = props.componentType as string
-	return <Loader {...props} />
-}
-
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
-	const { componentType, context } = props
-	if (!componentType) return <NotFound {...props} />
-	const loader =
-		getLoader(componentType, !!context.getBuildMode()) || NotFound
-	return render(loader, componentType, props)
 }
 
 export {

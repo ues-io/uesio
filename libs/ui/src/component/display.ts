@@ -1,15 +1,16 @@
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
+import { useUesio } from "../hooks/hooks"
 
-type FieldEqualsValueCondition = {
-	type: "fieldEquals" | undefined
-	field: string
-	value: string
-}
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
 
-type FieldNotEqualsValueCondition = {
-	type: "fieldNotEquals"
+// If there is a record in context, only test against that record
+// If there is no record in context, test against all records in the wire.
+type FieldValueCondition = {
+	type: "fieldValue" | undefined
+	wire?: string
 	field: string
+	operator: DisplayOperator
 	value: string
 }
 
@@ -18,9 +19,10 @@ type ParamIsSetCondition = {
 	param: string
 }
 
-type ParamIsValueCondition = {
-	type: "paramIsValue"
+type ParamValueCondition = {
+	type: "paramValue"
 	param: string
+	operator: DisplayOperator
 	value: string
 }
 
@@ -51,13 +53,16 @@ type FieldModeCondition = {
 type DisplayCondition =
 	| HasNoValueCondition
 	| HasValueCondition
-	| FieldEqualsValueCondition
-	| FieldNotEqualsValueCondition
+	| FieldValueCondition
 	| ParamIsSetCondition
-	| ParamIsValueCondition
+	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+
+function compare(a: unknown, b: unknown, op: DisplayOperator) {
+	return op === "NOT_EQUALS" ? a !== b : a === b
+}
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -83,17 +88,48 @@ function should(condition: DisplayCondition, context: Context) {
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.merge(condition.value as string)
-			: condition.value
+			: condition.value || ""
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
-	if (condition.type === "paramIsValue")
-		return context.getView()?.params?.[condition.param] === compareToValue
+	if (condition.type === "paramValue")
+		return compare(
+			context.getView()?.params?.[condition.param],
+			compareToValue,
+			condition.operator
+		)
 
-	const value = context.getRecord()?.getFieldValue(condition.field)
+	if (!condition.type || condition.type === "fieldValue") {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
 
-	if (condition.type === "fieldNotEquals") return value !== compareToValue
-	return value === compareToValue
+		const ctxRecord = ctx.getRecord()
+		// If we have a record in context, use it.
+		if (ctxRecord)
+			return compare(
+				compareToValue,
+				ctxRecord.getFieldValue(condition.field) || "",
+				condition.operator
+			)
+
+		// If we have no record in context, test against all records in the wire.
+		const ctxWire = ctx.getWire()
+		if (ctxWire)
+			return ctxWire
+				.getData()
+				.some((r) =>
+					compare(
+						compareToValue,
+						r.getFieldValue(condition.field) || "",
+						condition.operator
+					)
+				)
+		return false
+	}
+
+	console.warn(`Unknown display condition type: ${condition.type}`)
+	return true
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
@@ -101,8 +137,13 @@ function shouldDisplay(context: Context, definition?: DefinitionMap) {
 		| DisplayCondition[]
 		| undefined
 
+	const uesio = useUesio({ context })
 	if (displayLogic?.length) {
 		for (const condition of displayLogic) {
+			// Weird hack for now
+			if (!condition.type && condition.wire) {
+				uesio.wire.useWire(condition.wire)
+			}
 			if (!should(condition, context)) {
 				return false
 			}

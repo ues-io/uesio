@@ -22,7 +22,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "1"
                     components:
@@ -33,7 +33,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "2"
                     components:
@@ -55,7 +55,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "3"
                     components:
@@ -92,7 +92,7 @@ definition:
                       root:
                         textAlign: center
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "4"
                     components:
@@ -113,7 +113,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "5"
                     components:
@@ -126,7 +126,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "6"
                     components:
@@ -154,7 +154,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "7"
                     components:
@@ -171,7 +171,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "8"
                     components:
@@ -184,7 +184,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "9"
                     components:
@@ -219,7 +219,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "10"
                     components:
@@ -318,7 +318,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "11"
                     components:
@@ -331,7 +331,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "12"
                     components:
@@ -344,7 +344,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "13"
                     components:
@@ -357,7 +357,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "14"
                     components:
@@ -370,7 +370,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "15"
                     components:
@@ -383,7 +383,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "16"
                     components:
@@ -396,7 +396,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "17"
                     components:
@@ -409,7 +409,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "18"
                     components:
@@ -422,7 +422,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "19"
                     components:
@@ -433,7 +433,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "20"
                     components:
@@ -468,7 +468,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "21"
                     components:
@@ -585,7 +585,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "22"
                     components:
@@ -620,7 +620,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "23"
                     components:
@@ -796,7 +796,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "24"
                     components:
@@ -845,7 +845,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "25"
                     components:
@@ -906,7 +906,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "26"
                     components:
@@ -967,7 +967,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "27"
                     components:
@@ -990,7 +990,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "28"
                     components:
@@ -1036,7 +1036,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "29"
                     components:
@@ -1070,7 +1070,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "30"
                     components:
@@ -1093,7 +1093,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "31"
                     components:
@@ -1127,7 +1127,7 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/web.pitchbox
                     uesio.display:
-                      - type: paramIsValue
+                      - type: paramValue
                         param: step
                         value: "32"
                     components:
@@ -1143,7 +1143,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "1"
                     uesio.variant: uesio/web.navdot
@@ -1153,7 +1153,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "2"
                     uesio.variant: uesio/web.navdot
@@ -1163,7 +1163,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "3"
                     uesio.variant: uesio/web.navdot
@@ -1173,7 +1173,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "4"
                     uesio.variant: uesio/web.navdot
@@ -1183,7 +1183,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "5"
                     uesio.variant: uesio/web.navdot
@@ -1193,7 +1193,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "6"
                     uesio.variant: uesio/web.navdot
@@ -1203,7 +1203,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "7"
                     uesio.variant: uesio/web.navdot
@@ -1213,7 +1213,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "8"
                     uesio.variant: uesio/web.navdot
@@ -1223,7 +1223,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "9"
                     uesio.variant: uesio/web.navdot
@@ -1233,7 +1233,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "10"
                     uesio.variant: uesio/web.navdot
@@ -1243,7 +1243,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "11"
                     uesio.variant: uesio/web.navdot
@@ -1253,7 +1253,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "12"
                     uesio.variant: uesio/web.navdot
@@ -1263,7 +1263,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "13"
                     uesio.variant: uesio/web.navdot
@@ -1273,7 +1273,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "14"
                     uesio.variant: uesio/web.navdot
@@ -1283,7 +1283,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "15"
                     uesio.variant: uesio/web.navdot
@@ -1293,7 +1293,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "16"
                     uesio.variant: uesio/web.navdot
@@ -1303,7 +1303,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "17"
                     uesio.variant: uesio/web.navdot
@@ -1313,7 +1313,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "18"
                     uesio.variant: uesio/web.navdot
@@ -1323,7 +1323,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "19"
                     uesio.variant: uesio/web.navdot
@@ -1333,7 +1333,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "20"
                     uesio.variant: uesio/web.navdot
@@ -1343,7 +1343,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "21"
                     uesio.variant: uesio/web.navdot
@@ -1353,7 +1353,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "22"
                     uesio.variant: uesio/web.navdot
@@ -1363,7 +1363,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "23"
                     uesio.variant: uesio/web.navdot
@@ -1373,7 +1373,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "24"
                     uesio.variant: uesio/web.navdot
@@ -1383,7 +1383,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "25"
                     uesio.variant: uesio/web.navdot
@@ -1393,7 +1393,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "26"
                     uesio.variant: uesio/web.navdot
@@ -1403,7 +1403,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "27"
                     uesio.variant: uesio/web.navdot
@@ -1413,7 +1413,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "28"
                     uesio.variant: uesio/web.navdot
@@ -1423,7 +1423,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "29"
                     uesio.variant: uesio/web.navdot
@@ -1433,7 +1433,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "30"
                     uesio.variant: uesio/web.navdot
@@ -1443,7 +1443,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "31"
                     uesio.variant: uesio/web.navdot
@@ -1453,7 +1453,7 @@ definition:
                 - uesio/io.button:
                     uesio.classes:
                       selected:
-                        - type: paramIsValue
+                        - type: paramValue
                           param: step
                           value: "32"
                     uesio.variant: uesio/web.navdot

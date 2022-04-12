@@ -2,6 +2,6 @@ name: number
 type: MAP
 label: Number Metadata
 subfields:
-  - name: studio.decimals
+  - name: uesio/studio.decimals
     label: Decimals
     type: NUMBER
