@@ -3,7 +3,7 @@ definition:
   # Wires connect to data in collections
   wires:
     ${wirename}:
-      collection: cms.articles
+      collection: cms.article
       fields:
         cms.name:
   # Components determine the layout and composition of your view
