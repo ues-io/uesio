@@ -74,11 +74,29 @@ func (m *MetadataDependencyMap) GetItems() ([]meta.BundleableItem, error) {
 
 	themes, ok := (*m)["theme"]
 	if ok {
-		themeItems, err := meta.NewViews(themes)
+		themeItems, err := meta.NewThemes(themes)
 		if err != nil {
 			return nil, err
 		}
 		items = append(items, themeItems...)
+	}
+
+	labels, ok := (*m)["label"]
+	if ok {
+		labelItems, err := meta.NewLabels(labels)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, labelItems...)
+	}
+
+	selectlists, ok := (*m)["selectlist"]
+	if ok {
+		selectlistItems, err := meta.NewSelectLists(selectlists)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, selectlistItems...)
 	}
 
 	return items, nil
