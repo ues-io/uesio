@@ -25,7 +25,7 @@ type FileRecord struct {
 	FieldName string
 }
 
-var OrderedItems = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles"}
+var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles"}
 
 // Deploy func
 func Deploy(body []byte, session *sess.Session) error {
@@ -209,7 +209,14 @@ func Deploy(body []byte, session *sess.Session) error {
 		},
 	}
 
-	saves = getSaveRequestsInOrder(saves, dep, upsertOptions)
+	for _, element := range ORDERED_ITEMS {
+		if dep[element] != nil {
+			saves = append(saves, datasource.PlatformSaveRequest{
+				Collection: dep[element],
+				Options:    upsertOptions,
+			})
+		}
+	}
 
 	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
 	if err != nil {
@@ -282,16 +289,4 @@ func readZipFile(zf *zip.File, item meta.BundleableItem) error {
 	}
 	defer f.Close()
 	return yaml.NewDecoder(f).Decode(item)
-}
-
-func getSaveRequestsInOrder(saves []datasource.PlatformSaveRequest, dep map[string]meta.BundleableGroup, upsertOptions *adapt.SaveOptions) []datasource.PlatformSaveRequest {
-	for _, element := range OrderedItems {
-		if dep[element] != nil {
-			saves = append(saves, datasource.PlatformSaveRequest{
-				Collection: dep[element],
-				Options:    upsertOptions,
-			})
-		}
-	}
-	return saves
 }
