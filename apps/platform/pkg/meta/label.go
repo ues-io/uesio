@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/humandad/yaml"
@@ -20,6 +21,31 @@ type Label struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func NewLabel(key string) (*Label, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Label: " + key)
+	}
+	return &Label{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newLabel, err := NewLabel(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newLabel)
+	}
+
+	return items, nil
 }
 
 // GetCollectionName function

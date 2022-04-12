@@ -2,9 +2,10 @@ name: file
 type: MAP
 label: File Metadata
 subfields:
-  - name: studio.filecollection
+  - name: uesio/studio.filecollection
     label: File Collection
     type: TEXT
-  - name: studio.accept
+  - name: uesio/studio.accept
     label: Accept
-    type: TEXT
+    type: SELECT
+    selectList: uesio/studio.accepttypes

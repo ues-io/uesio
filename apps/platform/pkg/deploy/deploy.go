@@ -165,6 +165,9 @@ func Deploy(body []byte, session *sess.Session) error {
 			Workspace: &meta.Workspace{
 				ID: workspace,
 			},
+			App: &meta.App{
+				ID: key,
+			},
 			Bundle: &meta.Bundle{
 				ID: key + "_" + dep.Version,
 			},

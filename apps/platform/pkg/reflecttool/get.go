@@ -23,6 +23,10 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 
 	for _, name := range names {
 
+		if obj == nil {
+			return nil, errors.New("invalid map value")
+		}
+
 		objValue := reflectValue(obj)
 		objKind := objValue.Kind()
 		objType := objValue.Type()

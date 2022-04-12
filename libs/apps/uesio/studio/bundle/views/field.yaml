@@ -189,7 +189,7 @@ definition:
                                           value: "FILE"
                                       components:
                                         - uesio/studio.metadatafield:
-                                            fieldId: uesio/studio.file->studio.filecollection
+                                            fieldId: uesio/studio.file->uesio/studio.filecollection
                                             metadataType: "FILECOLLECTION"
                                             label: "File Collection"
                                   - uesio/io.box:
@@ -205,14 +205,14 @@ definition:
                                           value: "FILE"
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/studio.file->studio.accept
+                                            fieldId: uesio/studio.file->uesio/studio.accept
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
                                           value: "NUMBER"
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/studio.number->studio.decimals
+                                            fieldId: uesio/studio.number->uesio/studio.decimals
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
@@ -223,12 +223,12 @@ definition:
                                             metadataType: "SELECTLIST"
                                             label: "Select List"
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.validate->studio.type
+                                      fieldId: uesio/studio.validate->uesio/studio.type
                                   - uesio/io.field:
                                       uesio.display:
-                                        - field: uesio/studio.validate->studio.type
+                                        - field: uesio/studio.validate->uesio/studio.type
                                           value: "REGEX"
-                                      fieldId: uesio/studio.validate->studio.regex
+                                      fieldId: uesio/studio.validate->uesio/studio.regex
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
