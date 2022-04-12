@@ -75,8 +75,8 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			return err
 		}
 
-		validate, err := change.GetField("uesio/studio.validate")
-		if err == nil && !isNil(validate) {
+		_, err = change.GetField("uesio/studio.validate")
+		if err == nil {
 			validateType, _ := change.GetFieldAsString("uesio/studio.validate->uesio/studio.type")
 			if validateType == "REGEX" {
 				err = depMap.AddRequired(change, "field", "uesio/studio.validate->uesio/studio.regex")
@@ -92,16 +92,11 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			if err != nil {
 				return err
 			}
-			err = depMap.AddRequired(change, "field", "uesio/studio.file->uesio/studio.accept")
+			_, err := requireValue(change, "uesio/studio.file->uesio/studio.accept")
 			if err != nil {
 				return err
 			}
-		case "SELECT":
-			err = depMap.AddRequired(change, "selectlist", "uesio/studio.selectlist")
-			if err != nil {
-				return err
-			}
-		case "MULTISELECT":
+		case "SELECT", "MULTISELECT":
 			err = depMap.AddRequired(change, "selectlist", "uesio/studio.selectlist")
 			if err != nil {
 				return err

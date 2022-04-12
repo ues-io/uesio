@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"errors"
-	"reflect"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -179,8 +178,4 @@ func requireValue(change *adapt.ChangeItem, fieldName string) (string, error) {
 
 	return value, nil
 
-}
-
-func isNil(i interface{}) bool {
-	return i == nil || reflect.ValueOf(i).IsNil()
 }
