@@ -46,6 +46,9 @@ async function installBundle(
 			[collection.ID_FIELD]: `${namespace}_${version}`,
 		},
 		"uesio/studio.workspace": workspaceId,
+		"uesio/studio.app": {
+			"uesio/core.id": namespace,
+		},
 	})
 	await depWire.save(context)
 	return depWire.load(context)
@@ -122,7 +125,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 			return { namespace, version }
 		})
 		.filter((x) => x)
-
+	console.log({ bundles })
 	const deps = depWire.getData()
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
