@@ -3,7 +3,7 @@ definition:
   # Wires connect to data in collections
   wires:
     articleWire:
-      collection: cms.articles
+      collection: cms.article
       fields:
         cms.content:
         cms.name:
