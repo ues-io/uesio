@@ -79,29 +79,20 @@ definition:
                               padding: 40px
                               display: grid
                           components:
-                            - uesio/io.deck:
-                                id: usagelist
+                            - uesio/io.table:
+                                id: usagetable
                                 wire: usage
-                                uesio.variant: uesio/io.section
-                                components:
-                                  - uesio/io.grid:
-                                      templateColumns:
-                                        xs: 1fr
-                                        md: 1fr 1fr
-                                        lg: 1fr 1fr 1fr 1fr
-                                      columnGap: 10px
-                                      items:
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.site
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.user
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.day
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.actiontype
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.metadatatype
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.metadataname
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.total
+                                mode: READ
+                                columns:
+                                  - uesio/io.column:
+                                      field: uesio/core.user
+                                  - uesio/io.column:
+                                      field: uesio/core.day
+                                  - uesio/io.column:
+                                      field: uesio/core.actiontype
+                                  - uesio/io.column:
+                                      field: uesio/core.metadatatype
+                                  - uesio/io.column:
+                                      field: uesio/core.metadataname
+                                  - uesio/io.column:
+                                      field: uesio/core.total

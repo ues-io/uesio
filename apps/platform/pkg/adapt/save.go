@@ -77,24 +77,19 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	return valueString, nil
 }
 
+func (ci *ChangeItem) GetOldField(fieldID string) (interface{}, error) {
+	if ci.OldValues != nil {
+		return ci.OldValues.GetField(fieldID)
+	}
+	return nil, nil
+}
+
 func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
 	changeVal, err := ci.FieldChanges.GetField(fieldID)
 	if err == nil && changeVal != nil {
 		return changeVal, nil
 	}
-
-	if ci.OldValues != nil {
-		oldVal, err := ci.OldValues.GetField(fieldID)
-		if err != nil {
-			return nil, err
-		}
-		return oldVal, nil
-	}
-
-	if err != nil {
-		return nil, errors.New("Could not get field from change item: " + err.Error())
-	}
-	return nil, nil
+	return ci.GetOldField(fieldID)
 }
 
 func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {

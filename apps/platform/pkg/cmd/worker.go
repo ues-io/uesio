@@ -11,8 +11,8 @@ import (
 func init() {
 
 	RootCmd.AddCommand(&cobra.Command{
-		Use:   "worker",
-		Short: "uesio worker",
+		Use:   "work",
+		Short: "uesio work",
 		Run:   worker,
 	})
 
