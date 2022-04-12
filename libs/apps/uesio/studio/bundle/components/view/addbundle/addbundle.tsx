@@ -125,7 +125,6 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 			return { namespace, version }
 		})
 		.filter((x) => x)
-	console.log({ bundles })
 	const deps = depWire.getData()
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
