@@ -60,3 +60,20 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: list
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: siteusage
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/usage
+              content:
+                - uesio/io.text:
+                    text: Usage
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: data_usage

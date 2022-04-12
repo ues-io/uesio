@@ -189,7 +189,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			}
 		}
 
-		err = applyBatches(batch, connection, session)
+		err = applyBatches(dsKey, batch, connection, session)
 		if err != nil {
 			if !HasExistingConnection(dsKey, options.Connections) {
 				err := connection.RollbackTransaction()
@@ -212,7 +212,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	return nil
 }
 
-func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	metadata := connection.GetMetadata()
 	for _, op := range batch {
 
@@ -277,6 +277,8 @@ func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *s
 		if err != nil {
 			return err
 		}
+
+		go RegisterUsageEvent("SAVE", session.GetUserID(), "DATASOURCE", dsKey, connection)
 	}
 
 	return nil

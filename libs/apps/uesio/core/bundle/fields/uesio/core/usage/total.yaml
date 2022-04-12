@@ -1,0 +1,5 @@
+name: total
+type: NUMBER
+label: "Total"
+number:
+  decimals: 0

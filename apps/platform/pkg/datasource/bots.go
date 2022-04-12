@@ -107,6 +107,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runCollectionBeforeSaveBot
 	case "uesio/studio.bot":
 		botFunction = runBotBeforeSaveBot
+	case "uesio/core.usage":
+		botFunction = runUsageBeforeSaveBot
 	}
 
 	if botFunction != nil {

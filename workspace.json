@@ -135,6 +135,13 @@
             "cwd": "apps/platform"
           }
         },
+        "work": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../dist/platform/uesio work",
+            "cwd": "apps/platform"
+          }
+        },
         "build-image": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
