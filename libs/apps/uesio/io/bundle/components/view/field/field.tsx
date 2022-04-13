@@ -60,6 +60,8 @@ const getFieldContent = (
 	switch (true) {
 		case type === "DATE":
 			return <DateField {...common} />
+		case type === "LONGTEXT" && displayAs === "MARKDOWN":
+			return <MarkDownField {...common} />
 		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
 		case type === "NUMBER":
@@ -115,8 +117,6 @@ const getFieldContent = (
 			)
 		case type === "REFERENCEGROUP":
 			return <ReferenceGroupField {...common} options={reference} />
-		case type === "MARKDOWN":
-			return <MarkDownField {...common} />
 		default:
 			return null
 	}

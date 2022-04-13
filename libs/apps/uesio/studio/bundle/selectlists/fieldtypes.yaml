@@ -32,5 +32,3 @@ options:
     value: "AUTONUMBER"
   - label: "Formula"
     value: "FORMULA"
-  - label: "Markdown"
-    value: "MARKDOWN"

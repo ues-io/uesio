@@ -2,6 +2,7 @@ import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import rehypeHighlight from "rehype-highlight"
 
 interface MarkDownFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
@@ -39,6 +40,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 		<ReactMarkdown
 			children={value ? value : ""}
 			remarkPlugins={[remarkGfm]}
+			rehypePlugins={[rehypeHighlight]}
 		/>
 	) : (
 		<textarea {...commonProps} rows={40} cols={40} />

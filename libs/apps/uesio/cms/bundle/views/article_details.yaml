@@ -49,3 +49,4 @@ definition:
                     fieldId: uesio/cms.name
                 - uesio/io.field:
                     fieldId: uesio/cms.content
+                    displayAs: MARKDOWN
