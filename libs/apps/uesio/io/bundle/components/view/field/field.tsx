@@ -27,6 +27,7 @@ const EmailField = component.registry.getUtility("uesio/io.emailfield")
 const ReferenceGroupField = component.registry.getUtility(
 	"uesio/io.referencegroupfield"
 )
+const MarkDownField = component.registry.getUtility("uesio/io.markdownfield")
 
 const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
 
@@ -114,6 +115,8 @@ const getFieldContent = (
 			)
 		case type === "REFERENCEGROUP":
 			return <ReferenceGroupField {...common} options={reference} />
+		case type === "MARKDOWN":
+			return <MarkDownField {...common} />
 		default:
 			return null
 	}

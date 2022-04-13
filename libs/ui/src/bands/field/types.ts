@@ -19,6 +19,7 @@ const FIELD_TYPES = [
 	"USER",
 	"EMAIL",
 	"AUTONUMBER",
+	"MARKDOWN",
 ] as const
 
 type FieldType = typeof FIELD_TYPES[number]

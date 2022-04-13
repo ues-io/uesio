@@ -1,0 +1,6 @@
+name: article_details
+path: article/{recordid}
+view: uesio/cms.article_details
+theme: uesio/core.default
+collection: uesio/cms.article
+viewtype: detail

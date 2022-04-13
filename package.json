@@ -124,5 +124,9 @@
       "@oclif/plugin-help"
     ],
     "dirname": "/apps/cli"
+  },
+  "dependencies": {
+    "react-markdown": "^8.0.2",
+    "remark-gfm": "^3.0.1"
   }
 }
