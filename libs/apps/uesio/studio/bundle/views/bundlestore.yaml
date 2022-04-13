@@ -1,0 +1,125 @@
+name: bundlestore
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    installablebundles:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+
+    bundlelistings:
+      collection: uesio/studio.bundlelisting
+      init:
+        query: true
+        create: false
+      fields:
+        uesio/core.id:
+        uesio/studio.color:
+        uesio/studio.icon:
+        uesio/studio.description:
+
+    dependencies:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.workspace:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.workspace
+          value: $Param{app}_$Param{workspacename}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Add a Bundle
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                        display: grid
+                        grid-template-columns: 1fr 1fr 1fr;
+                        column-gap: 8px;
+
+                    components:
+                      - uesio/io.list:
+                          wire: bundlelistings
+                          id: bundleListingList
+                          mode: READ
+                          components:
+                            - uesio/io.box:
+                                uesio.display:
+                                  - type: fieldMode
+                                    mode: READ
+                                components:
+                                  - uesio/io.box:
+                                      uesio.variant: uesio/studio.bundlelistingvisual
+
+                                  - uesio/io.text:
+                                      text: ${uesio/core.id}
+                                      element: p
+                                      uesio.styles:
+                                        root:
+                                          font-weight: bold
+
+                                  - uesio/io.text:
+                                      uesio.display:
+                                        - type: wireHasRecord
+                                          wire: dependencies
+                                          field: uesio/studio.bundle->uesio/studio.app
+                                          value: ${uesio/core.id}
+                                      text: Installed
+
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.description}
+                                      element: p
+
+                # - uesio/io.box:
+                #     uesio.variant: uesio/io.section
+                #     uesio.styles:
+                #       root:
+                #         padding: 40px
+                #     components:
+                #       - uesio/studio.addbundle:
+                #           installablebundleswire: "installablebundles"
+                #           currentdependencies: "dependencies"

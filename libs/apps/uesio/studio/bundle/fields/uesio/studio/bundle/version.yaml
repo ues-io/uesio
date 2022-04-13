@@ -1,0 +1,6 @@
+name: version
+type: FORMULA
+label: Version
+formula:
+  expression: TO_STRING(uesio/studio.major) + "." + TO_STRING(uesio/studio.minor) + "." + TO_STRING(uesio/studio.patch)
+  returntype: TEXT

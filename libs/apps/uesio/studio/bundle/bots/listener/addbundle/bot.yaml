@@ -1,0 +1,3 @@
+name: addbundle
+dialect: JAVASCRIPT
+type: LISTENER

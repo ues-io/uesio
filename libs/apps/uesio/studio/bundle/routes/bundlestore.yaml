@@ -1,0 +1,4 @@
+name: bundlestore
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/bundlestore
+view: uesio/studio.bundlestore
+theme: uesio/studio.default
