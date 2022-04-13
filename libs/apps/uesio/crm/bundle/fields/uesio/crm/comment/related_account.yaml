@@ -1,0 +1,5 @@
+name: related_account
+type: REFERENCE
+label: Related Account
+reference:
+  collection: uesio/crm.account

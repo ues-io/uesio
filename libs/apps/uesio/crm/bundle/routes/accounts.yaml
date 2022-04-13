@@ -2,5 +2,5 @@ name: accounts
 path: accounts
 view: uesio/crm.accounts
 theme: uesio/crm.default
-collection: uesio/crm.accounts
+collection: uesio/crm.account
 viewtype: list

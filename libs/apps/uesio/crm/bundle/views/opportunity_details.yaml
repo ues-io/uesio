@@ -60,7 +60,7 @@ definition:
                           fieldId: uesio/core.createdat
   wires:
     opportunities:
-      collection: uesio/crm.opportunities
+      collection: uesio/crm.opportunity
       conditions:
         - field: uesio/core.id
           param: recordid

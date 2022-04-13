@@ -44,7 +44,7 @@ definition:
                 - text: Edit
                   signals:
                     - signal: route/NAVIGATE
-                      collection: uesio/crm.accounts
+                      collection: uesio/crm.account
                       viewtype: detail
                       recordid: ${uesio/core.id}
                 - text: Delete
@@ -70,7 +70,7 @@ definition:
               wire: accounts
   wires:
     accounts:
-      collection: uesio/crm.accounts
+      collection: uesio/crm.account
       order:
         - field: uesio/crm.name
           desc: false

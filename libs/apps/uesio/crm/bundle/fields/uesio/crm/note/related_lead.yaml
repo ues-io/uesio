@@ -1,0 +1,5 @@
+name: related_lead
+type: REFERENCE
+label: Related Lead
+reference:
+  collection: uesio/crm.lead

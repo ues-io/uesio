@@ -56,7 +56,7 @@ definition:
                           fieldId: uesio/core.createdat
   wires:
     leads:
-      collection: uesio/crm.leads
+      collection: uesio/crm.lead
       conditions:
         - field: uesio/core.id
           param: recordid

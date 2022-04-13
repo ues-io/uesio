@@ -1,0 +1,5 @@
+name: opportunity
+type: REFERENCE
+label: Opportunity
+reference:
+  collection: uesio/crm.opportunity
