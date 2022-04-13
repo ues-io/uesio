@@ -38,6 +38,22 @@ definition:
         uesio/core.picture:
       init:
         query: false
+    newuser:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.username:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.profile:
+        uesio/core.type:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/core.type
+          valueSource: VALUE
+          value: PERSON
   events:
     onload:
       - signal: "wire/LOAD"
@@ -73,6 +89,16 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Users
+                    subtitle: User is as user does.
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: "Add a User"
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: "panel/TOGGLE"
+                                    panel: "newUser"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -102,3 +128,49 @@ definition:
                                       image: $UserFile{uesio/core.picture}
                                       text: ${uesio/core.initials}
   panels:
+    newUser:
+      uesio.type: uesio/io.dialog
+      title: Add a User
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newuserlist
+            wire: newuser
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/core.username
+              - uesio/io.field:
+                  fieldId: uesio/core.firstname
+              - uesio/io.field:
+                  fieldId: uesio/core.lastname
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newuser
+                uesio.context:
+                  siteadmin:
+                    name: $Param{sitename}
+                    app: $Param{app}
+              - signal: "panel/TOGGLE"
+                panel: "newUser"
+              - signal: wire/EMPTY
+                wire: newuser
+              - signal: wire/CREATE_RECORD
+                wire: newuser
+              - signal: wire/LOAD
+                wires:
+                  - users
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newUser"
+              - signal: wire/CANCEL
+                wire: newuser
