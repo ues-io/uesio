@@ -1,7 +1,0 @@
-name: contacts
-type: REFERENCEGROUP
-label: Contacts
-referenceGroup:
-  collection: uesio/crm.contacts
-  field: uesio/crm.account
-  onDelete: CASCADE

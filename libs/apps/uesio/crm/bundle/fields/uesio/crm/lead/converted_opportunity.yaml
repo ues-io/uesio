@@ -1,0 +1,5 @@
+name: converted_opportunity
+type: REFERENCE
+label: Converted Opportunity
+reference:
+  collection: uesio/crm.opportunity

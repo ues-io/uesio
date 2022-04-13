@@ -82,7 +82,7 @@ definition:
                                         text: "-"
   wires:
     accounts:
-      collection: uesio/crm.accounts
+      collection: uesio/crm.account
       conditions:
         - field: uesio/core.id
           param: recordid
@@ -102,4 +102,4 @@ definition:
     recordid:
       type: recordId
       required: true
-      collection: uesio/crm.accounts
+      collection: uesio/crm.account

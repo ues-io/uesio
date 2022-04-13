@@ -1,0 +1,4 @@
+name: opportunity_item
+nameField: uesio/crm.name
+label: opportunity item
+pluralLabel: opportunity items

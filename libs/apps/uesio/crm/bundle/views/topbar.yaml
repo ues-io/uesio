@@ -33,7 +33,7 @@ definition:
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
-                              collection: uesio/crm.leads
+                              collection: uesio/crm.lead
                           text: Leads
                           uesio.variant: uesio/io.nav
                           uesio.styles:
@@ -41,7 +41,7 @@ definition:
                               color: "#EEE"
                       - uesio/io.button:
                           signals:
-                            - collection: uesio/crm.contacts
+                            - collection: uesio/crm.contact
                               signal: route/NAVIGATE
                           text: Contacts
                           uesio.variant: uesio/io.nav
@@ -51,7 +51,7 @@ definition:
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
-                              collection: uesio/crm.accounts
+                              collection: uesio/crm.account
                           text: Accounts
                           uesio.variant: uesio/io.nav
                           uesio.styles:
@@ -60,7 +60,7 @@ definition:
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
-                              collection: uesio/crm.opportunities
+                              collection: uesio/crm.opportunity
                           text: Opportunities
                           uesio.variant: uesio/io.nav
                           uesio.styles:

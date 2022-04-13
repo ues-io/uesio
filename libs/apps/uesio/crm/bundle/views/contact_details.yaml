@@ -65,7 +65,7 @@ definition:
                           fieldId: uesio/core.createdat
   wires:
     contacts:
-      collection: uesio/crm.contacts
+      collection: uesio/crm.contact
       conditions:
         - field: uesio/core.id
           param: recordid
@@ -85,4 +85,4 @@ definition:
     recordid:
       type: recordId
       required: true
-      collection: uesio/crm.contacts
+      collection: uesio/crm.contact

@@ -139,7 +139,7 @@ definition:
             padding-top: 20px
   wires:
     leads:
-      collection: uesio/crm.leads
+      collection: uesio/crm.lead
       fields:
         uesio/crm.firstname: null
         uesio/core.id: null
@@ -171,7 +171,7 @@ definition:
         uesio/crm.converted_opportunity: null
         uesio/crm.converted_to_account: null
         uesio/crm.converted_to_contact: null
-      collection: uesio/crm.leads
+      collection: uesio/crm.lead
       conditions:
         - field: uesio/crm.status
           value: CLOSED
@@ -181,4 +181,4 @@ definition:
         uesio/crm.account: null
         uesio/crm.lastname: null
         uesio/crm.firstname: null
-      collection: uesio/crm.leads
+      collection: uesio/crm.lead

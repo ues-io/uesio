@@ -81,12 +81,12 @@ definition:
                           uesio.variant: uesio/io.secondary
                           signals:
                             - signal: route/NAVIGATE
-                              collection: uesio/crm.contacts
+                              collection: uesio/crm.contact
                               viewtype: detail
                               recordid: ${uesio/core.id}
   wires:
     contacts:
-      collection: uesio/crm.contacts
+      collection: uesio/crm.contact
       fields:
         uesio/crm.account:
           fields:

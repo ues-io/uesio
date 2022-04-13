@@ -2,5 +2,5 @@ name: account_details
 path: account/{recordid}
 view: uesio/crm.account_details
 theme: uesio/crm.default
-collection: uesio/crm.accounts
+collection: uesio/crm.account
 viewtype: detail

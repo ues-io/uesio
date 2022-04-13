@@ -1,0 +1,5 @@
+name: reports_to
+type: REFERENCE
+label: Reports To
+reference:
+  collection: uesio/crm.contact

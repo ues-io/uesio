@@ -1,0 +1,4 @@
+name: account
+nameField: uesio/crm.name
+label: account
+pluralLabel: accounts

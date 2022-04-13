@@ -77,7 +77,7 @@ definition:
                           text: person
   wires:
     accounts:
-      collection: uesio/crm.accounts
+      collection: uesio/crm.account
       fields:
         uesio/core.id:
         uesio/crm.name:
@@ -87,7 +87,7 @@ definition:
         - field: uesio/core.updatedat
           desc: true
     contacts:
-      collection: uesio/crm.contacts
+      collection: uesio/crm.contact
       fields:
         uesio/core.id:
         uesio/crm.firstname:
@@ -98,7 +98,7 @@ definition:
         - field: uesio/core.updatedat
           desc: true
     leads:
-      collection: uesio/crm.leads
+      collection: uesio/crm.lead
       fields:
         uesio/core.id:
         uesio/crm.firstname:

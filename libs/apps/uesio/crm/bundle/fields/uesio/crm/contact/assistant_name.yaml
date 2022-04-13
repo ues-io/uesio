@@ -1,0 +1,5 @@
+name: assistant_name
+type: REFERENCE
+label: Assistant Name
+reference:
+  collection: uesio/crm.contact
