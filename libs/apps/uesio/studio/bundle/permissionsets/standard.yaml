@@ -2,12 +2,13 @@ name: standard
 named:
   uesio/studio.workspace_admin: true
 views:
-  uesio/studio.addbundle: true
+  uesio/studio.bundlestore: true
   uesio/studio.app: true
   uesio/studio.appedit: true
   uesio/studio.bot: true
   uesio/studio.bots: true
   uesio/studio.bundle: true
+  uesio/studio.bundlelisting: true
   uesio/studio.collection: true
   uesio/studio.collectiondata: true
   uesio/studio.collections: true
@@ -66,7 +67,8 @@ views:
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
-  uesio/studio.addbundle: true
+  uesio/studio.bundlestore: true
+  uesio/studio.bundlelisting: true
   uesio/studio.appdetail: true
   uesio/studio.bot: true
   uesio/studio.bots: true
@@ -128,6 +130,7 @@ collections:
   uesio/studio.bot: true
   uesio/studio.bundledependency: true
   uesio/studio.bundle: true
+  uesio/studio.bundlelisting: true
   uesio/studio.collection: true
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true

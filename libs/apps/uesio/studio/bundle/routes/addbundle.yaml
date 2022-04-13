@@ -1,4 +1,0 @@
-name: addbundle
-path: app/{app:\w*\/\w*}/workspace/{workspacename}/add-bundle
-view: uesio/studio.addbundle
-theme: uesio/studio.default

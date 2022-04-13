@@ -52,6 +52,7 @@ type Bundle struct {
 	Patch       string    `uesio:"uesio/studio.patch"`
 	App         *App      `uesio:"uesio/studio.app"`
 	Description string    `uesio:"uesio/studio.description"`
+	Version     string    `uesio:"uesio/studio.version"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`

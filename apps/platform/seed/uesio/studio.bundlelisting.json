@@ -1,0 +1,50 @@
+[
+	{
+		"uesio/studio.description": "Uesio Base Functionality",
+		"uesio/studio.icon": "favorite",
+		"uesio/studio.color": "#0e2e9e",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/core"
+		}
+	},
+	{
+		"uesio/studio.description": "The Uesio Configuration App",
+		"uesio/studio.icon": "construction",
+		"uesio/studio.color": "#9e0e0e",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/studio"
+		}
+	},
+	{
+		"uesio/studio.description": "Base Uesio Components",
+		"uesio/studio.icon": "cruelty_free",
+		"uesio/studio.color": "#0e9e75",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/io"
+		}
+	},
+	{
+		"uesio/studio.description": "Experimental Components",
+		"uesio/studio.icon": "self_improvement",
+		"uesio/studio.color": "#9e4a0e",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/lab"
+		}
+	},
+	{
+		"uesio/studio.description": "Uesio Docs",
+		"uesio/studio.icon": "account_balance",
+		"uesio/studio.color": "#36d9e6",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/docs"
+		}
+	},
+	{
+		"uesio/studio.description": "Uesio Website",
+		"uesio/studio.icon": "public",
+		"uesio/studio.color": "#9fb4b3",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/web"
+		}
+	}
+]
