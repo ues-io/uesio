@@ -27,6 +27,7 @@ components:
         - uesio/io.numberfield:uesio/io.default
         - uesio/io.listfield:uesio/io.default
         - uesio/io.markdownfield:uesio/io.default
+        - uesio/io.filemarkdown:uesio/io.default
     filter:
       variants:
         - uesio/io.selectfield:uesio/io.filter
@@ -48,6 +49,7 @@ components:
         - uesio/io.fileimage:uesio/io.table
         - uesio/io.numberfield:uesio/io.table
         - uesio/io.markdownfield:uesio/io.table
+        - uesio/io.filemarkdown:uesio/io.table
     text:
     tile:
       variants:
@@ -101,3 +103,4 @@ components:
     emailfield:
     referencegroupfield:
     markdownfield:
+    filemarkdown:

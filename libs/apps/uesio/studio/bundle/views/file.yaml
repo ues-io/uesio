@@ -92,5 +92,5 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
                             - uesio/io.field:
-                                displayAs: IMAGE
+                                displayAs: PREVIEW
                                 fieldId: uesio/studio.content
