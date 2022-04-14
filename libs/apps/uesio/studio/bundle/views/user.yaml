@@ -196,41 +196,36 @@ definition:
                                                 panel: newLoginMethod
                                             text: Add Method
                                             uesio.variant: uesio/io.secondary
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
+                            - uesio/io.deck:
+                                id: loginmethodlist
+                                wire: loginmethods
+                                uesio.variant: uesio/io.section
                                 components:
-                                  - uesio/io.deck:
-                                      id: loginmethodlist
-                                      wire: loginmethods
-                                      uesio.variant: uesio/io.section
-                                      components:
-                                        - uesio/io.tile:
-                                            uesio.variant: uesio/io.item
-                                            content:
-                                              - uesio/io.grid:
-                                                  templateColumns: 1fr auto
-                                                  uesio.styles:
-                                                    root:
-                                                      alignItems: center
-                                                  items:
-                                                    - uesio/io.box:
-                                                        components:
-                                                          - uesio/io.text:
-                                                              text: ${uesio/core.auth_source}
-                                                              element: div
-                                                          - uesio/io.text:
-                                                              text: ${uesio/core.federation_id}
-                                                              element: div
-                                                    - uesio/io.button:
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - loginmethods
-                                                        text: Remove
-                                                        uesio.variant: uesio/io.nav
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/io.item
+                                      content:
+                                        - uesio/io.grid:
+                                            templateColumns: 1fr auto
+                                            uesio.styles:
+                                              root:
+                                                alignItems: center
+                                            items:
+                                              - uesio/io.box:
+                                                  components:
+                                                    - uesio/io.text:
+                                                        text: ${uesio/core.auth_source}
+                                                        element: div
+                                                    - uesio/io.text:
+                                                        text: ${uesio/core.federation_id}
+                                                        element: div
+                                              - uesio/io.button:
+                                                  signals:
+                                                    - signal: wire/MARK_FOR_DELETE
+                                                    - signal: wire/SAVE
+                                                      wires:
+                                                        - loginmethods
+                                                  text: Remove
+                                                  uesio.variant: uesio/io.nav
 
   panels:
     newLoginMethod:
@@ -256,6 +251,10 @@ definition:
               - signal: wire/SAVE
                 wires:
                   - "newloginmethod"
+                uesio.context:
+                  siteadmin:
+                    name: $Param{sitename}
+                    app: $Param{app}
               - signal: wire/RESET
                 wire: newloginmethod
               - signal: wire/LOAD

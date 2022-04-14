@@ -24,6 +24,10 @@ routes:
   uesio/crm.opportunity_details: true
 files:
   uesio/crm.logo: true
+  uesio/crm.growthgraph: true
+  uesio/crm.leadratinggraph: true
+  uesio/crm.leadstatus: true
+allowallcollections: true
 allowallviews: true
 allowallroutes: false
 allowallfiles: false

@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -17,12 +16,12 @@ import (
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-type validationFunc func(change adapt.ChangeItem) error
+type validationFunc func(change adapt.ChangeItem) *adapt.SaveError
 
 type referenceValidationFunc func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry)
 
 func preventUpdate(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		if change.IsNew {
 			return nil
 		}
@@ -35,7 +34,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 
 		oldValue, err := change.FieldChanges.GetField(field.GetFullName())
 		if err != nil {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value")
 		}
 
 		// Since we're autopopulating this, allow the update to go through
@@ -49,26 +48,26 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		}
 
 		// Fail we have an attempted change on an unupdateable field
-		return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue)
+		return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue)
 	}
 }
 
 func validateRequired(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if (change.IsNew && err != nil) || val == "" {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
 		}
 		return nil
 	}
 }
 
 func validateEmail(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}
 		}
 		return nil
@@ -78,36 +77,36 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
 	if err != nil {
-		return func(change adapt.ChangeItem) error {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
+		return func(change adapt.ChangeItem) *adapt.SaveError {
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
 	}
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
 		}
 		return nil
 	}
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
 		}
 		return nil
 	}
 }
 
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		_, isFloat := val.(float64)
 		_, isInt := val.(int64)
 		if err == nil && !isFloat && !isInt {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
 		}
 		return nil
 	}
@@ -128,43 +127,6 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	}
 
 	return r, true
-}
-
-func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) validationFunc {
-
-	validations := []validationFunc{}
-	for _, field := range collectionMetadata.Fields {
-		validationMetadata := field.ValidationMetadata
-		if field.Required {
-			validations = append(validations, validateRequired(field))
-		}
-		if field.Type == "EMAIL" {
-			validations = append(validations, validateEmail(field))
-		}
-		if validationMetadata != nil && validationMetadata.Type == "REGEX" {
-			validations = append(validations, validateRegex(field))
-		}
-		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
-			validations = append(validations, validateMetadata(field))
-		}
-		if !field.Updateable && field.GetFullName() != adapt.ID_FIELD {
-			validations = append(validations, preventUpdate(field))
-		}
-		if field.Type == "NUMBER" {
-			validations = append(validations, validateNumber(field))
-		}
-	}
-
-	return func(change adapt.ChangeItem) error {
-		var errorList error
-		for _, validation := range validations {
-			err := validation(change)
-			if err != nil {
-				errorList = multierror.Append(errorList, err)
-			}
-		}
-		return errorList
-	}
 }
 
 func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) referenceValidationFunc {
@@ -213,7 +175,28 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 
 func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
-	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
+	validations := []validationFunc{}
+	for _, field := range collectionMetadata.Fields {
+		validationMetadata := field.ValidationMetadata
+		if field.Required {
+			validations = append(validations, validateRequired(field))
+		}
+		if field.Type == "EMAIL" {
+			validations = append(validations, validateEmail(field))
+		}
+		if validationMetadata != nil && validationMetadata.Type == "REGEX" {
+			validations = append(validations, validateRegex(field))
+		}
+		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
+			validations = append(validations, validateMetadata(field))
+		}
+		if !field.Updateable && field.GetFullName() != adapt.ID_FIELD {
+			validations = append(validations, preventUpdate(field))
+		}
+		if field.Type == "NUMBER" {
+			validations = append(validations, validateNumber(field))
+		}
+	}
 
 	referenceValidations := getReferenceValidationsFunction(collectionMetadata, session)
 
@@ -244,19 +227,24 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 
 			op.Inserts[i].IDValue = newID
 
-			err = fieldValidations(op.Inserts[i])
-			if err != nil {
-				return err
+			for _, validation := range validations {
+				err := validation(op.Inserts[i])
+				if err != nil {
+					op.AddError(err)
+				}
 			}
+
 			referenceValidations(op.Inserts[i], referenceRegistry)
 		}
 	}
 
 	if op.Updates != nil {
 		for i := range op.Updates {
-			err := fieldValidations(op.Updates[i])
-			if err != nil {
-				return err
+			for _, validation := range validations {
+				err := validation(op.Updates[i])
+				if err != nil {
+					op.AddError(err)
+				}
 			}
 			referenceValidations(op.Updates[i], referenceRegistry)
 		}

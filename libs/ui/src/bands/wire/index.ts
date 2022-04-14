@@ -250,7 +250,7 @@ const wireSlice = createSlice({
 								{},
 								state.entities[wireId],
 								{
-									error: null,
+									errors: undefined,
 								}
 							),
 						})
@@ -265,7 +265,9 @@ const wireSlice = createSlice({
 			action.meta.arg.wires?.forEach((entityName) => {
 				const entity = state.entities[`${viewId}/${entityName}`]
 				if (entity) {
-					entity.error = action.error.message
+					entity.errors = {
+						test: [{ message: action.error.message || "" }],
+					}
 				}
 			})
 		})

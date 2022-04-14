@@ -95,7 +95,6 @@ definition:
                           wire: leads
                           uesio.variant: uesio/io.default
                     uesio.variant: uesio/io.section
-              uesio.variant: null
           - uesio/io.box:
               uesio.variant: uesio/io.section
               components:
