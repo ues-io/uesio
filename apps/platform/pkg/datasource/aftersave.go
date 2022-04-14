@@ -1,18 +1,15 @@
 package datasource
 
 import (
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// AfterSaveAPI type
 type AfterSaveAPI struct {
 	Inserts    *InsertsAPI `bot:"inserts"`
 	Updates    *UpdatesAPI `bot:"updates"`
 	Deletes    *DeletesAPI `bot:"deletes"`
-	errors     []string
+	op         *adapt.SaveOp
 	session    *sess.Session
 	connection adapt.Connection
 }
@@ -29,22 +26,12 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 			op: request,
 		},
 		session: session,
+		op:      request,
 	}
 }
 
-// AddError function
 func (as *AfterSaveAPI) AddError(message string) {
-	as.errors = append(as.errors, message)
-}
-
-// HasErrors function
-func (as *AfterSaveAPI) HasErrors() bool {
-	return len(as.errors) > 0
-}
-
-// GetErrorString function
-func (as *AfterSaveAPI) GetErrorString() string {
-	return strings.Join(as.errors, ", ")
+	as.op.AddError(adapt.NewSaveError("", "", message))
 }
 
 // Save function

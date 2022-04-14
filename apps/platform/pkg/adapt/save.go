@@ -15,6 +15,18 @@ type SaveOp struct {
 	Updates        ChangeItems
 	Deletes        ChangeItems
 	Options        *SaveOptions
+	Errors         *[]SaveError
+}
+
+func (op *SaveOp) AddError(saveError *SaveError) {
+	if op.Errors == nil {
+		op.Errors = &[]SaveError{}
+	}
+	*op.Errors = append(*op.Errors, *saveError)
+}
+
+func (op *SaveOp) HasErrors() bool {
+	return len(*op.Errors) > 0
 }
 
 func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {

@@ -15,6 +15,7 @@ type OpList struct {
 	List           []*adapt.SaveOp
 	Counter        int
 	CurrentIndex   int
+	Errors         *[]adapt.SaveError
 }
 
 func (ol *OpList) getCurrentIndex() int {
@@ -30,6 +31,7 @@ func (ol *OpList) getCurrentIndex() int {
 			Updates:        adapt.ChangeItems{},
 			Deletes:        adapt.ChangeItems{},
 			Options:        ol.Options,
+			Errors:         ol.Errors,
 		})
 	}
 	ol.Counter++
@@ -68,6 +70,7 @@ func NewOpList(request *SaveRequest) *OpList {
 		WireName:       request.Wire,
 		Options:        request.Options,
 		List:           []*adapt.SaveOp{},
+		Errors:         &request.Errors,
 	}
 }
 
