@@ -61,6 +61,17 @@ type DisplayCondition =
 	| FieldModeCondition
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
+	if (
+		a &&
+		b &&
+		Object.prototype.toString.call(a) +
+			Object.prototype.toString.call(b) !==
+			"[object String][object String]"
+	)
+		console.warn(
+			"You're comparing objects in a display condition, this is probably an error"
+		)
+
 	return op === "NOT_EQUALS" ? a !== b : a === b
 }
 
@@ -115,16 +126,25 @@ function should(condition: DisplayCondition, context: Context) {
 
 		// If we have no record in context, test against all records in the wire.
 		const ctxWire = ctx.getWire()
-		if (ctxWire)
-			return ctxWire
-				.getData()
-				.some((r) =>
-					compare(
-						compareToValue,
-						r.getFieldValue(condition.field) || "",
-						condition.operator
-					)
+		if (ctxWire) {
+			const records = ctxWire.getData()
+
+			// When we check for false condition, we want to check every record.
+			const arrayMethod =
+				condition.operator === "NOT_EQUALS" ? "every" : "some"
+
+			// If there are no records, not_equal applies
+			if (condition.operator === "NOT_EQUALS" && !records.length)
+				return true
+
+			return records[arrayMethod]((r) =>
+				compare(
+					compareToValue,
+					r.getFieldValue(condition.field) || "",
+					condition.operator
 				)
+			)
+		}
 		return false
 	}
 
