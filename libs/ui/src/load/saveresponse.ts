@@ -1,8 +1,8 @@
 import { PlainWireRecord } from "../bands/wirerecord/types"
 
 type SaveError = {
-	recordid: string
-	fieldid: string
+	recordid?: string
+	fieldid?: string
 	message: string
 }
 
@@ -21,4 +21,4 @@ type SaveResponseBatch = {
 	wires: SaveResponse[]
 }
 
-export { SaveResponse, SaveResponseBatch }
+export { SaveResponse, SaveResponseBatch, SaveError }

@@ -127,10 +127,6 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		return err
 	}
 
-	if botAPI.HasErrors() {
-		return errors.New(botAPI.GetErrorString())
-	}
-
 	return nil
 }
 
@@ -167,10 +163,6 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	}, session)
 	if err != nil {
 		return err
-	}
-
-	if botAPI.HasErrors() {
-		return errors.New(botAPI.GetErrorString())
 	}
 
 	return nil
