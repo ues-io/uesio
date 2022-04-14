@@ -11,21 +11,21 @@ import (
 )
 
 func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		if !change.IsNew {
 			return nil
 		}
 
 		autoNumberMeta := field.AutoNumberMetadata
 		if autoNumberMeta == nil {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
 		}
 		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
 		sufix := fmt.Sprintf(format, change.Autonumber)
 		an := autoNumberMeta.Prefix + "-" + sufix
 		err := change.FieldChanges.SetField(field.GetFullName(), an)
 		if err != nil {
-			return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 		}
 
 		return nil
@@ -33,13 +33,13 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 }
 
 func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
 			if err != nil {
-				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -47,7 +47,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 }
 
 func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
-	return func(change adapt.ChangeItem) error {
+	return func(change adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
@@ -60,14 +60,24 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 				},
 			})
 			if err != nil {
-				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
 	}
 }
 
-func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) validationFunc {
+func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	autonumberStart, err := getAutonumber(len(op.Inserts), connection, collectionMetadata)
+	if err != nil {
+		return err
+	}
 
 	populations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
@@ -86,45 +96,25 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 		}
 	}
 
-	return func(change adapt.ChangeItem) error {
-		for _, population := range populations {
-			err := population(change)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-}
-
-func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
-	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
-	if err != nil {
-		return err
-	}
-
-	autonumberStart, err := getAutonumber(len(op.Inserts), connection, collectionMetadata)
-	if err != nil {
-		return err
-	}
-	fieldPopulations := getPopulationFunction(collectionMetadata, session)
-
 	if op.Inserts != nil {
 		for i := range op.Inserts {
 			op.Inserts[i].Autonumber = autonumberStart + i
-			err := fieldPopulations(op.Inserts[i])
-			if err != nil {
-				return err
+			for _, population := range populations {
+				err := population(op.Inserts[i])
+				if err != nil {
+					op.AddError(err)
+				}
 			}
 		}
 	}
 
 	if op.Updates != nil {
 		for i := range op.Updates {
-			err := fieldPopulations(op.Updates[i])
-			if err != nil {
-				return err
+			for _, population := range populations {
+				err := population(op.Updates[i])
+				if err != nil {
+					op.AddError(err)
+				}
 			}
 		}
 	}

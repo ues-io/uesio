@@ -19,7 +19,6 @@ require (
 	github.com/gomodule/redigo v1.8.5
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
-	github.com/hashicorp/go-multierror v1.1.1
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9
 	github.com/icza/session v1.2.0
 	github.com/jackc/pgconn v1.11.0
@@ -59,7 +58,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/icza/mighty v0.0.0-20210726202234-1719e2dcca1b // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
