@@ -27,7 +27,6 @@ definition:
 
     listing:
       collection: uesio/studio.bundlelisting
-      isOne: true
       fields:
         uesio/core.id:
         uesio/studio.description:
