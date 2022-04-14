@@ -215,9 +215,6 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, sess
 		Params: &ParamsAPI{
 			params: params,
 		},
-		StudioAPI: &StudioAPI{
-			session: session,
-		},
 	}
 
 	err = hydrateBot(robot, session)
