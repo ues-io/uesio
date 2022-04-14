@@ -96,6 +96,7 @@ const wireSlice = createSlice({
 			state.data = state.original || {}
 			state.changes = {}
 			state.deletes = {}
+			state.errors = {}
 		}),
 		init: (
 			state: EntityState<PlainWire>,
@@ -105,6 +106,7 @@ const wireSlice = createSlice({
 			state.data = {}
 			state.changes = {}
 			state.deletes = {}
+			state.errors = {}
 		}),
 		reset: createEntityReducer<ResetWirePayload, PlainWire>(
 			(state, { data, changes, original }) => {
@@ -112,6 +114,7 @@ const wireSlice = createSlice({
 				state.changes = changes
 				state.original = original
 				state.deletes = {}
+				state.errors = {}
 			}
 		),
 		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
@@ -188,9 +191,24 @@ const wireSlice = createSlice({
 			(state, { payload }: PayloadAction<SaveResponseBatch>) => {
 				payload.wires?.forEach((wire) => {
 					const wireId = wire.wire
-					if (wire.errors) return
 					const wireState = state.entities[wireId]
 					if (!wireState) return
+
+					if (wire.errors) {
+						wireState.errors = {}
+						const errorObj = wireState.errors
+						wire.errors.forEach((error) => {
+							const key = `${error.recordid || ""}:${
+								error.fieldid || ""
+							}`
+							if (!errorObj[key]) {
+								errorObj[key] = []
+							}
+							errorObj[key].push(error)
+						})
+						return
+					}
+
 					const data = wireState.data
 					const original = wireState.original
 					if (!data || !original) return
