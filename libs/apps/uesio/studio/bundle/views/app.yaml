@@ -325,11 +325,9 @@ definition:
               wire: newworkspace
             text: "Save"
             signals:
-              - signal: "bot/CALL"
-                bot: "uesio/studio.newworkspace"
-                params:
-                  name: ${uesio/studio.name}
-                  app: $Param{app}
+              - signal: "wire/SAVE"
+                wires:
+                  - newworkspace
               - signal: "route/NAVIGATE"
                 path: "app/$Param{app}/workspace/${uesio/studio.name}"
         - uesio/io.button:
