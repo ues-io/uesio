@@ -133,9 +133,32 @@ func getConditions(
 	}
 
 	// UserTokens query
+
 	if collectionMetadata.Access == "protected" && userTokens != nil {
-		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
-		values = append(values, userTokens)
+		accessField := "id"
+		tokenField := "fullid"
+		collectionCheck := collectionName
+		if collectionMetadata.AccessField != "" {
+			challengeMetadata, err := adapt.GetChallengeCollection(metadata, collectionMetadata)
+			if err != nil {
+				return nil, nil, err
+			}
+			// TODO: We could go recursive here and handle multiple levels.
+			// But this work for single-level access fields.
+			accessField = "fields->>'" + collectionMetadata.AccessField + "'"
+			tokenField = "recordid"
+
+			tenantID := credentials.GetTenantIDForCollection(challengeMetadata.GetFullName())
+
+			refCollectionName, err := getDBCollectionName(challengeMetadata, tenantID)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			collectionCheck = refCollectionName
+		}
+		conditionStrings = append(conditionStrings, accessField+" IN (SELECT "+tokenField+" FROM public.tokens WHERE token = ANY("+paramCounter.get()+") AND collection = "+paramCounter.get()+")")
+		values = append(values, userTokens, collectionCheck)
 	}
 
 	return conditionStrings, values, nil

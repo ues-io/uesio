@@ -123,7 +123,6 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 				continue
 			}
 			refReq.AddFields(field.Fields)
-			refReq.AddReference(fieldMetadata)
 		}
 
 		if fieldMetadata.Type == "REFERENCEGROUP" {

@@ -43,6 +43,7 @@ type CollectionMetadata struct {
 	Fields                map[string]*FieldMetadata              `json:"fields"`
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
+	AccessField           string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 	TableName             string                                 `json:"-"`
 	Public                bool                                   `json:"public"`

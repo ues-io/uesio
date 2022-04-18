@@ -64,6 +64,7 @@ type Collection struct {
 	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
+	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`

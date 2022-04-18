@@ -16,7 +16,7 @@ const INSERT_QUERY = "INSERT INTO public.data (id,collection,tenant,autonumber,f
 const UPDATE_QUERY = "UPDATE public.data SET fields = fields || $3 WHERE id = $1 and collection = $2"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2"
 const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2"
-const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
+const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (fullid,recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5,$6)"
 
 type DataMarshaler struct {
 	Data     loadable.Item
@@ -160,11 +160,11 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		for i, delete := range request.Deletes {
 			deleteIDs[i] = fmt.Sprintf("%s:%s", collectionName, delete.IDValue)
 		}
-		fmt.Println(deleteIDs)
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
 
 	tokenInsertCount := len(recordsIDsList)
+	collectionNameLength := len(collectionName) + 1
 
 	if tokenInsertCount > 0 {
 		tokenDeleteIDs := make([]string, tokenInsertCount)
@@ -181,6 +181,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,
 					key,
+					key[collectionNameLength:],
 					token,
 					collectionName,
 					tenantID,

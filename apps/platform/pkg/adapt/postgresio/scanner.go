@@ -13,7 +13,6 @@ type DataScanner struct {
 	Item       *loadable.Item
 	Field      *adapt.FieldMetadata
 	References *adapt.ReferenceRegistry
-	Index      *int
 }
 
 func (ds *DataScanner) Scan(src interface{}) error {

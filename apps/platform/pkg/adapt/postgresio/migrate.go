@@ -22,6 +22,7 @@ func (c *Connection) Migrate() error {
 
 		create table if not exists public.tokens
 		(
+			fullid     varchar(255) not null,
 			recordid   varchar(255) not null,
 			token      varchar(255) not null,
 			collection varchar(255) not null,
@@ -33,6 +34,7 @@ func (c *Connection) Migrate() error {
 		create index if not exists tenant_idx on data (tenant);
 		create unique index if not exists autonumber_idx on data (collection, autonumber);
 
+		create index if not exists fullid_idx on tokens(fullid);
 		create index if not exists recordid_idx on tokens (recordid);
 		create index if not exists collection_idx on tokens (collection);
 		create index if not exists tenant_idx on tokens (tenant);

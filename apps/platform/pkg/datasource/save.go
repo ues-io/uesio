@@ -251,7 +251,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return errors.New("Error with validation")
 		}
 
-		err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
+		err = GenerateRecordChallengeTokens(op, collectionMetadata, connection, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
