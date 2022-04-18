@@ -62,7 +62,7 @@ func RunJob() error {
 		usageItem.SetField("uesio/core.metadataname", keyParts[7])
 		total, _ := strconv.ParseFloat(values[i], 64)
 		usageItem.SetField("uesio/core.total", total)
-		changes = append(changes, usageItem)
+		changes = append(changes, &usageItem)
 	}
 
 	if len(changes) > 0 {

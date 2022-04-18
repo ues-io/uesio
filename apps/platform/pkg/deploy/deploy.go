@@ -161,7 +161,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	deps := meta.BundleDependencyCollection{}
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
-		deps = append(deps, meta.BundleDependency{
+		deps = append(deps, &meta.BundleDependency{
 			Workspace: &meta.Workspace{
 				ID: workspace,
 			},

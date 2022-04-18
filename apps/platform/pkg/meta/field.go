@@ -8,7 +8,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// NewField function
 func NewField(collectionKey, fieldKey string) (*Field, error) {
 	namespace, name, err := ParseKey(fieldKey)
 	if err != nil {
@@ -35,13 +34,11 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 	return items, nil
 }
 
-//ValidationMetadata struct
 type ValidationMetadata struct {
 	Type  string `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`
 	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"uesio/studio.regex"`
 }
 
-// SubField struct
 type SubField struct {
 	Name       string `yaml:"name,omitempty" uesio:"uesio/studio.name"`
 	Label      string `yaml:"label,omitempty" uesio:"uesio/studio.label"`
@@ -49,42 +46,35 @@ type SubField struct {
 	SelectList string `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
 }
 
-// NumberMetadata struct
 type NumberMetadata struct {
 	Decimals int `json:"decimals" uesio:"uesio/studio.decimals"`
 }
 
-// FileMetadata type
 type FileMetadata struct {
 	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"uesio/studio.accept"`
 	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"uesio/studio.filecollection"`
 }
 
-// ReferenceMetadata type
 type ReferenceMetadata struct {
 	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 }
 
-// ReferenceMetadata type
 type ReferenceGroupMetadata struct {
 	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 	Field      string `json:"field" yaml:"field,omitempty" uesio:"uesio/studio.field"`
 	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"uesio/studio.ondelete"`
 }
 
-// AutoNumberMetadata struct
 type AutoNumberMetadata struct {
 	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"uesio/studio.prefix"`
 	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"uesio/studio.leadingzeros"`
 }
 
-// FormulaMetadata struct
 type FormulaMetadata struct {
 	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"uesio/studio.expression"`
 	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"uesio/studio.returntype"`
 }
 
-// Field struct
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
@@ -117,7 +107,6 @@ type Field struct {
 	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"uesio/studio.columnname"`
 }
 
-// GetFieldTypes function
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
 		"TEXT":           true,
@@ -140,12 +129,10 @@ func GetFieldTypes() map[string]bool {
 	}
 }
 
-// GetCollectionName function
 func (f *Field) GetCollectionName() string {
 	return f.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (f *Field) GetCollection() CollectionableGroup {
 	var fc FieldCollection
 	return &fc
@@ -155,72 +142,59 @@ func (f *Field) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s_%s", workspace, f.CollectionRef, f.Name)
 }
 
-// GetBundleGroup function
 func (f *Field) GetBundleGroup() BundleableGroup {
 	var fc FieldCollection
 	return &fc
 }
 
-// GetKey function
 func (f *Field) GetKey() string {
 	return fmt.Sprintf("%s:%s.%s", f.CollectionRef, f.Namespace, f.Name)
 }
 
-// GetPath function
 func (f *Field) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
 	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
 }
 
-// GetPermChecker function
 func (f *Field) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (f *Field) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(f, fieldName, value)
 }
 
-// GetField function
 func (f *Field) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-// GetNamespace function
 func (f *Field) GetNamespace() string {
 	return f.Namespace
 }
 
-// SetNamespace function
 func (f *Field) SetNamespace(namespace string) {
 	f.Namespace = namespace
 }
 
-// SetWorkspace function
 func (f *Field) SetWorkspace(workspace string) {
 	f.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (f *Field) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
 }
 
-// Len function
 func (f *Field) Len() int {
 	return StandardItemLen(f)
 }
 
-// GetItemMeta function
 func (f *Field) GetItemMeta() *ItemMeta {
 	return f.itemMeta
 }
 
-// SetItemMeta function
 func (f *Field) SetItemMeta(itemMeta *ItemMeta) {
 	f.itemMeta = itemMeta
 }

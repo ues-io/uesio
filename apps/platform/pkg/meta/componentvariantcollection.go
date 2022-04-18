@@ -9,41 +9,35 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// FieldCollection slice
-type ComponentVariantCollection []ComponentVariant
+type ComponentVariantCollection []*ComponentVariant
 
-// GetName function
 func (cvc *ComponentVariantCollection) GetName() string {
 	return "uesio/studio.componentvariant"
 }
 
-// GetBundleFolderName function
 func (cvc *ComponentVariantCollection) GetBundleFolderName() string {
 	return "componentvariants"
 }
 
-// GetFields function
 func (cvc *ComponentVariantCollection) GetFields() []string {
 	return StandardGetFields(&ComponentVariant{})
 }
 
-// NewItem function
 func (cvc *ComponentVariantCollection) NewItem() loadable.Item {
-	*cvc = append(*cvc, ComponentVariant{})
-	return &((*cvc)[len(*cvc)-1])
+	cv := &ComponentVariant{}
+	*cvc = append(*cvc, cv)
+	return cv
 }
 
-// NewBundleableItemWithKey function
 func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	cv, err := NewComponentVariant(key)
 	if err != nil {
 		return nil, err
 	}
-	*cvc = append(*cvc, *cv)
-	return &(*cvc)[len(*cvc)-1], nil
+	*cvc = append(*cvc, cv)
+	return cv, nil
 }
 
-// GetKeyFromPath function
 func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
@@ -72,12 +66,10 @@ func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace str
 	return cv.GetKey(), nil
 }
 
-// GetItem function
 func (cvc *ComponentVariantCollection) GetItem(index int) loadable.Item {
-	return &(*cvc)[index]
+	return (*cvc)[index]
 }
 
-// Loop function
 func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cvc {
 		err := iter(cvc.GetItem(index), strconv.Itoa(index))
@@ -88,12 +80,10 @@ func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cvc *ComponentVariantCollection) Len() int {
 	return len(*cvc)
 }
 
-// GetItems function
 func (cvc *ComponentVariantCollection) GetItems() interface{} {
 	return *cvc
 }

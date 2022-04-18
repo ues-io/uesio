@@ -7,7 +7,7 @@ import (
 )
 
 // BulkBatchCollection slice
-type BulkBatchCollection []BulkBatch
+type BulkBatchCollection []*BulkBatch
 
 // GetName function
 func (bbc *BulkBatchCollection) GetName() string {
@@ -21,13 +21,13 @@ func (bbc *BulkBatchCollection) GetFields() []string {
 
 // GetItem function
 func (bbc *BulkBatchCollection) GetItem(index int) loadable.Item {
-	return &(*bbc)[index]
+	return (*bbc)[index]
 }
 
 // NewItem function
 func (bbc *BulkBatchCollection) NewItem() loadable.Item {
-	*bbc = append(*bbc, BulkBatch{})
-	return &(*bbc)[len(*bbc)-1]
+	*bbc = append(*bbc, &BulkBatch{})
+	return (*bbc)[len(*bbc)-1]
 }
 
 // Loop function

@@ -65,7 +65,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	for _, item := range routes {
 		if item.Path == pathTemplate {
-			route = &item
+			route = item
 			break
 		}
 	}
@@ -92,7 +92,7 @@ func GetRouteFromCollection(r *http.Request, namespace, collection string, viewt
 
 	for _, item := range routes {
 		if item.Collection == namespace+"."+collection && item.ViewType == viewtype {
-			route = &item
+			route = item
 			break
 		}
 	}

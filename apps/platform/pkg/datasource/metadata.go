@@ -209,7 +209,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	}
 
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field, session))
+		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
 	return nil
 }

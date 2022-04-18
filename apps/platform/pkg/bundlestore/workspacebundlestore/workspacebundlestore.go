@@ -241,6 +241,10 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	}
 	for i := range bdc {
 		// TODO: Possibly recurse here to get sub dependencies
+		bundleName := bdc[i].GetBundleName()
+		if bundleName == "" {
+			return nil, errors.New("Error getting bundle dependency name")
+		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
 			Version: bdc[i].GetVersionString(),
 		}

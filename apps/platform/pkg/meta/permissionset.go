@@ -7,7 +7,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// NewPermissionSet function
 func NewPermissionSet(key string) (*PermissionSet, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -19,7 +18,6 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 	}, nil
 }
 
-// PermissionSet struct
 type PermissionSet struct {
 	ID                  string          `yaml:"-" uesio:"uesio/core.id"`
 	Name                string          `yaml:"name" uesio:"uesio/studio.name"`
@@ -43,12 +41,10 @@ type PermissionSet struct {
 	Public              bool            `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
 func (ps *PermissionSet) GetCollectionName() string {
 	return ps.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (ps *PermissionSet) GetCollection() CollectionableGroup {
 	var psc PermissionSetCollection
 	return &psc
@@ -58,70 +54,57 @@ func (ps *PermissionSet) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, ps.Name)
 }
 
-// GetBundleGroup function
 func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
 	var psc PermissionSetCollection
 	return &psc
 }
 
-// GetKey function
 func (ps *PermissionSet) GetKey() string {
 	return fmt.Sprintf("%s.%s", ps.Namespace, ps.Name)
 }
 
-// GetPath function
 func (ps *PermissionSet) GetPath() string {
 	return ps.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (ps *PermissionSet) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (ps *PermissionSet) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(ps, fieldName, value)
 }
 
-// GetField function
 func (ps *PermissionSet) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(ps, fieldName)
 }
 
-// GetNamespace function
 func (ps *PermissionSet) GetNamespace() string {
 	return ps.Namespace
 }
 
-// SetNamespace function
 func (ps *PermissionSet) SetNamespace(namespace string) {
 	ps.Namespace = namespace
 }
 
-// SetWorkspace function
 func (ps *PermissionSet) SetWorkspace(workspace string) {
 	ps.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ps, iter)
 }
 
-// Len function
 func (ps *PermissionSet) Len() int {
 	return StandardItemLen(ps)
 }
 
-// GetItemMeta function
 func (ps *PermissionSet) GetItemMeta() *ItemMeta {
 	return ps.itemMeta
 }
 
-// SetItemMeta function
 func (ps *PermissionSet) SetItemMeta(itemMeta *ItemMeta) {
 	ps.itemMeta = itemMeta
 }
@@ -138,7 +121,6 @@ func (ps *PermissionSet) IsPublic() bool {
 	return ps.Public
 }
 
-// HasPermission method
 func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	if check == nil {
 		return true
@@ -194,7 +176,6 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	return true
 }
 
-// FlattenPermissions flattens the permissions
 func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	namedPerms := map[string]bool{}
 	viewPerms := map[string]bool{}

@@ -127,7 +127,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			loaderFunc(changeRequest, record)
 		}
 
-		changes = append(changes, changeRequest)
+		changes = append(changes, &changeRequest)
 
 	}
 

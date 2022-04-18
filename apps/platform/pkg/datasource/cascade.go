@@ -63,7 +63,7 @@ func getCascadeDeletes(
 						currentCollectionIds = adapt.Collection{}
 					}
 
-					currentCollectionIds = append(currentCollectionIds, adapt.Item{
+					currentCollectionIds = append(currentCollectionIds, &adapt.Item{
 						adapt.ID_FIELD: fkString,
 					})
 					cascadeDeleteFKs[referencedCollection] = currentCollectionIds
@@ -144,7 +144,7 @@ func getCascadeDeletes(
 						return errors.New("Delete id must be a string")
 					}
 
-					currentCollectionIds = append(currentCollectionIds, adapt.Item{
+					currentCollectionIds = append(currentCollectionIds, &adapt.Item{
 						adapt.ID_FIELD: refRKAsString,
 					})
 

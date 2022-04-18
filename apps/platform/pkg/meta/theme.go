@@ -7,7 +7,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// Theme struct
 type Theme struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
@@ -48,12 +47,10 @@ func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
-// GetCollectionName function
 func (t *Theme) GetCollectionName() string {
 	return t.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (t *Theme) GetCollection() CollectionableGroup {
 	var tc ThemeCollection
 	return &tc
@@ -63,28 +60,23 @@ func (t *Theme) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, t.Name)
 }
 
-// GetBundleGroup function
 func (t *Theme) GetBundleGroup() BundleableGroup {
 	var tc ThemeCollection
 	return &tc
 }
 
-// GetKey function
 func (t *Theme) GetKey() string {
 	return fmt.Sprintf("%s.%s", t.Namespace, t.Name)
 }
 
-// GetPath function
 func (t *Theme) GetPath() string {
 	return t.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (t *Theme) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
@@ -100,7 +92,6 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(t, fieldName, value)
 }
 
-// GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
 	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&t.Definition)
@@ -112,39 +103,32 @@ func (t *Theme) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-// GetNamespace function
 func (t *Theme) GetNamespace() string {
 	return t.Namespace
 }
 
-// SetNamespace function
 func (t *Theme) SetNamespace(namespace string) {
 	t.Namespace = namespace
 }
 
-// SetWorkspace function
 func (t *Theme) SetWorkspace(workspace string) {
 	t.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
 }
 
-// Len function
 func (t *Theme) Len() int {
 	return StandardItemLen(t)
 }
 
-// GetItemMeta function
 func (t *Theme) GetItemMeta() *ItemMeta {
 	return t.itemMeta
 }
 
-// SetItemMeta function
 func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
 	t.itemMeta = itemMeta
 }

@@ -53,7 +53,7 @@ func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 	response := []ConfigValueResponse{}
 
 	for _, cv := range configValues {
-		value, err := configstore.GetValue(&cv, session)
+		value, err := configstore.GetValue(cv, session)
 		if err != nil {
 			return nil, err
 		}

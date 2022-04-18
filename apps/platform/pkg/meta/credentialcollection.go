@@ -6,51 +6,43 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// CredentialCollection slice
-type CredentialCollection []Credential
+type CredentialCollection []*Credential
 
-// GetName function
 func (cc *CredentialCollection) GetName() string {
 	return "uesio/studio.credential"
 }
 
-// GetBundleFolderName function
 func (cc *CredentialCollection) GetBundleFolderName() string {
 	return "credentials"
 }
 
-// GetFields function
 func (cc *CredentialCollection) GetFields() []string {
 	return StandardGetFields(&Credential{})
 }
 
-// NewItem function
 func (cc *CredentialCollection) NewItem() loadable.Item {
-	*cc = append(*cc, Credential{})
-	return &(*cc)[len(*cc)-1]
+	c := &Credential{}
+	*cc = append(*cc, c)
+	return c
 }
 
-// NewBundleableItemWithKey function
 func (cc *CredentialCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	c, err := NewCredential(key)
 	if err != nil {
 		return nil, err
 	}
-	*cc = append(*cc, *c)
-	return &(*cc)[len(*cc)-1], nil
+	*cc = append(*cc, c)
+	return c, nil
 }
 
-// GetKeyFromPath function
 func (cc *CredentialCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (cc *CredentialCollection) GetItem(index int) loadable.Item {
-	return &(*cc)[index]
+	return (*cc)[index]
 }
 
-// Loop function
 func (cc *CredentialCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index), strconv.Itoa(index))
@@ -61,12 +53,10 @@ func (cc *CredentialCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cc *CredentialCollection) Len() int {
 	return len(*cc)
 }
 
-// GetItems function
 func (cc *CredentialCollection) GetItems() interface{} {
 	return *cc
 }
