@@ -1,6 +1,5 @@
 package meta
 
-// AppLicense struct
 type AppLicense struct {
 	ID            string
 	AppID         string

@@ -10,44 +10,38 @@ import (
 	language "golang.org/x/text/language"
 )
 
-// FieldCollection slice
-type TranslationCollection []Translation
+type TranslationCollection []*Translation
 
-// GetName function
 func (tc *TranslationCollection) GetName() string {
 	return "uesio/studio.translation"
 }
 
-// GetBundleFolderName function
 func (tc *TranslationCollection) GetBundleFolderName() string {
 	return "translations"
 }
 
-// GetFields function
 func (tc *TranslationCollection) GetFields() []string {
 	return StandardGetFields(&Translation{})
 }
 
-// NewItem function
 func (tc *TranslationCollection) NewItem() loadable.Item {
-	*tc = append(*tc, Translation{})
-	return &((*tc)[len(*tc)-1])
+	t := &Translation{}
+	*tc = append(*tc, t)
+	return t
 }
 
-// NewBundleableItemWithKey function
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-
 	_, err := language.ParseBase(key)
 	if err != nil {
 		return nil, errors.New("Invalid ISO 639 Key: " + key)
 	}
-	*tc = append(*tc, Translation{
+	t := &Translation{
 		Language: key,
-	})
-	return &(*tc)[len(*tc)-1], nil
+	}
+	*tc = append(*tc, t)
+	return t, nil
 }
 
-// GetKeyFromPath function
 func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 
 	if conditions == nil {
@@ -75,12 +69,10 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, c
 	return language, nil
 }
 
-// GetItem function
 func (tc *TranslationCollection) GetItem(index int) loadable.Item {
-	return &(*tc)[index]
+	return (*tc)[index]
 }
 
-// Loop function
 func (tc *TranslationCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index), strconv.Itoa(index))
@@ -91,12 +83,10 @@ func (tc *TranslationCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (tc *TranslationCollection) Len() int {
 	return len(*tc)
 }
 
-// GetItems function
 func (tc *TranslationCollection) GetItems() interface{} {
 	return *tc
 }

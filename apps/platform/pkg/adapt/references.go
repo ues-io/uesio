@@ -15,8 +15,8 @@ type ReferenceRequest struct {
 }
 
 type ReferenceLocator struct {
-	RecordIndex int
-	Field       *FieldMetadata
+	Item  loadable.Item
+	Field *FieldMetadata
 }
 
 // AddID function
@@ -79,7 +79,6 @@ func IsReference(fieldType string) bool {
 
 func HandleReferences(
 	connection Connection,
-	collection loadable.Group,
 	referencedCollections ReferenceRegistry,
 ) error {
 	ops := []*LoadOp{}
@@ -155,8 +154,7 @@ func HandleReferences(
 
 					meta.Copy(&referenceValue, refItem)
 
-					item := collection.GetItem(locator.RecordIndex)
-					err = item.SetField(reference.GetFullName(), referenceValue)
+					err = locator.Item.SetField(reference.GetFullName(), referenceValue)
 					if err != nil {
 						return err
 					}

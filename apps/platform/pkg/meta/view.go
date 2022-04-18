@@ -8,7 +8,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// View struct
 type View struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
@@ -49,12 +48,10 @@ func NewViews(keys map[string]bool) ([]BundleableItem, error) {
 	return items, nil
 }
 
-// GetCollectionName function
 func (v *View) GetCollectionName() string {
 	return v.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (v *View) GetCollection() CollectionableGroup {
 	var vc ViewCollection
 	return &vc
@@ -64,23 +61,19 @@ func (v *View) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, v.Name)
 }
 
-// GetBundleGroup function
 func (v *View) GetBundleGroup() BundleableGroup {
 	var vc ViewCollection
 	return &vc
 }
 
-// GetKey function
 func (v *View) GetKey() string {
 	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
 }
 
-// GetPath function
 func (v *View) GetPath() string {
 	return v.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (v *View) GetPermChecker() *PermissionSet {
 	key := v.GetKey()
 	return &PermissionSet{
@@ -90,7 +83,6 @@ func (v *View) GetPermChecker() *PermissionSet {
 	}
 }
 
-// SetField function
 func (v *View) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
@@ -107,7 +99,6 @@ func (v *View) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(v, fieldName, value)
 }
 
-// GetField function
 func (v *View) GetField(fieldName string) (interface{}, error) {
 	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
@@ -119,39 +110,32 @@ func (v *View) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-// GetNamespace function
 func (v *View) GetNamespace() string {
 	return v.Namespace
 }
 
-// SetNamespace function
 func (v *View) SetNamespace(namespace string) {
 	v.Namespace = namespace
 }
 
-// SetWorkspace function
 func (v *View) SetWorkspace(workspace string) {
 	v.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
 }
 
-// Len function
 func (v *View) Len() int {
 	return StandardItemLen(v)
 }
 
-// GetItemMeta function
 func (v *View) GetItemMeta() *ItemMeta {
 	return v.itemMeta
 }
 
-// SetItemMeta function
 func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
 }

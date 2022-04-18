@@ -74,8 +74,8 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		}
 
 		reference.AddID(src, adapt.ReferenceLocator{
-			RecordIndex: *ds.Index,
-			Field:       fieldMetadata,
+			Item:  *ds.Item,
+			Field: fieldMetadata,
 		})
 
 		return nil

@@ -6,31 +6,26 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ConfigStoreValueCollection slice
-type ConfigStoreValueCollection []ConfigStoreValue
+type ConfigStoreValueCollection []*ConfigStoreValue
 
-// GetName function
 func (cc *ConfigStoreValueCollection) GetName() string {
 	return "uesio/core.configstorevalue"
 }
 
-// GetFields function
 func (cc *ConfigStoreValueCollection) GetFields() []string {
 	return StandardGetFields(&ConfigStoreValue{})
 }
 
-// GetItem function
 func (cc *ConfigStoreValueCollection) GetItem(index int) loadable.Item {
-	return &(*cc)[index]
+	return (*cc)[index]
 }
 
-// NewItem function
 func (cc *ConfigStoreValueCollection) NewItem() loadable.Item {
-	*cc = append(*cc, ConfigStoreValue{})
-	return &(*cc)[len(*cc)-1]
+	c := &ConfigStoreValue{}
+	*cc = append(*cc, c)
+	return c
 }
 
-// Loop function
 func (cc *ConfigStoreValueCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index), strconv.Itoa(index))
@@ -41,12 +36,10 @@ func (cc *ConfigStoreValueCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cc *ConfigStoreValueCollection) Len() int {
 	return len(*cc)
 }
 
-// GetItems function
 func (cc *ConfigStoreValueCollection) GetItems() interface{} {
 	return *cc
 }

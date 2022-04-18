@@ -25,7 +25,6 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 	}, nil
 }
 
-// ComponentVariant struct
 type ComponentVariant struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
 	Namespace  string     `yaml:"-" uesio:"-"`
@@ -81,18 +80,15 @@ func (c *ComponentVariant) SetWorkspace(workspace string) {
 	}
 }
 
-// GetCollectionName function
 func (c *ComponentVariant) GetCollectionName() string {
 	return c.GetCollection().GetName()
 }
 
-// GetCollection function
 func (c *ComponentVariant) GetCollection() CollectionableGroup {
 	var sc ComponentVariantCollection
 	return &sc
 }
 
-// SetField function
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
@@ -108,7 +104,6 @@ func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(v, fieldName, value)
 }
 
-// GetField function
 func (v *ComponentVariant) GetField(fieldName string) (interface{}, error) {
 	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
@@ -120,22 +115,18 @@ func (v *ComponentVariant) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-// Loop function
 func (c *ComponentVariant) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
-// Len function
 func (c *ComponentVariant) Len() int {
 	return StandardItemLen(c)
 }
 
-// GetItemMeta function
 func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 	return c.itemMeta
 }
 
-// SetItemMeta function
 func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
 }

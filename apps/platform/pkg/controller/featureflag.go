@@ -30,7 +30,7 @@ func getFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse,
 	response := []FeatureFlagResponse{}
 
 	for _, cv := range featureFlags {
-		ffa, err := featureflagstore.GetValue(&cv, user, session)
+		ffa, err := featureflagstore.GetValue(cv, user, session)
 		if err != nil {
 			response = append(response, FeatureFlagResponse{
 				Name:      cv.Name,

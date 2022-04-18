@@ -44,7 +44,6 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 	}, nil
 }
 
-// Bundle struct
 type Bundle struct {
 	ID          string    `uesio:"uesio/core.id"`
 	Major       string    `uesio:"uesio/studio.major"`
@@ -73,43 +72,35 @@ func (b *Bundle) GetNextPatchVersionString() (string, error) {
 	return fmt.Sprintf("v%s.%s.%s", b.Major, b.Minor, strconv.Itoa(patch+1)), nil
 }
 
-// GetCollectionName function
 func (b *Bundle) GetCollectionName() string {
 	return b.GetCollection().GetName()
 }
 
-// GetCollection function
 func (b *Bundle) GetCollection() CollectionableGroup {
 	var bc BundleCollection
 	return &bc
 }
 
-// SetField function
 func (b *Bundle) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-// GetField function
 func (b *Bundle) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-// Loop function
 func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
 }
 
-// Len function
 func (b *Bundle) Len() int {
 	return StandardItemLen(b)
 }
 
-// GetItemMeta function
 func (b *Bundle) GetItemMeta() *ItemMeta {
 	return b.itemMeta
 }
 
-// SetItemMeta function
 func (b *Bundle) SetItemMeta(itemMeta *ItemMeta) {
 	b.itemMeta = itemMeta
 }

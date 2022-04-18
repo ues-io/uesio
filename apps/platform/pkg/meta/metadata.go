@@ -25,17 +25,14 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 	return true
 }
 
-// BundleConditions type
 type BundleConditions map[string]string
 
-// CollectionableGroup interface
 type CollectionableGroup interface {
 	loadable.Group
 	GetName() string
 	GetFields() []string
 }
 
-// CollectionableItem interface
 type CollectionableItem interface {
 	loadable.Item
 	GetCollectionName() string
@@ -44,7 +41,6 @@ type CollectionableItem interface {
 	SetItemMeta(*ItemMeta)
 }
 
-// BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string
@@ -52,7 +48,6 @@ type BundleableGroup interface {
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
 
-// BundleableItem interface
 type BundleableItem interface {
 	CollectionableItem
 	GetBundleGroup() BundleableGroup
@@ -66,7 +61,6 @@ type BundleableItem interface {
 	IsPublic() bool
 }
 
-// ParseKey function
 func ParseKey(key string) (string, string, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
@@ -95,7 +89,6 @@ func StandardKeyFromPath(path string, namespace string, conditions BundleConditi
 	return namespace + "." + strings.TrimSuffix(path, ".yaml"), nil
 }
 
-// StandardGetFields function
 func StandardGetFields(item CollectionableItem) []string {
 	names, err := reflecttool.GetFieldNames(item)
 	if err != nil {
@@ -104,7 +97,6 @@ func StandardGetFields(item CollectionableItem) []string {
 	return names
 }
 
-// StandardFieldGet function
 func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
 	itemMeta := item.GetItemMeta()
 	if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
@@ -113,12 +105,10 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, e
 	return reflecttool.GetField(item, fieldName)
 }
 
-// StandardFieldSet function
 func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
 	return reflecttool.SetField(item, fieldName, value)
 }
 
-// StandardItemLoop function
 func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
 	itemMeta := item.GetItemMeta()
 	for _, fieldName := range StandardGetFields(item) {
@@ -137,12 +127,10 @@ func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) er
 	return nil
 }
 
-// StandardItemLen function
 func StandardItemLen(item CollectionableItem) int {
 	return len(StandardGetFields(item))
 }
 
-// BundleableFactory function type
 type BundleableFactory func() BundleableGroup
 
 var bundleableGroupMap = map[string]BundleableFactory{
@@ -169,7 +157,6 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&TranslationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &TranslationCollection{} },
 }
 
-// GetBundleableGroupFromType function
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
 	group, ok := bundleableGroupMap[metadataType]
 	if !ok {
@@ -178,7 +165,6 @@ func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
 	return group(), nil
 }
 
-// GetMetadataTypes function
 func GetMetadataTypes() []string {
 	types := []string{}
 	for key := range bundleableGroupMap {

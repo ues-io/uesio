@@ -13,43 +13,35 @@ type LoginMethod struct {
 	CreatedAt    int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
-// GetCollectionName function
 func (lm *LoginMethod) GetCollectionName() string {
 	return lm.GetCollection().GetName()
 }
 
-// GetCollection function
 func (lm *LoginMethod) GetCollection() CollectionableGroup {
 	var lmc LoginMethodCollection
 	return &lmc
 }
 
-// SetField function
 func (lm *LoginMethod) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(lm, fieldName, value)
 }
 
-// GetField function
 func (lm *LoginMethod) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(lm, fieldName)
 }
 
-// Loop function
 func (lm *LoginMethod) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(lm, iter)
 }
 
-// Len function
 func (lm *LoginMethod) Len() int {
 	return StandardItemLen(lm)
 }
 
-// GetItemMeta function
 func (lm *LoginMethod) GetItemMeta() *ItemMeta {
 	return lm.itemMeta
 }
 
-// SetItemMeta function
 func (lm *LoginMethod) SetItemMeta(itemMeta *ItemMeta) {
 	lm.itemMeta = itemMeta
 }
