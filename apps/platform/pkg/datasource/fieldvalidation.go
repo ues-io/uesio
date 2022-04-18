@@ -161,7 +161,6 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 					return
 				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
-				request.AddReference(field)
 			})
 		}
 	}
@@ -251,18 +250,13 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 	}
 
 	for collection, request := range *referenceRegistry {
-		idCount := len(request.IDs)
+		ids := request.GetIDs()
+		idCount := len(ids)
 		if idCount == 0 {
 			continue
 		}
-		ids := make([]string, idCount)
-		fieldIDIndex := 0
-		for k := range request.IDs {
-			ids[fieldIDIndex] = k
-			fieldIDIndex++
-		}
 		results := &adapt.Collection{}
-		ops := []*adapt.LoadOp{{
+		op := &adapt.LoadOp{
 			CollectionName: collection,
 			WireName:       "referentialIntegrity",
 			Collection:     results,
@@ -275,13 +269,13 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 			},
 			Fields: []adapt.LoadRequestField{{ID: adapt.ID_FIELD}},
 			Query:  true,
-		}}
-		for _, op := range ops {
-			err := connection.Load(op)
-			if err != nil {
-				return err
-			}
 		}
+
+		err := connection.Load(op)
+		if err != nil {
+			return err
+		}
+
 		if idCount != results.Len() {
 			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {
 				value, err := item.GetField(adapt.ID_FIELD)
@@ -293,11 +287,8 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 			if err != nil {
 				return err
 			}
-			fieldNames := []string{}
-			for fieldKey := range request.ReferenceFields {
-				fieldNames = append(fieldNames, fieldKey)
-			}
-			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : ") + " for collection " + collectionMetadata.GetFullName() + " on field " + strings.Join(fieldNames, ","))
+
+			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : ") + " for collection " + collectionMetadata.GetFullName())
 		}
 	}
 

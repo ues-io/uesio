@@ -5,13 +5,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ReferenceRequest type
 type ReferenceRequest struct {
-	Fields          []LoadRequestField
-	FieldsMap       map[string]bool
-	Metadata        *CollectionMetadata
-	ReferenceFields FieldsMap
-	IDs             map[string][]ReferenceLocator
+	Fields    []LoadRequestField
+	FieldsMap map[string]bool
+	Metadata  *CollectionMetadata
+	IDMap     map[string][]ReferenceLocator
 }
 
 type ReferenceLocator struct {
@@ -19,19 +17,27 @@ type ReferenceLocator struct {
 	Field *FieldMetadata
 }
 
-// AddID function
+func (rr *ReferenceRequest) GetIDs() []string {
+	ids := make([]string, len(rr.IDMap))
+	fieldIDIndex := 0
+	for k := range rr.IDMap {
+		ids[fieldIDIndex] = k
+		fieldIDIndex++
+	}
+	return ids
+}
+
 func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
 	foreignKeyValueAsString, ok := value.(string)
 	if ok {
-		items, ok := rr.IDs[foreignKeyValueAsString]
+		items, ok := rr.IDMap[foreignKeyValueAsString]
 		if !ok {
-			rr.IDs[foreignKeyValueAsString] = []ReferenceLocator{}
+			rr.IDMap[foreignKeyValueAsString] = []ReferenceLocator{}
 		}
-		rr.IDs[foreignKeyValueAsString] = append(items, locator)
+		rr.IDMap[foreignKeyValueAsString] = append(items, locator)
 	}
 }
 
-// AddFields function
 func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
 	for _, field := range fields {
 		_, ok := rr.FieldsMap[field.ID]
@@ -42,25 +48,16 @@ func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
 	}
 }
 
-// AddReference function
-func (rr *ReferenceRequest) AddReference(reference *FieldMetadata) {
-	rr.ReferenceFields[reference.GetFullName()] = reference
-}
-
-// ReferenceRegistry type
 type ReferenceRegistry map[string]*ReferenceRequest
 
-// Add function
 func (rr *ReferenceRegistry) Add(collectionKey string) {
 	(*rr)[collectionKey] = &ReferenceRequest{
-		ReferenceFields: FieldsMap{},
-		IDs:             map[string][]ReferenceLocator{},
-		Fields:          []LoadRequestField{},
-		FieldsMap:       map[string]bool{},
+		IDMap:     map[string][]ReferenceLocator{},
+		Fields:    []LoadRequestField{},
+		FieldsMap: map[string]bool{},
 	}
 }
 
-// Get function
 func (rr *ReferenceRegistry) Get(collectionKey string) *ReferenceRequest {
 	request, ok := (*rr)[collectionKey]
 	if !ok {
@@ -81,24 +78,19 @@ func HandleReferences(
 	connection Connection,
 	referencedCollections ReferenceRegistry,
 ) error {
-	ops := []*LoadOp{}
+
 	for collectionName, ref := range referencedCollections {
-		idCount := len(ref.IDs)
+		ids := ref.GetIDs()
+		idCount := len(ids)
 		if idCount == 0 {
 			continue
-		}
-		ids := make([]string, idCount)
-		fieldIDIndex := 0
-		for k := range ref.IDs {
-			ids[fieldIDIndex] = k
-			fieldIDIndex++
 		}
 		ref.AddFields([]LoadRequestField{
 			{
 				ID: ID_FIELD,
 			},
 		})
-		ops = append(ops, &LoadOp{
+		op := &LoadOp{
 			Fields:         ref.Fields,
 			WireName:       "ReferenceLoad",
 			Collection:     &Collection{},
@@ -111,19 +103,15 @@ func HandleReferences(
 				},
 			},
 			Query: true,
-		})
-	}
-	for _, op := range ops {
+		}
+
 		err := connection.Load(op)
 		if err != nil {
 			return err
 		}
-	}
 
-	for i := range ops {
-		op := ops[i]
 		referencedCollection := referencedCollections[op.CollectionName]
-		err := op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+		err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 			refFK, err := refItem.GetField(ID_FIELD)
 			if err != nil {
 				return err
@@ -140,24 +128,17 @@ func HandleReferences(
 				return nil
 			}
 
-			matchIndexes, ok := referencedCollection.IDs[refFKAsString]
+			matchIndexes, ok := referencedCollection.IDMap[refFKAsString]
 			if !ok {
 				return nil
 			}
 
 			for _, locator := range matchIndexes {
-				for _, reference := range referencedCollection.ReferenceFields {
-					if reference != locator.Field {
-						continue
-					}
-					referenceValue := Item{}
-
-					meta.Copy(&referenceValue, refItem)
-
-					err = locator.Item.SetField(reference.GetFullName(), referenceValue)
-					if err != nil {
-						return err
-					}
+				referenceValue := Item{}
+				meta.Copy(&referenceValue, refItem)
+				err = locator.Item.SetField(locator.Field.GetFullName(), referenceValue)
+				if err != nil {
+					return err
 				}
 			}
 			return nil
