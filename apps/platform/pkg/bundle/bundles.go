@@ -226,14 +226,10 @@ func IsValid(items []meta.BundleableItem, session *sess.Session, connection adap
 	for namespace, items := range coalated {
 		version, bs, err := GetBundleStoreWithVersion(namespace, session)
 		if err != nil {
-			fmt.Println("Failed IsValid: " + err.Error())
-			for _, item := range items {
-				fmt.Println(item.GetKey())
-			}
 			return err
 		}
 
-		_, err = bs.HasAnyItems(items, version, session, connection)
+		err = bs.HasAllItems(items, version, session, connection)
 		if err != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 name: params
 type: LIST
 label: Params
+subType: MAP
 subFields:
   - name: studio.name
     label: Parameter Name

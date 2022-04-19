@@ -189,12 +189,12 @@ func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *ses
 	return &by, nil
 }
 
-func (b *SystemBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
+func (b *SystemBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	for _, item := range items {
 		err := b.GetItem(item, version, session)
 		if err != nil {
-			return true, err
+			return err
 		}
 	}
-	return true, nil
+	return nil
 }

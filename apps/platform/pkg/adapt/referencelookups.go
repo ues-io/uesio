@@ -54,6 +54,7 @@ func HandleReferenceLookups(
 
 		refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
 		refReq.Metadata = refCollectionMetadata
+		refReq.MatchField = matchField
 
 		refReq.AddFields([]LoadRequestField{
 			{

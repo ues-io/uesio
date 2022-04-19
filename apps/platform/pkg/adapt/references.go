@@ -6,10 +6,11 @@ import (
 )
 
 type ReferenceRequest struct {
-	Fields    []LoadRequestField
-	FieldsMap map[string]bool
-	Metadata  *CollectionMetadata
-	IDMap     map[string][]ReferenceLocator
+	Fields     []LoadRequestField
+	FieldsMap  map[string]bool
+	Metadata   *CollectionMetadata
+	IDMap      map[string][]ReferenceLocator
+	MatchField string
 }
 
 type ReferenceLocator struct {
@@ -25,6 +26,13 @@ func (rr *ReferenceRequest) GetIDs() []string {
 		fieldIDIndex++
 	}
 	return ids
+}
+
+func (rr *ReferenceRequest) GetMatchField() string {
+	if rr.MatchField != "" {
+		return rr.MatchField
+	}
+	return ID_FIELD
 }
 
 func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
@@ -97,7 +105,7 @@ func HandleReferences(
 			CollectionName: collectionName,
 			Conditions: []LoadRequestCondition{
 				{
-					Field:    ID_FIELD,
+					Field:    ref.GetMatchField(),
 					Operator: "IN",
 					Value:    ids,
 				},
@@ -112,7 +120,7 @@ func HandleReferences(
 
 		referencedCollection := referencedCollections[op.CollectionName]
 		err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
-			refFK, err := refItem.GetField(ID_FIELD)
+			refFK, err := refItem.GetField(ref.GetMatchField())
 			if err != nil {
 				return err
 			}

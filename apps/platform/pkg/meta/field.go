@@ -34,47 +34,6 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 	return items, nil
 }
 
-type ValidationMetadata struct {
-	Type  string `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`
-	Regex string `json:"regex" yaml:"regex,omitempty" uesio:"uesio/studio.regex"`
-}
-
-type SubField struct {
-	Name       string `yaml:"name,omitempty" uesio:"uesio/studio.name"`
-	Label      string `yaml:"label,omitempty" uesio:"uesio/studio.label"`
-	Type       string `yaml:"type,omitempty" uesio:"uesio/studio.type"`
-	SelectList string `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
-}
-
-type NumberMetadata struct {
-	Decimals int `json:"decimals" uesio:"uesio/studio.decimals"`
-}
-
-type FileMetadata struct {
-	Accept         string `json:"accept" yaml:"accept,omitempty" uesio:"uesio/studio.accept"`
-	FileCollection string `json:"filecollection" yaml:"filecollection,omitempty" uesio:"uesio/studio.filecollection"`
-}
-
-type ReferenceMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-}
-
-type ReferenceGroupMetadata struct {
-	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Field      string `json:"field" yaml:"field,omitempty" uesio:"uesio/studio.field"`
-	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"uesio/studio.ondelete"`
-}
-
-type AutoNumberMetadata struct {
-	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"uesio/studio.prefix"`
-	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"uesio/studio.leadingzeros"`
-}
-
-type FormulaMetadata struct {
-	Expression string `json:"expression" yaml:"expression,omitempty" uesio:"uesio/studio.expression"`
-	ReturnType string `json:"returntype" yaml:"returntype,omitempty" uesio:"uesio/studio.returntype"`
-}
-
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`

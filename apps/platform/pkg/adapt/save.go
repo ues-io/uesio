@@ -149,7 +149,7 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 	if ok {
 		fk, ok := valueMap[key]
 		if !ok {
-			return "", errors.New("could not get map property: " + key)
+			return "", fmt.Errorf("could not get map property: "+key+" %T", value)
 		}
 		return fk, nil
 	}
