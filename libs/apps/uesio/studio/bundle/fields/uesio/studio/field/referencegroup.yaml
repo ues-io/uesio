@@ -2,12 +2,12 @@ name: referencegroup
 type: MAP
 label: Reference Group Metadata
 subfields:
-  - name: studio.collection
+  - name: uesio/studio.collection
     label: Collection
     type: TEXT
-  - name: studio.field
+  - name: uesio/studio.field
     label: Collection
     type: TEXT
-  - name: studio.ondelete
+  - name: uesio/studio.ondelete
     label: On Delete
     type: TEXT

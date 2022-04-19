@@ -173,7 +173,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 					return err
 				}
 			}
-			return nil
+			return err
 		}
 
 		if !HasExistingConnection(dsKey, options.Connections) {
@@ -219,7 +219,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Check for population errors here
 		if op.HasErrors() {
-			return errors.New("Error with field population")
+			return adapt.NewGenericSaveError(errors.New("Error with field population"))
 		}
 
 		err = runBeforeSaveBots(op, connection, session)
@@ -230,7 +230,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Check for before save errors here
 		if op.HasErrors() {
-			return errors.New("Error with before save bots")
+			return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
 		}
 
 		// Now do Reference Lookups and Reference Integrity Lookups
@@ -248,7 +248,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Check for validate errors here
 		if op.HasErrors() {
-			return errors.New("Error with validation")
+			return adapt.NewGenericSaveError(errors.New("Error with validation"))
 		}
 
 		err = GenerateRecordChallengeTokens(op, collectionMetadata, connection, session)
@@ -277,7 +277,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Check for after save errors here
 		if op.HasErrors() {
-			return errors.New("Error with after save bots")
+			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
 		}
 
 		err = EvalFormulaFields(op, collectionMetadata, connection, session)

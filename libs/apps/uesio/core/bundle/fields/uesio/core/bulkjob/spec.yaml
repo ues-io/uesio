@@ -1,3 +1,19 @@
 name: spec
-type: "MAP"
-label: "Spec"
+type: MAP
+label: Spec
+subfields:
+  - name: uesio/core.jobtype
+    label: Job Type
+    type: TEXT
+  - name: uesio/core.filetype
+    label: File Type
+    type: TEXT
+  - name: uesio/core.collection
+    label: Collection
+    type: TEXT
+  - name: uesio/core.upsertkey
+    label: Upsert Key
+    type: TEXT
+  - name: uesio/core.mappings
+    label: Collection
+    type: MAP

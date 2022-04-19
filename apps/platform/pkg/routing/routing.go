@@ -30,7 +30,7 @@ func getHomeRoute(session *sess.Session) (*meta.Route, error) {
 }
 
 func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *sess.Session) (*meta.Route, error) {
-	var route *meta.Route
+	route := &meta.Route{}
 	var routes meta.RouteCollection
 
 	if path == "" {
@@ -65,7 +65,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	for _, item := range routes {
 		if item.Path == pathTemplate {
-			route = item
+			meta.Copy(route, item)
 			break
 		}
 	}

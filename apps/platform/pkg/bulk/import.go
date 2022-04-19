@@ -22,14 +22,14 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	}
 
 	if fileFormat == "csv" {
-		saveRequest, err = processCSV(body, &spec, metadataResponse, session, nil)
+		saveRequest, err = processCSV(body, spec, metadataResponse, session, nil)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	if fileFormat == "tab" {
-		saveRequest, err = processCSV(body, &spec, metadataResponse, session, &CSVOptions{
+		saveRequest, err = processCSV(body, spec, metadataResponse, session, &CSVOptions{
 			Comma: '\t',
 		})
 		if err != nil {
