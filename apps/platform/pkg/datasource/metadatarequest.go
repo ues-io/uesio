@@ -249,7 +249,23 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)
 			}
+			if metadata.AccessField != "" {
+				fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
+			}
 			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session)
+			if err != nil {
+				return err
+			}
+		}
+
+		if metadata.AccessField != "" {
+			accessFieldMetadata, err := metadata.GetField(metadata.AccessField)
+			if err != nil {
+				return err
+			}
+			// Get all Fields from the AccessFields collection
+			additionalRequests.Options.LoadAllFields = true
+			err = additionalRequests.AddCollection(accessFieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
 				return err
 			}

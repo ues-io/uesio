@@ -10,41 +10,35 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// BotCollection slice
-type BotCollection []Bot
+type BotCollection []*Bot
 
-// GetName function
 func (bc *BotCollection) GetName() string {
 	return "uesio/studio.bot"
 }
 
-// GetBundleFolderName function
 func (bc *BotCollection) GetBundleFolderName() string {
 	return "bots"
 }
 
-// GetFields function
 func (bc *BotCollection) GetFields() []string {
 	return StandardGetFields(&Bot{})
 }
 
-// NewItem function
 func (bc *BotCollection) NewItem() loadable.Item {
-	*bc = append(*bc, Bot{})
-	return &(*bc)[len(*bc)-1]
+	bot := &Bot{}
+	*bc = append(*bc, bot)
+	return bot
 }
 
-// NewBundleableItemWithKey function
 func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	bot, err := NewBot(key)
 	if err != nil {
 		return nil, err
 	}
-	*bc = append(*bc, *bot)
-	return &(*bc)[len(*bc)-1], nil
+	*bc = append(*bc, bot)
+	return bot, nil
 }
 
-// GetKeyFromPath function
 func (bc *BotCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio/studio.type"]]
@@ -103,12 +97,10 @@ func (bc *BotCollection) GetKeyFromPath(path string, namespace string, condition
 	return "", errors.New("Bad bundle conditions for bot: " + path)
 }
 
-// GetItem function
 func (bc *BotCollection) GetItem(index int) loadable.Item {
-	return &(*bc)[index]
+	return (*bc)[index]
 }
 
-// Loop function
 func (bc *BotCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index), strconv.Itoa(index))
@@ -119,12 +111,10 @@ func (bc *BotCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (bc *BotCollection) Len() int {
 	return len(*bc)
 }
 
-// GetItems function
 func (bc *BotCollection) GetItems() interface{} {
 	return *bc
 }

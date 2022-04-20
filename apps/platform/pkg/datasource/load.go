@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -64,7 +65,7 @@ func processLookupConditions(
 			}
 
 			if lookupOp.Collection.Len() != 1 {
-				return errors.New("Must lookup on wires with only one record")
+				return errors.New("Must lookup on wires with only one record: " + strconv.Itoa(lookupOp.Collection.Len()))
 			}
 
 			value, err := lookupOp.Collection.GetItem(0).GetField(condition.LookupField)

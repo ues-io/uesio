@@ -96,6 +96,7 @@ const wireSlice = createSlice({
 			state.data = state.original || {}
 			state.changes = {}
 			state.deletes = {}
+			state.errors = {}
 		}),
 		init: (
 			state: EntityState<PlainWire>,
@@ -105,6 +106,7 @@ const wireSlice = createSlice({
 			state.data = {}
 			state.changes = {}
 			state.deletes = {}
+			state.errors = {}
 		}),
 		reset: createEntityReducer<ResetWirePayload, PlainWire>(
 			(state, { data, changes, original }) => {
@@ -112,6 +114,7 @@ const wireSlice = createSlice({
 				state.changes = changes
 				state.original = original
 				state.deletes = {}
+				state.errors = {}
 			}
 		),
 		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
@@ -186,76 +189,50 @@ const wireSlice = createSlice({
 		builder.addCase(
 			saveOp.fulfilled,
 			(state, { payload }: PayloadAction<SaveResponseBatch>) => {
-				const response = payload
-				// TODO: This is definitely the wrong way to do this.
-				// I think you could accomplish this with a single assign statement.
-				if (response.wires) {
-					response.wires.forEach((wire) => {
-						const wireId = wire.wire
-						if (wire.errors) return
-						Object.keys(wire.changes).forEach((tempId) => {
-							const data = state.entities[wireId]?.data
-							if (!data) return
-							state.entities = Object.assign({}, state.entities, {
-								[wireId]: Object.assign(
-									{},
-									state.entities[wireId],
-									{
-										data: Object.assign({}, data, {
-											[tempId]: Object.assign(
-												{},
-												data[tempId],
-												wire.changes[tempId]
-											),
-										}),
-										changes: {},
-										original: Object.assign({}, data, {
-											[tempId]: Object.assign(
-												{},
-												data[tempId],
-												wire.changes[tempId]
-											),
-										}),
-									}
-								),
-							})
-						})
-						Object.keys(wire.deletes).forEach((tempId) => {
-							const newData: Record<string, PlainWireRecord> = {}
-							const newOriginal: Record<string, PlainWireRecord> =
-								{}
-							const data = state.entities[wireId]?.data
-							if (!data) return
-							Object.keys(data)
-								.filter((recordId) => recordId !== tempId)
-								.forEach((recordId) => {
-									newData[recordId] = data[recordId]
-									newOriginal[recordId] = data[recordId]
-								})
-							state.entities = Object.assign({}, state.entities, {
-								[wireId]: Object.assign(
-									{},
-									state.entities[wireId],
-									{
-										data: newData,
-										original: newOriginal,
-									}
-								),
-							})
-						})
+				payload.wires?.forEach((wire) => {
+					const wireId = wire.wire
+					const wireState = state.entities[wireId]
+					if (!wireState) return
 
-						// Remove errors on a successful save
-						state.entities = Object.assign({}, state.entities, {
-							[wireId]: Object.assign(
-								{},
-								state.entities[wireId],
-								{
-									errors: undefined,
-								}
-							),
+					if (wire.errors) {
+						wireState.errors = {}
+						const errorObj = wireState.errors
+						wire.errors.forEach((error) => {
+							const key = `${error.recordid || ""}:${
+								error.fieldid || ""
+							}`
+							if (!errorObj[key]) {
+								errorObj[key] = []
+							}
+							errorObj[key].push(error)
 						})
+						return
+					}
+
+					const data = wireState.data
+					const original = wireState.original
+					if (!data || !original) return
+
+					Object.keys(wire.changes).forEach((tempId) => {
+						data[tempId] = {
+							...data[tempId],
+							...wire.changes[tempId],
+						}
+						original[tempId] = {
+							...data[tempId],
+							...wire.changes[tempId],
+						}
 					})
-				}
+					wireState.changes = {}
+
+					Object.keys(wire.deletes).forEach((tempId) => {
+						delete data[tempId]
+						delete original[tempId]
+						delete wireState.deletes[tempId]
+					})
+
+					wireState.errors = undefined
+				})
 			}
 		)
 		builder.addCase(saveOp.rejected, (state, action) => {

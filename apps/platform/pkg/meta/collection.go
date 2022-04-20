@@ -46,7 +46,6 @@ type TokenCondition struct {
 	Value string `yaml:"value"`
 }
 
-// Collection struct
 type Collection struct {
 	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
@@ -65,17 +64,16 @@ type Collection struct {
 	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
+	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
 func (c *Collection) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (c *Collection) GetCollection() CollectionableGroup {
 	var cc CollectionCollection
 	return &cc
@@ -85,23 +83,19 @@ func (c *Collection) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, c.Name)
 }
 
-// GetBundleGroup function
 func (c *Collection) GetBundleGroup() BundleableGroup {
 	var cc CollectionCollection
 	return &cc
 }
 
-// GetKey function
 func (c *Collection) GetKey() string {
 	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
-// GetPath function
 func (c *Collection) GetPath() string {
 	return c.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (c *Collection) GetPermChecker() *PermissionSet {
 	key := c.GetKey()
 	return &PermissionSet{
@@ -111,49 +105,40 @@ func (c *Collection) GetPermChecker() *PermissionSet {
 	}
 }
 
-// SetField function
 func (c *Collection) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(c, fieldName, value)
 }
 
-// GetField function
 func (c *Collection) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-// GetNamespace function
 func (c *Collection) GetNamespace() string {
 	return c.Namespace
 }
 
-// SetNamespace function
 func (c *Collection) SetNamespace(namespace string) {
 	c.Namespace = namespace
 }
 
-// SetWorkspace function
 func (c *Collection) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
-// Len function
 func (c *Collection) Len() int {
 	return StandardItemLen(c)
 }
 
-// GetItemMeta function
 func (c *Collection) GetItemMeta() *ItemMeta {
 	return c.itemMeta
 }
 
-// SetItemMeta function
 func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
 }

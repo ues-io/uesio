@@ -15,7 +15,7 @@ import (
 func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 	for _, av := range meta.DefaultAppLicenses {
 		if av.AppID == app && av.LicensedAppID == appToCheck {
-			return &av, nil
+			return av, nil
 		}
 	}
 	// TODO: Fix this
@@ -23,7 +23,6 @@ func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 	return &meta.AppLicense{}, nil
 }
 
-// GetAppBundle function
 func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -227,14 +226,10 @@ func IsValid(items []meta.BundleableItem, session *sess.Session, connection adap
 	for namespace, items := range coalated {
 		version, bs, err := GetBundleStoreWithVersion(namespace, session)
 		if err != nil {
-			fmt.Println("Failed IsValid: " + err.Error())
-			for _, item := range items {
-				fmt.Println(item.GetKey())
-			}
 			return err
 		}
 
-		_, err = bs.HasAnyItems(items, version, session, connection)
+		err = bs.HasAllItems(items, version, session, connection)
 		if err != nil {
 			return err
 		}

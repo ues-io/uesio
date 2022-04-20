@@ -16,7 +16,52 @@ const INSERT_QUERY = "INSERT INTO public.data (id,collection,tenant,autonumber,f
 const UPDATE_QUERY = "UPDATE public.data SET fields = fields || $3 WHERE id = $1 and collection = $2"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2"
 const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2"
-const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
+const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (fullid,recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5,$6)"
+
+type DataArrayMarshaler struct {
+	Data          []interface{}
+	FieldMetadata *adapt.FieldMetadata
+}
+
+func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
+	for _, val := range dam.Data {
+		if val == nil {
+			return
+		}
+		if dam.FieldMetadata.SubType == "MAP" {
+			item, ok := val.(loadable.Item)
+			if !ok {
+				jsonValue, err := json.Marshal(val)
+				if err != nil {
+					fmt.Println("Error converting from map to json: " + dam.FieldMetadata.GetFullName())
+					return
+				}
+				ej := gojay.EmbeddedJSON(jsonValue)
+				enc.AddEmbeddedJSON(&ej)
+				return
+			}
+
+			marshaler := &DataMarshaler{
+				Data: item,
+				Metadata: &adapt.CollectionMetadata{
+					Fields: dam.FieldMetadata.SubFields,
+				},
+			}
+			jsonValue, err := gojay.MarshalJSONObject(marshaler)
+			if err != nil {
+				fmt.Println("Error Marshalling Map in list: " + err.Error())
+				return
+			}
+			ej := gojay.EmbeddedJSON(jsonValue)
+			enc.AddEmbeddedJSON(&ej)
+
+		}
+
+	}
+}
+func (dam *DataArrayMarshaler) IsNil() bool {
+	return len(dam.Data) == 0
+}
 
 type DataMarshaler struct {
 	Data     loadable.Item
@@ -26,12 +71,58 @@ type DataMarshaler struct {
 func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
 	err := dm.Data.Loop(func(fieldID string, value interface{}) error {
+		if value == nil {
+			return nil
+		}
 		fieldMetadata, err := dm.Metadata.GetField(fieldID)
 		if err != nil {
 			return err
 		}
 
-		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" || fieldMetadata.Type == "MULTISELECT" {
+		if fieldMetadata.Type == "MAP" {
+
+			item, ok := value.(loadable.Item)
+			if !ok || fieldMetadata.SubFields == nil || len(fieldMetadata.SubFields) == 0 {
+				fmt.Printf("Failing: %T\n", value)
+				jsonValue, err := json.Marshal(value)
+				if err != nil {
+					return errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
+				}
+				ej := gojay.EmbeddedJSON(jsonValue)
+				enc.AddEmbeddedJSONKey(fieldID, &ej)
+				return nil
+			}
+
+			marshaler := &DataMarshaler{
+				Data: item,
+				Metadata: &adapt.CollectionMetadata{
+					Fields: fieldMetadata.SubFields,
+				},
+			}
+			jsonValue, err := gojay.MarshalJSONObject(marshaler)
+			if err != nil {
+				return err
+			}
+			ej := gojay.EmbeddedJSON(jsonValue)
+			enc.AddEmbeddedJSONKey(fieldID, &ej)
+			return nil
+		}
+
+		if fieldMetadata.Type == "LIST" {
+			list, ok := value.([]interface{})
+			if !ok {
+				return fmt.Errorf("Couldn't convert list item: %T", value)
+			}
+
+			marshaler := &DataArrayMarshaler{
+				Data:          list,
+				FieldMetadata: fieldMetadata,
+			}
+			enc.AddArrayKey(fieldID, marshaler)
+			return nil
+		}
+
+		if fieldMetadata.Type == "MULTISELECT" {
 			jsonValue, err := json.Marshal(value)
 			if err != nil {
 				return errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
@@ -44,7 +135,7 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 		if adapt.IsReference(fieldMetadata.Type) {
 			refValue, err := adapt.GetReferenceKey(value)
 			if err != nil {
-				return errors.New("Error converting reference field: " + fieldMetadata.GetFullName() + " : " + err.Error())
+				return nil
 			}
 			if refValue == "" {
 				return nil
@@ -60,6 +151,8 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
 		if fieldMetadata.Type == "NUMBER" {
 			switch v := value.(type) {
+			case int:
+				enc.IntKey(fieldID, v)
 			case int64:
 				enc.Int64Key(fieldID, v)
 			case float64:
@@ -80,7 +173,9 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 		return nil
 	})
 	if err != nil {
-		fmt.Println("Got this dumb error: " + err.Error())
+		// this should add an error to the encoder and make it bomb
+		badValue := []string{}
+		enc.AddInterface(badValue)
 	}
 }
 
@@ -160,11 +255,11 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		for i, delete := range request.Deletes {
 			deleteIDs[i] = fmt.Sprintf("%s:%s", collectionName, delete.IDValue)
 		}
-		fmt.Println(deleteIDs)
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
 
 	tokenInsertCount := len(recordsIDsList)
+	collectionNameLength := len(collectionName) + 1
 
 	if tokenInsertCount > 0 {
 		tokenDeleteIDs := make([]string, tokenInsertCount)
@@ -181,6 +276,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,
 					key,
+					key[collectionNameLength:],
 					token,
 					collectionName,
 					tenantID,

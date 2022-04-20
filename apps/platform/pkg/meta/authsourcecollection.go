@@ -6,7 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-type AuthSourceCollection []AuthSource
+type AuthSourceCollection []*AuthSource
 
 func (asc *AuthSourceCollection) GetName() string {
 	return "uesio/studio.authsource"
@@ -21,8 +21,9 @@ func (asc *AuthSourceCollection) GetFields() []string {
 }
 
 func (asc *AuthSourceCollection) NewItem() loadable.Item {
-	*asc = append(*asc, AuthSource{})
-	return &(*asc)[len(*asc)-1]
+	as := &AuthSource{}
+	*asc = append(*asc, as)
+	return as
 }
 
 func (asc *AuthSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
@@ -30,8 +31,8 @@ func (asc *AuthSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 	if err != nil {
 		return nil, err
 	}
-	*asc = append(*asc, *as)
-	return &(*asc)[len(*asc)-1], nil
+	*asc = append(*asc, as)
+	return as, nil
 }
 
 func (asc *AuthSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
@@ -39,7 +40,7 @@ func (asc *AuthSourceCollection) GetKeyFromPath(path string, namespace string, c
 }
 
 func (asc *AuthSourceCollection) GetItem(index int) loadable.Item {
-	return &(*asc)[index]
+	return (*asc)[index]
 }
 
 func (asc *AuthSourceCollection) Loop(iter loadable.GroupIterator) error {

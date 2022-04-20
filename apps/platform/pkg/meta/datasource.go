@@ -7,7 +7,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// NewDataSource function
 func NewDataSource(key string) (*DataSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -19,7 +18,6 @@ func NewDataSource(key string) (*DataSource, error) {
 	}, nil
 }
 
-// DataSource struct
 type DataSource struct {
 	ID          string     `yaml:"-" uesio:"uesio/core.id"`
 	Name        string     `yaml:"name" uesio:"uesio/studio.name"`
@@ -36,12 +34,10 @@ type DataSource struct {
 	Public      bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
 func (ds *DataSource) GetCollectionName() string {
 	return ds.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (ds *DataSource) GetCollection() CollectionableGroup {
 	var dsc DataSourceCollection
 	return &dsc
@@ -51,70 +47,57 @@ func (ds *DataSource) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, ds.Name)
 }
 
-// GetBundleGroup function
 func (ds *DataSource) GetBundleGroup() BundleableGroup {
 	var dsc DataSourceCollection
 	return &dsc
 }
 
-// GetKey function
 func (ds *DataSource) GetKey() string {
 	return fmt.Sprintf("%s.%s", ds.Namespace, ds.Name)
 }
 
-// GetPath function
 func (ds *DataSource) GetPath() string {
 	return ds.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (ds *DataSource) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (ds *DataSource) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(ds, fieldName, value)
 }
 
-// GetField function
 func (ds *DataSource) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(ds, fieldName)
 }
 
-// GetNamespace function
 func (ds *DataSource) GetNamespace() string {
 	return ds.Namespace
 }
 
-// SetNamespace function
 func (ds *DataSource) SetNamespace(namespace string) {
 	ds.Namespace = namespace
 }
 
-// SetWorkspace function
 func (ds *DataSource) SetWorkspace(workspace string) {
 	ds.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (ds *DataSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ds, iter)
 }
 
-// Len function
 func (ds *DataSource) Len() int {
 	return StandardItemLen(ds)
 }
 
-// GetItemMeta function
 func (ds *DataSource) GetItemMeta() *ItemMeta {
 	return ds.itemMeta
 }
 
-// SetItemMeta function
 func (ds *DataSource) SetItemMeta(itemMeta *ItemMeta) {
 	ds.itemMeta = itemMeta
 }

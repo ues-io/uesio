@@ -6,7 +6,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// Translation struct
 type Translation struct {
 	ID        string            `yaml:"-" uesio:"uesio/core.id"`
 	Namespace string            `yaml:"-" uesio:"-"`
@@ -57,43 +56,35 @@ func (t *Translation) SetWorkspace(workspace string) {
 	}
 }
 
-// GetCollectionName function
 func (t *Translation) GetCollectionName() string {
 	return t.GetCollection().GetName()
 }
 
-// GetCollection function
 func (t *Translation) GetCollection() CollectionableGroup {
 	var tc TranslationCollection
 	return &tc
 }
 
-// SetField function
 func (t *Translation) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(t, fieldName, value)
 }
 
-// GetField function
 func (t *Translation) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-// Loop function
 func (t *Translation) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
 }
 
-// Len function
 func (t *Translation) Len() int {
 	return StandardItemLen(t)
 }
 
-// GetItemMeta function
 func (t *Translation) GetItemMeta() *ItemMeta {
 	return t.itemMeta
 }
 
-// SetItemMeta function
 func (t *Translation) SetItemMeta(itemMeta *ItemMeta) {
 	t.itemMeta = itemMeta
 }

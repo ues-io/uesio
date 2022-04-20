@@ -211,12 +211,12 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 	return &by, nil
 }
 
-func (b *PlatformBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
+func (b *PlatformBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	for _, item := range items {
 		err := b.GetItem(item, version, session)
 		if err != nil {
-			return true, err
+			return err
 		}
 	}
-	return true, nil
+	return nil
 }
