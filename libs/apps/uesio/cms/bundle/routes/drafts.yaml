@@ -1,0 +1,6 @@
+name: drafts
+path: drafts
+view: uesio/cms.drafts
+theme: uesio/core.default
+collection: uesio/cms.draft
+viewtype: list

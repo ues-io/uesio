@@ -1,3 +1,5 @@
 name: content
-type: LONGTEXT
+type: FILE
 label: Content
+file:
+  accept: DOCUMENT

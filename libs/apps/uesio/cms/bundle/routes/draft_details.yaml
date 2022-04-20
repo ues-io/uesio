@@ -1,0 +1,6 @@
+name: draft_details
+path: draft/{recordid}
+view: uesio/cms.draft_details
+theme: uesio/core.default
+collection: uesio/cms.draft
+viewtype: detail
