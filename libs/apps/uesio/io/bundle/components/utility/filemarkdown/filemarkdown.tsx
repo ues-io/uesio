@@ -51,7 +51,7 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 			{
 				signal: "component/uesio/io.field/INIT_FILE",
 				target: componentId,
-				value: fileContent,
+				value: currentValue?.value || fileContent,
 				recordId: record.getIdFieldValue(),
 				fieldId,
 				collectionId: wire.getCollection().getFullName(),
