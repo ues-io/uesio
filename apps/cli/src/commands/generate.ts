@@ -24,7 +24,10 @@ export default class Generate extends Command {
 		const { args /*, flags */ } = this.parse(Generate)
 
 		const user = await authorize()
-		const [namespace, name] = getKeyWithDefault(args.generator, "uesio")
+		const [namespace, name] = getKeyWithDefault(
+			args.generator,
+			"uesio/core"
+		)
 
 		return runGenerator(namespace, name, user)
 	}
