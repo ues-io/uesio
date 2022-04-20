@@ -2,20 +2,24 @@ import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+
+import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash"
+import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"
+
+SyntaxHighlighter.registerLanguage("bash", bash)
+SyntaxHighlighter.registerLanguage("yaml", yaml)
 
 interface MarkDownFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string | null
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
-	placeholder?: string
-	password?: boolean
 }
 
 const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder } = props
+	const { setValue, value, mode } = props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -29,7 +33,6 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 
 	const commonProps = {
 		value: value || "",
-		placeholder,
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
 		onChange: (
@@ -64,5 +67,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 		<textarea {...commonProps} rows={40} cols={40} />
 	)
 }
+
+export { MarkDownFieldProps }
 
 export default MarkDownField
