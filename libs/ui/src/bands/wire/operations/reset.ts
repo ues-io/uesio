@@ -4,6 +4,7 @@ import { reset } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { nanoid } from "nanoid"
 import { PlainWireRecord } from "../../wirerecord/types"
+import { getFullWireId } from "../selectors"
 
 export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch, getState) => {
@@ -18,7 +19,8 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		const state = getState()
 		const dataArray = []
 
-		const wire = state.wire.entities[wirename]
+		const wireId = getFullWireId(viewId, wirename)
+		const wire = state.wire.entities[wireId]
 		if (!wire) return context
 
 		if (autoCreateRecord) {
