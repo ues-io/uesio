@@ -20,15 +20,17 @@ definition:
               components:
                 - uesio/io.button:
                     signals:
-                      - signal: wire/SAVE
+                      - signal: component/uesio/io.field/SAVE_FILE
+                        target: mdcontent
+                      - signal: wire/LOAD
                         wires:
                           - articleWire
                     text: Save
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
-                      - signal: wire/CANCEL
-                        wire: articleWire
+                      - signal: component/uesio/io.field/CANCEL_FILE
+                        target: mdcontent
                     text: Cancel
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
@@ -49,4 +51,5 @@ definition:
                     fieldId: uesio/cms.name
                 - uesio/io.field:
                     fieldId: uesio/cms.content
-                    displayAs: MARKDOWN
+                    displayAs: TEXT
+                    id: mdcontent
