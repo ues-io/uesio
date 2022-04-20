@@ -35,7 +35,7 @@ const ChartComponent: FC<Props> = (props) => {
 	const getValuesArray = (w: string, f: string) =>
 		wires[w].getData().map((rec) => rec.getFieldValue(f))
 
-	const { wire: labelsWire, field: labelsField } = definition.options.xAxis
+	const { wire: labelsWire, field: labelsField } = definition.xAxis
 
 	return (
 		<div className={classes.root}>

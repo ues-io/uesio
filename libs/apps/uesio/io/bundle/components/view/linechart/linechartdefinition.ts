@@ -1,22 +1,21 @@
 import { definition, builder, signal } from "@uesio/ui"
-
+import { ChartOptions, DatasetChartOptions } from "chart.js"
 type SeriesDefinition = {
 	name: string
 	label: string
 	field: string
 	wire: string
-	options: Record<string, string>
+	options: DatasetChartOptions
 }
 
 export type Definition = {
 	text?: string
 	icon?: string
-	options: {
-		xAxis: {
-			wire: string
-			field: string
-		}
+	xAxis: {
+		wire: string
+		field: string
 	}
+	options: ChartOptions
 	title?: string
 	signals?: signal.SignalDefinition[]
 	series: SeriesDefinition[]
