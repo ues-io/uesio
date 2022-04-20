@@ -2,6 +2,7 @@ name: main
 public: true
 components:
   view:
+    linechart:
     avatar:
     box:
     button:
