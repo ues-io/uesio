@@ -66,7 +66,7 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 	}
 
 	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
+		err := hydrateBot(bot, session)
 		if err != nil {
 			return err
 		}
@@ -76,7 +76,7 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 			return err
 		}
 
-		err = dialectFunc(dialect, &bot)
+		err = dialectFunc(dialect, bot)
 		if err != nil {
 			return err
 		}
@@ -214,9 +214,6 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, sess
 		session: session,
 		Params: &ParamsAPI{
 			params: params,
-		},
-		StudioAPI: &StudioAPI{
-			session: session,
 		},
 	}
 

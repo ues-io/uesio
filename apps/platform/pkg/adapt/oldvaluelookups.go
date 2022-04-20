@@ -1,5 +1,7 @@
 package adapt
 
+import "fmt"
+
 func HandleOldValuesLookup(
 	connection Connection,
 	op *SaveOp,
@@ -59,14 +61,14 @@ func HandleOldValuesLookup(
 	for index, change := range op.Updates {
 		oldValues, ok := oldValuesLookup[change.IDValue]
 		if !ok {
-			return err
+			return fmt.Errorf("Could not find record to update: %s", change.IDValue)
 		}
 		op.Updates[index].OldValues = oldValues
 	}
 	for index, change := range op.Deletes {
 		oldValues, ok := oldValuesLookup[change.IDValue]
 		if !ok {
-			return err
+			return fmt.Errorf("Could not find record to delete: %s", change.IDValue)
 		}
 		op.Deletes[index].OldValues = oldValues
 	}

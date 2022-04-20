@@ -26,6 +26,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Fields:                fieldMetadata,
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
+		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,
 		TableName:             e.TableName,
 		Public:                e.Public,
@@ -209,7 +210,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	}
 
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field, session))
+		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
 	return nil
 }

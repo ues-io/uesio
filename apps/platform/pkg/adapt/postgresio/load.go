@@ -112,7 +112,6 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 			Item:       &item,
 			Field:      fieldMap[string(col.Name)],
 			References: &referencedCollections,
-			Index:      &index,
 		}
 	}
 
@@ -152,5 +151,5 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	return adapt.HandleReferences(c, op.Collection, referencedCollections)
+	return adapt.HandleReferences(c, referencedCollections)
 }

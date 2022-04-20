@@ -9,7 +9,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// NewBot function
 func NewBot(key string) (*Bot, error) {
 	keyArray := strings.Split(key, ":")
 	keySize := len(keyArray)
@@ -81,7 +80,6 @@ type BotParam struct {
 	Default      string `yaml:"default" uesio:"uesio/studio.default" json:"default"`
 }
 
-// Bot struct
 type Bot struct {
 	ID            string            `yaml:"-" uesio:"uesio/core.id"`
 	Name          string            `yaml:"name" uesio:"uesio/studio.name"`
@@ -102,7 +100,6 @@ type Bot struct {
 	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetBotTypes function
 func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
@@ -112,7 +109,6 @@ func GetBotTypes() map[string]string {
 	}
 }
 
-// GetBotDialects function
 func GetBotDialects() map[string]string {
 	return map[string]string{
 		"JAVASCRIPT": "javascript",
@@ -136,12 +132,10 @@ func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
 	return filepath.Join(b.GetBasePath(), "templates", template)
 }
 
-// GetCollectionName function
 func (b *Bot) GetCollectionName() string {
 	return b.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (b *Bot) GetCollection() CollectionableGroup {
 	var bc BotCollection
 	return &bc
@@ -151,13 +145,11 @@ func (b *Bot) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s_%s_%s", workspace, b.CollectionRef, b.Type, b.Name)
 }
 
-// GetBundleGroup function
 func (b *Bot) GetBundleGroup() BundleableGroup {
 	var bc BotCollection
 	return &bc
 }
 
-// GetKey function
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
 	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
@@ -180,54 +172,44 @@ func (b *Bot) GetPath() string {
 	return filepath.Join(b.GetBasePath(), "bot.yaml")
 }
 
-// GetPermChecker function
 func (b *Bot) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (b *Bot) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-// GetField function
 func (b *Bot) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-// GetNamespace function
 func (b *Bot) GetNamespace() string {
 	return b.Namespace
 }
 
-// SetNamespace function
 func (b *Bot) SetNamespace(namespace string) {
 	b.Namespace = namespace
 }
 
-// SetWorkspace function
 func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
 }
 
-// Len function
 func (b *Bot) Len() int {
 	return StandardItemLen(b)
 }
 
-// GetItemMeta function
 func (b *Bot) GetItemMeta() *ItemMeta {
 	return b.itemMeta
 }
 
-// SetItemMeta function
 func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
 	b.itemMeta = itemMeta
 }

@@ -25,10 +25,6 @@ type Connection struct {
 	datasource  string
 }
 
-func (c *Connection) GetAutonumber(collectionMetadata *adapt.CollectionMetadata) (int, error) {
-	return 0, nil
-}
-
 func (c *Connection) GetCredentials() *adapt.Credentials {
 	return c.credentials
 }

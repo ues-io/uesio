@@ -52,6 +52,19 @@ definition:
         - field: uesio/core.id
           desc: true
 
+    versionsToDelete:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+
+      conditions:
+        - field: uesio/studio.app
+          value: $Param{id}
+      order:
+        - field: uesio/core.id
+          desc: true
+
     latestversion:
       collection: uesio/studio.bundle
       fields:
@@ -84,19 +97,30 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.workspace:
+        uesio/studio.app:
+          # fields:
+          #   uesio/core.id:
         uesio/studio.bundle:
           fields:
             uesio/studio.app:
             uesio/studio.major:
             uesio/studio.minor:
-            uesio/studio.patch: uesio/studio.workspace
+            uesio/studio.patch:
       conditions:
         - field: uesio/studio.workspace
           value: $Param{app}_$Param{workspacename}
       defaults:
         - field: uesio/studio.bundle
           valueSource: LOOKUP
-          lookupWire: versions
+          lookupWire: latestversion
+          lookupField: uesio/core.id
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: listing
           lookupField: uesio/core.id
 
   # Components are how we describe the layout of our view
@@ -137,6 +161,34 @@ definition:
                           mode: READ
                           id: listingList
                           components:
+                            # Update Button
+                            # - uesio/io.box:
+                            #     uesio.display:
+                            #       - wire: dependencies
+                            #         field: uesio/studio.app
+                            #         value: ${uesio/core.id}
+                            #     components:
+                            #       - uesio/io.list:
+                            #           wire: latestversion
+                            #           mode: READ
+                            #           id: latestversionlist
+                            #           components:
+                            #             - uesio/io.button:
+                            #                 uesio.variant: uesio/io.primary
+                            #                 text: update
+                            #                 uesio.display:
+                            #                   - operator: NOT_EQUALS
+                            #                     wire: dependencies
+                            #                     field: uesio/core.id
+                            #                     value: ${uesio/core.id}
+                            #                 signals:
+                            #                   - signal: "bot/CALL"
+                            #                     bot: "uesio/studio.addbundle"
+                            #                     params:
+                            #                       bundle: ${uesio/core.id}
+                            #                       workspace: $Param{workspacename}
+                            #                       app: $Param{app}
+                            # == end update button
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
@@ -159,59 +211,38 @@ definition:
                                             uesio.styles:
                                               root:
                                                 margin-top: auto
+
                                             components:
                                               - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: uninstall
                                                   uesio.display:
-                                                    - type: wireHasRecord
+                                                    - field: uesio/studio.app->uesio/core.id
                                                       wire: dependencies
-                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
-                                                      value: ${uesio/core.id}
-                                              - uesio/io.button:
+                                                      value: $Param{id}
+                                                      operator: NOT_EQUALS
                                                   uesio.variant: uesio/io.primary
                                                   text: Install ${uesio/core.id}
                                                   signals:
-                                                    - signal: "bot/CALL"
-                                                      bot: "uesio/studio.addbundle"
-                                                      params:
-                                                        bundle: ${uesio/core.id}
-                                                        workspace: $Param{workspacename}
-                                                        app: $Param{app}
-                                                  uesio.display:
-                                                    - type: wireDoesNotHaveRecord
+                                                    - signal: wire/CREATE_RECORD
                                                       wire: dependencies
-                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
-                                                      value: ${uesio/core.id}
+                                                    - signal: wire/SAVE
+                                                      wire: dependencies
+                                                    - signal: wire/LOAD
+                                                      wires: dependencies
 
-                                              # Update Button, check if this listing is installed
-                                              - uesio/io.box:
-                                                  uesio.display:
-                                                    - type: wireHasRecord
-                                                      wire: dependencies
-                                                      field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
-                                                      value: ${uesio/core.id}
+                                              # Uninstall Button
+                                              - uesio/io.list:
+                                                  wire: dependencies
                                                   components:
-                                                    - uesio/io.list:
-                                                        wire: latestversion
-                                                        mode: READ
-                                                        id: latestversionlist
-                                                        components:
-                                                          - uesio/io.button:
-                                                              uesio.variant: uesio/io.primary
-                                                              text: update
-                                                              uesio.display:
-                                                                - type: wireDoesNotHaveRecord
-                                                                  wire: dependencies
-                                                                  field: uesio/core.id
-                                                                  value: uesio/core.id
-                                                              signals:
-                                                                - signal: "bot/CALL"
-                                                                  bot: "uesio/studio.addbundle"
-                                                                  params:
-                                                                    bundle: ${uesio/core.id}
-                                                                    workspace: $Param{workspacename}
-                                                                    app: $Param{app}
+                                                    - uesio/io.button:
+                                                        uesio.variant: uesio/io.secondary
+                                                        text: uninstall
+                                                        uesio.display:
+                                                          - field: uesio/studio.app->uesio/core.id
+                                                            value: $Param{id}
+                                                        signals:
+                                                          - signal: "wire/MARK_FOR_DELETE"
+                                                          - signal: "wire/SAVE"
+                                                          - signal: "wire/LOAD"
 
                                   - uesio/io.box:
                                       uesio.styles:
@@ -273,22 +304,29 @@ definition:
                                             text: installed
                                             element: p
                                             uesio.display:
-                                              - type: wireHasRecord
-                                                wire: dependencies
+                                              - wire: dependencies
                                                 field: uesio/studio.bundle->uesio/core.id
                                                 value: ${uesio/core.id}
-                                        - uesio/io.button:
-                                            text: install ${uesio/studio.version}
-                                            uesio.variant: uesio/io.primary
-                                            uesio.display:
-                                              - type: wireDoesNotHaveRecord
-                                                wire: dependencies
-                                                field: uesio/studio.bundle->uesio/core.id
-                                                value: ${uesio/core.id}
-                                            signals:
-                                              - signal: "bot/CALL"
-                                                bot: "uesio/studio.addbundle"
-                                                params:
-                                                  bundle: ${uesio/core.id}_v${uesio/studio.version}
-                                                  workspace: $Param{workspacename}
-                                                  app: $Param{app}
+
+                                        # We need the update record function to work
+                                        # with data from another wire than in context fro the belof to work
+
+                                        # - uesio/io.button:
+                                        #     text: install ${uesio/studio.version} | ${uesio/core.id}
+                                        #     uesio.variant: uesio/io.primary
+                                        #     uesio.display:
+                                        #       - wire: dependencies
+                                        #         operator: NOT_EQUALS
+                                        #         field: uesio/studio.bundle->uesio/core.id
+                                        #         value: ${uesio/core.id}
+                                        #     signals:
+                                        #       - signal: wire/CREATE_RECORD
+                                        #         wire: dependencies
+                                        #       - signal: "wire/UPDATE_RECORD"
+                                        #         wire: dependencies
+                                        #         field: uesio/studio.bundle->uesio/core.id
+                                        #         value: uesio/core.id
+                                        #       - signal: wire/SAVE
+                                        #         wire: dependencies
+                                        #       - signal: wire/LOAD
+                                        #         wires: dependencies, versions

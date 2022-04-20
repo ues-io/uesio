@@ -51,7 +51,7 @@ type BundleStore interface {
 	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
-	HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error)
+	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 }
 
 // GetBundleStore function

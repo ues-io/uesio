@@ -162,7 +162,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	}
 	for i := range variants {
 		variant := variants[i]
-		deps.ComponentVariants[variant.GetKey()] = &variant
+		deps.ComponentVariants[variant.GetKey()] = variant
 	}
 
 	ffr, _ := getFeatureFlags(session, "")

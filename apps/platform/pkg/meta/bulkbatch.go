@@ -1,6 +1,5 @@
 package meta
 
-// BulkBatch struct
 type BulkBatch struct {
 	ID        string            `uesio:"uesio/core.id"`
 	AutoID    string            `uesio:"uesio/core.autoid"`
@@ -15,43 +14,35 @@ type BulkBatch struct {
 	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
-// GetCollectionName function
 func (bb *BulkBatch) GetCollectionName() string {
 	return bb.GetCollection().GetName()
 }
 
-// GetCollection function
 func (bb *BulkBatch) GetCollection() CollectionableGroup {
 	var bbc BulkBatchCollection
 	return &bbc
 }
 
-// SetField function
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(bb, fieldName, value)
 }
 
-// GetField function
 func (bb *BulkBatch) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(bb, fieldName)
 }
 
-// Loop function
 func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bb, iter)
 }
 
-// Len function
 func (bb *BulkBatch) Len() int {
 	return StandardItemLen(bb)
 }
 
-// GetItemMeta function
 func (bb *BulkBatch) GetItemMeta() *ItemMeta {
 	return bb.itemMeta
 }
 
-// SetItemMeta function
 func (bb *BulkBatch) SetItemMeta(itemMeta *ItemMeta) {
 	bb.itemMeta = itemMeta
 }

@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+	"fmt"
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -148,7 +149,7 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 	if ok {
 		fk, ok := valueMap[key]
 		if !ok {
-			return "", errors.New("could not get map property: " + key)
+			return "", fmt.Errorf("could not get map property: "+key+" %T", value)
 		}
 		return fk, nil
 	}
@@ -158,7 +159,12 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 		return valueItem.GetField(key)
 	}
 
-	return nil, errors.New("not a valid map or item")
+	loadableValueItem, ok := value.(loadable.Item)
+	if ok {
+		return loadableValueItem.GetField(key)
+	}
+
+	return nil, fmt.Errorf("not a valid map or item: %T", value)
 }
 
 func GetReferenceKey(value interface{}) (string, error) {

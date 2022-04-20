@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.BulkBatch, error) {
 
 	var job meta.BulkJob

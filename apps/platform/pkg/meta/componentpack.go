@@ -7,7 +7,6 @@ import (
 	"github.com/humandad/yaml"
 )
 
-// ComponentPack struct
 type ComponentPack struct {
 	ID              string              `yaml:"-" uesio:"uesio/core.id"`
 	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
@@ -36,12 +35,10 @@ type ComponentDependencies struct {
 	Utilities    []string `yaml:"utilities"`
 }
 
-// GetCollectionName function
 func (cp *ComponentPack) GetCollectionName() string {
 	return cp.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (cp *ComponentPack) GetCollection() CollectionableGroup {
 	var cpc ComponentPackCollection
 	return &cpc
@@ -51,13 +48,11 @@ func (cp *ComponentPack) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s_%s", workspace, cp.Name)
 }
 
-// GetBundleGroup function
 func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
 	var cpc ComponentPackCollection
 	return &cpc
 }
 
-// GetKey function
 func (cp *ComponentPack) GetKey() string {
 	return fmt.Sprintf("%s.%s", cp.Namespace, cp.Name)
 }
@@ -70,17 +65,14 @@ func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
 	return filepath.Join(cp.Name, fileName)
 }
 
-// GetPath function
 func (cp *ComponentPack) GetPath() string {
 	return filepath.Join(cp.Name, "pack.yaml")
 }
 
-// GetPermChecker function
 func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.components" {
 		if value == nil {
@@ -99,7 +91,6 @@ func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(cp, fieldName, value)
 }
 
-// GetField function
 func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
 	if fieldName == "uesio/studio.components" {
 
@@ -113,39 +104,32 @@ func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(cp, fieldName)
 }
 
-// GetNamespace function
 func (cp *ComponentPack) GetNamespace() string {
 	return cp.Namespace
 }
 
-// SetNamespace function
 func (cp *ComponentPack) SetNamespace(namespace string) {
 	cp.Namespace = namespace
 }
 
-// SetWorkspace function
 func (cp *ComponentPack) SetWorkspace(workspace string) {
 	cp.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
 func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cp, iter)
 }
 
-// Len function
 func (cp *ComponentPack) Len() int {
 	return StandardItemLen(cp)
 }
 
-// GetItemMeta function
 func (cp *ComponentPack) GetItemMeta() *ItemMeta {
 	return cp.itemMeta
 }
 
-// SetItemMeta function
 func (cp *ComponentPack) SetItemMeta(itemMeta *ItemMeta) {
 	cp.itemMeta = itemMeta
 }

@@ -7,54 +7,47 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// SelectListCollection slice
-type SelectListCollection []SelectList
+type SelectListCollection []*SelectList
 
-// GetName function
 func (slc *SelectListCollection) GetName() string {
 	return "uesio/studio.selectlist"
 }
 
-// GetBundleFolderName function
 func (slc *SelectListCollection) GetBundleFolderName() string {
 	return "selectlists"
 }
 
-// GetFields function
 func (slc *SelectListCollection) GetFields() []string {
 	return StandardGetFields(&SelectList{})
 }
 
-// NewItem function
 func (slc *SelectListCollection) NewItem() loadable.Item {
-	*slc = append(*slc, SelectList{})
-	return &(*slc)[len(*slc)-1]
+	sl := &SelectList{}
+	*slc = append(*slc, sl)
+	return sl
 }
 
-// NewBundleableItemWithKey function
 func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
 		return nil, errors.New("Invalid SelectList Key: " + key)
 	}
-	*slc = append(*slc, SelectList{
+	sl := &SelectList{
 		Namespace: namespace,
 		Name:      name,
-	})
-	return &(*slc)[len(*slc)-1], nil
+	}
+	*slc = append(*slc, sl)
+	return sl, nil
 }
 
-// GetKeyFromPath function
 func (slc *SelectListCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (slc *SelectListCollection) GetItem(index int) loadable.Item {
-	return &(*slc)[index]
+	return (*slc)[index]
 }
 
-// Loop function
 func (slc *SelectListCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *slc {
 		err := iter(slc.GetItem(index), strconv.Itoa(index))
@@ -65,12 +58,10 @@ func (slc *SelectListCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (slc *SelectListCollection) Len() int {
 	return len(*slc)
 }
 
-// GetItems function
 func (slc *SelectListCollection) GetItems() interface{} {
 	return *slc
 }

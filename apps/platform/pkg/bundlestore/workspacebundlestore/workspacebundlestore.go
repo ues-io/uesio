@@ -241,6 +241,10 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	}
 	for i := range bdc {
 		// TODO: Possibly recurse here to get sub dependencies
+		bundleName := bdc[i].GetBundleName()
+		if bundleName == "" {
+			return nil, errors.New("Error getting bundle dependency name")
+		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
 			Version: bdc[i].GetVersionString(),
 		}
@@ -273,32 +277,30 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	return &by, nil
 }
 
-func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) (bool, error) {
+func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
 	if session.GetWorkspace() == nil {
-		return true, errors.New("Workspace bundle store, needs a workspace in context")
+		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
 	collectionIDs := map[string][]string{}
-	itemMap := map[string]meta.BundleableItem{}
+
 	workspace := session.GetWorkspaceID()
 	namespace := session.GetWorkspaceApp()
 	for _, item := range items {
 		collectionName := item.GetBundleGroup().GetBundleFolderName()
 		dbID := item.GetDBID(workspace)
-		item.SetNamespace(namespace)
 		_, ok := collectionIDs[collectionName]
 		if !ok {
 			collectionIDs[collectionName] = []string{}
 		}
 
 		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
-		itemMap[collectionName+":"+dbID] = item
 	}
 	for collectionName, ids := range collectionIDs {
 		group, err := meta.GetBundleableGroupFromType(collectionName)
 		if err != nil {
-			return true, err
+			return err
 		}
 
 		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
@@ -314,7 +316,7 @@ func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version 
 				},
 			}}, session.RemoveWorkspaceContext())
 		if err != nil {
-			return true, err
+			return err
 		}
 
 		if group.Len() != len(items) {
@@ -326,20 +328,13 @@ func (b *WorkspaceBundleStore) HasAnyItems(items []meta.BundleableItem, version 
 				return value.(string)
 			}, ids)
 			if err != nil {
-				return true, err
+				return err
 			}
 			if len(badValues) > 0 {
-				return true, errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
 			}
 		}
 
-		return true, group.Loop(func(item loadable.Item, _ string) error {
-			bundleable := item.(meta.BundleableItem)
-			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
-			meta.Copy(match, item)
-			return nil
-		})
-
 	}
-	return true, nil
+	return nil
 }

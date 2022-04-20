@@ -10,8 +10,8 @@ import (
 func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 
 	job := meta.BulkJob{
-		Spec:       *spec,
-		Collection: *&spec.Collection,
+		Spec:       spec,
+		Collection: spec.Collection,
 	}
 
 	err := datasource.PlatformSaveOne(&job, nil, nil, session)
