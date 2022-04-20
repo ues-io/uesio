@@ -13,8 +13,10 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
+import { CodeFieldUtilityProps } from "../codefield/codefield"
 
-const FileText = component.registry.getUtility("uesio/io.filetext")
+const CodeField =
+	component.registry.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
 interface FileMarkDownProps extends definition.UtilityProps {
 	label?: string
@@ -86,7 +88,20 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 			}}
 		/>
 	) : (
-		<FileText {...props} />
+		<CodeField
+			context={context}
+			value={currentValue?.value || ""}
+			setValue={(value: string) => {
+				uesio.signal.run(
+					{
+						signal: "component/uesio/io.field/SET_FILE",
+						target: componentId,
+						value,
+					},
+					context
+				)
+			}}
+		/>
 	)
 }
 
