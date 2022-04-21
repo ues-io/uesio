@@ -91,7 +91,7 @@ func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFie
 	if ok {
 		collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
 	}
-	_, ok = requestedFields["uesio/core.createda"]
+	_, ok = requestedFields["uesio/core.createdat"]
 	if ok {
 		collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
 	}
