@@ -83,7 +83,6 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
 			item, ok := value.(loadable.Item)
 			if !ok || fieldMetadata.SubFields == nil || len(fieldMetadata.SubFields) == 0 {
-				fmt.Printf("Failing: %T\n", value)
 				jsonValue, err := json.Marshal(value)
 				if err != nil {
 					return errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
