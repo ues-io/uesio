@@ -8,9 +8,6 @@ definition:
         uesio.variant: uesio/web.mainlayout
         uesio.styles:
           root:
-            position: fixed
-            left: 0
-            right: 0
             height: 120px
         items:
           - uesio/io.griditem:
@@ -53,6 +50,14 @@ definition:
                                             signals:
                                               - signal: "route/REDIRECT"
                                                 path: "https://studio.$Site{domain}"
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.secondary
+                                            text: Blog
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "blog"
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:

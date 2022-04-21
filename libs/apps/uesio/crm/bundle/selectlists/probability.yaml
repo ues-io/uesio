@@ -20,3 +20,4 @@ options:
     value: "90"
   - label: "100"
     value: "100"
+public: true

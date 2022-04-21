@@ -8,3 +8,4 @@ options:
     value: DISQUALIFIED
   - label: Closed
     value: CLOSED
+public: true

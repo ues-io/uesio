@@ -8,10 +8,10 @@ definition:
       margin: 20px 0
       alignItems: baseline
   avatar:
-    - io.text:
+    - uesio/io.text:
         uesio.styles:
           root:
             fontSize: 16pt
-        uesio.variant: io.icon
+        uesio.variant: uesio/io.icon
         color: green
         text: check

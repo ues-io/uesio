@@ -10,3 +10,4 @@ options:
     value: Mrs
   - label: Miss
     value: Miss
+public: true

@@ -155,6 +155,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/auth/"+getNSParam("namespace")+"/{name}/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
+	siteAPI(sr, "/rest/"+getNSParam("namespace")+"/{name}", controller.Rest).Methods("GET")
 	siteAPI(sr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 	siteAPI(r, "/{route:.*}", controller.ServeLocalRoute).Methods("GET")
 
