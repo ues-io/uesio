@@ -18,7 +18,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Name:                  e.Name,
 		Namespace:             e.Namespace,
 		IDFormat:              e.IDFormat,
-		NameField:             e.NameField,
+		NameField:             GetNameField(e),
 		Createable:            !e.ReadOnly,
 		Accessible:            true,
 		Updateable:            !e.ReadOnly,
@@ -31,6 +31,13 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		TableName:             e.TableName,
 		Public:                e.Public,
 	}
+}
+
+func GetNameField(c *meta.Collection) string {
+	if c.NameField != "" {
+		return c.NameField
+	}
+	return adapt.ID_FIELD
 }
 
 func GetFieldLabel(f *meta.Field, session *sess.Session) string {
