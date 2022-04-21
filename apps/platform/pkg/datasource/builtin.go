@@ -1,0 +1,104 @@
+package datasource
+
+import "github.com/thecloudmasters/uesio/pkg/adapt"
+
+var ID_FIELD_METADATA = adapt.FieldMetadata{
+	Name:       "id",
+	Namespace:  "uesio/core",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "Id",
+}
+
+var OWNER_FIELD_METADATA = adapt.FieldMetadata{
+	Name:         "owner",
+	Namespace:    "uesio/core",
+	Createable:   false,
+	Accessible:   true,
+	Updateable:   false,
+	Type:         "USER",
+	Label:        "Owner",
+	AutoPopulate: "CREATE",
+}
+
+var CREATEDBY_FIELD_METADATA = adapt.FieldMetadata{
+	Name:         "createdby",
+	Namespace:    "uesio/core",
+	Createable:   false,
+	Accessible:   true,
+	Updateable:   false,
+	Type:         "USER",
+	Label:        "Created By",
+	AutoPopulate: "CREATE",
+}
+
+var UPDATEDBY_FIELD_METADATA = adapt.FieldMetadata{
+	Name:         "updatedby",
+	Namespace:    "uesio/core",
+	Createable:   false,
+	Accessible:   true,
+	Updateable:   false,
+	Type:         "USER",
+	Label:        "Updated By",
+	AutoPopulate: "UPDATE",
+}
+
+var CREATEDAT_FIELD_METADATA = adapt.FieldMetadata{
+	Name:         "createdat",
+	Namespace:    "uesio/core",
+	Createable:   false,
+	Accessible:   true,
+	Updateable:   false,
+	Type:         "TIMESTAMP",
+	Label:        "Created At",
+	AutoPopulate: "CREATE",
+}
+
+var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
+	Name:         "updatedat",
+	Namespace:    "uesio/core",
+	Createable:   false,
+	Accessible:   true,
+	Updateable:   false,
+	Type:         "TIMESTAMP",
+	Label:        "Updated At",
+	AutoPopulate: "UPDATE",
+}
+
+func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
+	collectionMetadata.SetField(&ID_FIELD_METADATA)
+	collectionMetadata.SetField(&OWNER_FIELD_METADATA)
+	collectionMetadata.SetField(&CREATEDBY_FIELD_METADATA)
+	collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
+	collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
+	collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
+	return
+}
+
+func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFields FieldsMap) {
+	collectionMetadata.SetField(&ID_FIELD_METADATA)
+	_, ok := requestedFields["uesio/core.owner"]
+	if ok {
+		collectionMetadata.SetField(&OWNER_FIELD_METADATA)
+	}
+	_, ok = requestedFields["uesio/core.createdby"]
+	if ok {
+		collectionMetadata.SetField(&CREATEDBY_FIELD_METADATA)
+	}
+	_, ok = requestedFields["uesio/core.updatedby"]
+	if ok {
+		collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
+	}
+	_, ok = requestedFields["uesio/core.createda"]
+	if ok {
+		collectionMetadata.SetField(&CREATEDAT_FIELD_METADATA)
+	}
+	_, ok = requestedFields["uesio/core.updatedat"]
+	if ok {
+		collectionMetadata.SetField(&UPDATEDAT_FIELD_METADATA)
+	}
+
+	return
+}

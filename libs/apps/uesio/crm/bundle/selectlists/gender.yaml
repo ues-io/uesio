@@ -6,3 +6,4 @@ options:
     value: FEMALE
   - label: Other
     value: OTHER
+public: true

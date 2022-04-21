@@ -21,6 +21,7 @@ components:
         - uesio/io.checkboxfield:uesio/io.default
         - uesio/io.selectfield:uesio/io.default
         - uesio/io.autocomplete:uesio/io.default
+        - uesio/io.emailfield:uesio/io.default
         - uesio/io.fieldlabel:uesio/io.default
         - uesio/io.fieldwrapper:uesio/io.default
         - uesio/io.tile:uesio/io.default

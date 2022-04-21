@@ -20,7 +20,6 @@ definition:
                     columnGap: 40px
                     uesio.styles:
                       root:
-                        marginTop: 120px
                         padding: 80px
                     items:
                       - io.griditem:
