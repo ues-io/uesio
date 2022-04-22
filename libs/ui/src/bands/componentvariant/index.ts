@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import loadOp from "../viewdef/operations/load"
+import { load } from "../viewdef"
 import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
 import { getFullPathParts, parseVariantKey } from "../../component/path"
@@ -30,7 +30,7 @@ const componentVariantSlice = createSlice({
 	initialState: componentVariantAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
+		builder.addCase(load, (state, { payload }) => {
 			const yamlDoc = parse(payload)
 			const variants = getNodeAtPath(
 				["dependencies", "componentvariants"],

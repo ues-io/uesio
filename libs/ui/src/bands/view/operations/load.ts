@@ -3,10 +3,11 @@ import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { selectors as viewDefSelectors } from "../../viewdef/adapter"
 import loadWiresOp from "../../wire/operations/load"
-import loadViewDefOp from "../../viewdef/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { PlainView, ViewParams } from "../types"
 import { runMany } from "../../../signals/signals"
+import { parseKey } from "../../../component/path"
+import { load } from "../../viewdef"
 
 export default createAsyncThunk<
 	PlainView,
@@ -22,11 +23,13 @@ export default createAsyncThunk<
 	if (!viewDefId) throw new Error("No View Def Context Provided")
 	let viewDef = viewDefSelectors.selectById(api.getState(), viewDefId)
 	if (!viewDef) {
-		await api.dispatch(
-			loadViewDefOp({
-				context,
-			})
+		const [namespace, name] = parseKey(viewDefId)
+		const viewDefResponse = await api.extra.getView(
+			context,
+			namespace,
+			name
 		)
+		api.dispatch(load(viewDefResponse))
 	}
 	viewDef = viewDefSelectors.selectById(api.getState(), viewDefId)
 	if (!viewDef) throw new Error("Could not get View Def")
