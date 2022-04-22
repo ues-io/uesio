@@ -90,6 +90,7 @@ components:
         - uesio/io.button:uesio/io.primary
       utilities:
         - uesio/io.button
+    generator:
     # Define a builder for the uesio runtime and slot
     # uesio.runtime:
     # uesio.view:

@@ -64,6 +64,10 @@ func getNSParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w*\\/\\w*}", paramName)
 }
 
+func getKeyParam(paramName string) string {
+	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
+}
+
 func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
@@ -108,9 +112,12 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
 	workspaceAPI(wr, "/metadata/generate/"+getNSParam("namespace")+"/{name}", controller.Generate).Methods("POST")
 
-	workspaceAPI(wr, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
+	workspaceAPI(wr, "/collections/meta/"+getKeyParam("collectionname"), controller.GetCollectionMetadata).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/"+getKeyParam("grouping"), controller.MetadataList).Methods("GET")
+	siteAndWorkspaceAPI(wr, sr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}", controller.MetadataItem, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}/{grouping}", controller.MetadataItem, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}/"+getKeyParam("grouping"), controller.MetadataItem, "GET")
 	workspaceAPI(wr, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 
@@ -131,7 +138,7 @@ func serve(cmd *cobra.Command, args []string) {
 	versionAPI(vr, "/metadata/generate/{name}", controller.Generate).Methods("POST")
 	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
 	versionAPI(vr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
-	versionAPI(vr, "/metadata/types/{type}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	versionAPI(vr, "/metadata/types/{type}/list/"+getKeyParam("grouping"), controller.MetadataList).Methods("GET")
 	versionAPI(vr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
@@ -139,11 +146,14 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/secrets", controller.Secrets).Methods("GET")
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
-	siteAdminAPI(sar, "/featureflags/{key:\\w+\\/\\w+\\.\\w+}", controller.SetFeatureFlag).Methods("POST")
+	siteAdminAPI(sar, "/featureflags/"+getKeyParam("key"), controller.SetFeatureFlag).Methods("POST")
 	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
-	siteAdminAPI(sar, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
+	siteAdminAPI(sar, "/collections/meta/"+getKeyParam("collectionname"), controller.GetCollectionMetadata).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/"+getKeyParam("grouping"), controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}", controller.MetadataItem).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}/{grouping}", controller.MetadataItem).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/item/{name}/"+getKeyParam("grouping"), controller.MetadataItem).Methods("GET")
 	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
 	siteAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")

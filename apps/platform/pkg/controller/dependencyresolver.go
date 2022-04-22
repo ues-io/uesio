@@ -11,6 +11,49 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
+func MetadataItem(w http.ResponseWriter, r *http.Request) {
+	session := middleware.GetSession(r)
+
+	vars := mux.Vars(r)
+	metadatatype := vars["type"]
+	namespace := vars["namespace"]
+	grouping := vars["grouping"]
+	name := vars["name"]
+
+	conditions := meta.BundleConditions{}
+	conditions["uesio/studio.name"] = name
+
+	//Special handling for fields for now
+	if metadatatype == "fields" {
+		conditions["uesio/studio.collection"] = grouping
+	} else if metadatatype == "bots" {
+		conditions["uesio/studio.type"] = grouping
+	} else if metadatatype == "componentvariants" {
+		conditions["uesio/studio.component"] = grouping
+	}
+
+	collection, err := meta.GetBundleableGroupFromType(metadatatype)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	test, err := collection.NewBundleableItemWithKey("theme")
+
+	bundle.load(bot)
+
+	err = bundle.LoadAll(collection, namespace, conditions, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(w, r, &collection)
+
+}
+
 func MetadataList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 

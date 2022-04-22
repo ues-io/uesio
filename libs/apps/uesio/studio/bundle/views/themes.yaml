@@ -110,13 +110,10 @@ definition:
       width: 400px
       height: 500px
       components:
-        - uesio/io.list:
-            id: newthemelist
-            wire: newtheme
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
+        - uesio/studio.generator:
+            collectionId: $Param{collectionname}
+            namespace: $Param{app}
+            usage: workspace
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

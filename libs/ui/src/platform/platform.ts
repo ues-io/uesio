@@ -17,6 +17,8 @@ type BotParams = {
 	[key: string]: string
 }
 
+type TEST = Array<BotParams>
+
 type BotResponse = {
 	success: boolean
 	error: string
@@ -400,6 +402,21 @@ const platform = {
 		const response = await fetch(`${prefix}/metadata/bundle`)
 		return response.json()
 	},
+	getMetadata: async (
+		context: Context,
+		name: string,
+		metadataType: MetadataType,
+		namespace: string,
+		grouping?: string
+	): Promise<TEST> => {
+		const prefix = getPrefix(context)
+		const mdType = METADATA[metadataType]
+		const groupingUrl = grouping ? `/${grouping}` : ""
+		const response = await fetch(
+			`${prefix}/metadata/types/${mdType}/namespace/${namespace}/item/${name}${groupingUrl}`
+		)
+		return response.json()
+	},
 }
 
 type Platform = typeof platform
@@ -416,4 +433,5 @@ export {
 	CollectionNavigateRequest,
 	NavigateRequest,
 	JobResponse,
+	TEST,
 }
