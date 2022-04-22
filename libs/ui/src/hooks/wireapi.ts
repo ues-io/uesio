@@ -29,6 +29,22 @@ class WireAPI {
 		return new Wire(plainWire).attachCollection(plainCollection)
 	}
 
+	useWires(wireNames?: string[]) {
+		// useWire assumes current wire in context when no input is given,
+		// this is not desired when instantiating a group, we want to be explicit or get nothing
+		return !wireNames
+			? null
+			: wireNames
+					.filter((w) => w)
+					.reduce(
+						(prev, curr) => ({
+							...prev,
+							[curr]: this.useWire(curr),
+						}),
+						{}
+					)
+	}
+
 	loadWires(context: Context, wireNames: string[]) {
 		return this.uesio.getDispatcher()(
 			loadWiresOp({
