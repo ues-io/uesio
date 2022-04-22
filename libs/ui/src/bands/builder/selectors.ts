@@ -101,6 +101,14 @@ const useMetadataList = (
 const useNamespaces = () =>
 	useSelector(({ builder }: RootState) => builder?.namespaces?.data || null)
 
+const useGeneratorParams = (metadataType: MetadataType) => {
+	const key = `${metadataType}`
+	return useSelector(
+		({ builder }: RootState) =>
+			builder?.generatorparams?.[key]?.data || null
+	)
+}
+
 export {
 	useNodeState,
 	useSelectedNode,
@@ -113,4 +121,5 @@ export {
 	useMetadataList,
 	useNamespaces,
 	getMetadataListKey,
+	useGeneratorParams,
 }

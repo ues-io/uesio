@@ -10,6 +10,8 @@ export default (
 		value: string
 	): ThunkFunc =>
 	(dispatch) => {
+		console.log({ context, wirename, recordId, field, value })
+
 		const viewId = context.getViewId()
 		if (!viewId) return context
 		if (recordId) {
@@ -18,7 +20,11 @@ export default (
 			recordId = context.getRecordId() || ""
 		}
 
+		console.log("dos", { context, wirename, recordId, field, value })
+
 		if (!recordId) return context
+
+		console.log("3", { context, wirename, recordId, field, value })
 
 		dispatch(
 			updateRecord({

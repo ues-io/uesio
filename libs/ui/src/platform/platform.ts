@@ -114,6 +114,25 @@ const postJSON = (url: string, body?: Record<string, unknown>) =>
 	})
 
 const platform = {
+	getGeneratorParams: async (
+		context: Context,
+		metadataType: MetadataType
+	) => {
+		//"/version/uesio/crm/uesio/core/v0.0.1/bots/params/generator/theme"
+
+		// const paramsResponse = await get(
+		// 	`version/${app}/${namespace}/${version}/bots/params/generator/${name}`,
+		// 	user.cookie
+		// )
+
+		const response = await fetch(
+			`/version/uesio/crm/uesio/core/v0.0.1/bots/params/generator/theme`
+		)
+		if (response.status !== 200) {
+			throw new Error("View Not Found")
+		}
+		return response.json()
+	},
 	getView: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/views/${namespace}/${name}`)

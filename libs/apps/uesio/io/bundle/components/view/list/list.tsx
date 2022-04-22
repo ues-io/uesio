@@ -18,7 +18,12 @@ const List: FunctionComponent<ListProps> = (props) => {
 
 	const [mode] = useMode(definition.id, definition.mode, props)
 
-	if (!wire || !mode) return null
+	if (!wire || !mode) {
+		console.log({ id: definition.id, wire, mode })
+		return null
+	}
+
+	console.log({ id: definition.id, wire, mode })
 
 	return (
 		<>

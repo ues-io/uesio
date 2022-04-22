@@ -111,12 +111,22 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newthemelist
-            wire: newtheme
+            id: credslist333
+            wire: botparamsdata
             mode: EDIT
             components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
+              - uesio/io.button:
+                  uesio.variant: "uesio/io.secondary"
+                  text: "Cancel2"
+                  signals:
+                    - signal: wire/UPDATE_RECORD
+                      wire: botparamsdata
+                      field: uesio/viewonly.name
+                      value: AbeL
+        - uesio/studio.generator:
+            collectionId: $Param{collectionname}
+            namespace: $Param{app}
+            usage: workspace
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -131,5 +141,7 @@ definition:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newTheme"
+              - signal: wire/UPDATE_RECORD
+                wire: botparamsdata
+                field: uesio/viewonly.name
+                value: AbeL

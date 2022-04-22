@@ -5,7 +5,7 @@ import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
 import { getMetadataListKey } from "./selectors"
-import { MetadataListStore, MetadataType } from "./types"
+import { BotParam, MetadataListStore, MetadataType } from "./types"
 
 const getMetadataList = createAsyncThunk<
 	MetadataListStore,
@@ -45,6 +45,27 @@ const getAvailableNamespaces = createAsyncThunk<
 		condition: (context, { getState }) => {
 			const { builder } = getState()
 			const status = builder.namespaces?.status
+			return status !== "FULFILLED" && status !== "PENDING"
+		},
+	}
+)
+
+const getGeneratorParams = createAsyncThunk<
+	BotParam[],
+	{
+		context: Context
+		metadataType: MetadataType
+	},
+	UesioThunkAPI
+>(
+	"builder/getGeneratorParams",
+	async ({ context, metadataType }, api) =>
+		api.extra.getGeneratorParams(context, metadataType),
+	{
+		condition: ({ metadataType }, { getState }) => {
+			const { builder } = getState()
+			const key = `${metadataType}`
+			const status = builder.generatorparams?.[key]?.status
 			return status !== "FULFILLED" && status !== "PENDING"
 		},
 	}
@@ -94,4 +115,5 @@ export default {
 	getMetadataList,
 	getAvailableNamespaces,
 	save,
+	getGeneratorParams,
 }

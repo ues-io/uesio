@@ -40,6 +40,12 @@ type BuilderState = {
 		status: "PENDING" | "FULFILLED"
 		data: MetadataListStore
 	} | null
+	generatorparams: {
+		[key: string]: {
+			status: string
+			data: BotParam[]
+		}
+	} | null
 }
 
 type MetadataListResponse = {
@@ -49,10 +55,20 @@ type MetadataListResponse = {
 	metadata: MetadataListStore
 }
 
+type BotParam = {
+	name: string
+	prompt: string
+	type?: string
+	metadataType?: MetadataType
+	grouping?: string
+	default?: string
+}
+
 export {
 	BuilderState,
 	MetadataListStore,
 	MetadataListResponse,
 	MetadataType,
+	BotParam,
 	METADATA,
 }

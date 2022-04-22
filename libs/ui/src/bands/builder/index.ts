@@ -196,6 +196,20 @@ const builderSlice = createSlice({
 			state.namespaces = null
 			state.metadata = null
 		})
+
+		builder.addCase(
+			builderOps.getGeneratorParams.fulfilled,
+			(state, { payload, meta }) => {
+				const key = `${meta.arg.metadataType}`
+				if (!state.generatorparams) {
+					state.generatorparams = {}
+				}
+				state.generatorparams[key] = {
+					status: "FULFILLED",
+					data: payload,
+				}
+			}
+		)
 	},
 })
 

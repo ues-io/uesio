@@ -40,6 +40,10 @@ type WireFieldDefinitionMap = {
 	[key: string]: WireFieldDefinition
 }
 
+type ViewOnlyWireFieldDefinitionMap = {
+	[key: string]: ViewOnlyField
+}
+
 type WireFieldDefinition =
 	| {
 			id: string
@@ -60,4 +64,5 @@ export {
 	WireFieldDefinitionMap,
 	RegularWireDefinition,
 	ViewOnlyWireDefinition,
+	ViewOnlyWireFieldDefinitionMap,
 }

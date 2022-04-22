@@ -9,6 +9,7 @@ import {
 	useSelectedType,
 	useSelectedItem,
 	useSelectedYAML,
+	useGeneratorParams,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { useEffect } from "react"
@@ -290,6 +291,21 @@ class BuilderAPI {
 	}
 	getSignalProperties = (signal: SignalDefinition) =>
 		this.uesio.signal.getProperties(signal)
+
+	useGeneratorParams = (context: Context, metadataType: MetadataType) => {
+		const params = useGeneratorParams(metadataType)
+		useEffect(() => {
+			if (!params && metadataType) {
+				this.dispatcher(
+					builderOps.getGeneratorParams({
+						context,
+						metadataType,
+					})
+				)
+			}
+		})
+		return params
+	}
 }
 
 export { BuilderAPI }
