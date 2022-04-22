@@ -11,7 +11,6 @@ import {
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
 import { PlainViewDef } from "./types"
-import loadOp from "./operations/load"
 import builderOps from "../builder/operations"
 import viewdefAdapter from "./adapter"
 import {
@@ -179,30 +178,27 @@ const viewDefSlice = createSlice({
 	initialState: viewdefAdapter.getInitialState(),
 	reducers: {
 		cancel: cancelAllDefs,
+		load: (state, { payload }: PayloadAction<string>) => {
+			const yamlDoc = parse(payload)
+			const defDoc = newDoc()
+			defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
+			const dependenciesDoc = getNodeAtPath(
+				"dependencies",
+				yamlDoc.contents
+			)
+
+			viewdefAdapter.upsertOne(state, {
+				name: yamlDoc.get("name") as string,
+				namespace: yamlDoc.get("namespace") as string,
+				dependencies: dependenciesDoc?.toJSON(),
+				yaml: defDoc,
+				originalYaml: defDoc,
+				definition: defDoc.toJSON(),
+			})
+		},
 	},
 
 	extraReducers: (builder) => {
-		builder.addCase(
-			loadOp.fulfilled,
-			(state, { payload }: PayloadAction<string>) => {
-				const yamlDoc = parse(payload)
-				const defDoc = newDoc()
-				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
-				const dependenciesDoc = getNodeAtPath(
-					"dependencies",
-					yamlDoc.contents
-				)
-
-				viewdefAdapter.upsertOne(state, {
-					name: yamlDoc.get("name") as string,
-					namespace: yamlDoc.get("namespace") as string,
-					dependencies: dependenciesDoc?.toJSON(),
-					yaml: defDoc,
-					originalYaml: defDoc,
-					definition: defDoc.toJSON(),
-				})
-			}
-		)
 		builder.addCase(builderOps.save.fulfilled, saveAllDefs)
 		builder.addCase(
 			setDefinition,
@@ -335,5 +331,7 @@ const viewDefSlice = createSlice({
 		builder.addCase(cancel, cancelAllDefs)
 	},
 })
+
+export const { load } = viewDefSlice.actions
 
 export default viewDefSlice.reducer
