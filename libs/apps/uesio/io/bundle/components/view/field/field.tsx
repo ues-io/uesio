@@ -27,6 +27,8 @@ const EmailField = component.registry.getUtility("uesio/io.emailfield")
 const ReferenceGroupField = component.registry.getUtility(
 	"uesio/io.referencegroupfield"
 )
+const MarkDownField = component.registry.getUtility("uesio/io.markdownfield")
+const FileMarkDown = component.registry.getUtility("uesio/io.filemarkdown")
 
 const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
 
@@ -59,6 +61,8 @@ const getFieldContent = (
 	switch (true) {
 		case type === "DATE":
 			return <DateField {...common} />
+		case type === "LONGTEXT" && displayAs === "MARKDOWN":
+			return <MarkDownField {...common} />
 		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
 		case type === "NUMBER":
@@ -100,6 +104,8 @@ const getFieldContent = (
 			return <FileImage {...common} />
 		case type === "FILE" && displayAs === "PREVIEW":
 			return <FilePreview {...common} />
+		case type === "FILE" && displayAs === "MARKDOWN":
+			return <FileMarkDown {...common} />
 		case type === "FILE":
 			return <File {...common} />
 		case type === "USER":

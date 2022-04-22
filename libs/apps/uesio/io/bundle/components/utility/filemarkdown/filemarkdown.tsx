@@ -3,14 +3,20 @@ import {
 	definition,
 	context,
 	collection,
-	component,
-	hooks,
 	wire,
+	hooks,
+	component,
 } from "@uesio/ui"
-import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
-import { CodeFieldUtilityProps } from "../codefield/codefield"
 
-interface FileTextProps extends definition.UtilityProps {
+import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
+
+import { MarkDownFieldProps } from "../markdownfield/markdownfield"
+
+const MarkDownField = component.registry.getUtility<MarkDownFieldProps>(
+	"uesio/io.markdownfield"
+)
+
+interface FileMarkDownProps extends definition.UtilityProps {
 	label?: string
 	width?: string
 	fieldMetadata: collection.Field
@@ -21,19 +27,16 @@ interface FileTextProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const CodeField =
-	component.registry.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
-
-const FileText: FunctionComponent<FileTextProps> = (props) => {
+const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, wire, context, id, path } = props
+	const { fieldMetadata, record, wire, context, id, path, mode } = props
 	const fieldId = fieldMetadata.getId()
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)
 	const fileName = userFile?.["uesio/core.name"] as string
-	const mimeType = userFile?.["uesio/core.mimetype"] as string
+	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
 	const componentId = id || path || ""
@@ -58,10 +61,13 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 			context
 		)
 	}, [fileContent])
+
 	return (
-		<CodeField
+		<MarkDownField
 			context={context}
+			fieldMetadata={fieldMetadata}
 			value={currentValue?.value || ""}
+			mode={mode}
 			setValue={(value: string) => {
 				uesio.signal.run(
 					{
@@ -76,4 +82,4 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 	)
 }
 
-export default FileText
+export default FileMarkDown

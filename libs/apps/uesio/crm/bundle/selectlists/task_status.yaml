@@ -12,3 +12,4 @@ options:
     value: Cancelled
   - label: Needs Action
     value: Needs Action
+public: true

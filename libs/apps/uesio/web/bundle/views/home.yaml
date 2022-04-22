@@ -13,20 +13,19 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 400px 1fr
+                    templateColumns: 460px 1fr
                     uesio.styles:
                       root:
-                        marginTop: 120px
                         padding: 80px
                     items:
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: A new approach to web development.
+                                text: Create apps faster and easier.
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: Uesio is a web application builder, where you work on configuration rather than code. Think specifying the desired outcome, not the individual instructions to the computer.
+                                text: ues.io makes bulding, running, and selling web apps easier for developers and possible for everyone else.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         uesio.styles:

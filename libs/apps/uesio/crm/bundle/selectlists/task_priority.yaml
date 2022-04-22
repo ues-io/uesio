@@ -6,3 +6,4 @@ options:
     value: MEDIUM
   - label: low
     value: LOW
+public: true

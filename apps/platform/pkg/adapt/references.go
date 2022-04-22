@@ -142,8 +142,8 @@ func HandleReferences(
 			}
 
 			for _, locator := range matchIndexes {
-				referenceValue := Item{}
-				meta.Copy(&referenceValue, refItem)
+				referenceValue := &Item{}
+				meta.Copy(referenceValue, refItem)
 				err = locator.Item.SetField(locator.Field.GetFullName(), referenceValue)
 				if err != nil {
 					return err

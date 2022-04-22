@@ -24,11 +24,14 @@ components:
         - uesio/io.checkboxfield:uesio/io.default
         - uesio/io.selectfield:uesio/io.default
         - uesio/io.autocomplete:uesio/io.default
+        - uesio/io.emailfield:uesio/io.default
         - uesio/io.fieldlabel:uesio/io.default
         - uesio/io.fieldwrapper:uesio/io.default
         - uesio/io.tile:uesio/io.default
         - uesio/io.numberfield:uesio/io.default
         - uesio/io.listfield:uesio/io.default
+        - uesio/io.markdownfield:uesio/io.default
+        - uesio/io.filemarkdown:uesio/io.default
     filter:
       variants:
         - uesio/io.selectfield:uesio/io.filter
@@ -49,6 +52,8 @@ components:
         - uesio/io.button:uesio/io.nav
         - uesio/io.fileimage:uesio/io.table
         - uesio/io.numberfield:uesio/io.table
+        - uesio/io.markdownfield:uesio/io.table
+        - uesio/io.filemarkdown:uesio/io.table
     text:
     tile:
       variants:
@@ -102,3 +107,5 @@ components:
     numberfield:
     emailfield:
     referencegroupfield:
+    markdownfield:
+    filemarkdown:

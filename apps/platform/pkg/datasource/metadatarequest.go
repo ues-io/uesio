@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// ParseSelectListKey function
 func ParseSelectListKey(key string) (string, string, string) {
 	keyParts := strings.Split(key, ":")
 	return keyParts[0], keyParts[1], keyParts[2]
@@ -31,24 +30,20 @@ func (fm *FieldsMap) merge(newFields *FieldsMap) {
 	}
 }
 
-// MetadataRequestOptions struct
 type MetadataRequestOptions struct {
 	LoadAllFields bool
 }
 
-// MetadataRequest type
 type MetadataRequest struct {
 	Collections FieldsMap
 	SelectLists map[string]bool
 	Options     *MetadataRequestOptions
 }
 
-// HasRequests function
 func (mr *MetadataRequest) HasRequests() bool {
 	return len(mr.Collections) > 0 || len(mr.SelectLists) > 0
 }
 
-// AddCollection function
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
 		return fmt.Errorf("Tried to add blank collection")
@@ -63,7 +58,6 @@ func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	return nil
 }
 
-// AddField function
 func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
 	if collectionName == "" || fieldName == "" {
 		return fmt.Errorf("adding field: %s, %s", collectionName, fieldName)
@@ -84,7 +78,6 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 	return nil
 }
 
-// AddSelectList function
 func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListName string) {
 	if mr.SelectLists == nil {
 		mr.SelectLists = map[string]bool{}
@@ -96,7 +89,6 @@ func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListNa
 	}
 }
 
-// GetSelectListKey function
 func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 	return collectionName + ":" + fieldName + ":" + selectListName
 }
@@ -223,7 +215,6 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 }
 
-// Load function
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
@@ -239,11 +230,13 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 		}
 
 		if mr.Options != nil && mr.Options.LoadAllFields {
+			addAllBuiltinFields(metadata)
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session)
 			if err != nil {
 				return err
 			}
 		} else {
+			addBuiltinFields(metadata, collection)
 			// Automagially add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
 			for fieldKey := range collection {
