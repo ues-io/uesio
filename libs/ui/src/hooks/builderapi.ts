@@ -239,6 +239,7 @@ class BuilderAPI {
 		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 		return useSelector((state: RootState) => {
 			console.log("TODO", metadataType, metadataItem, localPath, state)
+			return {}
 			/*
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
