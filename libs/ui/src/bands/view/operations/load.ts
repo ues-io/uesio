@@ -8,7 +8,7 @@ import { PlainView, ViewParams } from "../types"
 import { runMany } from "../../../signals/signals"
 import { parseKey } from "../../../component/path"
 import { setMany as setMetadata } from "../../metadata"
-import { PlainViewDef2 } from "../../viewdef/types"
+import { PlainViewDef } from "../../../definition/viewdef"
 import { MetadataState } from "../../metadata/types"
 import {
 	getNodeAtPath,
@@ -117,7 +117,7 @@ export default createAsyncThunk<
 	viewDef = metadataSelectors.selectById(api.getState(), "view:" + viewDefId)
 	if (!viewDef) throw new Error("Could not get View Def")
 
-	const content = viewDef.parsed as PlainViewDef2
+	const content = viewDef.parsed as PlainViewDef
 	const definition = content.definition
 	const wires = definition.wires
 	const wireNames = wires ? Object.keys(wires) : []

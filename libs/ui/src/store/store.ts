@@ -10,8 +10,6 @@ import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
 import builder from "../bands/builder"
-import viewdef from "../bands/viewdef"
-import theme from "../bands/theme"
 import component from "../bands/component"
 import wire from "../bands/wire"
 import view from "../bands/view"
@@ -58,10 +56,8 @@ const create = (plat: Platform, initialState: InitialState) => {
 			route,
 			user,
 			builder,
-			viewdef,
 			view,
 			metadata,
-			theme,
 			panel,
 			notification,
 			wire,

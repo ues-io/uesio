@@ -1,12 +1,8 @@
-import {
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
-import { WireDefinitionMap } from "../../definition/wire"
-import { PanelDefinitionMap } from "../../definition/panel"
-import { SignalDefinition } from "../../signalexports"
-import { ParamDefinition } from "../../definition/param"
+import { DefinitionList, DefinitionMap } from "./definition"
+import { WireDefinitionMap } from "./wire"
+import { PanelDefinitionMap } from "./panel"
+import { ParamDefinition } from "./param"
+import { SignalDefinition } from "./signal"
 
 type ComponentPackDependency = {
 	loaded: boolean
@@ -27,15 +23,6 @@ type Dependencies = {
 	componentvariants: Record<string, DefinitionMap>
 }
 
-type PlainViewDef = {
-	name: string
-	namespace: string
-	definition: ViewDefinition
-	yaml?: YamlDoc
-	dependencies?: Dependencies
-	originalYaml?: YamlDoc
-}
-
 type PlainViewDefMap = {
 	[key: string]: PlainViewDef
 }
@@ -44,7 +31,7 @@ type ViewEventsDef = {
 	onload: SignalDefinition[]
 }
 
-type PlainViewDef2 = {
+type PlainViewDef = {
 	name: string
 	namespace: string
 	definition: ViewDefinition
@@ -59,10 +46,4 @@ type ViewDefinition = {
 	params?: ParamDefinition
 }
 
-export {
-	PlainViewDef,
-	PlainViewDef2,
-	PlainViewDefMap,
-	Dependencies,
-	ViewDefinition,
-}
+export { PlainViewDef, PlainViewDefMap, Dependencies, ViewDefinition }

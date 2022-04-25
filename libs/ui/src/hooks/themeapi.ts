@@ -1,11 +1,14 @@
 import { useEffect } from "react"
 import { AnyAction } from "redux"
-import { useTheme } from "../bands/theme/selectors"
 import { parseKey } from "../component/path"
 import { Context } from "../context/context"
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
-import themeOps from "../bands/theme/operations"
+import { platform } from "../platform/platform"
+import { setMany as setMetadata } from "../bands/metadata"
+import { useMetadataItem } from "../bands/metadata/selectors"
+import { ThemeState } from "../definition/theme"
+import { parse } from "../yamlutils/yamlutils"
 
 class ThemeAPI {
 	constructor(uesio: Uesio) {
@@ -17,23 +20,38 @@ class ThemeAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	useTheme(themeId?: string, context?: Context) {
-		const theme = useTheme(themeId || "")
+		const theme = useMetadataItem("theme", themeId || "")
 		useEffect(() => {
 			if (!theme && themeId) {
 				const [namespace, name] = parseKey(themeId)
 
 				if (namespace && name) {
-					this.dispatcher(
-						themeOps.fetchTheme({
+					const fetchData = async () => {
+						const themeResult = await platform.getTheme(
+							context || this.uesio.getContext(),
 							namespace,
-							name,
-							context: context || this.uesio.getContext(),
-						})
-					)
+							name
+						)
+
+						const yamlDoc = parse(themeResult)
+
+						this.dispatcher(
+							setMetadata([
+								{
+									key: themeId,
+									type: "theme",
+									content: themeResult,
+									parsed: yamlDoc.toJSON(),
+								},
+							])
+						)
+					}
+
+					fetchData()
 				}
 			}
 		})
-		return theme
+		return theme?.parsed as ThemeState
 	}
 }
 

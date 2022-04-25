@@ -5,7 +5,7 @@ import Slot from "./slot"
 import { ViewParams } from "../bands/view/types"
 import { css } from "@emotion/css"
 import { useMetadataItem, useMetadataKeys } from "../bands/metadata/selectors"
-import { PlainViewDef2 } from "../bands/viewdef/types"
+import { PlainViewDef } from "../definition/viewdef"
 
 interface Props extends BaseProps {
 	definition: {
@@ -55,7 +55,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
-	const content = viewDef.parsed as PlainViewDef2
+	const content = viewDef.parsed as PlainViewDef
 
 	const slot = (
 		<Slot

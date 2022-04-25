@@ -32,10 +32,6 @@ import {
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
 import { Dispatcher, RootState } from "../store/store"
-import {
-	getViewDefinition,
-	useBuilderHasChanges,
-} from "../bands/viewdef/selectors"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
@@ -82,7 +78,7 @@ class BuilderAPI {
 	useDropNode = (): [string, string, string] =>
 		getFullPathParts(useDropNode())
 
-	useHasChanges = useBuilderHasChanges
+	useHasChanges = () => false //useBuilderHasChanges
 
 	useSelectedYAML = useSelectedYAML
 
@@ -242,10 +238,12 @@ class BuilderAPI {
 	useDefinition = (path: string) => {
 		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 		return useSelector((state: RootState) => {
+			console.log("TODO", metadataType, metadataItem, localPath, state)
+			/*
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
 			}
-			/*
+
 			if (metadataType === "componentvariant" && metadataItem) {
 				return getComponentVariant(state, metadataItem, localPath)
 			}

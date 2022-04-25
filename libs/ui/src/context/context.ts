@@ -2,7 +2,6 @@ import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as metadataSelectors } from "../bands/metadata/adapter"
-import { selectors as themeSelectors } from "../bands/theme/adapter"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
@@ -11,13 +10,14 @@ import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
+import { ThemeState } from "../definition/theme"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
-import { PlainViewDef2 } from "../bands/viewdef/types"
-import { ComponentVariant } from "../bands/componentvariant/types"
+import { PlainViewDef } from "../definition/viewdef"
+import { ComponentVariant } from "../definition/componentvariant"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -209,7 +209,7 @@ const getViewDef = (viewDefId: string | undefined) =>
 		? (metadataSelectors.selectById(
 				getStore().getState(),
 				"view:" + viewDefId
-		  )?.parsed as PlainViewDef2)
+		  )?.parsed as PlainViewDef)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -289,10 +289,10 @@ class Context {
 		get(this.getViewDef(), getAncestorPath(path, 3))
 
 	getTheme = () =>
-		themeSelectors.selectById(
+		(metadataSelectors.selectById(
 			getStore().getState(),
-			this.getThemeId() || ""
-		) || defaultTheme
+			`theme:${this.getThemeId() || ""}`
+		)?.parsed || defaultTheme) as ThemeState
 
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 

@@ -1,7 +1,7 @@
 import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
-import { ThemeState } from "../bands/theme/types"
+import { ThemeState } from "../definition/theme"
 import {
 	BaseProps,
 	DefinitionMap,

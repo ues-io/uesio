@@ -1,9 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../context/context"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
-import { PlainWireRecord } from "../wirerecord/types"
 import { getMetadataListKey } from "./selectors"
 import { MetadataListStore, MetadataType } from "./types"
 
@@ -57,6 +55,11 @@ const save = createAsyncThunk<
 	},
 	UesioThunkAPI
 >("builder/save", async ({ context }, api) => {
+	console.log("TODO", context, api)
+	return await new Promise(() => {
+		console.log("TODO")
+	})
+	/*
 	const changes: Record<string, PlainWireRecord> = {}
 	const state = api.getState().viewdef?.entities
 	const workspace = context.getWorkspace()
@@ -88,6 +91,7 @@ const save = createAsyncThunk<
 			},
 		],
 	})
+	*/
 })
 
 export default {
