@@ -146,6 +146,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			label={label}
 			labelPosition={definition.labelPosition}
 			context={context}
+			wire={wire}
+			fieldId={fieldId}
 		>
 			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>
