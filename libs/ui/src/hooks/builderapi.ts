@@ -46,7 +46,6 @@ import {
 } from "../component/path"
 import { Definition, YamlDoc } from "../definition/definition"
 import { useSelector } from "react-redux"
-import { getComponentVariant } from "../bands/componentvariant/selectors"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -246,9 +245,11 @@ class BuilderAPI {
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
 			}
+			/*
 			if (metadataType === "componentvariant" && metadataItem) {
 				return getComponentVariant(state, metadataItem, localPath)
 			}
+			*/
 		})
 	}
 

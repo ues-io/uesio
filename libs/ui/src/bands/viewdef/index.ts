@@ -47,11 +47,6 @@ import {
 	updateYaml,
 } from "../../store/reducers"
 
-/**
- * Clone a yaml node. Currently only tested with viewdef components.
- * We might want to extend the functionality to themes and variants.
- *  * @param path - path of the cloned component, the new component will be a direct sibling
- */
 const cloneDef = (state: PlainViewDef, { path }: CloneDefinitionPayload) => {
 	const parentPath = getParentPath(path)
 	const isArrayClone = isNumberIndex(getKeyAtPath(parentPath))

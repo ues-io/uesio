@@ -3,8 +3,9 @@ import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
 import { ViewParams } from "../bands/view/types"
-import { useViewDef } from "../bands/viewdef/selectors"
 import { css } from "@emotion/css"
+import { useMetadataItem, useMetadataKeys } from "../bands/metadata/selectors"
+import { PlainViewDef2 } from "../bands/viewdef/types"
 
 interface Props extends BaseProps {
 	definition: {
@@ -24,7 +25,8 @@ const View: FunctionComponent<Props> = (props) => {
 	const newPanelsNode = useRef<HTMLDivElement>(null)
 
 	const viewId = `${viewDefId}(${path || ""})`
-	const viewDef = useViewDef(viewDefId)
+	const viewDef = useMetadataItem("view", viewDefId)
+	const cpacks = useMetadataKeys("componentpack")
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -35,10 +37,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && !isSubView
-	const scriptResult = uesio.component.usePacks(
-		Object.keys(viewDef?.dependencies?.componentpacks || {}),
-		buildMode
-	)
+	const scriptResult = uesio.component.usePacks(cpacks, buildMode)
 
 	const useBuildTime = buildMode && scriptResult.loaded
 
@@ -56,9 +55,11 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
+	const content = viewDef.parsed as PlainViewDef2
+
 	const slot = (
 		<Slot
-			definition={viewDef.definition}
+			definition={content.definition}
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}

@@ -1,11 +1,9 @@
 import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
-import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
+import { selectors as metadataSelectors } from "../bands/metadata/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
-import { selectById as selectVariant } from "../bands/componentvariant/adapter"
-import { selectById as selectLabel } from "../bands/label/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
@@ -18,6 +16,8 @@ import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
+import { PlainViewDef2 } from "../bands/viewdef/types"
+import { ComponentVariant } from "../bands/componentvariant/types"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -172,8 +172,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Label: (expression, context) => {
 		const label = context.getLabel(expression)
-		if (!label) return "Label not found" // We might want to do some more error related stuff here
-		return label.value || "missing label value"
+		if (!label) return expression
+		return label || "missing label value"
 	},
 }
 
@@ -206,7 +206,10 @@ const inject = (template: string, context: Context): string =>
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
-		? viewDefSelectors.selectById(getStore().getState(), viewDefId)
+		? (metadataSelectors.selectById(
+				getStore().getState(),
+				"view:" + viewDefId
+		  )?.parsed as PlainViewDef2)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -283,7 +286,7 @@ class Context {
 	getViewDef = () => getViewDef(this.getViewDefId())
 
 	getParentComponentDef = (path: string) =>
-		get(this.getViewDef()?.definition, getAncestorPath(path, 3))
+		get(this.getViewDef(), getAncestorPath(path, 3))
 
 	getTheme = () =>
 		themeSelectors.selectById(
@@ -294,10 +297,14 @@ class Context {
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
 	getComponentVariant = (componentType: string, variantName: string) =>
-		selectVariant(getStore().getState(), `${componentType}.${variantName}`)
+		metadataSelectors.selectById(
+			getStore().getState(),
+			`componentvariant:${componentType}:${variantName}`
+		)?.parsed as ComponentVariant
 
 	getLabel = (labelKey: string) =>
-		selectLabel(getStore().getState(), labelKey)
+		metadataSelectors.selectById(getStore().getState(), `label:${labelKey}`)
+			?.content
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
