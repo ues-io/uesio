@@ -12,8 +12,7 @@ type ViewParams = {
 }
 
 type PlainView = {
-	name: string
-	namespace: string
+	viewDefId: string
 	path: string
 	params?: ViewParams
 	errors?: ErrorMap
