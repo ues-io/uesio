@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
+import { useMetadataItem } from "../metadata/selectors"
 import { MetadataType } from "./types"
 
 const isMatch = (componentPath: string, testPath?: string) => {
@@ -56,11 +57,14 @@ const useSelectedItem = () =>
 
 const useSelectedYAML = () =>
 	useSelector((state: RootState) => {
-		console.log("TODO:", state)
-		/*
 		const [metadataType, metadataItem] = getFullPathParts(
 			state.builder?.selectedNode || ""
 		)
+
+		console.log("TODO:", metadataType)
+
+		return useMetadataItem("view", metadataItem)?.parsed
+		/*
 		if (metadataType === "viewdef") {
 			const viewDef = viewSelectors.selectById(state, metadataItem)
 			return viewDef?.yaml
@@ -73,8 +77,9 @@ const useSelectedYAML = () =>
 			)
 			return componentVariant?.yaml
 		}
-		*/
+
 		return undefined
+		*/
 	})
 
 const useDragNode = () =>

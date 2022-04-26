@@ -31,7 +31,7 @@ import {
 } from "../bands/builder"
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher, RootState } from "../store/store"
+import { Dispatcher } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
@@ -41,7 +41,6 @@ import {
 	makeFullPath,
 } from "../component/path"
 import { Definition, YamlDoc } from "../definition/definition"
-import { useSelector } from "react-redux"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -236,11 +235,15 @@ class BuilderAPI {
 	}
 
 	useDefinition = (path: string) => {
+		console.log("TODO", path)
+		return {}
+		/*
 		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
+
 		return useSelector((state: RootState) => {
 			console.log("TODO", metadataType, metadataItem, localPath, state)
 			return {}
-			/*
+
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
 			}
@@ -248,8 +251,9 @@ class BuilderAPI {
 			if (metadataType === "componentvariant" && metadataItem) {
 				return getComponentVariant(state, metadataItem, localPath)
 			}
-			*/
+
 		})
+		*/
 	}
 
 	useMetadataList = (

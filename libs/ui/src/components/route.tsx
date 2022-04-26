@@ -11,11 +11,12 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
 	const site = useSite()
 	const route = useRoute()
+	const buildMode = props.context.getBuildMode() && !!route?.workspace
 	const routeContext = props.context.addFrame({
 		site,
 		route,
 		workspace: route?.workspace,
-		buildMode: props.context.getBuildMode() && !!route?.workspace,
+		buildMode,
 		viewDef: route?.view,
 		theme: route?.theme,
 	})
@@ -53,10 +54,14 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
+	const componentType = buildMode
+		? "uesio/studio.runtime"
+		: "uesio/core.runtime"
+
 	return (
 		<>
 			<ComponentInternal
-				componentType="uesio/core.runtime"
+				componentType={componentType}
 				path=""
 				context={routeContext}
 			/>
