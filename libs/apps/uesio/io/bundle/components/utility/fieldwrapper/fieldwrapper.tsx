@@ -1,28 +1,35 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles, component, wire } from "@uesio/ui"
 import { LabelPosition } from "../../view/field/fielddefinition"
 
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	label?: string
 	labelPosition?: LabelPosition
+	record: wire.WireRecord
+	fieldId: string
 }
-
+const Icon = component.registry.getUtility("uesio/io.icon")
 const FieldLabel = component.registry.getUtility("uesio/io.fieldlabel")
 
 const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
-	const { label, labelPosition, children, context } = props
+	const { label, labelPosition, children, context, record, fieldId } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
 			labelTop: {},
 			labelLeft: {},
 			label: {},
+			errorwrapper: {},
+			erroricon: {},
+			error: {},
 		},
 		props
 	)
 	if (labelPosition === "none") {
 		return <>{children}</>
 	}
+
+	const errors = record.getErrors(fieldId)
 
 	return (
 		<div
@@ -38,6 +45,20 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 				context={context}
 			/>
 			{children}
+
+			{errors?.map((error) => (
+				<div
+					className={classes.errorwrapper}
+					key={error.recordid + ":" + error.fieldid}
+				>
+					<Icon
+						icon="error_outline"
+						context={props.context}
+						className={classes.erroricon}
+					/>
+					<div className={classes.error}>{error.message}</div>
+				</div>
+			))}
 		</div>
 	)
 }

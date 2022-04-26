@@ -188,3 +188,5 @@ definition:
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newApp"
+              - signal: "wire/RESET"
+                wire: newapp
