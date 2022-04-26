@@ -1,4 +1,4 @@
-import { DefinitionMap, YamlDoc } from "../../definition/definition"
+import { DefinitionMap } from "./definition"
 
 export type ComponentVariant = {
 	name: string
@@ -7,6 +7,4 @@ export type ComponentVariant = {
 	extends?: string
 	component: string
 	definition: DefinitionMap
-	yaml?: YamlDoc
-	originalYaml?: YamlDoc
 }

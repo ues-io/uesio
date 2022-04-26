@@ -9,7 +9,7 @@ import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
-import { ComponentVariant } from "../bands/componentvariant/types"
+import { ComponentVariant } from "../definition/componentvariant"
 
 /**
  * Returns a new object that has a deep merge where source overrides

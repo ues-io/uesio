@@ -34,9 +34,9 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 	// This can be removed when we figure out a better way to get all variants onto the page for buildtime
 	// Right now we need this so we can re-render when we get the view definition in.
-	const def = uesio.builder.useDefinition(
-		component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
-	)
+	//const def = uesio.builder.useDefinition(
+	//	component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
+	//)
 
 	const viewDef = context.getViewDef()
 
@@ -49,7 +49,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		"uesio/studio.default",
 		new ctx.Context()
 	)
-	if (!scriptResult.loaded || !def || !builderTheme)
+	if (!scriptResult.loaded || !builderTheme)
 		return <Canvas context={context} />
 
 	const builderContext = context.addFrame({

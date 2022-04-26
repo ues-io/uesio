@@ -1,12 +1,12 @@
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
 import { AnyAction } from "redux"
-import { useViewConfigValue } from "../bands/viewdef/selectors"
 import { useView } from "../bands/view/selectors"
 import { useEffect } from "react"
 import { ViewParams } from "../bands/view/types"
 import { Context } from "../context/context"
 import loadViewOp from "../bands/view/operations/load"
+import { useMetadataItem } from "../bands/metadata/selectors"
 
 const VIEW_BAND = "view"
 
@@ -37,9 +37,8 @@ class ViewAPI {
 		})
 		return view
 	}
-	useConfigValue(key: string): string {
-		const viewDefId = this.uesio.getViewDefId()
-		return viewDefId ? useViewConfigValue(viewDefId, key) : ""
+	useConfigValue(key: string) {
+		return useMetadataItem("configvalue", key)?.content || ""
 	}
 }
 

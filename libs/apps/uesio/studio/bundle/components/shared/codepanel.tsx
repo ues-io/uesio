@@ -28,7 +28,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const metadataItemRef = useRef<string>(metadataItem)
 	metadataTypeRef.current = metadataType
 	metadataItemRef.current = metadataItem
-	const yamlDoc = uesio.builder.useSelectedYAML()
+	const yamlDoc = util.yaml.parse("")
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
