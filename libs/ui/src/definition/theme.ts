@@ -1,4 +1,4 @@
-import { DefinitionMap } from "../../definition/definition"
+import { DefinitionMap } from "./definition"
 
 interface Palette {
 	primary: string

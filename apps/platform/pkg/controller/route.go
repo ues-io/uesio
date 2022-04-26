@@ -121,7 +121,7 @@ func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Se
 	}
 
 	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, getNotFoundRoute(path), false, session)
+	ExecuteIndexTemplate(w, getNotFoundRoute(path), nil, false, session)
 }
 
 // ServeRoute serves a route
@@ -139,10 +139,15 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ExecuteIndexTemplate(w, route, false, session)
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		HandleMissingRoute(w, r, session, path, err)
+		return
+	}
+
+	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }
 
-// ServeLocalRoute serves a route
 func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	path := vars["route"]
@@ -156,5 +161,11 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ExecuteIndexTemplate(w, route, false, session)
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		HandleMissingRoute(w, r, session, path, err)
+		return
+	}
+
+	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }

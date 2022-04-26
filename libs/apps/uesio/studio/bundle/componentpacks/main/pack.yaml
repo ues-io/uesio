@@ -91,7 +91,7 @@ components:
       utilities:
         - uesio/io.button
     # Define a builder for the uesio runtime and slot
-    # uesio.runtime:
+    runtime:
     # uesio.view:
   utility:
     buildwrapper:

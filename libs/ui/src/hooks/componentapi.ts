@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { AnyAction } from "@reduxjs/toolkit"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
-import { useAllVariants } from "../bands/componentvariant/selectors"
+import { useMetadataKeys } from "../bands/metadata/selectors"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 
 class ComponentAPI {
@@ -103,7 +103,7 @@ class ComponentAPI {
 		componentId: string
 	): T | undefined => useComponentState<T>(componentType, componentId, viewId)
 
-	useAllVariants = useAllVariants
+	useAllVariants = () => useMetadataKeys("componentvariant")
 }
 
 export { ComponentAPI }
