@@ -38,7 +38,7 @@ func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
 				}
 				ej := gojay.EmbeddedJSON(jsonValue)
 				enc.AddEmbeddedJSON(&ej)
-				return
+				continue
 			}
 
 			marshaler := &DataMarshaler{
@@ -55,6 +55,9 @@ func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
 			ej := gojay.EmbeddedJSON(jsonValue)
 			enc.AddEmbeddedJSON(&ej)
 
+		}
+		if dam.FieldMetadata.SubType == "TEXT" {
+			enc.String(val.(string))
 		}
 
 	}
