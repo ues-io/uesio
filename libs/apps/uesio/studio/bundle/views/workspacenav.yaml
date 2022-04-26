@@ -10,6 +10,9 @@ definition:
               uesio.variant: uesio/io.nav
               title: Data
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_bots
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -44,6 +47,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: list
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_datasources
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -81,6 +87,9 @@ definition:
               uesio.variant: uesio/io.nav
               title: User Interface
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_components
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
