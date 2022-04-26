@@ -28,6 +28,12 @@ class WireRecord {
 
 	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
 
+	getErrors = (fieldId: string) => {
+		const wire = this.wire
+		const errors = wire.getErrors()
+		return errors?.[this.id + ":" + fieldId]
+	}
+
 	update = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
 		return this.wire.updateRecord(this.id, value, fieldNameParts)

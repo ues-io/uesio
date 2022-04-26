@@ -5,26 +5,23 @@ import { LabelPosition } from "../../view/field/fielddefinition"
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	label?: string
 	labelPosition?: LabelPosition
-	wire: wire.Wire
+	record: wire.WireRecord
 	fieldId: string
 }
 const Icon = component.registry.getUtility("uesio/io.icon")
 const FieldLabel = component.registry.getUtility("uesio/io.fieldlabel")
 
 const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
-	const { label, labelPosition, children, context, wire, fieldId } = props
+	const { label, labelPosition, children, context, record, fieldId } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
 			labelTop: {},
 			labelLeft: {},
 			label: {},
-			error: {
-				color: "#ff4545",
-				fontStyle: "italic",
-				fontSize: "0.95em",
-				marginTop: "5px",
-			},
+			errorwrapper: {},
+			erroricon: {},
+			error: {},
 		},
 		props
 	)
@@ -32,10 +29,7 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 		return <>{children}</>
 	}
 
-	// Only show first error
-	const error = Object.values(wire.getErrors() || {})
-		.flat()
-		.find((err) => err.fieldid === fieldId)
+	const errors = record.getErrors(fieldId)
 
 	return (
 		<div
@@ -52,13 +46,19 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 			/>
 			{children}
 
-			{/* Error */}
-			{error && (
-				<div className={classes.error}>
-					<Icon icon="error_outline" context={props.context} />{" "}
-					{error.message}
+			{errors?.map((error) => (
+				<div
+					className={classes.errorwrapper}
+					key={error.recordid + ":" + error.fieldid}
+				>
+					<Icon
+						icon="error_outline"
+						context={props.context}
+						className={classes.erroricon}
+					/>
+					<div className={classes.error}>{error.message}</div>
 				</div>
-			)}
+			))}
 		</div>
 	)
 }
