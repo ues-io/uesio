@@ -38,7 +38,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				padding: "60px",
 				...styles.getBackgroundStyles(
 					{
-						image: "uesio.whitesplash",
+						image: "uesio/core.whitesplash",
 					},
 					context.getTheme(),
 					context
