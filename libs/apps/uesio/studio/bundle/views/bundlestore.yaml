@@ -103,7 +103,7 @@ definition:
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
-                                    padding: 20px
+                                    padding: 24px
                                 components:
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
