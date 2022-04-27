@@ -80,24 +80,24 @@ definition:
                       root:
                         padding: 40px
                         display: grid
-                        column-gap: 40px;
-                        row-gap: 40px
+                        column-gap: 24px;
+                        row-gap: 24px
                     templateColumns:
                       xs: 1fr
                       md: 1fr 1fr
                       lg: 1fr 1fr 1fr
                     components:
-                      - uesio/io.box:
-                          uesio.display:
-                            - type: fieldMode
-                              mode: READ
+                      - uesio/io.tile:
                           uesio.styles:
                             root:
                               borderRadius: 8pt
                               overflow: hidden
                               background: white
-                              boxShadow: "0 0 4px #00000033"
-                          components:
+                              boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                          signals:
+                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
+                              signal: route/NAVIGATE
+                          content:
                             - uesio/io.box:
                                 uesio.variant: uesio/studio.bundlelistingvisual
                             - uesio/io.box:

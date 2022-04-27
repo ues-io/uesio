@@ -13,9 +13,6 @@ definition:
       position: relative
   components:
     - uesio/io.button:
-        signals:
-          - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
-            signal: route/NAVIGATE
         uesio.styles:
           root:
             inset: 0 0 0 0
