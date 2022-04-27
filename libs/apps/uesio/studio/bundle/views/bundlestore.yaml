@@ -97,18 +97,18 @@ definition:
 
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
-                                      element: p
+                                      element: span
                                       uesio.styles:
                                         root:
                                           font-weight: bold
 
                                   - uesio/io.text:
                                       uesio.display:
-                                        - type: wireHasRecord
+                                        - field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
                                           wire: dependencies
-                                          field: uesio/studio.bundle->uesio/studio.app
                                           value: ${uesio/core.id}
-                                      text: Installed
+                                          operator: EQUALS
+                                      text: " ☑️"
 
                                   - uesio/io.text:
                                       text: ${uesio/studio.description}
