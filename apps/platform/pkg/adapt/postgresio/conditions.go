@@ -27,19 +27,19 @@ func NewParamCounter(start int) *ParamCounter {
 
 func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string) ([]string, []interface{}, error) {
 	if condition.Operator != "IN" {
-		return []string{"id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, condition.Value)}, nil
+		return []string{"main.id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, condition.Value)}, nil
 	}
 
 	values := condition.Value.([]string)
 	if len(values) == 1 {
-		return []string{"id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, values[0])}, nil
+		return []string{"main.id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, values[0])}, nil
 	}
 
 	appendedValues := make([]string, len(values))
 	for i, v := range values {
 		appendedValues[i] = fmt.Sprintf("%s:%s", collectionName, v)
 	}
-	return []string{"id = ANY($1)"}, []interface{}{appendedValues}, nil
+	return []string{"main.id = ANY($1)"}, []interface{}{appendedValues}, nil
 }
 
 func getConditions(
@@ -47,7 +47,7 @@ func getConditions(
 	metadata *adapt.MetadataCache,
 	collectionMetadata *adapt.CollectionMetadata,
 	credentials *adapt.Credentials,
-	userTokens []string,
+	paramCounter *ParamCounter,
 ) ([]string, []interface{}, error) {
 
 	tenantID := credentials.GetTenantIDForCollection(collectionMetadata.GetFullName())
@@ -62,9 +62,8 @@ func getConditions(
 		return idConditionOptimization(&op.Conditions[0], collectionName)
 	}
 
-	conditionStrings := []string{"collection = $1"}
+	conditionStrings := []string{"main.collection = $1"}
 
-	paramCounter := NewParamCounter(2)
 	values := []interface{}{collectionName}
 
 	for _, condition := range op.Conditions {
@@ -130,35 +129,6 @@ func getConditions(
 			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
 			values = append(values, conditionValue)
 		}
-	}
-
-	// UserTokens query
-
-	if collectionMetadata.Access == "protected" && userTokens != nil {
-		accessField := "id"
-		tokenField := "fullid"
-		collectionCheck := collectionName
-		if collectionMetadata.AccessField != "" {
-			challengeMetadata, err := adapt.GetChallengeCollection(metadata, collectionMetadata)
-			if err != nil {
-				return nil, nil, err
-			}
-			// TODO: We could go recursive here and handle multiple levels.
-			// But this work for single-level access fields.
-			accessField = "fields->>'" + collectionMetadata.AccessField + "'"
-			tokenField = "recordid"
-
-			tenantID := credentials.GetTenantIDForCollection(challengeMetadata.GetFullName())
-
-			refCollectionName, err := getDBCollectionName(challengeMetadata, tenantID)
-			if err != nil {
-				return nil, nil, err
-			}
-
-			collectionCheck = refCollectionName
-		}
-		conditionStrings = append(conditionStrings, accessField+" IN (SELECT "+tokenField+" FROM public.tokens WHERE token = ANY("+paramCounter.get()+") AND collection = "+paramCounter.get()+")")
-		values = append(values, userTokens, collectionCheck)
 	}
 
 	return conditionStrings, values, nil

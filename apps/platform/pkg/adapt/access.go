@@ -8,5 +8,10 @@ func GetChallengeCollection(metadata *MetadataCache, collectionMetadata *Collect
 	if err != nil {
 		return nil, err
 	}
-	return metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetChallengeCollection(metadata, refCollectionMetadata)
 }

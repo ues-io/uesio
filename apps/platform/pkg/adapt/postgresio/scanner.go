@@ -53,7 +53,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		reference, ok := (*ds.References)[fieldMetadata.ReferenceMetadata.Collection]
 		if !ok {
 			// We couldn't find a reference record here, so just put in the id
-			refItem := adapt.Item{}
+			refItem := &adapt.Item{}
 			err := refItem.SetField(adapt.ID_FIELD, src)
 			if err != nil {
 				return err
@@ -64,7 +64,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		// If we didn't request any additional fields here, then we don't need to
 		// do a query, just set the ID field of our reference object
 		if len(reference.Fields) == 0 || (len(reference.Fields) == 1 && reference.Fields[0].ID == adapt.ID_FIELD) {
-			refItem := adapt.Item{}
+			refItem := &adapt.Item{}
 			err := refItem.SetField(adapt.ID_FIELD, src)
 			if err != nil {
 				return err

@@ -175,8 +175,10 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 	// Upload workspace properties like homeRoute and loginRoute
 	workspaceItem := (&meta.Workspace{
-		ID:             workspace,
-		App:            session.GetSite().App,
+		ID: workspace,
+		App: &meta.App{
+			ID: namespace,
+		},
 		LoginRoute:     by.LoginRoute,
 		HomeRoute:      by.HomeRoute,
 		DefaultProfile: by.DefaultProfile,
@@ -194,6 +196,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			"uesio/studio.defaultprofile": true,
 			"uesio/studio.publicprofile":  true,
 			"uesio/studio.defaulttheme":   true,
+			"uesio/studio.app":            true,
 		},
 	})
 
