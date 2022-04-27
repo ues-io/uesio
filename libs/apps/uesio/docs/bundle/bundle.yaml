@@ -5,9 +5,9 @@ defaultProfile: uesio/docs.public
 defaultTheme: uesio/uesio.default
 publicProfile: uesio/docs.public
 dependencies:
-  uesio/io:
+  uesio/cms:
     version: v0.0.1
   uesio/core:
     version: v0.0.1
-  uesio/cms:
+  uesio/io:
     version: v0.0.1
