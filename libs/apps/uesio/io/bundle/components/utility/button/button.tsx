@@ -2,8 +2,8 @@ import { FunctionComponent, ReactNode } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import { TooltipUtilityProps } from "../tooltip/tooltip"
 import { Placement } from "@popperjs/core"
-
-interface ButtonUtilityProps extends definition.UtilityProps {
+import { IOUtilityProps } from "../../shared/types"
+interface ButtonUtilityProps extends definition.UtilityProps, IOUtilityProps {
 	onClick?: () => void
 	label?: string
 	isSelected?: boolean
@@ -52,6 +52,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 		<button
 			disabled={disabled}
 			onClick={onClick}
+			{...props.attributes}
 			className={styles.cx(
 				classes.root,
 				disabled && classes.disabled,

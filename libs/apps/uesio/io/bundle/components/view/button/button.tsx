@@ -32,6 +32,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				variant={definition["uesio.variant"]}
 				classes={classes}
 				label={definition.text}
+				attributes={definition.attributes}
 				onClick={handler}
 				context={context}
 				isSelected={isSelected}

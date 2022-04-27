@@ -1,10 +1,11 @@
 import { definition, builder, signal } from "@uesio/ui"
+import { BaseDefinition } from "../../shared/types"
 
 type ButtonDefinition = {
 	text?: string
 	icon?: string
 	signals?: signal.SignalDefinition[]
-} & definition.BaseDefinition
+} & BaseDefinition
 
 interface ButtonProps extends definition.BaseProps {
 	definition: ButtonDefinition

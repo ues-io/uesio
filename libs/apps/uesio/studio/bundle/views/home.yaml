@@ -40,6 +40,9 @@ definition:
                     title: My Apps
                     actions:
                       - uesio/io.button:
+                          attributes:
+                            data-testid: "add-app"
+                            required: true
                           icon: add
                           signals:
                             - signal: panel/TOGGLE
