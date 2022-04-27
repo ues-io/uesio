@@ -1,13 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import { selectors as metadataSelectors } from "../../metadata/adapter"
 import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { PlainView, ViewParams } from "../types"
 import { runMany } from "../../../signals/signals"
 import { parseKey } from "../../../component/path"
-import { setMany as setMetadata } from "../../metadata"
+import { selectors as viewSelectors, set as setViewDef } from "../../viewdef"
+import { setMany as setComponentPack } from "../../componentpack"
+import { setMany as setConfigValue } from "../../configvalue"
+import { setMany as setLabel } from "../../label"
+import { setMany as setComponentVariant } from "../../componentvariant"
 import { PlainViewDef } from "../../../definition/viewdef"
 import { MetadataState } from "../../metadata/types"
 import {
@@ -15,6 +18,7 @@ import {
 	parse,
 	removeNodeAtPath,
 } from "../../../yamlutils/yamlutils"
+import { batch } from "react-redux"
 
 export default createAsyncThunk<
 	PlainView,
@@ -29,10 +33,7 @@ export default createAsyncThunk<
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Def Context Provided")
 
-	let viewDef = metadataSelectors.selectById(
-		api.getState(),
-		"view:" + viewDefId
-	)
+	let viewDef = viewSelectors.selectById(api.getState(), viewDefId)
 
 	if (!viewDef) {
 		const [namespace, name] = parseKey(viewDefId)
@@ -47,21 +48,24 @@ export default createAsyncThunk<
 		const depsNode = getNodeAtPath("dependencies", yamlDoc.contents)
 		removeNodeAtPath("dependencies", yamlDoc.contents)
 
-		const metadataToAdd: MetadataState[] = [
-			{
-				key: viewDefId,
-				type: "view",
-				content: viewDefResponse,
-				parsed: yamlDoc.toJSON(),
-			},
-		]
+		const viewToAdd: MetadataState = {
+			key: viewDefId,
+			type: "view",
+			content: viewDefResponse,
+			parsed: yamlDoc.toJSON(),
+		}
+
+		const componentPacksToAdd: MetadataState[] = []
+		const configValuesToAdd: MetadataState[] = []
+		const labelsToAdd: MetadataState[] = []
+		const componentVariantsToAdd: MetadataState[] = []
 
 		if (depsNode) {
 			const packsNode = getNodeAtPath("componentpacks", depsNode)
 			if (packsNode) {
 				const packs = packsNode.toJSON()
 				Object.keys(packs).forEach((dep) => {
-					metadataToAdd.push({
+					componentPacksToAdd.push({
 						key: dep,
 						type: "componentpack",
 						content: "",
@@ -74,7 +78,7 @@ export default createAsyncThunk<
 				const configs = configNode.toJSON()
 				Object.keys(configs).forEach((dep) => {
 					const value = configs[dep]
-					metadataToAdd.push({
+					configValuesToAdd.push({
 						key: dep,
 						type: "configvalue",
 						content: value || "",
@@ -87,7 +91,7 @@ export default createAsyncThunk<
 				const labels = labelsNode.toJSON()
 				Object.keys(labels).forEach((dep) => {
 					const value = labels[dep]
-					metadataToAdd.push({
+					labelsToAdd.push({
 						key: dep,
 						type: "label",
 						content: value || "",
@@ -102,7 +106,7 @@ export default createAsyncThunk<
 					const value = variants[dep]
 					const yamlValue =
 						getNodeAtPath(dep, variantsNode)?.toString() || ""
-					metadataToAdd.push({
+					componentVariantsToAdd.push({
 						key: dep,
 						type: "componentvariant",
 						content: yamlValue,
@@ -112,9 +116,16 @@ export default createAsyncThunk<
 			}
 		}
 
-		api.dispatch(setMetadata(metadataToAdd))
+		// TODO: This can be removed once we move to React 18
+		batch(() => {
+			api.dispatch(setViewDef(viewToAdd))
+			api.dispatch(setComponentPack(componentPacksToAdd))
+			api.dispatch(setConfigValue(configValuesToAdd))
+			api.dispatch(setLabel(labelsToAdd))
+			api.dispatch(setComponentVariant(componentVariantsToAdd))
+		})
 	}
-	viewDef = metadataSelectors.selectById(api.getState(), "view:" + viewDefId)
+	viewDef = viewSelectors.selectById(api.getState(), viewDefId)
 	if (!viewDef) throw new Error("Could not get View Def")
 
 	const content = viewDef.parsed as PlainViewDef

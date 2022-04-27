@@ -8,9 +8,8 @@ import (
 )
 
 type MetadataState struct {
-	MetadataType string `json:"type"`
-	Key          string `json:"key"`
-	Content      string `json:"content"`
+	Key     string `json:"key"`
+	Content string `json:"content"`
 }
 
 type MetadataMergeData struct {
@@ -18,21 +17,31 @@ type MetadataMergeData struct {
 	Entities map[string]MetadataState `json:"entities"`
 }
 
-func (mmd *MetadataMergeData) AddItem(id string, metadataType string, content string) {
+func (mmd *MetadataMergeData) AddItem(id, content string) {
 	mmd.IDs = append(mmd.IDs, id)
 	mmd.Entities[id] = MetadataState{
-		MetadataType: metadataType,
-		Key:          id,
-		Content:      content,
+		Key:     id,
+		Content: content,
 	}
 }
 
-func GetMetadataDeps(route *meta.Route, session *sess.Session) (*MetadataMergeData, error) {
+type PreloadMetadata struct {
+	Themes *MetadataMergeData
+}
 
-	deps := &MetadataMergeData{
-		IDs:      []string{},
-		Entities: map[string]MetadataState{},
+func (pm *PreloadMetadata) AddTheme(id, content string) {
+	if pm.Themes == nil {
+		pm.Themes = &MetadataMergeData{
+			IDs:      []string{},
+			Entities: map[string]MetadataState{},
+		}
 	}
+	pm.Themes.AddItem(id, content)
+}
+
+func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
+
+	deps := &PreloadMetadata{}
 
 	themeNamespace, themeName, err := meta.ParseKey(route.ThemeRef)
 	if err != nil {
@@ -54,7 +63,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*MetadataMergeDa
 		return nil, err
 	}
 
-	deps.AddItem("theme:"+route.ThemeRef, "theme", string(bytes))
+	deps.AddTheme(route.ThemeRef, string(bytes))
 
 	return deps, nil
 }

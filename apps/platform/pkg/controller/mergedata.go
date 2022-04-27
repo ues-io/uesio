@@ -65,13 +65,13 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route       *RouteMergeData            `json:"route"`
-	User        *UserMergeData             `json:"user"`
-	Site        *SiteMergeData             `json:"site"`
-	Workspace   *WorkspaceMergeData        `json:"workspace,omitempty"`
-	Component   *ComponentsMergeData       `json:"component,omitempty"`
-	Metadata    *routing.MetadataMergeData `json:"metadata,omitempty"`
-	ReactBundle string                     `json:"-"`
+	Route        *RouteMergeData            `json:"route"`
+	User         *UserMergeData             `json:"user"`
+	Site         *SiteMergeData             `json:"site"`
+	Workspace    *WorkspaceMergeData        `json:"workspace,omitempty"`
+	Component    *ComponentsMergeData       `json:"component,omitempty"`
+	ThemePreload *routing.MetadataMergeData `json:"theme,omitempty"`
+	ReactBundle  string                     `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -135,7 +135,7 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 }
 
 // ExecuteIndexTemplate function
-func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, metadata *routing.MetadataMergeData, buildMode bool, session *sess.Session) {
+func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
@@ -164,9 +164,9 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, metadata *ro
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		Metadata:    metadata,
-		Component:   GetComponentMergeData(buildMode),
-		ReactBundle: ReactSrc,
+		ThemePreload: preload.Themes,
+		Component:    GetComponentMergeData(buildMode),
+		ReactBundle:  ReactSrc,
 	}
 
 	// Not checking this error for now.

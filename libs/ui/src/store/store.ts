@@ -15,7 +15,12 @@ import wire from "../bands/wire"
 import view from "../bands/view"
 import site from "../bands/site"
 import panel from "../bands/panel"
-import metadata from "../bands/metadata"
+import viewdef from "../bands/viewdef"
+import label from "../bands/label"
+import theme from "../bands/theme"
+import componentvariant from "../bands/componentvariant"
+import configvalue from "../bands/configvalue"
+import componentpack from "../bands/componentpack"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
@@ -44,7 +49,7 @@ type InitialState = {
 	route: RouteState
 	user: UserState
 	site: SiteState
-	metadata: EntityState<MetadataState>
+	theme: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -53,19 +58,12 @@ let store: ReturnType<typeof create>
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
-	// handle initialstate
-	if (initialState.metadata?.ids?.length) {
-		initialState.metadata.ids.forEach((id: string) => {
-			const idSplit = id.split(":")
-			const metadataType = idSplit[0]
-			if (metadataType === "theme") {
-				const theme = initialState.metadata.entities[
-					id
-				] as MetadataState
-				theme.parsed = parse(theme.content).toJSON()
-			}
+	// handle cached themes coming from the route
+	if (initialState.theme?.ids?.length) {
+		initialState.theme.ids.forEach((id: string) => {
+			const theme = initialState.theme.entities[id] as MetadataState
+			theme.parsed = parse(theme.content).toJSON()
 		})
-		initialState.metadata.entities
 	}
 
 	const newStore = configureStore({
@@ -76,10 +74,15 @@ const create = (plat: Platform, initialState: InitialState) => {
 			user,
 			builder,
 			view,
-			metadata,
+			theme,
 			panel,
 			notification,
 			wire,
+			viewdef,
+			label,
+			componentvariant,
+			configvalue,
+			componentpack,
 			site,
 			workspace: (state) => state || {},
 		},
