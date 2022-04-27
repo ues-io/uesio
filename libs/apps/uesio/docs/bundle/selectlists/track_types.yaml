@@ -1,0 +1,6 @@
+name: track_types
+options:
+  - label: Developer
+    value: developer
+  - label: Human
+    value: human

@@ -1,0 +1,5 @@
+name: doc
+label: doc
+pluralLabel: docs
+dataSource: uesio/core.platform
+nameField: ""

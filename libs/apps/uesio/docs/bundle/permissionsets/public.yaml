@@ -1,8 +1,8 @@
 name: public
 named: {}
-views:
-routes:
-files:
+views: {}
+routes: {}
+files: {}
 allowallviews: true
 allowallroutes: true
 allowallfiles: true

@@ -1,0 +1,5 @@
+name: article
+type: REFERENCE
+label: Article
+reference:
+  collection: uesio/cms.article
