@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { ViewParams } from "../bands/view/types"
 import { Context } from "../context/context"
 import loadViewOp from "../bands/view/operations/load"
-import { useMetadataItem } from "../bands/metadata/selectors"
+import { useConfigValue } from "../bands/configvalue"
 
 const VIEW_BAND = "view"
 
@@ -38,7 +38,7 @@ class ViewAPI {
 		return view
 	}
 	useConfigValue(key: string) {
-		return useMetadataItem("configvalue", key)?.content || ""
+		return useConfigValue(key)?.content || ""
 	}
 }
 

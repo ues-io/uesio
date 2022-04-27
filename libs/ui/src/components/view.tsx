@@ -4,8 +4,9 @@ import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
 import { ViewParams } from "../bands/view/types"
 import { css } from "@emotion/css"
-import { useMetadataItem, useMetadataKeys } from "../bands/metadata/selectors"
 import { PlainViewDef } from "../definition/viewdef"
+import { useViewDef } from "../bands/viewdef"
+import { useComponentPackKeys } from "../bands/componentpack"
 
 interface Props extends BaseProps {
 	definition: {
@@ -25,8 +26,8 @@ const View: FunctionComponent<Props> = (props) => {
 	const newPanelsNode = useRef<HTMLDivElement>(null)
 
 	const viewId = `${viewDefId}(${path || ""})`
-	const viewDef = useMetadataItem("view", viewDefId)
-	const cpacks = useMetadataKeys("componentpack")
+	const viewDef = useViewDef(viewDefId)
+	const cpacks = useComponentPackKeys()
 
 	const subViewClass = css({
 		pointerEvents: "none",

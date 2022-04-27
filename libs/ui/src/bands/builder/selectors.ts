@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
-import { useMetadataItem } from "../metadata/selectors"
+import { useViewDef } from "../viewdef"
 import { MetadataType } from "./types"
 
 const isMatch = (componentPath: string, testPath?: string) => {
@@ -63,7 +63,7 @@ const useSelectedYAML = () =>
 
 		console.log("TODO:", metadataType)
 
-		return useMetadataItem("view", metadataItem)?.parsed
+		return useViewDef(metadataItem)?.parsed
 		/*
 		if (metadataType === "viewdef") {
 			const viewDef = viewSelectors.selectById(state, metadataItem)
