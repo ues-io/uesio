@@ -58,3 +58,4 @@ definition:
                           fieldId: uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
+                          id: mdcontent
