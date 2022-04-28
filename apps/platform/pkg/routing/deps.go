@@ -29,6 +29,13 @@ type PreloadMetadata struct {
 	Themes *MetadataMergeData
 }
 
+func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
+	if pm.Themes == nil {
+		return nil
+	}
+	return pm.Themes
+}
+
 func (pm *PreloadMetadata) AddTheme(id, content string) {
 	if pm.Themes == nil {
 		pm.Themes = &MetadataMergeData{
