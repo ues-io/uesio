@@ -164,7 +164,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		ThemePreload: preload.Themes,
+		ThemePreload: preload.GetThemes(),
 		Component:    GetComponentMergeData(buildMode),
 		ReactBundle:  ReactSrc,
 	}
