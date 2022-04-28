@@ -1,0 +1,5 @@
+name: track
+type: REFERENCE
+label: Track
+reference:
+  collection: uesio/docs.track

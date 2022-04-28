@@ -1,0 +1,4 @@
+name: doc_single
+path: docs/{recordid}
+view: uesio/docs.doc_single
+public: true

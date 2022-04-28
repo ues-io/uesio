@@ -1,0 +1,4 @@
+name: doc_editor
+path: admin/{recordid}
+view: uesio/docs.doc_editor
+public: true

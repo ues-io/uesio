@@ -1,4 +1,0 @@
-name: type
-type: SELECT
-label: Type
-selectList: uesio/docs.track_types

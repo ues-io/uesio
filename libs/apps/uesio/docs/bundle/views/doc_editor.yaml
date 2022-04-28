@@ -1,0 +1,114 @@
+name: doc_editor
+definition:
+  components:
+    - uesio/io.titlebar:
+        uesio.variant: uesio/io.main
+        title: Admin panel
+        subtitle: Is there a doc in the room?!
+        # actions:
+        #   - uesio/io.group:
+        #       components:
+        #         - uesio/io.button:
+        #             text: Create a New Collection
+        #             uesio.variant: uesio/io.secondary
+
+    # variant: Admin section
+    - uesio/io.box:
+        uesio.styles:
+          root:
+            backgroundColor: "#eee"
+            padding: 40px
+        components:
+          - uesio/io.button:
+              icon: arrow_back
+              signals:
+                - signal: route/NAVIGATE
+                  path: admin
+              uesio.styles:
+                root:
+                  background: "#32e896"
+                  border-radius: 1.5em
+                  width: 3em
+                  margin-right: 1em
+          # New article
+          - uesio/io.list:
+              wire: article
+              id: articleList
+              mode: EDIT
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+
+                    components:
+                      - uesio/io.field:
+                          fieldId: uesio/cms.name
+                      - uesio/io.field:
+                          fieldId: uesio/docs.track
+                          reference:
+                            template: ${uesio/docs.name}
+                            searchFields:
+                              - uesio/docs.name
+                            returnFields:
+                              - uesio/docs.name
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        display: flex
+
+                    components:
+                      - uesio/io.field:
+                          fieldId: uesio/cms.content
+                          displayAs: MARKDOWN
+                          id: mdcontent
+                          labelPosition: none
+                      - uesio/io.field:
+                          labelPosition: none
+                          uesio.context:
+                            fieldMode: READ
+                          fieldId: uesio/cms.content
+                          displayAs: MARKDOWN
+
+                - uesio/io.group:
+                    components:
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.secondary
+                          text: Save
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - article
+                            - signal: component/uesio/io.field/SAVE_FILE
+                              target: mdcontent
+                      - uesio/io.button:
+                          uesio.variant: uesio/io.primary
+                          text: Cancel
+                          signals:
+                            - signal: wire/CANCEL
+                              wire: article
+
+  wires:
+    article:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.createdat:
+        uesio/core.id:
+        uesio/docs.track:
+          fields:
+            uesio/core.id:
+            uesio/docs.name:
+        uesio/cms.content:
+        uesio/cms.name:
+      conditions:
+        - field: uesio/core.id
+          param: recordid
+          valueSource: PARAM
+    markdown:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.id:
+        uesio/cms.content:
+      conditions:
+        - field: uesio/core.id
+          param: recordid
+          valueSource: PARAM

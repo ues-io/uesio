@@ -2,7 +2,7 @@ name: uesio/docs
 loginRoute: uesio/docs.login
 homeRoute: uesio/docs.home
 defaultProfile: uesio/docs.public
-defaultTheme: uesio/uesio.default
+defaultTheme: uesio/docs.default
 publicProfile: uesio/docs.public
 dependencies:
   uesio/cms:

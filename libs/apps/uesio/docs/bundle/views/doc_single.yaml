@@ -1,0 +1,90 @@
+name: doc_single
+definition:
+  components:
+    - uesio/io.titlebar:
+        uesio.variant: uesio/io.main
+        title: Admin panel
+        subtitle: Is there a doc in the room?!
+        # actions:
+        #   - uesio/io.group:
+        #       components:
+        #         - uesio/io.button:
+        #             text: Create a New Collection
+        #             uesio.variant: uesio/io.secondary
+
+    # variant: Admin section
+    - uesio/io.box:
+        uesio.styles:
+          root:
+            backgroundColor: "#eee"
+            padding: 40px
+            display: flex
+        components:
+          - uesio/io.box:
+              uesio.styles:
+                root:
+                  flex: 30%
+              components:
+                - uesio/io.list:
+                    wire: articles
+                    id: articleList
+                    mode: EDIT
+                    components:
+                      - uesio/io.text:
+                          element: p
+                          text: ${uesio/cms.name}
+
+          - uesio/io.box:
+              uesio.styles:
+                root:
+                  flex: 70%
+                  border: 1px solid black
+              components:
+                # New article
+                - uesio/io.list:
+                    wire: article
+                    id: articleList
+                    mode: READ
+                    components:
+                      - uesio/io.box:
+                          uesio.styles:
+                            root:
+                              padding: 15px
+                          components:
+                            - uesio/io.text:
+                                text: ${uesio/cms.name}
+
+                            - uesio/io.field:
+                                fieldId: uesio/cms.content
+                                displayAs: MARKDOWN
+                                id: mdcontent
+                                labelPosition: none
+
+  wires:
+    articles:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.createdat:
+        uesio/core.id:
+        uesio/docs.track:
+          fields:
+            uesio/core.id:
+            uesio/docs.name:
+        uesio/cms.content:
+        uesio/cms.name:
+
+    article:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.createdat:
+        uesio/core.id:
+        uesio/docs.track:
+          fields:
+            uesio/core.id:
+            uesio/docs.name:
+        uesio/cms.content:
+        uesio/cms.name:
+      conditions:
+        - field: uesio/core.id
+          param: recordid
+          valueSource: PARAM
