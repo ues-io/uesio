@@ -72,45 +72,62 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Add a Bundle
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                - uesio/io.deck:
+                    wire: bundlelistings
+                    id: bundleListingList
+                    mode: READ
                     uesio.styles:
                       root:
                         padding: 40px
                         display: grid
-                        grid-template-columns: 1fr 1fr 1fr;
-                        column-gap: 8px;
-
+                        column-gap: 24px;
+                        row-gap: 24px
+                    templateColumns:
+                      xs: 1fr
+                      md: 1fr 1fr
+                      lg: 1fr 1fr 1fr
                     components:
-                      - uesio/io.list:
-                          wire: bundlelistings
-                          id: bundleListingList
-                          mode: READ
-                          components:
+                      - uesio/io.tile:
+                          uesio.styles:
+                            root:
+                              borderRadius: 8pt
+                              overflow: hidden
+                              background: white
+                              boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                          signals:
+                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
+                              signal: route/NAVIGATE
+                          content:
                             - uesio/io.box:
-                                uesio.display:
-                                  - type: fieldMode
-                                    mode: READ
+                                uesio.variant: uesio/studio.bundlelistingvisual
+                            - uesio/io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 24px
                                 components:
-                                  - uesio/io.box:
-                                      uesio.variant: uesio/studio.bundlelistingvisual
-
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
-                                      element: p
+                                      element: span
                                       uesio.styles:
                                         root:
+                                          vertical-align: middle
                                           font-weight: bold
 
                                   - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: rgb(29,173,113)
+                                      uesio.styles:
+                                        root:
+                                          padding: 4px
                                       uesio.display:
-                                        - type: wireHasRecord
+                                        - field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
                                           wire: dependencies
-                                          field: uesio/studio.bundle->uesio/studio.app
                                           value: ${uesio/core.id}
-                                      text: Installed
+                                          operator: EQUALS
+                                      text: "verified"
 
                                   - uesio/io.text:
+                                      uesio.variant: uesio/io.aside
                                       text: ${uesio/studio.description}
                                       element: p
 

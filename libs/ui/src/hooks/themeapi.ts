@@ -5,10 +5,9 @@ import { Context } from "../context/context"
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
 import { platform } from "../platform/platform"
-import { setMany as setMetadata } from "../bands/metadata"
-import { useMetadataItem } from "../bands/metadata/selectors"
 import { ThemeState } from "../definition/theme"
 import { parse } from "../yamlutils/yamlutils"
+import { useTheme, set as setTheme } from "../bands/theme"
 
 class ThemeAPI {
 	constructor(uesio: Uesio) {
@@ -20,7 +19,7 @@ class ThemeAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	useTheme(themeId?: string, context?: Context) {
-		const theme = useMetadataItem("theme", themeId || "")
+		const theme = useTheme(themeId || "")
 		useEffect(() => {
 			if (!theme && themeId) {
 				const [namespace, name] = parseKey(themeId)
@@ -36,14 +35,12 @@ class ThemeAPI {
 						const yamlDoc = parse(themeResult)
 
 						this.dispatcher(
-							setMetadata([
-								{
-									key: themeId,
-									type: "theme",
-									content: themeResult,
-									parsed: yamlDoc.toJSON(),
-								},
-							])
+							setTheme({
+								key: themeId,
+								type: "theme",
+								content: themeResult,
+								parsed: yamlDoc.toJSON(),
+							})
 						)
 					}
 

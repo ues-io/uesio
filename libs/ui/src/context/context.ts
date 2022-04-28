@@ -1,8 +1,11 @@
 import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
-import { selectors as metadataSelectors } from "../bands/metadata/adapter"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
+import { selectors as viewSelectors } from "../bands/viewdef"
+import { selectors as labelSelectors } from "../bands/label"
+import { selectors as componentVariantSelectors } from "../bands/componentvariant"
+import { selectors as themeSelectors } from "../bands/theme"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
@@ -206,10 +209,8 @@ const inject = (template: string, context: Context): string =>
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
-		? (metadataSelectors.selectById(
-				getStore().getState(),
-				"view:" + viewDefId
-		  )?.parsed as PlainViewDef)
+		? (viewSelectors.selectById(getStore().getState(), viewDefId)
+				?.parsed as PlainViewDef)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -289,22 +290,21 @@ class Context {
 		get(this.getViewDef(), getAncestorPath(path, 3))
 
 	getTheme = () =>
-		(metadataSelectors.selectById(
+		(themeSelectors.selectById(
 			getStore().getState(),
-			`theme:${this.getThemeId() || ""}`
+			this.getThemeId() || ""
 		)?.parsed || defaultTheme) as ThemeState
 
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
 	getComponentVariant = (componentType: string, variantName: string) =>
-		metadataSelectors.selectById(
+		componentVariantSelectors.selectById(
 			getStore().getState(),
-			`componentvariant:${componentType}:${variantName}`
+			`${componentType}:${variantName}`
 		)?.parsed as ComponentVariant
 
 	getLabel = (labelKey: string) =>
-		metadataSelectors.selectById(getStore().getState(), `label:${labelKey}`)
-			?.content
+		labelSelectors.selectById(getStore().getState(), labelKey)?.content
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
