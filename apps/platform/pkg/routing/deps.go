@@ -30,7 +30,7 @@ type PreloadMetadata struct {
 }
 
 func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
-	if pm.Themes == nil {
+	if pm == nil {
 		return nil
 	}
 	return pm.Themes
