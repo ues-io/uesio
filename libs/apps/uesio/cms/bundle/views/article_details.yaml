@@ -33,12 +33,6 @@ definition:
                         target: mdcontent
                     text: Cancel
                     uesio.variant: uesio/io.secondary
-                - uesio/io.button:
-                    signals:
-                      - signal: component/uesio/io.list/TOGGLE_MODE
-                        target: articleList
-                    text: Mode
-                    uesio.variant: uesio/io.secondary
     - uesio/io.list:
         id: articleList
         wire: articleWire
@@ -49,7 +43,19 @@ definition:
               components:
                 - uesio/io.field:
                     fieldId: uesio/cms.name
-                - uesio/io.field:
-                    fieldId: uesio/cms.content
-                    displayAs: MARKDOWN
-                    id: mdcontent
+                - uesio/io.grid:
+                    templateColumns: 1fr 1fr
+                    columnGap: 10px
+                    items:
+                      - uesio/io.field:
+                          uesio.context:
+                            fieldMode: EDIT
+                          labelPosition: none
+                          fieldId: uesio/cms.content
+                          displayAs: MARKDOWN
+                          id: mdcontent
+                      - uesio/io.field:
+                          fieldId: uesio/cms.content
+                          labelPosition: none
+                          displayAs: MARKDOWN
+                          id: mdcontent
