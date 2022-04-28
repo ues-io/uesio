@@ -9,7 +9,7 @@ import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
-import { ComponentVariant } from "../bands/componentvariant/types"
+import { ComponentVariant } from "../definition/componentvariant"
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -78,12 +78,17 @@ function additionalContext(context: Context, additional: ContextFrame) {
 		const frame: ContextFrame = {}
 		const workspace = additional.workspace
 		const siteadmin = additional.siteadmin
+		const fieldMode = additional.fieldMode
 		if (workspace) {
 			frame.workspace = {
 				name: context.merge(workspace.name),
 				app: context.merge(workspace.app),
 			}
 		}
+		if (fieldMode) {
+			frame.fieldMode = fieldMode
+		}
+
 		if (siteadmin) {
 			frame.siteadmin = {
 				name: context.merge(siteadmin.name),

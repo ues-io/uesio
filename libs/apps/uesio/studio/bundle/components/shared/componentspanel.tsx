@@ -25,7 +25,8 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 	const builderComponents = component.registry.getBuilderComponents()
-	const variants = uesio.component.useAllVariants()
+	//const variants = uesio.component.useAllVariants()
+	const variants: Record<string, component.ComponentVariant> = {}
 	// loop over variants and group by component
 	const variantsMap: Record<string, component.ComponentVariant[]> = {}
 	Object.keys(variants).forEach((key) => {

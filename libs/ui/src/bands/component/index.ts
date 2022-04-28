@@ -1,6 +1,7 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
+import { set as setRoute } from "../route"
 
 const getComponentStateKey = (
 	componentType: string,
@@ -22,6 +23,12 @@ const componentSlice = createSlice({
 	initialState: componentAdapter.getInitialState(),
 	reducers: {
 		set: componentAdapter.upsertOne,
+	},
+	extraReducers: (builder) => {
+		builder.addCase(setRoute, (state) => {
+			state.entities = {}
+			state.ids = []
+		})
 	},
 })
 

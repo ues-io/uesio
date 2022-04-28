@@ -41,6 +41,8 @@ files:
   uesio/web.routeexample: true
   uesio/web.viewexample: true
   uesio/web.wessel: true
+collections:
+  uesio/crm.lead: true
 allowallviews: false
 allowallroutes: false
 allowallfiles: false

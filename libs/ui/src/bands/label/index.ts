@@ -1,37 +1,29 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import labelAdapter from "./adapter"
-import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
-import { parseKey } from "../../component/path"
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
+import { useSelector } from "react-redux"
+import { RootState } from "../../store/store"
+import { MetadataState } from "../metadata/types"
 
-const labelSlice = createSlice({
+const adapter = createEntityAdapter<MetadataState>({
+	selectId: (metadata) => metadata.key,
+})
+
+const selectors = adapter.getSelectors((state: RootState) => state.label)
+
+const metadataSlice = createSlice({
 	name: "label",
-	initialState: labelAdapter.getInitialState(),
-	reducers: {},
-	extraReducers: (builder) => {
-		builder.addCase(
-			loadOp.fulfilled,
-			(state, { payload }: PayloadAction<string>) => {
-				const yamlDoc = parse(payload)
-				const labels = getNodeAtPath(
-					"dependencies.labels",
-					yamlDoc.contents
-				)?.toJSON()
-				if (!labels) return
-				return labelAdapter.upsertMany(
-					state,
-					Object.keys(labels).map((key) => {
-						const [namespace, name] = parseKey(key)
-						return {
-							namespace,
-							name,
-							value: labels[key],
-						}
-					})
-				)
-			}
-		)
+	initialState: adapter.getInitialState(),
+	reducers: {
+		set: adapter.upsertOne,
+		setMany: adapter.upsertMany,
 	},
 })
 
-export default labelSlice.reducer
+const useLabel = (key: string) =>
+	useSelector((state: RootState) => selectors.selectById(state, key))
+
+const useLabelKeys = () => useSelector(selectors.selectIds) as string[]
+
+export { useLabel, useLabelKeys, selectors }
+
+export const { set, setMany } = metadataSlice.actions
+export default metadataSlice.reducer

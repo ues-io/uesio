@@ -9,4 +9,14 @@ definition:
       display: grid
       gridTemplateColumns: "40% 60%"
       alignItems: center
+    errorwrapper:
+      alignItems: center
+      display: flex
+      color: "#ff6565"
+      marginTop: 8px
+    error:
+      flex: 1
+      fontSize: 0.75em
+    erroricon:
+      margin: 8px
 public: true

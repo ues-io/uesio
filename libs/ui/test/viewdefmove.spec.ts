@@ -1,5 +1,5 @@
 import { createNextState } from "@reduxjs/toolkit"
-import { PlainViewDef } from "../src/bands/viewdef/types"
+import { PlainViewDef } from "../src/definition/viewdef"
 import { MoveDefinitionPayload } from "../src/bands/builder"
 import { moveDef } from "../src/store/reducers"
 

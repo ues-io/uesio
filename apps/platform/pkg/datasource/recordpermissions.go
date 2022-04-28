@@ -14,6 +14,42 @@ import (
 
 type tokenFunc func(loadable.Item) (string, bool, error)
 
+func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache) ([]adapt.LoadRequestField, error) {
+	if collectionMetadata.AccessField == "" {
+		return nil, nil
+	}
+
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	if err != nil {
+		return nil, err
+	}
+
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return nil, err
+	}
+
+	fields := []adapt.LoadRequestField{}
+
+	for fieldID := range refCollectionMetadata.Fields {
+		var subFields []adapt.LoadRequestField
+		if fieldID == refCollectionMetadata.AccessField {
+			subFields, err = getAccessFields(refCollectionMetadata, metadata)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		fields = append(fields, adapt.LoadRequestField{
+			ID:     fieldID,
+			Fields: subFields,
+		})
+	}
+
+	return fields, nil
+
+}
+
 func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 	referencedCollections := adapt.ReferenceRegistry{}
 
@@ -24,26 +60,18 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		return err
 	}
 
-	if fieldMetadata.Type != "REFERENCE" {
-		return errors.New("Access field must be a reference field: " + collectionMetadata.AccessField)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return err
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	fields, err := getAccessFields(collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
 
 	refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
 	refReq.Metadata = refCollectionMetadata
-
-	// Load in all Fields
-	fields := []adapt.LoadRequestField{}
-
-	for fieldID := range refCollectionMetadata.Fields {
-		fields = append(fields, adapt.LoadRequestField{
-			ID: fieldID,
-		})
-	}
 
 	refReq.AddFields(fields)
 
@@ -111,19 +139,36 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 
 }
 
-func handleAccessFieldChange(accessFieldKey string, change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, session *sess.Session) error {
 
-	accessItem, err := change.FieldChanges.GetField(accessFieldKey)
-	if err != nil {
-		return err
+	var accessItem loadable.Item
+
+	accessItem = change.FieldChanges
+
+	challengeMetadata := collectionMetadata
+
+	for challengeMetadata.AccessField != "" {
+		accessInterface, err := accessItem.GetField(challengeMetadata.AccessField)
+		if err != nil {
+			return err
+		}
+		var ok bool
+		accessItem, ok = accessInterface.(loadable.Item)
+		if !ok {
+			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
+		}
+
+		fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
+		if err != nil {
+			return err
+		}
+		challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+		if err != nil {
+			return err
+		}
 	}
 
-	accessItemConcrete, ok := accessItem.(loadable.Item)
-	if !ok {
-		return fmt.Errorf("Couldn't convert item: %T", accessItem)
-	}
-
-	ownerObj, err := accessItemConcrete.GetField("uesio/core.owner")
+	ownerObj, err := accessItem.GetField("uesio/core.owner")
 	if err != nil {
 		return err
 	}
@@ -140,20 +185,21 @@ func handleAccessFieldChange(accessFieldKey string, change *adapt.ChangeItem, to
 	for _, userToken := range session.GetTokens() {
 		if ownerToken == userToken {
 			hasToken = true
+			//fmt.Println("GRANTED BASED ON OWNER OF: " + challengeMetadata.GetFullName())
 		}
 	}
 
 	for _, tokenFunc := range tokenFuncs {
-		token, isReadWrite, err := tokenFunc(accessItemConcrete)
+		token, isReadWrite, err := tokenFunc(accessItem)
 		if err != nil {
 			return err
 		}
 
 		// We don't care about read tokens here because we're doing a write
 		if isReadWrite {
-
 			for _, userToken := range session.GetTokens() {
 				if token == userToken {
+					//fmt.Println("GRANTED BASED ON TOKEN: " + challengeMetadata.GetFullName() + " MATCHING " + token)
 					hasToken = true
 					break
 				}
@@ -207,7 +253,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 	return op.LoopChanges(func(change *adapt.ChangeItem) error {
 		if collectionMetadata.AccessField != "" {
-			return handleAccessFieldChange(collectionMetadata.AccessField, change, tokenFuncs, challengeMetadata, session)
+			return handleAccessFieldChange(change, tokenFuncs, collectionMetadata, metadata, session)
 		}
 		return handleStandardChange(change, tokenFuncs, collectionMetadata, session)
 	})
@@ -222,9 +268,18 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
-		challengeMetadata, err := adapt.GetChallengeCollection(metadata, collectionMetadata)
-		if err != nil {
-			return err
+
+		challengeMetadata := collectionMetadata
+
+		for challengeMetadata.AccessField != "" {
+			fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
+			if err != nil {
+				return err
+			}
+			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+			if err != nil {
+				return err
+			}
 		}
 
 		for _, challengeToken := range challengeMetadata.RecordChallengeTokens {
@@ -251,6 +306,14 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 			for _, fieldKey := range fieldKeys {
 				fields = append(fields, adapt.LoadRequestField{
 					ID: fieldKey,
+					// This is somewhat wierd, but it prevents reference
+					// fields in the token from being fully loaded.
+					// It shouldn't affect other fields
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: adapt.ID_FIELD,
+						},
+					},
 				})
 			}
 

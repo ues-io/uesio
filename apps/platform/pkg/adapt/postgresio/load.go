@@ -19,17 +19,17 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	fieldName := fieldMetadata.GetFullName()
 	switch fieldMetadata.Type {
 	case "CHECKBOX":
-		return "(fields->>'" + fieldName + "')::boolean"
+		return "(main.fields->>'" + fieldName + "')::boolean"
 	case "TIMESTAMP":
-		return "(fields->>'" + fieldName + "')::bigint"
+		return "(main.fields->>'" + fieldName + "')::bigint"
 	case "NUMBER":
-		return "fields->'" + fieldName + "'"
+		return "main.fields->'" + fieldName + "'"
 	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
-		return "fields->'" + fieldName + "'"
+		return "main.fields->'" + fieldName + "'"
 	default:
 		// Cast to string
-		return "fields->>'" + fieldName + "'"
+		return "main.fields->>'" + fieldName + "'"
 	}
 }
 
@@ -55,14 +55,61 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	loadQuery := "SELECT " + strings.Join(fieldIDs, ",") + " FROM public.data WHERE "
+	joins := []string{}
 
-	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, credentials, userTokens)
+	paramCounter := NewParamCounter(2)
+
+	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, credentials, paramCounter)
 	if err != nil {
 		return err
 	}
 
-	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
+	if collectionMetadata.Access == "protected" && userTokens != nil {
+		accessFieldID := "main.id"
+
+		challengeMetadata := collectionMetadata
+		currentTable := "main"
+
+		for challengeMetadata.AccessField != "" {
+
+			accessField := challengeMetadata.AccessField
+
+			fieldMetadata, err := challengeMetadata.GetField(accessField)
+			if err != nil {
+				return err
+			}
+			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+			if err != nil {
+				return err
+			}
+
+			tenantID := credentials.GetTenantIDForCollection(challengeMetadata.GetFullName())
+
+			refCollectionName, err := getDBCollectionName(challengeMetadata, tenantID)
+			if err != nil {
+				return err
+			}
+
+			newTable := currentTable + "sub"
+
+			joins = append(joins, "LEFT OUTER JOIN data as \""+newTable+"\" ON "+currentTable+".fields->>'"+accessField+"' = "+newTable+".fields->>'uesio/core.id' AND "+newTable+".collection = '"+refCollectionName+"'")
+
+			accessFieldID = newTable + ".id"
+
+			currentTable = newTable
+
+		}
+
+		conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
+		values = append(values, userTokens)
+	}
+
+	loadQuery := "SELECT " +
+		strings.Join(fieldIDs, ",") +
+		" FROM data as \"main\" " +
+		strings.Join(joins, " ") +
+		" WHERE " +
+		strings.Join(conditionStrings, " AND ")
 
 	orders := make([]string, len(op.Order))
 	for i, order := range op.Order {

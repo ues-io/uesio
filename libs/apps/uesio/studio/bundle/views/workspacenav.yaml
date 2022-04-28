@@ -10,6 +10,9 @@ definition:
               uesio.variant: uesio/io.nav
               title: Data
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_bots
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -44,6 +47,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: list
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_datasources
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -81,6 +87,9 @@ definition:
               uesio.variant: uesio/io.nav
               title: User Interface
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_components
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -169,6 +178,9 @@ definition:
               uesio.variant: uesio/io.nav
               title: Admin
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_config_values
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -186,6 +198,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: tune
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_credentials
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -254,6 +269,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: group
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_secrets
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -271,6 +289,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: lock
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_feature_flags
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
@@ -305,6 +326,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: translate
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_auth_methods
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:

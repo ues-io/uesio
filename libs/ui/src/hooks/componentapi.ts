@@ -6,8 +6,8 @@ import { useEffect } from "react"
 import { AnyAction } from "@reduxjs/toolkit"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
-import { useAllVariants } from "../bands/componentvariant/selectors"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
+import { useComponentVariantKeys } from "../bands/componentvariant"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -103,7 +103,7 @@ class ComponentAPI {
 		componentId: string
 	): T | undefined => useComponentState<T>(componentType, componentId, viewId)
 
-	useAllVariants = useAllVariants
+	useAllVariants = () => useComponentVariantKeys()
 }
 
 export { ComponentAPI }

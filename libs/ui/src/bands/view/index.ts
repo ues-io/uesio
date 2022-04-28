@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { parseKey } from "../../component/path"
 
 import viewAdapter from "./adapter"
 
@@ -17,11 +16,9 @@ const viewSlice = createSlice({
 			if (!viewDefId) {
 				return
 			}
-			const [namespace, name] = parseKey(viewDefId)
 
 			viewAdapter.upsertOne(state, {
-				namespace,
-				name,
+				viewDefId,
 				path: arg.path,
 				params: arg.params,
 				loaded: false,

@@ -1,33 +1,29 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import themeAdapter from "./adapter"
-import ops from "./operations"
-import { getNodeAtPath, parse, newDoc } from "../../yamlutils/yamlutils"
-import { defaultTheme } from "../../styles/styles"
-import merge from "lodash/merge"
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
+import { useSelector } from "react-redux"
+import { RootState } from "../../store/store"
+import { MetadataState } from "../metadata/types"
 
-const themeSlice = createSlice({
+const adapter = createEntityAdapter<MetadataState>({
+	selectId: (metadata) => metadata.key,
+})
+
+const selectors = adapter.getSelectors((state: RootState) => state.theme)
+
+const metadataSlice = createSlice({
 	name: "theme",
-	initialState: themeAdapter.getInitialState(),
-	reducers: {},
-	extraReducers: (builder) => {
-		builder.addCase(
-			ops.fetchTheme.fulfilled,
-			(state, { payload }: PayloadAction<string>) => {
-				const yamlDoc = parse(payload)
-				const defDoc = newDoc()
-				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
-				return themeAdapter.upsertOne(state, {
-					namespace: yamlDoc.get("namespace") as string,
-					name: yamlDoc.get("name") as string,
-					definition: merge(
-						{},
-						defaultTheme.definition,
-						defDoc.toJSON()
-					),
-				})
-			}
-		)
+	initialState: adapter.getInitialState(),
+	reducers: {
+		set: adapter.upsertOne,
+		setMany: adapter.upsertMany,
 	},
 })
 
-export default themeSlice.reducer
+const useTheme = (key: string) =>
+	useSelector((state: RootState) => selectors.selectById(state, key))
+
+const useThemeKeys = () => useSelector(selectors.selectIds) as string[]
+
+export { useTheme, useThemeKeys, selectors }
+
+export const { set, setMany } = metadataSlice.actions
+export default metadataSlice.reducer

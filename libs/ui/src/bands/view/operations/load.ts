@@ -1,12 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import { selectors as viewDefSelectors } from "../../viewdef/adapter"
 import loadWiresOp from "../../wire/operations/load"
-import loadViewDefOp from "../../viewdef/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { PlainView, ViewParams } from "../types"
 import { runMany } from "../../../signals/signals"
+import { parseKey } from "../../../component/path"
+import { selectors as viewSelectors, set as setViewDef } from "../../viewdef"
+import { setMany as setComponentPack } from "../../componentpack"
+import { setMany as setConfigValue } from "../../configvalue"
+import { setMany as setLabel } from "../../label"
+import { setMany as setComponentVariant } from "../../componentvariant"
+import { PlainViewDef } from "../../../definition/viewdef"
+import { MetadataState } from "../../metadata/types"
+import {
+	getNodeAtPath,
+	parse,
+	removeNodeAtPath,
+} from "../../../yamlutils/yamlutils"
+import { batch } from "react-redux"
 
 export default createAsyncThunk<
 	PlainView,
@@ -20,17 +32,105 @@ export default createAsyncThunk<
 	// First check to see if we have the viewDef
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Def Context Provided")
-	let viewDef = viewDefSelectors.selectById(api.getState(), viewDefId)
+
+	let viewDef = viewSelectors.selectById(api.getState(), viewDefId)
+
 	if (!viewDef) {
-		await api.dispatch(
-			loadViewDefOp({
-				context,
-			})
+		const [namespace, name] = parseKey(viewDefId)
+		const viewDefResponse = await api.extra.getView(
+			context,
+			namespace,
+			name
 		)
+
+		const yamlDoc = parse(viewDefResponse)
+		//const definitionNode = getNodeAtPath("definition", yamlDoc.contents)
+		const depsNode = getNodeAtPath("dependencies", yamlDoc.contents)
+		removeNodeAtPath("dependencies", yamlDoc.contents)
+
+		const viewToAdd: MetadataState = {
+			key: viewDefId,
+			type: "view",
+			content: viewDefResponse,
+			parsed: yamlDoc.toJSON(),
+		}
+
+		const componentPacksToAdd: MetadataState[] = []
+		const configValuesToAdd: MetadataState[] = []
+		const labelsToAdd: MetadataState[] = []
+		const componentVariantsToAdd: MetadataState[] = []
+
+		if (depsNode) {
+			const packsNode = getNodeAtPath("componentpacks", depsNode)
+			if (packsNode) {
+				const packs = packsNode.toJSON()
+				Object.keys(packs).forEach((dep) => {
+					componentPacksToAdd.push({
+						key: dep,
+						type: "componentpack",
+						content: "",
+						parsed: undefined,
+					})
+				})
+			}
+			const configNode = getNodeAtPath("configvalues", depsNode)
+			if (configNode) {
+				const configs = configNode.toJSON()
+				Object.keys(configs).forEach((dep) => {
+					const value = configs[dep]
+					configValuesToAdd.push({
+						key: dep,
+						type: "configvalue",
+						content: value || "",
+						parsed: undefined,
+					})
+				})
+			}
+			const labelsNode = getNodeAtPath("labels", depsNode)
+			if (labelsNode) {
+				const labels = labelsNode.toJSON()
+				Object.keys(labels).forEach((dep) => {
+					const value = labels[dep]
+					labelsToAdd.push({
+						key: dep,
+						type: "label",
+						content: value || "",
+						parsed: undefined,
+					})
+				})
+			}
+			const variantsNode = getNodeAtPath("componentvariants", depsNode)
+			if (variantsNode) {
+				const variants = variantsNode.toJSON()
+				Object.keys(variants).forEach((dep) => {
+					const value = variants[dep]
+					const yamlValue =
+						getNodeAtPath(dep, variantsNode)?.toString() || ""
+					componentVariantsToAdd.push({
+						key: dep,
+						type: "componentvariant",
+						content: yamlValue,
+						parsed: value,
+					})
+				})
+			}
+		}
+
+		// TODO: This can be removed once we move to React 18
+		batch(() => {
+			api.dispatch(setViewDef(viewToAdd))
+			api.dispatch(setComponentPack(componentPacksToAdd))
+			api.dispatch(setConfigValue(configValuesToAdd))
+			api.dispatch(setLabel(labelsToAdd))
+			api.dispatch(setComponentVariant(componentVariantsToAdd))
+		})
 	}
-	viewDef = viewDefSelectors.selectById(api.getState(), viewDefId)
+	viewDef = viewSelectors.selectById(api.getState(), viewDefId)
 	if (!viewDef) throw new Error("Could not get View Def")
-	const wires = viewDef.definition?.wires
+
+	const content = viewDef.parsed as PlainViewDef
+	const definition = content.definition
+	const wires = definition.wires
 	const wireNames = wires ? Object.keys(wires) : []
 
 	// Initialize Wires
@@ -46,14 +146,13 @@ export default createAsyncThunk<
 	}
 
 	// Handle Events
-	const onloadEvents = viewDef.definition.events?.onload
+	const onloadEvents = definition.events?.onload
 	if (onloadEvents) {
 		await runMany(api.dispatch, "", onloadEvents, context)
 	}
 
 	return {
-		namespace: viewDef.namespace,
-		name: viewDef.name,
+		viewDefId: viewDef.key,
 		path,
 		loaded: true,
 	}

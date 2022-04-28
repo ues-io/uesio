@@ -1,7 +1,7 @@
 import { AnyAction } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch } from "react-redux"
-import { configureStore } from "@reduxjs/toolkit"
+import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
 import { Context } from "../context/context"
@@ -10,19 +10,23 @@ import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
 import builder from "../bands/builder"
-import viewdef from "../bands/viewdef"
-import theme from "../bands/theme"
-import label from "../bands/label"
 import component from "../bands/component"
-import componentvariant from "../bands/componentvariant"
 import wire from "../bands/wire"
 import view from "../bands/view"
 import site from "../bands/site"
 import panel from "../bands/panel"
+import viewdef from "../bands/viewdef"
+import label from "../bands/label"
+import theme from "../bands/theme"
+import componentvariant from "../bands/componentvariant"
+import configvalue from "../bands/configvalue"
+import componentpack from "../bands/componentpack"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
+import { MetadataState } from "../bands/metadata/types"
+import { parse } from "../yamlutils/yamlutils"
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
 type ThunkFunc = ThunkAction<
@@ -45,6 +49,7 @@ type InitialState = {
 	route: RouteState
 	user: UserState
 	site: SiteState
+	theme: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -52,21 +57,32 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
+
+	// handle cached themes coming from the route
+	if (initialState.theme?.ids?.length) {
+		initialState.theme.ids.forEach((id: string) => {
+			const theme = initialState.theme.entities[id] as MetadataState
+			theme.parsed = parse(theme.content).toJSON()
+		})
+	}
+
 	const newStore = configureStore({
 		reducer: {
 			collection,
 			component,
-			componentvariant,
 			route,
 			user,
 			builder,
-			viewdef,
 			view,
 			theme,
-			label,
 			panel,
 			notification,
 			wire,
+			viewdef,
+			label,
+			componentvariant,
+			configvalue,
+			componentpack,
 			site,
 			workspace: (state) => state || {},
 		},

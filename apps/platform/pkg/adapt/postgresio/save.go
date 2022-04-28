@@ -38,7 +38,7 @@ func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
 				}
 				ej := gojay.EmbeddedJSON(jsonValue)
 				enc.AddEmbeddedJSON(&ej)
-				return
+				continue
 			}
 
 			marshaler := &DataMarshaler{
@@ -55,6 +55,9 @@ func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
 			ej := gojay.EmbeddedJSON(jsonValue)
 			enc.AddEmbeddedJSON(&ej)
 
+		}
+		if dam.FieldMetadata.SubType == "TEXT" {
+			enc.String(val.(string))
 		}
 
 	}
@@ -83,7 +86,6 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
 			item, ok := value.(loadable.Item)
 			if !ok || fieldMetadata.SubFields == nil || len(fieldMetadata.SubFields) == 0 {
-				fmt.Printf("Failing: %T\n", value)
 				jsonValue, err := json.Marshal(value)
 				if err != nil {
 					return errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())

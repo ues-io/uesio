@@ -65,7 +65,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			ThemeRef: session.GetDefaultTheme(),
 		}
 
-		ExecuteIndexTemplate(w, route, buildMode, session)
+		ExecuteIndexTemplate(w, route, nil, buildMode, session)
 	}
 }
 
@@ -95,7 +95,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 		ThemeRef: session.GetDefaultTheme(),
 	}
 
-	ExecuteIndexTemplate(w, route, true, session)
+	ExecuteIndexTemplate(w, route, nil, true, session)
 }
 
 func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCollection, error) {

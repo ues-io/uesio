@@ -1,11 +1,13 @@
 import { useEffect } from "react"
 import { AnyAction } from "redux"
-import { useTheme } from "../bands/theme/selectors"
 import { parseKey } from "../component/path"
 import { Context } from "../context/context"
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
-import themeOps from "../bands/theme/operations"
+import { platform } from "../platform/platform"
+import { ThemeState } from "../definition/theme"
+import { parse } from "../yamlutils/yamlutils"
+import { useTheme, set as setTheme } from "../bands/theme"
 
 class ThemeAPI {
 	constructor(uesio: Uesio) {
@@ -23,17 +25,30 @@ class ThemeAPI {
 				const [namespace, name] = parseKey(themeId)
 
 				if (namespace && name) {
-					this.dispatcher(
-						themeOps.fetchTheme({
+					const fetchData = async () => {
+						const themeResult = await platform.getTheme(
+							context || this.uesio.getContext(),
 							namespace,
-							name,
-							context: context || this.uesio.getContext(),
-						})
-					)
+							name
+						)
+
+						const yamlDoc = parse(themeResult)
+
+						this.dispatcher(
+							setTheme({
+								key: themeId,
+								type: "theme",
+								content: themeResult,
+								parsed: yamlDoc.toJSON(),
+							})
+						)
+					}
+
+					fetchData()
 				}
 			}
 		})
-		return theme
+		return theme?.parsed as ThemeState
 	}
 }
 
