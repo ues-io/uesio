@@ -36,38 +36,34 @@ definition:
               id: articleList
               mode: EDIT
               components:
-                - uesio/io.box:
-                    uesio.styles:
-                      root:
-
-                    components:
-                      - uesio/io.field:
-                          fieldId: uesio/cms.name
-                      - uesio/io.field:
-                          fieldId: uesio/docs.track
-                          reference:
-                            template: ${uesio/docs.name}
-                            searchFields:
-                              - uesio/docs.name
-                            returnFields:
-                              - uesio/docs.name
+                - uesio/io.field:
+                    fieldId: uesio/cms.name
+                - uesio/io.field:
+                    fieldId: uesio/cms.slug
+                - uesio/io.field:
+                    fieldId: uesio/docs.track
+                    reference:
+                      template: ${uesio/docs.name}
+                      searchFields:
+                        - uesio/docs.name
+                      returnFields:
+                        - uesio/docs.name
                 - uesio/io.box:
                     uesio.styles:
                       root:
                         display: flex
-
                     components:
-                      - uesio/io.field:
-                          fieldId: uesio/cms.content
-                          displayAs: MARKDOWN
-                          id: mdcontent
-                          labelPosition: none
-                      - uesio/io.field:
-                          labelPosition: none
-                          uesio.context:
-                            fieldMode: READ
-                          fieldId: uesio/cms.content
-                          displayAs: MARKDOWN
+                      # - uesio/io.field:
+                      #     fieldId: uesio/cms.content
+                      #     displayAs: MARKDOWN
+                      #     id: mdcontent
+                      #     labelPosition: none
+                      # - uesio/io.field:
+                      #     labelPosition: none
+                      #     uesio.context:
+                      #       fieldMode: READ
+                      #     fieldId: uesio/cms.content
+                      #     displayAs: MARKDOWN
 
                 - uesio/io.group:
                     components:
@@ -98,6 +94,7 @@ definition:
             uesio/core.id:
             uesio/docs.name:
         uesio/cms.content:
+        uesio/cms.slug:
         uesio/cms.name:
       conditions:
         - field: uesio/core.id
