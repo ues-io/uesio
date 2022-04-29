@@ -63,7 +63,7 @@ export default class Init extends Command {
 				(app) => app["uesio/core.id"]
 			)
 
-			if (!newappIDResp || newappIDResp.length != 1)
+			if (!newappIDResp || newappIDResp.length !== 1)
 				throw new Error("error reading the new application.")
 
 			const newappID = newappIDResp[0] as string
