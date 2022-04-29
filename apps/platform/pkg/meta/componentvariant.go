@@ -30,7 +30,7 @@ type ComponentVariant struct {
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
-	Component  string     `yaml:"component" uesio:"uesio/studio.component"`
+	Component  string     `yaml:"-" uesio:"uesio/studio.component"`
 	Extends    string     `yaml:"extends" uesio:"uesio/studio.extends"`
 	Label      string     `yaml:"label" uesio:"uesio/studio.label"`
 	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
