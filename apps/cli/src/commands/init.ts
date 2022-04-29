@@ -31,7 +31,7 @@ export default class Init extends Command {
 		const workspaceMetadata = getMetadataByTypePlural("workspaces")
 		const appresponse = await load(appMetadata, user)
 		const appNames = appresponse.wires[0].data?.map(
-			(app) => app["uesio/core.id"]
+			(app) => app["uesio/studio.name"]
 		)
 
 		if (!appNames) {
@@ -49,35 +49,56 @@ export default class Init extends Command {
 					},
 				])
 			)
+
+			const newapp = await load(appMetadata, user, [
+				{
+					field: "uesio/studio.name",
+					valueSource: "VALUE",
+					value: name,
+					active: true,
+				},
+			])
+
+			const newappIDResp = newapp.wires[0].data?.map(
+				(app) => app["uesio/core.id"]
+			)
+
+			if (!newappIDResp || newappIDResp.length != 1)
+				throw new Error("error reading the new application.")
+
+			const newappID = newappIDResp[0] as string
+
 			await save(
 				workspaceMetadata,
 				user,
 				createChange([
 					{
 						"uesio/studio.name": "dev",
-						"uesio/studio.app": name,
+						"uesio/studio.app": newappID,
 					},
 				])
 			)
-			await setActiveWorkspace(name, "dev")
-		}
+			await setActiveWorkspace(newappID, "dev")
 
-		const response = await post(
-			`version/uesio/core/v0.0.1/metadata/generate/init`,
-			JSON.stringify({ name }),
-			user.cookie
-		)
-
-		if (!response || !response.body) throw new Error("invalid response")
-
-		response.body
-			.pipe(
-				unzipper.Extract({
-					path: "",
-				})
+			const response = await post(
+				`version/uesio/core/uesio/core/v0.0.1/metadata/generate/init`,
+				JSON.stringify({ name: newappID }),
+				user.cookie
 			)
-			.on("close", () => {
-				console.log("New bundle extracted!")
-			})
+
+			if (!response || !response.body) throw new Error("invalid response")
+
+			response.body
+				.pipe(
+					unzipper.Extract({
+						path: "",
+					})
+				)
+				.on("close", () => {
+					console.log("New bundle extracted!")
+				})
+		} else {
+			throw new Error("App already initialized")
+		}
 	}
 }

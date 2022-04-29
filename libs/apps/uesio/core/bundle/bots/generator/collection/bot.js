@@ -1,10 +1,14 @@
 function collection(bot) {
 	var name = bot.params.get("name")
-	var namespace = bot.getNamespace()
+	var label = bot.params.get("label")
+	var pluralLabel = bot.params.get("pluralLabel")
+	//var namespace = bot.getNamespace()
 	bot.generateFile(
-		"collections/" + namespace + "." + name + ".yaml",
+		"collections/" + name + ".yaml",
 		{
 			name: name,
+			label: label,
+			pluralLabel: pluralLabel,
 		},
 		"collection.yaml"
 	)
