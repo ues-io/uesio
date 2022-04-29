@@ -1,0 +1,3 @@
+name: slugify
+type: BEFORESAVE
+dialect: JAVASCRIPT
