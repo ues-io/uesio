@@ -150,7 +150,13 @@ const getKeyFromPath = (
 	return ""
 }
 
-const getFiles = async (dir: string): Promise<string[]> => {
+const getFiles = async (dir: string): Promise<string[] | null> => {
+	const dirExists = await fileExists(dir)
+
+	if (!dirExists) {
+		return null
+	}
+
 	const dirents = await fs.readdir(dir, { withFileTypes: true })
 	const files = await Promise.all(
 		dirents.map((dirent) => {
@@ -168,6 +174,11 @@ const getLocalMetadataItemsList = async (
 	const metadataDir = metadata.METADATA[metadataType]
 	const dirPath = "./bundle/" + metadataDir + "/"
 	const files = await getFiles(dirPath)
+
+	if (!files) {
+		return []
+	}
+
 	return files.flatMap((fileName) => {
 		const fileKey = getKeyFromPath(
 			metadataType,
