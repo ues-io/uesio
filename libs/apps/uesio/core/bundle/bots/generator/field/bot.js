@@ -5,7 +5,7 @@ function field(bot) {
 	var label = bot.params.get("label")
 	var namespace = bot.getNamespace()
 	bot.generateFile(
-		"fields/" + collectionKey + "/" + namespace + "." + name + ".yaml",
+		"fields/" + namespace + "/" + collectionKey + "/" + name + ".yaml",
 		{
 			name: name,
 			type: type,
