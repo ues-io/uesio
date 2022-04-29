@@ -1,28 +1,56 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 import { ChartOptions, DatasetChartOptions } from "chart.js"
-type SeriesDefinition = {
+export type SeriesDefinition = {
 	name: string
 	label: string
-	field: string
+	valueField: string // this is what determines the total value on the y axis
+	groupingField: string // This is what determines what bucket the data point goes into
 	wire: string
 	options: DatasetChartOptions
 }
 
-export type Definition = {
-	text?: string
-	icon?: string
-	xAxis: {
-		wire: string
-		field: string
-	}
+type WireLabels = {
+	source: "WIRE"
+	wire: string
+	field: string
+}
+
+type ValueLabels = {
+	source: "VALUE"
+	values: ValueLabel[]
+}
+
+type ValueLabel = {
+	key: string
+	value: string
+}
+
+type DataLabels = {
+	source: "DATA"
+	field: string
+}
+
+type CategoryScale = {
+	type: "CATEGORY"
+	labels: WireLabels | ValueLabels | DataLabels
+}
+
+export type TimeScale = {
+	type: "TIME"
+	unit: "month"
+}
+
+export type Scale = CategoryScale | TimeScale
+
+export type LineChartDefinition = {
+	scales: Scale[]
 	options: ChartOptions
 	title?: string
-	signals?: signal.SignalDefinition[]
 	series: SeriesDefinition[]
 } & definition.BaseDefinition
 
 export interface Props extends definition.BaseProps {
-	definition: Definition
+	definition: LineChartDefinition
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
@@ -32,31 +60,9 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		text: "New chart",
 	}),
-	properties: [
-		{
-			name: "text",
-			type: "TEXT",
-			label: "Text",
-		},
-		{
-			name: "icon",
-			type: "ICON",
-			label: "Icon",
-		},
-	],
-	sections: [
-		{
-			title: "Signals",
-			type: "SIGNALS",
-		},
-	],
-	actions: [
-		{
-			label: "Run Signals",
-			type: "RUN_SIGNALS",
-			slot: "signals",
-		},
-	],
+	properties: [],
+	sections: [],
+	actions: [],
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",

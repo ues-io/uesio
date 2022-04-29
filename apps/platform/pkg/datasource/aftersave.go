@@ -44,8 +44,5 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 		},
 	}
 	err := SaveWithOptions(requests, as.session, GetConnectionSaveOptions(as.connection))
-	if err != nil {
-		return err
-	}
-	return HandleSaveRequestErrors(requests)
+	return HandleSaveRequestErrors(requests, err)
 }

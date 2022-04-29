@@ -21,8 +21,5 @@ func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
 		},
 	}
 	err := Save(requests, cba.session)
-	if err != nil {
-		return err
-	}
-	return HandleSaveRequestErrors(requests)
+	return HandleSaveRequestErrors(requests, err)
 }

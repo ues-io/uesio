@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -47,14 +48,21 @@ func PlatformSaves(psrs []PlatformSaveRequest, connection adapt.Connection, sess
 	return doPlatformSave(requests, connection, session)
 }
 
-func HandleSaveRequestErrors(requests []SaveRequest) error {
+func HandleSaveRequestErrors(requests []SaveRequest, err error) error {
+	errorStrings := []string{}
+	if err != nil {
+		errorStrings = append(errorStrings, err.Error())
+	}
 	for _, request := range requests {
-		if request.Errors != nil {
-			if len(request.Errors) > 0 {
-				return errors.New(request.Errors[0].Error())
-			}
+		for _, saveError := range request.Errors {
+			errorStrings = append(errorStrings, saveError.Error())
 		}
 	}
+
+	if len(errorStrings) > 0 {
+		return errors.New(strings.Join(errorStrings, " : "))
+	}
+
 	return nil
 }
 
@@ -86,10 +94,7 @@ func GetConnectionSaveOptions(connection adapt.Connection) *SaveOptions {
 
 func doPlatformSave(requests []SaveRequest, connection adapt.Connection, session *sess.Session) error {
 	err := SaveWithOptions(requests, session, GetConnectionSaveOptions(connection))
-	if err != nil {
-		return err
-	}
-	return HandleSaveRequestErrors(requests)
+	return HandleSaveRequestErrors(requests, err)
 }
 
 func PlatformSave(psr PlatformSaveRequest, connection adapt.Connection, session *sess.Session) error {

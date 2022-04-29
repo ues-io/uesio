@@ -39,6 +39,20 @@ definition:
           root:
             padding: 40px
         components:
+          - uesio/io.linechart:
+              uesio.styles:
+                chart:
+                  padding: 40px
+                  height: 400px
+              series:
+                - name: blah
+                  label: Revenue by Month
+                  valueField: uesio/crm.expected_revenue
+                  groupingField: uesio/crm.close_date
+                  wire: opportunities
+              scales:
+                - type: TIME
+                  unit: month
           - uesio/io.table:
               rowactions:
                 - text: Edit
@@ -57,6 +71,10 @@ definition:
                     field: uesio/crm.status
                 - uesio/io.column:
                     field: uesio/crm.account
+                - uesio/io.column:
+                    field: uesio/crm.close_date
+                - uesio/io.column:
+                    field: uesio/crm.expected_revenue
                 - uesio/io.column:
                     field: uesio/core.updatedat
                 - uesio/io.column:
@@ -77,3 +95,5 @@ definition:
             uesio/crm.name:
         uesio/core.updatedat:
         uesio/core.createdat:
+        uesio/crm.close_date:
+        uesio/crm.expected_revenue:

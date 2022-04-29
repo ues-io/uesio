@@ -96,6 +96,8 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 
 		if fieldMetadata.Type == "CHECKBOX" {
 			loaderFuncs = append(loaderFuncs, getBooleanLoader(index, &mapping, fieldMetadata, valueGetter))
+		} else if fieldMetadata.Type == "NUMBER" {
+			loaderFuncs = append(loaderFuncs, getNumberLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else if fieldMetadata.Type == "REFERENCE" {
 			if mapping.MatchField != "" {
 				lookups = append(lookups, adapt.Lookup{

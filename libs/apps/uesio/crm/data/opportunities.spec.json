@@ -1,6 +1,6 @@
 {
 	"jobtype": "import",
-	"collection": "uesio/crm.contact",
+	"collection": "uesio/crm.opportunity",
 	"filetype": "csv",
 	"upsertkey": "uesio/crm.externalid",
 	"mappings": {
@@ -11,17 +11,14 @@
 		"uesio/crm.externalid": {
 			"columnname": "externalid"
 		},
-		"uesio/crm.firstname": {
-			"columnname": "firstname"
+		"uesio/crm.name": {
+			"columnname": "name"
 		},
-		"uesio/crm.lastname": {
-			"columnname": "lastname"
+		"uesio/crm.close_date": {
+			"columnname": "closedate"
 		},
-		"uesio/crm.gender": {
-			"columnname": "gender"
-		},
-		"uesio/crm.email": {
-			"columnname": "email"
+		"uesio/crm.expected_revenue": {
+			"columnname": "revenue"
 		}
 	}
 }

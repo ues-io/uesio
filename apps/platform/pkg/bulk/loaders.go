@@ -1,12 +1,24 @@
 package bulk
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) string
 type loaderFunc func(change adapt.Item, data interface{})
+
+func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
+	return func(change adapt.Item, data interface{}) {
+		number, err := strconv.ParseInt(getValue(data, mapping, index), 10, 64)
+		if err != nil {
+			return
+		}
+		change[fieldMetadata.GetFullName()] = number
+	}
+}
 
 func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {

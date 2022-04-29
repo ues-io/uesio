@@ -76,6 +76,7 @@
     "archiver": "^5.3.0",
     "chai": "^4.3.6",
     "chalk": "^4.1.1",
+    "chart.js": "^3.7.1",
     "chroma-js": "^2.3.0",
     "downshift": "^6.1.7",
     "eslint": "8.8.0",
@@ -94,6 +95,7 @@
     "nyc": "^15.1.0",
     "prettier": "2.5.1",
     "react": "^17.0.2",
+    "react-chartjs-2": "^4.1.0",
     "react-dom": "^17.0.2",
     "react-google-login": "^5.2.2",
     "react-markdown": "^8.0.2",
@@ -115,9 +117,7 @@
     "webpack": "^5.67.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.2",
-    "yaml": "2.0.0-10",
-    "chart.js": "^3.7.1",
-    "react-chartjs-2": "^4.1.0"
+    "yaml": "2.0.0-10"
   },
   "imports": {
     "#uesio/loginhelpers": "./dist/cli/lib/libs/loginhelpers/src/index.js",
@@ -130,5 +130,8 @@
       "@oclif/plugin-help"
     ],
     "dirname": "/apps/cli"
+  },
+  "dependencies": {
+    "chartjs-adapter-luxon": "^1.1.0"
   }
 }
