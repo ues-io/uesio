@@ -1,14 +1,14 @@
 import { definition, builder } from "@uesio/ui"
 import { LabelsDefinition, SeriesDefinition } from "../../shared/chart"
 
-export type LineChartDefinition = {
+export type BarChartDefinition = {
 	labels: LabelsDefinition
 	title?: string
 	series: SeriesDefinition[]
 } & definition.BaseDefinition
 
 export interface Props extends definition.BaseProps {
-	definition: LineChartDefinition
+	definition: BarChartDefinition
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {

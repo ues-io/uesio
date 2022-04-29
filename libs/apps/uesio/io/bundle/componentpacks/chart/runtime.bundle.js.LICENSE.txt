@@ -11,13 +11,6 @@ object-assign
  * Released under the MIT License
  */
 
-/*!
- * chartjs-adapter-luxon v1.1.0
- * https://www.chartjs.org
- * (c) 2021 chartjs-adapter-luxon Contributors
- * Released under the MIT license
- */
-
 /** @license React v17.0.2
  * react-jsx-runtime.production.min.js
  *

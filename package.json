@@ -130,8 +130,5 @@
       "@oclif/plugin-help"
     ],
     "dirname": "/apps/cli"
-  },
-  "dependencies": {
-    "chartjs-adapter-luxon": "^1.1.0"
   }
 }

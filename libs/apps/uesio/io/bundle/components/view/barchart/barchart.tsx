@@ -1,8 +1,8 @@
 import { FC } from "react"
 import { styles, hooks } from "@uesio/ui"
-import { Props } from "./linechartdefinition"
+import { Props } from "./barchartdefinition"
 
-import { Line } from "react-chartjs-2"
+import { Bar } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
 import { getDataSets, getLabels } from "../../shared/chart"
 Chart.register(...registerables)
@@ -51,7 +51,7 @@ const ChartComponent: FC<Props> = (props) => {
 				<h3 className={classes.title}>{definition.title}</h3>
 			)}
 			<div className={classes.chart}>
-				<Line
+				<Bar
 					data={{
 						datasets,
 						labels,

@@ -19,6 +19,12 @@
 		},
 		"uesio/crm.expected_revenue": {
 			"columnname": "revenue"
+		},
+		"uesio/crm.amount": {
+			"columnname": "amount"
+		},
+		"uesio/crm.status": {
+			"columnname": "status"
 		}
 	}
 }

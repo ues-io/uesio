@@ -3,5 +3,6 @@ public: true
 components:
   view:
     linechart:
+    barchart:
   utility:
 

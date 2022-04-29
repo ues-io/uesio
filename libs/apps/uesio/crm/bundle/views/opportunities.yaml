@@ -39,20 +39,49 @@ definition:
           root:
             padding: 40px
         components:
-          - uesio/io.linechart:
+          - uesio/io.grid:
+              templateColumns: 1fr 1fr
+              columnGap: 24px
               uesio.styles:
-                chart:
-                  padding: 40px
-                  height: 400px
-              series:
-                - name: blah
-                  label: Revenue by Month
-                  valueField: uesio/crm.expected_revenue
-                  groupingField: uesio/crm.close_date
-                  wire: opportunities
-              scales:
-                - type: TIME
-                  unit: month
+                root:
+                  padding-bottom: 40px
+              items:
+                - uesio/io.linechart:
+                    uesio.styles:
+                      chart:
+                        height: 300px
+                    series:
+                      - name: revenue
+                        label: Expected Revenue
+                        valueField: uesio/crm.expected_revenue
+                        categoryField: uesio/crm.close_date
+                        wire: opportunities
+                      - name: amount
+                        label: Opportunity Amount
+                        valueField: uesio/crm.amount
+                        categoryField: uesio/crm.close_date
+                        wire: opportunities
+                    labels:
+                      source: DATA
+                      timeunit: MONTH
+                - uesio/io.barchart:
+                    uesio.styles:
+                      chart:
+                        height: 300px
+                    series:
+                      - name: revenue
+                        label: Expected Revenue
+                        valueField: uesio/crm.expected_revenue
+                        categoryField: uesio/crm.close_date
+                        wire: opportunities
+                      - name: amount
+                        label: Opportunity Amount
+                        valueField: uesio/crm.amount
+                        categoryField: uesio/crm.close_date
+                        wire: opportunities
+                    labels:
+                      source: DATA
+                      timeunit: MONTH
           - uesio/io.table:
               rowactions:
                 - text: Edit
@@ -66,8 +95,6 @@ definition:
                 - uesio/io.column:
                     field: uesio/crm.name
                 - uesio/io.column:
-                    field: uesio/crm.description
-                - uesio/io.column:
                     field: uesio/crm.status
                 - uesio/io.column:
                     field: uesio/crm.account
@@ -76,9 +103,7 @@ definition:
                 - uesio/io.column:
                     field: uesio/crm.expected_revenue
                 - uesio/io.column:
-                    field: uesio/core.updatedat
-                - uesio/io.column:
-                    field: uesio/core.createdat
+                    field: uesio/crm.amount
               id: opportunitiesTable
               mode: EDIT
               wire: opportunities
@@ -97,3 +122,4 @@ definition:
         uesio/core.createdat:
         uesio/crm.close_date:
         uesio/crm.expected_revenue:
+        uesio/crm.amount:
