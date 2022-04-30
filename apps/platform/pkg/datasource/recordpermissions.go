@@ -31,7 +31,11 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 
 	fields := []adapt.LoadRequestField{}
 
-	for fieldID := range refCollectionMetadata.Fields {
+	for fieldID, fieldInfo := range refCollectionMetadata.Fields {
+		// TODO: We should be better about deciding which field we load in here
+		if fieldInfo.Type == "REFERENCEGROUP" {
+			continue
+		}
 		var subFields []adapt.LoadRequestField
 		if fieldID == refCollectionMetadata.AccessField {
 			subFields, err = getAccessFields(refCollectionMetadata, metadata)

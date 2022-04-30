@@ -5,4 +5,10 @@ params:
   - name: name
     prompt: Collection Name
     type: METADATANAME
+  - name: label
+    prompt: Collection Label
+    type: TEXT
+  - name: pluralLabel
+    prompt: Collection Plural Label
+    type: TEXT
 public: true

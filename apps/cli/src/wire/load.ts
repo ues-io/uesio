@@ -26,7 +26,7 @@ const load = async (
 		user.cookie
 	)
 
-	return response.json() as Promise<wire.LoadResponseBatch>
+	return response.json()
 }
 
 export { load }

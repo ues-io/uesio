@@ -150,7 +150,13 @@ const getKeyFromPath = (
 	return ""
 }
 
-const getFiles = async (dir: string): Promise<string[]> => {
+const getFiles = async (dir: string): Promise<string[] | null> => {
+	const dirExists = await fileExists(dir)
+
+	if (!dirExists) {
+		return null
+	}
+
 	const dirents = await fs.readdir(dir, { withFileTypes: true })
 	const files = await Promise.all(
 		dirents.map((dirent) => {
@@ -162,19 +168,25 @@ const getFiles = async (dir: string): Promise<string[]> => {
 }
 
 const getLocalMetadataItemsList = async (
+	app: string,
 	metadataType: metadata.MetadataType,
 	grouping?: string
 ): Promise<string[]> => {
 	const metadataDir = metadata.METADATA[metadataType]
 	const dirPath = "./bundle/" + metadataDir + "/"
 	const files = await getFiles(dirPath)
+
+	if (!files) {
+		return []
+	}
+
 	return files.flatMap((fileName) => {
 		const fileKey = getKeyFromPath(
 			metadataType,
 			fileName.slice(dirPath.length),
 			grouping
 		)
-		return fileKey ? [fileKey] : []
+		return fileKey ? [app + "." + fileKey] : []
 	})
 }
 
@@ -201,7 +213,11 @@ const getMetadataList = async (
 ): Promise<string[]> => {
 	const bundleInfo = await getBundleInfo()
 	// First get items installed here.
-	const localItems = await getLocalMetadataItemsList(metadataType, grouping)
+	const localItems = await getLocalMetadataItemsList(
+		app,
+		metadataType,
+		grouping
+	)
 	// For components, only return local ones
 	if (metadataType === "COMPONENT") {
 		return localItems

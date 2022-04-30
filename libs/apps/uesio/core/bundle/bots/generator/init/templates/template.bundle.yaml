@@ -1,6 +1,6 @@
 name: ${name}
 dependencies:
-  io:
+  uesio/io:
     version: v0.0.1
-  uesio:
+  uesio/core:
     version: v0.0.1
