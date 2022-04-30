@@ -23,6 +23,7 @@ type User = {
 	profile: string
 	site: string
 	cookie: string
+	id: string
 }
 
 type AuthHandlers = {
