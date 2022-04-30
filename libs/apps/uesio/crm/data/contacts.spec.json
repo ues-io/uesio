@@ -5,12 +5,23 @@
 	"upsertkey": "uesio/crm.externalid",
 	"mappings": {
 		"uesio/crm.account": {
-			"matchfield": "uesio/crm.externalid"
+			"matchfield": "uesio/crm.externalid",
+			"columnname": "account"
 		},
-		"uesio/crm.externalid": null,
-		"uesio/crm.firstname": null,
-		"uesio/crm.lastname": null,
-		"uesio/crm.gender": null,
-		"uesio/crm.email": null
+		"uesio/crm.externalid": {
+			"columnname": "externalid"
+		},
+		"uesio/crm.firstname": {
+			"columnname": "firstname"
+		},
+		"uesio/crm.lastname": {
+			"columnname": "lastname"
+		},
+		"uesio/crm.gender": {
+			"columnname": "gender"
+		},
+		"uesio/crm.email": {
+			"columnname": "email"
+		}
 	}
 }

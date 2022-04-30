@@ -1,4 +1,4 @@
-uesio/crm.externalid,uesio/crm.firstname,uesio/crm.lastname,uesio/crm.gender,uesio/crm.account,uesio/crm.email
+externalid,firstname,lastname,gender,account,email
 C-0001,Jason,Bourne,FEMALE,,jbourne@hotmail.com
 C-0002,Bruce,Willis,MALE,,diehard@aol.com
 C-0003,Jackie,Chan,FEMALE,,jackieattackie@gmail.com

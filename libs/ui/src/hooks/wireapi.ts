@@ -1,6 +1,6 @@
 import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
-import { useWire } from "../bands/wire/selectors"
+import { getFullWireId, useWire, useWires } from "../bands/wire/selectors"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import initializeWiresOp from "../bands/wire/operations/initialize"
@@ -27,6 +27,25 @@ class WireAPI {
 		const plainCollection = useCollection(collectionName)
 		if (!plainCollection) return undefined
 		return new Wire(plainWire).attachCollection(plainCollection)
+	}
+
+	useWires(wireNames: string[]) {
+		const view = this.uesio.getViewId() || ""
+		const fullWireIds = wireNames.map((wirename) =>
+			getFullWireId(view, wirename)
+		)
+		const plainWires = useWires(fullWireIds)
+		return Object.fromEntries(
+			Object.entries(plainWires).map(([key, plainWire]) => {
+				const collectionName = plainWire?.collection
+				const plainCollection = useCollection(collectionName)
+				if (!plainCollection) return [key, undefined]
+				return [
+					key.slice(view.length + 1),
+					new Wire(plainWire).attachCollection(plainCollection),
+				]
+			})
+		)
 	}
 
 	loadWires(context: Context, wireNames: string[]) {
