@@ -3,9 +3,9 @@ function field(bot) {
 	var collectionKey = bot.params.get("collection")
 	var type = bot.params.get("type")
 	var label = bot.params.get("label")
-	var namespace = bot.getNamespace()
+	const parts = collectionKey.split(".")
 	bot.generateFile(
-		"fields/" + namespace + "/" + collectionKey + "/" + name + ".yaml",
+		"fields/" + parts[0] + "/" + parts[1] + "/" + name + ".yaml",
 		{
 			name: name,
 			type: type,

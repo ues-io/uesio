@@ -168,6 +168,7 @@ const getFiles = async (dir: string): Promise<string[] | null> => {
 }
 
 const getLocalMetadataItemsList = async (
+	app: string,
 	metadataType: metadata.MetadataType,
 	grouping?: string
 ): Promise<string[]> => {
@@ -185,7 +186,7 @@ const getLocalMetadataItemsList = async (
 			fileName.slice(dirPath.length),
 			grouping
 		)
-		return fileKey ? [fileKey] : []
+		return fileKey ? [app + "." + fileKey] : []
 	})
 }
 
@@ -212,7 +213,11 @@ const getMetadataList = async (
 ): Promise<string[]> => {
 	const bundleInfo = await getBundleInfo()
 	// First get items installed here.
-	const localItems = await getLocalMetadataItemsList(metadataType, grouping)
+	const localItems = await getLocalMetadataItemsList(
+		app,
+		metadataType,
+		grouping
+	)
 	// For components, only return local ones
 	if (metadataType === "COMPONENT") {
 		return localItems
