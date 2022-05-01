@@ -5,7 +5,7 @@ import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { PlainView, ViewParams } from "../types"
 import { runMany } from "../../../signals/signals"
-import { parseKey } from "../../../component/path"
+import { parseKey, parseVariantKey } from "../../../component/path"
 import { selectors as viewSelectors, set as setViewDef } from "../../viewdef"
 import { setMany as setComponentPack } from "../../componentpack"
 import { setMany as setConfigValue } from "../../configvalue"
@@ -50,7 +50,6 @@ export default createAsyncThunk<
 
 		const viewToAdd: MetadataState = {
 			key: viewDefId,
-			type: "view",
 			content: viewDefResponse,
 			parsed: yamlDoc.toJSON(),
 		}
@@ -67,7 +66,6 @@ export default createAsyncThunk<
 				Object.keys(packs).forEach((dep) => {
 					componentPacksToAdd.push({
 						key: dep,
-						type: "componentpack",
 						content: "",
 						parsed: undefined,
 					})
@@ -80,7 +78,6 @@ export default createAsyncThunk<
 					const value = configs[dep]
 					configValuesToAdd.push({
 						key: dep,
-						type: "configvalue",
 						content: value || "",
 						parsed: undefined,
 					})
@@ -93,7 +90,6 @@ export default createAsyncThunk<
 					const value = labels[dep]
 					labelsToAdd.push({
 						key: dep,
-						type: "label",
 						content: value || "",
 						parsed: undefined,
 					})
@@ -104,11 +100,13 @@ export default createAsyncThunk<
 				const variants = variantsNode.toJSON()
 				Object.keys(variants).forEach((dep) => {
 					const value = variants[dep]
+					const [cns, cn, ns] = parseVariantKey(dep)
+					value.component = cns + "." + cn
+					value.namespace = ns
 					const yamlValue =
 						getNodeAtPath(dep, variantsNode)?.toString() || ""
 					componentVariantsToAdd.push({
 						key: dep,
-						type: "componentvariant",
 						content: yamlValue,
 						parsed: value,
 					})

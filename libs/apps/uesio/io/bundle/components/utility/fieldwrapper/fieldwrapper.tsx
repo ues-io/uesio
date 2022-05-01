@@ -29,7 +29,7 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 		return <>{children}</>
 	}
 
-	const errors = record.getErrors(fieldId)
+	const errors = record?.getErrors(fieldId)
 
 	return (
 		<div
