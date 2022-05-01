@@ -1,0 +1,5 @@
+name: order
+type: NUMBER
+label: Order
+number:
+  decimals: 0

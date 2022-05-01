@@ -1,8 +1,7 @@
 name: default
 definition:
-  variantOverrides:
   palette:
-    primary: "#111111"
+    primary: "#32e896"
     secondary: "#dc004e"
     error: "#f44336"
     warning: "#ff9800"

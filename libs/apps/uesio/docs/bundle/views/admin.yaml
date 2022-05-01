@@ -31,8 +31,7 @@ definition:
                           signals:
                             - signal: wire/CREATE_RECORD
                               wire: newtrack
-                            - signal: component/uesio/io.list/TOGGLE_MODE
-                              target: newTrackList
+
           - uesio/io.box:
               uesio.styles:
                 root:
@@ -57,6 +56,7 @@ definition:
                 - uesio/io.list:
                     wire: newtrack
                     id: newTrackList
+                    mode: EDIT
                     components:
                       - uesio/io.box:
                           uesio.styles:
@@ -71,17 +71,22 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: Save
-                                      signal:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - newtrack
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
                                       text: Cancel
                                       signal:
                                         - signal: wire/CANCEL
                                           wires: newtrack
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: Save
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - newtrack
+                                        - signal: wire/EMPTY
+                                          wire: newtrack
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - tracks
 
     # variant: Admin section
     - uesio/io.box:
@@ -138,20 +143,23 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      text: Cancel
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: newarticle
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
                                       text: Save
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - newarticle
+                                        - signal: wire/EMPTY
+                                          wire: newarticle
                                         - signal: wire/LOAD
                                           wires:
                                             - articles
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.primary
-                                      text: Cancel
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: newarticle
+
                 # Articles list
                 - uesio/io.list:
                     wire: articles
@@ -164,16 +172,15 @@ definition:
                               flex: 1
                               padding: 15px
                               display: flex
-
                           components:
                             - uesio/io.button:
                                 icon: visibility
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "docs/${uesio/core.id}"
+                                    path: "docs/${uesio/docs.track->uesio/docs.name}/${uesio/cms.slug}"
                                 uesio.styles:
                                   root:
-                                    background: "#32e896"
+                                    background: $Theme{color.primary}
                                     border-radius: 1.5em
                                     width: 3em
                                     margin-right: 1em
@@ -184,7 +191,7 @@ definition:
                                     path: "admin/${uesio/core.id}"
                                 uesio.styles:
                                   root:
-                                    background: "#32e896"
+                                    background: $Theme{color.primary}
                                     border-radius: 1.5em
                                     width: 3em
                                     margin-right: 1em
@@ -238,15 +245,20 @@ definition:
 
     articles:
       collection: uesio/cms.article
+      order:
+        - field: uesio/core.updatedat
+          desc: true
       fields:
-        uesio/core.createdat:
+        uesio/core.updatedat:
         uesio/core.id:
+        uesio/docs.order:
         uesio/docs.track:
           fields:
             uesio/core.id:
             uesio/docs.name:
         uesio/cms.content:
         uesio/cms.name:
+        uesio/cms.slug:
 
     # Tracks
     tracks:
@@ -257,7 +269,6 @@ definition:
     newtrack:
       collection: uesio/docs.track
       init:
-        create: false
         query: false
       fields:
         uesio/core.id:

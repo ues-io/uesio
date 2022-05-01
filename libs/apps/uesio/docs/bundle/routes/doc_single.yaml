@@ -1,4 +1,4 @@
 name: doc_single
-path: docs/{recordid}
+path: docs/{track}/{slug}
 view: uesio/docs.doc_single
 public: true

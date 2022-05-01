@@ -13,34 +13,48 @@ definition:
         #             uesio.variant: uesio/io.secondary
 
     # variant: Admin section
-    - uesio/io.box:
-        uesio.styles:
-          root:
-            backgroundColor: "#eee"
-            padding: 40px
-            display: flex
-        components:
-          - uesio/io.box:
-              uesio.styles:
-                root:
-                  flex: 30%
+    - uesio/io.grid:
+        uesio.variant: uesio/docs.mainlayout
+        items:
+          - uesio/io.griditem:
               components:
+                - uesio/io.text:
+                    text: Documentation
+                    element: h3
                 - uesio/io.list:
                     wire: articles
                     id: articleList
                     mode: EDIT
                     components:
-                      - uesio/io.text:
-                          element: p
-                          text: ${uesio/cms.name}
-
-          - uesio/io.box:
-              uesio.styles:
-                root:
-                  flex: 70%
-                  border: 1px solid black
+                      # Active
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "docs/${uesio/docs.track->uesio/docs.name}/${uesio/cms.slug}"
+                          uesio.styles:
+                            root:
+                              marginBottom: 1em
+                              fontWeight: 700
+                          content:
+                            - uesio/io.text:
+                                uesio.display:
+                                  - value: $Param{recordid}
+                                    field: uesio/core.id
+                                    type: fieldValue
+                                    operator: EQUALS
+                                text: ${uesio/cms.name}
+                            # Non active
+                            - uesio/io.text:
+                                uesio.display:
+                                  - value: $Param{recordid}
+                                    field: uesio/core.id
+                                    operator: NOT_EQUALS
+                                text: ${uesio/cms.name}
+                                uesio.styles:
+                                  root:
+                                    opacity: 0.6
+          - uesio/io.griditem:
               components:
-                # New article
                 - uesio/io.list:
                     wire: article
                     id: articleList
@@ -53,6 +67,7 @@ definition:
                           components:
                             - uesio/io.text:
                                 text: ${uesio/cms.name}
+                                element: h1
 
                             - uesio/io.field:
                                 fieldId: uesio/cms.content
@@ -63,6 +78,8 @@ definition:
   wires:
     articles:
       collection: uesio/cms.article
+      order:
+        - field: uesio/docs.order
       fields:
         uesio/core.createdat:
         uesio/core.id:
@@ -72,6 +89,7 @@ definition:
             uesio/docs.name:
         uesio/cms.content:
         uesio/cms.name:
+        uesio/docs.order:
 
     article:
       collection: uesio/cms.article
@@ -85,6 +103,6 @@ definition:
         uesio/cms.content:
         uesio/cms.name:
       conditions:
-        - field: uesio/core.id
-          param: recordid
+        - field: uesio/cms.slug
+          param: slug
           valueSource: PARAM
