@@ -120,20 +120,12 @@ const getKeyFromPath = (
 		return parts[0].substring(0, parts[0].length - 5)
 	}
 	if (metadataType === "FIELD") {
-		if (!grouping) {
-			throw new Error("Must specify collection for fields list")
-		}
-		// TODO: Should be os path separator
-		const parts = path.split("/")
-		if (parts.length !== 2 || !parts[1].endsWith(".yaml")) {
+		if (!path.endsWith(".yaml")) {
 			// Ignore this file
 			return ""
 		}
-		if (parts[0] !== grouping) {
-			// Ignore this file
-			return ""
-		}
-		return parts[1].substring(0, parts[1].length - 5)
+		const parts = path.split(".")
+		return parts[0]
 	}
 	if (metadataType === "COMPONENT") {
 		if (grouping) {
@@ -173,7 +165,15 @@ const getLocalMetadataItemsList = async (
 	grouping?: string
 ): Promise<string[]> => {
 	const metadataDir = metadata.METADATA[metadataType]
-	const dirPath = "./bundle/" + metadataDir + "/"
+	const BaseDirPath = "./bundle/" + metadataDir + "/"
+	let dirPath = BaseDirPath
+	if (metadataType === "FIELD") {
+		const collection = grouping?.split(".").pop()
+		dirPath = collection
+			? BaseDirPath + app + "/" + collection
+			: BaseDirPath
+	}
+
 	const files = await getFiles(dirPath)
 
 	if (!files) {
