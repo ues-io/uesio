@@ -7,7 +7,7 @@ function view(bot) {
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
 	var tableColumnsYaml = bot.repeatString(
 		fields,
-		"- io.column:\n    field: ${key}\n"
+		"- uesio/io.column:\n    field: ${key}\n"
 	)
 
 	var definition = bot.mergeYamlTemplate(
