@@ -1,0 +1,6 @@
+name: slug
+type: TEXT
+label: Slug
+validate:
+  type: REGEX
+  regex: ^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$
