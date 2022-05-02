@@ -17,7 +17,7 @@ function view(bot) {
 		"detailview.yaml"
 	)
 
-	bot.runGenerator("uesio", "view", {
+	bot.runGenerator("uesio/core", "view", {
 		name: name,
 		definition: definition,
 	})
