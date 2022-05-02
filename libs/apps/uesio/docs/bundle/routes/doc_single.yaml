@@ -1,0 +1,5 @@
+name: doc_single
+path: docs/{track}/{slug}
+view: uesio/docs.doc_single
+theme: uesio/docs.default
+public: true
