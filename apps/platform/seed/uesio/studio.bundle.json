@@ -52,5 +52,14 @@
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
+	},
+	{
+		"app": {
+			"id": "uesio/cms"
+		},
+		"description": "Uesio CMS",
+		"major": "0",
+		"minor": "0",
+		"patch": "1"
 	}
 ]

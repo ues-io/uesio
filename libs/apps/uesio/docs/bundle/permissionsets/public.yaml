@@ -1,0 +1,10 @@
+name: public
+named: {}
+views: {}
+collections: {}
+routes: {}
+files: {}
+allowallcollections: true
+allowallviews: true
+allowallroutes: true
+allowallfiles: true

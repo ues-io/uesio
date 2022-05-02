@@ -136,7 +136,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 	}
 
 	if !hasToken {
-		return errors.New("User does not have access to write to this field" + change.IDValue)
+		return errors.New("User does not have access to write to this field: " + change.IDValue)
 	}
 
 	return nil

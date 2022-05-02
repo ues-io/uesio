@@ -1,7 +1,0 @@
-name: content
-component: io.griditem
-label: Content
-definition:
-  uesio.styles:
-    root:
-      backgroundColor: "#fafafa"
