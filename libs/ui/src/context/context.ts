@@ -361,8 +361,7 @@ class Context {
 	}
 
 	getFieldMode = () =>
-		this.stack.find((frame) => frame?.fieldMode === "EDIT")?.fieldMode ||
-		"READ"
+		this.stack.find((frame) => frame?.fieldMode)?.fieldMode || "READ"
 
 	getBuildMode = () => {
 		for (const frame of this.stack) {

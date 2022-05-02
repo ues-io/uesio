@@ -101,11 +101,10 @@ definition:
                               - uesio/docs.name
                             returnFields:
                               - uesio/docs.name
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              display: flex
-                          components:
+                      - uesio/io.grid:
+                          templateColumns: 1fr 1fr
+                          columnGap: 10px
+                          items:
                             - uesio/io.field:
                                 fieldId: uesio/cms.content
                                 displayAs: MARKDOWN
