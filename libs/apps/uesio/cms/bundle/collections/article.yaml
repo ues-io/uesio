@@ -1,3 +1,4 @@
 name: article
 label: article
 pluralLabel: articles
+public: true

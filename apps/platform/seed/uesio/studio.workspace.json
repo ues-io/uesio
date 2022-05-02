@@ -16,5 +16,11 @@
 		"app": {
 			"id": "uesio/cms"
 		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"id": "uesio/docs"
+		}
 	}
 ]

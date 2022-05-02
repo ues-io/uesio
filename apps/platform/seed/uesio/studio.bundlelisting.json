@@ -46,5 +46,13 @@
 		"uesio/studio.app": {
 			"uesio/core.id": "uesio/web"
 		}
+	},
+	{
+		"uesio/studio.description": "Uesio Content Management System",
+		"uesio/studio.icon": "article",
+		"uesio/studio.color": "#b4a99f",
+		"uesio/studio.app": {
+			"uesio/core.id": "uesio/cms"
+		}
 	}
 ]

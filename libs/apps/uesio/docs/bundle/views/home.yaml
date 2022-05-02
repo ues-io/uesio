@@ -1,0 +1,20 @@
+name: home
+definition:
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/docs.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: cyan
+              components:
+                - uesio/io.text:
+                    text: first
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: orange
+              components:
+                - uesio/io.text:
+                    text: second
