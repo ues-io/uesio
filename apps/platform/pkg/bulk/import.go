@@ -42,6 +42,7 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	}
 
 	err = datasource.Save(saveRequest, session)
+	err = datasource.HandleSaveRequestErrors(saveRequest, err)
 	if err != nil {
 		return nil, err
 	}

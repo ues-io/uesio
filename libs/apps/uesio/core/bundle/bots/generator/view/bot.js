@@ -3,9 +3,8 @@ function view(bot) {
 	var definition =
 		bot.params.get("definition") || bot.getTemplate("blankdefinition.yaml")
 
-	var namespace = bot.getNamespace()
 	bot.generateYamlFile(
-		"views/" + namespace + "." + name + ".yaml",
+		"views/" + name + ".yaml",
 		{
 			name: name,
 			definition: definition,

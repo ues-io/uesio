@@ -1,6 +1,5 @@
 function theme(bot) {
 	var name = bot.params.get("name")
-	var namespace = bot.getNamespace()
 	var primary = bot.params.get("primary")
 	var secondary = bot.params.get("secondary")
 	var error = bot.params.get("error")
@@ -9,7 +8,7 @@ function theme(bot) {
 	var success = bot.params.get("success")
 
 	bot.generateFile(
-		"themes/" + namespace + "." + name + ".yaml",
+		"themes/" + name + ".yaml",
 		{
 			name: name,
 			primary: primary,

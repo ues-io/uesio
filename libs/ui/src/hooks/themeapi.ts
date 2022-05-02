@@ -37,7 +37,6 @@ class ThemeAPI {
 						this.dispatcher(
 							setTheme({
 								key: themeId,
-								type: "theme",
 								content: themeResult,
 								parsed: yamlDoc.toJSON(),
 							})

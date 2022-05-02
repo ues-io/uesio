@@ -257,13 +257,13 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
-		err = connection.Save(op)
+		err = performCascadeDeletes(op, connection, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
 		}
 
-		err = performCascadeDeletes(op, connection, session)
+		err = connection.Save(op)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
