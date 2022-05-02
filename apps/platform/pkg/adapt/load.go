@@ -24,14 +24,14 @@ type LoadOp struct {
 
 // LoadRequestField struct
 type LoadRequestField struct {
-	ID     string             `json:"id"`
-	Fields []LoadRequestField `json:"fields"`
+	ID     string             `json:"id" bot:"id"`
+	Fields []LoadRequestField `json:"fields" bot:"fields"`
 }
 
 // LoadRequestCondition struct
 type LoadRequestCondition struct {
-	Field        string      `json:"field"`
-	Value        interface{} `json:"value"`
+	Field        string      `json:"field" bot:"field"`
+	Value        interface{} `json:"value" bot:"value"`
 	ValueSource  string      `json:"valueSource"`
 	Type         string      `json:"type"`
 	Operator     string      `json:"operator"`
@@ -42,8 +42,8 @@ type LoadRequestCondition struct {
 
 // LoadRequestOrder struct
 type LoadRequestOrder struct {
-	Field string `json:"field"`
-	Desc  bool   `json:"desc"`
+	Field string `json:"field" bot:"field"`
+	Desc  bool   `json:"desc" bot:"desc"`
 }
 
 // FieldsMap type
