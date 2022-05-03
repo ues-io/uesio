@@ -1,0 +1,5 @@
+name: amount
+type: NUMBER
+label: Amount
+number:
+  decimals: 0

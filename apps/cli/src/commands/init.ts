@@ -1,13 +1,63 @@
 import { Command } from "@oclif/command"
 import inquirer from "inquirer"
-import { authorize } from "../auth/login"
+import { authorize, User } from "../auth/login"
 import unzipper from "unzipper"
+import path from "path"
 import { metadataNameValidator } from "../generate/prompts"
 import { post } from "../request/request"
 import { getMetadataByTypePlural } from "../metadata/metadata"
 import { load } from "../wire/load"
 import { createChange, save } from "../wire/save"
 import { setActiveWorkspace } from "../config/config"
+
+const getApp = async (user: User, name: string) => {
+	const response = await load(getMetadataByTypePlural("apps"), user, [
+		{
+			field: "uesio/core.id",
+			value: user.id + "/" + name,
+			valueSource: "VALUE",
+			active: true,
+		},
+	])
+	return response.wires[0].data?.length ? response.wires[0].data[0] : null
+}
+
+const createApp = async (user: User, name: string) =>
+	save(
+		getMetadataByTypePlural("apps"),
+		user,
+		createChange([
+			{
+				"uesio/studio.name": name,
+				"uesio/studio.description": "A new app",
+				"uesio/studio.color": "#00FF00",
+			},
+		])
+	)
+
+const getDevWorkspace = async (user: User, appName: string) => {
+	const response = await load(getMetadataByTypePlural("workspaces"), user, [
+		{
+			field: "uesio/core.id",
+			value: user.id + "/" + appName + "_dev",
+			valueSource: "VALUE",
+			active: true,
+		},
+	])
+	return response.wires[0].data?.length ? response.wires[0].data[0] : null
+}
+
+const createDevWorkspace = async (user: User, appName: string) =>
+	await save(
+		getMetadataByTypePlural("workspaces"),
+		user,
+		createChange([
+			{
+				"uesio/studio.name": "dev",
+				"uesio/studio.app": user.id + "/" + appName,
+			},
+		])
+	)
 
 export default class Init extends Command {
 	static description = "run a generator bot"
@@ -24,47 +74,33 @@ export default class Init extends Command {
 			name: "name",
 			message: "App Name",
 			type: "input",
+			default: path.basename(process.cwd()),
 			validate: metadataNameValidator,
 		})
 
-		const appMetadata = getMetadataByTypePlural("apps")
-		const workspaceMetadata = getMetadataByTypePlural("workspaces")
-		const appresponse = await load(appMetadata, user)
-		const appNames = appresponse.wires[0].data?.map(
-			(app) => app["uesio/core.id"]
-		)
+		const existingApp = await getApp(user, name)
 
-		if (!appNames) {
-			throw new Error("Could not query for apps")
+		if (!existingApp) {
+			await createApp(user, name)
 		}
-		if (!appNames.includes(name)) {
-			await save(
-				appMetadata,
-				user,
-				createChange([
-					{
-						"uesio/studio.name": name,
-						"uesio/studio.description": "A new app",
-						"uesio/studio.color": "#00FF00",
-					},
-				])
-			)
-			await save(
-				workspaceMetadata,
-				user,
-				createChange([
-					{
-						"uesio/studio.name": "dev",
-						"uesio/studio.app": name,
-					},
-				])
-			)
-			await setActiveWorkspace(name, "dev")
+
+		const app = await getApp(user, name)
+
+		if (!app) throw new Error("error creating or getting the app")
+
+		const devWorkspace = await getDevWorkspace(user, name)
+
+		if (!devWorkspace) {
+			await createDevWorkspace(user, name)
 		}
+
+		const appId = user.id + "/" + name
+
+		await setActiveWorkspace(appId, "dev")
 
 		const response = await post(
-			`version/uesio/core/v0.0.1/metadata/generate/init`,
-			JSON.stringify({ name }),
+			`version/uesio/core/uesio/core/v0.0.1/metadata/generate/init`,
+			JSON.stringify({ name: appId }),
 			user.cookie
 		)
 
@@ -77,7 +113,7 @@ export default class Init extends Command {
 				})
 			)
 			.on("close", () => {
-				console.log("New bundle extracted!")
+				console.log("Initialized App: " + name)
 			})
 	}
 }

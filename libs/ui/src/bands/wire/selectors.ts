@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux"
+import { createSelector } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { selectors } from "./adapter"
 import { PlainWire } from "./types"
@@ -6,6 +7,20 @@ import { PlainWire } from "./types"
 // Both gets wire state and subscribes the component to wire changes
 const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 	useSelector((state: RootState) => selectWire(state, viewId, wireName))
+
+const useWires = (
+	fullWireIds: string[]
+): Record<string, PlainWire | undefined> =>
+	useSelector((state: RootState) => selectWires(state, fullWireIds))
+
+const selectWires = createSelector(
+	selectors.selectEntities,
+	(state: RootState, fullWireIds: string[]) => fullWireIds,
+	(items, fullWireIds) =>
+		Object.fromEntries(
+			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+		)
+)
 
 const selectWire = (
 	state: RootState,
@@ -19,4 +34,4 @@ const selectWire = (
 const getFullWireId = (viewId: string, wireName: string) =>
 	`${viewId}/${wireName}`
 
-export { useWire, selectWire, getFullWireId }
+export { useWire, useWires, selectWire, getFullWireId }

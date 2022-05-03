@@ -128,11 +128,6 @@ func (gba *GeneratorBotAPI) RepeatString(repeater []string, templateString strin
 	return strings.Join(mergedStrings, ""), nil
 }
 
-// GetNamespace function
-func (gba *GeneratorBotAPI) GetNamespace() string {
-	return gba.session.GetContextAppName()
-}
-
 func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
 	node, err := mergeYamlString(templateString, params)
 	if err != nil {

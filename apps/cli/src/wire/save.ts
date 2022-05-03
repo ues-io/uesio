@@ -26,7 +26,7 @@ const save = async (
 		user.cookie
 	)
 
-	return response.json() as Promise<wire.SaveResponseBatch>
+	return response.json()
 }
 
 const createChange = (
