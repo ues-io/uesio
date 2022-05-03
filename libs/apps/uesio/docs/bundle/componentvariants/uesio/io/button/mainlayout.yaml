@@ -1,0 +1,10 @@
+name: mainlayout
+label: Main Layout
+definition:
+  templateRows: 60px fr
+  templateColumns: 300px 1fr
+  uesio.styles:
+    root:
+      minHeight: 100vh
+      maxWidth: 1200px
+      margin: auto

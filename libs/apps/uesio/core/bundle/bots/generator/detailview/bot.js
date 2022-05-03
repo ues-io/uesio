@@ -5,7 +5,10 @@ function view(bot) {
 	var wirename = bot.params.get("wirename")
 
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
-	var formFieldsYaml = bot.repeatString(fields, "- io.field: ${key}\n")
+	var formFieldsYaml = bot.repeatString(
+		fields,
+		"- uesio/io.field:\n    fieldId: ${key}\n"
+	)
 
 	var definition = bot.mergeYamlTemplate(
 		{
@@ -17,7 +20,7 @@ function view(bot) {
 		"detailview.yaml"
 	)
 
-	bot.runGenerator("uesio", "view", {
+	bot.runGenerator("uesio/core", "view", {
 		name: name,
 		definition: definition,
 	})

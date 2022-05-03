@@ -99,6 +99,7 @@ const getBundleInfo = async (): Promise<BundleInfo> => {
 }
 
 const getKeyFromPath = (
+	app: string,
 	metadataType: metadata.MetadataType,
 	path: string,
 	grouping?: string
@@ -117,7 +118,7 @@ const getKeyFromPath = (
 			// Ignore this file
 			return ""
 		}
-		return parts[0].substring(0, parts[0].length - 5)
+		return app + "." + parts[0].substring(0, parts[0].length - 5)
 	}
 	if (metadataType === "FIELD") {
 		if (!grouping) {
@@ -125,15 +126,18 @@ const getKeyFromPath = (
 		}
 		// TODO: Should be os path separator
 		const parts = path.split("/")
-		if (parts.length !== 2 || !parts[1].endsWith(".yaml")) {
+		if (parts.length !== 4 || !parts[3].endsWith(".yaml")) {
 			// Ignore this file
 			return ""
 		}
-		if (parts[0] !== grouping) {
+
+		const collection = `${parts[0]}/${parts[1]}.${parts[2]}`
+
+		if (collection !== grouping) {
 			// Ignore this file
 			return ""
 		}
-		return parts[1].substring(0, parts[1].length - 5)
+		return app + "." + parts[3].substring(0, parts[3].length - 5)
 	}
 	if (metadataType === "COMPONENT") {
 		if (grouping) {
@@ -145,7 +149,7 @@ const getKeyFromPath = (
 			// Ignore this file
 			return ""
 		}
-		return parts[1]
+		return app + "." + parts[1]
 	}
 	return ""
 }
@@ -174,6 +178,7 @@ const getLocalMetadataItemsList = async (
 ): Promise<string[]> => {
 	const metadataDir = metadata.METADATA[metadataType]
 	const dirPath = "./bundle/" + metadataDir + "/"
+
 	const files = await getFiles(dirPath)
 
 	if (!files) {
@@ -182,11 +187,12 @@ const getLocalMetadataItemsList = async (
 
 	return files.flatMap((fileName) => {
 		const fileKey = getKeyFromPath(
+			app,
 			metadataType,
 			fileName.slice(dirPath.length),
 			grouping
 		)
-		return fileKey ? [app + "." + fileKey] : []
+		return fileKey ? [fileKey] : []
 	})
 }
 
