@@ -1,0 +1,25 @@
+{
+	"jobtype": "import",
+	"collection": "uesio/cms.article",
+	"filetype": "csv",
+	"upsertkey": "uesio/cms.name",
+	"mappings": {
+		"uesio/docs.track": {
+			"matchfield": "uesio/docs.name",
+			"columnname": "track"
+		},
+		"uesio/cms.name": {
+			"columnname": "name"
+		},
+		"uesio/cms.slug": {
+			"columnname": "slug"
+		},
+		"uesio/cms.content": {
+			//we need a userfile or change the field to point to a static file
+			"columnname": "content"
+		},
+		"uesio/docs.order": {
+			"columnname": "order"
+		}
+	}
+}
