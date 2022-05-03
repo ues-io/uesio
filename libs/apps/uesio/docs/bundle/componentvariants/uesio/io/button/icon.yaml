@@ -1,0 +1,9 @@
+name: icon
+label: Icon Button
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: $Theme{color.primary}
+      border-radius: 1.5em
+      width: 3em
+      margin-right: 1em

@@ -1,0 +1,5 @@
+name: track_editor
+path: admin/track/{recordid}
+view: uesio/docs.track_editor
+theme: uesio/docs.default
+public: true

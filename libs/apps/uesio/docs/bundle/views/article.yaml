@@ -1,0 +1,23 @@
+name: article
+definition:
+  components:
+    - uesio/io.griditem:
+        components:
+          - uesio/io.list:
+              # wire: article
+              id: articleList
+              mode: READ
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        padding: 15px
+                    components:
+                      - uesio/io.text:
+                          text: ${uesio/cms.name}
+                          element: h1
+                      - uesio/io.field:
+                          fieldId: uesio/cms.content
+                          displayAs: MARKDOWN
+                          id: mdcontent
+                          labelPosition: none

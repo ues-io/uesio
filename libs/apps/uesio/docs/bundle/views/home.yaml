@@ -7,14 +7,49 @@ definition:
           - uesio/io.griditem:
               uesio.styles:
                 root:
-                  backgroundColor: cyan
+                  gridColumnStart: col1-start
+                  gridColumnEnd: col2-end
               components:
                 - uesio/io.text:
-                    text: first
-          - uesio/io.griditem:
-              uesio.styles:
-                root:
-                  backgroundColor: orange
-              components:
+                    text: Welcome to uesio
+                    element: h1
                 - uesio/io.text:
-                    text: second
+                    text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    element: p
+                # Deck of tracks
+                - uesio/io.deck:
+                    wire: tracks
+                    id: trackList
+                    uesio.styles:
+                      root:
+                        display: flex
+                        gap: 15px
+                    components:
+                      - uesio/io.tile:
+                          uesio.styles:
+                            root:
+                              border: "1px solid #000"
+                              flex: 50%
+                              padding: 15px
+                          content:
+                            - uesio/io.text:
+                                text: ${uesio/docs.name}
+                                element: h4
+                            - uesio/io.text:
+                                text: ${uesio/docs.description}
+                                element: p
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.primary
+                                text: Learn mores
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "docs/${uesio/docs.name}"
+
+  wires:
+    # Tracks
+    tracks:
+      collection: uesio/docs.track
+      fields:
+        uesio/core.id:
+        uesio/docs.name:
+        uesio/docs.description:

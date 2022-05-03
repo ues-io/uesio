@@ -1,0 +1,54 @@
+name: doclist
+definition:
+  components:
+    - uesio/io.list:
+        id: articleList
+        mode: EDIT
+        components:
+          # Active
+          - uesio/io.tile:
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "docs/${uesio/docs.track->uesio/docs.name}/${uesio/cms.slug}"
+              uesio.styles:
+                root:
+                  marginBottom: 1em
+                  fontWeight: 700
+              content:
+                - uesio/io.text:
+                    uesio.display:
+                      - value: $Param{slug}
+                        field: uesio/cms.slug
+                        type: fieldValue
+                        operator: EQUALS
+                      - type: paramIsSet
+                        param: slug
+                    # text: ${uesio/cms.name}
+                    text: ${uesio/cms.name}
+                # Non active
+                - uesio/io.text:
+                    uesio.display:
+                      - value: $Param{slug}
+                        field: uesio/cms.slug
+                        operator: NOT_EQUALS
+                      - type: paramIsSet
+                        param: slug
+                      - value: nope
+                        operator: NOT_EQUALS
+                        type: paramValue
+                        param: slug
+                    text: ${uesio/cms.name}
+                    uesio.styles:
+                      root:
+                        opacity: 0.6
+
+                # For the track page... if we could dor and/or in conditions.. that would make the below unecessary
+                - uesio/io.text:
+                    uesio.display:
+                      - value: nope
+                        type: paramValue
+                        param: slug
+                    text: ${uesio/cms.name}
+                    uesio.styles:
+                      root:
+                        opacity: 0.6

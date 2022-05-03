@@ -1,9 +1,10 @@
 name: mainlayout
 label: Main Layout
 definition:
-  templateRows: 60px fr
-  templateColumns: 300px 1fr
+  templateColumns: "[col1-start] 300px [col2-start] 1fr [mainEnd]"
+  templateRows: "[row1-start] 60px [row2-start] 20px [row3-start] 1fr [row3-end]"
   uesio.styles:
     root:
       minHeight: 100vh
-public: true
+      maxWidth: 1200px
+      margin: auto

@@ -1,0 +1,13 @@
+name: breadcrumbs
+label: Breadcrumbs
+definition:
+  uesio.styles:
+    root:
+      gridColumnStart: col1-start
+      gridColumnEnd: col2-end
+      gridRowStart: row1-start
+      gridRowEnd: row2-start
+      backgroundColor: "#c7c7c7"
+  components:
+    - uesio/io.text:
+        text: $Param{track} / path /

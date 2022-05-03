@@ -1,4 +1,4 @@
-name: doc_editor
+name: track_editor
 definition:
   components:
     - uesio/io.titlebar:
@@ -65,8 +65,8 @@ definition:
               components:
                 # New article
                 - uesio/io.list:
-                    wire: article
-                    id: articleList
+                    wire: track
+                    id: trackList
                     mode: EDIT
                     components:
                       # Slug + order
@@ -79,27 +79,23 @@ definition:
                                 flex: 1
                           components:
                             - uesio/io.field:
-                                fieldId: uesio/cms.slug
-                            - uesio/io.field:
-                                fieldId: uesio/docs.order
-                            - uesio/io.field:
-                                fieldId: uesio/docs.track
+                                fieldId: uesio/docs.doc
                                 reference:
-                                  template: ${uesio/docs.name}
+                                  template: ${uesio/cms.name}
                                   searchFields:
-                                    - uesio/docs.name
+                                    - uesio/cms.name
                                   returnFields:
-                                    - uesio/docs.name
+                                    - uesio/cms.name
                             - uesio/io.button:
                                 icon: visibility
                                 uesio.variant: uesio/docs.icon
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "docs/${uesio/docs.track->uesio/docs.name}/${uesio/cms.slug}"
+                                    path: "docs/${uesio/docs.track->uesio/docs.name}/"
 
                       # Name
                       - uesio/io.field:
-                          fieldId: uesio/cms.name
+                          fieldId: uesio/docs.name
 
                       # Track
 
@@ -112,16 +108,16 @@ definition:
                                 flex: 1
                           components:
                             - uesio/io.field:
-                                fieldId: uesio/cms.content
+                                fieldId: uesio/docs.content
                                 displayAs: MARKDOWN
                                 id: mdcontent
-                                labelPosition: none
+
                             - uesio/io.field:
-                                labelPosition: none
+                                label: Preview
                                 id: mdcontent
                                 uesio.context:
                                   fieldMode: READ
-                                fieldId: uesio/cms.content
+                                fieldId: uesio/docs.content
                                 displayAs: MARKDOWN
 
                       - uesio/io.group:
@@ -134,47 +130,51 @@ definition:
                                 text: Cancel
                                 signals:
                                   - signal: wire/CANCEL
-                                    wire: article
+                                    wire: track
                             - uesio/io.button:
                                 uesio.variant: uesio/io.primary
                                 text: Save
                                 signals:
                                   - signal: wire/SAVE
                                     wires:
-                                      - article
+                                      - track
                                   - signal: component/uesio/io.field/SAVE_FILE
                                     target: mdcontent
 
   wires:
-    article:
-      collection: uesio/cms.article
+    track:
+      collection: uesio/docs.track
       fields:
         uesio/core.createdat:
         uesio/core.id:
-        uesio/docs.track:
+        uesio/docs.content:
+        uesio/docs.name:
+        uesio/docs.doc:
           fields:
             uesio/core.id:
-            uesio/docs.name:
-        uesio/cms.content:
-        uesio/cms.slug:
-        uesio/cms.name:
-        uesio/docs.order:
+            uesio/cms.name:
       conditions:
         - field: uesio/core.id
           param: recordid
           valueSource: PARAM
 
+    # All the articles in this track
     articles:
       collection: uesio/cms.article
-      order:
-        - field: uesio/docs.order
       fields:
         uesio/core.createdat:
         uesio/core.id:
-        uesio/docs.order:
         uesio/docs.track:
           fields:
             uesio/core.id:
-            uesio/docs.name:
         uesio/cms.content:
         uesio/cms.name:
+        uesio/docs.order:
+        uesio/cms.slug:
+      order:
+        - field: uesio/docs.order
+      conditions:
+        - field: uesio/docs.track
+          lookupWire: track
+          lookupField: uesio/core.id
+          valueSource: LOOKUP

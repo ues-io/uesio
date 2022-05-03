@@ -1,10 +1,11 @@
-name: doc_single
+name: track
 definition:
   components:
     - uesio/io.titlebar:
         uesio.variant: uesio/io.main
-        title: $Param{slug}
+        title: $Param{track}
         subtitle: Is there a doc in the room?!
+
     - uesio/io.grid:
         uesio.variant: uesio/docs.mainlayout
         items:
@@ -12,22 +13,36 @@ definition:
               uesio.variant: uesio/docs.localnav
               components:
                 - uesio/io.text:
-                    text: ${uesio/docs.name} Documentation
-                    uesio.context:
-                      wire: track
+                    text: $Param{track}
                     element: h3
                 - uesio/core.view:
                     view: uesio/docs.doclist
                     params:
-                      slug: $Param{slug}
+                      slug: nope
                     uesio.context:
                       wire: articles
           - uesio/io.griditem:
               components:
-                - uesio/core.view:
-                    view: uesio/docs.article
-                    uesio.context:
-                      wire: article
+                - uesio/io.list:
+                    wire: track
+                    components:
+                      - uesio/io.text:
+                          text: ${uesio/docs.name}
+                          element: h1
+                      - uesio/io.text:
+                          text: "prerequisites: ${uesio/docs.prerequisites}"
+                          element: p
+                      - uesio/io.field:
+                          fieldId: uesio/docs.content
+                          displayAs: MARKDOWN
+                          id: mdcontent
+                          labelPosition: none
+                      - uesio/io.button:
+                          text: Start learning
+                          uesio.variant: uesio/io.primary
+                          signal:
+                            - signal: "route/NAVIGATE"
+                              path: "docs/${uesio/docs.name}/${uesio/docs.doc->uesio/docs.name}"
 
   wires:
     track:
@@ -37,6 +52,7 @@ definition:
         uesio/docs.name:
         uesio/docs.description:
         uesio/docs.content:
+        uesio/docs.prerequisites:
         uesio/docs.doc:
           fields:
             uesio/core.id:
@@ -79,7 +95,12 @@ definition:
             uesio/docs.name:
         uesio/cms.content:
         uesio/cms.name:
+        uesio/docs.order:
+      order:
+        - field: uesio/docs.order
+      limit: 2
       conditions:
-        - field: uesio/cms.slug
-          param: slug
-          valueSource: PARAM
+        - field: uesio/core.id
+          lookupWire: track
+          lookupField: uesio/docs.doc
+          valueSource: LOOKUP
