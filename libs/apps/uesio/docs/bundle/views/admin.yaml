@@ -5,12 +5,6 @@ definition:
         uesio.variant: uesio/io.main
         title: Admin panel
         subtitle: Is there a doc in the room?!
-        actions:
-          - uesio/io.group:
-              components:
-                - uesio/io.button:
-                    text: Create a New Collection
-                    uesio.variant: uesio/io.secondary
 
     # variant: Admin section
     - uesio/io.grid:
@@ -126,9 +120,9 @@ definition:
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: Cancel
-                                            signal:
+                                            signals:
                                               - signal: wire/CANCEL
-                                                wires: newtrack
+                                                wire: newtrack
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.primary
                                             text: Save

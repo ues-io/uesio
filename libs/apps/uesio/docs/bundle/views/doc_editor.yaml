@@ -38,7 +38,7 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "admin/${uesio/core.id}"
+                              path: "admin/doc/${uesio/core.id}"
                           uesio.styles:
                             root:
                               marginBottom: 1em
@@ -70,14 +70,10 @@ definition:
                     mode: EDIT
                     components:
                       # Slug + order
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              display: flex
-                              gap: 15px
-                              "div":
-                                flex: 1
-                          components:
+                      - uesio/io.grid:
+                          templateColumns: 1fr 1fr
+                          columnGap: 10px
+                          items:
                             - uesio/io.field:
                                 fieldId: uesio/cms.slug
                             - uesio/io.field:
