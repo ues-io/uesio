@@ -9,9 +9,9 @@ definition:
       myfield2:
   # Components are how we describe the layout of our view
   components:
-    - io.text:
+    - uesio/io.text:
         text: Some text here
-    - io.button:
+    - uesio/io.button:
         label: Press this button
         signals:
           - signal: notification/ADD

@@ -14,5 +14,9 @@
 	{
 		"uesio/studio.app": "uesio/docs",
 		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": "uesio/web",
+		"uesio/studio.name": "maintainers"
 	}
 ]
