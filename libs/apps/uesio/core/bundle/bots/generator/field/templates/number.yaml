@@ -1,2 +1,2 @@
 number:
-  decimals: ${number}
+  decimals: ${number_decimals}
