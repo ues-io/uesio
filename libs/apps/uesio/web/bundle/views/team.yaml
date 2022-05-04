@@ -4,26 +4,26 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: web.topbar
-    - io.grid:
-        uesio.variant: web.mainlayout
+    - uesio/core.view:
+        view: uesio/web.topbar
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
         items:
-          - io.griditem:
+          - uesio/io.griditem:
               area: main
               components:
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns: 400px 1fr
                     uesio.styles:
                       root:
                         padding: 80px
                     items:
-                      - io.griditem:
+                      - uesio/io.griditem:
                           components:
-                            - io.text:
-                                uesio.variant: web.callout
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.callout
                                 text: The team
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns:
                       sm: 1fr
                       md: 1fr 1fr
@@ -31,113 +31,113 @@ definition:
                       xl: 1fr 1fr 1fr 1fr
                     columnGap: 50px
                     items:
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.abel
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.abel
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Abel Jimenez Molla
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Senior Software Engineer
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.albin
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.albin
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Albin Duhanaj
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Senior Project Manager
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.ben
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.ben
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Ben Hubbard
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Lead Software Engineer
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.gregg
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.gregg
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Gregg Baxter
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Product Manager
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.james
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.james
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: James Muir
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Solutions Engineer
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.matti
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.matti
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Matthias Fankhauser
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Senior Solutions Engineer
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.primi
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.primi
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Michael Primessnig
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Senior Program Manager
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.osman
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.osman
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Osman Jakupi
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Professional Services Director
-                      - io.box:
-                          uesio.variant: web.phototext
+                      - uesio/io.box:
+                          uesio.variant: uesio/web.phototext
                           components:
-                            - io.image:
-                                uesio.variant: web.image
-                                file: web.wessel
-                            - io.text:
-                                uesio.variant: web.teamtextname
+                            - uesio/io.image:
+                                uesio.variant: uesio/web.image
+                                file: uesio/web.wessel
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtextname
                                 text: Wessel van der Plas
-                            - io.text:
-                                uesio.variant: web.teamtext
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.teamtext
                                 text: Senior Software Engineer
-    - uesio.view:
-        view: web.footer
+    - uesio/core.view:
+        view: uesio/web.footer

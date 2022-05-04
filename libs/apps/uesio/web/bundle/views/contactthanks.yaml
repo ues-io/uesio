@@ -4,15 +4,15 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: web.topbar
-    - io.grid:
-        uesio.variant: web.mainlayout
+    - uesio/core.view:
+        view: uesio/web.topbar
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
         items:
-          - io.griditem:
+          - uesio/io.griditem:
               area: main
               components:
-                - io.grid:
+                - uesio/io.grid:
                     templateColumns:
                       sm: 1fr
                       md: 350px 1fr
@@ -22,13 +22,13 @@ definition:
                       root:
                         padding: 80px
                     items:
-                      - io.griditem:
+                      - uesio/io.griditem:
                           components:
-                            - io.text:
-                                uesio.variant: web.callout
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.callout
                                 text: Thanks for contacting us.
-                            - io.text:
-                                uesio.variant: web.calloutsub
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsub
                                 text: We will send you an email or something cool like that.
-    - uesio.view:
-        view: web.footer
+    - uesio/core.view:
+        view: uesio/web.footer
