@@ -177,6 +177,30 @@ const defaultTheme: ThemeState = {
 	},
 }
 
+// Add the componentname and key defined in component definition to the the classname visible in the DOM
+const labelCSSClasses = (
+	styleObject?: Record<string, CSSInterpolation>,
+	componentType?: string
+): DefinitionMap => {
+	if (!componentType || !styleObject) return {}
+	//  "/" or "." bring terror to the DOM
+	const componentLabel = componentType.replace(/\/|\./g, "-")
+	return Object.entries(styleObject).reduce(
+		(prev, [key, value]) => ({
+			...prev,
+			[key]: {
+				...(value as Record<string, unknown>),
+				label:
+					// If a builder has given a label, use it.
+					value && typeof value === "object" && "label" in value
+						? value.label
+						: `${key}-${componentLabel}`,
+			},
+		}),
+		{}
+	)
+}
+
 function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
@@ -185,7 +209,13 @@ function useStyles<K extends string>(
 		defaults,
 		mergeDefinitionMaps(
 			{},
-			props?.definition?.["uesio.styles"] as DefinitionMap,
+			labelCSSClasses(
+				props?.definition?.["uesio.styles"] as Record<
+					string,
+					CSSInterpolation
+				>,
+				props?.componentType
+			),
 			props?.context
 		)
 	)
