@@ -1,4 +1,1 @@
-name: ${name}
-collection: ${collection}
-type: ${type}
-label: ${label}
+${definition}

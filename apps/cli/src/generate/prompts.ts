@@ -3,6 +3,7 @@ import inquirer from "inquirer"
 import { get, parseJSON } from "../request/request"
 import { collection, metadata } from "#uesio/ui"
 import { getMetadataList } from "../config/config"
+import { shouldDisplay } from "libs/ui/src/componentexports"
 
 type BotParam = {
 	name: string
@@ -11,6 +12,7 @@ type BotParam = {
 	metadataType?: metadata.MetadataType
 	grouping?: string
 	default?: string
+	conditions?: { param: string; value: string | number }[]
 }
 
 type PromptAnswers = Record<string, string>
@@ -108,12 +110,32 @@ const getPrompts = async (
 	let answers: PromptAnswers = {}
 	for (const param of params) {
 		const answer = await getNextPrompt(param, answers, app, version, user)
-		answers = {
-			...answers,
-			...answer,
+		if (answer) {
+			answers = {
+				...answers,
+				...answer,
+			}
 		}
 	}
 	return answers
+}
+
+const checkConditions = (param: BotParam, answers: PromptAnswers) => {
+	const conditions = param?.conditions
+
+	if (!conditions) return true
+
+	const badParamType = conditions.find((el) => !(el.param in answers))
+
+	if (badParamType) {
+		throw new Error("Bad Param Type or wrong order: " + badParamType.param)
+	}
+
+	const shouldDisplay = conditions.every(
+		(el) => el.value === answers[el.param]
+	)
+
+	return shouldDisplay
 }
 
 const getNextPrompt = async (
@@ -122,9 +144,14 @@ const getNextPrompt = async (
 	app: string,
 	version: string,
 	user: User
-): Promise<PromptAnswers> => {
+): Promise<PromptAnswers | null> => {
 	// TODO: Possibly figure out conditional rendering here based on
 	// more param metadata.
+
+	const shouldDisplay = checkConditions(param, answers)
+
+	if (!shouldDisplay) return null
+
 	const type = param.type || "TEXT"
 	const renderer = promptRenderers[type]
 	if (!renderer) {

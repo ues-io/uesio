@@ -12,6 +12,11 @@ params:
   - name: type
     prompt: Field Type
     type: FIELDTYPE
+  - name: number
+    prompt: Number of Decimals
+    conditions:
+      - param: type
+        value: NUMBER
   - name: label
     prompt: Label
 public: true

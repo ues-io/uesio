@@ -71,13 +71,19 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 	}
 }
 
+type BotParamCondition struct {
+	Param string `yaml:"param" uesio:"uesio/studio.param" json:"param"`
+	Value string `yaml:"value" uesio:"uesio/studio.value" json:"value"`
+}
+
 type BotParam struct {
-	Name         string `yaml:"name" uesio:"uesio/studio.name" json:"name"`
-	Prompt       string `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
-	Type         string `yaml:"type" uesio:"uesio/studio.type" json:"type"`
-	MetadataType string `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
-	Grouping     string `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
-	Default      string `yaml:"default" uesio:"uesio/studio.default" json:"default"`
+	Name         string              `yaml:"name" uesio:"uesio/studio.name" json:"name"`
+	Prompt       string              `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
+	Type         string              `yaml:"type" uesio:"uesio/studio.type" json:"type"`
+	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
+	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
+	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
+	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
 }
 
 type Bot struct {
