@@ -2,3 +2,4 @@ name: quote
 nameField: uesio/crm.name
 label: quote
 pluralLabel: quotes
+public: true

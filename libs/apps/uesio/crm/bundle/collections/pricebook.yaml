@@ -2,3 +2,4 @@ name: pricebook
 nameField: uesio/crm.name
 label: pricebook
 pluralLabel: pricebooks
+public: true
