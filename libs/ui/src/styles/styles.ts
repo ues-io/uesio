@@ -187,7 +187,8 @@ function useStyles<K extends string>(
 			{},
 			props?.definition?.["uesio.styles"] as DefinitionMap,
 			props?.context
-		)
+		),
+		props?.componentType
 	)
 }
 
@@ -216,7 +217,16 @@ function useUtilityStyles<K extends string>(
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			classNames[className] = cx(
-				css([defaults[className], styles?.[className]]),
+				css([
+					defaults[className],
+					styles?.[className],
+					{
+						label: getClassNameLabel(
+							props?.componentType,
+							className
+						),
+					},
+				]),
 				props?.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.
@@ -228,15 +238,28 @@ function useUtilityStyles<K extends string>(
 	)
 }
 
+function getClassNameLabel(
+	componentType: string | undefined,
+	className: string
+) {
+	//  "/" or "." bring terror to the DOM
+	const componentLabel = componentType?.replace(/\/|\./g, "-") || "unknown"
+	return `${componentLabel}-${className}`
+}
+
 function mergeStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
-	existing: Record<string, CSSInterpolation> | undefined
+	existing: Record<string, CSSInterpolation> | undefined,
+	componentType: string | undefined
 ) {
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			classNames[className] = css([
 				defaults[className],
 				existing?.[className],
+				{
+					label: getClassNameLabel(componentType, className),
+				},
 			])
 			return classNames
 		},

@@ -43,6 +43,7 @@ export interface UtilityProps {
 	className?: string
 	context: Context
 	children?: ReactNode
+	componentType?: string
 }
 
 export interface UtilityPropsPlus extends UtilityProps {
