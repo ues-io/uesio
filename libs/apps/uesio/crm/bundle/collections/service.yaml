@@ -2,3 +2,4 @@ name: service
 nameField: uesio/crm.name
 label: service
 pluralLabel: services
+public: true

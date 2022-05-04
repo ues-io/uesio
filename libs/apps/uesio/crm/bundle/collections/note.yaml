@@ -2,3 +2,4 @@ name: note
 nameField: uesio/crm.name
 label: note
 pluralLabel: notes
+public: true
