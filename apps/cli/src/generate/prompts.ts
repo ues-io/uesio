@@ -3,7 +3,6 @@ import inquirer from "inquirer"
 import { get, parseJSON } from "../request/request"
 import { collection, metadata } from "#uesio/ui"
 import { getMetadataList } from "../config/config"
-import { shouldDisplay } from "libs/ui/src/componentexports"
 
 type BotParam = {
 	name: string
