@@ -73,7 +73,8 @@ params:
         value: REFERENCEGROUP
   - name: referencegroup_ondelete
     prompt: On Delete
-    type: FILEACCEPTTYPE
+    type: LIST
+    options: ["ONDELETE", "OTHEROPTIONS"]
     conditions:
       - param: type
         value: REFERENCEGROUP
