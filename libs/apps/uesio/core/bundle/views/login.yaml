@@ -94,6 +94,7 @@ definition:
                                       fieldId: uesio/viewonly.username
                                   - uesio/io.field:
                                       fieldId: uesio/viewonly.password
+                                      displayAs: PASSWORD
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:

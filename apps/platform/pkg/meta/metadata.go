@@ -155,6 +155,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&FeatureFlagCollection{}).GetBundleFolderName():        func() BundleableGroup { return &FeatureFlagCollection{} },
 	(&LabelCollection{}).GetBundleFolderName():              func() BundleableGroup { return &LabelCollection{} },
 	(&TranslationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &TranslationCollection{} },
+	(&AuthSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &AuthSourceCollection{} },
 }
 
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {

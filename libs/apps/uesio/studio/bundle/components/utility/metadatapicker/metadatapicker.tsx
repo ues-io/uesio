@@ -34,6 +34,10 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	} = props
 	const uesio = hooks.useUesio(props)
 
+	if (!context.getWorkspace() && !context.getSiteAdmin()) {
+		return <div>Must provide either siteadmin or workspace context</div>
+	}
+
 	const namespaces = uesio.builder.useAvailableNamespaces(context)
 	const [currentNamespace, name] = component.path.parseKey(value)
 	const namespace = defaultNamespace || currentNamespace

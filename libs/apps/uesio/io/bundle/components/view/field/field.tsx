@@ -63,6 +63,8 @@ const getFieldContent = (
 			return <DateField {...common} />
 		case type === "LONGTEXT" && displayAs === "MARKDOWN":
 			return <MarkDownField {...common} />
+		case type === "TEXT" && displayAs === "PASSWORD":
+			return <TextField {...common} password={true} />
 		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
 		case type === "NUMBER":

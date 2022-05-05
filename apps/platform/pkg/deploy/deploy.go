@@ -166,6 +166,24 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		defer f.Close()
 	}
 
+	uploadOps := []filesource.FileUploadOp{}
+
+	for _, fileStream := range fileStreams {
+		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
+		if !ok {
+			continue
+		}
+		uploadOps = append(uploadOps, filesource.FileUploadOp{
+			Data: fileStream.Data,
+			Details: &fileadapt.FileDetails{
+				Name:         fileStream.FileName,
+				CollectionID: fileStream.Type,
+				RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
+				FieldID:      fileRecord.FieldName,
+			},
+		})
+	}
+
 	deps := meta.BundleDependencyCollection{}
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
@@ -239,7 +257,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	err = applyDeploy(saves, fileStreams, fileNameMap, connection, session)
+	err = applyDeploy(saves, uploadOps, connection, session)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -262,8 +280,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 func applyDeploy(
 	saves []datasource.PlatformSaveRequest,
-	fileStreams []bundlestore.ReadItemStream,
-	fileNameMap map[string]FileRecord,
+	fileops []filesource.FileUploadOp,
 	connection adapt.Connection,
 	session *sess.Session,
 ) error {
@@ -272,24 +289,11 @@ func applyDeploy(
 		return err
 	}
 
-	// Read the filestreams
-	for _, fileStream := range fileStreams {
-
-		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
-		if !ok {
-			continue
-		}
-
-		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
-			Name:         fileStream.FileName,
-			CollectionID: fileStream.Type,
-			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-			FieldID:      fileRecord.FieldName,
-		}, connection, session.RemoveWorkspaceContext())
-		if err != nil {
-			return err
-		}
+	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext())
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
 

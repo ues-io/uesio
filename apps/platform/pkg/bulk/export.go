@@ -110,7 +110,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
-	details := fileadapt.FileDetails{
+	details := &fileadapt.FileDetails{
 		Name:         generateFileName(spec.Collection),
 		CollectionID: "uesio/core.bulkbatch",
 		RecordID:     batch.ID,
@@ -122,7 +122,12 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
-	_, err = filesource.Upload(data, details, nil, session)
+	_, err = filesource.Upload([]filesource.FileUploadOp{
+		{
+			Data:    data,
+			Details: details,
+		},
+	}, nil, session)
 	if err != nil {
 		return nil, err
 	}

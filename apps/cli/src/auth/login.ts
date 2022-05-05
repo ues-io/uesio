@@ -2,14 +2,12 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
-import { platform, component } from "#uesio/ui"
+import { component } from "#uesio/ui"
 
 // Using # here because it's a subpath import
-import { cognito, mock } from "#uesio/loginhelpers"
+import { mock } from "#uesio/loginhelpers"
 
-type AuthHandlerResponse = {
-	token: string
-}
+type AuthHandlerResponse = Record<string, string>
 
 type AuthHandler = () => Promise<AuthHandlerResponse>
 
@@ -51,42 +49,9 @@ const authHandlers = {
 			},
 		])
 
-		const poolIdResponse = await get(
-			"/site/configvalues/uesio.cognito_pool_id"
-		)
-		const poolData =
-			(await poolIdResponse.json()) as platform.ConfigValueResponse
-		const poolId = poolData.value
-		const clientIdResponse = await get(
-			"/site/configvalues/uesio.cognito_client_id"
-		)
-		const clientIdData =
-			(await clientIdResponse.json()) as platform.ConfigValueResponse
-		const clientId = clientIdData.value
-		const pool = cognito.getPool(poolId, clientId)
-		const authDetails = cognito.getAuthDetails(
-			responses.username,
-			responses.password
-		)
-		const cognitoUser = cognito.getUser(responses.username, pool)
-
-		const accessToken = await new Promise((resolve, reject) => {
-			cognitoUser.authenticateUser(authDetails, {
-				onSuccess: (result) => {
-					const accessToken = result.getIdToken().getJwtToken()
-					resolve(accessToken)
-				},
-				onFailure: (err) => {
-					const message = err.message || JSON.stringify(err)
-					reject(message)
-				},
-			})
-		}).catch((err) => {
-			throw new Error("Bad Login: " + err)
-		})
-
 		return {
-			token: accessToken as string,
+			username: responses.username as string,
+			password: responses.password as string,
 		}
 	},
 } as AuthHandlers
@@ -132,7 +97,7 @@ const login = async (authSource: string): Promise<User> => {
 	const [namespace, name] = component.path.parseKey(authSource)
 
 	const response = await post(
-		`site/auth/${namespace}/${name}/tokenlogin`,
+		`site/auth/${namespace}/${name}/login`,
 		JSON.stringify(authHandlerResponse),
 		cookie
 	)
