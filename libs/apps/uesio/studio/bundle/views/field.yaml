@@ -143,6 +143,10 @@ definition:
                                   md: 1fr 1fr
                                   lg: 1fr 1fr 1fr 1fr
                                 columnGap: 10px
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name

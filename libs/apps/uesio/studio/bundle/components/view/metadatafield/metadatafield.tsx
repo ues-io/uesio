@@ -22,14 +22,11 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const record = context.getRecord()
 	const wire = context.getWire()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appId = view?.params?.app
 
 	const grouping = context.merge(props.definition.grouping)
 	const namespace = context.merge(props.definition.namespace)
 
-	if (!wire || !record || !workspaceName || !appId) {
+	if (!wire || !record) {
 		return null
 	}
 
@@ -57,12 +54,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			setValue={(value: string) => {
 				record.update(fieldId, value)
 			}}
-			context={context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appId,
-				},
-			})}
+			context={context}
 			{...(grouping && {
 				grouping,
 			})}
