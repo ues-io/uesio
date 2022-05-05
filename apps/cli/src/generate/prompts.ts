@@ -66,7 +66,13 @@ const promptRenderers: Record<string, PromptRenderer> = {
 	METADATA: async (param, answers, app, version, user) => {
 		const metadataType = param.metadataType
 		if (!metadataType) throw new Error("Bad Metadata Type: " + metadataType)
-		const items = await getMetadataList(metadataType, app, version, user)
+		const items = await getMetadataList(
+			metadataType,
+			app,
+			version,
+			user,
+			mergeParam(param.grouping, answers)
+		)
 		return inquirer.prompt({
 			name: param.name,
 			message: param.prompt,
@@ -97,6 +103,13 @@ const promptRenderers: Record<string, PromptRenderer> = {
 			message: param.prompt,
 			type: "list",
 			choices: collection.FIELD_TYPES,
+		}),
+	FILEACCEPTTYPE: async (param) =>
+		inquirer.prompt({
+			name: param.name,
+			message: param.prompt,
+			type: "list",
+			choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"],
 		}),
 }
 

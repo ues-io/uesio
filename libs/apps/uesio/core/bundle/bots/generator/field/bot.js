@@ -1,5 +1,5 @@
 function field(bot) {
-	function help(template, parameters) {
+	function getDefinition(template, parameters) {
 		var params = parameters.reduce((prev, key) => {
 			const value = bot.params.get(key)
 
@@ -32,12 +32,23 @@ function field(bot) {
 		"common.yaml"
 	)
 
-	var number_definition = help("number.yaml", ["number_decimals"])
-	var reference_definition = help("reference.yaml", ["ref_collection"])
-	var selectlist_definition = help("selectlist.yaml", ["select_list"])
-	var autonumber_definition = help("autonumber.yaml", [
+	var number_definition = getDefinition("number.yaml", ["number_decimals"])
+	var reference_definition = getDefinition("reference.yaml", [
+		"ref_collection",
+	])
+	var selectlist_definition = getDefinition("selectlist.yaml", [
+		"select_list",
+	])
+	var autonumber_definition = getDefinition("autonumber.yaml", [
 		"autonumber_prefix",
 		"autonumber_leadingzeros",
+	])
+
+	var file_definition = getDefinition("file.yaml", ["accept"])
+	var referencegroup_definition = getDefinition("referencegroup.yaml", [
+		"referencegroup_collection",
+		"referencegroup_field",
+		"referencegroup_ondelete",
 	])
 
 	var field = [
@@ -46,6 +57,8 @@ function field(bot) {
 		reference_definition,
 		selectlist_definition,
 		autonumber_definition,
+		file_definition,
+		referencegroup_definition,
 	]
 		.filter((val) => val)
 		.join("")
