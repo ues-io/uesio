@@ -367,13 +367,7 @@ const platform = {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				jobtype: spec.jobtype,
-				filetype: spec.filetype,
-				collection: spec.collection,
-				upsertkey: spec.upsertkey,
-				mappings: spec.mappings,
-			}),
+			body: JSON.stringify(spec),
 		})
 		return response.json()
 	},

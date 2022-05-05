@@ -1,7 +1,7 @@
 {
-	"jobtype": "export",
+	"jobtype": "EXPORT",
 	"collection": "uesio/crm.contact",
-	"filetype": "csv",
+	"filetype": "CSV",
 	"upsertkey": "uesio/crm.externalid",
 	"mappings": {
 		"uesio/crm.account": {

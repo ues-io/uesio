@@ -67,12 +67,10 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	const collection = uesio.collection.useCollection(newContext, collectionId)
 	if (!collection) return null
 
-	const spec: definition.Spec = {
-		jobtype: "export",
+	const spec: definition.ExportSpec = {
+		jobtype: "EXPORT",
 		collection: collection.getFullName(),
-		upsertkey: "",
-		filetype: "csv",
-		mappings: {},
+		filetype: "CSV",
 	}
 
 	const triggerExport = async () => {

@@ -4,6 +4,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,9 +30,15 @@ type FileRecord struct {
 var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles", "componentvariants"}
 
 // Deploy func
-func Deploy(body []byte, session *sess.Session) error {
+func Deploy(body io.ReadCloser, session *sess.Session) error {
 
-	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	// Unfortunately, we have to read the whole thing into memory
+	bodybytes, err := ioutil.ReadAll(body)
+	if err != nil {
+		return err
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(bodybytes), int64(len(bodybytes)))
 	if err != nil {
 		return err
 	}
