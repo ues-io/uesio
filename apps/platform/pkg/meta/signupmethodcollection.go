@@ -9,11 +9,11 @@ import (
 type SignupMethodCollection []*SignupMethod
 
 func (smc *SignupMethodCollection) GetName() string {
-	return "uesio/studio.authsource"
+	return "uesio/studio.signupmethod"
 }
 
 func (smc *SignupMethodCollection) GetBundleFolderName() string {
-	return "authsources"
+	return "signupmethods"
 }
 
 func (smc *SignupMethodCollection) GetFields() []string {
