@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// NewImportBatch func
 func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
@@ -21,14 +20,14 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		return nil, err
 	}
 
-	if fileFormat == "csv" {
+	if fileFormat == "CSV" {
 		saveRequest, err = processCSV(body, spec, metadataResponse, session, nil)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if fileFormat == "tab" {
+	if fileFormat == "TAB" {
 		saveRequest, err = processCSV(body, spec, metadataResponse, session, &CSVOptions{
 			Comma: '\t',
 		})

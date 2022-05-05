@@ -79,7 +79,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	var collection Exportable
 
-	if fileFormat == "csv" {
+	if fileFormat == "CSV" {
 		collection = NewCSVExportCollection(collectionMetadata)
 	}
 

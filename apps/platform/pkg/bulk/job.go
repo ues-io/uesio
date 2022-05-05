@@ -20,7 +20,7 @@ func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 	}
 
 	// If we're an export job go ahead and create the batch automatically.
-	if job.Spec.JobType == "export" {
+	if job.Spec.JobType == "EXPORT" {
 		_, err = NewExportBatch(job, session)
 		if err != nil {
 			return "", err
