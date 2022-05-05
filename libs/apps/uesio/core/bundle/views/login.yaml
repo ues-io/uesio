@@ -102,8 +102,9 @@ definition:
                                             signals:
                                               - signal: user/LOGIN
                                                 authSource: uesio/core.platform
-                                                username: ${uesio/viewonly.username}
-                                                password: ${uesio/viewonly.password}
+                                                payload:
+                                                  username: ${uesio/viewonly.username}
+                                                  password: ${uesio/viewonly.password}
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: Cancel
