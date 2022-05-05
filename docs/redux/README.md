@@ -146,9 +146,11 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
 + <button onClick={(): void => {
 +   uesio.signal.run(
         {
-            signal: "user/LOGINTOKEN",
+            signal: "user/LOGIN",
             type: "mock",
-            token: "mockToken",
+            payload: {
+                token: "mockToken",
+            }
         },
         props.context
     )

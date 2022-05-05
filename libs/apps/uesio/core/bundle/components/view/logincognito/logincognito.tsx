@@ -108,8 +108,10 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 			{
 				signal: "user/LOGIN",
 				authSource: "uesio/core.platform",
-				username,
-				password,
+				payload: {
+					username,
+					password,
+				},
 			},
 			context
 		)

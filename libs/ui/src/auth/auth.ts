@@ -1,14 +1,5 @@
 import { UserState } from "../bands/user/types"
 
-type LoginTokenRequest = {
-	token: string
-}
-
-type LoginRequest = {
-	username: string
-	password: string
-}
-
 type LoginResponse = LoginResponsePath | LoginResponseRedirect
 
 type LoginResponsePath = {
@@ -22,4 +13,4 @@ type LoginResponseRedirect = {
 	redirectRouteName: string
 }
 
-export { LoginRequest, LoginTokenRequest, LoginResponse }
+export { LoginResponse }

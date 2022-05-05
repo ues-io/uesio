@@ -30,25 +30,16 @@ func (c *Connection) Verify(token string, session *sess.Session) error {
 	return nil
 }
 
-// Decode function
-func (c *Connection) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	// TODO: Actually verify the token
-	parser := jwt.Parser{}
-	tokenObj, _, err := parser.ParseUnverified(token, jwt.MapClaims{})
-	if err != nil {
-		return nil, err
+func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+
+	username, ok := payload["username"]
+	if !ok {
+		return nil, errors.New("No username provided for Cognito login")
 	}
-	claims := tokenObj.Claims.(jwt.MapClaims)
-	return &auth.AuthenticationClaims{
-		Subject:   claims["sub"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
-		Email:     claims["email"].(string),
-	}, nil
-}
-
-func (c *Connection) Login(username string, password string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-
+	password, ok := payload["password"]
+	if !ok {
+		return nil, errors.New("No password provided for Cognito login")
+	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
 		return nil, errors.New("no client id provided in credentials")
@@ -79,6 +70,17 @@ func (c *Connection) Login(username string, password string, session *sess.Sessi
 		return nil, err
 	}
 
-	return c.Decode(*result.AuthenticationResult.IdToken, session)
+	parser := jwt.Parser{}
+	tokenObj, _, err := parser.ParseUnverified(*result.AuthenticationResult.IdToken, jwt.MapClaims{})
+	if err != nil {
+		return nil, err
+	}
+	claims := tokenObj.Claims.(jwt.MapClaims)
+	return &auth.AuthenticationClaims{
+		Subject:   claims["sub"].(string),
+		FirstName: claims["given_name"].(string),
+		LastName:  claims["family_name"].(string),
+		Email:     claims["email"].(string),
+	}, nil
 
 }
