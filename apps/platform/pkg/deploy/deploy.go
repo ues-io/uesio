@@ -205,24 +205,22 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		App: &meta.App{
 			ID: namespace,
 		},
-		LoginRoute:     by.LoginRoute,
-		HomeRoute:      by.HomeRoute,
-		DefaultProfile: by.DefaultProfile,
-		PublicProfile:  by.PublicProfile,
-		DefaultTheme:   by.DefaultTheme,
+		LoginRoute:    by.LoginRoute,
+		HomeRoute:     by.HomeRoute,
+		PublicProfile: by.PublicProfile,
+		DefaultTheme:  by.DefaultTheme,
 	})
 
 	// We set the valid fields here because it's an update and we don't want
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			adapt.ID_FIELD:                true,
-			"uesio/studio.loginroute":     true,
-			"uesio/studio.homeroute":      true,
-			"uesio/studio.defaultprofile": true,
-			"uesio/studio.publicprofile":  true,
-			"uesio/studio.defaulttheme":   true,
-			"uesio/studio.app":            true,
+			adapt.ID_FIELD:               true,
+			"uesio/studio.loginroute":    true,
+			"uesio/studio.homeroute":     true,
+			"uesio/studio.publicprofile": true,
+			"uesio/studio.defaulttheme":  true,
+			"uesio/studio.app":           true,
 		},
 	})
 
