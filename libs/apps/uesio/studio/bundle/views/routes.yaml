@@ -120,6 +120,10 @@ definition:
             id: newroutelist
             wire: newroute
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name

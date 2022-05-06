@@ -44,9 +44,7 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Verify(string, *sess.Session) error
-	Decode(string, *sess.Session) (*AuthenticationClaims, error)
-	Login(string, string, *sess.Session) (*AuthenticationClaims, error)
+	Login(map[string]string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -81,12 +79,10 @@ func getAuthType(authTypeName string, session *sess.Session) (AuthenticationType
 	return authType, nil
 }
 
-// RegisterAuthType function
 func RegisterAuthType(name string, authType AuthenticationType) {
 	authTypeMap[name] = authType
 }
 
-// AuthenticationClaims struct
 type AuthenticationClaims struct {
 	Subject   string `json:"subject"`
 	FirstName string `json:"firstname"`
@@ -162,11 +158,8 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 		},
 	})
 
-	defaultSiteProfile := site.GetAppBundle().DefaultProfile
-
-	if defaultSiteProfile == "" {
-		defaultSiteProfile = "uesio/core.public"
-	}
+	// TODO: Get this from the signup method
+	defaultSiteProfile := "uesio/core.public"
 
 	return datasource.PlatformSaveOne(&meta.User{
 		/*

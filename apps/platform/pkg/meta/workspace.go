@@ -1,22 +1,21 @@
 package meta
 
 type Workspace struct {
-	ID             string         `uesio:"uesio/core.id"`
-	Name           string         `uesio:"uesio/studio.name"`
-	LoginRoute     string         `uesio:"uesio/studio.loginroute"`
-	HomeRoute      string         `uesio:"uesio/studio.homeroute"`
-	DefaultProfile string         `uesio:"uesio/studio.defaultprofile"`
-	DefaultTheme   string         `uesio:"uesio/studio.defaulttheme"`
-	PublicProfile  string         `uesio:"uesio/studio.publicprofile"`
-	App            *App           `uesio:"uesio/studio.app"`
-	Permissions    *PermissionSet `uesio:"-"`
-	bundleDef      *BundleDef
-	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy      *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner          *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy      *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt      int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt      int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID            string         `uesio:"uesio/core.id"`
+	Name          string         `uesio:"uesio/studio.name"`
+	LoginRoute    string         `uesio:"uesio/studio.loginroute"`
+	HomeRoute     string         `uesio:"uesio/studio.homeroute"`
+	DefaultTheme  string         `uesio:"uesio/studio.defaulttheme"`
+	PublicProfile string         `uesio:"uesio/studio.publicprofile"`
+	App           *App           `uesio:"uesio/studio.app"`
+	Permissions   *PermissionSet `uesio:"-"`
+	bundleDef     *BundleDef
+	itemMeta      *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy     *User     `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner         *User     `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy     *User     `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt     int64     `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt     int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
 func (w *Workspace) GetAppID() string {

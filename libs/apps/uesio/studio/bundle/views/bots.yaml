@@ -127,6 +127,10 @@ definition:
                       type: "fieldNotEquals"
                   components:
                     - uesio/studio.metadatafield:
+                        uesio.context:
+                          workspace:
+                            name: $Param{workspacename}
+                            app: $Param{app}
                         fieldId: uesio/studio.collection
                         metadataType: "COLLECTION"
                         label: "Collection"

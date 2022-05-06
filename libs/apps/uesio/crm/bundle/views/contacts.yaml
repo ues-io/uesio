@@ -34,56 +34,59 @@ definition:
                         target: contactsTable
                     text: Mode
                     uesio.variant: uesio/io.secondary
-    - uesio/io.box:
-        uesio.variant: uesio/io.section
+    - uesio/io.deck:
+        id: NewId
+        mode: READ
+        wire: contacts
+        uesio.styles:
+          root:
+            padding: 40px
+            display: grid
+            column-gap: 24px;
+            row-gap: 24px
+        templateColumns:
+          xs: 1fr
+          sm: 1fr 1fr
+          md: 1fr 1fr 1fr 1fr
+          lg: 1fr 1fr 1fr 1fr 1fr
+          xl: 1fr 1fr 1fr 1fr 1fr 1fr
         components:
-          - uesio/io.deck:
-              id: NewId
-              mode: EDIT
-              wire: contacts
-              templateColumns: 1fr 1fr 1fr
+          - uesio/io.box:
               uesio.styles:
                 root:
-                  columnGap: 20px
-                  rowGap: 20px
-                  padding: 40px
+                  alignItems: flex-start
+                  border: "1px solid #ccc"
+                  boxShadow: "0 0 6px #00000033"
+                  padding: 15px
+                  min-height: 240px
+              templateColumns: 180px 1fr 1fr
+              columnGap: 10px
               components:
-                - uesio/io.box:
+                - uesio/io.field:
+                    fieldId: uesio/crm.image
+                    displayAs: IMAGE
                     uesio.styles:
                       root:
-                        alignItems: flex-start
-                        border: "1px solid #ccc"
-                        boxShadow: "0 0 6px #00000033"
-                        padding: 15px
-                        min-height: 240px
-                    templateColumns: 180px 1fr 1fr
-                    columnGap: 10px
-                    components:
-                      - uesio/io.field:
-                          fieldId: uesio/crm.image
-                          displayAs: IMAGE
-                          uesio.styles:
-                            root:
-                              max-height: 200px
-                          label: null
-                          labelPosition: none
-                      - uesio/io.field:
-                          fieldId: uesio/crm.firstname
-                      - uesio/io.field:
-                          fieldId: uesio/crm.lastname
-                      - uesio/io.field:
-                          fieldId: uesio/crm.email
-                      - uesio/io.field:
-                          fieldId: uesio/crm.account
-                      - uesio/io.button:
-                          text: View
-                          icon: arrow_forward
-                          uesio.variant: uesio/io.secondary
-                          signals:
-                            - signal: route/NAVIGATE
-                              collection: uesio/crm.contact
-                              viewtype: detail
-                              recordid: ${uesio/core.id}
+                        max-height: 200px
+                    label: null
+                    labelPosition: none
+                - uesio/io.field:
+                    fieldId: uesio/crm.firstname
+                - uesio/io.field:
+                    fieldId: uesio/crm.lastname
+                - uesio/io.field:
+                    fieldId: uesio/crm.email
+                - uesio/io.field:
+                    fieldId: uesio/crm.account
+                - uesio/io.button:
+                    text: View
+                    icon: arrow_forward
+                    uesio.variant: uesio/io.secondary
+                    signals:
+                      - signal: route/NAVIGATE
+                        collection: uesio/crm.contact
+                        viewtype: detail
+                        recordid: ${uesio/core.id}
   wires:
     contacts:
       collection: uesio/crm.contact

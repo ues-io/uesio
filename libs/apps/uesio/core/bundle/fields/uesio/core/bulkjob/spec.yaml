@@ -15,5 +15,8 @@ subfields:
     label: Upsert Key
     type: TEXT
   - name: uesio/core.mappings
-    label: Collection
+    label: Mappings
     type: MAP
+  - name: uesio/core.uploadfield
+    label: Upload Field
+    type: Text

@@ -173,6 +173,10 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.plurallabel
                                   - uesio/studio.metadatafield:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.namefield
                                       metadataType: "FIELD"
                                       label: "Name Field"
@@ -263,6 +267,10 @@ definition:
             id: editCollectionList
             wire: collections
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
@@ -308,6 +316,10 @@ definition:
             id: newfieldlist
             wire: newfield
             mode: EDIT
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name

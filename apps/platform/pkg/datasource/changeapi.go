@@ -6,7 +6,7 @@ import (
 
 // ChangeAPI type
 type ChangeAPI struct {
-	change adapt.ChangeItem
+	change *adapt.ChangeItem
 	errors []string
 }
 

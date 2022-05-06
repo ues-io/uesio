@@ -4,6 +4,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,9 +30,15 @@ type FileRecord struct {
 var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles", "componentvariants"}
 
 // Deploy func
-func Deploy(body []byte, session *sess.Session) error {
+func Deploy(body io.ReadCloser, session *sess.Session) error {
 
-	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	// Unfortunately, we have to read the whole thing into memory
+	bodybytes, err := ioutil.ReadAll(body)
+	if err != nil {
+		return err
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(bodybytes), int64(len(bodybytes)))
 	if err != nil {
 		return err
 	}
@@ -158,6 +166,24 @@ func Deploy(body []byte, session *sess.Session) error {
 		defer f.Close()
 	}
 
+	uploadOps := []filesource.FileUploadOp{}
+
+	for _, fileStream := range fileStreams {
+		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
+		if !ok {
+			continue
+		}
+		uploadOps = append(uploadOps, filesource.FileUploadOp{
+			Data: fileStream.Data,
+			Details: &fileadapt.FileDetails{
+				Name:         fileStream.FileName,
+				CollectionID: fileStream.Type,
+				RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
+				FieldID:      fileRecord.FieldName,
+			},
+		})
+	}
+
 	deps := meta.BundleDependencyCollection{}
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
@@ -179,24 +205,22 @@ func Deploy(body []byte, session *sess.Session) error {
 		App: &meta.App{
 			ID: namespace,
 		},
-		LoginRoute:     by.LoginRoute,
-		HomeRoute:      by.HomeRoute,
-		DefaultProfile: by.DefaultProfile,
-		PublicProfile:  by.PublicProfile,
-		DefaultTheme:   by.DefaultTheme,
+		LoginRoute:    by.LoginRoute,
+		HomeRoute:     by.HomeRoute,
+		PublicProfile: by.PublicProfile,
+		DefaultTheme:  by.DefaultTheme,
 	})
 
 	// We set the valid fields here because it's an update and we don't want
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			adapt.ID_FIELD:                true,
-			"uesio/studio.loginroute":     true,
-			"uesio/studio.homeroute":      true,
-			"uesio/studio.defaultprofile": true,
-			"uesio/studio.publicprofile":  true,
-			"uesio/studio.defaulttheme":   true,
-			"uesio/studio.app":            true,
+			adapt.ID_FIELD:               true,
+			"uesio/studio.loginroute":    true,
+			"uesio/studio.homeroute":     true,
+			"uesio/studio.publicprofile": true,
+			"uesio/studio.defaulttheme":  true,
+			"uesio/studio.app":           true,
 		},
 	})
 
@@ -231,7 +255,7 @@ func Deploy(body []byte, session *sess.Session) error {
 		return err
 	}
 
-	err = applyDeploy(saves, fileStreams, fileNameMap, connection, session)
+	err = applyDeploy(saves, uploadOps, connection, session)
 	if err != nil {
 		rollbackError := connection.RollbackTransaction()
 		if rollbackError != nil {
@@ -254,8 +278,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 func applyDeploy(
 	saves []datasource.PlatformSaveRequest,
-	fileStreams []bundlestore.ReadItemStream,
-	fileNameMap map[string]FileRecord,
+	fileops []filesource.FileUploadOp,
 	connection adapt.Connection,
 	session *sess.Session,
 ) error {
@@ -264,24 +287,11 @@ func applyDeploy(
 		return err
 	}
 
-	// Read the filestreams
-	for _, fileStream := range fileStreams {
-
-		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
-		if !ok {
-			continue
-		}
-
-		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
-			Name:         fileStream.FileName,
-			CollectionID: fileStream.Type,
-			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-			FieldID:      fileRecord.FieldName,
-		}, connection, session.RemoveWorkspaceContext())
-		if err != nil {
-			return err
-		}
+	_, err = filesource.Upload(fileops, connection, session.RemoveWorkspaceContext())
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
 

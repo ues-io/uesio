@@ -23,9 +23,11 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const responseGoogle = (response: GoogleLoginResponse): void => {
 		uesio.signal.run(
 			{
-				signal: "user/LOGINTOKEN",
+				signal: "user/LOGIN",
 				type: "google",
-				token: response.getAuthResponse().id_token,
+				payload: {
+					token: response.getAuthResponse().id_token,
+				},
 			},
 			context
 		)

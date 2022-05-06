@@ -17,12 +17,27 @@ export type ImportMapping = {
 	value?: string
 }
 
-export type Spec = {
-	jobtype: string
-	filetype: string
+export type Spec = ImportSpec | ExportSpec | UploadSpec
+
+export type ImportSpec = {
+	jobtype: "IMPORT"
 	collection: string
+	filetype: "CSV" | "TAB" | undefined
 	upsertkey: string
 	mappings: Record<string, ImportMapping>
+}
+
+export type ExportSpec = {
+	jobtype: "EXPORT"
+	collection: string
+	filetype: "CSV"
+}
+
+export type UploadSpec = {
+	jobtype: "UPLOADFILES"
+	collection: string
+	upsertkey: string
+	uploadfield?: string
 }
 
 export type BaseProps = {
@@ -43,6 +58,7 @@ export interface UtilityProps {
 	className?: string
 	context: Context
 	children?: ReactNode
+	componentType?: string
 }
 
 export interface UtilityPropsPlus extends UtilityProps {

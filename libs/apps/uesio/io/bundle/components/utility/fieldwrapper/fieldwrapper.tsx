@@ -25,10 +25,6 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 		},
 		props
 	)
-	if (labelPosition === "none") {
-		return <>{children}</>
-	}
-
 	const errors = record?.getErrors(fieldId)
 
 	return (
@@ -39,11 +35,14 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 				labelPosition === "left" && classes.labelLeft
 			)}
 		>
-			<FieldLabel
-				classes={{ root: classes.label }}
-				label={label}
-				context={context}
-			/>
+			{labelPosition !== "none" && (
+				<FieldLabel
+					classes={{ root: classes.label }}
+					label={label}
+					context={context}
+				/>
+			)}
+
 			{children}
 
 			{errors?.map((error) => (

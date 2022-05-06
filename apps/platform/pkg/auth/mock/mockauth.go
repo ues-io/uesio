@@ -22,19 +22,15 @@ type Connection struct {
 	credentials *adapt.Credentials
 }
 
-func (c *Connection) Verify(token string, session *sess.Session) error {
-	return nil
-}
-
-func (c *Connection) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	token, ok := payload["token"]
+	if !ok {
+		return nil, errors.New("No token provided for Mock login")
+	}
 	claim := auth.AuthenticationClaims{}
 	err := json.Unmarshal([]byte(token), &claim)
 	if err != nil {
 		return nil, err
 	}
 	return &claim, nil
-}
-
-func (c *Connection) Login(username string, password string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return nil, errors.New("Login not Supported for mock")
 }

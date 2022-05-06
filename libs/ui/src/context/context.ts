@@ -27,7 +27,6 @@ type FieldMode = "READ" | "EDIT"
 type SiteAdminState = {
 	name: string
 	app: string
-	version?: string
 }
 
 type MergeType =

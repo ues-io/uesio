@@ -2,3 +2,4 @@ name: comment
 nameField: uesio/crm.name
 label: comment
 pluralLabel: comments
+public: true
