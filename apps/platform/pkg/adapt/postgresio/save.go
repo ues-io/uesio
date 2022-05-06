@@ -208,47 +208,30 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	batch := &pgx.Batch{}
 
-	for _, change := range request.Inserts {
-
+	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 		marshaler := &DataMarshaler{
 			Data:     change.FieldChanges,
 			Metadata: collectionMetadata,
 		}
-
 		fieldJSON, err := gojay.MarshalJSONObject(marshaler)
 		if err != nil {
 			return err
 		}
-
 		fullRecordID := fmt.Sprintf("%s:%s", collectionName, change.IDValue)
 
-		batch.Queue(INSERT_QUERY, fullRecordID, collectionName, tenantID, change.Autonumber, fieldJSON)
+		if change.IsNew {
+			batch.Queue(INSERT_QUERY, fullRecordID, collectionName, tenantID, change.Autonumber, fieldJSON)
+		} else {
+			batch.Queue(UPDATE_QUERY, fullRecordID, collectionName, fieldJSON)
+		}
 
 		if collectionMetadata.Access == "protected" {
 			recordsIDsList[fullRecordID] = change.ReadWriteTokens
 		}
-
-	}
-
-	for _, change := range request.Updates {
-
-		marshaler := &DataMarshaler{
-			Data:     change.FieldChanges,
-			Metadata: collectionMetadata,
-		}
-
-		fieldJSON, err := gojay.MarshalJSONObject(marshaler)
-		if err != nil {
-			return err
-		}
-
-		fullRecordID := fmt.Sprintf("%s:%s", collectionName, change.IDValue)
-
-		batch.Queue(UPDATE_QUERY, fullRecordID, collectionName, fieldJSON)
-
-		if collectionMetadata.Access == "protected" {
-			recordsIDsList[fullRecordID] = change.ReadWriteTokens
-		}
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
 	deleteCount := len(request.Deletes)

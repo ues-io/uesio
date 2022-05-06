@@ -17,6 +17,7 @@ type SaveOp struct {
 	Deletes        ChangeItems
 	Options        *SaveOptions
 	Errors         *[]SaveError
+	InsertCount    int
 }
 
 func (op *SaveOp) AddError(saveError *SaveError) {
@@ -30,18 +31,15 @@ func (op *SaveOp) HasErrors() bool {
 	return len(*op.Errors) > 0
 }
 
-func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
+func (op *SaveOp) LoopInserts(changeFunc func(change *ChangeItem) error) error {
 	if op.Inserts != nil {
 		for i := range op.Inserts {
-			err := changeFunc(&op.Inserts[i])
-			if err != nil {
-				return err
+			// Since some of our inserts could have been converted to updates
+			// We need this check to skip them.
+			if !op.Inserts[i].IsNew {
+				continue
 			}
-		}
-	}
-	if op.Updates != nil {
-		for i := range op.Updates {
-			err := changeFunc(&op.Updates[i])
+			err := changeFunc(op.Inserts[i])
 			if err != nil {
 				return err
 			}
@@ -50,7 +48,27 @@ func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	return nil
 }
 
-type ChangeItems []ChangeItem
+func (op *SaveOp) LoopUpdates(changeFunc func(change *ChangeItem) error) error {
+	if op.Updates != nil {
+		for i := range op.Updates {
+			err := changeFunc(op.Updates[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
+	err := op.LoopInserts(changeFunc)
+	if err != nil {
+		return err
+	}
+	return op.LoopUpdates(changeFunc)
+}
+
+type ChangeItems []*ChangeItem
 
 type ChangeItem struct {
 	FieldChanges    loadable.Item

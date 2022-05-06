@@ -10,16 +10,16 @@ func runViewBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 }
 
 func processView(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	for i := range request.Inserts {
-		err := addViewDefaultDefinition(request.Inserts[i])
+	return request.LoopInserts(func(change *adapt.ChangeItem) error {
+		err := addViewDefaultDefinition(change)
 		if err != nil {
 			return err
 		}
-	}
-	return nil
+		return nil
+	})
 }
 
-func addViewDefaultDefinition(change adapt.ChangeItem) error {
+func addViewDefaultDefinition(change *adapt.ChangeItem) error {
 	defaultDefinition := "# Wires connect to data in collections\nwires: {}\n# Components determine the layout and composition of your view\ncomponents: []"
 	definition, _ := change.GetField("uesio/studio.definition")
 	if definition == nil {
