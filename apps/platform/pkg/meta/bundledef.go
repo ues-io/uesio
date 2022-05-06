@@ -6,13 +6,12 @@ type BundleDefDep struct {
 }
 
 type BundleDef struct {
-	Name           string                 `yaml:"name"`
-	LoginRoute     string                 `yaml:"loginRoute,omitempty"`
-	HomeRoute      string                 `yaml:"homeRoute,omitempty"`
-	DefaultProfile string                 `yaml:"defaultProfile,omitempty"`
-	DefaultTheme   string                 `yaml:"defaultTheme,omitempty"`
-	PublicProfile  string                 `yaml:"publicProfile,omitempty"`
-	Dependencies   BundleDefDependencyMap `yaml:"dependencies,omitempty"`
+	Name          string                 `yaml:"name"`
+	LoginRoute    string                 `yaml:"loginRoute,omitempty"`
+	HomeRoute     string                 `yaml:"homeRoute,omitempty"`
+	DefaultTheme  string                 `yaml:"defaultTheme,omitempty"`
+	PublicProfile string                 `yaml:"publicProfile,omitempty"`
+	Dependencies  BundleDefDependencyMap `yaml:"dependencies,omitempty"`
 }
 
 type BundleDefDependencyMap map[string]BundleDefDep
