@@ -1,0 +1,4 @@
+name: platform
+authsource: uesio/core.mock
+profile: uesio/crm.public
+public: true

@@ -147,30 +147,30 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 }
 
 // CreateUser function
-func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
+func CreateUser(username string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, site *meta.Site) error {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio/core.user": true,
+			"uesio/core.user":     true,
+			"uesio/core.userfile": true,
 		},
 	})
 
-	defaultSiteProfile := site.GetAppBundle().DefaultProfile
+	// defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
-	if defaultSiteProfile == "" {
-		defaultSiteProfile = "uesio/core.public"
-	}
+	// if defaultSiteProfile == "" {
+	// 	defaultSiteProfile = "uesio/core.public"
+	// }
 
 	return datasource.PlatformSaveOne(&meta.User{
-		/*
-			FederationType: claims.AuthType,
-			FederationID:   claims.Subject,
-		*/
-		//Username: claims.Username,
-		Profile: defaultSiteProfile,
+		Username:  username,
+		LastName:  claims.LastName,
+		FirstName: claims.FirstName,
+		Profile:   signupMethod.Profile,
+		Type:      "PERSON",
 	}, nil, nil, session)
 }
 
@@ -285,4 +285,23 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	}
 
 	return &loginmethod, nil
+}
+
+// CreateLoginMethod function
+func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, site *meta.Site, claims *AuthenticationClaims) error {
+
+	// For now, just use a public session to do this.
+	// We'll need to rethink this later when we add security to collections/wires
+	session := sess.NewPublic(site)
+	session.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio/core.user": true,
+		},
+	})
+
+	return datasource.PlatformSaveOne(&meta.LoginMethod{
+		FederationID: claims.Subject,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, nil, nil, session)
 }
