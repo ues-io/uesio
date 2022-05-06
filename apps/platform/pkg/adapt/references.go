@@ -1,31 +1,50 @@
 package adapt
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
+
+type LocatorMap map[string][]ReferenceLocator
+
+func (lm *LocatorMap) GetIDs() []string {
+	ids := make([]string, len(*lm))
+	fieldIDIndex := 0
+	for k := range *lm {
+		ids[fieldIDIndex] = k
+		fieldIDIndex++
+	}
+	return ids
+}
+
+func (lm *LocatorMap) AddID(value interface{}, locator ReferenceLocator) {
+	foreignKeyValueAsString, ok := value.(string)
+	if ok {
+		items, ok := (*lm)[foreignKeyValueAsString]
+		if !ok {
+			(*lm)[foreignKeyValueAsString] = []ReferenceLocator{}
+		}
+		(*lm)[foreignKeyValueAsString] = append(items, locator)
+	}
+}
 
 type ReferenceRequest struct {
 	Fields     []LoadRequestField
 	FieldsMap  map[string]bool
 	Metadata   *CollectionMetadata
-	IDMap      map[string][]ReferenceLocator
+	IDMap      LocatorMap
 	MatchField string
 }
 
 type ReferenceLocator struct {
-	Item  loadable.Item
+	Item  interface{}
 	Field *FieldMetadata
 }
 
 func (rr *ReferenceRequest) GetIDs() []string {
-	ids := make([]string, len(rr.IDMap))
-	fieldIDIndex := 0
-	for k := range rr.IDMap {
-		ids[fieldIDIndex] = k
-		fieldIDIndex++
-	}
-	return ids
+	return rr.IDMap.GetIDs()
 }
 
 func (rr *ReferenceRequest) GetMatchField() string {
@@ -36,14 +55,7 @@ func (rr *ReferenceRequest) GetMatchField() string {
 }
 
 func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
-	foreignKeyValueAsString, ok := value.(string)
-	if ok {
-		items, ok := rr.IDMap[foreignKeyValueAsString]
-		if !ok {
-			rr.IDMap[foreignKeyValueAsString] = []ReferenceLocator{}
-		}
-		rr.IDMap[foreignKeyValueAsString] = append(items, locator)
-	}
+	rr.IDMap.AddID(value, locator)
 }
 
 func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
@@ -82,6 +94,60 @@ func IsReference(fieldType string) bool {
 	return fieldType == "REFERENCE" || fieldType == "FILE" || fieldType == "USER"
 }
 
+func LoadLooper(
+	connection Connection,
+	collectionName string,
+	idMap LocatorMap,
+	fields []LoadRequestField,
+	matchField string,
+	looper func(loadable.Item, []ReferenceLocator) error,
+) error {
+	ids := idMap.GetIDs()
+	if len(ids) == 0 {
+		return errors.New("No ids provided for load looper")
+	}
+	op := &LoadOp{
+		Fields:         fields,
+		WireName:       "LooperLoad",
+		Collection:     &Collection{},
+		CollectionName: collectionName,
+		Conditions: []LoadRequestCondition{
+			{
+				Field:    matchField,
+				Operator: "IN",
+				Value:    ids,
+			},
+		},
+		Query: true,
+	}
+
+	err := connection.Load(op)
+	if err != nil {
+		return err
+	}
+
+	return op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+		refFK, err := refItem.GetField(matchField)
+		if err != nil {
+			return err
+		}
+
+		refFKAsString, ok := refFK.(string)
+		if !ok {
+			//Was unable to convert foreign key to a string!
+			//Something has gone sideways!
+			return err
+		}
+
+		matchIndexes, ok := idMap[refFKAsString]
+		if !ok {
+			return looper(refItem, nil)
+		}
+		return looper(refItem, matchIndexes)
+	})
+
+}
+
 func HandleReferences(
 	connection Connection,
 	referencedCollections ReferenceRegistry,
@@ -89,62 +155,27 @@ func HandleReferences(
 
 	for collectionName, ref := range referencedCollections {
 		ids := ref.GetIDs()
-		idCount := len(ids)
-		if idCount == 0 {
+		if len(ids) == 0 {
 			continue
 		}
+
 		ref.AddFields([]LoadRequestField{
 			{
 				ID: ID_FIELD,
 			},
 		})
-		op := &LoadOp{
-			Fields:         ref.Fields,
-			WireName:       "ReferenceLoad",
-			Collection:     &Collection{},
-			CollectionName: collectionName,
-			Conditions: []LoadRequestCondition{
-				{
-					Field:    ref.GetMatchField(),
-					Operator: "IN",
-					Value:    ids,
-				},
-			},
-			Query: true,
-		}
 
-		err := connection.Load(op)
-		if err != nil {
-			return err
-		}
+		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), func(refItem loadable.Item, matchIndexes []ReferenceLocator) error {
 
-		referencedCollection := referencedCollections[op.CollectionName]
-		err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
-			refFK, err := refItem.GetField(ref.GetMatchField())
-			if err != nil {
-				return err
-			}
-
-			refFKAsString, ok := refFK.(string)
-			if !ok {
-				//Was unable to convert foreign key to a string!
-				//Something has gone sideways!
-				return err
-			}
-
-			if refFKAsString == "" {
-				return nil
-			}
-
-			matchIndexes, ok := referencedCollection.IDMap[refFKAsString]
-			if !ok {
+			if matchIndexes == nil {
 				return nil
 			}
 
 			for _, locator := range matchIndexes {
 				referenceValue := &Item{}
+				concreteItem := locator.Item.(loadable.Item)
 				meta.Copy(referenceValue, refItem)
-				err = locator.Item.SetField(locator.Field.GetFullName(), referenceValue)
+				err := concreteItem.SetField(locator.Field.GetFullName(), referenceValue)
 				if err != nil {
 					return err
 				}

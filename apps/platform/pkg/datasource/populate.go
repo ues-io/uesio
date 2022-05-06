@@ -11,7 +11,7 @@ import (
 )
 
 func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		if !change.IsNew {
 			return nil
 		}
@@ -33,7 +33,7 @@ func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
 }
 
 func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
@@ -47,7 +47,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 }
 
 func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
@@ -74,7 +74,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		return err
 	}
 
-	autonumberStart, err := getAutonumber(len(op.Inserts), connection, collectionMetadata)
+	autonumberStart, err := getAutonumber(op.InsertCount, connection, collectionMetadata)
 	if err != nil {
 		return err
 	}
@@ -96,28 +96,18 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
-	if op.Inserts != nil {
-		for i := range op.Inserts {
-			op.Inserts[i].Autonumber = autonumberStart + i
-			for _, population := range populations {
-				err := population(op.Inserts[i])
-				if err != nil {
-					op.AddError(err)
-				}
+	insertIndex := 0
+	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+		if change.IsNew {
+			change.Autonumber = autonumberStart + insertIndex
+			insertIndex++
+		}
+		for _, population := range populations {
+			err := population(change)
+			if err != nil {
+				op.AddError(err)
 			}
 		}
-	}
-
-	if op.Updates != nil {
-		for i := range op.Updates {
-			for _, population := range populations {
-				err := population(op.Updates[i])
-				if err != nil {
-					op.AddError(err)
-				}
-			}
-		}
-	}
-
-	return nil
+		return nil
+	})
 }

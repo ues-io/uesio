@@ -11,10 +11,12 @@ type UpdatesAPI struct {
 func (c *UpdatesAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	for _, update := range c.op.Updates {
+	_ = c.op.LoopUpdates(func(change *adapt.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
-			change: update,
+			change: change,
 		})
-	}
+		return nil
+	})
+
 	return changeAPIs
 }
