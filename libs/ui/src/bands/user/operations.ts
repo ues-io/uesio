@@ -29,28 +29,17 @@ async function responseRedirect(
 	return context
 }
 
-const loginToken =
-	(context: Context, authSource: string, token: string): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		const response = await platform.loginToken(authSource, {
-			token,
-		})
-		dispatch(setUser(response.user))
-		return responseRedirect(response, dispatch, context)
-	}
-
 const login =
 	(
 		context: Context,
 		authSource: string,
-		username: string,
-		password: string
+		payload: Record<string, string>
 	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		const response = await platform.login(authSource, {
-			username: context.merge(username),
-			password: context.merge(password),
-		})
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
+		if (!mergedPayload) return context
+		const response = await platform.login(authSource, mergedPayload)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
@@ -64,7 +53,6 @@ const logout =
 	}
 
 export default {
-	loginToken,
 	login,
 	logout,
 }

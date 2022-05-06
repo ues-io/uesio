@@ -23,20 +23,25 @@ type Connection struct {
 	credentials *adapt.Credentials
 }
 
-func (c *Connection) Verify(token string, session *sess.Session) error {
+func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	token, ok := payload["token"]
+	if !ok {
+		return nil, errors.New("No token provided for Google login")
+	}
 	v := verifier.Verifier{}
 
 	aud, err := configstore.GetValueFromKey("uesio.google_client_id", session)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return v.VerifyIDToken(token, []string{
+	err = v.VerifyIDToken(token, []string{
 		aud,
 	})
-}
+	if err != nil {
+		return nil, err
+	}
 
-func (c *Connection) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	claimSet, err := verifier.Decode(token)
 	if err != nil {
 		return nil, err
@@ -48,8 +53,5 @@ func (c *Connection) Decode(token string, session *sess.Session) (*auth.Authenti
 		LastName:  claimSet.FamilyName,
 		Email:     claimSet.Email,
 	}, nil
-}
 
-func (c *Connection) Login(username string, password string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return nil, errors.New("Login not Supported for google")
 }

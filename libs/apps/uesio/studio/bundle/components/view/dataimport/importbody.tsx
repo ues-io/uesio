@@ -58,11 +58,11 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		return mappings
 	}
 
-	const [spec, setSpec] = useState<definition.Spec>({
-		jobtype: "import",
+	const [spec, setSpec] = useState<definition.ImportSpec>({
+		jobtype: "IMPORT",
 		collection: collection.getFullName(),
 		upsertkey: "",
-		filetype: "csv",
+		filetype: "CSV",
 		mappings: getInitialMatch(csvFields, collectionFields),
 	})
 

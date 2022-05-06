@@ -239,8 +239,14 @@ definition:
             wire: newloginmethod
             mode: EDIT
             components:
-              - uesio/io.field:
+              - uesio/studio.metadatafield:
+                  uesio.context:
+                    siteadmin:
+                      name: $Param{sitename}
+                      app: $Param{app}
                   fieldId: uesio/core.auth_source
+                  metadataType: "AUTHSOURCE"
+                  label: "Auth Source"
               - uesio/io.field:
                   fieldId: uesio/core.federation_id
       actions:

@@ -159,7 +159,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
 			Name:      site.Name,
-			Version:   site.Bundle.GetVersionString(),
 			App:       site.GetAppID(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,

@@ -114,6 +114,10 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.type
                                   - uesio/studio.metadatafield:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.credentials
                                       metadataType: "CREDENTIALS"
                                       label: "Credentials"

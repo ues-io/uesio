@@ -17,12 +17,25 @@ export type ImportMapping = {
 	value?: string
 }
 
-export type Spec = {
-	jobtype: string
-	filetype: string
+export type Spec = ImportSpec | ExportSpec | UploadSpec
+
+export type ImportSpec = {
+	jobtype: "IMPORT"
 	collection: string
+	filetype: "CSV" | "TAB" | undefined
 	upsertkey: string
 	mappings: Record<string, ImportMapping>
+}
+
+export type ExportSpec = {
+	jobtype: "EXPORT"
+	collection: string
+	filetype: "CSV"
+}
+
+export type UploadSpec = {
+	jobtype: "UPLOADFILES"
+	collection: string
 }
 
 export type BaseProps = {

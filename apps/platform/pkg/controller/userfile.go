@@ -33,13 +33,24 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	details.ContentLength = contentLen
 
-	ufm, err := filesource.Upload(r.Body, *details, nil, session)
+	ufm, err := filesource.Upload([]filesource.FileUploadOp{
+		{
+			Data:    r.Body,
+			Details: details,
+		},
+	}, nil, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJSON(w, r, ufm)
+	if len(ufm) != 1 {
+		err = errors.New("Upload Failed: Invalid Response")
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	respondJSON(w, r, ufm[0])
 }
 
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {

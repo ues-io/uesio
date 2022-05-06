@@ -31,11 +31,15 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return nil, err
 	}
 
-	if job.Spec.JobType == "export" {
-		return nil, errors.New("Cannot manually create export batches")
+	if job.Spec.JobType == "IMPORT" {
+		return NewImportBatch(body, job, session)
 	}
 
-	return NewImportBatch(body, job, session)
+	if job.Spec.JobType == "UPLOADFILES" {
+		return NewFileUploadBatch(body, job, session)
+	}
+
+	return nil, errors.New("Invalid JobType for creating batches: " + job.Spec.JobType)
 
 }
 

@@ -41,9 +41,11 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						onClick={(): void => {
 							uesio.signal.run(
 								{
-									signal: "user/LOGINTOKEN",
+									signal: "user/LOGIN",
 									authSource: "uesio/core.mock",
-									token: mock.getMockToken(user),
+									payload: {
+										token: mock.getMockToken(user),
+									},
 								},
 								context
 							)

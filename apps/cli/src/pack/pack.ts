@@ -1,7 +1,7 @@
 import { fileExists, getApp } from "../config/config"
-import * as path from "path"
+import path from "path"
 import { promises as fs } from "fs"
-import * as yaml from "yaml"
+import yaml from "yaml"
 import chalk from "chalk"
 
 import webpack, { RuleSetRule, StatsError } from "webpack"

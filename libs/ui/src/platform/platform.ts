@@ -1,6 +1,6 @@
 import { LoadRequestBatch } from "../load/loadrequest"
 import { LoadResponseBatch } from "../load/loadresponse"
-import { LoginRequest, LoginTokenRequest, LoginResponse } from "../auth/auth"
+import { LoginResponse } from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
@@ -333,20 +333,9 @@ const platform = {
 		})
 		return response.json()
 	},
-	loginToken: async (
-		authSource: string,
-		requestBody: LoginTokenRequest
-	): Promise<LoginResponse> => {
-		const [namespace, name] = parseKey(authSource)
-		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/tokenlogin`,
-			requestBody
-		)
-		return response.json()
-	},
 	login: async (
 		authSource: string,
-		requestBody: LoginRequest
+		requestBody: Record<string, string>
 	): Promise<LoginResponse> => {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
@@ -367,13 +356,7 @@ const platform = {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				jobtype: spec.jobtype,
-				filetype: spec.filetype,
-				collection: spec.collection,
-				upsertkey: spec.upsertkey,
-				mappings: spec.mappings,
-			}),
+			body: JSON.stringify(spec),
 		})
 		return response.json()
 	},

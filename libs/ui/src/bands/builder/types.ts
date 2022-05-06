@@ -3,6 +3,7 @@ const METADATA = {
 	FIELD: "fields",
 	VIEW: "views",
 	DATASOURCE: "datasources",
+	AUTHSOURCE: "authsources",
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
