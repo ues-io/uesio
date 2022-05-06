@@ -199,6 +199,14 @@ func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, e
 func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	var user meta.User
 
+	//TO-DO check this permissions
+	session.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio/core.user":     true,
+			"uesio/core.userfile": true,
+		},
+	})
+
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
@@ -295,7 +303,9 @@ func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, site *m
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio/core.user": true,
+			"uesio/core.loginmethod": true,
+			"uesio/core.user":        true,
+			"uesio/core.userfile":    true,
 		},
 	})
 

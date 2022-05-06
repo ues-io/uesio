@@ -1,4 +1,5 @@
 name: platform
 authsource: uesio/core.mock
-profile: uesio/crm.public
+profile: uesio/studio.standard
+usernameTempalte: ${merg of stuff from the payload}
 public: true

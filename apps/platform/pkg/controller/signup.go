@@ -20,25 +20,24 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	signupMethodNamespace := vars["namespace"]
 	signupMethodName := vars["name"]
 
-	signupMethod, err := meta.NewSignupMethod(signupMethodNamespace + "." + signupMethodName) //THIS is BAD
+	signupMethod, err := meta.NewSignupMethod(signupMethodNamespace + "." + signupMethodName)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	err = bundle.Load(signupMethod, session)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
-	//VALIDATE if we have more data, not doing it for at the moment;
 	authconn, err := auth.GetAuthConnection(signupMethod.AuthSource, session)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
@@ -47,30 +46,33 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]string
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
+	//for the studio is mandatory move there
 	//get username for google from the body or default the email
 	username, ok := payload["username"]
 	if !ok {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: username is required"
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	//TO-DO
 	//username/password (cognito) or token (google)
-	//for congnito create a new user in cognito
+	//for congnito create a new user in cognito autoprovisioning??
 	//for google login it's fine
+
+	//authconn.Signup() prepare the username adding the site in front
 
 	// to get the claims based on the map that is send in
 	claims, err := authconn.Login(payload, session)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
@@ -78,28 +80,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	err = auth.CreateUser(username, claims, signupMethod, site)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
-	//TO-DO get the user we just created
 	user, err := auth.GetUserByID(username, session)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-
-	//add the loginmethods
 
 	err = auth.CreateLoginMethod(user, signupMethod, site, claims)
 	if err != nil {
-		msg := "Invalid request format: " + err.Error()
+		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
