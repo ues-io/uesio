@@ -4,6 +4,7 @@ named:
 views:
   uesio/core.login: true
   uesio/core.notfound: true
+  uesio/core.signup: true
 routes:
   uesio/core.login: true
 files:

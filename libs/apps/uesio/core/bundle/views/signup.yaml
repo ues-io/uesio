@@ -1,0 +1,109 @@
+name: signup
+public: true
+definition:
+  # Wires are how we pull in data
+  wires:
+    # For dev, viewonly wire
+    loginmethod:
+      viewOnly: true
+      fields:
+        uesio/viewonly.terms:
+          label: Terms and conditions
+          type: CHECKBOX
+        uesio/viewonly.username:
+          label: Username
+          type: TEXT
+        uesio/viewonly.password:
+          label: Password
+          type: TEXT
+        uesio/viewonly.email:
+          label: Email
+          type: TEXT
+        uesio/viewonly.signupmethod:
+          label: Signup Method
+          type: TEXT
+      init:
+        create: true
+        # Some fake test data
+      defaults:
+        - field: uesio/viewonly.provider
+          valueSource: VALUE
+          value: "google"
+
+    credentials:
+      viewOnly: true
+      fields:
+        uesio/viewonly.username:
+          label: Username
+          type: TEXT
+        uesio/viewonly.password:
+          label: Password
+          type: TEXT
+        uesio/viewonly.method:
+          label: Method
+          type: TEXT
+      init:
+        create: true
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: url($File{uesio/core.splash})
+            minHeight: 100vh
+        templateColumns:
+          xs: 1fr
+          md: 1fr 1fr
+          lg: 5fr 7fr
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: "#f3f3f3"
+              components:
+                - uesio/io.image:
+                    uesio.styles:
+                      root:
+                        margin: 60px
+                    file: uesio/core.logo
+                    height: 120px
+                    align: center
+                    signals:
+                      - signal: "route/REDIRECT"
+                        path: "https://$Site{domain}"
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        width: "300px"
+                        margin: "40px auto"
+                        textAlign: "center"
+                    components:
+                      - uesio/io.list:
+                          id: credslist
+                          wire: loginmethod
+                          mode: EDIT
+                          components:
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.text:
+                                      text: -- Custom component that renders a field per field listed in the signup method? --
+                                      textAlign: center
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.username
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.password
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.terms
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.primary
+                                            text: Create Account
+                                            signals:
+                                              - signal: user/SIGNUP
+                                                signupMethod: ${uesio/viewonly.signupmethod}
+                                                payload:
+                                                  username: ${uesio/viewonly.username}
+                                                  password: ${uesio/viewonly.password}
+                                                  email: ${uesio/viewonly.email}

@@ -90,6 +90,7 @@ routes:
   uesio/studio.home: true
   uesio/studio.installedbundle: true
   uesio/studio.login: true
+  uesio/studio.signup: true
   uesio/studio.permissionset: true
   uesio/studio.permissionsets: true
   uesio/studio.profile: true

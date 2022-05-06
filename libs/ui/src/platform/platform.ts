@@ -333,6 +333,17 @@ const platform = {
 		})
 		return response.json()
 	},
+	signup: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<LoginResponse> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/signup`,
+			requestBody
+		)
+		return response.json()
+	},
 	login: async (
 		authSource: string,
 		requestBody: Record<string, string>
