@@ -46,7 +46,7 @@ func RegisterAdapter(name string, adapter Adapter) {
 	adapterMap[name] = adapter
 }
 
-func getStringWithDefault(field string, defaultField string) string {
+func GetStringWithDefault(field string, defaultField string) string {
 	if field != "" {
 		return field
 	}

@@ -268,7 +268,6 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		return nil, err
 	}
 
-	by.DefaultProfile = workspace.DefaultProfile
 	by.PublicProfile = workspace.PublicProfile
 	by.HomeRoute = workspace.HomeRoute
 	by.LoginRoute = workspace.LoginRoute

@@ -1,9 +1,11 @@
 name: mainlayout
 label: Main Layout
 definition:
-  templateRows: 60px fr
-  templateColumns: 300px 1fr
+  templateAreas: '". main ."'
+  templateColumns:
+    sm: 0 1fr 0
+    md: 1fr 900px 1fr
+    lg: 1fr 900px 1fr
   uesio.styles:
     root:
-      minHeight: 100vh
-public: true
+      backgroundColor: rgb(249,249,249)

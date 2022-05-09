@@ -1,0 +1,71 @@
+name: lesson
+definition:
+  components:
+    - uesio/io.box:
+        uesio.styles:
+          root:
+            height: 120px
+        components:
+          - uesio/core.view:
+              view: uesio/docs.topbar
+    - uesio/io.grid:
+        uesio.variant: uesio/docs.mainlayout
+        items:
+          - uesio/io.griditem:
+              area: main
+              uesio.styles:
+                root:
+                  minHeight: 100vh
+                  padding: 22px
+              components:
+                - uesio/io.list:
+                    wire: lesson
+                    components:
+                      - uesio/io.text:
+                          uesio.variant: uesio/docs.smallcallout
+                          text: ${uesio/docs.article->uesio/cms.name}
+                      - uesio/io.text:
+                          uesio.variant: uesio/docs.content
+                          text: ${uesio/docs.article->uesio/cms.description}
+  wires:
+    track:
+      collection: uesio/docs.track
+      fields:
+        uesio/core.id:
+        uesio/docs.name:
+        uesio/docs.description:
+        uesio/docs.slug:
+      conditions:
+        - field: uesio/docs.slug
+          param: track
+          valueSource: PARAM
+    article:
+      collection: uesio/cms.article
+      fields:
+        uesio/core.id:
+        uesio/cms.slug:
+      conditions:
+        - field: uesio/cms.slug
+          param: lesson
+          valueSource: PARAM
+    lesson:
+      collection: uesio/docs.lesson
+      fields:
+        uesio/core.id:
+        uesio/docs.order:
+        uesio/docs.article:
+          fields:
+            uesio/cms.name:
+            uesio/cms.description:
+        uesio/docs.track:
+          fields:
+            uesio/docs.slug:
+      conditions:
+        - field: uesio/docs.track
+          lookupWire: track
+          lookupField: uesio/core.id
+          valueSource: LOOKUP
+        - field: uesio/docs.article
+          lookupWire: article
+          lookupField: uesio/core.id
+          valueSource: LOOKUP

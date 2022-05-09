@@ -1,7 +1,6 @@
 name: uesio/studio
 loginRoute: uesio/studio.login
 homeRoute: uesio/studio.home
-defaultProfile: uesio/studio.standard
 defaultTheme: uesio/studio.default
 publicProfile: uesio/studio.public
 dependencies:

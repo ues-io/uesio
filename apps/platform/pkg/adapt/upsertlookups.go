@@ -2,7 +2,9 @@ package adapt
 
 import (
 	"errors"
+	"strconv"
 
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -10,6 +12,8 @@ func HandleUpsertLookup(
 	connection Connection,
 	op *SaveOp,
 ) error {
+
+	op.InsertCount = len(op.Inserts)
 
 	options := op.Options
 	if options == nil || options.Upsert == nil {
@@ -24,8 +28,8 @@ func HandleUpsertLookup(
 	}
 
 	// If we have a match field option, use that, otherwise, use the name field
-	upsertKey := getStringWithDefault(options.Upsert.MatchField, ID_FIELD)
-	matchTemplate := getStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
+	upsertKey := GetStringWithDefault(options.Upsert.MatchField, ID_FIELD)
+	matchTemplate := GetStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
 
 	template, err := NewFieldChanges(matchTemplate, collectionMetadata)
 	if err != nil {
@@ -33,7 +37,7 @@ func HandleUpsertLookup(
 	}
 
 	// Go through all the changes and get a list of the upsert keys
-	ids := []string{}
+	idMap := LocatorMap{}
 	for _, change := range op.Inserts {
 		upsertKeyStringValue, err := templating.Execute(template, change.FieldChanges)
 		if err != nil {
@@ -43,82 +47,50 @@ func HandleUpsertLookup(
 		if upsertKeyStringValue == "" {
 			continue
 		}
-		ids = append(ids, upsertKeyStringValue)
+
+		idMap.AddID(upsertKeyStringValue, ReferenceLocator{
+			Item: change,
+		})
+
 	}
 
-	if len(ids) == 0 {
+	if len(idMap) == 0 {
 		return nil
 	}
 
-	loadOp := &LoadOp{
-		CollectionName: op.CollectionName,
-		WireName:       op.WireName,
-		Fields: []LoadRequestField{
-			{
-				ID: ID_FIELD,
-			},
-			{
-				ID: upsertKey,
-			},
+	return LoadLooper(connection, op.CollectionName, idMap, []LoadRequestField{
+		{
+			ID: ID_FIELD,
 		},
-		Collection: &Collection{},
-		Conditions: []LoadRequestCondition{
-			{
-				Field:    upsertKey,
-				Operator: "IN",
-				Value:    ids,
-			},
+		{
+			ID: upsertKey,
 		},
-		Query: true,
-	}
+	}, upsertKey, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
 
-	err = connection.Load(loadOp)
-	if err != nil {
-		return err
-	}
-
-	lookupResult, err := getLookupResultMap(loadOp, upsertKey)
-	if err != nil {
-		return err
-	}
-
-	template, err = NewFieldChanges(matchTemplate, collectionMetadata)
-	if err != nil {
-		return err
-	}
-
-	if template == nil {
-		return errors.New("Cannot upsert without id format metadata")
-	}
-
-	newInserts := ChangeItems{}
-	for _, change := range op.Inserts {
-
-		keyVal, err := templating.Execute(template, change.FieldChanges)
-		if err != nil || keyVal == "" {
-			return errors.New("Could not get key for upsert change: " + err.Error() + " : " + keyVal)
-		}
-		match, ok := lookupResult[keyVal]
-
-		// If we find a match, populate the id field so that it's an update instead of an insert
-		if ok {
-			idValue, err := match.GetField(ID_FIELD)
-			if err != nil {
-				return err
-			}
-			err = change.FieldChanges.SetField(ID_FIELD, idValue)
-			if err != nil {
-				return err
-			}
-			change.IDValue = idValue.(string)
-			change.IsNew = false
-			op.Updates = append(op.Updates, change)
-		} else {
-			newInserts = append(newInserts, change)
+		if len(matchIndexes) != 1 {
+			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
 
-	}
-	op.Inserts = newInserts
-	return nil
+		match := matchIndexes[0].Item
+
+		// Cast item to a change
+		change := match.(*ChangeItem)
+
+		idValue, err := item.GetField(ID_FIELD)
+		if err != nil {
+			return err
+		}
+		err = change.SetField(ID_FIELD, idValue)
+		if err != nil {
+			return err
+		}
+
+		change.IDValue = idValue.(string)
+		change.IsNew = false
+		op.Updates = append(op.Updates, change)
+		op.InsertCount = op.InsertCount - 1
+
+		return nil
+	})
 
 }

@@ -133,6 +133,8 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 
 	}
 
+	matchTemplate := adapt.GetStringWithDefault(spec.UpsertTemplate, "${"+spec.UpsertKey+"}")
+
 	return []datasource.SaveRequest{
 		{
 			Collection: spec.Collection,
@@ -141,7 +143,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{
 					MatchField:    spec.UpsertKey,
-					MatchTemplate: "${" + spec.UpsertKey + "}",
+					MatchTemplate: matchTemplate,
 				},
 				Lookups: lookups,
 			},
