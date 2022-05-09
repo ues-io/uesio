@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Context } from "../../../context/context"
+import { Context, getWireDefFromWireName } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
@@ -19,6 +19,7 @@ import {
 	removeNodeAtPath,
 } from "../../../yamlutils/yamlutils"
 import { batch } from "react-redux"
+import { WireDefinition } from "../../../definition/wire"
 
 export default createAsyncThunk<
 	PlainView,
@@ -130,9 +131,17 @@ export default createAsyncThunk<
 	const definition = content.definition
 	const wires = definition.wires
 	const wireNames = wires ? Object.keys(wires) : []
+	const wireDefs: Record<string, WireDefinition> = {}
+	wireNames.forEach((wirename) => {
+		const viewId = context.getViewId()
+		if (!viewId) throw new Error("Could not get View Def Id")
+		const wireDef = getWireDefFromWireName(viewId, wirename)
+		if (!wireDef) throw new Error("Cannot initialize invalid wire")
+		wireDefs[wirename] = wireDef
+	})
 
 	// Initialize Wires
-	api.dispatch(initializeWiresOp(context, wireNames))
+	api.dispatch(initializeWiresOp(context, wireDefs))
 
 	if (wireNames?.length) {
 		await api.dispatch(
