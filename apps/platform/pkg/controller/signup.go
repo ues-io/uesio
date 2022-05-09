@@ -119,37 +119,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var redirectNamespace, redirectRoute string
-
-	landingRoute := signupMethod.LandingRoute
-	if landingRoute == "" {
-		msg := "No Landing Route Specfied"
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	redirectNamespace, redirectRoute, err = meta.ParseKey(landingRoute)
-	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	respondJSON(w, r, &LoginResponse{
-		User: &UserMergeData{
-			ID:        user.ID,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Profile:   user.Profile,
-			PictureID: user.GetPictureID(),
-			Site:      session.GetSite().ID, //TO-DO Not sure what site
-			Language:  user.Language,
-		},
-		RedirectRouteNamespace: redirectNamespace,
-		RedirectRouteName:      redirectRoute,
-		//RedirectPath:           redirectPath,
-	})
+	redirectResponse(w, r, signupMethod.LandingRoute, user, site)
 
 }
 
