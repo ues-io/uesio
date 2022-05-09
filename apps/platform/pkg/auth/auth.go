@@ -44,8 +44,8 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Login(map[string]string, *sess.Session) (*AuthenticationClaims, error)
-	Signup(payload map[string]string, usarname string, session *sess.Session) error
+	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
+	Signup(map[string]interface{}, string, *sess.Session) error
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -256,4 +256,20 @@ func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims 
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
 	}, nil, nil, session)
+}
+
+func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {
+
+	value, ok := payload[key]
+	if !ok {
+		return "", errors.New("Key: " + key + " not present in payload")
+	}
+
+	stringValue, ok := value.(string)
+	if !ok {
+		return "", errors.New("The value for" + key + " is not string")
+	}
+
+	return stringValue, nil
+
 }

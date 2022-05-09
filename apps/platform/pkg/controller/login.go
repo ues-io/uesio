@@ -68,7 +68,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
-	var loginRequest map[string]string
+	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()

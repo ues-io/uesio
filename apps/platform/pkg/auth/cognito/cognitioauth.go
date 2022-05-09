@@ -34,15 +34,15 @@ func getFullyQualifiedUsername(site string, username string) string {
 	return site + ":" + username
 }
 
-func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
-	username, ok := payload["username"]
-	if !ok {
-		return nil, errors.New("No username provided for Cognito login")
+	username, err := auth.GetPayloadValue(payload, "username")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
 	}
-	password, ok := payload["password"]
-	if !ok {
-		return nil, errors.New("No password provided for Cognito login")
+	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
 	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
@@ -89,7 +89,7 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 
 }
 
-func (c *Connection) Signup(payload map[string]string, username string, session *sess.Session) error {
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
 
 	site := session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
@@ -121,9 +121,9 @@ func (c *Connection) Signup(payload map[string]string, username string, session 
 		return errors.New("User already exists")
 	}
 
-	password, ok := payload["password"]
-	if !ok {
-		return errors.New("No password provided for Cognito login")
+	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
 	}
 
 	signUpData := &cognito.SignUpInput{
