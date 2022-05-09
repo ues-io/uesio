@@ -1,5 +1,0 @@
-name: admin
-path: admin
-view: uesio/docs.admin
-theme: uesio/docs.default
-public: true

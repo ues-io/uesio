@@ -28,8 +28,8 @@ func HandleUpsertLookup(
 	}
 
 	// If we have a match field option, use that, otherwise, use the name field
-	upsertKey := getStringWithDefault(options.Upsert.MatchField, ID_FIELD)
-	matchTemplate := getStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
+	upsertKey := GetStringWithDefault(options.Upsert.MatchField, ID_FIELD)
+	matchTemplate := GetStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
 
 	template, err := NewFieldChanges(matchTemplate, collectionMetadata)
 	if err != nil {

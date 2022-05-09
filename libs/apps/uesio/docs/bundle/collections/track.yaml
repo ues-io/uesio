@@ -1,5 +1,4 @@
 name: track
 label: Track
 pluralLabel: tracks
-dataSource: uesio/core.platform
-nameField: ""
+idFormat: ${uesio/docs.slug}

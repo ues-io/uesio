@@ -1,0 +1,5 @@
+name: lesson
+path: track/{track}/{lesson}
+view: uesio/docs.lesson
+theme: uesio/docs.default
+public: true

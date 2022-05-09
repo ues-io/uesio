@@ -40,8 +40,8 @@ func HandleReferenceLookups(
 			return err
 		}
 
-		matchField := getStringWithDefault(lookup.MatchField, ID_FIELD)
-		matchTemplate := getStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
+		matchField := GetStringWithDefault(lookup.MatchField, ID_FIELD)
+		matchTemplate := GetStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
 
 		template, err := NewFieldChanges(matchTemplate, refCollectionMetadata)
 		if err != nil {
