@@ -2,7 +2,10 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"regexp"
+	"text/template"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -10,24 +13,33 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func Signup(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()
+	publicSession := sess.NewPublic(site)
+	publicSession.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio/core.loginmethod": true,
+			"uesio/core.user":        true,
+			"uesio/core.userfile":    true,
+		},
+	})
+
 	vars := mux.Vars(r)
-	signupMethodNamespace := vars["namespace"]
-	signupMethodName := vars["name"]
+	namespace := vars["namespace"]
+	name := vars["name"]
 
-	signupMethod, err := meta.NewSignupMethod(signupMethodNamespace + "." + signupMethodName)
-	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
+	signupMethod := &meta.SignupMethod{
+		Name:      name,
+		Namespace: namespace,
 	}
-	err = bundle.Load(signupMethod, session)
+
+	err := bundle.Load(signupMethod, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -35,7 +47,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authconn, err := auth.GetAuthConnection(signupMethod.AuthSource, session)
+	authconn, err := auth.GetAuthConnection(signupMethod.AuthSource, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -52,25 +64,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//for the studio is mandatory move there
-	//get username for google from the body or default the email
-	username, ok := payload["username"]
-	if !ok {
-		msg := "Signup failed: username is required"
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	//TO-DO
-	//username/password (cognito) or token (google)
-	//for congnito create a new user in cognito autoprovisioning??
-	//for google login it's fine
-
-	//authconn.Signup() prepare the username adding the site in front
-
-	// to get the claims based on the map that is send in
-	claims, err := authconn.Login(payload, session)
+	username, err := mergeTemplate(payload, signupMethod.UsernameTemplate)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -78,7 +72,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.CreateUser(username, claims, signupMethod, site)
+	if !matchesRegex(username, signupMethod.Regex) {
+		msg := "Signup failed: Regex validation failed"
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	err = authconn.Signup(payload, username, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -86,7 +87,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.GetUserByID(username, session)
+	claims, err := authconn.Login(payload, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -94,7 +95,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.CreateLoginMethod(user, signupMethod, site, claims)
+	err = auth.CreateUser(username, claims, signupMethod, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -102,6 +103,79 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//redirect
+	user, err := auth.GetUserByID(username, publicSession)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
 
+	err = auth.CreateLoginMethod(user, signupMethod, claims, publicSession)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	var redirectNamespace, redirectRoute string
+
+	landingRoute := signupMethod.LandingRoute
+	if landingRoute == "" {
+		msg := "No Landing Route Specfied"
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	redirectNamespace, redirectRoute, err = meta.ParseKey(landingRoute)
+	if err != nil {
+		msg := "Signup failed: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(w, r, &LoginResponse{
+		User: &UserMergeData{
+			ID:        user.ID,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Profile:   user.Profile,
+			PictureID: user.GetPictureID(),
+			Site:      session.GetSite().ID, //TO-DO Not sure what site
+			Language:  user.Language,
+		},
+		RedirectRouteNamespace: redirectNamespace,
+		RedirectRouteName:      redirectRoute,
+		//RedirectPath:           redirectPath,
+	})
+
+}
+
+func mergeTemplate(payload map[string]string, usernameTemplate string) (string, error) {
+	//TO-DO add default
+	template, err := newTemplateWithValidKeysOnly(usernameTemplate)
+	if err != nil {
+		return "", err
+	}
+	return templating.Execute(template, payload)
+}
+
+func matchesRegex(usarname string, regex string) bool {
+	if regex == "" {
+		return meta.IsValidMetadataName(usarname)
+	}
+	var validMetaRegex, _ = regexp.Compile(regex)
+	return validMetaRegex.MatchString(usarname)
+}
+
+func newTemplateWithValidKeysOnly(templateString string) (*template.Template, error) {
+	return templating.NewWithFunc(templateString, func(m map[string]string, key string) (interface{}, error) {
+		val, ok := m[key]
+		if !ok {
+			return nil, errors.New("missing key " + key)
+		}
+		return val, nil
+	})
 }

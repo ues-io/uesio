@@ -53,10 +53,13 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 		return nil, err
 	}
 
+	site := session.GetSiteTenantID()
+	fullUsername := site + ":" + username
+
 	authTry := &cognito.AdminInitiateAuthInput{
 		AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
 		AuthParameters: map[string]string{
-			"USERNAME": username,
+			"USERNAME": fullUsername,
 			"PASSWORD": password,
 		},
 		ClientId:   aws.String(clientID),
@@ -77,10 +80,71 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	return &auth.AuthenticationClaims{
-		Subject:   claims["sub"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
-		Email:     claims["email"].(string),
+		Subject: claims["sub"].(string),
+		//FirstName: claims["given_name"].(string),
+		//LastName:  claims["family_name"].(string),
+		//Email:     claims["email"].(string),
 	}, nil
 
+}
+
+func (c *Connection) Signup(payload map[string]string, username string, session *sess.Session) error {
+
+	site := session.GetSiteTenantID()
+	fullUsername := site + ":" + username
+
+	clientID, ok := (*c.credentials)["clientid"]
+	if !ok {
+		return errors.New("no client id provided in credentials")
+	}
+
+	poolID, ok := (*c.credentials)["poolid"]
+	if !ok {
+		return errors.New("no user pool provided in credentials")
+	}
+
+	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	if err != nil {
+		return err
+	}
+
+	client := cognito.NewFromConfig(cfg)
+
+	awsUserExists := &cognito.AdminGetUserInput{
+		Username:   &fullUsername,
+		UserPoolId: aws.String(poolID),
+	}
+
+	adminGetUserOutput, _ := client.AdminGetUser(context.Background(), awsUserExists)
+	if adminGetUserOutput != nil && adminGetUserOutput.Username != nil {
+		return errors.New("User already exists")
+	}
+
+	password, ok := payload["password"]
+	if !ok {
+		return errors.New("No password provided for Cognito login")
+	}
+
+	signUpData := &cognito.SignUpInput{
+		ClientId: aws.String(clientID),
+		Username: &fullUsername,
+		Password: &password,
+	}
+
+	_, err = client.SignUp(context.Background(), signUpData)
+	if err != nil {
+		return err
+	}
+
+	confirmSignUpData := &cognito.AdminConfirmSignUpInput{
+		Username:   &fullUsername,
+		UserPoolId: aws.String(poolID),
+	}
+
+	_, err = client.AdminConfirmSignUp(context.Background(), confirmSignUpData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

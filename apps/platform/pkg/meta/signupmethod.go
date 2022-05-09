@@ -19,19 +19,22 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 }
 
 type SignupMethod struct {
-	ID         string     `yaml:"-" uesio:"uesio/core.id"`
-	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" uesio:"-"`
-	AuthSource string     `yaml:"authsource" uesio:"uesio/studio.authsource"`
-	Profile    string     `yaml:"profile" uesio:"uesio/studio.profile"`
-	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID               string     `yaml:"-" uesio:"uesio/core.id"`
+	Name             string     `yaml:"name" uesio:"uesio/studio.name"`
+	Namespace        string     `yaml:"-" uesio:"-"`
+	AuthSource       string     `yaml:"authsource" uesio:"uesio/studio.authsource"`
+	Profile          string     `yaml:"profile" uesio:"uesio/studio.profile"`
+	UsernameTemplate string     `yaml:"usernameTemplate" uesio:"uesio/studio.usernametemplate"`
+	LandingRoute     string     `yaml:"landingRoute" uesio:"uesio/studio.landingroute"`
+	Regex            string     `yaml:"regex" uesio:"uesio/studio.regex"`
+	Workspace        *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
+	itemMeta         *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy        *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner            *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy        *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt        int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt        int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public           bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 func (sm *SignupMethod) GetCollectionName() string {

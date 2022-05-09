@@ -55,3 +55,7 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 	}, nil
 
 }
+
+func (c *Connection) Signup(payload map[string]string, username string, session *sess.Session) error {
+	return nil
+}

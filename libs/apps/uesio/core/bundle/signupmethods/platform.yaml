@@ -1,5 +1,7 @@
 name: platform
-authsource: uesio/core.mock
+authsource: uesio/core.platform
 profile: uesio/studio.standard
-usernameTempalte: ${merg of stuff from the payload}
+usernameTemplate: ${username}
+regex: "^[a-z0-9_]+$"
+landingRoute: uesio/studio.home
 public: true

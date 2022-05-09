@@ -45,6 +45,7 @@ type AuthenticationType interface {
 
 type AuthConnection interface {
 	Login(map[string]string, *sess.Session) (*AuthenticationClaims, error)
+	Signup(payload map[string]string, usarname string, session *sess.Session) error
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -146,67 +147,21 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-// CreateUser function
-func CreateUser(username string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, site *meta.Site) error {
+func CreateUser(username string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
 
-	// For now, just use a public session to do this.
-	// We'll need to rethink this later when we add security to collections/wires
-	session := sess.NewPublic(site)
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.user":     true,
-			"uesio/core.userfile": true,
-		},
-	})
-
-	// defaultSiteProfile := site.GetAppBundle().DefaultProfile
-
-	// if defaultSiteProfile == "" {
-	// 	defaultSiteProfile = "uesio/core.public"
-	// }
+	if signupMethod.Profile == "" {
+		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
+	}
 
 	return datasource.PlatformSaveOne(&meta.User{
-		Username:  username,
-		LastName:  claims.LastName,
-		FirstName: claims.FirstName,
-		Profile:   signupMethod.Profile,
-		Type:      "PERSON",
+		Username: username,
+		Profile:  signupMethod.Profile,
+		Type:     "PERSON",
 	}, nil, nil, session)
 }
 
-/*
-// ProvisionUser function
-func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
-
-	err := CreateUser(claims, site)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := GetUser(claims, site)
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, errors.New("Failed Provisioning user Couldn't find it after creating")
-	}
-
-	return user, nil
-}
-*/
-
 func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	var user meta.User
-
-	//TO-DO check this permissions
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.user":     true,
-			"uesio/core.userfile": true,
-		},
-	})
-
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
@@ -295,20 +250,7 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	return &loginmethod, nil
 }
 
-// CreateLoginMethod function
-func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, site *meta.Site, claims *AuthenticationClaims) error {
-
-	// For now, just use a public session to do this.
-	// We'll need to rethink this later when we add security to collections/wires
-	session := sess.NewPublic(site)
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.loginmethod": true,
-			"uesio/core.user":        true,
-			"uesio/core.userfile":    true,
-		},
-	})
-
+func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, session *sess.Session) error {
 	return datasource.PlatformSaveOne(&meta.LoginMethod{
 		FederationID: claims.Subject,
 		User:         user,
