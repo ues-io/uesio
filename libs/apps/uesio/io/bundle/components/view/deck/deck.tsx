@@ -19,11 +19,21 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		context
 	)
 
+	const columnGap = definition.columnGap && {
+		gridColumnGap: definition.columnGap,
+	}
+
+	const rowGap = definition.rowGap && {
+		gridRowGap: definition.rowGap,
+	}
+
 	const classes = styles.useStyles(
 		{
 			root: {
 				...gridCols,
 				...gridRows,
+				...columnGap,
+				...rowGap,
 			},
 		},
 		props

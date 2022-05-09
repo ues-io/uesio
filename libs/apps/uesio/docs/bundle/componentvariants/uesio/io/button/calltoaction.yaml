@@ -1,0 +1,8 @@
+name: calltoaction
+label: Call to Action
+extends: uesio/docs.secondary
+definition:
+  uesio.styles:
+    root:
+      border: 2px solid rgb(251,96,78)
+      padding: 10px 30px

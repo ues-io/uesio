@@ -27,6 +27,11 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 	const columnGap = definition.columnGap && {
 		gridColumnGap: definition.columnGap,
 	}
+
+	const rowGap = definition.rowGap && {
+		gridRowGap: definition.rowGap,
+	}
+
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -34,6 +39,7 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 				...gridRows,
 				...gridAreas,
 				...columnGap,
+				...rowGap,
 			},
 		},
 		props

@@ -1,5 +1,6 @@
 name: order
-type: NUMBER
 label: Order
+type: NUMBER
+required: true
 number:
   decimals: 0

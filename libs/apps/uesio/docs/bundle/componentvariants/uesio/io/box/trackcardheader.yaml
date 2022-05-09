@@ -1,0 +1,14 @@
+name: trackcardheader
+label: Track Card Header
+definition:
+  uesio.styles:
+    root:
+      background: "#eee"
+      background-image: url($File{uesio/core.splash})
+      background-size: 200%
+      padding: 20px;
+      display: flex
+      alignItems: center
+      justifyContent: center
+      color: "#000"
+      position: relative

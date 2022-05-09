@@ -176,6 +176,7 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 	})
 	if err != nil {
 		// this should add an error to the encoder and make it bomb
+		fmt.Println(err)
 		badValue := []string{}
 		enc.AddInterface(badValue)
 	}
