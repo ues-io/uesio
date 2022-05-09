@@ -1,9 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import {
-	Context,
-	getWireDef,
-	getWireDefFromWireName,
-} from "../../../context/context"
+import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
@@ -47,8 +43,7 @@ function getWireRequest(
 	context: Context
 ) {
 	const fullWireId = getFullWireId(wire.view, wire.name)
-	const wiredef = getWireDef(wire)
-	if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+	const wiredef = wire.def
 	if (wiredef.viewOnly)
 		throw new Error("Cannot get request for viewOnly wire: " + wire.name)
 	return {
@@ -95,7 +90,7 @@ export default createAsyncThunk<
 		const original: Record<string, PlainWireRecord> = {}
 		const changes: Record<string, PlainWireRecord> = {}
 
-		const wireDef = getWireDefFromWireName(view, name)
+		const wireDef = requestWire.def
 
 		if (!wireDef) throw new Error("No wiredef found")
 		if (wireDef.viewOnly) throw new Error("Cannot load viewOnly wire")
@@ -128,6 +123,7 @@ export default createAsyncThunk<
 			view,
 			query: true,
 			batchid: nanoid(),
+			def: wireDef,
 			data,
 			original,
 			changes,

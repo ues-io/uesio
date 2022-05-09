@@ -12,6 +12,7 @@ type ViewOnlyField = {
 }
 
 type WireDefinitionBase = {
+	name: string
 	defaults?: WireDefault[]
 	init?: {
 		query?: boolean
