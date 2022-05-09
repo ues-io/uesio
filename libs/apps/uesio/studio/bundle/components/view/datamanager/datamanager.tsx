@@ -69,7 +69,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		})
 
 		uesio.wire.initWires(newContext, {
-			[WIRE_NAME]: { name: WIRE_NAME, collection, fields },
+			[WIRE_NAME]: { collection, fields },
 		})
 		uesio.wire.loadWires(newContext, [WIRE_NAME])
 	}, [fieldsMeta])

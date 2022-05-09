@@ -73,7 +73,7 @@ const initializeViewOnlyWire = (
 		}
 	})
 	const viewOnlyMetadata: PlainCollection = {
-		name: wireDef.name,
+		name: wirename,
 		nameField: "uesio/core.id",
 		accessible: true,
 		createable: true,
@@ -83,7 +83,7 @@ const initializeViewOnlyWire = (
 		updateable: true,
 	}
 
-	const collectionFullname = `${viewOnlyNamespace}.${wireDef.name}`
+	const collectionFullname = `${viewOnlyNamespace}.${wirename}`
 
 	metadata[collectionFullname] = viewOnlyMetadata
 
