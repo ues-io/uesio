@@ -1,0 +1,5 @@
+name: signupmethod
+idFormat: ${uesio/studio.workspace}_${uesio/studio.name}
+nameField: uesio/studio.name
+label: signup method
+pluralLabel: signup methods

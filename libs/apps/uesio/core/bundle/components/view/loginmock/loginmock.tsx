@@ -53,8 +53,9 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						variant="uesio/io.secondary"
 						styles={{
 							root: {
-								width: "210px",
 								backgroundColor: "white",
+								width: "100%",
+								display: "block",
 							},
 							label: {
 								textTransform: "none",

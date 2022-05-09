@@ -30,11 +30,10 @@ async function responseRedirect(
 }
 
 const signup =
-	(context: Context, _signupMethod: string, payload: Payload): ThunkFunc =>
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		const signupMethod = context.merge(_signupMethod)
 		const response = await platform.signup(signupMethod, mergedPayload)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
