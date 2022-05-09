@@ -30,6 +30,10 @@ func (c *Connection) Verify(token string, session *sess.Session) error {
 	return nil
 }
 
+func getFullyQualifiedUsername(site string, username string) string {
+	return site + ":" + username
+}
+
 func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	username, ok := payload["username"]
@@ -54,12 +58,12 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 	}
 
 	site := session.GetSiteTenantID()
-	fullUsername := site + ":" + username
+	fqUsername := getFullyQualifiedUsername(site, username)
 
 	authTry := &cognito.AdminInitiateAuthInput{
 		AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
 		AuthParameters: map[string]string{
-			"USERNAME": fullUsername,
+			"USERNAME": fqUsername,
 			"PASSWORD": password,
 		},
 		ClientId:   aws.String(clientID),
@@ -81,9 +85,6 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	return &auth.AuthenticationClaims{
 		Subject: claims["sub"].(string),
-		//FirstName: claims["given_name"].(string),
-		//LastName:  claims["family_name"].(string),
-		//Email:     claims["email"].(string),
 	}, nil
 
 }
@@ -91,7 +92,7 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 func (c *Connection) Signup(payload map[string]string, username string, session *sess.Session) error {
 
 	site := session.GetSiteTenantID()
-	fullUsername := site + ":" + username
+	fqUsername := getFullyQualifiedUsername(site, username)
 
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
@@ -111,7 +112,7 @@ func (c *Connection) Signup(payload map[string]string, username string, session 
 	client := cognito.NewFromConfig(cfg)
 
 	awsUserExists := &cognito.AdminGetUserInput{
-		Username:   &fullUsername,
+		Username:   &fqUsername,
 		UserPoolId: aws.String(poolID),
 	}
 
@@ -127,7 +128,7 @@ func (c *Connection) Signup(payload map[string]string, username string, session 
 
 	signUpData := &cognito.SignUpInput{
 		ClientId: aws.String(clientID),
-		Username: &fullUsername,
+		Username: &fqUsername,
 		Password: &password,
 	}
 
@@ -137,7 +138,7 @@ func (c *Connection) Signup(payload map[string]string, username string, session 
 	}
 
 	confirmSignUpData := &cognito.AdminConfirmSignUpInput{
-		Username:   &fullUsername,
+		Username:   &fqUsername,
 		UserPoolId: aws.String(poolID),
 	}
 
