@@ -1,13 +1,24 @@
 import { createSlice, createEntityAdapter, EntityState } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
-import { addDef, moveDef, removeDef, setDef } from "../../store/reducers"
+import {
+	addDef,
+	addDefPair,
+	changeDefKey,
+	cloneDef,
+	moveDef,
+	removeDef,
+	setDef,
+} from "../../store/reducers"
 import { RootState } from "../../store/store"
 import { setNodeAtPath, parse } from "../../yamlutils/yamlutils"
 import builderOps from "../builder/operations"
 import {
 	addDefinition,
+	addDefinitionPair,
 	cancel,
+	changeDefinitionKey,
+	cloneDefinition,
 	moveDefinition,
 	removeDefinition,
 	setDefinition,
@@ -144,6 +155,34 @@ const metadataSlice = createSlice({
 		})
 		builder.addCase(builderOps.save.fulfilled, saveAllDefs)
 		builder.addCase(cancel, cancelAllDefs)
+		builder.addCase(changeDefinitionKey, (state, { payload }) => {
+			const [localPath, viewDef] = getViewDefState(state, payload.path)
+			if (viewDef) {
+				changeDefKey(viewDef, {
+					path: localPath,
+					key: payload.key,
+				})
+			}
+		})
+		builder.addCase(cloneDefinition, (state, { payload }) => {
+			const [localPath, viewDef] = getViewDefState(state, payload.path)
+			if (viewDef) {
+				cloneDef(viewDef, {
+					path: localPath,
+				})
+			}
+		})
+
+		builder.addCase(addDefinitionPair, (state, { payload }) => {
+			const [localPath, viewDef] = getViewDefState(state, payload.path)
+			if (viewDef) {
+				addDefPair(viewDef, {
+					path: localPath,
+					definition: payload.definition,
+					key: payload.key,
+				})
+			}
+		})
 	},
 })
 

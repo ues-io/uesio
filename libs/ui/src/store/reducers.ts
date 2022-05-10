@@ -1,6 +1,9 @@
 import toPath from "lodash/toPath"
 import {
+	AddDefinitionPairPayload,
 	AddDefinitionPayload,
+	ChangeDefinitionKeyPayload,
+	CloneDefinitionPayload,
 	MoveDefinitionPayload,
 	RemoveDefinitionPayload,
 	SetDefinitionPayload,
@@ -10,17 +13,20 @@ import {
 	getKeyAtPath,
 	getParentPath,
 	fromPath,
+	getIndexFromPath,
 } from "../component/path"
 import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
 
 import {
 	addNodeAtPath,
+	addNodePairAtPath,
 	getNodeAtPath,
 	parse,
 	removeNodeAtPath,
 	setNodeAtPath,
 } from "../yamlutils/yamlutils"
 import { MetadataState } from "../bands/metadata/types"
+import { isScalar, YAMLMap } from "yaml"
 
 const getNewNode = (yaml: YamlDoc, definition: Definition) => {
 	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
@@ -131,10 +137,6 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 			{}
 		)
 
-		console.log("Doing array move")
-		console.log(fromParentPath)
-		console.log(newDefinition)
-
 		return setDef(state, {
 			path: fromParentPath,
 			definition: newDefinition,
@@ -169,4 +171,101 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 	})
 }
 
-export { removeDef, addDef, setDef, moveDef }
+const addDefPair = (
+	state: MetadataState,
+	payload: AddDefinitionPairPayload
+) => {
+	const { path, definition, key } = payload
+
+	if (state.content) {
+		// create a new document so components using useYaml will rerender
+		const yamlDoc = parse(state.content)
+		const newNode = yamlDoc.createNode(definition)
+
+		addNodePairAtPath(
+			["definition"].concat(toPath(path)),
+			yamlDoc.contents,
+			newNode,
+			key
+		)
+
+		state.content = yamlDoc.toString()
+		state.parsed = yamlDoc.toJSON()
+	}
+}
+
+const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
+	const parentPath = getParentPath(path)
+	const isArrayClone = isNumberIndex(getKeyAtPath(parentPath))
+	if (isArrayClone) {
+		const index = getIndexFromPath(parentPath)
+		if (!index && index !== 0) return
+
+		const yamlDoc = parse(state.content)
+		const defNode = getNodeAtPath(
+			["definition"].concat(toPath(parentPath)),
+			yamlDoc.contents
+		)
+		const definition = defNode?.toJSON() as DefinitionMap
+
+		addDef(state, {
+			path: getParentPath(parentPath),
+			definition,
+			index: index + 1,
+		})
+	} else {
+		const newKey =
+			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
+
+		const yamlDoc = parse(state.content)
+		const defNode = getNodeAtPath(
+			["definition"].concat(toPath(path)),
+			yamlDoc.contents
+		)
+		const definition = defNode?.toJSON() as DefinitionMap
+
+		addDefPair(state, {
+			path: parentPath,
+			definition,
+			key: newKey,
+		})
+	}
+}
+
+const changeDefKey = (
+	state: MetadataState,
+	payload: ChangeDefinitionKeyPayload
+) => {
+	const { path, key: newKey } = payload
+	const pathArray = toPath(path)
+	const oldKey = pathArray.pop()
+
+	if (oldKey) {
+		if (state.content) {
+			// create a new document so components using useYaml will rerender
+			const yamlDoc = parse(state.content)
+			const parent = getNodeAtPath(
+				["definition"].concat(pathArray),
+				yamlDoc.contents
+			) as YAMLMap
+			const keyNode = parent?.items.find(
+				(item) => isScalar(item.key) && item.key.value === oldKey
+			)
+			if (keyNode && isScalar(keyNode.key)) {
+				keyNode.key.value = newKey
+			}
+			state.content = yamlDoc.toString()
+			state.parsed = yamlDoc.toJSON()
+		}
+	}
+}
+
+export {
+	removeDef,
+	addDef,
+	setDef,
+	moveDef,
+	cloneDef,
+	addDefPair,
+	changeDefKey,
+}
