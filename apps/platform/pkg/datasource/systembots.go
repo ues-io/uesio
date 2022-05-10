@@ -25,10 +25,7 @@ func (m *MetadataDependencyMap) AddMap(keys map[string]bool, metadataType string
 
 func (m *MetadataDependencyMap) AddRequired(change *adapt.ChangeItem, metadataType, fieldName string) error {
 	metadataName, err := change.GetFieldAsString(fieldName)
-	if err != nil {
-		return err
-	}
-	if metadataName == "" {
+	if err != nil || metadataName == "" {
 		return errors.New("Missing metadata item in field: " + fieldName)
 	}
 	return m.AddItem(metadataType, metadataName)

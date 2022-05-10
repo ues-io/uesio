@@ -147,6 +147,8 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runDomainAfterSaveSiteBot
 	case "uesio/studio.collection":
 		botFunction = runCollectionAfterSaveBot
+	case "uesio/studio.workspace":
+		botFunction = runWorkspaceAfterSaveBot
 	}
 
 	if botFunction != nil {
