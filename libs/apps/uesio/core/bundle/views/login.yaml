@@ -152,15 +152,3 @@ definition:
                                                       wire: credentials
                                                       field: uesio/viewonly.method
                                                       value:
-                                  - uesio/io.button:
-                                      text: Register
-                                      uesio.variant: uesio/io.primary
-                                      uesio.styles:
-                                        root:
-                                          width: 100%
-                                          display: block
-                                        label:
-                                          textTransform: none
-                                      signals:
-                                        - path: signup
-                                          signal: route/NAVIGATE

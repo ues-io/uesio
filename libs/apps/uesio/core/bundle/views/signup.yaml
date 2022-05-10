@@ -107,20 +107,3 @@ definition:
                                             username: ${uesio/viewonly.username}
                                             password: ${uesio/viewonly.password}
                                             email: ${uesio/viewonly.email}
-
-                                  # Already a mmember?
-                                  - uesio/io.text:
-                                      text: Already a member?
-                                      uesio.styles:
-                                        root:
-                                          opacity: 0.6
-                                  - uesio/io.button:
-                                      uesio.styles:
-                                        root:
-                                          fontSize: inherit
-                                          textDecoration: underline
-                                          color: $Theme{color.primary}
-                                      text: Sign in
-                                      signals:
-                                        - path: login
-                                          signal: route/NAVIGATE
