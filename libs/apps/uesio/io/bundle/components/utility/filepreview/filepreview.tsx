@@ -8,12 +8,13 @@ const FileMarkDown = component.registry.getUtility("uesio/io.filemarkdown")
 
 interface FilePreviewProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
+	fieldId: string
 	record: wire.WireRecord
 }
 
 const FilePreview: FC<FilePreviewProps> = (props) => {
-	const { fieldMetadata, record } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldMetadata, fieldId, record } = props
+
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)

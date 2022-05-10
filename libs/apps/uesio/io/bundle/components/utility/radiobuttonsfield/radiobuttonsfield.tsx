@@ -13,6 +13,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	value?: string
 	width?: string
 	fieldMetadata: collection.Field
+	fieldId: string
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
 }
@@ -25,6 +26,7 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 		options,
 		context,
 		fieldMetadata,
+		fieldId,
 	} = props
 
 	const classes = styles.useUtilityStyles(
@@ -46,7 +48,6 @@ const RadioButtons: FC<SelectFieldProps> = (props) => {
 	)
 
 	const fieldLabel = fieldMetadata.getLabel()
-	const fieldId = fieldMetadata.getId()
 	return (
 		<Fieldset
 			fieldLabel={fieldLabel}

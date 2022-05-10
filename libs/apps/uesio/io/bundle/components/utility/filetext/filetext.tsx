@@ -13,6 +13,7 @@ import { CodeFieldUtilityProps } from "../codefield/codefield"
 interface FileTextProps extends definition.UtilityProps {
 	label?: string
 	width?: string
+	fieldId: string
 	fieldMetadata: collection.Field
 	labelPosition?: LabelPosition
 	id?: string
@@ -26,8 +27,7 @@ const CodeField =
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, wire, context, id, path } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldMetadata, fieldId, record, wire, context, id, path } = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId

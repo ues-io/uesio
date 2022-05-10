@@ -47,7 +47,6 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 	)
 
 	const fieldLabel = fieldMetadata.getLabel()
-	const fieldId = fieldMetadata.getLabel()
 
 	return (
 		<Fieldset
@@ -58,10 +57,8 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 			{options
 				?.filter(({ value }) => value)
 				.map((option) => {
-					const optionId = `${fieldId}_check_${option.value}`.replace(
-						/ /g,
-						"_"
-					)
+					const optionId =
+						`${fieldLabel}_check_${option.value}`.replace(/ /g, "_")
 					return (
 						<div className={classes.option} key={option.value}>
 							<CheckBoxField

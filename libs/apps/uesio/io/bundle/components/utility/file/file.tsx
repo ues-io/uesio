@@ -12,6 +12,7 @@ import {
 interface FileUtilityProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
+	fieldId: string
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord
@@ -23,8 +24,7 @@ const Button = component.registry.getUtility("uesio/io.button")
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, context } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldMetadata, fieldId, record, context } = props
 
 	const view = context.getView()
 	const appName = view?.params?.app

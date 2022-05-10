@@ -19,6 +19,7 @@ const MarkDownField = component.registry.getUtility<MarkDownFieldProps>(
 interface FileMarkDownProps extends definition.UtilityProps {
 	label?: string
 	width?: string
+	fieldId: string
 	fieldMetadata: collection.Field
 	labelPosition?: LabelPosition
 	id?: string
@@ -29,8 +30,8 @@ interface FileMarkDownProps extends definition.UtilityProps {
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, wire, context, id, path, mode } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldId, fieldMetadata, record, wire, context, id, path, mode } =
+		props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId

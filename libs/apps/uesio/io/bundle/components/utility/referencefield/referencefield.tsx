@@ -13,6 +13,7 @@ const TextField = component.registry.getUtility("uesio/io.textfield")
 const AutoComplete = component.registry.getUtility("uesio/io.autocomplete")
 
 interface ReferenceFieldProps extends definition.UtilityProps {
+	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
 	record: wire.WireRecord
@@ -23,9 +24,16 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, mode, record, context, variant, options, path } =
-		props
-	const fieldId = fieldMetadata.getId()
+	const {
+		fieldId,
+		fieldMetadata,
+		mode,
+		record,
+		context,
+		variant,
+		options,
+		path,
+	} = props
 
 	const referencedCollection = uesio.collection.useCollection(
 		context,
