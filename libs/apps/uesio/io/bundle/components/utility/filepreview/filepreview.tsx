@@ -13,7 +13,7 @@ interface FilePreviewProps extends definition.UtilityProps {
 }
 
 const FilePreview: FC<FilePreviewProps> = (props) => {
-	const { fieldMetadata, fieldId, record } = props
+	const { fieldId, record } = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId

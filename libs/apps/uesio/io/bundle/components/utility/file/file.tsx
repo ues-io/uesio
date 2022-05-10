@@ -24,7 +24,7 @@ const Button = component.registry.getUtility("uesio/io.button")
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, fieldId, record, context } = props
+	const { fieldId, record, context } = props
 
 	const view = context.getView()
 	const appName = view?.params?.app
