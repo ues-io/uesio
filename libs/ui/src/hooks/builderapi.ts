@@ -26,12 +26,12 @@ import {
 	removeDefinition,
 	changeDefinitionKey,
 	moveDefinition,
-	setYaml,
+	setDefinitionContent,
 	cancel,
 } from "../bands/builder"
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher } from "../store/store"
+import { Dispatcher, RootState } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
@@ -40,7 +40,12 @@ import {
 	getParentPath,
 	makeFullPath,
 } from "../component/path"
-import { Definition, YamlDoc } from "../definition/definition"
+import { Definition, DefinitionMap } from "../definition/definition"
+import { useSelector } from "react-redux"
+
+import { selectors as viewSelectors } from "../bands/viewdef"
+import { PlainViewDef } from "../definition/viewdef"
+import get from "lodash/get"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -54,7 +59,7 @@ class BuilderAPI {
 	useBuilderState = <T extends PlainComponentState>(scope: string) =>
 		this.uesio.component.useExternalState<T>(
 			"$root",
-			"uesio.runtime",
+			"uesio/studio.runtime",
 			scope
 		)
 
@@ -77,7 +82,20 @@ class BuilderAPI {
 	useDropNode = (): [string, string, string] =>
 		getFullPathParts(useDropNode())
 
-	useHasChanges = () => false //useBuilderHasChanges
+	useHasChanges = () =>
+		useSelector(({ viewdef }: RootState) => {
+			const entities = viewdef?.entities
+			// Loop over view defs
+			if (entities) {
+				for (const defKey of Object.keys(entities)) {
+					const viewDef = entities[defKey]
+					if (viewDef && viewDef.content !== viewDef.original) {
+						return true
+					}
+				}
+			}
+			return false
+		})
 
 	useSelectedYAML = useSelectedYAML
 
@@ -225,36 +243,50 @@ class BuilderAPI {
 		)
 	}
 
-	setYaml(path: string, yamlDoc: YamlDoc) {
+	setDefinitionContent(
+		metadataType: string,
+		metadataItem: string,
+		content: string
+	) {
 		this.dispatcher(
-			setYaml({
-				path,
-				yaml: yamlDoc,
+			setDefinitionContent({
+				metadataType,
+				metadataItem,
+				content,
 			})
 		)
 	}
 
-	useDefinition = (path: string) => {
-		console.log("TODO", path)
-		return {}
-		/*
-		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
-
-		return useSelector((state: RootState) => {
-			console.log("TODO", metadataType, metadataItem, localPath, state)
-			return {}
-
+	useDefinitionContent = (metadataType: string, metadataItem: string) =>
+		useSelector((state: RootState) => {
 			if (metadataType === "viewdef" && metadataItem) {
-				return getViewDefinition(state, metadataItem, localPath)
+				return viewSelectors.selectById(state, metadataItem)?.content
 			}
 
 			if (metadataType === "componentvariant" && metadataItem) {
-				return getComponentVariant(state, metadataItem, localPath)
+				//return getComponentVariant(state, metadataItem, localPath)
+			}
+		})
+
+	useDefinition = (
+		metadataType: string,
+		metadataItem: string,
+		localPath: string
+	) =>
+		useSelector((state: RootState) => {
+			if (metadataType === "viewdef" && metadataItem) {
+				const viewDef = viewSelectors.selectById(state, metadataItem)
+					?.parsed as PlainViewDef
+				if (!localPath) {
+					return viewDef.definition as DefinitionMap
+				}
+				return get(viewDef.definition, localPath) as DefinitionMap
 			}
 
+			if (metadataType === "componentvariant" && metadataItem) {
+				//return getComponentVariant(state, metadataItem, localPath)
+			}
 		})
-		*/
-	}
 
 	useMetadataList = (
 		context: Context,

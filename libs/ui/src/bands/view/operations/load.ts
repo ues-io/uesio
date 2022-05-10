@@ -49,9 +49,11 @@ export default createAsyncThunk<
 		const depsNode = getNodeAtPath("dependencies", yamlDoc.contents)
 		removeNodeAtPath("dependencies", yamlDoc.contents)
 
+		const viewContent = yamlDoc.toString()
 		const viewToAdd: MetadataState = {
 			key: viewDefId,
-			content: viewDefResponse,
+			content: viewContent,
+			original: viewContent,
 			parsed: yamlDoc.toJSON(),
 		}
 

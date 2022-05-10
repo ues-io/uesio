@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, hooks } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
@@ -10,12 +10,13 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const metadataType = "viewdef"
 	const metadataItem = uesio.getViewDefId() || ""
 	const localPath = '["wires"]'
-	const path = component.path.makeFullPath(
+
+	const def = uesio.builder.useDefinition(
 		metadataType,
 		metadataItem,
 		localPath
-	)
-	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
+	) as definition.DefinitionMap
+
 	return (
 		<div>
 			{Object.keys(def || {}).map((key: string, index) => {

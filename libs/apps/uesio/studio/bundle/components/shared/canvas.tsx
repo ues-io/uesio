@@ -67,6 +67,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				},
 				".text": {
 					marginTop: 0,
+					fontWeight: 300,
+					color: "#444",
 				},
 
 				".quote": {
@@ -83,8 +85,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 				".inner": {
 					textAlign: "center",
-					border: "3px dashed rgba(238, 238, 238)",
-					padding: "0.5em 2em 2em 2em",
+					border: "1px dashed rgba(238, 238, 238)",
+					padding: "2em",
 					borderRadius: "2em",
 				},
 			},
@@ -224,16 +226,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 								icon={"flip_to_back"}
 								context={context}
 							/>
-							<h3 className="text">
+							<h4 className="text">
 								Drag and drop any component here to get started
-							</h3>
-							<div className="quote">
-								<h4>
-									What's better than a blank slate in the
-									right hands?
-								</h4>
-								<p>&mdash; Frank Underwood &mdash;</p>
-							</div>
+							</h4>
 						</div>
 					</div>
 				)}

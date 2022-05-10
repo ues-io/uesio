@@ -10,7 +10,7 @@ const Grid = component.registry.getUtility("uesio/io.grid")
 
 import usePanels from "./usePanels"
 
-component.registry.registerSignals("uesio.runtime", {
+component.registry.registerSignals("uesio/studio.runtime", {
 	TOGGLE_CODE: {
 		dispatcher: (signal, context, getState, setState) => {
 			const showCode = getState() as boolean
@@ -32,13 +32,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 	const { context } = props
 
-	// This can be removed when we figure out a better way to get all variants onto the page for buildtime
-	// Right now we need this so we can re-render when we get the view definition in.
-	//const def = uesio.builder.useDefinition(
-	//	component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
-	//)
-
-	const viewDef = context.getViewDef()
+	const viewDef = uesio.view.useViewDef(context.getViewDefId() || "")
 
 	const scriptResult = uesio.component.usePacks(
 		Object.keys(viewDef?.dependencies?.componentpacks || {}),
@@ -49,7 +43,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		"uesio/studio.default",
 		new ctx.Context()
 	)
-	if (!scriptResult.loaded || !builderTheme)
+	if (!scriptResult.loaded || !builderTheme || !viewDef)
 		return <Canvas context={context} />
 
 	const builderContext = context.addFrame({

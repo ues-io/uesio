@@ -20,6 +20,7 @@ type LoadOp struct {
 	HasMoreBatches        bool                   `json:"more"`
 	ReferencedCollections ReferenceRegistry      `json:"-"`
 	UserResponseTokens    []string               `json:"-"`
+	SkipRecordSecurity    bool                   `json:"-"`
 }
 
 // LoadRequestField struct
