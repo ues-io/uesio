@@ -13,6 +13,7 @@ const TextField = component.registry.getUtility("uesio/io.textfield")
 
 interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
+	fieldId: string
 	mode: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
@@ -24,8 +25,9 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 	props
 ) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, context, variant, options, path } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldMetadata, fieldId, record, context, variant, options, path } =
+		props
+
 	const referencedCollection = uesio.collection.useCollection(
 		context,
 		fieldMetadata.source.referencegroup?.collection || ""
