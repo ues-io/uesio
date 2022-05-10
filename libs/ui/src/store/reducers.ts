@@ -1,5 +1,3 @@
-import get from "lodash/get"
-
 import toPath from "lodash/toPath"
 import {
 	AddDefinitionPayload,
@@ -17,6 +15,7 @@ import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
 
 import {
 	addNodeAtPath,
+	getNodeAtPath,
 	parse,
 	removeNodeAtPath,
 	setNodeAtPath,
@@ -103,10 +102,14 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 		const fromKey = getKeyAtPath(fromPathStr)
 		const toKey = getKeyAtPath(toPathStr)
 
-		const definition = get(
-			(state.parsed as DefinitionMap).definition,
-			fromParentPath
-		) as DefinitionMap
+		const fromPathArray = toPath(fromParentPath)
+
+		const yamlDoc = parse(state.content)
+		const defNode = getNodeAtPath(
+			["definition"].concat(fromPathArray),
+			yamlDoc.contents
+		)
+		const definition = defNode?.toJSON() as DefinitionMap
 
 		if (!definition || !fromKey || !toKey) return
 
@@ -128,6 +131,10 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 			{}
 		)
 
+		console.log("Doing array move")
+		console.log(fromParentPath)
+		console.log(newDefinition)
+
 		return setDef(state, {
 			path: fromParentPath,
 			definition: newDefinition,
@@ -138,10 +145,12 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 	const fromPathArray = toPath(fromPathStr)
 	//fromPathArray.splice(-1)
 	//Grab current definition
-	const definition = get(
-		(state.parsed as DefinitionMap).definition,
-		fromPathArray
+	const yamlDoc = parse(state.content)
+	const defNode = getNodeAtPath(
+		["definition"].concat(fromPathArray),
+		yamlDoc.contents
 	)
+	const definition = defNode?.toJSON() as DefinitionMap
 	//Remove the original
 	removeDef(state, { path: fromPathStr })
 	const toPathStr = payload.toPath
