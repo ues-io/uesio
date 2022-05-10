@@ -1,7 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 import { SaveResponseBatch } from "../../load/saveresponse"
+import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
+import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
+import { PlainWireRecord } from "../wirerecord/types"
 import { getMetadataListKey } from "./selectors"
 import { MetadataListStore, MetadataType } from "./types"
 
@@ -55,11 +59,6 @@ const save = createAsyncThunk<
 	},
 	UesioThunkAPI
 >("builder/save", async ({ context }, api) => {
-	console.log("TODO", context, api)
-	return await new Promise(() => {
-		console.log("TODO")
-	})
-	/*
 	const changes: Record<string, PlainWireRecord> = {}
 	const state = api.getState().viewdef?.entities
 	const workspace = context.getWorkspace()
@@ -70,28 +69,39 @@ const save = createAsyncThunk<
 	if (state) {
 		for (const defKey of Object.keys(state)) {
 			const defState = state[defKey]
-			if (defState?.yaml === defState?.originalYaml) {
+			if (!defState) continue
+			if (defState.content === defState.original) {
 				continue
 			}
-			if (defState?.yaml) {
+
+			const yamlDoc = parse(defState.content || "")
+			const depsNode = getNodeAtPath("definition", yamlDoc.contents)
+
+			const defDoc = newDoc()
+			defDoc.contents = depsNode
+			const defYaml = defDoc.toString() || ""
+
+			const [, name] = parseKey(defState.key)
+
+			if (defState?.content) {
 				changes[defKey] = {
-					"uesio/studio.definition": defState.yaml.toString(),
-					[ID_FIELD]: `${workspace.app}_${workspace.name}_${defState.name}`,
+					"uesio/studio.definition": defYaml,
+					[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
 				}
 			}
 		}
 	}
+
 	return api.extra.saveData(new Context(), {
 		wires: [
 			{
 				wire: "saveview",
-				collection: "uesio/studio.views",
+				collection: "uesio/studio.view",
 				changes,
 				deletes: {},
 			},
 		],
 	})
-	*/
 })
 
 export default {

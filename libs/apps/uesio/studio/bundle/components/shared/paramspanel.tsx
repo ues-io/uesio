@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, panel } from "@uesio/ui"
+import { definition, hooks, panel } from "@uesio/ui"
 import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
@@ -10,12 +10,11 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const metadataType = "viewdef"
 	const metadataItem = uesio.getViewDefId() || ""
 	const localPath = `["params"]`
-	const path = component.path.makeFullPath(
+	const def = uesio.builder.useDefinition(
 		metadataType,
 		metadataItem,
 		localPath
-	)
-	const def = uesio.builder.useDefinition(path) as panel.PanelDefinition
+	) as panel.PanelDefinition
 	return (
 		<div>
 			{Object.keys(def || {}).map((paramId: string) => {

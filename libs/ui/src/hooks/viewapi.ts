@@ -7,6 +7,8 @@ import { ViewParams } from "../bands/view/types"
 import { Context } from "../context/context"
 import loadViewOp from "../bands/view/operations/load"
 import { useConfigValue } from "../bands/configvalue"
+import { useViewDef } from "../bands/viewdef"
+import { PlainViewDef } from "../definition/viewdef"
 
 const VIEW_BAND = "view"
 
@@ -36,6 +38,9 @@ class ViewAPI {
 			}
 		})
 		return view
+	}
+	useViewDef(viewDefId: string) {
+		return useViewDef(viewDefId)?.parsed as PlainViewDef
 	}
 	useConfigValue(key: string) {
 		return useConfigValue(key)?.content || ""

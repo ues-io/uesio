@@ -77,7 +77,9 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.useSelectedNode()
 
 	const definition = uesio.builder.useDefinition(
-		component.path.makeFullPath(metadataType, metadataItem, "")
+		metadataType,
+		metadataItem,
+		""
 	) as definition.DefinitionMap
 
 	const fullPath = component.path.makeFullPath(

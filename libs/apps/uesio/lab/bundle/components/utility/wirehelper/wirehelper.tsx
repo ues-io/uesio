@@ -22,7 +22,9 @@ const wireHelper: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
 	const parentDef = uesio.builder.useDefinition(
-		component.path.makeFullPath(metadataType, metadataItem, path)
+		metadataType,
+		metadataItem,
+		path
 	) as ParentDef
 	const wireId = `${parentDef && parentDef.wire ? parentDef.wire : ""}`
 
@@ -32,7 +34,9 @@ const wireHelper: FC<T> = (props) => {
 		"wires"
 	)
 	const wiresInDef = uesio.builder.useDefinition(
-		defWiresPath
+		metadataType,
+		metadataItem,
+		"wires"
 	) as wire.WireDefinitionMap
 
 	const selectWire = (wireName: string) =>
@@ -88,7 +92,7 @@ const wireHelper: FC<T> = (props) => {
 
 			const showWires = uesio.signal.getHandler([
 				{
-					signal: "component/uesio.runtime/SHOW_WIRES",
+					signal: "component/uesio/studio.runtime/SHOW_WIRES",
 				},
 			])
 

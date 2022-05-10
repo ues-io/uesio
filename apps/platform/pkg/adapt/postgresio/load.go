@@ -64,7 +64,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	if collectionMetadata.Access == "protected" && userTokens != nil {
+	if collectionMetadata.Access == "protected" && userTokens != nil && op.SkipRecordSecurity == false {
 		accessFieldID := "main.id"
 
 		challengeMetadata := collectionMetadata
