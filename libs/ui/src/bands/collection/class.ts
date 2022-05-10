@@ -1,3 +1,4 @@
+import { getStore } from "../../store/store"
 import Field from "../field/class"
 import { FieldMetadata } from "../field/types"
 
@@ -27,7 +28,7 @@ class Collection {
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
 	getFullName = () => this.getNamespace() + "." + this.getId()
-	getField = (fieldName: string | null) => {
+	getField = (fieldName: string | null): Field | undefined => {
 		// Special handling for maps
 		const fieldNameParts = fieldName?.split("->")
 		if (!fieldNameParts) return undefined
@@ -35,6 +36,18 @@ class Collection {
 			// Get the metadata for the base field
 			const baseFieldMetadata =
 				this.source.fields[fieldNameParts.shift() || ""]
+
+			if (baseFieldMetadata.type === "REFERENCE") {
+				if (!baseFieldMetadata.reference?.collection) return undefined
+				const state =
+					getStore().getState().collection.entities[
+						baseFieldMetadata.reference?.collection
+					]
+
+				if (!state) return undefined
+				const collection = new Collection(state)
+				return collection.getField(fieldNameParts.join("->"))
+			}
 
 			if (!baseFieldMetadata || !baseFieldMetadata.subfields)
 				return undefined

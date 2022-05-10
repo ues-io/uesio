@@ -12,6 +12,7 @@ import {
 interface FileImageProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
+	fieldId: string
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord
@@ -23,8 +24,7 @@ const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
 
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, context, wire } = props
-	const fieldId = fieldMetadata.getId()
+	const { fieldMetadata, fieldId, record, context, wire } = props
 
 	const fileInput = useRef<HTMLInputElement>(null)
 
