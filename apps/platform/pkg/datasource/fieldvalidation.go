@@ -65,7 +65,7 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 func validateEmail(field *adapt.FieldMetadata) validationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil {
+		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
 				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}

@@ -147,17 +147,23 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(username string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
+func CreateUser(username string, email string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
 
 	if signupMethod.Profile == "" {
 		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
 	}
 
-	return datasource.PlatformSaveOne(&meta.User{
+	user := &meta.User{
 		Username: username,
 		Profile:  signupMethod.Profile,
 		Type:     "PERSON",
-	}, nil, nil, session)
+	}
+
+	if email != "" {
+		user.Email = email
+	}
+
+	return datasource.PlatformSaveOne(user, nil, nil, session)
 }
 
 func GetUserByID(username string, session *sess.Session) (*meta.User, error) {

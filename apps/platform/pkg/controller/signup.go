@@ -93,7 +93,9 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.CreateUser(username, claims, signupMethod, publicSession)
+	email, _ := auth.GetPayloadValue(payload, "email")
+
+	err = auth.CreateUser(username, email, claims, signupMethod, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
