@@ -12,6 +12,7 @@ type BotParam = {
 	grouping?: string
 	default?: string
 	conditions?: { param: string; value: string | number }[]
+	choices?: string[]
 }
 
 type PromptAnswers = Record<string, string>
@@ -104,12 +105,12 @@ const promptRenderers: Record<string, PromptRenderer> = {
 			type: "list",
 			choices: collection.FIELD_TYPES,
 		}),
-	FILEACCEPTTYPE: async (param) =>
+	LIST: async (param) =>
 		inquirer.prompt({
 			name: param.name,
 			message: param.prompt,
 			type: "list",
-			choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"],
+			choices: param.choices,
 		}),
 }
 

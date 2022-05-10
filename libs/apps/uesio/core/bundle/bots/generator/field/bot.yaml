@@ -52,7 +52,8 @@ params:
         value: AUTONUMBER
   - name: accept
     prompt: Accept
-    type: FILEACCEPTTYPE
+    type: LIST
+    choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"]
     conditions:
       - param: type
         value: FILE
@@ -74,7 +75,7 @@ params:
   - name: referencegroup_ondelete
     prompt: On Delete
     type: LIST
-    options: ["ONDELETE", "OTHEROPTIONS"]
+    choices: ["CASCADE"]
     conditions:
       - param: type
         value: REFERENCEGROUP
