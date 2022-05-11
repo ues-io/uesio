@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 
-import { Context, getWireDef } from "../../../context/context"
+import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { SaveResponseBatch } from "../../../load/saveresponse"
 import { getWiresFromDefinitonOrContext } from "../adapter"
@@ -21,9 +21,6 @@ export default createAsyncThunk<
 	}
 	const saveRequest = {
 		wires: wiresToSave.flatMap((wire) => {
-			const wiredef = getWireDef(wire)
-			if (!wiredef || !wire || wiredef.viewOnly)
-				throw new Error("Invalid Wire: " + wire)
 			const wireId = getFullWireId(wire.view, wire.name)
 			// Check to see if we need to go to the serve
 			if (
@@ -41,7 +38,7 @@ export default createAsyncThunk<
 			return [
 				{
 					wire: wireId,
-					collection: wiredef.collection,
+					collection: wire.collection,
 					changes: wire.changes,
 					deletes: wire.deletes,
 				},

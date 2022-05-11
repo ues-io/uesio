@@ -61,6 +61,14 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
+                                            uesio.variant: uesio/web.secondary
+                                            text: Docs
+                                            signals:
+                                              - signal: "route/REDIRECT"
+                                                path: "https://docs.$Site{domain}"
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
                                             uesio.variant: uesio/web.calltoaction
                                             text: Early Access
                                             signals:

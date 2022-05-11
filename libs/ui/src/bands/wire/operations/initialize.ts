@@ -1,10 +1,11 @@
 import { ThunkFunc } from "../../../store/store"
-import { Context, getWireDefFromWireName } from "../../../context/context"
+import { Context } from "../../../context/context"
 import { init } from ".."
 import { getInitializedConditions } from "../conditions/conditions"
 import {
 	RegularWireDefinition,
 	ViewOnlyWireDefinition,
+	WireDefinition,
 } from "../../../definition/wire"
 import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
@@ -26,6 +27,7 @@ const initializeRegularWire = (
 	conditions: getInitializedConditions(wireDef.conditions),
 	batchid: "",
 	batchnumber: 0,
+	def: wireDef,
 	data: {},
 	original: {},
 	changes: {},
@@ -120,6 +122,7 @@ const initializeViewOnlyWire = (
 		query: !wireDef.init || wireDef.init.query || false,
 		conditions: [],
 		name: wirename,
+		def: wireDef,
 		batchid: "",
 		batchnumber: 0,
 		data,
@@ -131,14 +134,16 @@ const initializeViewOnlyWire = (
 	}
 }
 
-export default (context: Context, wireNames: string[]): ThunkFunc =>
+export default (
+		context: Context,
+		wireDefs: Record<string, WireDefinition>
+	): ThunkFunc =>
 	(dispatch) => {
 		const collectionMetadata: PlainCollectionMap = {}
-		const initializedWires = wireNames.map((wirename: string) => {
+		const initializedWires = Object.keys(wireDefs).map((wirename) => {
+			const wireDef = wireDefs[wirename]
 			const viewId = context.getViewId()
 			if (!viewId) throw new Error("Could not get View Def Id")
-			const wireDef = getWireDefFromWireName(viewId, wirename)
-			if (!wireDef) throw new Error("Cannot initialize invalid wire")
 			return wireDef.viewOnly
 				? initializeViewOnlyWire(
 						context,

@@ -11,8 +11,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		if (!viewId) return context
 		const viewDef = context.getViewDef()
 		if (!viewDef) return context
-		const wireDef = viewDef.definition?.wires?.[wirename]
-		if (!wireDef) return context
+
 		const recordId = nanoid()
 		const state = getState()
 
@@ -28,7 +27,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 					state.wire.entities,
 					state.collection.entities,
 					viewId,
-					wireDef,
+					wire.def,
 					wire.collection
 				),
 				entity: `${viewId}/${wirename}`,

@@ -36,6 +36,8 @@ const init = (
 	return [namespaceMrg, `${namespaceMrg}.${collectionMrg}`, context]
 }
 
+const WIRE_NAME = "collectionData"
+
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
@@ -66,22 +68,10 @@ const DataManager: FunctionComponent<Props> = (props) => {
 			fields[`${record}`] = null
 		})
 
-		const basePath = `["viewdef"]["${newContext.getViewDefId()}"]["wires"]`
-		uesio.builder.addDefinitionPair(
-			basePath,
-			{
-				collection,
-				fields,
-			},
-			"collectionData"
-		)
-
-		uesio.wire.initWires(newContext, ["collectionData"])
-		uesio.wire.loadWires(newContext, ["collectionData"])
-
-		return () => {
-			uesio.builder.removeDefinition(`${basePath}["collectionData"]`)
-		}
+		uesio.wire.initWires(newContext, {
+			[WIRE_NAME]: { collection, fields },
+		})
+		uesio.wire.loadWires(newContext, [WIRE_NAME])
 	}, [fieldsMeta])
 
 	if (!fieldsMeta) return null
@@ -91,7 +81,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 			componentType="uesio/io.table"
 			definition={{
 				id: "collectionDataTable",
-				wire: "collectionData",
+				wire: WIRE_NAME,
 				mode: "EDIT",
 				rownumbers: true,
 				pagesize: 10,

@@ -45,7 +45,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				variant="uesio/studio.sidebar"
 				onClick={uesio.signal.getHandler([
 					{
-						signal: "component/uesio.runtime/TOGGLE_CODE",
+						signal: "component/uesio/studio.runtime/TOGGLE_CODE",
 					},
 				])}
 			/>

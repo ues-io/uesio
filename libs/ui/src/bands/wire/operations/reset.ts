@@ -1,5 +1,5 @@
 import { ThunkFunc } from "../../../store/store"
-import { Context, getWireDefFromWireName } from "../../../context/context"
+import { Context } from "../../../context/context"
 import { reset } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { nanoid } from "nanoid"
@@ -10,8 +10,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch, getState) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		const wireDef = getWireDefFromWireName(viewId, wirename)
-		const autoCreateRecord = !!wireDef?.init?.create
+
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
 		const changes: Record<string, PlainWireRecord> = {}
@@ -22,6 +21,9 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		const wireId = getFullWireId(viewId, wirename)
 		const wire = state.wire.entities[wireId]
 		if (!wire) return context
+
+		const wireDef = wire.def
+		const autoCreateRecord = !!wireDef?.init?.create
 
 		if (autoCreateRecord) {
 			dataArray.push(

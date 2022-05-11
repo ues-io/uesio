@@ -12,7 +12,6 @@ import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
-import { PlainWire } from "../bands/wire/types"
 import { ThemeState } from "../definition/theme"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
@@ -217,9 +216,6 @@ const getViewDef = (viewDefId: string | undefined) =>
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getStore().getState(), viewId, wireId)
 
-const getWireDef = (wire: PlainWire | undefined) =>
-	wire ? getWireDefFromWireName(wire.view, wire.name) : undefined
-
 const getWireDefFromWireName = (viewId: string, wirename: string) => {
 	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
@@ -341,8 +337,6 @@ class Context {
 	getWire = () => {
 		const state = getStore().getState()
 		const plainWire = this.getPlainWire()
-		const wireDef = getWireDef(plainWire)
-		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
 		const plainCollection = collectionSelectors.selectById(
 			state,
@@ -406,7 +400,6 @@ export {
 	RouteState,
 	WorkspaceState,
 	SiteState,
-	getWireDef,
 	getWireDefFromWireName,
 	getWire,
 }

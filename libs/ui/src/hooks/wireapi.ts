@@ -5,6 +5,7 @@ import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import initializeWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
+import { WireDefinition } from "../definition/wire"
 
 // This is the wire api exposed on the uesio object returned
 // to components using the useUesio hook.
@@ -57,8 +58,8 @@ class WireAPI {
 		)
 	}
 
-	initWires(context: Context, wireNames: string[]) {
-		return this.uesio.getDispatcher()(initializeWiresOp(context, wireNames))
+	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
+		return this.uesio.getDispatcher()(initializeWiresOp(context, wireDefs))
 	}
 }
 

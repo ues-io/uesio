@@ -20,7 +20,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		"viewinfopanel",
 		"components",
 		undefined,
-		"uesio.runtime"
+		"uesio/studio.runtime"
 	)
 
 	return (

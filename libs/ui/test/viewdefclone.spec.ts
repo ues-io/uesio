@@ -1,47 +1,50 @@
 import { createNextState } from "@reduxjs/toolkit"
-import { RemoveDefinitionPayload } from "../src/bands/builder"
+import { CloneDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
-import { removeDef } from "../src/store/reducers"
+import { cloneDef } from "../src/store/reducers"
 
-const buttondeletetest = `name: page
+const buttonclonetest = `name: page
 namespace: ben/planets
 definition:
   components:
     - uesio/io.button:
         text: button1
-    - uesio/io.button:
-        text: button2
   wires:
   panels:
 `
 
-const buttondeletetestresult = `name: page
+const buttonclonetestresult = `name: page
 namespace: ben/planets
 definition:
   components:
+    - uesio/io.button:
+        text: button1
     - uesio/io.button:
         text: button1
   wires: null
   panels: null
 `
 
-test("viewdef delete component", () => {
-	testDelete(
+test("viewdef clone component", () => {
+	testClone(
 		{
 			key: "ben/planets.page",
-			content: buttondeletetest,
+			content: buttonclonetest,
 		},
 		{
-			path: `["components"]["1"]`,
+			path: `["components"]["0"]["uesio/io.button"]`,
 		},
 		{
 			key: "ben/planets.page",
-			content: buttondeletetestresult,
+			content: buttonclonetestresult,
 		}
 	)
 })
 
-const wiredeletetest = `name: page
+/*
+// Had to comment this out because we're generating random wire names on clone
+// That's pretty hard to test.
+const wireclonetest = `name: page
 namespace: ben/planets
 definition:
   components:
@@ -49,46 +52,47 @@ definition:
     mywire:
       collection: mycollection
       fields:
-    myotherwire:
-      collection: myothercollection
-      fields:
   panels:
 `
 
-const wiredeletetestresult = `name: page
+const wireclonetestresult = `name: page
 namespace: ben/planets
 definition:
   components: null
   wires:
-    myotherwire:
-      collection: myothercollection
+    mywire:
+      collection: mycollection
+      fields: null
+    mywire:
+      collection: mycollection
       fields: null
   panels: null
 `
 
-test("viewdef delete wire", () => {
-	testDelete(
+test("viewdef clone wire", () => {
+	testClone(
 		{
 			key: "ben/planets.page",
-			content: wiredeletetest,
+			content: wireclonetest,
 		},
 		{
 			path: `["wires"]["mywire"]`,
 		},
 		{
 			key: "ben/planets.page",
-			content: wiredeletetestresult,
+			content: wireclonetestresult,
 		}
 	)
 })
+*/
 
-const testDelete = (
+const testClone = (
 	initial: MetadataState,
-	payload: RemoveDefinitionPayload,
+	payload: CloneDefinitionPayload,
 	expected: MetadataState
 ) => {
 	const newState = createNextState(initial, (draftState) => {
-		removeDef(draftState, payload)
+		cloneDef(draftState, payload)
 	})
 	expect(newState.content).toStrictEqual(expected.content)
 }

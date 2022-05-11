@@ -1,3 +1,4 @@
+import { WireDefinition } from "../../definition/wire"
 import { SaveError } from "../../load/saveresponse"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
@@ -9,6 +10,7 @@ type PlainWire = {
 	collection: string
 	conditions: WireConditionState[]
 	data: Record<string, PlainWireRecord>
+	def: WireDefinition
 	deletes: Record<string, PlainWireRecord>
 	errors?: Record<string, SaveError[]>
 	more?: boolean
