@@ -344,6 +344,15 @@ const platform = {
 		)
 		return response.json()
 	},
+	testUsername: async (
+		username: string
+	): Promise<true | false | undefined> => {
+		const random = Math.random()
+		const response = random > 0.33 ? random < 0.66 : undefined
+		return response
+		// const response = await fetch(`/site/auth/testusername/${username}/`)
+		// return response.json()
+	},
 	login: async (
 		authSource: string,
 		requestBody: Record<string, string>

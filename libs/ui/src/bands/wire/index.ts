@@ -1,5 +1,5 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
-import { SaveResponseBatch } from "../../load/saveresponse"
+import { SaveResponseBatch, SaveError } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
@@ -14,6 +14,17 @@ import get from "lodash/get"
 
 type DeletePayload = {
 	recordId: string
+} & EntityPayload
+
+type AddErrorPayload = {
+	recordId: string
+	fieldId: string
+	message: string
+} & EntityPayload
+
+type RemoveErrorPayload = {
+	recordId: string
+	fieldId: string
 } & EntityPayload
 
 type UndeletePayload = {
@@ -55,6 +66,41 @@ const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
 	reducers: {
+		addError: createEntityReducer<AddErrorPayload, PlainWire>(
+			(state, { recordId, fieldId, message }) => {
+				const recordFieldKey = `${recordId}:${fieldId}`
+				const newErrorItem = {
+					recordid: recordId,
+					fieldid: fieldId,
+					message,
+				}
+
+				// We don't want duplicate error messages
+				if (
+					state.errors &&
+					state.errors[recordFieldKey] &&
+					state.errors[recordFieldKey].some(
+						(el) => el.message === newErrorItem.message
+					)
+				)
+					return
+
+				const currentFieldErrors = state.errors
+					? state.errors[recordFieldKey]
+					: []
+
+				state.errors = {
+					...state.errors,
+					[recordFieldKey]: [...currentFieldErrors, newErrorItem],
+				}
+			}
+		),
+		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
+			(state, { recordId, fieldId }) => {
+				console.log("something is right")
+				delete state.errors?.[`${recordId}:${fieldId}`]
+			}
+		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
 				state.deletes[recordId] = {
@@ -253,6 +299,8 @@ const wireSlice = createSlice({
 
 export const {
 	markForDelete,
+	addError,
+	removeError,
 	unmarkForDelete,
 	updateRecord,
 	setRecord,

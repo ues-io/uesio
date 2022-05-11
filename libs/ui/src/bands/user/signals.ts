@@ -13,6 +13,10 @@ interface LoginSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
+interface UsernameTestSignal extends SignalDefinition {
+	username: string
+	fieldId: string
+}
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -54,6 +58,12 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
 		label: "Logout",
+		properties: () => [],
+	},
+	[`${USER_BAND}/TEST_USERNAME`]: {
+		dispatcher: (signal: UsernameTestSignal, context: Context) =>
+			operations.testUsername(context, signal.username, signal.fieldId),
+		label: "Test Username",
 		properties: () => [],
 	},
 }

@@ -12,6 +12,7 @@ import {
 	toggleCondition,
 } from "."
 import saveWiresOp from "./operations/save"
+import { runMany } from "../../signals/signals"
 import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
@@ -40,6 +41,7 @@ class Wire {
 			: []
 
 	getErrors = () => this.source?.errors
+
 	getViewId = () => this.source?.view
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 
@@ -57,7 +59,46 @@ class Wire {
 
 	hasMore = () => this.source.more
 
+	getWireDef = () => {
+		const wireDef = {
+			events: {
+				onChange: [
+					{
+						field: "uesio/viewonly.username",
+						signals: [
+							{
+								signal: "user/TEST_USERNAME",
+								username: "$Record{uesio/viewonly.username}",
+								fieldId: "uesio/viewonly.username",
+							},
+						],
+					},
+				],
+			},
+		}
+
+		return wireDef
+	}
+
+	doChanges = (recordId: string, path: string[]) => {
+		// Get all signals under the field
+		const signals = this.getWireDef().events.onChange.reduce(
+			(prev, { field, signals }) => [
+				...prev,
+				...(path[0] === field ? signals : []),
+			],
+			[]
+		)
+		const context = new Context().addFrame({
+			wire: this.source.name,
+			record: recordId,
+			view: this.source.view,
+		})
+		runMany(getStore().dispatch, "", signals, context)
+	}
+
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
+		console.log({ recordId, record, path })
 		getStore().dispatch(
 			updateRecord({
 				entity: this.getFullId(),
@@ -66,6 +107,7 @@ class Wire {
 				path,
 			})
 		)
+		this.doChanges(recordId, path)
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {

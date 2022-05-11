@@ -4,6 +4,12 @@ definition:
   wires:
     userData:
       viewOnly: true
+      events:
+        onChange:
+          - field: uesio/viewonly.username
+            signals:
+              - signal: user/TEST_USERNAME
+                username: ${uesio/viewonly.username}
       fields:
         uesio/viewonly.username:
           label: Username

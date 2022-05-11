@@ -3,6 +3,8 @@ import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
+import addError from "../wire/operations/adderror"
+import removeError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
@@ -56,9 +58,27 @@ const logout =
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
+const testUsername =
+	(context: Context, username: string, usernameFieldId: string): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const response = await platform.testUsername(username)
+		if (response === false)
+			return dispatch(
+				addError(
+					context,
+					usernameFieldId,
+					"Username not available, try something more creative"
+				)
+			)
+		// remove error if api call fails or username is available
+		if (response === true || !response)
+			return dispatch(removeError(context, usernameFieldId))
+		return context
+	}
 
 export default {
 	login,
 	logout,
 	signup,
+	testUsername,
 }
