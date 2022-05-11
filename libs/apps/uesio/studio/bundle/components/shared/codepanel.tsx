@@ -1,9 +1,9 @@
-import { FunctionComponent, useRef, useEffect } from "react"
-import { definition, component, hooks, util, styles } from "@uesio/ui"
+import { FunctionComponent, useRef } from "react"
+import { definition, component, hooks, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
-const ANIMATION_DURATION = 3000
+//const ANIMATION_DURATION = 3000
 
 const ScrollPanel = component.registry.getUtility("uesio/io.scrollpanel")
 const TitleBar = component.registry.getUtility("uesio/io.titlebar")
@@ -13,6 +13,7 @@ const IOCodeField = component.registry.getUtility("uesio/io.codefield")
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
+	/*
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
@@ -22,30 +23,47 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		},
 		props
 	)
-	const metadataType = uesio.builder.useSelectedType()
-	const metadataItem = uesio.builder.useSelectedItem()
+	*/
+
+	const viewId = context.getViewDefId() || ""
+	const metadataType = uesio.builder.useSelectedType() || "viewdef"
+	const metadataItem =
+		uesio.builder.useSelectedItem() ||
+		(metadataType === "viewdef" ? viewId : "")
 	const metadataTypeRef = useRef<string>(metadataType)
 	const metadataItemRef = useRef<string>(metadataItem)
 	metadataTypeRef.current = metadataType
 	metadataItemRef.current = metadataItem
-	const yamlDoc = util.yaml.parse("")
-	const currentYaml = yamlDoc?.toString() || ""
+
+	const fullYaml =
+		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
+
+	const yamlDoc = util.yaml.parse(fullYaml)
+	const depsNode = util.yaml.getNodeAtPath("definition", yamlDoc.contents)
+
+	const defDoc = util.yaml.newDoc()
+	defDoc.contents = depsNode
+	const defYaml = defDoc.toString() || ""
+
+	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
 		component.path.getFullPathParts(lastModifiedNode || "")
+		*/
 
-	const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
-	currentAST.current = util.yaml.parse(currentYaml)
+	//const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
+	//currentAST.current = yamlDoc
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
 		undefined
 	)
 	const monacoRef = useRef<typeof monaco | undefined>(undefined)
-	const decorationsRef = useRef<string[] | undefined>(undefined)
+	//const decorationsRef = useRef<string[] | undefined>(undefined)
 
-	const e = editorRef.current
-	const m = monacoRef.current
+	//const e = editorRef.current
+	//const m = monacoRef.current
 
+	/*
 	useEffect(() => {
 		if (
 			e &&
@@ -98,6 +116,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			}, ANIMATION_DURATION)
 		}
 	})
+	*/
 
 	return (
 		<ScrollPanel
@@ -112,7 +131,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{
-									signal: "component/uesio.runtime/TOGGLE_CODE",
+									signal: "component/uesio/studio.runtime/TOGGLE_CODE",
 								},
 							])}
 						/>
@@ -125,7 +144,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<IOCodeField
 				context={context}
-				value={currentYaml}
+				value={defYaml}
 				options={{
 					automaticLayout: true,
 					minimap: {
@@ -143,8 +162,14 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				}}
 				language="yaml"
-				onChange={
-					((newValue, event): void => {
+				setValue={
+					((newValue): void => {
+						uesio.builder.setDefinitionContent(
+							metadataTypeRef.current,
+							metadataItemRef.current,
+							newValue || ""
+						)
+						/*
 						const newAST = util.yaml.parse(newValue || "")
 
 						if (
@@ -215,6 +240,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							}
 						})
 						currentAST.current = newAST
+						*/
 					}) as EditorProps["onChange"]
 				}
 				onMount={
@@ -223,10 +249,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						monacoRef.current = monaco
 						// Set currentAST again because sometimes monaco reformats the text
 						// (like removing trailing spaces and such)
-						currentAST.current = util.yaml.parse(editor.getValue())
+						//currentAST.current = util.yaml.parse(editor.getValue())
 						// We want to:
 						// Or set the selected node when clicking
 						// Or clear the selected node when selecting text
+						/*
 						editor.onDidChangeCursorSelection((e) => {
 							const model = editor.getModel()
 							const {
@@ -292,6 +319,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								}
 							}
 						})
+						*/
 					}) as EditorProps["onMount"]
 				}
 			/>

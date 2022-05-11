@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 import { BuilderState } from "./types"
-import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
+import { Definition, DefinitionMap } from "../../definition/definition"
 import builderOps from "./operations"
 
 import { getMetadataListKey } from "./selectors"
@@ -42,9 +42,10 @@ type ChangeDefinitionKeyPayload = {
 	key: string
 }
 
-type YamlUpdatePayload = {
-	path: string
-	yaml: YamlDoc
+type SetDefinitionContentPayload = {
+	metadataType: string
+	metadataItem: string
+	content: string
 }
 
 type CloneDefinitionPayload = {
@@ -124,8 +125,12 @@ const builderSlice = createSlice({
 			state.selectedNode = ""
 			state.lastModifiedNode = ""
 		},
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
+		setDefinitionContent: (
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			state,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			action: PayloadAction<SetDefinitionContentPayload>
+		) => {
 			//state.lastModifiedNode = payload.path
 		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
@@ -211,7 +216,7 @@ export const {
 	removeDefinition,
 	moveDefinition,
 	changeDefinitionKey,
-	setYaml,
+	setDefinitionContent,
 	save,
 	cancel,
 } = builderSlice.actions
@@ -223,6 +228,6 @@ export {
 	RemoveDefinitionPayload,
 	MoveDefinitionPayload,
 	ChangeDefinitionKeyPayload,
-	YamlUpdatePayload,
+	SetDefinitionContentPayload,
 }
 export default builderSlice.reducer

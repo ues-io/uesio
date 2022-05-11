@@ -11,7 +11,7 @@ const loader = (element: HTMLElement | null, initialState: InitialState) => {
 			<Provider store={create(platform, initialState)}>
 				<Runtime
 					path=""
-					componentType="uesio.runtime"
+					componentType="uesio/studio.runtime"
 					context={new Context()}
 				/>
 			</Provider>

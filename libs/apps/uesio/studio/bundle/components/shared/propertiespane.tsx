@@ -21,7 +21,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		"propertiespanel:" + path,
 		"",
 		undefined,
-		"uesio.runtime"
+		"uesio/studio.runtime"
 	)
 
 	const selectedSection = propsDef.sections?.find(

@@ -259,8 +259,9 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 					Value:    ids,
 				},
 			},
-			Fields: []adapt.LoadRequestField{{ID: adapt.ID_FIELD}},
-			Query:  true,
+			Fields:             []adapt.LoadRequestField{{ID: adapt.ID_FIELD}},
+			Query:              true,
+			SkipRecordSecurity: true,
 		}
 
 		err := connection.Load(op)
