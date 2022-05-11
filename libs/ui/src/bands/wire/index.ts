@@ -1,5 +1,5 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
-import { SaveResponseBatch, SaveError } from "../../load/saveresponse"
+import { SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
@@ -85,9 +85,10 @@ const wireSlice = createSlice({
 				)
 					return
 
-				const currentFieldErrors = state.errors
-					? state.errors[recordFieldKey]
-					: []
+				const currentFieldErrors =
+					state.errors && state.errors[recordFieldKey]
+						? state.errors[recordFieldKey]
+						: []
 
 				state.errors = {
 					...state.errors,
