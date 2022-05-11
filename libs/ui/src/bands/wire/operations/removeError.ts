@@ -2,7 +2,8 @@ import { Context } from "../../../context/context"
 import { removeError } from ".."
 import { ThunkFunc } from "../../../store/store"
 
-export default (context: Context, fieldId: string): ThunkFunc =>
+const wireRemoveError =
+	(context: Context, fieldId: string): ThunkFunc =>
 	(dispatch) => {
 		const recordId = context.getRecord()?.getId()
 		const wire = context.getWire()
@@ -16,3 +17,5 @@ export default (context: Context, fieldId: string): ThunkFunc =>
 		)
 		return context
 	}
+
+export default wireRemoveError

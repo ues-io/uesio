@@ -3,8 +3,8 @@ import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
-import addError from "../wire/operations/adderror"
-import removeError from "../wire/operations/removeerror"
+import wireAddError from "../wire/operations/adderror"
+import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
@@ -74,10 +74,10 @@ const testUsername =
 			)
 			if (response.status !== 200) {
 				const error = await response.text()
-				return dispatch(addError(context, usernameFieldId, error))
+				return dispatch(wireAddError(context, usernameFieldId, error))
 			}
 			if (response.status === 200 || !response)
-				return dispatch(removeError(context, usernameFieldId))
+				return dispatch(wireRemoveError(context, usernameFieldId))
 		}
 		return context
 	}
