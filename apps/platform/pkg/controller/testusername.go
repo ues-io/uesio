@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -38,36 +37,31 @@ func TestUsername(w http.ResponseWriter, r *http.Request) {
 	err := bundle.Load(signupMethod, publicSession)
 	if err != nil {
 		msg := "Test Username failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
-	var payload map[string]interface{}
-	payload["username"] = testUsername
+	payload := map[string]interface{}{"username": testUsername}
 
 	username, err := mergeTemplate(payload, signupMethod.UsernameTemplate)
 	if err != nil {
 		msg := "Test Username failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	if !matchesRegex(username, signupMethod.Regex) {
-		msg := "Test Username failed: Regex validation failed"
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
+		msg := "Regex validation failed"
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
-	user, err := auth.GetUserByID(username, session)
+	user, err := auth.GetUserByID(username, publicSession)
 
 	if user != nil && err == nil {
-		//username already taken
-
+		msg := "Username not available, try something more creative"
+		http.Error(w, msg, http.StatusBadRequest)
+		return
 	}
-
-	//redirectResponse(w, r, signupMethod.LandingRoute, user, site)
 
 }

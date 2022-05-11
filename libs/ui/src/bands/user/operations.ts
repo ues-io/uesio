@@ -66,18 +66,19 @@ const testUsername =
 		usernameFieldId: string
 	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		const response = await platform.testUsername(username)
-		if (response === false)
-			return dispatch(
-				addError(
-					context,
-					usernameFieldId,
-					"Username not available, try something more creative"
-				)
+		const mergedUsername = context.merge(username)
+		if (mergedUsername.length > 2) {
+			const response = await platform.testUsername(
+				signupMethod,
+				mergedUsername
 			)
-		// remove error if api call fails or username is available
-		if (response === true || !response)
-			return dispatch(removeError(context, usernameFieldId))
+			if (response.status !== 200) {
+				const error = await response.text()
+				return dispatch(addError(context, usernameFieldId, error))
+			}
+			if (response.status === 200 || !response)
+				return dispatch(removeError(context, usernameFieldId))
+		}
 		return context
 	}
 

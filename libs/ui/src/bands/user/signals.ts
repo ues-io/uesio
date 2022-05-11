@@ -15,6 +15,7 @@ interface LoginSignal extends SignalDefinition {
 }
 interface UsernameTestSignal extends SignalDefinition {
 	username: string
+	signupMethod: string
 	fieldId: string
 }
 
@@ -62,7 +63,12 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${USER_BAND}/TEST_USERNAME`]: {
 		dispatcher: (signal: UsernameTestSignal, context: Context) =>
-			operations.testUsername(context, signal.username, signal.fieldId),
+			operations.testUsername(
+				context,
+				signal.username,
+				signal.signupMethod,
+				signal.fieldId
+			),
 		label: "Test Username",
 		properties: () => [],
 	},

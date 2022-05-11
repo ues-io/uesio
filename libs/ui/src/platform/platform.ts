@@ -345,14 +345,14 @@ const platform = {
 		return response.json()
 	},
 	testUsername: async (
-		authSource: string,
+		signupMethod: string,
 		username: string
-	): Promise<true | false | undefined> => {
-		const [namespace, name] = parseKey(authSource)
+	): Promise<Response> => {
+		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/testusername/${username}/`
+			`/site/auth/${namespace}/${name}/testusername/${username}`
 		)
-		return response.json()
+		return response
 	},
 	login: async (
 		authSource: string,

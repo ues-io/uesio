@@ -10,6 +10,7 @@ definition:
             signals:
               - signal: user/TEST_USERNAME
                 username: ${uesio/viewonly.username}
+                signupMethod: uesio/core.platform
       fields:
         uesio/viewonly.username:
           label: Username

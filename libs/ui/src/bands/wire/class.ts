@@ -70,6 +70,7 @@ class Wire {
 								signal: "user/TEST_USERNAME",
 								username: "$Record{uesio/viewonly.username}",
 								fieldId: "uesio/viewonly.username",
+								signupMethod: "uesio/core.platform",
 							},
 						],
 					},
@@ -98,7 +99,6 @@ class Wire {
 	}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		console.log({ recordId, record, path })
 		getStore().dispatch(
 			updateRecord({
 				entity: this.getFullId(),

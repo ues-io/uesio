@@ -98,7 +98,6 @@ const wireSlice = createSlice({
 		),
 		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
 			(state, { recordId, fieldId }) => {
-				console.log("something is right")
 				delete state.errors?.[`${recordId}:${fieldId}`]
 			}
 		),
