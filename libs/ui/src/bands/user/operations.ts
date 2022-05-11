@@ -59,7 +59,12 @@ const logout =
 		return responseRedirect(response, dispatch, context)
 	}
 const testUsername =
-	(context: Context, username: string, usernameFieldId: string): ThunkFunc =>
+	(
+		context: Context,
+		username: string,
+		signupMethod: string,
+		usernameFieldId: string
+	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		const response = await platform.testUsername(username)
 		if (response === false)
