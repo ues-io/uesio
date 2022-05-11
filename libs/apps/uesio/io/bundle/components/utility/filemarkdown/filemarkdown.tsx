@@ -26,6 +26,7 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
+	variant?: string
 }
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
@@ -79,6 +80,7 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 					context
 				)
 			}}
+			variant={props.variant}
 		/>
 	)
 }

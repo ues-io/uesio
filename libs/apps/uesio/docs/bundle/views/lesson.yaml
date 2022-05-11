@@ -28,6 +28,7 @@ definition:
                           uesio.variant: uesio/docs.content
                           text: ${uesio/docs.article->uesio/cms.description}
                       - uesio/io.field:
+                          uesio.variant: uesio/docs.docsmarkdown
                           fieldId: uesio/docs.article->uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
