@@ -1,7 +1,6 @@
 name: uesio/web
 loginRoute: uesio/core.login
 homeRoute: uesio/web.home
-defaultProfile: uesio/web.public
 defaultTheme: uesio/crm.default
 publicProfile: uesio/web.public
 dependencies:

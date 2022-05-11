@@ -16,12 +16,12 @@ import (
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-type validationFunc func(change adapt.ChangeItem) *adapt.SaveError
+type validationFunc func(change *adapt.ChangeItem) *adapt.SaveError
 
-type referenceValidationFunc func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry)
+type referenceValidationFunc func(change *adapt.ChangeItem, registry *adapt.ReferenceRegistry)
 
 func preventUpdate(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		if change.IsNew {
 			return nil
 		}
@@ -53,7 +53,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateRequired(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if (change.IsNew && err != nil) || val == "" {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
@@ -63,9 +63,9 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateEmail(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil {
+		if err == nil && val != "" {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
 				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}
@@ -77,11 +77,11 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
 	if err != nil {
-		return func(change adapt.ChangeItem) *adapt.SaveError {
+		return func(change *adapt.ChangeItem) *adapt.SaveError {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
 	}
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
@@ -91,7 +91,7 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
 			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
@@ -101,7 +101,7 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
-	return func(change adapt.ChangeItem) *adapt.SaveError {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		_, isFloat := val.(float64)
 		_, isInt := val.(int64)
@@ -134,7 +134,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 	for i := range collectionMetadata.Fields {
 		field := collectionMetadata.Fields[i]
 		if adapt.IsReference(field.Type) {
-			validations = append(validations, func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
+			validations = append(validations, func(change *adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
 				referencedCollection := field.ReferenceMetadata.Collection
 				request := registry.Get(referencedCollection)
 				fieldName := field.GetFullName()
@@ -165,7 +165,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 		}
 	}
 
-	return func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
+	return func(change *adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
 		for _, validation := range validations {
 			validation(change, registry)
 		}
@@ -207,10 +207,10 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 		return err
 	}
 
-	if op.Inserts != nil {
-		for i := range op.Inserts {
+	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+		if change.IsNew {
 			// This is kind of randomly placed, but we want to populate new field id here
-			newID, err := templating.Execute(idTemplate, op.Inserts[i].FieldChanges)
+			newID, err := templating.Execute(idTemplate, change.FieldChanges)
 			if err != nil {
 				return err
 			}
@@ -219,34 +219,26 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 				newID = uuid.New().String()
 			}
 
-			err = op.Inserts[i].FieldChanges.SetField(adapt.ID_FIELD, newID)
+			err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
 			if err != nil {
 				return err
 			}
 
-			op.Inserts[i].IDValue = newID
-
-			for _, validation := range validations {
-				err := validation(op.Inserts[i])
-				if err != nil {
-					op.AddError(err)
-				}
-			}
-
-			referenceValidations(op.Inserts[i], referenceRegistry)
+			change.IDValue = newID
 		}
-	}
 
-	if op.Updates != nil {
-		for i := range op.Updates {
-			for _, validation := range validations {
-				err := validation(op.Updates[i])
-				if err != nil {
-					op.AddError(err)
-				}
+		for _, validation := range validations {
+			err := validation(change)
+			if err != nil {
+				op.AddError(err)
 			}
-			referenceValidations(op.Updates[i], referenceRegistry)
 		}
+
+		referenceValidations(change, referenceRegistry)
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
 	for collection, request := range *referenceRegistry {

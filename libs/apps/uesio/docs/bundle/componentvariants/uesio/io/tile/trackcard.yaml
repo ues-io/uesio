@@ -1,0 +1,9 @@
+name: trackcard
+label: Track Card
+definition:
+  uesio.styles:
+    root:
+      borderRadius: 8pt
+      overflow: hidden
+      background: white
+      boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"

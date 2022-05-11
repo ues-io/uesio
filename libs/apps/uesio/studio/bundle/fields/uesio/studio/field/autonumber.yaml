@@ -2,9 +2,9 @@ name: autonumber
 type: MAP
 label: Autonumber Metadata
 subfields:
-  - name: studio.leadingzeros
+  - name: uesio/studio.leadingzeros
     label: Leading Zeros
     type: NUMBER
-  - name: studio.prefix
+  - name: uesio/studio.prefix
     label: Prefix
     type: TEXT

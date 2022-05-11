@@ -1,6 +1,11 @@
 package adapt
 
-import "fmt"
+import (
+	"errors"
+	"strconv"
+
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
 
 func HandleOldValuesLookup(
 	connection Connection,
@@ -21,57 +26,30 @@ func HandleOldValuesLookup(
 	}
 
 	// Go through all the changes and get a list of the upsert keys
-	ids := []string{}
+	idMap := LocatorMap{}
 	for _, change := range op.Updates {
-		ids = append(ids, change.IDValue)
+		idMap.AddID(change.IDValue, ReferenceLocator{
+			Item: change,
+		})
 	}
 	for _, change := range op.Deletes {
-		ids = append(ids, change.IDValue)
+		idMap.AddID(change.IDValue, ReferenceLocator{
+			Item: change,
+		})
 	}
 
-	if len(ids) == 0 {
+	if len(idMap) == 0 {
 		return nil
 	}
 
-	oldValuesOp := &LoadOp{
-		CollectionName: op.CollectionName,
-		WireName:       op.WireName,
-		Fields:         allFields,
-		Collection:     &Collection{},
-		Conditions: []LoadRequestCondition{
-			{
-				Field:    ID_FIELD,
-				Operator: "IN",
-				Value:    ids,
-			},
-		},
-		Query: true,
-	}
-
-	err = connection.Load(oldValuesOp)
-	if err != nil {
-		return err
-	}
-
-	oldValuesLookup, err := getLookupResultMap(oldValuesOp, ID_FIELD)
-	if err != nil {
-		return err
-	}
-
-	for index, change := range op.Updates {
-		oldValues, ok := oldValuesLookup[change.IDValue]
-		if !ok {
-			return fmt.Errorf("Could not find record to update: %s", change.IDValue)
+	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+		if len(matchIndexes) != 1 {
+			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
-		op.Updates[index].OldValues = oldValues
-	}
-	for index, change := range op.Deletes {
-		oldValues, ok := oldValuesLookup[change.IDValue]
-		if !ok {
-			return fmt.Errorf("Could not find record to delete: %s", change.IDValue)
-		}
-		op.Deletes[index].OldValues = oldValues
-	}
-
-	return nil
+		match := matchIndexes[0].Item
+		// Cast item to a change
+		change := match.(*ChangeItem)
+		change.OldValues = item
+		return nil
+	})
 }

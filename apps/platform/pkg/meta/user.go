@@ -8,6 +8,7 @@ type User struct {
 	Profile   string            `uesio:"uesio/core.profile"`
 	Username  string            `uesio:"uesio/core.username"`
 	Initials  string            `uesio:"uesio/core.initials"`
+	Email     string            `uesio:"uesio/core.email"`
 	Type      string            `uesio:"uesio/core.type"`
 	Picture   *UserFileMetadata `uesio:"uesio/core.picture"`
 	Language  string            `uesio:"uesio/core.language"`

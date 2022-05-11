@@ -99,7 +99,7 @@ definition:
                                           value: ""
                                       components:
                                         - uesio/io.button:
-                                            text: Sign in with Email
+                                            text: Sign in with Username
                                             uesio.variant: uesio/io.primary
                                             uesio.styles:
                                               root:
@@ -110,14 +110,14 @@ definition:
                                             signals:
                                               - signal: wire/UPDATE_RECORD
                                                 field: uesio/viewonly.method
-                                                value: email
+                                                value: username
                                   - uesio/io.box:
                                       uesio.styles:
                                         root:
                                           marginBottom: 10px
                                       uesio.display:
                                         - field: uesio/viewonly.method
-                                          value: email
+                                          value: username
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/viewonly.username
@@ -152,15 +152,3 @@ definition:
                                                       wire: credentials
                                                       field: uesio/viewonly.method
                                                       value:
-                                  - uesio/io.button:
-                                      text: Register
-                                      uesio.variant: uesio/io.primary
-                                      uesio.styles:
-                                        root:
-                                          width: 100%
-                                          display: block
-                                        label:
-                                          textTransform: none
-                                      signals:
-                                        - path: signup
-                                          signal: route/NAVIGATE

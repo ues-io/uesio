@@ -1,0 +1,17 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/docs.track",
+	"filetype": "CSV",
+	"upsertkey": "uesio/docs.slug",
+	"mappings": {
+		"uesio/docs.name": {
+			"columnname": "name"
+		},
+		"uesio/docs.description": {
+			"columnname": "description"
+		},
+		"uesio/docs.slug": {
+			"columnname": "slug"
+		}
+	}
+}

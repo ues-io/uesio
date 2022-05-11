@@ -36,6 +36,8 @@ export type ExportSpec = {
 export type UploadSpec = {
 	jobtype: "UPLOADFILES"
 	collection: string
+	upsertkey: string
+	uploadfield?: string
 }
 
 export type BaseProps = {

@@ -1,7 +1,0 @@
-name: localnav
-label: Local Navigation
-definition:
-  uesio.styles:
-    root:
-      backgroundColor: orange
-      padding: 15px

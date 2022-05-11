@@ -135,7 +135,7 @@ const authorize = async (): Promise<User> => {
 				choices: [
 					{ name: "Mock Login", value: "uesio/core.mock" },
 					{
-						name: "Sign in with Email",
+						name: "Sign in with Username",
 						value: "uesio/core.platform",
 					},
 				],

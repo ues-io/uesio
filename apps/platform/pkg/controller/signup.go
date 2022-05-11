@@ -2,10 +2,8 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"regexp"
-	"text/template"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -55,7 +53,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var payload map[string]string
+	var payload map[string]interface{}
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
@@ -95,7 +93,9 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = auth.CreateUser(username, claims, signupMethod, publicSession)
+	email, _ := auth.GetPayloadValue(payload, "email")
+
+	err = auth.CreateUser(username, email, claims, signupMethod, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -119,43 +119,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var redirectNamespace, redirectRoute string
-
-	landingRoute := signupMethod.LandingRoute
-	if landingRoute == "" {
-		msg := "No Landing Route Specfied"
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	redirectNamespace, redirectRoute, err = meta.ParseKey(landingRoute)
-	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	respondJSON(w, r, &LoginResponse{
-		User: &UserMergeData{
-			ID:        user.ID,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Profile:   user.Profile,
-			PictureID: user.GetPictureID(),
-			Site:      session.GetSite().ID, //TO-DO Not sure what site
-			Language:  user.Language,
-		},
-		RedirectRouteNamespace: redirectNamespace,
-		RedirectRouteName:      redirectRoute,
-		//RedirectPath:           redirectPath,
-	})
+	redirectResponse(w, r, signupMethod.LandingRoute, user, site)
 
 }
 
-func mergeTemplate(payload map[string]string, usernameTemplate string) (string, error) {
-	//TO-DO add default
-	template, err := newTemplateWithValidKeysOnly(usernameTemplate)
+func mergeTemplate(payload map[string]interface{}, usernameTemplate string) (string, error) {
+	template, err := templating.NewTemplateWithValidKeysOnly(usernameTemplate)
 	if err != nil {
 		return "", err
 	}
@@ -168,14 +137,4 @@ func matchesRegex(usarname string, regex string) bool {
 	}
 	var validMetaRegex, _ = regexp.Compile(regex)
 	return validMetaRegex.MatchString(usarname)
-}
-
-func newTemplateWithValidKeysOnly(templateString string) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(m map[string]string, key string) (interface{}, error) {
-		val, ok := m[key]
-		if !ok {
-			return nil, errors.New("missing key " + key)
-		}
-		return val, nil
-	})
 }

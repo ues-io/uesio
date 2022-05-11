@@ -32,20 +32,10 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 		return nil, errors.New("failed Getting user Data: " + err.Error())
 	}
 
-	/*
-		if user == nil {
-			// 7. If user doesn't exist, provision one
-			user, err = ProvisionUser(claims, session.GetSite())
-			if err != nil {
-				return nil, errors.New("Failed Getting User Data: " + err.Error())
-			}
-		}
-	*/
-
 	return user, nil
 }
 
-func Login(authSourceID string, payload map[string]string, session *sess.Session) (*meta.User, error) {
+func Login(authSourceID string, payload map[string]interface{}, session *sess.Session) (*meta.User, error) {
 	conn, err := GetAuthConnection(authSourceID, session)
 	if err != nil {
 		return nil, err

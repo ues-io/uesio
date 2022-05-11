@@ -44,8 +44,8 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Login(map[string]string, *sess.Session) (*AuthenticationClaims, error)
-	Signup(payload map[string]string, usarname string, session *sess.Session) error
+	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
+	Signup(map[string]interface{}, string, *sess.Session) error
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -147,17 +147,23 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(username string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
+func CreateUser(username string, email string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
 
 	if signupMethod.Profile == "" {
 		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
 	}
 
-	return datasource.PlatformSaveOne(&meta.User{
+	user := &meta.User{
 		Username: username,
 		Profile:  signupMethod.Profile,
 		Type:     "PERSON",
-	}, nil, nil, session)
+	}
+
+	if email != "" {
+		user.Email = email
+	}
+
+	return datasource.PlatformSaveOne(user, nil, nil, session)
 }
 
 func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
@@ -256,4 +262,20 @@ func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims 
 		User:         user,
 		AuthSource:   signupMethod.AuthSource,
 	}, nil, nil, session)
+}
+
+func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {
+
+	value, ok := payload[key]
+	if !ok {
+		return "", errors.New("Key: " + key + " not present in payload")
+	}
+
+	stringValue, ok := value.(string)
+	if !ok {
+		return "", errors.New("The value for" + key + " is not string")
+	}
+
+	return stringValue, nil
+
 }

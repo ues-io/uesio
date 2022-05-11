@@ -26,7 +26,7 @@ func getAuthSourceID(vars map[string]string) string {
 	return authSourceNamespace + "." + authSourceName
 }
 
-func makeLoginResponse(w http.ResponseWriter, r *http.Request, user *meta.User, site *meta.Site) {
+func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
 
 	// If we had an old session, remove it.
 	w.Header().Del("set-cookie")
@@ -45,12 +45,11 @@ func makeLoginResponse(w http.ResponseWriter, r *http.Request, user *meta.User, 
 	var redirectNamespace, redirectRoute string
 
 	if redirectPath == "" {
-		homeRoute := site.GetAppBundle().HomeRoute
-		if homeRoute == "" {
-			http.Error(w, "No Home Route Specfied", http.StatusInternalServerError)
+		if redirectKey == "" {
+			http.Error(w, "No Redirect Route Specfied", http.StatusInternalServerError)
 			return
 		}
-		redirectNamespace, redirectRoute, err = meta.ParseKey(homeRoute)
+		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +68,7 @@ func makeLoginResponse(w http.ResponseWriter, r *http.Request, user *meta.User, 
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
-	var loginRequest map[string]string
+	var loginRequest map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
@@ -88,6 +87,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	makeLoginResponse(w, r, user, site)
+	redirectResponse(w, r, site.GetAppBundle().HomeRoute, user, site)
 
 }

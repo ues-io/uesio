@@ -11,10 +11,12 @@ type InsertsAPI struct {
 func (c *InsertsAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	for _, insert := range c.op.Inserts {
+	_ = c.op.LoopInserts(func(change *adapt.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
-			change: insert,
+			change: change,
 		})
-	}
+		return nil
+	})
+
 	return changeAPIs
 }

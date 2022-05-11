@@ -1,0 +1,19 @@
+name: checkitem
+label: Check Item
+definition:
+  uesio.styles:
+    root:
+      color: "#444"
+      margin: 20px 0
+      alignItems: baseline
+      fontSize: 10pt
+    content:
+      verticalAlign: middle
+  avatar:
+    - uesio/io.text:
+        uesio.styles:
+          root:
+            fontSize: 16pt
+        uesio.variant: uesio/io.icon
+        color: rgb(251,96,78)
+        text: check_circle
