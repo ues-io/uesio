@@ -23,7 +23,7 @@ const signals: Record<string, SignalDescriptor> = {
 		properties: () => [
 			{
 				name: "signupMethod",
-				label: "Auth Source",
+				label: "Signup Method",
 				type: "TEXT",
 			},
 			{
