@@ -58,7 +58,7 @@ const logout =
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
-const testUsername =
+const checkAvailability =
 	(
 		context: Context,
 		username: string,
@@ -67,8 +67,8 @@ const testUsername =
 	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		const mergedUsername = context.merge(username)
-		if (mergedUsername.length > 2) {
-			const response = await platform.testUsername(
+		if (mergedUsername) {
+			const response = await platform.checkAvailability(
 				signupMethod,
 				mergedUsername
 			)
@@ -86,5 +86,5 @@ export default {
 	login,
 	logout,
 	signup,
-	testUsername,
+	checkAvailability,
 }

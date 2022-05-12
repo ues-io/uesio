@@ -61,9 +61,9 @@ const signals: Record<string, SignalDescriptor> = {
 		label: "Logout",
 		properties: () => [],
 	},
-	[`${USER_BAND}/TEST_USERNAME`]: {
+	[`${USER_BAND}/CHECK_AVAILABILITY`]: {
 		dispatcher: (signal: UsernameTestSignal, context: Context) =>
-			operations.testUsername(
+			operations.checkAvailability(
 				context,
 				signal.username,
 				signal.signupMethod,

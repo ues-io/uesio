@@ -11,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func TestUsername(w http.ResponseWriter, r *http.Request) {
+func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()
@@ -50,7 +50,7 @@ func TestUsername(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !matchesRegex(username, signupMethod.Regex) {
+	if !matchesRegex(username, signupMethod.UsernameRegex) {
 		msg := "Regex validation failed"
 		http.Error(w, msg, http.StatusBadRequest)
 		return

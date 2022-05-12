@@ -12,7 +12,7 @@ import {
 	toggleCondition,
 } from "."
 import saveWiresOp from "./operations/save"
-import { runMany } from "../../signals/signals"
+import { runManyThrottled } from "../../signals/signals"
 import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
@@ -59,43 +59,27 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	getWireDef = () => {
-		const wireDef = {
-			events: {
-				onChange: [
-					{
-						field: "uesio/viewonly.username",
-						signals: [
-							{
-								signal: "user/TEST_USERNAME",
-								username: "$Record{uesio/viewonly.username}",
-								fieldId: "uesio/viewonly.username",
-								signupMethod: "uesio/core.platform",
-							},
-						],
-					},
-				],
-			},
-		}
-
-		return wireDef
-	}
+	getWireDef = () => this.source.def
 
 	doChanges = (recordId: string, path: string[]) => {
-		// Get all signals under the field
-		const signals = this.getWireDef().events.onChange.reduce(
-			(prev, { field, signals }) => [
-				...prev,
-				...(path[0] === field ? signals : []),
-			],
-			[]
-		)
-		const context = new Context().addFrame({
-			wire: this.source.name,
-			record: recordId,
-			view: this.source.view,
-		})
-		runMany(getStore().dispatch, "", signals, context)
+		const wireDef = this.getWireDef()
+		const changeEvents = wireDef.events?.onChange
+
+		if (changeEvents) {
+			for (const changeEvent of changeEvents) {
+				if (changeEvent.field !== path[0]) continue
+				runManyThrottled(
+					getStore().dispatch,
+					"",
+					changeEvent.signals,
+					new Context().addFrame({
+						wire: this.source.name,
+						record: recordId,
+						view: this.source.view,
+					})
+				)
+			}
+		}
 	}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {

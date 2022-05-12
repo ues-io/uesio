@@ -344,13 +344,13 @@ const platform = {
 		)
 		return response.json()
 	},
-	testUsername: async (
+	checkAvailability: async (
 		signupMethod: string,
 		username: string
 	): Promise<Response> => {
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/testusername/${username}`
+			`/site/auth/${namespace}/${name}/checkavailability/${username}`
 		)
 		return response
 	},

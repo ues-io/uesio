@@ -75,25 +75,20 @@ const wireSlice = createSlice({
 					message,
 				}
 
-				// We don't want duplicate error messages
-				if (
-					state.errors &&
-					state.errors[recordFieldKey] &&
-					state.errors[recordFieldKey].some(
-						(el) => el.message === newErrorItem.message
-					)
-				)
-					return
+				let errors = state.errors
 
-				const currentFieldErrors =
-					state.errors && state.errors[recordFieldKey]
-						? state.errors[recordFieldKey]
-						: []
-
-				state.errors = {
-					...state.errors,
-					[recordFieldKey]: [...currentFieldErrors, newErrorItem],
+				if (!errors) {
+					errors = {}
+					state.errors = errors
 				}
+
+				const currentFieldErrors = errors[recordFieldKey]
+
+				if (!currentFieldErrors) {
+					errors[recordFieldKey] = []
+				}
+
+				errors[recordFieldKey].push(newErrorItem)
 			}
 		),
 		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
