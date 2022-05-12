@@ -4,7 +4,7 @@ import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
 import wireAddError from "../wire/operations/adderror"
-import wireRemoveError from "../wire/operations/removeerror2"
+import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
