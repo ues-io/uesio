@@ -12,6 +12,7 @@ import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
 import metadataSignals from "../bands/metadata/signals"
 import { additionalContext } from "../component/component"
+import debounce from "lodash/debounce"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -74,4 +75,6 @@ const runMany = async (
 	return context
 }
 
-export { run, runMany, registry, isPanelSignal, getPanelKey }
+const runManyThrottled = debounce(runMany, 250)
+
+export { run, runMany, runManyThrottled, registry, isPanelSignal, getPanelKey }

@@ -4,6 +4,14 @@ definition:
   wires:
     userData:
       viewOnly: true
+      events:
+        onChange:
+          - field: uesio/viewonly.username
+            signals:
+              - signal: user/CHECK_AVAILABILITY
+                username: ${uesio/viewonly.username}
+                signupMethod: uesio/core.platform
+                fieldId: uesio/viewonly.username
       fields:
         uesio/viewonly.username:
           label: Username
@@ -44,28 +52,7 @@ definition:
                         textAlign: center
                     components:
                       - uesio/io.image:
-                          uesio.styles:
-                            root:
-                              margin: 60px
-                              # Little easter egg
-                              "&:hover":
-                                animation-name: myEffect
-                                animation-duration: 2s
-                                animation-iteration-count: infinite
-                                "@keyframes myEffect":
-                                  "0%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(95%) contrast(80%)
-                                  "20%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
-                                  "40%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(150deg) brightness(95%) contrast(80%)
-                                  "60%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(250deg) brightness(95%) contrast(80%)
-                                  "80%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
-                                  "100%":
-                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(95%) contrast(80%)
-
+                          uesio.variant: uesio/core.fancy
                           file: uesio/core.logo
                           height: 120px
                           align: center

@@ -1,6 +1,7 @@
 import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
 import { FieldType } from "../bands/field/types"
+import { SignalDefinition } from "./signal"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -11,6 +12,15 @@ type ViewOnlyField = {
 	type: FieldType // get better type
 }
 
+type OnChangeEvent = {
+	field: string
+	signals: SignalDefinition[]
+}
+
+type WireEvents = {
+	onChange: OnChangeEvent[]
+}
+
 type WireDefinitionBase = {
 	defaults?: WireDefault[]
 	init?: {
@@ -18,6 +28,7 @@ type WireDefinitionBase = {
 		create?: boolean
 	}
 	viewOnly?: boolean
+	events?: WireEvents
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {

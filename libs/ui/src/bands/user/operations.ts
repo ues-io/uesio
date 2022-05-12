@@ -3,6 +3,8 @@ import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
+import wireAddError from "../wire/operations/adderror"
+import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
@@ -56,9 +58,33 @@ const logout =
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
+const checkAvailability =
+	(
+		context: Context,
+		username: string,
+		signupMethod: string,
+		usernameFieldId: string
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const mergedUsername = context.merge(username)
+		if (mergedUsername) {
+			const response = await platform.checkAvailability(
+				signupMethod,
+				mergedUsername
+			)
+			if (response.status !== 200) {
+				const error = await response.text()
+				return dispatch(wireAddError(context, usernameFieldId, error))
+			}
+			if (response.status === 200 || !response)
+				return dispatch(wireRemoveError(context, usernameFieldId))
+		}
+		return context
+	}
 
 export default {
 	login,
 	logout,
 	signup,
+	checkAvailability,
 }
