@@ -1,7 +1,7 @@
 name: mainlayout
 label: Main Layout
 definition:
-  templateAreas: '". main ."'
+  templateAreas: '"left main right"'
   templateColumns:
     sm: 0 1fr 0
     md: 1fr 900px 1fr
