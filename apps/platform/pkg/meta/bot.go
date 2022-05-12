@@ -83,6 +83,7 @@ type BotParam struct {
 	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
 	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
 	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
+	Choices      []string            `yaml:"choices" uesio:"uesio/studio.choices" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
 }
 

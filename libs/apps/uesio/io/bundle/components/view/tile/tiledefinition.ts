@@ -18,6 +18,9 @@ const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
+	type: "component",
+	classes: ["root", "content", "avatar"],
 }
 export { TileProps, TileDefinition }
 

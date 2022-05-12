@@ -37,7 +37,10 @@ class Collection {
 			const baseFieldMetadata =
 				this.source.fields[fieldNameParts.shift() || ""]
 
-			if (baseFieldMetadata.type === "REFERENCE") {
+			if (
+				baseFieldMetadata.type === "REFERENCE" ||
+				baseFieldMetadata.type === "FILE"
+			) {
 				if (!baseFieldMetadata.reference?.collection) return undefined
 				const state =
 					getStore().getState().collection.entities[

@@ -74,21 +74,6 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			label: "Collection",
 		},
 		{
-			name: "type",
-			type: "SELECT",
-			label: "Wire Type",
-			options: [
-				{
-					label: "Create",
-					value: "CREATE",
-				},
-				{
-					label: "Read",
-					value: "",
-				},
-			],
-		},
-		{
 			name: "batchsize",
 			type: "NUMBER",
 			label: "Batch Size",
