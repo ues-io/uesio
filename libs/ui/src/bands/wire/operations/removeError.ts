@@ -1,6 +1,6 @@
 import { Context } from "../../../context/context"
-import { removeError } from ".."
 import { ThunkFunc } from "../../../store/store"
+import { removeError } from ".."
 
 const wireRemoveError =
 	(context: Context, fieldId: string): ThunkFunc =>
