@@ -26,7 +26,7 @@ type SignupMethod struct {
 	Profile          string     `yaml:"profile" uesio:"uesio/studio.profile"`
 	UsernameTemplate string     `yaml:"usernameTemplate" uesio:"uesio/studio.usernametemplate"`
 	LandingRoute     string     `yaml:"landingRoute" uesio:"uesio/studio.landingroute"`
-	Regex            string     `yaml:"regex" uesio:"uesio/studio.regex"`
+	UsernameRegex    string     `yaml:"usernameRegex" uesio:"uesio/studio.usernameregex"`
 	Workspace        *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta         *ItemMeta  `yaml:"-" uesio:"-"`
 	CreatedBy        *User      `yaml:"-" uesio:"uesio/core.createdby"`

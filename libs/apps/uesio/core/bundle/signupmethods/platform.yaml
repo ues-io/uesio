@@ -2,6 +2,6 @@ name: platform
 authsource: uesio/core.platform
 profile: uesio/studio.standard
 usernameTemplate: ${username}
-regex: "^[a-z0-9_]+$"
+usernameRegex: "^[a-z0-9_]+$"
 landingRoute: uesio/studio.home
 public: true

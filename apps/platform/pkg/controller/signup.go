@@ -70,7 +70,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !matchesRegex(username, signupMethod.Regex) {
+	if !matchesRegex(username, signupMethod.UsernameRegex) {
 		msg := "Signup failed: Regex validation failed"
 		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)

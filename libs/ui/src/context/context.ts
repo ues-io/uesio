@@ -390,11 +390,17 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap = <T extends Record<string, string> | undefined>(map: T): T =>
-		Object.entries(map || {}).reduce<T>(
-			(prev, [key, val]) => ({ ...prev, [key]: this.merge(val) }),
-			{} as T
-		)
+	mergeMap = (
+		map: Record<string, string> | undefined
+	): Record<string, string> =>
+		map
+			? Object.fromEntries(
+					Object.entries(map).map((entries) => [
+						entries[0],
+						this.merge(entries[1]),
+					])
+			  )
+			: {}
 
 	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
 }
