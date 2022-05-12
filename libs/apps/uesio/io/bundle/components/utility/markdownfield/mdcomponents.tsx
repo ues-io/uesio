@@ -1,5 +1,5 @@
 import { Options } from "react-markdown"
-import { context, component, styles, definition } from "@uesio/ui"
+import { context, component, styles } from "@uesio/ui"
 import React, { FC } from "react"
 import { IconUtilityProps } from "../icon/icon"
 
