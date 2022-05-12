@@ -72,7 +72,9 @@ const checkAvailability =
 				await platform.checkAvailability(signupMethod, mergedUsername)
 				return dispatch(wireRemoveError(context, usernameFieldId))
 			} catch (error) {
-				return dispatch(wireAddError(context, usernameFieldId, error))
+				return dispatch(
+					wireAddError(context, usernameFieldId, error.message)
+				)
 			}
 		}
 		return context
