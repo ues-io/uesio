@@ -15,9 +15,36 @@ const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Deck",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
-	properties: [],
+	properties: [
+		{
+			name: "id",
+			type: "TEXT",
+			label: "id",
+		},
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "wire",
+		},
+		{
+			name: "mode",
+			type: "SELECT",
+			label: "Mode",
+			options: [
+				{
+					value: "READ",
+					label: "Read",
+				},
+				{
+					value: "EDIT",
+					label: "Edit",
+				},
+			],
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root"],
 }
