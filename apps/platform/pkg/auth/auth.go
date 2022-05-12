@@ -44,7 +44,8 @@ type AuthenticationType interface {
 }
 
 type AuthConnection interface {
-	Login(map[string]string, *sess.Session) (*AuthenticationClaims, error)
+	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
+	Signup(map[string]interface{}, string, *sess.Session) error
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -146,56 +147,27 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-// CreateUser function
-func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
+func CreateUser(username string, email string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
 
-	// For now, just use a public session to do this.
-	// We'll need to rethink this later when we add security to collections/wires
-	session := sess.NewPublic(site)
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.user": true,
-		},
-	})
+	if signupMethod.Profile == "" {
+		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
+	}
 
-	// TODO: Get this from the signup method
-	defaultSiteProfile := "uesio/core.public"
+	user := &meta.User{
+		Username: username,
+		Profile:  signupMethod.Profile,
+		Type:     "PERSON",
+	}
 
-	return datasource.PlatformSaveOne(&meta.User{
-		/*
-			FederationType: claims.AuthType,
-			FederationID:   claims.Subject,
-		*/
-		//Username: claims.Username,
-		Profile: defaultSiteProfile,
-	}, nil, nil, session)
+	if email != "" {
+		user.Email = email
+	}
+
+	return datasource.PlatformSaveOne(user, nil, nil, session)
 }
-
-/*
-// ProvisionUser function
-func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
-
-	err := CreateUser(claims, site)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := GetUser(claims, site)
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, errors.New("Failed Provisioning user Couldn't find it after creating")
-	}
-
-	return user, nil
-}
-*/
 
 func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	var user meta.User
-
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
@@ -282,4 +254,28 @@ func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *
 	}
 
 	return &loginmethod, nil
+}
+
+func CreateLoginMethod(user *meta.User, signupMethod *meta.SignupMethod, claims *AuthenticationClaims, session *sess.Session) error {
+	return datasource.PlatformSaveOne(&meta.LoginMethod{
+		FederationID: claims.Subject,
+		User:         user,
+		AuthSource:   signupMethod.AuthSource,
+	}, nil, nil, session)
+}
+
+func GetPayloadValue(payload map[string]interface{}, key string) (string, error) {
+
+	value, ok := payload[key]
+	if !ok {
+		return "", errors.New("Key: " + key + " not present in payload")
+	}
+
+	stringValue, ok := value.(string)
+	if !ok {
+		return "", errors.New("The value for" + key + " is not string")
+	}
+
+	return stringValue, nil
+
 }

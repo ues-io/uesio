@@ -22,15 +22,20 @@ type Connection struct {
 	credentials *adapt.Credentials
 }
 
-func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	token, ok := payload["token"]
-	if !ok {
-		return nil, errors.New("No token provided for Mock login")
+func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+
+	token, err := auth.GetPayloadValue(payload, "token")
+	if err != nil {
+		return nil, errors.New("Mock login:" + err.Error())
 	}
 	claim := auth.AuthenticationClaims{}
-	err := json.Unmarshal([]byte(token), &claim)
+	err = json.Unmarshal([]byte(token), &claim)
 	if err != nil {
 		return nil, err
 	}
 	return &claim, nil
+}
+
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
+	return nil
 }

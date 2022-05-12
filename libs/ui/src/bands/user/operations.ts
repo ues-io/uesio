@@ -4,7 +4,7 @@ import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
 import routeOps from "../../bands/route/operations"
-
+type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,
 	dispatch: Dispatcher<AnyAction>,
@@ -29,16 +29,21 @@ async function responseRedirect(
 	return context
 }
 
-const login =
-	(
-		context: Context,
-		authSource: string,
-		payload: Record<string, string>
-	): ThunkFunc =>
+const signup =
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		if (!mergedPayload) return context
+		const response = await platform.signup(signupMethod, mergedPayload)
+		dispatch(setUser(response.user))
+		return responseRedirect(response, dispatch, context)
+	}
+
+const login =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
 		const response = await platform.login(authSource, mergedPayload)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
@@ -55,4 +60,5 @@ const logout =
 export default {
 	login,
 	logout,
+	signup,
 }

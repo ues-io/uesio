@@ -1,0 +1,109 @@
+name: signup
+public: true
+definition:
+  wires:
+    userData:
+      viewOnly: true
+      fields:
+        uesio/viewonly.username:
+          label: Username
+          type: TEXT
+        uesio/viewonly.password:
+          label: Password
+          type: TEXT
+        uesio/viewonly.email:
+          label: Email
+          type: TEXT
+      init:
+        create: true
+
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: url($File{uesio/core.splash})
+            minHeight: 100vh
+        templateColumns:
+          xs: 1fr
+          md: 1fr 1fr
+          lg: 5fr 7fr
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: "#f3f3f3"
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        maxWidth: 250px
+                        padding: 10px
+                        margin: 0 auto
+                        textAlign: center
+                    components:
+                      - uesio/io.image:
+                          uesio.styles:
+                            root:
+                              margin: 60px
+                              # Little easter egg
+                              "&:hover":
+                                animation-name: myEffect
+                                animation-duration: 2s
+                                animation-iteration-count: infinite
+                                "@keyframes myEffect":
+                                  "0%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(95%) contrast(80%)
+                                  "20%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
+                                  "40%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(150deg) brightness(95%) contrast(80%)
+                                  "60%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(250deg) brightness(95%) contrast(80%)
+                                  "80%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(50deg) brightness(95%) contrast(80%)
+                                  "100%":
+                                    filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(95%) contrast(80%)
+
+                          file: uesio/core.logo
+                          height: 120px
+                          align: center
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://$Site{domain}"
+
+                      - uesio/io.list:
+                          id: credslist
+                          wire: userData
+                          mode: EDIT
+                          components:
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.username
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.email
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.password
+                                      displayAs: PASSWORD
+                                  - uesio/io.field:
+                                      fieldId: uesio/viewonly.terms
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: Create Account
+                                      uesio.styles:
+                                        root:
+                                          width: 100%
+                                          display: block
+                                          margin-bottom: 12px
+                                        label:
+                                          textTransform: none
+                                      signals:
+                                        - signal: user/SIGNUP
+                                          signupMethod: uesio/core.platform
+                                          requireds:
+                                          payload:
+                                            username: ${uesio/viewonly.username}
+                                            password: ${uesio/viewonly.password}
+                                            email: ${uesio/viewonly.email}

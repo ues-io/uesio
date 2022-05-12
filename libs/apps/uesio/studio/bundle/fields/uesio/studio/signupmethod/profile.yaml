@@ -1,0 +1,5 @@
+name: profile
+label: Profile
+type: REFERENCE
+reference:
+  collection: uesio/studio.profile

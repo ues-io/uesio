@@ -115,7 +115,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const user = context.getUser()
 		if (!user) return ""
 		if (expression === "initials") {
-			return user.firstname.charAt(0) + user.lastname.charAt(0)
+			return user.firstname
+				? user.firstname.charAt(0) + user.lastname.charAt(0)
+				: user.id.charAt(0)
 		} else if (expression === "picture") {
 			// Remove the workspace context here
 			return getUserFileURL(new Context(), user.picture)
@@ -382,7 +384,9 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap = (map?: Record<string, string>) =>
+	mergeMap = (
+		map: Record<string, string> | undefined
+	): Record<string, string> =>
 		map
 			? Object.fromEntries(
 					Object.entries(map).map((entries) => [
@@ -390,7 +394,8 @@ class Context {
 						this.merge(entries[1]),
 					])
 			  )
-			: map
+			: {}
+
 	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
 }
 

@@ -3,4 +3,5 @@ named:
 views:
 routes:
   uesio/studio.login: true
+  uesio/studio.signup: true
 files:

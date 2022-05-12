@@ -9,9 +9,30 @@ interface LoginSignal extends SignalDefinition {
 	authSource: string
 	payload: Record<string, string>
 }
+interface LoginSignal extends SignalDefinition {
+	signupMethod: string
+	payload: Record<string, string>
+}
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
+	[`${USER_BAND}/SIGNUP`]: {
+		dispatcher: (signal: LoginSignal, context: Context) =>
+			operations.signup(context, signal.signupMethod, signal.payload),
+		label: "Signup",
+		properties: () => [
+			{
+				name: "signupMethod",
+				label: "Signup Method",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
+	},
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
 			operations.login(context, signal.authSource, signal.payload),

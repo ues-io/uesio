@@ -4,8 +4,10 @@ named:
 views:
   uesio/core.login: true
   uesio/core.notfound: true
+  uesio/core.signup: true
 routes:
   uesio/core.login: true
+  uesio/core.signup: true
 files:
   uesio/core.logo: true
   uesio/core.logowhite: true
