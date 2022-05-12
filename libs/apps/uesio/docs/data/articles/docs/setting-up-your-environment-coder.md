@@ -21,13 +21,13 @@ https://code.visualstudio.com/
 
 Finally, we are going to install the Uesio CLI. In this example we install the CLI globally, this is the easiest way to start using Uesio. Open a new terminal on the operating system of your choice and then enter the following command:
 
-```console
+```bash
 npm install -g @uesio/cli
 ```
 
 Verify that the CLI is installed correctly
 
-```console
+```bash
 uesio version
 ```
 

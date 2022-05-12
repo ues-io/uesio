@@ -8,7 +8,7 @@ _Note: This tutorial uses Unix commands, if you are using Windows you may need t
 
 We recommend that you give this directory the same name that you will give your application.
 
-```console
+```bash
 mkdir <myproject>
 cd <myproject>
 ```
@@ -20,7 +20,7 @@ If it is the first time that you use the Uesio CLI you will have to select the h
 
 To perform this operation, you need to enter the following command and select the desired host from those available in the list.
 
-```console
+```bash
 uesio sethost
 ```
 
@@ -28,7 +28,7 @@ uesio sethost
 
 Now we are going to create our first application in Uesio, for this we only need to type the following command and answer the questions that are asked to create our first application.
 
-```console
+```bash
 uesio init
 ```
 
@@ -36,13 +36,13 @@ uesio init
 
 Let's check the status of our application.
 
-```console
+```bash
 uesio status
 ```
 
 If everything has gone well, you will see a message similar to this one:
 
-```console
+```bash
 Connected to host: https://studio.ues.io
 Hello! User
 You are a studio.standard user in the prod_studio site.
@@ -60,7 +60,7 @@ Generators help you build an entire application or just parts of an application 
 
 Depending on the type of generator we use, the system asks different questions, if we answer them all properly we will obtain new metadata of the desired type.
 
-```console
+```bash
 uesio generate collection
 ```
 
@@ -68,17 +68,17 @@ What is a collection without any fields? Something a bit useless …
 Let’s go ahead and create some fields! Depending on the type of field you chose the system will ask you different questions.
 Move on and create as many fields as you need for your collection.
 
-```console
+```bash
 uesio generate field
 ```
 
 But that's not all, if you need a list or detail type view, simply execute the following commands and you will be able to generate a functional base for your views. Later you can make all the changes you consider necessary but this will help you to start with the views in Uesio.
 
-```console
+```bash
 uesio generate listview
 ```
 
-```console
+```bash
 uesio generate detailview
 ```
 
@@ -86,7 +86,7 @@ uesio generate detailview
 
 Now it's time to send our changes to the server, for this it will be enough to execute a simple command and our new metadata will be sent to the server.
 
-```console
+```bash
 uesio deploy
 ```
 

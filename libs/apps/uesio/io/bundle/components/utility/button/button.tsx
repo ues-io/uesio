@@ -28,6 +28,8 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 				columnGap: "8px",
 				alignItems: "center",
 				background: "none",
+				color: "inherit",
+				fontSize: "inherit",
 			},
 			label: {},
 			selected: {},

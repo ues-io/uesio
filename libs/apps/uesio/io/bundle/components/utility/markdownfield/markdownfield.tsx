@@ -2,32 +2,64 @@ import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
-import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import mdComponents from "./mdcomponents"
+import { summaryFactory } from "./mdhelpers"
+import { MDOptions } from "./types"
 
-import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash"
-import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"
-
-SyntaxHighlighter.registerLanguage("bash", bash)
-SyntaxHighlighter.registerLanguage("yaml", yaml)
+const defaultMDOptions: MDOptions = {
+	hashheadings: true,
+}
 
 interface MarkDownFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string | null
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
+	options: MDOptions
 }
 
 const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
-	const { setValue, value, mode } = props
+	const { setValue, value, mode, context, options: userOptions } = props
+	const options = { ...defaultMDOptions, ...userOptions }
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
+			root: {
+				".actions": {
+					opacity: 0,
+					color: "rgb(251,96,78)",
+					"&:hover": {
+						opacity: 1,
+					},
+				},
+			},
 			input: {
 				resize: "none",
 			},
 			readonly: {},
 			markdown: {},
+
+			codeToolbar: {
+				position: "absolute",
+				top: "0px",
+				right: " 0",
+				zIndex: 1,
+				padding: "5px",
+				opacity: 0,
+			},
+			"h1,h2,h3,h4,h5,h6": {
+				"&:hover .actions": {
+					opacity: 0.8,
+				},
+			},
+
+			codeblock: {
+				position: "relative",
+
+				"&:hover .codeToolbar": {
+					opacity: 1,
+				},
+			},
 		},
 		props
 	)
@@ -42,29 +74,12 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 	}
 
 	return readonly ? (
-		<div>
+		<div className={classes.root}>
 			<ReactMarkdown
 				children={value || ""}
 				remarkPlugins={[remarkGfm]}
 				className={classes.markdown}
-				components={{
-					code({ node, inline, className, children, ...props }) {
-						const match = /language-(\w+)/.exec(className || "")
-						return !inline && match ? (
-							<SyntaxHighlighter
-								children={String(children).replace(/\n$/, "")}
-								style={materialDark}
-								language={match[1]}
-								PreTag="div"
-								{...props}
-							/>
-						) : (
-							<code className={className} {...props}>
-								{children}
-							</code>
-						)
-					},
-				}}
+				components={mdComponents(context, classes, options)}
 			/>
 		</div>
 	) : (
