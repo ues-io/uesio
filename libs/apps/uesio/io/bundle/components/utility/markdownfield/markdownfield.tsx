@@ -3,7 +3,6 @@ import { definition, styles, context, collection } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import mdComponents from "./mdcomponents"
-import { summaryFactory } from "./mdhelpers"
 import { MDOptions } from "./types"
 
 const defaultMDOptions: MDOptions = {
