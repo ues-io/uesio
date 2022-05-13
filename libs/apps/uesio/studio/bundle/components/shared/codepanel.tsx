@@ -1,6 +1,7 @@
 import { FunctionComponent, useRef } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
+
 import type monaco from "monaco-editor"
 
 //const ANIMATION_DURATION = 3000
@@ -113,6 +114,17 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	})
 	*/
 
+	const monacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+		automaticLayout: true,
+		minimap: {
+			enabled: true,
+		},
+		fontSize: 10,
+		scrollBeyondLastLine: false,
+		smoothScrolling: true,
+		//quickSuggestions: true,
+	}
+
 	return (
 		<ScrollPanel
 			header={
@@ -140,16 +152,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			<IOCodeField
 				context={context}
 				value={fullYaml}
-				options={{
-					automaticLayout: true,
-					minimap: {
-						enabled: true,
-					},
-					fontSize: 10,
-					scrollBeyondLastLine: false,
-					smoothScrolling: true,
-					//quickSuggestions: true,
-				}}
+				options={monacoOptions}
 				styles={{
 					input: {
 						padding: 0,
@@ -242,6 +245,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					((editor, monaco): void => {
 						editorRef.current = editor
 						monacoRef.current = monaco
+
 						// Set currentAST again because sometimes monaco reformats the text
 						// (like removing trailing spaces and such)
 						//currentAST.current = util.yaml.parse(editor.getValue())
