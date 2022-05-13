@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -87,5 +88,5 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondFile(w, r, userFile.MimeType, fileStream)
+	respondFile(w, r, userFile.FileName, time.UnixMilli(userFile.UpdatedAt), fileStream)
 }

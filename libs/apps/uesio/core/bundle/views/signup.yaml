@@ -83,7 +83,8 @@ definition:
                                         root:
                                           width: 100%
                                           display: block
-                                          margin-bottom: 12px
+                                          marginTop: 26px
+                                          marginBottom: 60px
                                         label:
                                           textTransform: none
                                       signals:

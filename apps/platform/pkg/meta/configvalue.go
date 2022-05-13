@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -84,6 +85,10 @@ func (cv *ConfigValue) SetWorkspace(workspace string) {
 	cv.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (cv *ConfigValue) SetModified(mod time.Time) {
+	cv.UpdatedAt = mod.UnixMilli()
 }
 
 func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {

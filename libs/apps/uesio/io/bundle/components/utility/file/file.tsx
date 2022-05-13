@@ -43,7 +43,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 		fieldId
 	)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const fileUrl = uesio.file.getUserFileURL(newContext, userFileId, true)
+	const fileUrl = uesio.file.getUserFileURL(newContext, userFileId)
 
 	const classes = styles.useUtilityStyles(
 		{

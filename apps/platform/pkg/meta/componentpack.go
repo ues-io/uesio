@@ -3,6 +3,7 @@ package meta
 import (
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -116,6 +117,10 @@ func (cp *ComponentPack) SetWorkspace(workspace string) {
 	cp.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (cp *ComponentPack) SetModified(mod time.Time) {
+	cp.UpdatedAt = mod.UnixMilli()
 }
 
 func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
