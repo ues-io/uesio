@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -27,6 +28,11 @@ type UserFileCollection struct {
 	PathFormat string     `yaml:"pathFormat"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
@@ -88,6 +94,10 @@ func (ufc *UserFileCollection) SetWorkspace(workspace string) {
 	ufc.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (ufc *UserFileCollection) SetModified(mod time.Time) {
+	ufc.UpdatedAt = mod.UnixMilli()
 }
 
 func (ufc *UserFileCollection) GetKey() string {

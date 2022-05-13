@@ -145,7 +145,6 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 
 }
 
-// GetFileStream function
 func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	if file.Content == nil {
 		return nil, nil
@@ -158,7 +157,6 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 	return stream, nil
 }
 
-// GetComponentPackStream function
 func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileID := componentPack.RuntimeBundle.ID
 	if buildMode {

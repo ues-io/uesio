@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, CSSProperties } from "react"
+import { FunctionComponent, useRef, CSSProperties, useState } from "react"
 import {
 	definition,
 	styles,
@@ -8,6 +8,7 @@ import {
 	wire,
 	hooks,
 } from "@uesio/ui"
+import { nanoid } from "nanoid"
 
 interface FileImageProps extends definition.UtilityProps {
 	width?: string
@@ -27,6 +28,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const { fieldMetadata, fieldId, record, context, wire } = props
 
 	const fileInput = useRef<HTMLInputElement>(null)
+	const [cacheBuster, setCacheBuster] = useState<string>("")
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
@@ -35,7 +37,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	//const fileName = userFile?.["uesio/core.name"] as string
 	//const mimeType = userFile?.["uesio/core.mimetype"] as string
 	const accept = fieldMetadata.getAccept()
-	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
+	const fileUrl = uesio.file.getUserFileURL(context, userFileId, cacheBuster)
 
 	const actionIconStyles: CSSProperties = {
 		cursor: "pointer",
@@ -96,12 +98,14 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 				recordId,
 				fieldId
 			)
+			setCacheBuster(nanoid())
 			record.set(fieldId, fileId)
 		}
 	}
 
 	const deleteFile = async () => {
 		await uesio.file.deleteFile(uesio.getContext(), userFileId)
+		setCacheBuster(nanoid())
 		record.set(fieldId, "")
 	}
 
