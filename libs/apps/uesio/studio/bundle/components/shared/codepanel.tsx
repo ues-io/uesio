@@ -159,18 +159,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
-						console.log({ newValue: `${newValue}` })
-						if (editorRef.current) {
-							console.log(
-								"YEAP",
-								console.log(editorRef.current.getPosition())
-							)
-							editorRef.current.setPosition({
-								lineNumber: 1,
-								column: 3,
-							})
-						}
-
 						uesio.builder.setDefinitionContent(
 							metadataTypeRef.current,
 							metadataItemRef.current,
