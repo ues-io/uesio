@@ -1,5 +1,5 @@
 import { FunctionComponent, useRef } from "react"
-import { definition, component, hooks, util } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
@@ -35,15 +35,10 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	metadataTypeRef.current = metadataType
 	metadataItemRef.current = metadataItem
 
+	// 1. Field value
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
-
-	const yamlDoc = util.yaml.parse(fullYaml)
-	const depsNode = util.yaml.getNodeAtPath("definition", yamlDoc.contents)
-
-	const defDoc = util.yaml.newDoc()
-	defDoc.contents = depsNode
-	const defYaml = defDoc.toString() || ""
+	// 2. YAML from field value
 
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
@@ -144,7 +139,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<IOCodeField
 				context={context}
-				value={defYaml}
+				value={fullYaml}
 				options={{
 					automaticLayout: true,
 					minimap: {
@@ -164,6 +159,18 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
+						console.log({ newValue: `${newValue}` })
+						if (editorRef.current) {
+							console.log(
+								"YEAP",
+								console.log(editorRef.current.getPosition())
+							)
+							editorRef.current.setPosition({
+								lineNumber: 1,
+								column: 3,
+							})
+						}
+
 						uesio.builder.setDefinitionContent(
 							metadataTypeRef.current,
 							metadataItemRef.current,

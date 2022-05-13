@@ -11,13 +11,9 @@ import { setMany as setComponentPack } from "../../componentpack"
 import { setMany as setConfigValue } from "../../configvalue"
 import { setMany as setLabel } from "../../label"
 import { setMany as setComponentVariant } from "../../componentvariant"
-import { PlainViewDef } from "../../../definition/viewdef"
+import { ViewDefinition } from "../../../definition/viewdef"
 import { MetadataState } from "../../metadata/types"
-import {
-	getNodeAtPath,
-	parse,
-	removeNodeAtPath,
-} from "../../../yamlutils/yamlutils"
+import { getNodeAtPath, newDoc, parse } from "../../../yamlutils/yamlutils"
 import { batch } from "react-redux"
 import { WireDefinition } from "../../../definition/wire"
 
@@ -47,14 +43,16 @@ export default createAsyncThunk<
 		const yamlDoc = parse(viewDefResponse)
 		//const definitionNode = getNodeAtPath("definition", yamlDoc.contents)
 		const depsNode = getNodeAtPath("dependencies", yamlDoc.contents)
-		removeNodeAtPath("dependencies", yamlDoc.contents)
-
-		const viewContent = yamlDoc.toString()
+		const defNode = getNodeAtPath("definition", yamlDoc.contents)
+		// removeNodeAtPath("dependencies", yamlDoc.contents)
+		const defDoc = newDoc()
+		defDoc.contents = defNode
+		const viewContent = defDoc?.toString()
 		const viewToAdd: MetadataState = {
 			key: viewDefId,
-			content: viewContent,
+			content: viewContent || "",
 			original: viewContent,
-			parsed: yamlDoc.toJSON(),
+			parsed: defNode?.toJSON(),
 		}
 
 		const componentPacksToAdd: MetadataState[] = []
@@ -129,8 +127,7 @@ export default createAsyncThunk<
 	viewDef = viewSelectors.selectById(api.getState(), viewDefId)
 	if (!viewDef) throw new Error("Could not get View Def")
 
-	const content = viewDef.parsed as PlainViewDef
-	const definition = content.definition
+	const definition = viewDef.parsed as ViewDefinition
 	const wires = definition.wires
 	const wireNames = wires ? Object.keys(wires) : []
 	const wireDefs: Record<string, WireDefinition> = {}

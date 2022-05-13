@@ -49,11 +49,7 @@ const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 		const yamlDoc = parse(state.content)
 		const newNode = getNewNode(yamlDoc, definition)
 		const pathArray = toPath(path)
-		setNodeAtPath(
-			["definition"].concat(pathArray),
-			yamlDoc.contents,
-			newNode
-		)
+		setNodeAtPath(pathArray, yamlDoc.contents, newNode)
 		state.content = yamlDoc.toString()
 		state.parsed = yamlDoc.toJSON()
 	}
@@ -67,12 +63,7 @@ const addDef = (state: MetadataState, payload: AddDefinitionPayload) => {
 		const newNode = yamlDoc.createNode(definition)
 		const pathArray = toPath(path)
 		if (newNode) {
-			addNodeAtPath(
-				["definition"].concat(pathArray),
-				yamlDoc.contents,
-				newNode,
-				index || 0
-			)
+			addNodeAtPath(pathArray, yamlDoc.contents, newNode, index || 0)
 		}
 		state.content = yamlDoc.toString()
 		state.parsed = yamlDoc.toJSON()
@@ -84,10 +75,7 @@ const removeDef = (state: MetadataState, payload: RemoveDefinitionPayload) => {
 	const index = pathArray.pop() // Get the index
 	if (index) {
 		const yamlDoc = parse(state.content)
-		removeNodeAtPath(
-			["definition"].concat(pathArray, [index]),
-			yamlDoc.contents
-		)
+		removeNodeAtPath(pathArray.concat([index]), yamlDoc.contents)
 		state.content = yamlDoc.toString()
 		state.parsed = yamlDoc.toJSON()
 	}
@@ -111,10 +99,7 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 		const fromPathArray = toPath(fromParentPath)
 
 		const yamlDoc = parse(state.content)
-		const defNode = getNodeAtPath(
-			["definition"].concat(fromPathArray),
-			yamlDoc.contents
-		)
+		const defNode = getNodeAtPath(fromPathArray, yamlDoc.contents)
 		const definition = defNode?.toJSON() as DefinitionMap
 
 		if (!definition || !fromKey || !toKey) return
@@ -148,10 +133,7 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 	//fromPathArray.splice(-1)
 	//Grab current definition
 	const yamlDoc = parse(state.content)
-	const defNode = getNodeAtPath(
-		["definition"].concat(fromPathArray),
-		yamlDoc.contents
-	)
+	const defNode = getNodeAtPath(fromPathArray, yamlDoc.contents)
 	const definition = defNode?.toJSON() as DefinitionMap
 	//Remove the original
 	removeDef(state, { path: fromPathStr })
@@ -182,12 +164,7 @@ const addDefPair = (
 		const yamlDoc = parse(state.content)
 		const newNode = yamlDoc.createNode(definition)
 
-		addNodePairAtPath(
-			["definition"].concat(toPath(path)),
-			yamlDoc.contents,
-			newNode,
-			key
-		)
+		addNodePairAtPath(toPath(path), yamlDoc.contents, newNode, key)
 
 		state.content = yamlDoc.toString()
 		state.parsed = yamlDoc.toJSON()
@@ -202,10 +179,7 @@ const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
 		if (!index && index !== 0) return
 
 		const yamlDoc = parse(state.content)
-		const defNode = getNodeAtPath(
-			["definition"].concat(toPath(parentPath)),
-			yamlDoc.contents
-		)
+		const defNode = getNodeAtPath(toPath(parentPath), yamlDoc.contents)
 		const definition = defNode?.toJSON() as DefinitionMap
 
 		addDef(state, {
@@ -218,10 +192,7 @@ const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
 			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
 
 		const yamlDoc = parse(state.content)
-		const defNode = getNodeAtPath(
-			["definition"].concat(toPath(path)),
-			yamlDoc.contents
-		)
+		const defNode = getNodeAtPath(toPath(path), yamlDoc.contents)
 		const definition = defNode?.toJSON() as DefinitionMap
 
 		addDefPair(state, {
@@ -244,10 +215,7 @@ const changeDefKey = (
 		if (state.content) {
 			// create a new document so components using useYaml will rerender
 			const yamlDoc = parse(state.content)
-			const parent = getNodeAtPath(
-				["definition"].concat(pathArray),
-				yamlDoc.contents
-			) as YAMLMap
+			const parent = getNodeAtPath(pathArray, yamlDoc.contents) as YAMLMap
 			const keyNode = parent?.items.find(
 				(item) => isScalar(item.key) && item.key.value === oldKey
 			)
