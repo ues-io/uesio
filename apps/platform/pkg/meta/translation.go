@@ -2,6 +2,7 @@ package meta
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -54,6 +55,10 @@ func (t *Translation) SetWorkspace(workspace string) {
 	t.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (t *Translation) SetModified(mod time.Time) {
+	t.UpdatedAt = mod.UnixMilli()
 }
 
 func (t *Translation) GetCollectionName() string {

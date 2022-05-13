@@ -107,13 +107,6 @@
             "cwd": "apps/platform"
           }
         },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx webpack --watch --config webpack.config.js &",
-            "cwd": "apps/platform"
-          }
-        },
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -437,7 +430,7 @@
             "dist/ui"
           ],
           "options": {
-            "command": "npx webpack --config webpack.config.js",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap",
             "cwd": "libs/ui"
           }
         },
@@ -460,7 +453,7 @@
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "npx webpack --watch --config webpack.config.js &",
+            "command": "",
             "cwd": "libs/ui"
           }
         },
@@ -498,15 +491,6 @@
           ],
           "options": {
             "commands": [
-              "mkdir -p dist/vendor",
-              "npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} wget -O dist/vendor/react.development.js {}",
-              "npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} wget -O dist/vendor/react.production.min.js {}",
-              "npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} wget -O dist/vendor/react-dom.development.js {}",
-              "npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.production.min.js\" | xargs -I{} wget -O dist/vendor/react-dom.production.min.js {}",
-              "npm run --silent get-module-version --modulename=redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/redux/{}/redux.js\" | xargs -I{} wget -O dist/vendor/redux.js {}",
-              "npm run --silent get-module-version --modulename=react-redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/react-redux/{}/react-redux.js\" | xargs -I{} wget -O dist/vendor/react-redux.js {}",
-              "npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js {}",
-              "npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js.map\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js.map {}",
               "mkdir -p dist/vendor/monaco-editor/min/vs",
               "cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
               "echo Done!"

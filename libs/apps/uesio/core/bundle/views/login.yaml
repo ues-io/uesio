@@ -12,9 +12,6 @@ definition:
         uesio/viewonly.password:
           label: Password
           type: TEXT
-        uesio/viewonly.method:
-          label: Method
-          type: TEXT
       init:
         create: true
   # Components are how we describe the layout of our view
@@ -56,10 +53,6 @@ definition:
                           clientId: uesio/core.google_client_id
                           align: center
                       - uesio/core.loginmock:
-                          uesio.display:
-                            - wire: credentials
-                              field: uesio/viewonly.method
-                              value: ""
                           text: Sign in with Mock
                           align: center
                       - uesio/io.box:
@@ -72,31 +65,7 @@ definition:
                                   - uesio/io.box:
                                       uesio.styles:
                                         root:
-                                          paddingTop: 40px
-                                      uesio.display:
-                                        - field: uesio/viewonly.method
-                                          value: ""
-                                      components:
-                                        - uesio/io.button:
-                                            text: Sign in with Username
-                                            uesio.variant: uesio/io.primary
-                                            uesio.styles:
-                                              root:
-                                                width: 100%
-                                                marginBottom: 10px
-                                              label:
-                                                textTransform: none
-                                            signals:
-                                              - signal: wire/UPDATE_RECORD
-                                                field: uesio/viewonly.method
-                                                value: username
-                                  - uesio/io.box:
-                                      uesio.styles:
-                                        root:
                                           marginBottom: 10px
-                                      uesio.display:
-                                        - field: uesio/viewonly.method
-                                          value: username
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/viewonly.username
@@ -112,6 +81,9 @@ definition:
                                                   uesio.variant: uesio/io.primary
                                                   text: Sign In
                                                   uesio.styles:
+                                                    root:
+                                                      marginTop: 26px
+                                                      marginBottom: 60px
                                                     label:
                                                       textTransform: none
                                                   signals:
@@ -120,14 +92,4 @@ definition:
                                                       payload:
                                                         username: ${uesio/viewonly.username}
                                                         password: ${uesio/viewonly.password}
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.secondary
-                                                  text: Cancel
-                                                  uesio.styles:
-                                                    label:
-                                                      textTransform: none
-                                                  signals:
-                                                    - signal: wire/UPDATE_RECORD
-                                                      wire: credentials
-                                                      field: uesio/viewonly.method
-                                                      value:
+                                                  onerror:

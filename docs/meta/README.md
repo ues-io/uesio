@@ -161,10 +161,6 @@ https://reactjs.org/docs/hooks-intro.html
 
 https://redux.js.org/
 
-## Webpack
-
-https://webpack.js.org/
-
 ## Prettier
 
 https://prettier.io/
