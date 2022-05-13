@@ -59,9 +59,9 @@ func (cp *ComponentPack) GetKey() string {
 }
 
 func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
-	fileName := "runtime.bundle.js"
+	fileName := "runtime.js"
 	if buildMode {
-		fileName = "builder.bundle.js"
+		fileName = "builder.js"
 	}
 	return filepath.Join(cp.Name, fileName)
 }
