@@ -5,7 +5,6 @@
 		"uesio": "/bin/run"
 	},
 	"imports": {
-		"#uesio/loginhelpers": "./lib/libs/loginhelpers/src/index.js",
 		"#uesio/ui": "./lib/libs/ui/src/index.js"
 	},
 	"oclif": {
