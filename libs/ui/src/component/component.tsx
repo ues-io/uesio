@@ -10,6 +10,7 @@ import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
+import ErrorBoundary from "../components/errorboundary"
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -173,7 +174,11 @@ function renderUtility(
 ) {
 	const Loader = loader
 	loader.displayName = props.componentType as string
-	return <Loader {...props} />
+	return (
+		<ErrorBoundary componentProps={props}>
+			<Loader {...props} />
+		</ErrorBoundary>
+	)
 }
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
