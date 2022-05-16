@@ -86,7 +86,7 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
 		// provided, they want to navigate within the same namespace.
 		const viewDefId = context.getViewDefId() || ""
-		const [, viewDefNamespace] = parseKey(viewDefId)
+		const [viewDefNamespace] = parseKey(viewDefId)
 		const namespace = request.namespace || viewDefNamespace || ""
 		return `${prefix}/routes/path/${namespace}/${context.merge(
 			request.path

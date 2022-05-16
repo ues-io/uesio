@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -203,6 +204,10 @@ func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (b *Bot) SetModified(mod time.Time) {
+	b.UpdatedAt = mod.UnixMilli()
 }
 
 func (b *Bot) Loop(iter func(string, interface{}) error) error {

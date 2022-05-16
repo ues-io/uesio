@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -140,6 +141,10 @@ func (f *Field) SetWorkspace(workspace string) {
 	f.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (f *Field) SetModified(mod time.Time) {
+	f.UpdatedAt = mod.UnixMilli()
 }
 
 func (f *Field) Loop(iter func(string, interface{}) error) error {

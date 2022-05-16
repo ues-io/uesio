@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -58,6 +59,7 @@ type BundleableItem interface {
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)
+	SetModified(time.Time)
 	IsPublic() bool
 }
 

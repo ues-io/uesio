@@ -39,7 +39,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	// 1. Field value
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
-	// 2. YAML from field value
 
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
