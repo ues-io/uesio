@@ -4,9 +4,6 @@ import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
 import { component } from "#uesio/ui"
 
-// Using # here because it's a subpath import
-import { mock } from "#uesio/loginhelpers"
-
 type AuthHandlerResponse = Record<string, string>
 
 type AuthHandler = () => Promise<AuthHandlerResponse>
@@ -33,7 +30,10 @@ const SESSION_KEY = "sessid"
 const authHandlers = {
 	["uesio/core.mock"]: async (): Promise<AuthHandlerResponse> => ({
 		// TODO: actually read from seeds and allow mock login as all users
-		token: mock.getMockToken("ben"),
+		token: JSON.stringify({
+			authType: "mock",
+			subject: "ben",
+		}),
 	}),
 	["uesio/core.platform"]: async (): Promise<AuthHandlerResponse> => {
 		const responses = await inquirer.prompt([
@@ -135,7 +135,7 @@ const authorize = async (): Promise<User> => {
 				choices: [
 					{ name: "Mock Login", value: "uesio/core.mock" },
 					{
-						name: "Sign in with Email",
+						name: "Sign in with Username",
 						value: "uesio/core.platform",
 					},
 				],

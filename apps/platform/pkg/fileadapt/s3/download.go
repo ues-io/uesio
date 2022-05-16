@@ -13,13 +13,18 @@ import (
 )
 
 func (c *Connection) Download(path string) (io.ReadCloser, error) {
-	ctx := context.Background()
-
-	downloader := manager.NewDownloader(c.client)
-
-	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
+	return c.DownloadWithDownloader(&s3.GetObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
+	})
+}
+
+func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (io.ReadCloser, error) {
+	ctx := context.Background()
+	downloader := manager.NewDownloader(c.client)
+	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket: aws.String(c.bucket),
+		Key:    input.Key,
 	})
 
 	if err != nil {
@@ -29,11 +34,6 @@ func (c *Connection) Download(path string) (io.ReadCloser, error) {
 	buf := make([]byte, head.ContentLength)
 	w := manager.NewWriteAtBuffer(buf)
 
-	input := &s3.GetObjectInput{
-		Bucket: aws.String(c.bucket),
-		Key:    aws.String(path),
-	}
-
 	_, err = downloader.Download(ctx, w, input)
 
 	if err != nil {
@@ -41,4 +41,14 @@ func (c *Connection) Download(path string) (io.ReadCloser, error) {
 	}
 
 	return ioutil.NopCloser(bytes.NewBuffer(buf)), nil
+}
+
+func (c *Connection) DownloadWithGetObject(input *s3.GetObjectInput) (io.ReadCloser, error) {
+	ctx := context.Background()
+	result, err := c.client.GetObject(ctx, input)
+	if err != nil {
+		return nil, errors.New("failed to retrieve Object")
+	}
+
+	return result.Body, nil
 }

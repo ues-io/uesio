@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -83,6 +84,7 @@ type BotParam struct {
 	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
 	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
 	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
+	Choices      []string            `yaml:"choices" uesio:"uesio/studio.choices" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
 }
 
@@ -202,6 +204,10 @@ func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (b *Bot) SetModified(mod time.Time) {
+	b.UpdatedAt = mod.UnixMilli()
 }
 
 func (b *Bot) Loop(iter func(string, interface{}) error) error {

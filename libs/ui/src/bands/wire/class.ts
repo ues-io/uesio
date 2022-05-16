@@ -12,6 +12,7 @@ import {
 	toggleCondition,
 } from "."
 import saveWiresOp from "./operations/save"
+import { runManyThrottled } from "../../signals/signals"
 import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
@@ -40,6 +41,7 @@ class Wire {
 			: []
 
 	getErrors = () => this.source?.errors
+
 	getViewId = () => this.source?.view
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 
@@ -57,6 +59,29 @@ class Wire {
 
 	hasMore = () => this.source.more
 
+	getWireDef = () => this.source.def
+
+	doChanges = (recordId: string, path: string[]) => {
+		const wireDef = this.getWireDef()
+		const changeEvents = wireDef.events?.onChange
+
+		if (changeEvents) {
+			for (const changeEvent of changeEvents) {
+				if (changeEvent.field !== path[0]) continue
+				runManyThrottled(
+					getStore().dispatch,
+					"",
+					changeEvent.signals,
+					new Context().addFrame({
+						wire: this.source.name,
+						record: recordId,
+						view: this.source.view,
+					})
+				)
+			}
+		}
+	}
+
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		getStore().dispatch(
 			updateRecord({
@@ -66,6 +91,7 @@ class Wire {
 				path,
 			})
 		)
+		this.doChanges(recordId, path)
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {

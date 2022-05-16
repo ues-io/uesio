@@ -2,9 +2,6 @@ import { fileExists, getApp } from "../config/config"
 import path from "path"
 import { promises as fs } from "fs"
 import yaml from "yaml"
-import chalk from "chalk"
-
-import webpack, { RuleSetRule, StatsError } from "webpack"
 
 type ComponentMap = {
 	[key: string]: unknown
@@ -12,10 +9,6 @@ type ComponentMap = {
 
 type EntryFileMap = {
 	[key: string]: string
-}
-
-interface WebpackError extends Error {
-	details?: string
 }
 
 const factory = ['import { component } from "@uesio/ui";']
@@ -140,208 +133,24 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const viewComponents = components.view
 		const utilityComponents = components.utility
 		entries[packName + "/runtime"] = path.resolve(
-			`./bundle/componentpacks/${packName}/runtime.entry.ts`
+			`./bundle/componentpacks/${packName}/runtime.ts`
 		)
 		entries[packName + "/builder"] = path.resolve(
-			`./bundle/componentpacks/${packName}/builder.entry.ts`
+			`./bundle/componentpacks/${packName}/builder.ts`
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${packName}/runtime.entry.ts`),
+			path.resolve(packDir, `${packName}/runtime.ts`),
 			await getEntryFile(appName, viewComponents, utilityComponents)
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${packName}/builder.entry.ts`),
+			path.resolve(packDir, `${packName}/builder.ts`),
 			await getBuilderEntryFile(appName, viewComponents)
 		)
 	}
 
 	return entries
 }
-interface Flags {
-	develop: boolean
-	stats: boolean
-}
 
-const getWebpackConfig = (
-	entries: EntryFileMap,
-	flags: Flags
-): webpack.Configuration => {
-	const dev = flags.develop
-	const devRule: RuleSetRule = {
-		enforce: "pre",
-		test: /\.js$/,
-		loader: require.resolve("source-map-loader"),
-	}
-	return {
-		// Configuration Object
-		resolve: {
-			// Add '.ts' and '.tsx' as resolvable extensions.
-			extensions: [".ts", ".tsx", ".js"],
-			alias: {
-				"@uesio/loginhelpers": path.resolve(
-					"../../../loginhelpers/src"
-				),
-			},
-		},
-		module: {
-			rules: [
-				{
-					test: /\.ts(x?)$/,
-					exclude: /node_modules/,
-					use: [
-						{
-							loader: require.resolve("ts-loader"),
-							options: {
-								silent: true,
-								errorFormatter: (error: StatsError) =>
-									error.content,
-							},
-						},
-					],
-				},
-				...(dev ? [devRule] : []),
-			],
-		},
-		...(dev
-			? {
-					watch: true,
-					devtool: "inline-source-map",
-					watchOptions: {
-						ignored: /node_modules/,
-					},
-			  }
-			: {}),
-		mode: dev ? "development" : "production",
-		entry: entries,
-		output: {
-			path: path.resolve("./bundle/componentpacks"),
-			filename: "[name].bundle.js",
-		},
-		node: false,
-		externals: {
-			react: "React",
-			"react-dom": "ReactDOM",
-			"@uesio/ui": "uesio",
-			yaml: "yaml",
-			"@emotion/css": "emotion",
-		},
-	}
-}
-
-const handleErrors = (errors: webpack.StatsError[]) => {
-	// Try to print errors nicely and just print everything if it fails
-	try {
-		// Group errors by file
-		const perFile = errors.reduce(
-			(acc: Record<string, webpack.StatsError[]>, error) => {
-				if (!error) return acc
-				if (error.file) {
-					const pathArray = error.file.split("/")
-					const path = pathArray.splice(-4).join("/")
-					return {
-						...acc,
-						[path]: [...(path in acc ? acc[path] : []), error],
-					}
-				}
-
-				const path = "NOFILE"
-				return {
-					...acc,
-					[path]: [...(path in acc ? acc[path] : []), error],
-				}
-			},
-			{}
-		)
-
-		Object.keys(perFile).forEach((file) => {
-			// File
-			const pathArray = perFile[file][0].file?.split("/") || []
-			const path = pathArray.splice(-4).join("/")
-			const namespace = pathArray[pathArray.indexOf("apps") + 1] || "none"
-			console.log(
-				chalk`{bold.bgRed  E R R O R } {bold.bgBlue  ${namespace.toUpperCase()} } ${path} `
-			)
-			console.log(``)
-
-			perFile[file].forEach((error) => {
-				// Individual error
-				if (!error.loc) return
-				console.log(
-					chalk`> {bold Line: ${
-						error.loc.split(":")[0]
-					}} {bold.redBright ${error.message}}`
-				)
-				console.log(``)
-			})
-			console.log(``)
-		})
-	} catch (fail) {
-		console.log(`Error while processing webpack errors: ${fail}`)
-		console.log(errors)
-	}
-}
-
-const getWebpackComplete = (
-	flags: Flags
-): ((err: WebpackError, stats: webpack.Stats) => void) => {
-	const dev = flags.develop
-	const getStats = flags.stats
-	let firstMessage = true
-	let firstRebuild = true
-	return (err: WebpackError, stats: webpack.Stats): void => {
-		// Stats Object
-		if (err) {
-			console.error(err.stack || err)
-			if (err.details) {
-				console.error(err.details)
-			}
-			return
-		}
-
-		const info = stats.toJson()
-
-		if (getStats) {
-			fs.writeFile("stats.json", JSON.stringify(info))
-		}
-
-		if (stats.hasErrors()) {
-			// Left this here in case we want to use standardized errors again
-			// info.errors?.forEach((message) => console.error(message))
-
-			if (info.errors) handleErrors(info.errors)
-
-			// force the build process to fail upon compilation error, except for the watcher on dev mode
-			if (!dev) {
-				process.exit(1)
-			}
-		}
-		if (!stats.hasErrors()) {
-			console.log(chalk`{greenBright No errors :) }`)
-		}
-		if (stats.hasWarnings()) {
-			info.warnings?.forEach((message) => console.warn(message))
-		}
-		if (dev) {
-			if (firstMessage) {
-				console.log("Done PACKING!")
-				firstMessage = false
-			} else {
-				//There does not seem to be a way in webpack API to detect this initial compilation
-				//completed from a watch command - so we have this hacky workaround
-				if (firstRebuild) {
-					console.log("Watching Pack...")
-					firstRebuild = false
-				} else {
-					console.log("Rebuilt pack")
-				}
-			}
-		} else {
-			console.log("Done PACKING!")
-		}
-		// Done processing
-	}
-}
-
-export { createEntryFiles, getWebpackConfig, getWebpackComplete }
+export { createEntryFiles }

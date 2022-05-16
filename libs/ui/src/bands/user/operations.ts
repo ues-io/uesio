@@ -3,8 +3,10 @@ import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
+import wireAddError from "../wire/operations/adderror"
+import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
-
+type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,
 	dispatch: Dispatcher<AnyAction>,
@@ -29,16 +31,21 @@ async function responseRedirect(
 	return context
 }
 
-const login =
-	(
-		context: Context,
-		authSource: string,
-		payload: Record<string, string>
-	): ThunkFunc =>
+const signup =
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		if (!mergedPayload) return context
+		const response = await platform.signup(signupMethod, mergedPayload)
+		dispatch(setUser(response.user))
+		return responseRedirect(response, dispatch, context)
+	}
+
+const login =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
 		const response = await platform.login(authSource, mergedPayload)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
@@ -51,8 +58,33 @@ const logout =
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
+const checkAvailability =
+	(
+		context: Context,
+		username: string,
+		signupMethod: string,
+		usernameFieldId: string
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const mergedUsername = context.merge(username)
+		if (mergedUsername) {
+			const response = await platform.checkAvailability(
+				signupMethod,
+				mergedUsername
+			)
+			if (response.status !== 200) {
+				const error = await response.text()
+				return dispatch(wireAddError(context, usernameFieldId, error))
+			}
+			if (response.status === 200 || !response)
+				return dispatch(wireRemoveError(context, usernameFieldId))
+		}
+		return context
+	}
 
 export default {
 	login,
 	logout,
+	signup,
+	checkAvailability,
 }

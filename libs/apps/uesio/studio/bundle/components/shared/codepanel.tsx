@@ -1,5 +1,5 @@
 import { FunctionComponent, useRef } from "react"
-import { definition, component, hooks, util } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
@@ -37,13 +37,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
-
-	const yamlDoc = util.yaml.parse(fullYaml)
-	const depsNode = util.yaml.getNodeAtPath("definition", yamlDoc.contents)
-
-	const defDoc = util.yaml.newDoc()
-	defDoc.contents = depsNode
-	const defYaml = defDoc.toString() || ""
 
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
@@ -118,6 +111,17 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	})
 	*/
 
+	const monacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+		automaticLayout: true,
+		minimap: {
+			enabled: true,
+		},
+		fontSize: 10,
+		scrollBeyondLastLine: false,
+		smoothScrolling: true,
+		//quickSuggestions: true,
+	}
+
 	return (
 		<ScrollPanel
 			header={
@@ -144,17 +148,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<IOCodeField
 				context={context}
-				value={defYaml}
-				options={{
-					automaticLayout: true,
-					minimap: {
-						enabled: true,
-					},
-					fontSize: 10,
-					scrollBeyondLastLine: false,
-					smoothScrolling: true,
-					//quickSuggestions: true,
-				}}
+				value={fullYaml}
+				options={monacoOptions}
 				styles={{
 					input: {
 						padding: 0,

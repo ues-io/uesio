@@ -126,7 +126,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		return viewComponent
 	}
 
-	const componentCount = viewDef?.definition?.components?.length
+	const componentCount = viewDef?.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear

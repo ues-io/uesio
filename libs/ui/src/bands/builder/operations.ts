@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
@@ -74,18 +73,11 @@ const save = createAsyncThunk<
 				continue
 			}
 
-			const yamlDoc = parse(defState.content || "")
-			const depsNode = getNodeAtPath("definition", yamlDoc.contents)
-
-			const defDoc = newDoc()
-			defDoc.contents = depsNode
-			const defYaml = defDoc.toString() || ""
-
 			const [, name] = parseKey(defState.key)
 
 			if (defState?.content) {
 				changes[defKey] = {
-					"uesio/studio.definition": defYaml,
+					"uesio/studio.definition": defState.content,
 					[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
 				}
 			}

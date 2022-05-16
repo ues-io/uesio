@@ -26,19 +26,23 @@ const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 
 	return (
 		<>
-			{listDef.map((itemDef, index) => {
-				const [componentType, unWrappedDef] = unWrapDefinition(itemDef)
-				return (
-					<Component
-						key={index}
-						componentType={componentType}
-						definition={unWrappedDef}
-						index={index}
-						path={`${listPath}["${index}"]`}
-						context={context}
-					/>
-				)
-			})}
+			{listDef instanceof Array &&
+				listDef
+					.filter((el) => el)
+					.map((itemDef, index) => {
+						const [componentType, unWrappedDef] =
+							unWrapDefinition(itemDef)
+						return (
+							<Component
+								key={index}
+								componentType={componentType}
+								definition={unWrappedDef}
+								index={index}
+								path={`${listPath}["${index}"]`}
+								context={context}
+							/>
+						)
+					})}
 		</>
 	)
 }

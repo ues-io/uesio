@@ -1,0 +1,4 @@
+referenceGroup:
+  collection: ${referencegroup_collection}
+  field: ${referencegroup_field}
+  onDelete: ${referencegroup_ondelete}

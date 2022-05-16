@@ -16,6 +16,17 @@ type DeletePayload = {
 	recordId: string
 } & EntityPayload
 
+type AddErrorPayload = {
+	recordId: string
+	fieldId: string
+	message: string
+} & EntityPayload
+
+type RemoveErrorPayload = {
+	recordId: string
+	fieldId: string
+} & EntityPayload
+
 type UndeletePayload = {
 	recordId: string
 } & EntityPayload
@@ -55,6 +66,36 @@ const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
 	reducers: {
+		addError: createEntityReducer<AddErrorPayload, PlainWire>(
+			(state, { recordId, fieldId, message }) => {
+				const recordFieldKey = `${recordId}:${fieldId}`
+				const newErrorItem = {
+					recordid: recordId,
+					fieldid: fieldId,
+					message,
+				}
+
+				let errors = state.errors
+
+				if (!errors) {
+					errors = {}
+					state.errors = errors
+				}
+
+				const currentFieldErrors = errors[recordFieldKey]
+
+				if (!currentFieldErrors) {
+					errors[recordFieldKey] = []
+				}
+
+				errors[recordFieldKey].push(newErrorItem)
+			}
+		),
+		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
+			(state, { recordId, fieldId }) => {
+				delete state.errors?.[`${recordId}:${fieldId}`]
+			}
+		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
 				state.deletes[recordId] = {
@@ -253,6 +294,8 @@ const wireSlice = createSlice({
 
 export const {
 	markForDelete,
+	addError,
+	removeError,
 	unmarkForDelete,
 	updateRecord,
 	setRecord,
