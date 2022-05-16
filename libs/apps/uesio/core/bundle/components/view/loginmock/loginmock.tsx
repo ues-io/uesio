@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import { mock } from "@uesio/loginhelpers"
 import LoginWrapper from "../../shared/loginwrapper"
 type LoginDefinition = {
 	clientId: string
@@ -46,7 +45,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				}}
 				context={context}
 			>
-				{mock.mockUsers.map((user) => (
+				{["ben", "abel", "wessel", "gregg"].map((user) => (
 					<Button
 						key={user}
 						context={context}
@@ -56,7 +55,10 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 									signal: "user/LOGIN",
 									authSource: "uesio/core.mock",
 									payload: {
-										token: mock.getMockToken(user),
+										token: JSON.stringify({
+											authType: "mock",
+											subject: user,
+										}),
 									},
 								},
 								context

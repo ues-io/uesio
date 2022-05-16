@@ -118,7 +118,6 @@
     "yaml": "2.0.0-10"
   },
   "imports": {
-    "#uesio/loginhelpers": "./dist/cli/lib/libs/loginhelpers/src/index.js",
     "#uesio/ui": "./dist/cli/lib/libs/ui/src/index.js"
   },
   "oclif": {
