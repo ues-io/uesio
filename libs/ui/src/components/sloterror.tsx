@@ -13,8 +13,6 @@ const slotError: FC<T> = ({ error, componentProps }) => {
 	const name = toPath(componentProps.path).pop()
 	const uesio = useUesio(componentProps)
 	const viewDefId = uesio.getViewDefId() || ""
-
-	console.log("sloterror", { name })
 	return (
 		<div
 			onClick={(event: SyntheticEvent) => {
@@ -28,9 +26,7 @@ const slotError: FC<T> = ({ error, componentProps }) => {
 			style={{
 				color: "rgba(255, 128, 128)",
 				padding: "10px 10px 2px",
-				// border: "1px solid rgb(92, 0, 0)",
 				border: "1px solid rgba(255, 128, 128)",
-				borderRadius: "5px",
 				borderLeft: "5px solid rgba(255, 128, 128)",
 			}}
 		>
@@ -44,8 +40,7 @@ const slotError: FC<T> = ({ error, componentProps }) => {
 			>
 				{name}
 			</p>
-			<pre>{error?.message}</pre>
-			{/* <pre>{JSON.stringify(componentProps, null, 4)}</pre> */}
+			<pre style={{ whiteSpace: "normal" }}>{error?.message}</pre>
 		</div>
 	)
 }
