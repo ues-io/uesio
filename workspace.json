@@ -430,8 +430,11 @@
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/ui"
+          ],
           "options": {
-            "command": "",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap --watch",
             "cwd": "libs/ui"
           }
         },
