@@ -2,7 +2,7 @@ import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import mdComponents from "./mdcomponents"
+import { code, h } from "./mdcomponents"
 import { MDOptions } from "./types"
 
 const defaultMDOptions: MDOptions = {
@@ -72,13 +72,23 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 		) => setValue(event.target.value),
 	}
 
+	const hashheadings = options.hashheadings
+
 	return readonly ? (
 		<div className={classes.root}>
 			<ReactMarkdown
 				children={value || ""}
 				remarkPlugins={[remarkGfm]}
 				className={classes.markdown}
-				components={mdComponents(context, classes, options)}
+				components={{
+					h1: (props) => h(props, context, classes, hashheadings),
+					h2: (props) => h(props, context, classes, hashheadings),
+					h3: (props) => h(props, context, classes, hashheadings),
+					h4: (props) => h(props, context, classes, hashheadings),
+					h5: (props) => h(props, context, classes, hashheadings),
+					h6: (props) => h(props, context, classes, hashheadings),
+					code: (props) => code(props, context, classes),
+				}}
 			/>
 		</div>
 	) : (
