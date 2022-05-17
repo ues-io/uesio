@@ -1,5 +1,4 @@
 import toPath from "lodash/toPath"
-
 import {
 	AddDefinitionPairPayload,
 	AddDefinitionPayload,
@@ -27,6 +26,7 @@ import {
 	setNodeAtPath,
 } from "../yamlutils/yamlutils"
 import { MetadataState } from "../bands/metadata/types"
+import { isScalar, YAMLMap } from "yaml"
 
 const getNewNode = (yaml: YamlDoc, definition: Definition) => {
 	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
@@ -45,28 +45,13 @@ const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 
 	if (state.content) {
+		// create a new document so components using useYaml will rerender
 		const yamlDoc = parse(state.content)
-
-		try {
-			// create a new document so components using useYaml will rerender
-			const newNode = getNewNode(yamlDoc, definition)
-			if (!newNode) return
-			const pathArray = toPath(path)
-
-			setNodeAtPath(pathArray, yamlDoc.contents, newNode)
-			state.content = yamlDoc.toString()
-			state.parsed = yamlDoc.toJSON()
-		} catch (error) {
-			// Test
-			const newNode = getNewNode(yamlDoc, {
-				[toPath(path).pop() || ""]: definition,
-			})
-			const pathArray = toPath(path).slice(0, toPath(path).length - 1)
-
-			setNodeAtPath(pathArray, yamlDoc.contents, newNode)
-			state.content = yamlDoc.toString()
-			state.parsed = yamlDoc.toJSON()
-		}
+		const newNode = getNewNode(yamlDoc, definition)
+		const pathArray = toPath(path)
+		setNodeAtPath(pathArray, yamlDoc.contents, newNode)
+		state.content = yamlDoc.toString()
+		state.parsed = yamlDoc.toJSON()
 	}
 }
 
