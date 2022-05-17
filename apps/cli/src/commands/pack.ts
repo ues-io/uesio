@@ -10,12 +10,13 @@ export default class Pack extends Command {
 	static flags = {
 		develop: flags.boolean({ char: "d" }),
 		stats: flags.boolean({ char: "s" }),
+		watch: flags.boolean({ char: "w" }),
 	}
 
 	static args = []
 
 	async run(): Promise<void> {
-		//const { flags } = this.parse(Pack)
+		const { flags } = this.parse(Pack)
 
 		console.log("Packing...")
 		const entries = await createEntryFiles()
@@ -41,6 +42,7 @@ export default class Pack extends Command {
 				"yaml",
 				"@emotion/css",
 			],
+			watch: flags.watch,
 			format: "esm",
 			tsconfig: "./tsconfig.json",
 			plugins: [
@@ -54,5 +56,6 @@ export default class Pack extends Command {
 			],
 			//minify: true,
 		})
+		console.log("done")
 	}
 }
