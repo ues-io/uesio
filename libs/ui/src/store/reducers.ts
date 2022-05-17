@@ -1,4 +1,5 @@
 import toPath from "lodash/toPath"
+import yaml from "yaml"
 import {
 	AddDefinitionPairPayload,
 	AddDefinitionPayload,
@@ -15,7 +16,7 @@ import {
 	fromPath,
 	getIndexFromPath,
 } from "../component/path"
-import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
+import { DefinitionMap } from "../definition/definition"
 
 import {
 	addNodeAtPath,
@@ -26,33 +27,38 @@ import {
 	setNodeAtPath,
 } from "../yamlutils/yamlutils"
 import { MetadataState } from "../bands/metadata/types"
-import { isScalar, YAMLMap } from "yaml"
-
-const getNewNode = (yaml: YamlDoc, definition: Definition) => {
-	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
-	if (definition === 0) {
-		return yaml.createNode(definition)
-	}
-
-	if (!definition) {
-		return null
-	}
-
-	return yaml.createNode(definition)
-}
 
 const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 
-	if (state.content) {
-		// create a new document so components using useYaml will rerender
-		const yamlDoc = parse(state.content)
-		const newNode = getNewNode(yamlDoc, definition)
-		const pathArray = toPath(path)
-		setNodeAtPath(pathArray, yamlDoc.contents, newNode)
-		state.content = yamlDoc.toString()
-		state.parsed = yamlDoc.toJSON()
-	}
+	if (!state.content) return
+
+	const yamlDoc = parse(state.content)
+	const pathArray = toPath(path)
+
+	const parentPath = pathArray.slice(0, pathArray.length - 1)
+
+	const hasIn = yamlDoc.hasIn(pathArray)
+	const hasInParent = yamlDoc.hasIn(parentPath)
+
+	// create a new document so components using useYaml will rerender
+	// --
+	// A bit of a hack to  add a key pair value if it doesn't exist at path.
+	// for instance when component key is like - "uesio/io.text: null" and we want to update the text prop
+	// It only works for 1 level of non-existence
+	const lastPathElementDoesNotExist = !hasIn && hasInParent
+	const newNodeSrc = lastPathElementDoesNotExist
+		? {
+				[`${toPath(path).pop()}`]: definition,
+		  }
+		: definition
+
+	const pathToUpdate = lastPathElementDoesNotExist ? parentPath : pathArray
+	const newNode = yamlDoc.createNode(newNodeSrc)
+
+	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
 }
 
 const addDef = (state: MetadataState, payload: AddDefinitionPayload) => {
@@ -215,11 +221,14 @@ const changeDefKey = (
 		if (state.content) {
 			// create a new document so components using useYaml will rerender
 			const yamlDoc = parse(state.content)
-			const parent = getNodeAtPath(pathArray, yamlDoc.contents) as YAMLMap
+			const parent = getNodeAtPath(
+				pathArray,
+				yamlDoc.contents
+			) as yaml.YAMLMap
 			const keyNode = parent?.items.find(
-				(item) => isScalar(item.key) && item.key.value === oldKey
+				(item) => yaml.isScalar(item.key) && item.key.value === oldKey
 			)
-			if (keyNode && isScalar(keyNode.key)) {
+			if (keyNode && yaml.isScalar(keyNode.key)) {
 				keyNode.key.value = newKey
 			}
 			state.content = yamlDoc.toString()
