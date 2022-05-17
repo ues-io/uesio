@@ -1,6 +1,7 @@
 import { FunctionComponent, useRef } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
+
 import type monaco from "monaco-editor"
 
 //const ANIMATION_DURATION = 3000
@@ -38,6 +39,15 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	// 1. Field value
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
+
+	/*
+	const lastModifiedNode = uesio.builder.useLastModifiedNode()
+	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
+		component.path.getFullPathParts(lastModifiedNode || "")
+		*/
+
+	//const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
+	//currentAST.current = yamlDoc
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
 		undefined
