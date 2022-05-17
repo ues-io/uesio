@@ -1,16 +1,16 @@
 import React, { FC, SyntheticEvent } from "react"
 import { UtilityPropsPlus } from "../definition/definition"
-import { toPath } from "../component/path"
+
 import { useUesio } from "../hooks/hooks"
 
 type T = {
 	error: Error | null
 	componentProps: UtilityPropsPlus
+	cname?: string
 }
 // const Icon = getUtility("uesio/io.icon")
-
-const slotError: FC<T> = ({ error, componentProps }) => {
-	const name = toPath(componentProps.path).pop()
+const slotError: FC<T> = ({ error, componentProps, cname }) => {
+	console.log({ cname })
 	const uesio = useUesio(componentProps)
 	const viewDefId = uesio.getViewDefId() || ""
 	return (
@@ -38,7 +38,7 @@ const slotError: FC<T> = ({ error, componentProps }) => {
 					margin: 0,
 				}}
 			>
-				{name}
+				{cname}
 			</p>
 			<pre style={{ whiteSpace: "normal" }}>{error?.message}</pre>
 		</div>

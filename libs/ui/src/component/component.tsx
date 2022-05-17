@@ -107,7 +107,14 @@ function additionalContext(context: Context, additional: ContextFrame) {
 
 const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
-	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
+	return (
+		<ErrorBoundary cname={componentType} componentProps={props}>
+			<ComponentInternal
+				{...props}
+				path={`${path}["${componentType}"]`}
+			/>
+		</ErrorBoundary>
+	)
 }
 
 function getThemeOverride(
@@ -174,11 +181,7 @@ function renderUtility(
 ) {
 	const Loader = loader
 	loader.displayName = props.componentType as string
-	return (
-		<ErrorBoundary componentProps={props}>
-			<Loader {...props} />
-		</ErrorBoundary>
-	)
+	return <Loader {...props} />
 }
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
