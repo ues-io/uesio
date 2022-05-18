@@ -85,75 +85,51 @@ const removeDef = (state: MetadataState, payload: RemoveDefinitionPayload) => {
 	}
 }
 
+const getDefFromPath = (state: MetadataState, path: string | string[]) => {
+	const yamlDoc = parse(state.content)
+	const defNode = getNodeAtPath(path, yamlDoc.contents)
+	return defNode?.toJSON() as DefinitionMap
+}
+
 const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 	const isArrayMove = isNumberIndex(getKeyAtPath(payload.toPath))
+	const { fromPath: originalPath, toPath: destinationPath } = payload
+	const originalParentPath = getParentPath(originalPath)
+	const destinationParentPath = getParentPath(destinationPath)
 
 	if (!isArrayMove) {
-		const fromPathStr = payload.fromPath
-		const toPathStr = payload.toPath
-
-		const fromParentPath = getParentPath(payload.fromPath)
-		const toParentPath = getParentPath(payload.toPath)
-
-		if (fromParentPath !== toParentPath) return
-
-		const fromKey = getKeyAtPath(fromPathStr)
-		const toKey = getKeyAtPath(toPathStr)
-
-		const fromPathArray = toPath(fromParentPath)
-
-		const yamlDoc = parse(state.content)
-		const defNode = getNodeAtPath(fromPathArray, yamlDoc.contents)
-		const definition = defNode?.toJSON() as DefinitionMap
+		if (originalParentPath !== destinationParentPath) return
+		const fromKey = getKeyAtPath(originalPath)
+		const toKey = getKeyAtPath(destinationPath)
+		const definition = getDefFromPath(state, originalParentPath)
 
 		if (!definition || !fromKey || !toKey) return
 
-		const keys = Object.keys(definition)
-		const fromIndex = keys.indexOf(fromKey)
-		const toIndex = keys.indexOf(toKey)
-
-		const newKeys = keys.map((el, i) => {
-			if (i === fromIndex) return keys[toIndex]
-			if (i === toIndex) return keys[fromIndex]
-			return el
-		})
-
-		const newDefinition = newKeys.reduce(
-			(obj, item) => ({
-				...obj,
-				[item]: definition[item],
-			}),
-			{}
-		)
+		// Turn object into array so it's easier to re-order
+		const keys = Object.entries(definition)
+		const fromIndex = keys.findIndex(([k]) => k === fromKey)
+		const toIndex = keys.findIndex(([k]) => k === toKey)
+		const cutOut = keys.splice(fromIndex, 1)[0]
+		keys.splice(toIndex, 0, cutOut) // insert cutout at index
+		const newDefinition = Object.fromEntries(keys)
 
 		return setDef(state, {
-			path: fromParentPath,
+			path: destinationParentPath,
 			definition: newDefinition,
 		})
 	}
 
-	const fromPathStr = payload.fromPath
-	const fromPathArray = toPath(fromPathStr)
-	//fromPathArray.splice(-1)
 	//Grab current definition
-	const yamlDoc = parse(state.content)
-	const defNode = getNodeAtPath(fromPathArray, yamlDoc.contents)
-	const definition = defNode?.toJSON() as DefinitionMap
+	const definition = getDefFromPath(state, originalPath)
 	//Remove the original
-	removeDef(state, { path: fromPathStr })
-	const toPathStr = payload.toPath
-	const pathArray = toPath(toPathStr)
-	const index = parseInt(pathArray[pathArray.length - 1], 10)
+	removeDef(state, { path: originalPath })
+	const index = Number(getKeyAtPath(destinationPath) || "")
 
-	const updatedPathStr = payload.toPath
-	const updatePathArr = toPath(updatedPathStr)
-	updatePathArr.splice(-1)
 	//Add back in the intended spot
-
 	addDef(state, {
 		definition,
 		index,
-		path: fromPath(updatePathArr),
+		path: destinationParentPath,
 	})
 }
 

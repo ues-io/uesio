@@ -8,8 +8,6 @@ const moveComponentTest = `components:
       text: button1
   - uesio/io.button:
       text: button2
-wires:
-panels:
 `
 
 const moveComponentTestResult = `components:
@@ -17,8 +15,6 @@ const moveComponentTestResult = `components:
       text: button2
   - uesio/io.button:
       text: button1
-wires: null
-panels: null
 `
 
 test("viewdef move component", () => {
@@ -135,5 +131,7 @@ const testMove = (
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
+	console.log({ received: newState.content, expected: expected.content })
+
 	expect(newState.content).toStrictEqual(expected.content)
 }
