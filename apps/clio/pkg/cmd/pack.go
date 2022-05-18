@@ -98,37 +98,40 @@ func pack() error {
 		builderRegistrations := []string{}
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
+			fmt.Println("Buliding for: " + key)
 			hasDefinition := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]s.tsx", key))
+			hasBuilder := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sbuilder.tsx", key))
+			hasBuilderDef := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sdefinition.ts", key))
+			hasSignals := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/signals.ts", key))
 			if hasDefinition {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"../../components/view/%[1]s/%[1]s\";", key))
-				hasSignals := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/signals.ts", key))
-				hasBuilder := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sbuilder.tsx", key))
-				hasDef := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sdefinition.ts", key))
+
 				if hasSignals {
 					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"../../components/view/%[1]s/signals\";", key))
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s,%[1]ssignals);", key, namespace))
 				} else {
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", key, namespace))
 				}
-				builderName := fmt.Sprintf("%[1]sbuilder", key)
-				definitionName := fmt.Sprintf("%[1]sdefinition", key)
+			}
+			builderName := fmt.Sprintf("%[1]sbuilder", key)
+			definitionName := fmt.Sprintf("%[1]sdefinition", key)
+			if hasBuilder {
+				fmt.Println("HAD BUILDER")
+				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, builderName))
+			}
+			if hasBuilderDef {
+				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, definitionName))
+			}
+			if hasBuilder || hasBuilderDef {
+				builderValue := "undefined"
 				if hasBuilder {
-					builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, builderName))
+					builderValue = builderName
 				}
-				if hasDef {
-					builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, definitionName))
+				defValue := "undefined"
+				if hasBuilderDef {
+					defValue = definitionName
 				}
-				if hasBuilder || hasDef {
-					builderValue := "undefined"
-					if hasBuilder {
-						builderValue = builderName
-					}
-					defValue := "undefined"
-					if hasDef {
-						defValue = definitionName
-					}
-					builderRegistrations = append(builderRegistrations, fmt.Sprintf("component.registry.registerBuilder(\"%[2]s.%[1]s\",%[3]s,%[4]s);", key, namespace, builderValue, defValue))
-				}
+				builderRegistrations = append(builderRegistrations, fmt.Sprintf("component.registry.registerBuilder(\"%[2]s.%[1]s\",%[3]s,%[4]s);", key, namespace, builderValue, defValue))
 			}
 		}
 
