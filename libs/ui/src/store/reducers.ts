@@ -37,23 +37,21 @@ const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 	const pathArray = toPath(path)
 
 	const parentPath = pathArray.slice(0, pathArray.length - 1)
-
-	const hasIn = yamlDoc.hasIn(pathArray)
-	const hasInParent = yamlDoc.hasIn(parentPath)
+	const parentNode = yamlDoc.getIn(parentPath) as yaml.Node
+	// const parentDef = parentNode.toJSON()
 
 	// create a new document so components using useYaml will rerender
 	// --
-	// A bit of a hack to  add a key pair value if it doesn't exist at path.
-	// for instance when component key is like - "uesio/io.text: null" and we want to update the text prop
+	// A bit of a hack to  add a key pair value if the parent is null || undefined.
+	// Example: "- uesio/io.text: null" and we want to update the text prop.
 	// It only works for 1 level of non-existence
-	const lastPathElementDoesNotExist = !hasIn && hasInParent
-	const newNodeSrc = lastPathElementDoesNotExist
-		? {
+	const newNodeSrc = parentNode
+		? definition
+		: {
 				[`${toPath(path).pop()}`]: definition,
 		  }
-		: definition
 
-	const pathToUpdate = lastPathElementDoesNotExist ? parentPath : pathArray
+	const pathToUpdate = parentNode ? pathArray : parentPath
 	const newNode = yamlDoc.createNode(newNodeSrc)
 
 	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
