@@ -2,6 +2,7 @@ import { createNextState } from "@reduxjs/toolkit"
 import { SetDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { setDef } from "../src/store/reducers"
+
 type SetTest = {
 	payload: SetDefinitionPayload
 	data: string

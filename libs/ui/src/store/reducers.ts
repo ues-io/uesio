@@ -13,7 +13,6 @@ import {
 	isNumberIndex,
 	getKeyAtPath,
 	getParentPath,
-	fromPath,
 	getIndexFromPath,
 } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
@@ -189,26 +188,16 @@ const changeDefKey = (
 ) => {
 	const { path, key: newKey } = payload
 	const pathArray = toPath(path)
-	const oldKey = pathArray.pop()
-
-	if (oldKey) {
-		if (state.content) {
-			// create a new document so components using useYaml will rerender
-			const yamlDoc = parse(state.content)
-			const parent = getNodeAtPath(
-				pathArray,
-				yamlDoc.contents
-			) as yaml.YAMLMap
-			const keyNode = parent?.items.find(
-				(item) => yaml.isScalar(item.key) && item.key.value === oldKey
-			)
-			if (keyNode && yaml.isScalar(keyNode.key)) {
-				keyNode.key.value = newKey
-			}
-			state.content = yamlDoc.toString()
-			state.parsed = yamlDoc.toJSON()
-		}
-	}
+	// create a new document so components using useYaml will rerender
+	const yamlDoc = parse(state.content)
+	// make a copy so we can place with a new key and delete the old node
+	const newNode = yamlDoc.getIn(toPath(path))
+	// replace the old with the new key
+	pathArray.splice(-1, 1, newKey)
+	yamlDoc.setIn(pathArray, newNode)
+	yamlDoc.deleteIn(toPath(path))
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
 }
 
 export {

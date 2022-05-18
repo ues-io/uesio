@@ -131,7 +131,6 @@ const testMove = (
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
-	console.log({ received: newState.content, expected: expected.content })
 
 	expect(newState.content).toStrictEqual(expected.content)
 }
