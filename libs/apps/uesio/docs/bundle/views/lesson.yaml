@@ -32,6 +32,19 @@ definition:
                           fieldId: uesio/docs.article->uesio/cms.content
                           labelPosition: none
                           displayAs: MARKDOWN
+          - uesio/io.griditem:
+              area: right
+              uesio.styles:
+                root:
+                  padding: 5px
+              components:
+                - uesio/io.list:
+                    wire: lesson
+                    components:
+                      - uesio/io.markdownnavigation:
+                          uesio.variant: uesio/docs.lesson
+                          mdField: uesio/docs.article->uesio/cms.content
+
   wires:
     track:
       collection: uesio/docs.track
