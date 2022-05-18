@@ -10,7 +10,7 @@ import (
 
 func init() {
 
-	RootCmd.AddCommand(&cobra.Command{
+	rootCmd.AddCommand(&cobra.Command{
 		Use:   "work",
 		Short: "uesio work",
 		Run:   worker,

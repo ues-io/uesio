@@ -16,7 +16,7 @@ import (
 
 func init() {
 
-	RootCmd.AddCommand(&cobra.Command{
+	rootCmd.AddCommand(&cobra.Command{
 		Use:   "serve",
 		Short: "Start Webserver",
 		Run:   serve,
