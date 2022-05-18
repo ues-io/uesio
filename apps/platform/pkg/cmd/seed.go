@@ -17,7 +17,7 @@ import (
 
 func init() {
 
-	RootCmd.AddCommand(&cobra.Command{
+	rootCmd.AddCommand(&cobra.Command{
 		Use:   "seed",
 		Short: "Seed Database",
 		Run:   seed,

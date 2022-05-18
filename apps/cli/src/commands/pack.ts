@@ -33,7 +33,6 @@ export default class Pack extends Command {
 			outdir: "./bundle/componentpacks",
 			outbase: "./bundle/componentpacks",
 			allowOverwrite: true,
-			inject: [],
 			external: [
 				"react",
 				"react-dom",
@@ -41,8 +40,6 @@ export default class Pack extends Command {
 				"yaml",
 				"@emotion/css",
 			],
-			format: "esm",
-			tsconfig: "./tsconfig.json",
 			plugins: [
 				GlobalsPlugin({
 					react: "React",
