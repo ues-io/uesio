@@ -98,7 +98,6 @@ func pack() error {
 		builderRegistrations := []string{}
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
-			fmt.Println("Buliding for: " + key)
 			hasDefinition := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]s.tsx", key))
 			hasBuilder := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sbuilder.tsx", key))
 			hasBuilderDef := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sdefinition.ts", key))
@@ -116,7 +115,6 @@ func pack() error {
 			builderName := fmt.Sprintf("%[1]sbuilder", key)
 			definitionName := fmt.Sprintf("%[1]sdefinition", key)
 			if hasBuilder {
-				fmt.Println("HAD BUILDER")
 				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, builderName))
 			}
 			if hasBuilderDef {
