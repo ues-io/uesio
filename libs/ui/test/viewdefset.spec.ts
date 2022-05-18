@@ -24,7 +24,6 @@ const setExistingKey = {
   - uesio/io.button:
       text: button1
   - uesio/io.button:
-      uesio.variant: uesio/io.primary
       text: uesio is awesome
 `,
 }
@@ -90,6 +89,5 @@ const testSet = (
 	const newState = createNextState(initial, (draftState) => {
 		setDef(draftState, payload)
 	})
-	console.log({ received: newState.content, expected: expected.content })
 	expect(newState.content).toStrictEqual(expected.content)
 }
