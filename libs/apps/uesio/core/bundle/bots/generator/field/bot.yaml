@@ -33,6 +33,13 @@ params:
     conditions:
       - param: type
         value: SELECT
+  - name: select_list
+    prompt: Select List
+    type: METADATA
+    metadataType: SELECTLIST
+    conditions:
+      - param: type
+        value: MULTISELECT
   - name: autonumber_prefix
     prompt: Prefix
     conditions:
@@ -43,4 +50,33 @@ params:
     conditions:
       - param: type
         value: AUTONUMBER
+  - name: accept
+    prompt: Accept
+    type: LIST
+    choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"]
+    conditions:
+      - param: type
+        value: FILE
+  - name: referencegroup_collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
+  - name: referencegroup_field
+    prompt: field
+    type: METADATA
+    metadataType: FIELD
+    grouping: $Answer{referencegroup_collection}
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
+  - name: referencegroup_ondelete
+    prompt: On Delete
+    type: LIST
+    choices: ["CASCADE"]
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
 public: true

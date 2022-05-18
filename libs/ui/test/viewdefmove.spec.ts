@@ -3,28 +3,18 @@ import { MoveDefinitionPayload } from "../src/bands/builder"
 import { moveDef } from "../src/store/reducers"
 import { MetadataState } from "../src/bands/metadata/types"
 
-const moveComponentTest = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button1
-    - uesio/io.button:
-        text: button2
-  wires:
-  panels:
+const moveComponentTest = `components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
 `
 
-const moveComponentTestResult = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button2
-    - uesio/io.button:
-        text: button1
-  wires: null
-  panels: null
+const moveComponentTestResult = `components:
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button1
 `
 
 test("viewdef move component", () => {
@@ -44,30 +34,24 @@ test("viewdef move component", () => {
 	)
 })
 
-const moveWireTest = `name: page
-namespace: ben/planets
-definition:
-  wires:
-    myotherwire:
-      collection: myothercollection
-      fields:
-    mywire:
-      collection: mycollection
-      fields:
-  panels: null
+const moveWireTest = `wires:
+  myotherwire:
+    collection: myothercollection
+    fields:
+  mywire:
+    collection: mycollection
+    fields:
+panels: null
 `
 
-const moveWireTestResult = `name: page
-namespace: ben/planets
-definition:
-  wires:
-    mywire:
-      collection: mycollection
-      fields: null
-    myotherwire:
-      collection: myothercollection
-      fields: null
-  panels: null
+const moveWireTestResult = `wires:
+  mywire:
+    collection: mycollection
+    fields: null
+  myotherwire:
+    collection: myothercollection
+    fields: null
+panels: null
 `
 
 test("viewdef move wire", () => {
@@ -87,44 +71,38 @@ test("viewdef move wire", () => {
 	)
 })
 
-const moveComponentDifferentParentTest = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.group:
-        components:
-          - uesio/io.button:
-              text: button1
-          - uesio/io.button:
-              text: button2
-    - uesio/io.group:
-        components:
-          - uesio/io.button:
-              text: button3
-          - uesio/io.button:
-              text: button4
-  wires: null
-  panels: null
+const moveComponentDifferentParentTest = `components:
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+        - uesio/io.button:
+            text: button2
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button3
+        - uesio/io.button:
+            text: button4
+wires: null
+panels: null
 `
 
-const moveComponentDifferentParentTestResult = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.group:
-        components:
-          - uesio/io.button:
-              text: button2
-    - uesio/io.group:
-        components:
-          - uesio/io.button:
-              text: button1
-          - uesio/io.button:
-              text: button3
-          - uesio/io.button:
-              text: button4
-  wires: null
-  panels: null
+const moveComponentDifferentParentTestResult = `components:
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button2
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+        - uesio/io.button:
+            text: button3
+        - uesio/io.button:
+            text: button4
+wires: null
+panels: null
 `
 
 test("viewdef move component different parent", () => {
@@ -153,5 +131,6 @@ const testMove = (
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
+
 	expect(newState.content).toStrictEqual(expected.content)
 }

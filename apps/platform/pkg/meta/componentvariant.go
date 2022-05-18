@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -78,6 +79,10 @@ func (c *ComponentVariant) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (c *ComponentVariant) SetModified(mod time.Time) {
+	c.UpdatedAt = mod.UnixMilli()
 }
 
 func (c *ComponentVariant) GetCollectionName() string {

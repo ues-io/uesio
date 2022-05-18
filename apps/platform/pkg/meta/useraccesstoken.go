@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 func NewUserAccessToken(key string) (*UserAccessToken, error) {
@@ -83,6 +84,10 @@ func (uat *UserAccessToken) SetWorkspace(workspace string) {
 	uat.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (uat *UserAccessToken) SetModified(mod time.Time) {
+	uat.UpdatedAt = mod.UnixMilli()
 }
 
 func (uat *UserAccessToken) Loop(iter func(string, interface{}) error) error {

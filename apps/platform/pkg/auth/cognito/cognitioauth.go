@@ -30,15 +30,19 @@ func (c *Connection) Verify(token string, session *sess.Session) error {
 	return nil
 }
 
-func (c *Connection) Login(payload map[string]string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func getFullyQualifiedUsername(site string, username string) string {
+	return site + ":" + username
+}
 
-	username, ok := payload["username"]
-	if !ok {
-		return nil, errors.New("No username provided for Cognito login")
+func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+
+	username, err := auth.GetPayloadValue(payload, "username")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
 	}
-	password, ok := payload["password"]
-	if !ok {
-		return nil, errors.New("No password provided for Cognito login")
+	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
 	}
 	clientID, ok := (*c.credentials)["clientid"]
 	if !ok {
@@ -53,10 +57,13 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 		return nil, err
 	}
 
+	site := session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, username)
+
 	authTry := &cognito.AdminInitiateAuthInput{
 		AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
 		AuthParameters: map[string]string{
-			"USERNAME": username,
+			"USERNAME": fqUsername,
 			"PASSWORD": password,
 		},
 		ClientId:   aws.String(clientID),
@@ -77,10 +84,68 @@ func (c *Connection) Login(payload map[string]string, session *sess.Session) (*a
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	return &auth.AuthenticationClaims{
-		Subject:   claims["sub"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
-		Email:     claims["email"].(string),
+		Subject: claims["sub"].(string),
 	}, nil
 
+}
+
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
+
+	site := session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, username)
+
+	clientID, ok := (*c.credentials)["clientid"]
+	if !ok {
+		return errors.New("no client id provided in credentials")
+	}
+
+	poolID, ok := (*c.credentials)["poolid"]
+	if !ok {
+		return errors.New("no user pool provided in credentials")
+	}
+
+	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	if err != nil {
+		return err
+	}
+
+	client := cognito.NewFromConfig(cfg)
+
+	awsUserExists := &cognito.AdminGetUserInput{
+		Username:   &fqUsername,
+		UserPoolId: aws.String(poolID),
+	}
+
+	adminGetUserOutput, _ := client.AdminGetUser(context.Background(), awsUserExists)
+	if adminGetUserOutput != nil && adminGetUserOutput.Username != nil {
+		return errors.New("User already exists")
+	}
+
+	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	signUpData := &cognito.SignUpInput{
+		ClientId: aws.String(clientID),
+		Username: &fqUsername,
+		Password: &password,
+	}
+
+	_, err = client.SignUp(context.Background(), signUpData)
+	if err != nil {
+		return err
+	}
+
+	confirmSignUpData := &cognito.AdminConfirmSignUpInput{
+		Username:   &fqUsername,
+		UserPoolId: aws.String(poolID),
+	}
+
+	_, err = client.AdminConfirmSignUp(context.Background(), confirmSignUpData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

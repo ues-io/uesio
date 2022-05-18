@@ -10,6 +10,7 @@ import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
+import ErrorBoundary from "../components/errorboundary"
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -106,7 +107,14 @@ function additionalContext(context: Context, additional: ContextFrame) {
 
 const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
-	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
+	return (
+		<ErrorBoundary cname={componentType} componentProps={props}>
+			<ComponentInternal
+				{...props}
+				path={`${path}["${componentType}"]`}
+			/>
+		</ErrorBoundary>
+	)
 }
 
 function getThemeOverride(

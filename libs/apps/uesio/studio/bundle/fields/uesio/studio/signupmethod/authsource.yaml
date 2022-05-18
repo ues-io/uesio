@@ -1,0 +1,5 @@
+name: authsource
+label: Auth source
+type: REFERENCE
+reference:
+  collection: uesio/studio.authsource

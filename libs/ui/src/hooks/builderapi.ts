@@ -278,9 +278,9 @@ class BuilderAPI {
 				const viewDef = viewSelectors.selectById(state, metadataItem)
 					?.parsed as PlainViewDef
 				if (!localPath) {
-					return viewDef.definition as DefinitionMap
+					return viewDef as DefinitionMap
 				}
-				return get(viewDef.definition, localPath) as DefinitionMap
+				return get(viewDef, localPath) as DefinitionMap
 			}
 
 			if (metadataType === "componentvariant" && metadataItem) {

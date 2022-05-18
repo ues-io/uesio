@@ -17,12 +17,12 @@ const getURLFromFullName = (context: Context, fullName: string) => {
 const getUserFileURL = (
 	context: Context,
 	userfileid: string,
-	cacheBuster?: boolean
+	cacheBuster?: string
 ) => {
 	if (!userfileid) return ""
 	const platform = getPlatform()
 	const url = platform.getUserFileURL(context, userfileid)
-	return cacheBuster ? url + "&cb=" + Date.now() : url
+	return cacheBuster ? url + "&cb=" + cacheBuster : url
 }
 
 const deleteFile = (context: Context, userFileID: string) =>
@@ -57,7 +57,7 @@ class FileAPI {
 				fieldId
 			)
 			const userFileId = userFile?.[ID_FIELD] as string
-			const fileUrl = getUserFileURL(context, userFileId, true)
+			const fileUrl = getUserFileURL(context, userFileId)
 			if (!fileUrl) {
 				setContent("")
 				return

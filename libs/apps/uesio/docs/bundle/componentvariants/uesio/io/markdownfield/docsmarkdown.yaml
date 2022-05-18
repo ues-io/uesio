@@ -4,9 +4,10 @@ definition:
   uesio.styles:
     markdown:
       margin: 20px 0
-      fontSize: 1em
+      fontSize: 0.9em
       lineHeight: 1.6;
       color: "#444444"
+      fontWeight: 300
 
       "h1,h2,h3,h4,h5,h6":
         fontFamily: Gosha
@@ -15,4 +16,6 @@ definition:
 
       a:
         color: rgb(251,96,78)
-        fontWeight: 800
+        fontWeight: 300
+      p:
+        fontWeight: 300

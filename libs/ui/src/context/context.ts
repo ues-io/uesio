@@ -18,7 +18,7 @@ import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
-import { PlainViewDef } from "../definition/viewdef"
+import { ViewDefinition } from "../definition/viewdef"
 import { ComponentVariant } from "../definition/componentvariant"
 
 type FieldMode = "READ" | "EDIT"
@@ -115,7 +115,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const user = context.getUser()
 		if (!user) return ""
 		if (expression === "initials") {
-			return user.firstname.charAt(0) + user.lastname.charAt(0)
+			return user.firstname
+				? user.firstname.charAt(0) + user.lastname.charAt(0)
+				: user.id.charAt(0)
 		} else if (expression === "picture") {
 			// Remove the workspace context here
 			return getUserFileURL(new Context(), user.picture)
@@ -208,7 +210,7 @@ const inject = (template: string, context: Context): string =>
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
 		? (viewSelectors.selectById(getStore().getState(), viewDefId)
-				?.parsed as PlainViewDef)
+				?.parsed as ViewDefinition)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -217,7 +219,7 @@ const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 const getWireDefFromWireName = (viewId: string, wirename: string) => {
 	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
-	return viewDef?.definition?.wires?.[wirename]
+	return viewDef?.wires?.[wirename]
 }
 
 class Context {
@@ -382,7 +384,9 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap = (map?: Record<string, string>) =>
+	mergeMap = (
+		map: Record<string, string> | undefined
+	): Record<string, string> =>
 		map
 			? Object.fromEntries(
 					Object.entries(map).map((entries) => [
@@ -390,7 +394,8 @@ class Context {
 						this.merge(entries[1]),
 					])
 			  )
-			: map
+			: {}
+
 	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
 }
 

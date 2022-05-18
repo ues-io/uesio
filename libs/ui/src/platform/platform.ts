@@ -85,8 +85,9 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 	if (isPathRouteRequest(request)) {
 		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
 		// provided, they want to navigate within the same namespace.
-		const namespace =
-			request.namespace || context.getViewDef()?.namespace || ""
+		const viewDefId = context.getViewDefId() || ""
+		const [viewDefNamespace] = parseKey(viewDefId)
+		const namespace = request.namespace || viewDefNamespace || ""
 		return `${prefix}/routes/path/${namespace}/${context.merge(
 			request.path
 		)}`
@@ -332,6 +333,27 @@ const platform = {
 			user,
 		})
 		return response.json()
+	},
+	signup: async (
+		signupMethod: string,
+		requestBody: Record<string, string>
+	): Promise<LoginResponse> => {
+		const [namespace, name] = parseKey(signupMethod)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/signup`,
+			requestBody
+		)
+		return response.json()
+	},
+	checkAvailability: async (
+		signupMethod: string,
+		username: string
+	): Promise<Response> => {
+		const [namespace, name] = parseKey(signupMethod)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/checkavailability/${username}`
+		)
+		return response
 	},
 	login: async (
 		authSource: string,

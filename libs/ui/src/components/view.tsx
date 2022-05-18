@@ -4,7 +4,7 @@ import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
 import { ViewParams } from "../bands/view/types"
 import { css } from "@emotion/css"
-import { PlainViewDef } from "../definition/viewdef"
+import { ViewDefinition } from "../definition/viewdef"
 import { useViewDef } from "../bands/viewdef"
 import { useComponentPackKeys } from "../bands/componentpack"
 
@@ -56,11 +56,11 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
-	const content = viewDef.parsed as PlainViewDef
+	const content = viewDef.parsed as ViewDefinition
 
 	const slot = (
 		<Slot
-			definition={content.definition}
+			definition={content}
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}

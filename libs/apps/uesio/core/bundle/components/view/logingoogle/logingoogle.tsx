@@ -57,9 +57,6 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 				onClick={signIn}
 				variant="uesio/io.secondary"
 				styles={{
-					root: {
-						width: "210px",
-					},
 					label: {
 						textTransform: "none",
 					},
