@@ -27,6 +27,11 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/docs.content
                           text: ${uesio/docs.article->uesio/cms.description}
+                      - uesio/io.field:
+                          uesio.variant: uesio/docs.docsmarkdown
+                          fieldId: uesio/docs.article->uesio/cms.content
+                          labelPosition: none
+                          displayAs: MARKDOWN
   wires:
     track:
       collection: uesio/docs.track
@@ -57,6 +62,7 @@ definition:
           fields:
             uesio/cms.name:
             uesio/cms.description:
+            uesio/cms.content:
         uesio/docs.track:
           fields:
             uesio/docs.slug:

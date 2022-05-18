@@ -8,8 +8,6 @@ export default class Pack extends Command {
 	static description = "pack components"
 
 	static flags = {
-		develop: flags.boolean({ char: "d" }),
-		stats: flags.boolean({ char: "s" }),
 		watch: flags.boolean({ char: "w" }),
 	}
 
@@ -34,7 +32,6 @@ export default class Pack extends Command {
 			outdir: "./bundle/componentpacks",
 			outbase: "./bundle/componentpacks",
 			allowOverwrite: true,
-			inject: [],
 			external: [
 				"react",
 				"react-dom",
@@ -43,8 +40,6 @@ export default class Pack extends Command {
 				"@emotion/css",
 			],
 			watch: flags.watch,
-			format: "esm",
-			tsconfig: "./tsconfig.json",
 			plugins: [
 				GlobalsPlugin({
 					react: "React",
