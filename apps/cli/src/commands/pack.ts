@@ -8,8 +8,6 @@ export default class Pack extends Command {
 	static description = "pack components"
 
 	static flags = {
-		develop: flags.boolean({ char: "d" }),
-		stats: flags.boolean({ char: "s" }),
 		watch: flags.boolean({ char: "w" }),
 	}
 
