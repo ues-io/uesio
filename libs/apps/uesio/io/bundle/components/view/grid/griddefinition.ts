@@ -6,6 +6,7 @@ type GridDefinition = {
 	templateAreas?: styles.ResponsiveDefinition
 	columnGap?: string
 	rowGap?: string
+	gap?: string
 }
 
 interface GridProps extends definition.BaseProps {

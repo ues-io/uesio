@@ -2,7 +2,6 @@ import { FunctionComponent } from "react"
 
 import { FieldDefinition, FieldProps } from "./fielddefinition"
 import { component, collection, wire, context } from "@uesio/ui"
-
 const TextField = component.registry.getUtility("uesio/io.textfield")
 const SelectField = component.registry.getUtility("uesio/io.selectfield")
 const RadioButtonsField = component.registry.getUtility(
@@ -39,7 +38,7 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs, reference } = definition
+	const { fieldId, id, displayAs, reference, options } = definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
@@ -57,6 +56,7 @@ const getFieldContent = (
 		record,
 		wire,
 		variant: definition["uesio.variant"],
+		options,
 	}
 
 	switch (true) {

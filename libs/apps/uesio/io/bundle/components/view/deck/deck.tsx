@@ -27,6 +27,10 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		gridRowGap: definition.rowGap,
 	}
 
+	const gap = definition.gap && {
+		gridGap: definition.gap,
+	}
+
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -34,6 +38,7 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 				...gridRows,
 				...columnGap,
 				...rowGap,
+				...gap,
 			},
 		},
 		props
