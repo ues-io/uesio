@@ -15,7 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type SystemBundleStore struct {}
+type SystemBundleStore struct{}
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
