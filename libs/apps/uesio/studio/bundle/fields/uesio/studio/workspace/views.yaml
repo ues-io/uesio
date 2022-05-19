@@ -1,0 +1,7 @@
+name: views
+type: REFERENCEGROUP
+label: Views
+referenceGroup:
+  collection: uesio/studio.view
+  field: uesio/studio.workspace
+  onDelete: CASCADE

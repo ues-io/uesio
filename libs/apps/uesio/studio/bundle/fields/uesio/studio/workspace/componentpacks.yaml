@@ -1,0 +1,7 @@
+name: componentpacks
+type: REFERENCEGROUP
+label: Component Packs
+referenceGroup:
+  collection: uesio/studio.componentpack
+  field: uesio/studio.workspace
+  onDelete: CASCADE
