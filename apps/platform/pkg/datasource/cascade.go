@@ -35,6 +35,9 @@ func getCascadeDeletes(
 				}
 				for _, deletion := range wire.Deletes {
 					item := deletion.OldValues
+					if item == nil {
+						continue
+					}
 					refInterface, err := item.GetField(field.GetFullName())
 					if err != nil {
 						continue
@@ -174,13 +177,15 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 		return nil
 	}
 	saves := []SaveRequest{}
-	for collectionKey, ids := range deletes {
-		saves = append(saves, SaveRequest{
-			Collection: collectionKey,
-			Wire:       "CascadeDelete",
-			Deletes:    &ids,
-		})
+	for collectionKey := range deletes {
+		ids := deletes[collectionKey]
+		if ids.Len() > 0 {
+			saves = append(saves, SaveRequest{
+				Collection: collectionKey,
+				Wire:       "CascadeDelete",
+				Deletes:    &ids,
+			})
+		}
 	}
-
 	return SaveWithOptions(saves, session, GetConnectionSaveOptions(connection))
 }
