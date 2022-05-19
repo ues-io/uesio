@@ -99,6 +99,7 @@ const useScripts = (sources: string[]): ScriptResult => {
 					const script = document.createElement("script")
 					script.src = src
 					script.async = true
+					script.type = "module"
 
 					const scriptCacheItem = {
 						loaded: false,

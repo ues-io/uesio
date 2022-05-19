@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -37,8 +38,7 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
 			return
 		}
-		mimeType := "application/javascript"
 
-		respondFile(w, r, mimeType, stream)
+		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
 	}
 }

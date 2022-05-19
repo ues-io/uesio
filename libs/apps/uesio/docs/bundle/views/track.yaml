@@ -28,7 +28,7 @@ definition:
                           uesio.variant: uesio/docs.content
                           text: ${uesio/docs.description}
                 - uesio/io.deck:
-                    columnGap: 40px
+                    gap: 40px
                     templateColumns: 1fr 1fr 1fr
                     wire: lesson
                     uesio.styles:

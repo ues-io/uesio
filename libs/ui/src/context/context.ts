@@ -18,7 +18,7 @@ import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
-import { PlainViewDef } from "../definition/viewdef"
+import { ViewDefinition } from "../definition/viewdef"
 import { ComponentVariant } from "../definition/componentvariant"
 
 type FieldMode = "READ" | "EDIT"
@@ -210,7 +210,7 @@ const inject = (template: string, context: Context): string =>
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
 		? (viewSelectors.selectById(getStore().getState(), viewDefId)
-				?.parsed as PlainViewDef)
+				?.parsed as ViewDefinition)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -219,7 +219,7 @@ const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 const getWireDefFromWireName = (viewId: string, wirename: string) => {
 	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
-	return viewDef?.definition?.wires?.[wirename]
+	return viewDef?.wires?.[wirename]
 }
 
 class Context {

@@ -11,7 +11,7 @@ import {
 	setDef,
 } from "../../store/reducers"
 import { RootState } from "../../store/store"
-import { setNodeAtPath, parse } from "../../yamlutils/yamlutils"
+import { parse } from "../../yamlutils/yamlutils"
 import builderOps from "../builder/operations"
 import {
 	addDefinition,
@@ -115,15 +115,9 @@ const metadataSlice = createSlice({
 			if (payload.metadataType === "viewdef") {
 				const viewDef = state.entities[payload.metadataItem]
 				if (viewDef) {
-					const yamlDoc = parse(viewDef.content)
 					const defDoc = parse(payload.content)
-					setNodeAtPath(
-						"definition",
-						yamlDoc.contents,
-						defDoc.contents
-					)
-					viewDef.content = yamlDoc.toString()
-					viewDef.parsed = yamlDoc.toJSON()
+					viewDef.content = payload.content
+					viewDef.parsed = defDoc.toJSON()
 				}
 			}
 		})

@@ -45,7 +45,7 @@ class SignalAPI {
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
 					const panels: PanelDefinitionMap | undefined =
-						viewDef?.definition?.panels
+						viewDef?.panels
 					if (!panels || !panelId) return null
 
 					const panelDef = panels[panelId]

@@ -3,26 +3,20 @@ import { CloneDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { cloneDef } from "../src/store/reducers"
 
-const buttonclonetest = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button1
-  wires:
-  panels:
+const buttonclonetest = `components:
+  - uesio/io.button:
+      text: button1
+wires:
+panels:
 `
 
-const buttonclonetestresult = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button1
-    - uesio/io.button:
-        text: button1
-  wires: null
-  panels: null
+const buttonclonetestresult = `components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button1
+wires: null
+panels: null
 `
 
 test("viewdef clone component", () => {

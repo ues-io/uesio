@@ -27,6 +27,24 @@ definition:
                       - uesio/io.text:
                           uesio.variant: uesio/docs.content
                           text: ${uesio/docs.article->uesio/cms.description}
+                      - uesio/io.field:
+                          uesio.variant: uesio/docs.docsmarkdown
+                          fieldId: uesio/docs.article->uesio/cms.content
+                          labelPosition: none
+                          displayAs: MARKDOWN
+          - uesio/io.griditem:
+              area: right
+              uesio.styles:
+                root:
+                  padding: 5px
+              components:
+                - uesio/io.list:
+                    wire: lesson
+                    components:
+                      - uesio/io.markdownnavigation:
+                          uesio.variant: uesio/docs.lesson
+                          mdField: uesio/docs.article->uesio/cms.content
+
   wires:
     track:
       collection: uesio/docs.track
@@ -57,6 +75,7 @@ definition:
           fields:
             uesio/cms.name:
             uesio/cms.description:
+            uesio/cms.content:
         uesio/docs.track:
           fields:
             uesio/docs.slug:

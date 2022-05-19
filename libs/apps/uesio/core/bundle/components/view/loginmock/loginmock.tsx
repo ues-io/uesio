@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import { mock } from "@uesio/loginhelpers"
 import LoginWrapper from "../../shared/loginwrapper"
 type LoginDefinition = {
 	clientId: string
@@ -12,6 +11,7 @@ interface LoginProps extends definition.BaseProps {
 }
 
 const Button = component.registry.getUtility("uesio/io.button")
+const Grid = component.registry.getUtility("uesio/io.grid")
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -33,10 +33,21 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	return (
-		<>
-			{mock.mockUsers.map((user) => (
-				<LoginWrapper key={user} align={definition.align}>
+		<LoginWrapper align={definition.align}>
+			<Grid
+				styles={{
+					root: {
+						gridTemplateColumns: "1fr 1fr",
+						columnGap: "10px",
+						rowGap: "10px",
+						paddingBottom: "20px",
+					},
+				}}
+				context={context}
+			>
+				{["ben", "abel", "wessel", "gregg"].map((user) => (
 					<Button
+						key={user}
 						context={context}
 						onClick={(): void => {
 							uesio.signal.run(
@@ -44,7 +55,10 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 									signal: "user/LOGIN",
 									authSource: "uesio/core.mock",
 									payload: {
-										token: mock.getMockToken(user),
+										token: JSON.stringify({
+											authType: "mock",
+											subject: user,
+										}),
 									},
 								},
 								context
@@ -58,14 +72,14 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 								display: "block",
 							},
 							label: {
-								textTransform: "none",
+								textTransform: "capitalize",
 							},
 						}}
-						label={"Sign in as " + user}
+						label={user}
 					/>
-				</LoginWrapper>
-			))}
-		</>
+				))}
+			</Grid>
+		</LoginWrapper>
 	)
 }
 

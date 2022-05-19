@@ -8,9 +8,9 @@ definition:
       margin: 60px
       # Little easter egg
       "&:hover":
-        animation-name: myEffect
-        animation-duration: 10s
-        animation-iteration-count: infinite
+        animationName: myEffect
+        animationDuration: 10s
+        animationIterationCount: infinite
         "@keyframes myEffect":
           "0%":
             filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(0deg) brightness(15%) contrast(80%)

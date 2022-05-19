@@ -15,8 +15,7 @@
 		"resolveJsonModule": true,
 		"baseUrl": "./",
 		"paths": {
-			"@uesio/ui": ["../../../ui/src/index.ts"],
-			"@uesio/loginhelpers": ["../../../loginhelpers/src/index.ts"]
+			"@uesio/ui": ["../../../ui/src/index.ts"]
 		}
 	}
 }

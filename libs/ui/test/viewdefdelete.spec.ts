@@ -3,26 +3,20 @@ import { RemoveDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { removeDef } from "../src/store/reducers"
 
-const buttondeletetest = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button1
-    - uesio/io.button:
-        text: button2
-  wires:
-  panels:
+const buttondeletetest = `components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+wires:
+panels:
 `
 
-const buttondeletetestresult = `name: page
-namespace: ben/planets
-definition:
-  components:
-    - uesio/io.button:
-        text: button1
-  wires: null
-  panels: null
+const buttondeletetestresult = `components:
+  - uesio/io.button:
+      text: button1
+wires: null
+panels: null
 `
 
 test("viewdef delete component", () => {
@@ -41,29 +35,23 @@ test("viewdef delete component", () => {
 	)
 })
 
-const wiredeletetest = `name: page
-namespace: ben/planets
-definition:
-  components:
-  wires:
-    mywire:
-      collection: mycollection
-      fields:
-    myotherwire:
-      collection: myothercollection
-      fields:
-  panels:
+const wiredeletetest = `components:
+wires:
+  mywire:
+    collection: mycollection
+    fields:
+  myotherwire:
+    collection: myothercollection
+    fields:
+panels:
 `
 
-const wiredeletetestresult = `name: page
-namespace: ben/planets
-definition:
-  components: null
-  wires:
-    myotherwire:
-      collection: myothercollection
-      fields: null
-  panels: null
+const wiredeletetestresult = `components: null
+wires:
+  myotherwire:
+    collection: myothercollection
+    fields: null
+panels: null
 `
 
 test("viewdef delete wire", () => {

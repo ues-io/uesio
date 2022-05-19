@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/humandad/yaml"
 )
@@ -97,6 +98,10 @@ func (l *Label) SetWorkspace(workspace string) {
 	l.Workspace = &Workspace{
 		ID: workspace,
 	}
+}
+
+func (l *Label) SetModified(mod time.Time) {
+	l.UpdatedAt = mod.UnixMilli()
 }
 
 func (l *Label) Loop(iter func(string, interface{}) error) error {

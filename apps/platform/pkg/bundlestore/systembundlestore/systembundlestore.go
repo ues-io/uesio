@@ -15,18 +15,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// SystemBundleStore struct
-type SystemBundleStore struct {
-}
+type SystemBundleStore struct{}
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
 	return filepath.Join("..", "..", "libs", "apps", namespace, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
+func getFile(namespace string, version string, objectname string, filename string) (*os.File, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 	return os.Open(filePath)
+}
+
+func getFileInfo(namespace string, version string, objectname string, filename string) (os.FileInfo, error) {
+	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
+	return os.Stat(filePath)
 }
 
 func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
@@ -64,7 +67,6 @@ func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, 
 	return keys, err
 }
 
-// GetItem function
 func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
@@ -88,12 +90,20 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return nil
 	}
 
-	stream, err := getStream(namespace, version, collectionName, item.GetPath())
+	fileInfo, err := getFileInfo(namespace, version, collectionName, item.GetPath())
 	if err != nil {
 		return err
 	}
-	defer stream.Close()
-	err = bundlestore.DecodeYAML(item, stream)
+
+	item.SetModified(fileInfo.ModTime())
+
+	file, err := getFile(namespace, version, collectionName, item.GetPath())
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+	err = bundlestore.DecodeYAML(item, file)
 	if err != nil {
 		return err
 	}
@@ -152,37 +162,35 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 }
 
 func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath())
+	return getFile(file.Namespace, version, "files", file.GetFilePath())
 }
 
 func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
+	return getFile(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
 func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
+	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
 }
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
+	return getFile(componentPack.Namespace, version, "componentpacks", fileName)
 }
 
-// StoreItems function
 func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-// GetBundleDef function
 func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
-	stream, err := getStream(namespace, version, "", "bundle.yaml")
+	file, err := getFile(namespace, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
 	}
-	defer stream.Close()
+	defer file.Close()
 
-	err = bundlestore.DecodeYAML(&by, stream)
+	err = bundlestore.DecodeYAML(&by, file)
 	if err != nil {
 		return nil, err
 	}

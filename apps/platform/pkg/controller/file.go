@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"mime"
 	"net/http"
-	"path/filepath"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -39,8 +38,6 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mimeType := mime.TypeByExtension(filepath.Ext(file.FileName))
-
-	respondFile(w, r, mimeType, stream)
+	respondFile(w, r, file.FileName, time.UnixMilli(file.UpdatedAt), stream)
 
 }
