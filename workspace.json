@@ -131,6 +131,40 @@
       },
       "tags": []
     },
+    "clio": {
+      "projectType": "application",
+      "root": "apps/clio",
+      "sourceRoot": "apps/clio",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/clio"
+          ],
+          "options": {
+            "commands": [
+              "go build -o ../../dist/clio/uesio"
+            ],
+            "cwd": "apps/clio"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "test -z $(gofmt -l ./pkg/**)",
+            "cwd": "apps/clio"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "go test -v ./...",
+            "cwd": "apps/clio"
+          }
+        }
+      },
+      "tags": []
+    },
     "apps-uesio-crm": {
       "root": "libs/apps/uesio/crm",
       "sourceRoot": "libs/apps/uesio/crm",
@@ -140,14 +174,14 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/crm"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/crm"
           }
         },
@@ -168,7 +202,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-cms": {
@@ -180,14 +214,14 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/cms"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/cms"
           }
         },
@@ -208,7 +242,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-docs": {
@@ -220,21 +254,21 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/docs"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/docs"
           }
         }
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-io": {
@@ -250,14 +284,14 @@
             "libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/io"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop &",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/io"
           }
         },
@@ -272,7 +306,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-lab": {
@@ -288,14 +322,14 @@
             "libs/apps/uesio/lab/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/lab"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop &",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/lab"
           }
         },
@@ -310,7 +344,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-studio": {
@@ -326,14 +360,14 @@
             "libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/studio"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop &",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/studio"
           }
         },
@@ -348,7 +382,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "apps-uesio-core": {
@@ -364,14 +398,14 @@
             "libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack",
+            "command": "./../../../../dist/clio/uesio pack",
             "cwd": "libs/apps/uesio/core"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../../apps/cli/bin/run pack -w",
             "cwd": "libs/apps/uesio/core"
           }
         },
@@ -393,7 +427,7 @@
       },
       "tags": [],
       "implicitDependencies": [
-        "cli"
+        "cli","clio"
       ]
     },
     "ui": {
@@ -430,8 +464,11 @@
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/ui"
+          ],
           "options": {
-            "command": "",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap --watch",
             "cwd": "libs/ui"
           }
         },

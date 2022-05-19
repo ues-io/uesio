@@ -1,4 +1,6 @@
 import { FunctionComponent, useEffect } from "react"
+import { MDOptions } from "../markdownfield/types"
+
 import {
 	definition,
 	context,
@@ -26,12 +28,23 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
+	variant?: string
+	options: MDOptions
 }
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldId, fieldMetadata, record, wire, context, id, path, mode } =
-		props
+	const {
+		fieldId,
+		fieldMetadata,
+		record,
+		wire,
+		context,
+		id,
+		path,
+		mode,
+		options,
+	} = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
@@ -79,6 +92,8 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 					context
 				)
 			}}
+			options={options}
+			variant={props.variant}
 		/>
 	)
 }

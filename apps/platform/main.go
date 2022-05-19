@@ -27,7 +27,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
@@ -76,8 +75,5 @@ func init() {
 }
 
 func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		logger.LogError(err)
-		os.Exit(-1)
-	}
+	cmd.Execute()
 }

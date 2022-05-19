@@ -7,9 +7,7 @@ type ComponentMap = {
 	[key: string]: unknown
 }
 
-type EntryFileMap = {
-	[key: string]: string
-}
+type EntryFileMap = Record<string, boolean>
 
 const factory = ['import { component } from "@uesio/ui";']
 
@@ -132,12 +130,8 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const components = yamlContents.components
 		const viewComponents = components.view
 		const utilityComponents = components.utility
-		entries[packName + "/runtime"] = path.resolve(
-			`./bundle/componentpacks/${packName}/runtime.ts`
-		)
-		entries[packName + "/builder"] = path.resolve(
-			`./bundle/componentpacks/${packName}/builder.ts`
-		)
+		entries[packName + "/runtime"] = true
+		entries[packName + "/builder"] = true
 
 		await fs.writeFile(
 			path.resolve(packDir, `${packName}/runtime.ts`),
