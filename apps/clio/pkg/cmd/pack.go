@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"compress/gzip"
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -15,11 +17,14 @@ import (
 
 func init() {
 
-	rootCmd.AddCommand(&cobra.Command{
+	packCommand := &cobra.Command{
 		Use:   "pack",
 		Short: "clio pack",
 		Run:   packer,
-	})
+	}
+	packCommand.PersistentFlags().Bool("zip", false, "Also gzip packed resources")
+
+	rootCmd.AddCommand(packCommand)
 
 }
 
@@ -68,7 +73,7 @@ func fileExists(path string) bool {
 	return err == nil
 }
 
-func pack() error {
+func pack(doZip bool) error {
 
 	sbs := &localbundlestore.LocalBundleStore{}
 
@@ -179,12 +184,61 @@ func pack() error {
 	if result.Errors != nil {
 		fmt.Println(result.Errors)
 	}
+
+	if doZip {
+		err := zipEntries(entryPoints)
+		if err != nil {
+			return err
+		}
+	}
+
 	fmt.Println(fmt.Sprintf("Done Packing: %v", time.Since(start)))
 	return nil
 }
 
+func zipEntries(entries []string) error {
+	// for each entry point, gzip them
+	for _, ep := range entries {
+		// Remove the .ts extension and add .js
+		fileName := strings.TrimSuffix(ep, filepath.Ext(ep)) + ".js"
+		err := gzipFile(fileName)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func gzipFile(fileName string) error {
+
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(fileName + ".gz")
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	zw := gzip.NewWriter(file)
+	defer zw.Close()
+	_, err = zw.Write(data)
+	if err != nil {
+		return err
+	}
+	err = zw.Flush()
+	if err != nil {
+		return nil
+	}
+
+	return nil
+}
+
 func packer(cmd *cobra.Command, args []string) {
-	err := pack()
+	doZip, _ := cmd.Flags().GetBool("zip")
+	err := pack(doZip)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return
