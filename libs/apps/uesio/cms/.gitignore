@@ -1,5 +1,6 @@
 node_modules/
 bundle/componentpacks/*/*.bundle.js
 bundle/componentpacks/*/*.entry.ts
+bundle/componentpacks/*/*.js.gz
 bundle/componentpacks/*/*.LICENSE.txt
 .DS_Store
