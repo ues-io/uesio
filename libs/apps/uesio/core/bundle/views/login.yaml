@@ -88,6 +88,9 @@ definition:
                                                       textTransform: none
                                                   signals:
                                                     - signal: user/LOGIN
+                                                      onerror:
+                                                        signals:
+                                                          - signal: notification/ADD_ERRORS
                                                       authSource: uesio/core.platform
                                                       payload:
                                                         username: ${uesio/viewonly.username}

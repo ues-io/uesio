@@ -103,6 +103,33 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 	throw new Error("Not a valid Route Request")
 }
 
+const respondJSON = async (response: Response) => {
+	if (response.status !== 200) {
+		const errorText = await response.text()
+		throw new Error(errorText)
+	}
+
+	return response.json()
+}
+
+const respondVoid = async (response: Response) => {
+	if (response.status !== 200) {
+		const errorText = await response.text()
+		throw new Error(errorText)
+	}
+
+	return
+}
+
+const respondText = async (response: Response) => {
+	if (response.status !== 200) {
+		const errorText = await response.text()
+		throw new Error(errorText)
+	}
+
+	return response.text()
+}
+
 const postJSON = (url: string, body?: Record<string, unknown>) =>
 	fetch(url, {
 		method: "POST",
@@ -118,18 +145,12 @@ const platform = {
 	getView: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/views/${namespace}/${name}`)
-		if (response.status !== 200) {
-			throw new Error("View Not Found")
-		}
-		return response.text()
+		return respondText(response)
 	},
 	getTheme: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/themes/${namespace}/${name}`)
-		if (response.status !== 200) {
-			throw new Error("Theme Not Found")
-		}
-		return response.text()
+		return respondText(response)
 	},
 	getRoute: async (
 		context: Context,
@@ -137,10 +158,7 @@ const platform = {
 	): Promise<RouteState> => {
 		const routeUrl = getRouteUrl(context, request)
 		const response = await fetch(routeUrl)
-		if (response.status !== 200) {
-			throw new Error("Route Not Found")
-		}
-		return response.json()
+		return respondJSON(response)
 	},
 	loadData: async (
 		context: Context,
@@ -148,11 +166,7 @@ const platform = {
 	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/wires/load`, requestBody)
-		if (response.status !== 200) {
-			const error = await response.text()
-			throw new Error(error)
-		}
-		return response.json()
+		return respondJSON(response)
 	},
 	saveData: async (
 		context: Context,
@@ -160,11 +174,7 @@ const platform = {
 	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/wires/save`, requestBody)
-		if (response.status !== 200) {
-			const error = await response.text()
-			throw new Error(error)
-		}
-		return response.json()
+		return respondJSON(response)
 	},
 	callBot: async (
 		context: Context,
@@ -177,14 +187,7 @@ const platform = {
 			`${prefix}/bots/call/${namespace}/${name}`,
 			params
 		)
-		if (response.status !== 200) {
-			const error = await response.text()
-			return {
-				success: false,
-				error,
-			}
-		}
-		return response.json()
+		return respondJSON(response)
 	},
 	getFileURL: (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
@@ -219,7 +222,7 @@ const platform = {
 			body: fileData,
 		})
 
-		return response.json()
+		return respondJSON(response)
 	},
 	deleteFile: async (
 		context: Context,
@@ -230,7 +233,7 @@ const platform = {
 		const response = await fetch(url, {
 			method: "POST",
 		})
-		return response.json()
+		return respondJSON(response)
 	},
 	getComponentPackURL: (
 		context: Context,
@@ -254,7 +257,7 @@ const platform = {
 		const response = await fetch(
 			`${prefix}/metadata/types/${mdType}/namespace/${namespace}/list${groupingUrl}`
 		)
-		return response.json()
+		return respondJSON(response)
 	},
 	getCollectionMetadata: async (
 		context: Context,
@@ -264,7 +267,7 @@ const platform = {
 		const response = await fetch(
 			`${prefix}/collections/meta/${collectionName}`
 		)
-		return response.json()
+		return respondJSON(response)
 	},
 	getAvailableNamespaces: async (
 		context: Context,
@@ -276,14 +279,14 @@ const platform = {
 		const response = await fetch(
 			`${prefix}/metadata/namespaces${mdTypeUrl}`
 		)
-		return response.json()
+		return respondJSON(response)
 	},
 	getConfigValues: async (
 		context: Context
 	): Promise<ConfigValueResponse[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/configvalues`)
-		return response.json()
+		return respondJSON(response)
 	},
 	setConfigValue: async (
 		context: Context,
@@ -294,12 +297,12 @@ const platform = {
 		const response = await postJSON(`${prefix}/configvalues/${key}`, {
 			value,
 		})
-		return response.json()
+		return respondJSON(response)
 	},
 	getSecrets: async (context: Context): Promise<SecretResponse[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/secrets`)
-		return response.json()
+		return respondJSON(response)
 	},
 	setSecret: async (
 		context: Context,
@@ -310,7 +313,7 @@ const platform = {
 		const response = await postJSON(`${prefix}/secrets/${key}`, {
 			value,
 		})
-		return response.json()
+		return respondJSON(response)
 	},
 	getFeatureFlags: async (
 		context: Context,
@@ -319,7 +322,7 @@ const platform = {
 		const prefix = getPrefix(context)
 		const userUrl = user ? `/${user}` : ""
 		const response = await fetch(`${prefix}/featureflags${userUrl}`)
-		return response.json()
+		return respondJSON(response)
 	},
 	setFeatureFlag: async (
 		context: Context,
@@ -332,7 +335,7 @@ const platform = {
 			value,
 			user,
 		})
-		return response.json()
+		return respondJSON(response)
 	},
 	signup: async (
 		signupMethod: string,
@@ -343,17 +346,17 @@ const platform = {
 			`/site/auth/${namespace}/${name}/signup`,
 			requestBody
 		)
-		return response.json()
+		return respondJSON(response)
 	},
 	checkAvailability: async (
 		signupMethod: string,
 		username: string
-	): Promise<Response> => {
+	): Promise<void> => {
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
 			`/site/auth/${namespace}/${name}/checkavailability/${username}`
 		)
-		return response
+		return respondVoid(response)
 	},
 	login: async (
 		authSource: string,
@@ -364,11 +367,12 @@ const platform = {
 			`/site/auth/${namespace}/${name}/login`,
 			requestBody
 		)
-		return response.json()
+
+		return respondJSON(response)
 	},
 	logout: async (): Promise<LoginResponse> => {
 		const response = await postJSON("/site/auth/logout")
-		return response.json()
+		return respondJSON(response)
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
 		const prefix = getPrefix(context)
@@ -380,13 +384,13 @@ const platform = {
 			},
 			body: JSON.stringify(spec),
 		})
-		return response.json()
+		return respondJSON(response)
 	},
 	importData: async (
 		context: Context,
 		fileData: File,
 		jobId: string
-	): Promise<Response> => {
+	): Promise<void> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job/${jobId}/batch`
 
@@ -398,12 +402,12 @@ const platform = {
 			body: fileData,
 		})
 
-		return response
+		return respondVoid(response)
 	},
 	bundle: async (context: Context): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/metadata/bundle`)
-		return response.json()
+		return respondJSON(response)
 	},
 }
 

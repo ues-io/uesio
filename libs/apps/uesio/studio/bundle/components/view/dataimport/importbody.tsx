@@ -71,15 +71,13 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 
 		if (!jobResponse.id) return
 
-		const batchResponse = await uesio.collection.importData(
-			context,
-			file,
-			jobResponse.id
-		)
-
-		if (batchResponse.status !== 200) {
-			const error = await batchResponse.text()
-			uesio.notification.addError("Import error: " + error, context)
+		try {
+			await uesio.collection.importData(context, file, jobResponse.id)
+		} catch (error) {
+			uesio.notification.addError(
+				"Import error: " + error.message,
+				context
+			)
 			return
 		}
 

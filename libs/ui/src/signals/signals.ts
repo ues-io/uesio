@@ -64,11 +64,19 @@ const runMany = async (
 				path: getPanelKey(path, context),
 			}
 		}
-		// Keep adding to context as each signal is run
-		context = await run(dispatcher, useSignal, context)
-		// STOP running the rest of signals if there is an error
-		const errors = context.getErrors()
-		if (errors && errors.length) {
+
+		try {
+			// Keep adding to context as each signal is run
+			context = await run(dispatcher, useSignal, context)
+		} catch (error) {
+			if (signal.onerror?.signals) {
+				runMany(
+					dispatcher,
+					path,
+					signal.onerror.signals,
+					context.addFrame({ errors: [error.message] })
+				)
+			}
 			break
 		}
 	}
