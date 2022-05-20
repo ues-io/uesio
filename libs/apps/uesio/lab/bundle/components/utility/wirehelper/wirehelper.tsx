@@ -28,11 +28,11 @@ const wireHelper: FC<T> = (props) => {
 	) as ParentDef
 	const wireId = `${parentDef && parentDef.wire ? parentDef.wire : ""}`
 
-	const defWiresPath = component.path.makeFullPath(
-		metadataType,
-		metadataItem,
-		"wires"
-	)
+	// const defWiresPath = component.path.makeFullPath(
+	// 	metadataType,
+	// 	metadataItem,
+	// 	"wires"
+	// )
 	const wiresInDef = uesio.builder.useDefinition(
 		metadataType,
 		metadataItem,
@@ -78,14 +78,6 @@ const wireHelper: FC<T> = (props) => {
 
 		// Create new wire
 		if (!wireId) {
-			uesio.builder.addDefinitionPair(
-				defWiresPath,
-				{
-					fields: null,
-				},
-				wireName,
-				"wire"
-			)
 			selectWire(wireName)
 
 			uesio.setContext(new ctx.Context([{ view: "$root" }]))
@@ -99,12 +91,6 @@ const wireHelper: FC<T> = (props) => {
 			showWires && showWires()
 		}
 
-		// Add wire to parent def
-		uesio.builder.addDefinitionPair(
-			component.path.makeFullPath(metadataType, metadataItem, path),
-			wireName,
-			"wire"
-		)
 		refreshWire(wireName)
 	}
 

@@ -41,14 +41,16 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Panel"
 				onClick={() =>
-					uesio.builder.addDefinitionPair(
-						path,
+					uesio.builder.addDefinition(
+						path +
+							`[${
+								"newpanel" +
+								(Math.floor(Math.random() * 60) + 1)
+							}]`,
 						{
 							"uesio.type": "uesio/io.dialog",
 							components: [],
-						},
-						"newpanel" + (Math.floor(Math.random() * 60) + 1),
-						"panel"
+						}
 					)
 				}
 			/>
