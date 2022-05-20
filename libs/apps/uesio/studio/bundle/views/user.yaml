@@ -164,8 +164,14 @@ definition:
                                             fieldId: uesio/core.initials
                                         - uesio/io.field:
                                             fieldId: uesio/core.username
-                                        - uesio/io.field:
+                                        - uesio/studio.metadatafield:
+                                            uesio.context:
+                                              siteadmin:
+                                                name: $Param{sitename}
+                                                app: $Param{app}
                                             fieldId: uesio/core.profile
+                                            metadataType: "PROFILE"
+                                            label: "Profile"
                                         - uesio/io.field:
                                             fieldId: uesio/core.language
                       - uesio/io.box:
