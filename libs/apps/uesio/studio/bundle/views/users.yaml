@@ -159,24 +159,21 @@ definition:
             text: "Save"
             signals:
               - signal: wire/SAVE
-                # onerror:
-                #   signals:
-                #     - signal: notification/ADD_ERRORS
                 wires:
                   - newuser
                 uesio.context:
                   siteadmin:
                     name: $Param{sitename}
                     app: $Param{app}
-              # - signal: "panel/TOGGLE"
-              #   panel: "newUser"
-              # - signal: wire/EMPTY
-              #   wire: newuser
-              # - signal: wire/CREATE_RECORD
-              #   wire: newuser
-              # - signal: wire/LOAD
-              #   wires:
-              #     - users
+              - signal: "panel/TOGGLE"
+                panel: "newUser"
+              - signal: wire/EMPTY
+                wire: newuser
+              - signal: wire/CREATE_RECORD
+                wire: newuser
+              - signal: wire/LOAD
+                wires:
+                  - users
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"
