@@ -35,8 +35,6 @@ test("viewdef clone component", () => {
 	)
 })
 
-// Had to comment this out because we're generating random wire names on clone
-// That's pretty hard to test.
 const wireclonetest = `name: page
 namespace: ben/planets
 definition:
