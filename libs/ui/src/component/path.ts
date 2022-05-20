@@ -49,10 +49,12 @@ const fromPath = (pathArray: string[]) => {
 	return `["${pathArray.join(`"]["`)}"]`
 }
 
-const getParentPath = (path: string) => {
+// Trims the last item of a path, can handle strings or arrays
+const getParentPath = <T extends string | string[]>(path: T): T => {
+	const returnType = typeof path
 	const pathArray = toPath(path)
 	pathArray.pop()
-	return fromPath(pathArray)
+	return (returnType === "string" ? fromPath(pathArray) : pathArray) as T
 }
 
 const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)

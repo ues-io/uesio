@@ -17,7 +17,7 @@ const moveComponentTestResult = `components:
       text: button1
 `
 
-test("viewdef move component", () => {
+test("Move within same parent", () => {
 	testMove(
 		{
 			key: "ben/planets.page",
@@ -131,6 +131,9 @@ const testMove = (
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
-
+	// console.log({
+	// 	received: newState.content,
+	// 	expected: expected.content,
+	// })
 	expect(newState.content).toStrictEqual(expected.content)
 }

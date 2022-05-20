@@ -2,6 +2,7 @@ import { createNextState } from "@reduxjs/toolkit"
 import { ChangeDefinitionKeyPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { changeDefKey } from "../src/store/reducers"
+
 type Test = {
 	payload: ChangeDefinitionKeyPayload
 	data: string
@@ -27,7 +28,21 @@ const changeKey = {
       text: button2
 `,
 }
-const tests: Test[] = [changeKey]
+const changeWireName = {
+	payload: {
+		path: `["wires"]["myboringwire"]`,
+		key: "mycoolwire",
+	},
+	data: `wires:
+  myboringwire:
+    collection: accounts
+`,
+	expected: `wires:
+  mycoolwire:
+    collection: accounts
+`,
+}
+const tests: Test[] = [changeKey, changeWireName]
 tests.map(({ data, payload, expected }) =>
 	test("viewdef change definition key", () => {
 		testSet(

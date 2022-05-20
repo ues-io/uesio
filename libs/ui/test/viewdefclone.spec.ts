@@ -35,7 +35,6 @@ test("viewdef clone component", () => {
 	)
 })
 
-/*
 // Had to comment this out because we're generating random wire names on clone
 // That's pretty hard to test.
 const wireclonetest = `name: page
@@ -57,7 +56,7 @@ definition:
     mywire:
       collection: mycollection
       fields: null
-    mywire:
+    mywire61:
       collection: mycollection
       fields: null
   panels: null
@@ -70,7 +69,7 @@ test("viewdef clone wire", () => {
 			content: wireclonetest,
 		},
 		{
-			path: `["wires"]["mywire"]`,
+			path: `["definition"]["wires"]["mywire"]`,
 		},
 		{
 			key: "ben/planets.page",
@@ -78,7 +77,13 @@ test("viewdef clone wire", () => {
 		}
 	)
 })
-*/
+
+beforeEach(() => {
+	jest.spyOn(global.Math, "random").mockReturnValue(1)
+})
+afterEach(() => {
+	jest.spyOn(global.Math, "random").mockRestore()
+})
 
 const testClone = (
 	initial: MetadataState,
