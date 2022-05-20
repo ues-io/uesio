@@ -201,8 +201,11 @@ const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
 		const newKey =
 			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
 		const node = getNodeAtPath(path, yamlDoc.contents)
-		const { setIn } = getNodeAtPath(parentPath, yamlDoc.contents) as YAMLMap
-		setIn([newKey], node)
+		const parentNode = getNodeAtPath(
+			parentPath,
+			yamlDoc.contents
+		) as YAMLMap
+		parentNode.setIn([newKey], node)
 	}
 	state.content = yamlDoc.toString()
 	state.parsed = yamlDoc.toJSON()
