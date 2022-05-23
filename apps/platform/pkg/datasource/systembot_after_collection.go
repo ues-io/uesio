@@ -1,17 +1,99 @@
 package datasource
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func ParseKeyCollectionKey(key string) (string, string, string, string, error) {
+
+	keyArray := strings.Split(key, "_")
+	if len(keyArray) != 3 {
+		return "", "", "", "", errors.New("Invalid Key: " + key)
+	}
+
+	keyArray2 := strings.Split(keyArray[0], "/")
+	if len(keyArray2) != 2 {
+		return "", "", "", "", errors.New("Invalid Key: " + key)
+	}
+
+	return keyArray2[0], keyArray2[1], keyArray[1], keyArray[2], nil
+}
+
+func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	ids := []string{}
+	for i := range request.Deletes {
+		collectionID := request.Deletes[i].IDValue
+		ownerName, appName, _, collectionName, err := ParseKeyCollectionKey(collectionID)
+		if err != nil {
+			return err
+		}
+		ids = append(ids, ownerName+"/"+appName+"."+collectionName)
+	}
+
+	if len(ids) == 0 {
+		return nil
+	}
+
+	fc := meta.FieldCollection{}
+	err := PlatformLoad(&fc, &PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio/studio.collection",
+				Value:    ids,
+				Operator: "IN",
+			},
+		},
+		Connection: connection,
+	}, session)
+	if err != nil {
+		return err
+	}
+
+	delIds := adapt.Collection{}
+	fc.Loop(func(item loadable.Item, _ string) error {
+		fieldId, err := item.GetField(adapt.ID_FIELD)
+		if err != nil {
+			return err
+		}
+
+		fieldIdAsString, ok := fieldId.(string)
+		if !ok {
+			return errors.New("Delete id must be a string")
+		}
+
+		delIds = append(delIds, &adapt.Item{
+			adapt.ID_FIELD: fieldIdAsString,
+		})
+
+		return nil
+	})
+
+	return SaveWithOptions([]SaveRequest{
+		{
+			Collection: "uesio/studio.field",
+			Wire:       "RunCollectionAfterSaveBot",
+			Deletes:    &delIds,
+		},
+	}, session, GetConnectionSaveOptions(connection))
+
+}
+
 func runCollectionAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	return deleteCollectionFields(request, connection, session)
 
 	// I'm actually not sure we want to do this at all.
 	// Maybe this functionality could be part of a generator.
 	// This will cause all deployments to auto-create name fields,
 	// Which for some collections, this is not what we want.
-	return nil
+	//return nil
 	/*
 		var workspaceID string
 
