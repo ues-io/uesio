@@ -20,13 +20,6 @@ type AddDefinitionPayload = {
 	type?: string
 }
 
-type AddDefinitionPairPayload = {
-	path: string
-	definition: Definition
-	key: string
-	type?: string
-}
-
 type RemoveDefinitionPayload = {
 	path: string
 }
@@ -79,14 +72,6 @@ const builderSlice = createSlice({
 				const def = payload.definition as DefinitionMap
 				const key = Object.keys(def)[0]
 				state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
-			}
-		},
-		addDefinitionPair: (
-			state,
-			{ payload }: PayloadAction<AddDefinitionPairPayload>
-		) => {
-			if (payload.type === "wire" || payload.type === "panel") {
-				state.selectedNode = `${payload.path}["${payload.key}"]`
 			}
 		},
 		removeDefinition: (
@@ -212,7 +197,7 @@ export const {
 	setDefinition,
 	cloneDefinition,
 	addDefinition,
-	addDefinitionPair,
+
 	removeDefinition,
 	moveDefinition,
 	changeDefinitionKey,
@@ -224,7 +209,6 @@ export {
 	CloneDefinitionPayload,
 	SetDefinitionPayload,
 	AddDefinitionPayload,
-	AddDefinitionPairPayload,
 	RemoveDefinitionPayload,
 	MoveDefinitionPayload,
 	ChangeDefinitionKeyPayload,

@@ -3,21 +3,23 @@ import { MoveDefinitionPayload } from "../src/bands/builder"
 import { moveDef } from "../src/store/reducers"
 import { MetadataState } from "../src/bands/metadata/types"
 
-const moveComponentTest = `components:
+const moveComponentTest = `
+components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
       text: button2
 `
 
-const moveComponentTestResult = `components:
+const moveComponentTestResult = `
+components:
   - uesio/io.button:
       text: button2
   - uesio/io.button:
       text: button1
 `
 
-test("viewdef move component", () => {
+test("Move within same parent", () => {
 	testMove(
 		{
 			key: "ben/planets.page",
@@ -34,7 +36,8 @@ test("viewdef move component", () => {
 	)
 })
 
-const moveWireTest = `wires:
+const moveWireTest = `
+wires:
   myotherwire:
     collection: myothercollection
     fields:
@@ -44,7 +47,8 @@ const moveWireTest = `wires:
 panels: null
 `
 
-const moveWireTestResult = `wires:
+const moveWireTestResult = `
+wires:
   mywire:
     collection: mycollection
     fields: null
@@ -71,7 +75,8 @@ test("viewdef move wire", () => {
 	)
 })
 
-const moveComponentDifferentParentTest = `components:
+const moveComponentDifferentParentTest = `
+components:
   - uesio/io.group:
       components:
         - uesio/io.button:
@@ -88,7 +93,8 @@ wires: null
 panels: null
 `
 
-const moveComponentDifferentParentTestResult = `components:
+const moveComponentDifferentParentTestResult = `
+components:
   - uesio/io.group:
       components:
         - uesio/io.button:
@@ -131,6 +137,5 @@ const testMove = (
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
-
-	expect(newState.content).toStrictEqual(expected.content)
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }

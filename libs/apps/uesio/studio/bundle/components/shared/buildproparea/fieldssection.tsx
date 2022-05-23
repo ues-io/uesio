@@ -95,16 +95,12 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					results.map((fieldId, index) => {
 						const fieldDef = fieldsDef?.[fieldId]
 						const selected = fieldDef !== undefined
-						const onClick = (): void =>
+						const onClick = (): void => {
+							const setPath = `${path}["fields"]["${fieldId}"]`
 							selected
-								? valueAPI.remove(
-										`${path}["fields"]["${fieldId}"]`
-								  )
-								: valueAPI.addPair(
-										`${path}["fields"]`,
-										null,
-										fieldId
-								  )
+								? valueAPI.remove(setPath)
+								: valueAPI.set(setPath, null)
+						}
 						return (
 							<PropNodeTag
 								draggable={`${collectionKey}.${fieldId}`}

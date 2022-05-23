@@ -3,7 +3,6 @@ import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import {
 	addDef,
-	addDefPair,
 	changeDefKey,
 	cloneDef,
 	moveDef,
@@ -15,7 +14,6 @@ import { parse } from "../../yamlutils/yamlutils"
 import builderOps from "../builder/operations"
 import {
 	addDefinition,
-	addDefinitionPair,
 	cancel,
 	changeDefinitionKey,
 	cloneDefinition,
@@ -163,17 +161,6 @@ const metadataSlice = createSlice({
 			if (viewDef) {
 				cloneDef(viewDef, {
 					path: localPath,
-				})
-			}
-		})
-
-		builder.addCase(addDefinitionPair, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				addDefPair(viewDef, {
-					path: localPath,
-					definition: payload.definition,
-					key: payload.key,
 				})
 			}
 		})
