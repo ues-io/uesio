@@ -68,16 +68,14 @@ const checkAvailability =
 	async (dispatch, getState, platform) => {
 		const mergedUsername = context.merge(username)
 		if (mergedUsername) {
-			const response = await platform.checkAvailability(
-				signupMethod,
-				mergedUsername
-			)
-			if (response.status !== 200) {
-				const error = await response.text()
-				return dispatch(wireAddError(context, usernameFieldId, error))
-			}
-			if (response.status === 200 || !response)
+			try {
+				await platform.checkAvailability(signupMethod, mergedUsername)
 				return dispatch(wireRemoveError(context, usernameFieldId))
+			} catch (error) {
+				return dispatch(
+					wireAddError(context, usernameFieldId, error.message)
+				)
+			}
 		}
 		return context
 	}

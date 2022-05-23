@@ -1,6 +1,7 @@
 import { useState, useRef, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles } from "@uesio/ui"
+import { usePopper } from "react-popper"
 import debounce from "lodash/debounce"
 
 type DropDownProps<T> = {
@@ -69,7 +70,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 	} = useCombobox({
 		items: inputItems,
 		itemToString,
-		initialSelectedItem: value,
+		selectedItem: value,
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
@@ -105,32 +106,40 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 		},
 	})
 
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
+	const popper = usePopper(anchorEl, popperEl, {
+		placement: "bottom-start",
+	})
+
 	return (
-		<div style={{ position: "relative" }}>
+		<div ref={setAnchorEl}>
 			<div className={classes.root} {...getComboboxProps()}>
 				<input className={classes.input} {...getInputProps()} />
 			</div>
 			{isOpen && (
 				<div
-					className={classes.menu}
-					{...getMenuProps()}
-					style={{ position: "absolute", zIndex: 1 }}
+					ref={setPopperEl}
+					style={popper.styles.popper}
+					{...popper.attributes.popper}
 				>
-					{loading
-						? loadingRenderer()
-						: inputItems.map((item, index) => (
-								<div
-									className={classes.menuitem}
-									key={itemToString(item) + "_" + index}
-									{...getItemProps({ item, index })}
-								>
-									{itemRenderer(
-										item,
-										index,
-										highlightedIndex
-									)}
-								</div>
-						  ))}
+					<div className={classes.menu} {...getMenuProps()}>
+						{loading
+							? loadingRenderer()
+							: inputItems.map((item, index) => (
+									<div
+										className={classes.menuitem}
+										key={itemToString(item) + "_" + index}
+										{...getItemProps({ item, index })}
+									>
+										{itemRenderer(
+											item,
+											index,
+											highlightedIndex
+										)}
+									</div>
+							  ))}
+					</div>
 				</div>
 			)}
 		</div>
