@@ -20,13 +20,6 @@ type AddDefinitionPayload = {
 	type?: string
 }
 
-type AddDefinitionPairPayload = {
-	path: string
-	definition: Definition
-	key: string
-	type?: string
-}
-
 type RemoveDefinitionPayload = {
 	path: string
 }
@@ -216,7 +209,6 @@ export {
 	CloneDefinitionPayload,
 	SetDefinitionPayload,
 	AddDefinitionPayload,
-	AddDefinitionPairPayload,
 	RemoveDefinitionPayload,
 	MoveDefinitionPayload,
 	ChangeDefinitionKeyPayload,
