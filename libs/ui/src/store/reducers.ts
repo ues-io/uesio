@@ -1,7 +1,6 @@
 import toPath from "lodash/toPath"
 import yaml, { YAMLMap, YAMLSeq } from "yaml"
 import {
-	AddDefinitionPairPayload,
 	AddDefinitionPayload,
 	ChangeDefinitionKeyPayload,
 	CloneDefinitionPayload,
@@ -168,22 +167,6 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 	state.parsed = yamlDoc.toJSON()
 }
 
-const addDefPair = (
-	state: MetadataState,
-	payload: AddDefinitionPairPayload
-) => {
-	const { path, definition, key } = payload
-	// create a new document so components using useYaml will rerender
-	const yamlDoc = parse(state.content)
-	const newNode = yamlDoc.createNode(definition)
-
-	// addNodePairAtPath(toPath(path), yamlDoc.contents, newNode, key)
-	// TODO: for now we can use addNodeAtPath here under the hood, until we refactor the functions using the builder.addDefPair to use builder.addNode
-	addNodeAtPath([...path, key], yamlDoc.contents, newNode, 0)
-	state.content = yamlDoc.toString()
-	state.parsed = yamlDoc.toJSON()
-}
-
 const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
 	const parentPath = getParentPath(path)
 	const isArrayItemClone = isNumberIndex(getKeyAtPath(parentPath))
@@ -230,12 +213,4 @@ const changeDefKey = (
 	state.parsed = yamlDoc.toJSON()
 }
 
-export {
-	removeDef,
-	addDef,
-	setDef,
-	moveDef,
-	cloneDef,
-	addDefPair,
-	changeDefKey,
-}
+export { removeDef, addDef, setDef, moveDef, cloneDef, changeDefKey }
