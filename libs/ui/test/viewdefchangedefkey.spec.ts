@@ -14,14 +14,16 @@ const changeKey = {
 		path: `["components"]["1"]["uesio/io.button"]`,
 		key: "uesio/io.box",
 	},
-	data: `components:
+	data: `
+components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
       text: button2
 
 `,
-	expected: `components:
+	expected: `
+components:
   - uesio/io.button:
       text: button1
   - uesio/io.box:
@@ -33,11 +35,13 @@ const changeWireName = {
 		path: `["wires"]["myboringwire"]`,
 		key: "mycoolwire",
 	},
-	data: `wires:
+	data: `
+wires:
   myboringwire:
     collection: accounts
 `,
-	expected: `wires:
+	expected: `
+wires:
   mycoolwire:
     collection: accounts
 `,
@@ -67,5 +71,5 @@ const testSet = (
 	const newState = createNextState(initial, (draftState) => {
 		changeDefKey(draftState, payload)
 	})
-	expect(newState.content).toStrictEqual(expected.content)
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }

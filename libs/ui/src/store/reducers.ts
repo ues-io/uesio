@@ -15,6 +15,7 @@ import {
 	getParentPath,
 	getIndexFromPath,
 	getGrandParentPath,
+	getParentPathArray,
 } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
 
@@ -49,7 +50,7 @@ const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 	if (!state.content) return
 	const yamlDoc = parse(state.content)
 	const pathArray = toPath(path)
-	const parentPath = getParentPath(pathArray)
+	const parentPath = getParentPathArray(pathArray)
 	const parentNode = yamlDoc.getIn(parentPath)
 	// create a new document so components using useYaml will rerender
 	// --
