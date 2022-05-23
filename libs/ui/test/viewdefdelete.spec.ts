@@ -3,7 +3,8 @@ import { RemoveDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { removeDef } from "../src/store/reducers"
 
-const buttondeletetest = `components:
+const buttondeletetest = `
+components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
@@ -12,7 +13,8 @@ wires:
 panels:
 `
 
-const buttondeletetestresult = `components:
+const buttondeletetestresult = `
+components:
   - uesio/io.button:
       text: button1
 wires: null
@@ -35,7 +37,8 @@ test("viewdef delete component", () => {
 	)
 })
 
-const wiredeletetest = `components:
+const wiredeletetest = `
+components:
 wires:
   mywire:
     collection: mycollection
@@ -46,7 +49,8 @@ wires:
 panels:
 `
 
-const wiredeletetestresult = `components: null
+const wiredeletetestresult = `
+components: null
 wires:
   myotherwire:
     collection: myothercollection
@@ -78,5 +82,5 @@ const testDelete = (
 	const newState = createNextState(initial, (draftState) => {
 		removeDef(draftState, payload)
 	})
-	expect(newState.content).toStrictEqual(expected.content)
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }
