@@ -17,7 +17,7 @@
 			"files": ["**/*.spec.ts", "**/*.spec.tsx"],
 			"env": {
 				"jest": true,
-				"global": true
+				"browser": true
 			}
 		},
 		{

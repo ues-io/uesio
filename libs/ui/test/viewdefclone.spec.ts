@@ -77,10 +77,10 @@ test("viewdef clone wire", () => {
 })
 
 beforeEach(() => {
-	jest.spyOn(global.Math, "random").mockReturnValue(1)
+	jest.spyOn(Math, "random").mockReturnValue(1)
 })
 afterEach(() => {
-	jest.spyOn(global.Math, "random").mockRestore()
+	jest.spyOn(Math, "random").mockRestore()
 })
 
 const testClone = (

@@ -1,5 +1,5 @@
 import toPath from "lodash/toPath"
-import yaml, { isCollection, YAMLMap, YAMLSeq } from "yaml"
+import yaml, { YAMLMap, YAMLSeq } from "yaml"
 import {
 	AddDefinitionPairPayload,
 	AddDefinitionPayload,
