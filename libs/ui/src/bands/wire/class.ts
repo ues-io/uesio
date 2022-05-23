@@ -19,14 +19,17 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
+import { addError } from "./"
 
 class Wire {
 	constructor(source?: PlainWire) {
 		this.source = source || ({} as PlainWire)
+		this.isValid = true
 	}
 
 	source: PlainWire
 	collection: Collection
+	isValid: boolean
 
 	getId = () => this.source.name
 	getFullId = () => `${this.source.view}/${this.source.name}`
@@ -82,6 +85,31 @@ class Wire {
 		}
 	}
 
+	wireIsValid = () => !this.getErrors()?.length
+
+	invalidateFieldOnRecord = (
+		recordId: string,
+		fieldId: string,
+		message: string
+	) =>
+		getStore().dispatch(
+			addError({
+				entity: this.getFullId(),
+				recordId,
+				fieldId,
+				message,
+			})
+		)
+
+	validateChange = (recordId: string, value: FieldValue, path: string[]) => {
+		// const collection = this.getCollection()
+		// const fieldMetadata = collection.getField(path[0])
+
+		// validators
+		if (value === "uesio sucks")
+			this.invalidateFieldOnRecord(recordId, path[0], "uesio is awesome")
+	}
+
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		getStore().dispatch(
 			updateRecord({
@@ -92,6 +120,7 @@ class Wire {
 			})
 		)
 		this.doChanges(recordId, path)
+		this.validateChange(recordId, record, path)
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
@@ -118,6 +147,15 @@ class Wire {
 	}
 
 	markRecordForDeletion = (recordId: string) => {
+		getStore().dispatch(
+			markForDelete({
+				entity: this.getFullId(),
+				recordId,
+			})
+		)
+	}
+
+	setRecordValidity = (recordId: string) => {
 		getStore().dispatch(
 			markForDelete({
 				entity: this.getFullId(),

@@ -1,8 +1,9 @@
-import { Context } from "../../context/context"
+import { Context, getWire } from "../../context/context"
 import { PropDescriptor } from "../../buildmode/buildpropdefinition"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
+
 import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
@@ -313,6 +314,17 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher:
 			(signal: SaveWiresSignal, context: Context): ThunkFunc =>
 			async (dispatch) => {
+				// Test frontend wire validation
+				const allgood = signal.wires?.every((wireId) => {
+					const wire = getWire(context.getViewId(), wireId)
+					const isValid = !wire?.errors
+					return isValid
+				})
+				if (!allgood) {
+					console.log("stopping save")
+					return context
+				}
+				// Test frontend wire validation
 				const batch = await dispatch(
 					saveWiresOp({ context, wires: signal.wires })
 				).then(unwrapResult)
