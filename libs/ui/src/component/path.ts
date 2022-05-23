@@ -49,6 +49,7 @@ const fromPath = (pathArray: string[]) => {
 	return `["${pathArray.join(`"]["`)}"]`
 }
 
+// Trims the last item of a path
 const getParentPath = (path: string) => {
 	const pathArray = toPath(path)
 	pathArray.pop()

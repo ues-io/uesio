@@ -14,16 +14,14 @@ const setExistingKey = {
 		path: `["components"]["1"]["uesio/io.button"]["text"]`,
 		definition: "uesio is awesome",
 	},
-	data: `
-components:
+	data: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
       text: button2
 
 `,
-	expected: `
-components:
+	expected: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
@@ -35,14 +33,12 @@ const setInNulledParent = {
 		path: `["components"]["1"]["uesio/io.button"]["text"]`,
 		definition: "uesio is awesome",
 	},
-	data: `
-components:
+	data: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button: null
 `,
-	expected: `
-components:
+	expected: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
@@ -54,15 +50,13 @@ const setNonExistentKey = {
 		path: `["components"]["1"]["uesio/io.button"]["uesio.variant"]`,
 		definition: "uesio/io.primary",
 	},
-	data: `
-components:
+	data: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
       text: button2
 `,
-	expected: `
-components:
+	expected: `components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
@@ -96,5 +90,5 @@ const testSet = (
 	const newState = createNextState(initial, (draftState) => {
 		setDef(draftState, payload)
 	})
-	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
+	expect(newState.content).toStrictEqual(expected.content)
 }

@@ -3,14 +3,16 @@ import { CloneDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { cloneDef } from "../src/store/reducers"
 
-const buttonclonetest = `components:
+const buttonclonetest = `
+components:
   - uesio/io.button:
       text: button1
 wires:
 panels:
 `
 
-const buttonclonetestresult = `components:
+const buttonclonetestresult = `
+components:
   - uesio/io.button:
       text: button1
   - uesio/io.button:
@@ -35,32 +37,23 @@ test("viewdef clone component", () => {
 	)
 })
 
-/*
-// Had to comment this out because we're generating random wire names on clone
-// That's pretty hard to test.
-const wireclonetest = `name: page
-namespace: ben/planets
-definition:
-  components:
-  wires:
-    mywire:
-      collection: mycollection
-      fields:
-  panels:
+const wireclonetest = `
+components:
+wires:
+  mywire:
+    collection: mycollection
+    fields:
 `
 
-const wireclonetestresult = `name: page
-namespace: ben/planets
-definition:
-  components: null
-  wires:
-    mywire:
-      collection: mycollection
-      fields: null
-    mywire:
-      collection: mycollection
-      fields: null
-  panels: null
+const wireclonetestresult = `
+components: null
+wires:
+  mywire:
+    collection: mycollection
+    fields: null
+  mywire61:
+    collection: mycollection
+    fields: null
 `
 
 test("viewdef clone wire", () => {
@@ -78,7 +71,13 @@ test("viewdef clone wire", () => {
 		}
 	)
 })
-*/
+
+beforeEach(() => {
+	jest.spyOn(Math, "random").mockReturnValue(1)
+})
+afterEach(() => {
+	jest.spyOn(Math, "random").mockRestore()
+})
 
 const testClone = (
 	initial: MetadataState,
@@ -88,5 +87,5 @@ const testClone = (
 	const newState = createNextState(initial, (draftState) => {
 		cloneDef(draftState, payload)
 	})
-	expect(newState.content).toStrictEqual(expected.content)
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }
