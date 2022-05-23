@@ -1,0 +1,7 @@
+name: teams
+type: REFERENCEGROUP
+label: Teams
+referenceGroup:
+  collection: uesio/studio.team
+  field: uesio/studio.app
+  onDelete: CASCADE
