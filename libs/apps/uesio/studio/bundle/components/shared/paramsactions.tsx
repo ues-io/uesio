@@ -41,13 +41,15 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Parameter"
 				onClick={() =>
-					uesio.builder.addDefinitionPair(
-						path,
+					uesio.builder.addDefinition(
+						path +
+							`[${
+								"newparam" +
+								(Math.floor(Math.random() * 60) + 1)
+							}]`,
 						{
 							type: "recordId",
-						},
-						"newparam" + (Math.floor(Math.random() * 60) + 1),
-						"params"
+						}
 					)
 				}
 			/>

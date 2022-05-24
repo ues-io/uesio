@@ -22,7 +22,6 @@ import {
 	cloneDefinition,
 	setDefinition,
 	addDefinition,
-	addDefinitionPair,
 	removeDefinition,
 	changeDefinitionKey,
 	moveDefinition,
@@ -195,22 +194,6 @@ class BuilderAPI {
 				path,
 				definition,
 				index,
-				type,
-			})
-		)
-	}
-
-	addDefinitionPair(
-		path: string,
-		definition: Definition,
-		key: string,
-		type?: string
-	) {
-		this.dispatcher(
-			addDefinitionPair({
-				path,
-				definition,
-				key,
 				type,
 			})
 		)

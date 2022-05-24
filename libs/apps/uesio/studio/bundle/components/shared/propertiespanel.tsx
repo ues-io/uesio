@@ -131,18 +131,6 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						number
 					)
 				},
-				addPair: (path: string, value: string, key: string) => {
-					if (path === undefined) return
-					uesio.builder.addDefinitionPair(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						value,
-						key
-					)
-				},
 				remove: (path: string) => {
 					if (path === undefined) return
 					uesio.builder.removeDefinition(

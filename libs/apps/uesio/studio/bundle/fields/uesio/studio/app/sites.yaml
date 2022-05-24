@@ -1,0 +1,7 @@
+name: sites
+type: REFERENCEGROUP
+label: Sites
+referenceGroup:
+  collection: uesio/studio.site
+  field: uesio/studio.app
+  onDelete: CASCADE

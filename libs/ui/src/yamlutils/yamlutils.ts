@@ -1,5 +1,5 @@
 import toPath from "lodash/toPath"
-import yaml, { Pair, Node, YAMLMap } from "yaml"
+import yaml, { Node } from "yaml"
 import { getParentPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
@@ -155,33 +155,6 @@ const addNodeAtPath = (
 		: node.addIn(pathArray, [setNode])
 }
 
-const addNodePairAtPath = (
-	path: string | string[],
-	node: Node | null,
-	setNode: Node,
-	key: string
-) => {
-	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
-
-	const pathArray = makePathArray(path)
-	const hasParent = node?.hasIn(pathArray)
-	if (hasParent) {
-		const fullPathArray = [...pathArray, key]
-		const alreadyExists = node?.hasIn(fullPathArray)
-		const parentNode = node?.getIn(pathArray) as yaml.YAMLMap
-		parentNode && (parentNode.flow = false)
-		if (!parentNode) {
-			node?.setIn(pathArray, new YAMLMap())
-		}
-		alreadyExists
-			? node?.setIn(fullPathArray, setNode)
-			: node?.addIn(pathArray, new Pair(key, setNode))
-		return
-	}
-	node?.setIn(pathArray, new YAMLMap())
-	node?.addIn(pathArray, new Pair(key, setNode))
-}
-
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 	node?.deleteIn(makePathArray(path))
@@ -192,7 +165,6 @@ export {
 	getNodeAtPath,
 	setNodeAtPath,
 	addNodeAtPath,
-	addNodePairAtPath,
 	removeNodeAtPath,
 	getCommonAncestorPath,
 	getPathFromPathArray,

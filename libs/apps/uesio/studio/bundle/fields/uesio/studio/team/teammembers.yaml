@@ -1,0 +1,7 @@
+name: teammembers
+type: REFERENCEGROUP
+label: Team Members
+referenceGroup:
+  collection: uesio/studio.teammember
+  field: uesio/studio.team
+  onDelete: CASCADE
