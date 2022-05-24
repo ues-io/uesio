@@ -2,5 +2,6 @@ name: name
 type: TEXT
 label: Name
 createOnly: true
+required: true
 validate:
   type: METADATA

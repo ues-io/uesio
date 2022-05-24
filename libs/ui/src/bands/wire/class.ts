@@ -20,6 +20,7 @@ import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
 import { addError } from "./"
+import { selectWire } from "./selectors"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -42,6 +43,8 @@ class Wire {
 		this.source?.data
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
+
+	getRawData = () => (this.source?.data ? this.source.data : [])
 
 	getErrors = () => this.source?.errors
 
@@ -101,16 +104,52 @@ class Wire {
 			})
 		)
 
-	validateChange = (recordId: string, value: FieldValue, path: string[]) => {
-		// const collection = this.getCollection()
-		// const fieldMetadata = collection.getField(path[0])
+	validate = () => {
+		const state = getStore().getState()
+		const data = selectWire(state, this.getViewId(), this.getId())?.data
+		if (!data) return
+		// Prepare data so we can more easily map over it and have everything we need
+		const iterableFieldValues = Object.entries(data).flatMap(
+			([recordId, valuePairs]) => [
+				...Object.entries(valuePairs).map(([fieldId, fieldValue]) => ({
+					fieldId,
+					fieldValue,
+					recordId,
+				})),
+			]
+		)
+
+		// Loop over values to validate them
+		for (const { recordId, fieldId, fieldValue } of iterableFieldValues) {
+			this.validateRecordValue(recordId, fieldValue, fieldId)
+		}
+	}
+
+	validateRecordValue = (
+		recordId: string,
+		value: FieldValue,
+		fieldId: string
+	) => {
+		const collection = this.getCollection()
+		const fieldMetadata = collection.getField(fieldId)
 
 		// validators
 		if (value === "uesio sucks")
-			this.invalidateFieldOnRecord(recordId, path[0], "uesio is awesome")
+			this.invalidateFieldOnRecord(recordId, fieldId, "uesio is awesome")
+		// Required
+		if (!value && fieldMetadata?.source.required)
+			this.invalidateFieldOnRecord(
+				recordId,
+				fieldId,
+				"this field is required"
+			)
 	}
 
-	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
+	updateRecord = async (
+		recordId: string,
+		record: FieldValue,
+		path: string[]
+	) => {
 		getStore().dispatch(
 			updateRecord({
 				entity: this.getFullId(),
@@ -120,7 +159,9 @@ class Wire {
 			})
 		)
 		this.doChanges(recordId, path)
-		this.validateChange(recordId, record, path)
+		this.validateRecordValue(recordId, record, path[0])
+
+		// this.validateData()
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {

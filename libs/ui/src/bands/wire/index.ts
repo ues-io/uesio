@@ -88,6 +88,15 @@ const wireSlice = createSlice({
 					errors[recordFieldKey] = []
 				}
 
+				// We don't want to display errors double
+				if (
+					currentFieldErrors &&
+					currentFieldErrors.find(
+						({ message: msg }) => msg === message
+					)
+				)
+					return
+
 				errors[recordFieldKey].push(newErrorItem)
 			}
 		),

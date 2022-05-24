@@ -27,6 +27,7 @@ import {
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
+import wire from "."
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -315,15 +316,12 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: SaveWiresSignal, context: Context): ThunkFunc =>
 			async (dispatch) => {
 				// Test frontend wire validation
-				const allgood = signal.wires?.every((wireId) => {
-					const wire = getWire(context.getViewId(), wireId)
-					const isValid = !wire?.errors
-					return isValid
-				})
-				if (!allgood) {
-					console.log("stopping save")
-					return context
-				}
+				const wireIsValid = signal.wires?.every(
+					(wireId) => !getWire(context.getViewId(), wireId)?.errors
+				)
+
+				if (!wireIsValid) throw new Error("Invalid fields")
+
 				// Test frontend wire validation
 				const batch = await dispatch(
 					saveWiresOp({ context, wires: signal.wires })
