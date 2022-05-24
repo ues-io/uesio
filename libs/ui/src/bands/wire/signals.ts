@@ -27,7 +27,6 @@ import {
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
-import wire from "."
 
 // The key for the entire band
 const WIRE_BAND = "wire"
