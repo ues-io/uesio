@@ -44,8 +44,6 @@ class Wire {
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
 
-	getRawData = () => (this.source?.data ? this.source.data : [])
-
 	getErrors = () => this.source?.errors
 
 	getViewId = () => this.source?.view
@@ -88,8 +86,6 @@ class Wire {
 		}
 	}
 
-	wireIsValid = () => !this.getErrors()?.length
-
 	invalidateFieldOnRecord = (
 		recordId: string,
 		fieldId: string,
@@ -103,28 +99,6 @@ class Wire {
 				message,
 			})
 		)
-
-	validate = () => {
-		const state = getStore().getState()
-		// TODO only validate records present in changes
-		const data = selectWire(state, this.getViewId(), this.getId())?.data
-		if (!data) return
-		// Prepare data so we can more easily map over it and have everything we need
-		const iterableFieldValues = Object.entries(data).flatMap(
-			([recordId, valuePairs]) => [
-				...Object.entries(valuePairs).map(([fieldId, fieldValue]) => ({
-					fieldId,
-					fieldValue,
-					recordId,
-				})),
-			]
-		)
-
-		// Loop over values to validate them
-		for (const { recordId, fieldId, fieldValue } of iterableFieldValues) {
-			this.validateRecordValue(recordId, fieldValue, fieldId)
-		}
-	}
 
 	validateRecordValue = (
 		recordId: string,
@@ -174,7 +148,6 @@ class Wire {
 		)
 		this.doChanges(recordId, path)
 		this.validateRecordValue(recordId, record, path[0])
-		this.validate()
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
