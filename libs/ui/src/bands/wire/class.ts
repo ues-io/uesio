@@ -19,7 +19,7 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
-import { addError } from "./"
+import { addError, removeError } from "./"
 import { selectWire } from "./selectors"
 
 class Wire {
@@ -106,6 +106,7 @@ class Wire {
 
 	validate = () => {
 		const state = getStore().getState()
+		// TODO only validate records present in changes
 		const data = selectWire(state, this.getViewId(), this.getId())?.data
 		if (!data) return
 		// Prepare data so we can more easily map over it and have everything we need
@@ -135,14 +136,27 @@ class Wire {
 
 		// validators
 		if (value === "uesio sucks")
-			this.invalidateFieldOnRecord(recordId, fieldId, "uesio is awesome")
+			return this.invalidateFieldOnRecord(
+				recordId,
+				fieldId,
+				"uesio is awesome"
+			)
 		// Required
 		if (!value && fieldMetadata?.source.required)
-			this.invalidateFieldOnRecord(
+			return this.invalidateFieldOnRecord(
 				recordId,
 				fieldId,
 				"this field is required"
 			)
+
+		// remove error from field
+		return getStore().dispatch(
+			removeError({
+				entity: this.getFullId(),
+				recordId,
+				fieldId,
+			})
+		)
 	}
 
 	updateRecord = async (
@@ -160,8 +174,7 @@ class Wire {
 		)
 		this.doChanges(recordId, path)
 		this.validateRecordValue(recordId, record, path[0])
-
-		// this.validateData()
+		this.validate()
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
