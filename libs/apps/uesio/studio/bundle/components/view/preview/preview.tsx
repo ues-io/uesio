@@ -1,15 +1,13 @@
-import { FunctionComponent, useState, useEffect } from "react"
+import { FunctionComponent, useEffect } from "react"
 import {
 	hooks,
 	definition,
 	util,
 	component,
-	collection,
 	param,
 	wire,
+	collection,
 } from "@uesio/ui"
-import { Scalar, YAMLMap } from "yaml"
-import PreviewItem from "./previewitem"
 
 type PreviewDefinition = {
 	fieldId: string
@@ -19,161 +17,113 @@ interface Props extends definition.BaseProps {
 	definition: PreviewDefinition
 }
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
-const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
-const Button = component.registry.getUtility("uesio/io.button")
-const Group = component.registry.getUtility("uesio/io.group")
+const WIRE_NAME = "paramData"
+
+const Form = component.registry.getUtility("uesio/io.form")
+
+const getParamDefs = (
+	fieldId: string,
+	record: wire.WireRecord | undefined
+): Record<string, param.ParamDefinition> => {
+	if (!record || !fieldId) return {}
+	const viewDef = record.getFieldValue<string>(fieldId)
+	const yamlDoc = util.yaml.parse(viewDef)
+	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
+	return params?.toJSON() || {}
+}
+
+const getFieldsFromParams = (params: Record<string, param.ParamDefinition>) =>
+	Object.fromEntries(
+		Object.entries(params).map(([key, value]) => {
+			const field =
+				value.type === "RECORD"
+					? {
+							label: key,
+							required: !!value.required,
+							type: "REFERENCE" as const,
+							reference: {
+								collection: value.collection,
+							},
+					  }
+					: {
+							label: key,
+							required: !!value.required,
+							type: "TEXT" as const,
+					  }
+
+			return [`uesio/viewonly.${key}`, field]
+		})
+	)
 
 const Preview: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const { fieldId } = definition
 	const uesio = hooks.useUesio(props)
+
 	const record = context.getRecord()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-	const viewName = view?.params?.viewname
 
-	const newContext =
-		!appName || !workspaceName
-			? props.context
-			: context.addFrame({
-					workspace: {
-						name: workspaceName,
-						app: appName,
-					},
-			  })
+	const params = getParamDefs(fieldId, record)
+	const hasParams = Object.keys(params).length
 
-	if (!record || !fieldId) return null
+	const workspaceContext = context.getWorkspace()
+	const appName = workspaceContext?.app
+	const workspaceName = workspaceContext?.name
+	const viewName = record?.getFieldValue<string>("uesio/studio.name")
 
-	const viewDef = record.getFieldValue<string>(fieldId)
-	const yamlDoc = util.yaml.parse(viewDef)
-	const params = util.yaml.getNodeAtPath(
-		["params"],
-		yamlDoc.contents
-	) as YAMLMap<Scalar<string>, YAMLMap>
-
-	const paramObj = params.toJSON() as Record<string, param.ParamDefinition>
-
-	const numberOfParams = paramObj ? Object.keys(paramObj).length : 0
-
-	const getInitialMatch = (): Record<string, wire.FieldValue> => {
-		let mappings: Record<string, string> = {}
-
-		Object.entries(paramObj).forEach(([key, paramDefinition]) => {
-			if (
-				paramDefinition.type === "TEXT" &&
-				paramDefinition.defaultValue
-			) {
-				mappings = {
-					...mappings,
-					[key]: paramDefinition.defaultValue,
-				}
-			}
-		})
-
-		return mappings
-	}
-
-	const [lstate, setLstate] = useState<Record<string, wire.FieldValue>>(
-		getInitialMatch()
-	)
+	if (!workspaceContext) throw new Error("No Workspace Context Provided")
 
 	useEffect(() => {
-		if (!numberOfParams) {
+		if (!hasParams) {
 			uesio.signal.run(
 				{
 					signal: "route/REDIRECT",
-					path: `/workspace/${newContext.getWorkspace()?.app}/${
-						newContext.getWorkspace()?.name
+					path: `/workspace/${context.getWorkspace()?.app}/${
+						context.getWorkspace()?.name
 					}/views/${appName}/${viewName}/preview`,
 				},
-				newContext
+				context
 			)
 		}
-	}, [params])
+	}, [])
 
-	return numberOfParams ? (
-		<>
-			{Object.entries(paramObj).map(([key, paramDefinition], index) =>
-				paramDefinition.type === "TEXT" ? (
-					<FieldWrapper
-						context={newContext}
-						label={key}
-						key={key + index}
-					>
-						<TextField
-							variant="uesio/io.default"
-							value={lstate[key]}
-							setValue={(value: string) =>
-								setLstate({
-									...lstate,
-									[key]: value,
-								})
-							}
-							context={newContext}
-						/>
-					</FieldWrapper>
-				) : (
-					<PreviewItem
-						key={key + index}
-						fieldKey={key}
-						item={paramDefinition}
-						context={newContext}
-						lstate={lstate}
-						setLstate={setLstate}
-					/>
-				)
-			)}
+	uesio.wire.useDynamicWire(WIRE_NAME, {
+		viewOnly: true,
+		fields: getFieldsFromParams(params),
+		init: {
+			create: true,
+		},
+	})
 
-			<Group
-				styles={{
-					root: {
-						justifyContent: "end",
-						padding: "20px",
-					},
-				}}
-				context={newContext}
-			>
-				<Button
-					context={newContext}
-					variant="uesio/io.primary"
-					label="Preview"
-					onClick={() => {
-						const getParams = new URLSearchParams()
-
-						Object.entries(paramObj).forEach(([key, value]) => {
-							const lstateValue = lstate[key]
-							if (value.type === "RECORD") {
-								getParams.append(
-									key,
-									(lstateValue as wire.PlainWireRecord)[
-										collection.ID_FIELD
-									] as string
-								)
-							}
-							if (value.type === "TEXT") {
-								getParams.append(key, lstateValue as string)
-							}
-						})
-
-						uesio.signal.run(
-							{
-								signal: "route/REDIRECT",
-								path: `/workspace/${
-									newContext.getWorkspace()?.app
-								}/${
-									newContext.getWorkspace()?.name
-								}/views/${appName}/${viewName}/preview?${getParams}`,
-							},
-							newContext
+	return (
+		<Form
+			wire={WIRE_NAME}
+			context={context}
+			submitLabel="Preview"
+			onSubmit={(record: wire.WireRecord) => {
+				const getParams = new URLSearchParams()
+				Object.entries(params).forEach(([key, paramDef]) => {
+					const fieldKey = `uesio/viewonly.${key}`
+					let value
+					if (paramDef.type === "RECORD") {
+						value = record.getFieldValue<string>(
+							`${fieldKey}->${collection.ID_FIELD}`
 						)
-					}}
-				/>
-			</Group>
-		</>
-	) : (
-		<h3 style={{ textAlign: "center" }}>Building view</h3>
+					}
+					if (paramDef.type === "TEXT") {
+						value = record.getFieldValue<string>(fieldKey)
+					}
+					if (value) getParams.append(key, value)
+				})
+
+				uesio.signal.run(
+					{
+						signal: "route/REDIRECT",
+						path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview?${getParams}`,
+					},
+					context
+				)
+			}}
+		/>
 	)
 }
 

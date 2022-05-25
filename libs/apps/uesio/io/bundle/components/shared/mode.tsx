@@ -29,8 +29,8 @@ const setEditMode: signal.ComponentSignalDescriptor = {
 }
 
 const useMode = (
-	id: string,
-	initialMode: context.FieldMode,
+	id: string | undefined,
+	initialMode: context.FieldMode | undefined,
 	props: definition.BaseProps
 ) => {
 	const uesio = hooks.useUesio(props)

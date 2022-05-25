@@ -82,6 +82,8 @@ class Wire {
 		}
 	}
 
+	getFields = () => this.getWireDef().fields
+
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		getStore().dispatch(
 			updateRecord({

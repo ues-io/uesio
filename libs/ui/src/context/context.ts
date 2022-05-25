@@ -216,12 +216,6 @@ const getViewDef = (viewDefId: string | undefined) =>
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getStore().getState(), viewId, wireId)
 
-const getWireDefFromWireName = (viewId: string, wirename: string) => {
-	const viewDefId = viewId.split("(")[0]
-	const viewDef = getViewDef(viewDefId)
-	return viewDef?.wires?.[wirename]
-}
-
 class Context {
 	constructor(stack?: ContextFrame[]) {
 		this.stack = stack || []
@@ -406,6 +400,5 @@ export {
 	RouteState,
 	WorkspaceState,
 	SiteState,
-	getWireDefFromWireName,
 	getWire,
 }
