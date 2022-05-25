@@ -18,6 +18,7 @@ import * as platform from "./platform/platform"
 import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
 import * as panel from "./panelexports"
+import * as param from "./paramexports"
 import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
@@ -36,6 +37,7 @@ export {
 	metadata,
 	notification,
 	panel,
+	param,
 	platform,
 	signal,
 	state,

@@ -5,15 +5,15 @@ import {
 	component,
 	collection as col,
 	wire,
+	param,
 	styles,
 } from "@uesio/ui"
-import { ParamDefinition } from "./preview"
 
 interface Props extends definition.BaseProps {
 	fieldKey: string
-	item: ParamDefinition
-	lstate: Record<string, string>
-	setLstate: Dispatch<SetStateAction<Record<string, string>>>
+	item: param.ParamDefinition
+	lstate: Record<string, wire.FieldValue>
+	setLstate: Dispatch<SetStateAction<Record<string, wire.FieldValue>>>
 }
 
 const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
@@ -21,7 +21,7 @@ const AutoComplete = component.registry.getUtility("uesio/io.autocomplete")
 
 const PreviewItem: FunctionComponent<Props> = (props) => {
 	const { context, fieldKey, item, lstate, setLstate } = props
-	const { collectionId } = item
+	const collectionId = item.collection
 	const uesio = hooks.useUesio(props)
 
 	const collection = uesio.collection.useCollection(context, collectionId)
@@ -36,20 +36,13 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			div: {
-				boxShadow: "0 2px 5px #888",
-				background: "#FFF",
-				cursor: "pointer",
-			},
 			title: { fontWeight: "bold" },
-			subtitle: {
-				fontFamily: "monospace",
-				whiteSpace: "pre",
-			},
+			subtitle: {},
 		},
 		props
 	)
 
+	console.log("meh", lstate)
 	return (
 		<FieldWrapper context={context} label={fieldKey} key={fieldKey}>
 			<AutoComplete
@@ -57,22 +50,19 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 				variant="uesio/io.default"
 				value={lstate[fieldKey]}
 				setValue={(value: wire.PlainWireRecord) => {
-					const idValue = value && (value[col.ID_FIELD] as string)
-					if (idValue && idValue !== "") {
-						setLstate({
-							...lstate,
-							[fieldKey]: idValue,
-						})
-					}
+					setLstate({
+						...lstate,
+						[fieldKey]: value,
+					})
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord) => (
-					<div className={classes.div} style={{}}>
+					<>
 						<div className={classes.title}>{item[fieldName]}</div>
 						<span className={classes.subtitle}>
 							{item[col.ID_FIELD]}
 						</span>
-					</div>
+					</>
 				)}
 				getItems={async (
 					searchText: string,

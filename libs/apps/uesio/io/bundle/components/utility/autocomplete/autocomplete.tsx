@@ -57,8 +57,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 	const [loading, setLoading] = useState(false)
 	const [inputItems, setInputItems] = useState<unknown[]>([])
 	const lastInputChange = useRef<number>(0)
-
-	const debouncedRequest = debounce(getItems, 250)
+	const debouncedRequest = useRef(debounce(getItems, 250)).current
 
 	const {
 		isOpen,

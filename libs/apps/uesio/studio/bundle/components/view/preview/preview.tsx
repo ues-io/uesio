@@ -1,14 +1,15 @@
 import { FunctionComponent, useState, useEffect } from "react"
-import { hooks, definition, util, component } from "@uesio/ui"
+import {
+	hooks,
+	definition,
+	util,
+	component,
+	collection,
+	param,
+	wire,
+} from "@uesio/ui"
 import { Scalar, YAMLMap } from "yaml"
 import PreviewItem from "./previewitem"
-
-export type ParamDefinition = {
-	type: string
-	collectionId: string
-	required: boolean
-	defaultValue: string
-}
 
 type PreviewDefinition = {
 	fieldId: string
@@ -51,30 +52,22 @@ const Preview: FunctionComponent<Props> = (props) => {
 		["params"],
 		yamlDoc.contents
 	) as YAMLMap<Scalar<string>, YAMLMap>
-	const numberOfParams = params ? params.toJSON().length : 0
 
-	const paramsToAdd: Record<string, ParamDefinition> = {}
-	params?.items.forEach((item) => {
-		const key = item.key.value
-		paramsToAdd[key] = {
-			type: item.value?.get("type") as string,
-			collectionId: item.value?.get("collection") as string,
-			required: item.value?.get("required") as boolean,
-			defaultValue: item.value?.get("defaultValue") as string,
-		}
-	})
+	const paramObj = params.toJSON() as Record<string, param.ParamDefinition>
 
-	const getInitialMatch = (): Record<string, string> => {
+	const numberOfParams = paramObj ? Object.keys(paramObj).length : 0
+
+	const getInitialMatch = (): Record<string, wire.FieldValue> => {
 		let mappings: Record<string, string> = {}
 
-		Object.entries(paramsToAdd).forEach(([key, ParamDefinition]) => {
+		Object.entries(paramObj).forEach(([key, paramDefinition]) => {
 			if (
-				ParamDefinition.type === "text" &&
-				ParamDefinition.defaultValue
+				paramDefinition.type === "TEXT" &&
+				paramDefinition.defaultValue
 			) {
 				mappings = {
 					...mappings,
-					[key]: ParamDefinition.defaultValue,
+					[key]: paramDefinition.defaultValue,
 				}
 			}
 		})
@@ -82,12 +75,12 @@ const Preview: FunctionComponent<Props> = (props) => {
 		return mappings
 	}
 
-	const [lstate, setLstate] = useState<Record<string, string>>(
+	const [lstate, setLstate] = useState<Record<string, wire.FieldValue>>(
 		getInitialMatch()
 	)
 
 	useEffect(() => {
-		if (!numberOfParams)
+		if (!numberOfParams) {
 			uesio.signal.run(
 				{
 					signal: "route/REDIRECT",
@@ -97,12 +90,13 @@ const Preview: FunctionComponent<Props> = (props) => {
 				},
 				newContext
 			)
+		}
 	}, [params])
 
 	return numberOfParams ? (
 		<>
-			{Object.entries(paramsToAdd).map(([key, ParamDefinition], index) =>
-				ParamDefinition.type === "text" ? (
+			{Object.entries(paramObj).map(([key, paramDefinition], index) =>
+				paramDefinition.type === "TEXT" ? (
 					<FieldWrapper
 						context={newContext}
 						label={key}
@@ -124,7 +118,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 					<PreviewItem
 						key={key + index}
 						fieldKey={key}
-						item={ParamDefinition}
+						item={paramDefinition}
 						context={newContext}
 						lstate={lstate}
 						setLstate={setLstate}
@@ -146,19 +140,22 @@ const Preview: FunctionComponent<Props> = (props) => {
 					variant="uesio/io.primary"
 					label="Preview"
 					onClick={() => {
-						let getParams = "?"
-						const size = Object.keys(lstate).length - 1
-						Object.entries(lstate).forEach(
-							([key, value], index) => {
-								if (value !== "") {
-									size > index
-										? (getParams =
-												getParams + `${key}=${value}&`)
-										: (getParams =
-												getParams + `${key}=${value}`)
-								}
+						const getParams = new URLSearchParams()
+
+						Object.entries(paramObj).forEach(([key, value]) => {
+							const lstateValue = lstate[key]
+							if (value.type === "RECORD") {
+								getParams.append(
+									key,
+									(lstateValue as wire.PlainWireRecord)[
+										collection.ID_FIELD
+									] as string
+								)
 							}
-						)
+							if (value.type === "TEXT") {
+								getParams.append(key, lstateValue as string)
+							}
+						})
 
 						uesio.signal.run(
 							{
@@ -167,7 +164,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 									newContext.getWorkspace()?.app
 								}/${
 									newContext.getWorkspace()?.name
-								}/views/${appName}/${viewName}/preview${getParams}`,
+								}/views/${appName}/${viewName}/preview?${getParams}`,
 							},
 							newContext
 						)
