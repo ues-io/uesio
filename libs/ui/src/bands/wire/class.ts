@@ -20,7 +20,6 @@ import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
 import { addError, removeError } from "./"
-import { selectWire } from "./selectors"
 
 class Wire {
 	constructor(source?: PlainWire) {
