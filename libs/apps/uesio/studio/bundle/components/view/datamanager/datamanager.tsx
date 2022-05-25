@@ -2,9 +2,10 @@ import { FunctionComponent, useEffect } from "react"
 import { definition, wire, hooks, component, context } from "@uesio/ui"
 
 type DataManagerDefinition = {
-	collectionId: string
-	namespace: string
+	collectionId: string // uesio/crm.account
+	app: string // uesio/crm
 	usage: "site" | "workspace"
+	siteName?: string // uesio/studio
 }
 
 interface Props extends definition.BaseProps {
@@ -13,27 +14,20 @@ interface Props extends definition.BaseProps {
 
 const init = (
 	usage: string,
-	collectionMrg: string,
-	namespaceMrg: string,
+	siteName: string,
+	appName: string,
 	context: context.Context
-): [string, string, context.Context] => {
+): context.Context => {
 	if (usage === "site") {
-		const view = context.getView()
-		const appName = view?.params?.app
-		const siteName = view?.params?.sitename
-		const [namespace] = component.path.parseKey(collectionMrg)
-		return [
-			namespace,
-			collectionMrg,
-			context.addFrame({
-				siteadmin: {
-					name: siteName || "",
-					app: appName || "",
-				},
-			}),
-		]
+		return context.addFrame({
+			siteadmin: {
+				name: siteName || "",
+				app: appName || "",
+			},
+		})
 	}
-	return [namespaceMrg, `${namespaceMrg}.${collectionMrg}`, context]
+
+	return context
 }
 
 const WIRE_NAME = "collectionData"
@@ -41,21 +35,16 @@ const WIRE_NAME = "collectionData"
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const collectionMrg = context.merge(definition.collectionId)
-	const namespaceMrg = context.merge(definition.namespace)
+	const collection = context.merge(definition.collectionId)
+	const siteName = context.merge(definition?.siteName)
+	const app = context.merge(definition.app)
 	const usage = definition.usage
 
-	const [namespace, collection, newContext] = init(
-		usage,
-		collectionMrg,
-		namespaceMrg,
-		context
-	)
-
+	const newContext = init(usage, siteName, app, context)
 	const fieldsMeta = uesio.builder.useMetadataList(
 		newContext,
 		"FIELD",
-		namespace,
+		app,
 		collection
 	)
 

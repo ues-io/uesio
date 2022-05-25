@@ -1,0 +1,4 @@
+name: bundlecollection
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/bundlecollections/{collectionowner}/{collectionapp}/{collectionname}
+view: uesio/studio.bundlecollection
+theme: uesio/studio.default

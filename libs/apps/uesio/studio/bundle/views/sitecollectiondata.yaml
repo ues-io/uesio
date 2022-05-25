@@ -71,6 +71,7 @@ definition:
                         padding: 40px
                     components:
                       - uesio/studio.datamanager:
-                          collectionId: $Param{collectionname}
-                          namespace: $Param{app}
+                          collectionId: $Param{collectionowner}/$Param{collectionapp}.$Param{collectionname}
+                          app: $Param{collectionowner}/$Param{collectionapp}
                           usage: site
+                          siteName: $Param{sitename}

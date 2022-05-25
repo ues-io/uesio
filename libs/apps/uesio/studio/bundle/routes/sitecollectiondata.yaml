@@ -1,4 +1,4 @@
 name: sitecollectiondata
-path: app/{app:\w*\/\w*}/site/{sitename}/data/{collectionname:\w+\/\w+\.\w+}
+path: app/{app:\w*\/\w*}/site/{sitename}/data/{collectionowner}/{collectionapp}/{collectionname}
 view: uesio/studio.sitecollectiondata
 theme: uesio/studio.default

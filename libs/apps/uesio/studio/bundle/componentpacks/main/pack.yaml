@@ -43,6 +43,11 @@ components:
         - uesio/io.table:uesio/io.default
       utilities:
         - uesio/io.table
+    collectionfields:
+      variants:
+        - uesio/io.table:uesio/io.default
+      utilities:
+        - uesio/io.table
     collectionlist:
       variants:
         - uesio/io.tile:uesio/io.item
