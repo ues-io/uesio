@@ -221,7 +221,7 @@ definition:
                             - text: Edit
                               signals:
                                 - signal: "route/NAVIGATE"
-                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${uesio/studio.name}"
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionowner}/$Param{collectionapp}/$Param{collectionname}/fields/${uesio/studio.name}"
                           columns:
                             - uesio/io.column:
                                 field: uesio/studio.name
@@ -229,8 +229,6 @@ definition:
                                 field: uesio/studio.type
                             - uesio/io.column:
                                 field: uesio/studio.label
-                            - uesio/io.column:
-                                field: uesio/studio.languagelabel
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog

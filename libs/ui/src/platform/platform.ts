@@ -12,6 +12,7 @@ import {
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
+import { context } from ".."
 
 type BotParams = {
 	[key: string]: string
@@ -57,6 +58,11 @@ type CollectionNavigateRequest = {
 	viewtype?: string
 	recordid?: string
 }
+
+//TO-DO DELETE this
+type FIELD_METADATA = {}
+type BOT_METADATA = {}
+type METADATA_RESP = FIELD_METADATA | BOT_METADATA
 
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
 
@@ -281,6 +287,13 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	TEST: async <T extends METADATA_RESP>( //TO-DO DELETE this
+		context: Context
+	): Promise<T | undefined> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(`${prefix}/configvalues`)
+		return respondJSON(response)
+	},
 	getConfigValues: async (
 		context: Context
 	): Promise<ConfigValueResponse[]> => {
@@ -410,6 +423,10 @@ const platform = {
 		return respondJSON(response)
 	},
 }
+
+//TO-DO DELETE this
+const test = platform.TEST<BOT_METADATA>(new Context())
+console.log(test)
 
 type Platform = typeof platform
 
