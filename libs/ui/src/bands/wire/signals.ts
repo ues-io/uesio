@@ -289,17 +289,8 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/LOAD_ALL`]: {
 		label: "Load All",
-		dispatcher:
-			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
-			async (dispatch) => {
-				await dispatch(
-					loadAllOp({
-						context,
-						wires: signal.wires,
-					})
-				)
-				return context
-			},
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadAllOp(context, signal.wires),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

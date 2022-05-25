@@ -41,7 +41,7 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Parameter"
 				onClick={() =>
-					uesio.builder.addDefinition(
+					uesio.builder.setDefinition(
 						path +
 							`[${
 								"newparam" +

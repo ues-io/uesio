@@ -1,36 +1,30 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
-import { UesioThunkAPI } from "../../utils"
 import loadNextBatchOp from "./loadnextbatch"
 import { selectWire } from "../selectors"
+import { ThunkFunc } from "../../../store/store"
 
-const loadAllOp = createAsyncThunk<
-	void,
-	{
-		context: Context
-		wires?: string[]
-	},
-	UesioThunkAPI
->("wire/loadAll", async ({ context, wires }, api) => {
-	// Turn the list of wires into a load request
-	const viewId = context.getViewId()
-	if (!viewId) throw new Error("No ViewId in Context")
+const loadAllOp =
+	(context: Context, wires?: string[]): ThunkFunc =>
+	async (dispatch, getState) => {
+		// Turn the list of wires into a load request
+		const viewId = context.getViewId()
+		if (!viewId) throw new Error("No ViewId in Context")
 
-	// Get the wires that still need to be loaded
-	const loadWires = wires?.filter(
-		(wireName) => selectWire(api.getState(), viewId, wireName)?.more
-	)
+		// Get the wires that still need to be loaded
+		const loadWires = wires?.filter(
+			(wireName) => selectWire(getState(), viewId, wireName)?.more
+		)
 
-	if (!loadWires || loadWires.length === 0) return
+		if (!loadWires || loadWires.length === 0) return context
 
-	await api.dispatch(
-		loadNextBatchOp({
-			context,
-			wires: loadWires,
-		})
-	)
+		await dispatch(
+			loadNextBatchOp({
+				context,
+				wires: loadWires,
+			})
+		)
 
-	await api.dispatch(loadAllOp({ context, wires: loadWires }))
-})
+		return dispatch(loadAllOp(context, loadWires))
+	}
 
 export default loadAllOp

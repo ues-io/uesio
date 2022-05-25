@@ -41,7 +41,7 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Panel"
 				onClick={() =>
-					uesio.builder.addDefinition(
+					uesio.builder.setDefinition(
 						path +
 							`[${
 								"newpanel" +
