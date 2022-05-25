@@ -70,6 +70,7 @@ const initializeViewOnlyWire = (
 			namespace,
 			type: fieldDef.type,
 			label: fieldDef.label,
+			reference: fieldDef.reference,
 		}
 	})
 	const viewOnlyMetadata: PlainCollection = {

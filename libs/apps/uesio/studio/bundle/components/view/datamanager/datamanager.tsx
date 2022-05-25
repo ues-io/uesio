@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect } from "react"
-import { definition, wire, hooks, component, context } from "@uesio/ui"
+import { FunctionComponent } from "react"
+import { definition, hooks, component, context } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
@@ -38,6 +38,14 @@ const init = (
 
 const WIRE_NAME = "collectionData"
 
+const getWireDefinition = (collection: string, fields: string[] | null) => {
+	if (!fields || !collection) return null
+	return {
+		collection,
+		fields: Object.fromEntries(fields.map((field) => [field, null])),
+	}
+}
+
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
@@ -59,22 +67,14 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		collection
 	)
 
-	// Get Field info
-	useEffect(() => {
-		// Create on-the-fly wire
-		if (!fieldsMeta) return
-		const fields: wire.WireFieldDefinitionMap = {}
-		Object.keys(fieldsMeta).forEach((record) => {
-			fields[`${record}`] = null
-		})
+	const wireDef = getWireDefinition(
+		collection,
+		fieldsMeta && Object.keys(fieldsMeta)
+	)
 
-		uesio.wire.initWires(newContext, {
-			[WIRE_NAME]: { collection, fields },
-		})
-		uesio.wire.loadWires(newContext, [WIRE_NAME])
-	}, [fieldsMeta])
+	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef, true)
 
-	if (!fieldsMeta) return null
+	if (!dataWire || !fieldsMeta) return null
 
 	return (
 		<component.Component

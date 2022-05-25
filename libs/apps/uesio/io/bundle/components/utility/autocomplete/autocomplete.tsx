@@ -116,14 +116,19 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 			<div className={classes.root} {...getComboboxProps()}>
 				<input className={classes.input} {...getInputProps()} />
 			</div>
-			{isOpen && (
+
+			<div
+				ref={setPopperEl}
+				style={popper.styles.popper}
+				{...popper.attributes.popper}
+			>
 				<div
-					ref={setPopperEl}
-					style={popper.styles.popper}
-					{...popper.attributes.popper}
+					className={classes.menu}
+					style={{ ...(!isOpen && { visibility: "hidden" }) }}
+					{...getMenuProps()}
 				>
-					<div className={classes.menu} {...getMenuProps()}>
-						{loading
+					{isOpen &&
+						(loading
 							? loadingRenderer()
 							: inputItems.map((item, index) => (
 									<div
@@ -137,10 +142,9 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 											highlightedIndex
 										)}
 									</div>
-							  ))}
-					</div>
+							  )))}
 				</div>
-			)}
+			</div>
 		</div>
 	)
 }

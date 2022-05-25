@@ -1,6 +1,6 @@
 import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
-import { FieldType } from "../bands/field/types"
+import { FieldType, ReferenceMetadata } from "../bands/field/types"
 import { SignalDefinition } from "./signal"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
@@ -10,6 +10,12 @@ type ViewOnlyField = {
 	label: string
 	required: boolean
 	type: FieldType // get better type
+	reference?: ReferenceMetadata
+}
+
+type RegularField = {
+	id: string
+	fields: WireFieldDefinitionMap
 }
 
 type OnChangeEvent = {
@@ -51,13 +57,7 @@ type WireFieldDefinitionMap = {
 	[key: string]: WireFieldDefinition
 }
 
-type WireFieldDefinition =
-	| {
-			id: string
-			fields: WireFieldDefinitionMap
-	  }
-	| undefined
-	| null
+type WireFieldDefinition = RegularField | undefined | null
 
 type WireOrderDescription = {
 	field: string

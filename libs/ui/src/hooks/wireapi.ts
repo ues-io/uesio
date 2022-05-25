@@ -6,6 +6,7 @@ import loadWiresOp from "../bands/wire/operations/load"
 import initializeWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { WireDefinition } from "../definition/wire"
+import { useEffect } from "react"
 
 // This is the wire api exposed on the uesio object returned
 // to components using the useUesio hook.
@@ -28,6 +29,23 @@ class WireAPI {
 		const plainCollection = useCollection(collectionName)
 		if (!plainCollection) return undefined
 		return new Wire(plainWire).attachCollection(plainCollection)
+	}
+
+	useDynamicWire(
+		wireName: string,
+		wireDef: WireDefinition | null,
+		doLoad?: boolean
+	) {
+		const context = this.uesio.getContext()
+		const wire = this.useWire(wireName)
+		useEffect(() => {
+			if (wire || !wireDef) return
+			this.initWires(context, {
+				[wireName]: wireDef,
+			})
+			doLoad && this.loadWires(context, [wireName])
+		}, [wireName, JSON.stringify(wireDef)])
+		return wire
 	}
 
 	useWires(wireNames: string[]) {

@@ -125,4 +125,8 @@ definition:
       height: 500px
       components:
         - uesio/studio.preview:
+            uesio.context:
+              workspace:
+                name: $Param{workspacename}
+                app: $Param{app}
             fieldId: uesio/studio.definition
