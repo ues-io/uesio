@@ -98,7 +98,6 @@ definition:
                                   - uesio/studio.dataexport:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{app}
-                                      usage: workspace
                                       wireName: "bulkjobs"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary

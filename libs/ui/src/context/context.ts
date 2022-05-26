@@ -7,7 +7,6 @@ import { selectors as labelSelectors } from "../bands/label"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
 import { selectWire } from "../bands/wire/selectors"
-import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
@@ -57,6 +56,7 @@ type ContextFrame = {
 	theme?: string
 	mediaOffset?: number
 	errors?: string[]
+	params?: Record<string, string>
 }
 
 type MergeHandler = (
@@ -109,8 +109,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
 	},
-	Param: (expression, context) =>
-		context.getView()?.params?.[expression] || "",
+	Param: (expression, context) => context.getParam(expression) || "",
 	User: (expression, context) => {
 		const user = context.getUser()
 		if (!user) return ""
@@ -268,14 +267,11 @@ class Context {
 
 	getViewId = () => this.stack.find((frame) => frame?.view)?.view
 
-	getView = () => {
-		const viewId = this.getViewId()
-		return viewId
-			? selectors.selectById(getStore().getState(), viewId)
-			: undefined
-	}
-
 	getViewDef = () => getViewDef(this.getViewDefId())
+
+	getParams = () => this.stack.find((frame) => frame?.params)?.params
+
+	getParam = (param: string) => this.getParams()?.[param]
 
 	getParentComponentDef = (path: string) =>
 		get(this.getViewDef(), getAncestorPath(path, 3))

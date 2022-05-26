@@ -26,24 +26,11 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { fieldId, record, context } = props
 
-	const view = context.getView()
-	const appName = view?.params?.app
-	const workspaceName = view?.params?.workspacename
-	const newContext =
-		!appName || !workspaceName
-			? props.context
-			: context.addFrame({
-					workspace: {
-						name: workspaceName,
-						app: appName,
-					},
-			  })
-
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const fileUrl = uesio.file.getUserFileURL(newContext, userFileId)
+	const fileUrl = uesio.file.getUserFileURL(context, userFileId)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -57,8 +44,8 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	return (
 		<a href={fileUrl} className={classes.root}>
 			<Button
-				icon={<Icon icon="file_download" context={newContext} />}
-				context={newContext}
+				icon={<Icon icon="file_download" context={context} />}
+				context={context}
 				label={"Download"}
 				variant="uesio/io.secondary"
 			/>

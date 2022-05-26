@@ -12,7 +12,6 @@ import user from "../bands/user"
 import builder from "../bands/builder"
 import component from "../bands/component"
 import wire from "../bands/wire"
-import view from "../bands/view"
 import site from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
@@ -72,7 +71,6 @@ const create = (plat: Platform, initialState: InitialState) => {
 			route,
 			user,
 			builder,
-			view,
 			theme,
 			panel,
 			notification,

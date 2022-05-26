@@ -66,20 +66,17 @@ const Preview: FunctionComponent<Props> = (props) => {
 	const hasParams = Object.keys(params).length
 
 	const workspaceContext = context.getWorkspace()
-	const appName = workspaceContext?.app
-	const workspaceName = workspaceContext?.name
-	const viewName = record?.getFieldValue<string>("uesio/studio.name")
-
 	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+	const appName = workspaceContext.app
+	const workspaceName = workspaceContext.name
+	const viewName = record?.getFieldValue<string>("uesio/studio.name")
 
 	useEffect(() => {
 		if (!hasParams) {
 			uesio.signal.run(
 				{
 					signal: "route/REDIRECT",
-					path: `/workspace/${context.getWorkspace()?.app}/${
-						context.getWorkspace()?.name
-					}/views/${appName}/${viewName}/preview`,
+					path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview`,
 				},
 				context
 			)
@@ -126,5 +123,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 		/>
 	)
 }
+
+export { getParamDefs }
 
 export default Preview
