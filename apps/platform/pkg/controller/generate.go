@@ -28,7 +28,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	files, err := datasource.CallGeneratorBot(namespace, name, params, session)
+	files, err := datasource.CallGeneratorBot(namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

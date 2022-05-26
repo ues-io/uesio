@@ -7,15 +7,12 @@ import (
 	"github.com/dop251/goja"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Logger function
 func Logger(message string) {
 	fmt.Println(message)
 }
 
-// JSDialect struct
 type JSDialect struct {
 }
 
@@ -61,18 +58,18 @@ func runBot(botName string, contents string, api interface{}, errorFunc func(str
 	return nil
 }
 
-func (b *JSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI, session *sess.Session) error {
+func (b *JSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI) error {
 	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
-func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI, session *sess.Session) error {
+func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI) error {
 	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
-func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI, session *sess.Session) error {
+func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI) error {
 	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
-func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI, session *sess.Session) error {
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI) error {
 	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }

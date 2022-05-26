@@ -123,7 +123,8 @@ definition:
                                                   uesio.variant: uesio/io.secondary
                                                   text: Package New Version
                                                   signals:
-                                                    - signal: "metadata/BUNDLE"
+                                                    - signal: "bot/CALL"
+                                                      bot: "uesio/studio.createbundle"
                                                       uesio.context:
                                                         workspace:
                                                           name: $Param{workspacename}

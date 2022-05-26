@@ -31,7 +31,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	err = datasource.CallListenerBot(namespace, name, params, session)
+	err = datasource.CallListenerBot(namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &BotResponse{

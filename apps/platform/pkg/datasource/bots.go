@@ -11,24 +11,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// BotDialect interface
 type BotDialect interface {
-	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
-	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
-	CallBot(bot *meta.Bot, botAPI *CallBotAPI, session *sess.Session) error
-	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI, session *sess.Session) error
+	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI) error
+	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI) error
+	CallBot(bot *meta.Bot, botAPI *CallBotAPI) error
+	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI) error
 }
 
 type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
+type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
+
 var botDialectMap = map[string]BotDialect{}
 
-// RegisterBotDialect function
 func RegisterBotDialect(name string, dialect BotDialect) {
 	botDialectMap[name] = dialect
 }
 
-// GetBotDialect function
 func getBotDialect(botDialectName string) (BotDialect, error) {
 	dialectKey, ok := meta.GetBotDialects()[botDialectName]
 	if !ok {
@@ -121,7 +120,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
 	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
-		return dialect.BeforeSave(bot, botAPI, session)
+		return dialect.BeforeSave(bot, botAPI)
 	}, session)
 	if err != nil {
 		return err
@@ -161,7 +160,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
 	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
-		return dialect.AfterSave(bot, botAPI, session)
+		return dialect.AfterSave(bot, botAPI)
 	}, session)
 	if err != nil {
 		return err
@@ -170,7 +169,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	return nil
 }
 
-func CallGeneratorBot(namespace, name string, params map[string]interface{}, session *sess.Session) ([]bundlestore.ItemStream, error) {
+func CallGeneratorBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) ([]bundlestore.ItemStream, error) {
 	robot := meta.NewGeneratorBot(namespace, name)
 
 	err := bundle.Load(robot, session)
@@ -197,14 +196,27 @@ func CallGeneratorBot(namespace, name string, params map[string]interface{}, ses
 		return nil, err
 	}
 
-	err = dialect.CallGeneratorBot(robot, botAPI, session)
+	err = dialect.CallGeneratorBot(robot, botAPI)
 	if err != nil {
 		return nil, err
 	}
 	return botAPI.itemStreams, nil
 }
 
-func CallListenerBot(namespace, name string, params map[string]interface{}, session *sess.Session) error {
+func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+
+	var botFunction CallBotFunc
+
+	switch namespace + "." + name {
+	case "uesio/studio.createbundle":
+		botFunction = runCreateBundleListenerBot
+	}
+
+	if botFunction != nil {
+		// We can quit early here because we found the code for this bot
+		return botFunction(params, connection, session)
+	}
+
 	robot := meta.NewListenerBot(namespace, name)
 
 	err := bundle.Load(robot, session)
@@ -217,6 +229,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, sess
 		Params: &ParamsAPI{
 			params: params,
 		},
+		connection: connection,
 	}
 
 	err = hydrateBot(robot, session)
@@ -229,5 +242,5 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, sess
 		return err
 	}
 
-	return dialect.CallBot(robot, botAPI, session)
+	return dialect.CallBot(robot, botAPI)
 }
