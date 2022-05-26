@@ -68,6 +68,10 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.definition
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary

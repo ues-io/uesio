@@ -1,17 +1,17 @@
-import { FunctionComponent, RefObject, useRef } from "react"
+import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
-import { ViewParams } from "../bands/view/types"
 import { css } from "@emotion/css"
 import { ViewDefinition } from "../definition/viewdef"
 import { useViewDef } from "../bands/viewdef"
 import { useComponentPackKeys } from "../bands/componentpack"
+import loadViewOp from "../bands/view/operations/load"
 
 interface Props extends BaseProps {
 	definition: {
 		view: string
-		params?: ViewParams
+		params?: Record<string, string>
 	}
 }
 let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
@@ -46,15 +46,15 @@ const View: FunctionComponent<Props> = (props) => {
 		view: viewId,
 		viewDef: viewDefId,
 		buildMode: useBuildTime,
+		params: context.mergeMap(params),
 	})
 
-	const view = uesio.view.useView(
-		viewId,
-		context.mergeMap(params),
-		viewContext
-	)
+	// We need to get load the wires here.
+	useEffect(() => {
+		uesio.getDispatcher()(loadViewOp(viewContext))
+	}, [JSON.stringify(params)])
 
-	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
+	if (!viewDef || !scriptResult.loaded) return null
 
 	const content = viewDef.parsed as ViewDefinition
 

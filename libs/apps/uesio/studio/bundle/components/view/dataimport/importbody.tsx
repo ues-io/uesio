@@ -3,7 +3,6 @@ import { definition, styles, collection, hooks, component } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 
 interface Props extends definition.BaseProps {
-	usage: "site" | "workspace"
 	collection: collection.Collection
 	csvFields: string[]
 	file: File | null
@@ -15,7 +14,7 @@ const Button = component.registry.getUtility("uesio/io.button")
 const SelectField = component.registry.getUtility("uesio/io.selectfield")
 
 const ImportBody: FunctionComponent<Props> = (props) => {
-	const { context, usage, collection, csvFields, file } = props
+	const { context, collection, csvFields, file } = props
 	const uesio = hooks.useUesio(props)
 
 	if (!collection?.source.fields) return null
@@ -81,19 +80,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			return
 		}
 
-		if (usage === "site") {
-			uesio.signal.run(
-				{
-					signal: "route/REDIRECT",
-					path: `/app/${context.getSiteAdmin()?.app}/site/${
-						context.getSiteAdmin()?.name
-					}/data/${collection.getFullName()}`,
-				},
-				context
-			)
-			return
-		}
-
+		// TODO: Check the context to get the correct redirect
 		uesio.signal.run(
 			{
 				signal: "route/REDIRECT",

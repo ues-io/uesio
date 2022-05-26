@@ -67,18 +67,8 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 const CollectionList: FunctionComponent<Props> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
-	const view = context.getView()
-	const appName = view?.params?.app
-	const siteName = view?.params?.sitename
 
-	const newContext = props.context.addFrame({
-		siteadmin: {
-			name: siteName || "",
-			app: appName || "",
-		},
-	})
-
-	const namespaces = uesio.builder.useAvailableNamespaces(newContext)
+	const namespaces = uesio.builder.useAvailableNamespaces(context)
 	if (namespaces) {
 		return (
 			<>
@@ -88,7 +78,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 						definition={{
 							namespace,
 						}}
-						context={newContext}
+						context={context}
 					/>
 				))}
 			</>

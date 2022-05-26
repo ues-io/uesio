@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
-import { hooks, definition, util, component } from "@uesio/ui"
-import { Scalar, YAMLMap } from "yaml"
+import { hooks, definition, component } from "@uesio/ui"
+import { getParamDefs } from "../preview/preview"
 
 type PreviewDefinition = {
 	fieldId: string
@@ -17,29 +17,17 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 	const { fieldId } = definition
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-	const viewName = view?.params?.viewname
-	let newContext = props.context
-	if (appName) {
-		if (workspaceName) {
-			newContext = context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-	}
-	if (!record || !fieldId) return null
 
-	const viewDef = record.getFieldValue<string>(fieldId)
-	const yamlDoc = util.yaml.parse(viewDef)
-	const params = util.yaml.getNodeAtPath(
-		["params"],
-		yamlDoc.contents
-	) as YAMLMap<Scalar<string>, YAMLMap>
+	const params = getParamDefs(fieldId, record)
+	const hasParams = Object.keys(params).length
+
+	const workspaceContext = context.getWorkspace()
+	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+	const appName = workspaceContext.app
+	const workspaceName = workspaceContext.name
+	const viewName = record?.getFieldValue<string>("uesio/studio.name")
+
+	if (!record || !fieldId) return null
 
 	const [handler, portals] = uesio.signal.useHandler([
 		{
@@ -49,9 +37,9 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 	])
 	return (
 		<>
-			{params ? (
+			{hasParams ? (
 				<Button
-					context={newContext}
+					context={context}
 					variant="uesio/io.secondary"
 					label="Preview"
 					path={props.path}
@@ -61,20 +49,16 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 				/>
 			) : (
 				<Button
-					context={newContext}
+					context={context}
 					variant="uesio/io.secondary"
 					label="Preview"
 					onClick={() => {
 						uesio.signal.run(
 							{
 								signal: "route/REDIRECT",
-								path: `/workspace/${
-									newContext.getWorkspace()?.app
-								}/${
-									newContext.getWorkspace()?.name
-								}/views/${appName}/${viewName}/preview`,
+								path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview`,
 							},
-							newContext
+							context
 						)
 					}}
 				/>

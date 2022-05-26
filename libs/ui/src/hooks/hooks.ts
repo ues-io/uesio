@@ -65,7 +65,6 @@ class Uesio {
 	getComponentType = () => this._componentType
 	getContext = () => this._context
 	getDispatcher = () => this._dispatcher
-	getView = () => this.getContext().getView()
 	getTheme = () => this.getContext().getTheme()
 	getViewId = () => this.getContext().getViewId()
 	getViewDef = () => this.getContext().getViewDef()
