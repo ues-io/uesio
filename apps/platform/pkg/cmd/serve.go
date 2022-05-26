@@ -103,7 +103,6 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}/builder", controller.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getNSParam("namespace")+"/{name}", controller.ServeComponentPack(false), "GET")
 
-	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
 	workspaceAPI(wr, "/metadata/generate/"+getNSParam("namespace")+"/{name}", controller.Generate).Methods("POST")

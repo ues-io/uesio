@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/humandad/yaml"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -28,11 +29,12 @@ type GeneratorBotAPI struct {
 	Params      *ParamsAPI `bot:"params"`
 	itemStreams bundlestore.ItemStreams
 	bot         *meta.Bot
+	connection  adapt.Connection
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
 	// Go get that bot
-	streams, err := CallGeneratorBot(namespace, name, params, gba.session)
+	streams, err := CallGeneratorBot(namespace, name, params, gba.connection, gba.session)
 	if err != nil {
 		return err
 	}

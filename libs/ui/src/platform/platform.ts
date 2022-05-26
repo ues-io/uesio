@@ -404,11 +404,6 @@ const platform = {
 
 		return respondVoid(response)
 	},
-	bundle: async (context: Context): Promise<BotResponse> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/metadata/bundle`)
-		return respondJSON(response)
-	},
 }
 
 type Platform = typeof platform
