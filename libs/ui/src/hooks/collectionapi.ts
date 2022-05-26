@@ -4,7 +4,7 @@ import { Context } from "../context/context"
 import { Dispatcher, getPlatform } from "../store/store"
 import { AnyAction } from "redux"
 import { useEffect } from "react"
-import get from "../bands/collection/operations/get"
+import getMetadata from "../bands/collection/operations/get"
 import { Collection } from "../collectionexports"
 import { Spec } from "../definition/definition"
 
@@ -22,12 +22,7 @@ class CollectionAPI {
 
 		useEffect(() => {
 			if (!plainCollection) {
-				this.dispatcher(
-					get.collectionMetadata({
-						collectionName,
-						context,
-					})
-				)
+				this.dispatcher(getMetadata(collectionName, context))
 			}
 		}, [])
 
