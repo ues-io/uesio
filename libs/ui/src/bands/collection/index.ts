@@ -1,11 +1,8 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { PlainCollection, PlainCollectionMap } from "./types"
 import wireLoadOp from "../wire/operations/load"
-import get from "./operations/get"
-import { PlainWire } from "../wire/types"
 import collectionAdapter from "./adapter"
-import { LoadResponseBatch } from "../../load/loadresponse"
-import { init as initWire } from "../wire"
+import { init as initWire, WireLoadAction } from "../wire"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
@@ -28,44 +25,30 @@ const mergeCollection = (
 	collectionAdapter.upsertMany(state, collectionsToAdd)
 }
 
+type SetCollectionAction = PayloadAction<Record<string, PlainCollection>>
+
 const collectionSlice = createSlice({
 	name: "collection",
 	initialState: collectionAdapter.getInitialState(),
-	reducers: {},
+	reducers: {
+		set: (state, { payload }: SetCollectionAction) =>
+			mergeCollection(state, payload),
+	},
 	extraReducers: (builder) => {
 		builder.addCase(
-			get.collectionMetadata.fulfilled,
-			(
-				state,
-				{ payload: { collections } }: PayloadAction<LoadResponseBatch>
-			) => {
-				mergeCollection(state, collections)
-			}
-		)
-
-		builder.addCase(
 			wireLoadOp.fulfilled,
-			(
-				state,
-				{
-					payload: [, collections],
-				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => {
+			(state, { payload: [, collections] }: WireLoadAction) => {
 				mergeCollection(state, collections)
 			}
 		)
 		builder.addCase(
 			initWire,
-			(
-				state,
-				{
-					payload: [, collections],
-				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => {
+			(state, { payload: [, collections] }: WireLoadAction) => {
 				mergeCollection(state, collections)
 			}
 		)
 	},
 })
 
+export const { set } = collectionSlice.actions
 export default collectionSlice.reducer

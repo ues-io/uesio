@@ -60,7 +60,9 @@ type ResetWirePayload = {
 	changes: Record<string, PlainWireRecord>
 } & EntityPayload
 
-type InitPayload = [PlainWire[], Record<string, PlainCollection>]
+type WireLoadAction = PayloadAction<
+	[PlainWire[], Record<string, PlainCollection>]
+>
 
 const wireSlice = createSlice({
 	name: "wire",
@@ -139,10 +141,8 @@ const wireSlice = createSlice({
 			state.deletes = {}
 			state.errors = {}
 		}),
-		init: (
-			state: EntityState<PlainWire>,
-			action: PayloadAction<InitPayload>
-		) => wireAdapter.upsertMany(state, action.payload[0]),
+		init: (state: EntityState<PlainWire>, action: WireLoadAction) =>
+			wireAdapter.upsertMany(state, action.payload[0]),
 		empty: createEntityReducer<EntityPayload, PlainWire>((state) => {
 			state.data = {}
 			state.changes = {}
@@ -207,23 +207,13 @@ const wireSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(
 			loadOp.fulfilled,
-			(
-				state,
-				{
-					payload: [wires],
-				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => {
+			(state, { payload: [wires] }: WireLoadAction) => {
 				wireAdapter.upsertMany(state, wires)
 			}
 		)
 		builder.addCase(
 			loadNextBatch.fulfilled,
-			(
-				state,
-				{
-					payload: [wires],
-				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => {
+			(state, { payload: [wires] }: WireLoadAction) => {
 				wireAdapter.upsertMany(state, wires)
 			}
 		)
@@ -291,6 +281,8 @@ const wireSlice = createSlice({
 		})
 	},
 })
+
+export { WireLoadAction }
 
 export const {
 	markForDelete,
