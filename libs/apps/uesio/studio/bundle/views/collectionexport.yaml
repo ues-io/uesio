@@ -96,6 +96,10 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.dataexport:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{app}
                                       wireName: "bulkjobs"

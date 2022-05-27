@@ -65,3 +65,7 @@ definition:
                               display: grid
                           components:
                             - uesio/studio.collectionlist:
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}

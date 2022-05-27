@@ -96,6 +96,10 @@ definition:
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: config
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -109,6 +113,10 @@ definition:
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: secrets
+                                uesio.context:
+                                  siteadmin:
+                                    name: $Param{sitename}
+                                    app: $Param{app}
   panels:
     editSite:
       uesio.type: uesio/io.dialog
