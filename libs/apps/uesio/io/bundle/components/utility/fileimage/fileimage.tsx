@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, CSSProperties, useState } from "react"
+import { FunctionComponent, CSSProperties } from "react"
 import {
 	definition,
 	styles,
@@ -21,23 +21,19 @@ interface FileImageProps extends definition.UtilityProps {
 }
 
 const Icon = component.registry.getUtility("uesio/io.icon")
-const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
+const FileUploadArea = component.registry.getUtility("uesio/io.fileuploadarea")
 
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, fieldId, record, context, wire } = props
 
-	const fileInput = useRef<HTMLInputElement>(null)
-	const [cacheBuster, setCacheBuster] = useState<string>("")
-
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
 	)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	//const fileName = userFile?.["uesio/core.name"] as string
-	//const mimeType = userFile?.["uesio/core.mimetype"] as string
+	const userModDate = userFile?.["uesio/core.updatedat"] as string
 	const accept = fieldMetadata.getAccept()
-	const fileUrl = uesio.file.getUserFileURL(context, userFileId, cacheBuster)
+	const fileUrl = uesio.file.getUserFileURL(context, userFileId, userModDate)
 
 	const actionIconStyles: CSSProperties = {
 		cursor: "pointer",
@@ -85,56 +81,38 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 		props
 	)
 
-	const upload = async (files: FileList | null) => {
-		if (files && files.length > 0) {
-			const collection = wire.getCollection()
-			const collectionFullName = collection.getFullName()
-			const recordId = record.getIdFieldValue() as string
-			const file = files[0]
-			const fileId = await uesio.file.uploadFile(
-				uesio.getContext(),
-				file,
-				collectionFullName,
-				recordId,
-				fieldId
-			)
-			setCacheBuster(nanoid())
-			record.set(fieldId, fileId)
-		}
-	}
-
-	const deleteFile = async () => {
-		await uesio.file.deleteFile(uesio.getContext(), userFileId)
-		setCacheBuster(nanoid())
-		record.set(fieldId, "")
-	}
+	const uploadLabelId = nanoid()
+	const deleteLabelId = nanoid()
 
 	return (
-		<UploadArea
+		<FileUploadArea
 			context={context}
-			inputRef={fileInput}
-			upload={upload}
+			record={record}
+			wire={wire}
 			accept={accept}
+			fieldId={fieldId}
 			className={classes.root}
+			uploadLabelId={uploadLabelId}
+			deleteLabelId={deleteLabelId}
 		>
 			{
 				<>
-					<div
+					<label
 						className={styles.cx(classes.editicon, "hovershow")}
-						onClick={() => fileInput.current?.click()}
+						htmlFor={uploadLabelId}
 					>
 						<Icon context={context} icon="edit" />
-					</div>
+					</label>
 					{userFileId && (
-						<div
+						<label
 							className={styles.cx(
 								classes.deleteicon,
 								"hovershow"
 							)}
-							onClick={() => deleteFile()}
+							htmlFor={deleteLabelId}
 						>
 							<Icon context={context} icon="delete" />
-						</div>
+						</label>
 					)}
 				</>
 			}
@@ -149,7 +127,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 					/>
 				</div>
 			)}
-		</UploadArea>
+		</FileUploadArea>
 	)
 }
 

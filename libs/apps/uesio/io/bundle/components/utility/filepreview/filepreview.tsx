@@ -35,11 +35,11 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 			}
 			return <FileText {...props} />
 		case "application":
-			return <FileText {...props} />
+			return <File {...props} />
 		case "image":
 			return <FileImage {...props} />
 		default:
-			return null
+			return <File {...props} />
 	}
 }
 

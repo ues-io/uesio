@@ -75,6 +75,7 @@ components:
     filetext:
     fileimage:
     file:
+    fileuploadarea:
     form:
     grid:
     group:
