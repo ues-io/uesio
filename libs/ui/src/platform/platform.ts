@@ -12,6 +12,7 @@ import {
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
+import { PlainWireRecord } from "../bands/wirerecord/types"
 
 type BotParams = {
 	[key: string]: string
@@ -205,7 +206,7 @@ const platform = {
 		collectionID: string,
 		recordID: string,
 		fieldID: string
-	): Promise<string> => {
+	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
 		const params = new URLSearchParams()
