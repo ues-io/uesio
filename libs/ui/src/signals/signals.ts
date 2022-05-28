@@ -22,16 +22,9 @@ const registry: Record<string, SignalDescriptor> = {
 	...notificationSignals,
 }
 
-const isPanelSignal = (signal: SignalDefinition) =>
-	signal.signal.startsWith("panel/")
-
-const getPanelKey = (path: string, context: Context) => {
-	const recordContext = context.getRecordId()
-	return recordContext ? `${path}:${recordContext}` : path
-}
-
 const run = (
 	dispatcher: Dispatcher<AnyAction>,
+	path: string,
 	signal: SignalDefinition,
 	context: Context
 ) => {
@@ -42,7 +35,8 @@ const run = (
 			additionalContext(
 				context,
 				signal?.["uesio.context"] as ContextFrame
-			)
+			),
+			path
 		)
 	)
 }
@@ -54,18 +48,9 @@ const runMany = async (
 	context: Context
 ) => {
 	for (const signal of signals) {
-		// Special handling for panel signals
-		let useSignal = signal
-		if (isPanelSignal(signal)) {
-			useSignal = {
-				...signal,
-				path: getPanelKey(path, context),
-			}
-		}
-
 		try {
 			// Keep adding to context as each signal is run
-			context = await run(dispatcher, useSignal, context)
+			context = await run(dispatcher, path, signal, context)
 		} catch (error) {
 			if (signal.onerror?.signals) {
 				runMany(
@@ -83,4 +68,4 @@ const runMany = async (
 
 const runManyThrottled = debounce(runMany, 250)
 
-export { run, runMany, runManyThrottled, registry, isPanelSignal, getPanelKey }
+export { run, runMany, runManyThrottled, registry }

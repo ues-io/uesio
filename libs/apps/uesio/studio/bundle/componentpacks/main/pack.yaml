@@ -69,17 +69,6 @@ components:
         - uesio/io.button:uesio/io.secondary
         - uesio/io.titlebar:uesio/io.default
     translations:
-    preview:
-      utilities:
-        - uesio/io.textfield
-        - uesio/io.fieldwrapper
-        - uesio/io.autocomplete
-        - uesio/io.group
-        - uesio/io.button
-      variants:
-        - uesio/io.textfield:uesio/io.default
-        - uesio/io.button:uesio/io.primary
-        - uesio/io.autocomplete:uesio/io.default
     previewbutton:
       utilities:
         - uesio/io.button

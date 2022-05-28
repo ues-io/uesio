@@ -11,27 +11,10 @@ type PlainCollection = {
 	fields: FieldMetadataMap
 }
 
-type CollectionState = {
-	[key: string]: {
-		status: "PENDING" | "FULFILLED"
-		data: PlainCollection
-	}
-}
-
-type CollectionStore = {
-	[key: string]: PlainCollection // CollectionState
-}
-
 type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
 const ID_FIELD = "uesio/core.id"
 
-export {
-	PlainCollectionMap,
-	PlainCollection,
-	CollectionState,
-	CollectionStore,
-	ID_FIELD,
-}
+export { PlainCollectionMap, PlainCollection, ID_FIELD }

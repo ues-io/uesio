@@ -8,7 +8,6 @@ import {
 	useLastModifiedNode,
 	useSelectedType,
 	useSelectedItem,
-	useSelectedYAML,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { useEffect } from "react"
@@ -95,8 +94,6 @@ class BuilderAPI {
 			}
 			return false
 		})
-
-	useSelectedYAML = useSelectedYAML
 
 	setActiveNode = (
 		metadataType: string,

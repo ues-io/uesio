@@ -12,13 +12,15 @@ import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
 import Panel from "../components/panel"
-import {
-	getPanelKey,
-	isPanelSignal,
-	registry,
-	run,
-	runMany,
-} from "../signals/signals"
+import { registry, run, runMany } from "../signals/signals"
+
+const isPanelSignal = (signal: SignalDefinition) =>
+	signal.signal.startsWith("panel/")
+
+const getPanelKey = (path: string, context: Context) => {
+	const recordContext = context.getRecordId()
+	return recordContext ? `${path}:${recordContext}` : path
+}
 
 class SignalAPI {
 	constructor(uesio: Uesio) {
@@ -83,7 +85,7 @@ class SignalAPI {
 		runMany(this.dispatcher, this.uesio.getPath(), signals, context)
 
 	run = (signal: SignalDefinition, context: Context) =>
-		run(this.dispatcher, signal, context)
+		run(this.dispatcher, this.uesio.getPath(), signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal.signal] || componentSignal
@@ -109,4 +111,4 @@ function defaultSignalProps(): PropDescriptor[] {
 		},
 	]
 }
-export { SignalAPI }
+export { SignalAPI, getPanelKey }
