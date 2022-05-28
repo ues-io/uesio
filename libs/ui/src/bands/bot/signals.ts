@@ -9,6 +9,7 @@ const BOT_BAND = "bot"
 interface CallSignal extends SignalDefinition {
 	bot: string
 	params: BotParams
+	namespace?: string
 }
 
 const signals: Record<string, SignalDescriptor> = {
@@ -33,7 +34,7 @@ const signals: Record<string, SignalDescriptor> = {
 				return context
 			},
 		label: "Call Bot",
-		properties: (signal: SignalDefinition) => [
+		properties: (signal: CallSignal) => [
 			{
 				type: "NAMESPACE",
 				name: "namespace",
@@ -41,7 +42,7 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 			{
 				type: "BOT",
-				namespace: <string>signal.namespace,
+				namespace: signal.namespace,
 				botType: "LISTENER",
 				name: "bot",
 				label: "Bot",

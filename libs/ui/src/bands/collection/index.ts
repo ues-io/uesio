@@ -8,7 +8,7 @@ const mergeCollection = (
 	state: EntityState<PlainCollection>,
 	collections: PlainCollectionMap
 ) => {
-	const collectionsToAdd: Record<string, PlainCollection> = {}
+	const collectionsToAdd: PlainCollectionMap = {}
 	for (const [key, collection] of Object.entries(collections)) {
 		collectionsToAdd[key] = collection
 
@@ -25,7 +25,7 @@ const mergeCollection = (
 	collectionAdapter.upsertMany(state, collectionsToAdd)
 }
 
-type SetCollectionAction = PayloadAction<Record<string, PlainCollection>>
+type SetCollectionAction = PayloadAction<PlainCollectionMap>
 
 const collectionSlice = createSlice({
 	name: "collection",

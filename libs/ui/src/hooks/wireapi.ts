@@ -39,7 +39,7 @@ class WireAPI {
 		const context = this.uesio.getContext()
 		const wire = this.useWire(wireName)
 		useEffect(() => {
-			if (wire || !wireDef) return
+			if (wire || !wireDef || !wireName) return
 			this.initWires(context, {
 				[wireName]: wireDef,
 			})
