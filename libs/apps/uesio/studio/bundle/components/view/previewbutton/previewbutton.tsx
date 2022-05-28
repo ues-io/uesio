@@ -23,16 +23,16 @@ const Form = component.registry.getUtility("uesio/io.form")
 
 const WIRE_NAME = "paramData"
 
-const getParamDefs = (
-	record: wire.WireRecord
-): Record<string, param.ParamDefinition> => {
+type ParamMap = Record<string, param.ParamDefinition>
+
+const getParamDefs = (record: wire.WireRecord): ParamMap => {
 	const viewDef = record.getFieldValue<string>("uesio/studio.definition")
 	const yamlDoc = util.yaml.parse(viewDef)
 	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
 	return params?.toJSON() || {}
 }
 
-const getFieldsFromParams = (params: Record<string, param.ParamDefinition>) =>
+const getFieldsFromParams = (params: ParamMap) =>
 	Object.fromEntries(
 		Object.entries(params).map(([key, value]) => {
 			const field =
@@ -55,6 +55,42 @@ const getFieldsFromParams = (params: Record<string, param.ParamDefinition>) =>
 		})
 	)
 
+const getUrlParams = (params: ParamMap, record: wire.WireRecord) => {
+	const getParams = new URLSearchParams()
+	const hasParams = Object.keys(params).length
+	if (!hasParams) return null
+	Object.entries(params).forEach(([key, paramDef]) => {
+		const fieldKey = `uesio/viewonly.${key}`
+		let value
+		if (paramDef.type === "RECORD") {
+			value = record.getFieldValue<string>(
+				`${fieldKey}->${collection.ID_FIELD}`
+			)
+		}
+		if (paramDef.type === "TEXT") {
+			value = record.getFieldValue<string>(fieldKey)
+		}
+		if (value) getParams.append(key, value)
+	})
+	return getParams
+}
+
+const getRedirectSignal = (
+	params: ParamMap,
+	record: wire.WireRecord,
+	appName: string,
+	workspaceName: string,
+	viewName: string
+) => {
+	const urlParams = getUrlParams(params, record)
+	return {
+		signal: "route/REDIRECT",
+		path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
+			urlParams ? `?${urlParams}` : ""
+		}`,
+	}
+}
+
 const PreviewButton: FunctionComponent<Props> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
@@ -64,12 +100,13 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No Workspace Context Provided")
 
+	const viewName = record.getFieldValue<string>("uesio/studio.name")
+
 	const params = getParamDefs(record)
 	const hasParams = Object.keys(params).length
 
 	const appName = workspaceContext.app
 	const workspaceName = workspaceContext.name
-	const viewName = record?.getFieldValue<string>("uesio/studio.name")
 
 	const [open, setOpen] = useState<boolean>(false)
 
@@ -91,10 +128,13 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 					hasParams
 						? setOpen(true)
 						: uesio.signal.run(
-								{
-									signal: "route/REDIRECT",
-									path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview`,
-								},
+								getRedirectSignal(
+									params,
+									record,
+									appName,
+									workspaceName,
+									viewName
+								),
 								context
 						  )
 				}
@@ -113,32 +153,14 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 							context={context}
 							submitLabel="Preview"
 							onSubmit={(record: wire.WireRecord) => {
-								const getParams = new URLSearchParams()
-								Object.entries(params).forEach(
-									([key, paramDef]) => {
-										const fieldKey = `uesio/viewonly.${key}`
-										let value
-										if (paramDef.type === "RECORD") {
-											value =
-												record.getFieldValue<string>(
-													`${fieldKey}->${collection.ID_FIELD}`
-												)
-										}
-										if (paramDef.type === "TEXT") {
-											value =
-												record.getFieldValue<string>(
-													fieldKey
-												)
-										}
-										if (value) getParams.append(key, value)
-									}
-								)
-
 								uesio.signal.run(
-									{
-										signal: "route/REDIRECT",
-										path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview?${getParams}`,
-									},
+									getRedirectSignal(
+										params,
+										record,
+										appName,
+										workspaceName,
+										viewName
+									),
 									context
 								)
 							}}
