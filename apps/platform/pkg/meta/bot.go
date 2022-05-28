@@ -89,23 +89,23 @@ type BotParam struct {
 }
 
 type Bot struct {
-	ID            string            `yaml:"-" uesio:"uesio/core.id"`
-	Name          string            `yaml:"name" uesio:"uesio/studio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Namespace     string            `yaml:"-" uesio:"-"`
-	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
-	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
-	Params        []BotParam        `yaml:"params,omitempty" uesio:"uesio/studio.params"`
-	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
-	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy     *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner         *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy     *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
-	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID            string              `yaml:"-" uesio:"uesio/core.id"`
+	Name          string              `yaml:"name" uesio:"uesio/studio.name"`
+	CollectionRef string              `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
+	Namespace     string              `yaml:"-" uesio:"-"`
+	Type          string              `yaml:"type" uesio:"uesio/studio.type"`
+	Dialect       string              `yaml:"dialect" uesio:"uesio/studio.dialect"`
+	Params        map[string]BotParam `yaml:"params,omitempty" uesio:"uesio/studio.params"`
+	Content       *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.content"`
+	FileContents  string              `yaml:"-" uesio:"-"`
+	Workspace     *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy     *User               `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner         *User               `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy     *User               `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt     int64               `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt     int64               `yaml:"-" uesio:"uesio/core.createdat"`
+	itemMeta      *ItemMeta           `yaml:"-" uesio:"-"`
+	Public        bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 func GetBotTypes() map[string]string {

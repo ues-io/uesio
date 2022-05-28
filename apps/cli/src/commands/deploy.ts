@@ -43,7 +43,7 @@ export default class Deploy extends Command {
 			throw err
 		})
 
-		archive.directory("bundle/", "bundle")
+		archive.directory("bundle/", false)
 
 		archive.finalize()
 

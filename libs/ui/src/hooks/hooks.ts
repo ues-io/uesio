@@ -15,6 +15,7 @@ import { SecretAPI } from "./secretapi"
 import { ThemeAPI } from "./themeapi"
 import { NotificationAPI } from "./notificationapi"
 import { FeatureFlagAPI } from "./featureflagapi"
+import { BotAPI } from "./botapi"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
@@ -38,6 +39,7 @@ class Uesio {
 		this.featureflag = new FeatureFlagAPI(this)
 		this.theme = new ThemeAPI(this)
 		this.notification = new NotificationAPI(this)
+		this.bot = new BotAPI(this)
 	}
 
 	// Public Apis
@@ -54,6 +56,7 @@ class Uesio {
 	featureflag: FeatureFlagAPI
 	theme: ThemeAPI
 	notification: NotificationAPI
+	bot: BotAPI
 
 	_path: string
 	_context: Context

@@ -2,18 +2,18 @@ name: listview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  - name: name
+  name:
     prompt: View name
     type: METADATANAME
-  - name: collection
+  collection:
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
-  - name: wirename
+  wirename:
     prompt: Wire Name
     type: TEXT
     default: $Answer{name}Wire
-  - name: fields
+  fields:
     prompt: fields
     type: METADATAMULTI
     metadataType: FIELD
