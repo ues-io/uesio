@@ -57,8 +57,6 @@ const getFieldsFromParams = (params: ParamMap) =>
 
 const getUrlParams = (params: ParamMap, record: wire.WireRecord) => {
 	const getParams = new URLSearchParams()
-	const hasParams = Object.keys(params).length
-	if (!hasParams) return null
 	Object.entries(params).forEach(([key, paramDef]) => {
 		const fieldKey = `uesio/viewonly.${key}`
 		let value
@@ -73,22 +71,6 @@ const getUrlParams = (params: ParamMap, record: wire.WireRecord) => {
 		if (value) getParams.append(key, value)
 	})
 	return getParams
-}
-
-const getRedirectSignal = (
-	params: ParamMap,
-	record: wire.WireRecord,
-	appName: string,
-	workspaceName: string,
-	viewName: string
-) => {
-	const urlParams = getUrlParams(params, record)
-	return {
-		signal: "route/REDIRECT",
-		path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
-			urlParams ? `?${urlParams}` : ""
-		}`,
-	}
 }
 
 const PreviewButton: FunctionComponent<Props> = (props) => {
@@ -118,26 +100,27 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 		},
 	})
 
+	const previewHandler = (record?: wire.WireRecord) => {
+		const urlParams =
+			hasParams && record ? getUrlParams(params, record) : undefined
+		uesio.signal.run(
+			{
+				signal: "route/REDIRECT",
+				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
+					urlParams ? `?${urlParams}` : ""
+				}`,
+			},
+			context
+		)
+	}
+
 	return (
 		<>
 			<Button
 				context={context}
 				variant="uesio/io.secondary"
 				label="Preview"
-				onClick={() =>
-					hasParams
-						? setOpen(true)
-						: uesio.signal.run(
-								getRedirectSignal(
-									params,
-									record,
-									appName,
-									workspaceName,
-									viewName
-								),
-								context
-						  )
-				}
+				onClick={() => (hasParams ? setOpen(true) : previewHandler())}
 			/>
 			{open && (
 				<component.Panel key="previewpanel" context={context}>
@@ -152,18 +135,7 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 							wire={WIRE_NAME}
 							context={context}
 							submitLabel="Preview"
-							onSubmit={(record: wire.WireRecord) => {
-								uesio.signal.run(
-									getRedirectSignal(
-										params,
-										record,
-										appName,
-										workspaceName,
-										viewName
-									),
-									context
-								)
-							}}
+							onSubmit={previewHandler}
 						/>
 					</Dialog>
 				</component.Panel>
