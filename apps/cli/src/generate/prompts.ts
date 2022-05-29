@@ -115,13 +115,15 @@ const promptRenderers: Record<string, PromptRenderer> = {
 }
 
 const getPrompts = async (
-	params: BotParam[],
+	params: Record<string, BotParam>,
 	app: string,
 	version: string,
 	user: User
 ) => {
 	let answers: PromptAnswers = {}
-	for (const param of params) {
+	for (const key in params) {
+		const param = params[key]
+		param.name = key
 		const answer = await getNextPrompt(param, answers, app, version, user)
 		if (answer) {
 			answers = {

@@ -2,10 +2,10 @@ name: componentpack
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  - name: name
+  name:
     prompt: ComponentPack Name
     type: METADATANAME
-  - name: components
+  components:
     prompt: components
     type: METADATAMULTI
     metadataType: COMPONENT
