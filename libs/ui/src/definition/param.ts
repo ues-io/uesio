@@ -11,3 +11,5 @@ type TextParam = {
 }
 
 export type ParamDefinition = RecordParam | TextParam
+
+export type ParamDefinitionMap = Record<string, ParamDefinition>

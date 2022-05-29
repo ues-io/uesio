@@ -116,7 +116,19 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 	return nil
 }
 
-func (gba *GeneratorBotAPI) RepeatString(repeater []string, templateString string) (string, error) {
+func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
+	// This allows the repeater input to be either a string or a slice of strings
+	var repeater []string
+	repeaterSlice, ok := repeaterInput.([]string)
+	if ok {
+		repeater = repeaterSlice
+	} else {
+		repeaterString, ok := repeaterInput.(string)
+		if ok {
+			repeater = strings.Split(repeaterString, ",")
+		}
+	}
+
 	mergedStrings := []string{}
 	for _, key := range repeater {
 		result, err := gba.MergeString(map[string]interface{}{

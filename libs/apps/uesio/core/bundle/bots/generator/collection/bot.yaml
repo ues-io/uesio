@@ -2,13 +2,13 @@ name: collection
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  - name: name
+  name:
     prompt: Collection Name
     type: METADATANAME
-  - name: label
+  label:
     prompt: Collection Label
     type: TEXT
-  - name: pluralLabel
+  pluralLabel:
     prompt: Collection Plural Label
     type: TEXT
 public: true

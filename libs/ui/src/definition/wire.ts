@@ -71,4 +71,5 @@ export {
 	WireFieldDefinitionMap,
 	RegularWireDefinition,
 	ViewOnlyWireDefinition,
+	ViewOnlyField,
 }

@@ -13,6 +13,7 @@ import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
+import { ParamDefinitionMap } from "../definition/param"
 
 type BotParams = {
 	[key: string]: string
@@ -187,6 +188,31 @@ const platform = {
 		const response = await postJSON(
 			`${prefix}/bots/call/${namespace}/${name}`,
 			params
+		)
+		return respondJSON(response)
+	},
+	callGeneratorBot: async (
+		context: Context,
+		namespace: string,
+		name: string,
+		params: BotParams
+	): Promise<BotResponse> => {
+		const prefix = getPrefix(context)
+		const response = await postJSON(
+			`${prefix}/metadata/generate/${namespace}/${name}`,
+			params
+		)
+		return respondJSON(response)
+	},
+	getBotParams: async (
+		context: Context,
+		namespace: string,
+		name: string,
+		type: string
+	): Promise<ParamDefinitionMap> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(
+			`${prefix}/bots/params/${type}/${namespace}/${name}`
 		)
 		return respondJSON(response)
 	},

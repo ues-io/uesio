@@ -2,69 +2,62 @@ name: field
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
-  - name: name
+  name:
     prompt: Field Name
     type: METADATANAME
-  - name: label
+  label:
     prompt: Label
-  - name: collection
+  collection:
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
-  - name: type
+  type:
     prompt: Field Type
     type: FIELDTYPE
-  - name: number_decimals
+  number_decimals:
     prompt: Number of Decimals
     conditions:
       - param: type
         value: NUMBER
-  - name: ref_collection
+  ref_collection:
     prompt: Reference Collection
     type: METADATA
     metadataType: COLLECTION
     conditions:
       - param: type
         value: REFERENCE
-  - name: select_list
+  select_list:
     prompt: Select List
     type: METADATA
     metadataType: SELECTLIST
     conditions:
       - param: type
         value: SELECT
-  - name: select_list
-    prompt: Select List
-    type: METADATA
-    metadataType: SELECTLIST
-    conditions:
-      - param: type
-        value: MULTISELECT
-  - name: autonumber_prefix
+  autonumber_prefix:
     prompt: Prefix
     conditions:
       - param: type
         value: AUTONUMBER
-  - name: autonumber_leadingzeros
+  autonumber_leadingzeros:
     prompt: Leading Zeros
     conditions:
       - param: type
         value: AUTONUMBER
-  - name: accept
+  accept:
     prompt: Accept
     type: LIST
     choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"]
     conditions:
       - param: type
         value: FILE
-  - name: referencegroup_collection
+  referencegroup_collection:
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
     conditions:
       - param: type
         value: REFERENCEGROUP
-  - name: referencegroup_field
+  referencegroup_field:
     prompt: field
     type: METADATA
     metadataType: FIELD
@@ -72,7 +65,7 @@ params:
     conditions:
       - param: type
         value: REFERENCEGROUP
-  - name: referencegroup_ondelete
+  referencegroup_ondelete:
     prompt: On Delete
     type: LIST
     choices: ["CASCADE"]
