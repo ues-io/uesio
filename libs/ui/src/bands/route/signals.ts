@@ -34,6 +34,22 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${ROUTE_BAND}/RELOAD`]: {
+		dispatcher:
+			(signal: SignalDefinition, context: Context) =>
+			async (dispatch, getState) => {
+				const routeState = getState().route
+				if (!routeState) return context
+				return dispatch(
+					operations.navigate(context, {
+						namespace: routeState.namespace,
+						path: routeState.path,
+					})
+				)
+			},
+		label: "Reload",
+		properties: () => [],
+	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
 			operations.navigate(context, signal),

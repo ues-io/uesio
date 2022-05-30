@@ -7,15 +7,15 @@ type UserFileMetadata struct {
 	FieldID          string    `uesio:"uesio/core.fieldid" json:"-"`
 	FileCollectionID string    `uesio:"uesio/core.filecollectionid" json:"-"`
 	Name             string    `uesio:"uesio/core.name" json:"-"`
-	FileName         string    `uesio:"uesio/core.filename" json:"-"`
+	FileName         string    `uesio:"uesio/core.filename" json:"uesio/core.filename"`
 	Path             string    `uesio:"uesio/core.path" json:"-"`
 	RecordID         string    `uesio:"uesio/core.recordid" json:"-"`
 	Type             string    `uesio:"uesio/core.type" json:"-"`
 	CreatedBy        *User     `yaml:"-" uesio:"uesio/core.createdby" json:"-"`
 	Owner            *User     `yaml:"-" uesio:"uesio/core.owner" json:"-"`
 	UpdatedBy        *User     `yaml:"-" uesio:"uesio/core.updatedby" json:"-"`
-	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat" json:"-"`
-	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat" json:"-"`
+	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat" json:"uesio/core.updatedat"`
+	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat" json:"uesio/core.createdat"`
 	itemMeta         *ItemMeta `yaml:"-" uesio:"-" json:"-"`
 }
 

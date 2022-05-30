@@ -139,11 +139,11 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			options: [
 				{
 					label: "Record ID",
-					value: "recordId",
+					value: "RECORD",
 				},
 				{
 					label: "Text",
-					value: "text",
+					value: "TEXT",
 				},
 			],
 		},

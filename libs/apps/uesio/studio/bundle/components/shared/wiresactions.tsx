@@ -41,7 +41,7 @@ const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Wire"
 				onClick={() =>
-					uesio.builder.addDefinition(
+					uesio.builder.setDefinition(
 						path +
 							`[${
 								"newwire" + (Math.floor(Math.random() * 60) + 1)

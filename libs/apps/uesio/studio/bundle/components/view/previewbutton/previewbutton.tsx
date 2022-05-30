@@ -1,92 +1,88 @@
-import { FunctionComponent } from "react"
-import { hooks, definition, util, component } from "@uesio/ui"
-import { Scalar, YAMLMap } from "yaml"
-
-export type ParamDefinition = {
-	type: string
-	collectionId: string
-	required: boolean
-	defaultValue: string
-}
-
-type PreviewDefinition = {
-	fieldId: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: PreviewDefinition
-}
+import { FunctionComponent, useState } from "react"
+import { hooks, component, wire, param, definition, util } from "@uesio/ui"
 
 const Button = component.registry.getUtility("uesio/io.button")
+const Dialog = component.registry.getUtility("uesio/io.dialog")
+const Form = component.registry.getUtility("uesio/io.form")
 
-const PreviewButton: FunctionComponent<Props> = (props) => {
-	const { context, definition } = props
-	const { fieldId } = definition
-	const uesio = hooks.useUesio(props)
-	const record = context.getRecord()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-	const viewName = view?.params?.viewname
-	let newContext = props.context
-	if (appName) {
-		if (workspaceName) {
-			newContext = context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-	}
-	if (!record || !fieldId) return null
+const WIRE_NAME = "paramData"
 
-	const viewDef = record.getFieldValue<string>(fieldId)
+const getParamDefs = (record: wire.WireRecord): param.ParamDefinitionMap => {
+	const viewDef = record.getFieldValue<string>("uesio/studio.definition")
 	const yamlDoc = util.yaml.parse(viewDef)
-	const params = util.yaml.getNodeAtPath(
-		["params"],
-		yamlDoc.contents
-	) as YAMLMap<Scalar<string>, YAMLMap>
+	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
+	return params?.toJSON() || {}
+}
 
-	const [handler, portals] = uesio.signal.useHandler([
-		{
-			signal: "panel/TOGGLE",
-			panel: "previewPanel",
+const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
+	const { context } = props
+	const uesio = hooks.useUesio(props)
+
+	const record = context.getRecord()
+	if (!record) throw new Error("No Record Context Provided")
+	const workspaceContext = context.getWorkspace()
+	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+
+	const viewName = record.getFieldValue<string>("uesio/studio.name")
+
+	const params = getParamDefs(record)
+	const hasParams = Object.keys(params).length
+
+	const appName = workspaceContext.app
+	const workspaceName = workspaceContext.name
+
+	const [open, setOpen] = useState<boolean>(false)
+
+	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
+		viewOnly: true,
+		fields: uesio.wire.getFieldsFromParams(params),
+		init: {
+			create: true,
 		},
-	])
+	})
+
+	const previewHandler = (record?: wire.WireRecord) => {
+		const urlParams =
+			hasParams && record
+				? new URLSearchParams(uesio.wire.getParamValues(params, record))
+				: undefined
+		uesio.signal.run(
+			{
+				signal: "route/REDIRECT",
+				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
+					urlParams ? `?${urlParams}` : ""
+				}`,
+			},
+			context
+		)
+	}
+
 	return (
 		<>
-			{params ? (
-				<Button
-					context={newContext}
-					variant="uesio/io.secondary"
-					label="Preview"
-					path={props.path}
-					onClick={() => {
-						handler && handler()
-					}}
-				/>
-			) : (
-				<Button
-					context={newContext}
-					variant="uesio/io.secondary"
-					label="Preview"
-					onClick={() => {
-						uesio.signal.run(
-							{
-								signal: "route/REDIRECT",
-								path: `/workspace/${
-									newContext.getWorkspace()?.app
-								}/${
-									newContext.getWorkspace()?.name
-								}/views/${appName}/${viewName}/preview`,
-							},
-							newContext
-						)
-					}}
-				/>
+			<Button
+				context={context}
+				variant="uesio/io.secondary"
+				label="Preview"
+				onClick={() => (hasParams ? setOpen(true) : previewHandler())}
+			/>
+			{open && (
+				<component.Panel key="previewpanel" context={context}>
+					<Dialog
+						context={context}
+						width="400px"
+						height="500px"
+						onClose={() => setOpen(false)}
+						title="Set Preview Parameters"
+					>
+						<Form
+							wire={WIRE_NAME}
+							context={context}
+							submitLabel="Preview"
+							onSubmit={previewHandler}
+						/>
+					</Dialog>
+				</component.Panel>
 			)}
-			{portals}
 		</>
 	)
 }

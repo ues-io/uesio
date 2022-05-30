@@ -76,6 +76,13 @@ definition:
                     actions:
                       - uesio/io.group:
                           components:
+                            - uesio/studio.generatorbutton:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate List View
+                                generator: uesio/core.listview
                             - uesio/io.button:
                                 text: Create a New View
                                 uesio.variant: uesio/io.secondary

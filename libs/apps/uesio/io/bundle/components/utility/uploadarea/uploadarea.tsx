@@ -1,10 +1,12 @@
-import { FunctionComponent, DragEvent, RefObject } from "react"
+import { FunctionComponent, DragEvent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface UploadAreaProps extends definition.UtilityProps {
 	accept?: string
-	upload: (files: FileList | null) => void
-	inputRef: RefObject<HTMLInputElement>
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	uploadLabelId?: string
+	deleteLabelId?: string
 }
 
 const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
@@ -18,12 +20,19 @@ const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
 		props
 	)
 
-	const { children, inputRef, upload, accept } = props
+	const {
+		children,
+		uploadLabelId,
+		deleteLabelId,
+		onUpload,
+		onDelete,
+		accept,
+	} = props
 
 	const onDrop = (e: DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		upload(e.dataTransfer.files)
+		onUpload(e.dataTransfer.files)
 	}
 
 	const onDragOver = (e: DragEvent) => {
@@ -57,10 +66,18 @@ const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {
 				type="file"
 				accept={accept}
 				onChange={(e) => {
-					upload(e.target.files)
+					onUpload(e.target.files)
 				}}
-				ref={inputRef}
+				id={uploadLabelId}
 			/>
+			{onDelete && (
+				<input
+					className={classes.fileinput}
+					type="button"
+					onClick={onDelete}
+					id={deleteLabelId}
+				/>
+			)}
 		</>
 	)
 }

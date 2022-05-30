@@ -2,20 +2,20 @@ package controller
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/deploy"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
-type BotResponse struct {
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
+func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
-func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
@@ -31,17 +31,26 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	err = datasource.CallListenerBot(namespace, name, params, nil, session)
+	files, err := datasource.CallGeneratorBot(namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	retrieveData := bundlestore.GetFileReader(func(data io.Writer) error {
+		return retrieve.Zip(data, files, session)
+	})
+
+	err = deploy.Deploy(io.NopCloser(retrieveData), session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	respondJSON(w, r, &BotResponse{
 		Success: true,
 	})
+
 }

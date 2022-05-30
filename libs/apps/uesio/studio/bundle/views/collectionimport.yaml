@@ -118,4 +118,3 @@ definition:
                                   - uesio/studio.dataimport:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{app}
-                                      usage: workspace

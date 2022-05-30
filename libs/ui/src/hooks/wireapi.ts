@@ -5,7 +5,48 @@ import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import initializeWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
-import { WireDefinition } from "../definition/wire"
+import { ViewOnlyField, WireDefinition } from "../definition/wire"
+import { useEffect } from "react"
+import { ParamDefinitionMap, ParamDefinition } from "../definition/param"
+import WireRecord from "../bands/wirerecord/class"
+import { ID_FIELD } from "../bands/collection/types"
+
+const getFieldFromParamDef = (
+	key: string,
+	def: ParamDefinition
+): ViewOnlyField => {
+	switch (def.type) {
+		case "RECORD":
+			return {
+				label: key,
+				required: !!def.required,
+				type: "REFERENCE" as const,
+				reference: {
+					collection: def.collection,
+				},
+			}
+		default:
+			return {
+				label: key,
+				required: !!def.required,
+				type: "TEXT" as const,
+			}
+	}
+}
+
+const getValueForParam = (
+	key: string,
+	def: ParamDefinition,
+	record: WireRecord
+) => {
+	const fieldKey = `uesio/viewonly.${key}`
+	switch (def.type) {
+		case "RECORD":
+			return record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`)
+		default:
+			return record.getFieldValue<string>(fieldKey)
+	}
+}
 
 // This is the wire api exposed on the uesio object returned
 // to components using the useUesio hook.
@@ -28,6 +69,23 @@ class WireAPI {
 		const plainCollection = useCollection(collectionName)
 		if (!plainCollection) return undefined
 		return new Wire(plainWire).attachCollection(plainCollection)
+	}
+
+	useDynamicWire(
+		wireName: string,
+		wireDef: WireDefinition | null,
+		doLoad?: boolean
+	) {
+		const context = this.uesio.getContext()
+		const wire = this.useWire(wireName)
+		useEffect(() => {
+			if (wire || !wireDef || !wireName) return
+			this.initWires(context, {
+				[wireName]: wireDef,
+			})
+			doLoad && this.loadWires(context, [wireName])
+		}, [wireName, JSON.stringify(wireDef)])
+		return wire
 	}
 
 	useWires(wireNames: string[]) {
@@ -60,6 +118,26 @@ class WireAPI {
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
 		return this.uesio.getDispatcher()(initializeWiresOp(context, wireDefs))
+	}
+
+	getFieldsFromParams(params: ParamDefinitionMap | undefined) {
+		if (!params) return {}
+		return Object.fromEntries(
+			Object.entries(params).map(([key, def]) => [
+				`uesio/viewonly.${key}`,
+				getFieldFromParamDef(key, def),
+			])
+		)
+	}
+
+	getParamValues(params: ParamDefinitionMap | undefined, record: WireRecord) {
+		if (!params) return {}
+		return Object.fromEntries(
+			Object.entries(params).map(([key, def]) => [
+				key,
+				getValueForParam(key, def, record),
+			])
+		)
 	}
 }
 

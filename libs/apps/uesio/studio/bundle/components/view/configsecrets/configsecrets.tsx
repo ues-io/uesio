@@ -9,38 +9,13 @@ const TextField = component.registry.getUtility("uesio/io.textfield")
 const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context } = props
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-	const siteName = view?.params?.sitename
-
-	let newContext = props.context
 
 	const valueType = props.definition?.valueType
 	const isSecret = valueType !== "config"
 
-	if (appName) {
-		if (workspaceName) {
-			newContext = props.context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-		if (siteName) {
-			newContext = props.context.addFrame({
-				siteadmin: {
-					name: siteName,
-					app: appName,
-				},
-			})
-		}
-	}
-
 	const [values, resetValues] = isSecret
-		? uesio.secret.useSecrets(newContext)
-		: uesio.configvalue.useConfigValues(newContext)
+		? uesio.secret.useSecrets(context)
+		: uesio.configvalue.useConfigValues(context)
 
 	const [state, setState] = useState({
 		selected: "",
@@ -67,7 +42,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const handleSet = async () => {
 		const api = isSecret ? uesio.secret : uesio.configvalue
-		await api.set(newContext, state.selected, state.value)
+		await api.set(context, state.selected, state.value)
 		resetValues()
 		handleClose()
 	}

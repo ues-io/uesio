@@ -100,6 +100,6 @@ definition:
             uesio/crm.firstname: null
   params:
     recordid:
-      type: recordId
+      type: RECORD
       required: true
       collection: uesio/crm.account

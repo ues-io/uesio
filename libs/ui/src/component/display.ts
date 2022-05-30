@@ -83,7 +83,7 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 
 	if (condition.type === "paramIsSet") {
-		return !!context.getView()?.params?.[condition.param]
+		return !!context.getParam(condition.param)
 	}
 
 	if (condition.type === "fieldMode") {
@@ -106,7 +106,7 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "hasValue") return !!compareToValue
 	if (condition.type === "paramValue")
 		return compare(
-			context.getView()?.params?.[condition.param],
+			context.getParam(condition.param),
 			compareToValue,
 			condition.operator
 		)

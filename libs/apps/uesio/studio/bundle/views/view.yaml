@@ -68,7 +68,10 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
-                                      fieldId: uesio/studio.definition
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Build"
@@ -117,12 +120,3 @@ definition:
                                 fieldId: uesio/studio.definition
                                 height: 350px
                                 language: "yaml"
-  panels:
-    previewPanel:
-      uesio.type: uesio/io.dialog
-      title: Preview
-      width: 400px
-      height: 500px
-      components:
-        - uesio/studio.preview:
-            fieldId: uesio/studio.definition

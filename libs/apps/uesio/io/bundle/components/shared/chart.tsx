@@ -53,6 +53,7 @@ const getLabels = (
 	if (labels.source === "DATA") {
 		serieses.forEach((series) => {
 			const wire = wires[series.wire]
+			if (!wire) return
 			const categoryField = wire
 				?.getCollection()
 				.getField(series.categoryField)
@@ -66,11 +67,16 @@ const getLabels = (
 				}
 			})
 		})
+
+		const categoryKeys = Object.keys(categories)
+		const sortedCategories: Categories = {}
+		if (!categoryKeys.length) return sortedCategories
+
 		// Now sort our buckets
-		const sortedKeys = Object.keys(categories).sort()
+		const sortedKeys = categoryKeys.sort()
 		const firstKey = sortedKeys[0]
 		const lastKey = sortedKeys[sortedKeys.length - 1]
-		const sortedCategories: Categories = {}
+
 		let currentKey = firstKey
 		if (labels.timeunit === "MONTH") {
 			const getLabel = (d: Date) =>
@@ -118,8 +124,9 @@ const getDataSets = (
 	labels: LabelsDefinition,
 	serieses: SeriesDefinition[]
 ) =>
-	serieses.map((series, index) => {
+	serieses.flatMap((series, index) => {
 		const wire = wires[series.wire]
+		if (!wire) return []
 		const bucketField = wire?.getCollection().getField(series.categoryField)
 		if (!bucketField) {
 			throw new Error("Invalid Category Field")
@@ -135,13 +142,15 @@ const getDataSets = (
 			const currentValue = buckets[category]
 			buckets[category] = currentValue + aggValue
 		})
-		return {
-			label: series.label,
-			cubicInterpolationMode: "monotone" as const,
-			data: Object.values(buckets),
-			backgroundColor: Object.values(CHART_COLORS)[index],
-			borderColor: Object.values(CHART_COLORS)[index],
-		}
+		return [
+			{
+				label: series.label,
+				cubicInterpolationMode: "monotone" as const,
+				data: Object.values(buckets),
+				backgroundColor: Object.values(CHART_COLORS)[index],
+				borderColor: Object.values(CHART_COLORS)[index],
+			},
+		]
 	})
 
 export { getDataSets, getLabels, SeriesDefinition, LabelsDefinition }

@@ -54,6 +54,10 @@ definition:
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: config
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -67,6 +71,10 @@ definition:
                           components:
                             - uesio/studio.configsecrets:
                                 valueType: secrets
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -79,3 +87,7 @@ definition:
                               padding: 40px
                           components:
                             - uesio/studio.configfeatureflags:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}

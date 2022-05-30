@@ -13,40 +13,15 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
 	const user = definition?.user ? context.merge(definition?.user) : ""
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-	const siteName = view?.params?.sitename
 
-	let newContext = props.context
-
-	if (appName) {
-		if (workspaceName) {
-			newContext = props.context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-		if (siteName) {
-			newContext = props.context.addFrame({
-				siteadmin: {
-					name: siteName,
-					app: appName,
-				},
-			})
-		}
-	}
-
-	const [values] = uesio.featureflag.useFeatureFlags(newContext, user)
+	const [values] = uesio.featureflag.useFeatureFlags(context, user)
 
 	if (!values) {
 		return null
 	}
 
 	const handleSet = async (key: string, value: boolean) => {
-		await uesio.featureflag.set(newContext, key, value, user)
+		await uesio.featureflag.set(context, key, value, user)
 	}
 
 	return (
@@ -59,7 +34,7 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 						key={`${key}.${i}`}
 						title={key}
 						value={value}
-						context={newContext}
+						context={context}
 						handleSet={handleSet}
 					/>
 				)

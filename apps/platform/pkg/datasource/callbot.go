@@ -7,8 +7,9 @@ import (
 
 // CallBotAPI type
 type CallBotAPI struct {
-	session *sess.Session
-	Params  *ParamsAPI `bot:"params"`
+	session    *sess.Session
+	Params     *ParamsAPI `bot:"params"`
+	connection adapt.Connection
 }
 
 // Save function

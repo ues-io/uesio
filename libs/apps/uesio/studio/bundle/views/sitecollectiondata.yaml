@@ -73,4 +73,7 @@ definition:
                       - uesio/studio.datamanager:
                           collectionId: $Param{collectionname}
                           namespace: $Param{app}
-                          usage: site
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}

@@ -17,30 +17,13 @@ const Translation: FunctionComponent<Props> = (props) => {
 	const { fieldId } = definition
 	const wire = context.getWire()
 	const record = context.getRecord()
-	const view = context.getView()
-
-	let newContext = props.context
 
 	if (!wire || !fieldId || !record) {
 		return null
 	}
 
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
-
-	if (appName) {
-		if (workspaceName) {
-			newContext = context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-	}
-
 	const originalValue = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const namespaces = uesio.builder.useAvailableNamespaces(newContext, "LABEL")
+	const namespaces = uesio.builder.useAvailableNamespaces(context, "LABEL")
 
 	if (!namespaces) return null
 
@@ -51,7 +34,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 					key={entry}
 					value={originalValue}
 					namespace={entry}
-					context={newContext}
+					context={context}
 					setValue={(value: wire.PlainWireRecord): void => {
 						record.update(fieldId, value)
 					}}

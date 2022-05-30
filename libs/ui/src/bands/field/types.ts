@@ -78,5 +78,6 @@ export {
 	SelectOption,
 	FieldType,
 	NumberMetadata,
+	ReferenceMetadata,
 	FIELD_TYPES,
 }

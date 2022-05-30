@@ -1,5 +1,5 @@
 name: params
-type: LIST
+type: MAP
 label: Params
 subType: MAP
 subFields:

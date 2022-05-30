@@ -13,9 +13,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// UploadUserFile function
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text")
+
 	session := middleware.GetSession(r)
 	details, err := fileadapt.NewFileDetails(r.URL.Query())
 	if err != nil {

@@ -1,5 +1,6 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
+import { nanoid } from "nanoid"
 
 interface Props extends definition.BaseProps {
 	changeUploaded: (success: boolean, csvFields: string[], file: File) => void
@@ -47,12 +48,10 @@ const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded } = props
 	const uesio = hooks.useUesio(props)
-	const fileInput = useRef<HTMLInputElement>(null)
-
+	const uploadLabelId = nanoid()
 	return (
 		<UploadArea
 			context={context}
-			inputRef={fileInput}
 			accept={".csv"}
 			upload={async (files: FileList | null) => {
 				if (files && files.length > 0) {
@@ -67,13 +66,15 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 					uesio.notification.addError("No file found", context)
 				}
 			}}
+			uploadLabelId={uploadLabelId}
 		>
-			<Button
-				context={context}
-				variant={"uesio/io.secondary"}
-				onClick={() => fileInput.current?.click()}
-				label={"choose file"}
-			/>
+			<label htmlFor={uploadLabelId}>
+				<Button
+					context={context}
+					variant={"uesio/io.secondary"}
+					label={"choose file"}
+				/>
+			</label>
 		</UploadArea>
 	)
 }

@@ -12,6 +12,8 @@ import {
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
+import { PlainWireRecord } from "../bands/wirerecord/types"
+import { ParamDefinitionMap } from "../definition/param"
 
 type BotParams = {
 	[key: string]: string
@@ -189,6 +191,31 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	callGeneratorBot: async (
+		context: Context,
+		namespace: string,
+		name: string,
+		params: BotParams
+	): Promise<BotResponse> => {
+		const prefix = getPrefix(context)
+		const response = await postJSON(
+			`${prefix}/metadata/generate/${namespace}/${name}`,
+			params
+		)
+		return respondJSON(response)
+	},
+	getBotParams: async (
+		context: Context,
+		namespace: string,
+		name: string,
+		type: string
+	): Promise<ParamDefinitionMap> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(
+			`${prefix}/bots/params/${type}/${namespace}/${name}`
+		)
+		return respondJSON(response)
+	},
 	getFileURL: (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}/${name}`
@@ -205,7 +232,7 @@ const platform = {
 		collectionID: string,
 		recordID: string,
 		fieldID: string
-	): Promise<string> => {
+	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
 		const params = new URLSearchParams()
@@ -403,11 +430,6 @@ const platform = {
 		})
 
 		return respondVoid(response)
-	},
-	bundle: async (context: Context): Promise<BotResponse> => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/metadata/bundle`)
-		return respondJSON(response)
 	},
 }
 

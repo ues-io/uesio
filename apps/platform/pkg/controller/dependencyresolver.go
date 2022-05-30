@@ -71,7 +71,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	namespaces := session.GetContextNamespaces()

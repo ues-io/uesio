@@ -1,5 +1,3 @@
-import { ViewParams } from "../view/types"
-
 type WorkspaceState = {
 	name: string
 	app: string
@@ -7,7 +5,7 @@ type WorkspaceState = {
 
 type RouteState = {
 	view: string
-	params?: ViewParams
+	params?: Record<string, string>
 	namespace: string
 	path: string
 	workspace?: WorkspaceState

@@ -147,6 +147,5 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.datamanager:
-                                      collectionId: $Param{collectionname}
+                                      collectionId: $Param{app}.$Param{collectionname}
                                       namespace: $Param{app}
-                                      usage: workspace

@@ -21,12 +21,13 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.app
+
 	const wire = uesio.wire.useWire(wireName || "")
 
-	if (!wire || !record || !workspaceName || !appName) {
+	const workspaceContext = context.getWorkspace()
+	if (!workspaceContext) throw new Error("No workspace context provided")
+
+	if (!wire || !record) {
 		return null
 	}
 
@@ -61,7 +62,9 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		<>
 			{data.map((record, i) => {
 				const itemName =
-					appName + "." + record.getFieldValue(nameNameField)
+					workspaceContext.app +
+					"." +
+					record.getFieldValue(nameNameField)
 				return (
 					<TitleBar
 						key={`${itemName}.${i}`}

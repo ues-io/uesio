@@ -65,13 +65,13 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		dirParts := strings.Split(dir, string(os.PathSeparator))
 		partsLength := len(dirParts)
 
-		if fileName == "" || partsLength < 2 || dirParts[0] != "bundle" {
+		if fileName == "" || partsLength < 1 {
 			continue
 		}
 
-		metadataType := dirParts[1]
+		metadataType := dirParts[0]
 
-		if partsLength == 2 && metadataType == "" && fileName == "bundle.yaml" {
+		if partsLength == 1 && metadataType == "" && fileName == "bundle.yaml" {
 			readCloser, err := zipFile.Open()
 			if err != nil {
 				return err
@@ -99,7 +99,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			continue
 		}
 
-		path := filepath.Join(filepath.Join(dirParts[2:]...), fileName)
+		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
 
 		key, err := collection.GetKeyFromPath(path, namespace, nil)
 		if err != nil {

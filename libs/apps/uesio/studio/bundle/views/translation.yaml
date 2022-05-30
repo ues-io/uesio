@@ -113,3 +113,7 @@ definition:
                                 items:
                                   - uesio/studio.translations:
                                       fieldId: uesio/studio.labels
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}

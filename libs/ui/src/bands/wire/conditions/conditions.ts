@@ -106,8 +106,7 @@ const conditionInitializers: ConditionInitializers = {
 
 const conditionHandlers: ConditionHandlers = {
 	[PARAM]: (condition: ParamConditionState, context) => {
-		const view = context.getView()
-		const value = view?.params?.[condition.param] || ""
+		const value = context.getParam(condition.param) || ""
 		return {
 			...condition,
 			valueSource: VALUE,

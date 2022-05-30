@@ -44,17 +44,16 @@ const navigate =
 
 		// Pre-load the view for faster appearances and no white flash
 		await dispatch(
-			loadViewOp({
-				context: new Context([
+			loadViewOp(
+				new Context([
 					{
 						view: `${view}()`,
 						viewDef: view,
 						workspace,
+						params: routeResponse.params,
 					},
-				]),
-				path: "",
-				params: routeResponse.params,
-			})
+				])
+			)
 		)
 
 		dispatch(setRoute(routeResponse))
