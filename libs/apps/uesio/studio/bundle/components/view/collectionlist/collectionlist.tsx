@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, context } from "@uesio/ui"
+import { definition, hooks, component, context, styles } from "@uesio/ui"
 
 type CollectionListDefinition = {
 	collectionId: string
@@ -22,6 +22,7 @@ interface Props extends definition.BaseProps {
 
 const Tile = component.registry.getUtility("uesio/io.tile")
 const Icon = component.registry.getUtility("uesio/io.icon")
+const Grid = component.registry.getUtility("uesio/io.grid")
 
 function getComponentContext(
 	context: context.Context
@@ -65,7 +66,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 	const collectionKeys = collections && Object.keys(collections)
 	if (collectionKeys && collectionKeys.length > 0) {
 		return (
-			<>
+			<div>
 				<h4>{definition.namespace}</h4>
 				{Object.keys(collections).map((collection) => (
 					<Tile
@@ -90,7 +91,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 						{collection}
 					</Tile>
 				))}
-			</>
+			</div>
 		)
 	}
 	return null
@@ -103,6 +104,12 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 	const lcontext = getComponentContext(context)
 	const namespaces = uesio.builder.useAvailableNamespaces(context)
 
+	const gridCols = styles.getResponsiveStyles(
+		"gridTemplateColumns",
+		{ xs: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" },
+		context
+	)
+
 	if (namespaces) {
 		const keys = Object.keys(namespaces)
 		const fromIndex = keys.indexOf(lcontext?.app || "")
@@ -110,7 +117,12 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 		const element = keys.splice(fromIndex, 1)[0]
 		keys.splice(toIndex, 0, element)
 		return (
-			<>
+			<Grid
+				styles={{
+					root: { ...gridCols, columnGap: "10px" },
+				}}
+				context={context}
+			>
 				{keys.map((namespace) => (
 					<Collection
 						key={namespace}
@@ -121,7 +133,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 						context={context}
 					/>
 				))}
-			</>
+			</Grid>
 		)
 	}
 	return null

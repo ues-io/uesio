@@ -92,17 +92,17 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
-                # - uesio/io.box:
-                #     uesio.styles:
-                #       root:
-                #         padding: 40px
-                #     uesio.variant: uesio/io.section
-                #     components:
-                #       - uesio/studio.collectionlist:
-                #           uesio.context:
-                #             workspace:
-                #               name: $Param{workspacename}
-                #               app: $Param{app}
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/studio.collectionlist:
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
   panels:
     newCollection:
       uesio.type: uesio/io.dialog

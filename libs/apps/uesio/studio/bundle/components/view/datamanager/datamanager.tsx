@@ -26,6 +26,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	const collection = context.merge(definition.collectionId)
 	const namespace = context.merge(definition.namespace)
 
+	//TO-DO we need to catch errors, if a collections isn't public etc.
 	const fieldsMeta = uesio.builder.useMetadataList(
 		context,
 		"FIELD",

@@ -73,7 +73,7 @@ definition:
                     params:
                       itemType: collections
                       itemIcon: list
-                      itemName: $Param{collectionname}
+                      itemName: $Param{namespace}.$Param{collectionname}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -86,66 +86,45 @@ definition:
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
-                - uesio/io.list:
-                    id: collectionsDeck
-                    wire: collections
-                    mode: READ
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.main
-                          title: Collection - ${uesio/studio.plurallabel}
-                          actions:
-                            - uesio/io.group:
-                                components:
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Import Data"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{collectionname}"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Collection Configuration"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
+                - uesio/io.titlebar:
+                    uesio.context:
+                      workspace:
+                        name: $Param{workspacename}
+                        app: $Param{app}
+                    uesio.variant: uesio/io.main
+                    title: $Param{namespace}.$Param{collectionname}
+                    actions:
+                      - uesio/io.group:
                           components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.section
-                                title:
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: "Save"
-                                            signals:
-                                              - signal: "wire/SAVE"
-                                                wires:
-                                                  - "collectionData"
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: "Cancel"
-                                            signals:
-                                              - signal: "wire/CANCEL"
-                                                wire: "collectionData"
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/io.secondary
-                                            text: "Create"
-                                            signals:
-                                              - signal: "wire/CREATE_RECORD"
-                                                wire: "collectionData"
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
-                                components:
-                                  - uesio/studio.datamanager:
-                                      collectionId: $Param{app}.$Param{collectionname}
-                                      namespace: $Param{app}
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: "Save"
+                                signals:
+                                  - signal: "wire/SAVE"
+                                    wires:
+                                      - "collectionData"
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: "Cancel"
+                                signals:
+                                  - signal: "wire/CANCEL"
+                                    wire: "collectionData"
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: "Create"
+                                signals:
+                                  - signal: "wire/CREATE_RECORD"
+                                    wire: "collectionData"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.context:
+                      workspace:
+                        name: $Param{workspacename}
+                        app: $Param{app}
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    components:
+                      - uesio/studio.datamanager:
+                          collectionId: $Param{namespace}.$Param{collectionname}
+                          namespace: $Param{namespace}
