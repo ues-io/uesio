@@ -11,6 +11,7 @@ class Field {
 	getId = () => this.source.namespace + "." + this.source.name
 	getLabel = () => this.source.label
 	getType = () => this.source.type
+	getRequired = () => this.source.required || false
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible

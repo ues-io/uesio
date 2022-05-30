@@ -27,6 +27,11 @@ type RemoveErrorPayload = {
 	fieldId: string
 } & EntityPayload
 
+type RemoveRecordErrorsPayload = {
+	recordId: string
+	fieldId: string | null
+} & EntityPayload
+
 type UndeletePayload = {
 	recordId: string
 } & EntityPayload
@@ -105,6 +110,19 @@ const wireSlice = createSlice({
 				delete state.errors?.[`${recordId}:${fieldId}`]
 			}
 		),
+		clearRecordErrors: createEntityReducer<
+			RemoveRecordErrorsPayload,
+			PlainWire
+		>((state, { recordId, fieldId }) => {
+			const result = Object.fromEntries(
+				Object.entries(state.errors || {}).filter(([key]) =>
+					fieldId
+						? key !== `${recordId}:${fieldId}`
+						: !key.startsWith(recordId)
+				)
+			)
+			state.errors = result
+		}),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
 				state.deletes[recordId] = {
@@ -308,6 +326,7 @@ export const {
 	unmarkForDelete,
 	updateRecord,
 	setRecord,
+	clearRecordErrors,
 	createRecord,
 	cancel,
 	empty,

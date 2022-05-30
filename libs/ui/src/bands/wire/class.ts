@@ -8,6 +8,7 @@ import {
 	markForDelete,
 	unmarkForDelete,
 	cancel,
+	clearRecordErrors,
 	empty,
 	toggleCondition,
 } from "."
@@ -21,6 +22,8 @@ import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
 import { addError, removeError } from "./"
 import { selectWire } from "./selectors"
+import { selectors } from "../collection/adapter"
+import Field from "../field/class"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -99,16 +102,112 @@ class Wire {
 				message,
 			})
 		)
+	clearValidationErrorsOnRecord = (recordId: string) =>
+		getStore().dispatch(
+			clearRecordErrors({
+				entity: this.getFullId(),
+				recordId,
+				fieldId: null,
+			})
+		)
 
-	validateRecordValue = (
+	validateWireRecord = (
 		recordId: string,
-		value: FieldValue,
-		fieldId: string
+		recordData: PlainWireRecord,
+		requiredFieldIds: string[],
+		fields: [string, Field][],
+		data: PlainWireRecord
 	) => {
-		const collection = this.getCollection()
-		const fieldMetadata = collection.getField(fieldId)
+		this.clearValidationErrorsOnRecord(recordId)
+		// 1. Get the changed fields and filter out empty strings
+		const changedFields = Object.keys(recordData)
 
+		// 2. Identify required but missing
+		const missingButRequired = requiredFieldIds.filter((fieldId) => {
+			if (changedFields.includes(fieldId)) return false // field is updated
+			if (fieldId in data) return false // value was already in the wire load
+			return true
+		})
+		missingButRequired.forEach((fieldId) =>
+			this.invalidateFieldOnRecord(recordId, fieldId, "required")
+		)
+		// 3. Fields we can run validation on
+		const fieldsToValidate = Object.entries(recordData).map(
+			([fieldId, value]) => ({
+				fieldId,
+				value,
+				recordId,
+				field: fields.find(([id]) => id === fieldId)?.[1] as Field,
+			})
+		)
+		fieldsToValidate.forEach((el) => this.validateRecordValue(el))
+	}
+
+	getFieldInstance = (fieldId: string) => {
+		const state = getStore().getState()
+		const plainCollection = selectors.selectById(
+			state,
+			this.source.collection
+		)
+		if (!plainCollection) return
+		this.attachCollection(plainCollection)
+		const collection = this.getCollection()
+
+		return collection.getField(fieldId)
+	}
+
+	validate = () => {
+		const state = getStore().getState()
+		console.log("validate ire")
+		// Create field tuples array for easy access later
+		const collectionFieldData = Object.keys(this.getWireDef().fields)
+			.map((fieldId) => {
+				// Todo, we don't really want to do this in a loop
+				const fieldInstance = this.getFieldInstance(fieldId)
+				// if (!fieldInstance) return undefined
+				return {
+					fieldId,
+					fieldInstance,
+					required: fieldInstance?.getRequired(),
+				}
+			})
+			.filter((x) => x) as {
+			fieldId: string
+			fieldInstance: Field
+			required: boolean
+		}[]
+		const requiredFieldsIds = collectionFieldData.reduce(
+			(prev, f) => [...prev, ...(f?.required ? [f.fieldId] : [])],
+			[]
+		)
+		const fieldInstances: [string, Field][] = collectionFieldData.map(
+			(f) => [f.fieldId, f.fieldInstance]
+		)
+		// Identify which records we need to validate
+		const wireState = selectWire(state, this.getViewId(), this.getId())
+		if (!wireState) return
+		const changedRecordsIds = Object.entries(wireState.changes)
+
+		changedRecordsIds.forEach(([recordId, keyValues]) =>
+			this.validateWireRecord(
+				recordId,
+				keyValues,
+				requiredFieldsIds,
+				fieldInstances,
+				wireState.data[recordId]
+			)
+		)
+	}
+
+	validateRecordValue = (fieldData: {
+		recordId: string
+		value: FieldValue
+		fieldId: string
+		field?: Field
+	}) => {
 		// validators
+		const { recordId, value, fieldId, field } = fieldData
+		const fieldInstance = field || this.getFieldInstance(fieldId)
 		if (value === "uesio sucks")
 			return this.invalidateFieldOnRecord(
 				recordId,
@@ -116,7 +215,7 @@ class Wire {
 				"uesio is awesome"
 			)
 		// Required
-		if (!value && fieldMetadata?.source.required)
+		if (!value && fieldInstance?.source.required)
 			return this.invalidateFieldOnRecord(
 				recordId,
 				fieldId,
@@ -147,7 +246,11 @@ class Wire {
 			})
 		)
 		this.doChanges(recordId, path)
-		this.validateRecordValue(recordId, record, path[0])
+		this.validateRecordValue({
+			recordId,
+			value: record,
+			fieldId: path[0],
+		})
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {

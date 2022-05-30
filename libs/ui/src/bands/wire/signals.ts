@@ -3,7 +3,7 @@ import { PropDescriptor } from "../../buildmode/buildpropdefinition"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
-
+import Wire from "./class"
 import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
@@ -27,6 +27,7 @@ import {
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
+import { getWiresFromDefinitonOrContext } from "./adapter"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -314,6 +315,14 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher:
 			(signal: SaveWiresSignal, context: Context): ThunkFunc =>
 			async (dispatch) => {
+				//
+				const wiresToSave = getWiresFromDefinitonOrContext(
+					signal.wires,
+					context
+				)
+
+				wiresToSave.forEach((w) => new Wire(w).validate())
+				//
 				const wireIsValid = signal.wires?.every(
 					(wireId) =>
 						!Object.keys(
@@ -325,7 +334,7 @@ const signals: Record<string, SignalDescriptor> = {
 
 				// Test frontend wire validation
 				const batch = await dispatch(
-					saveWiresOp({ context, wires: signal.wires })
+					saveWiresOp({ context, wiresToSave })
 				).then(unwrapResult)
 
 				// Special handling for saves of just one wire and one record
