@@ -100,15 +100,15 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      collectionId: $Param{collectionname}
+                                      collectionId: $Param{namespace}.$Param{collectionname}
                                       namespace: $Param{app}
                                       wireName: "bulkjobs"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Collection Config"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                  # - uesio/io.button:
+                                  #     uesio.variant: uesio/io.secondary
+                                  #     text: "Collection Config"
+                                  #     signals:
+                                  #       - signal: "route/NAVIGATE"
+                                  #         path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

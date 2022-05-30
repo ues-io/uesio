@@ -116,5 +116,5 @@ definition:
                                     app: $Param{app}
                                 components:
                                   - uesio/studio.dataimport:
-                                      collectionId: $Param{collectionname}
+                                      collectionId: $Param{namespace}.$Param{collectionname}
                                       namespace: $Param{app}

@@ -106,7 +106,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
-		{ xs: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" },
+		{ xs: "1fr 1fr 1fr", md: "1fr 1fr 1fr 1fr", lg: "1fr 1fr 1fr 1fr 1fr" },
 		context
 	)
 

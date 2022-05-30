@@ -90,6 +90,11 @@ components:
         - uesio/io.button:uesio/io.primary
       utilities:
         - uesio/io.button
+    collectionfields:
+      variants:
+        - uesio/io.table:uesio/io.default
+      utilities:
+        - uesio/io.table
     # Define a builder for the uesio runtime and slot
     runtime:
     # uesio.view:
