@@ -3,17 +3,16 @@ import { addError } from ".."
 import { ThunkFunc } from "../../../store/store"
 
 export default (
-		context: Context,
+		entity: string,
+		recordId: string,
 		fieldId: string,
 		message: string
 	): ThunkFunc =>
 	(dispatch) => {
-		const recordId = context.getRecord()?.getId()
-		const wire = context.getWire()
-		if (!recordId || !wire) return context
+		console.log("add error")
 		dispatch(
 			addError({
-				entity: wire.getFullId(),
+				entity,
 				recordId,
 				fieldId,
 				message,

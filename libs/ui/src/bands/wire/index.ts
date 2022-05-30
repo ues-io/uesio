@@ -41,6 +41,11 @@ type UpdateRecordPayload = {
 	record: FieldValue
 	path: string[]
 } & EntityPayload
+type ValidateRecordPayload = {
+	recordId: string
+	record: FieldValue
+	path: string[]
+} & EntityPayload
 
 type CreateRecordPayload = {
 	record: PlainWireRecord
@@ -137,13 +142,14 @@ const wireSlice = createSlice({
 				delete state.deletes[recordId]
 			}
 		),
+
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
+				console.log("store update")
 				const usePath = [recordId].concat(path)
 				const basePath = [recordId].concat([path[0]])
 				set(state.data, usePath, record)
 				set(state.changes, basePath, get(state.data, basePath))
-
 				// Make sure the id field gets set.
 				state.changes[recordId][ID_FIELD] =
 					state.data[recordId][ID_FIELD]

@@ -52,7 +52,8 @@ const getFieldContent = (
 		fieldId,
 		id,
 		value: record.getFieldValue(fieldId),
-		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
+		setValue: (value: wire.FieldValue) =>
+			record.update(context, fieldId, value),
 		record,
 		wire,
 		variant: definition["uesio.variant"],

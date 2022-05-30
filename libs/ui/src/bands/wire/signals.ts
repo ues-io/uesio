@@ -143,13 +143,13 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
-			updateRecordOp(
+			updateRecordOp({
 				context,
-				signal.wire,
-				signal.record,
-				signal.field,
-				signal.value
-			),
+				wirename: signal.wire,
+				recordId: signal.record,
+				field: signal.field,
+				value: signal.value,
+			}),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",
