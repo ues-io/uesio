@@ -3,7 +3,6 @@ import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
 import { useEffect } from "react"
-import { AnyAction } from "@reduxjs/toolkit"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
@@ -16,7 +15,7 @@ class ComponentAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
 		this.dispatcher((dispatch, getState, platform) =>

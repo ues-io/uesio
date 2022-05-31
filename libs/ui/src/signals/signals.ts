@@ -1,4 +1,3 @@
-import { AnyAction } from "redux"
 import { Context, ContextFrame } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { Dispatcher } from "../store/store"
@@ -23,7 +22,7 @@ const registry: Record<string, SignalDescriptor> = {
 }
 
 const run = (
-	dispatcher: Dispatcher<AnyAction>,
+	dispatcher: Dispatcher,
 	path: string,
 	signal: SignalDefinition,
 	context: Context
@@ -42,7 +41,7 @@ const run = (
 }
 
 const runMany = async (
-	dispatcher: Dispatcher<AnyAction>,
+	dispatcher: Dispatcher,
 	path: string,
 	signals: SignalDefinition[],
 	context: Context

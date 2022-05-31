@@ -1,6 +1,5 @@
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
-import { AnyAction } from "redux"
 import { useConfigValue } from "../bands/configvalue"
 import { useViewDef } from "../bands/viewdef"
 import { PlainViewDef } from "../definition/viewdef"
@@ -14,7 +13,7 @@ class ViewAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useViewDef(viewDefId: string) {
 		return useViewDef(viewDefId)?.parsed as PlainViewDef

@@ -6,7 +6,6 @@ import { Context } from "../context/context"
 import { PanelDefinitionMap } from "../definition/panel"
 
 import componentSignal from "../bands/component/signals"
-import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
@@ -29,7 +28,7 @@ class SignalAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useHandler = (
 		signals: SignalDefinition[] | undefined,

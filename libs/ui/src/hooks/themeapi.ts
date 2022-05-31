@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import { AnyAction } from "redux"
 import { parseKey } from "../component/path"
 import { Context } from "../context/context"
 import { Dispatcher } from "../store/store"
@@ -16,7 +15,7 @@ class ThemeAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useTheme(themeId?: string, context?: Context) {
 		const theme = useTheme(themeId || "")

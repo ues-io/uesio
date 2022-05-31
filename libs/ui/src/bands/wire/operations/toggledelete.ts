@@ -4,7 +4,7 @@ import unmarkForDeleteOp from "./unmarkfordelete"
 import { ThunkFunc } from "../../..//store/store"
 
 export default (context: Context): ThunkFunc =>
-	(dispatch, getState, platform) => {
+	(dispatch) => {
 		const record = context.getRecord()
 		const wire = context.getWire()
 
@@ -13,7 +13,7 @@ export default (context: Context): ThunkFunc =>
 		const recordId = record.getId()
 		const isDeleted = wire.isMarkedForDeletion(recordId)
 
-		return isDeleted
-			? unmarkForDeleteOp(context)(dispatch, getState, platform)
-			: markForDeleteOp(context)(dispatch, getState, platform)
+		return dispatch(
+			isDeleted ? unmarkForDeleteOp(context) : markForDeleteOp(context)
+		)
 	}

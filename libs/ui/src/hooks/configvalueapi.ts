@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { AnyAction } from "redux"
 import { Context } from "../context/context"
 import { ConfigValueResponse } from "../platform/platform"
 import { Dispatcher } from "../store/store"
@@ -12,7 +11,7 @@ class ConfigValueAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useConfigValues(context: Context) {
 		const [values, setValues] = useState<ConfigValueResponse[] | null>(null)

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { AnyAction } from "redux"
 import { Context } from "../context/context"
 import { SecretResponse } from "../platform/platform"
 import { Dispatcher } from "../store/store"
@@ -12,7 +11,7 @@ class SecretAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useSecrets(context: Context) {
 		const [secrets, setSecrets] = useState<SecretResponse[] | null>(null)
