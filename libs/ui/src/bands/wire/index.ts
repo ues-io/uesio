@@ -22,6 +22,11 @@ type AddErrorPayload = {
 	message: string
 } & EntityPayload
 
+type RemoveRecordErrorsPayload = {
+	recordId: string
+	fieldId: string | null
+} & EntityPayload
+
 type RemoveErrorPayload = {
 	recordId: string
 	fieldId: string
@@ -90,9 +95,30 @@ const wireSlice = createSlice({
 					errors[recordFieldKey] = []
 				}
 
+				// We don't want to display duplicate error messages
+				if (
+					currentFieldErrors &&
+					currentFieldErrors.find(
+						({ message: msg }) => msg === message
+					)
+				)
+					return
 				errors[recordFieldKey].push(newErrorItem)
 			}
 		),
+		clearRecordErrors: createEntityReducer<
+			RemoveRecordErrorsPayload,
+			PlainWire
+		>((state, { recordId, fieldId }) => {
+			const result = Object.fromEntries(
+				Object.entries(state.errors || {}).filter(([key]) =>
+					fieldId
+						? key !== `${recordId}:${fieldId}`
+						: !key.startsWith(recordId)
+				)
+			)
+			state.errors = result
+		}),
 		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
 			(state, { recordId, fieldId }) => {
 				delete state.errors?.[`${recordId}:${fieldId}`]

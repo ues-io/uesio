@@ -3,7 +3,6 @@ import Collection from "../collection/class"
 import { getStore } from "../../store/store"
 import {
 	setRecord,
-	updateRecord,
 	createRecord,
 	markForDelete,
 	unmarkForDelete,
@@ -12,6 +11,7 @@ import {
 	toggleCondition,
 } from "."
 import saveWiresOp from "./operations/save"
+import updateRecordOp from "./operations/updaterecord"
 import { runManyThrottled } from "../../signals/signals"
 import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
@@ -84,15 +84,22 @@ class Wire {
 
 	getFields = () => this.getWireDef().fields
 
-	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
+	updateRecord = (
+		context: Context,
+		recordId: string,
+		record: FieldValue,
+		path: string[]
+	) => {
 		getStore().dispatch(
-			updateRecord({
-				entity: this.getFullId(),
+			updateRecordOp({
+				context,
+				wirename: this.source.name,
 				recordId,
-				record,
-				path,
+				value: record as string,
+				field: path[0],
 			})
 		)
+
 		this.doChanges(recordId, path)
 	}
 

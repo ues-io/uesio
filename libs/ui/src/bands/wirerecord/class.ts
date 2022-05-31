@@ -2,6 +2,7 @@ import get from "lodash/get"
 import { ID_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
+import { Context } from "../../context/context"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -34,9 +35,9 @@ class WireRecord {
 		return errors?.[this.id + ":" + fieldId]
 	}
 
-	update = (fieldId: string, value: FieldValue) => {
+	update = (context: Context, fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		return this.wire.updateRecord(this.id, value, fieldNameParts)
+		return this.wire.updateRecord(context, this.id, value, fieldNameParts)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
