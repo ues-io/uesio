@@ -19,6 +19,7 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
+import { getWiresFromDefinitonOrContext } from "./adapter"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -174,8 +175,10 @@ class Wire {
 		return this
 	}
 
-	save = (context: Context) =>
-		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
+	save = (context: Context) => {
+		const wires = getWiresFromDefinitonOrContext(this.getId(), context)
+		getStore().dispatch(saveWiresOp({ context, wires }))
+	}
 
 	load = (context: Context) =>
 		getStore().dispatch(loadWireOp({ context, wires: [this.getId()] }))

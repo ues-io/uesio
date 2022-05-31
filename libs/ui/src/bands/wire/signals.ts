@@ -307,12 +307,12 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: SaveWiresSignal, context: Context): ThunkFunc =>
 			async (dispatch) => {
 				//
-				const wiresToSave = getWiresFromDefinitonOrContext(
+				const wires = getWiresFromDefinitonOrContext(
 					signal.wires,
 					context
 				)
 
-				wiresToSave.forEach((w) => new Wire(w).validate())
+				// wires.forEach((w) => new Wire(w).validate())
 				//
 				const wireIsValid = signal.wires?.every(
 					(wireId) =>
@@ -325,7 +325,7 @@ const signals: Record<string, SignalDescriptor> = {
 
 				// Test frontend wire validation
 				const batch = await dispatch(
-					saveWiresOp({ context, wiresToSave })
+					saveWiresOp({ context, wires })
 				).then(unwrapResult)
 
 				// Special handling for saves of just one wire and one record

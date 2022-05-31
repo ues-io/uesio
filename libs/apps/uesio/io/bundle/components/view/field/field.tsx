@@ -51,7 +51,6 @@ const getFieldContent = (
 		fieldMetadata,
 		fieldId,
 		id,
-
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) =>
 			record.update(context, fieldId, value),
