@@ -2,7 +2,6 @@ import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
 import { Context } from "../context/context"
 import { Dispatcher, getPlatform } from "../store/store"
-import { AnyAction } from "redux"
 import { useEffect } from "react"
 import getMetadata from "../bands/collection/operations/get"
 import { Collection } from "../collectionexports"
@@ -15,7 +14,7 @@ class CollectionAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useCollection(context: Context, collectionName: string) {
 		const plainCollection = useCollection(collectionName)

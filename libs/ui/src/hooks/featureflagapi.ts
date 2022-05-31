@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { AnyAction } from "redux"
 import { Context } from "../context/context"
 import { FeatureFlagResponse } from "../platform/platform"
 import { Dispatcher } from "../store/store"
@@ -12,7 +11,7 @@ class FeatureFlagAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useFeatureFlags(context: Context, user: string) {
 		const [featureflags, setFeatureFlags] = useState<

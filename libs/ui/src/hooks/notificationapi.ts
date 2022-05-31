@@ -1,4 +1,3 @@
-import { AnyAction } from "redux"
 import { Context } from "../context/context"
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
@@ -10,7 +9,7 @@ class NotificationAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	addError(text: string, context?: Context, path?: string) {
 		return this.uesio.signal.run(

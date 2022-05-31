@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { AnyAction } from "redux"
 import { Context } from "../context/context"
 import { ParamDefinitionMap } from "../definition/param"
 import { BotParams, platform } from "../platform/platform"
@@ -13,7 +12,7 @@ class BotAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useParams(context: Context, namespace: string, name: string, type: string) {
 		const [params, setParams] = useState<ParamDefinitionMap | undefined>(

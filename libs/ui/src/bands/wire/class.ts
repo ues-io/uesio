@@ -1,6 +1,6 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
-import { getStore } from "../../store/store"
+import { getDispatcher, getStore } from "../../store/store"
 import {
 	setRecord,
 	updateRecord,
@@ -171,7 +171,7 @@ class Wire {
 		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
 
 	load = (context: Context) =>
-		getStore().dispatch(loadWireOp({ context, wires: [this.getId()] }))
+		getDispatcher()(loadWireOp({ context, wires: [this.getId()] }))
 }
 
 export default Wire

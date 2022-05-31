@@ -27,7 +27,6 @@ import {
 	setDefinitionContent,
 	cancel,
 } from "../bands/builder"
-import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
 import { Dispatcher, RootState } from "../store/store"
 
@@ -52,7 +51,7 @@ class BuilderAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
+	dispatcher: Dispatcher
 
 	useBuilderState = <T extends PlainComponentState>(scope: string) =>
 		this.uesio.component.useExternalState<T>(

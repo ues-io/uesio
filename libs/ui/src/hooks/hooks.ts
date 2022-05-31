@@ -9,7 +9,6 @@ import { PlatformAPI } from "./platformapi"
 import { CollectionAPI } from "./collectionapi"
 import { BaseProps } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import { AnyAction } from "redux"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
 import { ThemeAPI } from "./themeapi"
@@ -19,7 +18,7 @@ import { BotAPI } from "./botapi"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
-	constructor(dispatcher: Dispatcher<AnyAction>, props: BaseProps) {
+	constructor(dispatcher: Dispatcher, props: BaseProps) {
 		this._dispatcher = dispatcher
 
 		this._path = props.path || ""
@@ -62,7 +61,7 @@ class Uesio {
 	_context: Context
 	_componentType: string
 
-	_dispatcher: Dispatcher<AnyAction>
+	_dispatcher: Dispatcher
 
 	getPath = () => this._path
 	getComponentType = () => this._componentType
