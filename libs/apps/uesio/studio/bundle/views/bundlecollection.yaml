@@ -82,13 +82,13 @@ definition:
                       root:
                         padding: 40px
                     components:
-                      - uesio/io.text:
-                          text: "Component with the Collection info"
-                          uesio.styles:
-                            root:
-                              fontSize: 60pt
-                              padding: 20px
-                          element: div
+                      - uesio/studio.collectioninfo:
+                          collectionId: $Param{namespace}.$Param{collectionname}
+                          namespace: $Param{app}
+                          uesio.context:
+                            workspace:
+                              name: $Param{workspacename}
+                              app: $Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

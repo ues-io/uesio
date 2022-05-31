@@ -58,6 +58,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	const collections = uesio.builder.useMetadataList(
+		//TO_DO dont return stuff that is not public
 		context,
 		"COLLECTION",
 		definition.namespace
