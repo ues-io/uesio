@@ -25,12 +25,14 @@ const getFieldFromParamDef = (
 				reference: {
 					collection: def.collection,
 				},
+				placeholder: "Type to Search..",
 			}
 		default:
 			return {
 				label: key,
 				required: !!def.required,
 				type: "TEXT" as const,
+				placeholder: "Enter Text",
 			}
 	}
 }

@@ -19,6 +19,7 @@ type FieldDefinition = {
 	id?: string
 	displayAs?: string
 	reference: ReferenceFieldOptions
+	placeholder: string
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"

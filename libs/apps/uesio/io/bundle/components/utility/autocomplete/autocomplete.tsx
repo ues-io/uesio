@@ -15,6 +15,7 @@ type DropDownProps<T> = {
 		index: number,
 		highlightedIndex: number
 	) => ReactNode
+	placeholder?: string
 } & definition.BaseProps
 
 const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
@@ -29,6 +30,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 			<div className={classes.menuitem}>Loading...</div>
 		),
 		itemRenderer = (item) => <div>{itemToString(item)}</div>,
+		placeholder,
 	} = props
 
 	const classes = styles.useUtilityStyles(
@@ -114,7 +116,11 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 	return (
 		<div ref={setAnchorEl}>
 			<div className={classes.root} {...getComboboxProps()}>
-				<input className={classes.input} {...getInputProps()} />
+				<input
+					className={classes.input}
+					{...getInputProps()}
+					placeholder={placeholder}
+				/>
 			</div>
 
 			<div

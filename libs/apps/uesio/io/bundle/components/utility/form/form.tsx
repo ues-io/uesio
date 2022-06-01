@@ -32,18 +32,21 @@ const Form: FunctionComponent<FormProps> = (props) => {
 				// Loop over all the fields in the wire
 				return (
 					<>
-						{Object.entries(wire.getFields()).map(([key]) => (
-							<component.Component
-								key={record.getId() + key}
-								componentType="uesio/io.field"
-								definition={{
-									fieldId: key,
-								}}
-								index={i}
-								path={`${path}["${key}"]["${i}"]`}
-								context={recordContext}
-							/>
-						))}
+						{Object.entries(wire.getFields()).map(
+							([key, fieldDef]) => (
+								<component.Component
+									key={record.getId() + key}
+									componentType="uesio/io.field"
+									definition={{
+										fieldId: key,
+										placeholder: fieldDef?.placeholder,
+									}}
+									index={i}
+									path={`${path}["${key}"]["${i}"]`}
+									context={recordContext}
+								/>
+							)
+						)}
 						<Group
 							styles={{
 								root: {
