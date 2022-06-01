@@ -19,7 +19,7 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
-import { getWiresFromDefinitonOrContext } from "./adapter"
+import { getWiresFromDefinitonOrContext } from "./"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -93,7 +93,7 @@ class Wire {
 		appDispatch()(
 			updateRecordOp({
 				context,
-				entity: this.getFullId(),
+				wirename: this.getFullId(),
 				recordId,
 				value: record as string,
 				field: path[0],
@@ -174,8 +174,14 @@ class Wire {
 		return this
 	}
 
-	save = (context: Context) =>
-		appDispatch()(saveWiresOp({ context, wires: [this.getId()] }))
+	save = (context: Context) => {
+		appDispatch()(
+			saveWiresOp({
+				context,
+				wires: getWiresFromDefinitonOrContext([this.getId()], context),
+			})
+		)
+	}
 
 	load = (context: Context) =>
 		appDispatch()(loadWireOp({ context, wires: [this.getId()] }))

@@ -3,7 +3,7 @@ import { PropDescriptor } from "../../buildmode/buildpropdefinition"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
-import Wire from "./class"
+
 import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
@@ -27,7 +27,7 @@ import {
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
-import { getWiresFromDefinitonOrContext } from "./adapter"
+import { getWiresFromDefinitonOrContext } from "./"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
