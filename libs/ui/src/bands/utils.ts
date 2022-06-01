@@ -18,4 +18,11 @@ const createEntityReducer =
 		entityState && reducer(entityState, payload)
 	}
 
-export { createEntityReducer, EntityPayload, UesioThunkAPI }
+const getErrorString = (error: unknown) => {
+	if (error instanceof Error) {
+		return error.message
+	}
+	return error + ""
+}
+
+export { createEntityReducer, EntityPayload, UesioThunkAPI, getErrorString }

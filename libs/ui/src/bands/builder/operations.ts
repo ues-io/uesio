@@ -1,12 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
-import { SaveResponseBatch } from "../../load/saveresponse"
+
+import { ThunkFunc } from "../../store/store"
 import { ID_FIELD } from "../collection/types"
 import { UesioThunkAPI } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
 import { getMetadataListKey } from "./selectors"
 import { MetadataListStore, MetadataType } from "./types"
+import { save as saveBuilder } from "."
 
 const getMetadataList = createAsyncThunk<
 	MetadataListStore,
@@ -51,50 +53,50 @@ const getAvailableNamespaces = createAsyncThunk<
 	}
 )
 
-const save = createAsyncThunk<
-	SaveResponseBatch,
-	{
-		context: Context
-	},
-	UesioThunkAPI
->("builder/save", async ({ context }, api) => {
-	const changes: Record<string, PlainWireRecord> = {}
-	const state = api.getState().viewdef?.entities
-	const workspace = context.getWorkspace()
+const save =
+	(context: Context): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const changes: Record<string, PlainWireRecord> = {}
+		const state = getState().viewdef?.entities
+		const workspace = context.getWorkspace()
 
-	if (!workspace) throw new Error("No Workspace in context")
+		if (!workspace) throw new Error("No Workspace in context")
 
-	// Loop over view defs
-	if (state) {
-		for (const defKey of Object.keys(state)) {
-			const defState = state[defKey]
-			if (!defState) continue
-			if (defState.content === defState.original) {
-				continue
-			}
+		// Loop over view defs
+		if (state) {
+			for (const defKey of Object.keys(state)) {
+				const defState = state[defKey]
+				if (!defState) continue
+				if (defState.content === defState.original) {
+					continue
+				}
 
-			const [, name] = parseKey(defState.key)
+				const [, name] = parseKey(defState.key)
 
-			if (defState?.content) {
-				changes[defKey] = {
-					"uesio/studio.definition": defState.content,
-					[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
+				if (defState?.content) {
+					changes[defKey] = {
+						"uesio/studio.definition": defState.content,
+						[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
+					}
 				}
 			}
 		}
-	}
 
-	return api.extra.saveData(new Context(), {
-		wires: [
-			{
-				wire: "saveview",
-				collection: "uesio/studio.view",
-				changes,
-				deletes: {},
-			},
-		],
-	})
-})
+		await platform.saveData(new Context(), {
+			wires: [
+				{
+					wire: "saveview",
+					collection: "uesio/studio.view",
+					changes,
+					deletes: {},
+				},
+			],
+		})
+
+		dispatch(saveBuilder())
+
+		return context
+	}
 
 export default {
 	getMetadataList,

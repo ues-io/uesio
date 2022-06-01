@@ -19,6 +19,7 @@ import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
 import { ViewDefinition } from "../definition/viewdef"
 import { ComponentVariant } from "../definition/componentvariant"
+import { getErrorString } from "../bands/utils"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -68,12 +69,12 @@ type MergeHandler = (
 const handleMergeError = ({
 	mergeType,
 	expression,
-	error,
+	errorMessage,
 	viewDefId,
 }: {
 	mergeType: MergeType
 	expression: string
-	error: Error
+	errorMessage: string
 	viewDefId: string
 }) => {
 	const title = "Error in Template merge"
@@ -91,7 +92,7 @@ const handleMergeError = ({
 		}
 		if (!mergeType) return missingMergeType
 		if (!(mergeType in handlers)) return invalidMergeType
-		if (error.message === "noValue") return noValue
+		if (errorMessage === "noValue") return noValue
 
 		return {
 			mergeType,
@@ -196,10 +197,12 @@ const inject = (template: string, context: Context): string =>
 			if (!value) throw new Error("noValue")
 			return value
 		} catch (error) {
+			const errorMessage = getErrorString(error)
+
 			handleMergeError({
 				mergeType,
 				expression,
-				error,
+				errorMessage,
 				viewDefId: context.getViewDefId() || "",
 			})
 			return ""
