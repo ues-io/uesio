@@ -189,6 +189,10 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.filerefs
                                       wireName: files
                       - uesio/io.box:
@@ -203,6 +207,10 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.routerefs
                                       wireName: routes
                       - uesio/io.box:
@@ -217,6 +225,10 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.viewrefs
                                       wireName: views
                       - uesio/io.box:
@@ -231,5 +243,9 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.permissionpicker:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                       fieldId: uesio/studio.collectionrefs
                                       wireName: collections
