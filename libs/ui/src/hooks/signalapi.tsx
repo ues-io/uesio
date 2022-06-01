@@ -1,4 +1,3 @@
-import { Dispatcher } from "../store/store"
 import { SignalDefinition } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
@@ -24,11 +23,9 @@ const getPanelKey = (path: string, context: Context) => {
 class SignalAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher
 
 	useHandler = (
 		signals: SignalDefinition[] | undefined,
@@ -81,10 +78,10 @@ class SignalAPI {
 	}
 
 	runMany = async (signals: SignalDefinition[], context: Context) =>
-		runMany(this.dispatcher, this.uesio.getPath(), signals, context)
+		runMany(this.uesio.getPath(), signals, context)
 
 	run = (signal: SignalDefinition, context: Context) =>
-		run(this.dispatcher, this.uesio.getPath(), signal, context)
+		run(this.uesio.getPath(), signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal.signal] || componentSignal

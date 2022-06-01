@@ -1,4 +1,4 @@
-import { Dispatcher, getStore } from "../store/store"
+import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
@@ -7,24 +7,21 @@ import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import { useComponentVariantKeys } from "../bands/componentvariant"
+import { platform } from "../platform/platform"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher
 
 	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
-		this.dispatcher((dispatch, getState, platform) =>
-			platform.getComponentPackURL(
-				this.uesio.getContext(),
-				namespace,
-				name,
-				buildMode
-			)
+		platform.getComponentPackURL(
+			this.uesio.getContext(),
+			namespace,
+			name,
+			buildMode
 		)
 
 	usePacks = (packs: string[] | undefined, buildMode: boolean) =>
@@ -57,7 +54,7 @@ class ComponentAPI {
 			: fullState
 
 		const setState = (state: T) => {
-			this.dispatcher({
+			appDispatch()({
 				type: "component/set",
 				payload: {
 					id: componentId,
@@ -66,7 +63,7 @@ class ComponentAPI {
 					state: slice
 						? {
 								...(selectState<T>(
-									getStore().getState(),
+									getCurrentState(),
 									componentType,
 									componentId,
 									viewId
@@ -90,7 +87,7 @@ class ComponentAPI {
 	getState = <T extends PlainComponentState>(
 		componentId: string
 	): T | undefined => {
-		const state = getStore().getState()
+		const state = getCurrentState()
 		const componentType = this.uesio.getComponentType()
 		const viewId = this.uesio.getViewId()
 		return selectState(state, componentType, componentId, viewId)

@@ -1,16 +1,22 @@
-import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
+import {
+	createEntityAdapter,
+	createSlice,
+	EntityState,
+	PayloadAction,
+} from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import loadNextBatch from "./operations/loadnextbatch"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
+import { RootState } from "../../store/store"
+import { Context, getWire } from "../../context/context"
 
 type DeletePayload = {
 	recordId: string
@@ -63,6 +69,31 @@ type ResetWirePayload = {
 type WireLoadAction = PayloadAction<
 	[PlainWire[], Record<string, PlainCollection>]
 >
+
+const wireAdapter = createEntityAdapter<PlainWire>({
+	selectId: (wire) => `${wire.view}/${wire.name}`,
+})
+
+const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
+
+const getWiresFromDefinitonOrContext = (
+	wires: string[] | string | undefined,
+	context: Context
+): PlainWire[] => {
+	if (wires) {
+		const viewId = context.getViewId()
+		if (!viewId) throw new Error("No ViewId in Context")
+		const wiresArray = Array.isArray(wires) ? wires : [wires]
+		return wiresArray.flatMap((wirename) => {
+			const wire = getWire(viewId, wirename)
+			if (!wire) throw new Error("Bad Wire!")
+			return wire
+		})
+	}
+	const wire = context.getPlainWire()
+	if (!wire) throw new Error("No Wire in Definition or Context")
+	return [wire]
+}
 
 const wireSlice = createSlice({
 	name: "wire",
@@ -283,6 +314,8 @@ const wireSlice = createSlice({
 })
 
 export { WireLoadAction }
+
+export { selectors, getWiresFromDefinitonOrContext }
 
 export const {
 	markForDelete,

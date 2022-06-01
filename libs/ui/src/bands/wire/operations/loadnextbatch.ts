@@ -5,7 +5,7 @@ import { nanoid } from "nanoid"
 import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { PlainWireRecord } from "../../wirerecord/types"
-import { getWiresFromDefinitonOrContext } from "../adapter"
+import { getWiresFromDefinitonOrContext } from ".."
 import { getWireRequest, getWiresMap } from "./load"
 
 export default createAsyncThunk<
