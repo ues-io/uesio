@@ -14,9 +14,19 @@ const getParamDefs = (record: wire.WireRecord): param.ParamDefinitionMap => {
 	return params?.toJSON() || {}
 }
 
-const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
-	const { context } = props
+type PreviewButtonDefinition = {
+	build: boolean
+}
+
+interface Props extends definition.BaseProps {
+	definition: PreviewButtonDefinition
+}
+
+const PreviewButton: FunctionComponent<Props> = (props) => {
+	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
+	const build = definition.build
+	const label = build ? "Build" : "Preview"
 
 	const record = context.getRecord()
 	if (!record) throw new Error("No Record Context Provided")
@@ -49,9 +59,9 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 		uesio.signal.run(
 			{
 				signal: "route/REDIRECT",
-				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
-					urlParams ? `?${urlParams}` : ""
-				}`,
+				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/${
+					build ? "edit" : "preview"
+				}${urlParams ? `?${urlParams}` : ""}`,
 			},
 			context
 		)
@@ -62,7 +72,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 			<Button
 				context={context}
 				variant="uesio/io.secondary"
-				label="Preview"
+				label={label}
 				onClick={() => (hasParams ? setOpen(true) : previewHandler())}
 			/>
 			{open && (
@@ -72,12 +82,12 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 						width="400px"
 						height="500px"
 						onClose={() => setOpen(false)}
-						title="Set Preview Parameters"
+						title={`Set ${label} Parameters`}
 					>
 						<Form
 							wire={WIRE_NAME}
 							context={context}
-							submitLabel="Preview"
+							submitLabel={label}
 							onSubmit={previewHandler}
 						/>
 					</Dialog>

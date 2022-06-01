@@ -72,12 +72,12 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Build"
-                                      signals:
-                                        - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
+                                  - uesio/studio.previewbutton:
+                                      build: true
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
