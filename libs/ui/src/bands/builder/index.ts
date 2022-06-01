@@ -2,11 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 import { BuilderState } from "./types"
 import { Definition, DefinitionMap } from "../../definition/definition"
-import builderOps from "./operations"
 
-import { getMetadataListKey } from "./selectors"
 import { getParentPath } from "../../component/path"
-import { set as setRoute } from "../route"
 
 type SetDefinitionPayload = {
 	path: string
@@ -130,62 +127,6 @@ const builderSlice = createSlice({
 		setDropNode: (state, { payload }: PayloadAction<string>) => {
 			state.droppingNode = payload
 		},
-	},
-	extraReducers: (builder) => {
-		builder.addCase(
-			builderOps.getAvailableNamespaces.fulfilled,
-			(state, { payload }) => {
-				state.namespaces = {
-					status: "FULFILLED",
-					data: payload,
-				}
-			}
-		)
-		builder.addCase(builderOps.getAvailableNamespaces.pending, (state) => {
-			state.namespaces = {
-				status: "PENDING",
-				data: null,
-			}
-		})
-		builder.addCase(
-			builderOps.getMetadataList.fulfilled,
-			(state, { payload, meta }) => {
-				const key = getMetadataListKey(
-					meta.arg.metadataType,
-					meta.arg.namespace,
-					meta.arg.grouping
-				)
-				if (!state.metadata) {
-					state.metadata = {}
-				}
-				state.metadata[key] = {
-					status: "FULFILLED",
-					data: payload,
-				}
-			}
-		)
-		builder.addCase(
-			builderOps.getMetadataList.pending,
-			(state, { meta }) => {
-				const key = getMetadataListKey(
-					meta.arg.metadataType,
-					meta.arg.namespace,
-					meta.arg.grouping
-				)
-				if (!state.metadata) {
-					state.metadata = {}
-				}
-				state.metadata[key] = {
-					status: "PENDING",
-					data: null,
-				}
-			}
-		)
-
-		builder.addCase(setRoute, (state) => {
-			state.namespaces = null
-			state.metadata = null
-		})
 	},
 })
 

@@ -1,57 +1,30 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
 import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 
 import { ThunkFunc } from "../../store/store"
 import { ID_FIELD } from "../collection/types"
-import { UesioThunkAPI } from "../utils"
+
 import { PlainWireRecord } from "../wirerecord/types"
-import { getMetadataListKey } from "./selectors"
-import { MetadataListStore, MetadataType } from "./types"
+import { MetadataType } from "./types"
 import { save as saveBuilder } from "."
 
-const getMetadataList = createAsyncThunk<
-	MetadataListStore,
-	{
-		context: Context
-		metadataType: MetadataType
-		namespace: string
+const getMetadataList =
+	(
+		context: Context,
+		metadataType: MetadataType,
+		namespace: string,
 		grouping?: string
-	},
-	UesioThunkAPI
->(
-	"builder/getMetadataList",
-	async ({ context, metadataType, namespace, grouping }, api) =>
-		api.extra.getMetadataList(context, metadataType, namespace, grouping),
-	{
-		condition: ({ metadataType, namespace, grouping }, { getState }) => {
-			const { builder } = getState()
-			const key = getMetadataListKey(metadataType, namespace, grouping)
-			const status = builder.metadata?.[key]?.status
-			return status !== "FULFILLED" && status !== "PENDING"
-		},
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const response = await platform.getMetadataList(
+			context,
+			metadataType,
+			namespace,
+			grouping
+		)
+		console.log(response)
+		return context
 	}
-)
-
-const getAvailableNamespaces = createAsyncThunk<
-	MetadataListStore,
-	{
-		context: Context
-		metadataType?: MetadataType
-	},
-	UesioThunkAPI
->(
-	"builder/getAvailableNamespaces",
-	async ({ context, metadataType }, api) =>
-		api.extra.getAvailableNamespaces(context, metadataType),
-	{
-		condition: (context, { getState }) => {
-			const { builder } = getState()
-			const status = builder.namespaces?.status
-			return status !== "FULFILLED" && status !== "PENDING"
-		},
-	}
-)
 
 const save =
 	(context: Context): ThunkFunc =>
@@ -100,6 +73,5 @@ const save =
 
 export default {
 	getMetadataList,
-	getAvailableNamespaces,
 	save,
 }

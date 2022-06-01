@@ -66,20 +66,6 @@ const getMetadataListKey = (
 	grouping?: string
 ) => `${metadataType}-${namespace}-${grouping}`
 
-const useMetadataList = (
-	metadataType: MetadataType,
-	namespace: string,
-	grouping?: string
-) => {
-	const key = getMetadataListKey(metadataType, namespace, grouping)
-	return useSelector(
-		({ builder }: RootState) => builder?.metadata?.[key]?.data || null
-	)
-}
-
-const useNamespaces = () =>
-	useSelector(({ builder }: RootState) => builder?.namespaces?.data || null)
-
 export {
 	useNodeState,
 	useSelectedNode,
@@ -88,7 +74,5 @@ export {
 	useLastModifiedNode,
 	useDragNode,
 	useDropNode,
-	useMetadataList,
-	useNamespaces,
 	getMetadataListKey,
 }
