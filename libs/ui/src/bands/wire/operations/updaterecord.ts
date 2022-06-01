@@ -1,11 +1,11 @@
 import { ThunkFunc, appDispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { updateRecord, addError } from ".."
+import { updateRecord } from ".."
 
 import { FieldMetadata } from "../../field/types"
 import { FieldValue } from "../../wirerecord/types"
 
-const checkFieldValidation = (
+const getFieldValidationErrors = (
 	fieldMetaData: FieldMetadata,
 	value: FieldValue
 ) => {
@@ -28,7 +28,7 @@ const checkFieldValidation = (
 			msg: "Expected Text, not a number",
 		},
 	]
-	return checks.filter(({ condition }) => condition)
+	return checks.filter(({ condition }) => condition).map(({ msg }) => msg)
 }
 
 export default ({
@@ -45,64 +45,37 @@ export default ({
 		value: string
 	}): ThunkFunc =>
 	(dispatch) => {
-		// Would be nice if we can get rid of context
-		console.log({ context })
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		if (recordId) {
-			recordId = context.merge(recordId)
-		} else {
-			recordId = context.getRecordId() || ""
-		}
-		if (!recordId) return context
-
-		const entity = `${viewId}/${wirename || context.getWireId()}`
-
+		const recordIdx = recordId
+			? context.merge(recordId)
+			: context.getRecordId() || ""
+		if (!recordIdx) return context
+		const entity = `${wirename || context.getWireId()}`
 		const mergedValue = context.merge(value)
 
-		appDispatch()(
-			updateRecord({
-				recordId,
-				record: mergedValue,
-				entity,
-				path: [field],
-			})
-		)
-
 		// Validation stuff below, we might want to abstract this out later
-		// 1. Check if field is required
+		// Check if field is required
 		const state = appDispatch()((dispatch, getState) => getState())
 		const wireState = state.wire.entities[entity]
 		const fieldMetadata =
 			state.collection.entities[wireState?.collection || ""]?.fields[
 				field
 			]
-		if (!fieldMetadata) return context
-		const { required: isRequired } = fieldMetadata
 
-		const isMissingButRequired = isRequired ? value !== undefined : true
-		if (!isMissingButRequired)
-			dispatch(
-				addError({
-					entity,
-					recordId,
-					fieldId: field,
-					message: "That's required mate",
-				})
-			)
+		const errors = fieldMetadata
+			? getFieldValidationErrors(fieldMetadata, value)
+			: []
 
-		// 2. Validatie field
-		const errors = checkFieldValidation(fieldMetadata, value)
-		errors.forEach((el) => {
-			dispatch(
-				addError({
-					entity,
-					recordId,
-					fieldId: field,
-					message: el.msg,
-				})
-			)
-		})
+		dispatch(
+			updateRecord({
+				errors,
+				recordId: recordIdx,
+				record: mergedValue,
+				entity,
+				path: [field],
+			})
+		)
 
 		return context
 	}

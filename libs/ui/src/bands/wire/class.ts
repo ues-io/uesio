@@ -100,13 +100,15 @@ class Wire {
 			})
 		)
 
+		// Todo, move logic to reducer
 		this.doChanges(recordId, path)
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		appDispatch()(
 			setRecord({
-				entity: this.getFullId(),
+				errors: [],
+				entity: this.getId(),
 				recordId,
 				record,
 				path,

@@ -2,6 +2,7 @@ import {
 	createEntityAdapter,
 	createSlice,
 	EntityState,
+	isAnyOf,
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
@@ -43,6 +44,7 @@ type UndeletePayload = {
 } & EntityPayload
 
 type UpdateRecordPayload = {
+	errors: string[]
 	recordId: string
 	record: FieldValue
 	path: string[]
@@ -336,6 +338,26 @@ const wireSlice = createSlice({
 				}
 			})
 		})
+		builder.addMatcher(
+			isAnyOf(updateRecord),
+			(
+				state,
+				{ payload: { entity, errors: newErrors, recordId, path } }
+			) => {
+				const recordFieldKey = `${recordId}:${path[0]}`
+				const entityObject = state.entities[entity]
+				if (!entityObject) return state
+				if (!entityObject.errors) entityObject.errors = {}
+
+				entityObject.errors[recordFieldKey] = newErrors.map(
+					(message) => ({
+						message,
+						recordid: recordId,
+						fieldid: path[0],
+					})
+				)
+			}
+		)
 	},
 })
 
