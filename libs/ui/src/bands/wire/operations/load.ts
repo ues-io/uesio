@@ -9,7 +9,7 @@ import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
-import { getWiresFromDefinitonOrContext } from "../adapter"
+import { getWiresFromDefinitonOrContext } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
 function getFieldsRequest(

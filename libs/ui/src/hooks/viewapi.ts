@@ -1,4 +1,3 @@
-import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
 import { useConfigValue } from "../bands/configvalue"
 import { useViewDef } from "../bands/viewdef"
@@ -9,11 +8,9 @@ const VIEW_BAND = "view"
 class ViewAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher
 
 	useViewDef(viewDefId: string) {
 		return useViewDef(viewDefId)?.parsed as PlainViewDef

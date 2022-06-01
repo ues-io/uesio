@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux"
 import { createSelector } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
-import { selectors } from "./adapter"
 import { PlainWire } from "./types"
+import { selectors } from "."
 
 // Both gets wire state and subscribes the component to wire changes
 const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>

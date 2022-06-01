@@ -1,6 +1,6 @@
 import { AnyAction } from "redux"
 import { ThunkAction } from "redux-thunk"
-import { Provider, useDispatch } from "react-redux"
+import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
@@ -98,9 +98,10 @@ const create = (plat: Platform, initialState: InitialState) => {
 type RootState = ReturnType<typeof store.getState>
 
 type Dispatcher = typeof store.dispatch
-const getDispatcher = () => useDispatch<Dispatcher>()
+
+const appDispatch = () => store.dispatch
 const getPlatform = () => platform
-const getStore = () => store
+const getCurrentState = () => store.getState()
 
 export {
 	create,
@@ -110,7 +111,7 @@ export {
 	RootState,
 	InitialState,
 	SiteState,
-	getDispatcher,
+	appDispatch,
 	getPlatform,
-	getStore,
+	getCurrentState,
 }

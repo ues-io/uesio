@@ -1,15 +1,12 @@
 import { Context } from "../context/context"
-import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
 
 class NotificationAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher
 
 	addError(text: string, context?: Context, path?: string) {
 		return this.uesio.signal.run(

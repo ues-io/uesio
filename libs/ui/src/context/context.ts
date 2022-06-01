@@ -1,4 +1,4 @@
-import { getStore, SiteState } from "../store/store"
+import { getCurrentState, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
@@ -208,12 +208,12 @@ const inject = (template: string, context: Context): string =>
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
-		? (viewSelectors.selectById(getStore().getState(), viewDefId)
+		? (viewSelectors.selectById(getCurrentState(), viewDefId)
 				?.parsed as ViewDefinition)
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
-	selectWire(getStore().getState(), viewId, wireId)
+	selectWire(getCurrentState(), viewId, wireId)
 
 class Context {
 	constructor(stack?: ContextFrame[]) {
@@ -277,21 +277,19 @@ class Context {
 		get(this.getViewDef(), getAncestorPath(path, 3))
 
 	getTheme = () =>
-		(themeSelectors.selectById(
-			getStore().getState(),
-			this.getThemeId() || ""
-		)?.parsed || defaultTheme) as ThemeState
+		(themeSelectors.selectById(getCurrentState(), this.getThemeId() || "")
+			?.parsed || defaultTheme) as ThemeState
 
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
 	getComponentVariant = (componentType: string, variantName: string) =>
 		componentVariantSelectors.selectById(
-			getStore().getState(),
+			getCurrentState(),
 			`${componentType}:${variantName}`
 		)?.parsed as ComponentVariant
 
 	getLabel = (labelKey: string) =>
-		labelSelectors.selectById(getStore().getState(), labelKey)?.content
+		labelSelectors.selectById(getCurrentState(), labelKey)?.content
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
@@ -325,7 +323,7 @@ class Context {
 	}
 
 	getWire = () => {
-		const state = getStore().getState()
+		const state = getCurrentState()
 		const plainWire = this.getPlainWire()
 		const wire = new Wire(plainWire)
 		const plainCollection = collectionSelectors.selectById(
@@ -360,7 +358,7 @@ class Context {
 		return false
 	}
 
-	getUser = () => getStore().getState().user
+	getUser = () => getCurrentState().user
 
 	getNoMerge = () => this.stack.some((frame) => frame?.noMerge)
 

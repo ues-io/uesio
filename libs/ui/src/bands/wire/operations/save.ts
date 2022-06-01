@@ -3,8 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { SaveResponseBatch } from "../../../load/saveresponse"
-import { getWiresFromDefinitonOrContext } from "../adapter"
 import { getFullWireId } from "../selectors"
+import { getWiresFromDefinitonOrContext } from ".."
 
 export default createAsyncThunk<
 	SaveResponseBatch,

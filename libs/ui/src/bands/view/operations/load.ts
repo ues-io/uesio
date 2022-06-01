@@ -135,7 +135,7 @@ export default (context: Context): ThunkFunc =>
 		// Handle Events
 		const onloadEvents = definition.events?.onload
 		if (onloadEvents) {
-			await runMany(dispatch, "", onloadEvents, context)
+			await runMany("", onloadEvents, context)
 		}
 
 		return context

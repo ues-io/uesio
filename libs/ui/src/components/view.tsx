@@ -5,8 +5,9 @@ import Slot from "./slot"
 import { css } from "@emotion/css"
 import { ViewDefinition } from "../definition/viewdef"
 import { useViewDef } from "../bands/viewdef"
-import { useComponentPackKeys } from "../bands/componentpack"
+import { getComponentPackKeys } from "../bands/componentpack"
 import loadViewOp from "../bands/view/operations/load"
+import { appDispatch } from "../store/store"
 
 interface Props extends BaseProps {
 	definition: {
@@ -27,7 +28,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	const viewId = `${viewDefId}(${path || ""})`
 	const viewDef = useViewDef(viewDefId)
-	const cpacks = useComponentPackKeys()
+	const cpacks = getComponentPackKeys()
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -51,7 +52,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	// We need to get load the wires here.
 	useEffect(() => {
-		uesio.getDispatcher()(loadViewOp(viewContext))
+		appDispatch()(loadViewOp(viewContext))
 	}, [JSON.stringify(params)])
 
 	if (!viewDef || !scriptResult.loaded) return null

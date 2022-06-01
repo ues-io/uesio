@@ -8,6 +8,7 @@ import Route from "./route"
 import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
+import { appDispatch } from "../store/store"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -37,12 +38,12 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
-				uesio.signal.dispatcher(
+				appDispatch()(
 					routeOps.redirect(new Context(), document.location.pathname)
 				)
 				return
 			}
-			uesio.signal.dispatcher(
+			appDispatch()(
 				routeOps.navigate(
 					new Context([
 						{
