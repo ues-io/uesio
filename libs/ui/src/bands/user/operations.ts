@@ -1,4 +1,3 @@
-import { AnyAction } from "redux"
 import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
@@ -9,7 +8,7 @@ import routeOps from "../../bands/route/operations"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,
-	dispatch: Dispatcher<AnyAction>,
+	dispatch: Dispatcher,
 	context: Context
 ) {
 	await dispatch(

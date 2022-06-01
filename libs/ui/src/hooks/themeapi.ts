@@ -1,8 +1,7 @@
 import { useEffect } from "react"
-import { AnyAction } from "redux"
 import { parseKey } from "../component/path"
 import { Context } from "../context/context"
-import { Dispatcher } from "../store/store"
+import { appDispatch } from "../store/store"
 import { Uesio } from "./hooks"
 import { platform } from "../platform/platform"
 import { ThemeState } from "../definition/theme"
@@ -12,11 +11,9 @@ import { useTheme, set as setTheme } from "../bands/theme"
 class ThemeAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
 
 	useTheme(themeId?: string, context?: Context) {
 		const theme = useTheme(themeId || "")
@@ -34,7 +31,7 @@ class ThemeAPI {
 
 						const yamlDoc = parse(themeResult)
 
-						this.dispatcher(
+						appDispatch()(
 							setTheme({
 								key: themeId,
 								content: themeResult,

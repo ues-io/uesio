@@ -170,9 +170,7 @@ const metadataSlice = createSlice({
 const useViewDef = (key: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, key))
 
-const useViewDefKeys = () => useSelector(selectors.selectIds) as string[]
-
-export { useViewDef, useViewDefKeys, selectors }
+export { useViewDef, selectors }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

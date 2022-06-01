@@ -1,4 +1,4 @@
-import { getStore } from "../../store/store"
+import { getCurrentState } from "../../store/store"
 import Field from "../field/class"
 import { FieldMetadata } from "../field/types"
 
@@ -43,7 +43,7 @@ class Collection {
 			) {
 				if (!baseFieldMetadata.reference?.collection) return undefined
 				const state =
-					getStore().getState().collection.entities[
+					getCurrentState().collection.entities[
 						baseFieldMetadata.reference?.collection
 					]
 

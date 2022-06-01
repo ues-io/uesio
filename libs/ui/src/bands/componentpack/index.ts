@@ -1,6 +1,6 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { RootState } from "../../store/store"
+import { RootState, getCurrentState } from "../../store/store"
 import { MetadataState } from "../metadata/types"
 
 const adapter = createEntityAdapter<MetadataState>({
@@ -25,7 +25,17 @@ const useComponentPack = (key: string) =>
 
 const useComponentPackKeys = () => useSelector(selectors.selectIds) as string[]
 
-export { useComponentPack, useComponentPackKeys, selectors }
+// This function doesn't run a selector so it will only get the current
+// state of the store and not update with changes
+const getComponentPackKeys = () =>
+	selectors.selectIds(getCurrentState()) as string[]
+
+export {
+	useComponentPack,
+	useComponentPackKeys,
+	getComponentPackKeys,
+	selectors,
+}
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

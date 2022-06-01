@@ -175,6 +175,11 @@ func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version strin
 
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := componentPack.GetComponentPackFilePath(buildMode)
+	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", fileName)
+	if err != nil {
+		return nil, err
+	}
+	componentPack.SetModified(fileInfo.ModTime())
 	return getFile(componentPack.Namespace, version, "componentpacks", fileName)
 }
 

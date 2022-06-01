@@ -1,7 +1,6 @@
-import { AnyAction } from "redux"
 import { Context, ContextFrame } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
-import { Dispatcher } from "../store/store"
+import { appDispatch } from "../store/store"
 import componentSignal from "../bands/component/signals"
 
 import botSignals from "../bands/bot/signals"
@@ -22,14 +21,9 @@ const registry: Record<string, SignalDescriptor> = {
 	...notificationSignals,
 }
 
-const run = (
-	dispatcher: Dispatcher<AnyAction>,
-	path: string,
-	signal: SignalDefinition,
-	context: Context
-) => {
+const run = (path: string, signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || componentSignal
-	return dispatcher(
+	return appDispatch()(
 		descriptor.dispatcher(
 			signal,
 			additionalContext(
@@ -42,7 +36,6 @@ const run = (
 }
 
 const runMany = async (
-	dispatcher: Dispatcher<AnyAction>,
 	path: string,
 	signals: SignalDefinition[],
 	context: Context
@@ -50,11 +43,10 @@ const runMany = async (
 	for (const signal of signals) {
 		try {
 			// Keep adding to context as each signal is run
-			context = await run(dispatcher, path, signal, context)
+			context = await run(path, signal, context)
 		} catch (error) {
 			if (signal.onerror?.signals) {
 				runMany(
-					dispatcher,
 					path,
 					signal.onerror.signals,
 					context.addFrame({ errors: [error.message] })

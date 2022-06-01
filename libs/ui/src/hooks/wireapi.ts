@@ -10,6 +10,7 @@ import { useEffect } from "react"
 import { ParamDefinitionMap, ParamDefinition } from "../definition/param"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../bands/collection/types"
+import { appDispatch } from "../store/store"
 
 const getFieldFromParamDef = (
 	key: string,
@@ -108,7 +109,7 @@ class WireAPI {
 	}
 
 	loadWires(context: Context, wireNames: string[]) {
-		return this.uesio.getDispatcher()(
+		return appDispatch()(
 			loadWiresOp({
 				context,
 				wires: wireNames,
@@ -117,7 +118,7 @@ class WireAPI {
 	}
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
-		return this.uesio.getDispatcher()(initializeWiresOp(context, wireDefs))
+		return appDispatch()(initializeWiresOp(context, wireDefs))
 	}
 
 	getFieldsFromParams(params: ParamDefinitionMap | undefined) {

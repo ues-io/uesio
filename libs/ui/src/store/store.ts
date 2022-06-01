@@ -1,6 +1,6 @@
 import { AnyAction } from "redux"
-import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
-import { Provider, useDispatch } from "react-redux"
+import { ThunkAction } from "redux-thunk"
+import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
@@ -27,7 +27,6 @@ import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
 import { parse } from "../yamlutils/yamlutils"
 
-type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
 	RootState,
@@ -85,7 +84,12 @@ const create = (plat: Platform, initialState: InitialState) => {
 		},
 		devTools: true,
 		preloadedState: initialState,
-		middleware: [thunk.withExtraArgument(plat)],
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				thunk: {
+					extraArgument: plat,
+				},
+			}),
 	})
 	store = newStore
 	return newStore
@@ -93,10 +97,11 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-export type AppDispatch = typeof store.dispatch
-const getDispatcher = () => useDispatch<AppDispatch>()
+type Dispatcher = typeof store.dispatch
+
+const appDispatch = () => store.dispatch
 const getPlatform = () => platform
-const getStore = () => store
+const getCurrentState = () => store.getState()
 
 export {
 	create,
@@ -106,7 +111,7 @@ export {
 	RootState,
 	InitialState,
 	SiteState,
-	getDispatcher,
+	appDispatch,
 	getPlatform,
-	getStore,
+	getCurrentState,
 }

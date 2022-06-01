@@ -1,4 +1,3 @@
-import { Dispatcher } from "../store/store"
 import { SignalDefinition } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
@@ -6,7 +5,6 @@ import { Context } from "../context/context"
 import { PanelDefinitionMap } from "../definition/panel"
 
 import componentSignal from "../bands/component/signals"
-import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
@@ -25,11 +23,9 @@ const getPanelKey = (path: string, context: Context) => {
 class SignalAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
 
 	useHandler = (
 		signals: SignalDefinition[] | undefined,
@@ -82,10 +78,10 @@ class SignalAPI {
 	}
 
 	runMany = async (signals: SignalDefinition[], context: Context) =>
-		runMany(this.dispatcher, this.uesio.getPath(), signals, context)
+		runMany(this.uesio.getPath(), signals, context)
 
 	run = (signal: SignalDefinition, context: Context) =>
-		run(this.dispatcher, this.uesio.getPath(), signal, context)
+		run(this.uesio.getPath(), signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal.signal] || componentSignal

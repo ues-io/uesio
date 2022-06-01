@@ -27,9 +27,8 @@ import {
 	setDefinitionContent,
 	cancel,
 } from "../bands/builder"
-import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher, RootState } from "../store/store"
+import { appDispatch, RootState } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
@@ -48,11 +47,9 @@ import get from "lodash/get"
 class BuilderAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
 
 	useBuilderState = <T extends PlainComponentState>(scope: string) =>
 		this.uesio.component.useExternalState<T>(
@@ -100,13 +97,13 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setActiveNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearActiveNode = () => {
-		this.dispatcher(setActiveNode(""))
+		appDispatch()(setActiveNode(""))
 	}
 
 	setSelectedNode = (
@@ -114,13 +111,13 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	unSelectNode = () => {
-		this.dispatcher((dispatch, getState) => {
+		appDispatch()((dispatch, getState) => {
 			const selectedNode = getState().builder.selectedNode
 			if (!selectedNode) return
 			const newPath = getParentPath(selectedNode)
@@ -129,7 +126,7 @@ class BuilderAPI {
 	}
 
 	clearSelectedNode = () => {
-		this.dispatcher(setSelectedNode(""))
+		appDispatch()(setSelectedNode(""))
 	}
 
 	setDragNode = (
@@ -137,13 +134,13 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setDragNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearDragNode = () => {
-		this.dispatcher(setDragNode(""))
+		appDispatch()(setDragNode(""))
 	}
 
 	setDropNode = (
@@ -151,29 +148,28 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setDropNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearDropNode = () => {
-		this.dispatcher(setDropNode(""))
+		appDispatch()(setDropNode(""))
 	}
 
 	save = () =>
-		this.dispatcher(
+		appDispatch()(
 			builderOps.save({
 				context: this.uesio.getContext() || new Context(),
 			})
 		)
 
-	cancel = () => this.dispatcher(cancel())
+	cancel = () => appDispatch()(cancel())
 
-	cloneDefinition = (path: string) =>
-		this.dispatcher(cloneDefinition({ path }))
+	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
 
 	setDefinition = (path: string, definition: Definition) =>
-		this.dispatcher(
+		appDispatch()(
 			setDefinition({
 				path,
 				definition,
@@ -186,7 +182,7 @@ class BuilderAPI {
 		index?: number,
 		type?: string
 	) {
-		this.dispatcher(
+		appDispatch()(
 			addDefinition({
 				path,
 				definition,
@@ -197,7 +193,7 @@ class BuilderAPI {
 	}
 
 	removeDefinition(path: string) {
-		this.dispatcher(
+		appDispatch()(
 			removeDefinition({
 				path,
 			})
@@ -205,7 +201,7 @@ class BuilderAPI {
 	}
 
 	changeDefinitionKey(path: string, key: string) {
-		this.dispatcher(
+		appDispatch()(
 			changeDefinitionKey({
 				path,
 				key,
@@ -214,7 +210,7 @@ class BuilderAPI {
 	}
 
 	moveDefinition(fromPath: string, toPath: string, selectKey?: string) {
-		this.dispatcher(
+		appDispatch()(
 			moveDefinition({
 				fromPath,
 				toPath,
@@ -228,7 +224,7 @@ class BuilderAPI {
 		metadataItem: string,
 		content: string
 	) {
-		this.dispatcher(
+		appDispatch()(
 			setDefinitionContent({
 				metadataType,
 				metadataItem,
@@ -277,7 +273,7 @@ class BuilderAPI {
 		const metadata = useMetadataList(metadataType, namespace, grouping)
 		useEffect(() => {
 			if (!metadata && metadataType && namespace) {
-				this.dispatcher(
+				appDispatch()(
 					builderOps.getMetadataList({
 						context,
 						metadataType,
@@ -297,7 +293,7 @@ class BuilderAPI {
 		const namespaces = useNamespaces()
 		useEffect(() => {
 			if (!namespaces) {
-				this.dispatcher(
+				appDispatch()(
 					builderOps.getAvailableNamespaces({ context, metadataType })
 				)
 			}

@@ -1,6 +1,6 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
-import { getStore } from "../../store/store"
+import { appDispatch } from "../../store/store"
 import {
 	setRecord,
 	createRecord,
@@ -70,7 +70,6 @@ class Wire {
 			for (const changeEvent of changeEvents) {
 				if (changeEvent.field !== path[0]) continue
 				runManyThrottled(
-					getStore().dispatch,
 					"",
 					changeEvent.signals,
 					new Context().addFrame({
@@ -91,10 +90,10 @@ class Wire {
 		record: FieldValue,
 		path: string[]
 	) => {
-		getStore().dispatch(
+		appDispatch()(
 			updateRecordOp({
 				context,
-				wirename: this.source.name,
+				entity: this.getFullId(),
 				recordId,
 				value: record as string,
 				field: path[0],
@@ -105,7 +104,7 @@ class Wire {
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		getStore().dispatch(
+		appDispatch()(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
@@ -117,7 +116,7 @@ class Wire {
 
 	createRecord = (record: PlainWireRecord) => {
 		const recordId = nanoid()
-		getStore().dispatch(
+		appDispatch()(
 			createRecord({
 				entity: this.getFullId(),
 				record,
@@ -128,7 +127,7 @@ class Wire {
 	}
 
 	markRecordForDeletion = (recordId: string) => {
-		getStore().dispatch(
+		appDispatch()(
 			markForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -137,7 +136,7 @@ class Wire {
 	}
 
 	unmarkRecordForDeletion = (recordId: string) => {
-		getStore().dispatch(
+		appDispatch()(
 			unmarkForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -146,7 +145,7 @@ class Wire {
 	}
 
 	cancel = () => {
-		getStore().dispatch(
+		appDispatch()(
 			cancel({
 				entity: this.getFullId(),
 			})
@@ -154,7 +153,7 @@ class Wire {
 	}
 
 	empty = () => {
-		getStore().dispatch(
+		appDispatch()(
 			empty({
 				entity: this.getFullId(),
 			})
@@ -162,7 +161,7 @@ class Wire {
 	}
 
 	toggleCondition = (conditionId: string) => {
-		getStore().dispatch(
+		appDispatch()(
 			toggleCondition({
 				entity: this.getFullId(),
 				conditionId,
@@ -175,13 +174,11 @@ class Wire {
 		return this
 	}
 
-	save = (context: Context) => {
-		const wires = getWiresFromDefinitonOrContext(this.getId(), context)
-		getStore().dispatch(saveWiresOp({ context, wires }))
-	}
+	save = (context: Context) =>
+		appDispatch()(saveWiresOp({ context, wires: [this.getId()] }))
 
 	load = (context: Context) =>
-		getStore().dispatch(loadWireOp({ context, wires: [this.getId()] }))
+		appDispatch()(loadWireOp({ context, wires: [this.getId()] }))
 }
 
 export default Wire
