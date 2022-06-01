@@ -4,11 +4,7 @@ import { LoginResponse } from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
-import {
-	MetadataListStore,
-	MetadataType,
-	METADATA,
-} from "../bands/builder/types"
+import { MetadataType, METADATA } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
@@ -277,7 +273,7 @@ const platform = {
 		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
-	): Promise<MetadataListStore> => {
+	): Promise<Record<string, boolean>> => {
 		const prefix = getPrefix(context)
 		const mdType = METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
@@ -299,7 +295,7 @@ const platform = {
 	getAvailableNamespaces: async (
 		context: Context,
 		metadataType?: MetadataType
-	): Promise<MetadataListStore> => {
+	): Promise<Record<string, boolean>> => {
 		const prefix = getPrefix(context)
 		const mdType = metadataType && METADATA[metadataType]
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
