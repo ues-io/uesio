@@ -1,10 +1,10 @@
 import { Dictionary } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
-import { getFullWireId } from "../selectors"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD, PlainCollection } from "../../collection/types"
 import { WireDefinition } from "../../../definition/wire"
+import { getFullWireId } from ".."
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"

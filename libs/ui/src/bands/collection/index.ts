@@ -1,8 +1,7 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { PlainCollection, PlainCollectionMap } from "./types"
-import wireLoadOp from "../wire/operations/load"
 import collectionAdapter from "./adapter"
-import { init as initWire, WireLoadAction } from "../wire"
+import { init as initWire, load as loadWire, WireLoadAction } from "../wire"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
@@ -36,7 +35,7 @@ const collectionSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
-			wireLoadOp.fulfilled,
+			loadWire,
 			(state, { payload: [, collections] }: WireLoadAction) => {
 				mergeCollection(state, collections)
 			}

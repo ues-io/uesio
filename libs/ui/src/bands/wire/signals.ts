@@ -16,7 +16,6 @@ import loadWiresOp from "./operations/load"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
-import { ThunkFunc } from "../../store/store"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { RegularWireDefinition } from "../../definition/wire"
 import {
@@ -247,12 +246,8 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
-		dispatcher:
-			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
-			async (dispatch) => {
-				await dispatch(loadWiresOp({ context, wires: signal.wires }))
-				return context
-			},
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadWiresOp(context, signal.wires),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",
@@ -263,17 +258,8 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
 		label: "Load Next Batch",
-		dispatcher:
-			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
-			async (dispatch) => {
-				await dispatch(
-					loadNextBatchOp({
-						context,
-						wires: signal.wires,
-					})
-				)
-				return context
-			},
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadNextBatchOp(context, signal.wires),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

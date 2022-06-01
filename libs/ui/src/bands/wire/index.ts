@@ -1,6 +1,7 @@
 import {
 	createEntityAdapter,
 	createSlice,
+	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -9,13 +10,12 @@ import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import loadOp from "./operations/load"
-import loadNextBatch from "./operations/loadnextbatch"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
+import { useSelector } from "react-redux"
 
 type DeletePayload = {
 	recordId: string
@@ -279,26 +279,51 @@ const wireSlice = createSlice({
 				wireState.errors = undefined
 			})
 		},
-	},
-	extraReducers: (builder) => {
-		builder.addCase(
-			loadOp.fulfilled,
-			(state, { payload: [wires] }: WireLoadAction) => {
-				wireAdapter.upsertMany(state, wires)
-			}
-		)
-		builder.addCase(
-			loadNextBatch.fulfilled,
-			(state, { payload: [wires] }: WireLoadAction) => {
-				wireAdapter.upsertMany(state, wires)
-			}
-		)
+		load: (state, { payload: [wires] }: WireLoadAction) => {
+			wireAdapter.upsertMany(state, wires)
+		},
 	},
 })
 
-export { WireLoadAction }
+// Both gets wire state and subscribes the component to wire changes
+const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
+	useSelector((state: RootState) => selectWire(state, viewId, wireName))
 
-export { selectors, getWiresFromDefinitonOrContext }
+const useWires = (
+	fullWireIds: string[]
+): Record<string, PlainWire | undefined> =>
+	useSelector((state: RootState) => selectWires(state, fullWireIds))
+
+const selectWires = createSelector(
+	selectors.selectEntities,
+	(state: RootState, fullWireIds: string[]) => fullWireIds,
+	(items, fullWireIds) =>
+		Object.fromEntries(
+			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+		)
+)
+
+const selectWire = (
+	state: RootState,
+	viewId: string | undefined,
+	wireName: string | undefined
+) =>
+	viewId && wireName
+		? selectors.selectById(state, getFullWireId(viewId, wireName))
+		: undefined
+
+const getFullWireId = (viewId: string, wireName: string) =>
+	`${viewId}/${wireName}`
+
+export {
+	useWire,
+	useWires,
+	selectWire,
+	getFullWireId,
+	WireLoadAction,
+	selectors,
+	getWiresFromDefinitonOrContext,
+}
 
 export const {
 	markForDelete,
@@ -312,6 +337,7 @@ export const {
 	empty,
 	reset,
 	save,
+	load,
 	init,
 	toggleCondition,
 	addCondition,
