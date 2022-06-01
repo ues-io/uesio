@@ -1,67 +1,60 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
-import { UesioThunkAPI } from "../../utils"
 import { nanoid } from "nanoid"
-import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { PlainWireRecord } from "../../wirerecord/types"
-import { getWiresFromDefinitonOrContext } from ".."
+import { getWiresFromDefinitonOrContext, load } from ".."
 import { getWireRequest, getWiresMap } from "./load"
+import { ThunkFunc } from "../../../store/store"
 
-export default createAsyncThunk<
-	[PlainWire[], Record<string, PlainCollection>],
-	{
-		context: Context
-		wires?: string[]
-	},
-	UesioThunkAPI
->("wire/loadNextBatch", async ({ context, wires }, api) => {
-	// Turn the list of wires into a load request
-	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
-	const response = await api.extra.loadData(context, {
-		wires: wiresToLoad.map((wire) =>
-			getWireRequest(wire, wire.batchnumber, context)
-		),
-	})
-
-	// Add in the local ids
-	const wiresRequestMap = getWiresMap(wiresToLoad)
-	const wiresResponse: Record<string, PlainWire> = {}
-	for (const wire of response?.wires || []) {
-		const requestWire = wiresRequestMap[wire.wire]
-		const [viewNsUser, viewName, name] = wire.wire.split("/")
-		const view = `${viewNsUser}/${viewName}`
-		const data: Record<string, PlainWireRecord> = {}
-		const original: Record<string, PlainWireRecord> = {}
-
-		wire.data?.forEach((item) => {
-			const localId = nanoid()
-			data[localId] = item
-			original[localId] = item
+export default (context: Context, wires?: string[]): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		// Turn the list of wires into a load request
+		const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+		const response = await platform.loadData(context, {
+			wires: wiresToLoad.map((wire) =>
+				getWireRequest(wire, wire.batchnumber, context)
+			),
 		})
-		wiresResponse[wire.wire] = {
-			name,
-			view,
-			query: true,
-			batchid: requestWire.batchid,
-			data: {
-				...requestWire.data,
-				...data,
-			},
-			original: {
-				...requestWire.original,
-				...original,
-			},
-			changes: requestWire.changes,
-			def: requestWire.def,
-			deletes: requestWire.deletes,
-			batchnumber: requestWire.batchnumber + 1,
-			more: wire.more,
-			errors: undefined,
-			conditions: requestWire.conditions,
-			collection: wire.collection,
-		}
-	}
 
-	return [Object.values(wiresResponse), response.collections]
-})
+		// Add in the local ids
+		const wiresRequestMap = getWiresMap(wiresToLoad)
+		const wiresResponse: Record<string, PlainWire> = {}
+		for (const wire of response?.wires || []) {
+			const requestWire = wiresRequestMap[wire.wire]
+			const [viewNsUser, viewName, name] = wire.wire.split("/")
+			const view = `${viewNsUser}/${viewName}`
+			const data: Record<string, PlainWireRecord> = {}
+			const original: Record<string, PlainWireRecord> = {}
+
+			wire.data?.forEach((item) => {
+				const localId = nanoid()
+				data[localId] = item
+				original[localId] = item
+			})
+			wiresResponse[wire.wire] = {
+				name,
+				view,
+				query: true,
+				batchid: requestWire.batchid,
+				data: {
+					...requestWire.data,
+					...data,
+				},
+				original: {
+					...requestWire.original,
+					...original,
+				},
+				changes: requestWire.changes,
+				def: requestWire.def,
+				deletes: requestWire.deletes,
+				batchnumber: requestWire.batchnumber + 1,
+				more: wire.more,
+				errors: undefined,
+				conditions: requestWire.conditions,
+				collection: wire.collection,
+			}
+		}
+
+		dispatch(load([Object.values(wiresResponse), response.collections]))
+		return context
+	}

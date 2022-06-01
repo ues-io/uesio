@@ -1,7 +1,6 @@
 import { Context } from "../../../context/context"
 import { SaveResponse, SaveResponseBatch } from "../../../load/saveresponse"
-import { getFullWireId } from "../selectors"
-import { getWiresFromDefinitonOrContext, save } from ".."
+import { getWiresFromDefinitonOrContext, save, getFullWireId } from ".."
 import { ThunkFunc } from "../../../store/store"
 import { getErrorString } from "../../utils"
 

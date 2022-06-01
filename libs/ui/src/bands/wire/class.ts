@@ -170,7 +170,7 @@ class Wire {
 		appDispatch()(saveWiresOp(context, [this.getId()]))
 
 	load = (context: Context) =>
-		appDispatch()(loadWireOp({ context, wires: [this.getId()] }))
+		appDispatch()(loadWireOp(context, [this.getId()]))
 }
 
 export default Wire

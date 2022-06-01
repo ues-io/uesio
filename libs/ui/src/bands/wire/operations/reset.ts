@@ -1,10 +1,9 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { reset } from ".."
+import { reset, getFullWireId } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { nanoid } from "nanoid"
 import { PlainWireRecord } from "../../wirerecord/types"
-import { getFullWireId } from "../selectors"
 
 export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch, getState) => {

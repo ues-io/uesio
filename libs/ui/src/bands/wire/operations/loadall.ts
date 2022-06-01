@@ -1,6 +1,6 @@
 import { Context } from "../../../context/context"
 import loadNextBatchOp from "./loadnextbatch"
-import { selectWire } from "../selectors"
+import { selectWire } from ".."
 import { ThunkFunc } from "../../../store/store"
 
 const loadAllOp =
@@ -17,13 +17,7 @@ const loadAllOp =
 
 		if (!loadWires || loadWires.length === 0) return context
 
-		await dispatch(
-			loadNextBatchOp({
-				context,
-				wires: loadWires,
-			})
-		)
-
+		await dispatch(loadNextBatchOp(context, loadWires))
 		return dispatch(loadAllOp(context, loadWires))
 	}
 
