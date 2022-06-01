@@ -167,7 +167,7 @@ class Wire {
 	}
 
 	save = (context: Context) =>
-		appDispatch()(saveWiresOp({ context, wires: [this.getId()] }))
+		appDispatch()(saveWiresOp(context, [this.getId()]))
 
 	load = (context: Context) =>
 		appDispatch()(loadWireOp({ context, wires: [this.getId()] }))

@@ -5,6 +5,7 @@ import { set as setUser } from "."
 import wireAddError from "../wire/operations/adderror"
 import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
+import { getErrorString } from "../utils"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,
@@ -71,9 +72,8 @@ const checkAvailability =
 				await platform.checkAvailability(signupMethod, mergedUsername)
 				return dispatch(wireRemoveError(context, usernameFieldId))
 			} catch (error) {
-				return dispatch(
-					wireAddError(context, usernameFieldId, error.message)
-				)
+				const message = getErrorString(error)
+				return dispatch(wireAddError(context, usernameFieldId, message))
 			}
 		}
 		return context

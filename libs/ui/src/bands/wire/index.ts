@@ -11,7 +11,6 @@ import { createEntityReducer, EntityPayload } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import loadOp from "./operations/load"
 import loadNextBatch from "./operations/loadnextbatch"
-import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -234,6 +233,52 @@ const wireSlice = createSlice({
 				})
 			}
 		),
+		save: (state, { payload }: PayloadAction<SaveResponseBatch>) => {
+			payload.wires?.forEach((wire) => {
+				const wireId = wire.wire
+				const wireState = state.entities[wireId]
+				if (!wireState) return
+
+				if (wire.errors) {
+					wireState.errors = {}
+					const errorObj = wireState.errors
+					wire.errors.forEach((error) => {
+						const key = `${error.recordid || ""}:${
+							error.fieldid || ""
+						}`
+						if (!errorObj[key]) {
+							errorObj[key] = []
+						}
+						errorObj[key].push(error)
+					})
+					return
+				}
+
+				const data = wireState.data
+				const original = wireState.original
+				if (!data || !original) return
+
+				Object.keys(wire.changes).forEach((tempId) => {
+					data[tempId] = {
+						...data[tempId],
+						...wire.changes[tempId],
+					}
+					original[tempId] = {
+						...data[tempId],
+						...wire.changes[tempId],
+					}
+				})
+				wireState.changes = {}
+
+				Object.keys(wire.deletes).forEach((tempId) => {
+					delete data[tempId]
+					delete original[tempId]
+					delete wireState.deletes[tempId]
+				})
+
+				wireState.errors = undefined
+			})
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
@@ -248,68 +293,6 @@ const wireSlice = createSlice({
 				wireAdapter.upsertMany(state, wires)
 			}
 		)
-		builder.addCase(
-			saveOp.fulfilled,
-			(state, { payload }: PayloadAction<SaveResponseBatch>) => {
-				payload.wires?.forEach((wire) => {
-					const wireId = wire.wire
-					const wireState = state.entities[wireId]
-					if (!wireState) return
-
-					if (wire.errors) {
-						wireState.errors = {}
-						const errorObj = wireState.errors
-						wire.errors.forEach((error) => {
-							const key = `${error.recordid || ""}:${
-								error.fieldid || ""
-							}`
-							if (!errorObj[key]) {
-								errorObj[key] = []
-							}
-							errorObj[key].push(error)
-						})
-						return
-					}
-
-					const data = wireState.data
-					const original = wireState.original
-					if (!data || !original) return
-
-					Object.keys(wire.changes).forEach((tempId) => {
-						data[tempId] = {
-							...data[tempId],
-							...wire.changes[tempId],
-						}
-						original[tempId] = {
-							...data[tempId],
-							...wire.changes[tempId],
-						}
-					})
-					wireState.changes = {}
-
-					Object.keys(wire.deletes).forEach((tempId) => {
-						delete data[tempId]
-						delete original[tempId]
-						delete wireState.deletes[tempId]
-					})
-
-					wireState.errors = undefined
-				})
-			}
-		)
-		builder.addCase(saveOp.rejected, (state, action) => {
-			const viewId = action.meta.arg.context.getViewId()
-			// This doesn't handle the case where the wire comes from context
-			// instead of the definition
-			action.meta.arg.wires?.forEach((entityName) => {
-				const entity = state.entities[`${viewId}/${entityName}`]
-				if (entity) {
-					entity.errors = {
-						test: [{ message: action.error.message || "" }],
-					}
-				}
-			})
-		})
 	},
 })
 
@@ -328,6 +311,7 @@ export const {
 	cancel,
 	empty,
 	reset,
+	save,
 	init,
 	toggleCondition,
 	addCondition,

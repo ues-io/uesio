@@ -158,11 +158,7 @@ class BuilderAPI {
 	}
 
 	save = () =>
-		appDispatch()(
-			builderOps.save({
-				context: this.uesio.getContext() || new Context(),
-			})
-		)
+		appDispatch()(builderOps.save(this.uesio.getContext() || new Context()))
 
 	cancel = () => appDispatch()(cancel())
 
