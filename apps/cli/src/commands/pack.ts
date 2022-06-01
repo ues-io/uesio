@@ -39,7 +39,12 @@ export default class Pack extends Command {
 				"yaml",
 				"@emotion/css",
 			],
-			watch: flags.watch,
+			watch: flags.watch && {
+				onRebuild(error) {
+					if (error) console.error("watch build failed:", error)
+					else console.log("Rebuilt")
+				},
+			},
 			plugins: [
 				GlobalsPlugin({
 					react: "React",
