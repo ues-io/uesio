@@ -67,7 +67,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 
 	const upload = async (file: File) => {
 		const jobResponse = await uesio.collection.createJob(context, spec)
-
 		if (!jobResponse.id) return
 
 		try {
@@ -80,16 +79,30 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			return
 		}
 
-		// TODO: Check the context to get the correct redirect
-		uesio.signal.run(
-			{
-				signal: "route/REDIRECT",
-				path: `/app/${context.getWorkspace()?.app}/workspace/${
-					context.getWorkspace()?.name
-				}/data/${collection.getId()}`,
-			},
-			context
-		)
+		const collectionID = collection.getId()
+		const collectionNS = collection.getNamespace()
+
+		const workspace = context.getWorkspace()
+		if (workspace) {
+			uesio.signal.run(
+				{
+					signal: "route/REDIRECT",
+					path: `/app/${workspace?.app}/workspace/${workspace?.name}/data/${collectionNS}/${collectionID}`,
+				},
+				context
+			)
+		}
+
+		const siteadmin = context.getSiteAdmin()
+		if (siteadmin) {
+			uesio.signal.run(
+				{
+					signal: "route/REDIRECT",
+					path: `/app/${siteadmin?.app}/site/${siteadmin?.name}/data/${collectionNS}/${collectionID}`,
+				},
+				context
+			)
+		}
 	}
 
 	const isValidMapping = (): boolean => {
