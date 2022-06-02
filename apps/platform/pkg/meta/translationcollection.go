@@ -31,12 +31,13 @@ func (tc *TranslationCollection) NewItem() loadable.Item {
 }
 
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	_, err := language.ParseBase(key)
+	languageISO := strings.Split(key, ".")[1]
+	_, err := language.ParseBase(languageISO)
 	if err != nil {
-		return nil, errors.New("Invalid ISO 639 Key: " + key)
+		return nil, errors.New("Invalid ISO 639 Key: " + languageISO)
 	}
 	t := &Translation{
-		Language: key,
+		Language: languageISO,
 	}
 	*tc = append(*tc, t)
 	return t, nil
