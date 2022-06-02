@@ -5,8 +5,6 @@ const Button = component.registry.getUtility("uesio/io.button")
 const Dialog = component.registry.getUtility("uesio/io.dialog")
 const Form = component.registry.getUtility("uesio/io.form")
 
-const WIRE_NAME = "paramData"
-
 const getParamDefs = (record: wire.WireRecord): param.ParamDefinitionMap => {
 	const viewDef = record.getFieldValue<string>("uesio/studio.definition")
 	const yamlDoc = util.yaml.parse(viewDef)
@@ -32,13 +30,25 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const workspaceName = workspaceContext.name
 
 	const [open, setOpen] = useState<boolean>(false)
+	const fields = uesio.wire.getFieldsFromParams(params)
+	const viewId = context.getRecord()?.getFieldValue("uesio/core.id")
+	const WIRE_NAME = `${viewId}/paramData`
 
 	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
 		viewOnly: true,
-		fields: uesio.wire.getFieldsFromParams(params),
+		fields,
 		init: {
 			create: true,
 		},
+		defaults: Object.keys(fields).map((field) => {
+			const localStorageKey = `${viewId}-paramData-${field}`
+			const savedValue = localStorage.getItem(localStorageKey)
+			return {
+				field,
+				valueSource: "VALUE",
+				value: savedValue ? JSON.parse(savedValue) : "",
+			}
+		}),
 	})
 
 	const previewHandler = (record?: wire.WireRecord) => {
@@ -46,6 +56,13 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 			hasParams && record
 				? new URLSearchParams(uesio.wire.getParamValues(params, record))
 				: undefined
+
+		urlParams?.forEach((value, key) => {
+			const localStorageKey = `${viewId}-paramData-uesio/viewonly.${key}`
+			value
+				? localStorage.setItem(localStorageKey, JSON.stringify(value))
+				: localStorage.removeItem(localStorageKey)
+		})
 		uesio.signal.run(
 			{
 				signal: "route/REDIRECT",
