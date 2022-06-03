@@ -3,7 +3,6 @@ import Collection from "../collection/class"
 import { appDispatch } from "../../store/store"
 import {
 	setRecord,
-	updateRecord,
 	createRecord,
 	markForDelete,
 	unmarkForDelete,
@@ -12,10 +11,10 @@ import {
 	toggleCondition,
 } from "."
 import saveWiresOp from "./operations/save"
-import { runManyThrottled } from "../../signals/signals"
 import loadWireOp from "./operations/load"
+import updateRecordOp from "./operations/updaterecord"
 import { PlainWire } from "./types"
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
@@ -61,38 +60,15 @@ class Wire {
 
 	getWireDef = () => this.source.def
 
-	doChanges = (recordId: string, path: string[]) => {
-		const wireDef = this.getWireDef()
-		const changeEvents = wireDef.events?.onChange
-
-		if (changeEvents) {
-			for (const changeEvent of changeEvents) {
-				if (changeEvent.field !== path[0]) continue
-				runManyThrottled(
-					"",
-					changeEvent.signals,
-					new Context().addFrame({
-						wire: this.source.name,
-						record: recordId,
-						view: this.source.view,
-					})
-				)
-			}
-		}
-	}
-
 	getFields = () => this.getWireDef().fields
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		appDispatch()(
-			updateRecord({
-				entity: this.getFullId(),
-				recordId,
-				record,
-				path,
-			})
-		)
-		this.doChanges(recordId, path)
+		const context = newContext({
+			wire: this.getId(),
+			record: recordId,
+			view: this.getViewId(),
+		})
+		appDispatch()(updateRecordOp(context, path, record))
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {

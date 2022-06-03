@@ -1,5 +1,5 @@
 import { LoginResponse } from "../../auth/auth"
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
 import wireAddError from "../wire/operations/adderror"
@@ -17,11 +17,9 @@ async function responseRedirect(
 			? routeOps.redirect(context, response.redirectPath)
 			: routeOps.navigate(
 					// Always run the logout action in the site context.
-					new Context([
-						{
-							site: context.getSite(),
-						},
-					]),
+					newContext({
+						site: context.getSite(),
+					}),
 					{
 						path: response.redirectRouteName,
 						namespace: response.redirectRouteNamespace,
