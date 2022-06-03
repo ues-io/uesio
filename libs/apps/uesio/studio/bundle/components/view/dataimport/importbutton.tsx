@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, hooks, component, styles } from "@uesio/ui"
 import { nanoid } from "nanoid"
 
 interface Props extends definition.BaseProps {
@@ -42,18 +42,36 @@ const getHeaderString = (data: ArrayBuffer): string => {
 	return headerString
 }
 
-const Button = component.registry.getUtility("uesio/io.button")
+const Icon = component.registry.getUtility("uesio/io.icon")
 const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded } = props
 	const uesio = hooks.useUesio(props)
 	const uploadLabelId = nanoid()
+
+	const classes = styles.useUtilityStyles(
+		{
+			div: {
+				padding: "100px",
+				outline: "dashed 1px " + context.merge("$Theme{color.primary}"),
+				textAlign: "center",
+				color: "rgb(196, 195, 196)",
+			},
+			icon: {
+				fontSize: "80px",
+				padding: "32px",
+				color: context.merge("$Theme{color.primary}"),
+			},
+		},
+		props
+	)
+
 	return (
 		<UploadArea
 			context={context}
 			accept={".csv"}
-			upload={async (files: FileList | null) => {
+			onUpload={async (files: FileList | null) => {
 				if (files && files.length > 0) {
 					const csvFields = await getHeaderFields(files)
 					if (csvFields.length > 0) {
@@ -69,11 +87,14 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 			uploadLabelId={uploadLabelId}
 		>
 			<label htmlFor={uploadLabelId}>
-				<Button
-					context={context}
-					variant={"uesio/io.secondary"}
-					label={"choose file"}
-				/>
+				<div className={classes.div}>
+					<p>Drop your .csv file here or Click to browse.</p>
+					<Icon
+						className={classes.icon}
+						context={context}
+						icon="image"
+					/>
+				</div>
 			</label>
 		</UploadArea>
 	)

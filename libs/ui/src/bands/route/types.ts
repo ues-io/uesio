@@ -1,4 +1,4 @@
-type WorkspaceState = {
+type TenantState = {
 	name: string
 	app: string
 }
@@ -8,9 +8,9 @@ type RouteState = {
 	params?: Record<string, string>
 	namespace: string
 	path: string
-	workspace?: WorkspaceState
+	workspace?: TenantState
 	theme: string
 	isLoading?: boolean
 } | null
 
-export { RouteState, WorkspaceState }
+export { RouteState, TenantState }
