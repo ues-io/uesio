@@ -27,7 +27,7 @@ type FileRecord struct {
 	FieldName string
 }
 
-var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles", "componentvariants"}
+var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles", "componentvariants", "labels", "translations"}
 
 // Deploy func
 func Deploy(body io.ReadCloser, session *sess.Session) error {
