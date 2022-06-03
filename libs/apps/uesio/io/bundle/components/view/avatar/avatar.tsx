@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { styles, component } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"
 
-const IOAvatar = component.registry.getUtility("uesio/io.avatar")
+const IOAvatar = component.getUtility("uesio/io.avatar")
 
 const Avatar: FunctionComponent<AvatarProps> = (props) => {
 	const { definition, context } = props

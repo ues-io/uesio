@@ -15,7 +15,7 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const Icon = component.registry.getUtility("uesio/io.icon")
+const Icon = component.getUtility("uesio/io.icon")
 
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	const { setValue, value, mode, context } = props

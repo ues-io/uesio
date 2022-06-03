@@ -1,8 +1,8 @@
 import { FunctionComponent, useState } from "react"
 import { definition, component } from "@uesio/ui"
 
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
-const ToggleField = component.registry.getUtility("uesio/io.togglefield")
+const TitleBar = component.getUtility("uesio/io.titlebar")
+const ToggleField = component.getUtility("uesio/io.togglefield")
 
 interface Props extends definition.BaseProps {
 	title: string

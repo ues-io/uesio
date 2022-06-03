@@ -4,13 +4,13 @@ import { GroupUtilityProps } from "../group/group"
 import { DialogPlainUtilityProps } from "../dialogplain/dialogplain"
 import { IconButtonUtilityProps } from "../iconbutton/iconbutton"
 
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
-const IconButton = component.registry.getUtility<IconButtonUtilityProps>(
+const TitleBar = component.getUtility("uesio/io.titlebar")
+const IconButton = component.getUtility<IconButtonUtilityProps>(
 	"uesio/io.iconbutton"
 )
-const Grid = component.registry.getUtility("uesio/io.grid")
-const Group = component.registry.getUtility<GroupUtilityProps>("uesio/io.group")
-const IODialogPlain = component.registry.getUtility<DialogPlainUtilityProps>(
+const Grid = component.getUtility("uesio/io.grid")
+const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
+const IODialogPlain = component.getUtility<DialogPlainUtilityProps>(
 	"uesio/io.dialogplain"
 )
 

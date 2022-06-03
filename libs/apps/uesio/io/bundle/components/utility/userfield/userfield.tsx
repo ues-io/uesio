@@ -9,9 +9,9 @@ interface UserFieldProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const Tile = component.registry.getUtility("uesio/io.tile")
-const Avatar = component.registry.getUtility("uesio/io.avatar")
-const ReferenceField = component.registry.getUtility("uesio/io.referencefield")
+const Tile = component.getUtility("uesio/io.tile")
+const Avatar = component.getUtility("uesio/io.avatar")
+const ReferenceField = component.getUtility("uesio/io.referencefield")
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { mode, record, fieldId, context } = props

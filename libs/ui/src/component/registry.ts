@@ -1,7 +1,6 @@
 import { FC } from "react"
 import {
 	BaseProps,
-	DefinitionMap,
 	UtilityProps,
 	UtilityPropsPlus,
 } from "../definition/definition"
@@ -15,13 +14,7 @@ import {
 	fromPath,
 } from "./path"
 import toPath from "lodash/toPath"
-import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import {
-	getDefinitionFromVariant,
-	mergeDefinitionMaps,
-	renderUtility,
-} from "./component"
 import {
 	getComponentTypePropsDef,
 	getFieldPropsDef,
@@ -29,7 +22,6 @@ import {
 	getPanelPropsDef,
 	getParamPropsDef,
 } from "./builtinpropsdefs"
-import { Context } from "../context/context"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -75,95 +67,11 @@ const registerBuilder = (
 	definition && addToRegistry(definitionRegistry, key, definition)
 }
 
-const getBuildtimeLoader = (key: string) =>
-	builderRegistry[key] || getDefaultBuildtimeLoader(key)
+const getBuildtimeLoader = (key: string) => builderRegistry[key]
 
 const getRuntimeLoader = (key: string) => registry[key]
 
 const getUtilityLoader = (key: string) => utilityRegistry[key]
-
-const getLoader = (key: string, buildMode: boolean) =>
-	buildMode ? getBuildtimeLoader(key) : getRuntimeLoader(key)
-
-const getVariantInfo = (
-	fullName: string | undefined,
-	key: string
-): [string, string] => {
-	const parts = fullName?.split(".")
-	if (parts?.length === 4) {
-		return [`${parts[0]}.${parts[1]}`, `${parts[2]}.${parts[3]}`]
-	}
-	if (parts?.length === 2) {
-		return [key, `${parts[0]}.${parts[1]}`]
-	}
-	const [keyNamespace] = parseKey(key)
-	return [key, `${keyNamespace}.default`]
-}
-
-function getVariantStylesDef(
-	componentType: string,
-	variantName: string,
-	context: Context
-) {
-	const variant = context.getComponentVariant(componentType, variantName)
-	if (!variant) return {}
-	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return variantDefinition?.["uesio.styles"] as DefinitionMap
-}
-
-const getVariantStyleInfo = (props: UtilityProps, key: string) => {
-	const { variant, context, styles } = props
-	const [componentType, variantName] = getVariantInfo(variant, key)
-	if (!variantName) {
-		return styles as DefinitionMap
-	}
-
-	const variantStyles = getVariantStylesDef(
-		componentType,
-		variantName,
-		context
-	)
-
-	if (!styles) {
-		return variantStyles
-	}
-
-	return mergeDefinitionMaps(
-		variantStyles,
-		styles as DefinitionMap,
-		undefined
-	)
-}
-
-const getUtility =
-	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
-	(props: T) => {
-		const loader = getUtilityLoader(key) || NotFound
-		const styles = getVariantStyleInfo(props, key)
-		return renderUtility(loader, {
-			...(props as unknown as UtilityPropsPlus),
-			styles,
-			componentType: key,
-		})
-	}
-
-const BuildWrapper = getUtility("uesio/studio.buildwrapper")
-
-const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
-	const Loader = getRuntimeLoader(key)
-
-	// Don't use the buildwrapper for a panel component
-	if (props.definition && "uesio.type" in props.definition)
-		return <Loader {...props} />
-
-	return Loader ? (
-		<BuildWrapper {...props}>
-			<Loader {...props} />
-		</BuildWrapper>
-	) : (
-		<NotFound {...props} />
-	)
-}
 
 const getSignal = (key: string, signal: string) =>
 	componentSignalsRegistry[key]?.[signal]
@@ -269,9 +177,8 @@ export {
 	registerUtilityComponent,
 	registerBuilder,
 	registerSignals,
-	getUtility,
-	getLoader,
 	getComponents,
+	getBuildtimeLoader,
 	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,

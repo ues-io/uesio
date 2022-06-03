@@ -1,9 +1,9 @@
 import { FunctionComponent } from "react"
 import { builder, component } from "@uesio/ui"
 
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
-const CheckBoxField = component.registry.getUtility("uesio/io.checkboxfield")
-const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
+const SelectField = component.getUtility("uesio/io.selectfield")
+const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,

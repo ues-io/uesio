@@ -9,13 +9,11 @@ import { TableUtilityProps } from "../../utility/table/table"
 
 import { ColumnDefinition, TableProps } from "./tabledefinition"
 
-const Group = component.registry.getUtility<GroupUtilityProps>("uesio/io.group")
-const Button =
-	component.registry.getUtility<ButtonUtilityProps>("uesio/io.button")
-const IOTable =
-	component.registry.getUtility<TableUtilityProps>("uesio/io.table")
+const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
+const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
+const IOTable = component.getUtility<TableUtilityProps>("uesio/io.table")
 const Paginator =
-	component.registry.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
+	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
 const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props

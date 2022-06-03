@@ -9,8 +9,8 @@ import {
 } from "@uesio/ui"
 import { ReferenceFieldOptions } from "../../view/field/fielddefinition"
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
-const AutoComplete = component.registry.getUtility("uesio/io.autocomplete")
+const TextField = component.getUtility("uesio/io.textfield")
+const AutoComplete = component.getUtility("uesio/io.autocomplete")
 
 interface ReferenceFieldProps extends definition.UtilityProps {
 	fieldId: string

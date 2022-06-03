@@ -5,8 +5,8 @@ interface SelectPropRendererProps extends builder.PropRendererProps {
 	descriptor: builder.SelectProp
 }
 
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
-const FieldWrapper = component.registry.getUtility("uesio/io.fieldwrapper")
+const SelectField = component.getUtility("uesio/io.selectfield")
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	descriptor,

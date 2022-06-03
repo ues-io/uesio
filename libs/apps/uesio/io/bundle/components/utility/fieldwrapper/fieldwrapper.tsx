@@ -8,8 +8,8 @@ interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	record: wire.WireRecord
 	fieldId: string
 }
-const Icon = component.registry.getUtility("uesio/io.icon")
-const FieldLabel = component.registry.getUtility("uesio/io.fieldlabel")
+const Icon = component.getUtility("uesio/io.icon")
+const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 	const { label, labelPosition, children, context, record, fieldId } = props

@@ -9,7 +9,7 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const TitleBar = component.getUtility("uesio/io.titlebar")
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props

@@ -4,7 +4,7 @@ import { CodeProps } from "./codedefinition"
 import { CodeFieldUtilityProps } from "../../utility/codefield/codefield"
 
 const IOCodeField =
-	component.registry.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
+	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
 const CodeField: FunctionComponent<CodeProps> = (props) => {
 	const { definition, context } = props

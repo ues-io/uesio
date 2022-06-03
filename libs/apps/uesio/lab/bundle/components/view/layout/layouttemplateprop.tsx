@@ -7,7 +7,7 @@ type ColumnArrayKey = {
 		components: definition.DefinitionList
 	}
 }
-const FieldLabel = component.registry.getUtility("uesio/io.fieldlabel")
+const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 interface T extends definition.UtilityProps {
 	onClick: (value: number[]) => void

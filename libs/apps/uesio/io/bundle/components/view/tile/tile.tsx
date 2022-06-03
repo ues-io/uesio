@@ -4,7 +4,7 @@ import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
 import { TileUtilityProps } from "../../utility/tile/tile"
 
-const IOTile = component.registry.getUtility<TileUtilityProps>("uesio/io.tile")
+const IOTile = component.getUtility<TileUtilityProps>("uesio/io.tile")
 
 const Tile: FunctionComponent<TileProps> = (props) => {
 	const classes = styles.useStyles(

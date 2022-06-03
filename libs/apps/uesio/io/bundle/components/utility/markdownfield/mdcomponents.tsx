@@ -4,8 +4,8 @@ import { IconUtilityProps } from "../icon/icon"
 
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter"
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism"
-const IOButton = component.registry.getUtility("uesio/io.button")
-const Icon = component.registry.getUtility<IconUtilityProps>("uesio/io.icon")
+const IOButton = component.getUtility("uesio/io.button")
+const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash"
 import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml"

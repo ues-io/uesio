@@ -42,11 +42,11 @@ type SiteState = {
 }
 
 type InitialState = {
-	builder: BuilderState
-	route: RouteState
-	user: UserState
-	site: SiteState
-	theme: EntityState<MetadataState>
+	builder?: BuilderState
+	route?: RouteState
+	user?: UserState
+	site?: SiteState
+	theme?: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -56,9 +56,10 @@ const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
 	// handle cached themes coming from the route
-	if (initialState.theme?.ids?.length) {
-		initialState.theme.ids.forEach((id: string) => {
-			const theme = initialState.theme.entities[id] as MetadataState
+	const themeState = initialState.theme
+	if (themeState && themeState.ids?.length) {
+		themeState.ids.forEach((id: string) => {
+			const theme = themeState.entities[id] as MetadataState
 			theme.parsed = parse(theme.content).toJSON()
 		})
 	}

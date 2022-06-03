@@ -11,7 +11,7 @@ interface Props extends definition.BaseProps {
 	definition: DataExportDefinition
 }
 
-const Button = component.registry.getUtility("uesio/io.button")
+const Button = component.getUtility("uesio/io.button")
 
 const DataExport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props

@@ -4,9 +4,8 @@ import {
 	DefinitionList,
 	UtilityProps,
 } from "../definition/definition"
-import { Component } from "../component/component"
+import { Component, getUtility } from "../component/component"
 import { unWrapDefinition } from "../component/path"
-import { getUtility } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string

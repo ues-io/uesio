@@ -9,11 +9,7 @@ const loader = (element: HTMLElement | null, initialState: InitialState) => {
 	ReactDOM.render(
 		<StrictMode>
 			<Provider store={create(platform, initialState)}>
-				<Runtime
-					path=""
-					componentType="uesio/studio.runtime"
-					context={new Context()}
-				/>
+				<Runtime path="" context={new Context()} />
 			</Provider>
 		</StrictMode>,
 		element

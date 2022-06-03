@@ -4,9 +4,9 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
-const Button = component.registry.getUtility("uesio/io.button")
-const Icon = component.registry.getUtility("uesio/io.icon")
+const TitleBar = component.getUtility("uesio/io.titlebar")
+const Button = component.getUtility("uesio/io.button")
+const Icon = component.getUtility("uesio/io.icon")
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props

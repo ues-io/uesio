@@ -20,9 +20,9 @@ interface FileUtilityProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const Tile = component.registry.getUtility("uesio/io.tile")
-const Icon = component.registry.getUtility("uesio/io.icon")
-const FileUploadArea = component.registry.getUtility("uesio/io.fileuploadarea")
+const Tile = component.getUtility("uesio/io.tile")
+const Icon = component.getUtility("uesio/io.icon")
+const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)

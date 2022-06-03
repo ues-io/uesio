@@ -4,9 +4,8 @@ import { ButtonProps } from "./buttondefinition"
 import { IconUtilityProps } from "../../utility/icon/icon"
 import { ButtonUtilityProps } from "../../utility/button/button"
 
-const IOButton =
-	component.registry.getUtility<ButtonUtilityProps>("uesio/io.button")
-const Icon = component.registry.getUtility<IconUtilityProps>("uesio/io.icon")
+const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
+const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition, context } = props

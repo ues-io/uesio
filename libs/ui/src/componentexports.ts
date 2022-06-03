@@ -4,7 +4,7 @@ import Panel from "./components/panel"
 import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
-import { Component } from "./component/component"
+import { Component, getUtility } from "./component/component"
 import { shouldHaveClass, shouldDisplay } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
 
@@ -14,6 +14,7 @@ export {
 	View,
 	path,
 	registry,
+	getUtility,
 	Component,
 	ComponentVariant,
 	Panel,

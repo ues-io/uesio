@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { component, styles } from "@uesio/ui"
 import { GridProps } from "./griddefinition"
 
-const IOGrid = component.registry.getUtility("uesio/io.grid")
+const IOGrid = component.getUtility("uesio/io.grid")
 
 const Grid: FunctionComponent<GridProps> = (props) => {
 	const { definition, context } = props

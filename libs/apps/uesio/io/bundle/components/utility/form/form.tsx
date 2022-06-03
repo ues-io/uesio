@@ -8,8 +8,8 @@ interface FormProps extends definition.UtilityProps {
 	onSubmit?: (record: wire.WireRecord) => void
 }
 
-const Button = component.registry.getUtility("uesio/io.button")
-const Group = component.registry.getUtility("uesio/io.group")
+const Button = component.getUtility("uesio/io.button")
+const Group = component.getUtility("uesio/io.group")
 
 const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel } = props

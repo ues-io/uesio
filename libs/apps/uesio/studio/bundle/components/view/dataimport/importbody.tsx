@@ -17,8 +17,8 @@ interface Props extends definition.BaseProps {
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
-const Button = component.registry.getUtility("uesio/io.button")
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
+const Button = component.getUtility("uesio/io.button")
+const SelectField = component.getUtility("uesio/io.selectfield")
 
 const ImportBody: FunctionComponent<Props> = (props) => {
 	const { context, collection, csvFields, file } = props

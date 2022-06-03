@@ -1,9 +1,9 @@
 import { FunctionComponent } from "react"
 import { useNotifications } from "../bands/notification/selectors"
-import { getUtility } from "../component/registry"
 import { BaseProps } from "../definition/definition"
 import { appDispatch } from "../store/store"
 import { remove as removeNotification } from "../bands/notification"
+import { getUtility } from "../component/component"
 
 const Alert = getUtility("uesio/io.alert")
 

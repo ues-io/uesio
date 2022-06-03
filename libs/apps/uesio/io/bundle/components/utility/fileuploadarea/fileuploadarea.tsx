@@ -10,7 +10,7 @@ interface FileUploadAreaProps extends definition.UtilityProps {
 	deleteLabelId?: string
 }
 
-const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
+const UploadArea = component.getUtility("uesio/io.uploadarea")
 
 const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	const { context, record, wire, fieldId } = props

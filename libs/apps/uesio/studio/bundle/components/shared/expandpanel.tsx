@@ -1,6 +1,6 @@
 import { FunctionComponent, SyntheticEvent } from "react"
 
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
+const IconButton = component.getUtility("uesio/io.iconbutton")
 import { component, definition } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
@@ -11,8 +11,8 @@ interface Props extends definition.UtilityProps {
 	actionOnClick?: () => void
 }
 
-const IOExpandPanel = component.registry.getUtility("uesio/io.expandpanel")
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const TitleBar = component.getUtility("uesio/io.titlebar")
 
 const ExpandPanel: FunctionComponent<Props> = ({
 	children,

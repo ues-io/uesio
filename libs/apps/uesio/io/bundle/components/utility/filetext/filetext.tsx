@@ -23,7 +23,7 @@ interface FileTextProps extends definition.UtilityProps {
 }
 
 const CodeField =
-	component.registry.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
+	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const uesio = hooks.useUesio(props)

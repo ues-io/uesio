@@ -30,7 +30,7 @@ interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
 
-const IOCodeField = component.registry.getUtility("uesio/io.codefield")
+const IOCodeField = component.getUtility("uesio/io.codefield")
 
 function getChangeHandler(
 	fieldType: collection.FieldType,

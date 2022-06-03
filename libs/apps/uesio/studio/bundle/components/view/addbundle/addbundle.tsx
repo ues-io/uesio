@@ -20,11 +20,11 @@ interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
 
-const Grid = component.registry.getUtility("uesio/io.grid")
-const Tile = component.registry.getUtility("uesio/io.tile")
-const Button = component.registry.getUtility("uesio/io.button")
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
+const Grid = component.getUtility("uesio/io.grid")
+const Tile = component.getUtility("uesio/io.tile")
+const Button = component.getUtility("uesio/io.button")
+const SelectField = component.getUtility("uesio/io.selectfield")
+const TitleBar = component.getUtility("uesio/io.titlebar")
 
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()

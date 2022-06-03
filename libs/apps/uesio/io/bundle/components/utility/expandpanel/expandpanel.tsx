@@ -19,8 +19,8 @@ interface ExpandPanelProps extends definition.UtilityProps {
 	expandState?: [boolean, Dispatch<SetStateAction<boolean>>]
 }
 
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
-const IOGrid = component.registry.getUtility("uesio/io.grid")
+const IconButton = component.getUtility("uesio/io.iconbutton")
+const IOGrid = component.getUtility("uesio/io.grid")
 
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const {

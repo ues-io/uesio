@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
-const IOGrid = component.registry.getUtility("uesio/io.grid")
+const IOGrid = component.getUtility("uesio/io.grid")
 
 interface GroupUtilityProps extends definition.UtilityProps {
 	columnGap?: string | number

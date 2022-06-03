@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { TextProps } from "./textdefinition"
 import { component, styles } from "@uesio/ui"
 
-const IOText = component.registry.getUtility("uesio/io.text")
+const IOText = component.getUtility("uesio/io.text")
 
 const Text: FunctionComponent<TextProps> = (props) => {
 	const { definition, context } = props
