@@ -31,7 +31,7 @@ func (tc *TranslationCollection) NewItem() loadable.Item {
 }
 
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	_, languageISO, err := ParseKey(key)
+	namespace, languageISO, err := ParseKey(key)
 	if err != nil {
 		return nil, errors.New("Invalid Label Key: " + key)
 	}
@@ -41,7 +41,8 @@ func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (Bundleabl
 		return nil, errors.New("Invalid ISO 639 Key: " + languageISO)
 	}
 	t := &Translation{
-		Language: languageISO,
+		Namespace: namespace,
+		Language:  languageISO,
 	}
 	*tc = append(*tc, t)
 	return t, nil
