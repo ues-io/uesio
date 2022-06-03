@@ -71,7 +71,6 @@ const initializeViewOnlyWire = (
 			type: fieldDef.type,
 			label: fieldDef.label,
 			reference: fieldDef.reference,
-			placeholder: fieldDef.placeholder,
 		}
 	})
 	const viewOnlyMetadata: PlainCollection = {

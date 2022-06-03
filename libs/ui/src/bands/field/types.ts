@@ -69,7 +69,6 @@ type FieldMetadata = {
 	file?: FileMetadata
 	subtype?: string
 	number?: NumberMetadata
-	placeholder?: string
 }
 
 export {
