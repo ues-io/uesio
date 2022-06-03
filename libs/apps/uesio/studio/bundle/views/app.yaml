@@ -257,12 +257,13 @@ definition:
   panels:
     deleteApp:
       uesio.type: uesio/io.dialog
-      title: Delete App
+      title: You are about to delete you app ${uesio/studio.name}.
       width: 400px
       height: 300px
       components:
         - uesio/io.text:
-            text: Are you sure you want to delete this app?
+            text: All your data ${uesio/studio.name} will be permanently removed and you won't be able to see it again, including the all your views, fields and collections.
+            element: p
       actions:
         - uesio/io.button:
             text: Delete
