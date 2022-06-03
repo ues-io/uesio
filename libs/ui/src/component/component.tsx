@@ -12,12 +12,7 @@ import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 
-/**
- * Returns a new object that has a deep merge where source overrides
- * destination, but ignoring empty values in source
- * @param destDef
- * @param sourceDef
- */
+// Returns a new object that has a deep merge where source overrides
 function mergeDefinitionMaps(
 	destDef: DefinitionMap,
 	sourceDef: DefinitionMap,
@@ -31,11 +26,7 @@ function mergeDefinitionMaps(
 	return result
 }
 
-/**
- * Will ignore null/undefined/empty string in the src obj
- * @param dest
- * @param src
- */
+// Will ignore null/undefined/empty string in the src obj
 function mergeDeep(
 	dest: DefinitionMap,
 	src: DefinitionMap,
@@ -108,7 +99,7 @@ function additionalContext(context: Context, additional: ContextFrame) {
 const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
 	return (
-		<ErrorBoundary cname={componentType} componentProps={props}>
+		<ErrorBoundary {...props}>
 			<ComponentInternal
 				{...props}
 				path={`${path}["${componentType}"]`}
