@@ -59,5 +59,9 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/studio.dataimport:
-                          collectionId: $Param{collectionname}
+                          collectionId: $Param{namespace}.$Param{collectionname}
                           namespace: $Param{app}
+                          uesio.context:
+                            siteadmin:
+                              name: $Param{sitename}
+                              app: $Param{app}

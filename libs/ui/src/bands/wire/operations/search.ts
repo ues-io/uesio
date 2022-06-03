@@ -29,6 +29,6 @@ export default (
 						entity,
 				  })
 		)
-		await dispatch(loadWiresOp({ context, wires: [wirename] }))
+		await dispatch(loadWiresOp(context, [wirename]))
 		return context
 	}

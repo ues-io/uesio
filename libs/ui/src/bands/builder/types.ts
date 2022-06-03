@@ -21,39 +21,19 @@ const METADATA = {
 
 type MetadataType = keyof typeof METADATA
 
-type MetadataListStore = {
-	[key: string]: MetadataListStore
-} | null
-
 type BuilderState = {
 	activeNode?: string
 	selectedNode?: string
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	metadata: {
-		[key: string]: {
-			status: string
-			data: MetadataListStore
-		}
-	} | null
-	namespaces: {
-		status: "PENDING" | "FULFILLED"
-		data: MetadataListStore
-	} | null
 }
 
 type MetadataListResponse = {
 	metadataType: MetadataType
 	namespace: string
 	grouping?: string
-	metadata: MetadataListStore
+	metadata: Record<string, boolean>
 }
 
-export {
-	BuilderState,
-	MetadataListStore,
-	MetadataListResponse,
-	MetadataType,
-	METADATA,
-}
+export { BuilderState, MetadataListResponse, MetadataType, METADATA }

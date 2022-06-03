@@ -1,12 +1,12 @@
 import { getCurrentState, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
-import { RouteState, WorkspaceState } from "../bands/route/types"
+import { RouteState, TenantState } from "../bands/route/types"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
-import { selectWire } from "../bands/wire/selectors"
+import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
@@ -19,13 +19,9 @@ import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
 import { ViewDefinition } from "../definition/viewdef"
 import { ComponentVariant } from "../definition/componentvariant"
+import { getErrorString } from "../bands/utils"
 
 type FieldMode = "READ" | "EDIT"
-
-type SiteAdminState = {
-	name: string
-	app: string
-}
 
 type MergeType =
 	| "Record"
@@ -50,8 +46,8 @@ type ContextFrame = {
 	fieldMode?: FieldMode
 	noMerge?: boolean
 	route?: RouteState
-	workspace?: WorkspaceState
-	siteadmin?: SiteAdminState
+	workspace?: TenantState
+	siteadmin?: TenantState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
@@ -68,12 +64,12 @@ type MergeHandler = (
 const handleMergeError = ({
 	mergeType,
 	expression,
-	error,
+	errorMessage,
 	viewDefId,
 }: {
 	mergeType: MergeType
 	expression: string
-	error: Error
+	errorMessage: string
 	viewDefId: string
 }) => {
 	const title = "Error in Template merge"
@@ -91,7 +87,7 @@ const handleMergeError = ({
 		}
 		if (!mergeType) return missingMergeType
 		if (!(mergeType in handlers)) return invalidMergeType
-		if (error.message === "noValue") return noValue
+		if (errorMessage === "noValue") return noValue
 
 		return {
 			mergeType,
@@ -196,10 +192,12 @@ const inject = (template: string, context: Context): string =>
 			if (!value) throw new Error("noValue")
 			return value
 		} catch (error) {
+			const errorMessage = getErrorString(error)
+
 			handleMergeError({
 				mergeType,
 				expression,
-				error,
+				errorMessage,
 				viewDefId: context.getViewDefId() || "",
 			})
 			return ""
@@ -299,6 +297,19 @@ class Context {
 
 	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
 
+	getTenant = () => {
+		const workspace = this.getWorkspace()
+		return workspace ? workspace : this.getSiteAdmin()
+	}
+
+	getTenantType = () => {
+		const workspace = this.getWorkspace()
+		if (workspace) return "workspace"
+		const siteadmin = this.getSiteAdmin()
+		if (siteadmin) return "site"
+		return undefined
+	}
+
 	getSite = () => this.stack.find((frame) => frame?.site)?.site
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
@@ -392,7 +403,7 @@ export {
 	ContextFrame,
 	FieldMode,
 	RouteState,
-	WorkspaceState,
 	SiteState,
+	TenantState,
 	getWire,
 }

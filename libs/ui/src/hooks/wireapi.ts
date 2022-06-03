@@ -1,6 +1,6 @@
 import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
-import { getFullWireId, useWire, useWires } from "../bands/wire/selectors"
+import { getFullWireId, useWire, useWires } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import initializeWiresOp from "../bands/wire/operations/initialize"
@@ -111,12 +111,7 @@ class WireAPI {
 	}
 
 	loadWires(context: Context, wireNames: string[]) {
-		return appDispatch()(
-			loadWiresOp({
-				context,
-				wires: wireNames,
-			})
-		)
+		return appDispatch()(loadWiresOp(context, wireNames))
 	}
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {

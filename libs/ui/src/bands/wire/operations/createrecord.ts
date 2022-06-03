@@ -1,8 +1,7 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { nanoid } from "nanoid"
-import { createRecord } from ".."
-import { getFullWireId } from "../selectors"
+import { createRecord, getFullWireId } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
 export default (context: Context, wirename: string): ThunkFunc =>

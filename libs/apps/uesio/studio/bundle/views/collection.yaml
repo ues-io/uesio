@@ -128,19 +128,19 @@ definition:
                                       text: "Export Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Import Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Manage Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Edit"
@@ -221,7 +221,7 @@ definition:
                             - text: Edit
                               signals:
                                 - signal: "route/NAVIGATE"
-                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${uesio/studio.name}"
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}"
                           columns:
                             - uesio/io.column:
                                 field: uesio/studio.name

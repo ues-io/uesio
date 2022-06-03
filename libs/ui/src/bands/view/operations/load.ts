@@ -124,12 +124,7 @@ export default (context: Context): ThunkFunc =>
 		dispatch(initializeWiresOp(context, wires))
 
 		if (wireNames?.length) {
-			await dispatch(
-				loadWiresOp({
-					context,
-					wires: wireNames,
-				})
-			)
+			await dispatch(loadWiresOp(context, wireNames))
 		}
 
 		// Handle Events

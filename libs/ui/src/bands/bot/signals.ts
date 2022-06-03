@@ -2,6 +2,7 @@ import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { BotParams } from "../../platform/platform"
 import { parseKey } from "../../component/path"
+import { getErrorString } from "../utils"
 
 // The key for the entire band
 const BOT_BAND = "bot"
@@ -28,7 +29,8 @@ const signals: Record<string, SignalDescriptor> = {
 						mergedParams || {}
 					)
 				} catch (error) {
-					return context.addFrame({ errors: [error.message] })
+					const message = getErrorString(error)
+					return context.addFrame({ errors: [message] })
 				}
 
 				return context

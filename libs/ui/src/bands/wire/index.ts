@@ -1,6 +1,7 @@
 import {
 	createEntityAdapter,
 	createSlice,
+	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -9,14 +10,12 @@ import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import loadOp from "./operations/load"
-import loadNextBatch from "./operations/loadnextbatch"
-import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
+import { useSelector } from "react-redux"
 
 type DeletePayload = {
 	recordId: string
@@ -234,88 +233,97 @@ const wireSlice = createSlice({
 				})
 			}
 		),
-	},
-	extraReducers: (builder) => {
-		builder.addCase(
-			loadOp.fulfilled,
-			(state, { payload: [wires] }: WireLoadAction) => {
-				wireAdapter.upsertMany(state, wires)
-			}
-		)
-		builder.addCase(
-			loadNextBatch.fulfilled,
-			(state, { payload: [wires] }: WireLoadAction) => {
-				wireAdapter.upsertMany(state, wires)
-			}
-		)
-		builder.addCase(
-			saveOp.fulfilled,
-			(state, { payload }: PayloadAction<SaveResponseBatch>) => {
-				payload.wires?.forEach((wire) => {
-					const wireId = wire.wire
-					const wireState = state.entities[wireId]
-					if (!wireState) return
+		save: (state, { payload }: PayloadAction<SaveResponseBatch>) => {
+			payload.wires?.forEach((wire) => {
+				const wireId = wire.wire
+				const wireState = state.entities[wireId]
+				if (!wireState) return
 
-					if (wire.errors) {
-						wireState.errors = {}
-						const errorObj = wireState.errors
-						wire.errors.forEach((error) => {
-							const key = `${error.recordid || ""}:${
-								error.fieldid || ""
-							}`
-							if (!errorObj[key]) {
-								errorObj[key] = []
-							}
-							errorObj[key].push(error)
-						})
-						return
-					}
-
-					const data = wireState.data
-					const original = wireState.original
-					if (!data || !original) return
-
-					Object.keys(wire.changes).forEach((tempId) => {
-						data[tempId] = {
-							...data[tempId],
-							...wire.changes[tempId],
+				if (wire.errors) {
+					wireState.errors = {}
+					const errorObj = wireState.errors
+					wire.errors.forEach((error) => {
+						const key = `${error.recordid || ""}:${
+							error.fieldid || ""
+						}`
+						if (!errorObj[key]) {
+							errorObj[key] = []
 						}
-						original[tempId] = {
-							...data[tempId],
-							...wire.changes[tempId],
-						}
+						errorObj[key].push(error)
 					})
-					wireState.changes = {}
-
-					Object.keys(wire.deletes).forEach((tempId) => {
-						delete data[tempId]
-						delete original[tempId]
-						delete wireState.deletes[tempId]
-					})
-
-					wireState.errors = undefined
-				})
-			}
-		)
-		builder.addCase(saveOp.rejected, (state, action) => {
-			const viewId = action.meta.arg.context.getViewId()
-			// This doesn't handle the case where the wire comes from context
-			// instead of the definition
-			action.meta.arg.wires?.forEach((entityName) => {
-				const entity = state.entities[`${viewId}/${entityName}`]
-				if (entity) {
-					entity.errors = {
-						test: [{ message: action.error.message || "" }],
-					}
+					return
 				}
+
+				const data = wireState.data
+				const original = wireState.original
+				if (!data || !original) return
+
+				Object.keys(wire.changes).forEach((tempId) => {
+					data[tempId] = {
+						...data[tempId],
+						...wire.changes[tempId],
+					}
+					original[tempId] = {
+						...data[tempId],
+						...wire.changes[tempId],
+					}
+				})
+				wireState.changes = {}
+
+				Object.keys(wire.deletes).forEach((tempId) => {
+					delete data[tempId]
+					delete original[tempId]
+					delete wireState.deletes[tempId]
+				})
+
+				wireState.errors = undefined
 			})
-		})
+		},
+		load: (state, { payload: [wires] }: WireLoadAction) => {
+			wireAdapter.upsertMany(state, wires)
+		},
 	},
 })
 
-export { WireLoadAction }
+// Both gets wire state and subscribes the component to wire changes
+const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
+	useSelector((state: RootState) => selectWire(state, viewId, wireName))
 
-export { selectors, getWiresFromDefinitonOrContext }
+const useWires = (
+	fullWireIds: string[]
+): Record<string, PlainWire | undefined> =>
+	useSelector((state: RootState) => selectWires(state, fullWireIds))
+
+const selectWires = createSelector(
+	selectors.selectEntities,
+	(state: RootState, fullWireIds: string[]) => fullWireIds,
+	(items, fullWireIds) =>
+		Object.fromEntries(
+			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+		)
+)
+
+const selectWire = (
+	state: RootState,
+	viewId: string | undefined,
+	wireName: string | undefined
+) =>
+	viewId && wireName
+		? selectors.selectById(state, getFullWireId(viewId, wireName))
+		: undefined
+
+const getFullWireId = (viewId: string, wireName: string) =>
+	`${viewId}/${wireName}`
+
+export {
+	useWire,
+	useWires,
+	selectWire,
+	getFullWireId,
+	WireLoadAction,
+	selectors,
+	getWiresFromDefinitonOrContext,
+}
 
 export const {
 	markForDelete,
@@ -328,6 +336,8 @@ export const {
 	cancel,
 	empty,
 	reset,
+	save,
+	load,
 	init,
 	toggleCondition,
 	addCondition,

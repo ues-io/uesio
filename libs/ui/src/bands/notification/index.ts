@@ -1,8 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, nanoid } from "@reduxjs/toolkit"
 import notificationAdapter from "./adapter"
-import saveOp from "../wire/operations/save"
-import { nanoid } from "nanoid"
 import { set as setRoute } from "../route"
+import { save } from "../wire"
 import { NotificationState } from "./types"
 
 const notificationSlice = createSlice({
@@ -13,15 +12,7 @@ const notificationSlice = createSlice({
 		remove: notificationAdapter.removeOne,
 	},
 	extraReducers: (builder) => {
-		builder.addCase(saveOp.rejected, (state, action) => {
-			notificationAdapter.addOne(state, {
-				id: nanoid(),
-				severity: "error",
-				text: "ERROR",
-				details: action?.error?.message,
-			})
-		})
-		builder.addCase(saveOp.fulfilled, (state, action) => {
+		builder.addCase(save, (state, action) => {
 			const notifications: NotificationState[] = []
 			for (const wire of action.payload.wires) {
 				if (wire.errors) {

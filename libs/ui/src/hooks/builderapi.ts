@@ -1,8 +1,6 @@
 import {
 	useDragNode,
 	useDropNode,
-	useMetadataList,
-	useNamespaces,
 	useNodeState,
 	useSelectedNode,
 	useLastModifiedNode,
@@ -10,7 +8,6 @@ import {
 	useSelectedItem,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
-import { useEffect } from "react"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
 import {
@@ -43,6 +40,8 @@ import { useSelector } from "react-redux"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { PlainViewDef } from "../definition/viewdef"
 import get from "lodash/get"
+import { platform } from "../platform/platform"
+import usePlatformFunc from "./useplatformfunc"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -158,11 +157,7 @@ class BuilderAPI {
 	}
 
 	save = () =>
-		appDispatch()(
-			builderOps.save({
-				context: this.uesio.getContext() || new Context(),
-			})
-		)
+		appDispatch()(builderOps.save(this.uesio.getContext() || new Context()))
 
 	cancel = () => appDispatch()(cancel())
 
@@ -269,37 +264,26 @@ class BuilderAPI {
 		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
-	) => {
-		const metadata = useMetadataList(metadataType, namespace, grouping)
-		useEffect(() => {
-			if (!metadata && metadataType && namespace) {
-				appDispatch()(
-					builderOps.getMetadataList({
-						context,
-						metadataType,
-						namespace,
-						grouping,
-					})
-				)
-			}
-		})
-		return metadata
-	}
+	) =>
+		usePlatformFunc(
+			() =>
+				namespace
+					? platform.getMetadataList(
+							context,
+							metadataType,
+							namespace,
+							grouping
+					  )
+					: undefined,
+			[metadataType, namespace, grouping]
+		)
 
-	useAvailableNamespaces = (
-		context: Context,
-		metadataType?: MetadataType
-	) => {
-		const namespaces = useNamespaces()
-		useEffect(() => {
-			if (!namespaces) {
-				appDispatch()(
-					builderOps.getAvailableNamespaces({ context, metadataType })
-				)
-			}
-		})
-		return namespaces
-	}
+	useAvailableNamespaces = (context: Context, metadataType?: MetadataType) =>
+		usePlatformFunc(
+			() => platform.getAvailableNamespaces(context, metadataType),
+			[metadataType]
+		)
+
 	getSignalProperties = (signal: SignalDefinition) =>
 		this.uesio.signal.getProperties(signal)
 }

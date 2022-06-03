@@ -81,6 +81,8 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - "selectlists"
+                                        - signal: component/uesio/io.list/SET_READ_MODE
+                                          target: "selectlistsDeck"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"

@@ -11,6 +11,7 @@ import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
 import { additionalContext } from "../component/component"
 import debounce from "lodash/debounce"
+import { getErrorString } from "../bands/utils"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -45,11 +46,12 @@ const runMany = async (
 			// Keep adding to context as each signal is run
 			context = await run(path, signal, context)
 		} catch (error) {
+			const message = getErrorString(error)
 			if (signal.onerror?.signals) {
 				runMany(
 					path,
 					signal.onerror.signals,
-					context.addFrame({ errors: [error.message] })
+					context.addFrame({ errors: [message] })
 				)
 			}
 			break

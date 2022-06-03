@@ -99,16 +99,10 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Import Data"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{collectionname}"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
                                       text: "Collection Configuration"
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.context:
