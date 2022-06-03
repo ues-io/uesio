@@ -1,25 +1,22 @@
-import React, { FC, SyntheticEvent } from "react"
+import { FC, SyntheticEvent } from "react"
+import { getErrorString } from "../bands/utils"
 import { UtilityPropsPlus } from "../definition/definition"
 
 import { useUesio } from "../hooks/hooks"
 
-type T = {
-	error: Error | null
-	componentProps: UtilityPropsPlus
-	cname?: string
-}
-// const Icon = getUtility("uesio/io.icon")
-const slotError: FC<T> = ({ error, componentProps, cname }) => {
-	console.log({ cname })
-	const uesio = useUesio(componentProps)
+const slotError: FC<UtilityPropsPlus> = (props) => {
+	const cname = props.componentType
+	const uesio = useUesio(props)
 	const viewDefId = uesio.getViewDefId() || ""
+	const message = getErrorString(props.error)
+
 	return (
 		<div
 			onClick={(event: SyntheticEvent) => {
 				uesio.builder.setSelectedNode(
 					"viewdef",
 					viewDefId,
-					componentProps.path || ""
+					props.path || ""
 				)
 				event.stopPropagation()
 			}}
@@ -40,7 +37,7 @@ const slotError: FC<T> = ({ error, componentProps, cname }) => {
 			>
 				{cname}
 			</p>
-			<pre style={{ whiteSpace: "normal" }}>{error?.message}</pre>
+			<pre style={{ whiteSpace: "normal" }}>{message}</pre>
 		</div>
 	)
 }
