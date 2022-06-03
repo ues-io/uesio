@@ -1,4 +1,4 @@
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import loadViewOp from "../view/operations/load"
@@ -45,14 +45,12 @@ const navigate =
 		// Pre-load the view for faster appearances and no white flash
 		await dispatch(
 			loadViewOp(
-				new Context([
-					{
-						view: `${view}()`,
-						viewDef: view,
-						workspace,
-						params: routeResponse.params,
-					},
-				])
+				newContext({
+					view: `${view}()`,
+					viewDef: view,
+					workspace,
+					params: routeResponse.params,
+				})
 			)
 		)
 

@@ -99,6 +99,8 @@ const handleMergeError = ({
 	return console.log(title, { ...getErrorFeedback(), viewDefId, expression })
 }
 
+const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
+
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
@@ -121,7 +123,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	RecordId: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
-		return context.getRecord()?.getId() || ""
+		return context.getRecordId() || ""
 	},
 	Theme: (expression, context) => {
 		const [scope, value, op] = expression.split(".")
@@ -220,7 +222,7 @@ class Context {
 
 	stack: ContextFrame[]
 
-	getRecordId = () => this.stack.find((frame) => frame?.record)?.record
+	getRecordId = () => this.getRecord()?.getId()
 
 	getRecordData = () =>
 		this.stack.find((frame) => frame?.recordData)?.recordData
@@ -406,4 +408,5 @@ export {
 	SiteState,
 	TenantState,
 	getWire,
+	newContext,
 }

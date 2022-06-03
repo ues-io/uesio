@@ -1,7 +1,7 @@
 import { platform } from "../src/platform/platform"
 import { create } from "../src/store/store"
 import initializeWiresOp from "../src/bands/wire/operations/initialize"
-import { Context } from "../src/context/context"
+import { newContext } from "../src/context/context"
 import { selectWire } from "../src/bands/wire"
 
 // This is a somewhat trivial test to make sure UI only wires are
@@ -11,7 +11,7 @@ test("wire init", () => {
 	const store = create(platform, {})
 	const VIEW_NAME = "myview"
 	const WIRE_NAME = "mywire"
-	const context = new Context([{ view: VIEW_NAME }])
+	const context = newContext({ view: VIEW_NAME })
 	store.dispatch(
 		initializeWiresOp(context, {
 			[WIRE_NAME]: {
