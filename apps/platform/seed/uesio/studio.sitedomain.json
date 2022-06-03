@@ -25,6 +25,13 @@
 			"id": "uesio/web_prod"
 		},
 		"type": "domain",
+		"domain": "ues-uat.io"
+	},
+	{
+		"site": {
+			"id": "uesio/web_prod"
+		},
+		"type": "domain",
 		"domain": "uesio.com"
 	},
 	{
