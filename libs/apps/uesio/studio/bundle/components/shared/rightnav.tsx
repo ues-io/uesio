@@ -53,7 +53,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				context={props.context}
 				label="View Detail"
 				tooltipPlacement="left"
-				icon="list"
+				icon="wysiwyg"
 				variant="uesio/studio.sidebar"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()
@@ -68,6 +68,27 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 						{
 							signal: "route/REDIRECT",
 							path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`,
+						},
+						props.context
+					)
+				}}
+			/>
+			<IconButton
+				context={props.context}
+				label="View List"
+				tooltipPlacement="left"
+				icon="view_quilt"
+				variant="uesio/studio.sidebar"
+				onClick={() => {
+					const workspace = props.context.getWorkspace()
+					if (!workspace) {
+						return
+					}
+
+					uesio.signal.run(
+						{
+							signal: "route/REDIRECT",
+							path: `/app/${workspace.app}/workspace/${workspace.name}/views`,
 						},
 						props.context
 					)
