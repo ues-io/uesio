@@ -1,6 +1,6 @@
 import { getCurrentState, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
-import { RouteState, WorkspaceState } from "../bands/route/types"
+import { RouteState, TenantState } from "../bands/route/types"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
@@ -22,11 +22,6 @@ import { ComponentVariant } from "../definition/componentvariant"
 import { getErrorString } from "../bands/utils"
 
 type FieldMode = "READ" | "EDIT"
-
-type SiteAdminState = {
-	name: string
-	app: string
-}
 
 type MergeType =
 	| "Record"
@@ -51,8 +46,8 @@ type ContextFrame = {
 	fieldMode?: FieldMode
 	noMerge?: boolean
 	route?: RouteState
-	workspace?: WorkspaceState
-	siteadmin?: SiteAdminState
+	workspace?: TenantState
+	siteadmin?: TenantState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
@@ -302,6 +297,19 @@ class Context {
 
 	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
 
+	getTenant = () => {
+		const workspace = this.getWorkspace()
+		return workspace ? workspace : this.getSiteAdmin()
+	}
+
+	getTenantType = () => {
+		const workspace = this.getWorkspace()
+		if (workspace) return "workspace"
+		const siteadmin = this.getSiteAdmin()
+		if (siteadmin) return "site"
+		return undefined
+	}
+
 	getSite = () => this.stack.find((frame) => frame?.site)?.site
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
@@ -395,8 +403,7 @@ export {
 	ContextFrame,
 	FieldMode,
 	RouteState,
-	WorkspaceState,
-	SiteAdminState,
 	SiteState,
+	TenantState,
 	getWire,
 }

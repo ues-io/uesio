@@ -1,5 +1,12 @@
 import { FunctionComponent, useState } from "react"
-import { definition, styles, collection, hooks, component } from "@uesio/ui"
+import {
+	definition,
+	styles,
+	collection,
+	hooks,
+	component,
+	util,
+} from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 
 interface Props extends definition.BaseProps {
@@ -16,6 +23,10 @@ const SelectField = component.registry.getUtility("uesio/io.selectfield")
 const ImportBody: FunctionComponent<Props> = (props) => {
 	const { context, collection, csvFields, file } = props
 	const uesio = hooks.useUesio(props)
+
+	const tenant = context.getTenant()
+	if (!tenant) throw new Error("Invalid context for collection list")
+	const tenantType = context.getTenantType()
 
 	if (!collection?.source.fields) return null
 	const collectionFields = Object.keys(collection?.source.fields)
@@ -72,37 +83,20 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		try {
 			await uesio.collection.importData(context, file, jobResponse.id)
 		} catch (error) {
-			uesio.notification.addError(
-				"Import error: " + error.message,
-				context
-			)
+			const message = util.getErrorString(error)
+			uesio.notification.addError("Import error: " + message, context)
 			return
 		}
 
-		const collectionID = collection.getId()
-		const collectionNS = collection.getNamespace()
-
-		const workspace = context.getWorkspace()
-		if (workspace) {
-			uesio.signal.run(
-				{
-					signal: "route/REDIRECT",
-					path: `/app/${workspace?.app}/workspace/${workspace?.name}/data/${collectionNS}/${collectionID}`,
-				},
-				context
-			)
-		}
-
-		const siteadmin = context.getSiteAdmin()
-		if (siteadmin) {
-			uesio.signal.run(
-				{
-					signal: "route/REDIRECT",
-					path: `/app/${siteadmin?.app}/site/${siteadmin?.name}/data/${collectionNS}/${collectionID}`,
-				},
-				context
-			)
-		}
+		uesio.signal.run(
+			{
+				signal: "route/REDIRECT",
+				path: `/app/${tenant.app}/${tenantType}/${
+					tenant.name
+				}/data/${collection.getNamespace()}/${collection.getId()}`,
+			},
+			context
+		)
 	}
 
 	const isValidMapping = (): boolean => {
