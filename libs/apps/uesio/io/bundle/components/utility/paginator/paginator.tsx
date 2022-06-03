@@ -10,10 +10,10 @@ interface PaginatorUtilityProps extends definition.UtilityProps {
 	loadMore?: () => Promise<void>
 }
 
-const IconButton = component.registry.getUtility<IconButtonUtilityProps>(
+const IconButton = component.getUtility<IconButtonUtilityProps>(
 	"uesio/io.iconbutton"
 )
-const Group = component.registry.getUtility<GroupUtilityProps>("uesio/io.group")
+const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
 
 const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	const { currentPage, maxPages, setPage, loadMore, context } = props

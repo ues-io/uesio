@@ -48,7 +48,7 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 		autoLoad: false,
 	})
 
-	const Button = component.registry.getUtility("uesio/io.button")
+	const Button = component.getUtility("uesio/io.button")
 
 	return (
 		<LoginWrapper align={definition.align}>

@@ -10,9 +10,9 @@ interface Props extends definition.BaseProps {
 	definition: GeneratorButtonDefinition
 }
 
-const Button = component.registry.getUtility("uesio/io.button")
-const Dialog = component.registry.getUtility("uesio/io.dialog")
-const Form = component.registry.getUtility("uesio/io.form")
+const Button = component.getUtility("uesio/io.button")
+const Dialog = component.getUtility("uesio/io.dialog")
+const Form = component.getUtility("uesio/io.form")
 
 const WIRE_NAME = "paramData"
 

@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { Props } from "./tabsdefinition"
 
-const TabLabels = component.registry.getUtility("uesio/io.tablabels")
+const TabLabels = component.getUtility("uesio/io.tablabels")
 
 const Tabs: FunctionComponent<Props> = (props) => {
 	const { definition, context, path } = props

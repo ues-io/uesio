@@ -15,9 +15,8 @@ interface TabsUtilityProps extends definition.UtilityProps {
 	setSelectedTab: (selected: string) => void
 }
 
-const Button =
-	component.registry.getUtility<ButtonUtilityProps>("uesio/io.button")
-const Icon = component.registry.getUtility<IconUtilityProps>("uesio/io.icon")
+const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
+const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props

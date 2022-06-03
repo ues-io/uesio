@@ -4,7 +4,7 @@ import { definition, component, hooks } from "@uesio/ui"
 import ExpandPanel from "./expandpanel"
 import PropNodeTag from "./buildpropitem/propnodetag"
 
-const Grid = component.registry.getUtility("uesio/io.grid")
+const Grid = component.getUtility("uesio/io.grid")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)

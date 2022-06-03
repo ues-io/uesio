@@ -14,7 +14,7 @@ import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
 
 import { MarkDownFieldProps } from "../markdownfield/markdownfield"
 
-const MarkDownField = component.registry.getUtility<MarkDownFieldProps>(
+const MarkDownField = component.getUtility<MarkDownFieldProps>(
 	"uesio/io.markdownfield"
 )
 

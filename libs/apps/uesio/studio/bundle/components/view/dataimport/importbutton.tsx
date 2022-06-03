@@ -42,8 +42,8 @@ const getHeaderString = (data: ArrayBuffer): string => {
 	return headerString
 }
 
-const Icon = component.registry.getUtility("uesio/io.icon")
-const UploadArea = component.registry.getUtility("uesio/io.uploadarea")
+const Icon = component.getUtility("uesio/io.icon")
+const UploadArea = component.getUtility("uesio/io.uploadarea")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded } = props

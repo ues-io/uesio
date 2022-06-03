@@ -12,9 +12,8 @@ interface IconButtonUtilityProps extends definition.UtilityProps {
 	tooltipPlacement?: Placement
 }
 
-const Icon = component.registry.getUtility<IconUtilityProps>("uesio/io.icon")
-const Button =
-	component.registry.getUtility<ButtonUtilityProps>("uesio/io.button")
+const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
+const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 
 const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 	const {

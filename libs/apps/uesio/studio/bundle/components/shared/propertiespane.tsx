@@ -4,10 +4,10 @@ import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
-const ScrollPanel = component.registry.getUtility("uesio/io.scrollpanel")
-const TitleBar = component.registry.getUtility("uesio/io.titlebar")
-const TabLabels = component.registry.getUtility("uesio/io.tablabels")
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
+const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+const TitleBar = component.getUtility("uesio/io.titlebar")
+const TabLabels = component.getUtility("uesio/io.tablabels")
+const IconButton = component.getUtility("uesio/io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)

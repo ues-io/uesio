@@ -4,7 +4,7 @@ import { component, styles } from "@uesio/ui"
 import { DeckProps } from "./deckdefinition"
 import List from "../list/list"
 
-const IOGrid = component.registry.getUtility("uesio/io.grid")
+const IOGrid = component.getUtility("uesio/io.grid")
 
 const Deck: FunctionComponent<DeckProps> = (props) => {
 	const { definition, context } = props

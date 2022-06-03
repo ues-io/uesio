@@ -8,7 +8,7 @@ interface Props extends definition.BaseProps {
 	disabled?: boolean
 }
 
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
+const IconButton = component.getUtility("uesio/io.iconbutton")
 
 const ActionButton: FunctionComponent<Props> = (props) => {
 	const { title, onClick, icon, disabled, context } = props

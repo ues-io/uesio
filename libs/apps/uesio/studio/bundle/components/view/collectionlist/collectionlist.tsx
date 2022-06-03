@@ -19,9 +19,9 @@ interface Props extends definition.BaseProps {
 	definition: CollectionListDefinition
 }
 
-const Tile = component.registry.getUtility("uesio/io.tile")
-const Icon = component.registry.getUtility("uesio/io.icon")
-const Grid = component.registry.getUtility("uesio/io.grid")
+const Tile = component.getUtility("uesio/io.tile")
+const Icon = component.getUtility("uesio/io.icon")
+const Grid = component.getUtility("uesio/io.grid")
 
 const Collection: FunctionComponent<CollectionProps> = (props) => {
 	const { context, definition } = props

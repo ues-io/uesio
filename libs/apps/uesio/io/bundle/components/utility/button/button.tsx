@@ -13,8 +13,7 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	tooltipPlacement?: Placement
 }
 
-const Tooltip =
-	component.registry.getUtility<TooltipUtilityProps>("uesio/io.tooltip")
+const Tooltip = component.getUtility<TooltipUtilityProps>("uesio/io.tooltip")
 
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(

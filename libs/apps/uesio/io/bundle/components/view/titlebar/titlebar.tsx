@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { TitleBarProps } from "./titlebardefinition"
 import { component } from "@uesio/ui"
 
-const IOTitleBar = component.registry.getUtility("uesio/io.titlebar")
+const IOTitleBar = component.getUtility("uesio/io.titlebar")
 
 const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 	const { definition, path, context } = props

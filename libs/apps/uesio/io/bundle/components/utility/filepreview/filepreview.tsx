@@ -1,10 +1,10 @@
 import { FC } from "react"
 import { definition, collection, component, wire } from "@uesio/ui"
 
-const FileImage = component.registry.getUtility("uesio/io.fileimage")
-const FileText = component.registry.getUtility("uesio/io.filetext")
-const File = component.registry.getUtility("uesio/io.file")
-const FileMarkDown = component.registry.getUtility("uesio/io.filemarkdown")
+const FileImage = component.getUtility("uesio/io.fileimage")
+const FileText = component.getUtility("uesio/io.filetext")
+const File = component.getUtility("uesio/io.file")
+const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
 
 interface FilePreviewProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field

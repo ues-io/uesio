@@ -8,7 +8,7 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
-import { mergeDefinitionMaps } from "../component/component"
+import { mergeDefinitionMaps } from "../component/merge"
 
 type ResponsiveDefinition =
 	| string

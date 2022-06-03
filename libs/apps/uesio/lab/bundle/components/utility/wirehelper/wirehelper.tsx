@@ -8,8 +8,8 @@ import {
 	wire,
 } from "@uesio/ui"
 
-const Button = component.registry.getUtility("uesio/io.button")
-const Icon = component.registry.getUtility("uesio/io.icon")
+const Button = component.getUtility("uesio/io.button")
+const Icon = component.getUtility("uesio/io.icon")
 
 interface ParentDef extends definition.DefinitionMap {
 	wire?: string

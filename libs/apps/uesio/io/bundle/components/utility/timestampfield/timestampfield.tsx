@@ -9,7 +9,7 @@ interface TimestampFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
+const TextField = component.getUtility("uesio/io.textfield")
 
 const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 	if (props.value) {

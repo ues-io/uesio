@@ -17,8 +17,8 @@ interface SelectFieldProps extends definition.UtilityProps {
 	options: collection.SelectOption[] | null
 }
 
-const CheckBoxField = component.registry.getUtility("uesio/io.checkboxfield")
-const Fieldset = component.registry.getUtility("uesio/io.fieldset")
+const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
+const Fieldset = component.getUtility("uesio/io.fieldset")
 
 const MultiCheckField: FC<SelectFieldProps> = (props) => {
 	const {

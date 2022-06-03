@@ -8,7 +8,7 @@ interface DateFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
+const TextField = component.getUtility("uesio/io.textfield")
 
 const DateField: FunctionComponent<DateFieldProps> = (props) => {
 	const { setValue, value, mode } = props

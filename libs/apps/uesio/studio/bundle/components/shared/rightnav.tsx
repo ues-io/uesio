@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
-const ScrollPanel = component.registry.getUtility("uesio/io.scrollpanel")
+const IconButton = component.getUtility("uesio/io.iconbutton")
+const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context, className } = props

@@ -3,7 +3,7 @@ import { wire, collection, definition, context, component } from "@uesio/ui"
 import { ListFieldUtilityProps } from "../listfield/listfield"
 
 const ListField =
-	component.registry.getUtility<ListFieldUtilityProps>("uesio/io.listfield")
+	component.getUtility<ListFieldUtilityProps>("uesio/io.listfield")
 
 interface MapFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode

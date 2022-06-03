@@ -2,7 +2,7 @@ import { FC } from "react"
 import { component, styles } from "@uesio/ui"
 import { LayoutProps } from "./layoutdefinition"
 
-const IOLayout = component.registry.getUtility("uesio/lab.layout")
+const IOLayout = component.getUtility("uesio/lab.layout")
 
 const Layout: FC<LayoutProps> = (props) => {
 	const {

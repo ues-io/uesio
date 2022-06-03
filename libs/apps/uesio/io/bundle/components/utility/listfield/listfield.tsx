@@ -8,10 +8,10 @@ import {
 	styles,
 } from "@uesio/ui"
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
-const IconButton = component.registry.getUtility("uesio/io.iconbutton")
-const Grid = component.registry.getUtility("uesio/io.grid")
-const FieldLabel = component.registry.getUtility("uesio/io.fieldlabel")
+const TextField = component.getUtility("uesio/io.textfield")
+const IconButton = component.getUtility("uesio/io.iconbutton")
+const Grid = component.getUtility("uesio/io.grid")
+const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 interface ListFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode

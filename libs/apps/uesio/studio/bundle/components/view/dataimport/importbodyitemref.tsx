@@ -7,7 +7,7 @@ interface Props extends definition.BaseProps {
 	field: collection.Field
 }
 
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
+const SelectField = component.getUtility("uesio/io.selectfield")
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const ImportBodyItemRef: FunctionComponent<Props> = (props) => {

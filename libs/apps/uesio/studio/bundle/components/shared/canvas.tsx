@@ -3,7 +3,7 @@ import { definition, component, hooks, styles } from "@uesio/ui"
 import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
 
-const Icon = component.registry.getUtility("uesio/io.icon")
+const Icon = component.getUtility("uesio/io.icon")
 
 const getIndex = (
 	target: Element | null,

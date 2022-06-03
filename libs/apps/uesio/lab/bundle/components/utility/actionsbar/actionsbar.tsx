@@ -8,7 +8,7 @@ interface T extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const IOButton = component.registry.getUtility("uesio/io.button")
+const IOButton = component.getUtility("uesio/io.button")
 
 const ActionsBar: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)

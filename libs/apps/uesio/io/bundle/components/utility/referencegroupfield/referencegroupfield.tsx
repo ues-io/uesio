@@ -9,7 +9,7 @@ import {
 } from "@uesio/ui"
 import { ReferenceGroupFieldOptions } from "../../view/field/fielddefinition"
 
-const TextField = component.registry.getUtility("uesio/io.textfield")
+const TextField = component.getUtility("uesio/io.textfield")
 
 interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field

@@ -2,7 +2,7 @@ import { FunctionComponent, useState } from "react"
 
 import { component, context, styles } from "@uesio/ui"
 
-const IOExpandPanel = component.registry.getUtility("uesio/io.expandpanel")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type Props = {
 	title: string
@@ -17,8 +17,8 @@ type Props = {
 	popChildren?: boolean
 }
 
-const Tile = component.registry.getUtility("uesio/io.tile")
-const Popper = component.registry.getUtility("uesio/io.popper")
+const Tile = component.getUtility("uesio/io.tile")
+const Popper = component.getUtility("uesio/io.popper")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {

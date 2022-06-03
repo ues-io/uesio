@@ -17,7 +17,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
 }
-const Fieldset = component.registry.getUtility("uesio/io.fieldset")
+const Fieldset = component.getUtility("uesio/io.fieldset")
 const RadioButtons: FC<SelectFieldProps> = (props) => {
 	const {
 		setValue,

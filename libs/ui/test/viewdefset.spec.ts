@@ -3,12 +3,6 @@ import { SetDefinitionPayload } from "../src/bands/builder"
 import { MetadataState } from "../src/bands/metadata/types"
 import { setDef } from "../src/store/reducers"
 
-type SetTest = {
-	payload: SetDefinitionPayload
-	data: string
-	expected: string
-}
-
 const setExistingKey = {
 	payload: {
 		path: `["components"]["1"]["uesio/io.button"]["text"]`,
@@ -71,7 +65,7 @@ components:
 `,
 }
 
-const tests: SetTest[] = [setExistingKey, setInNulledParent, setNonExistentKey]
+const tests = [setExistingKey, setInNulledParent, setNonExistentKey]
 tests.map(({ data, payload, expected }) =>
 	test("viewdef set definition", () => {
 		testSet(

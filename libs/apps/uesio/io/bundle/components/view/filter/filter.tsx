@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 import { FilterProps } from "./filterdefinition"
 import { component, collection, hooks } from "@uesio/ui"
 
-const SelectField = component.registry.getUtility("uesio/io.selectfield")
+const SelectField = component.getUtility("uesio/io.selectfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
