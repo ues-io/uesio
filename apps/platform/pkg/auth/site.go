@@ -122,9 +122,9 @@ func GetStudioAdminSession() (*sess.Session, error) {
 			App: &meta.App{
 				ID: "uesio/studio",
 			},
-			Major: "0",
-			Minor: "0",
-			Patch: "1",
+			Major: 0,
+			Minor: 0,
+			Patch: 1,
 		},
 		App: &meta.App{
 			ID: "uesio/studio",

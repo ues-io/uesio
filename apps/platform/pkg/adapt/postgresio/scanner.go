@@ -3,6 +3,7 @@ package postgresio
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -40,9 +41,17 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	}
 
 	if fieldMetadata.Type == "NUMBER" {
-		f, err := strconv.ParseFloat(string(src.([]byte)), 64)
+		stringValue := string(src.([]byte))
+		f, err := strconv.ParseFloat(stringValue, 64)
 		if err != nil {
-			return errors.New("Postgresql number parse error: " + fieldMetadata.GetFullName())
+			firstChar := stringValue[0:1]
+			lastChar := stringValue[len(stringValue)-1:]
+			if firstChar == "\"" && lastChar == "\"" {
+				numVal := stringValue[1 : len(stringValue)-1]
+				fmt.Println("WARNING: converted string to int: " + numVal)
+				return (*ds.Item).SetField(fieldMetadata.GetFullName(), numVal)
+			}
+			return errors.New("Postgresql number parse error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), f)
 	}
