@@ -34,6 +34,13 @@ definition:
         - field: uesio/studio.app
           valueSource: PARAM
           param: app
+      order:
+        - field: uesio/studio.major
+          desc: true
+        - field: uesio/studio.minor
+          desc: true
+        - field: uesio/studio.patch
+          desc: true
     sites:
       collection: uesio/studio.site
       fields:
