@@ -27,6 +27,7 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
+	classes: ["root"],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
 		const [metadataType, metadataItem] =
