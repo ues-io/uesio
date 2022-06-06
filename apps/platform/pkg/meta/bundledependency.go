@@ -20,7 +20,7 @@ func (b *BundleDependency) GetVersionString() string {
 	if bundle == nil {
 		return ""
 	}
-	return fmt.Sprintf("v%s.%s.%s", bundle.Major, bundle.Minor, bundle.Patch)
+	return fmt.Sprintf("v%v.%v.%v", bundle.Major, bundle.Minor, bundle.Patch)
 }
 
 func (b *BundleDependency) GetBundleName() string {

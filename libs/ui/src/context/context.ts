@@ -105,7 +105,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
 		const value = context.getRecord()?.getFieldValue(expression)
-		return value ? `${value}` : ""
+		return value !== undefined || value !== null ? `${value}` : ""
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
 	User: (expression, context) => {

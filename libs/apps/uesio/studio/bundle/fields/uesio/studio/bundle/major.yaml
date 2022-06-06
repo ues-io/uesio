@@ -1,4 +1,6 @@
 name: major
-type: "TEXT"
+type: NUMBER
 label: "Major version"
 readOnly: true
+number:
+  decimals: 0

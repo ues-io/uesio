@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -42,13 +44,14 @@ func GetUserCache(userid, siteid string) (*meta.User, bool) {
 }
 
 func setHostCache(domainType, domainValue string, site *meta.Site) error {
+
 	return cache.SetHash(cache.GetHostKey(domainType, domainValue), map[string]string{
 		"sitename": site.Name,
 		"siteid":   site.ID,
 		"siteapp":  site.GetAppID(),
-		"major":    site.Bundle.Major,
-		"minor":    site.Bundle.Minor,
-		"patch":    site.Bundle.Patch,
+		"major":    strconv.Itoa(site.Bundle.Major),
+		"minor":    strconv.Itoa(site.Bundle.Minor),
+		"patch":    strconv.Itoa(site.Bundle.Patch),
 	})
 }
 
@@ -58,6 +61,10 @@ func getHostCache(domainType, domainValue string) (*meta.Site, bool) {
 	if err != nil || result == nil {
 		return nil, false
 	}
+
+	major, _ := strconv.Atoi(result["major"])
+	minor, _ := strconv.Atoi(result["minor"])
+	patch, _ := strconv.Atoi(result["patch"])
 
 	return &meta.Site{
 		ID:   result["siteid"],
@@ -69,9 +76,9 @@ func getHostCache(domainType, domainValue string) (*meta.Site, bool) {
 			App: &meta.App{
 				ID: result["siteapp"],
 			},
-			Major: result["major"],
-			Minor: result["minor"],
-			Patch: result["patch"],
+			Major: major,
+			Minor: minor,
+			Patch: patch,
 		},
 	}, true
 }

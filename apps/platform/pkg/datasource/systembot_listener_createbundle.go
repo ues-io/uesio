@@ -55,15 +55,18 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return err
 	}
 
-	version := ""
+	major := 0
+	minor := 0
+	patch := 1
 
-	if len(bundles) == 0 {
-		version = "v0.0.1"
-	} else {
-		version, err = bundles.GetItem(0).(*meta.Bundle).GetNextPatchVersionString()
-		if err != nil {
-			return err
-		}
+	if len(bundles) != 0 {
+		lastBundle := bundles.GetItem(0).(*meta.Bundle)
+		patch = lastBundle.Patch + 1
+	}
+
+	bundle, err := meta.NewBundle(app, major, minor, patch, "")
+	if err != nil {
+		return err
 	}
 
 	wsbs, err := bundlestore.GetBundleStoreByType("workspace")
@@ -71,6 +74,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return err
 	}
 
-	return CreateBundle(app, workspace.Name, version, "", wsbs, session)
+	return CreateBundle(app, workspace.Name, bundle, wsbs, session)
 
 }

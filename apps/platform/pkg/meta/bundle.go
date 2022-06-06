@@ -1,54 +1,27 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 )
 
-func getPartsFromVersion(version string) ([]int, error) {
-	errorObj := errors.New("version must be formatted like so: v#.#.#, gave: " + version)
-	if !strings.HasPrefix(version, "v") {
-		return nil, errorObj
-	}
-	version = strings.TrimPrefix(version, "v")
-	parts := strings.Split(version, ".")
-	if len(parts) != 3 {
-		return nil, errorObj
-	}
-	partsAsNums := make([]int, 3)
-	for i, part := range parts {
-		asInt, err := strconv.Atoi(part)
-		if err != nil {
-			return nil, errorObj
-		}
-		partsAsNums[i] = asInt
-	}
-	return partsAsNums, nil
-}
+func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
 
-func NewBundle(namespace, version, description string) (*Bundle, error) {
-	versionParts, err := getPartsFromVersion(version)
-	if err != nil {
-		return nil, err
-	}
 	return &Bundle{
 		App: &App{
 			ID: namespace,
 		},
-		Major:       strconv.Itoa(versionParts[0]),
-		Minor:       strconv.Itoa(versionParts[1]),
-		Patch:       strconv.Itoa(versionParts[2]),
+		Major:       major,
+		Minor:       minor,
+		Patch:       patch,
 		Description: description,
 	}, nil
 }
 
 type Bundle struct {
 	ID          string    `uesio:"uesio/core.id"`
-	Major       string    `uesio:"uesio/studio.major"`
-	Minor       string    `uesio:"uesio/studio.minor"`
-	Patch       string    `uesio:"uesio/studio.patch"`
+	Major       int       `uesio:"uesio/studio.major"`
+	Minor       int       `uesio:"uesio/studio.minor"`
+	Patch       int       `uesio:"uesio/studio.patch"`
 	App         *App      `uesio:"uesio/studio.app"`
 	Description string    `uesio:"uesio/studio.description"`
 	Version     string    `uesio:"uesio/studio.version"`
@@ -61,15 +34,7 @@ type Bundle struct {
 }
 
 func (b *Bundle) GetVersionString() string {
-	return fmt.Sprintf("v%s.%s.%s", b.Major, b.Minor, b.Patch)
-}
-
-func (b *Bundle) GetNextPatchVersionString() (string, error) {
-	patch, err := strconv.Atoi(b.Patch)
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("v%s.%s.%s", b.Major, b.Minor, strconv.Itoa(patch+1)), nil
+	return fmt.Sprintf("v%v.%v.%v", b.Major, b.Minor, b.Patch)
 }
 
 func (b *Bundle) GetCollectionName() string {
