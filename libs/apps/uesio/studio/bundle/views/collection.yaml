@@ -381,6 +381,17 @@ definition:
                         fieldId: uesio/studio.selectlist
                         metadataType: "SELECTLIST"
                         label: "Select List"
+              - uesio/io.box:
+                  uesio.display:
+                    - field: uesio/studio.type
+                      value: "FILE"
+                  components:
+                    - uesio/studio.metadatafield:
+                        fieldId: uesio/studio.file->uesio/studio.filecollection
+                        metadataType: "FILECOLLECTION"
+                        label: "File Collection"
+                    - uesio/io.field:
+                        fieldId: uesio/studio.file->uesio/studio.accept
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
