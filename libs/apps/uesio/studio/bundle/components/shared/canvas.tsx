@@ -95,6 +95,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const uesio = hooks.useUesio(props)
+	const [, , selectedPath] = uesio.builder.useSelectedNode()
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [, , dropPath] = uesio.builder.useDropNode()
@@ -234,7 +235,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				)}
 				{viewComponent}
 
-				<PanelPortal context={context} />
+				<PanelPortal context={context} path={selectedPath} />
 			</div>
 		</div>
 	)
