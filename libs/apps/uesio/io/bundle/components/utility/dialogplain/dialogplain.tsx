@@ -13,7 +13,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
-				position: "fixed",
+				position: props.context.getBuildMode() ? "absolute" : "fixed",
 				inset: 0,
 				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
 			},
