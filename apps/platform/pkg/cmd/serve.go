@@ -139,6 +139,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
 	siteAdminAPI(sar, "/featureflags/{key:\\w+\\/\\w+\\.\\w+}", controller.SetFeatureFlag).Methods("POST")
+	siteAdminAPI(sar, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
 	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 	siteAdminAPI(sar, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
