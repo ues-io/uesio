@@ -7,7 +7,7 @@ import { PanelDefinitionMap } from "../definition/panel"
 import componentSignal from "../bands/component/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
-import { ReactNode } from "react"
+import { ReactNode, useState } from "react"
 import { ComponentInternal } from "../component/component"
 import Panel from "../components/panel"
 import { registry, run, runMany } from "../signals/signals"
@@ -30,55 +30,66 @@ class SignalAPI {
 	useHandler = (
 		signals: SignalDefinition[] | undefined,
 		context: Context = this.uesio.getContext()
-	): [(() => Promise<Context>) | undefined, ReactNode] => [
-		this.getHandler(signals, context),
-		signals?.flatMap((signal) => {
-			// If this signal is a panel signal and we're controlling it from this
-			// path, then send the context from this path into a portal
-			if (isPanelSignal(signal)) {
-				const panelId = signal.panel as string
+	): [(() => Promise<Context>) | undefined, ReactNode] => {
+		const [ctx, setCtx] = useState(context)
+		return [
+			this.getHandler(signals, ctx, setCtx),
+			signals?.flatMap((signal) => {
+				// If this signal is a panel signal and we're controlling it from this
+				// path, then send the context from this path into a portal
+				if (isPanelSignal(signal)) {
+					const panelId = signal.panel as string
 
-				const panel = usePanel(panelId)
-				const path = this.uesio.getPath()
-				if (panel && panel.contextPath === getPanelKey(path, context)) {
-					const viewDef = context.getViewDef()
-					const panels: PanelDefinitionMap | undefined =
-						viewDef?.panels
-					if (!panels || !panelId) return null
+					const panel = usePanel(panelId)
+					const path = this.uesio.getPath()
+					if (panel && panel.contextPath === getPanelKey(path, ctx)) {
+						const viewDef = context.getViewDef()
+						const panels: PanelDefinitionMap | undefined =
+							viewDef?.panels
+						if (!panels || !panelId) return null
 
-					const panelDef = panels[panelId]
-					if (!panelDef) return null
-					const componentType = panelDef["uesio.type"]
+						const panelDef = panels[panelId]
+						if (!panelDef) return null
+						const componentType = panelDef["uesio.type"]
 
-					if (componentType) {
-						return [
-							<Panel key={panelId} context={context}>
-								<ComponentInternal
-									definition={{ ...panelDef, id: panelId }}
-									path={path}
-									context={context}
-									componentType={componentType}
-								/>
-							</Panel>,
-						]
+						if (componentType) {
+							return [
+								<Panel key={panelId} context={context}>
+									<ComponentInternal
+										definition={{
+											...panelDef,
+											id: panelId,
+										}}
+										path={path}
+										context={context}
+										componentType={componentType}
+									/>
+								</Panel>,
+							]
+						}
 					}
 				}
-			}
-			return []
-		}),
-	]
+				return []
+			}),
+		]
+	}
 
 	// Returns a handler function for running a list of signals
 	getHandler = (
 		signals: SignalDefinition[] | undefined,
-		context: Context = this.uesio.getContext()
+		context: Context = this.uesio.getContext(),
+		setNewContext: (arg1: Context) => void
 	) => {
 		if (!signals) return undefined
-		return async () => this.runMany(signals, context)
+
+		return async () => this.runMany(signals, context, setNewContext)
 	}
 
-	runMany = async (signals: SignalDefinition[], context: Context) =>
-		runMany(this.uesio.getPath(), signals, context)
+	runMany = async (
+		signals: SignalDefinition[],
+		context: Context,
+		setContext: (arg1: Context) => void
+	) => runMany(this.uesio.getPath(), signals, context, setContext)
 
 	run = (signal: SignalDefinition, context: Context) =>
 		run(this.uesio.getPath(), signal, context)

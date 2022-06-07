@@ -39,19 +39,22 @@ const run = (path: string, signal: SignalDefinition, context: Context) => {
 const runMany = async (
 	path: string,
 	signals: SignalDefinition[],
-	context: Context
+	context: Context,
+	setNewContext: (arg1: Context) => void
 ) => {
 	for (const signal of signals) {
 		try {
 			// Keep adding to context as each signal is run
 			context = await run(path, signal, context)
+			setNewContext(context)
 		} catch (error) {
 			const message = getErrorString(error)
 			if (signal.onerror?.signals) {
 				runMany(
 					path,
 					signal.onerror.signals,
-					context.addFrame({ errors: [message] })
+					context.addFrame({ errors: [message] }),
+					setNewContext
 				)
 			}
 			break
