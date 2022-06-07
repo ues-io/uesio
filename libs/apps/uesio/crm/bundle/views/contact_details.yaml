@@ -147,7 +147,7 @@ definition:
           lookupField: uesio/core.id
   params:
     recordid:
-      type: recordId
+      type: RECORD
       required: true
       collection: uesio/crm.contact
   panels:

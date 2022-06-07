@@ -20,6 +20,7 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 	wire: wire.Wire
 	variant: string
 	options?: ReferenceFieldOptions
+	placeholder?: string
 }
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
@@ -33,6 +34,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		variant,
 		options,
 		path,
+		placeholder,
 	} = props
 
 	const referencedCollection = uesio.collection.useCollection(
@@ -128,6 +130,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 					})
 					callback(result.wires[0].data || [])
 				}}
+				placeholder={placeholder}
 			/>
 		)
 	}

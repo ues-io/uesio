@@ -32,7 +32,8 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs, reference, options } = definition
+	const { fieldId, id, displayAs, reference, options, placeholder } =
+		definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
@@ -51,6 +52,7 @@ const getFieldContent = (
 		wire,
 		variant: definition["uesio.variant"],
 		options,
+		placeholder,
 	}
 
 	switch (true) {
