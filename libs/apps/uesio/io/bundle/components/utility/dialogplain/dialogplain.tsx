@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { definition, styles } from "@uesio/ui"
 
 const minPagePadding = "40px"
@@ -13,19 +13,13 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
-				position: "absolute",
-				top: 0,
-				bottom: 0,
-				height: "100%",
-				width: "100%",
+				position: "fixed",
+				inset: 0,
 				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
 			},
 			root: {
 				position: "absolute",
-				top: 0,
-				bottom: 0,
-				height: "100%",
-				width: "100%",
+				inset: 0,
 				display: "grid",
 				gridTemplateColumns: `minmax(${minPagePadding},1fr) minmax(auto,${
 					props.width || "100%"
@@ -46,6 +40,13 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 		},
 		props
 	)
+
+	useEffect(() => {
+		document.body.style.overflow = "hidden"
+		return () => {
+			document.body.style.overflow = "auto"
+		}
+	}, [])
 
 	return (
 		<>
