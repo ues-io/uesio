@@ -20,12 +20,11 @@ const parseVariantKey = (
 	return [componentNamespace, componentName, variantNamespace, variantName]
 }
 
-// io.button:io.nav ==> [io, button, io, nav]
+// uesio/crm.account.uesio/crm.account_type ==> [uesio/crm,account,uesio/crm,account_type ]
 const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	if (!fullName) return ["", "", "", ""]
-	const [collection, field] = fullName.split(":", 2)
-	const [collectionNamespace, collectionName] = parseKey(collection)
-	const [fieldNamespace, fieldName] = parseKey(field)
+	const [collectionNamespace, collectionName, fieldNamespace, fieldName] =
+		fullName.split(".", 4)
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
 }
 
