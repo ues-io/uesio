@@ -53,7 +53,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		)
 	)
 
-	const columns = columnsToDisplay.map((columnDef) => {
+	const columns = columnsToDisplay?.map((columnDef) => {
 		const column = columnDef["uesio/io.column"] as ColumnDefinition
 		const fieldId = column.field
 		const fieldMetadata = collection.getField(fieldId)
