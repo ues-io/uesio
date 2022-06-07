@@ -12,6 +12,10 @@ import { appDispatch } from "../store/store"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
+	// Hardcode the component type since this component is called
+	// in an unusual way by the loader
+	uesio._componentType = "uesio/studio.runtime"
+
 	uesio.addContextFrame({
 		view: "$root",
 	})
