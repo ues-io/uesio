@@ -103,7 +103,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						return (
 							<PropNodeTag
-								draggable={`${collectionKey}.${fieldId}`}
+								draggable={`${collectionKey}:${fieldId}`}
 								title={fieldId}
 								icon={
 									selected
