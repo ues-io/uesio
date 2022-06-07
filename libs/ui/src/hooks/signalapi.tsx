@@ -78,7 +78,7 @@ class SignalAPI {
 	getHandler = (
 		signals: SignalDefinition[] | undefined,
 		context: Context = this.uesio.getContext(),
-		setNewContext: (arg1: Context) => void
+		setNewContext?: (arg1: Context) => void
 	) => {
 		if (!signals) return undefined
 
@@ -88,7 +88,7 @@ class SignalAPI {
 	runMany = async (
 		signals: SignalDefinition[],
 		context: Context,
-		setContext: (arg1: Context) => void
+		setContext?: (arg1: Context) => void
 	) => runMany(this.uesio.getPath(), signals, context, setContext)
 
 	run = (signal: SignalDefinition, context: Context) =>
