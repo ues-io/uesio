@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { panelsDomNode } from "../components/view"
+import { panelsDomNode } from "../components/panelarea"
 
 function usePortal() {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)

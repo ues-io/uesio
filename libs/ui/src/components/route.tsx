@@ -6,6 +6,7 @@ import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
+import PanelArea from "./panelarea"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -66,6 +67,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				context={routeContext}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
+			<PanelArea context={props.context} />
 		</>
 	)
 }

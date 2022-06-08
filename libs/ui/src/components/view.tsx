@@ -1,4 +1,4 @@
-import { FunctionComponent, RefObject, useEffect, useRef } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
@@ -15,7 +15,6 @@ interface Props extends BaseProps {
 		params?: Record<string, string>
 	}
 }
-let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
 const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
@@ -24,7 +23,6 @@ const View: FunctionComponent<Props> = (props) => {
 		context,
 		definition: { params, view: viewDefId },
 	} = props
-	const newPanelsNode = useRef<HTMLDivElement>(null)
 
 	const viewId = `${viewDefId}(${path || ""})`
 	const viewDef = useViewDef(viewDefId)
@@ -69,20 +67,11 @@ const View: FunctionComponent<Props> = (props) => {
 		/>
 	)
 
-	if (isSubView) {
-		if (context.getBuildMode()) {
-			return <div className={subViewClass}>{slot}</div>
-		}
-		return <div>{slot}</div>
+	if (isSubView && context.getBuildMode()) {
+		return <div className={subViewClass}>{slot}</div>
 	}
-	panelsDomNode = newPanelsNode
-	return (
-		<div>
-			{slot}
-			<div ref={newPanelsNode} />
-		</div>
-	)
+
+	return <div>{slot}</div>
 }
 
 export default View
-export { panelsDomNode }
