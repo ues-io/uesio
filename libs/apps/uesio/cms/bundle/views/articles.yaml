@@ -3,7 +3,7 @@ public: true
 definition:
   # Wires connect to data in collections
   wires:
-    ${wirename}:
+    articles:
       collection: uesio/cms.article
       fields:
         uesio/cms.name:
@@ -19,20 +19,20 @@ definition:
                 - uesio/io.button:
                     signals:
                       - signal: wire/CREATE_RECORD
-                        wire: ${wirename}
+                        wire: articles
                     text: Create
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
-                          - ${wirename}
+                          - articles
                     text: Save
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
                     signals:
                       - signal: wire/CANCEL
-                        wire: ${wirename}
+                        wire: articles
                     text: Cancel
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:
@@ -60,4 +60,4 @@ definition:
                     field: uesio/cms.name
               id: table1
               mode: EDIT
-              wire: ${wirename}
+              wire: articles
