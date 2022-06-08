@@ -12,11 +12,6 @@ class SignalAPI {
 
 	uesio: Uesio
 
-	useHandler = (
-		signals: SignalDefinition[] | undefined,
-		context: Context = this.uesio.getContext()
-	): (() => Promise<Context>) | undefined => this.getHandler(signals, context)
-
 	// Returns a handler function for running a list of signals
 	getHandler = (
 		signals: SignalDefinition[] | undefined,
