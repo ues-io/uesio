@@ -37,9 +37,6 @@ definition:
                     id: appslist
                     components:
                       - uesio/io.tile:
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: app/${uesio/studio.name}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
