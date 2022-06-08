@@ -22,7 +22,7 @@ const registry: Record<string, SignalDescriptor> = {
 	...notificationSignals,
 }
 
-const run = (path: string, signal: SignalDefinition, context: Context) => {
+const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || componentSignal
 	return appDispatch()(
 		descriptor.dispatcher(
@@ -30,26 +30,20 @@ const run = (path: string, signal: SignalDefinition, context: Context) => {
 			additionalContext(
 				context,
 				signal?.["uesio.context"] as ContextFrame
-			),
-			path
+			)
 		)
 	)
 }
 
-const runMany = async (
-	path: string,
-	signals: SignalDefinition[],
-	context: Context
-) => {
+const runMany = async (signals: SignalDefinition[], context: Context) => {
 	for (const signal of signals) {
 		try {
 			// Keep adding to context as each signal is run
-			context = await run(path, signal, context)
+			context = await run(signal, context)
 		} catch (error) {
 			const message = getErrorString(error)
 			if (signal.onerror?.signals) {
 				runMany(
-					path,
 					signal.onerror.signals,
 					context.addFrame({ errors: [message] })
 				)

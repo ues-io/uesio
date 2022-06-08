@@ -1,6 +1,8 @@
+import { Context } from "../../context/context"
+
 interface PanelState {
 	id: string
-	contextPath: string
+	context: Context | undefined
 }
 
 export { PanelState }

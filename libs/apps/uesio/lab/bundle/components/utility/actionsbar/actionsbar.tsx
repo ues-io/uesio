@@ -27,7 +27,7 @@ const ActionsBar: FC<T> = (props) => {
 	)
 
 	const fireSignals = (signals: signal.SignalDefinition[]) => {
-		const [handler] = uesio.signal.useHandler(signals)
+		const handler = uesio.signal.useHandler(signals)
 		handler && handler()
 	}
 

@@ -7,8 +7,7 @@ import { Platform } from "../platform/platform"
 
 type SignalDispatcher = (
 	signal: SignalDefinition,
-	context: Context,
-	path: string
+	context: Context
 ) => ThunkFunc
 
 type ComponentSignalDispatcher = (

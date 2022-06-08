@@ -106,7 +106,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					context={recordContext}
 				>
 					{definition.rowactions.map((action, i) => {
-						const [handler] = uesio.signal.useHandler(
+						const handler = uesio.signal.useHandler(
 							action.signals,
 							recordContext
 						)

@@ -24,30 +24,27 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		"selected",
 		definition
 	)
-	const [handler, portals] = uesio.signal.useHandler(definition.signals)
+	const handler = uesio.signal.useHandler(definition.signals)
 	return (
-		<>
-			<IOButton
-				variant={definition["uesio.variant"]}
-				classes={classes}
-				label={definition.text}
-				onClick={handler}
-				context={context}
-				isSelected={isSelected}
-				icon={
-					definition.icon ? (
-						<Icon
-							classes={{
-								root: classes.icon,
-							}}
-							context={context}
-							icon={context.merge(definition.icon)}
-						/>
-					) : undefined
-				}
-			/>
-			{portals}
-		</>
+		<IOButton
+			variant={definition["uesio.variant"]}
+			classes={classes}
+			label={definition.text}
+			onClick={handler}
+			context={context}
+			isSelected={isSelected}
+			icon={
+				definition.icon ? (
+					<Icon
+						classes={{
+							root: classes.icon,
+						}}
+						context={context}
+						icon={context.merge(definition.icon)}
+					/>
+				) : undefined
+			}
+		/>
 	)
 }
 
