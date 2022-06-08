@@ -42,9 +42,10 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	)
 
 	useEffect(() => {
-		document.body.style.overflow = "hidden"
+		props.context.getBuildMode() &&
+			(document.body.style.overflow = "hidden")
 		return () => {
-			document.body.style.overflow = "auto"
+			document.body.style.overflow && (document.body.style.overflow = "")
 		}
 	}, [])
 
