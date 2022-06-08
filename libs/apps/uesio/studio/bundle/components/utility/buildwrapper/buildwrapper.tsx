@@ -10,8 +10,13 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { children, path = "", index = 0 } = props
 	const [canDrag, setCanDrag] = useState(false)
-
 	const viewDefId = uesio.getViewDefId()
+	const componentDef = uesio.builder.useDefinition(
+		"viewdef",
+		viewDefId || "",
+		path
+	)
+
 	if (!viewDefId) return null
 
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
@@ -28,6 +33,13 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
 
 	const wrapperPath = component.path.getGrandParentPath(path)
+	const componentKey = component.path.getKeyAtPath(path)
+
+	const title =
+		componentKey === "uesio/core.view"
+			? componentDef?.view
+			: propDef?.title || "unknown"
+
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
 	const classes = styles.useUtilityStyles(
@@ -88,7 +100,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 						onMouseDown={() => setCanDrag(true)}
 						onMouseUp={() => dragPath && setCanDrag(false)}
 					>
-						{propDef?.title ?? "Unknown"}
+						{title}
 					</div>
 				}
 				<div className={classes.inner}>{children}</div>
