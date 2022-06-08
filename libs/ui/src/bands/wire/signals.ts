@@ -29,6 +29,7 @@ const WIRE_BAND = "wire"
 
 interface CreateRecordSignal extends SignalDefinition {
 	wire: string
+	prepend?: boolean
 }
 
 interface UpdateRecordSignal extends SignalDefinition {
@@ -108,7 +109,7 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 		dispatcher: (signal: CreateRecordSignal, context: Context) =>
-			createRecordOp(context, signal.wire),
+			createRecordOp(context, signal.wire, signal.prepend),
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
 		label: "Update Record",
