@@ -45,6 +45,7 @@ type UpdateRecordPayload = {
 type CreateRecordPayload = {
 	record: PlainWireRecord
 	recordId: string
+	prepend: boolean
 } & EntityPayload
 
 type ToggleConditionPayload = {
@@ -160,8 +161,13 @@ const wireSlice = createSlice({
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
-			(state, { record, recordId }) => {
-				state.data = { ...state.data, [recordId]: record || {} }
+			(state, { record, recordId, prepend }) => {
+				const newRecord = { [recordId]: record || {} }
+				state.data = {
+					...(prepend && newRecord),
+					...state.data,
+					...(!prepend && newRecord),
+				}
 				state.changes = { ...state.changes, [recordId]: record || {} }
 			}
 		),

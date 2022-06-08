@@ -82,13 +82,14 @@ class Wire {
 		)
 	}
 
-	createRecord = (record: PlainWireRecord) => {
+	createRecord = (record: PlainWireRecord, prepend?: boolean) => {
 		const recordId = nanoid()
 		appDispatch()(
 			createRecord({
 				entity: this.getFullId(),
 				record,
 				recordId,
+				prepend: !!prepend,
 			})
 		)
 		return this.getRecord(recordId)

@@ -4,7 +4,11 @@ import { nanoid } from "nanoid"
 import { createRecord, getFullWireId } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
-export default (context: Context, wirename: string): ThunkFunc =>
+export default (
+		context: Context,
+		wirename: string,
+		prepend?: boolean
+	): ThunkFunc =>
 	(dispatch, getState) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
@@ -30,6 +34,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 					wire.collection
 				),
 				entity: `${viewId}/${wirename}`,
+				prepend: !!prepend,
 			})
 		)
 		return context.addFrame({
