@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -20,6 +21,17 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	grouping := vars["grouping"]
 
 	conditions := meta.BundleConditions{}
+	collectionKeyMap := map[string]bool{}
+
+	//TO-DO SHOW THIS
+	if namespace == "uesio/core" && metadatatype == "fields" {
+		for _, field := range datasource.BUILTIN_FIELDS {
+			collectionKeyMap[field.GetFullName()] = true
+		}
+		respondJSON(w, r, &collectionKeyMap)
+		return
+	}
+	//TO-DO SHOW THIS
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
@@ -43,8 +55,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	collectionKeyMap := map[string]bool{}
 
 	err = collection.Loop(func(item loadable.Item, _ string) error {
 		var key string

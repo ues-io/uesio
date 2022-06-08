@@ -9,53 +9,103 @@ const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
 function getConditionTitle(condition: wire.WireConditionDefinition): string {
-	if (condition.valueSource === "VALUE" || !condition.valueSource) {
+	if (condition.valueSource === "VALUE") {
 		const valueCondition = condition as wire.ValueConditionDefinition
 		return `${valueCondition.field} = ${valueCondition.value}`
 	}
-	return ""
+
+	if (condition.valueSource === "PARAM") {
+		const valueCondition = condition as wire.ParamConditionDefinition
+		return `${valueCondition.field} = Param{${valueCondition.param}}`
+	}
+
+	if (condition.valueSource === "LOOKUP") {
+		const valueCondition = condition as wire.LookupConditionDefinition
+		return `${valueCondition.field} = Lookup{${valueCondition.lookupWire}.${valueCondition.lookupField}}`
+	}
+
+	return "NEW CONDITION"
 }
 
 const getConditionProperties = (
 	condition: wire.WireConditionDefinition
-): builder.PropDescriptor[] =>
-	condition.valueSource === "VALUE" || !condition.valueSource
-		? [
+): builder.PropDescriptor[] => {
+	return [
+		{
+			name: "field",
+			type: "METADATA",
+			metadataType: "FIELD",
+			label: "Field",
+			groupingParents: 2,
+			groupingProperty: "collection",
+		},
+		{
+			name: "valueSource",
+			type: "SELECT",
+			label: "Value Source",
+			options: [
 				{
-					name: "field",
-					type: "METADATA",
-					metadataType: "FIELD",
-					label: "Field",
-					groupingParents: 2,
-					groupingProperty: "collection",
-				},
-				{
-					name: "value",
-					type: "TEXT",
 					label: "Value",
+					value: "VALUE",
 				},
 				{
-					name: "valueSource",
-					type: "SELECT",
-					label: "Value Source",
-					options: [
-						{
-							label: "Lookup",
-							value: "LOOKUP",
-						},
-						{
-							label: "Param",
-							value: "PARAM",
-						},
-					],
+					label: "Lookup",
+					value: "LOOKUP",
 				},
 				{
-					name: "id",
-					type: "TEXT",
-					label: "Id",
+					label: "Param",
+					value: "PARAM",
 				},
-		  ]
-		: []
+			],
+		},
+		{
+			name: "value",
+			type: "TEXT",
+			label: "Value",
+			display: [
+				{
+					property: "valueSource",
+					values: ["VALUE"],
+				},
+			],
+		},
+		{
+			//TO-DO This should be a dynamic metadatapicker
+			name: "lookupWire",
+			type: "TEXT",
+			label: "Lookup Wire",
+			display: [
+				{
+					property: "valueSource",
+					values: ["LOOKUP"],
+				},
+			],
+		},
+		{
+			//TO-DO This should be a dynamic metadatapicker
+			name: "lookupField",
+			type: "TEXT",
+			label: "Lookup Field",
+			display: [
+				{
+					property: "valueSource",
+					values: ["LOOKUP"],
+				},
+			],
+		},
+		{
+			name: "param",
+			type: "TEXT",
+			label: "Param",
+			display: [
+				{
+					property: "valueSource",
+					values: ["PARAM"],
+				},
+			],
+		},
+	]
+}
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
@@ -73,7 +123,6 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| undefined
 
 	const primaryColor = theme.definition.palette.primary
-
 	const conditionsPath = `${path}["conditions"]`
 
 	return (
@@ -97,6 +146,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						onClick={() => {
 							valueAPI.add(conditionsPath, {
 								field: null,
+								valueSource: "VALUE",
 								value: "NEW_VALUE",
 							})
 						}}
