@@ -23,7 +23,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	conditions := meta.BundleConditions{}
 	collectionKeyMap := map[string]bool{}
 
-	//TO-DO SHOW THIS
 	if namespace == "uesio/core" && metadatatype == "fields" {
 		for _, field := range datasource.BUILTIN_FIELDS {
 			collectionKeyMap[field.GetFullName()] = true
@@ -31,7 +30,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		respondJSON(w, r, &collectionKeyMap)
 		return
 	}
-	//TO-DO SHOW THIS
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
