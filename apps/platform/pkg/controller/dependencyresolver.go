@@ -21,15 +21,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	grouping := vars["grouping"]
 
 	conditions := meta.BundleConditions{}
-	collectionKeyMap := map[string]bool{}
-
-	if namespace == "uesio/core" && metadatatype == "fields" {
-		for _, field := range datasource.BUILTIN_FIELDS {
-			collectionKeyMap[field.GetFullName()] = true
-		}
-		respondJSON(w, r, &collectionKeyMap)
-		return
-	}
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
@@ -54,6 +45,8 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	collectionKeyMap := map[string]bool{}
+
 	err = collection.Loop(func(item loadable.Item, _ string) error {
 		var key string
 		// Special handling for fields for now
@@ -73,6 +66,12 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if metadatatype == "fields" {
+		for _, field := range datasource.BUILTIN_FIELDS {
+			collectionKeyMap[field.GetFullName()] = true
+		}
 	}
 
 	respondJSON(w, r, &collectionKeyMap)
