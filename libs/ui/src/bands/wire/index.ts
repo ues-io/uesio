@@ -71,7 +71,7 @@ type WireLoadAction = PayloadAction<
 >
 
 const wireAdapter = createEntityAdapter<PlainWire>({
-	selectId: (wire) => `${wire.view}/${wire.name}`,
+	selectId: (wire) => getFullWireId(wire.view, wire.name),
 })
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
@@ -319,13 +319,19 @@ const selectWire = (
 		: undefined
 
 const getFullWireId = (viewId: string, wireName: string) =>
-	`${viewId}/${wireName}`
+	`${viewId}:${wireName}`
+
+const getWireParts = (fullWireId: string): [string, string] => {
+	const parts = fullWireId.split(":")
+	return [parts[0], parts[1]]
+}
 
 export {
 	useWire,
 	useWires,
 	selectWire,
 	getFullWireId,
+	getWireParts,
 	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
