@@ -143,8 +143,7 @@ export default (
 		const collectionMetadata: PlainCollectionMap = {}
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
 			const wireDef = wireDefs[wirename]
-			// Viewid, with subpaths removed. This is the case for nested views
-			const viewId = context.getViewId()?.replace(/(?:\((.*?)\))?/, "")
+			const viewId = context.getViewId()
 			if (!viewId) throw new Error("Could not get View Def Id")
 			return wireDef.viewOnly
 				? initializeViewOnlyWire(

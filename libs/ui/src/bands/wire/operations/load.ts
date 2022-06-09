@@ -55,6 +55,22 @@ function getWireRequest(
 	}
 }
 
+const getNamesFromFullId = (str: string) => {
+	// uesio/crm.test()/parentWire =>  [uesio, crm.test(), parentWire]
+	// uesio/crm.contacts([\"components\"][\"0\"][\"uesio/core.view\"])/contacts =>
+	// [uesio, crm.contact([\"components\"][\"0\"][\"uesio/core.view\"]), contacts]
+
+	const namespace = `(^.+?(?=\\/))`
+	const view = `(.+(?<=\\)))`
+	const wire = `(.*)`
+	return (
+		str
+			.match(new RegExp(namespace + view + wire))
+			?.map((str) => (str.startsWith("/") ? str.substring(1) : str))
+			.shift() || []
+	)
+}
+
 export default (context: Context, wires?: string[]): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// Turn the list of wires into a load request
@@ -75,7 +91,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 		const wiresResponse: Record<string, PlainWire> = {}
 		for (const wire of response?.wires || []) {
 			const requestWire = wiresRequestMap[wire.wire]
-			const [viewNsUser, viewName, name] = wire.wire.split("/")
+			const [viewNsUser, viewName, name] = getNamesFromFullId(wire.wire)
 			const view = `${viewNsUser}/${viewName}`
 			const data: Record<string, PlainWireRecord> = {}
 			const original: Record<string, PlainWireRecord> = {}
