@@ -72,6 +72,7 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	type: "component",
+	traits: ["uesio.field"],
 	classes: ["root"],
 }
 

@@ -21,12 +21,20 @@ const parseVariantKey = (
 }
 
 // io.button:io.nav ==> [io, button, io, nav]
-const parseFieldKey = (fullName: string): [string, string, string, string] => {
-	if (!fullName) return ["", "", "", ""]
-	const [collection, field] = fullName.split(":", 2)
+const parseFieldKey = (
+	fullName: string
+): [string, string, string, string, string] => {
+	if (!fullName) return ["", "", "", "", ""]
+	const [wirename, collection, field] = fullName.split(":")
 	const [collectionNamespace, collectionName] = parseKey(collection)
 	const [fieldNamespace, fieldName] = parseKey(field)
-	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
+	return [
+		collectionNamespace,
+		collectionName,
+		fieldNamespace,
+		fieldName,
+		wirename,
+	]
 }
 
 // Unwraps a definition from its key

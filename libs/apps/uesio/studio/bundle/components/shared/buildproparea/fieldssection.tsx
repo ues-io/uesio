@@ -61,6 +61,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
+	const wireName = component.path.getKeyAtPath(path || "")
 	return (
 		<>
 			<TitleBar
@@ -103,7 +104,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						return (
 							<PropNodeTag
-								draggable={`${collectionKey}:${fieldId}`}
+								draggable={`${wireName}:${collectionKey}:${fieldId}`}
 								title={fieldId}
 								icon={
 									selected

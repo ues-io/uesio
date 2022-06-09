@@ -1,4 +1,4 @@
-import { hooks, component } from "@uesio/ui"
+import { hooks, component, util } from "@uesio/ui"
 
 const handleDrop = (
 	dragNode: string,
@@ -24,7 +24,29 @@ const handleDrop = (
 		case "field": {
 			const [dropPropDef] =
 				component.registry.getPropertiesDefinitionFromPath(dropNode)
-			const handler = dropPropDef?.handleFieldDrop
+			if (!dropPropDef) return
+
+			const [, , path] = component.path.getFullPathParts(dropNode)
+			const viewDef = uesio.getContext().getViewDef()
+			const wireInDef = util.get(viewDef, path).wire
+			const [, , , , wirename] =
+				component.path.parseFieldKey(metadataItem)
+
+			// The wire of the parent does not match the wire of the dragged field
+			if (wireInDef && wireInDef !== wirename) {
+				uesio.notification.addError(
+					"That field doesn't belong to this table's wire"
+				)
+				return
+			}
+			// If we don't have a wire set, but the parent has a wire option
+			// ==> assume we can set the wire value to the field's wire
+			!wireInDef &&
+				dropPropDef.properties?.find((el) => el.name === "wire")
+			uesio.builder.setDefinition(dropNode + '["wire"]', wirename)
+			//
+
+			const handler = dropPropDef.handleFieldDrop
 			if (handler) {
 				handler(dragNode, dropNode, dropIndex, propDef, uesio)
 			}

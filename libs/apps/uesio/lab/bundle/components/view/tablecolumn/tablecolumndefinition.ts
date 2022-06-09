@@ -69,8 +69,6 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	traits: ["uesio.tablecolumn", "uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
-		console.log("field drop in column")
-
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
 
