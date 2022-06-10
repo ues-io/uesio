@@ -1,0 +1,3 @@
+name: createonly
+type: CHECKBOX
+label: CreateOnly

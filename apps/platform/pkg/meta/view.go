@@ -1,61 +1,80 @@
 package meta
 
 import (
+	"errors"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 )
 
-// View struct
 type View struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
+func NewView(key string) (*View, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for View: " + key)
+	}
+	return &View{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewViews(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newView, err := NewView(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newView)
+	}
+
+	return items, nil
+}
+
 func (v *View) GetCollectionName() string {
 	return v.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (v *View) GetCollection() CollectionableGroup {
 	var vc ViewCollection
 	return &vc
 }
 
-// GetConditions function
-func (v *View) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": v.Name,
-	}
+func (v *View) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, v.Name)
 }
 
-// GetBundleGroup function
 func (v *View) GetBundleGroup() BundleableGroup {
 	var vc ViewCollection
 	return &vc
 }
 
-// GetKey function
 func (v *View) GetKey() string {
-	return v.Namespace + "." + v.Name
+	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
 }
 
-// GetPath function
 func (v *View) GetPath() string {
-	return v.GetKey() + ".yaml"
+	return v.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (v *View) GetPermChecker() *PermissionSet {
 	key := v.GetKey()
 	return &PermissionSet{
@@ -65,23 +84,24 @@ func (v *View) GetPermChecker() *PermissionSet {
 	}
 }
 
-// SetField function
 func (v *View) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
 			return err
 		}
-		v.Definition = *definition.Content[0]
+		if len(definition.Content) > 0 {
+			v.Definition = *definition.Content[0]
+		}
+
 		return nil
 	}
 	return StandardFieldSet(v, fieldName, value)
 }
 
-// GetField function
 func (v *View) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
 		if err != nil {
 			return nil, err
@@ -91,41 +111,42 @@ func (v *View) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-// GetNamespace function
 func (v *View) GetNamespace() string {
 	return v.Namespace
 }
 
-// SetNamespace function
 func (v *View) SetNamespace(namespace string) {
 	v.Namespace = namespace
 }
 
-// SetWorkspace function
 func (v *View) SetWorkspace(workspace string) {
 	v.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
+func (v *View) SetModified(mod time.Time) {
+	v.UpdatedAt = mod.UnixMilli()
+}
+
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
 }
 
-// Len function
 func (v *View) Len() int {
 	return StandardItemLen(v)
 }
 
-// GetItemMeta function
 func (v *View) GetItemMeta() *ItemMeta {
 	return v.itemMeta
 }
 
-// SetItemMeta function
 func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
+}
+
+func (v *View) IsPublic() bool {
+	return v.Public
 }
 
 func (v *View) UnmarshalYAML(node *yaml.Node) error {
@@ -151,7 +172,7 @@ func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, u
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							(*usedVariants)[compName+"."+valueNode.Value] = true
+							(*usedVariants)[compName+":"+valueNode.Value] = true
 						}
 					}
 				}

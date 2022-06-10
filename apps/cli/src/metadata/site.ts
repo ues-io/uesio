@@ -8,21 +8,21 @@ import { User } from "../auth/login"
 
 class Site {
 	static getCollectionName(): string {
-		return "studio.sites"
+		return "uesio/studio.site"
 	}
 	static getFields() {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.name",
+				id: "uesio/studio.name",
 			},
 			{
-				id: "studio.app",
+				id: "uesio/studio.app",
 			},
 			{
-				id: "studio.bundle",
+				id: "uesio/studio.bundle",
 			},
 		]
 	}
@@ -54,11 +54,11 @@ class Site {
 			user,
 			createChange([
 				{
-					"studio.name": responses.name,
-					"studio.bundle": {
-						"uesio.id": `${app}_${responses.version}`,
+					"uesio/studio.name": responses.name,
+					"uesio/studio.bundle": {
+						"uesio/core.id": `${app}_${responses.version}`,
 					},
-					"studio.app": app,
+					"uesio/studio.app": app,
 				},
 			])
 		)

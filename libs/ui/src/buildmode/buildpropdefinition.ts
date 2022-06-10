@@ -1,6 +1,10 @@
-import { DefinitionMap, DefinitionValue } from "../definition/definition"
+import {
+	BaseProps,
+	Definition,
+	DefinitionMap,
+	DefinitionValue,
+} from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
-import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
 import { FunctionComponent } from "react"
 import ValueAPI from "./valueapi"
@@ -86,7 +90,6 @@ type PropDescriptor =
 	| ConditionProp
 	| NamespaceProp
 	| ComponentTargetProp
-	| StylesListProp
 	| ConditionalDisplayProp
 	| IconProp
 
@@ -106,7 +109,7 @@ type DisplayCondition = {
 )
 
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
-	filter?: (def: definition.Definition, id: string) => boolean
+	filter?: (def: Definition, id: string) => boolean
 }
 
 interface CustomPropRendererProps extends PropRendererProps {
@@ -130,9 +133,6 @@ interface IconProp extends BasePropDescriptor {
 	type: "ICON"
 }
 
-interface StylesListProp extends BasePropDescriptor {
-	type: "STYLESLIST"
-}
 interface ConditionalDisplayProp extends BasePropDescriptor {
 	type: "CONDITIONALDISPLAY"
 }
@@ -244,7 +244,7 @@ type SignalProperties = {
 	name: string
 }
 
-interface PropRendererProps extends definition.BaseProps {
+interface PropRendererProps extends BaseProps {
 	descriptor: PropDescriptor
 	propsDef: BuildPropertiesDefinition
 	valueAPI: ValueAPI
@@ -282,7 +282,6 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
-	StylesListProp,
 	ConditionalDisplayProp,
 	OrderSection,
 }

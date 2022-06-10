@@ -1,7 +1,7 @@
 import { AnyAction } from "redux"
-import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
-import { Provider, useDispatch } from "react-redux"
-import { configureStore } from "@reduxjs/toolkit"
+import { ThunkAction } from "redux-thunk"
+import { Provider } from "react-redux"
+import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
 import { Context } from "../context/context"
@@ -10,20 +10,23 @@ import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
 import builder from "../bands/builder"
-import viewdef from "../bands/viewdef"
-import theme from "../bands/theme"
 import component from "../bands/component"
-import componentvariant from "../bands/componentvariant"
 import wire from "../bands/wire"
-import view from "../bands/view"
 import site from "../bands/site"
 import panel from "../bands/panel"
+import viewdef from "../bands/viewdef"
+import label from "../bands/label"
+import theme from "../bands/theme"
+import componentvariant from "../bands/componentvariant"
+import configvalue from "../bands/configvalue"
+import componentpack from "../bands/componentpack"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
+import { MetadataState } from "../bands/metadata/types"
+import { parse } from "../yamlutils/yamlutils"
 
-type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
 	RootState,
@@ -34,16 +37,16 @@ type ThunkFunc = ThunkAction<
 type SiteState = {
 	name: string
 	app: string
-	version?: string
 	domain: string
 	subdomain: string
 }
 
 type InitialState = {
-	builder: BuilderState
-	route: RouteState
-	user: UserState
-	site: SiteState
+	builder?: BuilderState
+	route?: RouteState
+	user?: UserState
+	site?: SiteState
+	theme?: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -51,26 +54,43 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
+
+	// handle cached themes coming from the route
+	const themeState = initialState.theme
+	if (themeState && themeState.ids?.length) {
+		themeState.ids.forEach((id: string) => {
+			const theme = themeState.entities[id] as MetadataState
+			theme.parsed = parse(theme.content).toJSON()
+		})
+	}
+
 	const newStore = configureStore({
 		reducer: {
 			collection,
 			component,
-			componentvariant,
 			route,
 			user,
 			builder,
-			viewdef,
-			view,
 			theme,
 			panel,
 			notification,
 			wire,
+			viewdef,
+			label,
+			componentvariant,
+			configvalue,
+			componentpack,
 			site,
 			workspace: (state) => state || {},
 		},
 		devTools: true,
 		preloadedState: initialState,
-		middleware: [thunk.withExtraArgument(plat)],
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				thunk: {
+					extraArgument: plat,
+				},
+			}),
 	})
 	store = newStore
 	return newStore
@@ -78,10 +98,11 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-export type AppDispatch = typeof store.dispatch
-const getDispatcher = () => useDispatch<AppDispatch>()
+type Dispatcher = typeof store.dispatch
+
+const appDispatch = () => store.dispatch
 const getPlatform = () => platform
-const getStore = () => store
+const getCurrentState = () => store.getState()
 
 export {
 	create,
@@ -91,7 +112,7 @@ export {
 	RootState,
 	InitialState,
 	SiteState,
-	getDispatcher,
+	appDispatch,
 	getPlatform,
-	getStore,
+	getCurrentState,
 }

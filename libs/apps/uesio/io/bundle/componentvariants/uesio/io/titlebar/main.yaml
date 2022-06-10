@@ -1,0 +1,14 @@
+name: main
+label: Main
+definition:
+  uesio.styles:
+    root:
+      margin: 40px
+    title:
+      color: "#444"
+      fontSize: "16pt"
+      textTransform: uppercase
+    subtitle:
+      fontSize: "10pt"
+      color: "#777"
+public: true

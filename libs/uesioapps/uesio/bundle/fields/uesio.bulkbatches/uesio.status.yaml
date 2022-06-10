@@ -1,4 +1,0 @@
-name: status
-collection: uesio.bulkbatches
-type: "TEXT"
-label: "Batch Status"

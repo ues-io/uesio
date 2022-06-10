@@ -1,0 +1,184 @@
+name: users
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          valueSource: PARAM
+          param: app
+    sites:
+      collection: uesio/studio.site
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.bundle:
+        uesio/studio.app:
+          fields:
+            uesio/core.id:
+            uesio/studio.name:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
+    users:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.picture:
+      init:
+        query: false
+    newuser:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.username:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.profile:
+        uesio/core.type:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/core.type
+          valueSource: VALUE
+          value: PERSON
+  events:
+    onload:
+      - signal: "wire/LOAD"
+        uesio.context:
+          siteadmin:
+            name: $Param{sitename}
+            app: $Param{app}
+        wires:
+          - users
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: sites
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.sitenav
+                    uesio.context:
+                      wire: sites
+                    params:
+                      selected: users
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Users
+                    subtitle: User is as user does.
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: "Add a User"
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: "panel/TOGGLE"
+                                    panel: "newUser"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          id: userslist
+                          wire: users
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
+                                      element: div
+                                  - uesio/io.text:
+                                      text: ${uesio/core.id}
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 9pt
+                                          color: "#666"
+                                      element: div
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
+                                avatar:
+                                  - uesio/io.avatar:
+                                      image: $UserFile{uesio/core.picture}
+                                      text: ${uesio/core.initials}
+  panels:
+    newUser:
+      uesio.type: uesio/io.dialog
+      title: Add a User
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newuserlist
+            wire: newuser
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/core.username
+              - uesio/io.field:
+                  fieldId: uesio/core.firstname
+              - uesio/io.field:
+                  fieldId: uesio/core.lastname
+              - uesio/studio.metadatafield:
+                  uesio.context:
+                    siteadmin:
+                      name: $Param{sitename}
+                      app: $Param{app}
+                  fieldId: uesio/core.profile
+                  metadataType: "PROFILE"
+                  label: "Profile"
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newuser
+                uesio.context:
+                  siteadmin:
+                    name: $Param{sitename}
+                    app: $Param{app}
+              - signal: "panel/TOGGLE"
+                panel: "newUser"
+              - signal: wire/EMPTY
+                wire: newuser
+              - signal: wire/CREATE_RECORD
+                wire: newuser
+              - signal: wire/LOAD
+                wires:
+                  - users
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newUser"
+              - signal: wire/CANCEL
+                wire: newuser

@@ -1,4 +1,0 @@
-name: public
-permissionSets:
-  - studio.public
-  - uesio.public

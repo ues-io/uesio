@@ -6,9 +6,8 @@ import (
 
 // ChangeAPI type
 type ChangeAPI struct {
-	change   adapt.ChangeItem
-	metadata *adapt.CollectionMetadata
-	errors   []string
+	change *adapt.ChangeItem
+	errors []string
 }
 
 // Get function

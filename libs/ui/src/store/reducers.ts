@@ -1,206 +1,216 @@
-import { get, setWith, toPath } from "lodash"
+import toPath from "lodash/toPath"
+import yaml, { YAMLMap, YAMLSeq } from "yaml"
 import {
 	AddDefinitionPayload,
+	ChangeDefinitionKeyPayload,
+	CloneDefinitionPayload,
 	MoveDefinitionPayload,
 	RemoveDefinitionPayload,
 	SetDefinitionPayload,
-	YamlUpdatePayload,
 } from "../bands/builder"
 import {
 	isNumberIndex,
 	getKeyAtPath,
 	getParentPath,
-	fromPath,
+	getIndexFromPath,
+	getGrandParentPath,
+	getParentPathArray,
 } from "../component/path"
-import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
-import yaml from "yaml"
+import { DefinitionMap } from "../definition/definition"
+
 import {
 	addNodeAtPath,
+	getNodeAtPath,
 	parse,
 	removeNodeAtPath,
 	setNodeAtPath,
 } from "../yamlutils/yamlutils"
+import { MetadataState } from "../bands/metadata/types"
 
-export type CommonState = {
-	definition: DefinitionMap
-	yaml?: YamlDoc
-	originalYaml?: YamlDoc | undefined
-}
+type MoveType =
+	| "pairWithinParent"
+	| "pairToParent"
+	| "seqIndexMove"
+	| "seqToSeq"
+	| "unknown"
 
-const getNewNode = (yaml: YamlDoc, definition: Definition) => {
-	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
-	if (definition === 0) {
-		return yaml.createNode(definition)
-	}
+/**
+ * Change the index of an element in an array, this modifies the array.
+ */
+const moveInArray = (
+	arr: unknown[],
+	oldIndex: number | string,
+	newIndex: number | string
+) => arr.splice(Number(newIndex), 0, arr.splice(Number(oldIndex), 1)[0])
 
-	if (!definition) {
-		return null
-	}
-
-	return yaml.createNode(definition)
-}
-
-const setDef = (state: CommonState, payload: SetDefinitionPayload) => {
+const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
-	const pathArray = toPath(path)
 
-	// Set the definition JS Object
-	setWith(state, ["definition", ...pathArray], definition)
-	if (state.yaml) {
-		// create a new document so components using useYaml will rerender
-		state.yaml = parse(state.yaml.toString())
-		const newNode = getNewNode(state.yaml, definition)
-		setNodeAtPath(path, state.yaml.contents, newNode)
-	}
+	if (!state.content) return
+	const yamlDoc = parse(state.content)
+	const pathArray = toPath(path)
+	const parentPath = getParentPathArray(pathArray)
+	const parentNode = yamlDoc.getIn(parentPath)
+	// create a new document so components using useYaml will rerender
+	// --
+	// if the parent is "null" or "undefined", the yaml library won't set our pair in the object.
+	// We need to
+	const newNodeSrc = parentNode
+		? definition
+		: {
+				[`${toPath(path).pop()}`]: definition,
+		  }
+
+	const pathToUpdate = parentNode ? pathArray : parentPath
+	const newNode = yamlDoc.createNode(newNodeSrc)
+
+	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
 }
 
-const addDef = (state: CommonState, payload: AddDefinitionPayload) => {
+const addDef = (state: MetadataState, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
-	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path) as Definition[]
-	let newIndex: number
-	if (!currentArray) {
-		newIndex = 0
-		setWith(state, ["definition", ...pathArray], [definition])
-	} else {
-		newIndex = index === undefined ? currentArray.length : index
-		currentArray.splice(newIndex, 0, definition)
-	}
-	if (state.yaml && definition) {
-		// create a new document so components using useYaml will rerender
-		state.yaml = parse(state.yaml.toString())
-		const newNode = state.yaml.createNode(definition)
+
+	if (state.content && definition) {
+		const yamlDoc = parse(state.content)
+		const newNode = yamlDoc.createNode(definition)
+		const pathArray = toPath(path)
 		if (newNode) {
-			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
+			addNodeAtPath(pathArray, yamlDoc.contents, newNode, index || 0)
 		}
+
+		state.content = yamlDoc.toString()
+		state.parsed = yamlDoc.toJSON()
 	}
 }
 
-const removeDef = (state: CommonState, payload: RemoveDefinitionPayload) => {
+const removeDef = (state: MetadataState, payload: RemoveDefinitionPayload) => {
 	const pathArray = toPath(payload.path)
 	const index = pathArray.pop() // Get the index
-	const parent = get(state.definition, pathArray)
 	if (index) {
-		if (Array.isArray(parent)) {
-			const newParent = parent.filter(
-				(item: Definition, itemIndex: number) =>
-					parseInt(index, 10) !== itemIndex
-			)
-			if (state.definition) {
-				setWith(state, ["definition", ...pathArray], newParent)
-			}
-		} else {
-			delete parent[index]
-			if (state.definition) {
-				setWith(state, ["definition", ...pathArray], parent)
-			}
-		}
-
-		if (state.yaml) {
-			// create a new document so components using useYaml will rerender
-			state.yaml = parse(state.yaml.toString())
-			removeNodeAtPath(pathArray.concat([index]), state.yaml.contents)
-		}
+		const yamlDoc = parse(state.content)
+		removeNodeAtPath(pathArray.concat([index]), yamlDoc.contents)
+		state.content = yamlDoc.toString()
+		state.parsed = yamlDoc.toJSON()
 	}
 }
 
-const moveDef = (state: CommonState, payload: MoveDefinitionPayload) => {
-	const isArrayMove = isNumberIndex(getKeyAtPath(payload.toPath))
+const getDefFromPath = (state: MetadataState, path: string | string[]) => {
+	const yamlDoc = parse(state.content)
+	const defNode = getNodeAtPath(path, yamlDoc.contents)
+	return defNode?.toJSON() as DefinitionMap
+}
 
-	if (!isArrayMove) {
-		const fromPathStr = payload.fromPath
-		const toPathStr = payload.toPath
+const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
+	const { fromPath: originalPath, toPath: destinationPath } = payload
+	const originalParentPath = getParentPath(originalPath)
+	const destinationParentPath = getParentPath(destinationPath)
+	const yamlDoc = parse(state.content)
+	const parentNode = yamlDoc.getIn(toPath(originalParentPath)) as yaml.Node
+	const isArrayMove = yaml.isSeq(parentNode)
 
-		const fromParentPath = getParentPath(payload.fromPath)
-		const toParentPath = getParentPath(payload.toPath)
+	const fromKey = getKeyAtPath(originalPath)
+	const toKey = getKeyAtPath(destinationPath)
+	if (!fromKey || !toKey) return console.warn("missing keys for moveDef")
 
-		if (fromParentPath !== toParentPath) return
+	const isSameParent = originalParentPath === destinationParentPath
 
-		const fromKey = getKeyAtPath(fromPathStr)
-		const toKey = getKeyAtPath(toPathStr)
+	const moveType = [
+		["pairWithinParent", isSameParent && !isArrayMove],
+		["pairToParent", !isSameParent && !isArrayMove],
+		["seqIndexMove", isArrayMove && isSameParent],
+		["seqToSeq", isArrayMove && !isSameParent],
+		["unknown", true],
+	].find(([, c]) => c)?.[0] as MoveType
 
-		const definition = get(
-			state.definition,
-			fromParentPath
-		) as DefinitionMap
-
-		if (!definition || !fromKey || !toKey) return
-
-		const keys = Object.keys(definition)
-		const fromIndex = keys.indexOf(fromKey)
-		const toIndex = keys.indexOf(toKey)
-
-		const newKeys = keys.map((el, i) => {
-			if (i === fromIndex) return keys[toIndex]
-			if (i === toIndex) return keys[fromIndex]
-			return el
-		})
-
-		const newDefinition = newKeys.reduce(
-			(obj, item) => ({
-				...obj,
-				[item]: definition[item],
-			}),
-			{}
-		)
+	if (moveType === "pairWithinParent") {
+		const definition = getDefFromPath(state, originalParentPath)
+		if (!definition) return console.warn("missing definition for moveDef")
+		// Turn object into array so it's easier to re-order
+		const keys = Object.entries(definition)
+		// Get the array indices and move them around, bring back to a definition and set it
+		const fromIndex = keys.findIndex(([k]) => k === fromKey)
+		const toIndex = keys.findIndex(([k]) => k === toKey)
+		moveInArray(keys, fromIndex, toIndex)
+		const newDefinition = Object.fromEntries(keys)
 
 		return setDef(state, {
-			path: fromParentPath,
+			path: destinationParentPath,
 			definition: newDefinition,
 		})
 	}
 
-	const fromPathStr = payload.fromPath
-	const fromPathArray = toPath(fromPathStr)
-	//fromPathArray.splice(-1)
-	//Grab current definition
-	const definition = get(state.definition, fromPathArray)
-	//Remove the original
-	removeDef(state, { path: fromPathStr })
-	const toPathStr = payload.toPath
-	const pathArray = toPath(toPathStr)
-	const index = parseInt(pathArray[pathArray.length - 1], 10)
-	/*
-	const updatedPathStr = calculateNewPathAheadOfTime(
-		payload.fromPath,
-		payload.toPath
-	)
-	*/
-	const updatedPathStr = payload.toPath
-	const updatePathArr = toPath(updatedPathStr)
-	updatePathArr.splice(-1)
-	//Add back in the intended spot
+	// We're moving items around within the same aray, that's easy
+	if (moveType === "seqIndexMove")
+		moveInArray((parentNode as YAMLSeq).items, fromKey, toKey)
 
-	addDef(state, {
-		definition,
-		index,
-		path: fromPath(updatePathArr),
-	})
+	if (moveType === "seqToSeq" && isArrayMove) {
+		const destinationNode = yamlDoc.getIn(
+			toPath(destinationParentPath)
+		) as YAMLSeq
+		// Append cutout to destination array + move it to the desired index + delete old
+		destinationNode.add(yamlDoc.getIn(toPath(originalPath)))
+		moveInArray(
+			destinationNode.items,
+			destinationNode.items.length - 1,
+			toKey
+		)
+		yamlDoc.deleteIn(toPath(originalPath))
+	}
+
+	if (moveType === "unknown")
+		return console.warn(
+			"That type of Yanl movement is not supported... yet"
+		)
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
 }
 
-const updateYaml = (state: CommonState, payload: YamlUpdatePayload) => {
-	const { path, yaml: yamlDoc } = payload
+const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
+	const parentPath = getParentPath(path)
+	const isArrayItemClone = isNumberIndex(getKeyAtPath(parentPath))
+	const yamlDoc = parse(state.content)
+
+	if (isArrayItemClone) {
+		const index = getIndexFromPath(parentPath)
+		if (!index && index !== 0) return
+		const grandParentPath = getGrandParentPath(path)
+		const { items } = getNodeAtPath(
+			grandParentPath,
+			yamlDoc.contents
+		) as YAMLSeq
+		items.splice(index, 0, items[index])
+	} else {
+		const newKey =
+			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
+		const node = getNodeAtPath(path, yamlDoc.contents)
+		const parentNode = getNodeAtPath(
+			parentPath,
+			yamlDoc.contents
+		) as YAMLMap
+		parentNode.setIn([newKey], node)
+	}
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
+}
+
+const changeDefKey = (
+	state: MetadataState,
+	payload: ChangeDefinitionKeyPayload
+) => {
+	const { path, key: newKey } = payload
 	const pathArray = toPath(path)
-	const definition = yamlDoc.toJSON()
-
-	// Set the definition JS Object from the yaml
-	setWith(state, ["definition", ...pathArray], definition)
-	if (!state.originalYaml) {
-		state.originalYaml = yamlDoc
-	}
-
-	if (!state.yaml) {
-		state.yaml = yamlDoc
-		return
-	}
-
-	if (state.yaml === state.originalYaml) {
-		state.originalYaml = parse(state.originalYaml.toString())
-	}
-	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
-
-	// We actually don't want components using useYaml to rerender
-	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
+	// create a new document so components using useYaml will rerender
+	const yamlDoc = parse(state.content)
+	// make a copy so we can place with a new key and delete the old node
+	const newNode = yamlDoc.getIn(toPath(path))
+	// replace the old with the new key
+	pathArray.splice(-1, 1, newKey)
+	yamlDoc.setIn(pathArray, newNode)
+	yamlDoc.deleteIn(toPath(path))
+	state.content = yamlDoc.toString()
+	state.parsed = yamlDoc.toJSON()
 }
 
-export { removeDef, addDef, moveDef, setDef, updateYaml }
+export { removeDef, addDef, setDef, moveDef, cloneDef, changeDefKey }

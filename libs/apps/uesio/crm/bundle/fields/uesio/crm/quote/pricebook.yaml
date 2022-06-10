@@ -1,0 +1,5 @@
+name: pricebook
+type: REFERENCE
+label: Pricebook
+reference:
+  collection: uesio/crm.pricebook

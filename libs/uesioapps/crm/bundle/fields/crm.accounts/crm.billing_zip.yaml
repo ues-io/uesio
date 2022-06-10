@@ -1,4 +1,0 @@
-name: billing_zip
-collection: crm.accounts
-type: TEXT
-label: Billing ZIP Code

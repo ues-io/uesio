@@ -1,0 +1,6 @@
+name: minor
+type: NUMBER
+label: "Minor version"
+readOnly: true
+number:
+  decimals: 0

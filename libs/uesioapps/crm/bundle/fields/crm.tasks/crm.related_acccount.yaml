@@ -1,6 +1,0 @@
-name: related_acccount
-collection: crm.tasks
-type: REFERENCE
-label: Related Account
-reference:
-  collection: crm.accounts

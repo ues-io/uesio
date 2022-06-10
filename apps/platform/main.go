@@ -6,14 +6,13 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
+	"github.com/thecloudmasters/uesio/pkg/adapt/salesforce"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
-	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
 	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
@@ -28,7 +27,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
@@ -37,9 +35,11 @@ import (
 func init() {
 	// Initialize Plugins
 	mime.AddExtensionType(".yaml", "application/x-yaml")
+	mime.AddExtensionType(".md", "text/markdown")
 
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
+	adapt.RegisterAdapter("uesio.salesforce", &salesforce.Adapter{})
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})
@@ -47,7 +47,6 @@ func init() {
 	if val == "true" {
 		auth.RegisterAuthType("mock", &mock.Auth{})
 	}
-	auth.RegisterAuthType("facebook", &facebook.Auth{})
 	auth.RegisterAuthType("cognito", &cognito.Auth{})
 
 	// File Adapters
@@ -67,7 +66,6 @@ func init() {
 	featureflagstore.RegisterFeatureFlagStore("platform", &ffsp.FeatureFlagStore{})
 
 	// Bundle Stores
-	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
 	bundlestore.RegisterBundleStore("system", &systembundlestore.SystemBundleStore{})
 	bundlestore.RegisterBundleStore("workspace", &workspacebundlestore.WorkspaceBundleStore{})
 	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})
@@ -77,8 +75,5 @@ func init() {
 }
 
 func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		logger.LogError(err)
-		os.Exit(-1)
-	}
+	cmd.Execute()
 }

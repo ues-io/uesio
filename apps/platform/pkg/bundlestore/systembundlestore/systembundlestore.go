@@ -1,14 +1,13 @@
 package systembundlestore
 
 import (
-	"bufio"
 	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/jinzhu/copier"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -16,64 +15,31 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// SystemBundleStore struct
-type SystemBundleStore struct {
-}
+type SystemBundleStore struct{}
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
-	return filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
+	return filepath.Join("..", "..", "libs", "apps", namespace, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
+func getFile(namespace string, version string, objectname string, filename string) (*os.File, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	reader := bufio.NewReader(file)
-	return bundlestore.ItemResponse{
-		Reader: reader,
-		Closer: file,
-	}, nil
+	return os.Open(filePath)
 }
 
-// GetItem function
-func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
-	key := item.GetKey()
-	namespace := item.GetNamespace()
-	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+func getFileInfo(namespace string, version string, objectname string, filename string) (os.FileInfo, error) {
+	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
+	return os.Stat(filePath)
+}
 
-	permSet := session.GetContextPermissions()
+func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
 
-	hasPermission := permSet.HasPermission(item.GetPermChecker())
-	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
-	}
-
-	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
-
+	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
 	if ok {
-		// We got a cache hit
-		return copier.Copy(item, cachedItem)
+		return cachedKeys, nil
 	}
-
-	stream, err := getStream(namespace, version, collectionName, item.GetPath())
-	if err != nil {
-		return err
-	}
-	defer stream.Close()
-	return bundlestore.DecodeYAML(item, stream)
-
-}
-
-// GetItems function
-func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
-
-	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
 	keys := []string{}
+
 	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			// Ignore walking errors
@@ -82,7 +48,7 @@ func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, vers
 		if path == basePath {
 			return nil
 		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			return nil
@@ -95,6 +61,85 @@ func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, vers
 		return nil
 	})
 	if err != nil {
+		return nil, err
+	}
+	bundle.AddFileListToCache(basePath, conditions, keys)
+	return keys, err
+}
+
+func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
+	key := item.GetKey()
+	namespace := item.GetNamespace()
+	fullCollectionName := item.GetCollectionName()
+	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	app := session.GetContextAppName()
+	permSet := session.GetContextPermissions()
+
+	hasPermission := permSet.HasPermission(item.GetPermChecker())
+	if !hasPermission {
+		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
+	}
+
+	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
+
+	if ok {
+		if app != namespace && !cachedItem.IsPublic() {
+			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+		}
+		meta.Copy(item, cachedItem)
+		return nil
+	}
+
+	fileInfo, err := getFileInfo(namespace, version, collectionName, item.GetPath())
+	if err != nil {
+		return err
+	}
+
+	item.SetModified(fileInfo.ModTime())
+
+	file, err := getFile(namespace, version, collectionName, item.GetPath())
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+	err = bundlestore.DecodeYAML(item, file)
+	if err != nil {
+		return err
+	}
+	if app != namespace && !item.IsPublic() {
+		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+	}
+	bundle.AddItemToCache(item, namespace, version)
+	return nil
+
+}
+
+func (b *SystemBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetAllItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
+func (b *SystemBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+
+	// TODO: Think about caching this, but remember conditions
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
+
+	keys, err := getFileKeys(basePath, namespace, group, conditions)
+	if err != nil {
 		return err
 	}
 
@@ -103,6 +148,7 @@ func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, vers
 		if err != nil {
 			return err
 		}
+		retrievedItem.SetNamespace(namespace)
 		err = b.GetItem(retrievedItem, version, session)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
@@ -115,43 +161,53 @@ func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, vers
 	return nil
 }
 
-// GetFileStream function
 func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath())
+	return getFile(file.Namespace, version, "files", file.GetFilePath())
 }
 
-// GetBotStream function
 func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
+	return getFile(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
-// GetComponentPackStream function
+func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
+}
+
 func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
+	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", fileName)
+	if err != nil {
+		return nil, err
 	}
-	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
+	componentPack.SetModified(fileInfo.ModTime())
+	return getFile(componentPack.Namespace, version, "componentpacks", fileName)
 }
 
-// StoreItems function
 func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-// GetBundleDef function
-func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
-	stream, err := getStream(namespace, version, "", "bundle.yaml")
+	file, err := getFile(namespace, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
 	}
-	defer stream.Close()
+	defer file.Close()
 
-	err = bundlestore.DecodeYAML(&by, stream)
+	err = bundlestore.DecodeYAML(&by, file)
 	if err != nil {
 		return nil, err
 	}
 	return &by, nil
+}
+
+func (b *SystemBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

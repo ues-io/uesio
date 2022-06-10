@@ -1,26 +1,16 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { UesioThunkAPI } from "../../utils"
-import { wire } from "@uesio/ui"
+import { set } from "../index"
 
-const collectionMetadata = createAsyncThunk<
-	wire.LoadResponseBatch,
-	{
-		collectionName: string
-		context: Context
-	},
-	UesioThunkAPI
->(
-	"collection/getCollectionMetadata",
-	async ({ collectionName, context }, api) =>
-		api.extra.getCollectionMetadata(context, collectionName),
-	{
-		// condition: (context, { getState }) => {
-		// 	const { collection } = getState()
-		// 	const status = collection[context.collectionName]?.status
-		// 	return status !== "FULFILLED" && status !== "PENDING"
-		// },
+const getMetadata =
+	(collectionName: string, context: Context): ThunkFunc =>
+	async (dispatcher, getState, api) => {
+		const response = await api.getCollectionMetadata(
+			context,
+			collectionName
+		)
+		dispatcher(set(response.collections))
+		return context
 	}
-)
 
-export default { collectionMetadata }
+export default getMetadata

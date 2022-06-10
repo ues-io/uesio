@@ -1,4 +1,0 @@
-name: workspaceconfig
-path: app/{appname}/workspace/{workspacename}/configuration
-view: studio.workspaceconfig
-theme: studio.default

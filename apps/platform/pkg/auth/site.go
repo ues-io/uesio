@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -10,65 +11,84 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
+func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
-	err := datasource.PlatformLoadOneWithFields(
+	err := datasource.PlatformLoadOne(
 		&s,
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio.id",
-			},
-			{
-				ID: "studio.name",
-			},
-			{
-				ID: "studio.app",
-			},
-			{
-				ID: "studio.bundle",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "studio.app",
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+				{
+					ID: "uesio/studio.name",
+				},
+				{
+					ID: "uesio/studio.app",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: adapt.ID_FIELD,
+						},
 					},
-					{
-						ID: "studio.major",
-					},
-					{
-						ID: "studio.minor",
-					},
-					{
-						ID: "studio.patch",
+				},
+				{
+					ID: "uesio/studio.bundle",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio/studio.app",
+							Fields: []adapt.LoadRequestField{
+								{
+									ID: adapt.ID_FIELD,
+								},
+							},
+						},
+						{
+							ID: "uesio/studio.major",
+						},
+						{
+							ID: "uesio/studio.minor",
+						},
+						{
+							ID: "uesio/studio.patch",
+						},
 					},
 				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: siteid,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: siteid,
+				},
 			},
 		},
 		session,
 	)
 	if err != nil {
+		fmt.Println("Faillll hrrrrrr: " + siteid)
 		return nil, err
 	}
 	return &s, nil
 }
 
-// GetDomain key
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOne(
 		&sd,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "studio.domain",
-				Value: domain,
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.site",
+				},
 			},
-			{
-				Field: "studio.type",
-				Value: domainType,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.domain",
+					Value: domain,
+				},
+				{
+					Field: "uesio/studio.type",
+					Value: domainType,
+				},
 			},
 		},
 		session,
@@ -79,9 +99,8 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 	return &sd, nil
 }
 
-// GetSiteFromDomain function
-func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
-	headlessSession, err := GetHeadlessSession()
+func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
+	headlessSession, err := GetStudioAdminSession()
 	if err != nil {
 		return nil, err
 	}
@@ -92,23 +111,23 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return GetSite(siteDomain.Site, headlessSession)
+	return querySite(siteDomain.Site.ID, headlessSession)
 }
 
-func GetHeadlessSession() (*sess.Session, error) {
+func GetStudioAdminSession() (*sess.Session, error) {
 	site := &meta.Site{
-		ID:   "prod_studio",
+		ID:   "uesio/studio_prod",
 		Name: "prod",
 		Bundle: &meta.Bundle{
 			App: &meta.App{
-				ID: "studio",
+				ID: "uesio/studio",
 			},
-			Major: "0",
-			Minor: "0",
-			Patch: "1",
+			Major: 0,
+			Minor: 0,
+			Patch: 1,
 		},
 		App: &meta.App{
-			ID: "studio",
+			ID: "uesio/studio",
 		},
 	}
 	bundleDef, err := bundle.GetSiteAppBundle(site)
@@ -117,10 +136,19 @@ func GetHeadlessSession() (*sess.Session, error) {
 	}
 	site.SetAppBundle(bundleDef)
 
-	return sess.GetHeadlessSession(&meta.User{
-		ID:        "system_system",
+	session := sess.NewSession(nil, &meta.User{
+		ID:        "uesio",
 		FirstName: "Super",
 		LastName:  "Admin",
-		Profile:   "uesio.public",
-	}, site), nil
+		Profile:   "uesio/core.public",
+	}, site)
+
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+	})
+
+	return session, nil
 }

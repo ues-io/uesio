@@ -1,0 +1,11 @@
+name: content
+label: Main Content
+definition:
+  uesio.styles:
+    root:
+      fontSize: 11pt
+      lineHeight: 18pt
+      color: "#444"
+      fontWeight: 300
+      margin: 20px 0
+  element: div

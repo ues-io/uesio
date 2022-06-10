@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+	"fmt"
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -11,22 +12,74 @@ import (
 type SaveOp struct {
 	CollectionName string
 	WireName       string
-	Inserts        *ChangeItems
-	Updates        *ChangeItems
-	Deletes        *ChangeItems
+	Inserts        ChangeItems
+	Updates        ChangeItems
+	Deletes        ChangeItems
 	Options        *SaveOptions
+	Errors         *[]SaveError
+	InsertCount    int
 }
 
-type ChangeItems []ChangeItem
+func (op *SaveOp) AddError(saveError *SaveError) {
+	if op.Errors == nil {
+		op.Errors = &[]SaveError{}
+	}
+	*op.Errors = append(*op.Errors, *saveError)
+}
+
+func (op *SaveOp) HasErrors() bool {
+	return len(*op.Errors) > 0
+}
+
+func (op *SaveOp) LoopInserts(changeFunc func(change *ChangeItem) error) error {
+	if op.Inserts != nil {
+		for i := range op.Inserts {
+			// Since some of our inserts could have been converted to updates
+			// We need this check to skip them.
+			if !op.Inserts[i].IsNew {
+				continue
+			}
+			err := changeFunc(op.Inserts[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (op *SaveOp) LoopUpdates(changeFunc func(change *ChangeItem) error) error {
+	if op.Updates != nil {
+		for i := range op.Updates {
+			err := changeFunc(op.Updates[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
+	err := op.LoopInserts(changeFunc)
+	if err != nil {
+		return err
+	}
+	return op.LoopUpdates(changeFunc)
+}
+
+type ChangeItems []*ChangeItem
 
 type ChangeItem struct {
 	FieldChanges    loadable.Item
-	IDValue         interface{}
+	IDValue         string
 	Error           error
-	RecordKey       interface{}
+	RecordKey       string
 	OldValues       loadable.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
+	Autonumber      int
+	IsNew           bool
 }
 
 func (ci *ChangeItem) AddReadToken(token string) {
@@ -43,16 +96,51 @@ func (ci *ChangeItem) AddReadWriteToken(token string) {
 	ci.ReadWriteTokens = append(ci.ReadWriteTokens, token)
 }
 
-func (ci *ChangeItem) GetOwnerID() (string, error) {
-	ownerChange, err := ci.FieldChanges.GetField("uesio.owner")
-	if err != nil || ownerChange == nil {
-		oldOwner, err := ci.OldValues.GetField("uesio.owner")
-		if err != nil {
-			return "", err
-		}
-		return GetReferenceKey(oldOwner)
+func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return "", err
 	}
-	return GetReferenceKey(ownerChange)
+	valueString, ok := value.(string)
+	if !ok {
+		return "", errors.New("Could not get value as string")
+	}
+	return valueString, nil
+}
+
+func (ci *ChangeItem) GetOldField(fieldID string) (interface{}, error) {
+	if ci.OldValues != nil {
+		return ci.OldValues.GetField(fieldID)
+	}
+	return nil, nil
+}
+
+func (ci *ChangeItem) GetField(fieldID string) (interface{}, error) {
+	changeVal, err := ci.FieldChanges.GetField(fieldID)
+	if err == nil && changeVal != nil {
+		return changeVal, nil
+	}
+	return ci.GetOldField(fieldID)
+}
+
+func (ci *ChangeItem) SetField(fieldID string, value interface{}) error {
+	return ci.FieldChanges.SetField(fieldID, value)
+}
+
+func (ci *ChangeItem) Loop(iter func(string, interface{}) error) error {
+	return ci.FieldChanges.Loop(iter)
+}
+
+func (ci *ChangeItem) Len() int {
+	return ci.FieldChanges.Len()
+}
+
+func (ci *ChangeItem) GetOwnerID() (string, error) {
+	ownerVal, err := ci.GetField("uesio/core.owner")
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(ownerVal)
 }
 
 // Lookup struct
@@ -74,6 +162,29 @@ type SaveOptions struct {
 	Lookups []Lookup
 }
 
+func GetFieldValue(value interface{}, key string) (interface{}, error) {
+	valueMap, ok := value.(map[string]interface{})
+	if ok {
+		fk, ok := valueMap[key]
+		if !ok {
+			return "", fmt.Errorf("could not get map property: "+key+" %T", value)
+		}
+		return fk, nil
+	}
+
+	valueItem, ok := value.(Item)
+	if ok {
+		return valueItem.GetField(key)
+	}
+
+	loadableValueItem, ok := value.(loadable.Item)
+	if ok {
+		return loadableValueItem.GetField(key)
+	}
+
+	return nil, fmt.Errorf("not a valid map or item: %T", value)
+}
+
 func GetReferenceKey(value interface{}) (string, error) {
 	if value == nil {
 		return "", nil
@@ -84,26 +195,12 @@ func GetReferenceKey(value interface{}) (string, error) {
 		return valueString, nil
 	}
 
-	valueMap, ok := value.(map[string]interface{})
-	if ok {
-		fk, ok := valueMap["uesio.id"]
-		if !ok {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
+	fk, err := GetFieldValue(value, ID_FIELD)
+	if err != nil {
+		return "", err
 	}
 
-	valueItem, ok := value.(Item)
-	if ok {
-		fk, err := valueItem.GetField("uesio.id")
-		if err != nil {
-			return "", errors.New("bad change map for ref field")
-		}
-		return GetReferenceKey(fk)
-
-	}
-
-	return "", errors.New("Bad foreign key")
+	return GetReferenceKey(fk)
 }
 
 // NewFieldChanges function returns a template that can merge field changes

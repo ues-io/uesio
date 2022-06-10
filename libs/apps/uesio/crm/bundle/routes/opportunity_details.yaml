@@ -1,0 +1,6 @@
+name: opportunity_details
+path: opportunity/{recordid}
+view: uesio/crm.opportunity_details
+theme: uesio/crm.default
+collection: uesio/crm.opportunity
+viewtype: detail

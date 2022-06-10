@@ -2,26 +2,40 @@ package mock
 
 import (
 	"encoding/json"
+	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Auth struct
-type Auth struct {
+type Auth struct{}
+
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+
+	return &Connection{
+		credentials: credentials,
+	}, nil
 }
 
-// Verify function
-func (a *Auth) Verify(token string, session *sess.Session) error {
-	return nil
+type Connection struct {
+	credentials *adapt.Credentials
 }
 
-// Decode function
-func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+
+	token, err := auth.GetPayloadValue(payload, "token")
+	if err != nil {
+		return nil, errors.New("Mock login:" + err.Error())
+	}
 	claim := auth.AuthenticationClaims{}
-	err := json.Unmarshal([]byte(token), &claim)
+	err = json.Unmarshal([]byte(token), &claim)
 	if err != nil {
 		return nil, err
 	}
 	return &claim, nil
+}
+
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
+	return nil
 }

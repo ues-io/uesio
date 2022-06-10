@@ -1,0 +1,4 @@
+name: bundlelisting
+idFormat: ${uesio/studio.app}
+label: bundlelisting
+pluralLabel: Bundle Listings

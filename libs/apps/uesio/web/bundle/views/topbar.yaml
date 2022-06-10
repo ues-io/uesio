@@ -1,0 +1,76 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        uesio.styles:
+          root:
+            height: 120px
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  display: grid
+              area: main
+              components:
+                - uesio/io.grid:
+                    templateColumns: 0fr 1fr 0fr
+                    uesio.styles:
+                      root:
+                        alignItems: center
+                    items:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.image:
+                                uesio.styles:
+                                  root:
+                                    margin: 16px
+                                height: 55px
+                                file: uesio/web.logo
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: ""
+                      - uesio/io.griditem:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.group:
+                                uesio.styles:
+                                  root:
+                                    margin: 20px
+                                columnGap: 40px
+                                components:
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.secondary
+                                            text: Login
+                                            signals:
+                                              - signal: "route/REDIRECT"
+                                                path: "https://studio.$Site{domain}"
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.secondary
+                                            text: Blog
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "blog"
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.secondary
+                                            text: Docs
+                                            signals:
+                                              - signal: "route/REDIRECT"
+                                                path: "https://docs.$Site{domain}"
+                                  - uesio/io.group:
+                                      components:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/web.calltoaction
+                                            text: Early Access
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "earlyaccess"

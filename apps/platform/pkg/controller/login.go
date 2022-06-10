@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -12,13 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// LoginRequest struct
-type LoginRequest struct {
-	Type  string
-	Token string
-}
-
-// LoginResponse struct
 type LoginResponse struct {
 	User                   *UserMergeData `json:"user"`
 	RedirectPath           string         `json:"redirectPath,omitempty"`
@@ -26,30 +20,16 @@ type LoginResponse struct {
 	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
 }
 
-// Login is good
-func Login(w http.ResponseWriter, r *http.Request) {
+func getAuthSourceID(vars map[string]string) string {
+	authSourceNamespace := vars["namespace"]
+	authSourceName := vars["name"]
+	return authSourceNamespace + "." + authSourceName
+}
 
-	// 1. Parse the request object.
-	var loginRequest LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
+func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string, user *meta.User, site *meta.Site) {
 
-	// 3. Get siteName from context
-	s := middleware.GetSession(r)
-	site := s.GetSite()
-
-	user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+	// If we had an old session, remove it.
+	w.Header().Del("set-cookie")
 	session := sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer
@@ -65,12 +45,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var redirectNamespace, redirectRoute string
 
 	if redirectPath == "" {
-		homeRoute := site.GetAppBundle().HomeRoute
-		if homeRoute == "" {
-			http.Error(w, "No Home Route Specfied", http.StatusInternalServerError)
+		if redirectKey == "" {
+			http.Error(w, "No Redirect Route Specfied", http.StatusInternalServerError)
 			return
 		}
-		redirectNamespace, redirectRoute, err = meta.ParseKey(homeRoute)
+		redirectNamespace, redirectRoute, err = meta.ParseKey(redirectKey)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -85,5 +64,29 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
 	})
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+
+	var loginRequest map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	s := middleware.GetSession(r)
+	site := s.GetSite()
+
+	user, err := auth.Login(getAuthSourceID(mux.Vars(r)), loginRequest, s)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	redirectResponse(w, r, site.GetAppBundle().HomeRoute, user, site)
 
 }

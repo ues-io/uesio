@@ -2,20 +2,26 @@ type FieldMetadataMap = {
 	[key: string]: FieldMetadata
 }
 
-type FieldType =
-	| "NUMBER"
-	| "TEXT"
-	| "REFERENCE"
-	| "LONGTEXT"
-	| "SELECT"
-	| "CHECKBOX"
-	| "DATE"
-	| "FILE"
-	| "MAP"
-	| "TIMESTAMP"
-	| "LIST"
-	| "USER"
-	| "EMAIL"
+const FIELD_TYPES = [
+	"NUMBER",
+	"TEXT",
+	"REFERENCE",
+	"REFERENCEGROUP",
+	"LONGTEXT",
+	"SELECT",
+	"CHECKBOX",
+	"MULTISELECT",
+	"DATE",
+	"FILE",
+	"MAP",
+	"TIMESTAMP",
+	"LIST",
+	"USER",
+	"EMAIL",
+	"AUTONUMBER",
+] as const
+
+type FieldType = typeof FIELD_TYPES[number]
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
@@ -43,6 +49,11 @@ type ReferenceMetadata = {
 	collection: string
 }
 
+type ReferenceGroupMetadata = {
+	collection: string
+	field: string
+}
+
 type FieldMetadata = {
 	name: string
 	namespace: string
@@ -53,6 +64,7 @@ type FieldMetadata = {
 	label: string
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
+	referencegroup?: ReferenceGroupMetadata
 	subfields?: FieldMetadataMap
 	file?: FileMetadata
 	subtype?: string
@@ -65,4 +77,6 @@ export {
 	SelectOption,
 	FieldType,
 	NumberMetadata,
+	ReferenceMetadata,
+	FIELD_TYPES,
 }

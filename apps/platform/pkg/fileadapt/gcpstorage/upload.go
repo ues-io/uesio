@@ -4,25 +4,16 @@ import (
 	"context"
 	"errors"
 	"io"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
-	projectID, ok := (*credentials)["project"]
-	if !ok {
-		return errors.New("No project id provided in credentials")
-	}
-	client, err := getClient(credentials)
-	if err != nil {
-		return errors.New("Invalid FileAdapterCredentials specified: " + err.Error())
-	}
+func (c *Connection) Upload(fileData io.Reader, path string) error {
+
 	ctx := context.Background()
 	objectName := path
-	fsbucket := client.Bucket(bucket)
-	_, err = fsbucket.Attrs(ctx)
+	fsbucket := c.client.Bucket(c.bucket)
+	_, err := fsbucket.Attrs(ctx)
 	if err != nil {
-		if err = fsbucket.Create(ctx, projectID, nil); err != nil {
+		if err = fsbucket.Create(ctx, c.projectID, nil); err != nil {
 			return err
 		}
 	}

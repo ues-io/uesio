@@ -1,4 +1,0 @@
-name: send_notification_email
-collection: crm.tasks
-type: CHECKBOX
-label: Send Notification Email

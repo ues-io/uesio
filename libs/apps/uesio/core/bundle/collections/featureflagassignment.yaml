@@ -1,0 +1,6 @@
+name: featureflagassignment
+idFormat: "${uesio/core.key}"
+nameField: uesio/core.key
+public: true
+label: feature flag assignment
+pluralLabel: feature flag assignments

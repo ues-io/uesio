@@ -1,0 +1,6 @@
+name: content
+label: Content
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: "#fafafa"

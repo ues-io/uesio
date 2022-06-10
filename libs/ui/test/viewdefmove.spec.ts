@@ -1,205 +1,141 @@
 import { createNextState } from "@reduxjs/toolkit"
-import { PlainViewDef } from "../src/bands/viewdef/types"
 import { MoveDefinitionPayload } from "../src/bands/builder"
 import { moveDef } from "../src/store/reducers"
+import { MetadataState } from "../src/bands/metadata/types"
 
-test("viewdef move component", () => {
+const moveComponentTest = `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+`
+
+const moveComponentTestResult = `
+components:
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button1
+`
+
+test("Move within same parent", () => {
 	testMove(
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.button": {
-							text: "button1",
-						},
-					},
-					{
-						"io.button": {
-							text: "button2",
-						},
-					},
-				],
-				wires: {},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveComponentTest,
 		},
 		{
 			toPath: `["components"]["0"]`,
 			fromPath: `["components"]["1"]`,
 		},
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.button": {
-							text: "button2",
-						},
-					},
-					{
-						"io.button": {
-							text: "button1",
-						},
-					},
-				],
-				wires: {},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveComponentTestResult,
 		}
 	)
 })
 
+const moveWireTest = `
+wires:
+  myotherwire:
+    collection: myothercollection
+    fields:
+  mywire:
+    collection: mycollection
+    fields:
+panels: null
+`
+
+const moveWireTestResult = `
+wires:
+  mywire:
+    collection: mycollection
+    fields: null
+  myotherwire:
+    collection: myothercollection
+    fields: null
+panels: null
+`
+
 test("viewdef move wire", () => {
 	testMove(
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [],
-				wires: {
-					mywire: {
-						collection: "mycollection",
-						fields: {},
-					},
-					myotherwire: {
-						collection: "myothercollection",
-						fields: {},
-					},
-				},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveWireTest,
 		},
 		{
 			toPath: `["wires"]["mywire"]`,
 			fromPath: `["wires"]["myotherwire"]`,
 		},
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [],
-				wires: {
-					myotherwire: {
-						collection: "myothercollection",
-						fields: {},
-					},
-					mywire: {
-						collection: "mycollection",
-						fields: {},
-					},
-				},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveWireTestResult,
 		}
 	)
 })
 
+const moveComponentDifferentParentTest = `
+components:
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+        - uesio/io.button:
+            text: button2
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button3
+        - uesio/io.button:
+            text: button4
+wires: null
+panels: null
+`
+
+const moveComponentDifferentParentTestResult = `
+components:
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button2
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+        - uesio/io.button:
+            text: button3
+        - uesio/io.button:
+            text: button4
+wires: null
+panels: null
+`
+
 test("viewdef move component different parent", () => {
 	testMove(
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.group": {
-							components: [
-								{
-									"io.button": {
-										text: "button1",
-									},
-								},
-								{
-									"io.button": {
-										text: "button2",
-									},
-								},
-							],
-						},
-					},
-					{
-						"io.group": {
-							components: [
-								{
-									"io.button": {
-										text: "button3",
-									},
-								},
-								{
-									"io.button": {
-										text: "button4",
-									},
-								},
-							],
-						},
-					},
-				],
-				wires: {},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveComponentDifferentParentTest,
 		},
 		{
-			toPath: `["components"]["1"]["io.group"]["components"]["0"]`,
-			fromPath: `["components"]["0"]["io.group"]["components"]["0"]`,
-			selectKey: "io.button",
+			toPath: `["components"]["1"]["uesio/io.group"]["components"]["0"]`,
+			fromPath: `["components"]["0"]["uesio/io.group"]["components"]["0"]`,
+			selectKey: "uesio/io.button",
 		},
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.group": {
-							components: [
-								{
-									"io.button": {
-										text: "button2",
-									},
-								},
-							],
-						},
-					},
-					{
-						"io.group": {
-							components: [
-								{
-									"io.button": {
-										text: "button1",
-									},
-								},
-								{
-									"io.button": {
-										text: "button3",
-									},
-								},
-								{
-									"io.button": {
-										text: "button4",
-									},
-								},
-							],
-						},
-					},
-				],
-				wires: {},
-				panels: {},
-			},
+			key: "ben/planets.page",
+			content: moveComponentDifferentParentTestResult,
 		}
 	)
 })
 
 const testMove = (
-	initial: PlainViewDef,
+	initial: MetadataState,
 	payload: MoveDefinitionPayload,
-	expected: PlainViewDef
+	expected: MetadataState
 ) => {
 	const newState = createNextState(initial, (draftState) => {
 		moveDef(draftState, payload)
 	})
-	expect(newState).toStrictEqual(expected)
-	// We have to stringify here to match key order
-	expect(JSON.stringify(newState)).toBe(JSON.stringify(expected))
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }

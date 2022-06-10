@@ -1,92 +1,77 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
+import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
-import { SaveResponseBatch } from "../../load/saveresponse"
-import { UesioThunkAPI } from "../utils"
+
+import { ThunkFunc } from "../../store/store"
+import { ID_FIELD } from "../collection/types"
+
 import { PlainWireRecord } from "../wirerecord/types"
-import { getMetadataListKey } from "./selectors"
-import { MetadataListStore, MetadataType } from "./types"
+import { MetadataType } from "./types"
+import { save as saveBuilder } from "."
 
-const getMetadataList = createAsyncThunk<
-	MetadataListStore,
-	{
-		context: Context
-		metadataType: MetadataType
-		namespace: string
+const getMetadataList =
+	(
+		context: Context,
+		metadataType: MetadataType,
+		namespace: string,
 		grouping?: string
-	},
-	UesioThunkAPI
->(
-	"builder/getMetadataList",
-	async ({ context, metadataType, namespace, grouping }, api) =>
-		api.extra.getMetadataList(context, metadataType, namespace, grouping),
-	{
-		condition: ({ metadataType, namespace, grouping }, { getState }) => {
-			const { builder } = getState()
-			const key = getMetadataListKey(metadataType, namespace, grouping)
-			const status = builder.metadata?.[key]?.status
-			return status !== "FULFILLED" && status !== "PENDING"
-		},
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const response = await platform.getMetadataList(
+			context,
+			metadataType,
+			namespace,
+			grouping
+		)
+		console.log(response)
+		return context
 	}
-)
 
-const getAvailableNamespaces = createAsyncThunk<
-	MetadataListStore,
-	Context,
-	UesioThunkAPI
->(
-	"builder/getAvailableNamespaces",
-	async (context, api) => api.extra.getAvailableNamespaces(context),
-	{
-		condition: (context, { getState }) => {
-			const { builder } = getState()
-			const status = builder.namespaces?.status
-			return status !== "FULFILLED" && status !== "PENDING"
-		},
-	}
-)
+const save =
+	(context: Context): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const changes: Record<string, PlainWireRecord> = {}
+		const state = getState().viewdef?.entities
+		const workspace = context.getWorkspace()
 
-const save = createAsyncThunk<
-	SaveResponseBatch,
-	{
-		context: Context
-	},
-	UesioThunkAPI
->("builder/save", async ({ context }, api) => {
-	const changes: Record<string, PlainWireRecord> = {}
-	const state = api.getState().viewdef?.entities
-	const workspace = context.getWorkspace()
+		if (!workspace) throw new Error("No Workspace in context")
 
-	if (!workspace) throw new Error("No Workspace in context")
+		// Loop over view defs
+		if (state) {
+			for (const defKey of Object.keys(state)) {
+				const defState = state[defKey]
+				if (!defState) continue
+				if (defState.content === defState.original) {
+					continue
+				}
 
-	// Loop over view defs
-	if (state) {
-		for (const defKey of Object.keys(state)) {
-			const defState = state[defKey]
-			if (defState?.yaml === defState?.originalYaml) {
-				continue
-			}
-			if (defState?.yaml) {
-				changes[defKey] = {
-					"studio.definition": defState.yaml.toString(),
-					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
+				const [, name] = parseKey(defState.key)
+
+				if (defState?.content) {
+					changes[defKey] = {
+						"uesio/studio.definition": defState.content,
+						[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
+					}
 				}
 			}
 		}
+
+		await platform.saveData(new Context(), {
+			wires: [
+				{
+					wire: "saveview",
+					collection: "uesio/studio.view",
+					changes,
+					deletes: {},
+				},
+			],
+		})
+
+		dispatch(saveBuilder())
+
+		return context
 	}
-	return api.extra.saveData(new Context(), {
-		wires: [
-			{
-				wire: "saveview",
-				collection: "studio.views",
-				changes,
-				deletes: {},
-			},
-		],
-	})
-})
 
 export default {
 	getMetadataList,
-	getAvailableNamespaces,
 	save,
 }

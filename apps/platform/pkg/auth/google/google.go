@@ -1,32 +1,47 @@
 package google
 
 import (
+	"errors"
+
 	verifier "github.com/futurenda/google-auth-id-token-verifier"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Auth struct
-type Auth struct {
+type Auth struct{}
+
+func (a *Auth) GetAuthConnection(credentials *adapt.Credentials) (auth.AuthConnection, error) {
+
+	return &Connection{
+		credentials: credentials,
+	}, nil
 }
 
-// Verify function
-func (a *Auth) Verify(token string, session *sess.Session) error {
+type Connection struct {
+	credentials *adapt.Credentials
+}
+
+func (c *Connection) Login(payload map[string]interface{}, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	token, err := auth.GetPayloadValue(payload, "token")
+	if err != nil {
+		return nil, errors.New("Google login:" + err.Error())
+	}
 	v := verifier.Verifier{}
 
 	aud, err := configstore.GetValueFromKey("uesio.google_client_id", session)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return v.VerifyIDToken(token, []string{
+	err = v.VerifyIDToken(token, []string{
 		aud,
 	})
-}
+	if err != nil {
+		return nil, err
+	}
 
-// Decode function
-func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	claimSet, err := verifier.Decode(token)
 	if err != nil {
 		return nil, err
@@ -36,7 +51,11 @@ func (a *Auth) Decode(token string, session *sess.Session) (*auth.Authentication
 		Subject:   claimSet.Sub,
 		FirstName: claimSet.GivenName,
 		LastName:  claimSet.FamilyName,
-		AuthType:  "google",
 		Email:     claimSet.Email,
 	}, nil
+
+}
+
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
+	return nil
 }

@@ -1,0 +1,105 @@
+name: track
+definition:
+  components:
+    - uesio/io.box:
+        uesio.styles:
+          root:
+            height: 120px
+        components:
+          - uesio/core.view:
+              view: uesio/docs.topbar
+    - uesio/io.grid:
+        uesio.variant: uesio/docs.mainlayout
+        items:
+          - uesio/io.griditem:
+              area: main
+              uesio.styles:
+                root:
+                  minHeight: 100vh
+                  padding: 22px
+              components:
+                - uesio/io.list:
+                    wire: track
+                    components:
+                      - uesio/io.text:
+                          uesio.variant: uesio/docs.smallcallout
+                          text: ${uesio/docs.name}
+                      - uesio/io.text:
+                          uesio.variant: uesio/docs.content
+                          text: ${uesio/docs.description}
+                - uesio/io.deck:
+                    gap: 40px
+                    templateColumns: 1fr 1fr 1fr
+                    wire: lesson
+                    uesio.styles:
+                      root:
+                        marginTop: 40px
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/docs.trackcard
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: track/${uesio/docs.track->uesio/docs.slug}/${uesio/docs.article->uesio/cms.slug}
+                          content:
+                            - uesio/io.box:
+                                uesio.variant: uesio/docs.trackcardheader
+                                uesio.styles:
+                                  root:
+                                    padding: 12px 24px
+                                    justifyContent: left
+                                components:
+                                  - uesio/io.text:
+                                      text: ${uesio/docs.order}
+                                      uesio.styles:
+                                        root:
+                                          color: white
+                                          fontSize: 20pt
+                                          textShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+                            - uesio/io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 24px
+                                components:
+                                  - uesio/io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 12pt
+                                      uesio.variant: uesio/docs.smallcallout
+                                      text: ${uesio/docs.article->uesio/cms.name}
+                                  - uesio/io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 10pt
+                                      uesio.variant: uesio/docs.content
+                                      text: ${uesio/docs.article->uesio/cms.description}
+  wires:
+    track:
+      collection: uesio/docs.track
+      fields:
+        uesio/core.id:
+        uesio/docs.name:
+        uesio/docs.description:
+        uesio/docs.slug:
+      conditions:
+        - field: uesio/docs.slug
+          param: track
+          valueSource: PARAM
+    lesson:
+      collection: uesio/docs.lesson
+      fields:
+        uesio/core.id:
+        uesio/docs.order:
+        uesio/docs.article:
+          fields:
+            uesio/cms.name:
+            uesio/cms.description:
+            uesio/cms.slug:
+        uesio/docs.track:
+          fields:
+            uesio/docs.slug:
+      conditions:
+        - field: uesio/docs.track
+          param: track
+          valueSource: PARAM
+      order:
+        - field: uesio/docs.order

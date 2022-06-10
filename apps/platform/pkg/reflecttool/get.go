@@ -23,9 +23,21 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 
 	for _, name := range names {
 
+		if obj == nil {
+			return nil, errors.New("invalid map value")
+		}
+
 		objValue := reflectValue(obj)
 		objKind := objValue.Kind()
 		objType := objValue.Type()
+		if objKind == reflect.Map {
+			mapValue := objValue.MapIndex(reflect.ValueOf(name))
+			if !mapValue.IsValid() {
+				return nil, errors.New("bad value here")
+			}
+			obj = mapValue.Interface()
+			continue
+		}
 		if objKind != reflect.Struct && objKind != reflect.Ptr {
 			return nil, errors.New("Cannot use GetField on a non-struct interface")
 		}
@@ -77,31 +89,14 @@ func getMap(from reflect.Value) (interface{}, error) {
 }
 
 func getStruct(from reflect.Value) (interface{}, error) {
-	structFieldType := from.Type()
-	returnMap := map[string]interface{}{}
-	uesioNames, err := getFieldNamesReflect(structFieldType)
-	if err != nil {
-		return nil, err
-	}
-	for _, uesioName := range uesioNames {
-		fieldName, err := getFieldName(structFieldType, uesioName)
-		if err != nil {
-			return nil, err
-		}
-		val, err := getFieldReflect(from.FieldByName(fieldName))
-		if err != nil {
-			return nil, err
-		}
-		returnMap[uesioName] = val
-	}
-	return returnMap, nil
+	return from.Interface(), nil
 }
 
 func getPointer(from reflect.Value) (interface{}, error) {
 	if from.IsNil() {
 		return nil, nil
 	}
-	return getFieldReflect(from.Elem())
+	return from.Interface(), nil
 }
 
 func getFieldReflect(value reflect.Value) (interface{}, error) {

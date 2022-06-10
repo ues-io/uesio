@@ -1,4 +1,0 @@
-name: email_opt_out
-collection: crm.contacts
-type: CHECKBOX
-label: Email Opt Out

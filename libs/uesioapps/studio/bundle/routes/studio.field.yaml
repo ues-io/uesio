@@ -1,4 +1,0 @@
-name: field
-path: app/{appname}/workspace/{workspacename}/collections/{collectionname}/fields/{fieldname}
-view: studio.field
-theme: studio.default

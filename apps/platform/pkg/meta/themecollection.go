@@ -2,61 +2,55 @@ package meta
 
 import (
 	"errors"
-	"strings"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ThemeCollection slice
-type ThemeCollection []Theme
+type ThemeCollection []*Theme
 
-func (tc *ThemeCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
-// GetName function
 func (tc *ThemeCollection) GetName() string {
-	return "studio.themes"
+	return "uesio/studio.theme"
 }
 
-// GetFields function
+func (tc *ThemeCollection) GetBundleFolderName() string {
+	return "themes"
+}
+
 func (tc *ThemeCollection) GetFields() []string {
 	return StandardGetFields(&Theme{})
 }
 
-// NewItem function
 func (tc *ThemeCollection) NewItem() loadable.Item {
-	*tc = append(*tc, Theme{})
-	return &(*tc)[len(*tc)-1]
+	t := &Theme{}
+	*tc = append(*tc, t)
+	return t
 }
 
-// NewBundleableItemWithKey function
 func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Theme Key: " + key)
 	}
-	*tc = append(*tc, Theme{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	})
-	return &(*tc)[len(*tc)-1], nil
+	t := &Theme{
+		Namespace: namespace,
+		Name:      name,
+	}
+	*tc = append(*tc, t)
+	return t, nil
 }
 
-// GetKeyFromPath function
-func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (tc *ThemeCollection) GetItem(index int) loadable.Item {
-	return &(*tc)[index]
+	return (*tc)[index]
 }
 
-// Loop function
 func (tc *ThemeCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *tc {
-		err := iter(tc.GetItem(index), index)
+		err := iter(tc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -64,17 +58,10 @@ func (tc *ThemeCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (tc *ThemeCollection) Len() int {
 	return len(*tc)
 }
 
-// GetItems function
 func (tc *ThemeCollection) GetItems() interface{} {
 	return *tc
-}
-
-// Slice function
-func (tc *ThemeCollection) Slice(start int, end int) {
-
 }

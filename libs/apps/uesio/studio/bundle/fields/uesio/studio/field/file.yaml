@@ -1,0 +1,11 @@
+name: file
+type: MAP
+label: File Metadata
+subfields:
+  - name: uesio/studio.filecollection
+    label: File Collection
+    type: TEXT
+  - name: uesio/studio.accept
+    label: Accept
+    type: SELECT
+    selectList: uesio/studio.accepttypes

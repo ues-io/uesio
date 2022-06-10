@@ -1,0 +1,11 @@
+name: calloutsub
+label: Callout Subtitle
+definition:
+  uesio.styles:
+    root:
+      fontSize: 13pt
+      lineHeight: 22pt
+      color: "#888"
+      fontWeight: 300
+      margin: 30px 0
+  element: div

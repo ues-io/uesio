@@ -1,4 +1,5 @@
 type UserState = {
+	id: string
 	site: string
 	firstname: string
 	lastname: string

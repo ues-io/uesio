@@ -1,15 +1,16 @@
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
+import { useUesio } from "../hooks/hooks"
 
-type FieldEqualsValueCondition = {
-	type: "fieldEquals" | undefined
-	field: string
-	value: string
-}
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
 
-type FieldNotEqualsValueCondition = {
-	type: "fieldNotEquals"
+// If there is a record in context, only test against that record
+// If there is no record in context, test against all records in the wire.
+type FieldValueCondition = {
+	type: "fieldValue" | undefined
+	wire?: string
 	field: string
+	operator: DisplayOperator
 	value: string
 }
 
@@ -18,10 +19,20 @@ type ParamIsSetCondition = {
 	param: string
 }
 
-type ParamIsValueCondition = {
-	type: "paramIsValue"
+type ParamValueCondition = {
+	type: "paramValue"
 	param: string
+	operator: DisplayOperator
 	value: string
+}
+
+type HasNoValueCondition = {
+	type: "hasNoValue"
+	value: unknown
+}
+type HasValueCondition = {
+	type: "hasValue"
+	value: unknown
 }
 
 type CollectionContextCondition = {
@@ -34,13 +45,35 @@ type FeatureFlagCondition = {
 	name: string
 }
 
+type FieldModeCondition = {
+	type: "fieldMode"
+	mode: "READ" | "EDIT"
+}
+
 type DisplayCondition =
-	| FieldEqualsValueCondition
-	| FieldNotEqualsValueCondition
+	| HasNoValueCondition
+	| HasValueCondition
+	| FieldValueCondition
 	| ParamIsSetCondition
-	| ParamIsValueCondition
+	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
+	| FieldModeCondition
+
+function compare(a: unknown, b: unknown, op: DisplayOperator) {
+	if (
+		a &&
+		b &&
+		Object.prototype.toString.call(a) +
+			Object.prototype.toString.call(b) !==
+			"[object String][object String]"
+	)
+		console.warn(
+			"You're comparing objects in a display condition, this is probably an error"
+		)
+
+	return op === "NOT_EQUALS" ? a !== b : a === b
+}
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -48,37 +81,90 @@ function should(condition: DisplayCondition, context: Context) {
 		const collection = wire?.getCollection()
 		return collection?.getFullName() === condition.collection
 	}
+
 	if (condition.type === "paramIsSet") {
-		return !!context.getView()?.params?.[condition.param]
+		return !!context.getParam(condition.param)
 	}
-	if (condition.type === "paramIsValue") {
-		return context.getView()?.params?.[condition.param] === condition.value
+
+	if (condition.type === "fieldMode") {
+		return condition.mode === context.getFieldMode()
 	}
+
 	if (condition.type === "featureFlag") {
-		const featureflags = context.getViewDef()?.dependencies?.featureflags
-		const featureFlag = featureflags && featureflags[condition.name]
+		// const featureflags = context.getViewDef()?.dependencies?.featureflags
+		// const featureFlag = featureflags && featureflags[condition.name]
+		// return featureFlag && featureFlag?.value
+		return false
+	}
 
-		if (!featureFlag) {
-			return false
+	const compareToValue =
+		typeof condition.value === "string"
+			? context.merge(condition.value as string)
+			: condition.value || ""
+
+	if (condition.type === "hasNoValue") return !compareToValue
+	if (condition.type === "hasValue") return !!compareToValue
+	if (condition.type === "paramValue")
+		return compare(
+			context.getParam(condition.param),
+			compareToValue,
+			condition.operator
+		)
+
+	if (!condition.type || condition.type === "fieldValue") {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+
+		const ctxRecord = ctx.getRecord()
+		// If we have a record in context, use it.
+		if (ctxRecord)
+			return compare(
+				compareToValue,
+				ctxRecord.getFieldValue(condition.field) || "",
+				condition.operator
+			)
+
+		// If we have no record in context, test against all records in the wire.
+		const ctxWire = ctx.getWire()
+		if (ctxWire) {
+			const records = ctxWire.getData()
+
+			// When we check for false condition, we want to check every record.
+			const arrayMethod =
+				condition.operator === "NOT_EQUALS" ? "every" : "some"
+
+			// If there are no records, not_equal applies
+			if (condition.operator === "NOT_EQUALS" && !records.length)
+				return true
+
+			return records[arrayMethod]((r) =>
+				compare(
+					compareToValue,
+					r.getFieldValue(condition.field) || "",
+					condition.operator
+				)
+			)
 		}
-
-		return featureFlag && featureFlag?.value
+		return false
 	}
-	const record = context.getRecord()
-	const value = record?.getFieldValue(condition.field)
 
-	if (condition.type === "fieldNotEquals") {
-		return value !== condition.value
-	}
-	return value === condition.value
+	console.warn(`Unknown display condition type: ${condition.type}`)
+	return true
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
 	const displayLogic = definition?.["uesio.display"] as
 		| DisplayCondition[]
 		| undefined
+
+	const uesio = useUesio({ context })
 	if (displayLogic?.length) {
 		for (const condition of displayLogic) {
+			// Weird hack for now
+			if (!condition.type && condition.wire) {
+				uesio.wire.useWire(condition.wire)
+			}
 			if (!should(condition, context)) {
 				return false
 			}

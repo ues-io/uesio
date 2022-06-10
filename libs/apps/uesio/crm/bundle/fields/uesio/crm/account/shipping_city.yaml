@@ -1,0 +1,3 @@
+name: shipping_city
+type: TEXT
+label: Shipping City

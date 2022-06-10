@@ -1,0 +1,6 @@
+name: leads
+path: leads
+view: uesio/crm.leads
+theme: uesio/crm.default
+collection: uesio/crm.lead
+viewtype: list

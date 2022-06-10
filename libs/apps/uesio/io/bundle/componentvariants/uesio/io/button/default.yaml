@@ -1,0 +1,11 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      fontSize: 10pt
+      "&:focus":
+        outline: none
+public: true

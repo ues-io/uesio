@@ -1,0 +1,36 @@
+name: lesson
+label: Lesson navigation
+definition:
+  uesio.styles:
+    root:
+      borderLeft: "1px solid #c7c7c7"
+      paddingLeft: 8px
+    nav:
+    title:
+      fontFamily: Gosha
+      margin-bottom: 0.25em
+    navItem:
+      position: relative
+
+      "&::after":
+        content: "''"
+        opacity: 0
+        transition: all 0.3s ease
+        display: block
+        position: absolute
+        width: 3px
+        left: -9.5px
+        backgroundColor: rgb(251,96,78)
+        height: 100%
+        top: 0
+      lineHeight: 1.6
+      opacity: 0.8
+      transition: all 0.3s ease
+      "&:hover":
+        opacity: 1
+        "&::after":
+          opacity: 1
+      a:
+        color: rgb(251,96,78)
+        # color: black
+        textDecoration: none

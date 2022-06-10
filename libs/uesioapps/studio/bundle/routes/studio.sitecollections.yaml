@@ -1,4 +1,0 @@
-name: sitecollections
-path: app/{appname}/site/{sitename}/collections
-view: studio.sitecollections
-theme: studio.default

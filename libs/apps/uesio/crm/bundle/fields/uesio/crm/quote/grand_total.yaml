@@ -1,0 +1,5 @@
+name: grand_total
+type: NUMBER
+label: Grand Total
+number:
+  decimals: 2

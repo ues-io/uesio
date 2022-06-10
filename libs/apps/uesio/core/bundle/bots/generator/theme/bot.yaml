@@ -1,0 +1,20 @@
+name: theme
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: Theme name
+    type: METADATANAME
+  primary:
+    prompt: primary color
+  secondary:
+    prompt: secondary color
+  error:
+    prompt: error color
+  warning:
+    prompt: warning color
+  info:
+    prompt: info color
+  success:
+    prompt: success color
+public: true

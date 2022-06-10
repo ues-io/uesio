@@ -1,41 +1,34 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// SiteDomainCollection slice
-type SiteDomainCollection []SiteDomain
+type SiteDomainCollection []*SiteDomain
 
-func (sdc *SiteDomainCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
-// GetName function
 func (sdc *SiteDomainCollection) GetName() string {
-	return "studio.sitedomains"
+	return "uesio/studio.sitedomain"
 }
 
-// GetFields function
 func (sdc *SiteDomainCollection) GetFields() []string {
 	return StandardGetFields(&SiteDomain{})
 }
 
-// GetItem function
 func (sdc *SiteDomainCollection) GetItem(index int) loadable.Item {
-	return &(*sdc)[index]
+	return (*sdc)[index]
 }
 
-// NewItem function
 func (sdc *SiteDomainCollection) NewItem() loadable.Item {
-	*sdc = append(*sdc, SiteDomain{})
-	return &(*sdc)[len(*sdc)-1]
+	sd := &SiteDomain{}
+	*sdc = append(*sdc, sd)
+	return sd
 }
 
-// Loop function
 func (sdc *SiteDomainCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *sdc {
-		err := iter(sdc.GetItem(index), index)
+		err := iter(sdc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -43,17 +36,10 @@ func (sdc *SiteDomainCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (sdc *SiteDomainCollection) Len() int {
 	return len(*sdc)
 }
 
-// GetItems function
 func (sdc *SiteDomainCollection) GetItems() interface{} {
 	return *sdc
-}
-
-// Slice function
-func (sdc *SiteDomainCollection) Slice(start int, end int) {
-
 }

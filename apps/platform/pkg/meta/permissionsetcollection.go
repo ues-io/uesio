@@ -1,52 +1,51 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// PermissionSetCollection slice
-type PermissionSetCollection []PermissionSet
+type PermissionSetCollection []*PermissionSet
 
-// GetName function
 func (pc *PermissionSetCollection) GetName() string {
-	return "studio.permissionsets"
+	return "uesio/studio.permissionset"
 }
 
-// GetFields function
+func (pc *PermissionSetCollection) GetBundleFolderName() string {
+	return "permissionsets"
+}
+
 func (pc *PermissionSetCollection) GetFields() []string {
 	return StandardGetFields(&PermissionSet{})
 }
 
-// NewItem function
 func (pc *PermissionSetCollection) NewItem() loadable.Item {
-	*pc = append(*pc, PermissionSet{})
-	return &(*pc)[len(*pc)-1]
+	p := &PermissionSet{}
+	*pc = append(*pc, p)
+	return p
 }
 
-// NewBundleableItemWithKey function
 func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	p, err := NewPermissionSet(key)
 	if err != nil {
 		return nil, err
 	}
-	*pc = append(*pc, *p)
-	return &(*pc)[len(*pc)-1], nil
+	*pc = append(*pc, p)
+	return p, nil
 }
 
-// GetKeyFromPath function
-func (pc *PermissionSetCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (pc *PermissionSetCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (pc *PermissionSetCollection) GetItem(index int) loadable.Item {
-	return &(*pc)[index]
+	return (*pc)[index]
 }
 
-// Loop function
 func (pc *PermissionSetCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *pc {
-		err := iter(pc.GetItem(index), index)
+		err := iter(pc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -54,20 +53,10 @@ func (pc *PermissionSetCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (pc *PermissionSetCollection) Len() int {
 	return len(*pc)
 }
 
-// GetItems function
 func (pc *PermissionSetCollection) GetItems() interface{} {
 	return *pc
-}
-
-// Slice function
-func (pc *PermissionSetCollection) Slice(start int, end int) {
-
-}
-func (bc *PermissionSetCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

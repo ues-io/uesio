@@ -1,0 +1,5 @@
+name: unit_cost
+type: NUMBER
+label: Unit Cost
+number:
+  decimals: 0

@@ -1,0 +1,137 @@
+name: labels
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    labels:
+      collection: uesio/studio.label
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+    newlabel:
+      collection: uesio/studio.label
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.value:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: labels
+                      itemIcon: tune
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+                    params:
+                      selected: labels
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Label
+                    subtitle: Something Clever
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: Create a New Label
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newlabel
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          id: labelsDeck
+                          wire: labels
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/labels/${uesio/studio.name}"
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.name}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: tune
+  panels:
+    newlabel:
+      uesio.type: uesio/io.dialog
+      title: Create a New Label
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newlabellist
+            wire: newlabel
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+              - uesio/io.field:
+                  fieldId: uesio/studio.value
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newlabel"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/labels/${uesio/studio.name}"
+        - uesio/io.button:
+            uesio.variant: uesio/io.secondary
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newlabel"

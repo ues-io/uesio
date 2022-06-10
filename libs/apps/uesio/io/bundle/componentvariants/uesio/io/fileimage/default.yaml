@@ -1,0 +1,6 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+public: true

@@ -7,14 +7,13 @@ const PANEL_BAND = "panel"
 
 interface ToggleSignal extends SignalDefinition {
 	panel: string
-	path: string
 }
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${PANEL_BAND}/TOGGLE`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.toggle(context, signal.panel, signal.path),
+			operations.toggle(context, signal.panel),
 		label: "Toggle",
 		properties: () => [
 			{
@@ -26,7 +25,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${PANEL_BAND}/OPEN`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.open(context, signal.panel, signal.path),
+			operations.open(context, signal.panel),
 		label: "Open",
 		properties: () => [
 			{

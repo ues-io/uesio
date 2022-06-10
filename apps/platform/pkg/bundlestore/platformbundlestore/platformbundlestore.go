@@ -7,12 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -22,50 +21,30 @@ import (
 type PlatformBundleStore struct {
 }
 
-// System variables
-var (
-	BundleStoreBucketName string
-	SystemSetUp           error
-)
+func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
 
-func init() {
-	SystemSetUp = InitSystemEnv()
-}
-
-//InitSystemEnv inits System variables
-func InitSystemEnv() error {
-
-	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_BUCKET_NAME")
-	if !ok {
-		return errors.New("Could not get environment variable: UESIO_BUNDLE_STORE_BUCKET_NAME")
+	fakeSession, err := auth.GetStudioAdminSession()
+	if err != nil {
+		return nil, err
 	}
-	BundleStoreBucketName = val
 
-	return nil
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", fakeSession)
 
 }
 
 func getBasePath(namespace, version string) string {
-	// We're ignoring the version here because we always get the latest
 	return filepath.Join(namespace, version, "bundle")
 }
 
 func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (io.ReadCloser, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
-	fileAdapter := &s3.FileAdapter{}
-
-	fakeSession, err := auth.GetHeadlessSession()
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return nil, err
 	}
 
-	credentials, err := adapt.GetCredentials("uesio.aws", fakeSession)
-	if err != nil {
-		return nil, err
-	}
-
-	return fileAdapter.Download(BundleStoreBucketName, filePath, credentials)
+	return conn.Download(filePath)
 
 }
 
@@ -73,49 +52,76 @@ func getStream(namespace string, version string, objectname string, filename str
 func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
-	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
-
+	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
+		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
 
 	if ok {
-		// We got a cache hit
-		return copier.Copy(item, cachedItem)
+		if app != namespace && !cachedItem.IsPublic() {
+			return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+		}
+		meta.Copy(item, cachedItem)
+		return nil
 	}
 	stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
 	if err != nil {
 		return err
 	}
 	defer stream.Close()
-	return bundlestore.DecodeYAML(item, stream)
+	err = bundlestore.DecodeYAML(item, stream)
+	if err != nil {
+		return err
+	}
+	if app != namespace && !item.IsPublic() {
+		return bundlestore.NewPermissionError("Metadata item: " + key + " is not public")
+	}
+	bundle.AddItemToCache(item, namespace, version)
+	return nil
 }
 
-// GetItems function
-func (b *PlatformBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetAllItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
+func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}
 
-	fileAdapter := &s3.FileAdapter{}
-	credentials, err := adapt.GetCredentials("uesio.aws", session)
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return err
 	}
 
-	s3Result, err := fileAdapter.List(BundleStoreBucketName, basePath, credentials)
+	paths, err := conn.List(basePath)
 	if err != nil {
 		return err
 	}
 
-	for _, fileMetadata := range s3Result.Contents {
-		path := *fileMetadata.Key
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+	for _, path := range paths {
+
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
 		if err != nil {
 			logger.LogError(err)
 			continue
@@ -131,6 +137,7 @@ func (b *PlatformBundleStore) GetItems(group meta.BundleableGroup, namespace, ve
 		if err != nil {
 			return err
 		}
+		retrievedItem.SetNamespace(namespace)
 		err = b.GetItem(retrievedItem, version, session)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
@@ -144,23 +151,21 @@ func (b *PlatformBundleStore) GetItems(group meta.BundleableGroup, namespace, ve
 
 }
 
-// GetFileStream function
 func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
 }
 
-// GetComponentPackStream function
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
-	if buildMode {
-		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
-	}
+	fileName := componentPack.GetComponentPackFilePath(buildMode)
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
 }
 
-// GetBotStream function
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath(), session)
+}
+
+func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
 }
 
 // StoreItems function
@@ -177,14 +182,12 @@ func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemS
 func storeItem(namespace string, version string, itemStream bundlestore.ItemStream, session *sess.Session) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 
-	fileAdapter := &s3.FileAdapter{}
-
-	credentials, err := adapt.GetCredentials("uesio.aws", session)
+	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return err
 	}
 
-	err = fileAdapter.Upload(&itemStream.Buffer, BundleStoreBucketName, fullFilePath, credentials)
+	err = conn.Upload(itemStream.File, fullFilePath)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}
@@ -193,7 +196,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 }
 
 // GetBundleDef function
-func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml", session)
 	if err != nil {
@@ -206,4 +209,14 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 		return nil, err
 	}
 	return &by, nil
+}
+
+func (b *PlatformBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

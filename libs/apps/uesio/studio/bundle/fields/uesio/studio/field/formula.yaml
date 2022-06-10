@@ -1,0 +1,11 @@
+name: formula
+type: MAP
+label: Formula
+subfields:
+  - name: uesio/studio.expression
+    label: Expression
+    type: TEXT
+  - name: uesio/studio.returntype
+    label: Return Type
+    type: SELECT
+    selectList: uesio/studio.formulafieldreturntypes

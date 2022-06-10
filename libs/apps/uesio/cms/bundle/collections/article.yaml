@@ -1,0 +1,5 @@
+name: article
+label: article
+pluralLabel: articles
+nameField: uesio/cms.name
+public: true

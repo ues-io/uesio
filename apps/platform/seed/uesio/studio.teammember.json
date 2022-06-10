@@ -1,0 +1,92 @@
+[
+	{
+		"uesio/studio.app": "uesio/crm",
+		"uesio/studio.team": "uesio/crm_maintainers",
+		"uesio/studio.member": "ben"
+	},
+	{
+		"uesio/studio.app": "uesio/crm",
+		"uesio/studio.team": "uesio/crm_maintainers",
+		"uesio/studio.member": "abel"
+	},
+	{
+		"uesio/studio.app": "uesio/crm",
+		"uesio/studio.team": "uesio/crm_maintainers",
+		"uesio/studio.member": "wessel"
+	},
+	{
+		"uesio/studio.app": "uesio/crm",
+		"uesio/studio.team": "uesio/crm_maintainers",
+		"uesio/studio.member": "gregg"
+	},
+	{
+		"uesio/studio.app": "uesio/cms",
+		"uesio/studio.team": "uesio/cms_maintainers",
+		"uesio/studio.member": "ben"
+	},
+	{
+		"uesio/studio.app": "uesio/cms",
+		"uesio/studio.team": "uesio/cms_maintainers",
+		"uesio/studio.member": "abel"
+	},
+	{
+		"uesio/studio.app": "uesio/cms",
+		"uesio/studio.team": "uesio/cms_maintainers",
+		"uesio/studio.member": "wessel"
+	},
+	{
+		"uesio/studio.app": "uesio/cms",
+		"uesio/studio.team": "uesio/cms_maintainers",
+		"uesio/studio.member": "gregg"
+	},
+	{
+		"uesio/studio.app": "uesio/studio",
+		"uesio/studio.team": "uesio/studio_maintainers",
+		"uesio/studio.member": "ben"
+	},
+	{
+		"uesio/studio.app": "uesio/studio",
+		"uesio/studio.team": "uesio/studio_maintainers",
+		"uesio/studio.member": "abel"
+	},
+	{
+		"uesio/studio.app": "uesio/docs",
+		"uesio/studio.team": "uesio/docs_maintainers",
+		"uesio/studio.member": "ben"
+	},
+	{
+		"uesio/studio.app": "uesio/docs",
+		"uesio/studio.team": "uesio/docs_maintainers",
+		"uesio/studio.member": "abel"
+	},
+	{
+		"uesio/studio.app": "uesio/docs",
+		"uesio/studio.team": "uesio/docs_maintainers",
+		"uesio/studio.member": "wessel"
+	},
+	{
+		"uesio/studio.app": "uesio/docs",
+		"uesio/studio.team": "uesio/docs_maintainers",
+		"uesio/studio.member": "gregg"
+	},
+	{
+		"uesio/studio.app": "uesio/web",
+		"uesio/studio.team": "uesio/web_maintainers",
+		"uesio/studio.member": "ben"
+	},
+	{
+		"uesio/studio.app": "uesio/web",
+		"uesio/studio.team": "uesio/web_maintainers",
+		"uesio/studio.member": "abel"
+	},
+	{
+		"uesio/studio.app": "uesio/web",
+		"uesio/studio.team": "uesio/web_maintainers",
+		"uesio/studio.member": "wessel"
+	},
+	{
+		"uesio/studio.app": "uesio/web",
+		"uesio/studio.team": "uesio/web_maintainers",
+		"uesio/studio.member": "gregg"
+	}
+]

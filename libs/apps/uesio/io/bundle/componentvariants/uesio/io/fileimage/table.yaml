@@ -1,0 +1,12 @@
+name: table
+label: Table
+definition:
+  uesio.styles:
+    root:
+      padding: 2px
+      maxWidth: 80px
+      margin: auto
+    nofileicon:
+      fontSize: "24px"
+      padding: "16px"
+public: true

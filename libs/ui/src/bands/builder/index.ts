@@ -1,12 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 import { BuilderState } from "./types"
-import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
-import builderOps from "./operations"
+import { Definition, DefinitionMap } from "../../definition/definition"
 
-import { getMetadataListKey } from "./selectors"
 import { getParentPath } from "../../component/path"
-import { set as setRoute } from "../route"
 
 type SetDefinitionPayload = {
 	path: string
@@ -17,13 +14,6 @@ type AddDefinitionPayload = {
 	path: string
 	definition: Definition
 	index?: number
-	type?: string
-}
-
-type AddDefinitionPairPayload = {
-	path: string
-	definition: Definition
-	key: string
 	type?: string
 }
 
@@ -42,9 +32,10 @@ type ChangeDefinitionKeyPayload = {
 	key: string
 }
 
-type YamlUpdatePayload = {
-	path: string
-	yaml: YamlDoc
+type SetDefinitionContentPayload = {
+	metadataType: string
+	metadataItem: string
+	content: string
 }
 
 type CloneDefinitionPayload = {
@@ -78,14 +69,6 @@ const builderSlice = createSlice({
 				const def = payload.definition as DefinitionMap
 				const key = Object.keys(def)[0]
 				state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
-			}
-		},
-		addDefinitionPair: (
-			state,
-			{ payload }: PayloadAction<AddDefinitionPairPayload>
-		) => {
-			if (payload.type === "wire" || payload.type === "panel") {
-				state.selectedNode = `${payload.path}["${payload.key}"]`
 			}
 		},
 		removeDefinition: (
@@ -124,8 +107,12 @@ const builderSlice = createSlice({
 			state.selectedNode = ""
 			state.lastModifiedNode = ""
 		},
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
+		setDefinitionContent: (
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			state,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			action: PayloadAction<SetDefinitionContentPayload>
+		) => {
 			//state.lastModifiedNode = payload.path
 		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
@@ -141,62 +128,6 @@ const builderSlice = createSlice({
 			state.droppingNode = payload
 		},
 	},
-	extraReducers: (builder) => {
-		builder.addCase(
-			builderOps.getAvailableNamespaces.fulfilled,
-			(state, { payload }) => {
-				state.namespaces = {
-					status: "FULFILLED",
-					data: payload,
-				}
-			}
-		)
-		builder.addCase(builderOps.getAvailableNamespaces.pending, (state) => {
-			state.namespaces = {
-				status: "PENDING",
-				data: null,
-			}
-		})
-		builder.addCase(
-			builderOps.getMetadataList.fulfilled,
-			(state, { payload, meta }) => {
-				const key = getMetadataListKey(
-					meta.arg.metadataType,
-					meta.arg.namespace,
-					meta.arg.grouping
-				)
-				if (!state.metadata) {
-					state.metadata = {}
-				}
-				state.metadata[key] = {
-					status: "FULFILLED",
-					data: payload,
-				}
-			}
-		)
-		builder.addCase(
-			builderOps.getMetadataList.pending,
-			(state, { meta }) => {
-				const key = getMetadataListKey(
-					meta.arg.metadataType,
-					meta.arg.namespace,
-					meta.arg.grouping
-				)
-				if (!state.metadata) {
-					state.metadata = {}
-				}
-				state.metadata[key] = {
-					status: "PENDING",
-					data: null,
-				}
-			}
-		)
-
-		builder.addCase(setRoute, (state) => {
-			state.namespaces = null
-			state.metadata = null
-		})
-	},
 })
 
 export const {
@@ -207,11 +138,11 @@ export const {
 	setDefinition,
 	cloneDefinition,
 	addDefinition,
-	addDefinitionPair,
+
 	removeDefinition,
 	moveDefinition,
 	changeDefinitionKey,
-	setYaml,
+	setDefinitionContent,
 	save,
 	cancel,
 } = builderSlice.actions
@@ -219,10 +150,9 @@ export {
 	CloneDefinitionPayload,
 	SetDefinitionPayload,
 	AddDefinitionPayload,
-	AddDefinitionPairPayload,
 	RemoveDefinitionPayload,
 	MoveDefinitionPayload,
 	ChangeDefinitionKeyPayload,
-	YamlUpdatePayload,
+	SetDefinitionContentPayload,
 }
 export default builderSlice.reducer

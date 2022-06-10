@@ -1,6 +1,0 @@
-name: bundle
-collection: studio.bundledependencies
-type: REFERENCE
-label: Bundle
-reference:
-  collection: studio.bundles

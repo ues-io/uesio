@@ -1,0 +1,3 @@
+name: shipping_zip
+type: TEXT
+label: Shipping ZIP

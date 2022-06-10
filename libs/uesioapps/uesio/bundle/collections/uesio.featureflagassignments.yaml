@@ -1,4 +1,0 @@
-name: featureflagassignments
-dataSource: uesio.platform
-idFormat: "${uesio.key}"
-nameField: uesio.key

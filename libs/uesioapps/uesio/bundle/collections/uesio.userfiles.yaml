@@ -1,4 +1,0 @@
-name: userfiles
-dataSource: uesio.platform
-idFormat: "${uesio.collectionid}_${uesio.recordid}_${uesio.type}_${uesio.name}"
-nameField: uesio.name

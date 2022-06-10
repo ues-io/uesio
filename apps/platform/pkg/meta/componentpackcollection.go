@@ -3,45 +3,46 @@ package meta
 import (
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ComponentPackCollection slice
-type ComponentPackCollection []ComponentPack
+type ComponentPackCollection []*ComponentPack
 
-// GetName function
 func (cpc *ComponentPackCollection) GetName() string {
-	return "studio.componentpacks"
+	return "uesio/studio.componentpack"
 }
 
-// GetFields function
+func (cpc *ComponentPackCollection) GetBundleFolderName() string {
+	return "componentpacks"
+}
+
 func (cpc *ComponentPackCollection) GetFields() []string {
 	return StandardGetFields(&ComponentPack{})
 }
 
-// NewItem function
 func (cpc *ComponentPackCollection) NewItem() loadable.Item {
-	*cpc = append(*cpc, ComponentPack{})
-	return &(*cpc)[len(*cpc)-1]
+	cp := &ComponentPack{}
+	*cpc = append(*cpc, cp)
+	return cp
 }
 
-// NewBundleableItemWithKey function
 func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
 	}
-	*cpc = append(*cpc, ComponentPack{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	})
-	return &(*cpc)[len(*cpc)-1], nil
+	cp := &ComponentPack{
+		Namespace: namespace,
+		Name:      name,
+	}
+	*cpc = append(*cpc, cp)
+	return cp, nil
 }
 
-// GetKeyFromPath function
-func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+func (cpc *ComponentPackCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
 	if len(conditions) > 0 {
 		return "", errors.New("Conditions not allowed for component packs")
 	}
@@ -50,18 +51,16 @@ func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions Bundl
 		// Ignore this file
 		return "", nil
 	}
-	return parts[0], nil
+	return namespace + "." + parts[0], nil
 }
 
-// GetItem function
 func (cpc *ComponentPackCollection) GetItem(index int) loadable.Item {
-	return &(*cpc)[index]
+	return (*cpc)[index]
 }
 
-// Loop function
 func (cpc *ComponentPackCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cpc {
-		err := iter(cpc.GetItem(index), index)
+		err := iter(cpc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -69,21 +68,10 @@ func (cpc *ComponentPackCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
 }
 
-// GetItems function
 func (cpc *ComponentPackCollection) GetItems() interface{} {
 	return *cpc
-}
-
-// Slice function
-func (cpc *ComponentPackCollection) Slice(start int, end int) {
-
-}
-
-func (bc *ComponentPackCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

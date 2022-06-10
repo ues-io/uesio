@@ -1,4 +1,0 @@
-name: files
-path: app/{appname}/workspace/{workspacename}/files
-view: studio.files
-theme: studio.default

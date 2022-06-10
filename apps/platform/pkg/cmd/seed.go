@@ -3,15 +3,12 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -20,7 +17,7 @@ import (
 
 func init() {
 
-	RootCmd.AddCommand(&cobra.Command{
+	rootCmd.AddCommand(&cobra.Command{
 		Use:   "seed",
 		Short: "Seed Database",
 		Run:   seed,
@@ -70,75 +67,10 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func installBundles(session *sess.Session, bundleNames ...string) error {
-	sysbs := &systembundlestore.SystemBundleStore{}
-
-	for _, bundleName := range bundleNames {
-		err := datasource.CreateBundle(bundleName, "v0.0.1", "v0.0.1", "Seed Install: "+bundleName, sysbs, session)
-		if err != nil {
-			logger.LogError(errors.New("Bundle already installed: " + bundleName))
-			// Don't return error here because we're ok with this error
-		}
-		err = datasource.StoreBundleAssets(bundleName, "v0.0.1", "v0.0.1", sysbs, session)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func seed(cmd *cobra.Command, args []string) {
-
-	logger.Log("Running seed command!", logger.INFO)
-
-	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
-	if platformDSType == "" {
-		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
-	}
-
-	platformDSCredentials := os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS")
-	if platformDSCredentials == "" {
-		logger.Log("No Platform Data Source Credentials Specified", logger.ERROR)
-	}
-
-	session, err := auth.GetHeadlessSession()
+func runSeeds(connection adapt.Connection, session *sess.Session) error {
+	err := connection.Migrate()
 	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllViews:  true,
-		AllowAllRoutes: true,
-		AllowAllFiles:  true,
-	})
-
-	// Get the adapter for the platform DS Type
-	adapter, err := adapt.GetAdapter(platformDSType, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	credentials, err := adapt.GetCredentials(platformDSCredentials, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = adapter.Migrate(credentials)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Install Default Bundles
-	// This takes code from the /libs/uesioapps code in the repo
-	// and installs it into the localbundlestore.
-	err = installBundles(session, "sample", "crm")
-	if err != nil {
-		logger.LogError(err)
-		return
+		return err
 	}
 
 	var apps meta.AppCollection
@@ -147,40 +79,91 @@ func seed(cmd *cobra.Command, args []string) {
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
+	var loginmethods meta.LoginMethodCollection
 	var configstorevalues meta.ConfigStoreValueCollection
 
-	err = populateSeedData(&apps, &bundles, &workspaces, &sites, &sitedomains, &users, &configstorevalues)
+	err = populateSeedData(
+		&apps,
+		&bundles,
+		&workspaces,
+		&sites,
+		&sitedomains,
+		&users,
+		&loginmethods,
+		&configstorevalues,
+	)
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
 	}
 
 	var teams adapt.Collection
 	var teammembers adapt.Collection
+	var bundlelistings adapt.Collection
 
-	err = getSeedDataFile(&teams, "studio.teams.json")
+	err = getSeedDataFile(&teams, "uesio/studio.team.json")
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
+	}
+	err = getSeedDataFile(&bundlelistings, "uesio/studio.bundlelisting.json")
+	if err != nil {
+		return err
 	}
 
-	err = getSeedDataFile(&teammembers, "studio.teammembers.json")
+	err = getSeedDataFile(&teammembers, "uesio/studio.teammember.json")
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
 	}
 
-	err = datasource.Save([]datasource.SaveRequest{
+	return datasource.SaveWithOptions([]datasource.SaveRequest{
+		getPlatformSeedSR(&users),
+		getPlatformSeedSR(&loginmethods),
 		getPlatformSeedSR(&apps),
 		getPlatformSeedSR(&bundles),
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
-		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&configstorevalues),
-		getSeedSR("studio.teams", &teams),
-		getSeedSR("studio.teammembers", &teammembers),
-	}, session)
+		getSeedSR("uesio/studio.team", &teams),
+		getSeedSR("uesio/studio.teammember", &teammembers),
+		getSeedSR("uesio/studio.bundlelisting", &bundlelistings),
+	}, session, datasource.GetConnectionSaveOptions(connection))
+}
+
+func seed(cmd *cobra.Command, args []string) {
+
+	logger.Log("Running seed command!", logger.INFO)
+
+	session, err := auth.GetStudioAdminSession()
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	connection, err := datasource.GetPlatformConnection(session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	err = runSeeds(connection, session)
+	if err != nil {
+		logger.Log("Seeds Failed", logger.ERROR)
+		logger.LogError(err)
+		err := connection.RollbackTransaction()
+		if err != nil {
+			logger.LogError(err)
+			return
+		}
+		return
+	}
+
+	err = connection.CommitTransaction()
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -188,5 +171,4 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Success", logger.INFO)
 
-	time.Sleep(100 * time.Millisecond)
 }

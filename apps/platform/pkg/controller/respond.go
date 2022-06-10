@@ -3,7 +3,10 @@ package controller
 import (
 	"encoding/json"
 	"io"
+	"mime"
 	"net/http"
+	"path/filepath"
+	"time"
 
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -31,8 +34,29 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 	}
 }
 
-func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream io.ReadCloser) {
+func respondFile(w http.ResponseWriter, r *http.Request, fileName string, modTime time.Time, stream io.ReadCloser) {
+	if stream == nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Resource Not Found"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			logger.LogErrorWithTrace(r, err)
+		}
+		w.Write(jsonResp)
+		return
+	}
+
 	defer stream.Close()
+
+	seeker, ok := stream.(io.ReadSeekCloser)
+	if ok {
+		http.ServeContent(w, r, fileName, modTime, seeker)
+		return
+	}
+
+	mimeType := mime.TypeByExtension(filepath.Ext(fileName))
 
 	w.Header().Set("content-type", mimeType)
 
@@ -42,4 +66,5 @@ func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream
 		http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
 		return
 	}
+
 }

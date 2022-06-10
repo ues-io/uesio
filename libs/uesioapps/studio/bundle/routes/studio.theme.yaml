@@ -1,4 +1,0 @@
-name: theme
-path: app/{appname}/workspace/{workspacename}/themes/{themename}
-view: studio.theme
-theme: studio.default

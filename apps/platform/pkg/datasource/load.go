@@ -1,14 +1,15 @@
 package datasource
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
 type SpecialReferences struct {
@@ -19,23 +20,70 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			OnDelete:   "CASCADE",
-			Collection: "uesio.userfiles",
+			Collection: "uesio/core.userfile",
 		},
-		Fields: []string{"uesio.mimetype", "uesio.name"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.name", "uesio/core.filename"},
 	},
 	"USER": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			Collection: "uesio.users",
+			Collection: "uesio/core.user",
 		},
-		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
+		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.picture"},
 	},
+}
+
+type LoadOptions struct {
+	Connections map[string]adapt.Connection
+	Metadata    *adapt.MetadataCache
+}
+
+func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
+	subFields := FieldsMap{}
+	for _, subField := range loadFields {
+		subFields[subField.ID] = *getSubFields(subField.Fields)
+	}
+	return &subFields
+}
+
+func processLookupConditions(
+	op *adapt.LoadOp,
+	metadata *adapt.MetadataCache,
+	ops []*adapt.LoadOp,
+) error {
+
+	for i, condition := range op.Conditions {
+
+		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
+
+			// Look through the previous wires to find the one to look up on.
+			var lookupOp *adapt.LoadOp
+			for _, lop := range ops {
+				if lop.WireName == condition.LookupWire {
+					lookupOp = lop
+					break
+				}
+			}
+
+			if lookupOp.Collection.Len() != 1 {
+				return errors.New("Must lookup on wires with only one record: " + strconv.Itoa(lookupOp.Collection.Len()))
+			}
+
+			value, err := lookupOp.Collection.GetItem(0).GetField(condition.LookupField)
+			if err != nil {
+				return err
+			}
+			op.Conditions[i].Value = value
+			op.Conditions[i].ValueSource = ""
+		}
+	}
+
+	return nil
 }
 
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	session *sess.Session,
 ) error {
 	collectionKey := op.CollectionName
@@ -48,12 +96,8 @@ func getMetadataForLoad(
 	}
 
 	for _, requestField := range op.Fields {
-		subFields := FieldsMap{}
-		for _, subField := range requestField.Fields {
-			// TODO: This should be recursive
-			subFields[subField.ID] = FieldsMap{}
-		}
-		err := collections.AddField(collectionKey, requestField.ID, &subFields)
+		subFields := getSubFields(requestField.Fields)
+		err := collections.AddField(collectionKey, requestField.ID, subFields)
 		if err != nil {
 			return err
 		}
@@ -109,24 +153,32 @@ func getMetadataForLoad(
 		}
 		specialRef, ok := specialRefs[fieldMetadata.Type]
 		if ok {
+			if len(op.Fields[i].Fields) == 0 {
+				for _, fieldID := range specialRef.Fields {
+					op.Fields[i].Fields = append(op.Fields[i].Fields, adapt.LoadRequestField{
+						ID: fieldID,
+					})
+				}
+			}
+		}
 
-			fields := []adapt.LoadRequestField{}
-			for _, fieldID := range specialRef.Fields {
-				fields = append(fields, adapt.LoadRequestField{
-					ID: fieldID,
-				})
+		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.Collection != "" {
+			if len(op.Fields[i].Fields) == 0 {
+				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+				if err != nil {
+					return err
+				}
+				op.Fields[i].Fields = []adapt.LoadRequestField{
+					{
+						ID: refCollectionMetadata.NameField,
+					},
+					{
+						ID: adapt.ID_FIELD,
+					},
+				}
+
 			}
 
-			// If the reference to a different data source, we'll
-			// need to do a whole new approach to reference fields.
-			if collectionMetadata.DataSource != "uesio.platform" {
-				op.ReferencedCollections = adapt.ReferenceRegistry{}
-				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
-				refCol.AddReference(fieldMetadata)
-				refCol.AddFields(fields)
-			} else {
-				op.Fields[i].Fields = fields
-			}
 		}
 	}
 
@@ -144,17 +196,43 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
-func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	return LoadWithOptions(ops, session, true)
-}
+func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+	if options == nil {
+		options = &LoadOptions{}
+	}
+	collated := map[string][]*adapt.LoadOp{}
+	metadataResponse := &adapt.MetadataCache{}
+	// Use existing metadata if it was passed in
+	if options.Metadata != nil {
+		metadataResponse = options.Metadata
+	}
 
-func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
-	collated := map[string][]adapt.LoadOp{}
-	metadataResponse := adapt.MetadataCache{}
+	if !session.HasLabels() {
+		labels, err := translate.GetTranslatedLabels(session)
+		if err != nil {
+			return nil, err
+		}
+		session.SetLabels(labels)
+	}
+
 	// Loop over the ops and batch per data source
 	for i := range ops {
+		// Verify that the id field is present
+		hasIDField := false
+		for j := range ops[i].Fields {
+			if ops[i].Fields[j].ID == adapt.ID_FIELD {
+				hasIDField = true
+				break
+			}
+		}
+		if !hasIDField {
+			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+				ID: adapt.ID_FIELD,
+			})
+		}
+
 		op := ops[i]
-		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
+		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -167,144 +245,52 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 
 		//Set default order by: id - asc
 		if op.Order == nil {
-			idField, err := collectionMetadata.GetIDField()
-			if err != nil {
-				return nil, err
-			}
-			idFieldName := idField.GetFullName()
 			op.Order = append(op.Order, adapt.LoadRequestOrder{
-				Field: idFieldName,
+				Field: adapt.ID_FIELD,
 				Desc:  false,
 			})
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		if op.Type == "QUERY" || op.Type == "" {
-			if batch == nil {
-				batch = []adapt.LoadOp{}
-			}
-			batch = append(batch, op)
+		if op.Query {
+			batch = append(batch, ops[i])
 		}
 		collated[dsKey] = batch
 	}
 
-	var userTokens []string = nil
-	if checkPermissions {
-		tokens, err := GenerateUserAccessTokens(&metadataResponse, session)
-		if err != nil {
-			return nil, err
-		}
-		userTokens = tokens
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:    metadataResponse,
+		Connections: options.Connections,
+	}, session)
+	if err != nil {
+		return nil, err
 	}
+
+	tokens := session.GetTokens()
 
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
+		connection, err := GetConnection(dsKey, tokens, metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
 
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return nil, err
-		}
+		for _, op := range batch {
 
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return nil, err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return nil, err
-		}
-
-		err = adapter.Load(batch, &metadataResponse, credentials, userTokens)
-		if err != nil {
-			return nil, err
-		}
-
-		// Now do our supplemental reference loads
-		for i := range batch {
-			op := batch[i]
-			for colKey, referencedCol := range op.ReferencedCollections {
-				refMetadata, err := metadataResponse.GetCollection(colKey)
-				if err != nil {
-					return nil, err
-				}
-				referencedCol.Metadata = refMetadata
-
-				datasource, err := meta.NewDataSource(referencedCol.Metadata.DataSource)
-				if err != nil {
-					return nil, err
-				}
-
-				err = bundle.Load(datasource, session)
-				if err != nil {
-					return nil, err
-				}
-
-				// Now figure out which data source adapter to use
-				// and make the requests
-				// It would be better to make this requests in parallel
-				// instead of in series
-				adapterType := datasource.Type
-				adapter, err := adapt.GetAdapter(adapterType, session)
-				if err != nil {
-					return nil, err
-				}
-				credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-				if err != nil {
-					return nil, err
-				}
-
-				index := 0
-				err = op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
-					for _, reference := range referencedCol.ReferenceFields {
-						refInterface, err := item.GetField(reference.GetFullName())
-						if err != nil {
-							return err
-						}
-
-						refItem, ok := refInterface.(adapt.Item)
-						if !ok {
-							continue
-						}
-
-						value, err := refItem.GetField(referencedCol.Metadata.IDField)
-						if err != nil {
-							return err
-						}
-						referencedCol.AddID(value, adapt.ReferenceLocator{
-							RecordIndex: index,
-							Field:       reference,
-						})
-					}
-					index++
-					return nil
-				})
-				if err != nil {
-					return nil, err
-				}
-
-				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
-				}, op.Collection, adapt.ReferenceRegistry{
-					colKey: referencedCol,
-				})
-				if err != nil {
-					return nil, err
-				}
+			err := processLookupConditions(op, metadataResponse, batch)
+			if err != nil {
+				return nil, err
 			}
 
+			err = connection.Load(op)
+			if err != nil {
+				return nil, err
+			}
+			go RegisterUsageEvent("LOAD", session.GetUserID(), "DATASOURCE", dsKey, connection)
 		}
 
 	}
-	return &metadataResponse, nil
+	return metadataResponse, nil
 }

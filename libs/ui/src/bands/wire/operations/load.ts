@@ -1,16 +1,18 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Context, getWireDef } from "../../../context/context"
-import { UesioThunkAPI } from "../../utils"
+import { Context } from "../../../context/context"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
-import shortid from "shortid"
-import { PlainCollection } from "../../collection/types"
+import { nanoid } from "nanoid"
 import { PlainWire } from "../types"
-import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
+import {
+	getWiresFromDefinitonOrContext,
+	load,
+	getFullWireId,
+	getWireParts,
+} from ".."
 import { getDefaultRecord } from "../defaults/defaults"
-import { getWiresFromDefinitonOrContext } from "../adapter"
+import { ThunkFunc } from "../../../store/store"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -28,80 +30,110 @@ function getFieldsRequest(
 	})
 }
 
-export default createAsyncThunk<
-	[PlainWire[], Record<string, PlainCollection>],
-	{
-		context: Context
-		wires?: string[]
-	},
-	UesioThunkAPI
->("wire/load", async ({ context, wires }, api) => {
-	// Turn the list of wires into a load request
-	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
-	const wiresRequestMap: Record<string, PlainWire> = {}
-	const batch = {
-		wires: wiresToLoad.map((wire) => {
-			const fullWireId = getFullWireId(wire.view, wire.name)
-			wiresRequestMap[fullWireId] = wire
-			const wiredef = getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-			return {
-				wire: fullWireId,
-				type: wiredef.type,
-				collection: wiredef.collection,
-				fields: getFieldsRequest(wiredef.fields) || [],
-				conditions: getLoadRequestConditions(wire.conditions, context),
-				order: wiredef.order,
-				batchsize: wiredef.batchsize,
-				batchnumber: wire.batchnumber,
-			}
-		}),
+function getWiresMap(wires: PlainWire[]) {
+	const wiresMap: Record<string, PlainWire> = {}
+	wires.forEach((wire) => {
+		const fullWireId = getFullWireId(wire.view, wire.name)
+		wiresMap[fullWireId] = wire
+	})
+	return wiresMap
+}
+
+function getWireRequest(
+	wire: PlainWire,
+	batchnumber: number,
+	context: Context
+) {
+	const fullWireId = getFullWireId(wire.view, wire.name)
+	const wiredef = wire.def
+	if (wiredef.viewOnly)
+		throw new Error("Cannot get request for viewOnly wire: " + wire.name)
+	return {
+		wire: fullWireId,
+		query: wire.query,
+		collection: wiredef.collection,
+		fields: getFieldsRequest(wiredef.fields) || [],
+		conditions: getLoadRequestConditions(wire.conditions, context),
+		order: wiredef.order,
+		batchsize: wiredef.batchsize,
+		batchnumber,
 	}
-	const response = await api.extra.loadData(context, batch)
+}
 
-	// Add the local ids
-	const wiresResponse: Record<string, PlainWire> = {}
-	for (const wire of response?.wires || []) {
-		const requestWire = wiresRequestMap[wire.wire]
-		const [view, name] = wire.wire.split("/")
-		const data: Record<string, PlainWireRecord> = {}
-		const original: Record<string, PlainWireRecord> = {}
-		const changes: Record<string, PlainWireRecord> = {}
+export default (context: Context, wires?: string[]): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		// Turn the list of wires into a load request
+		const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+		const loadRequests = wiresToLoad
+			.filter((wire) => !wire.viewOnly)
+			.map((wire) => getWireRequest(wire, 0, context))
 
-		if (requestWire.type === "CREATE") {
-			wire.data?.push(
-				getDefaultRecord(
-					context,
-					wiresResponse,
-					response.collections,
-					view,
-					name
-				)
-			)
+		if (!loadRequests.length) {
+			return context
 		}
-
-		wire.data?.forEach((item) => {
-			const localId = shortid.generate()
-			data[localId] = item
-			original[localId] = item
-
-			if (requestWire.type === "CREATE") {
-				changes[localId] = item
-			}
+		const response = await platform.loadData(context, {
+			wires: loadRequests,
 		})
-		wiresResponse[wire.wire] = {
-			name,
-			view,
-			type: requestWire.type,
-			batchid: shortid.generate(),
-			data,
-			original,
-			changes,
-			deletes: {},
-			error: undefined,
-			conditions: requestWire.conditions,
+
+		// Add the local ids
+		const wiresRequestMap = getWiresMap(wiresToLoad)
+		const wiresResponse: Record<string, PlainWire> = {}
+		for (const wire of response?.wires || []) {
+			const requestWire = wiresRequestMap[wire.wire]
+			const [view, name] = getWireParts(wire.wire)
+			const data: Record<string, PlainWireRecord> = {}
+			const original: Record<string, PlainWireRecord> = {}
+			const changes: Record<string, PlainWireRecord> = {}
+
+			const wireDef = requestWire.def
+
+			if (!wireDef) throw new Error("No wiredef found")
+			if (wireDef.viewOnly) throw new Error("Cannot load viewOnly wire")
+			const autoCreateRecord = !!wireDef.init?.create
+
+			if (autoCreateRecord) {
+				wire.data?.push(
+					getDefaultRecord(
+						context,
+						wiresResponse,
+						response.collections,
+						view,
+						wireDef,
+						wireDef.collection
+					)
+				)
+			}
+
+			wire.data?.forEach((item) => {
+				const localId = nanoid()
+				data[localId] = item
+				original[localId] = item
+
+				if (autoCreateRecord) {
+					changes[localId] = item
+				}
+			})
+			wiresResponse[wire.wire] = {
+				name,
+				view,
+				query: true,
+				batchid: nanoid(),
+				def: wireDef,
+				data,
+				original,
+				changes,
+				deletes: {},
+				batchnumber: wire.batchnumber,
+				more: wire.more,
+				errors: undefined,
+				conditions: requestWire.conditions,
+				collection: wireDef.collection,
+			}
 		}
+
+		dispatch(load([Object.values(wiresResponse), response.collections]))
+
+		return context
 	}
 
-	return [Object.values(wiresResponse), response.collections]
-})
+export { getWireRequest, getWiresMap }

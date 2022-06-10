@@ -1,8 +1,0 @@
-name: name
-collection: studio.secrets
-type: TEXT
-label: Secret name
-required: true
-createOnly: true
-validate:
-  type: METADATA

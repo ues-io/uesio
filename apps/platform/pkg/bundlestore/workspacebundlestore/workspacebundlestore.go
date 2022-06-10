@@ -3,12 +3,14 @@ package workspacebundlestore
 import (
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,30 +20,111 @@ type WorkspaceBundleStore struct {
 
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
-	conditionsMap := item.GetConditions()
-	// Add the workspace id as a condition
-	conditionsMap["studio.workspace"] = session.GetWorkspaceID()
 
-	conditions := []adapt.LoadRequestCondition{}
-
-	for field, value := range conditionsMap {
-		conditions = append(conditions, adapt.LoadRequestCondition{
-			Field: field,
-			Value: value,
-		})
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
 	item.SetNamespace(session.GetWorkspaceApp())
 
-	return datasource.PlatformLoadOne(item, conditions, session.RemoveWorkspaceContext())
+	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field: adapt.ID_FIELD,
+				Value: item.GetDBID(session.GetWorkspaceID()),
+			},
+		},
+	}, session.RemoveWorkspaceContext())
 }
 
-// GetItems function
-func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetAllItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
+func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
+	collectionIDs := map[string][]string{}
+	itemMap := map[string]meta.BundleableItem{}
+	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
+	for _, item := range items {
+		collectionName := item.GetBundleGroup().GetBundleFolderName()
+		dbID := item.GetDBID(workspace)
+		item.SetNamespace(namespace)
+		_, ok := collectionIDs[collectionName]
+		if !ok {
+			collectionIDs[collectionName] = []string{}
+		}
+
+		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
+		itemMap[collectionName+":"+dbID] = item
+	}
+	for collectionName, ids := range collectionIDs {
+		group, err := meta.GetBundleableGroupFromType(collectionName)
+		if err != nil {
+			return err
+		}
+
+		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+			Collection: group,
+			Namespace:  namespace,
+		}, &datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    adapt.ID_FIELD,
+					Value:    ids,
+					Operator: "IN",
+				},
+			}}, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+
+		if group.Len() != len(items) {
+			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
+				value, err := item.GetField(adapt.ID_FIELD)
+				if err != nil {
+					return ""
+				}
+				return value.(string)
+			}, ids)
+			if err != nil {
+				return err
+			}
+			if len(badValues) > 0 {
+				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+			}
+		}
+
+		return group.Loop(func(item loadable.Item, _ string) error {
+			bundleable := item.(meta.BundleableItem)
+			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
+			meta.Copy(match, item)
+			return nil
+		})
+
+	}
+	return nil
+}
+
+func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
-			Field: "studio.workspace",
+			Field: "uesio/studio.workspace",
 			Value: session.GetWorkspaceID(),
 		},
 	}
@@ -56,12 +139,16 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  namespace,
-	}, loadConditions, session.RemoveWorkspaceContext())
+	}, &datasource.PlatformLoadOptions{
+		Conditions: loadConditions,
+	}, session.RemoveWorkspaceContext())
 
 }
 
-// GetFileStream function
 func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
+	if file.Content == nil {
+		return nil, nil
+	}
 	stream, userFile, err := filesource.Download(file.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
@@ -70,7 +157,6 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 	return stream, nil
 }
 
-// GetComponentPackStream function
 func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileID := componentPack.RuntimeBundle.ID
 	if buildMode {
@@ -83,7 +169,6 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 	return stream, nil
 }
 
-// GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	stream, _, err := filesource.Download(bot.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
@@ -92,52 +177,60 @@ func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, sessi
 	return stream, nil
 }
 
+func (b *WorkspaceBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return nil, errors.New("Cant use generate bot templates here yet. :(")
+}
+
 // StoreItems function
 func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
 // GetBundleDef function
-func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
-	err := datasource.PlatformLoadWithFields(
+	workspaceID := namespace + "_" + version
+	err := datasource.PlatformLoad(
 		&bdc,
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio.id",
-			},
-			{
-				ID: "studio.workspace",
-			},
-			{
-				ID: "studio.bundle",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "studio.app",
-					},
-					{
-						ID: "studio.major",
-					},
-					{
-						ID: "studio.minor",
-					},
-					{
-						ID: "studio.patch",
+		&datasource.PlatformLoadOptions{
+			Connection: connection,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+				{
+					ID: "uesio/studio.workspace",
+				},
+				{
+					ID: "uesio/studio.bundle",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio/studio.app",
+						},
+						{
+							ID: "uesio/studio.major",
+						},
+						{
+							ID: "uesio/studio.minor",
+						},
+						{
+							ID: "uesio/studio.patch",
+						},
 					},
 				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field:    "studio.workspace",
-				Value:    namespace + "_" + version,
-				Operator: "=",
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "uesio/studio.workspace",
+					Value:    workspaceID,
+					Operator: "=",
+				},
 			},
 		},
-
-		session.RemoveWorkspaceContext())
+		session.RemoveWorkspaceContext(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -146,20 +239,99 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	}
 	for i := range bdc {
 		// TODO: Possibly recurse here to get sub dependencies
+		bundleName := bdc[i].GetBundleName()
+		if bundleName == "" {
+			return nil, errors.New("Error getting bundle dependency name")
+		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
 			Version: bdc[i].GetVersionString(),
 		}
 	}
 
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return nil, errors.New("No workspace found")
+	var workspace meta.Workspace
+	err = datasource.PlatformLoadOne(
+		&workspace,
+		&datasource.PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: workspaceID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return nil, err
 	}
-	by.DefaultProfile = workspace.DefaultProfile
+
 	by.PublicProfile = workspace.PublicProfile
 	by.HomeRoute = workspace.HomeRoute
 	by.LoginRoute = workspace.LoginRoute
 	by.DefaultTheme = workspace.DefaultTheme
 
 	return &by, nil
+}
+
+func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
+	collectionIDs := map[string][]string{}
+
+	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
+	for _, item := range items {
+		collectionName := item.GetBundleGroup().GetBundleFolderName()
+		dbID := item.GetDBID(workspace)
+		_, ok := collectionIDs[collectionName]
+		if !ok {
+			collectionIDs[collectionName] = []string{}
+		}
+
+		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
+	}
+	for collectionName, ids := range collectionIDs {
+		group, err := meta.GetBundleableGroupFromType(collectionName)
+		if err != nil {
+			return err
+		}
+
+		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+			Collection: group,
+			Namespace:  namespace,
+		}, &datasource.PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    adapt.ID_FIELD,
+					Value:    ids,
+					Operator: "IN",
+				},
+			}}, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+
+		if group.Len() != len(items) {
+			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
+				value, err := item.GetField(adapt.ID_FIELD)
+				if err != nil {
+					return ""
+				}
+				return value.(string)
+			}, ids)
+			if err != nil {
+				return err
+			}
+			if len(badValues) > 0 {
+				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+			}
+		}
+
+	}
+	return nil
 }

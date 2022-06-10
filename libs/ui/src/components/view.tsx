@@ -1,18 +1,20 @@
-import { FunctionComponent, RefObject, useRef } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
-import { ViewParams } from "../bands/view/types"
-import { useViewDef } from "../bands/viewdef/selectors"
 import { css } from "@emotion/css"
+import { ViewDefinition } from "../definition/viewdef"
+import { useViewDef } from "../bands/viewdef"
+import { getComponentPackKeys } from "../bands/componentpack"
+import loadViewOp from "../bands/view/operations/load"
+import { appDispatch } from "../store/store"
 
 interface Props extends BaseProps {
 	definition: {
 		view: string
-		params?: ViewParams
+		params?: Record<string, string>
 	}
 }
-let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
 const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
@@ -21,10 +23,10 @@ const View: FunctionComponent<Props> = (props) => {
 		context,
 		definition: { params, view: viewDefId },
 	} = props
-	const newPanelsNode = useRef<HTMLDivElement>(null)
 
 	const viewId = `${viewDefId}(${path || ""})`
 	const viewDef = useViewDef(viewDefId)
+	const cpacks = getComponentPackKeys()
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -35,10 +37,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && !isSubView
-	const scriptResult = uesio.component.usePacks(
-		Object.keys(viewDef?.dependencies?.componentpacks || {}),
-		buildMode
-	)
+	const scriptResult = uesio.component.usePacks(cpacks, buildMode)
 
 	const useBuildTime = buildMode && scriptResult.loaded
 
@@ -46,19 +45,21 @@ const View: FunctionComponent<Props> = (props) => {
 		view: viewId,
 		viewDef: viewDefId,
 		buildMode: useBuildTime,
+		params: context.mergeMap(params),
 	})
 
-	const view = uesio.view.useView(
-		viewId,
-		context.mergeMap(params),
-		viewContext
-	)
+	// We need to get load the wires here.
+	useEffect(() => {
+		appDispatch()(loadViewOp(viewContext))
+	}, [JSON.stringify(params)])
 
-	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
+	if (!viewDef || !scriptResult.loaded) return null
+
+	const content = viewDef.parsed as ViewDefinition
 
 	const slot = (
 		<Slot
-			definition={viewDef.definition}
+			definition={content}
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}
@@ -66,20 +67,11 @@ const View: FunctionComponent<Props> = (props) => {
 		/>
 	)
 
-	if (isSubView) {
-		if (context.getBuildMode()) {
-			return <div className={subViewClass}>{slot}</div>
-		}
-		return <div>{slot}</div>
+	if (isSubView && context.getBuildMode()) {
+		return <div className={subViewClass}>{slot}</div>
 	}
-	panelsDomNode = newPanelsNode
-	return (
-		<div>
-			{slot}
-			<div ref={newPanelsNode} />
-		</div>
-	)
+
+	return <div>{slot}</div>
 }
 
 export default View
-export { panelsDomNode }

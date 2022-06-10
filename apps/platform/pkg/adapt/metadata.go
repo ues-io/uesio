@@ -34,7 +34,6 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
 	Namespace             string                                 `json:"namespace"`
-	IDField               string                                 `json:"idField"`
 	IDFormat              string                                 `json:"-"`
 	NameField             string                                 `json:"nameField"`
 	Createable            bool                                   `json:"createable"`
@@ -44,7 +43,10 @@ type CollectionMetadata struct {
 	Fields                map[string]*FieldMetadata              `json:"fields"`
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
+	AccessField           string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
+	TableName             string                                 `json:"-"`
+	Public                bool                                   `json:"public"`
 }
 
 // GetField function
@@ -77,11 +79,6 @@ func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {
 	return cm.GetField(cm.NameField)
 }
 
-// GetIDField function
-func (cm *CollectionMetadata) GetIDField() (*FieldMetadata, error) {
-	return cm.GetField(cm.IDField)
-}
-
 // GetFullName function
 func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
@@ -96,23 +93,28 @@ type SelectListMetadata struct {
 
 // FieldMetadata struct
 type FieldMetadata struct {
-	Name               string                    `json:"name"`
-	Namespace          string                    `json:"namespace"`
-	Createable         bool                      `json:"createable"`
-	Accessible         bool                      `json:"accessible"`
-	Updateable         bool                      `json:"updateable"`
-	Required           bool                      `json:"required"`
-	Length             int                       `json:"length"`
-	Type               string                    `json:"type"`
-	Label              string                    `json:"label"`
-	SelectListMetadata *SelectListMetadata       `json:"selectlist,omitempty"`
-	NumberMetadata     *meta.NumberMetadata      `json:"number,omitempty"`
-	ReferenceMetadata  *meta.ReferenceMetadata   `json:"reference,omitempty"`
-	FileMetadata       *meta.FileMetadata        `json:"file,omitempty"`
-	ValidationMetadata *meta.ValidationMetadata  `json:"validate,omitempty"`
-	AutoPopulate       string                    `json:"autopopulate,omitempty"`
-	SubFields          map[string]*FieldMetadata `json:"subfields,omitempty"`
-	SubType            string                    `json:"subtype,omitempty"`
+	Name                   string                       `json:"name"`
+	Namespace              string                       `json:"namespace"`
+	Createable             bool                         `json:"createable"`
+	Accessible             bool                         `json:"accessible"`
+	Updateable             bool                         `json:"updateable"`
+	Required               bool                         `json:"required"`
+	Length                 int                          `json:"length"`
+	Type                   string                       `json:"type"`
+	Label                  string                       `json:"label"`
+	SelectListMetadata     *SelectListMetadata          `json:"selectlist,omitempty"`
+	NumberMetadata         *meta.NumberMetadata         `json:"number,omitempty"`
+	ReferenceMetadata      *meta.ReferenceMetadata      `json:"reference,omitempty"`
+	ReferenceGroupMetadata *meta.ReferenceGroupMetadata `json:"referencegroup,omitempty"`
+	FileMetadata           *meta.FileMetadata           `json:"file,omitempty"`
+	ValidationMetadata     *meta.ValidationMetadata     `json:"validate,omitempty"`
+	AutoNumberMetadata     *meta.AutoNumberMetadata     `json:"autonumber,omitempty"`
+	FormulaMetadata        *meta.FormulaMetadata        `json:"-"`
+	AutoPopulate           string                       `json:"autopopulate,omitempty"`
+	SubFields              map[string]*FieldMetadata    `json:"subfields,omitempty"`
+	SubType                string                       `json:"subtype,omitempty"`
+	ColumnName             string                       `json:"-"`
+	IsFormula              bool                         `json:"-"`
 }
 
 // GetFullName function

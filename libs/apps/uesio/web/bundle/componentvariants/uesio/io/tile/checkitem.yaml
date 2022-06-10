@@ -1,0 +1,17 @@
+name: checkitem
+label: Check Item
+definition:
+  uesio.styles:
+    root:
+      color: "#888"
+      fontWeight: 300
+      margin: 20px 0
+      alignItems: baseline
+  avatar:
+    - uesio/io.text:
+        uesio.styles:
+          root:
+            fontSize: 16pt
+        uesio.variant: uesio/io.icon
+        color: green
+        text: check

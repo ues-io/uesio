@@ -1,4 +1,0 @@
-name: teammembers
-dataSource: uesio.platform
-idFormat: "${studio.team}_${studio.member}"
-nameField: studio.member

@@ -1,4 +1,0 @@
-name: service_sub_category
-collection: crm.services
-type: TEXT
-label: Service Sub Category

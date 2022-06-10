@@ -1,6 +1,0 @@
-name: content
-collection: studio.files
-type: FILE
-label: Content
-file:
-  filecollection: uesio.platform

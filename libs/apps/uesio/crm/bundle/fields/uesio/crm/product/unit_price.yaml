@@ -1,0 +1,5 @@
+name: unit_price
+type: NUMBER
+label: Unit Price
+number:
+  decimals: 0

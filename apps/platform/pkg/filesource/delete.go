@@ -12,12 +12,18 @@ import (
 // Delete function
 func Delete(userFileID string, session *sess.Session) error {
 	userFile := meta.UserFileMetadata{}
-	err := datasource.PlatformLoadOne(&userFile, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: userFileID,
+	err := datasource.PlatformLoadOne(
+		&userFile,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: userFileID,
+				},
+			},
 		},
-	}, session)
+		session,
+	)
 
 	if err != nil {
 		return err
@@ -31,12 +37,12 @@ func Delete(userFileID string, session *sess.Session) error {
 		return err
 	}
 
-	collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, collectionID, fieldID)
+	_, fieldMetadata, err := getUploadMetadata(metadataResponse, collectionID, fieldID)
 	if err != nil {
 		return err
 	}
 
-	err = datasource.PlatformDeleteOne(&userFile, session)
+	err = datasource.PlatformDeleteOne(&userFile, nil, session)
 	if err != nil {
 		return err
 	}
@@ -53,8 +59,8 @@ func Delete(userFileID string, session *sess.Session) error {
 				Wire:       "filefieldupdate",
 				Changes: &adapt.Collection{
 					{
-						fieldID:                    nil,
-						collectionMetadata.IDField: userFile.RecordID,
+						fieldID:        nil,
+						adapt.ID_FIELD: userFile.RecordID,
 					},
 				},
 			},

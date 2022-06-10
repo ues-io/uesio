@@ -1,6 +1,0 @@
-name: reorder_level
-collection: crm.products
-type: NUMBER
-label: Reorder Level
-number:
-  decimals: 0

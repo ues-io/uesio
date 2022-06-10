@@ -1,5 +1,0 @@
-name: dialect
-collection: studio.bots
-type: SELECT
-label: Dialect
-selectList: studio.botdialect

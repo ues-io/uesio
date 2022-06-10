@@ -1,4 +1,0 @@
-name: shipping_city
-collection: crm.accounts
-type: TEXT
-label: Shipping City

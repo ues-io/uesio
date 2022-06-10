@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -32,6 +33,7 @@ type UserMergeData struct {
 	Site      string `json:"site"`
 	ID        string `json:"id"`
 	PictureID string `json:"picture"`
+	Language  string `json:"language"`
 }
 
 // SiteMergeData stuff to merge
@@ -63,12 +65,13 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route       *RouteMergeData      `json:"route"`
-	User        *UserMergeData       `json:"user"`
-	Site        *SiteMergeData       `json:"site"`
-	Workspace   *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component   *ComponentsMergeData `json:"component,omitempty"`
-	ReactBundle string               `json:"-"`
+	Route        *RouteMergeData            `json:"route"`
+	User         *UserMergeData             `json:"user"`
+	Site         *SiteMergeData             `json:"site"`
+	Workspace    *WorkspaceMergeData        `json:"workspace,omitempty"`
+	Component    *ComponentsMergeData       `json:"component,omitempty"`
+	ThemePreload *routing.MetadataMergeData `json:"theme,omitempty"`
+	ReactBundle  string                     `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -97,8 +100,9 @@ func GetUserMergeData(session *sess.Session) *UserMergeData {
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
 		Profile:   userInfo.Profile,
-		PictureID: userInfo.Picture.ID,
+		PictureID: userInfo.GetPictureID(),
 		Site:      session.GetSite().ID,
+		Language:  userInfo.Language,
 	}
 }
 
@@ -118,11 +122,11 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 		return nil
 	}
 	return &ComponentsMergeData{
-		IDs: []string{"$root/uesio.runtime/buildmode"},
+		IDs: []string{"$root/uesio/studio.runtime/buildmode"},
 		Entities: map[string]ComponentMergeData{
-			"$root/uesio.runtime/buildmode": {
+			"$root/uesio/studio.runtime/buildmode": {
 				ID:            "buildmode",
-				ComponentType: "uesio.runtime",
+				ComponentType: "uesio/studio.runtime",
 				View:          "$root",
 				State:         true,
 			},
@@ -131,7 +135,7 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 }
 
 // ExecuteIndexTemplate function
-func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bool, session *sess.Session) {
+func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
@@ -155,13 +159,13 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
 			Name:      site.Name,
-			Version:   site.Bundle.GetVersionString(),
-			App:       site.App.ID,
+			App:       site.GetAppID(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		Component:   GetComponentMergeData(buildMode),
-		ReactBundle: ReactSrc,
+		ThemePreload: preload.GetThemes(),
+		Component:    GetComponentMergeData(buildMode),
+		ReactBundle:  ReactSrc,
 	}
 
 	// Not checking this error for now.

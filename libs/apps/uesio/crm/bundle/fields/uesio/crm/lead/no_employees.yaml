@@ -1,0 +1,5 @@
+name: no_employees
+type: NUMBER
+label: No. of Employess
+number:
+  decimals: 0

@@ -1,0 +1,6 @@
+name: major
+type: NUMBER
+label: "Major version"
+readOnly: true
+number:
+  decimals: 0

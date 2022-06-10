@@ -1,0 +1,4 @@
+name: rating
+type: SELECT
+label: Rating
+selectList: uesio/crm.rating

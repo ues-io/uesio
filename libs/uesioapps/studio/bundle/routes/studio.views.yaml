@@ -1,4 +1,0 @@
-name: views
-path: app/{appname}/workspace/{workspacename}/views
-view: studio.views
-theme: studio.default

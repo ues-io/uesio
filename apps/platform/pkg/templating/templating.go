@@ -3,6 +3,7 @@ package templating
 import (
 	"bytes"
 	"errors"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -57,15 +58,33 @@ func NewWithFuncs(templateString string, defaultTemplateFunc interface{}, templa
 		defaultTemplateKey: defaultTemplateFunc,
 	}
 
-	replaceStrings := []string{"${", "{{ " + defaultTemplateKey + " . \"", "}", "\" }}"}
+	validKeys := []string{
+		defaultTemplateKey,
+	}
 	for key := range templateFuncs {
-		replaceStrings = append(replaceStrings, "$"+key+"{", "{{ "+key+" . \"")
+		validKeys = append(validKeys, key)
 		templateFuncMap[key] = templateFuncs[key]
 	}
-	templateText := strings.NewReplacer(replaceStrings...).Replace(templateString)
 
-	return template.New("").Funcs(templateFuncMap).Parse(templateText)
+	final := MergeTemplate(templateString, validKeys, func(mergeFunc string, mergeValue string) string {
+		if mergeFunc == "" {
+			mergeFunc = defaultTemplateKey
+		}
+		return "{{ " + mergeFunc + " . \"" + mergeValue + "\" }}"
+	})
 
+	return template.New("").Funcs(templateFuncMap).Parse(final)
+
+}
+
+func MergeTemplate(templateString string, validFuncKeys []string, templateFunc func(mergeFunc string, mergeValue string) string) string {
+	re := regexp.MustCompile("\\$(" + strings.Join(validFuncKeys, "|") + "|)\\{(.*?)\\}")
+	return re.ReplaceAllStringFunc(templateString, func(s string) string {
+		parts := strings.SplitN(s, "{", 2)
+		mergeFunc := strings.TrimPrefix(parts[0], "$")
+		mergeValue := strings.TrimSuffix(parts[1], "}")
+		return templateFunc(mergeFunc, mergeValue)
+	})
 }
 
 // Execute function

@@ -1,12 +1,11 @@
-import { FunctionComponent, RefObject } from "react"
+import { FunctionComponent } from "react"
 import {
 	BaseDefinition,
 	DefinitionList,
 	UtilityProps,
 } from "../definition/definition"
-import { Component } from "../component/component"
+import { Component, getUtility } from "../component/component"
 import { unWrapDefinition } from "../component/path"
-import { getUtility } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
@@ -15,7 +14,7 @@ interface SlotUtilityProps extends UtilityProps {
 	direction?: string
 }
 
-const SlotBuilder = getUtility("studio.slotbuilder")
+const SlotBuilder = getUtility("uesio/studio.slotbuilder")
 
 const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 	const { path, context, listName, definition } = props
@@ -26,19 +25,23 @@ const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 
 	return (
 		<>
-			{listDef.map((itemDef, index) => {
-				const [componentType, unWrappedDef] = unWrapDefinition(itemDef)
-				return (
-					<Component
-						key={index}
-						componentType={componentType}
-						definition={unWrappedDef}
-						index={index}
-						path={`${listPath}["${index}"]`}
-						context={context}
-					/>
-				)
-			})}
+			{listDef instanceof Array &&
+				listDef
+					.filter((el) => el)
+					.map((itemDef, index) => {
+						const [componentType, unWrappedDef] =
+							unWrapDefinition(itemDef)
+						return (
+							<Component
+								key={index}
+								componentType={componentType}
+								definition={unWrappedDef}
+								index={index}
+								path={`${listPath}["${index}"]`}
+								context={context}
+							/>
+						)
+					})}
 		</>
 	)
 }

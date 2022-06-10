@@ -1,0 +1,2 @@
+number:
+  decimals: ${number_decimals}

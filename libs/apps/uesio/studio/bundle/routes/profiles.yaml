@@ -1,0 +1,4 @@
+name: profiles
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/profiles
+view: uesio/studio.profiles
+theme: uesio/studio.default

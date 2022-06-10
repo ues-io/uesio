@@ -1,0 +1,8 @@
+name: view
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: View name
+    type: METADATANAME
+public: true

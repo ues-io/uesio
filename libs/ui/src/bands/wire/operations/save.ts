@@ -1,28 +1,21 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
+import { Context } from "../../../context/context"
+import { SaveResponse, SaveResponseBatch } from "../../../load/saveresponse"
+import { getWiresFromDefinitonOrContext, save, getFullWireId } from ".."
+import { ThunkFunc } from "../../../store/store"
+import { getErrorString } from "../../utils"
 
-import { Context, getWireDef } from "../../../context/context"
-import { UesioThunkAPI } from "../../utils"
-import { SaveResponseBatch } from "../../../load/saveresponse"
-import { getWiresFromDefinitonOrContext } from "../adapter"
-import { getFullWireId } from "../selectors"
+const getErrorStrings = (response: SaveResponse) =>
+	response.errors?.map((error) => error.message) || []
 
-export default createAsyncThunk<
-	SaveResponseBatch,
-	{
-		context: Context
-		wires?: string[]
-	},
-	UesioThunkAPI
->("wire/save", async ({ context, wires }, api) => {
-	// Turn the list of wires into a load request
-	const wiresToSave = getWiresFromDefinitonOrContext(wires, context)
-	const response: SaveResponseBatch = {
-		wires: [],
-	}
-	const saveRequest = {
-		wires: wiresToSave.flatMap((wire) => {
-			const wiredef = getWireDef(wire)
-			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)
+export default (context: Context, wires?: string[]): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		// Turn the list of wires into a load request
+		const wiresToSave = getWiresFromDefinitonOrContext(wires, context)
+		const response: SaveResponseBatch = {
+			wires: [],
+		}
+
+		const requests = wiresToSave.flatMap((wire) => {
 			const wireId = getFullWireId(wire.view, wire.name)
 			// Check to see if we need to go to the serve
 			if (
@@ -40,21 +33,60 @@ export default createAsyncThunk<
 			return [
 				{
 					wire: wireId,
-					collection: wiredef.collection,
+					collection: wire.collection,
 					changes: wire.changes,
 					deletes: wire.deletes,
 				},
 			]
-		}),
-	}
+		})
 
-	if (!saveRequest.wires.length) {
-		return response
+		if (!requests.length) {
+			return context
+		}
+
+		// Combine the server responses with the ones that did not need to go to the server.
+		try {
+			const serverResponse = await platform.saveData(context, {
+				wires: requests,
+			})
+			serverResponse.wires.forEach((wire) => {
+				response.wires.push(wire)
+			})
+		} catch (error) {
+			const message = getErrorString(error)
+
+			requests.forEach((req) => {
+				response.wires.push({
+					wire: req.wire,
+					errors: [
+						{
+							message,
+						},
+					],
+					changes: {},
+					deletes: {},
+				})
+			})
+		}
+
+		dispatch(save(response))
+
+		// Special handling for saves of just one wire and one record
+		if (response?.wires.length === 1) {
+			const wire = response.wires[0]
+			const changes = wire.changes
+			const changeKeys = Object.keys(changes)
+			if (changeKeys.length === 1) {
+				const [, , name] = wire.wire.split("/")
+				return context.addFrame({
+					record: changeKeys[0],
+					wire: name,
+					errors: getErrorStrings(wire),
+				})
+			}
+		}
+
+		const errors = response.wires.flatMap(getErrorStrings)
+
+		return errors.length > 0 ? context.addFrame({ errors }) : context
 	}
-	// Combine the server responses with the ones that did not need to go to the server.
-	const serverResponse = await api.extra.saveData(context, saveRequest)
-	serverResponse.wires.forEach((wire) => {
-		response.wires.push(wire)
-	})
-	return response
-})

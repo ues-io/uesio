@@ -1,4 +1,8 @@
-type FieldValue = PlainFieldValue | PlainWireRecord | PlainFieldValue[]
+type FieldValue =
+	| PlainFieldValue
+	| PlainWireRecord
+	| PlainFieldValue[]
+	| PlainWireRecord[]
 
 type PlainWireRecord = {
 	[key: string]: FieldValue

@@ -1,4 +1,0 @@
-name: domains
-path: app/{appname}/site/{sitename}/domains
-view: studio.domains
-theme: studio.default

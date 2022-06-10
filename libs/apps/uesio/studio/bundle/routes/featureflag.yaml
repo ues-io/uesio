@@ -1,0 +1,4 @@
+name: featureflag
+path: app/{app:\w*\/\w*}/workspace/{workspacename}/featureflags/{featureflagname}
+view: uesio/studio.featureflag
+theme: uesio/studio.default

@@ -5,13 +5,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// MetadataList is good
 func MetadataList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
@@ -21,14 +21,23 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	grouping := vars["grouping"]
 
 	conditions := meta.BundleConditions{}
+	collectionKeyMap := map[string]bool{}
+
+	if namespace == "uesio/core" && metadatatype == "fields" {
+		for _, field := range datasource.BUILTIN_FIELDS {
+			collectionKeyMap[field.GetFullName()] = true
+		}
+		respondJSON(w, r, &collectionKeyMap)
+		return
+	}
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
-		conditions["studio.collection"] = grouping
+		conditions["uesio/studio.collection"] = grouping
 	} else if metadatatype == "bots" {
-		conditions["studio.type"] = grouping
+		conditions["uesio/studio.type"] = grouping
 	} else if metadatatype == "componentvariants" {
-		conditions["studio.component"] = grouping
+		conditions["uesio/studio.component"] = grouping
 	}
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)
@@ -45,9 +54,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collectionKeyMap := map[string]bool{}
-
-	err = collection.Loop(func(item loadable.Item, _ interface{}) error {
+	err = collection.Loop(func(item loadable.Item, _ string) error {
 		var key string
 		// Special handling for fields for now
 		if metadatatype == "fields" {
@@ -72,9 +79,32 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	namespaces := session.GetContextNamespaces()
+
+	// If a type was specified, filter out namespaces that have no items from that type.
+	vars := mux.Vars(r)
+	metadatatype := vars["type"]
+	if metadatatype != "" {
+		for namespace := range namespaces {
+			collection, err := meta.GetBundleableGroupFromType(metadatatype)
+			if err != nil {
+				logger.LogErrorWithTrace(r, err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hasSome, err := bundle.HasAny(collection, namespace, nil, session)
+			if err != nil {
+				logger.LogErrorWithTrace(r, err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if !hasSome {
+				delete(namespaces, namespace)
+			}
+		}
+
+	}
 	respondJSON(w, r, &namespaces)
 }

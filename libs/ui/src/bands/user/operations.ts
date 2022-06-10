@@ -1,13 +1,15 @@
-import { AnyAction } from "redux"
 import { LoginResponse } from "../../auth/auth"
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
+import wireAddError from "../wire/operations/adderror"
+import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
-
+import { getErrorString } from "../utils"
+type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,
-	dispatch: Dispatcher<AnyAction>,
+	dispatch: Dispatcher,
 	context: Context
 ) {
 	await dispatch(
@@ -15,25 +17,34 @@ async function responseRedirect(
 			? routeOps.redirect(context, response.redirectPath)
 			: routeOps.navigate(
 					// Always run the logout action in the site context.
-					new Context([
-						{
-							site: context.getSite(),
-						},
-					]),
-					response.redirectRouteName,
-					response.redirectRouteNamespace
+					newContext({
+						site: context.getSite(),
+					}),
+					{
+						path: response.redirectRouteName,
+						namespace: response.redirectRouteNamespace,
+					}
 			  )
 	)
 	return context
 }
 
-const login =
-	(context: Context, type: string, token: string): ThunkFunc =>
+const signup =
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		const response = await platform.login({
-			type,
-			token,
-		})
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
+		const response = await platform.signup(signupMethod, mergedPayload)
+		dispatch(setUser(response.user))
+		return responseRedirect(response, dispatch, context)
+	}
+
+const login =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
+		const response = await platform.login(authSource, mergedPayload)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
@@ -45,8 +56,30 @@ const logout =
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
+const checkAvailability =
+	(
+		context: Context,
+		username: string,
+		signupMethod: string,
+		usernameFieldId: string
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		const mergedUsername = context.merge(username)
+		if (mergedUsername) {
+			try {
+				await platform.checkAvailability(signupMethod, mergedUsername)
+				return dispatch(wireRemoveError(context, usernameFieldId))
+			} catch (error) {
+				const message = getErrorString(error)
+				return dispatch(wireAddError(context, usernameFieldId, message))
+			}
+		}
+		return context
+	}
 
 export default {
 	login,
 	logout,
+	signup,
+	checkAvailability,
 }

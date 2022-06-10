@@ -1,6 +1,9 @@
 package datasource
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -9,82 +12,285 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+type tokenFunc func(loadable.Item) (string, bool, error)
 
-	if collectionMetadata.Access != "protected" {
-		return nil
+func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache) ([]adapt.LoadRequestField, error) {
+	if collectionMetadata.AccessField == "" {
+		return nil, nil
 	}
 
-	for i := range *op.Inserts {
-		insert := &(*op.Inserts)[i]
-		insert.AddReadWriteToken("uesio.owner:" + session.GetUserInfo().ID)
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	if err != nil {
+		return nil, err
 	}
 
-	for i := range *op.Updates {
-		update := &(*op.Updates)[i]
-		ownerID, err := update.GetOwnerID()
-		if err != nil {
-			return err
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return nil, err
+	}
+
+	fields := []adapt.LoadRequestField{}
+
+	for fieldID, fieldInfo := range refCollectionMetadata.Fields {
+		// TODO: We should be better about deciding which field we load in here
+		if fieldInfo.Type == "REFERENCEGROUP" {
+			continue
 		}
-		update.AddReadWriteToken("uesio.owner:" + ownerID)
-	}
-
-	for _, challengeToken := range collectionMetadata.RecordChallengeTokens {
-
-		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, collectionMetadata)
-		if err != nil {
-			return err
-		}
-		// Loop over each insert and update and fill in token values
-		for i := range *op.Updates {
-			update := &(*op.Updates)[i]
-			tokenValue, err := templating.Execute(tokenTemplate, update.FieldChanges)
+		var subFields []adapt.LoadRequestField
+		if fieldID == refCollectionMetadata.AccessField {
+			subFields, err = getAccessFields(refCollectionMetadata, metadata)
 			if err != nil {
-				tokenValue, err = templating.Execute(tokenTemplate, update.OldValues)
-				if err != nil {
-					return err
+				return nil, err
+			}
+		}
+
+		fields = append(fields, adapt.LoadRequestField{
+			ID:     fieldID,
+			Fields: subFields,
+		})
+	}
+
+	return fields, nil
+
+}
+
+func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+	referencedCollections := adapt.ReferenceRegistry{}
+
+	metadata := connection.GetMetadata()
+
+	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	if err != nil {
+		return err
+	}
+
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+	if err != nil {
+		return err
+	}
+
+	fields, err := getAccessFields(collectionMetadata, metadata)
+	if err != nil {
+		return err
+	}
+
+	refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
+	refReq.Metadata = refCollectionMetadata
+
+	refReq.AddFields(fields)
+
+	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+		fk, err := change.GetField(collectionMetadata.AccessField)
+		if err != nil {
+			return err
+		}
+		fkField, err := adapt.GetReferenceKey(fk)
+		if err != nil {
+			return err
+		}
+		refReq.AddID(fkField, adapt.ReferenceLocator{
+			Item:  change,
+			Field: fieldMetadata,
+		})
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return adapt.HandleReferences(connection, referencedCollections)
+}
+
+func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+	ownerID, err := change.GetOwnerID()
+	if err != nil {
+		return err
+	}
+	ownerToken := "uesio.owner:" + ownerID
+	change.AddReadWriteToken(ownerToken)
+
+	hasToken := false
+
+	for _, userToken := range session.GetTokens() {
+		if ownerToken == userToken {
+			hasToken = true
+		}
+	}
+
+	for _, tokenFunc := range tokenFuncs {
+		token, isReadWrite, err := tokenFunc(change)
+		if err != nil {
+			return err
+		}
+
+		if isReadWrite {
+			for _, userToken := range session.GetTokens() {
+				if token == userToken {
+					hasToken = true
 				}
 			}
+			change.AddReadWriteToken(token)
+		} else {
+			change.AddReadToken(token)
+		}
+	}
 
-			fullTokenString := challengeToken.UserAccessToken + ":" + tokenValue
-			if challengeToken.Access == "readwrite" {
-				update.AddReadWriteToken(fullTokenString)
-			} else if challengeToken.Access == "read" {
-				update.AddReadToken(fullTokenString)
-			}
+	if !hasToken {
+		return errors.New("User does not have access to write to this field: " + change.IDValue)
+	}
+
+	return nil
+
+}
+
+func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, session *sess.Session) error {
+
+	var accessItem loadable.Item
+
+	accessItem = change.FieldChanges
+
+	challengeMetadata := collectionMetadata
+
+	for challengeMetadata.AccessField != "" {
+		accessInterface, err := accessItem.GetField(challengeMetadata.AccessField)
+		if err != nil {
+			return err
+		}
+		var ok bool
+		accessItem, ok = accessInterface.(loadable.Item)
+		if !ok {
+			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
 		}
 
-		for i := range *op.Inserts {
-			insert := &(*op.Inserts)[i]
-			tokenValue, err := templating.Execute(tokenTemplate, insert.FieldChanges)
-			if err != nil {
-				return err
-			}
+		fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
+		if err != nil {
+			return err
+		}
+		challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+		if err != nil {
+			return err
+		}
+	}
 
-			fullTokenString := challengeToken.UserAccessToken + ":" + tokenValue
-			if challengeToken.Access == "readwrite" {
-				insert.AddReadWriteToken(fullTokenString)
-			} else if challengeToken.Access == "read" {
-				insert.AddReadToken(fullTokenString)
+	ownerObj, err := accessItem.GetField("uesio/core.owner")
+	if err != nil {
+		return err
+	}
+
+	ownerID, err := adapt.GetReferenceKey(ownerObj)
+	if err != nil {
+		return err
+	}
+
+	ownerToken := "uesio.owner:" + ownerID
+
+	hasToken := false
+
+	for _, userToken := range session.GetTokens() {
+		if ownerToken == userToken {
+			hasToken = true
+			//fmt.Println("GRANTED BASED ON OWNER OF: " + challengeMetadata.GetFullName())
+		}
+	}
+
+	for _, tokenFunc := range tokenFuncs {
+		token, isReadWrite, err := tokenFunc(accessItem)
+		if err != nil {
+			return err
+		}
+
+		// We don't care about read tokens here because we're doing a write
+		if isReadWrite {
+			for _, userToken := range session.GetTokens() {
+				if token == userToken {
+					//fmt.Println("GRANTED BASED ON TOKEN: " + challengeMetadata.GetFullName() + " MATCHING " + token)
+					hasToken = true
+					break
+				}
 			}
 		}
+	}
+
+	if !hasToken {
+		return errors.New("User does not have parent access to write to this field: " + change.IDValue)
 	}
 
 	return nil
 }
 
-func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) ([]string, error) {
+func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
-	tokenStrings := []string{"uesio.owner:" + session.GetUserInfo().ID}
+	if collectionMetadata.Access != "protected" {
+		return nil
+	}
+
+	// If we have an access field, we need to load in all data from that field
+	if collectionMetadata.AccessField != "" {
+		err := loadInAccessFieldData(op, collectionMetadata, connection, session)
+		if err != nil {
+			return err
+		}
+	}
+
+	metadata := connection.GetMetadata()
+
+	challengeMetadata, err := adapt.GetChallengeCollection(metadata, collectionMetadata)
+	if err != nil {
+		return err
+	}
+
+	tokenFuncs := []tokenFunc{}
+
+	for _, challengeToken := range challengeMetadata.RecordChallengeTokens {
+		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, challengeMetadata)
+		if err != nil {
+			return err
+		}
+		tokenFuncs = append(tokenFuncs, func(item loadable.Item) (string, bool, error) {
+			tokenValue, err := templating.Execute(tokenTemplate, item)
+			if err != nil {
+				return "", false, err
+			}
+			return challengeToken.UserAccessToken + ":" + tokenValue, challengeToken.Access == "readwrite", nil
+		})
+	}
+
+	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+		if collectionMetadata.AccessField != "" {
+			return handleAccessFieldChange(change, tokenFuncs, collectionMetadata, metadata, session)
+		}
+		return handleStandardChange(change, tokenFuncs, collectionMetadata, session)
+	})
+
+}
+
+func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOptions, session *sess.Session) error {
+
+	if !session.HasToken("uesio.owner") {
+		session.AddToken("uesio.owner", []string{session.GetUserID()})
+	}
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
-		if collectionMetadata.Access != "protected" {
-			continue
+
+		challengeMetadata := collectionMetadata
+
+		for challengeMetadata.AccessField != "" {
+			fieldMetadata, err := challengeMetadata.GetField(challengeMetadata.AccessField)
+			if err != nil {
+				return err
+			}
+			challengeMetadata, err = metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+			if err != nil {
+				return err
+			}
 		}
-		for _, challengeToken := range collectionMetadata.RecordChallengeTokens {
+
+		for _, challengeToken := range challengeMetadata.RecordChallengeTokens {
 			if challengeToken.UserAccessToken != "" {
-				userAccessTokenNames[challengeToken.UserAccessToken] = true
+				if !session.HasToken(challengeToken.UserAccessToken) {
+					userAccessTokenNames[challengeToken.UserAccessToken] = true
+				}
 			}
 		}
 	}
@@ -92,11 +298,11 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 	for key := range userAccessTokenNames {
 		uat, err := meta.NewUserAccessToken(key)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		err = bundle.Load(uat, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		if uat.Type == "lookup" {
 			fieldKeys := templating.ExtractKeys(uat.Token)
@@ -104,6 +310,14 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 			for _, fieldKey := range fieldKeys {
 				fields = append(fields, adapt.LoadRequestField{
 					ID: fieldKey,
+					// This is somewhat wierd, but it prevents reference
+					// fields in the token from being fully loaded.
+					// It shouldn't affect other fields
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: adapt.ID_FIELD,
+						},
+					},
 				})
 			}
 
@@ -114,45 +328,60 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 				})
 				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 					Field:    condition.Field,
-					Value:    session.GetUserInfo().ID,
+					Value:    session.GetUserID(),
 					Operator: "=",
 				})
 			}
+
 			lookupResults := &adapt.Collection{}
-			var loadOps = []adapt.LoadOp{{
+			var loadOp = &adapt.LoadOp{
 				CollectionName: uat.Collection,
 				WireName:       "foo",
 				Collection:     lookupResults,
 				Conditions:     loadConditions,
 				Fields:         fields,
-			}}
-			loadMetadata, err := LoadWithOptions(loadOps, session, false)
-			if err != nil {
-				return nil, err
+				Query:          true,
 			}
 
-			loadCollectionMetadata, err := loadMetadata.GetCollection(uat.Collection)
+			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session)
 			if err != nil {
-				return nil, err
+				return err
+			}
+
+			loadCollectionMetadata, err := loadOptions.Metadata.GetCollection(uat.Collection)
+			if err != nil {
+				return err
+			}
+
+			connection, err := GetConnection(loadCollectionMetadata.DataSource, session.GetTokens(), loadOptions.Metadata, session, loadOptions.Connections)
+			if err != nil {
+				return err
+			}
+
+			err = connection.Load(loadOp)
+			if err != nil {
+				return err
 			}
 
 			template, err := adapt.NewFieldChanges(uat.Token, loadCollectionMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			err = lookupResults.Loop(func(record loadable.Item, _ interface{}) error {
+			tokenStrings := []string{}
+			err = lookupResults.Loop(func(record loadable.Item, _ string) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {
 					return err
 				}
-				tokenStrings = append(tokenStrings, uat.GetKey()+":"+tokenValue)
+				tokenStrings = append(tokenStrings, tokenValue)
 				return nil
 			})
 			if err != nil {
-				return nil, err
+				return err
 			}
+			session.AddToken(uat.GetKey(), tokenStrings)
 		}
 	}
 
-	return tokenStrings, nil
+	return nil
 }

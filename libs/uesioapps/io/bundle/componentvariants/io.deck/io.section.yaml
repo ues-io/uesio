@@ -1,7 +1,0 @@
-name: section
-component: io.deck
-label: Section
-definition:
-  uesio.styles:
-    root:
-      padding: 40px

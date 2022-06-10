@@ -1,4 +1,0 @@
-name: sites
-dataSource: uesio.platform
-idFormat: "${studio.name}_${studio.app}"
-nameField: studio.name

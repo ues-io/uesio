@@ -1,6 +1,6 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { wire } from "@uesio/ui"
+import type { wire } from "@uesio/ui"
 import { User } from "../auth/login"
 
 const load = async (
@@ -12,7 +12,7 @@ const load = async (
 		wires: [
 			{
 				wire: "CLI_LOAD",
-				type: "QUERY",
+				query: true,
 				collection: metadata.getCollectionName(),
 				fields: metadata.getFields(),
 				conditions: conditions || [],

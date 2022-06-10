@@ -2,11 +2,12 @@ package meta
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/humandad/yaml"
 )
 
-// NewCollection function
 func NewCollection(key string) (*Collection, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
@@ -16,6 +17,20 @@ func NewCollection(key string) (*Collection, error) {
 		Name:      name,
 		Namespace: namespace,
 	}, nil
+}
+
+func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newCollection, err := NewCollection(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newCollection)
+	}
+
+	return items, nil
 }
 
 type RecordChallengeTokenDefinition struct {
@@ -32,108 +47,103 @@ type TokenCondition struct {
 	Value string `yaml:"value"`
 }
 
-// Collection struct
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"uesio.id"`
-	Name                  string                            `yaml:"name" uesio:"studio.name"`
+	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
+	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
+	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
+	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
-	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
-	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
-	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
+	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
+	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"uesio/studio.idformat"`
+	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`
-	Owner                 *User                             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"uesio.createdat"`
+	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
-	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
+	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
+	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
+	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
+	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
 func (c *Collection) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (c *Collection) GetCollection() CollectionableGroup {
 	var cc CollectionCollection
 	return &cc
 }
 
-// GetConditions function
-func (c *Collection) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": c.Name,
-	}
+func (c *Collection) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, c.Name)
 }
 
-// GetBundleGroup function
 func (c *Collection) GetBundleGroup() BundleableGroup {
 	var cc CollectionCollection
 	return &cc
 }
 
-// GetKey function
 func (c *Collection) GetKey() string {
-	return c.Namespace + "." + c.Name
+	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
 }
 
-// GetPath function
 func (c *Collection) GetPath() string {
-	return c.GetKey() + ".yaml"
+	return c.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (c *Collection) GetPermChecker() *PermissionSet {
-	return nil
+	key := c.GetKey()
+	return &PermissionSet{
+		CollectionRefs: map[string]bool{
+			key: true,
+		},
+	}
 }
 
-// SetField function
 func (c *Collection) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(c, fieldName, value)
 }
 
-// GetField function
 func (c *Collection) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-// GetNamespace function
 func (c *Collection) GetNamespace() string {
 	return c.Namespace
 }
 
-// SetNamespace function
 func (c *Collection) SetNamespace(namespace string) {
 	c.Namespace = namespace
 }
 
-// SetWorkspace function
 func (c *Collection) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
+func (c *Collection) SetModified(mod time.Time) {
+	c.UpdatedAt = mod.UnixMilli()
+}
+
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
-// Len function
 func (c *Collection) Len() int {
 	return StandardItemLen(c)
 }
 
-// GetItemMeta function
 func (c *Collection) GetItemMeta() *ItemMeta {
 	return c.itemMeta
 }
 
-// SetItemMeta function
 func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
 }
@@ -143,5 +153,17 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
+	err = setDefaultValue(node, "dataSource", "uesio/core.platform")
+	if err != nil {
+		return err
+	}
+	err = setDefaultValue(node, "nameField", "uesio/core.id")
+	if err != nil {
+		return err
+	}
 	return node.Decode(c)
+}
+
+func (c *Collection) IsPublic() bool {
+	return c.Public
 }

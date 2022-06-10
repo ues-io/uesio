@@ -1,8 +1,0 @@
-name: name
-collection: studio.featureflags
-type: TEXT
-label: Feature flag name
-required: true
-createOnly: true
-validate:
-  type: METADATA

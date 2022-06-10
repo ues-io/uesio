@@ -1,0 +1,120 @@
+name: installedbundle
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    installedapp:
+      collection: uesio/studio.bundledependency
+      fields:
+        uesio/core.id:
+        uesio/studio.bundle:
+          fields:
+            uesio/studio.app:
+            uesio/studio.major:
+            uesio/studio.minor:
+            uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.workspace
+          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.id
+          value: $Param{bundledep}
+    versions:
+      collection: uesio/studio.bundle
+      fields:
+        uesio/core.id:
+        uesio/studio.major:
+        uesio/studio.minor:
+        uesio/studio.patch:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: installedapp
+          lookupField: uesio/studio.bundle->uesio/studio.app->uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: installed
+                      itemIcon: inventory_2
+                      itemName: $Param{bundledep}
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.list:
+                    id: installedDeck
+                    wire: installedapp
+                    mode: READ
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Bundle - ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      text: "Uninstall"
+                                      uesio.variant: uesio/io.secondary
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "installedapp"
+                                        - signal: "route/NAVIGATE"
+                                          path: app/$Param{app}/workspace/$Param{workspacename}
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - uesio/io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.bundle
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Versions
+                      - uesio/io.deck:
+                          id: versionslist
+                          wire: versions
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.text:
+                                      text: "v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}"

@@ -1,0 +1,14 @@
+name: section
+label: Section
+definition:
+  uesio.styles:
+    root:
+      padding: 40px
+      borderBottom: "1px solid #eee"
+    title:
+      color: "#444"
+      fontSize: "12pt"
+    subtitle:
+      fontSize: "9pt"
+      color: "#777"
+public: true

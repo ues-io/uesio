@@ -1,0 +1,7 @@
+name: reference
+type: MAP
+label: Reference Metadata
+subfields:
+  - name: uesio/studio.collection
+    label: Collection
+    type: TEXT

@@ -1,4 +1,5 @@
 import get from "lodash/get"
+import { ID_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 
@@ -17,57 +18,30 @@ class WireRecord {
 	getWire = () => this.wire
 	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
 		const fieldNameParts = fieldName?.split("->")
-		if (fieldNameParts.length === 1) {
-			return get(this.source, fieldName) as T
-		}
-		// Special handling for maps
-		return get(this.source, fieldNameParts) as T
+		return get(
+			this.source,
+			fieldNameParts.length === 1 ? fieldName : fieldNameParts
+		)
 	}
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
-	getIdFieldValue = () => {
-		const metadata = this.wire.collection
-		const idField = metadata.getIdField()
-		return idField && this.getFieldValue(idField.getId())
+	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
+
+	getErrors = (fieldId: string) => {
+		const wire = this.wire
+		const errors = wire.getErrors()
+		return errors?.[this.id + ":" + fieldId]
 	}
 
 	update = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		if (fieldNameParts.length === 1) {
-			return this.wire.updateRecord(this.id, {
-				[fieldId]: value,
-			})
-		}
-		// Special handling for maps
-		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.updateRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+		return this.wire.updateRecord(this.id, value, fieldNameParts)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		if (fieldNameParts.length === 1) {
-			this.wire.setRecord(this.id, {
-				[fieldId]: value,
-			})
-		}
-		// Special handling for maps
-		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.setRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+		return this.wire.setRecord(this.id, value, fieldNameParts)
 	}
 }
 

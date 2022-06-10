@@ -12,10 +12,6 @@ type CollectionMap struct {
 	IDs  []string
 }
 
-func (c *CollectionMap) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetItem function
 func (c *CollectionMap) GetItem(index int) loadable.Item {
 	key := c.IDs[index]
@@ -47,11 +43,6 @@ func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
 // Len function
 func (c *CollectionMap) Len() int {
 	return len(c.Data)
-}
-
-// Slice function
-func (c *CollectionMap) Slice(start int, end int) {
-
 }
 
 func (c *CollectionMap) UnmarshalJSON(b []byte) error {

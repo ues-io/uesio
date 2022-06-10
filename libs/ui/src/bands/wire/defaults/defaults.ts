@@ -1,9 +1,10 @@
 import { Dictionary } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
-import { getFullWireId } from "../selectors"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
-import { PlainCollection } from "../../collection/types"
+import { ID_FIELD, PlainCollection } from "../../collection/types"
+import { WireDefinition } from "../../../definition/wire"
+import { getFullWireId } from ".."
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -54,14 +55,11 @@ const getDefaultRecord = (
 	wires: Dictionary<PlainWire>,
 	collections: Dictionary<PlainCollection>,
 	viewId: string,
-	wireName: string
+	wireDef: WireDefinition,
+	collectionName: string
 ): PlainWireRecord => {
-	const viewDef = context.getViewDef()
-	if (!viewDef) return {}
-	const wire = viewDef.definition?.wires[wireName]
-	if (!wire) return {}
-	const defaults = wire.defaults
-	const collection = collections[wire.collection]
+	const collection = collections[collectionName]
+	const defaults = wireDef.defaults
 	const defaultRecord: PlainWireRecord = {}
 	defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
@@ -71,11 +69,8 @@ const getDefaultRecord = (
 				fieldMetadata.type === "REFERENCE" &&
 				fieldMetadata.reference?.collection
 			) {
-				const referenceMeta =
-					collections[fieldMetadata.reference?.collection]
-				if (!referenceMeta) return
 				defaultRecord[defaultItem.field] = {
-					[referenceMeta.idField]: value,
+					[ID_FIELD]: value,
 				}
 				return
 			}

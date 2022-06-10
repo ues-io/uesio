@@ -1,0 +1,3 @@
+name: onsave
+type: BEFORESAVE
+dialect: JAVASCRIPT

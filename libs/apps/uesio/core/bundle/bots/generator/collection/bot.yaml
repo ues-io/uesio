@@ -1,0 +1,14 @@
+name: collection
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: Collection Name
+    type: METADATANAME
+  label:
+    prompt: Collection Label
+    type: TEXT
+  pluralLabel:
+    prompt: Collection Plural Label
+    type: TEXT
+public: true

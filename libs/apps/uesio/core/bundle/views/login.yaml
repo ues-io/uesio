@@ -1,0 +1,98 @@
+name: login
+public: true
+definition:
+  # Wires are how we pull in data
+  wires:
+    credentials:
+      viewOnly: true
+      fields:
+        uesio/viewonly.username:
+          label: Username
+          type: TEXT
+        uesio/viewonly.password:
+          label: Password
+          type: TEXT
+      init:
+        create: true
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: url($File{uesio/core.splash})
+            minHeight: 100vh
+        templateColumns:
+          xs: 1fr
+          md: 1fr 1fr
+          lg: 5fr 7fr
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: "#f3f3f3"
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        maxWidth: 250px
+                        padding: 10px
+                        margin: 0 auto
+                        textAlign: center
+                    components:
+                      - uesio/io.image:
+                          uesio.variant: uesio/core.fancy
+                          file: uesio/core.logo
+                          height: 120px
+                          align: center
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://$Site{domain}"
+                      - uesio/core.logingoogle:
+                          text: Sign in with Google
+                          clientId: uesio/core.google_client_id
+                          align: center
+                      - uesio/core.loginmock:
+                          text: Sign in with Mock
+                          align: center
+                      - uesio/io.box:
+                          components:
+                            - uesio/io.list:
+                                id: credslist
+                                wire: credentials
+                                mode: EDIT
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          marginBottom: 10px
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.username
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.password
+                                            displayAs: PASSWORD
+                                        - uesio/io.group:
+                                            uesio.styles:
+                                              root:
+                                                gridAutoColumns: initial
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.primary
+                                                  text: Sign In
+                                                  uesio.styles:
+                                                    root:
+                                                      marginTop: 26px
+                                                      marginBottom: 60px
+                                                    label:
+                                                      textTransform: none
+                                                  signals:
+                                                    - signal: user/LOGIN
+                                                      onerror:
+                                                        signals:
+                                                          - signal: notification/ADD_ERRORS
+                                                      authSource: uesio/core.platform
+                                                      payload:
+                                                        username: ${uesio/viewonly.username}
+                                                        password: ${uesio/viewonly.password}
+                                                  onerror:

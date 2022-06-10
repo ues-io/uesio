@@ -2,8 +2,10 @@ package bundle
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -13,7 +15,7 @@ import (
 func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 	for _, av := range meta.DefaultAppLicenses {
 		if av.AppID == app && av.LicensedAppID == appToCheck {
-			return &av, nil
+			return av, nil
 		}
 	}
 	// TODO: Fix this
@@ -21,11 +23,10 @@ func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 	return &meta.AppLicense{}, nil
 }
 
-// GetAppBundle function
-func GetAppBundle(session *sess.Session) (*meta.BundleDef, error) {
+func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
-	return getAppBundleInternal(appName, appVersion, session)
+	return getAppBundleInternal(appName, appVersion, session, connection)
 }
 
 // GetSiteAppBundle gets the app bundle for the site without regard for the workspace
@@ -34,23 +35,22 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.App.ID, site.Bundle.GetVersionString(), session)
+	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session, nil)
 }
 
-// ClearAppBundleCache entry
 func ClearAppBundleCache(session *sess.Session) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
 	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
 }
 
-func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*meta.BundleDef, error) {
+func getAppBundleInternal(appName, appVersion string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 
 	bs, err := bundlestore.GetBundleStore(appName, session)
 	if err != nil {
 		return nil, err
 	}
-	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session)
+	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +64,11 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
+
+	_, _, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return "", errors.New("Bad namespace: " + namespace)
+	}
 
 	if appName == namespace {
 		// We always have a license to our own app.
@@ -83,12 +88,12 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
-		return "", errors.New("That version doesn't exist for that bundle: " + appName + " " + appVersion)
+		return "", fmt.Errorf("%s version %s doesn't exist for %s ", appName, appVersion, namespace)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
 	if !hasDep {
-		return "", errors.New("You don't have that dependency installed: " + namespace)
+		return "", fmt.Errorf("%s version %s doesn't have %s installed", appName, appVersion, namespace)
 	}
 
 	return depBundle.Version, nil
@@ -106,7 +111,6 @@ func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 	return version, bs, nil
 }
 
-// LoadAllFromAny function
 func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
 	// Get all avaliable namespaces
 	namespaces := session.GetContextNamespaces()
@@ -119,25 +123,62 @@ func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions
 	return nil
 }
 
-// LoadAll function
+func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	version, bs, err := GetBundleStoreWithVersion(namespace, session)
+	if err != nil {
+		return false, err
+	}
+	return bs.HasAny(group, namespace, version, conditions, session)
+}
+
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
+		fmt.Println("Failed Load All: " + group.GetName())
 		return err
 	}
-	return bs.GetItems(group, namespace, version, conditions, session)
+	return bs.GetAllItems(group, namespace, version, conditions, session)
 }
 
-// Load function
+func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
+	// Coalate items into same namespace
+	coalated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := coalated[namespace]
+		if !ok {
+			coalated[namespace] = []meta.BundleableItem{}
+		}
+		coalated[namespace] = append(coalated[namespace], item)
+	}
+	for namespace, items := range coalated {
+		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		if err != nil {
+			fmt.Println("Failed load many")
+			for _, item := range items {
+				fmt.Println(item.GetKey())
+			}
+			return err
+		}
+
+		err = bs.GetManyItems(items, version, session)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
+		fmt.Println("Failed load one: " + item.GetKey())
 		return err
 	}
 	return bs.GetItem(item, version, session)
 }
 
-//GetFileStream function
 func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(file.Namespace, session)
 	if err != nil {
@@ -146,7 +187,6 @@ func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error
 	return bs.GetFileStream(version, file, session)
 }
 
-//GetComponentPackStream function
 func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
@@ -155,11 +195,45 @@ func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, s
 	return bs.GetComponentPackStream(version, buildMode, componentPack, session)
 }
 
-//GetBotStream function
 func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
 	return bs.GetBotStream(version, bot, session)
+}
+
+func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
+	if err != nil {
+		return nil, err
+	}
+	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
+}
+
+func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
+
+	// Coalate items into same namespace
+	coalated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := coalated[namespace]
+		if !ok {
+			coalated[namespace] = []meta.BundleableItem{}
+		}
+		coalated[namespace] = append(coalated[namespace], item)
+	}
+	for namespace, items := range coalated {
+		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		if err != nil {
+			return err
+		}
+
+		err = bs.HasAllItems(items, version, session, connection)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
 }

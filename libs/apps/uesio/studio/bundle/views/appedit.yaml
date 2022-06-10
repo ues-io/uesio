@@ -1,0 +1,18 @@
+name: appedit
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.list:
+        id: editapplist
+        mode: EDIT
+        components:
+          - uesio/io.field:
+              fieldId: uesio/studio.name
+          - uesio/io.field:
+              fieldId: uesio/studio.description
+          - uesio/io.field:
+              fieldId: uesio/studio.color
+          - uesio/studio.colorpicker:
+              fieldId: uesio/studio.color

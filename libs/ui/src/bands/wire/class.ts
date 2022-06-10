@@ -1,9 +1,8 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
-import { getStore } from "../../store/store"
+import { appDispatch } from "../../store/store"
 import {
 	setRecord,
-	updateRecord,
 	createRecord,
 	markForDelete,
 	unmarkForDelete,
@@ -13,11 +12,12 @@ import {
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
+import updateRecordOp from "./operations/updaterecord"
 import { PlainWire } from "./types"
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
-import { PlainWireRecord } from "../wirerecord/types"
-import shortid from "shortid"
+import { FieldValue, PlainWireRecord } from "../wirerecord/types"
+import { nanoid } from "nanoid"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -31,12 +31,15 @@ class Wire {
 	getFullId = () => `${this.source.view}/${this.source.name}`
 	getCollection = () => this.collection
 	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
+	isViewOnly = () => this.source.viewOnly
 	getBatchId = () => this.source.batchid
 
 	getData = () =>
 		this.source?.data
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
+
+	getErrors = () => this.source?.errors
 
 	getViewId = () => this.source?.view
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
@@ -53,68 +56,56 @@ class Wire {
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
-	updateRecord = (
-		recordId: string,
-		record: PlainWireRecord,
-		path?: string[]
-	) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
-		getStore().dispatch(
-			updateRecord({
-				entity: this.getFullId(),
-				recordId,
-				record,
-				idField,
-				path,
-			})
-		)
+	hasMore = () => this.source.more
+
+	getWireDef = () => this.source.def
+
+	getFields = () => this.getWireDef().fields
+
+	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
+		const context = newContext({
+			wire: this.getId(),
+			record: recordId,
+			view: this.getViewId(),
+		})
+		appDispatch()(updateRecordOp(context, path, record))
 	}
 
-	setRecord = (
-		recordId: string,
-		record: PlainWireRecord,
-		path?: string[]
-	) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
-		getStore().dispatch(
+	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
+		appDispatch()(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
 				record,
-				idField,
 				path,
 			})
 		)
 	}
 
-	createRecord = (record: PlainWireRecord) => {
-		const recordId = shortid.generate()
-		getStore().dispatch(
+	createRecord = (record: PlainWireRecord, prepend?: boolean) => {
+		const recordId = nanoid()
+		appDispatch()(
 			createRecord({
 				entity: this.getFullId(),
 				record,
 				recordId,
+				prepend: !!prepend,
 			})
 		)
 		return this.getRecord(recordId)
 	}
 
 	markRecordForDeletion = (recordId: string) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
-		getStore().dispatch(
+		appDispatch()(
 			markForDelete({
 				entity: this.getFullId(),
-				idField,
 				recordId,
 			})
 		)
 	}
 
 	unmarkRecordForDeletion = (recordId: string) => {
-		getStore().dispatch(
+		appDispatch()(
 			unmarkForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -123,7 +114,7 @@ class Wire {
 	}
 
 	cancel = () => {
-		getStore().dispatch(
+		appDispatch()(
 			cancel({
 				entity: this.getFullId(),
 			})
@@ -131,7 +122,7 @@ class Wire {
 	}
 
 	empty = () => {
-		getStore().dispatch(
+		appDispatch()(
 			empty({
 				entity: this.getFullId(),
 			})
@@ -139,7 +130,7 @@ class Wire {
 	}
 
 	toggleCondition = (conditionId: string) => {
-		getStore().dispatch(
+		appDispatch()(
 			toggleCondition({
 				entity: this.getFullId(),
 				conditionId,
@@ -153,10 +144,10 @@ class Wire {
 	}
 
 	save = (context: Context) =>
-		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
+		appDispatch()(saveWiresOp(context, [this.getId()]))
 
 	load = (context: Context) =>
-		getStore().dispatch(loadWireOp({ context, wires: [this.getId()] }))
+		appDispatch()(loadWireOp(context, [this.getId()]))
 }
 
 export default Wire

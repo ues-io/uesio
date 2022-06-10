@@ -1,0 +1,21 @@
+name: bundlelistingvisual
+label: Bundle Listing Visual
+definition:
+  uesio.styles:
+    root:
+      background: "#eee"
+      background-color: ${uesio/studio.color}
+      padding-top: 50%;
+      display: flex
+      alignItems: center
+      justifyContent: center
+      color: "#000"
+      position: relative
+  components:
+    - uesio/io.button:
+        uesio.styles:
+          root:
+            inset: 0 0 0 0
+            position: absolute
+            fontSize: 4em
+        icon: ${uesio/studio.icon}

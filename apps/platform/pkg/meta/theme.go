@@ -1,80 +1,100 @@
 package meta
 
 import (
+	"errors"
+	"fmt"
+	"time"
+
 	"github.com/humandad/yaml"
 )
 
-// Theme struct
 type Theme struct {
-	ID         string     `yaml:"-" uesio:"uesio.id"`
-	Name       string     `yaml:"name" uesio:"studio.name"`
+	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
-// GetCollectionName function
+func NewTheme(key string) (*Theme, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Theme: " + key)
+	}
+	return &Theme{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
+func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
+	items := []BundleableItem{}
+
+	for key := range keys {
+		newTheme, err := NewTheme(key)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, newTheme)
+	}
+
+	return items, nil
+}
+
 func (t *Theme) GetCollectionName() string {
 	return t.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (t *Theme) GetCollection() CollectionableGroup {
 	var tc ThemeCollection
 	return &tc
 }
 
-// GetConditions function
-func (t *Theme) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": t.Name,
-	}
+func (t *Theme) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, t.Name)
 }
 
-// GetBundleGroup function
 func (t *Theme) GetBundleGroup() BundleableGroup {
 	var tc ThemeCollection
 	return &tc
 }
 
-// GetKey function
 func (t *Theme) GetKey() string {
-	return t.Namespace + "." + t.Name
+	return fmt.Sprintf("%s.%s", t.Namespace, t.Name)
 }
 
-// GetPath function
 func (t *Theme) GetPath() string {
-	return t.GetKey() + ".yaml"
+	return t.Name + ".yaml"
 }
 
-// GetPermChecker function
 func (t *Theme) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
 			return err
 		}
-		t.Definition = *definition.Content[0]
+		if len(definition.Content) > 0 {
+			t.Definition = *definition.Content[0]
+		}
 		return nil
 	}
 	return StandardFieldSet(t, fieldName, value)
 }
 
-// GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "studio.definition" {
+	if fieldName == "uesio/studio.definition" {
 		bytes, err := yaml.Marshal(&t.Definition)
 		if err != nil {
 			return nil, err
@@ -84,39 +104,36 @@ func (t *Theme) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-// GetNamespace function
 func (t *Theme) GetNamespace() string {
 	return t.Namespace
 }
 
-// SetNamespace function
 func (t *Theme) SetNamespace(namespace string) {
 	t.Namespace = namespace
 }
 
-// SetWorkspace function
 func (t *Theme) SetWorkspace(workspace string) {
 	t.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
+func (t *Theme) SetModified(mod time.Time) {
+	t.UpdatedAt = mod.UnixMilli()
+}
+
 func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
 }
 
-// Len function
 func (t *Theme) Len() int {
 	return StandardItemLen(t)
 }
 
-// GetItemMeta function
 func (t *Theme) GetItemMeta() *ItemMeta {
 	return t.itemMeta
 }
 
-// SetItemMeta function
 func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
 	t.itemMeta = itemMeta
 }
@@ -127,4 +144,8 @@ func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(t)
+}
+
+func (t *Theme) IsPublic() bool {
+	return t.Public
 }

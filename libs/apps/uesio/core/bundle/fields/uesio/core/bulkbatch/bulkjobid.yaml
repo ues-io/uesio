@@ -1,0 +1,3 @@
+name: bulkjobid
+type: "TEXT"
+label: "Bulk job id"

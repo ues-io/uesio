@@ -1,4 +1,0 @@
-name: profiles
-dataSource: uesio.platform
-idFormat: "${studio.workspace}_${studio.name}"
-nameField: studio.name

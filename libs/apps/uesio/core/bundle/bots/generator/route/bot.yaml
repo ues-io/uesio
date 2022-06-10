@@ -1,0 +1,18 @@
+name: route
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: Route name
+    type: METADATANAME
+  path:
+    prompt: Path
+  view:
+    prompt: select a view
+    type: METADATA
+    metadataType: VIEW
+  theme:
+    prompt: select a theme
+    type: METADATA
+    metadataType: THEME
+public: true

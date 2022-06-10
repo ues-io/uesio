@@ -10,21 +10,21 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
-	ctx := context.Background()
-	client, err := getS3Client(ctx, credentials)
-	if err != nil {
-		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
-	}
-
-	downloader := manager.NewDownloader(client)
-
-	head, err := client.HeadObject(ctx, &s3.HeadObjectInput{
-		Bucket: aws.String(bucket),
+func (c *Connection) Download(path string) (io.ReadCloser, error) {
+	return c.DownloadWithDownloader(&s3.GetObjectInput{
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
+	})
+}
+
+func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (io.ReadCloser, error) {
+	ctx := context.Background()
+	downloader := manager.NewDownloader(c.client)
+	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket: aws.String(c.bucket),
+		Key:    input.Key,
 	})
 
 	if err != nil {
@@ -34,11 +34,6 @@ func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentia
 	buf := make([]byte, head.ContentLength)
 	w := manager.NewWriteAtBuffer(buf)
 
-	input := &s3.GetObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(path),
-	}
-
 	_, err = downloader.Download(ctx, w, input)
 
 	if err != nil {
@@ -46,4 +41,14 @@ func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentia
 	}
 
 	return ioutil.NopCloser(bytes.NewBuffer(buf)), nil
+}
+
+func (c *Connection) DownloadWithGetObject(input *s3.GetObjectInput) (io.ReadCloser, error) {
+	ctx := context.Background()
+	result, err := c.client.GetObject(ctx, input)
+	if err != nil {
+		return nil, errors.New("failed to retrieve Object")
+	}
+
+	return result.Body, nil
 }

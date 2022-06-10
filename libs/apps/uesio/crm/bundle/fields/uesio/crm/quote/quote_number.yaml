@@ -1,0 +1,5 @@
+name: quote_number
+type: NUMBER
+label: Quote Number
+number:
+  decimals: 0

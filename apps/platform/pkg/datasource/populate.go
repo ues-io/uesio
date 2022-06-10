@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -8,14 +10,36 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
+		if !change.IsNew {
+			return nil
+		}
+
+		autoNumberMeta := field.AutoNumberMetadata
+		if autoNumberMeta == nil {
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+		}
+		format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
+		sufix := fmt.Sprintf(format, change.Autonumber)
+		an := autoNumberMeta.Prefix + "-" + sufix
+		err := change.FieldChanges.SetField(field.GetFullName(), an)
+		if err != nil {
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+		}
+
+		return nil
+	}
+}
+
 func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
-		if ((field.AutoPopulate == "CREATE") && isNew) || field.AutoPopulate == "UPDATE" {
+		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
 			if err != nil {
-				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -23,33 +47,43 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 }
 
 func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
-	return func(change adapt.ChangeItem, isNew bool) error {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
-		if ((field.AutoPopulate == "CREATE") && isNew) || field.AutoPopulate == "UPDATE" {
+		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
-				"uesio.id":        user.ID,
-				"uesio.firstname": user.FirstName,
-				"uesio.lastname":  user.LastName,
-				"uesio.picture": map[string]interface{}{
-					"uesio.id": user.GetPictureID(),
+				adapt.ID_FIELD:         user.ID,
+				"uesio/core.firstname": user.FirstName,
+				"uesio/core.lastname":  user.LastName,
+				"uesio/core.picture": map[string]interface{}{
+					adapt.ID_FIELD: user.GetPictureID(),
 				},
 			})
 			if err != nil {
-				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+				return adapt.NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
 	}
 }
 
-func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) validationFunc {
+func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	autonumberStart, err := getAutonumber(op.InsertCount, connection, collectionMetadata)
+	if err != nil {
+		return err
+	}
 
 	populations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
-				timestamp := time.Now().UnixNano() / 1e6
+				timestamp := time.Now().UnixMilli()
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
@@ -57,40 +91,23 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 				populations = append(populations, populateUser(field, user))
 			}
 		}
+		if field.Type == "AUTONUMBER" {
+			populations = append(populations, populateAutoNumbers(field))
+		}
 	}
 
-	return func(change adapt.ChangeItem, isNew bool) error {
+	insertIndex := 0
+	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+		if change.IsNew {
+			change.Autonumber = autonumberStart + insertIndex
+			insertIndex++
+		}
 		for _, population := range populations {
-			err := population(change, isNew)
+			err := population(change)
 			if err != nil {
-				return err
+				op.AddError(err)
 			}
 		}
 		return nil
-	}
-}
-
-func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-
-	fieldPopulations := getPopulationFunction(collectionMetadata, session)
-
-	if op.Inserts != nil {
-		for _, insert := range *op.Inserts {
-			err := fieldPopulations(insert, true)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	if op.Updates != nil {
-		for _, update := range *op.Updates {
-			err := fieldPopulations(update, false)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
+	})
 }

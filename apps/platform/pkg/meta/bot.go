@@ -2,16 +2,16 @@ package meta
 
 import (
 	"errors"
-	"os"
+	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/humandad/yaml"
 )
 
-// NewBot function
 func NewBot(key string) (*Bot, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
+	keyArray := strings.Split(key, ":")
 	keySize := len(keyArray)
 	if keySize != 3 && keySize != 2 {
 		return nil, errors.New("Invalid Bot Key: " + key)
@@ -36,12 +36,28 @@ func NewBot(key string) (*Bot, error) {
 		return NewListenerBot(namespace, name), nil
 	}
 
+	if keySize == 2 && botType == "GENERATOR" {
+		namespace, name, err := ParseKey(keyArray[1])
+		if err != nil {
+			return nil, err
+		}
+		return NewGeneratorBot(namespace, name), nil
+	}
+
 	return nil, errors.New("Invalid Bot Key: " + key)
 }
 
 func NewListenerBot(namespace, name string) *Bot {
 	return &Bot{
 		Type:      "LISTENER",
+		Namespace: namespace,
+		Name:      name,
+	}
+}
+
+func NewGeneratorBot(namespace, name string) *Bot {
+	return &Bot{
+		Type:      "GENERATOR",
 		Namespace: namespace,
 		Name:      name,
 	}
@@ -56,35 +72,51 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 	}
 }
 
-// Bot struct
-type Bot struct {
-	ID            string            `yaml:"-" uesio:"uesio.id"`
-	Name          string            `yaml:"name" uesio:"studio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" uesio:"studio.collection"`
-	Namespace     string            `yaml:"-" uesio:"-"`
-	Type          string            `yaml:"type" uesio:"studio.type"`
-	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
-	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
-	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy     *User             `yaml:"-" uesio:"uesio.createdby"`
-	Owner         *User             `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy     *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt     int64             `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt     int64             `yaml:"-" uesio:"uesio.createdat"`
-	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
+type BotParamCondition struct {
+	Param string `yaml:"param" uesio:"uesio/studio.param" json:"param"`
+	Value string `yaml:"value" uesio:"uesio/studio.value" json:"value"`
 }
 
-// GetBotTypes function
+type BotParam struct {
+	Name         string              `yaml:"name" uesio:"uesio/studio.name" json:"name"`
+	Prompt       string              `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
+	Type         string              `yaml:"type" uesio:"uesio/studio.type" json:"type"`
+	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
+	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
+	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
+	Choices      []string            `yaml:"choices" uesio:"uesio/studio.choices" json:"choices"`
+	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
+}
+
+type Bot struct {
+	ID            string              `yaml:"-" uesio:"uesio/core.id"`
+	Name          string              `yaml:"name" uesio:"uesio/studio.name"`
+	CollectionRef string              `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
+	Namespace     string              `yaml:"-" uesio:"-"`
+	Type          string              `yaml:"type" uesio:"uesio/studio.type"`
+	Dialect       string              `yaml:"dialect" uesio:"uesio/studio.dialect"`
+	Params        map[string]BotParam `yaml:"params,omitempty" uesio:"uesio/studio.params"`
+	Content       *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.content"`
+	FileContents  string              `yaml:"-" uesio:"-"`
+	Workspace     *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy     *User               `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner         *User               `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy     *User               `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt     int64               `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt     int64               `yaml:"-" uesio:"uesio/core.createdat"`
+	itemMeta      *ItemMeta           `yaml:"-" uesio:"-"`
+	Public        bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
 func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
+		"GENERATOR":  "generator",
 	}
 }
 
-// GetBotDialects function
 func GetBotDialects() map[string]string {
 	return map[string]string{
 		"JAVASCRIPT": "javascript",
@@ -101,96 +133,95 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 }
 
 func (b *Bot) GetBotFilePath() string {
-	return filepath.Join(b.GetKey(), "bot.js")
+	return filepath.Join(b.GetBasePath(), "bot.js")
 }
 
-// GetCollectionName function
+func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
+	return filepath.Join(b.GetBasePath(), "templates", template)
+}
+
 func (b *Bot) GetCollectionName() string {
 	return b.GetBundleGroup().GetName()
 }
 
-// GetCollection function
 func (b *Bot) GetCollection() CollectionableGroup {
 	var bc BotCollection
 	return &bc
 }
 
-// GetConditions function
-func (b *Bot) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name":       b.Name,
-		"studio.collection": b.CollectionRef,
-		"studio.type":       b.Type,
-	}
+func (b *Bot) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s_%s_%s", workspace, b.CollectionRef, b.Type, b.Name)
 }
 
-// GetBundleGroup function
 func (b *Bot) GetBundleGroup() BundleableGroup {
 	var bc BotCollection
 	return &bc
 }
 
-// GetKey function
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" {
-		return filepath.Join(botType, b.Namespace+"."+b.Name)
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+		return fmt.Sprintf("%s:%s.%s", botType, b.Namespace, b.Name)
 	}
-	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)
+	return fmt.Sprintf("%s:%s:%s.%s", botType, b.CollectionRef, b.Namespace, b.Name)
+}
+
+func (b *Bot) GetBasePath() string {
+	botType := GetBotTypes()[b.Type]
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
+		return filepath.Join(botType, b.Name)
+	}
+	collectionNamespace, collectionName, _ := ParseKey(b.CollectionRef)
+	nsUser, appName, _ := ParseNamespace(collectionNamespace)
+	return filepath.Join(botType, nsUser, appName, collectionName, b.Name)
 }
 
 func (b *Bot) GetPath() string {
-	return filepath.Join(b.GetKey(), "bot.yaml")
+	return filepath.Join(b.GetBasePath(), "bot.yaml")
 }
 
-// GetPermChecker function
 func (b *Bot) GetPermChecker() *PermissionSet {
 	return nil
 }
 
-// SetField function
 func (b *Bot) SetField(fieldName string, value interface{}) error {
 	return StandardFieldSet(b, fieldName, value)
 }
 
-// GetField function
 func (b *Bot) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-// GetNamespace function
 func (b *Bot) GetNamespace() string {
 	return b.Namespace
 }
 
-// SetNamespace function
 func (b *Bot) SetNamespace(namespace string) {
 	b.Namespace = namespace
 }
 
-// SetWorkspace function
 func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
-// Loop function
+func (b *Bot) SetModified(mod time.Time) {
+	b.UpdatedAt = mod.UnixMilli()
+}
+
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
 }
 
-// Len function
 func (b *Bot) Len() int {
 	return StandardItemLen(b)
 }
 
-// GetItemMeta function
 func (b *Bot) GetItemMeta() *ItemMeta {
 	return b.itemMeta
 }
 
-// SetItemMeta function
 func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
 	b.itemMeta = itemMeta
 }
@@ -201,4 +232,8 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode(b)
+}
+
+func (b *Bot) IsPublic() bool {
+	return b.Public
 }

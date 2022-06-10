@@ -1,0 +1,5 @@
+name: bulkjob
+idFormat: ${uesio/core.autoid}
+public: true
+label: bulkjob
+pluralLabel: bulk jobs

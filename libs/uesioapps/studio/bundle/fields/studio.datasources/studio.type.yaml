@@ -1,6 +1,0 @@
-name: type
-collection: studio.datasources
-type: SELECT
-selectList: studio.datasourcetypes
-label: Type
-required: true

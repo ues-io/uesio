@@ -1,0 +1,135 @@
+name: themes
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{workspacename}
+    themes:
+      collection: uesio/studio.theme
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+    newtheme:
+      collection: uesio/studio.theme
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.workspace:
+      conditions:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: themes
+                      itemIcon: palette
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: uesio/studio.workspacenav
+                    params:
+                      selected: themes
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Themes
+                    subtitle: Motif?
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: Create a New Theme
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newTheme
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          id: themesDeck
+                          wire: themes
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}"
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.name}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: palette
+  panels:
+    newTheme:
+      uesio.type: uesio/io.dialog
+      title: Create a New Theme
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newthemelist
+            wire: newtheme
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.name
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newtheme"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}/workspace/$Param{workspacename}/themes/${uesio/studio.name}"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newTheme"

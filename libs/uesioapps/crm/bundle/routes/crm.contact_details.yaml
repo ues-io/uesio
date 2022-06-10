@@ -1,4 +1,0 @@
-name: contact_details
-path: contact/{contactid}
-view: crm.contact_details
-theme: crm.default

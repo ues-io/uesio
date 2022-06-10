@@ -1,4 +1,0 @@
-name: bundle
-path: app/{appname}/bundle/{major}/{minor}/{patch}
-view: studio.bundle
-theme: studio.default

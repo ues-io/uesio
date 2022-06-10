@@ -20,16 +20,12 @@ func StoreBundleAssets(namespace, sourceversion, destversion string, source bund
 	return dest.StoreItems(namespace, destversion, streams, session)
 }
 
-func CreateBundle(namespace, sourceversion, destversion, description string, source bundlestore.BundleStore, session *sess.Session) error {
-	bundle, err := meta.NewBundle(namespace, destversion, description)
+func CreateBundle(namespace, sourceversion string, bundle *meta.Bundle, source bundlestore.BundleStore, session *sess.Session) error {
+
+	err := PlatformSaveOne(bundle, nil, nil, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	err = PlatformSaveOne(bundle, nil, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	return StoreBundleAssets(namespace, sourceversion, destversion, source, session)
+	return StoreBundleAssets(namespace, sourceversion, bundle.GetVersionString(), source, session)
 }

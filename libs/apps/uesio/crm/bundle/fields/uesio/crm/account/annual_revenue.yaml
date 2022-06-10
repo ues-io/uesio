@@ -1,0 +1,5 @@
+name: annual_revenue
+type: NUMBER
+label: Annual Revenue
+number:
+  decimals: 0

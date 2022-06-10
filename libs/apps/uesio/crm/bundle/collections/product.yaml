@@ -1,0 +1,5 @@
+name: product
+nameField: uesio/crm.name
+label: product
+pluralLabel: products
+public: true

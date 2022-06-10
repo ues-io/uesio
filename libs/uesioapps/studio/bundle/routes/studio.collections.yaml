@@ -1,4 +1,0 @@
-name: collections
-path: app/{appname}/workspace/{workspacename}/collections
-view: studio.collections
-theme: studio.default

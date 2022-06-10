@@ -1,13 +1,16 @@
-import { Dispatcher } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { AnyAction } from "redux"
 import { addCondition, removeCondition } from ".."
 import loadWiresOp from "./load"
 
 const SEARCH_CONDITION_ID = "uesio.search"
 
-export default (context: Context, wirename: string, search: string) =>
-	async (dispatch: Dispatcher<AnyAction>) => {
+export default (
+		context: Context,
+		wirename: string,
+		search: string
+	): ThunkFunc =>
+	async (dispatch) => {
 		const viewId = context.getViewId()
 		const entity = `${viewId}/${wirename}`
 		dispatch(
@@ -26,6 +29,6 @@ export default (context: Context, wirename: string, search: string) =>
 						entity,
 				  })
 		)
-		await dispatch(loadWiresOp({ context, wires: [wirename] }))
+		await dispatch(loadWiresOp(context, [wirename]))
 		return context
 	}
