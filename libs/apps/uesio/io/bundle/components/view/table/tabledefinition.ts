@@ -56,6 +56,11 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+		{
+			name: "pagesize",
+			type: "TEXT",
+			label: "Page size",
+		},
 	],
 	sections: [],
 	actions: [],

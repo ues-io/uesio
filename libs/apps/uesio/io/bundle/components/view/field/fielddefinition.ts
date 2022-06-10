@@ -68,6 +68,16 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+		{
+			name: "dispplayAs",
+			type: "TEXT",
+			label: "Display as",
+		},
+		{
+			name: "id",
+			type: "TEXT",
+			label: "ID",
+		},
 	],
 	sections: [],
 	actions: [],
