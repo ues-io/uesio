@@ -4,15 +4,15 @@ extends: uesio/io.default
 definition:
   uesio.styles:
     root:
-      backgroundColor: "#fff"
-      color: "rgb(68, 68, 68)"
+      backgroundColor: "$Theme{color.primary}"
+      color: "#FFFFFFee"
       fontWeight: 500
-      border: "1px solid rgb(238, 238, 238)"
-      boxShadow: "0 0 2px #00000033"
+      border: "1px solid rgb(200,74, 37)"
+      boxShadow: "0 0 4px #00000033"
+      minWidth: 100px
       borderRadius: 4px
-      padding: "8px 12px"
-      transition: all 0.125s ease-in-out
-      "&:focus &:hover":
+      padding: 10px
+      "&:focus":
         boxShadow: "0 0 6px #00000093"
     label:
       textTransform: uppercase

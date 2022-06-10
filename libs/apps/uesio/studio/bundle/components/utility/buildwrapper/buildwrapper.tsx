@@ -1,6 +1,5 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
-
 import styling from "./styling"
 
 interface BuildWrapperProps extends definition.UtilityProps {
@@ -26,13 +25,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
-
-	const fieldId = (() => {
-		if (component.path.toPath(path).pop() !== "io.field") return ""
-
-		return componentDef?.fieldId
-	})()
-
 	const accepts = propDef?.accepts
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
@@ -84,7 +76,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 					uesio.builder.clearDropNode()
 				}}
 				className={classes.root}
-				{...(fieldId ? { "data-fieldid": fieldId } : "")}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected &&
 						uesio.builder.setSelectedNode(
