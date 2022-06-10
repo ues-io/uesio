@@ -18,7 +18,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
-	const [handler, portals] = uesio.signal.useHandler(definition.signals)
+	const handler = uesio.signal.getHandler(definition.signals)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
@@ -51,7 +51,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 				accepts={["uesio.standalone"]}
 				context={context}
 			/>
-			{portals}
 		</IOTile>
 	)
 }

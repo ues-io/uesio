@@ -2,6 +2,8 @@ package datasource
 
 import "github.com/thecloudmasters/uesio/pkg/adapt"
 
+var BUILTIN_FIELDS = [...]adapt.FieldMetadata{ID_FIELD_METADATA, OWNER_FIELD_METADATA, CREATEDBY_FIELD_METADATA, UPDATEDBY_FIELD_METADATA, CREATEDAT_FIELD_METADATA, UPDATEDAT_FIELD_METADATA}
+
 var ID_FIELD_METADATA = adapt.FieldMetadata{
 	Name:       "id",
 	Namespace:  "uesio/core",

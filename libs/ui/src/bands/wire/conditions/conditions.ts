@@ -1,3 +1,4 @@
+import { getFullWireId } from ".."
 import { Context } from "../../../context/context"
 
 const PARAM = "PARAM"
@@ -126,7 +127,10 @@ const conditionHandlers: ConditionHandlers = {
 	[LOOKUP]: (condition: LookupConditionState, context: Context) => ({
 		...condition,
 		valueSource: LOOKUP,
-		lookupWire: context.getViewId() + "/" + condition.lookupWire,
+		lookupWire: getFullWireId(
+			context.getViewId() || "",
+			condition.lookupWire
+		),
 		active: true,
 	}),
 }

@@ -45,6 +45,7 @@ type UpdateRecordPayload = {
 type CreateRecordPayload = {
 	record: PlainWireRecord
 	recordId: string
+	prepend: boolean
 } & EntityPayload
 
 type ToggleConditionPayload = {
@@ -70,7 +71,7 @@ type WireLoadAction = PayloadAction<
 >
 
 const wireAdapter = createEntityAdapter<PlainWire>({
-	selectId: (wire) => `${wire.view}/${wire.name}`,
+	selectId: (wire) => getFullWireId(wire.view, wire.name),
 })
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
@@ -160,8 +161,13 @@ const wireSlice = createSlice({
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
-			(state, { record, recordId }) => {
-				state.data = { ...state.data, [recordId]: record || {} }
+			(state, { record, recordId, prepend }) => {
+				const newRecord = { [recordId]: record || {} }
+				state.data = {
+					...(prepend && newRecord),
+					...state.data,
+					...(!prepend && newRecord),
+				}
 				state.changes = { ...state.changes, [recordId]: record || {} }
 			}
 		),
@@ -313,13 +319,19 @@ const selectWire = (
 		: undefined
 
 const getFullWireId = (viewId: string, wireName: string) =>
-	`${viewId}/${wireName}`
+	`${viewId}:${wireName}`
+
+const getWireParts = (fullWireId: string): [string, string] => {
+	const parts = fullWireId.split(":")
+	return [parts[0], parts[1]]
+}
 
 export {
 	useWire,
 	useWires,
 	selectWire,
 	getFullWireId,
+	getWireParts,
 	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,

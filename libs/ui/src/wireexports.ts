@@ -9,6 +9,8 @@ import WireRecord from "./bands/wirerecord/class"
 import { FieldValue, PlainWireRecord } from "./bands/wirerecord/types"
 import {
 	ValueConditionDefinition,
+	ParamConditionDefinition,
+	LookupConditionDefinition,
 	WireConditionDefinition,
 	WireConditionState,
 } from "./bands/wire/conditions/conditions"
@@ -31,5 +33,7 @@ export {
 	WireConditionState,
 	WireConditionDefinition,
 	ValueConditionDefinition,
+	ParamConditionDefinition,
+	LookupConditionDefinition,
 	WireFieldDefinitionMap,
 }

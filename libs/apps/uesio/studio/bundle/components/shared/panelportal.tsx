@@ -8,7 +8,7 @@ const PanelPortal: FC<definition.BaseProps> = (props) => {
 	const pathArray = component.path.toPath(selectedPath)
 	const isPanel = metadataType === "viewdef" && pathArray[0] === "panels"
 	const panelId = pathArray[1]
-	const [togglePanel, portals] = uesio.signal.useHandler([
+	const togglePanel = uesio.signal.getHandler([
 		{
 			signal: "panel/OPEN",
 			panel: panelId,
@@ -19,7 +19,7 @@ const PanelPortal: FC<definition.BaseProps> = (props) => {
 			togglePanel()
 		}
 	}, [selectedPath])
-	return <>{portals}</>
+	return <></>
 }
 
 export default PanelPortal

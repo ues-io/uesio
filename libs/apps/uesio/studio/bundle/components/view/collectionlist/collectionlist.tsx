@@ -33,7 +33,6 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 	const tenantType = context.getTenantType()
 
 	const collections = uesio.builder.useMetadataList(
-		//TO-DO dont return stuff that is not public
 		context,
 		"COLLECTION",
 		namespace
@@ -55,7 +54,13 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 							uesio.signal.run(
 								{
 									signal: "route/REDIRECT",
-									path: `/app/${tenant.app}/${tenantType}/${tenant.name}/data/${collectionNS}/${collectionName}`,
+									path: `/app/${tenant.app}/${tenantType}/${
+										tenant.name
+									}/${
+										tenantType === "site"
+											? "data"
+											: "collections"
+									}/${collectionNS}/${collectionName}`,
 								},
 								context
 							)

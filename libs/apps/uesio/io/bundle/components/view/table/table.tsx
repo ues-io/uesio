@@ -53,7 +53,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		)
 	)
 
-	const columns = columnsToDisplay.map((columnDef) => {
+	const columns = columnsToDisplay?.map((columnDef) => {
 		const column = columnDef["uesio/io.column"] as ColumnDefinition
 		const fieldId = column.field
 		const fieldMetadata = collection.getField(fieldId)
@@ -106,7 +106,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					context={recordContext}
 				>
 					{definition.rowactions.map((action, i) => {
-						const [handler] = uesio.signal.useHandler(
+						const handler = uesio.signal.getHandler(
 							action.signals,
 							recordContext
 						)

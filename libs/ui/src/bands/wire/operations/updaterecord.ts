@@ -35,7 +35,7 @@ export default (
 		if (changeEvents) {
 			for (const changeEvent of changeEvents) {
 				if (changeEvent.field !== path[0]) continue
-				runManyThrottled("", changeEvent.signals, context)
+				runManyThrottled(changeEvent.signals, context)
 			}
 		}
 
