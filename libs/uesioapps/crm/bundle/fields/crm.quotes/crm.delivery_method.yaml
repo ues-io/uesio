@@ -1,4 +1,0 @@
-name: delivery_method
-collection: crm.quotes
-type: TEXT
-label: Delivery Method

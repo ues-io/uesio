@@ -3,7 +3,6 @@ import { FieldMetadataMap } from "../field/types"
 type PlainCollection = {
 	name: string
 	namespace: string
-	idField: string
 	nameField: string
 	createable: boolean
 	accessible: boolean
@@ -16,4 +15,6 @@ type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
-export { PlainCollectionMap, PlainCollection }
+const ID_FIELD = "uesio/core.id"
+
+export { PlainCollectionMap, PlainCollection, ID_FIELD }

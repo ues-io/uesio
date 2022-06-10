@@ -1,0 +1,4 @@
+name: mock_auth
+managedBy: app
+store: environment
+public: true

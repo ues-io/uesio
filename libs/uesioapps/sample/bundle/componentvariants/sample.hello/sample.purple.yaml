@@ -1,7 +1,0 @@
-name: purple
-component: sample.hello
-label: Purple
-definition:
-  uesio.styles:
-    root:
-      backgroundColor: purple

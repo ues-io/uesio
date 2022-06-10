@@ -1,0 +1,8 @@
+name: language
+type: SELECT
+label: Language
+selectList: uesio/core.language
+required: true
+createOnly: true
+validate:
+  type: METADATA

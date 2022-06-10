@@ -1,5 +1,0 @@
-name: app
-collection: studio.sites
-type: REFERENCE
-label: App
-referencedCollection: studio.apps

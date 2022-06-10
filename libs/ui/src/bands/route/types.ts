@@ -1,18 +1,16 @@
-import { ViewParams } from "../view/types"
-
-type WorkspaceState = {
+type TenantState = {
 	name: string
 	app: string
 }
 
 type RouteState = {
 	view: string
-	params?: ViewParams
+	params?: Record<string, string>
 	namespace: string
 	path: string
-	workspace?: WorkspaceState
+	workspace?: TenantState
 	theme: string
 	isLoading?: boolean
 } | null
 
-export { RouteState, WorkspaceState }
+export { RouteState, TenantState }

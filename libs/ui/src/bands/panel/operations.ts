@@ -4,13 +4,37 @@ import { set as setPanel } from "."
 import { selectors } from "./adapter"
 
 const toggle =
-	(context: Context, panel: string, contextPath: string): ThunkFunc =>
+	(context: Context, panel: string): ThunkFunc =>
 	async (dispatch, getState) => {
 		const panelState = selectors.selectById(getState(), panel)
 		dispatch(
 			setPanel({
 				id: panel,
-				contextPath: panelState?.contextPath ? "" : contextPath,
+				context: panelState?.context ? undefined : context,
+			})
+		)
+		return context
+	}
+
+const close =
+	(context: Context, panel: string): ThunkFunc =>
+	async (dispatch) => {
+		dispatch(
+			setPanel({
+				id: panel,
+				context: undefined,
+			})
+		)
+		return context
+	}
+
+const open =
+	(context: Context, panel: string): ThunkFunc =>
+	async (dispatch) => {
+		dispatch(
+			setPanel({
+				id: panel,
+				context,
 			})
 		)
 		return context
@@ -18,4 +42,6 @@ const toggle =
 
 export default {
 	toggle,
+	open,
+	close,
 }

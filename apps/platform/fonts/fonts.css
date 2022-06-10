@@ -57,3 +57,19 @@
 	font-weight: bold;
 	src: url("/fonts/GoshaSans-Bold.otf") format("opentype");
 }
+
+/* Greenlink */
+@font-face {
+	font-family: "Viga";
+	src: url("/fonts/Viga-Regular.ttf") format("truetype");
+}
+@font-face {
+	font-family: "Lato";
+	src: url("/fonts/Lato-Regular.ttf") format("truetype");
+}
+@font-face {
+	font-family: "Lato";
+	font-weight: bold;
+	src: url("/fonts/Lato-Bold.ttf") format("truetype");
+}
+/*  */

@@ -29,11 +29,13 @@ type ComponentSignalDescriptor = {
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher
 	target?: string
+	slice?: string
 }
 
 type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
+	onerror?: { signals: SignalDefinition[] }
 }
 
 export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

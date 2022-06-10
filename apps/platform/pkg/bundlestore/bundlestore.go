@@ -3,44 +3,21 @@ package bundlestore
 import (
 	"errors"
 	"io"
-	"os"
 
 	"github.com/humandad/yaml"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
 
-// System variables
-var (
-	BundleStoreType string
-	SystemSetUp     error
-)
-
-func init() {
-	SystemSetUp = InitSystemEnv()
-}
-
-//InitSystemEnv inits System variables
-func InitSystemEnv() error {
-
-	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_TYPE")
-	if !ok {
-		return errors.New("Could not get environment variable: UESIO_BUNDLE_STORE_TYPE")
-	}
-	BundleStoreType = val
-
-	return nil
-
-}
-
 // RegisterBundleStore function
 func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
 }
 
-func getBundleStoreByType(bundleStoreType string) (BundleStore, error) {
+func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	adapter, ok := bundleStoreMap[bundleStoreType]
 	if !ok {
 		return nil, errors.New("No bundle store found of this type: " + bundleStoreType)
@@ -65,12 +42,16 @@ func NewPermissionError(message string) *PermissionError {
 // BundleStore interface
 type BundleStore interface {
 	GetItem(item meta.BundleableItem, version string, session *sess.Session) error
-	GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error
+	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error
+	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error
+	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error)
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
+	GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
-	GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error)
+	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
+	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 }
 
 // GetBundleStore function
@@ -80,14 +61,20 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if namespace == "" {
 		return nil, errors.New("Could not get bundlestore: No namespace provided")
 	}
-	if session.GetWorkspaceApp() == namespace {
-		return getBundleStoreByType("workspace")
-	}
-	if namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "lab" || namespace == "docs" || namespace == "web" {
-		return getBundleStoreByType("system")
+
+	_, _, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return nil, err
 	}
 
-	return getBundleStoreByType(BundleStoreType)
+	if session.GetWorkspaceApp() == namespace {
+		return GetBundleStoreByType("workspace")
+	}
+	if namespace == "uesio/core" || namespace == "uesio/studio" || namespace == "uesio/io" || namespace == "uesio/lab" || namespace == "uesio/docs" || namespace == "uesio/web" || namespace == "uesio/cms" {
+		return GetBundleStoreByType("system")
+	}
+
+	return GetBundleStoreByType("platform")
 }
 
 // DecodeYAML function

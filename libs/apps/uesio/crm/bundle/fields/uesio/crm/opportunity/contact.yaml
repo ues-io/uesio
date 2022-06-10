@@ -1,0 +1,5 @@
+name: contact
+type: REFERENCE
+label: Contact
+reference:
+  collection: uesio/crm.contact

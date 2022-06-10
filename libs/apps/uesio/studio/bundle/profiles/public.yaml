@@ -1,0 +1,4 @@
+name: public
+permissionSets:
+  - uesio/studio.public
+  - uesio/core.public

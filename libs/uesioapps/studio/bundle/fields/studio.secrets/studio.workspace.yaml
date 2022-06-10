@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.secrets
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

@@ -1,5 +1,0 @@
-name: default_pricebook
-collection: crm.opportunities
-type: REFERENCE
-label: Default Pricebook
-referencedCollection: crm.pricebooks

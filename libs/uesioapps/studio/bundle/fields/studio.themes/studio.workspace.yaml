@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.themes
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

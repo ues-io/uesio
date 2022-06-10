@@ -1,5 +1,0 @@
-name: picture
-collection: uesio.users
-type: FILE
-label: Profile picture
-filecollection: uesio.platform

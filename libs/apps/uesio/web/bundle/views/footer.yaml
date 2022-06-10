@@ -1,0 +1,78 @@
+name: footer
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            backgroundColor: rgb(33,36,44)
+            minHeight: 400px
+        uesio.variant: uesio/web.mainlayout
+        items:
+          - uesio/io.griditem:
+              area: main
+              components:
+                - uesio/io.grid:
+                    templateColumns: 0fr 1fr 0fr
+                    uesio.styles:
+                      root:
+                        alignItems: center
+                        margin: 16px
+                    items:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.image:
+                                file: uesio/web.logowhite
+                                uesio.styles:
+                                  root:
+                                    padding-right: 15px
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.footertext
+                                text: ©2020-2021 ues.io is the property of:-
+                                element: div
+                                uesio.styles:
+                                  root:
+                                    padding-bottom: 5px
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.footertext
+                                text: The Cloud Masters LLC Switzerland - All rights reserved
+                                element: div
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.group:
+                                columnGap: 14px
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/web.footerlink
+                                      text: Who we are
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://www.thecloudmasters.com"
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/web.footerlink
+                                      text: The team
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: team
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/web.footerlink
+                                      text: Contact us
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: contact
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/web.footerlink
+                                      text: Privacy policy
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: privacy
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/web.footerlink
+                                      text: Terms of use
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: terms

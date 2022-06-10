@@ -1,0 +1,5 @@
+name: selectlist
+idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
+nameField: uesio/studio.name
+label: select list
+pluralLabel: select lists

@@ -1,0 +1,9 @@
+name: gender
+options:
+  - label: Male
+    value: MALE
+  - label: Female
+    value: FEMALE
+  - label: Other
+    value: OTHER
+public: true

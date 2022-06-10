@@ -1,6 +1,74 @@
 {
   "version": 1,
   "projects": {
+    "cli": {
+      "root": "apps/cli",
+      "sourceRoot": "apps/cli/src",
+      "projectType": "application",
+      "prefix": "cli",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/cli"
+          ],
+          "options": {
+            "commands": [
+              "npx tsc",
+              "mkdir -p ../../dist/cli",
+              "cp ./publish/package.json ../../dist/cli/package.json"
+            ],
+            "parallel": false,
+            "cwd": "apps/cli"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/cli"
+          ],
+          "options": {
+            "command": "npx -w tsc &",
+            "cwd": "apps/cli"
+          }
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/cli"
+          ],
+          "options": {
+            "commands": [
+              "cd publish && npm version --no-git-tag-version patch",
+              "mkdir -p ../../dist/cli/bin",
+              "cp ./publish/package.json ../../dist/cli/package.json",
+              "cp ./bin/run ../../dist/cli/bin/run",
+              "cp ./bin/run.cmd ../../dist/cli/bin/run.cmd"
+            ],
+            "parallel": false,
+            "cwd": "apps/cli"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/cli/**/*.ts*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for cli.",
+            "cwd": "apps/cli"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": []
+    },
     "platform": {
       "projectType": "application",
       "root": "apps/platform",
@@ -13,26 +81,8 @@
           ],
           "options": {
             "commands": [
-              "go build -o ../../dist/platform/uesio",
-              "npx webpack --config webpack.config.js"
+              "go build -o ../../dist/platform/uesio"
             ],
-            "cwd": "apps/platform"
-          }
-        },
-        "build-go": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "dist/platform"
-          ],
-          "options": {
-            "command": "go build -o ../../dist/platform/uesio",
-            "cwd": "apps/platform"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx webpack --watch --config webpack.config.js &",
             "cwd": "apps/platform"
           }
         },
@@ -57,6 +107,13 @@
             "cwd": "apps/platform"
           }
         },
+        "work": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../dist/platform/uesio work",
+            "cwd": "apps/platform"
+          }
+        },
         "build-image": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -71,7 +128,307 @@
             "cwd": "apps/platform"
           }
         }
-      }
+      },
+      "tags": []
+    },
+    "clio": {
+      "projectType": "application",
+      "root": "apps/clio",
+      "sourceRoot": "apps/clio",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/clio"
+          ],
+          "options": {
+            "commands": [
+              "go build -o ../../dist/clio/uesio"
+            ],
+            "cwd": "apps/clio"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "test -z $(gofmt -l ./pkg/**)",
+            "cwd": "apps/clio"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "go test -v ./...",
+            "cwd": "apps/clio"
+          }
+        }
+      },
+      "tags": []
+    },
+    "apps-uesio-crm": {
+      "root": "libs/apps/uesio/crm",
+      "sourceRoot": "libs/apps/uesio/crm",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/crm"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/crm"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run deploy",
+            "cwd": "libs/apps/uesio/crm"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for apps-uesio-crm.",
+            "cwd": "libs/apps/uesio/crm"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-cms": {
+      "root": "libs/apps/uesio/cms",
+      "sourceRoot": "libs/apps/uesio/cms",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/cms"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/cms"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run deploy",
+            "cwd": "libs/apps/uesio/cms"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for apps-uesio-cms.",
+            "cwd": "libs/apps/uesio/cms"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-docs": {
+      "root": "libs/apps/uesio/docs",
+      "sourceRoot": "libs/apps/uesio/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/docs"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/docs"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-io": {
+      "root": "libs/apps/uesio/io",
+      "sourceRoot": "libs/apps/uesio/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "libs/apps/uesio/io/bundle/componentpacks/main/builder.bundle.js",
+            "libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
+          ],
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/io"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/io"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/apps/uesio/io/**/*.ts*"
+            ]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-lab": {
+      "root": "libs/apps/uesio/lab",
+      "sourceRoot": "libs/apps/uesio/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "libs/apps/uesio/lab/bundle/componentpacks/main/builder.bundle.js",
+            "libs/apps/uesio/lab/bundle/componentpacks/main/runtime.bundle.js"
+          ],
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/lab"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/lab"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/apps/uesio/lab/**/*.ts*"
+            ]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-studio": {
+      "root": "libs/apps/uesio/studio",
+      "sourceRoot": "libs/apps/uesio/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "libs/apps/uesio/studio/bundle/componentpacks/main/builder.bundle.js",
+            "libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
+          ],
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/studio"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/studio"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/apps/uesio/studio/**/*.ts*"
+            ]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
+    },
+    "apps-uesio-core": {
+      "root": "libs/apps/uesio/core",
+      "sourceRoot": "libs/apps/uesio/core/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "libs/apps/uesio/core/bundle/componentpacks/app/builder.bundle.js",
+            "libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
+          ],
+          "options": {
+            "command": "./../../../../dist/clio/uesio pack",
+            "cwd": "libs/apps/uesio/core"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../../apps/cli/bin/run pack -w",
+            "cwd": "libs/apps/uesio/core"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/apps/uesio/core/**/*.ts*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for apps-uesio-core.",
+            "cwd": "libs/apps/uesio/core"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli","clio"
+      ]
     },
     "ui": {
       "root": "libs/ui",
@@ -85,14 +442,33 @@
             "dist/ui"
           ],
           "options": {
-            "command": "npx webpack --config webpack.config.js",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap",
+            "cwd": "libs/ui"
+          }
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/ui"
+          ],
+          "options": {
+            "commands": [
+              "npx tsc --build",
+              "cd publish && npm version --no-git-tag-version patch",
+              "cp ./publish/package.json ../../dist/ui/package.json",
+              "cp ./publish/.npmignore ../../dist/ui/.npmignore"
+            ],
+            "parallel": false,
             "cwd": "libs/ui"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/ui"
+          ],
           "options": {
-            "command": "npx webpack --watch --config webpack.config.js &",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap --watch",
             "cwd": "libs/ui"
           }
         },
@@ -114,298 +490,8 @@
             "coverage/libs/ui"
           ]
         }
-      }
-    },
-    "lazymonaco": {
-      "root": "libs/lazymonaco",
-      "sourceRoot": "libs/lazymonaco/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "dist/lazymonaco"
-          ],
-          "options": {
-            "command": "npx webpack --config webpack.config.js",
-            "cwd": "libs/lazymonaco"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx webpack --watch --config webpack.config.js",
-            "cwd": "libs/lazymonaco"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/lazymonaco/**/*.ts*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/lazymonaco/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": [
-            "coverage/libs/lazymonaco"
-          ]
-        }
-      }
-    },
-    "uesioapps-sample": {
-      "root": "libs/uesioapps/sample",
-      "sourceRoot": "libs/uesioapps/sample/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/sample/bundle/componentpacks/sample.main/builder.bundle.js",
-            "libs/uesioapps/sample/bundle/componentpacks/sample.main/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/sample"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop",
-            "cwd": "libs/uesioapps/sample"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/sample/**/*.ts*"
-            ]
-          }
-        }
-      }
-    },
-    "uesioapps-studio": {
-      "root": "libs/uesioapps/studio",
-      "sourceRoot": "libs/uesioapps/studio/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/studio/bundle/componentpacks/studio.main/builder.bundle.js",
-            "libs/uesioapps/studio/bundle/componentpacks/studio.main/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/studio"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop &",
-            "cwd": "libs/uesioapps/studio"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/studio/**/*.ts*"
-            ]
-          }
-        }
-      }
-    },
-    "uesioapps-io": {
-      "root": "libs/uesioapps/io",
-      "sourceRoot": "libs/uesioapps/studio/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/io/bundle/componentpacks/io.main/builder.bundle.js",
-            "libs/uesioapps/io/bundle/componentpacks/io.main/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/io"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop &",
-            "cwd": "libs/uesioapps/io"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/io/**/*.ts*"
-            ]
-          }
-        }
-      }
-    },
-    "uesioapps-lab": {
-      "root": "libs/uesioapps/lab",
-      "sourceRoot": "libs/uesioapps/studio/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/lab/bundle/componentpacks/lab.main/builder.bundle.js",
-            "libs/uesioapps/lab/bundle/componentpacks/lab.main/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/lab"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop &",
-            "cwd": "libs/uesioapps/lab"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/lab/**/*.ts*"
-            ]
-          }
-        }
-      }
-    },
-    "uesioapps-docs": {
-      "root": "libs/uesioapps/docs",
-      "sourceRoot": "libs/uesioapps/studio/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/docs"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop",
-            "cwd": "libs/uesioapps/docs"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
-            "cwd": "libs/uesioapps/docs"
-          }
-        }
-      }
-    },
-    "uesioapps-uesio": {
-      "root": "libs/uesioapps/uesio",
-      "sourceRoot": "libs/uesioapps/uesio/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/uesio/bundle/componentpacks/uesio.app/builder.bundle.js",
-            "libs/uesioapps/uesio/bundle/componentpacks/uesio.app/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/uesio"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop",
-            "cwd": "libs/uesioapps/uesio"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
-            "cwd": "libs/uesioapps/uesio"
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "echo TODO: set up test for uesioapps-uesio.",
-            "cwd": "libs/uesioapps/uesio"
-          }
-        }
-      }
-    },
-    "uesioapps-crm": {
-      "root": "libs/uesioapps/crm",
-      "sourceRoot": "libs/uesioapps/crm",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/crm"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop",
-            "cwd": "libs/uesioapps/crm"
-          }
-        },
-        "deploy": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run deploy",
-            "cwd": "libs/uesioapps/crm"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
-            "cwd": "libs/uesioapps/crm"
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "echo TODO: set up test for uesioapps-crm.",
-            "cwd": "libs/uesioapps/crm"
-          }
-        }
-      }
+      },
+      "tags": []
     },
     "vendor": {
       "root": "libs/vendor",
@@ -420,15 +506,8 @@
           ],
           "options": {
             "commands": [
-              "mkdir -p dist/vendor",
-              "npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} wget -O dist/vendor/react.development.js {}",
-              "npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} wget -O dist/vendor/react.production.min.js {}",
-              "npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} wget -O dist/vendor/react-dom.development.js {}",
-              "npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.production.min.js\" | xargs -I{} wget -O dist/vendor/react-dom.production.min.js {}",
-              "npm run --silent get-module-version --modulename=redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/redux/{}/redux.js\" | xargs -I{} wget -O dist/vendor/redux.js {}",
-              "npm run --silent get-module-version --modulename=react-redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/react-redux/{}/react-redux.js\" | xargs -I{} wget -O dist/vendor/react-redux.js {}",
-              "npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js {}",
-              "npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js.map\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js.map {}",
+              "mkdir -p dist/vendor/monaco-editor/min/vs",
+              "cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
               "echo Done!"
             ],
             "parallel": false
@@ -441,55 +520,8 @@
             }
           }
         }
-      }
-    },
-    "cli": {
-      "root": "apps/cli",
-      "sourceRoot": "apps/cli/src",
-      "projectType": "application",
-      "prefix": "cli",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "dist/cli"
-          ],
-          "options": {
-            "command": "npx tsc",
-            "cwd": "apps/cli"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "dist/cli"
-          ],
-          "options": {
-            "command": "npx -w tsc &",
-            "cwd": "apps/cli"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "apps/cli/**/*.ts*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "echo TODO: set up test for cli.",
-            "cwd": "apps/cli"
-          }
-        }
-      }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/node"
-  },
-  "defaultProject": "cli"
+  }
 }

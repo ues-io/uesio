@@ -1,4 +1,0 @@
-name: filecollections
-dataSource: uesio.platform
-idFormat: "${studio.name}"
-nameField: studio.name

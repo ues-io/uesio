@@ -1,4 +1,0 @@
-name: mailing_state
-collection: crm.contacts
-type: TEXT
-label: Mailing State

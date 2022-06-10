@@ -1,5 +1,0 @@
-name: related_lead
-collection: crm.notes
-type: REFERENCE
-label: Related Lead
-referencedCollection: crm.leads

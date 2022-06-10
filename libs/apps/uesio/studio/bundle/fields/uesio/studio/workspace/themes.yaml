@@ -1,0 +1,7 @@
+name: themes
+type: REFERENCEGROUP
+label: Themes
+referenceGroup:
+  collection: uesio/studio.theme
+  field: uesio/studio.workspace
+  onDelete: CASCADE

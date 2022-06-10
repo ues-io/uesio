@@ -1,0 +1,192 @@
+name: home
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+      order:
+        - field: uesio/studio.name
+          desc: false
+    newapp:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+      init:
+        query: false
+        create: true
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Apps
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newApp
+                - uesio/io.list:
+                    id: appslist
+                    wire: apps
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/${uesio/core.id}"
+                          content:
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                text: ${uesio/core.id}
+                                element: div
+                            - uesio/io.text:
+                                text: ${uesio/studio.description}
+                                element: div
+                                uesio.styles:
+                                  root:
+                                    fontSize: 9pt
+                                    color: "#777"
+                                    lineHeight: 16pt
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "${uesio/studio.color}"
+                                text: circle
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        backgroundSize: cover
+                        backgroundImage: url($File{uesio/core.splash})
+                        padding: 100px
+                        height: 60px
+                        color: "#FFFFFFC0"
+                - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        backgroundSize: cover
+                        backgroundColor: rgb(22,22,22)
+                        padding: 40px 100px
+                        color: "#FFFFFFC0"
+                    components:
+                      - uesio/io.box:
+                          uesio.styles:
+                            root:
+                              fontFamily: Gosha
+                              fontSize: 40pt
+                          components:
+                            - uesio/io.text:
+                                text: "Get started with "
+                            - uesio/io.text:
+                                color: white
+                                text: ues.io
+                      - uesio/io.box:
+                          uesio.styles:
+                            root:
+                              lineHeight: 30px
+                              paddingTop: 10px
+                          components:
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: white
+                                text: "Build "
+                            - uesio/io.text:
+                                text: "web appliations declaratively. "
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: white
+                                text: "Reuse "
+                            - uesio/io.text:
+                                text: "components from other apps. "
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: white
+                                text: "Iterate "
+                            - uesio/io.text:
+                                text: "quickly."
+                - uesio/io.grid:
+                    templateColumns: 1fr 1fr
+                    items:
+                      - uesio/io.griditem:
+                          uesio.styles:
+                            root:
+                              padding: 50px
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Latest Updates & News
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.smallcontent
+                                text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
+                                element: div
+                      - uesio/io.griditem:
+                          uesio.styles:
+                            root:
+                              padding: 50px
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Learn ues.io
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://docs.$Site{domain}"
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.smallcontent
+                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
+                                element: div
+
+  panels:
+    newApp:
+      uesio.type: uesio/io.dialog
+      title: Create a New App
+      width: 400px
+      height: 500px
+      components:
+        - uesio/core.view:
+            view: uesio/studio.appedit
+            uesio.context:
+              wire: newapp
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newapp"
+              - signal: "route/NAVIGATE"
+                path: "app/${uesio/core.id}"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newApp"
+              - signal: "wire/RESET"
+                wire: newapp

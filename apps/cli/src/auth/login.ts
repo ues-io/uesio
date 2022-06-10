@@ -2,16 +2,15 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
+import { component } from "#uesio/ui"
 
-const MOCK_LOGIN = "mock"
-const GOOGLE_LOGIN = "google"
-
-type AuthHandlerResponse = {
-	type: string
-	token: string
-}
+type AuthHandlerResponse = Record<string, string>
 
 type AuthHandler = () => Promise<AuthHandlerResponse>
+
+type AuthCheckResponse = {
+	user: User
+}
 
 type User = {
 	firstname: string
@@ -19,6 +18,7 @@ type User = {
 	profile: string
 	site: string
 	cookie: string
+	id: string
 }
 
 type AuthHandlers = {
@@ -28,19 +28,31 @@ type AuthHandlers = {
 const SESSION_KEY = "sessid"
 
 const authHandlers = {
-	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
-		type: "mock",
+	["uesio/core.mock"]: async (): Promise<AuthHandlerResponse> => ({
 		// TODO: actually read from seeds and allow mock login as all users
 		token: JSON.stringify({
-			subject: "MockBen",
 			authType: "mock",
-			firstname: "Ben",
-			lastname: "Hubbard",
-			email: "ben@thecloudmasters.com",
+			subject: "ben",
 		}),
 	}),
-	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
-		throw new Error("Google Auth is not yet supported.")
+	["uesio/core.platform"]: async (): Promise<AuthHandlerResponse> => {
+		const responses = await inquirer.prompt([
+			{
+				name: "username",
+				message: "Username",
+				type: "input",
+			},
+			{
+				name: "password",
+				message: "Password",
+				type: "input",
+			},
+		])
+
+		return {
+			username: responses.username as string,
+			password: responses.password as string,
+		}
 	},
 } as AuthHandlers
 
@@ -64,31 +76,36 @@ const check = async (): Promise<User | null> => {
 	}
 
 	const response = await get("site/auth/check", cookie)
-	const result = await response.json()
-	const user = result.user as User
+	const result = (await response.json()) as AuthCheckResponse
+	const user = result.user
 	user.cookie = cookie
-	if (user && user.profile === "studio.standard") {
+	if (user && user.profile === "uesio/studio.standard") {
 		return user
 	}
 	return null
 }
 
-const login = async (authType: string): Promise<User> => {
-	const handler = authHandlers[authType]
+const login = async (authSource: string): Promise<User> => {
+	const handler = authHandlers[authSource]
 	if (!handler) {
 		throw new Error("That auth type is not yet supported.")
 	}
 	const authHandlerResponse = await handler()
 
+	const cookie = await getCookie()
+
+	const [namespace, name] = component.path.parseKey(authSource)
+
 	const response = await post(
-		"site/auth/login",
-		JSON.stringify(authHandlerResponse)
+		`site/auth/${namespace}/${name}/login`,
+		JSON.stringify(authHandlerResponse),
+		cookie
 	)
 
 	const sessionId = getSessionIdFromResponse(response)
 	await setSessionId(sessionId)
 
-	const result = await response.json()
+	const result = (await response.json()) as AuthCheckResponse
 	const user = result.user
 	user.cookie = `${SESSION_KEY}=${sessionId}`
 
@@ -116,8 +133,11 @@ const authorize = async (): Promise<User> => {
 				message: "Select a Login Method",
 				type: "list",
 				choices: [
-					{ name: "Sign in with Google", value: GOOGLE_LOGIN },
-					{ name: "Mock Login", value: MOCK_LOGIN },
+					{ name: "Mock Login", value: "uesio/core.mock" },
+					{
+						name: "Sign in with Username",
+						value: "uesio/core.platform",
+					},
 				],
 			},
 		])

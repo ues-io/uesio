@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.filesources
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

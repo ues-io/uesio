@@ -1,100 +1,86 @@
-import { removeDef } from "../src/bands/viewdef/reducers"
 import { createNextState } from "@reduxjs/toolkit"
 import { RemoveDefinitionPayload } from "../src/bands/builder"
-import { PlainViewDef } from "../src/bands/viewdef/types"
+import { MetadataState } from "../src/bands/metadata/types"
+import { removeDef } from "../src/store/reducers"
+
+const buttondeletetest = `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+wires:
+panels:
+`
+
+const buttondeletetestresult = `
+components:
+  - uesio/io.button:
+      text: button1
+wires: null
+panels: null
+`
 
 test("viewdef delete component", () => {
 	testDelete(
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.button": {
-							text: "button1",
-						},
-					},
-					{
-						"io.button": {
-							text: "button2",
-						},
-					},
-				],
-				wires: {},
-				panels: [],
-			},
+			key: "ben/planets.page",
+			content: buttondeletetest,
 		},
 		{
 			path: `["components"]["1"]`,
 		},
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [
-					{
-						"io.button": {
-							text: "button1",
-						},
-					},
-				],
-				wires: {},
-				panels: [],
-			},
+			key: "ben/planets.page",
+			content: buttondeletetestresult,
 		}
 	)
 })
 
+const wiredeletetest = `
+components:
+wires:
+  mywire:
+    collection: mycollection
+    fields:
+  myotherwire:
+    collection: myothercollection
+    fields:
+panels:
+`
+
+const wiredeletetestresult = `
+components: null
+wires:
+  myotherwire:
+    collection: myothercollection
+    fields: null
+panels: null
+`
+
 test("viewdef delete wire", () => {
 	testDelete(
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [],
-				wires: {
-					mywire: {
-						collection: "mycollection",
-						fields: {},
-					},
-					myotherwire: {
-						collection: "myothercollection",
-						fields: {},
-					},
-				},
-				panels: [],
-			},
+			key: "ben/planets.page",
+			content: wiredeletetest,
 		},
 		{
 			path: `["wires"]["mywire"]`,
 		},
 		{
-			name: "name",
-			namespace: "namespace",
-			definition: {
-				components: [],
-				wires: {
-					myotherwire: {
-						collection: "myothercollection",
-						fields: {},
-					},
-				},
-				panels: [],
-			},
+			key: "ben/planets.page",
+			content: wiredeletetestresult,
 		}
 	)
 })
 
 const testDelete = (
-	initial: PlainViewDef,
+	initial: MetadataState,
 	payload: RemoveDefinitionPayload,
-	expected: PlainViewDef
+	expected: MetadataState
 ) => {
 	const newState = createNextState(initial, (draftState) => {
 		removeDef(draftState, payload)
 	})
-	expect(newState).toStrictEqual(expected)
-	// We have to stringify here to match key order
-	expect(JSON.stringify(newState)).toBe(JSON.stringify(expected))
+	expect(newState.content.trim()).toStrictEqual(expected.content.trim())
 }

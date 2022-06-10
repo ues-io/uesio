@@ -1,52 +1,51 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ConfigValueCollection slice
-type ConfigValueCollection []ConfigValue
+type ConfigValueCollection []*ConfigValue
 
-// GetName function
 func (cvc *ConfigValueCollection) GetName() string {
-	return "studio.configvalues"
+	return "uesio/studio.configvalue"
 }
 
-// GetFields function
+func (cvc *ConfigValueCollection) GetBundleFolderName() string {
+	return "configvalues"
+}
+
 func (cvc *ConfigValueCollection) GetFields() []string {
 	return StandardGetFields(&ConfigValue{})
 }
 
-// NewItem function
 func (cvc *ConfigValueCollection) NewItem() loadable.Item {
-	*cvc = append(*cvc, ConfigValue{})
-	return &(*cvc)[len(*cvc)-1]
+	cv := &ConfigValue{}
+	*cvc = append(*cvc, cv)
+	return cv
 }
 
-// NewBundleableItemWithKey function
 func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	cv, err := NewConfigValue(key)
 	if err != nil {
 		return nil, err
 	}
-	*cvc = append(*cvc, *cv)
-	return &(*cvc)[len(*cvc)-1], nil
+	*cvc = append(*cvc, cv)
+	return cv, nil
 }
 
-// GetKeyFromPath function
-func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (cvc *ConfigValueCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (cvc *ConfigValueCollection) GetItem(index int) loadable.Item {
-	return &(*cvc)[index]
+	return (*cvc)[index]
 }
 
-// Loop function
 func (cvc *ConfigValueCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cvc {
-		err := iter(cvc.GetItem(index), index)
+		err := iter(cvc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -54,20 +53,10 @@ func (cvc *ConfigValueCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
 }
 
-// GetItems function
 func (cvc *ConfigValueCollection) GetItems() interface{} {
 	return *cvc
-}
-
-// Slice function
-func (cvc *ConfigValueCollection) Slice(start int, end int) {
-
-}
-func (bc *ConfigValueCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 // SetField sets the provided obj field with provided value. obj param has
@@ -104,7 +105,7 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 
 func setPointer(to reflect.Value, from reflect.Value) error {
 	if from.IsNil() {
-		to.Set(from)
+		to.Set(reflect.Zero(to.Type()))
 		return nil
 	}
 	value := reflect.New(to.Type().Elem())
@@ -113,7 +114,24 @@ func setPointer(to reflect.Value, from reflect.Value) error {
 }
 
 func setPrimative(to reflect.Value, from reflect.Value) error {
-	if to.Type() != from.Type() {
+	fromType := from.Type()
+	toType := to.Type()
+	if !fromType.AssignableTo(toType) {
+		if from.CanConvert(toType) {
+			to.Set(from.Convert(toType))
+			return nil
+		}
+		// A special case where we try to convert strings to int.
+		if fromType == reflect.TypeOf("") && toType == reflect.TypeOf(0) {
+			stringVal := from.String()
+			intVal, err := strconv.Atoi(stringVal)
+			if err != nil {
+				return err
+			}
+			to.Set(reflect.ValueOf(intVal))
+			fmt.Println("WARNING: converted string to int: " + stringVal)
+			return nil
+		}
 		return errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
 	}
 

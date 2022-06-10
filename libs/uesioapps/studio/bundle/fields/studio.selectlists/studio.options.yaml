@@ -1,8 +1,0 @@
-name: options
-collection: studio.selectlists
-type: LIST
-label: Options
-subtype: MAP
-subfields:
-  - name: label
-  - name: value

@@ -1,0 +1,27 @@
+{
+	"jobtype": "IMPORT",
+	"collection": "uesio/crm.contact",
+	"filetype": "CSV",
+	"upsertkey": "uesio/crm.externalid",
+	"mappings": {
+		"uesio/crm.account": {
+			"matchfield": "uesio/crm.externalid",
+			"columnname": "account"
+		},
+		"uesio/crm.externalid": {
+			"columnname": "externalid"
+		},
+		"uesio/crm.firstname": {
+			"columnname": "firstname"
+		},
+		"uesio/crm.lastname": {
+			"columnname": "lastname"
+		},
+		"uesio/crm.gender": {
+			"columnname": "gender"
+		},
+		"uesio/crm.email": {
+			"columnname": "email"
+		}
+	}
+}

@@ -1,4 +1,0 @@
-name: configvalue
-path: app/{appname}/workspace/{workspacename}/configvalues/{configvaluename}
-view: studio.configvalue
-theme: studio.default

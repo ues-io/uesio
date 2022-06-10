@@ -1,6 +1,6 @@
 package loadable
 
-type GroupIterator func(item Item, index interface{}) error
+type GroupIterator func(item Item, index string) error
 
 // Group interface
 type Group interface {
@@ -9,14 +9,37 @@ type Group interface {
 	Len() int
 	NewItem() Item
 	GetItems() interface{}
-	Slice(start int, end int)
-	Filter(iter func(item Item) (bool, error)) error
+}
+
+type Gettable interface {
+	GetField(string) (interface{}, error)
 }
 
 // Item interface
 type Item interface {
+	Gettable
 	SetField(string, interface{}) error
-	GetField(string) (interface{}, error)
 	Loop(iter func(string, interface{}) error) error
 	Len() int
+}
+
+func FindMissing(group Group, keyFunc func(item Item) string, needed []string) ([]string, error) {
+	returnedValues := map[string]bool{}
+	missing := []string{}
+	err := group.Loop(func(item Item, index string) error {
+		value := keyFunc(item)
+		returnedValues[value] = true
+		return nil
+	})
+	if err != nil {
+		return missing, err
+	}
+
+	for _, value := range needed {
+		_, ok := returnedValues[value]
+		if !ok {
+			missing = append(missing, value)
+		}
+	}
+	return missing, nil
 }

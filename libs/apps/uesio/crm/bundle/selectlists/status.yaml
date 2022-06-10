@@ -1,0 +1,11 @@
+name: status
+options:
+  - label: Qualified
+    value: QUALIFIED
+  - label: Open
+    value: OPEN
+  - label: Disqualified
+    value: DISQUALIFIED
+  - label: Closed
+    value: CLOSED
+public: true

@@ -1,0 +1,6 @@
+name: leftbar
+label: Left Bar
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: white

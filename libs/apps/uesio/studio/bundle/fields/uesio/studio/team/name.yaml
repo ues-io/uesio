@@ -1,0 +1,5 @@
+name: name
+type: TEXT
+label: Name
+validate:
+  type: METADATA

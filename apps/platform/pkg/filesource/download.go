@@ -16,10 +16,12 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		&userFile,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: userFileID,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: userFileID,
+				},
 			},
 		},
 		session,
@@ -28,12 +30,17 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&userFile, session)
+	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.FileCollectionID, session)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	content, err := adapter.Download(bucket, userFile.Path, credentials)
+	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	content, err := conn.Download(userFile.Path)
 	if err != nil {
 		return nil, nil, err
 	}

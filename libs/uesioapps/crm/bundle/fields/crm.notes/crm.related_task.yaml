@@ -1,5 +1,0 @@
-name: related_task
-collection: crm.notes
-type: REFERENCE
-label: Related Task
-referencedCollection: crm.tasks

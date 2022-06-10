@@ -1,6 +1,6 @@
 import cli from "cli-ux"
 import chalk from "chalk"
-import { collection, wire } from "@uesio/ui"
+import type { collection, wire } from "@uesio/ui"
 
 type TableColumn = {
 	id: string

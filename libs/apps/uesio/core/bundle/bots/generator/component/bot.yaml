@@ -1,0 +1,8 @@
+name: component
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: Component Name
+    type: METADATANAME
+public: true

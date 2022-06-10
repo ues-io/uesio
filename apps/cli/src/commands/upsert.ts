@@ -1,57 +1,14 @@
 import { Command, flags } from "@oclif/command"
-import { post } from "../request/request"
-import * as fs from "fs"
+import fs from "fs"
+import type { definition, platform } from "@uesio/ui"
+import { uploadFiles } from "../upsert/uploadfiles"
+import { printWorkspace } from "../print/workspace"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
+import { post } from "../request/request"
+import { BodyInit } from "node-fetch"
 
-type Spec = {
-	filetype: string
-	collection: string
-	upsertkey: string
-	mappings: {
-		[key: string]: {
-			fieldname: string
-			matchfield?: string
-		}
-	}
-}
-
-async function getSpec(
-	specFile?: string,
-	collection?: string,
-	upsertKey?: string
-): Promise<Spec> {
-	const specData = specFile
-		? JSON.parse(await fs.promises.readFile(specFile, "utf8"))
-		: {}
-
-	const spec: Spec = {
-		filetype: specData["uesio.filetype"] || "csv",
-		collection: specData["uesio.collection"],
-		upsertkey: specData["uesio.upsertkey"],
-		mappings: specData["uesio.mappings"],
-	}
-
-	if (collection) {
-		spec.collection = collection
-	}
-
-	if (upsertKey) {
-		spec.upsertkey = upsertKey
-	}
-	return spec
-}
-
-function getSpecString(spec: Spec) {
-	return JSON.stringify({
-		"uesio.filetype": spec.filetype,
-		"uesio.collection": spec.collection,
-		"uesio.upsertkey": spec.upsertkey,
-		"uesio.mappings": spec.mappings,
-	})
-}
-
-export default class Pack extends Command {
+export default class Upsert extends Command {
 	static description = "upsert data"
 
 	static flags = {
@@ -64,59 +21,83 @@ export default class Pack extends Command {
 	static args = []
 
 	async run(): Promise<void> {
-		const { flags } = this.parse(Pack)
+		const { flags } = this.parse(Upsert)
 
 		if (!flags.file) {
 			console.log("No file specified", flags)
 			return
 		}
 
-		const spec = await getSpec(
-			flags.spec,
-			flags.collection,
-			flags.upsertkey
-		)
+		const spec: definition.Spec = flags.spec
+			? JSON.parse(await fs.promises.readFile(flags.spec, "utf8"))
+			: {
+					jobtype: "IMPORT",
+			  }
 
-		if (!spec.collection) {
-			console.log("No collection specified", flags)
-			return
+		if (flags.collection) {
+			spec.collection = flags.collection
+		}
+
+		let payload: BodyInit = ""
+
+		if (spec.jobtype === "IMPORT") {
+			if (flags.upsertkey) {
+				spec.upsertkey = flags.upsertkey
+			}
+			if (!spec.collection) {
+				console.log("No collection specified", spec)
+				return
+			}
+			if (!spec.filetype) {
+				spec.filetype = "CSV"
+			}
+
+			console.log("Upserting...", flags.file, spec)
+
+			//const filedata = await fs.readFile(flags.file, "utf8")
+			payload = fs.createReadStream(flags.file, {
+				encoding: "utf8",
+			})
+		}
+
+		if (spec.jobtype === "UPLOADFILES") {
+			payload = await uploadFiles(flags.file, spec)
+		}
+
+		if (!payload) {
+			throw new Error("Invalid jobtype")
 		}
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 
 		const user = await authorize()
 
-		//const filedata = await fs.readFile(flags.file, "utf8")
-		const stream = await fs.createReadStream(flags.file, {
-			encoding: "utf8",
-		})
-
-		console.log("Upserting...", flags)
-		// Start a new job
 		const jobResponse = await post(
 			`workspace/${app}/${workspace}/bulk/job`,
-			getSpecString(spec),
+			JSON.stringify(spec),
 			user.cookie
 		)
-		const jobResponseObj = await jobResponse.json()
+		const jobResponseObj =
+			(await jobResponse.json()) as platform.JobResponse
 		// Create a batch
 		const jobId = jobResponseObj.id
 		const batchResponse = await post(
 			`workspace/${app}/${workspace}/bulk/job/${jobId}/batch`,
-			stream,
+			payload,
 			user.cookie
 		)
 		if (batchResponse.status === 200) {
-			const batchResponseObj = await batchResponse.json()
+			const batchResponseObj =
+				(await batchResponse.json()) as platform.JobResponse
 			console.log(batchResponseObj.id)
 		} else {
 			const errorMessage = await batchResponse.text()
 			console.log(errorMessage)
 		}
-
-		// Poll for status
-
-		// Done
 	}
 }

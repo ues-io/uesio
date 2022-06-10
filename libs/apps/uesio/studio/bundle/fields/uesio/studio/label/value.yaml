@@ -1,0 +1,4 @@
+name: value
+type: TEXT
+label: Label value
+required: true

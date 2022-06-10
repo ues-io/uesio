@@ -1,0 +1,5 @@
+name: content
+type: FILE
+label: Content
+file:
+  accept: DOCUMENT

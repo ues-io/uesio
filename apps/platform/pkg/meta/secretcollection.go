@@ -2,61 +2,55 @@ package meta
 
 import (
 	"errors"
-	"strings"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// SecretCollection slice
-type SecretCollection []Secret
+type SecretCollection []*Secret
 
-func (sc *SecretCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
-// GetName function
 func (sc *SecretCollection) GetName() string {
-	return "studio.secrets"
+	return "uesio/studio.secret"
 }
 
-// GetFields function
+func (sc *SecretCollection) GetBundleFolderName() string {
+	return "secrets"
+}
+
 func (sc *SecretCollection) GetFields() []string {
 	return StandardGetFields(&Secret{})
 }
 
-// NewItem function
 func (sc *SecretCollection) NewItem() loadable.Item {
-	*sc = append(*sc, Secret{})
-	return &(*sc)[len(*sc)-1]
+	s := &Secret{}
+	*sc = append(*sc, s)
+	return s
 }
 
-// NewBundleableItemWithKey function
 func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid Secret Key: " + key)
 	}
-	*sc = append(*sc, Secret{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	})
-	return &(*sc)[len(*sc)-1], nil
+	s := &Secret{
+		Namespace: namespace,
+		Name:      name,
+	}
+	*sc = append(*sc, s)
+	return s, nil
 }
 
-// GetKeyFromPath function
-func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (sc *SecretCollection) GetItem(index int) loadable.Item {
-	return &(*sc)[index]
+	return (*sc)[index]
 }
 
-// Loop function
 func (sc *SecretCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *sc {
-		err := iter(sc.GetItem(index), index)
+		err := iter(sc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -64,17 +58,10 @@ func (sc *SecretCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (sc *SecretCollection) Len() int {
 	return len(*sc)
 }
 
-// GetItems function
 func (sc *SecretCollection) GetItems() interface{} {
 	return *sc
-}
-
-// Slice function
-func (sc *SecretCollection) Slice(start int, end int) {
-
 }

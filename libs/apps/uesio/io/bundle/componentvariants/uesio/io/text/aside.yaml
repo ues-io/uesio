@@ -1,0 +1,8 @@
+name: aside
+label: Aside
+definition:
+  uesio.styles:
+    root:
+      color: "#444"
+      fontSize: "9pt"
+public: true

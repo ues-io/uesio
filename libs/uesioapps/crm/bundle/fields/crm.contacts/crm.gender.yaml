@@ -1,5 +1,0 @@
-name: gender
-collection: crm.contacts
-type: SELECT
-label: Gender
-selectList: crm.gender

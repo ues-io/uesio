@@ -30,13 +30,10 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 	value = *i
 
 	for _, name := range names {
-		dataMap, ok := value.(Item)
-		if !ok {
-			return nil, nil
-		}
-		value, ok = dataMap[name]
-		if !ok {
-			return nil, errors.New("Field not found: " + fieldName)
+		var err error
+		value, err = GetFieldValue(value, name)
+		if err != nil {
+			return nil, errors.New("Field Path not found: " + fieldName)
 		}
 	}
 

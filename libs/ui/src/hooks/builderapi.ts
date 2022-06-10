@@ -1,17 +1,13 @@
 import {
 	useDragNode,
 	useDropNode,
-	useMetadataList,
-	useNamespaces,
 	useNodeState,
 	useSelectedNode,
 	useLastModifiedNode,
 	useSelectedType,
 	useSelectedItem,
-	useSelectedYAML,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
-import { useEffect } from "react"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
 import {
@@ -22,40 +18,42 @@ import {
 	cloneDefinition,
 	setDefinition,
 	addDefinition,
-	addDefinitionPair,
 	removeDefinition,
 	changeDefinitionKey,
 	moveDefinition,
-	setYaml,
+	setDefinitionContent,
 	cancel,
 } from "../bands/builder"
-import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher, RootState } from "../store/store"
-import {
-	getViewDefinition,
-	useBuilderHasChanges,
-} from "../bands/viewdef/selectors"
+import { appDispatch, RootState } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
-import { getFullPathParts, makeFullPath } from "../component/path"
-import { Definition, YamlDoc } from "../definition/definition"
+import {
+	getFullPathParts,
+	getParentPath,
+	makeFullPath,
+} from "../component/path"
+import { Definition, DefinitionMap } from "../definition/definition"
 import { useSelector } from "react-redux"
+
+import { selectors as viewSelectors } from "../bands/viewdef"
+import { PlainViewDef } from "../definition/viewdef"
+import get from "lodash/get"
+import { platform } from "../platform/platform"
+import usePlatformFunc from "./useplatformfunc"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<AnyAction>
 
 	useBuilderState = <T extends PlainComponentState>(scope: string) =>
 		this.uesio.component.useExternalState<T>(
 			"$root",
-			"uesio.runtime",
+			"uesio/studio.runtime",
 			scope
 		)
 
@@ -78,22 +76,33 @@ class BuilderAPI {
 	useDropNode = (): [string, string, string] =>
 		getFullPathParts(useDropNode())
 
-	useHasChanges = useBuilderHasChanges
-
-	useSelectedYAML = useSelectedYAML
+	useHasChanges = () =>
+		useSelector(({ viewdef }: RootState) => {
+			const entities = viewdef?.entities
+			// Loop over view defs
+			if (entities) {
+				for (const defKey of Object.keys(entities)) {
+					const viewDef = entities[defKey]
+					if (viewDef && viewDef.content !== viewDef.original) {
+						return true
+					}
+				}
+			}
+			return false
+		})
 
 	setActiveNode = (
 		metadataType: string,
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setActiveNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearActiveNode = () => {
-		this.dispatcher(setActiveNode(""))
+		appDispatch()(setActiveNode(""))
 	}
 
 	setSelectedNode = (
@@ -101,13 +110,22 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
+	unSelectNode = () => {
+		appDispatch()((dispatch, getState) => {
+			const selectedNode = getState().builder.selectedNode
+			if (!selectedNode) return
+			const newPath = getParentPath(selectedNode)
+			dispatch(setSelectedNode(newPath))
+		})
+	}
+
 	clearSelectedNode = () => {
-		this.dispatcher(setSelectedNode(""))
+		appDispatch()(setSelectedNode(""))
 	}
 
 	setDragNode = (
@@ -115,13 +133,13 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setDragNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearDragNode = () => {
-		this.dispatcher(setDragNode(""))
+		appDispatch()(setDragNode(""))
 	}
 
 	setDropNode = (
@@ -129,29 +147,24 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		this.dispatcher(
+		appDispatch()(
 			setDropNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	clearDropNode = () => {
-		this.dispatcher(setDropNode(""))
+		appDispatch()(setDropNode(""))
 	}
 
 	save = () =>
-		this.dispatcher(
-			builderOps.save({
-				context: this.uesio.getContext() || new Context(),
-			})
-		)
+		appDispatch()(builderOps.save(this.uesio.getContext() || new Context()))
 
-	cancel = () => this.dispatcher(cancel())
+	cancel = () => appDispatch()(cancel())
 
-	cloneDefinition = (path: string) =>
-		this.dispatcher(cloneDefinition({ path }))
+	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
 
 	setDefinition = (path: string, definition: Definition) =>
-		this.dispatcher(
+		appDispatch()(
 			setDefinition({
 				path,
 				definition,
@@ -164,7 +177,7 @@ class BuilderAPI {
 		index?: number,
 		type?: string
 	) {
-		this.dispatcher(
+		appDispatch()(
 			addDefinition({
 				path,
 				definition,
@@ -174,24 +187,8 @@ class BuilderAPI {
 		)
 	}
 
-	addDefinitionPair(
-		path: string,
-		definition: Definition,
-		key: string,
-		type?: string
-	) {
-		this.dispatcher(
-			addDefinitionPair({
-				path,
-				definition,
-				key,
-				type,
-			})
-		)
-	}
-
 	removeDefinition(path: string) {
-		this.dispatcher(
+		appDispatch()(
 			removeDefinition({
 				path,
 			})
@@ -199,7 +196,7 @@ class BuilderAPI {
 	}
 
 	changeDefinitionKey(path: string, key: string) {
-		this.dispatcher(
+		appDispatch()(
 			changeDefinitionKey({
 				path,
 				key,
@@ -208,7 +205,7 @@ class BuilderAPI {
 	}
 
 	moveDefinition(fromPath: string, toPath: string, selectKey?: string) {
-		this.dispatcher(
+		appDispatch()(
 			moveDefinition({
 				fromPath,
 				toPath,
@@ -217,55 +214,76 @@ class BuilderAPI {
 		)
 	}
 
-	setYaml(path: string, yamlDoc: YamlDoc) {
-		this.dispatcher(
-			setYaml({
-				path,
-				yaml: yamlDoc,
+	setDefinitionContent(
+		metadataType: string,
+		metadataItem: string,
+		content: string
+	) {
+		appDispatch()(
+			setDefinitionContent({
+				metadataType,
+				metadataItem,
+				content,
 			})
 		)
 	}
 
-	useDefinition = (path: string) => {
-		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
-		return useSelector((state: RootState) => {
+	useDefinitionContent = (metadataType: string, metadataItem: string) =>
+		useSelector((state: RootState) => {
 			if (metadataType === "viewdef" && metadataItem) {
-				return getViewDefinition(state, metadataItem, localPath)
+				return viewSelectors.selectById(state, metadataItem)?.content
+			}
+
+			if (metadataType === "componentvariant" && metadataItem) {
+				//return getComponentVariant(state, metadataItem, localPath)
 			}
 		})
-	}
+
+	useDefinition = (
+		metadataType: string,
+		metadataItem: string,
+		localPath: string
+	) =>
+		useSelector((state: RootState) => {
+			if (metadataType === "viewdef" && metadataItem) {
+				const viewDef = viewSelectors.selectById(state, metadataItem)
+					?.parsed as PlainViewDef
+				if (!localPath) {
+					return viewDef as DefinitionMap
+				}
+				return get(viewDef, localPath) as DefinitionMap
+			}
+
+			if (metadataType === "componentvariant" && metadataItem) {
+				//return getComponentVariant(state, metadataItem, localPath)
+			}
+		})
 
 	useMetadataList = (
 		context: Context,
 		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
-	) => {
-		const metadata = useMetadataList(metadataType, namespace, grouping)
-		useEffect(() => {
-			if (!metadata && metadataType && namespace) {
-				this.dispatcher(
-					builderOps.getMetadataList({
-						context,
-						metadataType,
-						namespace,
-						grouping,
-					})
-				)
-			}
-		})
-		return metadata
-	}
+	) =>
+		usePlatformFunc(
+			() =>
+				namespace
+					? platform.getMetadataList(
+							context,
+							metadataType,
+							namespace,
+							grouping
+					  )
+					: undefined,
+			[metadataType, namespace, grouping]
+		)
 
-	useAvailableNamespaces = (context: Context) => {
-		const namespaces = useNamespaces()
-		useEffect(() => {
-			if (!namespaces) {
-				this.dispatcher(builderOps.getAvailableNamespaces(context))
-			}
-		})
-		return namespaces
-	}
+	useAvailableNamespaces = (context: Context, metadataType?: MetadataType) =>
+		usePlatformFunc(
+			() => platform.getAvailableNamespaces(context, metadataType),
+			[metadataType]
+		)
+
 	getSignalProperties = (signal: SignalDefinition) =>
 		this.uesio.signal.getProperties(signal)
 }

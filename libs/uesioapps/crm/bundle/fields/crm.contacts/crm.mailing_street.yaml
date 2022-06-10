@@ -1,4 +1,0 @@
-name: mailing_street
-collection: crm.contacts
-type: TEXT
-label: Mailing Street

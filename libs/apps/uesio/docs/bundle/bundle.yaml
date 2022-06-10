@@ -1,0 +1,12 @@
+name: uesio/docs
+loginRoute: uesio/docs.login
+homeRoute: uesio/docs.home
+defaultTheme: uesio/docs.default
+publicProfile: uesio/docs.public
+dependencies:
+  uesio/cms:
+    version: v0.0.1
+  uesio/core:
+    version: v0.0.1
+  uesio/io:
+    version: v0.0.1

@@ -17,9 +17,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	return &adapt.CollectionMetadata{
 		Name:                  e.Name,
 		Namespace:             e.Namespace,
-		IDField:               "uesio.id",
 		IDFormat:              e.IDFormat,
-		NameField:             e.NameField,
+		NameField:             GetNameField(e),
 		Createable:            !e.ReadOnly,
 		Accessible:            true,
 		Updateable:            !e.ReadOnly,
@@ -27,73 +26,97 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Fields:                fieldMetadata,
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
+		AccessField:           e.AccessField,
 		RecordChallengeTokens: e.RecordChallengeTokens,
+		TableName:             e.TableName,
+		Public:                e.Public,
 	}
+}
+
+func GetNameField(c *meta.Collection) string {
+	if c.NameField != "" {
+		return c.NameField
+	}
+	return adapt.ID_FIELD
+}
+
+func GetFieldLabel(f *meta.Field, session *sess.Session) string {
+	if f.LanguageLabel == "" {
+		return f.Label
+	}
+	translation := session.GetLabel(f.LanguageLabel)
+	if translation == "" {
+		return f.Label
+	}
+	return translation
 }
 
 // GetFieldMetadata function
-func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
+func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
-		Name:                 f.Name,
-		Namespace:            f.Namespace,
-		Createable:           !f.ReadOnly,
-		Accessible:           true,
-		Updateable:           !f.ReadOnly && !f.CreateOnly,
-		Type:                 f.Type,
-		Label:                f.Label,
-		ReferencedCollection: f.ReferencedCollection,
-		SelectListName:       f.SelectList,
-		Required:             f.Required,
-		Validate:             GetValidateMetadata(f.Validate),
-		AutoPopulate:         f.AutoPopulate,
-		OnDelete:             f.OnDelete,
-		FileCollection:       f.FileCollection,
-		Accept:               f.Accept,
-		SubFields:            GetSubFieldsMetadata(f.SubFields),
-		SubType:              f.SubType,
+		Name:                   f.Name,
+		Namespace:              f.Namespace,
+		Createable:             !f.ReadOnly && f.Type != "AUTONUMBER",
+		Accessible:             true,
+		Updateable:             GetUpdateable(f),
+		Type:                   GetType(f),
+		IsFormula:              f.Type == "FORMULA",
+		Label:                  GetFieldLabel(f, session),
+		ReferenceMetadata:      f.ReferenceMetadata,
+		ReferenceGroupMetadata: f.ReferenceGroupMetadata,
+		FileMetadata:           f.FileMetadata,
+		NumberMetadata:         f.NumberMetadata,
+		ValidationMetadata:     f.ValidationMetadata,
+		AutoNumberMetadata:     f.AutoNumberMetadata,
+		FormulaMetadata:        f.FormulaMetadata,
+		SelectListMetadata:     GetSelectListMetadata(f),
+		Required:               f.Required,
+		AutoPopulate:           f.AutoPopulate,
+		SubFields:              GetSubFieldMetadata(f),
+		SubType:                f.SubType,
+		ColumnName:             f.ColumnName,
 	}
 }
 
-// GetSubFieldsMetadata function
-func GetSubFieldsMetadata(subfields []meta.SubField) []adapt.SubField {
-	subfieldsMetadata := []adapt.SubField{}
-	for _, subfield := range subfields {
-		subfieldsMetadata = append(subfieldsMetadata, adapt.SubField{
-			Name: subfield.Name,
-		})
+func GetType(f *meta.Field) string {
+	if f.Type == "FORMULA" {
+		return f.FormulaMetadata.ReturnType
 	}
-	return subfieldsMetadata
+	return f.Type
 }
 
-// GetValidateMetadata function
-func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
-	return &adapt.ValidationMetadata{
-		Type:  v.Type,
-		Regex: v.Regex,
-	}
+func GetUpdateable(f *meta.Field) bool {
+	return !f.ReadOnly && !f.CreateOnly && f.Type != "AUTONUMBER" && f.Type != "FORMULA"
 }
 
-// GetSelectListMetadata function
-func GetSelectListMetadata(sl *meta.SelectList) *adapt.SelectListMetadata {
-	return &adapt.SelectListMetadata{
-		Name:    sl.Name,
-		Options: GetSelectListOptionsMetadata(sl.Options),
+func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
+	fieldMetadata := map[string]*adapt.FieldMetadata{}
+	for _, subField := range f.SubFields {
+		fieldMetadata[subField.Name] = &adapt.FieldMetadata{
+			Name:       subField.Name,
+			Label:      subField.Label,
+			Type:       subField.Type,
+			Updateable: !f.ReadOnly && !f.CreateOnly,
+			Createable: !f.ReadOnly,
+			Accessible: true,
+			SelectListMetadata: GetSelectListMetadata(&meta.Field{
+				Type:       subField.Type,
+				SelectList: subField.SelectList,
+			}),
+		}
 	}
+	return fieldMetadata
 }
 
-// GetSelectListOptionsMetadata function
-func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.SelectListOptionMetadata {
-	optionsMetadata := []adapt.SelectListOptionMetadata{}
-	for _, option := range options {
-		optionsMetadata = append(optionsMetadata, adapt.SelectListOptionMetadata{
-			Label: option.Label,
-			Value: option.Value,
-		})
+func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
+	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
+		return &adapt.SelectListMetadata{
+			Name: f.SelectList,
+		}
 	}
-	return optionsMetadata
+	return nil
 }
 
-// LoadCollectionMetadata function
 func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
@@ -112,66 +135,6 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	collectionMetadata = GetCollectionMetadata(collection)
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:       "id",
-		Namespace:  "uesio",
-		Createable: false,
-		Accessible: true,
-		Updateable: false,
-		Type:       "TEXT",
-		Label:      "Id",
-	})
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:         "owner",
-		Namespace:    "uesio",
-		Createable:   false,
-		Accessible:   true,
-		Updateable:   false,
-		Type:         "USER",
-		Label:        "Owner",
-		AutoPopulate: "CREATE",
-	})
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:         "createdby",
-		Namespace:    "uesio",
-		Createable:   false,
-		Accessible:   true,
-		Updateable:   false,
-		Type:         "USER",
-		Label:        "Created By",
-		AutoPopulate: "CREATE",
-	})
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:         "updatedby",
-		Namespace:    "uesio",
-		Createable:   false,
-		Accessible:   true,
-		Updateable:   false,
-		Type:         "USER",
-		Label:        "Updated By",
-		AutoPopulate: "UPDATE",
-	})
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:         "createdat",
-		Namespace:    "uesio",
-		Createable:   false,
-		Accessible:   true,
-		Updateable:   false,
-		Type:         "TIMESTAMP",
-		Label:        "Created At",
-		AutoPopulate: "CREATE",
-	})
-	collectionMetadata.SetField(&adapt.FieldMetadata{
-		Name:         "updatedat",
-		Namespace:    "uesio",
-		Createable:   false,
-		Accessible:   true,
-		Updateable:   false,
-		Type:         "TIMESTAMP",
-		Label:        "Updated At",
-		AutoPopulate: "UPDATE",
-	})
-
 	metadataCache.AddCollection(key, collectionMetadata)
 
 	return collectionMetadata, nil
@@ -182,47 +145,48 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
-		"studio.collection": collectionKey,
+		"uesio/studio.collection": collectionKey,
 	}, session)
 	if err != nil {
 		return err
 	}
 
+	if len(fields) == 0 {
+		return errors.New("No fields found for collection")
+	}
+
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field))
+		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
 	return nil
 }
 
 // LoadFieldsMetadata function
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	// TODO: Batch this
+
+	fields := []meta.BundleableItem{}
 	for _, key := range keys {
-		_, err := LoadFieldMetadata(key, collectionKey, collectionMetadata, session)
+		_, err := collectionMetadata.GetField(key)
 		if err != nil {
-			return err
+			field, err := meta.NewField(collectionKey, key)
+			if err != nil {
+				return err
+			}
+			fields = append(fields, field)
 		}
+	}
+	if len(fields) == 0 {
+		return nil
+	}
+	err := bundle.LoadMany(fields, session)
+	if err != nil {
+		return fmt.Errorf("collection: %s : %v", collectionKey, err)
+	}
+
+	for _, item := range fields {
+		collectionMetadata.SetField(GetFieldMetadata(item.(*meta.Field), session))
 	}
 	return nil
-}
-
-// LoadFieldMetadata function
-func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.FieldMetadata, error) {
-	// Check to see if the field is already in our metadata cache
-	fieldMetadata, err := collectionMetadata.GetField(key)
-	if err != nil {
-		field, err := meta.NewField(collectionKey, key)
-		if err != nil {
-			return nil, err
-		}
-		err = bundle.Load(field, session)
-		if err != nil {
-			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
-		}
-		fieldMetadata = GetFieldMetadata(field)
-		collectionMetadata.SetField(fieldMetadata)
-	}
-	return fieldMetadata, nil
 }
 
 // LoadSelectListMetadata function
@@ -245,7 +209,11 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		if err != nil {
 			return err
 		}
-		selectListMetadata = GetSelectListMetadata(&selectList)
+		selectListMetadata = &adapt.SelectListMetadata{
+			Name:             selectList.Name,
+			Options:          selectList.Options,
+			BlankOptionLabel: selectList.BlankOptionLabel,
+		}
 	}
 
 	collectionMetadata, err := metadataCache.GetCollection(collectionKey)
@@ -258,7 +226,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return errors.New("Field not Found for Select List: " + fieldKey)
 	}
 
-	fieldMetadata.SelectListOptions = (*selectListMetadata).Options
+	fieldMetadata.SelectListMetadata = selectListMetadata
 
 	return nil
 }

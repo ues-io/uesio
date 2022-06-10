@@ -12,14 +12,14 @@ import (
 
 // LoadRequest struct
 type LoadRequest struct {
-	Collection string                       `json:"collection"`
-	Wire       string                       `json:"wire"`
-	Type       string                       `json:"type"`
-	Fields     []adapt.LoadRequestField     `json:"fields"`
-	Conditions []adapt.LoadRequestCondition `json:"conditions"`
-	Order      []adapt.LoadRequestOrder     `json:"order"`
-	Limit      int                          `json:"limit"`
-	Offset     int                          `json:"offset"`
+	Collection  string                       `json:"collection"`
+	Wire        string                       `json:"wire"`
+	Query       bool                         `json:"query"`
+	Fields      []adapt.LoadRequestField     `json:"fields"`
+	Conditions  []adapt.LoadRequestCondition `json:"conditions"`
+	Order       []adapt.LoadRequestOrder     `json:"order"`
+	BatchSize   int                          `json:"batchsize"`
+	BatchNumber int                          `json:"batchnumber"`
 }
 
 // LoadRequestBatch struct
@@ -29,7 +29,7 @@ type LoadRequestBatch struct {
 
 // LoadResponseBatch struct
 type LoadResponseBatch struct {
-	Wires       []adapt.LoadOp                       `json:"wires"`
+	Wires       []*adapt.LoadOp                      `json:"wires"`
 	Collections map[string]*adapt.CollectionMetadata `json:"collections"`
 }
 
@@ -48,24 +48,24 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	ops := make([]adapt.LoadOp, len(loadRequestBatch.Wires))
+	ops := make([]*adapt.LoadOp, len(loadRequestBatch.Wires))
 
 	for i := range loadRequestBatch.Wires {
 		wire := loadRequestBatch.Wires[i]
-		ops[i] = adapt.LoadOp{
+		ops[i] = &adapt.LoadOp{
 			WireName:       wire.Wire,
 			CollectionName: wire.Collection,
 			Collection:     &adapt.Collection{},
 			Conditions:     wire.Conditions,
 			Fields:         wire.Fields,
 			Order:          wire.Order,
-			Type:           wire.Type,
-			Limit:          wire.Limit,
-			Offset:         wire.Offset,
+			Query:          wire.Query,
+			BatchSize:      wire.BatchSize,
+			BatchNumber:    wire.BatchNumber,
 		}
 	}
 
-	metadata, err := datasource.Load(ops, session)
+	metadata, err := datasource.Load(ops, session, nil)
 	if err != nil {
 		msg := "Load Failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

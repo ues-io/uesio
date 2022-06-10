@@ -1,4 +1,5 @@
 import { FieldMetadata } from "./types"
+import { addBlankSelectOption } from "./utils"
 
 class Field {
 	constructor(source: FieldMetadata) {
@@ -13,9 +14,17 @@ class Field {
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getOptions = () => this.source.options || null
+	getSelectMetadata = () => this.source.selectlist || null
+	getSelectOptions = () => {
+		const selectMetadata = this.getSelectMetadata()
+		if (!selectMetadata) return []
+		return addBlankSelectOption(
+			selectMetadata.options,
+			selectMetadata.blank_option_label
+		)
+	}
 	getAccept = () => {
-		switch (this.source.accept) {
+		switch (this.source.file?.accept) {
 			case "AUDIO":
 				return "audio/*"
 			case "DOCUMENT":
@@ -28,6 +37,7 @@ class Field {
 				return ""
 		}
 	}
+	getNumberMetadata = () => this.source.number || null
 }
 
 export default Field

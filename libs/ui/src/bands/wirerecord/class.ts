@@ -1,4 +1,5 @@
 import get from "lodash/get"
+import { ID_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 
@@ -15,31 +16,32 @@ class WireRecord {
 
 	getId = () => this.id
 	getWire = () => this.wire
-	getFieldArray = (fieldName: string) =>
-		get(this.source, fieldName) as FieldValue[]
-	getFieldValue = (fieldName: string) => get(this.source, fieldName)
-	getFieldString = (fieldName: string) =>
-		get(this.source, fieldName) as string
-	getFieldReference = (fieldName: string) =>
-		get(this.source, fieldName) as PlainWireRecord | undefined
+	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
+		const fieldNameParts = fieldName?.split("->")
+		return get(
+			this.source,
+			fieldNameParts.length === 1 ? fieldName : fieldNameParts
+		)
+	}
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
-	getIdFieldValue = () => {
-		const metadata = this.wire.collection
-		const idField = metadata.getIdField()
-		return idField && this.getFieldValue(idField.getId())
+	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
+
+	getErrors = (fieldId: string) => {
+		const wire = this.wire
+		const errors = wire.getErrors()
+		return errors?.[this.id + ":" + fieldId]
 	}
 
-	update = (fieldId: string, value: FieldValue) =>
-		this.wire.updateRecord(this.id, {
-			[fieldId]: value,
-		})
+	update = (fieldId: string, value: FieldValue) => {
+		const fieldNameParts = fieldId?.split("->")
+		return this.wire.updateRecord(this.id, value, fieldNameParts)
+	}
 
 	set = (fieldId: string, value: FieldValue) => {
-		this.wire.setRecord(this.id, {
-			[fieldId]: value,
-		})
+		const fieldNameParts = fieldId?.split("->")
+		return this.wire.setRecord(this.id, value, fieldNameParts)
 	}
 }
 

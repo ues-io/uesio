@@ -2,60 +2,55 @@ package meta
 
 import (
 	"errors"
-	"strings"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-type UserAccessTokenCollection []UserAccessToken
+type UserAccessTokenCollection []*UserAccessToken
 
-func (uatc *UserAccessTokenCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
-// GetName function
 func (uatc *UserAccessTokenCollection) GetName() string {
-	return "studio.useraccesstokens"
+	return "uesio/studio.useraccesstoken"
 }
 
-// GetFields function
+func (uatc *UserAccessTokenCollection) GetBundleFolderName() string {
+	return "useraccesstokens"
+}
+
 func (uatc *UserAccessTokenCollection) GetFields() []string {
 	return StandardGetFields(&UserAccessToken{})
 }
 
-// NewItem function
 func (uatc *UserAccessTokenCollection) NewItem() loadable.Item {
-	*uatc = append(*uatc, UserAccessToken{})
-	return &(*uatc)[len(*uatc)-1]
+	uat := &UserAccessToken{}
+	*uatc = append(*uatc, uat)
+	return uat
 }
 
-// NewBundleableItemWithKey function
 func (uatc *UserAccessTokenCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
 		return nil, errors.New("Invalid User Access Token Key: " + key)
 	}
-	*uatc = append(*uatc, UserAccessToken{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	})
-	return &(*uatc)[len(*uatc)-1], nil
+	uat := &UserAccessToken{
+		Namespace: namespace,
+		Name:      name,
+	}
+	*uatc = append(*uatc, uat)
+	return uat, nil
 }
 
-// GetKeyFromPath function
-func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-// GetItem function
 func (uatc *UserAccessTokenCollection) GetItem(index int) loadable.Item {
-	return &(*uatc)[index]
+	return (*uatc)[index]
 }
 
-// Loop function
 func (uatc *UserAccessTokenCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *uatc {
-		err := iter(uatc.GetItem(index), index)
+		err := iter(uatc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -63,17 +58,10 @@ func (uatc *UserAccessTokenCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (uatc *UserAccessTokenCollection) Len() int {
 	return len(*uatc)
 }
 
-// GetItems function
 func (uatc *UserAccessTokenCollection) GetItems() interface{} {
 	return *uatc
-}
-
-// Slice function
-func (uatc *UserAccessTokenCollection) Slice(start int, end int) {
-
 }

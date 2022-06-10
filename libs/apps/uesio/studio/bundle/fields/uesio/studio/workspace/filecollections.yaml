@@ -1,0 +1,7 @@
+name: filecollections
+type: REFERENCEGROUP
+label: File Collections
+referenceGroup:
+  collection: uesio/studio.filecollection
+  field: uesio/studio.workspace
+  onDelete: CASCADE

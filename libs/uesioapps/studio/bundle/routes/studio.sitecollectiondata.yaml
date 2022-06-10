@@ -1,4 +1,0 @@
-name: sitecollectiondata
-path: app/{appname}/site/{sitename}/data/{collectionname}
-view: studio.sitecollectiondata
-theme: studio.default

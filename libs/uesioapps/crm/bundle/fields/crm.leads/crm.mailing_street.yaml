@@ -1,4 +1,0 @@
-name: mailing_street
-collection: crm.leads
-type: TEXT
-label: Mailing Street

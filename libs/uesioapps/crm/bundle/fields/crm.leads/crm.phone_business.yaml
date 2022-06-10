@@ -1,5 +1,0 @@
-name: phone_business
-collection: crm.leads
-type: TEXT
-label: Phone Business
-referencedCollection: crm.

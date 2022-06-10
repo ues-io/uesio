@@ -1,0 +1,26 @@
+[
+	{
+		"name": "dev",
+		"app": {
+			"id": "uesio/crm"
+		}
+	},
+	{
+		"name": "test",
+		"app": {
+			"id": "uesio/crm"
+		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"id": "uesio/cms"
+		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"id": "uesio/docs"
+		}
+	}
+]

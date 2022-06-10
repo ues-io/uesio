@@ -1,4 +1,0 @@
-name: firstname
-collection: crm.contacts
-type: TEXT
-label: First Name

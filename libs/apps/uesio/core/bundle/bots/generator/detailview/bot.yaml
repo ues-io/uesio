@@ -1,0 +1,21 @@
+name: detailview
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: View name
+    type: METADATANAME
+  collection:
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  wirename:
+    prompt: Wire Name
+    type: TEXT
+    default: $Answer{name}Wire
+  fields:
+    prompt: fields
+    type: METADATAMULTI
+    metadataType: FIELD
+    grouping: $Answer{collection}
+public: true

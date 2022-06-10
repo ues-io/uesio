@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.BulkBatch, error) {
 
 	var job meta.BulkJob
@@ -18,10 +17,12 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
 		&job,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: jobID,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: jobID,
+				},
 			},
 		},
 		session,
@@ -30,35 +31,34 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return nil, err
 	}
 
-	spec := job.Spec
-	fileFormat := spec.FileType
-	var saveRequest []datasource.SaveRequest
-
-	if fileFormat == "csv" {
-		saveRequest, err = processCSV(body, &spec, session)
-		if err != nil {
-			return nil, err
-		}
+	if job.Spec.JobType == "IMPORT" {
+		return NewImportBatch(body, job, session)
 	}
 
-	if saveRequest == nil {
-		return nil, errors.New("Cannot process that file type: " + fileFormat)
+	if job.Spec.JobType == "UPLOADFILES" {
+		return NewFileUploadBatch(body, job, session)
 	}
 
-	err = datasource.Save(saveRequest, session)
+	return nil, errors.New("Invalid JobType for creating batches: " + job.Spec.JobType)
+
+}
+
+func getBatchMetadata(collectionName string, session *sess.Session) (*adapt.MetadataCache, error) {
+
+	metadataResponse := adapt.MetadataCache{}
+	collections := datasource.MetadataRequest{
+		Options: &datasource.MetadataRequestOptions{
+			LoadAllFields: true,
+		},
+	}
+	err := collections.AddCollection(collectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	batch := meta.BulkBatch{
-		Status:    "started",
-		BulkJobID: jobID,
-	}
-
-	err = datasource.PlatformSaveOne(&batch, nil, session)
+	err = collections.Load(&metadataResponse, session)
 	if err != nil {
 		return nil, err
 	}
-
-	return &batch, nil
+	return &metadataResponse, nil
 }

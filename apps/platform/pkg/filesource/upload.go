@@ -7,21 +7,20 @@ import (
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFileMetadataType(details fileadapt.FileDetails) string {
+func GetFileMetadataType(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
 	}
 	return "field"
 }
 
-func getFileUniqueName(details fileadapt.FileDetails) string {
+func GetFileUniqueName(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return details.Name
 	}
@@ -53,6 +52,11 @@ func getUploadMetadataResponse(collectionID, fieldID string, session *sess.Sessi
 	return &metadataResponse, nil
 }
 
+type FileUploadOp struct {
+	Data    io.Reader
+	Details *fileadapt.FileDetails
+}
+
 func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fieldID string) (*adapt.CollectionMetadata, *adapt.FieldMetadata, error) {
 	collectionMetadata, err := metadataResponse.GetCollection(collectionID)
 	if err != nil {
@@ -70,98 +74,90 @@ func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fiel
 	return collectionMetadata, fieldMetadata, nil
 }
 
-// Upload function
-func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Session) (*meta.UserFileMetadata, error) {
+func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Session) ([]meta.UserFileMetadata, error) {
 
-	metadataResponse, err := getUploadMetadataResponse(details.CollectionID, details.FieldID, session)
-	if err != nil {
-		return nil, err
-	}
-
-	collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, details.CollectionID, details.FieldID)
-	if err != nil {
-		return nil, err
-	}
-
-	fileCollectionID, err := fileadapt.GetFileCollectionID(collectionMetadata, fieldMetadata)
-	if err != nil {
-		return nil, err
-	}
-
-	ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
-	if err != nil {
-		return nil, err
-	}
-
-	ufm := meta.UserFileMetadata{
-		CollectionID:     details.CollectionID,
-		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
-		FieldID:          details.FieldID,
-		Type:             getFileMetadataType(details),
-		FileCollectionID: fileCollectionID,
-		FileName:         details.Name,
-		Name:             getFileUniqueName(details), // Different for file fields and attachments
-		RecordID:         details.RecordID,
-	}
-
-	path, err := ufc.GetFilePath(&ufm)
-	if err != nil {
-		return nil, errors.New("error generating path for userfile: " + err.Error())
-	}
-
-	ufm.Path = path
-
-	err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
-	}, session)
-	if err != nil {
-		return nil, err
-	}
-
-	fileAdapter, err := fileadapt.GetFileAdapter(fs.Type, session)
-	if err != nil {
-		return nil, err
-	}
-	credentials, err := adapt.GetCredentials(fs.Credentials, session)
-	if err != nil {
-		return nil, err
-	}
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
-	if err != nil {
-		return nil, err
-	}
-	err = fileAdapter.Upload(fileBody, bucket, path, credentials)
-	if err != nil {
-		return nil, err
-	}
-	if fieldMetadata != nil {
-
-		if fieldMetadata.Type != "FILE" {
-			return nil, errors.New("Can only attach files to FILE fields")
-		}
-
-		refMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
+	response := []meta.UserFileMetadata{}
+	for _, op := range ops {
+		details := op.Details
+		metadataResponse, err := getUploadMetadataResponse(details.CollectionID, details.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
 
-		err = datasource.Save([]datasource.SaveRequest{
-			{
-				Collection: details.CollectionID,
-				Wire:       "filefieldupdate",
-				Changes: &adapt.Collection{
-					{
-						details.FieldID: map[string]interface{}{
-							refMetadata.IDField: ufm.ID,
+		collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, details.CollectionID, details.FieldID)
+		if err != nil {
+			return nil, err
+		}
+
+		fileCollectionID, err := fileadapt.GetFileCollectionID(collectionMetadata, fieldMetadata)
+		if err != nil {
+			return nil, err
+		}
+
+		ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
+		if err != nil {
+			return nil, err
+		}
+
+		ufm := meta.UserFileMetadata{
+			CollectionID:     details.CollectionID,
+			MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
+			FieldID:          details.FieldID,
+			Type:             GetFileMetadataType(details),
+			FileCollectionID: fileCollectionID,
+			FileName:         details.Name,
+			Name:             GetFileUniqueName(details), // Different for file fields and attachments
+			RecordID:         details.RecordID,
+		}
+
+		path, err := ufc.GetFilePath(&ufm)
+		if err != nil {
+			return nil, errors.New("error generating path for userfile: " + err.Error())
+		}
+
+		ufm.Path = path
+
+		err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
+			Upsert: &adapt.UpsertOptions{},
+		}, connection, session)
+		if err != nil {
+			return nil, err
+		}
+
+		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+		if err != nil {
+			return nil, err
+		}
+		err = conn.Upload(op.Data, path)
+		if err != nil {
+			return nil, err
+		}
+		if fieldMetadata != nil {
+
+			if fieldMetadata.Type != "FILE" {
+				return nil, errors.New("Can only attach files to FILE fields")
+			}
+
+			err = datasource.SaveWithOptions([]datasource.SaveRequest{
+				{
+					Collection: details.CollectionID,
+					Wire:       "filefieldupdate",
+					Changes: &adapt.Collection{
+						{
+							details.FieldID: map[string]interface{}{
+								adapt.ID_FIELD: ufm.ID,
+							},
+							adapt.ID_FIELD: details.RecordID,
 						},
-						collectionMetadata.IDField: details.RecordID,
 					},
 				},
-			},
-		}, session)
-		if err != nil {
-			return nil, errors.New("Failed to update field for the given file: " + err.Error())
+			}, session, datasource.GetConnectionSaveOptions(connection))
+			if err != nil {
+				return nil, errors.New("Failed to update field for the given file: " + err.Error())
+			}
 		}
+		response = append(response, ufm)
 	}
-	return &ufm, nil
+
+	return response, nil
 }

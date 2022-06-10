@@ -1,0 +1,4 @@
+name: track
+label: Track
+pluralLabel: tracks
+idFormat: ${uesio/docs.slug}

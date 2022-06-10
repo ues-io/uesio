@@ -1,0 +1,8 @@
+name: init
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: App Name
+    type: METADATANAME
+public: true

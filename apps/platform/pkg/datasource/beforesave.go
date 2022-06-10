@@ -1,86 +1,80 @@
 package datasource
 
 import (
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// BeforeSaveAPI type
 type BeforeSaveAPI struct {
-	Inserts *InsertsAPI `bot:"inserts"`
-	Updates *UpdatesAPI `bot:"updates"`
-	Deletes *DeletesAPI `bot:"deletes"`
-	errors  []string
-	session *sess.Session
+	Inserts    *InsertsAPI `bot:"inserts"`
+	Updates    *UpdatesAPI `bot:"updates"`
+	Deletes    *DeletesAPI `bot:"deletes"`
+	op         *adapt.SaveOp
+	session    *sess.Session
+	connection adapt.Connection
 }
 
-func NewBeforeSaveAPI(op *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
+type BotLoadOp struct {
+	Collection string                       `bot:"collection"`
+	Fields     []adapt.LoadRequestField     `bot:"fields"`
+	Conditions []adapt.LoadRequestCondition `bot:"conditions"`
+	Order      []adapt.LoadRequestOrder     `bot:"order"`
+}
+
+func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Inserts: &InsertsAPI{
-			inserts:  op.Inserts,
-			metadata: metadata,
+			op: op,
 		},
 		Updates: &UpdatesAPI{
-			updates:  op.Updates,
-			metadata: metadata,
+			op: op,
 		},
 		Deletes: &DeletesAPI{
-			deletes:  op.Deletes,
-			metadata: metadata,
+			op: op,
 		},
 		session: session,
+		op:      op,
 	}
 }
 
-// AddError function
 func (bs *BeforeSaveAPI) AddError(message string) {
-	bs.errors = append(bs.errors, message)
+	bs.op.AddError(adapt.NewSaveError("", "", message))
 }
 
-// HasErrors function
-func (bs *BeforeSaveAPI) HasErrors() bool {
-	return len(bs.errors) > 0
-}
+func loadData(op *adapt.LoadOp, session *sess.Session) error {
 
-// GetErrorString function
-func (bs *BeforeSaveAPI) GetErrorString() string {
-	return strings.Join(bs.errors, ", ")
-}
-
-// DeleteFile function
-func (bs *BeforeSaveAPI) DeleteFiles(ids []string) error {
-	if len(ids) == 0 {
-		return nil
-	}
-	// Load all the userfile records
-	ufmc := meta.UserFileMetadataCollection{}
-	err := PlatformLoad(&ufmc, []adapt.LoadRequestCondition{
-		{
-			Field:    "uesio.id",
-			Value:    ids,
-			Operator: "IN",
-		},
-	}, bs.session,
-	)
+	_, err := Load([]*adapt.LoadOp{op}, session, nil)
 	if err != nil {
 		return err
 	}
 
-	for i := range ufmc {
-		ufm := ufmc[i]
-		adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&ufm, bs.session)
-		if err != nil {
-			return err
-		}
-		err = adapter.Delete(bucket, ufm.Path, credentials)
-		if err != nil {
-			return err
-		}
+	if !op.HasMoreBatches {
+		return nil
 	}
-	return nil
+
+	return loadData(op, session)
+}
+
+// Load function
+func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+
+	collection := &adapt.Collection{}
+
+	op := &adapt.LoadOp{
+		CollectionName: request.Collection,
+		Collection:     collection,
+		WireName:       "apibeforesave",
+		Fields:         request.Fields,
+		Conditions:     request.Conditions,
+		Order:          request.Order,
+		Query:          true,
+	}
+
+	err := loadData(op, bs.session)
+	if err != nil {
+		return nil, err
+	}
+
+	return collection, nil
 
 }

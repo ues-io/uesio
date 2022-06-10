@@ -1,0 +1,5 @@
+name: pricebook_entry
+nameField: uesio/crm.name
+label: pricebook entry
+pluralLabel: pricebook entries
+public: true

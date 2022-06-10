@@ -1,7 +1,0 @@
-name: permissionsetsrefs
-collection: studio.profiles
-type: LIST
-label: Permission sets refs
-subtype: TEXT
-subfields:
-  - name: permissionset

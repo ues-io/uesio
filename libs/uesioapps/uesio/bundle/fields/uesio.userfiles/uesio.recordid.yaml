@@ -1,5 +1,0 @@
-name: recordid
-collection: uesio.userfiles
-type: "TEXT"
-label: "Record Id"
-readOnly: true

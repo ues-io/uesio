@@ -11,8 +11,6 @@
 		"sourceMap": true,
 		"declaration": false,
 		"moduleResolution": "node",
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
 		"importHelpers": true,
 		"target": "es6",
 		"module": "esnext",
@@ -20,10 +18,11 @@
 		"lib": ["es2019", "dom"],
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
+		"useUnknownInCatchVariables": true,
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"]
+			"#uesio/ui": ["libs/ui/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]

@@ -2,14 +2,38 @@ package s3
 
 import (
 	"context"
+	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 )
 
 // FileAdapter struct
 type FileAdapter struct {
+}
+
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
+	bucket, ok := (*credentials)["bucket"]
+	if !ok {
+		return nil, errors.New("No bucket provided in credentials")
+	}
+	client, err := getS3Client(context.Background(), credentials)
+	if err != nil {
+		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
+	}
+	return &Connection{
+		credentials: credentials,
+		bucket:      bucket,
+		client:      client,
+	}, nil
+}
+
+type Connection struct {
+	credentials *adapt.Credentials
+	bucket      string
+	client      *s3.Client
 }
 
 // TODO: Figure out a way to clean up and close unused clients

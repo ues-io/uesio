@@ -1,0 +1,7 @@
+name: datasources
+type: REFERENCEGROUP
+label: Datasources
+referenceGroup:
+  collection: uesio/studio.datasource
+  field: uesio/studio.workspace
+  onDelete: CASCADE

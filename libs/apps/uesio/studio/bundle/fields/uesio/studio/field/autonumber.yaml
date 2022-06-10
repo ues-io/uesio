@@ -1,0 +1,10 @@
+name: autonumber
+type: MAP
+label: Autonumber Metadata
+subfields:
+  - name: uesio/studio.leadingzeros
+    label: Leading Zeros
+    type: NUMBER
+  - name: uesio/studio.prefix
+    label: Prefix
+    type: TEXT

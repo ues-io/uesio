@@ -12,18 +12,23 @@ type ConfigStore struct {
 }
 
 var configValues = map[string]string{
-	"uesio:cognito_client_id":               os.Getenv("COGNITO_CLIENT_ID"),
-	"uesio:cognito_pool_id":                 os.Getenv("COGNITO_POOL_ID"),
-	"uesio:google_project_id":               os.Getenv("GOOGLE_CLOUD_PROJECT"),
-	"uesio:mock_auth":                       os.Getenv("UESIO_MOCK_AUTH"),
-	"uesio:platform_datasource_type":        os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE"),
-	"uesio:platform_filesource_type":        os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE"),
-	"uesio:platform_datasource_credentials": os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS"),
-	"uesio:platform_filesource_credentials": os.Getenv("UESIO_PLATFORM_FILESOURCE_CREDENTIALS"),
-	"uesio:aws_region":                      os.Getenv("AWS_REGION"),
-	"uesio:userfiles_bucket_name":           os.Getenv("UESIO_USERFILES_BUCKET_NAME"),
-	"uesio:dbhost":                          os.Getenv("UESIO_DB_HOST"),
-	"uesio:dbport":                          os.Getenv("UESIO_DB_PORT"),
+	"uesio/core:cognito_client_id":                os.Getenv("COGNITO_CLIENT_ID"),
+	"uesio/core:cognito_pool_id":                  os.Getenv("COGNITO_POOL_ID"),
+	"uesio/core:google_project_id":                os.Getenv("GOOGLE_CLOUD_PROJECT"),
+	"uesio/core:mock_auth":                        os.Getenv("UESIO_MOCK_AUTH"),
+	"uesio/core:platform_authsource_type":         os.Getenv("UESIO_PLATFORM_AUTHSOURCE_TYPE"),
+	"uesio/core:platform_datasource_type":         os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE"),
+	"uesio/core:platform_filesource_type":         os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE"),
+	"uesio/core:platform_bundlestore_type":        os.Getenv("UESIO_PLATFORM_BUNDLESTORE_TYPE"),
+	"uesio/core:platform_authsource_credentials":  os.Getenv("UESIO_PLATFORM_AUTHSOURCE_CREDENTIALS"),
+	"uesio/core:platform_datasource_credentials":  os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS"),
+	"uesio/core:platform_filesource_credentials":  os.Getenv("UESIO_PLATFORM_FILESOURCE_CREDENTIALS"),
+	"uesio/core:platform_bundlestore_credentials": os.Getenv("UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS"),
+	"uesio/core:aws_region":                       os.Getenv("AWS_REGION"),
+	"uesio/core:userfiles_bucket_name":            os.Getenv("UESIO_USERFILES_BUCKET_NAME"),
+	"uesio/core:db_host":                          os.Getenv("UESIO_DB_HOST"),
+	"uesio/core:db_port":                          os.Getenv("UESIO_DB_PORT"),
+	"uesio/core:bundlestore_bucket":               os.Getenv("UESIO_BUNDLES_BUCKET_NAME"),
 }
 
 // Get function

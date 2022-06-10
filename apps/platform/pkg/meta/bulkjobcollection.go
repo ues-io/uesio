@@ -1,37 +1,34 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// BulkJobCollection slice
-type BulkJobCollection []BulkJob
+type BulkJobCollection []*BulkJob
 
-// GetName function
 func (bjc *BulkJobCollection) GetName() string {
-	return "uesio.bulkjobs"
+	return "uesio/core.bulkjob"
 }
 
-// GetFields function
 func (bjc *BulkJobCollection) GetFields() []string {
 	return StandardGetFields(&BulkJob{})
 }
 
-// GetItem function
 func (bjc *BulkJobCollection) GetItem(index int) loadable.Item {
-	return &(*bjc)[index]
+	return (*bjc)[index]
 }
 
-// NewItem function
 func (bjc *BulkJobCollection) NewItem() loadable.Item {
-	*bjc = append(*bjc, BulkJob{})
-	return &(*bjc)[len(*bjc)-1]
+	bj := &BulkJob{}
+	*bjc = append(*bjc, bj)
+	return bj
 }
 
-// Loop function
 func (bjc *BulkJobCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bjc {
-		err := iter(bjc.GetItem(index), index)
+		err := iter(bjc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -39,21 +36,10 @@ func (bjc *BulkJobCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (bjc *BulkJobCollection) Len() int {
 	return len(*bjc)
 }
 
-// GetItems function
 func (bjc *BulkJobCollection) GetItems() interface{} {
 	return *bjc
-}
-
-// Slice function
-func (bjc *BulkJobCollection) Slice(start int, end int) {
-
-}
-
-func (bjc *BulkJobCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

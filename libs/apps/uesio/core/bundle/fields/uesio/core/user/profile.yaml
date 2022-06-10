@@ -1,0 +1,4 @@
+name: profile
+type: TEXT
+label: Profile
+required: true

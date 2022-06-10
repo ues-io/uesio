@@ -1,76 +1,78 @@
 package meta
 
 import (
-	"errors"
+	"fmt"
 	"os"
-	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// FieldCollection slice
-type ComponentVariantCollection []ComponentVariant
+type ComponentVariantCollection []*ComponentVariant
 
-// GetName function
 func (cvc *ComponentVariantCollection) GetName() string {
-	return "studio.componentvariants"
+	return "uesio/studio.componentvariant"
 }
 
-// GetFields function
+func (cvc *ComponentVariantCollection) GetBundleFolderName() string {
+	return "componentvariants"
+}
+
 func (cvc *ComponentVariantCollection) GetFields() []string {
 	return StandardGetFields(&ComponentVariant{})
 }
 
-// NewItem function
 func (cvc *ComponentVariantCollection) NewItem() loadable.Item {
-	*cvc = append(*cvc, ComponentVariant{})
-	return &((*cvc)[len(*cvc)-1])
+	cv := &ComponentVariant{}
+	*cvc = append(*cvc, cv)
+	return cv
 }
 
-// NewBundleableItemWithKey function
 func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, string(os.PathSeparator))
-	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid Variant Key: " + key)
-	}
-	namespace, name, err := ParseKey(keyArray[1])
+	cv, err := NewComponentVariant(key)
 	if err != nil {
-		return nil, errors.New("Invalid Variant Key: " + key)
+		return nil, err
 	}
-	*cvc = append(*cvc, ComponentVariant{
-		Component: keyArray[0],
-		Namespace: namespace,
-		Name:      name,
-	})
-	return &(*cvc)[len(*cvc)-1], nil
+	*cvc = append(*cvc, cv)
+	return cv, nil
 }
 
-// GetKeyFromPath function
-func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	componentKey, hasComponent := conditions["studio.component"]
+func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
+	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 	if hasComponent {
-		if parts[0] != componentKey {
+		componentNS, componentName, err := ParseKey(componentKey)
+		if err != nil {
+			return "", err
+		}
+		nsUser, nsApp, err := ParseNamespace(componentNS)
+		if err != nil {
+			return "", err
+		}
+		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != componentName {
 			return "", nil
 		}
 	}
-	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
+	cv := ComponentVariant{
+		Component: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
+		Namespace: namespace,
+		Name:      strings.TrimSuffix(parts[3], ".yaml"),
+	}
+	return cv.GetKey(), nil
 }
 
-// GetItem function
 func (cvc *ComponentVariantCollection) GetItem(index int) loadable.Item {
-	return &(*cvc)[index]
+	return (*cvc)[index]
 }
 
-// Loop function
 func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cvc {
-		err := iter(cvc.GetItem(index), index)
+		err := iter(cvc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -78,20 +80,10 @@ func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (cvc *ComponentVariantCollection) Len() int {
 	return len(*cvc)
 }
 
-// GetItems function
 func (cvc *ComponentVariantCollection) GetItems() interface{} {
 	return *cvc
-}
-
-// Slice function
-func (cvc *ComponentVariantCollection) Slice(start int, end int) {
-
-}
-func (bc *ComponentVariantCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

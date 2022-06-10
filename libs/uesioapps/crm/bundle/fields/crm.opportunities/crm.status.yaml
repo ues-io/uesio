@@ -1,5 +1,0 @@
-name: status
-collection: crm.opportunities
-type: SELECT
-label: Status
-selectList: crm.status

@@ -1,0 +1,30 @@
+[
+	{
+		"user": {
+			"id": "ben"
+		},
+		"federationid": "ben",
+		"authsource": "uesio/core.mock"
+	},
+	{
+		"user": {
+			"id": "abel"
+		},
+		"federationid": "abel",
+		"authsource": "uesio/core.mock"
+	},
+	{
+		"user": {
+			"id": "wessel"
+		},
+		"federationid": "wessel",
+		"authsource": "uesio/core.mock"
+	},
+	{
+		"user": {
+			"id": "gregg"
+		},
+		"federationid": "gregg",
+		"authsource": "uesio/core.mock"
+	}
+]

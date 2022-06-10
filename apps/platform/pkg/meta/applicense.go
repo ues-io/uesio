@@ -1,6 +1,5 @@
 package meta
 
-// AppLicense struct
 type AppLicense struct {
 	ID            string
 	AppID         string
@@ -14,8 +13,8 @@ var DefaultAppLicenses = AppLicenseCollection{
 		LicensedAppID: "uesio",
 	},
 	{
-		AppID:         "crm",
-		LicensedAppID: "sample",
+		AppID:         "cms",
+		LicensedAppID: "uesio",
 	},
 	{
 		AppID:         "studio",

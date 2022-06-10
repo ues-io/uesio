@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.bundledependencies
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

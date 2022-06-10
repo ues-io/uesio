@@ -1,6 +1,0 @@
-name: team
-collection: studio.teammembers
-type: REFERENCE
-label: Team
-referencedCollection: studio.teams
-required: true

@@ -1,3 +1,4 @@
+import { getFullWireId } from ".."
 import { Context } from "../../../context/context"
 
 const PARAM = "PARAM"
@@ -20,6 +21,7 @@ type ConditionBase = {
 type SearchConditionDefinition = ConditionBase & {
 	type: typeof SEARCH
 	value: string
+	fields?: string[]
 }
 
 type SearchConditionState = SearchConditionDefinition & {
@@ -104,11 +106,10 @@ const conditionInitializers: ConditionInitializers = {
 }
 
 const conditionHandlers: ConditionHandlers = {
-	[PARAM]: (condition: ParamConditionState, context: Context) => {
-		const view = context.getView()
-		const value = view?.params?.[condition.param] || ""
+	[PARAM]: (condition: ParamConditionState, context) => {
+		const value = context.getParam(condition.param) || ""
 		return {
-			field: condition.field,
+			...condition,
 			valueSource: VALUE,
 			value,
 			active: true,
@@ -117,17 +118,19 @@ const conditionHandlers: ConditionHandlers = {
 	[VALUE]: (condition: ValueConditionState, context: Context) => {
 		const value = context.merge(condition.value)
 		return {
-			field: condition.field,
+			...condition,
 			valueSource: VALUE,
 			value,
 			active: true,
 		}
 	},
 	[LOOKUP]: (condition: LookupConditionState, context: Context) => ({
-		field: condition.field,
+		...condition,
 		valueSource: LOOKUP,
-		lookupField: condition.lookupField,
-		lookupWire: context.getViewId() + "/" + condition.lookupWire,
+		lookupWire: getFullWireId(
+			context.getViewId() || "",
+			condition.lookupWire
+		),
 		active: true,
 	}),
 }

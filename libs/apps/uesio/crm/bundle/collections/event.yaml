@@ -1,0 +1,5 @@
+name: event
+nameField: uesio/crm.name
+label: event
+pluralLabel: events
+public: true

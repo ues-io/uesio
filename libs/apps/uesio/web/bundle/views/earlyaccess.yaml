@@ -1,0 +1,111 @@
+name: earlyaccess
+definition:
+  # Wires are how we pull in data
+  wires:
+    newlead:
+      collection: uesio/crm.lead
+      fields:
+        uesio/crm.firstname:
+        uesio/crm.lastname:
+        uesio/crm.title:
+        uesio/crm.email:
+        uesio/crm.phone:
+        uesio/crm.account:
+      init:
+        query: false
+        create: true
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/core.view:
+        view: uesio/web.topbar
+    - uesio/io.grid:
+        uesio.variant: uesio/web.mainlayout
+        items:
+          - uesio/io.griditem:
+              area: main
+              components:
+                - uesio/io.grid:
+                    templateColumns:
+                      sm: 1fr
+                      md: 350px 1fr
+                      lg: 450px 1fr
+                    columnGap: 40px
+                    uesio.styles:
+                      root:
+                        padding: 80px
+                    items:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.callout
+                                text: Register for early access. It's free.
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.calloutsub
+                                text: Stay in the loop with ues.io. Join our private beta and become one of the first to change the industry.
+                            - uesio/io.box:
+                                uesio.styles:
+                                  root:
+                                    marginBottom: 40px
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: App building is free.
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: We only charge for data usage and page loads on published sites.
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: Add as many users as you want at no cost. Don't pay for dormant users.
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: No advance payments
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.list:
+                                wire: newlead
+                                mode: EDIT
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          backgroundColor: white
+                                          padding: 40px
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/crm.firstname
+                                        - uesio/io.field:
+                                            fieldId: uesio/crm.lastname
+                                        - uesio/io.field:
+                                            label: Job Title
+                                            fieldId: uesio/crm.title
+                                        - uesio/io.field:
+                                            fieldId: uesio/crm.email
+                                        - uesio/io.field:
+                                            fieldId: uesio/crm.phone
+                                        - uesio/io.field:
+                                            label: Company
+                                            fieldId: uesio/crm.account
+                                        - uesio/io.group:
+                                            uesio.styles:
+                                              root:
+                                                marginTop: 20px
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/web.calltoaction
+                                                  text: Register
+                                                  signals:
+                                                    - signal: wire/SAVE
+                                                      wires:
+                                                        - newlead
+                                                    - signal: route/NAVIGATE
+                                                      path: "earlyaccessthanks"
+    - uesio/core.view:
+        view: uesio/web.footer

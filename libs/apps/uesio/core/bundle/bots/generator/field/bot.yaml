@@ -1,0 +1,75 @@
+name: field
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: Field Name
+    type: METADATANAME
+  label:
+    prompt: Label
+  collection:
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  type:
+    prompt: Field Type
+    type: FIELDTYPE
+  number_decimals:
+    prompt: Number of Decimals
+    conditions:
+      - param: type
+        value: NUMBER
+  ref_collection:
+    prompt: Reference Collection
+    type: METADATA
+    metadataType: COLLECTION
+    conditions:
+      - param: type
+        value: REFERENCE
+  select_list:
+    prompt: Select List
+    type: METADATA
+    metadataType: SELECTLIST
+    conditions:
+      - param: type
+        value: SELECT
+  autonumber_prefix:
+    prompt: Prefix
+    conditions:
+      - param: type
+        value: AUTONUMBER
+  autonumber_leadingzeros:
+    prompt: Leading Zeros
+    conditions:
+      - param: type
+        value: AUTONUMBER
+  accept:
+    prompt: Accept
+    type: LIST
+    choices: ["IMAGE", "AUDIO", "VIDEO", "DOCUMENT", "ANY"]
+    conditions:
+      - param: type
+        value: FILE
+  referencegroup_collection:
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
+  referencegroup_field:
+    prompt: field
+    type: METADATA
+    metadataType: FIELD
+    grouping: $Answer{referencegroup_collection}
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
+  referencegroup_ondelete:
+    prompt: On Delete
+    type: LIST
+    choices: ["CASCADE"]
+    conditions:
+      - param: type
+        value: REFERENCEGROUP
+public: true

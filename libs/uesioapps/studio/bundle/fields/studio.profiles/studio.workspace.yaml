@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.profiles
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

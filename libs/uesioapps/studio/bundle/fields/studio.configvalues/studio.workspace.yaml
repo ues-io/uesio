@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.configvalues
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

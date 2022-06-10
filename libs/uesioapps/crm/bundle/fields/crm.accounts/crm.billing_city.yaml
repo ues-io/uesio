@@ -1,4 +1,0 @@
-name: billing_city
-collection: crm.accounts
-type: TEXT
-label: Billing City

@@ -1,0 +1,50 @@
+# Wires connect to data in collections
+wires:
+  ${wirename}:
+    collection: ${collection}
+    fields: ${fields}
+# Components determine the layout and composition of your view
+components:
+  - uesio/io.titlebar:
+      title: ${collection}
+      uesio.variant: uesio/io.main
+      actions:
+        - uesio/io.group:
+            components:
+              - uesio/io.button:
+                  signals:
+                    - signal: wire/CREATE_RECORD
+                      wire: ${wirename}
+                  text: Create
+                  uesio.variant: uesio/io.secondary
+              - uesio/io.button:
+                  signals:
+                    - signal: wire/SAVE
+                      wires:
+                        - ${wirename}
+                  text: Save
+                  uesio.variant: uesio/io.secondary
+              - uesio/io.button:
+                  signals:
+                    - signal: wire/CANCEL
+                      wire: ${wirename}
+                  text: Cancel
+                  uesio.variant: uesio/io.secondary
+              - uesio/io.button:
+                  signals:
+                    - signal: component/uesio/io.table/TOGGLE_MODE
+                      target: table1
+                  text: Mode
+                  uesio.variant: uesio/io.secondary
+  - uesio/io.box:
+      uesio.variant: uesio/io.section
+      components:
+        - uesio/io.table:
+            rowactions:
+              - text: Delete
+                signals:
+                  - signal: wire/TOGGLE_DELETE_STATUS
+            columns: ${tableColumns}
+            id: table1
+            mode: EDIT
+            wire: ${wirename}

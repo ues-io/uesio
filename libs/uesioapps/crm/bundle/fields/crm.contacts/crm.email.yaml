@@ -1,7 +1,0 @@
-name: email
-collection: crm.contacts
-type: TEXT
-label: Email
-required: true
-validate:
-  type: EMAIL

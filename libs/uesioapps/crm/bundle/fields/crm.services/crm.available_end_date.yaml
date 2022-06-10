@@ -1,4 +1,0 @@
-name: available_end_date
-collection: crm.services
-type: DATE
-label: Available End Date

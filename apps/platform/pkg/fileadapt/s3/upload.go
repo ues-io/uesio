@@ -2,27 +2,19 @@ package s3
 
 import (
 	"context"
-	"errors"
 	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
+func (c *Connection) Upload(fileData io.Reader, path string) error {
 
-	ctx := context.TODO()
+	uploader := manager.NewUploader(c.client)
 
-	client, err := getS3Client(ctx, credentials)
-	if err != nil {
-		return errors.New("invalid FileAdapterCredentials specified: " + err.Error())
-	}
-	uploader := manager.NewUploader(client)
-
-	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(bucket),
+	_, err := uploader.Upload(context.Background(), &s3.PutObjectInput{
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 		Body:   fileData,
 	})

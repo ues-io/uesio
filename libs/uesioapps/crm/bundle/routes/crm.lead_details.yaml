@@ -1,4 +1,0 @@
-name: lead_details
-path: lead/{leadid}
-view: crm.lead_details
-theme: crm.default

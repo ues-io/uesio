@@ -1,0 +1,4 @@
+name: db_host
+managedBy: app
+store: environment
+public: true

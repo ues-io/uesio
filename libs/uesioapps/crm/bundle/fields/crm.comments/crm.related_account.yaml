@@ -1,5 +1,0 @@
-name: related_account
-collection: crm.comments
-type: REFERENCE
-label: Related Account
-referencedCollection: crm.accounts

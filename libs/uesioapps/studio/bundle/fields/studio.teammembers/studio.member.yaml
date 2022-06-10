@@ -1,5 +1,0 @@
-name: member
-collection: studio.teammembers
-type: USER
-label: Member
-required: true

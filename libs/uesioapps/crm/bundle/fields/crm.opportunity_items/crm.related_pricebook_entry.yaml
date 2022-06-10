@@ -1,5 +1,0 @@
-name: related_pricebook_entry
-collection: crm.opportunity_items
-type: REFERENCE
-label: Related Pricebook Entry
-referencedCollection: crm.pricebook_entries

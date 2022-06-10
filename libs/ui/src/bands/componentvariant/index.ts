@@ -1,35 +1,32 @@
-import { createSlice } from "@reduxjs/toolkit"
-import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
-import componentVariantAdapter from "./adapter"
-import { parseVariantKey } from "../../component/path"
-import { ComponentVariant } from "./types"
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
+import { useSelector } from "react-redux"
+import { RootState } from "../../store/store"
+import { MetadataState } from "../metadata/types"
 
-const componentVariantSlice = createSlice({
-	name: "componentVariant",
-	initialState: componentVariantAdapter.getInitialState(),
-	reducers: {},
-	extraReducers: (builder) => {
-		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
-			const yamlDoc = parse(payload)
-			const variants = getNodeAtPath(
-				["dependencies", "componentvariants"],
-				yamlDoc.contents
-			)?.toJSON()
-			if (variants) {
-				const variantsToAdd: Record<string, ComponentVariant> = {}
-				Object.keys(variants).forEach((key) => {
-					const [, , variantNamespace] = parseVariantKey(key)
-					variants[key].namespace = variantNamespace
-					if (state.entities[key]) return
-					variantsToAdd[key] = variants[key]
-				})
+const adapter = createEntityAdapter<MetadataState>({
+	selectId: (metadata) => metadata.key,
+})
 
-				if (!Object.keys(variantsToAdd).length) return
-				componentVariantAdapter.upsertMany(state, variantsToAdd)
-			}
-		})
+const selectors = adapter.getSelectors(
+	(state: RootState) => state.componentvariant
+)
+
+const metadataSlice = createSlice({
+	name: "componentvariant",
+	initialState: adapter.getInitialState(),
+	reducers: {
+		set: adapter.upsertOne,
+		setMany: adapter.upsertMany,
 	},
 })
 
-export default componentVariantSlice.reducer
+const useComponentVariant = (key: string) =>
+	useSelector((state: RootState) => selectors.selectById(state, key))
+
+const useComponentVariantKeys = () =>
+	useSelector(selectors.selectIds) as string[]
+
+export { useComponentVariant, useComponentVariantKeys, selectors }
+
+export const { set, setMany } = metadataSlice.actions
+export default metadataSlice.reducer

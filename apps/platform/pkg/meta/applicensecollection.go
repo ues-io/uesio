@@ -1,9 +1,7 @@
 package meta
 
-// AppLicenseCollection slice
-type AppLicenseCollection []AppLicense
+type AppLicenseCollection []*AppLicense
 
-// GetName function
 func (a *AppLicenseCollection) GetName() string {
-	return "studio.applicences"
+	return "uesio/studio.applicences"
 }

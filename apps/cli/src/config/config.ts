@@ -1,29 +1,36 @@
-import * as os from "os"
+import os from "os"
 import { promises as fs } from "fs"
-import * as path from "path"
-import * as yaml from "yaml"
+import path from "path"
+import yaml from "yaml"
+import { metadata } from "#uesio/ui"
+import { User } from "../auth/login"
+import { get, parseJSON } from "../request/request"
 
 type Config = {
 	sessionId?: string
-	workspaceId?: string
-	appId?: string
+	activeWorkspaces?: Record<string, string>
+	hostUrl?: string
 }
 
-const SESSION_ID_KEY = "sessionId"
-const WORKSPACE_ID_KEY = "workspaceId"
-const APP_ID_KEY = "appId"
-
-type ConfigKey =
-	| typeof SESSION_ID_KEY
-	| typeof WORKSPACE_ID_KEY
-	| typeof APP_ID_KEY
+type VersionInfo = {
+	version: string
+}
 
 type BundleInfo = {
 	name: string
+	dependencies?: Record<string, VersionInfo>
 }
 
 const homedir = os.homedir()
 const saveFile = path.join(homedir, ".uesio")
+
+const validHosts = [
+	"https://studio.uesio-dev.com:3000",
+	"https://studio.ues.io",
+	"https://studio.ues-dev.io",
+]
+
+const DEFAULT_HOST = "https://studio.uesio-dev.com:3000"
 
 const fileExists = async (file: string): Promise<boolean> =>
 	fs
@@ -45,30 +52,42 @@ const setConfig = async (configObj: Config): Promise<void> => {
 	await fs.writeFile(saveFile, JSON.stringify(configObj))
 }
 
-const getConfigValue = async (key: ConfigKey): Promise<string | null> => {
+const getSessionId = async (): Promise<string | null> => {
 	const config = await getConfig()
-	return config?.[key] || null
+	return config?.sessionId || null
 }
 
-const setConfigValue = async (key: ConfigKey, value: string): Promise<void> =>
-	setConfig({ ...(await getConfig()), [key]: value })
+const setSessionId = async (value: string): Promise<void> => {
+	const config = await getConfig()
+	setConfig({ ...config, sessionId: value })
+}
 
-const getSessionId = async (): Promise<string | null> =>
-	getConfigValue(SESSION_ID_KEY)
+const getActiveWorkspace = async (app: string): Promise<string | null> => {
+	const config = await getConfig()
+	return config?.activeWorkspaces?.[app] || null
+}
 
-const setSessionId = async (value: string): Promise<void> =>
-	setConfigValue(SESSION_ID_KEY, value)
+const setActiveWorkspace = async (
+	app: string,
+	workspace: string
+): Promise<void> => {
+	const config = await getConfig()
+	const activeWorkspaces = config?.activeWorkspaces || {}
+	setConfig({
+		...config,
+		activeWorkspaces: { ...activeWorkspaces, [app]: workspace },
+	})
+}
 
-const getWorkspaceId = async (): Promise<string | null> =>
-	getConfigValue(WORKSPACE_ID_KEY)
+const getHostUrl = async (): Promise<string> => {
+	const config = await getConfig()
+	return config?.hostUrl || DEFAULT_HOST
+}
 
-const setWorkspaceId = async (value: string): Promise<void> =>
-	setConfigValue(WORKSPACE_ID_KEY, value)
-
-const getAppId = async (): Promise<string | null> => getConfigValue(APP_ID_KEY)
-
-const setAppId = async (value: string): Promise<void> =>
-	setConfigValue(APP_ID_KEY, value)
+const setHostUrl = async (value: string): Promise<void> => {
+	const config = await getConfig()
+	setConfig({ ...config, hostUrl: value })
+}
 
 const getBundleInfo = async (): Promise<BundleInfo> => {
 	const bundleInfoText = await fs.readFile(
@@ -79,28 +98,157 @@ const getBundleInfo = async (): Promise<BundleInfo> => {
 	return bundleInfo
 }
 
+const getKeyFromPath = (
+	app: string,
+	metadataType: metadata.MetadataType,
+	path: string,
+	grouping?: string
+) => {
+	if (
+		metadataType === "COLLECTION" ||
+		metadataType === "VIEW" ||
+		metadataType === "THEME"
+	) {
+		if (grouping) {
+			throw new Error("Conditions not allowed for this type")
+		}
+		// TODO: Should be os path separator
+		const parts = path.split("/")
+		if (parts.length !== 1 || !parts[0].endsWith(".yaml")) {
+			// Ignore this file
+			return ""
+		}
+		return app + "." + parts[0].substring(0, parts[0].length - 5)
+	}
+	if (metadataType === "FIELD") {
+		if (!grouping) {
+			throw new Error("Must specify collection for fields list")
+		}
+		// TODO: Should be os path separator
+		const parts = path.split("/")
+		if (parts.length !== 4 || !parts[3].endsWith(".yaml")) {
+			// Ignore this file
+			return ""
+		}
+
+		const collection = `${parts[0]}/${parts[1]}.${parts[2]}`
+
+		if (collection !== grouping) {
+			// Ignore this file
+			return ""
+		}
+		return app + "." + parts[3].substring(0, parts[3].length - 5)
+	}
+	if (metadataType === "COMPONENT") {
+		if (grouping) {
+			throw new Error("Conditions not allowed for this type")
+		}
+		// TODO: Should be os path separator
+		const parts = path.split("/")
+		if (parts.length !== 3 || !parts[2].endsWith(".tsx")) {
+			// Ignore this file
+			return ""
+		}
+		return app + "." + parts[1]
+	}
+	return ""
+}
+
+const getFiles = async (dir: string): Promise<string[] | null> => {
+	const dirExists = await fileExists(dir)
+
+	if (!dirExists) {
+		return null
+	}
+
+	const dirents = await fs.readdir(dir, { withFileTypes: true })
+	const files = await Promise.all(
+		dirents.map((dirent) => {
+			const res = dir + dirent.name
+			return dirent.isDirectory() ? getFiles(res + "/") : res
+		})
+	)
+	return Array.prototype.concat(...files)
+}
+
+const getLocalMetadataItemsList = async (
+	app: string,
+	metadataType: metadata.MetadataType,
+	grouping?: string
+): Promise<string[]> => {
+	const metadataDir = metadata.METADATA[metadataType]
+	const dirPath = "./bundle/" + metadataDir + "/"
+
+	const files = await getFiles(dirPath)
+
+	if (!files) {
+		return []
+	}
+
+	return files.flatMap((fileName) => {
+		const fileKey = getKeyFromPath(
+			app,
+			metadataType,
+			fileName.slice(dirPath.length),
+			grouping
+		)
+		return fileKey ? [fileKey] : []
+	})
+}
+
 const getApp = async (): Promise<string> => {
 	const bundleInfo = await getBundleInfo()
 	return bundleInfo.name
 }
 
-const getWorkspace = async (): Promise<string | null> => {
-	const workspaceId = await getWorkspaceId()
-	const appIdPref = await getAppId()
-	const appFromBundle = await getApp()
-	// Make sure the configured app id and the workspace app id match
-	if (appIdPref !== appFromBundle) {
-		throw Error(
-			"The app you are attempting to modify is different from your appId in your .uesio file"
-		)
+const getVersion = async (app: string): Promise<string> => {
+	const bundleInfo = await getBundleInfo()
+	const versionInfo = bundleInfo.dependencies?.[app]
+	if (!versionInfo || !versionInfo.version) {
+		throw new Error("No version found for that namespace")
 	}
-	return workspaceId
+	return versionInfo.version
+}
+
+const getMetadataList = async (
+	metadataType: metadata.MetadataType,
+	app: string,
+	version: string,
+	user: User,
+	grouping?: string
+): Promise<string[]> => {
+	const bundleInfo = await getBundleInfo()
+	// First get items installed here.
+	const localItems = await getLocalMetadataItemsList(
+		app,
+		metadataType,
+		grouping
+	)
+	// For components, only return local ones
+	if (metadataType === "COMPONENT") {
+		return localItems
+	}
+	for (const dep in bundleInfo.dependencies) {
+		const metadataDir = metadata.METADATA[metadataType]
+		const groupingUrl = grouping ? `/${grouping}` : ""
+		const listResponse = await get(
+			`version/${app}/${dep}/${version}/metadata/types/${metadataDir}/list${groupingUrl}`,
+			user.cookie
+		)
+		const list = await parseJSON(listResponse)
+		localItems.push(...Object.keys(list))
+	}
+	return localItems
+}
+
+const getWorkspace = async (): Promise<string | null> => {
+	const app = await getApp()
+	return await getActiveWorkspace(app)
 }
 
 const setWorkspace = async (workspace: string): Promise<void> => {
 	const app = await getApp()
-	await setAppId(app)
-	await setWorkspaceId(workspace)
+	await setActiveWorkspace(app, workspace)
 }
 
 export {
@@ -109,6 +257,12 @@ export {
 	fileExists,
 	Config,
 	getApp,
+	getVersion,
 	getWorkspace,
 	setWorkspace,
+	setActiveWorkspace,
+	getMetadataList,
+	getHostUrl,
+	setHostUrl,
+	validHosts,
 }

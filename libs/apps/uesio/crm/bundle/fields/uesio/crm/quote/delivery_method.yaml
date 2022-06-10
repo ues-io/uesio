@@ -1,0 +1,3 @@
+name: delivery_method
+type: TEXT
+label: Delivery Method

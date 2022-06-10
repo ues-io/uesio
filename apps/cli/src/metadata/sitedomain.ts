@@ -3,35 +3,36 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
 import { save, createChange } from "../wire/save"
 import { getApp } from "../config/config"
+import { User } from "../auth/login"
 
 class SiteDomain {
 	static getCollectionName(): string {
-		return "studio.sitedomains"
+		return "uesio/studio.sitedomain"
 	}
 	static getFields() {
 		return [
 			{
-				id: "uesio.id",
+				id: "uesio/core.id",
 			},
 			{
-				id: "studio.domain",
+				id: "uesio/studio.domain",
 			},
 			{
-				id: "studio.site",
+				id: "uesio/studio.site",
 			},
 			{
-				id: "studio.type",
+				id: "uesio/studio.type",
 			},
 		]
 	}
 	static getColumns(): TableColumn[] {
 		return SiteDomain.getFields()
 	}
-	static async list(): Promise<void> {
-		const response = await load(this)
+	static async list(user: User): Promise<void> {
+		const response = await load(this, user)
 		wiretable(response.wires[0], response.collections, this.getColumns())
 	}
-	static async create(): Promise<void> {
+	static async create(user: User): Promise<void> {
 		const responses = await inquirer.prompt([
 			{
 				name: "siteName",
@@ -53,11 +54,12 @@ class SiteDomain {
 
 		await save(
 			this,
+			user,
 			createChange([
 				{
-					"studio.site": responses.siteName + "_" + app,
-					"studio.domain": responses.domain,
-					"studio.type": responses.type,
+					"uesio/studio.site": responses.siteName + "_" + app,
+					"uesio/studio.domain": responses.domain,
+					"uesio/studio.type": responses.type,
 				},
 			])
 		)

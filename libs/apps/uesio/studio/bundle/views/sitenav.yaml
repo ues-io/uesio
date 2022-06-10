@@ -1,0 +1,79 @@
+name: sitenav
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.list:
+        components:
+          - uesio/io.titlebar:
+              uesio.variant: uesio/io.nav
+              title: Site Admin
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: users
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/users
+              content:
+                - uesio/io.text:
+                    text: Users
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: person
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: domains
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/domains
+              content:
+                - uesio/io.text:
+                    text: Domains
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: verified_user
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: sitecollections
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/collections
+              content:
+                - uesio/io.text:
+                    text: Collections
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: list
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: siteusage
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}/usage
+              content:
+                - uesio/io.text:
+                    text: Usage
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: data_usage

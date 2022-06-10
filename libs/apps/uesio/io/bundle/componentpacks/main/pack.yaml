@@ -1,0 +1,110 @@
+name: main
+public: true
+components:
+  view:
+    avatar:
+    markdownnavigation:
+    box:
+    button:
+    code:
+      variants:
+        - uesio/io.fieldlabel:uesio/io.default
+    deck:
+    dialog:
+      variants:
+        - uesio/io.titlebar:uesio/io.dialog
+    dialogplain:
+    field:
+      variants:
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.codefield:uesio/io.default
+        - uesio/io.userfield:uesio/io.default
+        - uesio/io.checkboxfield:uesio/io.default
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.autocomplete:uesio/io.default
+        - uesio/io.emailfield:uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.default
+        - uesio/io.tile:uesio/io.default
+        - uesio/io.numberfield:uesio/io.default
+        - uesio/io.listfield:uesio/io.default
+        - uesio/io.markdownfield:uesio/io.default
+        - uesio/io.filemarkdown:uesio/io.default
+    filter:
+      variants:
+        - uesio/io.selectfield:uesio/io.filter
+    grid:
+    griditem:
+    group:
+    image:
+    list:
+    tabs:
+    searchbox:
+    table:
+      variants:
+        - uesio/io.textfield:uesio/io.table
+        - uesio/io.selectfield:uesio/io.table
+        - uesio/io.checkboxfield:uesio/io.table
+        - uesio/io.autocomplete:uesio/io.table
+        - uesio/io.table:uesio/io.default
+        - uesio/io.button:uesio/io.nav
+        - uesio/io.fileimage:uesio/io.table
+        - uesio/io.numberfield:uesio/io.table
+        - uesio/io.markdownfield:uesio/io.table
+        - uesio/io.filemarkdown:uesio/io.table
+    text:
+    tile:
+      variants:
+        - uesio/io.text:uesio/io.icon
+    titlebar:
+  utility:
+    alert:
+    avatar:
+    autocomplete:
+    button:
+    checkboxfield:
+    togglefield:
+    codefield:
+    dialog:
+    dialogplain:
+    expandpanel:
+    fieldlabel:
+    fieldwrapper:
+    fieldset:
+    filepreview:
+    filetext:
+    fileimage:
+    file:
+    fileuploadarea:
+    form:
+    grid:
+    group:
+    icon:
+    iconbutton:
+    link:
+    multiselectfield:
+    multicheckfield:
+    radiobuttonsfield:
+    paginator:
+    popper:
+    referencefield:
+    scrollpanel:
+    selectfield:
+    table:
+    tablabels:
+    text:
+    textfield:
+    tile:
+    timestampfield:
+    titlebar:
+    tooltip:
+    uploadarea:
+    userfield:
+    listfield:
+    mapfield:
+    datefield:
+    numberfield:
+    emailfield:
+    referencegroupfield:
+    markdownfield:
+    filemarkdown:

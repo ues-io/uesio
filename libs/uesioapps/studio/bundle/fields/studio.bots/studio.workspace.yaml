@@ -1,5 +1,0 @@
-name: workspace
-collection: studio.bots
-type: REFERENCE
-label: Workspace
-referencedCollection: studio.workspaces

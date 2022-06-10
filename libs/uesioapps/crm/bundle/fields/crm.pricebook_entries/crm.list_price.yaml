@@ -1,4 +1,0 @@
-name: list_price
-collection: crm.pricebook_entries
-type: NUMBER
-label: List Price

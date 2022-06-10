@@ -1,0 +1,29 @@
+[
+	{
+		"name": "prod",
+		"bundle": {
+			"id": "uesio/studio_v0.0.1"
+		},
+		"app": {
+			"id": "uesio/studio"
+		}
+	},
+	{
+		"name": "prod",
+		"bundle": {
+			"id": "uesio/docs_v0.0.1"
+		},
+		"app": {
+			"id": "uesio/docs"
+		}
+	},
+	{
+		"name": "prod",
+		"bundle": {
+			"id": "uesio/web_v0.0.1"
+		},
+		"app": {
+			"id": "uesio/web"
+		}
+	}
+]

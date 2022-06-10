@@ -2,31 +2,12 @@ package datasource
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-type SaveError struct {
-	RecordID interface{} `json:"recordid"`
-	FieldID  string      `json:"fieldid"`
-	Message  string      `json:"message"`
-}
-
-func (se *SaveError) Error() string {
-	return se.Message
-}
-
-func NewSaveError(recordID interface{}, fieldID, message string) *SaveError {
-	return &SaveError{
-		RecordID: recordID,
-		FieldID:  fieldID,
-		Message:  message,
-	}
-}
 
 // SaveRequest struct
 type SaveRequest struct {
@@ -34,16 +15,9 @@ type SaveRequest struct {
 	Wire               string             `json:"wire"`
 	Changes            loadable.Group     `json:"changes"`
 	Deletes            loadable.Group     `json:"deletes"`
-	Errors             []SaveError        `json:"errors"`
+	Errors             []adapt.SaveError  `json:"errors"`
 	Options            *adapt.SaveOptions `json:"-"`
 	UserResponseTokens *adapt.SaveOptions `json:"-"`
-}
-
-func (sr *SaveRequest) AddError(err *SaveError) {
-	if sr.Errors == nil {
-		sr.Errors = []SaveError{}
-	}
-	sr.Errors = append(sr.Errors, *err)
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -88,11 +62,26 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type SaveOptions struct {
+	Connections map[string]adapt.Connection
+	Metadata    *adapt.MetadataCache
+}
+
 // Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
+	return SaveWithOptions(requests, session, nil)
+}
 
-	collated := map[string][]adapt.SaveOp{}
-	metadataResponse := adapt.MetadataCache{}
+func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
+	if options == nil {
+		options = &SaveOptions{}
+	}
+	collated := map[string][]*adapt.SaveOp{}
+	metadataResponse := &adapt.MetadataCache{}
+	// Use existing metadata if it was passed in
+	if options.Metadata != nil {
+		metadataResponse = options.Metadata
+	}
 
 	// Loop over the requests and batch per data source
 	for index := range requests {
@@ -127,7 +116,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 		}
 
-		err = collections.Load(&metadataResponse, session)
+		err = collections.Load(metadataResponse, session)
 		if err != nil {
 			return err
 		}
@@ -139,28 +128,24 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}
 
 		// Split changes into inserts, updates, and deletes
-		inserts, updates, deletes, err := SplitSave(request, collectionMetadata, session)
+		ops, err := SplitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch = append(batch, adapt.SaveOp{
-			CollectionName: request.Collection,
-			WireName:       request.Wire,
-			Inserts:        inserts,
-			Updates:        updates,
-			Deletes:        deletes,
-			Options:        request.Options,
-		})
+		batch = append(batch, ops...)
 		collated[dsKey] = batch
 	}
 
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	userTokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:    metadataResponse,
+		Connections: options.Connections,
+	}, session)
 	if err != nil {
 		return err
 	}
@@ -168,102 +153,140 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
+		connection, err := GetConnection(dsKey, session.GetTokens(), metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
 
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return err
-		}
-
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return err
-		}
-
-		// TODO:
-		// 0. Split change items into updates/inserts/deletes
-		// 1. Perform Lookups
-		// 2. Hydrate update values with full info
-		// 3. AutoPopulate data like dates and users
-		// 4. Run Before bots
-		// 5. Run validations
-		// 6. Check permissions
-		// 7. Actually do the save
-		// 8. Run After bots
-		// 9. Return results
-
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials, userTokens)
-		}, batch, &metadataResponse)
-		if err != nil {
-			return err
-		}
-
-		for _, op := range batch {
-
-			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-			if err != nil {
-				return err
-			}
-
-			err = Populate(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			err = runBeforeSaveBots(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			err = Validate(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			err = GenerateRecordChallengeTokens(&op, collectionMetadata, session)
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err := connection.BeginTransaction()
 			if err != nil {
 				return err
 			}
 		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials, userTokens)
+		err = applyBatches(dsKey, batch, connection, session)
 		if err != nil {
-			return err
-		}
-
-		err = performCascadeDeletes(batch, &metadataResponse, session)
-		if err != nil {
-			return err
-		}
-
-		for _, op := range batch {
-			collectionKey := op.CollectionName
-			collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
-			if err != nil {
-				return err
+			if !HasExistingConnection(dsKey, options.Connections) {
+				err := connection.RollbackTransaction()
+				if err != nil {
+					return err
+				}
 			}
+			return err
+		}
 
-			err = runAfterSaveBots(&op, collectionMetadata, session)
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err := connection.CommitTransaction()
 			if err != nil {
 				return err
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	metadata := connection.GetMetadata()
+	for _, op := range batch {
+
+		collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		// Do Upsert Lookups Here First
+		err = adapt.HandleUpsertLookup(connection, op)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = adapt.HandleOldValuesLookup(connection, op)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = Populate(op, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		// Check for population errors here
+		if op.HasErrors() {
+			return adapt.NewGenericSaveError(errors.New("Error with field population"))
+		}
+
+		err = runBeforeSaveBots(op, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		// Check for before save errors here
+		if op.HasErrors() {
+			return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
+		}
+
+		// Now do Reference Lookups and Reference Integrity Lookups
+		err = adapt.HandleReferenceLookups(connection, op)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = Validate(op, collectionMetadata, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		// Check for validate errors here
+		if op.HasErrors() {
+			return adapt.NewGenericSaveError(errors.New("Error with validation"))
+		}
+
+		err = GenerateRecordChallengeTokens(op, collectionMetadata, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = performCascadeDeletes(op, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = connection.Save(op)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = runAfterSaveBots(op, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		// Check for after save errors here
+		if op.HasErrors() {
+			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
+		}
+
+		err = EvalFormulaFields(op, collectionMetadata, connection, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		go RegisterUsageEvent("SAVE", session.GetUserID(), "DATASOURCE", dsKey, connection)
 	}
 
 	return nil

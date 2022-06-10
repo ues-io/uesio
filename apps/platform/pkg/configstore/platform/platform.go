@@ -14,16 +14,21 @@ type ConfigStore struct {
 // Get function
 func (cs *ConfigStore) Get(key string) (string, error) {
 	var cv meta.ConfigStoreValue
-	headlessSession, err := auth.GetHeadlessSession()
+	headlessSession, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return "", err
 	}
-	err = datasource.PlatformLoadOne(&cv, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: key,
+	err = datasource.PlatformLoadOne(
+		&cv,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: key,
+				},
+			},
 		},
-	}, headlessSession)
+		headlessSession)
 	if err != nil {
 		return "", nil
 	}
@@ -36,11 +41,11 @@ func (cs *ConfigStore) Set(key, value string) error {
 		Key:   key,
 		Value: value,
 	}
-	headlessSession, err := auth.GetHeadlessSession()
+	headlessSession, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return err
 	}
 	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, headlessSession)
+	}, nil, headlessSession)
 }

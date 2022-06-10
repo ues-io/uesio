@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS multistage
+FROM golang:1.17-alpine AS multistage
 
 WORKDIR /src
 COPY ./apps/platform .
@@ -9,7 +9,7 @@ RUN go build
 FROM alpine:latest
 COPY --from=multistage /src/uesio .
 COPY ./dist ./dist
-COPY ./libs/uesioapps ./libs/uesioapps
+COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
 COPY ./apps/platform/fonts ./fonts
 COPY ./apps/platform/seed ./seed

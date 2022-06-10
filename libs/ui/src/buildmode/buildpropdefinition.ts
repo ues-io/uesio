@@ -1,6 +1,10 @@
-import { DefinitionMap } from "../definition/definition"
+import {
+	BaseProps,
+	Definition,
+	DefinitionMap,
+	DefinitionValue,
+} from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
-import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
 import { FunctionComponent } from "react"
 import ValueAPI from "./valueapi"
@@ -27,7 +31,6 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
-	readOnly?: boolean
 }
 
 type PropertySection =
@@ -36,6 +39,8 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| OrderSection
+	| ConditionalDisplaySection
 
 type BasePropSection = {
 	title: string
@@ -44,6 +49,10 @@ type BasePropSection = {
 
 interface FieldsSection extends BasePropSection {
 	type: "FIELDS"
+}
+
+interface OrderSection extends BasePropSection {
+	type: "ORDER"
 }
 
 interface ConditionsSection extends BasePropSection {
@@ -62,6 +71,9 @@ interface PropListSection extends BasePropSection {
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
 }
+interface ConditionalDisplaySection extends BasePropSection {
+	type: "CONDITIONALDISPLAY"
+}
 
 type PropDescriptor =
 	| TextProp
@@ -78,7 +90,7 @@ type PropDescriptor =
 	| ConditionProp
 	| NamespaceProp
 	| ComponentTargetProp
-	| StylesListProp
+	| ConditionalDisplayProp
 	| IconProp
 
 type BasePropDescriptor = {
@@ -86,10 +98,18 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
+	display?: DisplayCondition[]
 }
 
+type DisplayCondition = {
+	property: string
+} & (
+	| { values: DefinitionValue[]; value?: never }
+	| { value: DefinitionValue; values?: never }
+)
+
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
-	filter?: (def: definition.Definition, id: string) => boolean
+	filter?: (def: Definition, id: string) => boolean
 }
 
 interface CustomPropRendererProps extends PropRendererProps {
@@ -113,8 +133,8 @@ interface IconProp extends BasePropDescriptor {
 	type: "ICON"
 }
 
-interface StylesListProp extends BasePropDescriptor {
-	type: "STYLESLIST"
+interface ConditionalDisplayProp extends BasePropDescriptor {
+	type: "CONDITIONALDISPLAY"
 }
 
 interface NumberProp extends BasePropDescriptor {
@@ -178,6 +198,8 @@ type ActionDescriptor =
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| DeleteAction
+	| MoveAction
 
 type AddAction = {
 	label: string
@@ -186,13 +208,19 @@ type AddAction = {
 	slot: string
 }
 
+type DeleteAction = {
+	type: "DELETE"
+}
+
+type MoveAction = {
+	type: "MOVE"
+}
+
 type CloneAction = {
-	label: string
 	type: "CLONE"
 }
 
 type LoadWireAction = {
-	label: string
 	type: "LOAD_WIRE"
 }
 
@@ -216,13 +244,14 @@ type SignalProperties = {
 	name: string
 }
 
-interface PropRendererProps extends definition.BaseProps {
+interface PropRendererProps extends BaseProps {
 	descriptor: PropDescriptor
 	propsDef: BuildPropertiesDefinition
 	valueAPI: ValueAPI
 }
 
 export {
+	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
 	CustomPropRendererProps,
@@ -253,5 +282,6 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
-	StylesListProp,
+	ConditionalDisplayProp,
+	OrderSection,
 }

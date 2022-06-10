@@ -1,41 +1,34 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// WorkspaceCollection slice
-type WorkspaceCollection []Workspace
+type WorkspaceCollection []*Workspace
 
-func (wc *WorkspaceCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
-// GetName function
 func (wc *WorkspaceCollection) GetName() string {
-	return "studio.workspaces"
+	return "uesio/studio.workspace"
 }
 
-// GetFields function
 func (wc *WorkspaceCollection) GetFields() []string {
 	return StandardGetFields(&Workspace{})
 }
 
-// GetItem function
 func (wc *WorkspaceCollection) GetItem(index int) loadable.Item {
-	return &(*wc)[index]
+	return (*wc)[index]
 }
 
-// NewItem function
 func (wc *WorkspaceCollection) NewItem() loadable.Item {
-	*wc = append(*wc, Workspace{})
-	return &(*wc)[len(*wc)-1]
+	w := &Workspace{}
+	*wc = append(*wc, w)
+	return w
 }
 
-// Loop function
 func (wc *WorkspaceCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *wc {
-		err := iter(wc.GetItem(index), index)
+		err := iter(wc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -43,17 +36,10 @@ func (wc *WorkspaceCollection) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
 }
 
-// GetItems function
 func (wc *WorkspaceCollection) GetItems() interface{} {
 	return *wc
-}
-
-// Slice function
-func (wc *WorkspaceCollection) Slice(start int, end int) {
-
 }

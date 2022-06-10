@@ -1,5 +1,0 @@
-name: related_event
-collection: crm.comments
-type: REFERENCE
-label: Related Event
-referencedCollection: crm.events

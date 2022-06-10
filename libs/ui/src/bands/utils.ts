@@ -1,14 +1,7 @@
 import { EntityState, PayloadAction } from "@reduxjs/toolkit"
-import { Platform } from "../platform/platform"
-import { RootState } from "../store/store"
 
 type EntityPayload = {
 	entity: string
-}
-
-type UesioThunkAPI = {
-	extra: Platform
-	state: RootState
 }
 
 const createEntityReducer =
@@ -18,4 +11,11 @@ const createEntityReducer =
 		entityState && reducer(entityState, payload)
 	}
 
-export { createEntityReducer, EntityPayload, UesioThunkAPI }
+const getErrorString = (error: unknown) => {
+	if (error instanceof Error) {
+		return error.message
+	}
+	return error + ""
+}
+
+export { createEntityReducer, EntityPayload, getErrorString }

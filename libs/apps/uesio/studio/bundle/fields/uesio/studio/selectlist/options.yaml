@@ -1,0 +1,11 @@
+name: options
+type: LIST
+label: Options
+subtype: MAP
+subfields:
+  - name: label
+    type: TEXT
+    label: Label
+  - name: value
+    type: TEXT
+    label: Value

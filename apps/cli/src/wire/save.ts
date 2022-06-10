@@ -1,10 +1,12 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { wire } from "@uesio/ui"
-import shortid from "shortid"
+import type { wire } from "@uesio/ui"
+import { nanoid } from "nanoid"
+import { User } from "../auth/login"
 
 const save = async (
 	metadata: Metadata,
+	user: User,
 	changes: Record<string, wire.PlainWireRecord>
 ): Promise<wire.SaveResponseBatch> => {
 	const request = {
@@ -18,7 +20,11 @@ const save = async (
 		],
 	}
 
-	const response = await post("site/wires/save", JSON.stringify(request))
+	const response = await post(
+		"site/wires/save",
+		JSON.stringify(request),
+		user.cookie
+	)
 
 	return response.json()
 }
@@ -26,6 +32,6 @@ const save = async (
 const createChange = (
 	data: wire.PlainWireRecord[]
 ): Record<string, wire.PlainWireRecord> =>
-	Object.fromEntries(data.map((item) => [shortid.generate(), item]))
+	Object.fromEntries(data.map((item) => [nanoid(), item]))
 
 export { save, createChange }

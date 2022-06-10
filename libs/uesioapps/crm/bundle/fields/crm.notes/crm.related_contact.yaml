@@ -1,5 +1,0 @@
-name: related_contact
-collection: crm.notes
-type: REFERENCE
-label: Related Contact
-referencedCollection: crm.contacts

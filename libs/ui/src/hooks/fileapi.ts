@@ -3,6 +3,8 @@ import { getPlatform } from "../store/store"
 import { Context } from "../context/context"
 import WireRecord from "../bands/wirerecord/class"
 import { useEffect, useState } from "react"
+import { PlainWireRecord } from "../wireexports"
+import { ID_FIELD } from "../collectionexports"
 
 const getURL = (context: Context, namespace: string, name: string) =>
 	getPlatform().getFileURL(context, namespace, name)
@@ -15,12 +17,12 @@ const getURLFromFullName = (context: Context, fullName: string) => {
 const getUserFileURL = (
 	context: Context,
 	userfileid: string,
-	cacheBuster?: boolean
+	cacheBuster?: string
 ) => {
 	if (!userfileid) return ""
 	const platform = getPlatform()
 	const url = platform.getUserFileURL(context, userfileid)
-	return cacheBuster ? url + "&cb=" + Date.now() : url
+	return cacheBuster ? url + "&cb=" + cacheBuster : url
 }
 
 const deleteFile = (context: Context, userFileID: string) =>
@@ -51,9 +53,11 @@ class FileAPI {
 	useUserFile = (context: Context, record: WireRecord, fieldId: string) => {
 		const [content, setContent] = useState<string>("")
 		useEffect(() => {
-			const userFile = record.getFieldReference(fieldId)
-			const userFileId = userFile?.["uesio.id"] as string
-			const fileUrl = getUserFileURL(context, userFileId, true)
+			const userFile = record.getFieldValue<PlainWireRecord | undefined>(
+				fieldId
+			)
+			const userFileId = userFile?.[ID_FIELD] as string
+			const fileUrl = getUserFileURL(context, userFileId)
 			if (!fileUrl) {
 				setContent("")
 				return

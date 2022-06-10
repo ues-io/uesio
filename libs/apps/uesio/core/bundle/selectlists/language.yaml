@@ -1,0 +1,17 @@
+name: language
+options:
+  - label: English
+    value: en
+  - label: Spanish
+    value: es
+  - label: German
+    value: de
+  - label: French
+    value: fr
+  - label: Italian
+    value: it
+  - label: Dutch
+    value: nl
+  - label: Portuguese
+    value: pt
+public: true

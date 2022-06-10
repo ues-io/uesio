@@ -1,5 +1,0 @@
-name: account
-collection: crm.opportunities
-type: REFERENCE
-label: Account
-referencedCollection: crm.accounts

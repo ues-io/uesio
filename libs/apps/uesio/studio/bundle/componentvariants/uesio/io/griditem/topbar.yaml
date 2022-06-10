@@ -1,0 +1,6 @@
+name: topbar
+label: Top Bar
+definition:
+  uesio.styles:
+    root:
+      gridColumn: 1 / 3

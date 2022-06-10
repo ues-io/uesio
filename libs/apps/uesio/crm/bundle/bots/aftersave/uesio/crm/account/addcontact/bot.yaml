@@ -1,0 +1,3 @@
+name: addcontact
+type: AFTERSAVE
+dialect: JAVASCRIPT

@@ -1,11 +1,12 @@
 package postgresio
 
 import (
-	"database/sql"
+	"context"
 	"errors"
 	"fmt"
+	"sync"
 
-	_ "github.com/lib/pq" //needed for Postgres
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -14,16 +15,22 @@ type Adapter struct {
 }
 
 // TODO: Figure out a way to clean up and close unused clients
-var clientPool = map[string]*sql.DB{}
+var clientPool = map[string]*pgxpool.Pool{}
+var lock sync.RWMutex
 
-func connect(credentials *adapt.Credentials) (*sql.DB, error) {
+func connect(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
+	lock.RLock()
 	client, ok := clientPool[hash]
+	lock.RUnlock()
 	if ok {
 		return client, nil
 	}
+	return getConnection(credentials, hash)
+}
 
+func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
 	host, ok := (*credentials)["host"]
 	if !ok {
 		return nil, errors.New("No host provided in credentials")
@@ -50,15 +57,19 @@ func connect(credentials *adapt.Credentials) (*sql.DB, error) {
 	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+
+	db, err := pgxpool.Connect(context.Background(), psqlInfo)
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
-	err = db.Ping()
+	err = db.Ping(context.Background())
 	if err != nil {
-		return db, err
+		return nil, err
 	}
+
+	lock.Lock()
+	defer lock.Unlock()
 
 	clientPool[hash] = db
 

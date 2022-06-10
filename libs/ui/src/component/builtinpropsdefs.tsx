@@ -1,5 +1,6 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
+import { getComponents } from "./registry"
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -27,8 +28,35 @@ const getComponentTypePropsDef = (
 		},
 	],
 	sections: [],
-	readOnly: true,
 })
+
+const getPanelPropsDef = (): BuildPropertiesDefinition => {
+	const componentList = getComponents("uesio.panel")
+	return {
+		title: "Panel",
+		defaultDefinition: () => ({}),
+		properties: [
+			{
+				name: "name",
+				type: "KEY",
+				label: "Panel Id",
+			},
+			{
+				type: "SELECT",
+				name: "uesio.type",
+				label: "Panel Component",
+				options: Object.entries(componentList).flatMap(([ns, nsdata]) =>
+					Object.entries(nsdata).map(([comp]) => ({
+						value: `${ns}.${comp}`,
+						label: `${ns}.${comp}`,
+					}))
+				),
+			},
+		],
+		type: "panel",
+		sections: [],
+	}
+}
 
 const getWirePropsDef = (): BuildPropertiesDefinition => ({
 	title: "Wire",
@@ -46,19 +74,9 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			label: "Collection",
 		},
 		{
-			name: "type",
-			type: "SELECT",
-			label: "Wire Type",
-			options: [
-				{
-					label: "Create",
-					value: "CREATE",
-				},
-				{
-					label: "Read",
-					value: "",
-				},
-			],
+			name: "batchsize",
+			type: "NUMBER",
+			label: "Batch Size",
 		},
 	],
 	sections: [
@@ -70,13 +88,17 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			title: "Conditions",
 			type: "CONDITIONS",
 		},
+		{
+			title: "Order by",
+			type: "ORDER",
+		},
 	],
 	actions: [
 		{
 			type: "LOAD_WIRE",
-			label: "Refresh Wire",
 		},
 	],
+	type: "wire",
 })
 
 const getFieldPropsDef = (
@@ -96,4 +118,68 @@ const getFieldPropsDef = (
 	name,
 })
 
-export { getComponentTypePropsDef, getWirePropsDef, getFieldPropsDef }
+const getParamPropsDef = (): BuildPropertiesDefinition => ({
+	title: "Parameter",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "name",
+			type: "KEY",
+			label: "Name",
+		},
+		{
+			name: "required",
+			type: "BOOLEAN",
+			label: "Required",
+		},
+		{
+			name: "type",
+			type: "SELECT",
+			label: "Parameter Type",
+			options: [
+				{
+					label: "Record ID",
+					value: "RECORD",
+				},
+				{
+					label: "Text",
+					value: "TEXT",
+				},
+			],
+		},
+		{
+			name: "collection",
+			type: "METADATA",
+			metadataType: "COLLECTION",
+			label: "Collection",
+			display: [
+				{
+					property: "type",
+					values: ["recordId"],
+				},
+			],
+		},
+		{
+			name: "defaultValue",
+			type: "TEXT",
+			label: "Default Value",
+			display: [
+				{
+					property: "type",
+					values: ["text"],
+				},
+			],
+		},
+	],
+	sections: [],
+	actions: [],
+	type: "param",
+})
+
+export {
+	getComponentTypePropsDef,
+	getWirePropsDef,
+	getFieldPropsDef,
+	getPanelPropsDef,
+	getParamPropsDef,
+}

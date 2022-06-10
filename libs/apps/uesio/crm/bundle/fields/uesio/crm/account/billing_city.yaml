@@ -1,0 +1,3 @@
+name: billing_city
+type: TEXT
+label: Billing City

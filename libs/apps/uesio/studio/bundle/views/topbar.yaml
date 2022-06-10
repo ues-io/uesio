@@ -1,0 +1,263 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+            height: 60px
+            backgroundColor: "#F2F2F2"
+        templateColumns: 58px 0fr 1fr 0fr
+        items:
+          # Uesio Logo
+          - uesio/io.griditem:
+              components:
+                - uesio/io.image:
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                        opacity: "0.8"
+                    file: uesio/core.logo
+                    height: 34px
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "home"
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  display: flex
+              components:
+                - uesio/io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio/studio.app
+                    id: appslist
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${uesio/core.id}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "${uesio/studio.color}"
+                                text: circle
+                - uesio/io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio/studio.site
+                    id: sitestag
+                    components:
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
+                                text: circle
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${uesio/studio.name}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#AAA"
+                                text: public
+                - uesio/io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio/studio.bundle
+                    id: sitestag
+                    components:
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
+                                text: circle
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: v${["uesio/studio.app"]["uesio/core.id"]}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#AAA"
+                                text: inventory_2
+                - uesio/io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio/studio.team
+                    id: teamstag
+                    components:
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
+                                text: circle
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/teams/${uesio/studio.name}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${uesio/studio.name}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#AAA"
+                                text: groups
+                - uesio/io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio/studio.workspace
+                    id: workspaceapptag
+                    components:
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
+                                text: circle
+                      - uesio/io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: ${uesio/studio.name}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#AAA"
+                                text: handyman
+                      - uesio/io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemType
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/$Param{itemType}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: $Param{itemType}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#AAA"
+                                text: $Param{itemIcon}
+                      - uesio/io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: $Param{itemName}
+                                element: div
+                      - uesio/io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                            - type: paramIsSet
+                              param: subItemName
+                            - type: paramIsSet
+                              param: subItemType
+                          uesio.variant: uesio/io.tag
+                          content:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.tag
+                                text: $Param{subItemName}
+                                element: div
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: right
+              components:
+                - uesio/io.button:
+                    uesio.variant: uesio/io.nav
+                    text: Log Out
+                    signals:
+                      - signal: "user/LOGOUT"
+
+          # Avatar
+          - uesio/io.griditem:
+              components:
+                - uesio/io.avatar:
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                    text: $User{initials}
+                    image: $User{picture}

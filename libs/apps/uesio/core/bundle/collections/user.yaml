@@ -1,0 +1,5 @@
+name: user
+idFormat: "${uesio/core.username}"
+public: true
+label: user
+pluralLabel: users

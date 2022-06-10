@@ -7,23 +7,29 @@ import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
+import resetWireOp from "./operations/reset"
+import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
+import setConditionOp from "./operations/setcondition"
+import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
+import loadNextBatchOp from "./operations/loadnextbatch"
+import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
-import { Dispatcher } from "../../store/store"
-import { AnyAction } from "redux"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { WireDefinition } from "../../definition/wire"
-import { WireConditionDefinition } from "./conditions/conditions"
+import { RegularWireDefinition } from "../../definition/wire"
+import {
+	WireConditionDefinition,
+	WireConditionState,
+} from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
-import { unwrapResult } from "@reduxjs/toolkit"
-import { SaveResponse } from "../../load/saveresponse"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
 
 interface CreateRecordSignal extends SignalDefinition {
 	wire: string
+	prepend?: boolean
 }
 
 interface UpdateRecordSignal extends SignalDefinition {
@@ -41,9 +47,23 @@ interface EmptyWireSignal extends SignalDefinition {
 	wire: string
 }
 
+interface ResetWireSignal extends SignalDefinition {
+	wire: string
+}
+
 interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
 	condition: string
+}
+
+interface RemoveConditionSignal extends SignalDefinition {
+	wire: string
+	condition: string
+}
+
+interface SetConditionSignal extends SignalDefinition {
+	wire: string
+	condition: WireConditionState
 }
 
 interface LoadWiresSignal extends SignalDefinition {
@@ -54,8 +74,10 @@ interface SaveWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
 
-const getErrorStrings = (response: SaveResponse) =>
-	response.errors?.map((error) => error.message) || []
+interface SearchWireSignal extends SignalDefinition {
+	wire: string
+	search: string
+}
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -87,16 +109,11 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 		dispatcher: (signal: CreateRecordSignal, context: Context) =>
-			createRecordOp(context, signal.wire),
+			createRecordOp(context, signal.wire, signal.prepend),
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
 		label: "Update Record",
 		properties: (): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
 			{
 				name: "field",
 				type: "TEXT",
@@ -107,20 +124,9 @@ const signals: Record<string, SignalDescriptor> = {
 				type: "TEXT",
 				label: "Value",
 			},
-			{
-				name: "record",
-				type: "TEXT",
-				label: "Record ID",
-			},
 		],
 		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
-			updateRecordOp(
-				context,
-				signal.wire,
-				signal.record,
-				signal.field,
-				signal.value
-			),
+			updateRecordOp(context, [signal.field], signal.value),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",
@@ -146,6 +152,35 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: EmptyWireSignal, context: Context) =>
 			emptyWireOp(context, signal.wire),
 	},
+	[`${WIRE_BAND}/RESET`]: {
+		label: "Reset Wire",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+		dispatcher: (signal: ResetWireSignal, context: Context) =>
+			resetWireOp(context, signal.wire),
+	},
+	[`${WIRE_BAND}/SEARCH`]: {
+		label: "Search Wire",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "search",
+				type: "TEXT",
+				label: "Search",
+			},
+		],
+		dispatcher: (signal: SearchWireSignal, context: Context) =>
+			searchWireOp(context, signal.wire, signal.search),
+	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
@@ -155,7 +190,9 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				filter: (def: Definition) =>
-					Boolean(def && (<WireDefinition>def).conditions?.length),
+					Boolean(
+						def && (<RegularWireDefinition>def).conditions?.length
+					),
 				label: "Wire",
 			},
 			{
@@ -168,14 +205,58 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${WIRE_BAND}/SET_CONDITION`]: {
+		label: "Set Wire Condition",
+		dispatcher: (signal: SetConditionSignal, context: Context) =>
+			setConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/REMOVE_CONDITION`]: {
+		label: "Remove Wire Condition",
+		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
+			removeConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
-		dispatcher:
-			(signal: LoadWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
-				await dispatch(loadWiresOp({ context, wires: signal.wires }))
-				return context
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadWiresOp(context, signal.wires),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
 			},
+		],
+	},
+	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
+		label: "Load Next Batch",
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadNextBatchOp(context, signal.wires),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
+	},
+	[`${WIRE_BAND}/LOAD_ALL`]: {
+		label: "Load All",
+		dispatcher: (signal: LoadWiresSignal, context: Context) =>
+			loadAllOp(context, signal.wires),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",
@@ -186,35 +267,8 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/SAVE`]: {
 		label: "Save Wire(s)",
-		dispatcher:
-			(signal: SaveWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
-				const batch = await dispatch(
-					saveWiresOp({ context, wires: signal.wires })
-				).then(unwrapResult)
-
-				// Special handling for saves of just one wire and one record
-				if (batch?.wires.length === 1) {
-					const wire = batch.wires[0]
-					const changes = wire.changes
-					const changeKeys = Object.keys(changes)
-					if (changeKeys.length === 1) {
-						const [, name] = wire.wire.split("/")
-						return context.addFrame({
-							record: changeKeys[0],
-							wire: name,
-							errors: getErrorStrings(wire),
-						})
-					}
-				}
-
-				const errors = batch.wires.flatMap(getErrorStrings)
-
-				if (errors.length > 0) {
-					return context.addFrame({ errors })
-				}
-				return context
-			},
+		dispatcher: (signal: SaveWiresSignal, context: Context) =>
+			saveWiresOp(context, signal.wires),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

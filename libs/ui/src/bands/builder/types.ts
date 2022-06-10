@@ -3,6 +3,7 @@ const METADATA = {
 	FIELD: "fields",
 	VIEW: "views",
 	DATASOURCE: "datasources",
+	AUTHSOURCE: "authsources",
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
@@ -12,14 +13,13 @@ const METADATA = {
 	ROUTE: "routes",
 	PROFILE: "profiles",
 	COMPONENTVARIANT: "componentvariants",
+	COMPONENTPACK: "componentpacks",
+	COMPONENT: "components",
 	FILE: "files",
+	LABEL: "labels",
 }
 
 type MetadataType = keyof typeof METADATA
-
-type MetadataListStore = {
-	[key: string]: MetadataListStore
-} | null
 
 type BuilderState = {
 	activeNode?: string
@@ -27,29 +27,13 @@ type BuilderState = {
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	metadata: {
-		[key: string]: {
-			status: string
-			data: MetadataListStore
-		}
-	} | null
-	namespaces: {
-		status: "PENDING" | "FULFILLED"
-		data: MetadataListStore
-	} | null
 }
 
 type MetadataListResponse = {
 	metadataType: MetadataType
 	namespace: string
 	grouping?: string
-	metadata: MetadataListStore
+	metadata: Record<string, boolean>
 }
 
-export {
-	BuilderState,
-	MetadataListStore,
-	MetadataListResponse,
-	MetadataType,
-	METADATA,
-}
+export { BuilderState, MetadataListResponse, MetadataType, METADATA }

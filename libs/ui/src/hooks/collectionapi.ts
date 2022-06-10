@@ -1,6 +1,10 @@
 import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
-import Collection from "../bands/collection/class"
+import { Context } from "../context/context"
+import { appDispatch, getPlatform } from "../store/store"
+import { useEffect } from "react"
+import getMetadata from "../bands/collection/operations/get"
+import { Collection } from "../collectionexports"
 
 class CollectionAPI {
 	constructor(uesio: Uesio) {
@@ -9,10 +13,20 @@ class CollectionAPI {
 
 	uesio: Uesio
 
-	useCollection(collectionName?: string) {
+	useCollection(context: Context, collectionName: string) {
 		const plainCollection = useCollection(collectionName)
-		return plainCollection ? new Collection(plainCollection) : undefined
+
+		useEffect(() => {
+			if (!plainCollection) {
+				appDispatch()(getMetadata(collectionName, context))
+			}
+		}, [])
+
+		return plainCollection && new Collection(plainCollection)
 	}
+
+	createJob = getPlatform().createJob
+	importData = getPlatform().importData
 }
 
 export { CollectionAPI }

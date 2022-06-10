@@ -13,35 +13,38 @@ type LoadOp struct {
 	Collection            loadable.Group         `json:"data"`
 	Conditions            []LoadRequestCondition `json:"-"`
 	Fields                []LoadRequestField     `json:"-"`
-	Type                  string                 `json:"-"`
+	Query                 bool                   `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
-	Limit                 int                    `json:"-"`
-	Offset                int                    `json:"-"`
+	BatchSize             int                    `json:"-"`
+	BatchNumber           int                    `json:"batchnumber"`
+	HasMoreBatches        bool                   `json:"more"`
 	ReferencedCollections ReferenceRegistry      `json:"-"`
 	UserResponseTokens    []string               `json:"-"`
+	SkipRecordSecurity    bool                   `json:"-"`
 }
 
 // LoadRequestField struct
 type LoadRequestField struct {
-	ID     string             `json:"id"`
-	Fields []LoadRequestField `json:"fields"`
+	ID     string             `json:"id" bot:"id"`
+	Fields []LoadRequestField `json:"fields" bot:"fields"`
 }
 
 // LoadRequestCondition struct
 type LoadRequestCondition struct {
-	Field       string      `json:"field"`
-	Value       interface{} `json:"value"`
-	ValueSource string      `json:"valueSource"`
-	Type        string      `json:"type"`
-	Operator    string      `json:"operator"`
-	LookupWire  string      `json:"lookupWire"`
-	LookupField string      `json:"lookupField"`
+	Field        string      `json:"field" bot:"field"`
+	Value        interface{} `json:"value" bot:"value"`
+	ValueSource  string      `json:"valueSource"`
+	Type         string      `json:"type"`
+	Operator     string      `json:"operator"`
+	LookupWire   string      `json:"lookupWire"`
+	LookupField  string      `json:"lookupField"`
+	SearchFields []string    `json:"fields"`
 }
 
 // LoadRequestOrder struct
 type LoadRequestOrder struct {
-	Field string `json:"field"`
-	Desc  bool   `json:"desc"`
+	Field string `json:"field" bot:"field"`
+	Desc  bool   `json:"desc" bot:"desc"`
 }
 
 // FieldsMap type
@@ -57,6 +60,8 @@ func (fm *FieldsMap) GetKeys() []string {
 	}
 	return fieldIDs
 }
+
+var ID_FIELD = "uesio/core.id"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {
@@ -83,37 +88,57 @@ func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
 }
 
 // GetFieldsMap function returns a map of field DB names to field UI names to be used in a load request
-func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, error) {
+func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
 	fieldIDMap := FieldsMap{}
 	referencedCollections := ReferenceRegistry{}
+	referencedGroupCollections := ReferenceGroupRegistry{}
+	formulaFields := map[string]*FieldMetadata{}
 	for _, field := range fields {
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, nil, err
+		}
+
+		if fieldMetadata.IsFormula {
+			formulaFields[fieldMetadata.GetFullName()] = fieldMetadata
+			continue
 		}
 
 		err = fieldIDMap.AddField(fieldMetadata)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
-		if !IsReference(fieldMetadata.Type) {
-			continue
+		if IsReference(fieldMetadata.Type) {
+			referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+
+			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
+			if err != nil {
+				continue
+			}
+
+			refReq := referencedCollections.Get(referencedCollection)
+			refReq.Metadata = referencedCollectionMetadata
+
+			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+				continue
+			}
+			refReq.AddFields(field.Fields)
 		}
 
-		referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
-		if err != nil {
-			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
+		if fieldMetadata.Type == "REFERENCEGROUP" {
+			referencedCollection := fieldMetadata.ReferenceGroupMetadata.Collection
+			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
+			if err != nil {
+				continue
+			}
+			refReq := referencedGroupCollections.Add(referencedCollection, fieldMetadata, referencedCollectionMetadata)
+			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+				continue
+			}
+			refReq.AddFields(field.Fields)
 		}
 
-		refReq := referencedCollections.Get(fieldMetadata.ReferencedCollection)
-		refReq.Metadata = referencedCollectionMetadata
-
-		if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
-			continue
-		}
-		refReq.AddFields(field.Fields)
-		refReq.AddReference(fieldMetadata)
 	}
-	return fieldIDMap, referencedCollections, nil
+	return fieldIDMap, referencedCollections, referencedGroupCollections, formulaFields, nil
 }

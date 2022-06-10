@@ -1,8 +1,0 @@
-name: description
-collection: crm.accounts
-type: TEXT
-label: Description
-required: true
-validate:
-  type: REGEX
-  regex: p([a-z ]+)ch

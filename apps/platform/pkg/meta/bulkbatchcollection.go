@@ -1,15 +1,17 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 // BulkBatchCollection slice
-type BulkBatchCollection []BulkBatch
+type BulkBatchCollection []*BulkBatch
 
 // GetName function
 func (bbc *BulkBatchCollection) GetName() string {
-	return "uesio.bulkbatches"
+	return "uesio/core.bulkbatch"
 }
 
 // GetFields function
@@ -19,19 +21,19 @@ func (bbc *BulkBatchCollection) GetFields() []string {
 
 // GetItem function
 func (bbc *BulkBatchCollection) GetItem(index int) loadable.Item {
-	return &(*bbc)[index]
+	return (*bbc)[index]
 }
 
 // NewItem function
 func (bbc *BulkBatchCollection) NewItem() loadable.Item {
-	*bbc = append(*bbc, BulkBatch{})
-	return &(*bbc)[len(*bbc)-1]
+	*bbc = append(*bbc, &BulkBatch{})
+	return (*bbc)[len(*bbc)-1]
 }
 
 // Loop function
 func (bbc *BulkBatchCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bbc {
-		err := iter(bbc.GetItem(index), index)
+		err := iter(bbc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -47,13 +49,4 @@ func (bbc *BulkBatchCollection) Len() int {
 // GetItems function
 func (bbc *BulkBatchCollection) GetItems() interface{} {
 	return *bbc
-}
-
-// Slice function
-func (bbc *BulkBatchCollection) Slice(start int, end int) {
-
-}
-
-func (bbc *BulkBatchCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
 }

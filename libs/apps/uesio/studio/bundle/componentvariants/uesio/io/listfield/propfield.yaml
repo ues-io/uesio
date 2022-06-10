@@ -1,0 +1,10 @@
+name: propfield
+label: Property Field
+definition:
+  uesio.styles:
+    root:
+      margin: 8px
+    row:
+      columnGap: "8px"
+      alignItems: "center"
+      margin: 8px 0

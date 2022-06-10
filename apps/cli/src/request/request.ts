@@ -1,19 +1,23 @@
 import https from "https"
 import fetch, { Response, RequestInit, BodyInit } from "node-fetch"
+import { getHostUrl } from "../config/config"
 
 const agent = new https.Agent({
 	rejectUnauthorized: false,
 })
 
-const makeFullURL = (url: string): string =>
-	`https://studio.uesio-dev.com:3000/${url}`
+const makeFullUrl = async (url: string): Promise<string> => {
+	const hostUrl = await getHostUrl()
+	return `${hostUrl}/${url}`
+}
 
-const get = (
+const get = async (
 	url: string,
 	cookie?: string,
 	init?: RequestInit
-): Promise<Response> =>
-	fetch(makeFullURL(url), {
+): Promise<Response> => {
+	const fullUrl = await makeFullUrl(url)
+	return fetch(fullUrl, {
 		...init,
 		agent,
 		headers: {
@@ -23,14 +27,16 @@ const get = (
 			}),
 		},
 	})
+}
 
-const post = (
+const post = async (
 	url: string,
 	body: BodyInit | undefined,
-	cookie?: string,
+	cookie?: string | null,
 	init?: RequestInit
-): Promise<Response> =>
-	fetch(makeFullURL(url), {
+): Promise<Response> => {
+	const fullUrl = await makeFullUrl(url)
+	return fetch(fullUrl, {
 		...init,
 		agent,
 		method: "post",
@@ -43,5 +49,14 @@ const post = (
 		},
 		body,
 	})
+}
 
-export { get, post }
+const parseJSON = async (response: Response) => {
+	if (response.status === 200) {
+		return await response.json()
+	}
+	const text = await response.text()
+	throw new Error(text)
+}
+
+export { get, post, parseJSON }

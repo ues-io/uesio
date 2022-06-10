@@ -1,6 +1,0 @@
-name: image
-collection: crm.contacts
-type: FILE
-label: Image
-filecollection: uesio.platform
-accept: IMAGE

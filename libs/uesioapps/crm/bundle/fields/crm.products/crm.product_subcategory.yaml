@@ -1,4 +1,0 @@
-name: product_subcategory
-collection: crm.products
-type: TEXT
-label: Product Sub Category

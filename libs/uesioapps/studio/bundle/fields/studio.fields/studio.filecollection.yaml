@@ -1,5 +1,0 @@
-name: filecollection
-collection: studio.fields
-type: TEXT
-label: File Collection
-readOnly: false

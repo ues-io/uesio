@@ -1,4 +1,0 @@
-name: sitedomains
-dataSource: uesio.platform
-idFormat: "${studio.domain}_${studio.type}"
-nameField: studio.domain

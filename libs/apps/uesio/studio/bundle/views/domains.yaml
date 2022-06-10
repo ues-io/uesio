@@ -1,0 +1,153 @@
+name: domains
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          valueSource: PARAM
+          param: app
+    sites:
+      collection: uesio/studio.site
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.bundle:
+        uesio/studio.app:
+          fields:
+            uesio/core.id:
+            uesio/studio.name:
+            uesio/studio.color:
+      conditions:
+        - field: uesio/core.id
+          value: $Param{app}_$Param{sitename}
+    domains:
+      collection: uesio/studio.sitedomain
+      fields:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.domain:
+      conditions:
+        - field: uesio/studio.site
+          valueSource: VALUE
+          value: $Param{app}_$Param{sitename}
+    newdomain:
+      collection: uesio/studio.sitedomain
+      fields:
+        uesio/core.id:
+        uesio/studio.type:
+        uesio/studio.domain:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.site
+          valueSource: VALUE
+          value: $Param{app}_$Param{sitename}
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: subdomain
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: sites
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.sitenav
+                    uesio.context:
+                      wire: sites
+                    params:
+                      selected: domains
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Domains
+                    subtitle: Add a domain to this site.
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                text: "Add a Domain"
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: "panel/TOGGLE"
+                                    panel: "newDomain"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.deck:
+                          id: domainslist
+                          wire: domains
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                content:
+                                  - uesio/io.text:
+                                      text: ${uesio/studio.type} ${uesio/studio.domain}
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: verified_user
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://${uesio/studio.domain}.$Site{domain}"
+                                    newtab: true
+  panels:
+    newDomain:
+      uesio.type: uesio/io.dialog
+      title: Add a Domain
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newdomainlist
+            wire: newdomain
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.domain
+      actions:
+        - uesio/io.button:
+            uesio.variant: uesio/io.primary
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newdomain
+              - signal: "panel/TOGGLE"
+                panel: "newDomain"
+              - signal: wire/EMPTY
+                wire: newdomain
+              - signal: wire/CREATE_RECORD
+                wire: newdomain
+              - signal: wire/LOAD
+                wires:
+                  - domains
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newDomain"
+              - signal: wire/CANCEL
+                wire: newdomain

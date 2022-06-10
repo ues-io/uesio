@@ -2,88 +2,45 @@ import { FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
+	UtilityPropsPlus,
 	UtilityProps,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import { getLoader, getRuntimeLoader, getUtility } from "./registry"
+import {
+	getBuildtimeLoader,
+	getRuntimeLoader,
+	getUtilityLoader,
+} from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
-import { ComponentVariant } from "../bands/componentvariant/types"
+import { ComponentVariant } from "../definition/componentvariant"
+import ErrorBoundary from "../components/errorboundary"
+import { mergeDefinitionMaps } from "./merge"
 
-/**
- * Returns a new object that has a deep merge where source overrides
- * destination, but ignoring empty values in source
- * @param destDef
- * @param sourceDef
- */
-function mergeDefinitionMaps(
-	destDef: DefinitionMap,
-	sourceDef: DefinitionMap,
-	context: Context | undefined
-) {
-	//const key = JSON.stringify([destDef, sourceDef])
-	//if (cache[key]) return cache[key]
-	const destClone = JSON.parse(JSON.stringify(destDef))
-	const result = mergeDeep(destClone, sourceDef, context)
-	//cache[key] = result
-	return result
-}
-
-/**
- * Will ignore null/undefined/empty string in the src obj
- * @param dest
- * @param src
- */
-function mergeDeep(
-	dest: DefinitionMap,
-	src: DefinitionMap,
-	context: Context | undefined
-): DefinitionMap {
-	const srcKeys = Object.keys(src)
-	for (const key of srcKeys) {
-		if (typeof src[key] === "object" && src[key] !== null) {
-			if (Array.isArray(src[key])) {
-				// Just bail on arrays and set dest to src
-				// Can't really merge them well.
-				dest[key] = src[key]
-				continue
-			}
-			if (!dest[key] || typeof dest[key] !== "object") {
-				dest[key] = {}
-			}
-			mergeDeep(
-				dest[key] as DefinitionMap,
-				src[key] as DefinitionMap,
-				context
-			)
-			continue
-		}
-
-		if (src[key] !== null && src[key] !== undefined && src[key] !== "") {
-			// Merge src key base on theme
-			const value = src[key]
-			dest[key] =
-				typeof value === "string" && context
-					? context.merge(value)
-					: value
-		}
-	}
-	return dest
-}
-
-function additionalContext(context: Context, definition?: DefinitionMap) {
-	const additionalContext = definition?.["uesio.context"] as ContextFrame
-	if (additionalContext) {
+function additionalContext(context: Context, additional: ContextFrame) {
+	if (additional) {
 		const frame: ContextFrame = {}
-		const workspace = additionalContext.workspace
+		const workspace = additional.workspace
+		const siteadmin = additional.siteadmin
+		const fieldMode = additional.fieldMode
 		if (workspace) {
 			frame.workspace = {
 				name: context.merge(workspace.name),
 				app: context.merge(workspace.app),
 			}
 		}
-		const wire = additionalContext.wire
+		if (fieldMode) {
+			frame.fieldMode = fieldMode
+		}
+
+		if (siteadmin) {
+			frame.siteadmin = {
+				name: context.merge(siteadmin.name),
+				app: context.merge(siteadmin.app),
+			}
+		}
+		const wire = additional.wire
 		if (wire) {
 			frame.wire = wire
 		}
@@ -94,7 +51,14 @@ function additionalContext(context: Context, definition?: DefinitionMap) {
 
 const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
-	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
+	return (
+		<ErrorBoundary {...props}>
+			<ComponentInternal
+				{...props}
+				path={`${path}["${componentType}"]`}
+			/>
+		</ErrorBoundary>
+	)
 }
 
 function getThemeOverride(
@@ -115,26 +79,26 @@ function getDefinitionFromVariant(
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}
+	const def = variant.extends
+		? mergeDefinitionMaps(
+				getDefinitionFromVariant(
+					context.getComponentVariant(
+						variant.component,
+						variant.extends
+					),
+					context
+				),
+				variant.definition,
+				undefined
+		  )
+		: variant.definition
+
 	const override = getThemeOverride(variant, context)
 	return mergeDefinitionMaps(
-		mergeDefinitionMaps({}, variant.definition, context),
+		def,
 		override ? { "uesio.styles": override } : {},
-		context
+		undefined
 	)
-}
-
-function getVariantStylesDef(
-	componentType: string,
-	variantName: string,
-	context: Context
-) {
-	const variant = context.getComponentVariant(componentType, variantName)
-	if (!variant) return {}
-	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
-	const override = getThemeOverride(variant, context)
-	return override
-		? mergeDefinitionMaps(variantStyles, override, context)
-		: variantStyles
 }
 
 function mergeContextVariants(
@@ -152,15 +116,24 @@ function mergeContextVariants(
 		variantName || `${namespace}.default`
 	)
 	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return mergeDefinitionMaps(variantDefinition, definition, context)
+	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-function render(
-	loader: FunctionComponent<BaseProps>,
-	componentType: string,
-	props: BaseProps
+function renderUtility(
+	loader: FunctionComponent<UtilityPropsPlus>,
+	props: UtilityPropsPlus
 ) {
-	const { context, definition } = props
+	const Loader = loader
+	loader.displayName = props.componentType as string
+	return <Loader {...props} />
+}
+
+const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+	const { componentType, context, definition } = props
+	if (!componentType) return <NotFound {...props} />
+	const loader =
+		getLoader(componentType, !!context.getBuildMode()) || NotFound
+
 	if (!shouldDisplay(context, definition)) return null
 	const mergedDefinition = mergeContextVariants(
 		definition,
@@ -170,31 +143,103 @@ function render(
 	return renderUtility(loader, {
 		...props,
 		definition: mergedDefinition,
-		context: additionalContext(context, mergedDefinition),
+		context: additionalContext(
+			context,
+			mergedDefinition?.["uesio.context"] as ContextFrame
+		),
 	})
 }
 
-function renderUtility(
-	loader: FunctionComponent<UtilityProps>,
-	props: UtilityProps
-) {
-	const Loader = loader
-	loader.displayName = props.componentType
-	return <Loader {...props} />
+const getLoader = (key: string, buildMode: boolean) =>
+	buildMode
+		? getBuildtimeLoader(key) || getDefaultBuildtimeLoader(key)
+		: getRuntimeLoader(key)
+
+const getVariantInfo = (
+	fullName: string | undefined,
+	key: string
+): [string, string] => {
+	const parts = fullName?.split(".")
+	if (parts?.length === 4) {
+		return [`${parts[0]}.${parts[1]}`, `${parts[2]}.${parts[3]}`]
+	}
+	if (parts?.length === 2) {
+		return [key, `${parts[0]}.${parts[1]}`]
+	}
+	const [keyNamespace] = parseKey(key)
+	return [key, `${keyNamespace}.default`]
 }
 
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
-	const { componentType, context } = props
-	if (!componentType) return <NotFound {...props} />
-	const loader =
-		getLoader(componentType, !!context.getBuildMode()) || NotFound
-	return render(loader, componentType, props)
+function getVariantStylesDef(
+	componentType: string,
+	variantName: string,
+	context: Context
+) {
+	const variant = context.getComponentVariant(componentType, variantName)
+	if (!variant) return {}
+	const variantDefinition = getDefinitionFromVariant(variant, context)
+	return variantDefinition?.["uesio.styles"] as DefinitionMap
+}
+
+const getVariantStyleInfo = (props: UtilityProps, key: string) => {
+	const { variant, context, styles } = props
+	const [componentType, variantName] = getVariantInfo(variant, key)
+	if (!variantName) {
+		return styles as DefinitionMap
+	}
+
+	const variantStyles = getVariantStylesDef(
+		componentType,
+		variantName,
+		context
+	)
+
+	if (!styles) {
+		return variantStyles
+	}
+
+	return mergeDefinitionMaps(
+		variantStyles,
+		styles as DefinitionMap,
+		undefined
+	)
+}
+
+const getUtility =
+	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
+	(props: T) => {
+		const loader = getUtilityLoader(key) || NotFound
+		const styles = getVariantStyleInfo(props, key)
+		return renderUtility(loader, {
+			...(props as unknown as UtilityPropsPlus),
+			styles,
+			componentType: key,
+		})
+	}
+
+const BuildWrapper = getUtility("uesio/studio.buildwrapper")
+
+const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
+	const Loader = getRuntimeLoader(key)
+
+	// Don't use the buildwrapper for a panel component
+	if (props.definition && "uesio.type" in props.definition)
+		return <Loader {...props} />
+
+	return Loader ? (
+		<BuildWrapper {...props}>
+			<Loader {...props} />
+		</BuildWrapper>
+	) : (
+		<NotFound {...props} />
+	)
 }
 
 export {
 	ComponentInternal,
 	Component,
 	renderUtility,
-	getVariantStylesDef,
-	mergeDefinitionMaps,
+	getDefinitionFromVariant,
+	additionalContext,
+	getUtility,
 }

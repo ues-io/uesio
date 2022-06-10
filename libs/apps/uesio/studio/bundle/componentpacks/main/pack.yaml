@@ -1,0 +1,99 @@
+name: main
+components:
+  view:
+    colorpicker:
+    addbundle:
+      utilities:
+        - uesio/io.grid
+        - uesio/io.tile
+        - uesio/io.selectfield
+        - uesio/io.button
+        - uesio/io.titlebar
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.button:uesio/io.primary
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.tile:uesio/io.item
+        - uesio/io.titlebar:uesio/io.default
+    metadatafield:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.selectfield
+        - uesio/io.grid
+    codefield:
+      utilities:
+        - uesio/io.codefield
+    permissionpicker:
+      utilities:
+        - uesio/io.checkboxfield
+        - uesio/io.toggleswitch
+        - uesio/io.titlebar
+    configsecrets:
+      utilities:
+        - uesio/io.titlebar
+        - uesio/io.button
+        - uesio/io.textfield
+        - uesio/io.dialog
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.textfield:uesio/io.default
+        - uesio/io.titlebar:uesio/io.default
+    datamanager:
+      variants:
+        - uesio/io.table:uesio/io.default
+      utilities:
+        - uesio/io.table
+    collectionlist:
+      variants:
+        - uesio/io.tile:uesio/io.item
+      utilities:
+        - uesio/io.tile
+    dataimport:
+      variants:
+        - uesio/io.selectfield:uesio/io.default
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.textfield:uesio/io.default
+      utilities:
+        - uesio/io.tile
+        - uesio/io.selectfield
+        - uesio/io.button
+        - uesio/io.icon
+        - uesio/io.grid
+    configfeatureflags:
+      utilities:
+        - uesio/io.titlebar
+        - uesio/io.button
+        - uesio/io.togglefield
+        - uesio/io.dialog
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.titlebar:uesio/io.default
+    translations:
+    previewbutton:
+      utilities:
+        - uesio/io.button
+        - uesio/io.form
+        - uesio/io.dialog
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.button:uesio/io.primary
+    generatorbutton:
+      utilities:
+        - uesio/io.button
+        - uesio/io.form
+        - uesio/io.dialog
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.button:uesio/io.primary
+    dataexport:
+      variants:
+        - uesio/io.button:uesio/io.primary
+      utilities:
+        - uesio/io.button
+    # Define a builder for the uesio runtime and slot
+    runtime:
+    # uesio.view:
+  utility:
+    buildwrapper:
+    slotbuilder:
+

@@ -4,19 +4,19 @@ import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // UpdatesAPI type
 type UpdatesAPI struct {
-	updates  *adapt.ChangeItems
-	metadata *adapt.CollectionMetadata
+	op *adapt.SaveOp
 }
 
 // Get function
 func (c *UpdatesAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	for _, update := range *c.updates {
+	_ = c.op.LoopUpdates(func(change *adapt.ChangeItem) error {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
-			change:   update,
-			metadata: c.metadata,
+			change: change,
 		})
-	}
+		return nil
+	})
+
 	return changeAPIs
 }

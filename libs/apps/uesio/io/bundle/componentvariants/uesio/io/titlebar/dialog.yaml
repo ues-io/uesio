@@ -1,0 +1,17 @@
+name: dialog
+label: Dialog
+definition:
+  uesio.styles:
+    root:
+      padding: 20px
+      backgroundColor: "#f5f5f5"
+      backgroundClip: "padding-box"
+      borderRadius: "4px 4px 0 0"
+    title:
+      fontWeight: 500
+      fontSize: "11pt"
+      color: "#21242D"
+    subtitle:
+      fontSize: "9pt"
+      color: "#777"
+public: true

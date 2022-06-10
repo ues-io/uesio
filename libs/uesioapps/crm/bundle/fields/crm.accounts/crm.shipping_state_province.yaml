@@ -1,4 +1,0 @@
-name: shipping_state_province
-collection: crm.accounts
-type: TEXT
-label: Shipping State

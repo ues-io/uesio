@@ -12,9 +12,9 @@ export default class List extends Command {
 	async run(): Promise<void> {
 		const { args /*, flags */ } = this.parse(List)
 
-		await authorize()
+		const user = await authorize()
 
 		const metadata = getMetadataByTypePlural(args.type)
-		await metadata.list()
+		await metadata.list(user)
 	}
 }

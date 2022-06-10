@@ -1,0 +1,16 @@
+name: nav
+label: Nav
+definition:
+  uesio.styles:
+    root:
+      padding: 20px
+    title:
+      fontWeight: 300
+      fontSize: 9pt
+      color: "#21242D"
+      textTransform: uppercase
+      letterSpacing: 1px
+    subtitle:
+      fontSize: 9pt
+      color: "#777"
+public: true

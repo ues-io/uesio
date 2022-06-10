@@ -6,11 +6,44 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"google.golang.org/api/option"
 )
 
 // FileAdapter struct
 type FileAdapter struct {
+}
+
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
+	bucket, ok := (*credentials)["bucket"]
+	if !ok {
+		return nil, errors.New("No bucket provided in credentials")
+	}
+	projectID, ok := (*credentials)["project"]
+	if !ok {
+		return nil, errors.New("No project id provided in credentials")
+	}
+	client, err := getClient(credentials)
+	if err != nil {
+		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
+	}
+	return &Connection{
+		credentials: credentials,
+		bucket:      bucket,
+		client:      client,
+		projectID:   projectID,
+	}, nil
+}
+
+type Connection struct {
+	credentials *adapt.Credentials
+	bucket      string
+	client      *storage.Client
+	projectID   string
+}
+
+func (c *Connection) List(path string) ([]string, error) {
+	return nil, nil
 }
 
 // TODO: Figure out a way to clean up and close unused clients
