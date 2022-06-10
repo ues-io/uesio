@@ -25,6 +25,90 @@ func NewParamCounter(start int) *ParamCounter {
 	}
 }
 
+func IsValid(lrc adapt.LoadRequestCondition) error {
+
+	switch lrc.Operator {
+	case "IN":
+		_, ok := lrc.Value.([]string)
+		if !ok {
+			return errors.New("Invalid IN condition value")
+		}
+
+	case "NOT_EQ":
+
+	case "GT":
+		_, ok := lrc.Value.(bool)
+		if !ok {
+			return errors.New("Invalid GT condition value")
+		}
+	case "LT":
+		_, ok := lrc.Value.(bool)
+		if !ok {
+			return errors.New("Invalid GT condition value")
+		}
+	case "GTE":
+		_, ok := lrc.Value.(bool)
+		if !ok {
+			return errors.New("Invalid GT condition value")
+		}
+	case "LTE":
+		_, ok := lrc.Value.(bool)
+		if !ok {
+			return errors.New("Invalid GT condition value")
+		}
+	case "IS_BLANK":
+
+	case "IS_NOT_BLANK":
+
+	}
+
+	return nil
+}
+
+func getValues(lrc adapt.LoadRequestCondition, fieldName string, paramCounter *ParamCounter) (string, interface{}) {
+
+	switch lrc.Operator {
+	case "IN":
+
+		//TO-DO this is optimization shall we remove it?
+
+		// conditions, ok := conditionValue.([]string)
+		// if !ok {
+		// 	return nil, nil, errors.New("Invalid IN condition value")
+		// }
+		// if len(conditions) == 1 {
+		// 	return fieldName + " = " + counter
+		// 	continue
+		// }
+		return fieldName + " = ANY(" + paramCounter.get() + ")", lrc.Value
+
+	case "NOT_EQ":
+		return fieldName + " is distinct from " + paramCounter.get(), lrc.Value
+
+	case "GT":
+		return fieldName + " > " + paramCounter.get(), lrc.Value
+
+	case "LT":
+		return fieldName + " < " + paramCounter.get(), lrc.Value
+
+	case "GTE":
+		return fieldName + " >= " + paramCounter.get(), lrc.Value
+
+	case "LTE":
+		return fieldName + " <= " + paramCounter.get(), lrc.Value
+
+	case "IS_BLANK":
+		return fieldName + " IS NULL ", nil
+
+	case "IS_NOT_BLANK":
+		return fieldName + " IS NOT NULL ", nil
+
+	default:
+		return fieldName + " = " + paramCounter.get(), lrc.Value
+
+	}
+}
+
 func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string) ([]string, []interface{}, error) {
 	if condition.Operator != "IN" {
 		return []string{"main.id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, condition.Value)}, nil
@@ -57,13 +141,12 @@ func getConditions(
 		return nil, nil, err
 	}
 
-	// Shortcut optimization when we only ask for the id field
-	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD {
+	// Shortcut optimization when we only ask for the id field just if operator IN || EQ
+	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
 		return idConditionOptimization(&op.Conditions[0], collectionName)
 	}
 
 	conditionStrings := []string{"main.collection = $1"}
-
 	values := []interface{}{collectionName}
 
 	for _, condition := range op.Conditions {
@@ -105,30 +188,23 @@ func getConditions(
 			continue
 		}
 
+		err := IsValid(condition)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 		if err != nil {
 			return nil, nil, err
 		}
+
 		fieldName := getFieldName(fieldMetadata)
-
-		conditionValue := condition.Value
-
-		if condition.Operator == "IN" {
-			conditions, ok := conditionValue.([]string)
-			if !ok {
-				return nil, nil, errors.New("Invalid IN condition value")
-			}
-			if len(conditions) == 1 {
-				conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
-				values = append(values, conditions[0])
-				continue
-			}
-			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
-			values = append(values, conditionValue)
-		} else {
-			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
-			values = append(values, conditionValue)
+		conditionString, value := getValues(condition, fieldName, paramCounter)
+		conditionStrings = append(conditionStrings, conditionString)
+		if value != nil {
+			values = append(values, value)
 		}
+
 	}
 
 	return conditionStrings, values, nil

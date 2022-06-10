@@ -6,6 +6,16 @@ const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
 
+const EQ = "EQ"
+const NOT_EQ = "NOT_EQ"
+const GT = "GT"
+const LT = "LT"
+const GTE = "GTE"
+const LTE = "LTE"
+const IN = "IN"
+const IS_BLANK = "IS_BLANK"
+const IS_NOT_BLANK = "IS_NOT_BLANK"
+
 type WireConditionState =
 	| ParamConditionState
 	| LookupConditionState
@@ -16,6 +26,16 @@ type ConditionBase = {
 	type?: typeof SEARCH
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
 	id?: string
+	operator?:
+		| typeof EQ
+		| typeof NOT_EQ
+		| typeof GT
+		| typeof LT
+		| typeof GTE
+		| typeof LTE
+		| typeof IN
+		| typeof IS_BLANK
+		| typeof IS_NOT_BLANK
 }
 
 type SearchConditionDefinition = ConditionBase & {
@@ -87,6 +107,7 @@ const conditionInitializers: ConditionInitializers = {
 		param: definition.param,
 		id: definition.id,
 		active: true,
+		operator: definition.operator,
 	}),
 	[VALUE]: (definition: ValueConditionDefinition) => ({
 		field: definition.field,
@@ -94,6 +115,7 @@ const conditionInitializers: ConditionInitializers = {
 		value: definition.value,
 		id: definition.id,
 		active: true,
+		operator: definition.operator,
 	}),
 	[LOOKUP]: (definition: LookupConditionDefinition) => ({
 		field: definition.field,
@@ -102,6 +124,7 @@ const conditionInitializers: ConditionInitializers = {
 		lookupField: definition.lookupField,
 		id: definition.id,
 		active: true,
+		operator: definition.operator,
 	}),
 }
 
