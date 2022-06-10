@@ -1,6 +1,5 @@
-import { hooks, component, definition, styles } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import ExpandPanel from "../expandpanel"
 import FieldRemove from "./fieldRemove"
 import {
 	FunctionComponent,
@@ -15,7 +14,7 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 const TitleBar = component.getUtility("uesio/io.titlebar")
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, valueAPI } = props
+	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 
 	// Field removal
@@ -35,19 +34,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		"FIELD",
 		namespace,
 		collectionKey
-	)
-
-	const classes = styles.useUtilityStyles(
-		{
-			search: {
-				marginBottom: "2px",
-				width: "100%",
-				height: "30px",
-				outline: 0,
-				borderWidth: "0 0 1px",
-			},
-		},
-		null
 	)
 
 	const theme = uesio.getTheme()
@@ -79,9 +65,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
-	// {fieldToRemove && (
-	//
-	// )}
 	return (
 		<>
 			<TitleBar
@@ -123,29 +106,40 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					results.map((fieldId, index) => {
 						const selected = fieldsDef?.[fieldId] !== undefined
 						return (
-							<PropNodeTag
-								draggable={`${collectionKey}:${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
-								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
+							<div
+								ref={
+									fieldId === fieldToRemove
+										? setAnchorEl
+										: null
 								}
 								key={index}
-								onClick={() => (fieldId: string) =>
-									selected
-										? setFieldToRemove(fieldId)
-										: valueAPI.set(
-												`${path}["fields"][${fieldId}]`,
-												null
-										  )}
-								context={context}
-							/>
+							>
+								<PropNodeTag
+									draggable={`${collectionKey}:${fieldId}`}
+									title={fieldId}
+									icon={
+										selected
+											? "check_box"
+											: "check_box_outline_blank"
+									}
+									iconColor={
+										selected
+											? theme.definition.palette.primary
+											: undefined
+									}
+									key={index}
+									selected={selected}
+									onClick={() =>
+										selected
+											? setFieldToRemove(fieldId)
+											: valueAPI.set(
+													`${path}["fields"]["${fieldId}"]`,
+													null
+											  )
+									}
+									context={context}
+								/>
+							</div>
 						)
 					})}
 			</div>

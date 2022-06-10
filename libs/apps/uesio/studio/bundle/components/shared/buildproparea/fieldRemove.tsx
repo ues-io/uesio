@@ -2,18 +2,20 @@ import { FC, useState, useEffect } from "react"
 
 import { hooks, component, definition, builder } from "@uesio/ui"
 interface T extends definition.BaseProps {
-	fieldId?: string
+	fieldId: string
 	valueAPI: builder.ValueAPI
 	anchorEl: HTMLDivElement | null
 }
 
-const Popper = component.getUtility("io.popper")
-const IOButton = component.getUtility("io.button")
-const IOIcon = component.getUtility("io.icon")
+const Popper = component.getUtility("uesio/io.popper")
+const IOButton = component.getUtility("uesio/io.button")
+const IOIcon = component.getUtility("uesio/io.icon")
 
 function flattenObj(
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	obj: Record<string, any>,
 	parent?: string,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	res: { [key: string]: any } = {}
 ) {
 	for (const key in obj) {
