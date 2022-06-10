@@ -468,7 +468,7 @@
             "dist/ui"
           ],
           "options": {
-            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify --sourcemap --watch",
+            "command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --define:process.env.NODE_ENV=\\\"development\\\" --inject:./src/react-shim.ts --sourcemap --watch",
             "cwd": "libs/ui"
           }
         },
