@@ -201,6 +201,10 @@ const changeDefKey = (
 ) => {
 	const { path, key: newKey } = payload
 	const pathArray = toPath(path)
+
+	// Stop if old and new values are the same
+	// TODO:TEST
+	if (pathArray[pathArray.length - 1] === newKey) return
 	// create a new document so components using useYaml will rerender
 	const yamlDoc = parse(state.content)
 	// make a copy so we can place with a new key and delete the old node

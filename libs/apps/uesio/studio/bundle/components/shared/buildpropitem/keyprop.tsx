@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import React, { FunctionComponent, useState } from "react"
 import { component, builder } from "@uesio/ui"
 
 const TextField = component.getUtility("uesio/io.textfield")
@@ -6,8 +6,9 @@ const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const KeyProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { path, descriptor, context, valueAPI } = props
+	const key = component.path.getKeyAtPath(path || "")
+	const [inputValue, setInputValue] = useState<string>(key || "")
 	if (!path) return null
-	const key = component.path.getKeyAtPath(path)
 	return (
 		<FieldWrapper
 			labelPosition="left"
@@ -17,11 +18,14 @@ const KeyProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 		>
 			<TextField
 				variant="uesio/studio.propfield"
-				value={key}
-				setValue={(value: string): void =>
-					valueAPI.changeKey(path, value)
-				}
+				value={inputValue}
+				onChange={(
+					e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+				) => setInputValue(e.target.value)}
 				context={context}
+				onBlur={() =>
+					inputValue !== key && valueAPI.changeKey(path, inputValue)
+				}
 			/>
 		</FieldWrapper>
 	)

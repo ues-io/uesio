@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import React, { FC } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
@@ -8,19 +8,14 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	password?: boolean
-	trigger?: string
+	setEvent?: string
+	onChange?: (e: React.ChangeEvent | null) => void
+	onBlur?: (e: React.FocusEvent | null) => void
 }
 
-const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const {
-		// trigger,
-		setValue,
-		value,
-		mode,
-		placeholder,
-		fieldMetadata,
-		password,
-	} = props
+const TextField: FC<TextFieldProps> = (props) => {
+	const { setValue, value, mode, placeholder, fieldMetadata, password } =
+		props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -33,26 +28,21 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	)
 
 	const commonProps = {
-		// value: value || "",
 		placeholder,
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
-		// onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-		// 	setValue(event.target.value),
+		onChange:
+			props.onChange ||
+			((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+				setValue(e.target.value)),
+		onBlur: props.onBlur,
 	}
 
 	const inputType = password ? "password" : "text"
-	const [xValue, setXValue] = useState(value || "")
 	return fieldMetadata && fieldMetadata.getType() === "LONGTEXT" ? (
 		<textarea {...commonProps} />
 	) : (
-		<input
-			onChange={(e) => setXValue(e.target.value)}
-			onBlur={() => setValue(xValue)}
-			value={xValue}
-			type={inputType}
-			{...commonProps}
-		/>
+		<input value={value || ""} type={inputType} {...commonProps} />
 	)
 }
 

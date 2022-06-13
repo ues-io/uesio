@@ -21,7 +21,6 @@ const TextProp: FunctionComponent<builder.PropRendererProps> = ({
 			variant="uesio/studio.propfield"
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
-			trigger={"onBlur"}
 			context={context}
 		/>
 	</FieldWrapper>
