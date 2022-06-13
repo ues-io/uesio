@@ -3,7 +3,7 @@ import { definition, styles, context, collection } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
-	value: string | null
+	value?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	placeholder?: string
@@ -28,6 +28,7 @@ const TextField: FC<TextFieldProps> = (props) => {
 	)
 
 	const commonProps = {
+		value,
 		placeholder,
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
@@ -38,11 +39,10 @@ const TextField: FC<TextFieldProps> = (props) => {
 		onBlur: props.onBlur,
 	}
 
-	const inputType = password ? "password" : "text"
 	return fieldMetadata && fieldMetadata.getType() === "LONGTEXT" ? (
 		<textarea {...commonProps} />
 	) : (
-		<input value={value || ""} type={inputType} {...commonProps} />
+		<input type={password ? "password" : "text"} {...commonProps} />
 	)
 }
 
