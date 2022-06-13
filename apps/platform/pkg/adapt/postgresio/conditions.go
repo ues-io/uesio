@@ -69,17 +69,6 @@ func getValues(lrc adapt.LoadRequestCondition, fieldName string, paramCounter *P
 
 	switch lrc.Operator {
 	case "IN":
-
-		//TO-DO this is optimization shall we remove it?
-
-		// conditions, ok := conditionValue.([]string)
-		// if !ok {
-		// 	return nil, nil, errors.New("Invalid IN condition value")
-		// }
-		// if len(conditions) == 1 {
-		// 	return fieldName + " = " + counter
-		// 	continue
-		// }
 		return fieldName + " = ANY(" + paramCounter.get() + ")", lrc.Value
 
 	case "NOT_EQ":
@@ -141,7 +130,7 @@ func getConditions(
 		return nil, nil, err
 	}
 
-	// Shortcut optimization when we only ask for the id field just if operator IN || EQ
+	// Shortcut optimization
 	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
 		return idConditionOptimization(&op.Conditions[0], collectionName)
 	}
