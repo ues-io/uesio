@@ -79,11 +79,20 @@ type ValueConditionState = ValueConditionDefinition & {
 	active: boolean
 }
 
+type BlankConditionDefinition = ConditionBase & {
+	field: string
+}
+
+type BlankConditionState = BlankConditionDefinition & {
+	active: boolean
+}
+
 type WireConditionDefinition =
 	| ParamConditionDefinition
 	| LookupConditionDefinition
 	| ValueConditionDefinition
 	| SearchConditionDefinition
+	| BlankConditionState
 
 type ConditionHandler = (
 	condition: WireConditionState,

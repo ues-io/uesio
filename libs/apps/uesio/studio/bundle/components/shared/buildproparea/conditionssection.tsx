@@ -32,7 +32,11 @@ function getConditionTitle(condition: wire.WireConditionDefinition): string {
 		}}`
 	}
 
-	return `${condition.operator || ""}`
+	if (condition.type !== "SEARCH") {
+		return `${condition.field || ""} ${condition.operator || ""}`
+	}
+
+	return ""
 }
 
 const getConditionProperties = (): builder.PropDescriptor[] => [
