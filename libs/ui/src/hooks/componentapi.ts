@@ -2,7 +2,6 @@ import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
-import { useEffect } from "react"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
@@ -75,13 +74,7 @@ class ComponentAPI {
 			})
 		}
 
-		useEffect(() => {
-			if (state === undefined && initialState !== undefined && viewId) {
-				setState(initialState)
-			}
-		})
-
-		return [state, setState]
+		return [state ?? initialState, setState]
 	}
 
 	getState = <T extends PlainComponentState>(
