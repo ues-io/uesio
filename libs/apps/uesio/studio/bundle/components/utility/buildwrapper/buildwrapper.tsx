@@ -32,7 +32,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 
 	const title =
 		componentKey === "uesio/core.view"
-			? definition?.view
+			? definition?.view || componentKey
 			: propDef?.title || "unknown"
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
