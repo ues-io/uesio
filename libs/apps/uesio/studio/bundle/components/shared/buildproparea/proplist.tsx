@@ -9,6 +9,7 @@ import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
 import MetadataProp from "../buildpropitem/metadataprop"
 import NumberProp from "../buildpropitem/numberprop"
+import ParamsProp from "../buildpropitem/paramsprop"
 import BooleanProp from "../buildpropitem/booleanprop"
 import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
@@ -52,6 +53,8 @@ function getPropHandler(type?: string) {
 			return IconProp
 		case "CUSTOM":
 			return CustomProp
+		case "PARAMS":
+			return ParamsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp

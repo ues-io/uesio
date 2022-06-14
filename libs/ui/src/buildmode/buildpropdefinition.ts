@@ -4,9 +4,9 @@ import {
 	DefinitionMap,
 	DefinitionValue,
 } from "../definition/definition"
+import { FC } from "react"
 import { Uesio } from "../hooks/hooks"
 import { MetadataType } from "../bands/builder/types"
-import { FunctionComponent } from "react"
 import ValueAPI from "./valueapi"
 
 type BuildPropertiesDefinition = {
@@ -92,6 +92,7 @@ type PropDescriptor =
 	| ComponentTargetProp
 	| ConditionalDisplayProp
 	| IconProp
+	| ParamsProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -140,10 +141,13 @@ interface ConditionalDisplayProp extends BasePropDescriptor {
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
 }
+interface ParamsProp extends BasePropDescriptor {
+	type: "PARAMS"
+}
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FunctionComponent<CustomPropRendererProps>
+	renderFunc: FC<CustomPropRendererProps>
 }
 
 interface MetadataProp extends BasePropDescriptor {
