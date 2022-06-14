@@ -5,6 +5,7 @@ const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
+const GROUP = "GROUP"
 
 const EQ = "EQ"
 const NOT_EQ = "NOT_EQ"
@@ -21,10 +22,12 @@ type WireConditionState =
 	| LookupConditionState
 	| ValueConditionState
 	| SearchConditionState
+	| GroupConditionState
 
 type ConditionBase = {
-	type?: typeof SEARCH
+	type?: typeof SEARCH | typeof GROUP
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
+	conjunction?: "AND" | "OR"
 	id?: string
 	operator?:
 		| typeof EQ
@@ -36,6 +39,15 @@ type ConditionBase = {
 		| typeof IN
 		| typeof IS_BLANK
 		| typeof IS_NOT_BLANK
+}
+
+type GroupConditionDefinition = ConditionBase & {
+	type: typeof GROUP
+	conditions: WireConditionState[]
+}
+
+type GroupConditionState = GroupConditionDefinition & {
+	active: boolean
 }
 
 type SearchConditionDefinition = ConditionBase & {
@@ -115,6 +127,7 @@ const conditionInitializers: ConditionInitializers = {
 		valueSource: definition.valueSource,
 		param: definition.param,
 		id: definition.id,
+		conjunction: definition.conjunction,
 		active: true,
 		operator: definition.operator,
 	}),
@@ -123,6 +136,7 @@ const conditionInitializers: ConditionInitializers = {
 		valueSource: VALUE,
 		value: definition.value,
 		id: definition.id,
+		conjunction: definition.conjunction,
 		active: true,
 		operator: definition.operator,
 	}),
@@ -132,6 +146,7 @@ const conditionInitializers: ConditionInitializers = {
 		lookupWire: definition.lookupWire,
 		lookupField: definition.lookupField,
 		id: definition.id,
+		conjunction: definition.conjunction,
 		active: true,
 		operator: definition.operator,
 	}),

@@ -27,6 +27,8 @@ func NewParamCounter(start int) *ParamCounter {
 
 func IsValid(lrc adapt.LoadRequestCondition) error {
 
+	//TO-DO check if the condition is the first and has Conjunction --> error
+
 	switch lrc.Operator {
 	case "IN":
 		_, ok := lrc.Value.([]string)
@@ -67,33 +69,38 @@ func IsValid(lrc adapt.LoadRequestCondition) error {
 
 func getValues(lrc adapt.LoadRequestCondition, fieldName string, paramCounter *ParamCounter) (string, interface{}) {
 
+	conjunction := "AND"
+	if lrc.Conjunction != "" {
+		conjunction = lrc.Conjunction
+	}
+
 	switch lrc.Operator {
 	case "IN":
-		return fieldName + " = ANY(" + paramCounter.get() + ")", lrc.Value
+		return conjunction + " " + fieldName + " = ANY(" + paramCounter.get() + ")", lrc.Value
 
 	case "NOT_EQ":
-		return fieldName + " is distinct from " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " is distinct from " + paramCounter.get(), lrc.Value
 
 	case "GT":
-		return fieldName + " > " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " > " + paramCounter.get(), lrc.Value
 
 	case "LT":
-		return fieldName + " < " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " < " + paramCounter.get(), lrc.Value
 
 	case "GTE":
-		return fieldName + " >= " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " >= " + paramCounter.get(), lrc.Value
 
 	case "LTE":
-		return fieldName + " <= " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " <= " + paramCounter.get(), lrc.Value
 
 	case "IS_BLANK":
-		return fieldName + " IS NULL ", nil
+		return conjunction + " " + fieldName + " IS NULL ", nil
 
 	case "IS_NOT_BLANK":
-		return fieldName + " IS NOT NULL ", nil
+		return conjunction + " " + fieldName + " IS NOT NULL ", nil
 
 	default:
-		return fieldName + " = " + paramCounter.get(), lrc.Value
+		return conjunction + " " + fieldName + " = " + paramCounter.get(), lrc.Value
 
 	}
 }
@@ -131,9 +138,9 @@ func getConditions(
 	}
 
 	// Shortcut optimization
-	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
-		return idConditionOptimization(&op.Conditions[0], collectionName)
-	}
+	// if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
+	// 	return idConditionOptimization(&op.Conditions[0], collectionName)
+	// }
 
 	conditionStrings := []string{"main.collection = $1"}
 	values := []interface{}{collectionName}
@@ -171,7 +178,7 @@ func getConditions(
 					searchConditions = append(searchConditions, field+" ILIKE "+paramNumber)
 				}
 				values = append(values, fmt.Sprintf("%%%v%%", token))
-				conditionStrings = append(conditionStrings, "("+strings.Join(searchConditions, " OR ")+")")
+				conditionStrings = append(conditionStrings, "AND ("+strings.Join(searchConditions, " OR ")+")")
 			}
 
 			continue

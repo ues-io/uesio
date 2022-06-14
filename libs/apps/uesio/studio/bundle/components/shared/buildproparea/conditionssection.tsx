@@ -128,6 +128,25 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		],
 	},
 	{
+		name: "conjunction",
+		type: "SELECT",
+		label: "Conjunction",
+		options: [
+			{
+				label: "",
+				value: "",
+			},
+			{
+				label: "AND",
+				value: "AND",
+			},
+			{
+				label: "OR",
+				value: "OR",
+			},
+		],
+	},
+	{
 		//TO-DO This should be a dynamic metadatapicker
 		name: "lookupWire",
 		type: "TEXT",

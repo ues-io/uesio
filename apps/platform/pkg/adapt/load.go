@@ -31,14 +31,16 @@ type LoadRequestField struct {
 
 // LoadRequestCondition struct
 type LoadRequestCondition struct {
-	Field        string      `json:"field" bot:"field"`
-	Value        interface{} `json:"value" bot:"value"`
-	ValueSource  string      `json:"valueSource"`
-	Type         string      `json:"type"`
-	Operator     string      `json:"operator"`
-	LookupWire   string      `json:"lookupWire"`
-	LookupField  string      `json:"lookupField"`
-	SearchFields []string    `json:"fields"`
+	Field        string                 `json:"field" bot:"field"`
+	Value        interface{}            `json:"value" bot:"value"`
+	ValueSource  string                 `json:"valueSource"`
+	Type         string                 `json:"type"`
+	Operator     string                 `json:"operator"`
+	LookupWire   string                 `json:"lookupWire"`
+	LookupField  string                 `json:"lookupField"`
+	SearchFields []string               `json:"fields"`
+	Conditions   []LoadRequestCondition `json:"conditions"`
+	Conjunction  string                 `json:"conjunction"`
 }
 
 // LoadRequestOrder struct

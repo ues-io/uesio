@@ -100,7 +100,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 		}
 
-		conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
+		conditionStrings = append(conditionStrings, "AND "+accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
 		values = append(values, userTokens)
 	}
 
@@ -109,7 +109,13 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		" FROM data as \"main\" " +
 		strings.Join(joins, " ") +
 		" WHERE " +
-		strings.Join(conditionStrings, " AND ")
+		strings.Join(conditionStrings, " ")
+
+	test := collectionMetadata.GetFullName()
+	//|| test == "uesio/studio.field"
+	if test == "uesio/crm.account" || test == "uesio/crm.contact" {
+		println(loadQuery)
+	}
 
 	orders := make([]string, len(op.Order))
 	for i, order := range op.Order {
