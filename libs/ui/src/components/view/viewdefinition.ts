@@ -1,15 +1,15 @@
-import { definition, builder } from "@uesio/ui"
-
+import { BaseProps, BaseDefinition } from "../../definition/definition"
+import { BuildPropertiesDefinition } from "../../buildmode/buildpropdefinition"
 type ViewDefinition = {
 	view: string
 	params?: Record<string, string>
-} & definition.BaseDefinition
+} & BaseDefinition
 
-export interface Props extends definition.BaseProps {
+export interface Props extends BaseProps {
 	definition: ViewDefinition
 }
 
-const ViewPropertyDefinition: builder.BuildPropertiesDefinition = {
+const ViewPropertyDefinition: BuildPropertiesDefinition = {
 	title: "View",
 	description: "Just a view",
 	link: "https://docs.ues.io/",
