@@ -1,5 +1,4 @@
 import { FunctionComponent, useEffect } from "react"
-import { BaseProps } from "../../../definition/definition"
 import { useUesio } from "../../hooks/hooks"
 import Slot from "../slot"
 import { css } from "@emotion/css"
