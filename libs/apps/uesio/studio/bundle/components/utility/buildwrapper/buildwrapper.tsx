@@ -2,20 +2,15 @@ import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
 
-interface BuildWrapperProps extends definition.UtilityProps {
+interface BuildWrapperProps extends definition.BaseProps {
 	test?: string
 }
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { children, path = "", index = 0 } = props
+	const { children, path = "", index = 0, definition } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const viewDefId = uesio.getViewDefId()
-	const componentDef = uesio.builder.useDefinition(
-		"viewdef",
-		viewDefId || "",
-		path
-	)
 
 	if (!viewDefId) return null
 
@@ -37,7 +32,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 
 	const title =
 		componentKey === "uesio/core.view"
-			? componentDef?.view
+			? definition?.view
 			: propDef?.title || "unknown"
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath

@@ -9,7 +9,7 @@ import {
 	removeDef,
 	setDef,
 } from "../../store/reducers"
-import { RootState } from "../../store/store"
+import { RootState, getCurrentState } from "../../store/store"
 import { parse } from "../../yamlutils/yamlutils"
 
 import {
@@ -171,7 +171,11 @@ const metadataSlice = createSlice({
 const useViewDef = (key: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, key))
 
-export { useViewDef, selectors }
+// This function doesn't run a selector so it will only get the current
+// state of the store and not update with changes
+const getViewDef = (key: string) => selectors.selectById(getCurrentState(), key)
+
+export { useViewDef, selectors, getViewDef }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer
