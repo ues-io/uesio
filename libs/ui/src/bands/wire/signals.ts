@@ -13,11 +13,13 @@ import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
 import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
+import initWiresOp from "./operations/initialize"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { RegularWireDefinition } from "../../definition/wire"
+import { RegularWireDefinition, WireDefinition } from "../../definition/wire"
+
 import {
 	WireConditionDefinition,
 	WireConditionState,
@@ -68,6 +70,9 @@ interface SetConditionSignal extends SignalDefinition {
 
 interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
+}
+interface InitializeWiresSignal extends SignalDefinition {
+	wireDefs: Record<string, WireDefinition>
 }
 
 interface SaveWiresSignal extends SignalDefinition {
@@ -226,6 +231,18 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/INIT`]: {
+		label: "Load Wire(s)",
+		dispatcher: (signal: InitializeWiresSignal, context: Context) =>
+			initWiresOp(context, signal.wireDefs),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
 			},
 		],
 	},
