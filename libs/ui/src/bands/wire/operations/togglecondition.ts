@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { toggleCondition } from ".."
+import { toggleCondition, getFullWireId } from ".."
 
 export default (
 		context: Context,
@@ -12,7 +12,7 @@ export default (
 		if (viewId)
 			dispatch(
 				toggleCondition({
-					entity: `${viewId}/${wirename}`,
+					entity: getFullWireId(viewId, wirename),
 					conditionId,
 				})
 			)
