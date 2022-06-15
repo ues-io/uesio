@@ -27,7 +27,7 @@ class SignalAPI {
 	run = (signal: SignalDefinition, context: Context) => run(signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
-		const descriptor = registry[signal.signal] || componentSignal
+		const descriptor = registry[signal?.signal] || componentSignal
 		let props = defaultSignalProps()
 		if (descriptor.properties) {
 			props = props.concat(descriptor.properties(signal))
