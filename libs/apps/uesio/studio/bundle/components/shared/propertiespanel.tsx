@@ -65,8 +65,17 @@ const augmentPropsDef = (
 			properties: propsDef?.properties?.concat(
 				componentPropsDef.properties
 			),
+			actions: standardActions.concat(...(propsDef.actions || [])),
 		}
 	}
+
+	if (propsDef.type === "param") {
+		return {
+			...propsDef,
+			actions: standardActions.concat(...(propsDef.actions || [])),
+		}
+	}
+
 	return propsDef
 }
 
