@@ -27,9 +27,18 @@ const readCSV = async (file: File): Promise<ArrayBuffer | null> =>
 		}
 	})
 
+const removeBOM = (ui8a: Uint8Array) => {
+	if (ui8a[0] === 239 && ui8a[1] === 187 && ui8a[2] === 191) {
+		//File has byte order mark (BOM)
+		return ui8a.slice(3)
+	}
+	return ui8a
+}
+
 const getHeaderString = (data: ArrayBuffer): string => {
 	const byteLength = data.byteLength
-	const ui8a = new Uint8Array(data, 0)
+	const ui8a = removeBOM(new Uint8Array(data, 0))
+
 	let headerString = ""
 	for (let i = 0; i < byteLength; i++) {
 		const char = String.fromCharCode(ui8a[i])
