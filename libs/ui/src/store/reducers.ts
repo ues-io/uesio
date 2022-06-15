@@ -13,7 +13,6 @@ import {
 	getKeyAtPath,
 	getParentPath,
 	getIndexFromPath,
-	getGrandParentPath,
 	getParentPathArray,
 } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
@@ -168,18 +167,14 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 }
 
 const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
-	const parentPath = getParentPath(path)
-	const isArrayItemClone = isNumberIndex(getKeyAtPath(parentPath))
+	const isArrayItemClone = isNumberIndex(getKeyAtPath(path))
 	const yamlDoc = parse(state.content)
+	const parentPath = getParentPath(path)
 
 	if (isArrayItemClone) {
-		const index = getIndexFromPath(parentPath)
+		const index = getIndexFromPath(path)
 		if (!index && index !== 0) return
-		const grandParentPath = getGrandParentPath(path)
-		const { items } = getNodeAtPath(
-			grandParentPath,
-			yamlDoc.contents
-		) as YAMLSeq
+		const { items } = getNodeAtPath(parentPath, yamlDoc.contents) as YAMLSeq
 		items.splice(index, 0, items[index])
 	} else {
 		const newKey =
