@@ -1,8 +1,5 @@
 import { BaseProps, BaseDefinition } from "../../definition/definition"
-import {
-	BuildPropertiesDefinition,
-	CustomPropRendererProps,
-} from "../../buildmode/buildpropdefinition"
+import { BuildPropertiesDefinition } from "../../buildmode/buildpropdefinition"
 type ViewDefinition = {
 	view: string
 	params?: Record<string, string>
