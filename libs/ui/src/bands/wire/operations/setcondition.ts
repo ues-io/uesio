@@ -13,7 +13,7 @@ export default (
 		if (viewId)
 			dispatch(
 				addCondition({
-					entity: `${viewId}/${wirename}`,
+					entity: `${viewId}:${wirename}`,
 					condition,
 				})
 			)

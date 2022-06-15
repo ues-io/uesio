@@ -48,7 +48,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		})
 
 		dispatch(
-			reset({ entity: `${viewId}/${wirename}`, data, original, changes })
+			reset({ entity: `${viewId}:${wirename}`, data, original, changes })
 		)
 		return context
 	}

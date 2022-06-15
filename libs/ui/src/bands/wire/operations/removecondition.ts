@@ -12,7 +12,7 @@ export default (
 		if (viewId)
 			dispatch(
 				removeCondition({
-					entity: `${viewId}/${wirename}`,
+					entity: `${viewId}:${wirename}`,
 					conditionId,
 				})
 			)

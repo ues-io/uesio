@@ -5,6 +5,6 @@ import { empty } from ".."
 export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch) => {
 		const viewId = context.getViewId()
-		if (viewId) dispatch(empty({ entity: `${viewId}/${wirename}` }))
+		if (viewId) dispatch(empty({ entity: `${viewId}:${wirename}` }))
 		return context
 	}

@@ -12,7 +12,7 @@ export default (
 	): ThunkFunc =>
 	async (dispatch) => {
 		const viewId = context.getViewId()
-		const entity = `${viewId}/${wirename}`
+		const entity = `${viewId}:${wirename}`
 		dispatch(
 			search
 				? addCondition({
