@@ -20,7 +20,6 @@ export default (
 		const wireId = getFullWireId(viewId, wirename)
 		const wire = state.wire.entities[wireId]
 		if (!wire) return context
-
 		dispatch(
 			createRecord({
 				recordId,
@@ -32,7 +31,7 @@ export default (
 					wire.def,
 					wire.collection
 				),
-				entity: `${viewId}:${wirename}`,
+				entity: wireId,
 				prepend: !!prepend,
 			})
 		)
