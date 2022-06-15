@@ -28,7 +28,7 @@ test("viewdef clone component", () => {
 			content: buttonclonetest,
 		},
 		{
-			path: `["components"]["0"]["uesio/io.button"]`,
+			path: `["components"]["0"]`,
 		},
 		{
 			key: "ben/planets.page",
