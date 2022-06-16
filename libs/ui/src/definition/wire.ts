@@ -49,6 +49,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 	order?: WireOrderDescription[]
 	batchsize?: number
 	conditions?: WireConditionDefinition[]
+	requirewriteaccess?: boolean
 }
 
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition

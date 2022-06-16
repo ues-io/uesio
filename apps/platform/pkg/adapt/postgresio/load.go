@@ -100,7 +100,12 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 		}
 
-		conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
+		if op.RequireWriteAccess {
+			conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+") AND readonly != true)")
+		} else {
+			conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
+		}
+
 		values = append(values, userTokens)
 	}
 

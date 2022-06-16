@@ -270,6 +270,13 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 		session.AddToken("uesio.owner", []string{session.GetUserID()})
 	}
 
+	// A special user access token type for installed deps
+	tokenStrings := []string{}
+	for key := range session.GetContextAppBundle().Dependencies {
+		tokenStrings = append(tokenStrings, key)
+	}
+	session.AddToken("uesio.installed", tokenStrings)
+
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
 
