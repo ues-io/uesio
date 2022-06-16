@@ -12,6 +12,7 @@ definition:
       order:
         - field: uesio/studio.name
           desc: false
+      requirewriteaccess: true
     newapp:
       collection: uesio/studio.app
       fields:

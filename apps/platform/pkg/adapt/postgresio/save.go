@@ -195,7 +195,9 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	tenantID := credentials.GetTenantID()
 
-	recordsIDsList := map[string][]string{}
+	readWriteTokens := map[string][]string{}
+	readTokens := map[string][]string{}
+	resetTokenIDs := []string{}
 
 	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
@@ -227,7 +229,11 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		}
 
 		if collectionMetadata.Access == "protected" {
-			recordsIDsList[fullRecordID] = change.ReadWriteTokens
+			if !change.IsNew {
+				resetTokenIDs = append(resetTokenIDs, fullRecordID)
+			}
+			readWriteTokens[fullRecordID] = change.ReadWriteTokens
+			readTokens[fullRecordID] = change.ReadTokens
 		}
 		return nil
 	})
@@ -244,20 +250,14 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
 
-	tokenInsertCount := len(recordsIDsList)
 	collectionNameLength := len(collectionName) + 1
 
-	if tokenInsertCount > 0 {
-		tokenDeleteIDs := make([]string, tokenInsertCount)
-		i := 0
-		for key := range recordsIDsList {
-			tokenDeleteIDs[i] = key
-			i++
-		}
+	if len(resetTokenIDs) > 0 {
+		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs, collectionName)
+	}
 
-		batch.Queue(TOKEN_DELETE_QUERY, tokenDeleteIDs, collectionName)
-
-		for key, tokens := range recordsIDsList {
+	if len(readWriteTokens) > 0 {
+		for key, tokens := range readWriteTokens {
 			for _, token := range tokens {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,
@@ -267,6 +267,22 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 					collectionName,
 					tenantID,
 					false,
+				)
+			}
+		}
+	}
+
+	if len(readTokens) > 0 {
+		for key, tokens := range readTokens {
+			for _, token := range tokens {
+				batch.Queue(
+					TOKEN_INSERT_QUERY,
+					key,
+					key[collectionNameLength:],
+					token,
+					collectionName,
+					tenantID,
+					true,
 				)
 			}
 		}
