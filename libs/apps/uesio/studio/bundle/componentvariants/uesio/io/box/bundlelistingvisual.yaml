@@ -4,8 +4,8 @@ definition:
   uesio.styles:
     root:
       background: "#eee"
-      background-color: ${uesio/studio.color}
-      padding-top: 50%;
+      backgroundColor: ${uesio/studio.color}
+      paddingTop: 50%;
       display: flex
       alignItems: center
       justifyContent: center

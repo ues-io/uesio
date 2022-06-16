@@ -27,7 +27,7 @@ definition:
                                 file: uesio/web.logowhite
                                 uesio.styles:
                                   root:
-                                    padding-right: 15px
+                                    paddingRight: 15px
                       - uesio/io.griditem:
                           components:
                             - uesio/io.text:
@@ -36,7 +36,7 @@ definition:
                                 element: div
                                 uesio.styles:
                                   root:
-                                    padding-bottom: 5px
+                                    paddingBottom: 5px
                       # - uesio/io.text:
                       #     uesio.variant: uesio/web.footertext
                       #     text: The Cloud Masters LLC Switzerland - All rights reserved
