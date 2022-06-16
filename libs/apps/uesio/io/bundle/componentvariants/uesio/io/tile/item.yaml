@@ -7,7 +7,7 @@ definition:
       color: rgb(33, 36, 45)
       border: "1px solid #f0f0f0"
       margin: 8px 0
-      border-radius: 4px
+      borderRadius: 4px
       backgroundColor: "#fcfcfc"
       alignItems: center
     content:
