@@ -80,8 +80,8 @@ definition:
                       root:
                         padding: 40px
                         display: grid
-                        column-gap: 24px;
-                        row-gap: 24px
+                        columnGap: 24px;
+                        rowGap: 24px
                     templateColumns:
                       xs: 1fr
                       md: 1fr 1fr
@@ -110,8 +110,8 @@ definition:
                                       element: span
                                       uesio.styles:
                                         root:
-                                          vertical-align: middle
-                                          font-weight: bold
+                                          verticalAlign: middle
+                                          fontWeight: bold
 
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon

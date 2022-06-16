@@ -8,4 +8,4 @@ definition:
       fontSize: 12pt
       borderRadius: 8px
       fontFamily: Gosha
-      background-color: rgb(45,39,245)
+      backgroundColor: rgb(45,39,245)
