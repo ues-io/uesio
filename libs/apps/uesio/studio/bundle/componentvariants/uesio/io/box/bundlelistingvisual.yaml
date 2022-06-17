@@ -9,7 +9,7 @@ definition:
       display: flex
       alignItems: center
       justifyContent: center
-      color: "#000"
+      color: white
       position: relative
   components:
     - uesio/io.button:
