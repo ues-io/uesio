@@ -5,7 +5,7 @@ const MODE_SLICE = "mode"
 const toggleMode: signal.ComponentSignalDescriptor = {
 	dispatcher: (signal, context, getState, setState) => {
 		const mode = getState() as string
-		setState(mode === "READ" ? "EDIT" : "READ")
+		setState(mode === "READ" || !mode ? "EDIT" : "READ")
 	},
 	label: "Toggle Mode",
 	properties: () => [],

@@ -56,6 +56,10 @@ type CollectionNavigateRequest = {
 	recordid?: string
 }
 
+type MetadataInfo = {
+	color: string
+}
+
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
 
 const getPrefix = (context: Context) => {
@@ -273,12 +277,13 @@ const platform = {
 		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
-	): Promise<Record<string, boolean>> => {
+	): Promise<Record<string, MetadataInfo>> => {
 		const prefix = getPrefix(context)
 		const mdType = METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
+		const namespaceUrl = namespace ? `/namespace/${namespace}` : ""
 		const response = await fetch(
-			`${prefix}/metadata/types/${mdType}/namespace/${namespace}/list${groupingUrl}`
+			`${prefix}/metadata/types/${mdType}${namespaceUrl}/list${groupingUrl}`
 		)
 		return respondJSON(response)
 	},

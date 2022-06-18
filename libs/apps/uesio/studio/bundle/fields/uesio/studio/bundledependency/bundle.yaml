@@ -3,3 +3,4 @@ type: REFERENCE
 label: Bundle
 reference:
   collection: uesio/studio.bundle
+required: true

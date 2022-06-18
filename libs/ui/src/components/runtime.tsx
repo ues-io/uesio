@@ -30,13 +30,13 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 
 	useEffect(() => {
 		const toggleFunc = (event: KeyboardEvent) => {
-			if (event.altKey && event.code === "KeyU") {
+			if (event.metaKey && event.code === "KeyU") {
 				setBuildMode(!uesio.component.getState("buildmode"))
 			}
 		}
 		// Handle swapping between buildmode and runtime
 		// Option + U
-		window.addEventListener("keyup", toggleFunc)
+		window.addEventListener("keydown", toggleFunc)
 
 		window.onpopstate = (event: PopStateEvent) => {
 			if (!event.state.path || !event.state.namespace) {
