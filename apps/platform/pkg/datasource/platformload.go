@@ -9,10 +9,11 @@ import (
 )
 
 type PlatformLoadOptions struct {
-	Conditions []adapt.LoadRequestCondition
-	Fields     []adapt.LoadRequestField
-	Orders     []adapt.LoadRequestOrder
-	Connection adapt.Connection
+	Conditions         []adapt.LoadRequestCondition
+	Fields             []adapt.LoadRequestField
+	Orders             []adapt.LoadRequestOrder
+	SkipRecordSecurity bool
+	Connection         adapt.Connection
 }
 
 // RecordNotFoundError struct
@@ -48,13 +49,14 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		fields = getLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&adapt.LoadOp{
-		WireName:       group.GetName() + "Wire",
-		CollectionName: group.GetName(),
-		Collection:     group,
-		Conditions:     options.Conditions,
-		Fields:         fields,
-		Order:          options.Orders,
-		Query:          true,
+		WireName:           group.GetName() + "Wire",
+		CollectionName:     group.GetName(),
+		Collection:         group,
+		Conditions:         options.Conditions,
+		Fields:             fields,
+		Order:              options.Orders,
+		Query:              true,
+		SkipRecordSecurity: options.SkipRecordSecurity,
 	}, options.Connection, session)
 }
 
