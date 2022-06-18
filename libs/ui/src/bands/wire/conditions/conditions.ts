@@ -6,15 +6,16 @@ const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
 
-const EQ = "EQ"
-const NOT_EQ = "NOT_EQ"
-const GT = "GT"
-const LT = "LT"
-const GTE = "GTE"
-const LTE = "LTE"
-const IN = "IN"
-const IS_BLANK = "IS_BLANK"
-const IS_NOT_BLANK = "IS_NOT_BLANK"
+type ConditionOperators =
+	| "EQ"
+	| "NOT_EQ"
+	| "GT"
+	| "LT"
+	| "GTE"
+	| "LTE"
+	| "IN"
+	| "IS_BLANK"
+	| "IS_NOT_BLANK"
 
 type WireConditionState =
 	| ParamConditionState
@@ -26,16 +27,7 @@ type ConditionBase = {
 	type?: typeof SEARCH
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
 	id?: string
-	operator?:
-		| typeof EQ
-		| typeof NOT_EQ
-		| typeof GT
-		| typeof LT
-		| typeof GTE
-		| typeof LTE
-		| typeof IN
-		| typeof IS_BLANK
-		| typeof IS_NOT_BLANK
+	operator?: ConditionOperators
 }
 
 type SearchConditionDefinition = ConditionBase & {
@@ -79,20 +71,11 @@ type ValueConditionState = ValueConditionDefinition & {
 	active: boolean
 }
 
-type BlankConditionDefinition = ConditionBase & {
-	field: string
-}
-
-type BlankConditionState = BlankConditionDefinition & {
-	active: boolean
-}
-
 type WireConditionDefinition =
 	| ParamConditionDefinition
 	| LookupConditionDefinition
 	| ValueConditionDefinition
 	| SearchConditionDefinition
-	| BlankConditionState
 
 type ConditionHandler = (
 	condition: WireConditionState,
@@ -111,29 +94,16 @@ type ConditionInitializers = {
 
 const conditionInitializers: ConditionInitializers = {
 	[PARAM]: (definition: ParamConditionDefinition) => ({
-		field: definition.field,
-		valueSource: definition.valueSource,
-		param: definition.param,
-		id: definition.id,
+		...definition,
 		active: true,
-		operator: definition.operator,
 	}),
 	[VALUE]: (definition: ValueConditionDefinition) => ({
-		field: definition.field,
-		valueSource: VALUE,
-		value: definition.value,
-		id: definition.id,
+		...definition,
 		active: true,
-		operator: definition.operator,
 	}),
 	[LOOKUP]: (definition: LookupConditionDefinition) => ({
-		field: definition.field,
-		valueSource: definition.valueSource,
-		lookupWire: definition.lookupWire,
-		lookupField: definition.lookupField,
-		id: definition.id,
+		...definition,
 		active: true,
-		operator: definition.operator,
 	}),
 }
 
