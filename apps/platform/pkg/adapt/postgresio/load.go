@@ -3,6 +3,7 @@ package postgresio
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -57,9 +58,9 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	joins := []string{}
 
-	paramCounter := NewParamCounter(2)
+	builder := NewQueryBuilder()
 
-	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, credentials, paramCounter)
+	err = getConditions(op, metadata, collectionMetadata, credentials, builder)
 	if err != nil {
 		return err
 	}
@@ -101,12 +102,10 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		}
 
 		if op.RequireWriteAccess {
-			conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+") AND readonly != true)")
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
 		} else {
-			conditionStrings = append(conditionStrings, accessFieldID+" IN (SELECT fullid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
 		}
-
-		values = append(values, userTokens)
 	}
 
 	loadQuery := "SELECT " +
@@ -114,7 +113,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		" FROM data as \"main\" " +
 		strings.Join(joins, " ") +
 		" WHERE " +
-		strings.Join(conditionStrings, " AND ")
+		strings.Join(builder.Parts, " AND ")
 
 	orders := make([]string, len(op.Order))
 	for i, order := range op.Order {
@@ -144,7 +143,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
-	rows, err := db.Query(context.Background(), loadQuery, values...)
+	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
 	}
