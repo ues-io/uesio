@@ -267,14 +267,12 @@ class BuilderAPI {
 	) =>
 		usePlatformFunc(
 			() =>
-				namespace
-					? platform.getMetadataList(
-							context,
-							metadataType,
-							namespace,
-							grouping
-					  )
-					: undefined,
+				platform.getMetadataList(
+					context,
+					metadataType,
+					namespace,
+					grouping
+				),
 			[metadataType, namespace, grouping]
 		)
 
