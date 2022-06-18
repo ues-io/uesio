@@ -9,110 +9,89 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-type ParamCounter struct {
-	Counter int
+type QueryBuilder struct {
+	Values []interface{}
+	Parts  []string
 }
 
-func (pc *ParamCounter) get() string {
-	count := "$" + strconv.Itoa(pc.Counter)
-	pc.Counter++
-	return count
-}
-
-func NewParamCounter(start int) *ParamCounter {
-	return &ParamCounter{
-		Counter: start,
+func NewQueryBuilder() *QueryBuilder {
+	return &QueryBuilder{
+		Values: []interface{}{},
+		Parts:  []string{},
 	}
 }
 
-func IsValid(lrc adapt.LoadRequestCondition) error {
+func (qb *QueryBuilder) addValue(value interface{}) string {
+	qb.Values = append(qb.Values, value)
+	return "$" + strconv.Itoa(len(qb.Values))
+}
 
-	switch lrc.Operator {
+func (qb *QueryBuilder) addQueryPart(part string) {
+	qb.Parts = append(qb.Parts, part)
+}
+
+func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+
+	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
+	if err != nil {
+		return err
+	}
+
+	fieldName := getFieldName(fieldMetadata)
+
+	switch condition.Operator {
 	case "IN":
-		_, ok := lrc.Value.([]string)
+		_, ok := condition.Value.([]string)
 		if !ok {
 			return errors.New("Invalid IN condition value")
 		}
+		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
 
 	case "NOT_EQ":
+		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
 
 	case "GT":
-		_, ok := lrc.Value.(bool)
-		if !ok {
-			return errors.New("Invalid GT condition value")
-		}
+		builder.addQueryPart(fmt.Sprintf("%s > %s", fieldName, builder.addValue(condition.Value)))
+
 	case "LT":
-		_, ok := lrc.Value.(bool)
-		if !ok {
-			return errors.New("Invalid GT condition value")
-		}
+		builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(condition.Value)))
+
 	case "GTE":
-		_, ok := lrc.Value.(bool)
-		if !ok {
-			return errors.New("Invalid GT condition value")
-		}
+		builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(condition.Value)))
+
 	case "LTE":
-		_, ok := lrc.Value.(bool)
-		if !ok {
-			return errors.New("Invalid GT condition value")
-		}
+		builder.addQueryPart(fmt.Sprintf("%s <= %s", fieldName, builder.addValue(condition.Value)))
+
 	case "IS_BLANK":
+		builder.addQueryPart(fmt.Sprintf("%s IS NULL", fieldName))
 
 	case "IS_NOT_BLANK":
+		builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 
+	default:
+		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 	}
-
 	return nil
 }
 
-func getValues(lrc adapt.LoadRequestCondition, fieldName string, paramCounter *ParamCounter) (string, interface{}) {
-
-	switch lrc.Operator {
-	case "IN":
-		return fieldName + " = ANY(" + paramCounter.get() + ")", lrc.Value
-
-	case "NOT_EQ":
-		return fieldName + " is distinct from " + paramCounter.get(), lrc.Value
-
-	case "GT":
-		return fieldName + " > " + paramCounter.get(), lrc.Value
-
-	case "LT":
-		return fieldName + " < " + paramCounter.get(), lrc.Value
-
-	case "GTE":
-		return fieldName + " >= " + paramCounter.get(), lrc.Value
-
-	case "LTE":
-		return fieldName + " <= " + paramCounter.get(), lrc.Value
-
-	case "IS_BLANK":
-		return fieldName + " IS NULL ", nil
-
-	case "IS_NOT_BLANK":
-		return fieldName + " IS NOT NULL ", nil
-
-	default:
-		return fieldName + " = " + paramCounter.get(), lrc.Value
-
-	}
-}
-
-func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string) ([]string, []interface{}, error) {
+func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder) {
 	if condition.Operator != "IN" {
-		return []string{"main.id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, condition.Value)}, nil
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, condition.Value))))
+		return
 	}
 
 	values := condition.Value.([]string)
 	if len(values) == 1 {
-		return []string{"main.id = $1"}, []interface{}{fmt.Sprintf("%s:%s", collectionName, values[0])}, nil
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, values[0]))))
+		return
 	}
 
 	appendedValues := make([]string, len(values))
 	for i, v := range values {
 		appendedValues[i] = fmt.Sprintf("%s:%s", collectionName, v)
 	}
-	return []string{"main.id = ANY($1)"}, []interface{}{appendedValues}, nil
+	builder.addQueryPart(fmt.Sprintf("main.id = ANY(%s)", builder.addValue(appendedValues)))
+	return
 }
 
 func getConditions(
@@ -120,30 +99,30 @@ func getConditions(
 	metadata *adapt.MetadataCache,
 	collectionMetadata *adapt.CollectionMetadata,
 	credentials *adapt.Credentials,
-	paramCounter *ParamCounter,
-) ([]string, []interface{}, error) {
+	builder *QueryBuilder,
+) error {
 
 	tenantID := credentials.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	// Shortcut optimization
 	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
-		return idConditionOptimization(&op.Conditions[0], collectionName)
+		idConditionOptimization(&op.Conditions[0], collectionName, builder)
+		return nil
 	}
 
-	conditionStrings := []string{"main.collection = $1"}
-	values := []interface{}{collectionName}
+	builder.addQueryPart(fmt.Sprintf("main.collection = %s", builder.addValue(collectionName)))
 
 	for _, condition := range op.Conditions {
 
 		if condition.Type == "SEARCH" {
 			nameFieldMetadata, err := collectionMetadata.GetNameField()
 			if err != nil {
-				return nil, nil, err
+				return err
 			}
 
 			nameFieldDB := getFieldName(nameFieldMetadata)
@@ -158,7 +137,7 @@ func getConditions(
 			for _, field := range condition.SearchFields {
 				fieldMetadata, err := collectionMetadata.GetField(field)
 				if err != nil {
-					return nil, nil, err
+					return err
 				}
 				searchFields[getFieldName(fieldMetadata)] = true
 			}
@@ -166,35 +145,19 @@ func getConditions(
 			tokens := strings.Fields(searchToken)
 			for _, token := range tokens {
 				searchConditions := []string{}
-				paramNumber := paramCounter.get()
+				paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
 				for field := range searchFields {
 					searchConditions = append(searchConditions, field+" ILIKE "+paramNumber)
 				}
-				values = append(values, fmt.Sprintf("%%%v%%", token))
-				conditionStrings = append(conditionStrings, "("+strings.Join(searchConditions, " OR ")+")")
+				builder.addQueryPart("(" + strings.Join(searchConditions, " OR ") + ")")
 			}
 
 			continue
 		}
 
-		err := IsValid(condition)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		fieldMetadata, err := collectionMetadata.GetField(condition.Field)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		fieldName := getFieldName(fieldMetadata)
-		conditionString, value := getValues(condition, fieldName, paramCounter)
-		conditionStrings = append(conditionStrings, conditionString)
-		if value != nil {
-			values = append(values, value)
-		}
+		processCondition(condition, collectionMetadata, builder)
 
 	}
 
-	return conditionStrings, values, nil
+	return nil
 }
