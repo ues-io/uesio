@@ -12,18 +12,31 @@ import (
 type QueryBuilder struct {
 	Values []interface{}
 	Parts  []string
+	Index  int
 }
 
-func NewQueryBuilder() *QueryBuilder {
+func NewQueryBuilder(index int) *QueryBuilder {
 	return &QueryBuilder{
 		Values: []interface{}{},
 		Parts:  []string{},
+		Index:  index,
 	}
 }
 
 func (qb *QueryBuilder) addValue(value interface{}) string {
 	qb.Values = append(qb.Values, value)
-	return "$" + strconv.Itoa(len(qb.Values))
+	qb.increment()
+	return "$" + strconv.Itoa(qb.Index)
+}
+
+func (qb *QueryBuilder) addValues(values []interface{}) {
+	for _, value := range values {
+		qb.addValue(value)
+	}
+}
+
+func (qb *QueryBuilder) increment() {
+	qb.Index = qb.Index + 1
 }
 
 func (qb *QueryBuilder) addQueryPart(part string) {
@@ -153,6 +166,17 @@ func getConditions(
 			}
 
 			continue
+		}
+
+		if condition.Type == "GROUP" {
+			gbuilder := NewQueryBuilder(builder.Index)
+
+			for _, gcondition := range condition.Conditions {
+				processCondition(gcondition, collectionMetadata, gbuilder)
+			}
+
+			builder.addQueryPart("(" + strings.Join(gbuilder.Parts, " "+condition.Conjunction+" ") + ")")
+			builder.addValues(gbuilder.Values)
 		}
 
 		processCondition(condition, collectionMetadata, builder)

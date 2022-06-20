@@ -8,6 +8,12 @@ const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
+const standardActions: builder.ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONE" },
+]
+
 function getConditionTitle(condition: wire.WireConditionDefinition): string {
 	if (condition.valueSource === "VALUE") {
 		const valueCondition = condition as wire.ValueConditionDefinition
@@ -32,8 +38,8 @@ function getConditionTitle(condition: wire.WireConditionDefinition): string {
 		}}`
 	}
 
-	if (condition.type !== "SEARCH") {
-		return `${condition.field || ""} ${condition.operator || ""}`
+	if (condition.type === "GROUP") {
+		return `GROUP ${condition.conjunction}`
 	}
 
 	return ""
@@ -243,6 +249,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 										defaultDefinition: () => ({}),
 										properties: getConditionProperties(),
 										actions: [
+											...standardActions,
 											{
 												label: "Toggle Condition",
 												type: "TOGGLE_CONDITION",
