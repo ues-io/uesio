@@ -6,8 +6,8 @@ definition:
       fontSize: 11pt
       color: "#808B96"
       minWidth: 1028px
-      line-height: 28px
-      padding-top: 20px
-      padding-bottom: 0px
-      text-align: justify
+      lineHeight: 28px
+      paddingTop: 20px
+      paddingBottom: 0px
+      textAlign: justify
   element: div

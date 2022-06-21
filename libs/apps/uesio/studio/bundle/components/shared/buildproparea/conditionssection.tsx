@@ -11,20 +11,32 @@ const Icon = component.getUtility("uesio/io.icon")
 function getConditionTitle(condition: wire.WireConditionDefinition): string {
 	if (condition.valueSource === "VALUE") {
 		const valueCondition = condition as wire.ValueConditionDefinition
-		return `${valueCondition.field} = ${valueCondition.value}`
+		return `${valueCondition.field} ${valueCondition.operator || ""} ${
+			valueCondition.value
+		}`
 	}
 
 	if (condition.valueSource === "PARAM") {
 		const valueCondition = condition as wire.ParamConditionDefinition
-		return `${valueCondition.field} = Param{${valueCondition.param}}`
+		return `${valueCondition.field} ${
+			valueCondition.operator || ""
+		} Param{${valueCondition.param}}`
 	}
 
 	if (condition.valueSource === "LOOKUP") {
 		const valueCondition = condition as wire.LookupConditionDefinition
-		return `${valueCondition.field} = Lookup{${valueCondition.lookupWire}.${valueCondition.lookupField}}`
+		return `${valueCondition.field} ${
+			valueCondition.operator || ""
+		} Lookup{${valueCondition.lookupWire || ""}.${
+			valueCondition.lookupField || ""
+		}}`
 	}
 
-	return "NEW CONDITION"
+	if (condition.type !== "SEARCH") {
+		return `${condition.field || ""} ${condition.operator || ""}`
+	}
+
+	return ""
 }
 
 const getConditionProperties = (): builder.PropDescriptor[] => [
@@ -35,6 +47,49 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		label: "Field",
 		groupingParents: 2,
 		groupingProperty: "collection",
+	},
+	{
+		name: "operator",
+		type: "SELECT",
+		label: "Operator",
+		options: [
+			{
+				label: "Equals",
+				value: "EQ",
+			},
+			{
+				label: "Not Equal To",
+				value: "NOT_EQ",
+			},
+			{
+				label: "Greater Than",
+				value: "GT",
+			},
+			{
+				label: "Less Than",
+				value: "LT",
+			},
+			{
+				label: "Greater Than or Equal To",
+				value: "GTE",
+			},
+			{
+				label: "Less Than or Equal To",
+				value: "LTE",
+			},
+			{
+				label: "In",
+				value: "IN",
+			},
+			{
+				label: "Is Blank",
+				value: "IS_BLANK",
+			},
+			{
+				label: "Is Not Blank",
+				value: "IS_NOT_BLANK",
+			},
+		],
 	},
 	{
 		name: "valueSource",
@@ -52,6 +107,12 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 			{
 				label: "Param",
 				value: "PARAM",
+			},
+		],
+		display: [
+			{
+				property: "operator",
+				values: ["EQ", "NOT_EQ", "GT", "LT", "GTE", "LTE", "IN"],
 			},
 		],
 	},

@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
-import { MetadataType } from "./types"
 
 const isMatch = (componentPath: string, testPath?: string) => {
 	if (testPath) {
@@ -60,12 +59,6 @@ const useDragNode = () =>
 const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
-const getMetadataListKey = (
-	metadataType: MetadataType,
-	namespace: string,
-	grouping?: string
-) => `${metadataType}-${namespace}-${grouping}`
-
 export {
 	useNodeState,
 	useSelectedNode,
@@ -74,5 +67,4 @@ export {
 	useLastModifiedNode,
 	useDragNode,
 	useDropNode,
-	getMetadataListKey,
 }

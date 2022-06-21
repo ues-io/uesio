@@ -8,7 +8,7 @@ definition:
     nav:
     title:
       fontFamily: Gosha
-      margin-bottom: 0.25em
+      marginBottom: 0.25em
     navItem:
       position: relative
 
