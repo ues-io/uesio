@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
-import get from "lodash/get"
 
 const standardActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
@@ -153,18 +152,6 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				},
 				changeKey: (path: string, key: string) => {
 					if (path === undefined) return
-					const pathArray = component.path.toPath(path)
-
-					if (get(definition, pathArray)) {
-						return uesio.signal.run(
-							{
-								signal: "notification/ADD",
-								severity: "error",
-								text: `"${key}" already exists.`,
-							},
-							props.context || uesio.getContext()
-						)
-					}
 					uesio.builder.changeDefinitionKey(
 						component.path.makeFullPath(
 							metadataType,
