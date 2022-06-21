@@ -16,7 +16,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		if (target && target.dataset.type) {
 			const typeArray = target.dataset.type.split(".")
 			const metadataType =
-				typeArray.length === 4 ? "componentvariant" : "component"
+				typeArray.length === 3 ? "componentvariant" : "component"
 			uesio.builder.setDragNode(metadataType, target.dataset.type, "")
 		}
 	}
@@ -25,19 +25,22 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 	const builderComponents = component.registry.getBuilderComponents()
-	//const variants = uesio.component.useAllVariants()
-	const variants: Record<string, component.ComponentVariant> = {}
+	const variants = uesio.component.useAllVariants()
 	// loop over variants and group by component
-	const variantsMap: Record<string, component.ComponentVariant[]> = {}
-	Object.keys(variants).forEach((key) => {
-		const [componentNamespace, componentName] =
-			component.path.parseVariantKey(key)
+	const variantsMap: Record<string, string[]> = {}
+	variants.forEach((key) => {
+		const [
+			componentNamespace,
+			componentName,
+			variantNamespace,
+			variantName,
+		] = component.path.parseVariantKey(key)
+
 		const componentKey = `${componentNamespace}.${componentName}`
+		const variantKey = `${variantNamespace}.${variantName}`
+
 		if (!variantsMap[componentKey]) variantsMap[componentKey] = []
-		const variant = variants[key]
-		if (variant) {
-			variantsMap[componentKey].push(variant)
-		}
+		variantsMap[componentKey].push(variantKey)
 	})
 
 	return (
@@ -92,7 +95,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												styles={{
 													root: {
 														gridTemplateColumns:
-															"1fr 1fr",
+															"1fr",
 														columnGap: "8px",
 														rowGap: "8px",
 														padding: "8px",
@@ -101,8 +104,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												context={context}
 											>
 												{variants.map((variant) => {
-													const variantName = `${variant.namespace}.${variant.name}`
-													const variantFullName = `${variant.component}.${variantName}`
+													const variantFullName = `${fullName}:${variant}`
 													const isVariantSelected =
 														selectedType ===
 															"componentvariant" &&
@@ -110,8 +112,8 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 															variantFullName
 													return (
 														<PropNodeTag
-															title={variantName}
-															key={variantName}
+															title={variant}
+															key={variant}
 															onClick={(
 																e: MouseEvent
 															) => {
