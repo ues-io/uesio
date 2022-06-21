@@ -46,7 +46,48 @@ wires:
     collection: accounts
 `,
 }
-const tests: Test[] = [changeKey, changeWireName]
+const changeToExisting = {
+	payload: {
+		path: `["wires"]["foo"]`,
+		key: "bar",
+	},
+	data: `
+wires:
+  foo:
+    collection: accounts
+  bar:
+    collection: accounts
+`,
+	expected: `
+wires:
+  foo:
+    collection: accounts
+  bar:
+    collection: accounts
+`,
+}
+const oldKeyEqualsNew = {
+	payload: {
+		path: `["wires"]["foo"]`,
+		key: "foo",
+	},
+	data: `
+wires:
+  foo:
+    collection: accounts
+`,
+	expected: `
+wires:
+  foo:
+    collection: accounts
+`,
+}
+const tests: Test[] = [
+	changeKey,
+	changeWireName,
+	changeToExisting,
+	oldKeyEqualsNew,
+]
 tests.map(({ data, payload, expected }) =>
 	test("viewdef change definition key", () => {
 		testSet(

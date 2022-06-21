@@ -195,6 +195,7 @@ const changeDefKey = (
 	payload: ChangeDefinitionKeyPayload
 ) => {
 	const { path, key: newKey } = payload
+	const originalPathArray = toPath(path)
 	const pathArray = toPath(path)
 	// Stop if old and new key are equal
 	// TODO:TEST
@@ -205,6 +206,18 @@ const changeDefKey = (
 	const newNode = yamlDoc.getIn(toPath(path))
 	// replace the old with the new key
 	pathArray.splice(-1, 1, newKey)
+
+	/* 
+	Keys need to be unique, this reverts the keychange
+	when the new key already exists.
+	TEST:oldKeyEqualsNew
+	*/
+	if (yamlDoc.getIn(pathArray)) {
+		yamlDoc.setIn(originalPathArray, newNode)
+		state.content = yamlDoc.toString()
+		state.parsed = yamlDoc.toJSON()
+		return
+	}
 	yamlDoc.setIn(pathArray, newNode)
 	yamlDoc.deleteIn(toPath(path))
 	state.content = yamlDoc.toString()
