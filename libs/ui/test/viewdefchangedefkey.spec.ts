@@ -66,7 +66,7 @@ wires:
     collection: accounts
 `,
 }
-const oldKeyEqualsNew = {
+const oldEqualsNew = {
 	payload: {
 		path: `["wires"]["foo"]`,
 		key: "foo",
@@ -86,7 +86,7 @@ const tests: Test[] = [
 	changeKey,
 	changeWireName,
 	changeToExisting,
-	oldKeyEqualsNew,
+	oldEqualsNew,
 ]
 tests.map(({ data, payload, expected }) =>
 	test("viewdef change definition key", () => {
