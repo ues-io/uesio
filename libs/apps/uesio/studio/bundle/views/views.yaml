@@ -17,6 +17,10 @@ definition:
       collection: uesio/studio.view
       fields:
         uesio/core.id:
+        uesio/core.updatedat:
+        uesio/core.updatedby:
+        uesio/core.createdat:
+        uesio/core.createdby:
         uesio/studio.name:
       conditions:
         - field: uesio/studio.workspace
@@ -103,13 +107,34 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
                                 content:
-                                  - uesio/io.text:
-                                      text: ${uesio/studio.name}
-                                avatar:
-                                  - uesio/io.text:
-                                      uesio.variant: uesio/io.icon
-                                      color: "#ccc"
-                                      text: view_quilt
+                                  - uesio/io.grid:
+                                      columnGap: 10px
+                                      templateColumns:
+                                        xs: 1fr 1fr 1fr
+                                        md: 1fr 1fr 1fr
+                                        lg: 1fr 1fr 1fr
+                                      items:
+                                        - uesio/io.griditem:
+                                            components:
+                                              - uesio/io.field:
+                                                  #labelPosition: none
+                                                  fieldId: uesio/studio.name
+                                  - uesio/io.grid:
+                                      templateColumns:
+                                        xs: 1fr
+                                        md: 1fr 1fr
+                                        lg: 1fr 1fr 1fr 1fr
+                                      columnGap: 10px
+                                      items:
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.createdby
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.createdat
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.updatedby
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.updatedat
+
   panels:
     newView:
       uesio.type: uesio/io.dialog

@@ -43,14 +43,12 @@ const augmentPropsDef = (
 		}
 	}
 	if (propsDef.type === "componentvariant") {
+		//override the properties
 		return {
 			...propsDef,
-			sections: propsDef.sections.concat([
-				{
-					title: "Styles",
-					type: "STYLES",
-				},
-			]),
+			title: "Component Variant",
+			sections: [],
+			properties: [],
 		}
 	}
 	if (propsDef.type === "panel") {
