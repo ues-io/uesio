@@ -25,14 +25,16 @@ import {
 	cancel,
 } from "../bands/builder"
 import builderOps from "../bands/builder/operations"
-import { appDispatch, RootState } from "../store/store"
+import { appDispatch, RootState, getCurrentState } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import {
+	fromPath,
 	getFullPathParts,
 	getParentPath,
 	makeFullPath,
+	toPath,
 } from "../component/path"
 import { Definition, DefinitionMap } from "../definition/definition"
 import { useSelector } from "react-redux"
@@ -42,6 +44,8 @@ import { PlainViewDef } from "../definition/viewdef"
 import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
+import { add } from "../bands/notification"
+import { nanoid } from "nanoid"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -196,6 +200,23 @@ class BuilderAPI {
 	}
 
 	changeDefinitionKey(path: string, key: string) {
+		const pathArray = toPath(path)
+		pathArray.splice(-1, 1, key)
+		const definition = this.getDefinitionFromFullPath(
+			getCurrentState(),
+			fromPath(pathArray)
+		)
+
+		if (definition) {
+			appDispatch()(
+				add({
+					id: nanoid(),
+					severity: "error",
+					text: `"${key}" already exists.`,
+				})
+			)
+			return
+		}
 		appDispatch()(
 			changeDefinitionKey({
 				path,
@@ -244,20 +265,35 @@ class BuilderAPI {
 		metadataItem: string,
 		localPath: string
 	) =>
-		useSelector((state: RootState) => {
-			if (metadataType === "viewdef" && metadataItem) {
-				const viewDef = viewSelectors.selectById(state, metadataItem)
-					?.parsed as PlainViewDef
-				if (!localPath) {
-					return viewDef as DefinitionMap
-				}
-				return get(viewDef, localPath) as DefinitionMap
-			}
+		useSelector((state: RootState) =>
+			this.getDefinition(state, metadataType, metadataItem, localPath)
+		)
 
-			if (metadataType === "componentvariant" && metadataItem) {
-				//return getComponentVariant(state, metadataItem, localPath)
+	getDefinitionFromFullPath = (state: RootState, fullPath: string) => {
+		const [metadataType, metadataItem, localPath] =
+			getFullPathParts(fullPath)
+		return this.getDefinition(state, metadataType, metadataItem, localPath)
+	}
+
+	getDefinition = (
+		state: RootState,
+		metadataType: string,
+		metadataItem: string,
+		localPath: string
+	) => {
+		if (metadataType === "viewdef" && metadataItem) {
+			const viewDef = viewSelectors.selectById(state, metadataItem)
+				?.parsed as PlainViewDef
+			if (!localPath) {
+				return viewDef as DefinitionMap
 			}
-		})
+			return get(viewDef, localPath) as DefinitionMap
+		}
+
+		if (metadataType === "componentvariant" && metadataItem) {
+			//return getComponentVariant(state, metadataItem, localPath)
+		}
+	}
 
 	useMetadataList = (
 		context: Context,

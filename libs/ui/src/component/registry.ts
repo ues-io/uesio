@@ -78,12 +78,12 @@ const getSignal = (key: string, signal: string) =>
 
 const getPropertiesDefinition = (key: string) => {
 	const propDef = definitionRegistry[key]
-	if (propDef) {
-		const [namespace, name] = parseKey(key)
-		propDef.name = name
-		propDef.namespace = namespace
+	const [namespace, name] = parseKey(key)
+	return {
+		...propDef,
+		name,
+		namespace,
 	}
-	return propDef
 }
 
 // Trims any path to the last element that is fully namespaced
