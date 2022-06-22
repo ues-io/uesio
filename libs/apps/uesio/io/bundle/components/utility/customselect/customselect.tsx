@@ -39,7 +39,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				backgroundColor: "white",
 				fontSize: "10pt",
 				border: "1px solid #ccc",
-				margin: "4px 0",
 				borderRadius: "4px",
 				overflow: "hidden",
 				boxShadow: "0 0 4px #00000033",
@@ -84,6 +83,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		isOpen,
 		selectedItem,
 		getMenuProps,
+		getComboboxProps,
 		getToggleButtonProps,
 		getLabelProps,
 		highlightedIndex,
@@ -151,9 +151,9 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				className={classes.menu}
 			>
 				<div {...getMenuProps()}>
-					{isOpen && (
+					{true && (
 						<>
-							<div>
+							<div {...getComboboxProps()}>
 								<input
 									type="text"
 									autoFocus
