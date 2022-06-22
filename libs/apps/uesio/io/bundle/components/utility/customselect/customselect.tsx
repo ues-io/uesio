@@ -39,7 +39,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				backgroundColor: "white",
 				fontSize: "10pt",
 				border: "1px solid #ccc",
-				margin: "4px 0",
 				borderRadius: "4px",
 				overflow: "hidden",
 				boxShadow: "0 0 4px #00000033",
@@ -84,6 +83,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		isOpen,
 		selectedItem,
 		getMenuProps,
+		getComboboxProps,
 		getToggleButtonProps,
 		getLabelProps,
 		highlightedIndex,
@@ -151,36 +151,28 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				className={classes.menu}
 			>
 				<div {...getMenuProps()}>
-					{isOpen && (
-						<>
-							<div>
-								<input
-									type="text"
-									autoFocus
-									className={classes.searchbox}
-									placeholder="Search..."
-									{...getInputProps()}
-								/>
+					<div {...getComboboxProps()}>
+						<input
+							type="text"
+							autoFocus
+							className={classes.searchbox}
+							placeholder="Search..."
+							{...getInputProps()}
+						/>
+					</div>
+					{items
+						.filter((item) =>
+							itemToString(item).includes(inputValue)
+						)
+						.map((item, index) => (
+							<div
+								className={classes.menuitem}
+								key={index}
+								{...getItemProps({ item, index })}
+							>
+								{itemRenderer(item, index, highlightedIndex)}
 							</div>
-							{items
-								.filter((item) =>
-									itemToString(item).includes(inputValue)
-								)
-								.map((item, index) => (
-									<div
-										className={classes.menuitem}
-										key={index}
-										{...getItemProps({ item, index })}
-									>
-										{itemRenderer(
-											item,
-											index,
-											highlightedIndex
-										)}
-									</div>
-								))}
-						</>
-					)}
+						))}
 				</div>
 			</div>
 		</div>
