@@ -151,36 +151,28 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				className={classes.menu}
 			>
 				<div {...getMenuProps()}>
-					{true && (
-						<>
-							<div {...getComboboxProps()}>
-								<input
-									type="text"
-									autoFocus
-									className={classes.searchbox}
-									placeholder="Search..."
-									{...getInputProps()}
-								/>
+					<div {...getComboboxProps()}>
+						<input
+							type="text"
+							autoFocus
+							className={classes.searchbox}
+							placeholder="Search..."
+							{...getInputProps()}
+						/>
+					</div>
+					{items
+						.filter((item) =>
+							itemToString(item).includes(inputValue)
+						)
+						.map((item, index) => (
+							<div
+								className={classes.menuitem}
+								key={index}
+								{...getItemProps({ item, index })}
+							>
+								{itemRenderer(item, index, highlightedIndex)}
 							</div>
-							{items
-								.filter((item) =>
-									itemToString(item).includes(inputValue)
-								)
-								.map((item, index) => (
-									<div
-										className={classes.menuitem}
-										key={index}
-										{...getItemProps({ item, index })}
-									>
-										{itemRenderer(
-											item,
-											index,
-											highlightedIndex
-										)}
-									</div>
-								))}
-						</>
-					)}
+						))}
 				</div>
 			</div>
 		</div>
