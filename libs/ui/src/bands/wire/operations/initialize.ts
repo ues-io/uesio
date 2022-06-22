@@ -141,10 +141,10 @@ export default (
 	): ThunkFunc =>
 	(dispatch) => {
 		const collectionMetadata: PlainCollectionMap = {}
+		const viewId = context.getViewId()
+		if (!viewId) throw new Error("Could not get View Def Id")
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
 			const wireDef = wireDefs[wirename]
-			const viewId = context.getViewId()
-			if (!viewId) throw new Error("Could not get View Def Id")
 			return wireDef.viewOnly
 				? initializeViewOnlyWire(
 						context,
@@ -155,7 +155,6 @@ export default (
 				  )
 				: initializeRegularWire(context, viewId, wirename, wireDef)
 		})
-
 		dispatch(init([initializedWires, collectionMetadata]))
 		return context
 	}

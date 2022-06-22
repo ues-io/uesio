@@ -1,37 +1,46 @@
 import { FunctionComponent } from "react"
-import { hooks, signal, component } from "@uesio/ui"
+import { hooks, component, styles } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
+import isEqual from "lodash/isequal"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path, action, context } = props
 	const wireName = component.path.getKeyAtPath(path || "")
 	const viewDef = uesio.view.useViewDef(context.getViewDefId() || "")
+	const wire = uesio.wire.useWire(wireName || "")
+	const wireDef = viewDef.wires?.[wireName || ""]
+	const classes = styles.useUtilityStyles(
+		{
+			root: {
+				color: isEqual(wireDef, wire?.getWireDef())
+					? "inherit"
+					: "#FF5E2F",
+			},
+		},
+		props
+	)
+
 	if (!action || !wireName) {
 		return null
 	}
 
-	const onClick = () => {
-		const wireDef = viewDef?.wires?.[wireName]
-		const signals: signal.SignalDefinition[] = [
-			{
-				signal: "wire/INIT",
-				wires: [wireName],
-				wireDefs: [wireDef || {}],
-			},
-			{
-				signal: "wire/LOAD",
-				wires: [wireName],
-			},
-		]
-		uesio.signal.getHandler(signals)
-	}
-
 	return (
 		<ActionButton
-			title={"Refresh Wire"}
-			onClick={() => onClick()}
+			disabled={!Object.keys(viewDef?.wires || {}).length}
+			className={classes.root}
+			title="Refresh Wire"
+			onClick={uesio.signal.getHandler([
+				{
+					signal: "wire/INIT",
+					wireDefs: viewDef?.wires || {},
+				},
+				{
+					signal: "wire/LOAD",
+					wires: [wireName],
+				},
+			])}
 			icon="refresh"
 			context={context}
 		/>
