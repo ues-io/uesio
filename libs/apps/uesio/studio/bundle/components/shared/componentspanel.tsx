@@ -14,10 +14,12 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
-			const typeArray = target.dataset.type.split(".")
-			const metadataType =
-				typeArray.length === 3 ? "componentvariant" : "component"
-			uesio.builder.setDragNode(metadataType, target.dataset.type, "")
+			const typeArray = target.dataset.type.split(":")
+			const metadataType = typeArray.shift()
+			const metadataItem = typeArray.join(":")
+			if (metadataType && metadataItem) {
+				uesio.builder.setDragNode(metadataType, metadataItem, "")
+			}
 		}
 	}
 	const onDragEnd = () => {
@@ -79,7 +81,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									context,
 									selected: isSelected,
 									expandChildren: true,
-									draggable: fullName,
+									draggable: `component:${fullName}`,
 									icon: "drag_indicator",
 								}
 								const variants = variantsMap[fullName]
@@ -127,9 +129,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 															selected={
 																isVariantSelected
 															}
-															draggable={
-																variantFullName
-															}
+															draggable={`componentvariant:${variantFullName}`}
 															context={context}
 														/>
 													)
