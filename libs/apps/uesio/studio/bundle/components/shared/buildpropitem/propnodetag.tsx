@@ -2,8 +2,6 @@ import { FunctionComponent, useState } from "react"
 
 import { component, context, styles } from "@uesio/ui"
 
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-
 type Props = {
 	title: string
 	icon?: string
@@ -14,25 +12,31 @@ type Props = {
 	context: context.Context
 	tooltip?: string
 	expandChildren?: boolean
+	panelAlwaysExpanded?: boolean
 	popChildren?: boolean
+	panelChildren?: React.ReactNode
+	popperChildren?: React.ReactNode
 }
 
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {
 		title,
 		onClick,
-		children,
 		draggable,
 		selected,
 		context,
-		popChildren,
-		expandChildren,
+		panelAlwaysExpanded,
+		panelChildren,
+		popperChildren,
 	} = props
 
-	const [expanded, setExpanded] = useState<boolean>(false)
+	const [expanded, setExpanded] = useState<boolean>(
+		panelAlwaysExpanded ? panelAlwaysExpanded : false
+	)
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -67,10 +71,10 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			ref={setAnchorEl}
 			draggable={!!draggable && !expanded}
 			data-type={draggable}
+			onClick={(e) => e.stopPropagation()}
 		>
 			<Tile
 				variant="uesio/studio.propnodetag"
-				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
 				isSelected={selected}
@@ -80,18 +84,22 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 					context={context}
 					toggle={<div className={classes.title}>{title}</div>}
 					showArrow={false}
-					expandState={[expanded, setExpanded]}
+					expandState={
+						panelAlwaysExpanded
+							? [true, null]
+							: [expanded, setExpanded]
+					}
 				>
-					{expandChildren && children}
+					{panelChildren}
 				</IOExpandPanel>
 			</Tile>
-			{selected && popChildren && anchorEl && children && (
+			{selected && anchorEl && popperChildren && (
 				<Popper
 					referenceEl={anchorEl}
 					context={context}
 					placement="right"
 				>
-					{children}
+					{popperChildren}
 				</Popper>
 			)}
 		</div>

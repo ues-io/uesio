@@ -8,6 +8,7 @@ import CloneAction from "./actions/cloneaction"
 import RunSignalsAction from "./actions/runsignalsaction"
 import LoadWireAction from "./actions/loadwireaction"
 import ToggleConditionAction from "./actions/toggleconditionaction"
+import AddCondition from "./actions/addcondition"
 import { ActionProps } from "./actions/actiondefinition"
 
 interface Props extends definition.BaseProps {
@@ -26,6 +27,7 @@ const ACTION_TO_COMPONENT: {
 	LOAD_WIRE: LoadWireAction,
 	DELETE: DeleteAction,
 	MOVE: MoveActions,
+	ADD_CONDITION: AddCondition,
 }
 
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
