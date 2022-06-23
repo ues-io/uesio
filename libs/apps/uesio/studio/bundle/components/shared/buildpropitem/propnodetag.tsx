@@ -1,5 +1,4 @@
-import { FunctionComponent, useState } from "react"
-
+import { FunctionComponent, ReactNode, useState } from "react"
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
@@ -14,8 +13,8 @@ type Props = {
 	expandChildren?: boolean
 	panelAlwaysExpanded?: boolean
 	popChildren?: boolean
-	panelChildren?: React.ReactNode
-	popperChildren?: React.ReactNode
+	panelChildren?: ReactNode
+	popperChildren?: ReactNode
 }
 
 const Tile = component.getUtility("uesio/io.tile")

@@ -105,7 +105,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							context={context}
 							condition={condition}
 							valueAPI={valueAPI}
-							onClick={(e: MouseEvent) => {
+							onClick={() => {
 								uesio.builder.setSelectedNode(
 									"viewdef",
 									viewDefId,
