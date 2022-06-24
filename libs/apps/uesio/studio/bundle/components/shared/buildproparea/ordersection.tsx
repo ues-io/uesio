@@ -93,10 +93,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 								orderPath
 							)
 						}}
-						popChildren
-						context={context}
-					>
-						{
+						popperChildren={
 							<PropertiesPane
 								path={orderPath}
 								index={0}
@@ -111,7 +108,8 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 								valueAPI={valueAPI}
 							/>
 						}
-					</PropNodeTag>
+						context={context}
+					/>
 				)
 			})}
 		</>

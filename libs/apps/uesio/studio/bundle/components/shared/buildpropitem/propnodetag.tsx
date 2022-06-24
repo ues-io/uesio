@@ -12,7 +12,6 @@ type Props = {
 	tooltip?: string
 	expandChildren?: boolean
 	panelAlwaysExpanded?: boolean
-	popChildren?: boolean
 	panelChildren?: ReactNode
 	popperChildren?: ReactNode
 }

@@ -277,7 +277,6 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 			expandChildren={true}
 			context={context}
 			panelAlwaysExpanded={true}
-			popChildren
 			popperChildren={
 				<PropertiesPane
 					path={conditionPath}

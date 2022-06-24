@@ -80,7 +80,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									tooltip: propDef.description,
 									context,
 									selected: isSelected,
-									expandChildren: true,
 									draggable: `component:${fullName}`,
 									icon: "drag_indicator",
 								}
@@ -91,52 +90,55 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									<PropNodeTag
 										key={fullName}
 										{...sharedProps}
-									>
-										{variants && (
-											<Grid
-												styles={{
-													root: {
-														gridTemplateColumns:
-															"1fr",
-														columnGap: "8px",
-														rowGap: "8px",
-														padding: "8px",
-													},
-												}}
-												context={context}
-											>
-												{variants.map((variant) => {
-													const variantFullName = `${fullName}:${variant}`
-													const isVariantSelected =
-														selectedType ===
-															"componentvariant" &&
-														selectedItem ===
-															variantFullName
-													return (
-														<PropNodeTag
-															title={variant}
-															key={variant}
-															onClick={(
-																e: MouseEvent
-															) => {
-																e.stopPropagation()
-																uesio.builder.setSelectedNode(
-																	"componentvariant",
-																	variantFullName,
-																	""
-																)
-															}}
-															selected={
-																isVariantSelected
-															}
-															draggable={`componentvariant:${variantFullName}`}
-															context={context}
-														/>
-													)
-												})}
-											</Grid>
-										)}
-									</PropNodeTag>
+										panelChildren={
+											variants && (
+												<Grid
+													styles={{
+														root: {
+															gridTemplateColumns:
+																"1fr",
+															columnGap: "8px",
+															rowGap: "8px",
+															padding: "8px",
+														},
+													}}
+													context={context}
+												>
+													{variants.map((variant) => {
+														const variantFullName = `${fullName}:${variant}`
+														const isVariantSelected =
+															selectedType ===
+																"componentvariant" &&
+															selectedItem ===
+																variantFullName
+														return (
+															<PropNodeTag
+																title={variant}
+																key={variant}
+																onClick={(
+																	e: MouseEvent
+																) => {
+																	e.stopPropagation()
+																	uesio.builder.setSelectedNode(
+																		"componentvariant",
+																		variantFullName,
+																		""
+																	)
+																}}
+																selected={
+																	isVariantSelected
+																}
+																draggable={`componentvariant:${variantFullName}`}
+																context={
+																	context
+																}
+															/>
+														)
+													})}
+												</Grid>
+											)
+										}
+									/>
 								)
 							}
 						)}

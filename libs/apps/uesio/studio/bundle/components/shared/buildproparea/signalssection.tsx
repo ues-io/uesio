@@ -76,9 +76,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							)
 						}
 						context={context}
-						popChildren
-					>
-						{
+						popperChildren={
 							<PropertiesPane
 								path={signalPath}
 								index={0}
@@ -96,7 +94,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								valueAPI={valueAPI}
 							/>
 						}
-					</PropNodeTag>
+					/>
 				)
 			})}
 		</>
