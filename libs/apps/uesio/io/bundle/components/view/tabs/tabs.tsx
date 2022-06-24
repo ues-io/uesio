@@ -23,13 +23,10 @@ const Tabs: FunctionComponent<Props> = (props) => {
 		"tabs",
 		definition.id || path
 	)
-
-	const foundIndex = definition.tabs.findIndex(
-		({ id }) => id === selectedTabId
-	)
+	const tabs = definition.tabs ? definition.tabs : []
+	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
 	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
-
-	const selectedTab = definition.tabs[selectedIndex]
+	const selectedTab = tabs[selectedIndex]
 
 	return (
 		<div className={classes.root}>
@@ -39,9 +36,9 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					tab: classes.tab,
 					tabSelected: classes.tabSelected,
 				}}
-				selectedTab={selectedTab.id}
+				selectedTab={selectedTab && selectedTab.id}
 				setSelectedTab={setSelectedTab}
-				tabs={definition.tabs}
+				tabs={tabs}
 				context={context}
 			/>
 
