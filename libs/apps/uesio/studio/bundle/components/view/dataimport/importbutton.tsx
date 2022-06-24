@@ -21,7 +21,7 @@ const readCSV = async (file: File): Promise<string[][]> =>
 	new Promise<string[][]>((resolve) => {
 		Papa.parse(file, {
 			header: false,
-			complete: function (results: ParseResult<string[]>) {
+			complete: (results: ParseResult<string[]>) => {
 				console.log("Finished:", results.data)
 				resolve(results.data)
 			},
