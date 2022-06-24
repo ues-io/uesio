@@ -58,20 +58,20 @@ function getPropHandler(type?: string) {
 	}
 }
 
-const PropList: FunctionComponent<Props> = ({
-	path,
-	propsDef,
-	context,
-	properties,
-	valueAPI,
-}) => {
+const PropList: FunctionComponent<Props> = (props) => {
+	const { path, propsDef, context, properties, valueAPI } = props
+
 	const displayConditionsAreMet = (conditions: builder.DisplayCondition[]) =>
-		conditions.some(({ property, value, values }) => {
+		conditions.some(({ property, values, type }) => {
 			const key = valueAPI.get(
 				`${path}['${property}']`
 			) as definition.DefinitionValue
-
-			return [...(values ? values : [value])].includes(key)
+			if (type === "isNotNull") return !!key
+			if (type === "isNull") return !key
+			const includes = [...values].includes(key)
+			if (!type || type === "includes") return includes
+			if (type === "excludes") return !includes
+			return true
 		})
 	return (
 		<>

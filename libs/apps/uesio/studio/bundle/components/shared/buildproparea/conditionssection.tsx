@@ -128,9 +128,8 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		],
 	},
 	{
-		//TO-DO This should be a dynamic metadatapicker
 		name: "lookupWire",
-		type: "TEXT",
+		type: "WIRE",
 		label: "Lookup Wire",
 		display: [
 			{
