@@ -20,7 +20,8 @@ const getHeaderFields = async (files: FileList | null): Promise<string[]> => {
 const readCSV = async (file: File): Promise<string[][]> =>
 	new Promise<string[][]>((resolve) => {
 		Papa.parse(file, {
-			header: false,
+			header: false, //If false, will omit the header row. If data is an array of arrays this option is ignored. If data is an array of objects the keys of the first object are the header row. If data is an object with the keys fields and data the fields are the header row.
+			skipEmptyLines: true, //If true, lines that are completely empty (those which evaluate to an empty string) will be skipped. If set to 'greedy', lines that don't have any content (those which have only whitespace after parsing) will also be skipped.
 			complete: (results: ParseResult<string[]>) => {
 				console.log("Finished:", results.data)
 				resolve(results.data)
