@@ -12,21 +12,11 @@ type loaderFunc func(change adapt.Item, data interface{})
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-
-		stringvalue := getValue(data, mapping, index)
-		numberInt, err := strconv.ParseInt(stringvalue, 10, 64)
+		number, err := strconv.ParseFloat(getValue(data, mapping, index), 64)
 		if err != nil {
-			numberFloat, err := strconv.ParseFloat(stringvalue, 64)
-			if err != nil {
-				return
-			}
-			println("Float", numberFloat)
-			change[fieldMetadata.GetFullName()] = numberFloat
 			return
 		}
-		println("Int", numberInt)
-		change[fieldMetadata.GetFullName()] = numberInt
-
+		change[fieldMetadata.GetFullName()] = number
 	}
 }
 
