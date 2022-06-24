@@ -2,8 +2,12 @@ import { definition, builder } from "@uesio/ui"
 
 interface TabsDefinition extends definition.BaseDefinition {
 	id?: string
-	tabs: { id: string; label: string; components: definition.DefinitionList }[]
-	footer: definition.DefinitionList
+	tabs?: {
+		id: string
+		label: string
+		components: definition.DefinitionList
+	}[]
+	footer?: definition.DefinitionList
 }
 
 interface Props extends definition.BaseProps {
@@ -11,8 +15,8 @@ interface Props extends definition.BaseProps {
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Box",
-	description: "Used for grouping elements",
+	title: "Tabs",
+	description: "Tab component",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
