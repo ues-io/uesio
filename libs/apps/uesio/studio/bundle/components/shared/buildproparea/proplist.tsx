@@ -58,30 +58,52 @@ function getPropHandler(type?: string) {
 	}
 }
 
+export const propsToRender = (
+	properties: builder.PropDescriptor[],
+	conditionValues: definition.DefinitionMap
+) =>
+	properties.filter((descriptor) => {
+		if (!descriptor.display) return true
+		return descriptor.display.some((condition) => {
+			const { type, property } = condition
+
+			if (!property) {
+				console.error("Displaycondition is missing the property key")
+				return true
+			}
+
+			const isSet = property in conditionValues
+			if (type === "SET") return isSet
+			if (type === "NOT_SET") return !isSet
+
+			if (!isSet) {
+				console.warn(
+					`Prop displaycondition error: ${property} does not exist on ${JSON.stringify(
+						conditionValues
+					)}`
+				)
+				return true
+			}
+			const key = conditionValues[property] as definition.DefinitionValue
+
+			if (type === "BLANK") return !key && key !== false
+			if (type === "NOT_BLANK") return key === false || !!key
+			if (type === "INCLUDES") return condition.values.includes(key)
+			if (type === "EQUALS" || !type) return key === condition.value
+			if (type === "NOT_EQUALS") return key !== condition.value
+			return true
+		})
+	})
+
 const PropList: FunctionComponent<Props> = (props) => {
 	const { path, propsDef, context, properties, valueAPI } = props
 
-	const displayConditionsAreMet = (conditions: builder.DisplayCondition[]) =>
-		conditions.some(({ property, values, type }) => {
-			const key = valueAPI.get(
-				`${path}['${property}']`
-			) as definition.DefinitionValue
-			if (type === "isNotNull") return !!key
-			if (type === "isNull") return !key
-			const includes = [...values].includes(key)
-			if (!type || type === "includes") return includes
-			if (type === "excludes") return !includes
-			return true
-		})
+	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
+	const propertiesToRender = propsToRender(properties, conditionValues)
+
 	return (
 		<>
-			{properties.map((descriptor, index) => {
-				if (
-					descriptor.display &&
-					!displayConditionsAreMet(descriptor.display)
-				)
-					return null
-
+			{propertiesToRender.map((descriptor, index) => {
 				const newPath =
 					descriptor.type === "KEY"
 						? path

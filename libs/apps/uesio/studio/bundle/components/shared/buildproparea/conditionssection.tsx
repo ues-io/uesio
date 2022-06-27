@@ -112,6 +112,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "operator",
+				type: "INCLUDES",
 				values: ["EQ", "NOT_EQ", "GT", "LT", "GTE", "LTE", "IN"],
 			},
 		],
@@ -123,7 +124,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["VALUE"],
+				value: "VALUE",
 			},
 		],
 	},
@@ -134,7 +135,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["LOOKUP"],
+				value: "LOOKUP",
 			},
 		],
 	},
@@ -146,7 +147,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["LOOKUP"],
+				value: "LOOKUP",
 			},
 		],
 	},
@@ -157,7 +158,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["PARAM"],
+				value: "PARAM",
 			},
 		],
 	},
