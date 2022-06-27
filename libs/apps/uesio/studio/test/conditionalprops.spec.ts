@@ -7,7 +7,7 @@ type Test = {
 	expectedLength: number
 }
 
-const equalsTrue: Test = {
+const equalsStringTrue: Test = {
 	conditionProperties: [
 		{
 			name: "foo",
@@ -26,7 +26,7 @@ const equalsTrue: Test = {
 	},
 	expectedLength: 1,
 }
-const equalsFalse: Test = {
+const equalsStringFalse: Test = {
 	conditionProperties: [
 		{
 			name: "name",
@@ -42,6 +42,64 @@ const equalsFalse: Test = {
 	],
 	conditionValues: {
 		name: "somethingElse",
+	},
+	expectedLength: 0,
+}
+
+const equalsNumberTrue: Test = {
+	conditionProperties: [
+		{
+			name: "foo",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					property: "age",
+					value: 22,
+				},
+			],
+		},
+	],
+	conditionValues: {
+		age: 22,
+	},
+	expectedLength: 1,
+}
+const equalsNumberFalse: Test = {
+	conditionProperties: [
+		{
+			name: "foo",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					property: "name",
+					value: 90,
+				},
+			],
+		},
+	],
+	conditionValues: {
+		age: 22,
+	},
+	expectedLength: 0,
+}
+const equalsUnset: Test = {
+	conditionProperties: [
+		{
+			name: "foo",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					property: "notexistingfield",
+					value: 90,
+				},
+			],
+		},
+	],
+	conditionValues: {
+		age: 22,
 	},
 	expectedLength: 0,
 }
@@ -79,10 +137,26 @@ const blankUnsetTrue: Test = {
 			],
 		},
 	],
-	conditionValues: {
-		foo: "",
-	},
+	conditionValues: {},
 	expectedLength: 1,
+}
+
+const notBlankUnsetTrue: Test = {
+	conditionProperties: [
+		{
+			name: "name",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					type: "NOT_BLANK",
+					property: "name",
+				},
+			],
+		},
+	],
+	conditionValues: {},
+	expectedLength: 0,
 }
 const blankFalse: Test = {
 	conditionProperties: [
@@ -261,7 +335,7 @@ const includesFalse: Test = {
 	},
 	expectedLength: 0,
 }
-const unsetFalse: Test = {
+const notSetFalse: Test = {
 	conditionProperties: [
 		{
 			name: "surname",
@@ -269,7 +343,7 @@ const unsetFalse: Test = {
 			label: "",
 			display: [
 				{
-					type: "UNSET",
+					type: "NOT_SET",
 					property: "name",
 				},
 			],
@@ -288,7 +362,7 @@ const unsetTrue: Test = {
 			label: "",
 			display: [
 				{
-					type: "UNSET",
+					type: "NOT_SET",
 					property: "name",
 				},
 			],
@@ -302,12 +376,16 @@ const unsetTrue: Test = {
 
 const tests = {
 	unsetTrue,
-	unsetFalse,
-	equalsTrue,
-	equalsFalse,
+	notSetFalse,
+	equalsStringTrue,
+	equalsStringFalse,
+	equalsNumberTrue,
+	equalsNumberFalse,
+	equalsUnset,
 	blankTrue,
 	blankFalse,
 	blankUnsetTrue,
+	notBlankUnsetTrue,
 	blankFalseBoolean,
 	notBlankTrue,
 	notBlankFalse,
