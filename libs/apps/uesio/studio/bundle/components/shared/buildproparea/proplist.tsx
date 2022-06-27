@@ -73,22 +73,21 @@ export const propsToRender = (
 			}
 
 			const isSet = property in conditionValues
-			if (type === "SET") return isSet
-			if (type === "NOT_SET") return !isSet
+			if (type === "UNSET") return !isSet
 
-			if (!isSet) {
-				console.warn(
-					`Prop displaycondition error: ${property} does not exist on ${JSON.stringify(
-						conditionValues
-					)}`
-				)
-				return true
-			}
 			const key = conditionValues[property] as definition.DefinitionValue
 
-			if (type === "BLANK") return !key && key !== false
-			if (type === "NOT_BLANK") return key === false || !!key
-			if (type === "INCLUDES") return condition.values.includes(key)
+			if (type === "BLANK") return !isSet || (!key && key !== false)
+
+			if (type === "NOT_BLANK") return (isSet && key === false) || !!key
+			if (type === "INCLUDES") {
+				console.log({
+					key,
+					values: condition.values,
+					returning: condition.values.includes(key),
+				})
+				return condition.values.includes(key)
+			}
 			if (type === "EQUALS" || !type) return key === condition.value
 			if (type === "NOT_EQUALS") return key !== condition.value
 			return true

@@ -45,44 +45,7 @@ const equalsFalse: Test = {
 	},
 	expectedLength: 0,
 }
-const setTrue: Test = {
-	conditionProperties: [
-		{
-			name: "foo",
-			type: "TEXT",
-			label: "",
-			display: [
-				{
-					type: "SET",
-					property: "name",
-				},
-			],
-		},
-	],
-	conditionValues: {
-		name: "somethingElse",
-	},
-	expectedLength: 1,
-}
-const setFalse: Test = {
-	conditionProperties: [
-		{
-			name: "name",
-			type: "TEXT",
-			label: "",
-			display: [
-				{
-					type: "SET",
-					property: "quak",
-				},
-			],
-		},
-	],
-	conditionValues: {
-		name: "somethingElse",
-	},
-	expectedLength: 0,
-}
+
 const blankTrue: Test = {
 	conditionProperties: [
 		{
@@ -99,6 +62,25 @@ const blankTrue: Test = {
 	],
 	conditionValues: {
 		name: "",
+	},
+	expectedLength: 1,
+}
+const blankUnsetTrue: Test = {
+	conditionProperties: [
+		{
+			name: "name",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					type: "BLANK",
+					property: "name",
+				},
+			],
+		},
+	],
+	conditionValues: {
+		foo: "",
 	},
 	expectedLength: 1,
 }
@@ -248,14 +230,14 @@ const includesTrue: Test = {
 			display: [
 				{
 					type: "INCLUDES",
-					property: "name",
-					values: ["jimmy"],
+					property: "names",
+					values: ["chuck", "norris"],
 				},
 			],
 		},
 	],
 	conditionValues: {
-		names: ["jimmy", "Tom"],
+		names: "norris",
 	},
 	expectedLength: 1,
 }
@@ -268,25 +250,64 @@ const includesFalse: Test = {
 			display: [
 				{
 					type: "INCLUDES",
-					property: "names",
-					values: ["chuck"],
+					property: "name",
+					values: ["chuck", "jimmy"],
 				},
 			],
 		},
 	],
 	conditionValues: {
-		names: ["jimmy", "Tom"],
+		name: "noris",
 	},
 	expectedLength: 0,
 }
+const unsetFalse: Test = {
+	conditionProperties: [
+		{
+			name: "surname",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					type: "UNSET",
+					property: "name",
+				},
+			],
+		},
+	],
+	conditionValues: {
+		name: "jimmy",
+	},
+	expectedLength: 0,
+}
+const unsetTrue: Test = {
+	conditionProperties: [
+		{
+			name: "surname",
+			type: "TEXT",
+			label: "",
+			display: [
+				{
+					type: "UNSET",
+					property: "name",
+				},
+			],
+		},
+	],
+	conditionValues: {
+		foo: "bar",
+	},
+	expectedLength: 1,
+}
 
 const tests = {
+	unsetTrue,
+	unsetFalse,
 	equalsTrue,
 	equalsFalse,
-	setTrue,
-	setFalse,
 	blankTrue,
 	blankFalse,
+	blankUnsetTrue,
 	blankFalseBoolean,
 	notBlankTrue,
 	notBlankFalse,

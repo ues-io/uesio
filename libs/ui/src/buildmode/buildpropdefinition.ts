@@ -110,7 +110,7 @@ type DisplayCondition = {
 	  }
 	| { type: "INCLUDES"; values: DefinitionValue[] }
 	| {
-			type: "BLANK" | "NOT_BLANK" | "SET" | "NOT_SET"
+			type: "BLANK" | "NOT_BLANK" | "UNSET"
 	  }
 )
 
