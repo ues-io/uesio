@@ -1,5 +1,5 @@
-import { useState, FunctionComponent, ReactNode, MouseEvent } from "react"
-import { useCombobox, useMultipleSelection, useSelect } from "downshift"
+import { useState, FunctionComponent, ReactNode } from "react"
+import { useMultipleSelection, useSelect } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
 import { IconUtilityProps } from "../icon/icon"
@@ -140,34 +140,29 @@ const CustomMultiSelect: FunctionComponent<CustomMultiSelectProps<unknown>> = (
 		<div ref={setAnchorEl}>
 			<div>
 				<div>
-					{selectedItems.map(function renderSelectedItem(
-						selectedItem,
-						index
-					) {
-						return (
-							<div
-								className={classes.selecteditem}
-								key={`${selectedItem}-${index}`}
-							>
-								{tagRenderer(selectedItem)}
-								<button
-									className={classes.editbutton}
-									type="button"
-									onClick={(e) => {
-										e.stopPropagation()
-										removeSelectedItem(selectedItem)
-										setValue(
-											selectedItems.filter(
-												(elem) => elem === selectedItem
-											)
+					{selectedItems.map((selectedItem, index) => (
+						<div
+							className={classes.selecteditem}
+							key={`${selectedItem}-${index}`}
+						>
+							{tagRenderer(selectedItem)}
+							<button
+								className={classes.editbutton}
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation()
+									removeSelectedItem(selectedItem)
+									setValue(
+										selectedItems.filter(
+											(elem) => elem === selectedItem
 										)
-									}}
-								>
-									<Icon icon="close" context={context} />
-								</button>
-							</div>
-						)
-					})}
+									)
+								}}
+							>
+								<Icon icon="close" context={context} />
+							</button>
+						</div>
+					))}
 					<button
 						className={classes.editbutton}
 						type="button"
