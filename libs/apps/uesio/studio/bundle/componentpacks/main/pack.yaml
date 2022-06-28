@@ -90,6 +90,11 @@ components:
         - uesio/io.button:uesio/io.primary
       utilities:
         - uesio/io.button
+    multimetadatafield:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.selectfield
+        - uesio/io.grid
     # Define a builder for the uesio runtime and slot
     runtime:
     # uesio.view:

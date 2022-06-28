@@ -66,6 +66,7 @@ components:
     togglefield:
     codefield:
     customselect:
+    custommultiselect:
     dialog:
     dialogplain:
     expandpanel:
