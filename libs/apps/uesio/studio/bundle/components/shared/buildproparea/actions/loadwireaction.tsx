@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { hooks, component, styles } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
-import isEqual from "lodash/isequal"
+import isEqual from "lodash/isEqual"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
