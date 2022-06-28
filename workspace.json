@@ -378,6 +378,16 @@
               "libs/apps/uesio/studio/**/*.ts*"
             ]
           }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/apps/uesio/studio/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/libs/apps/uesio/studio"
+          ]
         }
       },
       "tags": [],
