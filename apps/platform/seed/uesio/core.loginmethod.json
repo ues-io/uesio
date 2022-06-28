@@ -1,28 +1,28 @@
 [
 	{
 		"user": {
-			"id": "ben"
+			"uniquekey": "ben"
 		},
 		"federationid": "ben",
 		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
-			"id": "abel"
+			"uniquekey": "abel"
 		},
 		"federationid": "abel",
 		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
-			"id": "wessel"
+			"uniquekey": "wessel"
 		},
 		"federationid": "wessel",
 		"authsource": "uesio/core.mock"
 	},
 	{
 		"user": {
-			"id": "gregg"
+			"uniquekey": "gregg"
 		},
 		"federationid": "gregg",
 		"authsource": "uesio/core.mock"

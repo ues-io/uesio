@@ -21,6 +21,7 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 
 type SignupMethod struct {
 	ID               string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey        string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name             string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace        string     `yaml:"-" uesio:"-"`
 	AuthSource       string     `yaml:"authsource" uesio:"uesio/studio.authsource"`

@@ -21,6 +21,7 @@ func NewProfile(key string) (*Profile, error) {
 
 type Profile struct {
 	ID                string          `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey         string          `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name              string          `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"uesio/studio.permissionsetsrefs"`

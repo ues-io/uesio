@@ -32,19 +32,14 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 	}
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
-	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
+	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserKey")
 
 	if browserSessionSite != site.GetFullName() {
 		logger.Log("Sites mismatch: "+browserSessionUser, logger.INFO)
 		return sess.NewPublic(site), nil
 	}
 
-	fakeSession := sess.NewSession(nil, &meta.User{
-		ID:        "system",
-		FirstName: "Super",
-		LastName:  "Admin",
-		Profile:   "uesio/core.public",
-	}, site)
+	fakeSession := sess.NewSession(nil, &meta.User{}, site)
 	fakeSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
 			"uesio/core.user":     true,
@@ -73,17 +68,17 @@ func getUserFromSession(userid string, session *sess.Session) (*meta.User, error
 		return sess.GetPublicUser(session.GetSite()), nil
 	}
 	// Get Cache site info for the host
-	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppID())
+	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppFullName())
 	if ok {
 		return cachedUser, nil
 	}
 
-	user, err := GetUserByID(userid, session)
+	user, err := GetUserByID(userid, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = SetUserCache(userid, session.GetSite().GetAppID(), user)
+	err = SetUserCache(userid, session.GetSite().GetAppFullName(), user)
 	if err != nil {
 		return nil, err
 	}

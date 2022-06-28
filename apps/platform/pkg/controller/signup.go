@@ -103,7 +103,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.GetUserByID(username, publicSession)
+	user, err := auth.GetUserByID(username, publicSession, nil)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

@@ -69,6 +69,9 @@ func serve(cmd *cobra.Command, args []string) {
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
 
+	err := setSystemUser(nil, nil)
+	cobra.CheckErr(err)
+
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 

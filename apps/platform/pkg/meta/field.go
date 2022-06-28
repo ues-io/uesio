@@ -37,6 +37,7 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey              string                  `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
 	CollectionRef          string                  `yaml:"-" uesio:"uesio/studio.collection"`
 	Namespace              string                  `yaml:"-" uesio:"-"`

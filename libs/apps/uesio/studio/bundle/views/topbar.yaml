@@ -41,7 +41,7 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:

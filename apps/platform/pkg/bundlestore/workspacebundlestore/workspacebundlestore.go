@@ -191,7 +191,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
-	workspaceID := namespace + "_" + version
+	workspaceID := namespace + ":" + version
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{

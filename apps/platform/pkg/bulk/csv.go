@@ -23,7 +23,6 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 		r.Comma = options.Comma
 	}
 	changes := adapt.Collection{}
-	lookups := []adapt.Lookup{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -99,14 +98,6 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 		} else if fieldMetadata.Type == "NUMBER" {
 			loaderFuncs = append(loaderFuncs, getNumberLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else if fieldMetadata.Type == "REFERENCE" {
-			if mapping.MatchField != "" {
-				lookups = append(lookups, adapt.Lookup{
-					RefField:      fieldName,
-					MatchField:    mapping.MatchField,
-					MatchTemplate: "${" + mapping.MatchField + "}",
-				})
-			}
-
 			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else {
 			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, valueGetter))
@@ -133,19 +124,13 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 
 	}
 
-	matchTemplate := adapt.GetStringWithDefault(spec.UpsertTemplate, "${"+spec.UpsertKey+"}")
-
 	return []datasource.SaveRequest{
 		{
 			Collection: spec.Collection,
 			Wire:       "bulkupload",
 			Changes:    &changes,
 			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{
-					MatchField:    spec.UpsertKey,
-					MatchTemplate: matchTemplate,
-				},
-				Lookups: lookups,
+				Upsert: &adapt.UpsertOptions{},
 			},
 		},
 	}, nil

@@ -102,7 +102,7 @@ func StandardGetFields(item CollectionableItem) []string {
 func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
 	itemMeta := item.GetItemMeta()
 	if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
-		return nil, errors.New("Field Not Found: " + fieldName)
+		return nil, errors.New("Field Not Found: " + item.GetCollectionName() + " : " + fieldName)
 	}
 	return reflecttool.GetField(item, fieldName)
 }

@@ -22,6 +22,7 @@ func NewFile(key string) (*File, error) {
 
 type File struct {
 	ID        string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`

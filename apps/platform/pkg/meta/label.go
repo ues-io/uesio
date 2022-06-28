@@ -10,6 +10,7 @@ import (
 
 type Label struct {
 	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Value     string     `yaml:"value" uesio:"uesio/studio.value"`
 	Namespace string     `yaml:"-" uesio:"-"`

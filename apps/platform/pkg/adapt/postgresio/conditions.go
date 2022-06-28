@@ -76,19 +76,19 @@ func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *
 
 func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder) {
 	if condition.Operator != "IN" {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, condition.Value))))
 		return
 	}
 
 	values := condition.Value.([]string)
 	if len(values) == 1 {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, values[0]))))
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, values[0]))))
 		return
 	}
 
 	appendedValues := make([]string, len(values))
 	for i, v := range values {
-		appendedValues[i] = fmt.Sprintf("%s:%s", collectionName, v)
+		appendedValues[i] = makeDBId(collectionName, v)
 	}
 	builder.addQueryPart(fmt.Sprintf("main.id = ANY(%s)", builder.addValue(appendedValues)))
 	return

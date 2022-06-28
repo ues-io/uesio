@@ -19,6 +19,7 @@ func NewUserAccessToken(key string) (*UserAccessToken, error) {
 
 type UserAccessToken struct {
 	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Type       string            `yaml:"type" uesio:"uesio/studio.type"`

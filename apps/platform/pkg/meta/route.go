@@ -21,6 +21,7 @@ func NewRoute(key string) (*Route, error) {
 
 type Route struct {
 	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Path       string            `yaml:"path" uesio:"uesio/studio.path"`

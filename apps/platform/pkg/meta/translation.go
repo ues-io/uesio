@@ -9,6 +9,7 @@ import (
 
 type Translation struct {
 	ID        string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Workspace *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	Labels    map[string]string `yaml:"labels" uesio:"uesio/studio.labels"`

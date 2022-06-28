@@ -28,6 +28,7 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 
 type ComponentVariant struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`

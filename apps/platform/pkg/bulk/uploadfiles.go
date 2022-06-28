@@ -69,64 +69,49 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	connection.SetMetadata(metadata)
 
-	// If we need to use an upsert key
-	if spec.UpsertKey != "" {
-		idMap := adapt.LocatorMap{}
-		for i := range fileStreams {
-			idMap.AddID(fileStreams[i].Path, adapt.ReferenceLocator{
-				Item: fileStreams[i],
-			})
-		}
-
-		err := adapt.LoadLooper(connection, spec.Collection, idMap, []adapt.LoadRequestField{
-			{
-				ID: adapt.ID_FIELD,
-			},
-			{
-				ID: spec.UpsertKey,
-			},
-		}, spec.UpsertKey, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
-			if len(matchIndexes) != 1 {
-				return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
-			}
-
-			match := matchIndexes[0].Item
-
-			fileStream := match.(bundlestore.ReadItemStream)
-
-			idValue, err := item.GetField(adapt.ID_FIELD)
-			if err != nil {
-				return err
-			}
-
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: fileStream.Data,
-				Details: &fileadapt.FileDetails{
-					Name:         fileStream.FileName,
-					CollectionID: spec.Collection,
-					RecordID:     idValue.(string),
-					FieldID:      spec.UploadField,
-				},
-			})
-
-			// We need to match this to a filestream
-			return nil
+	idMap := adapt.LocatorMap{}
+	for i := range fileStreams {
+		idMap.AddID(fileStreams[i].Path, adapt.ReferenceLocator{
+			Item: fileStreams[i],
 		})
+	}
+
+	err = adapt.LoadLooper(connection, spec.Collection, idMap, []adapt.LoadRequestField{
+		{
+			ID: adapt.ID_FIELD,
+		},
+		{
+			ID: adapt.UNIQUE_KEY_FIELD,
+		},
+	}, adapt.UNIQUE_KEY_FIELD, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
+		if len(matchIndexes) != 1 {
+			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
+		}
+
+		match := matchIndexes[0].Item
+
+		fileStream := match.(bundlestore.ReadItemStream)
+
+		idValue, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
-			return nil, err
+			return err
 		}
-	} else {
-		for i := range fileStreams {
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: fileStreams[i].Data,
-				Details: &fileadapt.FileDetails{
-					Name:         fileStreams[i].FileName,
-					CollectionID: spec.Collection,
-					RecordID:     fileStreams[i].Path,
-					FieldID:      spec.UploadField,
-				},
-			})
-		}
+
+		uploadOps = append(uploadOps, filesource.FileUploadOp{
+			Data: fileStream.Data,
+			Details: &fileadapt.FileDetails{
+				Name:         fileStream.FileName,
+				CollectionID: spec.Collection,
+				RecordID:     idValue.(string),
+				FieldID:      spec.UploadField,
+			},
+		})
+
+		// We need to match this to a filestream
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	_, err = filesource.Upload(uploadOps, connection, session)

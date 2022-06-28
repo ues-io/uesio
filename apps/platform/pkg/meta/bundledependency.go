@@ -4,6 +4,7 @@ import "fmt"
 
 type BundleDependency struct {
 	ID        string     `uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	App       *App       `yaml:"-" uesio:"uesio/studio.app"`
 	Bundle    *Bundle    `uesio:"uesio/studio.bundle"`

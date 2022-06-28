@@ -49,12 +49,13 @@ type TokenCondition struct {
 
 type Collection struct {
 	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey             string                            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
 	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
-	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"uesio/studio.idformat"`
+	UniqueKeyFields       []string                          `yaml:"uniqueKey" uesio:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
