@@ -1,7 +1,7 @@
 import { Uesio } from "./hooks"
 import { useConfigValue } from "../bands/configvalue"
-import { useViewDef } from "../bands/viewdef"
-import { PlainViewDef } from "../definition/viewdef"
+import { getViewDef, useViewDef } from "../bands/viewdef"
+import { ViewDefinition } from "../definition/viewdef"
 
 const VIEW_BAND = "view"
 
@@ -13,7 +13,11 @@ class ViewAPI {
 	uesio: Uesio
 
 	useViewDef(viewDefId: string) {
-		return useViewDef(viewDefId)?.parsed as PlainViewDef
+		return useViewDef(viewDefId)?.parsed as ViewDefinition | undefined
+	}
+
+	getViewDef(viewDefId: string) {
+		return getViewDef(viewDefId)?.parsed as ViewDefinition | undefined
 	}
 	useConfigValue(key: string) {
 		return useConfigValue(key)?.content || ""
