@@ -132,7 +132,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 		>
 			<CustomMultiSelect
 				litems={items}
-				value={value ? value : undefined}
+				value={value ? value : []}
 				itemToString={itemToString}
 				itemRenderer={(
 					item: string,
