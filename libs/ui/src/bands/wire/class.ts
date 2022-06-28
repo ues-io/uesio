@@ -9,6 +9,7 @@ import {
 	cancel,
 	empty,
 	toggleCondition,
+	getFullWireId,
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
@@ -28,7 +29,7 @@ class Wire {
 	collection: Collection
 
 	getId = () => this.source.name
-	getFullId = () => `${this.source.view}/${this.source.name}`
+	getFullId = () => getFullWireId(this.source.view, this.source.name)
 	getCollection = () => this.collection
 	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
 	isViewOnly = () => this.source.viewOnly

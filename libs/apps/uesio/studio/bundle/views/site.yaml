@@ -66,6 +66,12 @@ definition:
                                       signals:
                                         - signal: "panel/TOGGLE"
                                           panel: "editSite"
+                                  - uesio/io.button:
+                                      text: Delete
+                                      uesio.variant: uesio/io.secondary
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: deleteSite
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:
@@ -118,6 +124,32 @@ definition:
                                     name: $Param{sitename}
                                     app: $Param{app}
   panels:
+    deleteSite:
+      uesio.type: uesio/io.dialog
+      title: You are about to delete your Site ${uesio/studio.name}.
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: All your data will be permanently removed and you won't be able to see it again, including the all your views, fields and collections.
+            element: p
+      actions:
+        - uesio/io.button:
+            text: Delete
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "sites"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{app}"
+        - uesio/io.button:
+            text: Cancel
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteSite
     editSite:
       uesio.type: uesio/io.dialog
       title: Edit a Site

@@ -34,17 +34,11 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 	const viewDef = uesio.view.useViewDef(context.getViewDefId() || "")
 
-	const scriptResult = uesio.component.usePacks(
-		Object.keys(viewDef?.dependencies?.componentpacks || {}),
-		true
-	)
-
 	const builderTheme = uesio.theme.useTheme(
 		"uesio/studio.default",
 		new ctx.Context()
 	)
-	if (!scriptResult.loaded || !builderTheme || !viewDef)
-		return <Canvas context={context} />
+	if (!builderTheme || !viewDef) return <Canvas context={context} />
 
 	const builderContext = context.addFrame({
 		theme: "uesio/studio.default",

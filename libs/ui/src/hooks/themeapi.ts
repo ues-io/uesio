@@ -43,7 +43,7 @@ class ThemeAPI {
 					fetchData()
 				}
 			}
-		})
+		}, [themeId])
 		return theme?.parsed as ThemeState
 	}
 }

@@ -42,8 +42,8 @@ definition:
           root:
             padding: 40px
             display: grid
-            column-gap: 24px;
-            row-gap: 24px
+            columnGap: 24px;
+            rowGap: 24px
         templateColumns:
           xs: 1fr
           sm: 1fr 1fr
@@ -58,7 +58,7 @@ definition:
                   border: "1px solid #ccc"
                   boxShadow: "0 0 6px #00000033"
                   padding: 15px
-                  min-height: 240px
+                  minHeight: 240px
               templateColumns: 180px 1fr 1fr
               columnGap: 10px
               components:

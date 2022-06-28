@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, metadata, collection } from "@uesio/ui"
+import { definition, component, hooks, metadata, styles } from "@uesio/ui"
 
 interface MetadataPickerProps extends definition.UtilityProps {
 	value: string
@@ -13,11 +13,12 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-const Grid = component.getUtility("uesio/io.grid")
-const SelectField = component.getUtility("uesio/io.selectfield")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+type MetadataItem = {
+	key: string
+}
 
-const addBlankSelectOption = collection.addBlankSelectOption
+const CustomSelect = component.getUtility("uesio/io.customselect")
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const {
@@ -28,36 +29,103 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		metadataType,
 		context,
 		grouping,
-		defaultNamespace,
-		selectVariant,
+		//defaultNamespace,
+		//selectVariant,
 		fieldWrapperVariant,
 	} = props
 	const uesio = hooks.useUesio(props)
 
 	if (!context.getWorkspace() && !context.getSiteAdmin()) {
-		return <div>Must provide either siteadmin or workspace context</div>
+		throw new Error("Must provide either siteadmin or workspace context")
 	}
 
-	const namespaces = uesio.builder.useAvailableNamespaces(
-		context,
-		metadataType
+	const classes = styles.useUtilityStyles(
+		{
+			itemwrapper: {
+				padding: "6px",
+				color: "white",
+			},
+			notfound: {
+				textTransform: "capitalize",
+				color: "#999",
+			},
+			namespacetag: {
+				display: "inline-block",
+				backgroundColor: "#ddd",
+				padding: "6px 10px",
+				marginRight: "8px",
+				borderRadius: "14px",
+				fontSize: "8pt",
+				verticalAlign: "middle",
+			},
+			highlighteditem: {
+				backgroundColor: "#eee",
+			},
+			nametag: {
+				display: "inline-block",
+				fontSize: "9pt",
+				verticalAlign: "middle",
+				color: "#333",
+			},
+		},
+		props
 	)
-	const [currentNamespace, name] = component.path.parseKey(value)
-	const namespace = defaultNamespace || currentNamespace
+
 	const metadata = uesio.builder.useMetadataList(
 		context,
 		metadataType,
-		namespace,
+		"",
 		grouping
 	)
 
-	const getMetadataName = (key: string) => {
-		if (metadataType === "COMPONENTVARIANT") {
-			const [, , , name] = component.path.parseVariantKey(key)
-			return name
-		}
-		const [, name] = component.path.parseKey(key)
-		return name
+	const items: MetadataItem[] = metadata
+		? Object.keys(metadata).map((key) => ({
+				key,
+		  }))
+		: []
+
+	const itemToString = (item: MetadataItem) => (item ? item.key : "")
+
+	const tag = (ns: string, name: string, background: string) => (
+		<>
+			<div
+				className={classes.namespacetag}
+				style={{
+					...(background && { backgroundColor: background }),
+				}}
+			>
+				{ns}
+			</div>
+			<div className={classes.nametag}>{name}</div>
+		</>
+	)
+
+	const renderer = (item: MetadataItem, highlighted: boolean) => {
+		if (!item)
+			return (
+				<div
+					className={styles.cx(classes.itemwrapper, classes.notfound)}
+				>
+					{tag(
+						`No ${metadataType.toLowerCase()} Selected`,
+						"",
+						"#eee"
+					)}
+				</div>
+			)
+		const [ns, name] = component.path.parseKey(item.key)
+		const metadataInfo = metadata?.[item.key]
+
+		return (
+			<div
+				className={styles.cx(
+					classes.itemwrapper,
+					highlighted && classes.highlighteditem
+				)}
+			>
+				{tag(ns, name, metadataInfo?.color || "#eee")}
+			</div>
+		)
 	}
 
 	return (
@@ -67,52 +135,33 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			label={label}
 			context={context}
 		>
-			<Grid
-				context={context}
-				styles={{
-					root: {
-						gridTemplateColumns: defaultNamespace
-							? "1fr"
-							: "1fr 1fr",
-						columnGap: "10px",
-					},
+			<CustomSelect
+				items={items}
+				value={
+					value
+						? {
+								key: value,
+						  }
+						: undefined
+				}
+				itemToString={itemToString}
+				itemRenderer={(
+					item: MetadataItem,
+					index: number,
+					highlightedIndex: number
+				) => {
+					if (!item) {
+						return null
+					}
+					const highlighted = index === highlightedIndex
+					return renderer(item, highlighted)
 				}}
-			>
-				{!defaultNamespace && (
-					<SelectField
-						context={context}
-						value={namespace}
-						options={addBlankSelectOption(
-							Object.keys(namespaces || {}).map((key) => ({
-								value: key,
-								label: key,
-							}))
-						)}
-						setValue={(value: string) => {
-							setValue(value ? `${value}.` : "")
-						}}
-						variant={selectVariant}
-					/>
-				)}
-
-				<SelectField
-					context={context}
-					value={name}
-					options={addBlankSelectOption(
-						Object.keys(metadata || {}).map((key) => {
-							const name = getMetadataName(key)
-							return {
-								value: name,
-								label: name,
-							}
-						})
-					)}
-					setValue={(value: string) => {
-						setValue(`${namespace}.${value}`)
-					}}
-					variant={selectVariant}
-				/>
-			</Grid>
+				tagRenderer={renderer}
+				context={context}
+				setValue={(item: MetadataItem) => {
+					setValue(item ? item.key : "")
+				}}
+			/>
 		</FieldWrapper>
 	)
 }

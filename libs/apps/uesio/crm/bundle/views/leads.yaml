@@ -43,7 +43,7 @@ definition:
                           height: 280px°
                     uesio.styles:
                       root:
-                        padding-left: 80px
+                        paddingLeft: 80px
                 - uesio/io.box:
                     uesio.styles:
                       root:
@@ -134,8 +134,8 @@ definition:
         uesio.styles:
           root:
             background: "#F0F0F0"
-            padding-bottom: 250px
-            padding-top: 20px
+            paddingBottom: 250px
+            paddingTop: 20px
   wires:
     leads:
       collection: uesio/crm.lead

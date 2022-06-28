@@ -4,6 +4,7 @@ import { Context } from "../context/context"
 import componentSignal from "../bands/component/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { registry, run, runMany } from "../signals/signals"
+import { addBlankSelectOption } from "../collectionexports"
 
 class SignalAPI {
 	constructor(uesio: Uesio) {
@@ -27,7 +28,7 @@ class SignalAPI {
 	run = (signal: SignalDefinition, context: Context) => run(signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
-		const descriptor = registry[signal.signal] || componentSignal
+		const descriptor = registry[signal?.signal] || componentSignal
 		let props = defaultSignalProps()
 		if (descriptor.properties) {
 			props = props.concat(descriptor.properties(signal))
@@ -43,10 +44,12 @@ function defaultSignalProps(): PropDescriptor[] {
 			name: "signal",
 			label: "Signal",
 			type: "SELECT",
-			options: signalIds.map((signal) => ({
-				value: signal,
-				label: registry[signal].label || signal,
-			})),
+			options: addBlankSelectOption(
+				signalIds.map((signal) => ({
+					value: signal,
+					label: registry[signal].label || signal,
+				}))
+			),
 		},
 	]
 }

@@ -5,26 +5,7 @@ import { ThunkFunc } from "../../store/store"
 import { ID_FIELD } from "../collection/types"
 
 import { PlainWireRecord } from "../wirerecord/types"
-import { MetadataType } from "./types"
 import { save as saveBuilder } from "."
-
-const getMetadataList =
-	(
-		context: Context,
-		metadataType: MetadataType,
-		namespace: string,
-		grouping?: string
-	): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		const response = await platform.getMetadataList(
-			context,
-			metadataType,
-			namespace,
-			grouping
-		)
-		console.log(response)
-		return context
-	}
 
 const save =
 	(context: Context): ThunkFunc =>
@@ -72,6 +53,5 @@ const save =
 	}
 
 export default {
-	getMetadataList,
 	save,
 }
