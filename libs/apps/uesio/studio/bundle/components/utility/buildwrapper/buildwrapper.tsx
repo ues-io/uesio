@@ -9,7 +9,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const viewDefId = uesio.getViewDefId()
 
-	const wireId = componentDef?.wire || ""
+	const wireId = definition?.wire || ""
 
 	if (!viewDefId) return null
 
