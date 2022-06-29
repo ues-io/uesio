@@ -77,13 +77,15 @@ const CustomMultiSelect: FunctionComponent<CustomMultiSelectProps<unknown>> = (
 		selectedItems,
 	} = useMultipleSelection({ initialSelectedItems: value as string[] })
 
-	function getFilter(selectedItems: string[]) {
-		return function filter(elem: string) {
-			return selectedItems.indexOf(elem) < 0
-		}
-	}
+	// function getFilter(selectedItems: string[]) {
+	// 	return function filter(elem: string) {
+	// 		return selectedItems.indexOf(elem) < 0
+	// 	}
+	// }
 
-	const items = litems.filter(getFilter(selectedItems))
+	// const items = litems.filter(getFilter(selectedItems))
+	const items = litems.filter((elem: string) => !selectedItems.includes(elem))
+	console.log({ selectedItems, litems, items })
 
 	const {
 		isOpen,
@@ -138,42 +140,39 @@ const CustomMultiSelect: FunctionComponent<CustomMultiSelectProps<unknown>> = (
 
 	return (
 		<div ref={setAnchorEl}>
-			<div>
-				<div>
-					{selectedItems.map((selectedItem, index) => (
-						<div
-							className={classes.selecteditem}
-							key={`${selectedItem}-${index}`}
-						>
-							{tagRenderer(selectedItem)}
-							<button
-								className={classes.editbutton}
-								type="button"
-								onClick={(e) => {
-									e.stopPropagation()
-									removeSelectedItem(selectedItem)
-									setValue(
-										selectedItems.filter(
-											(elem) => elem === selectedItem
-										)
-									)
-								}}
-							>
-								<Icon icon="close" context={context} />
-							</button>
-						</div>
-					))}
+			{selectedItems.map((selectedItem, index) => (
+				<div
+					className={classes.selecteditem}
+					key={`${selectedItem}-${index}`}
+				>
+					{tagRenderer(selectedItem)}
 					<button
 						className={classes.editbutton}
 						type="button"
-						{...getToggleButtonProps(
-							getDropdownProps({ preventKeyAction: isOpen })
-						)}
+						onClick={(e) => {
+							e.stopPropagation()
+							removeSelectedItem(selectedItem)
+							setValue(
+								selectedItems.filter(
+									(elem) => elem === selectedItem
+								)
+							)
+						}}
 					>
-						<Icon icon="expand_more" context={context} />
+						<Icon icon="close" context={context} />
 					</button>
 				</div>
-			</div>
+			))}
+			<button
+				className={classes.editbutton}
+				type="button"
+				{...getToggleButtonProps(
+					getDropdownProps({ preventKeyAction: isOpen })
+				)}
+			>
+				<Icon icon="expand_more" context={context} />
+			</button>
+
 			<div
 				ref={setPopperEl}
 				style={{
@@ -186,23 +185,15 @@ const CustomMultiSelect: FunctionComponent<CustomMultiSelectProps<unknown>> = (
 			>
 				<div {...getMenuProps()}>
 					{isOpen &&
-						items
-							.filter((item) =>
-								itemToString(item).includes(inputValue)
-							)
-							.map((item, index) => (
-								<div
-									className={classes.menuitem}
-									key={index}
-									{...getItemProps({ item, index })}
-								>
-									{itemRenderer(
-										item,
-										index,
-										highlightedIndex
-									)}
-								</div>
-							))}
+						items.map((item, index) => (
+							<div
+								className={classes.menuitem}
+								key={index}
+								{...getItemProps({ item, index })}
+							>
+								{itemRenderer(item, index, highlightedIndex)}
+							</div>
+						))}
 				</div>
 			</div>
 		</div>

@@ -60,23 +60,17 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<>
-			<MultiMetadataPicker
-				metadataType={metadataType}
-				label={label}
-				value={value}
-				setValue={(nvalue: string[]) => {
-					record.update(fieldId, nvalue)
-				}}
-				context={context}
-				{...(grouping && {
-					grouping,
-				})}
-				{...(namespace && {
-					defaultNamespace: namespace,
-				})}
-			/>
-		</>
+		<MultiMetadataPicker
+			metadataType={metadataType}
+			label={label}
+			value={value}
+			setValue={(nvalue: string[]) => {
+				record.update(fieldId, nvalue)
+			}}
+			context={context}
+			grouping={grouping}
+			defaultNamespace={namespace}
+		/>
 	)
 }
 

@@ -89,9 +89,9 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 					...(background && { backgroundColor: background }),
 				}}
 			>
-				{ns}
+				<span>{ns}</span>
 			</div>
-			<div className={classes.nametag}>{name}</div>
+			<span className={classes.nametag}>{name}</span>
 		</>
 	)
 
