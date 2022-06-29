@@ -18,6 +18,7 @@ import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 
+type MetaDataKey = `${string}/${string}.${string}`
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
 		const frame: ContextFrame = {}
@@ -197,7 +198,9 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility = <T extends UtilityProps = UtilityPropsPlus>(key: string) => {
+const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
+	key: MetaDataKey
+) => {
 	const returnFunc = (props: T) => {
 		const loader = getUtilityLoader(key) || NotFound
 		const styles = getVariantStyleInfo(props, key)
@@ -210,7 +213,6 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(key: string) => {
 	returnFunc.displayName = key
 	return returnFunc
 }
-
 const BuildWrapper = getUtility("uesio/studio.buildwrapper")
 
 const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
