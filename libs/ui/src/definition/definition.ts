@@ -5,7 +5,7 @@ import { Context } from "../context/context"
 import { MetadataKey } from "../metadataexports"
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
-	"uesio.variant"?: string
+	"uesio.variant"?: MetadataKey
 } & DefinitionMap
 
 export type YamlDoc = yaml.Document<yaml.Node>
