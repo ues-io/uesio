@@ -43,7 +43,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	workspace := session.GetWorkspaceID()
+	workspace := session.GetWorkspaceKey()
 	namespace := session.GetWorkspaceApp()
 
 	if workspace == "" {
@@ -189,21 +189,22 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		dep := by.Dependencies[key]
 		deps = append(deps, &meta.BundleDependency{
 			Workspace: &meta.Workspace{
-				ID: workspace,
+				UniqueKey: workspace,
 			},
 			App: &meta.App{
-				ID: key,
+				UniqueKey: key,
 			},
 			Bundle: &meta.Bundle{
-				ID: key + "_" + dep.Version,
+				UniqueKey: key + ":" + dep.Version,
 			},
 		})
 	}
+
 	// Upload workspace properties like homeRoute and loginRoute
 	workspaceItem := (&meta.Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 		App: &meta.App{
-			ID: namespace,
+			UniqueKey: namespace,
 		},
 		LoginRoute:    by.LoginRoute,
 		HomeRoute:     by.HomeRoute,
@@ -215,7 +216,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			adapt.ID_FIELD:               true,
+			adapt.UNIQUE_KEY_FIELD:       true,
 			"uesio/studio.loginroute":    true,
 			"uesio/studio.homeroute":     true,
 			"uesio/studio.publicprofile": true,
@@ -229,7 +230,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	saves := []datasource.PlatformSaveRequest{
-		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
+		*datasource.GetPlatformSaveOneRequest(workspaceItem, upsertOptions),
 		{
 			Collection: &deps,
 			Options:    upsertOptions,

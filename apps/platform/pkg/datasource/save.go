@@ -247,7 +247,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Set the unique keys for inserts
 		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-			uniqueKey, err := adapt.SetUniqueKey(change, collectionMetadata.UniqueKey)
+			uniqueKey, err := adapt.SetUniqueKey(change, collectionMetadata)
 			if err != nil {
 				return err
 			}

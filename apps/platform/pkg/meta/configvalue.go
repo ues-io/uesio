@@ -84,7 +84,7 @@ func (cv *ConfigValue) SetNamespace(namespace string) {
 
 func (cv *ConfigValue) SetWorkspace(workspace string) {
 	cv.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

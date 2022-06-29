@@ -103,7 +103,7 @@ func (sl *SelectList) SetNamespace(namespace string) {
 
 func (sl *SelectList) SetWorkspace(workspace string) {
 	sl.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

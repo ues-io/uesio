@@ -125,7 +125,7 @@ func (c *Collection) SetNamespace(namespace string) {
 
 func (c *Collection) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

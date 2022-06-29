@@ -35,7 +35,16 @@ func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
 	return "", fmt.Errorf("Invalid type for key field, %T", value)
 }
 
-func SetUniqueKey(item loadable.Item, keyFields []string) (string, error) {
+func SetUniqueKey(item loadable.Item, collectionMetadata *CollectionMetadata) (string, error) {
+	// First see if the unique key already exists.
+	fmt.Println("Settig uniuqe key")
+	existingKey, err := item.GetField(UNIQUE_KEY_FIELD)
+	if err == nil && existingKey != nil && existingKey != "" {
+		fmt.Println("Found Existing Key")
+		fmt.Println(existingKey)
+		return existingKey.(string), nil
+	}
+	keyFields := collectionMetadata.UniqueKey
 	if len(keyFields) == 0 {
 		keyFields = []string{ID_FIELD}
 	}
@@ -46,17 +55,20 @@ func SetUniqueKey(item loadable.Item, keyFields []string) (string, error) {
 			fmt.Println("Failed to get part: " + keyField)
 			fmt.Println(fmt.Sprintf("%+v", item))
 			fmt.Println(keyFields)
+			fmt.Println(collectionMetadata.GetFullName())
+			fmt.Println(err)
+
 			return "", err
 		}
 		if value == "" {
-			return "", errors.New("Required Unique Key Value Not Provided: " + keyField)
+			return "", errors.New("Required Unique Key Value Not Provided: " + collectionMetadata.GetFullName() + " : " + keyField)
 		}
 		keyValues[i] = value
 	}
 
 	uniqueKey := strings.Join(keyValues, ":")
 
-	err := item.SetField(UNIQUE_KEY_FIELD, uniqueKey)
+	err = item.SetField(UNIQUE_KEY_FIELD, uniqueKey)
 	if err != nil {
 		return "", err
 	}
@@ -108,7 +120,7 @@ func HandleOldValuesLookup(
 		change := match.(*ChangeItem)
 		change.OldValues = item
 
-		uniqueKey, err := SetUniqueKey(change, collectionMetadata.UniqueKey)
+		uniqueKey, err := SetUniqueKey(change, collectionMetadata)
 		if err != nil {
 			return err
 		}

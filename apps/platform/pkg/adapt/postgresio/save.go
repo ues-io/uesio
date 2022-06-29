@@ -294,6 +294,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()
 		if err != nil {
+			fmt.Println("Error saving: " + request.CollectionName)
 			results.Close()
 			return err
 		}

@@ -72,7 +72,7 @@ func HandleReferenceLookups(
 				return nil
 			}
 
-			referenceKeyValue, err := SetUniqueKey(matchKeyValueItem, refCollectionMetadata.UniqueKey)
+			referenceKeyValue, err := SetUniqueKey(matchKeyValueItem, refCollectionMetadata)
 			if err != nil {
 				return err
 			}

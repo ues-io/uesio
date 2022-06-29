@@ -84,7 +84,7 @@ func (as *AuthSource) SetNamespace(namespace string) {
 
 func (as *AuthSource) SetWorkspace(workspace string) {
 	as.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

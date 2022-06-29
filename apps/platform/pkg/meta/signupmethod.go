@@ -87,7 +87,7 @@ func (sm *SignupMethod) SetNamespace(namespace string) {
 
 func (sm *SignupMethod) SetWorkspace(workspace string) {
 	sm.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

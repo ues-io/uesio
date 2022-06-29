@@ -116,7 +116,7 @@ func (cp *ComponentPack) SetNamespace(namespace string) {
 
 func (cp *ComponentPack) SetWorkspace(workspace string) {
 	cp.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

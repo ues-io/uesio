@@ -84,7 +84,7 @@ func (fs *FileSource) SetNamespace(namespace string) {
 
 func (fs *FileSource) SetWorkspace(workspace string) {
 	fs.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

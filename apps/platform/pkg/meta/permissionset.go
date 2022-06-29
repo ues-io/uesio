@@ -91,7 +91,7 @@ func (ps *PermissionSet) SetNamespace(namespace string) {
 
 func (ps *PermissionSet) SetWorkspace(workspace string) {
 	ps.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

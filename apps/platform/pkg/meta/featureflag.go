@@ -82,7 +82,7 @@ func (ff *FeatureFlag) SetNamespace(namespace string) {
 
 func (ff *FeatureFlag) SetWorkspace(workspace string) {
 	ff.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

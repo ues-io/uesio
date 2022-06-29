@@ -84,7 +84,7 @@ func (s *Secret) SetNamespace(namespace string) {
 
 func (s *Secret) SetWorkspace(workspace string) {
 	s.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

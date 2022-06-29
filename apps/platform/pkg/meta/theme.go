@@ -115,7 +115,7 @@ func (t *Theme) SetNamespace(namespace string) {
 
 func (t *Theme) SetWorkspace(workspace string) {
 	t.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

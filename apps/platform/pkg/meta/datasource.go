@@ -84,7 +84,7 @@ func (ds *DataSource) SetNamespace(namespace string) {
 
 func (ds *DataSource) SetWorkspace(workspace string) {
 	ds.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

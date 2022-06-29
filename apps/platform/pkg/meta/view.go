@@ -122,7 +122,7 @@ func (v *View) SetNamespace(namespace string) {
 
 func (v *View) SetWorkspace(workspace string) {
 	v.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

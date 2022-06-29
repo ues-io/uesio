@@ -78,7 +78,7 @@ func (c *ComponentVariant) GetNamespace() string {
 
 func (c *ComponentVariant) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

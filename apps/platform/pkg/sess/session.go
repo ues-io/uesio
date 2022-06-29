@@ -188,6 +188,13 @@ func (s *Session) GetWorkspaceID() string {
 	return ""
 }
 
+func (s *Session) GetWorkspaceKey() string {
+	if s.workspace != nil {
+		return s.workspace.UniqueKey
+	}
+	return ""
+}
+
 func (s *Session) GetWorkspaceApp() string {
 	if s.workspace != nil {
 		return s.workspace.GetAppFullName()

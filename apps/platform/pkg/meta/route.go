@@ -93,7 +93,7 @@ func (r *Route) SetNamespace(namespace string) {
 
 func (r *Route) SetWorkspace(workspace string) {
 	r.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

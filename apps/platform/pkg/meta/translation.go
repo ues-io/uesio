@@ -54,7 +54,7 @@ func (t *Translation) GetNamespace() string {
 
 func (t *Translation) SetWorkspace(workspace string) {
 	t.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

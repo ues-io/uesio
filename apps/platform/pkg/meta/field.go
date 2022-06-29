@@ -140,7 +140,7 @@ func (f *Field) SetNamespace(namespace string) {
 
 func (f *Field) SetWorkspace(workspace string) {
 	f.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

@@ -83,7 +83,7 @@ func (uat *UserAccessToken) SetNamespace(namespace string) {
 
 func (uat *UserAccessToken) SetWorkspace(workspace string) {
 	uat.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

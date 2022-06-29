@@ -255,7 +255,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: adapt.UNIQUE_KEY_FIELD,
 					Value: workspaceID,
 				},
 			},

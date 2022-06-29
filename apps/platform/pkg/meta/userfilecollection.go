@@ -93,7 +93,7 @@ func (ufc *UserFileCollection) SetNamespace(namespace string) {
 
 func (ufc *UserFileCollection) SetWorkspace(workspace string) {
 	ufc.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

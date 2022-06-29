@@ -97,7 +97,7 @@ func (l *Label) SetNamespace(namespace string) {
 
 func (l *Label) SetWorkspace(workspace string) {
 	l.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

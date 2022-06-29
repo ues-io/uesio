@@ -88,7 +88,7 @@ func (c *Credential) SetNamespace(namespace string) {
 
 func (c *Credential) SetWorkspace(workspace string) {
 	c.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

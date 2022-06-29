@@ -203,7 +203,7 @@ func (b *Bot) SetNamespace(namespace string) {
 
 func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 

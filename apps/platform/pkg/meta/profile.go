@@ -84,7 +84,7 @@ func (p *Profile) SetNamespace(namespace string) {
 
 func (p *Profile) SetWorkspace(workspace string) {
 	p.Workspace = &Workspace{
-		ID: workspace,
+		UniqueKey: workspace,
 	}
 }
 
