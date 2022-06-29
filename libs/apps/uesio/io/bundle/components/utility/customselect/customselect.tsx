@@ -1,4 +1,4 @@
-import { useState, FunctionComponent, ReactNode, MouseEvent } from "react"
+import { useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
@@ -9,6 +9,7 @@ type CustomSelectProps<T> = {
 	setValue: (value: T) => void
 	items: T[]
 	itemToString: (item: T) => string
+	allowSearch?: true
 	itemRenderer: (
 		item: T,
 		index: number,
@@ -21,7 +22,7 @@ const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {
-		value,
+		allowSearch = true,
 		items,
 		setValue,
 		itemToString,
@@ -81,7 +82,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	const {
 		isOpen,
-		selectedItem,
 		getMenuProps,
 		getComboboxProps,
 		getToggleButtonProps,
@@ -89,13 +89,12 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		highlightedIndex,
 		getItemProps,
 		getInputProps,
-		selectItem,
 		inputValue,
 		openMenu,
 	} = useCombobox({
 		itemToString,
 		items,
-		selectedItem: value,
+		// selectedItem: value,
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
@@ -116,22 +115,9 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 					tabIndex={isOpen ? -1 : 0}
 					className={classes.displayarea}
 				>
-					{tagRenderer(selectedItem)}
+					{tagRenderer}
 				</div>
-				{selectedItem && (
-					<button
-						tabIndex={-1}
-						className={classes.editbutton}
-						type="button"
-						onClick={(event: MouseEvent) => {
-							event.preventDefault() // Prevent the label from triggering
-							setValue(undefined)
-							selectItem(null)
-						}}
-					>
-						<Icon icon="close" context={context} />
-					</button>
-				)}
+
 				<button
 					className={classes.editbutton}
 					type="button"
@@ -157,6 +143,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 							autoFocus
 							className={classes.searchbox}
 							placeholder="Search..."
+							style={{ display: allowSearch ? "auto" : "none" }}
 							{...getInputProps()}
 						/>
 					</div>

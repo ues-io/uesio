@@ -19,6 +19,7 @@ type MetadataItem = {
 
 const CustomSelect = component.getUtility("uesio/io.customselect")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+const Icon = component.getUtility("uesio/io.icon")
 
 const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const {
@@ -67,6 +68,15 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				verticalAlign: "middle",
 				color: "#333",
 			},
+			editbutton: {
+				color: "#444",
+				border: "none",
+				outline: "none",
+				padding: "6px 10px 6px 0",
+				backgroundColor: "transparent",
+				fontSize: "initial",
+				cursor: "pointer",
+			},
 		},
 		props
 	)
@@ -100,7 +110,11 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		</>
 	)
 
-	const renderer = (item: MetadataItem, highlighted: boolean) => {
+	const renderer = (
+		item: MetadataItem,
+		highlighted: boolean,
+		selected?: boolean
+	) => {
 		if (!item)
 			return (
 				<div
@@ -124,6 +138,19 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				)}
 			>
 				{tag(ns, name, metadataInfo?.color || "#eee")}
+				{selected && (
+					<button
+						tabIndex={-1}
+						className={classes.editbutton}
+						type="button"
+						onClick={(event) => {
+							event.preventDefault() // Prevent the label from triggering
+							setValue("")
+						}}
+					>
+						<Icon icon="close" context={context} />
+					</button>
+				)}
 			</div>
 		)
 	}
@@ -156,7 +183,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					const highlighted = index === highlightedIndex
 					return renderer(item, highlighted)
 				}}
-				tagRenderer={renderer}
+				tagRenderer={value && renderer({ key: value }, false, true)}
 				context={context}
 				setValue={(item: MetadataItem) => {
 					setValue(item ? item.key : "")
