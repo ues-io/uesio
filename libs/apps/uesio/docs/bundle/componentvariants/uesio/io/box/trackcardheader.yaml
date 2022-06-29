@@ -4,8 +4,8 @@ definition:
   uesio.styles:
     root:
       background: "#eee"
-      background-image: url($File{uesio/core.splash})
-      background-size: 200%
+      backgroundImage: url($File{uesio/core.splash})
+      backgroundSize: 200%
       padding: 20px;
       display: flex
       alignItems: center

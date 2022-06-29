@@ -21,6 +21,7 @@ type LoadOp struct {
 	ReferencedCollections ReferenceRegistry      `json:"-"`
 	UserResponseTokens    []string               `json:"-"`
 	SkipRecordSecurity    bool                   `json:"-"`
+	RequireWriteAccess    bool                   `json:"-"`
 }
 
 // LoadRequestField struct

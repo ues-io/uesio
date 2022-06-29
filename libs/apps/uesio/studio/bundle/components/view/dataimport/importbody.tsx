@@ -19,6 +19,7 @@ const addBlankSelectOption = collection.addBlankSelectOption
 
 const Button = component.getUtility("uesio/io.button")
 const SelectField = component.getUtility("uesio/io.selectfield")
+const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 const ImportBody: FunctionComponent<Props> = (props) => {
 	const { context, collection, csvFields, file } = props
@@ -134,8 +135,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		<>
 			<div className={classes.header}>
 				<div className={classes.headerItem}>
+					<FieldLabel label="Upsert key" context={context} />
 					<SelectField
-						label={"Upsert key:"}
 						context={context}
 						options={options}
 						setValue={(value: string) => {

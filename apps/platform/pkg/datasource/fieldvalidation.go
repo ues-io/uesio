@@ -42,7 +42,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 			return nil
 		}
 
-		if currentValue.(string) == oldValue.(string) {
+		if currentValue == oldValue {
 			// No change, we're ok
 			return nil
 		}

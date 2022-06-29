@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { removeCondition } from ".."
+import { removeCondition, getFullWireId } from ".."
 
 export default (
 		context: Context,
@@ -12,7 +12,7 @@ export default (
 		if (viewId)
 			dispatch(
 				removeCondition({
-					entity: `${viewId}/${wirename}`,
+					entity: getFullWireId(viewId, wirename),
 					conditionId,
 				})
 			)

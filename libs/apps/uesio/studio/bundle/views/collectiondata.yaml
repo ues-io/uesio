@@ -135,6 +135,7 @@ definition:
                                             signals:
                                               - signal: "wire/CREATE_RECORD"
                                                 wire: "collectionData"
+                                                prepend: true
                             - uesio/io.box:
                                 uesio.styles:
                                   root:

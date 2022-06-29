@@ -12,7 +12,7 @@ type loaderFunc func(change adapt.Item, data interface{})
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		number, err := strconv.ParseInt(getValue(data, mapping, index), 10, 64)
+		number, err := strconv.ParseFloat(getValue(data, mapping, index), 64)
 		if err != nil {
 			return
 		}

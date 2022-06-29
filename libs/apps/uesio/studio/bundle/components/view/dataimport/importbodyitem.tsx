@@ -26,7 +26,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				display: "flex",
 				justifyContent: "start",
 			},
-			headerItem: { width: "200px", paddingRight: "10px" },
+			headerItem: { width: "200px", padding: "2px" },
 		},
 		null
 	)
@@ -34,12 +34,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	return (
 		<div className={classes.gridItem}>
 			<div className={classes.headerItem}>
-				<TextField
-					context={context}
-					label="Field"
-					value={uesioField}
-					mode="READ"
-				/>
+				<TextField context={context} value={uesioField} mode="READ" />
 			</div>
 			<div className={classes.headerItem}>
 				<SelectField

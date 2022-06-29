@@ -13,15 +13,6 @@ definition:
       conditions:
         - field: uesio/core.id
           value: $Param{app}_$Param{workspacename}
-    installablebundles:
-      collection: uesio/studio.bundle
-      fields:
-        uesio/core.id:
-        uesio/studio.app:
-        uesio/studio.major:
-        uesio/studio.minor:
-        uesio/studio.patch:
-
     bundlelistings:
       collection: uesio/studio.bundlelisting
       init:
@@ -80,8 +71,8 @@ definition:
                       root:
                         padding: 40px
                         display: grid
-                        column-gap: 24px;
-                        row-gap: 24px
+                        columnGap: 24px;
+                        rowGap: 24px
                     templateColumns:
                       xs: 1fr
                       md: 1fr 1fr
@@ -110,8 +101,8 @@ definition:
                                       element: span
                                       uesio.styles:
                                         root:
-                                          vertical-align: middle
-                                          font-weight: bold
+                                          verticalAlign: middle
+                                          fontWeight: bold
 
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -130,13 +121,3 @@ definition:
                                       uesio.variant: uesio/io.aside
                                       text: ${uesio/studio.description}
                                       element: p
-
-                # - uesio/io.box:
-                #     uesio.variant: uesio/io.section
-                #     uesio.styles:
-                #       root:
-                #         padding: 40px
-                #     components:
-                #       - uesio/studio.addbundle:
-                #           installablebundleswire: "installablebundles"
-                #           currentdependencies: "dependencies"

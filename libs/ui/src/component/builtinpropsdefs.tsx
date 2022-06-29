@@ -155,7 +155,7 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			display: [
 				{
 					property: "type",
-					values: ["recordId"],
+					value: "recordId",
 				},
 			],
 		},
@@ -166,7 +166,7 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			display: [
 				{
 					property: "type",
-					values: ["text"],
+					value: "text",
 				},
 			],
 		},

@@ -65,6 +65,7 @@ components:
     checkboxfield:
     togglefield:
     codefield:
+    customselect:
     dialog:
     dialogplain:
     expandpanel:

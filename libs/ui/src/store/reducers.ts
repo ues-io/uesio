@@ -13,7 +13,6 @@ import {
 	getKeyAtPath,
 	getParentPath,
 	getIndexFromPath,
-	getGrandParentPath,
 	getParentPathArray,
 } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
@@ -168,18 +167,14 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 }
 
 const cloneDef = (state: MetadataState, { path }: CloneDefinitionPayload) => {
-	const parentPath = getParentPath(path)
-	const isArrayItemClone = isNumberIndex(getKeyAtPath(parentPath))
+	const isArrayItemClone = isNumberIndex(getKeyAtPath(path))
 	const yamlDoc = parse(state.content)
+	const parentPath = getParentPath(path)
 
 	if (isArrayItemClone) {
-		const index = getIndexFromPath(parentPath)
+		const index = getIndexFromPath(path)
 		if (!index && index !== 0) return
-		const grandParentPath = getGrandParentPath(path)
-		const { items } = getNodeAtPath(
-			grandParentPath,
-			yamlDoc.contents
-		) as YAMLSeq
+		const { items } = getNodeAtPath(parentPath, yamlDoc.contents) as YAMLSeq
 		items.splice(index, 0, items[index])
 	} else {
 		const newKey =
@@ -201,12 +196,21 @@ const changeDefKey = (
 ) => {
 	const { path, key: newKey } = payload
 	const pathArray = toPath(path)
+	// Stop if old and new key are equal
+	if (getKeyAtPath(path) === newKey) return
 	// create a new document so components using useYaml will rerender
 	const yamlDoc = parse(state.content)
 	// make a copy so we can place with a new key and delete the old node
-	const newNode = yamlDoc.getIn(toPath(path))
+	const newNode = yamlDoc.getIn(pathArray)
 	// replace the old with the new key
 	pathArray.splice(-1, 1, newKey)
+
+	/*
+	Keys need to be unique.
+	TEST:oldKeyEqualsNew
+	*/
+	if (yamlDoc.getIn(pathArray)) return
+
 	yamlDoc.setIn(pathArray, newNode)
 	yamlDoc.deleteIn(toPath(path))
 	state.content = yamlDoc.toString()
