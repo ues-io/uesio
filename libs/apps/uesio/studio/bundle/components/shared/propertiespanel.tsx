@@ -43,14 +43,12 @@ const augmentPropsDef = (
 		}
 	}
 	if (propsDef.type === "componentvariant") {
+		//override the properties
 		return {
 			...propsDef,
-			sections: propsDef.sections.concat([
-				{
-					title: "Styles",
-					type: "STYLES",
-				},
-			]),
+			title: "Component Variant",
+			sections: [],
+			properties: [],
 		}
 	}
 	if (propsDef.type === "panel") {
@@ -65,8 +63,17 @@ const augmentPropsDef = (
 			properties: propsDef?.properties?.concat(
 				componentPropsDef.properties
 			),
+			actions: standardActions.concat(...(propsDef.actions || [])),
 		}
 	}
+
+	if (propsDef.type === "param") {
+		return {
+			...propsDef,
+			actions: standardActions.concat(...(propsDef.actions || [])),
+		}
+	}
+
 	return propsDef
 }
 

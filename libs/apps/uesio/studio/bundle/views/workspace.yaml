@@ -24,9 +24,12 @@ definition:
         uesio/studio.bundle:
           fields:
             uesio/studio.app:
+              fields:
+                uesio/studio.color:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
+            uesio/studio.version:
       conditions:
         - field: uesio/studio.workspace
           value: $Param{app}_$Param{workspacename}
@@ -163,11 +166,11 @@ definition:
                                                 path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.id}"
                                             content:
                                               - uesio/io.text:
-                                                  text: ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
+                                                  text: ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.version"]}
                                             avatar:
                                               - uesio/io.text:
                                                   uesio.variant: uesio/io.icon
-                                                  color: "#ccc"
+                                                  color: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}"
                                                   text: circle
   panels:
     deleteWorkspace:

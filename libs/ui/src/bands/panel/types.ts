@@ -1,8 +1,8 @@
-import { Context } from "../../context/context"
+import { ContextFrame } from "../../context/context"
 
 interface PanelState {
 	id: string
-	context: Context | undefined
+	context: ContextFrame[] | undefined
 }
 
 export { PanelState }

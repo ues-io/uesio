@@ -2,11 +2,7 @@ import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
 
-interface BuildWrapperProps extends definition.BaseProps {
-	test?: string
-}
-
-const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
+const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { children, path = "", index = 0, definition } = props
 	const [canDrag, setCanDrag] = useState(false)
@@ -55,6 +51,9 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				data-accepts={accepts?.join(",")}
 				data-path={path}
 				onDragStart={(e: DragEvent) => {
+					// We do this because we don't want
+					// this component to always be draggable
+					// that's why we do the setCanDrag thing
 					e.stopPropagation()
 					setTimeout(() => {
 						if (dragPath !== path) {

@@ -1,6 +1,11 @@
 import { Context } from "../../../context/context"
 import { SaveResponse, SaveResponseBatch } from "../../../load/saveresponse"
-import { getWiresFromDefinitonOrContext, save, getFullWireId } from ".."
+import {
+	getWiresFromDefinitonOrContext,
+	save,
+	getFullWireId,
+	getWireParts,
+} from ".."
 import { ThunkFunc } from "../../../store/store"
 import { getErrorString } from "../../utils"
 
@@ -77,7 +82,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			const changes = wire.changes
 			const changeKeys = Object.keys(changes)
 			if (changeKeys.length === 1) {
-				const [, , name] = wire.wire.split("/")
+				const [, name] = getWireParts(wire.wire)
 				return context.addFrame({
 					record: changeKeys[0],
 					wire: name,

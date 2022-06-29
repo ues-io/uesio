@@ -1,4 +1,4 @@
-import { definition, builder, context } from "@uesio/ui"
+import { definition, builder, context, component } from "@uesio/ui"
 
 type ListDefinition = {
 	id: string
@@ -42,6 +42,23 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 			],
 		},
 	],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					"uesio/io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
+					},
+				},
+				dropIndex
+			)
+		}
+	},
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],

@@ -49,7 +49,7 @@ definition:
                                 uesio.styles:
                                   root:
                                     width: 700px
-                                    padding-left: 200px
+                                    paddingLeft: 200px
                                 components:
                                   - uesio/io.text:
                                       uesio.styles:
