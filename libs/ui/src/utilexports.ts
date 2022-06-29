@@ -4,5 +4,6 @@ import { getErrorString } from "./bands/utils"
 import * as yaml from "./yamlutils/yamlutils"
 
 const isValidNameSpace = (str: string) => /\w+\/\w+\.\w+/.test(str)
+type MetaDataKey = `${string}/${string}.${string}`
 
-export { get, toPath, yaml, getErrorString, isValidNameSpace }
+export { get, toPath, yaml, getErrorString, isValidNameSpace, MetaDataKey }

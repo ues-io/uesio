@@ -2,7 +2,7 @@ import { CSSInterpolation } from "@emotion/css"
 import { ReactNode } from "react"
 import yaml from "yaml"
 import { Context } from "../context/context"
-
+import { MetaDataKey } from "../utilexports"
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
 	"uesio.variant"?: string
@@ -44,7 +44,7 @@ export type BaseProps = {
 	definition?: BaseDefinition
 	index?: number
 	path?: string
-	componentType?: string
+	componentType?: MetaDataKey
 	context: Context
 	children?: ReactNode
 }
@@ -52,13 +52,13 @@ export type BaseProps = {
 export interface UtilityProps {
 	index?: number
 	path?: string
-	variant?: string
+	variant?: MetaDataKey
 	styles?: Record<string, CSSInterpolation>
 	classes?: Record<string, string>
 	className?: string
 	context: Context
 	children?: ReactNode
-	componentType?: string
+	componentType?: MetaDataKey
 }
 
 export interface UtilityPropsPlus extends UtilityProps {

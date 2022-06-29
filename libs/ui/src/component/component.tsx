@@ -17,8 +17,7 @@ import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
-
-type MetaDataKey = `${string}/${string}.${string}`
+import { MetaDataKey } from "../utilexports"
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
 		const frame: ContextFrame = {}
@@ -143,13 +142,13 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	})
 }
 
-const getLoader = (key: string, buildMode: boolean) =>
+const getLoader = (key: MetaDataKey, buildMode: boolean) =>
 	buildMode
 		? getBuildtimeLoader(key) || getDefaultBuildtimeLoader(key)
 		: getRuntimeLoader(key)
 
 const getVariantInfo = (
-	fullName: string | undefined,
+	fullName: MetaDataKey | undefined,
 	key: string
 ): [string, string] => {
 	const parts = fullName?.split(".")
@@ -215,7 +214,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 }
 const BuildWrapper = getUtility("uesio/studio.buildwrapper")
 
-const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
+const getDefaultBuildtimeLoader = (key: MetaDataKey) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)
 
 	// Don't use the buildwrapper for a panel component

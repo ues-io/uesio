@@ -1,6 +1,7 @@
 import { DefinitionMap } from "./definition"
+import { MetaDataKey } from "../utilexports"
 export type PanelDefinition = {
-	"uesio.type": string
+	"uesio.type": MetaDataKey
 	title: string
 	width: string
 	height: string
