@@ -1,6 +1,6 @@
 import toPath from "lodash/toPath"
 import { DefinitionMap } from "../definition/definition"
-import { MetaDataKey } from "../utilexports"
+import { MetadataKey } from "../metadataexports"
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
 		return ["", ""]
@@ -144,10 +144,10 @@ const getAncestorPath = (path: string, parents: number): string =>
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
-const getFullPathParts = (path: string): [string, MetaDataKey, string] => {
+const getFullPathParts = (path: string): [string, MetadataKey, string] => {
 	const pathArray = toPath(path)
 	const metadataType = pathArray.shift() || ""
-	const metadataItem = (pathArray.shift() || "") as MetaDataKey
+	const metadataItem = (pathArray.shift() || "") as MetadataKey
 	return [metadataType, metadataItem, fromPath(pathArray)]
 }
 

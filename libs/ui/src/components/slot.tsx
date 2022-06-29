@@ -6,7 +6,7 @@ import {
 } from "../definition/definition"
 import { Component, getUtility } from "../component/component"
 import { unWrapDefinition } from "../component/path"
-import { MetaDataKey } from "../utilexports"
+import { MetadataKey } from "../metadataexports"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
@@ -35,7 +35,7 @@ const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 						return (
 							<Component
 								key={index}
-								componentType={componentType as MetaDataKey}
+								componentType={componentType as MetadataKey}
 								definition={unWrappedDef}
 								index={index}
 								path={`${listPath}["${index}"]`}

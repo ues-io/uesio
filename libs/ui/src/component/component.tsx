@@ -17,7 +17,7 @@ import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
-import { MetaDataKey } from "../utilexports"
+import { MetadataKey } from "../metadataexports"
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
 		const frame: ContextFrame = {}
@@ -142,13 +142,13 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	})
 }
 
-const getLoader = (key: MetaDataKey, buildMode: boolean) =>
+const getLoader = (key: MetadataKey, buildMode: boolean) =>
 	buildMode
 		? getBuildtimeLoader(key) || getDefaultBuildtimeLoader(key)
 		: getRuntimeLoader(key)
 
 const getVariantInfo = (
-	fullName: MetaDataKey | undefined,
+	fullName: MetadataKey | undefined,
 	key: string
 ): [string, string] => {
 	const parts = fullName?.split(".")
@@ -198,7 +198,7 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 }
 
 const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
-	key: MetaDataKey
+	key: MetadataKey
 ) => {
 	const returnFunc = (props: T) => {
 		const loader = getUtilityLoader(key) || NotFound
@@ -214,7 +214,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 }
 const BuildWrapper = getUtility("uesio/studio.buildwrapper")
 
-const getDefaultBuildtimeLoader = (key: MetaDataKey) => (props: BaseProps) => {
+const getDefaultBuildtimeLoader = (key: MetadataKey) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)
 
 	// Don't use the buildwrapper for a panel component
