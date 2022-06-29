@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import View from "./view"
+import View from "./view/view"
 
 const RunMode: FunctionComponent<BaseProps> = ({ context }) => {
 	const route = context.getRoute()

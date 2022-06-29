@@ -1,5 +1,5 @@
 import Slot, { SlotUtilityProps } from "./components/slot"
-import View from "./components/view"
+import View from "./components/view/view"
 import Panel from "./components/panel"
 import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
