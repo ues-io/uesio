@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/dimchansky/utfbom"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -17,7 +18,7 @@ type CSVOptions struct {
 
 func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session, options *CSVOptions) ([]datasource.SaveRequest, error) {
 
-	r := csv.NewReader(body)
+	r := csv.NewReader(utfbom.SkipOnly(body))
 	r.LazyQuotes = true
 	if options != nil {
 		r.Comma = options.Comma
