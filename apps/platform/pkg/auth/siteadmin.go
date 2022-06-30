@@ -26,8 +26,8 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 		return errors.New("your profile does not allow you to administer sites")
 	}
 
-	// Get the Workspace from the DB
-	siteadmin, err := querySite(site.UniqueKey, session)
+	// Get the Site from the DB
+	siteadmin, err := querySite(appName+":"+siteName, session)
 	if err != nil {
 		return err
 	}
