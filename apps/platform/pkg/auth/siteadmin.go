@@ -27,7 +27,7 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 	}
 
 	// Get the Workspace from the DB
-	siteadmin, err := querySite(appName+"_"+siteName, session)
+	siteadmin, err := querySite(site.UniqueKey, session)
 	if err != nil {
 		return err
 	}

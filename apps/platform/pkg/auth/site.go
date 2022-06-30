@@ -67,7 +67,7 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: adapt.UNIQUE_KEY_FIELD,
 					Value: siteid,
 				},
 			},
