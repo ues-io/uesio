@@ -46,7 +46,7 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 }
 
 func (cv *ConfigValue) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, cv.Name)
+	return fmt.Sprintf("%s:%s", workspace, cv.Name)
 }
 
 func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
@@ -80,12 +80,6 @@ func (cv *ConfigValue) GetNamespace() string {
 
 func (cv *ConfigValue) SetNamespace(namespace string) {
 	cv.Namespace = namespace
-}
-
-func (cv *ConfigValue) SetWorkspace(workspace string) {
-	cv.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (cv *ConfigValue) SetModified(mod time.Time) {

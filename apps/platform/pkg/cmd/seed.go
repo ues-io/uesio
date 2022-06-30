@@ -76,7 +76,7 @@ func setSystemUser(session *sess.Session, connection adapt.Connection) error {
 		session = anonSession
 	}
 
-	user, err := auth.GetUserByID("system", session, connection)
+	user, err := auth.GetUserByKey("system", session, connection)
 	if err != nil {
 		return err
 	}

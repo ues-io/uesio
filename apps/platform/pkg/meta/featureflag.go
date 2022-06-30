@@ -44,7 +44,7 @@ func (ff *FeatureFlag) GetCollection() CollectionableGroup {
 }
 
 func (ff *FeatureFlag) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, ff.Name)
+	return fmt.Sprintf("%s:%s", workspace, ff.Name)
 }
 
 func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
@@ -78,12 +78,6 @@ func (ff *FeatureFlag) GetNamespace() string {
 
 func (ff *FeatureFlag) SetNamespace(namespace string) {
 	ff.Namespace = namespace
-}
-
-func (ff *FeatureFlag) SetWorkspace(workspace string) {
-	ff.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (ff *FeatureFlag) SetModified(mod time.Time) {

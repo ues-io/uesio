@@ -37,11 +37,8 @@ func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
 
 func SetUniqueKey(item loadable.Item, collectionMetadata *CollectionMetadata) (string, error) {
 	// First see if the unique key already exists.
-	fmt.Println("Settig uniuqe key")
 	existingKey, err := item.GetField(UNIQUE_KEY_FIELD)
 	if err == nil && existingKey != nil && existingKey != "" {
-		fmt.Println("Found Existing Key")
-		fmt.Println(existingKey)
 		return existingKey.(string), nil
 	}
 	keyFields := collectionMetadata.UniqueKey

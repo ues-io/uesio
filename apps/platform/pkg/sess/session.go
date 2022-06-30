@@ -8,11 +8,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func createBrowserSession(userKey, sitename string) *session.Session {
+func createBrowserSession(userid, sitename string) *session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
-			"Site":    sitename,
-			"UserKey": userKey,
+			"Site":   sitename,
+			"UserID": userid,
 		},
 	})
 	return &sess
@@ -41,7 +41,7 @@ func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
 }
 
 func New(user *meta.User, site *meta.Site) *Session {
-	browserSession := createBrowserSession(user.UniqueKey, site.GetFullName())
+	browserSession := createBrowserSession(user.ID, site.GetFullName())
 	return NewSession(browserSession, user, site)
 }
 
@@ -184,20 +184,6 @@ func (s *Session) GetSiteTenantID() string {
 func (s *Session) GetWorkspaceID() string {
 	if s.workspace != nil {
 		return s.workspace.ID
-	}
-	return ""
-}
-
-func (s *Session) GetWorkspaceKey() string {
-	if s.workspace != nil {
-		return s.workspace.UniqueKey
-	}
-	return ""
-}
-
-func (s *Session) GetWorkspaceApp() string {
-	if s.workspace != nil {
-		return s.workspace.GetAppFullName()
 	}
 	return ""
 }

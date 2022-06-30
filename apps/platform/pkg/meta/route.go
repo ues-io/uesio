@@ -50,7 +50,7 @@ func (r *Route) GetCollection() CollectionableGroup {
 }
 
 func (r *Route) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, r.Name)
+	return fmt.Sprintf("%s:%s", workspace, r.Name)
 }
 
 func (r *Route) GetBundleGroup() BundleableGroup {
@@ -89,12 +89,6 @@ func (r *Route) GetNamespace() string {
 
 func (r *Route) SetNamespace(namespace string) {
 	r.Namespace = namespace
-}
-
-func (r *Route) SetWorkspace(workspace string) {
-	r.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (r *Route) SetModified(mod time.Time) {

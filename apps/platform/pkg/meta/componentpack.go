@@ -47,7 +47,7 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 func (cp *ComponentPack) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, cp.Name)
+	return fmt.Sprintf("%s:%s", workspace, cp.Name)
 }
 
 func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
@@ -112,12 +112,6 @@ func (cp *ComponentPack) GetNamespace() string {
 
 func (cp *ComponentPack) SetNamespace(namespace string) {
 	cp.Namespace = namespace
-}
-
-func (cp *ComponentPack) SetWorkspace(workspace string) {
-	cp.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (cp *ComponentPack) SetModified(mod time.Time) {

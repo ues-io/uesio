@@ -28,7 +28,7 @@ func (b *BundleDependency) GetBundleName() string {
 	if b.Bundle == nil {
 		return ""
 	}
-	return b.Bundle.App.ID
+	return b.Bundle.App.UniqueKey
 }
 
 func (b *BundleDependency) GetCollectionName() string {

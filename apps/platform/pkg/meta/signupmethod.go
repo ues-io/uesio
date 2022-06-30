@@ -49,7 +49,7 @@ func (sm *SignupMethod) GetCollection() CollectionableGroup {
 }
 
 func (sm *SignupMethod) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, sm.Name)
+	return fmt.Sprintf("%s:%s", workspace, sm.Name)
 }
 
 func (sm *SignupMethod) GetBundleGroup() BundleableGroup {
@@ -83,12 +83,6 @@ func (sm *SignupMethod) GetNamespace() string {
 
 func (sm *SignupMethod) SetNamespace(namespace string) {
 	sm.Namespace = namespace
-}
-
-func (sm *SignupMethod) SetWorkspace(workspace string) {
-	sm.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (sm *SignupMethod) SetModified(mod time.Time) {

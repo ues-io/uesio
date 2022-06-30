@@ -32,7 +32,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 	}
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
-	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserKey")
+	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
 
 	if browserSessionSite != site.GetFullName() {
 		logger.Log("Sites mismatch: "+browserSessionUser, logger.INFO)
@@ -64,9 +64,6 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 
 func getUserFromSession(userid string, session *sess.Session) (*meta.User, error) {
 
-	if userid == "guest" {
-		return sess.GetPublicUser(session.GetSite()), nil
-	}
 	// Get Cache site info for the host
 	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppFullName())
 	if ok {

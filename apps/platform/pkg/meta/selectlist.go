@@ -65,7 +65,7 @@ func (sl *SelectList) GetCollection() CollectionableGroup {
 }
 
 func (sl *SelectList) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, sl.Name)
+	return fmt.Sprintf("%s:%s", workspace, sl.Name)
 }
 
 func (sl *SelectList) GetBundleGroup() BundleableGroup {
@@ -99,12 +99,6 @@ func (sl *SelectList) GetNamespace() string {
 
 func (sl *SelectList) SetNamespace(namespace string) {
 	sl.Namespace = namespace
-}
-
-func (sl *SelectList) SetWorkspace(workspace string) {
-	sl.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (sl *SelectList) SetModified(mod time.Time) {

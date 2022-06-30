@@ -2,7 +2,6 @@ package adapt
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -13,17 +12,13 @@ func HandleUpsertLookup(
 	op *SaveOp,
 ) error {
 
-	fmt.Println("UPSERT???")
 	op.InsertCount = len(op.Inserts)
 	metadata := connection.GetMetadata()
 	options := op.Options
 	skipUpsertQuery := options == nil || options.Upsert == nil
-	fmt.Println(op.Options)
 	if skipUpsertQuery {
 		return nil
 	}
-
-	fmt.Println("wooooggg")
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
@@ -38,8 +33,6 @@ func HandleUpsertLookup(
 			return err
 		}
 
-		fmt.Println("Adddd")
-
 		change.UniqueKey = uniqueKey
 
 		idMap.AddID(change.UniqueKey, ReferenceLocator{
@@ -51,9 +44,6 @@ func HandleUpsertLookup(
 		return nil
 	}
 
-	fmt.Println("HEER")
-	fmt.Println(idMap)
-
 	return LoadLooper(connection, op.CollectionName, idMap, []LoadRequestField{
 		{
 			ID: ID_FIELD,
@@ -63,7 +53,6 @@ func HandleUpsertLookup(
 		},
 	}, UNIQUE_KEY_FIELD, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
 
-		fmt.Println("ANYTHING?")
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
@@ -81,8 +70,6 @@ func HandleUpsertLookup(
 		if err != nil {
 			return err
 		}
-
-		fmt.Println("Found item: Swaping to update")
 
 		change.IDValue = idValue.(string)
 		change.IsNew = false

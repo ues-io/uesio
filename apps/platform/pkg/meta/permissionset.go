@@ -53,7 +53,7 @@ func (ps *PermissionSet) GetCollection() CollectionableGroup {
 }
 
 func (ps *PermissionSet) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, ps.Name)
+	return fmt.Sprintf("%s:%s", workspace, ps.Name)
 }
 
 func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
@@ -87,12 +87,6 @@ func (ps *PermissionSet) GetNamespace() string {
 
 func (ps *PermissionSet) SetNamespace(namespace string) {
 	ps.Namespace = namespace
-}
-
-func (ps *PermissionSet) SetWorkspace(workspace string) {
-	ps.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (ps *PermissionSet) SetModified(mod time.Time) {

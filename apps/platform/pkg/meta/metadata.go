@@ -58,7 +58,6 @@ type BundleableItem interface {
 	GetDBID(string) string
 	SetNamespace(string)
 	GetNamespace() string
-	SetWorkspace(string)
 	SetModified(time.Time)
 	IsPublic() bool
 }

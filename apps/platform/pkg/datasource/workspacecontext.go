@@ -27,23 +27,32 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	workspace := &meta.Workspace{
-		UniqueKey: appName + ":" + workspaceName,
-		Name:      workspaceName,
-		App: &meta.App{
-			UniqueKey: appName,
+	var workspace meta.Workspace
+	err := PlatformLoadOne(
+		&workspace,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.UNIQUE_KEY_FIELD,
+					Value: appName + ":" + workspaceName,
+				},
+			},
 		},
-		// Get the workspace permissions and set them on the session
-		// For now give workspace users access to everything.
-		Permissions: &meta.PermissionSet{
-			AllowAllViews:       true,
-			AllowAllRoutes:      true,
-			AllowAllFiles:       true,
-			AllowAllCollections: true,
-		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
 	}
 
-	session.AddWorkspaceContext(workspace)
+	workspace.Permissions = &meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+	}
+
+	session.AddWorkspaceContext(&workspace)
 
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {

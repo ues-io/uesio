@@ -65,7 +65,7 @@ func (c *ComponentVariant) GetPath() string {
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s_%s", workspace, c.Component, c.Name)
+	return fmt.Sprintf("%s:%s:%s", workspace, c.Component, c.Name)
 }
 
 func (c *ComponentVariant) SetNamespace(namespace string) {
@@ -74,12 +74,6 @@ func (c *ComponentVariant) SetNamespace(namespace string) {
 
 func (c *ComponentVariant) GetNamespace() string {
 	return c.Namespace
-}
-
-func (c *ComponentVariant) SetWorkspace(workspace string) {
-	c.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (c *ComponentVariant) SetModified(mod time.Time) {

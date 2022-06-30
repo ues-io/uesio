@@ -45,7 +45,7 @@ func (uat *UserAccessToken) GetCollection() CollectionableGroup {
 }
 
 func (uat *UserAccessToken) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, uat.Name)
+	return fmt.Sprintf("%s:%s", workspace, uat.Name)
 }
 
 func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
@@ -79,12 +79,6 @@ func (uat *UserAccessToken) GetNamespace() string {
 
 func (uat *UserAccessToken) SetNamespace(namespace string) {
 	uat.Namespace = namespace
-}
-
-func (uat *UserAccessToken) SetWorkspace(workspace string) {
-	uat.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (uat *UserAccessToken) SetModified(mod time.Time) {

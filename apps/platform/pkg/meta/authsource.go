@@ -46,7 +46,7 @@ func (as *AuthSource) GetCollection() CollectionableGroup {
 }
 
 func (as *AuthSource) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, as.Name)
+	return fmt.Sprintf("%s:%s", workspace, as.Name)
 }
 
 func (as *AuthSource) GetBundleGroup() BundleableGroup {
@@ -80,12 +80,6 @@ func (as *AuthSource) GetNamespace() string {
 
 func (as *AuthSource) SetNamespace(namespace string) {
 	as.Namespace = namespace
-}
-
-func (as *AuthSource) SetWorkspace(workspace string) {
-	as.Workspace = &Workspace{
-		UniqueKey: workspace,
-	}
 }
 
 func (as *AuthSource) SetModified(mod time.Time) {

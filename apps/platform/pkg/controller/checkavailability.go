@@ -56,7 +56,7 @@ func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.GetUserByID(username, publicSession, nil)
+	user, err := auth.GetUserByKey(username, publicSession, nil)
 
 	if user != nil && err == nil {
 		msg := "Username not available, try something more creative"
