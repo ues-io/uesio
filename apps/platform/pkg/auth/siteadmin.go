@@ -27,7 +27,7 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 	}
 
 	// Get the Site from the DB
-	siteadmin, err := querySite(appName+":"+siteName, session)
+	siteadmin, err := querySiteByKey(appName+":"+siteName, session)
 	if err != nil {
 		return err
 	}

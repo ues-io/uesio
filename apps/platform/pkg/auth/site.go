@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -13,7 +12,7 @@ import (
 
 var SYSTEM_USER = &meta.User{}
 
-func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
+func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
 	err := datasource.PlatformLoadOne(
 		&s,
@@ -67,18 +66,25 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: siteid,
+					Field: field,
+					Value: value,
 				},
 			},
 		},
 		session,
 	)
 	if err != nil {
-		fmt.Println("Faillll hrrrrrr: " + siteid)
 		return nil, err
 	}
 	return &s, nil
+}
+
+func querySiteByID(siteid string, session *sess.Session) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, session)
+}
+
+func querySiteByKey(sitekey string, session *sess.Session) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session)
 }
 
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
@@ -122,7 +128,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return querySite(siteDomain.Site.ID, headlessSession)
+	return querySiteByID(siteDomain.Site.ID, headlessSession)
 }
 
 func GetStudioSite() (*meta.Site, error) {
