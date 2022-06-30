@@ -165,7 +165,7 @@ definition:
                                             uesio.variant: uesio/io.item
                                             signals:
                                               - signal: "route/NAVIGATE"
-                                                path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.id}"
+                                                path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.uniquekey}"
                                             content:
                                               - uesio/io.text:
                                                   text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey} v${["uesio/studio.bundle"]["uesio/studio.version"]}

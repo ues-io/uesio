@@ -28,7 +28,7 @@ func GetUserCache(userUniqueKey, siteid string) (*meta.User, bool) {
 
 	return &meta.User{
 		ID:        result["userid"],
-		UniqueKey: userUniqueKey,
+		UniqueKey: result["username"],
 		FirstName: result["firstname"],
 		LastName:  result["lastname"],
 		Profile:   result["profile"],

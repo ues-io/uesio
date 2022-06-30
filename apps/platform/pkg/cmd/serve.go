@@ -149,6 +149,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
 	siteAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
