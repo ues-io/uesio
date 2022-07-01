@@ -25,6 +25,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		allowSearch = true,
 		items,
 		setValue,
+		value,
 		itemToString,
 		itemRenderer = (item) => <div>{itemToString(item)}</div>,
 		tagRenderer = (item) => <div>{itemToString(item)}</div>,
@@ -51,7 +52,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				color: "#444",
 				border: "none",
 				outline: "none",
-				padding: "6px 10px 6px 0",
+				padding: "6px 3px 6px 0",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",
@@ -64,6 +65,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				alignItems: "center",
 				border: "1px solid #00000044",
 				cursor: "pointer",
+				padding: "3px",
 			},
 			searchbox: {
 				minWidth: "200px",
@@ -92,10 +94,10 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		inputValue,
 		openMenu,
 	} = useCombobox({
-		itemToString,
 		items,
-		// selectedItem: value,
+		selectedItem: value,
 		onSelectedItemChange: (changes) => {
+			console.log(changes)
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
 		},
@@ -108,7 +110,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	})
 
 	return (
-		<div ref={setAnchorEl}>
+		<div style={{ position: "relative" }} ref={setAnchorEl}>
 			<label {...getLabelProps()} className={classes.label}>
 				<div
 					onFocus={openMenu}
@@ -147,19 +149,24 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 							{...getInputProps()}
 						/>
 					</div>
-					{items
-						.filter((item) =>
-							itemToString(item).includes(inputValue)
-						)
-						.map((item, index) => (
+					{items.map((item: string, index) => {
+						// hacky, but downshift needs the index in order to determine what element this is.
+						// That's why we can't filter the items array beforehand.
+						if (allowSearch && !item.includes(inputValue))
+							return null
+						return (
 							<div
 								className={classes.menuitem}
 								key={index}
-								{...getItemProps({ item, index })}
+								{...getItemProps({
+									item,
+									index,
+								})}
 							>
 								{itemRenderer(item, index, highlightedIndex)}
 							</div>
-						))}
+						)
+					})}
 				</div>
 			</div>
 		</div>

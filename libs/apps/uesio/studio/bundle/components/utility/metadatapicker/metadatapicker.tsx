@@ -13,9 +13,7 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-type MetadataItem = {
-	key: string
-}
+type MetadataItem = string
 
 const CustomSelect = component.getUtility("uesio/io.customselect")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
@@ -43,8 +41,11 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			itemwrapper: {
-				padding: "6px",
 				color: "white",
+				display: "flex",
+				alignItems: "center",
+				margin: "5px 0",
+				padding: "0 3px",
 			},
 			notfound: {
 				textTransform: "capitalize",
@@ -54,7 +55,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				display: "inline-block",
 				backgroundColor: "#ddd",
 				padding: "6px 10px",
-				marginRight: "8px",
+				marginRight: "4px",
 				borderRadius: "14px",
 				fontSize: "8pt",
 				verticalAlign: "middle",
@@ -72,7 +73,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				color: "#444",
 				border: "none",
 				outline: "none",
-				padding: "6px 10px 6px 0",
+				padding: "0px 5px 0px 0",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",
@@ -88,30 +89,49 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
-	const items: MetadataItem[] = metadata
-		? Object.keys(metadata).map((key) => ({
-				key,
-		  }))
-		: []
+	const items: MetadataItem[] = metadata ? Object.keys(metadata) : []
 
-	const itemToString = (item: MetadataItem) => (item ? item.key : "")
-
-	const tag = (ns: string, name: string, background: string) => (
+	const tag = (
+		ns: string,
+		name: string,
+		background: string,
+		selected: boolean
+	) => (
 		<>
-			<div
+			<span
 				className={classes.namespacetag}
 				style={{
 					...(background && { backgroundColor: background }),
+					...(selected && {
+						borderRight: "2px solid white",
+						borderTop: "2px solid white",
+						marginTop: "-2px",
+						marginBottom: "-2px",
+						borderBottom: "2px solid white",
+					}),
 				}}
 			>
 				{ns}
-			</div>
-			<div className={classes.nametag}>{name}</div>
+			</span>
+			<span
+				style={{
+					...(selected && {
+						whiteSpace: "nowrap",
+						overflow: "hidden",
+						marginRight: "4px",
+						maxWidth: "44px",
+						textOverflow: "ellipsis",
+					}),
+				}}
+				className={classes.nametag}
+			>
+				{name}
+			</span>
 		</>
 	)
 
 	const renderer = (
-		item: MetadataItem,
+		item: MetadataItem | null,
 		highlighted: boolean,
 		selected?: boolean
 	) => {
@@ -123,12 +143,13 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					{tag(
 						`No ${metadataType.toLowerCase()} Selected`,
 						"",
-						"#eee"
+						"#eee",
+						false
 					)}
 				</div>
 			)
-		const [ns, name] = component.path.parseKey(item.key)
-		const metadataInfo = metadata?.[item.key]
+		const [ns, name] = component.path.parseKey(item)
+		const metadataInfo = metadata?.[item]
 
 		return (
 			<div
@@ -136,8 +157,15 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					classes.itemwrapper,
 					highlighted && classes.highlighteditem
 				)}
+				style={{
+					...(selected && {
+						padding: "0",
+						borderRadius: "14px",
+						backgroundColor: "#dcdcdc",
+					}),
+				}}
 			>
-				{tag(ns, name, metadataInfo?.color || "#eee")}
+				{tag(ns, name, metadataInfo?.color || "#eee", !!selected)}
 				{selected && (
 					<button
 						tabIndex={-1}
@@ -164,30 +192,18 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		>
 			<CustomSelect
 				items={items}
-				value={
-					value
-						? {
-								key: value,
-						  }
-						: undefined
-				}
-				itemToString={itemToString}
+				value={value}
 				itemRenderer={(
 					item: MetadataItem,
 					index: number,
 					highlightedIndex: number
 				) => {
-					if (!item) {
-						return null
-					}
-					const highlighted = index === highlightedIndex
-					return renderer(item, highlighted)
+					const isHighlighted = index === highlightedIndex
+					return renderer(item, isHighlighted)
 				}}
-				tagRenderer={value && renderer({ key: value }, false, true)}
+				tagRenderer={renderer(value || null, false, true)}
 				context={context}
-				setValue={(item: MetadataItem) => {
-					setValue(item ? item.key : "")
-				}}
+				setValue={(item: MetadataItem) => setValue(item || "")}
 			/>
 		</FieldWrapper>
 	)
