@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks, metadata, styles } from "@uesio/ui"
-
-interface MetadataPickerProps extends definition.UtilityProps {
-	value: string
-	setValue: (value: string) => void
+interface MultiMetadataPickerProps extends definition.UtilityProps {
+	value: string[]
+	setValue: (value: string[]) => void
 	metadataType: metadata.MetadataType
 	label: string
 	labelPosition?: string
@@ -13,13 +12,13 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-type MetadataItem = string
-
+const Icon = component.getUtility("uesio/io.icon")
 const CustomSelect = component.getUtility("uesio/io.customselect")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-const Icon = component.getUtility("uesio/io.icon")
 
-const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
+const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
+	props
+) => {
 	const {
 		value,
 		setValue,
@@ -28,8 +27,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		metadataType,
 		context,
 		grouping,
-		//defaultNamespace,
-		//selectVariant,
 		fieldWrapperVariant,
 	} = props
 	const uesio = hooks.useUesio(props)
@@ -41,11 +38,9 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			itemwrapper: {
+				padding: "6px",
 				color: "white",
-				display: "flex",
-				alignItems: "center",
-				margin: "5px 0",
-				padding: "0 3px",
+				display: "inline-block",
 			},
 			notfound: {
 				textTransform: "capitalize",
@@ -55,7 +50,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				display: "inline-block",
 				backgroundColor: "#ddd",
 				padding: "6px 10px",
-				marginRight: "4px",
+				marginRight: "8px",
 				borderRadius: "14px",
 				fontSize: "8pt",
 				verticalAlign: "middle",
@@ -63,20 +58,20 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			highlighteditem: {
 				backgroundColor: "#eee",
 			},
+			editbutton: {
+				color: "#444",
+				border: "none",
+				outline: "none",
+				padding: "6px 10px 6px 0",
+				backgroundColor: "transparent",
+				fontSize: "initial",
+				cursor: "pointer",
+			},
 			nametag: {
 				display: "inline-block",
 				fontSize: "9pt",
 				verticalAlign: "middle",
 				color: "#333",
-			},
-			editbutton: {
-				color: "#444",
-				border: "none",
-				outline: "none",
-				padding: "0px 5px 0px 0",
-				backgroundColor: "transparent",
-				fontSize: "initial",
-				cursor: "pointer",
 			},
 		},
 		props
@@ -89,83 +84,43 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
-	const items: MetadataItem[] = metadata ? Object.keys(metadata) : []
+	const items: string[] = metadata
+		? Object.keys(metadata).filter((el) => !value.includes(el))
+		: []
 
-	const tag = (
-		ns: string,
-		name: string,
-		background: string,
-		selected: boolean
-	) => (
+	const itemToString = (item: string) => (item ? item : "")
+
+	const tag = (ns: string, name: string, background: string) => (
 		<>
-			<span
+			<div
 				className={classes.namespacetag}
 				style={{
 					...(background && { backgroundColor: background }),
-					...(selected && {
-						borderRight: "2px solid white",
-						borderTop: "2px solid white",
-						marginTop: "-2px",
-						marginBottom: "-2px",
-						borderBottom: "2px solid white",
-					}),
 				}}
 			>
-				{ns}
-			</span>
-			<span
-				style={{
-					...(selected && {
-						whiteSpace: "nowrap",
-						overflow: "hidden",
-						marginRight: "4px",
-						maxWidth: "44px",
-						textOverflow: "ellipsis",
-					}),
-				}}
-				className={classes.nametag}
-			>
-				{name}
-			</span>
+				<span>{ns}</span>
+			</div>
+			<span className={classes.nametag}>{name}</span>
 		</>
 	)
 
 	const renderer = (
-		item: MetadataItem | null,
+		item: string,
 		highlighted: boolean,
-		selected?: boolean
+		selected: boolean
 	) => {
-		if (!item)
-			return (
-				<div
-					className={styles.cx(classes.itemwrapper, classes.notfound)}
-				>
-					{tag(
-						`No ${metadataType.toLowerCase()} Selected`,
-						"",
-						"#eee",
-						false
-					)}
-				</div>
-			)
 		const [ns, name] = component.path.parseKey(item)
 		const metadataInfo = metadata?.[item]
 
 		return (
 			<div
+				key={item}
 				className={styles.cx(
 					classes.itemwrapper,
 					highlighted && classes.highlighteditem
 				)}
-				style={{
-					...(selected && {
-						padding: "0",
-						borderRadius: "14px",
-						backgroundColor: "#dcdcdc",
-					}),
-				}}
 			>
-				{tag(ns, name, metadataInfo?.color || "#eee", !!selected)}
+				{tag(ns, name, metadataInfo?.color || "#eee")}
 				{selected && (
 					<button
 						tabIndex={-1}
@@ -173,7 +128,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 						type="button"
 						onClick={(event) => {
 							event.preventDefault() // Prevent the label from triggering
-							setValue("")
+							setValue(value.filter((el) => el !== item))
 						}}
 					>
 						<Icon icon="close" context={context} />
@@ -193,22 +148,34 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			<CustomSelect
 				items={items}
 				value={value}
+				itemToString={itemToString}
 				itemRenderer={(
-					item: MetadataItem,
+					item: string,
 					index: number,
 					highlightedIndex: number
 				) => {
-					const isHighlighted = index === highlightedIndex
-					return renderer(item, isHighlighted)
+					if (!item) {
+						return null
+					}
+					const highlighted = index === highlightedIndex
+					return renderer(item, highlighted, false)
 				}}
-				tagRenderer={renderer(value || null, false, true)}
+				allowSearch={false}
+				tagRenderer={value.map((el) => el && renderer(el, false, true))}
 				context={context}
-				setValue={(item: MetadataItem) => setValue(item || "")}
+				setValue={(item: string) => {
+					if (!item) return
+					const newValue = value.includes(item)
+						? value.filter((el) => el !== item)
+						: [...value, item]
+
+					return setValue(newValue)
+				}}
 			/>
 		</FieldWrapper>
 	)
 }
 
-MetadataPicker.displayName = "MetadataPicker"
+MultiMetadataPicker.displayName = "MultiMetadataPicker"
 
-export default MetadataPicker
+export default MultiMetadataPicker
