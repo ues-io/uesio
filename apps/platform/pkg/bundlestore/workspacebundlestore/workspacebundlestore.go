@@ -80,7 +80,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		}, &datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    adapt.ID_FIELD,
+					Field:    adapt.UNIQUE_KEY_FIELD,
 					Value:    ids,
 					Operator: "IN",
 				},
@@ -91,7 +91,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 
 		if group.Len() != len(items) {
 			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.ID_FIELD)
+				value, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 				if err != nil {
 					return ""
 				}

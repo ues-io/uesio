@@ -23,8 +23,8 @@ import (
 )
 
 type FileRecord struct {
-	RecordID  string
-	FieldName string
+	RecordUniqueKey string
+	FieldName       string
 }
 
 var ORDERED_ITEMS = [...]string{
@@ -132,39 +132,36 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + key + " : " + err.Error())
 			}
 
-			/*
-				// Special handling for files
-				if metadataType == "files" {
-					file := collectionItem.(*meta.File)
-					fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
-						RecordID:  file.Name,
-						FieldName: "uesio/studio.content",
-					}
+			// Special handling for files
+			if metadataType == "files" {
+				file := collectionItem.(*meta.File)
+				fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
+					RecordUniqueKey: file.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.content",
 				}
+			}
 
-				// Special handling for bots
-				if metadataType == "bots" {
-					bot := collectionItem.(*meta.Bot)
-					fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
-						RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
-						FieldName: "uesio/studio.content",
-					}
+			// Special handling for bots
+			if metadataType == "bots" {
+				bot := collectionItem.(*meta.Bot)
+				fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
+					RecordUniqueKey: bot.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.content",
 				}
+			}
 
-
-				// Special handling for componentpacks
-				if metadataType == "componentpacks" {
-					cpack := collectionItem.(*meta.ComponentPack)
-					fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
-						RecordID:  cpack.Name,
-						FieldName: "uesio/studio.runtimebundle",
-					}
-					fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
-						RecordID:  cpack.Name,
-						FieldName: "uesio/studio.buildtimebundle",
-					}
+			// Special handling for componentpacks
+			if metadataType == "componentpacks" {
+				cpack := collectionItem.(*meta.ComponentPack)
+				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
+					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.runtimebundle",
 				}
-			*/
+				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
+					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.buildtimebundle",
+				}
+			}
 
 			collectionItem.SetField("uesio/studio.workspace", &meta.Workspace{
 				ID: workspace.ID,
@@ -197,10 +194,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		uploadOps = append(uploadOps, filesource.FileUploadOp{
 			Data: fileStream.Data,
 			Details: &fileadapt.FileDetails{
-				Name:         fileStream.FileName,
-				CollectionID: fileStream.Type,
-				RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-				FieldID:      fileRecord.FieldName,
+				Name:            fileStream.FileName,
+				CollectionID:    fileStream.Type,
+				RecordUniqueKey: fileRecord.RecordUniqueKey,
+				FieldID:         fileRecord.FieldName,
 			},
 		})
 	}

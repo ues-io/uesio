@@ -149,9 +149,8 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 
 	//This creates a copy of the session
 	wsSession := session.RemoveWorkspaceContext()
-	idSplit := strings.Split(workspaceID, ":")
 
-	err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession, connection)
+	err := AddWorkspaceContextByID(workspaceID, wsSession, connection)
 	if err != nil {
 		return err
 	}
@@ -161,9 +160,9 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 
 func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error {
 
-	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.uniquekey")
+	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
 	if err != nil {
-		return err //if error workspaceID, err := change.GetFieldAsString("uesio/studio.workspace")
+		return err
 	}
 
 	if *currentWorkspace == "" {

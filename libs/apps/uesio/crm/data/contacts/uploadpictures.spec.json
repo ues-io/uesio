@@ -1,6 +1,5 @@
 {
 	"jobtype": "UPLOADFILES",
 	"collection": "uesio/crm.contact",
-	"upsertkey": "uesio/crm.externalid",
 	"uploadfield": "uesio/crm.image"
 }

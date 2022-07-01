@@ -7,11 +7,12 @@ import (
 
 // FileDetails struct
 type FileDetails struct {
-	ContentLength uint64
-	Name          string
-	CollectionID  string
-	RecordID      string
-	FieldID       string
+	ContentLength   uint64
+	Name            string
+	CollectionID    string
+	RecordID        string
+	RecordUniqueKey string
+	FieldID         string
 }
 
 // NewFileDetails function

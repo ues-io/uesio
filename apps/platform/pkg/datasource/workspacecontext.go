@@ -9,8 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, connection adapt.Connection) error {
-
+func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetPermissions()
 
@@ -27,24 +26,6 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	var workspace meta.Workspace
-	err := PlatformLoadOne(
-		&workspace,
-		&PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: appName + ":" + workspaceName,
-				},
-			},
-		},
-		session.RemoveWorkspaceContext(),
-	)
-	if err != nil {
-		return err
-	}
-
 	workspace.Permissions = &meta.PermissionSet{
 		AllowAllViews:       true,
 		AllowAllRoutes:      true,
@@ -52,7 +33,7 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 		AllowAllCollections: true,
 	}
 
-	session.AddWorkspaceContext(&workspace)
+	session.AddWorkspaceContext(workspace)
 
 	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
@@ -61,5 +42,46 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 
 	workspace.SetAppBundle(bundleDef)
 	return nil
+}
 
+func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
+	var workspace meta.Workspace
+	err := PlatformLoadOne(
+		&workspace,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.UNIQUE_KEY_FIELD,
+					Value: workspaceKey,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
+	}
+	return addWorkspaceContext(&workspace, session, connection)
+}
+
+func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
+	var workspace meta.Workspace
+	err := PlatformLoadOne(
+		&workspace,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: workspaceID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
+	}
+	return addWorkspaceContext(&workspace, session, connection)
 }

@@ -1,6 +1,5 @@
 {
 	"jobtype": "UPLOADFILES",
 	"collection": "uesio/cms.article",
-	"upsertkey": "uesio/cms.slug",
 	"uploadfield": "uesio/cms.content"
 }
