@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks, metadata, styles } from "@uesio/ui"
-
 interface MultiMetadataPickerProps extends definition.UtilityProps {
 	value: string[]
 	setValue: (value: string[]) => void
@@ -13,7 +12,8 @@ interface MultiMetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-const CustomMultiSelect = component.getUtility("uesio/io.custommultiselect")
+const Icon = component.getUtility("uesio/io.icon")
+const CustomSelect = component.getUtility("uesio/io.customselect")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
@@ -58,6 +58,15 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 			highlighteditem: {
 				backgroundColor: "#eee",
 			},
+			editbutton: {
+				color: "#444",
+				border: "none",
+				outline: "none",
+				padding: "6px 10px 6px 0",
+				backgroundColor: "transparent",
+				fontSize: "initial",
+				cursor: "pointer",
+			},
 			nametag: {
 				display: "inline-block",
 				fontSize: "9pt",
@@ -76,7 +85,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 	)
 
 	const items: string[] = metadata
-		? Object.keys(metadata).map((key) => key)
+		? Object.keys(metadata).filter((el) => !value.includes(el))
 		: []
 
 	const itemToString = (item: string) => (item ? item : "")
@@ -95,30 +104,36 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 		</>
 	)
 
-	const renderer = (item: string, highlighted: boolean) => {
-		if (!item)
-			return (
-				<div
-					className={styles.cx(classes.itemwrapper, classes.notfound)}
-				>
-					{tag(
-						`No ${metadataType.toLowerCase()} Selected`,
-						"",
-						"#eee"
-					)}
-				</div>
-			)
+	const renderer = (
+		item: string,
+		highlighted: boolean,
+		selected: boolean
+	) => {
 		const [ns, name] = component.path.parseKey(item)
 		const metadataInfo = metadata?.[item]
 
 		return (
 			<div
+				key={item}
 				className={styles.cx(
 					classes.itemwrapper,
 					highlighted && classes.highlighteditem
 				)}
 			>
 				{tag(ns, name, metadataInfo?.color || "#eee")}
+				{selected && (
+					<button
+						tabIndex={-1}
+						className={classes.editbutton}
+						type="button"
+						onClick={(event) => {
+							event.preventDefault() // Prevent the label from triggering
+							setValue(value.filter((el) => el !== item))
+						}}
+					>
+						<Icon icon="close" context={context} />
+					</button>
+				)}
 			</div>
 		)
 	}
@@ -130,9 +145,9 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 			label={label}
 			context={context}
 		>
-			<CustomMultiSelect
-				litems={items}
-				value={value ? value : []}
+			<CustomSelect
+				items={items}
+				value={value}
 				itemToString={itemToString}
 				itemRenderer={(
 					item: string,
@@ -143,12 +158,18 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 						return null
 					}
 					const highlighted = index === highlightedIndex
-					return renderer(item, highlighted)
+					return renderer(item, highlighted, false)
 				}}
-				tagRenderer={renderer}
+				allowSearch={false}
+				tagRenderer={value.map((el) => el && renderer(el, false, true))}
 				context={context}
-				setValue={(item: string[]) => {
-					setValue(item ? item : [])
+				setValue={(item: string) => {
+					if (!item) return
+					const newValue = value.includes(item)
+						? value.filter((el) => el !== item)
+						: [...value, item]
+
+					return setValue(newValue)
 				}}
 			/>
 		</FieldWrapper>
