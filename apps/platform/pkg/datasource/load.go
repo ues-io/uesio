@@ -109,6 +109,12 @@ func getMetadataForLoad(
 			// We don't need any extra field metadata for search conditions yet
 			continue
 		}
+
+		if condition.Type == "GROUP" {
+			// We don't need any extra field metadata for group conditions yet
+			continue
+		}
+
 		err := collections.AddField(collectionKey, condition.Field, nil)
 		if err != nil {
 			return fmt.Errorf("condition field: %v", err)

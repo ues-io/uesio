@@ -5,6 +5,9 @@ const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 const SEARCH = "SEARCH"
+const GROUP = "GROUP"
+
+type Conjunction = "AND" | "OR"
 
 type ConditionOperators =
 	| "EQ"
@@ -22,12 +25,23 @@ type WireConditionState =
 	| LookupConditionState
 	| ValueConditionState
 	| SearchConditionState
+	| GroupConditionState
 
 type ConditionBase = {
-	type?: typeof SEARCH
+	type?: typeof SEARCH | typeof GROUP
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
 	id?: string
 	operator?: ConditionOperators
+}
+
+type GroupConditionDefinition = ConditionBase & {
+	type: typeof GROUP
+	conjunction: Conjunction
+	conditions: ConditionBase[]
+}
+
+type GroupConditionState = GroupConditionDefinition & {
+	active: boolean
 }
 
 type SearchConditionDefinition = ConditionBase & {
@@ -76,6 +90,7 @@ type WireConditionDefinition =
 	| LookupConditionDefinition
 	| ValueConditionDefinition
 	| SearchConditionDefinition
+	| GroupConditionDefinition
 
 type ConditionHandler = (
 	condition: WireConditionState,
