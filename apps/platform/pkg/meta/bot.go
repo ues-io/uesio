@@ -49,17 +49,19 @@ func NewBot(key string) (*Bot, error) {
 
 func NewListenerBot(namespace, name string) *Bot {
 	return &Bot{
-		Type:      "LISTENER",
-		Namespace: namespace,
-		Name:      name,
+		CollectionRef: "_",
+		Type:          "LISTENER",
+		Namespace:     namespace,
+		Name:          name,
 	}
 }
 
 func NewGeneratorBot(namespace, name string) *Bot {
 	return &Bot{
-		Type:      "GENERATOR",
-		Namespace: namespace,
-		Name:      name,
+		CollectionRef: "_",
+		Type:          "GENERATOR",
+		Namespace:     namespace,
+		Name:          name,
 	}
 }
 
@@ -90,6 +92,7 @@ type BotParam struct {
 
 type Bot struct {
 	ID            string              `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey     string              `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name          string              `yaml:"name" uesio:"uesio/studio.name"`
 	CollectionRef string              `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
 	Namespace     string              `yaml:"-" uesio:"-"`
@@ -150,7 +153,7 @@ func (b *Bot) GetCollection() CollectionableGroup {
 }
 
 func (b *Bot) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s_%s_%s", workspace, b.CollectionRef, b.Type, b.Name)
+	return fmt.Sprintf("%s:%s:%s:%s", workspace, b.CollectionRef, b.Type, b.Name)
 }
 
 func (b *Bot) GetBundleGroup() BundleableGroup {
@@ -198,12 +201,6 @@ func (b *Bot) GetNamespace() string {
 
 func (b *Bot) SetNamespace(namespace string) {
 	b.Namespace = namespace
-}
-
-func (b *Bot) SetWorkspace(workspace string) {
-	b.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (b *Bot) SetModified(mod time.Time) {

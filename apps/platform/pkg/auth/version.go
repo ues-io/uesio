@@ -13,7 +13,7 @@ func AddVersionContext(app, namespace, version string, session *sess.Session) er
 	perms := session.GetPermissions()
 
 	// 1. Make sure we're in a site that can work with metadata
-	if site.GetAppID() != "uesio/studio" {
+	if site.GetAppFullName() != "uesio/studio" {
 		return errors.New("this site does not allow working with versions")
 	}
 	// 2. we should have a profile that allows modifying workspaces

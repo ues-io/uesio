@@ -110,6 +110,17 @@ func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
+func getUniqueKeysFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
+	keys := []string{}
+	for i := range request.Updates {
+		keys = append(keys, request.Updates[i].UniqueKey)
+	}
+	for i := range request.Deletes {
+		keys = append(keys, request.Deletes[i].UniqueKey)
+	}
+	return keys
+}
+
 func clearHostForDomains(ids []string) error {
 	keys := []string{}
 	for _, id := range ids {
@@ -124,9 +135,9 @@ func clearHostForDomains(ids []string) error {
 }
 
 func getHostKeyFromDomainId(id string) (string, error) {
-	idParts := strings.Split(id, "_")
+	idParts := strings.Split(id, ":")
 	if len(idParts) != 2 {
-		return "", errors.New("Bad Domain ID")
+		return "", errors.New("Bad Domain ID: " + id)
 	}
 	return cache.GetHostKey(idParts[1], idParts[0]), nil
 }
@@ -138,9 +149,8 @@ func checkValidItems(workspaceID string, items []meta.BundleableItem, session *s
 
 	//This creates a copy of the session
 	wsSession := session.RemoveWorkspaceContext()
-	idSplit := strings.Split(workspaceID, "_")
 
-	err := AddWorkspaceContext(idSplit[0], idSplit[1], wsSession, connection)
+	err := AddWorkspaceContextByID(workspaceID, wsSession, connection)
 	if err != nil {
 		return err
 	}
@@ -152,7 +162,7 @@ func checkWorkspaceID(currentWorkspace *string, change *adapt.ChangeItem) error 
 
 	workspaceID, err := change.GetFieldAsString("uesio/studio.workspace->uesio/core.id")
 	if err != nil {
-		return err //if error workspaceID, err := change.GetFieldAsString("uesio/studio.workspace")
+		return err
 	}
 
 	if *currentWorkspace == "" {

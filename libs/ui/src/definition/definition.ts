@@ -13,7 +13,6 @@ export type YamlDoc = yaml.Document<yaml.Node>
 export type ImportMapping = {
 	type: "IMPORT" | "VALUE"
 	columnname?: string
-	matchfield?: string
 	value?: string
 }
 
@@ -23,7 +22,6 @@ export type ImportSpec = {
 	jobtype: "IMPORT"
 	collection: string
 	filetype: "CSV" | "TAB" | undefined
-	upsertkey: string
 	mappings: Record<string, ImportMapping>
 }
 
@@ -36,7 +34,6 @@ export type ExportSpec = {
 export type UploadSpec = {
 	jobtype: "UPLOADFILES"
 	collection: string
-	upsertkey: string
 	uploadfield?: string
 }
 

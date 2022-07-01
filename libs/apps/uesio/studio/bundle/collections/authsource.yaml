@@ -1,5 +1,7 @@
 name: authsource
-idFormat: "${uesio/studio.workspace}_${uesio/studio.name}"
+uniqueKey:
+  - uesio/studio.workspace
+  - uesio/studio.name
 nameField: uesio/studio.name
 label: auth source
 pluralLabel: auth sources

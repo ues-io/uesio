@@ -3,6 +3,7 @@ package meta
 // User struct
 type User struct {
 	ID        string            `uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	FirstName string            `uesio:"uesio/core.firstname"`
 	LastName  string            `uesio:"uesio/core.lastname"`
 	Profile   string            `uesio:"uesio/core.profile"`

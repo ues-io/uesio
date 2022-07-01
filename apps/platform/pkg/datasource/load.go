@@ -219,15 +219,26 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	for i := range ops {
 		// Verify that the id field is present
 		hasIDField := false
+		hasUniqueKeyField := false
 		for j := range ops[i].Fields {
 			if ops[i].Fields[j].ID == adapt.ID_FIELD {
 				hasIDField = true
+				break
+			}
+			if ops[i].Fields[j].ID == adapt.UNIQUE_KEY_FIELD {
+				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
 			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
 				ID: adapt.ID_FIELD,
+			})
+		}
+
+		if !hasUniqueKeyField {
+			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+				ID: adapt.UNIQUE_KEY_FIELD,
 			})
 		}
 

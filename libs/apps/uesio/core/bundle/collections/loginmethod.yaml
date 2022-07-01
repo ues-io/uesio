@@ -1,5 +1,7 @@
 name: loginmethod
-idFormat: "${uesio/core.auth_source}_${uesio/core.federation_id}"
+uniqueKey:
+  - uesio/core.auth_source
+  - uesio/core.federation_id
 nameField: uesio/core.federation_id
 public: true
 label: login method

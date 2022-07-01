@@ -1,4 +1,6 @@
 name: opportunity
+uniqueKey:
+  - uesio/crm.externalid
 nameField: uesio/crm.name
 label: opportunity
 pluralLabel: opportunities

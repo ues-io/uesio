@@ -113,7 +113,7 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *WorkspaceMergeData {
 	}
 	return &WorkspaceMergeData{
 		Name: workspace.Name,
-		App:  workspace.GetAppID(),
+		App:  workspace.GetAppFullName(),
 	}
 }
 
@@ -159,7 +159,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
 			Name:      site.Name,
-			App:       site.GetAppID(),
+			App:       site.GetAppFullName(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},

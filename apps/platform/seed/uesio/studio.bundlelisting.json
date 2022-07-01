@@ -4,7 +4,7 @@
 		"uesio/studio.icon": "favorite",
 		"uesio/studio.color": "#0e2e9e",
 		"uesio/studio.app": {
-			"uesio/core.id": "uesio/core"
+			"uesio/core.uniquekey": "uesio/core"
 		}
 	},
 	{
@@ -12,7 +12,7 @@
 		"uesio/studio.icon": "cruelty_free",
 		"uesio/studio.color": "#0e9e75",
 		"uesio/studio.app": {
-			"uesio/core.id": "uesio/io"
+			"uesio/core.uniquekey": "uesio/io"
 		}
 	},
 	{
@@ -20,7 +20,7 @@
 		"uesio/studio.icon": "article",
 		"uesio/studio.color": "#b4a99f",
 		"uesio/studio.app": {
-			"uesio/core.id": "uesio/cms"
+			"uesio/core.uniquekey": "uesio/cms"
 		}
 	}
 ]

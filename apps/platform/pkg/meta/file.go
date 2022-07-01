@@ -22,6 +22,7 @@ func NewFile(key string) (*File, error) {
 
 type File struct {
 	ID        string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`
@@ -46,7 +47,7 @@ func (f *File) GetCollection() CollectionableGroup {
 }
 
 func (f *File) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, f.Name)
+	return fmt.Sprintf("%s:%s", workspace, f.Name)
 }
 
 func (f *File) GetBundleGroup() BundleableGroup {
@@ -89,12 +90,6 @@ func (f *File) GetNamespace() string {
 
 func (f *File) SetNamespace(namespace string) {
 	f.Namespace = namespace
-}
-
-func (f *File) SetWorkspace(workspace string) {
-	f.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (f *File) SetModified(mod time.Time) {

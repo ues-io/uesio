@@ -166,11 +166,12 @@ func CreateUser(username string, email string, claims *AuthenticationClaims, sig
 	return datasource.PlatformSaveOne(user, nil, nil, session)
 }
 
-func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
+func getUser(field, value string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
 	var user meta.User
 	err := datasource.PlatformLoadOne(
 		&user,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/core.firstname",
@@ -198,8 +199,8 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: username,
+					Field: field,
+					Value: value,
 				},
 			},
 		},
@@ -209,6 +210,14 @@ func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func GetUserByKey(username string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
+	return getUser(adapt.UNIQUE_KEY_FIELD, username, session, connection)
+}
+
+func GetUserByID(id string, session *sess.Session, connection adapt.Connection) (*meta.User, error) {
+	return getUser(adapt.ID_FIELD, id, session, connection)
 }
 
 func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) {

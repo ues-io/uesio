@@ -10,6 +10,7 @@ import (
 
 type FeatureFlag struct {
 	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -43,7 +44,7 @@ func (ff *FeatureFlag) GetCollection() CollectionableGroup {
 }
 
 func (ff *FeatureFlag) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, ff.Name)
+	return fmt.Sprintf("%s:%s", workspace, ff.Name)
 }
 
 func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
@@ -77,12 +78,6 @@ func (ff *FeatureFlag) GetNamespace() string {
 
 func (ff *FeatureFlag) SetNamespace(namespace string) {
 	ff.Namespace = namespace
-}
-
-func (ff *FeatureFlag) SetWorkspace(workspace string) {
-	ff.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (ff *FeatureFlag) SetModified(mod time.Time) {

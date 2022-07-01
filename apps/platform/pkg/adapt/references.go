@@ -163,6 +163,9 @@ func HandleReferences(
 			{
 				ID: ID_FIELD,
 			},
+			{
+				ID: UNIQUE_KEY_FIELD,
+			},
 		})
 
 		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), func(refItem loadable.Item, matchIndexes []ReferenceLocator) error {

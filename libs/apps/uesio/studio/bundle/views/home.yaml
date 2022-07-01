@@ -53,13 +53,13 @@ definition:
                           uesio.variant: uesio/io.nav
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/${uesio/core.id}"
+                              path: "app/${uesio/core.uniquekey}"
                           content:
                             - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.uniquekey}
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/studio.description}
@@ -182,7 +182,7 @@ definition:
                 wires:
                   - "newapp"
               - signal: "route/NAVIGATE"
-                path: "app/${uesio/core.id}"
+                path: "app/${uesio/core.uniquekey}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

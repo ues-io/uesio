@@ -17,8 +17,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	return &adapt.CollectionMetadata{
 		Name:                  e.Name,
 		Namespace:             e.Namespace,
-		IDFormat:              e.IDFormat,
 		NameField:             GetNameField(e),
+		UniqueKey:             e.UniqueKeyFields,
 		Createable:            !e.ReadOnly,
 		Accessible:            true,
 		Updateable:            !e.ReadOnly,

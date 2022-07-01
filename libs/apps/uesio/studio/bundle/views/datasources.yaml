@@ -11,8 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     datasources:
       collection: uesio/studio.datasource
       fields:

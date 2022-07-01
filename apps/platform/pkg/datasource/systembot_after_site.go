@@ -29,7 +29,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 	}
 	domainIds := []string{}
 	err = domains.Loop(func(item loadable.Item, index string) error {
-		id, err := item.GetField(adapt.ID_FIELD)
+		id, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 		if err != nil {
 			return err
 		}
