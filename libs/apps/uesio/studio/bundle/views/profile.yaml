@@ -132,5 +132,11 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - uesio/io.field:
+                                  - uesio/studio.multimetadatafield:
                                       fieldId: uesio/studio.permissionsetsrefs
+                                      metadataType: "PERMISSIONSET"
+                                      label: "Select Permission Set"
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}

@@ -12,6 +12,7 @@ const METADATA = {
 	CREDENTIALS: "credentials",
 	ROUTE: "routes",
 	PROFILE: "profiles",
+	PERMISSIONSET: "permissionsets",
 	COMPONENTVARIANT: "componentvariants",
 	COMPONENTPACK: "componentpacks",
 	COMPONENT: "components",
