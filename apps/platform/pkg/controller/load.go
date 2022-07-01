@@ -12,14 +12,15 @@ import (
 
 // LoadRequest struct
 type LoadRequest struct {
-	Collection  string                       `json:"collection"`
-	Wire        string                       `json:"wire"`
-	Query       bool                         `json:"query"`
-	Fields      []adapt.LoadRequestField     `json:"fields"`
-	Conditions  []adapt.LoadRequestCondition `json:"conditions"`
-	Order       []adapt.LoadRequestOrder     `json:"order"`
-	BatchSize   int                          `json:"batchsize"`
-	BatchNumber int                          `json:"batchnumber"`
+	Collection         string                       `json:"collection"`
+	Wire               string                       `json:"wire"`
+	Query              bool                         `json:"query"`
+	Fields             []adapt.LoadRequestField     `json:"fields"`
+	Conditions         []adapt.LoadRequestCondition `json:"conditions"`
+	Order              []adapt.LoadRequestOrder     `json:"order"`
+	BatchSize          int                          `json:"batchsize"`
+	BatchNumber        int                          `json:"batchnumber"`
+	RequireWriteAccess bool                         `json:"requirewriteaccess"`
 }
 
 // LoadRequestBatch struct
@@ -53,15 +54,16 @@ func Load(w http.ResponseWriter, r *http.Request) {
 	for i := range loadRequestBatch.Wires {
 		wire := loadRequestBatch.Wires[i]
 		ops[i] = &adapt.LoadOp{
-			WireName:       wire.Wire,
-			CollectionName: wire.Collection,
-			Collection:     &adapt.Collection{},
-			Conditions:     wire.Conditions,
-			Fields:         wire.Fields,
-			Order:          wire.Order,
-			Query:          wire.Query,
-			BatchSize:      wire.BatchSize,
-			BatchNumber:    wire.BatchNumber,
+			WireName:           wire.Wire,
+			CollectionName:     wire.Collection,
+			Collection:         &adapt.Collection{},
+			Conditions:         wire.Conditions,
+			Fields:             wire.Fields,
+			Order:              wire.Order,
+			Query:              wire.Query,
+			BatchSize:          wire.BatchSize,
+			BatchNumber:        wire.BatchNumber,
+			RequireWriteAccess: wire.RequireWriteAccess,
 		}
 	}
 

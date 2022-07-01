@@ -1,21 +1,13 @@
 import { FunctionComponent, useEffect } from "react"
-import { BaseProps } from "../definition/definition"
-import { useUesio } from "../hooks/hooks"
-import Slot from "./slot"
+import { useUesio } from "../../hooks/hooks"
+import Slot from "../slot"
 import { css } from "@emotion/css"
-import { ViewDefinition } from "../definition/viewdef"
-import { useViewDef } from "../bands/viewdef"
-import { getComponentPackKeys } from "../bands/componentpack"
-import loadViewOp from "../bands/view/operations/load"
-import { appDispatch } from "../store/store"
-
-interface Props extends BaseProps {
-	definition: {
-		view: string
-		params?: Record<string, string>
-	}
-}
-
+import { ViewDefinition } from "../../definition/viewdef"
+import { getViewDef, useViewDef } from "../../bands/viewdef"
+import { getComponentPackKeys } from "../../bands/componentpack"
+import loadViewOp from "../../bands/view/operations/load"
+import { appDispatch } from "../../store/store"
+import { Props } from "./viewdefinition"
 const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
 	const {
@@ -25,7 +17,6 @@ const View: FunctionComponent<Props> = (props) => {
 	} = props
 
 	const viewId = `${viewDefId}(${path || ""})`
-	const viewDef = useViewDef(viewDefId)
 	const cpacks = getComponentPackKeys()
 
 	const subViewClass = css({
@@ -39,6 +30,8 @@ const View: FunctionComponent<Props> = (props) => {
 	const buildMode = !!context.getBuildMode() && !isSubView
 	const scriptResult = uesio.component.usePacks(cpacks, buildMode)
 
+	const viewDef = buildMode ? getViewDef(viewDefId) : useViewDef(viewDefId)
+
 	const useBuildTime = buildMode && scriptResult.loaded
 
 	const viewContext = context.addFrame({
@@ -51,7 +44,7 @@ const View: FunctionComponent<Props> = (props) => {
 	// We need to get load the wires here.
 	useEffect(() => {
 		appDispatch()(loadViewOp(viewContext))
-	}, [JSON.stringify(params)])
+	}, [viewDefId, JSON.stringify(params)])
 
 	if (!viewDef || !scriptResult.loaded) return null
 

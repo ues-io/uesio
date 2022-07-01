@@ -119,15 +119,6 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-function renderUtility(
-	loader: FunctionComponent<UtilityPropsPlus>,
-	props: UtilityPropsPlus
-) {
-	const Loader = loader
-	loader.displayName = props.componentType as string
-	return <Loader {...props} />
-}
-
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
@@ -140,7 +131,8 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		componentType,
 		context
 	)
-	return renderUtility(loader, {
+
+	return loader({
 		...props,
 		definition: mergedDefinition,
 		context: additionalContext(
@@ -205,17 +197,19 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility =
-	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
-	(props: T) => {
+const getUtility = <T extends UtilityProps = UtilityPropsPlus>(key: string) => {
+	const returnFunc = (props: T) => {
 		const loader = getUtilityLoader(key) || NotFound
 		const styles = getVariantStyleInfo(props, key)
-		return renderUtility(loader, {
+		return loader({
 			...(props as unknown as UtilityPropsPlus),
 			styles,
 			componentType: key,
 		})
 	}
+	returnFunc.displayName = key
+	return returnFunc
+}
 
 const BuildWrapper = getUtility("uesio/studio.buildwrapper")
 
@@ -238,7 +232,6 @@ const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
 export {
 	ComponentInternal,
 	Component,
-	renderUtility,
 	getDefinitionFromVariant,
 	additionalContext,
 	getUtility,

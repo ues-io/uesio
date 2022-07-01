@@ -5,7 +5,12 @@ import { nanoid } from "nanoid"
 import { PlainWire } from "../types"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
-import { getWiresFromDefinitonOrContext, load, getFullWireId } from ".."
+import {
+	getWiresFromDefinitonOrContext,
+	load,
+	getFullWireId,
+	getWireParts,
+} from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 import { ThunkFunc } from "../../../store/store"
 
@@ -52,6 +57,7 @@ function getWireRequest(
 		order: wiredef.order,
 		batchsize: wiredef.batchsize,
 		batchnumber,
+		requirewriteaccess: wiredef.requirewriteaccess,
 	}
 }
 
@@ -75,8 +81,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 		const wiresResponse: Record<string, PlainWire> = {}
 		for (const wire of response?.wires || []) {
 			const requestWire = wiresRequestMap[wire.wire]
-			const [viewNsUser, viewName, name] = wire.wire.split("/")
-			const view = `${viewNsUser}/${viewName}`
+			const [view, name] = getWireParts(wire.wire)
 			const data: Record<string, PlainWireRecord> = {}
 			const original: Record<string, PlainWireRecord> = {}
 			const changes: Record<string, PlainWireRecord> = {}

@@ -86,7 +86,7 @@ definition:
                                 uesio.variant: uesio/docs.trackcardheader
                                 uesio.styles:
                                   root:
-                                    background-position-y: -100px
+                                    backgroundPositionY: -100px
                                 components:
                                   - uesio/io.text:
                                       text: directions_run

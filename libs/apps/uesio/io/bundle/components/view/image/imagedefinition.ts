@@ -83,7 +83,7 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	traits: ["uesio.standalone"],
-	classes: ["root"],
+	classes: ["root", "inner"],
 	type: "component",
 }
 export { ImageProps, ImageDefinition }

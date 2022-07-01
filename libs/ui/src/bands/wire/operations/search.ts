@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { addCondition, removeCondition } from ".."
+import { addCondition, removeCondition, getFullWireId } from ".."
 import loadWiresOp from "./load"
 
 const SEARCH_CONDITION_ID = "uesio.search"
@@ -12,7 +12,8 @@ export default (
 	): ThunkFunc =>
 	async (dispatch) => {
 		const viewId = context.getViewId()
-		const entity = `${viewId}/${wirename}`
+		if (!viewId) return context
+		const entity = getFullWireId(viewId, wirename)
 		dispatch(
 			search
 				? addCondition({

@@ -241,7 +241,8 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 	tokenFuncs := []tokenFunc{}
 
-	for _, challengeToken := range challengeMetadata.RecordChallengeTokens {
+	for index := range challengeMetadata.RecordChallengeTokens {
+		challengeToken := challengeMetadata.RecordChallengeTokens[index]
 		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, challengeMetadata)
 		if err != nil {
 			return err
@@ -269,6 +270,13 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 	if !session.HasToken("uesio.owner") {
 		session.AddToken("uesio.owner", []string{session.GetUserID()})
 	}
+
+	// A special user access token type for installed deps
+	tokenStrings := []string{}
+	for key := range session.GetContextAppBundle().Dependencies {
+		tokenStrings = append(tokenStrings, key)
+	}
+	session.AddToken("uesio.installed", tokenStrings)
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
