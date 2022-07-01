@@ -35,7 +35,7 @@ const MarkdownNavigationPropertyDefinition: builder.BuildPropertiesDefinition =
 			},
 		],
 		sections: [],
-		traits: ["uesio.standalone"],
+		//traits: ["uesio.standalone"],
 		classes: ["root"],
 		type: "component",
 	}

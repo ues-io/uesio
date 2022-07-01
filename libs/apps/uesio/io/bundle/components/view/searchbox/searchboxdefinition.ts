@@ -17,7 +17,7 @@ const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [
 		{
 			name: "wire",
-			type: "TEXT",
+			type: "WIRE",
 			label: "wire",
 		},
 		{
