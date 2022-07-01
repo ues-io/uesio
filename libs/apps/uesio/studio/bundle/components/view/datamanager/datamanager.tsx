@@ -12,11 +12,16 @@ interface Props extends definition.BaseProps {
 
 const WIRE_NAME = "collectionData"
 
-const getWireDefinition = (collection: string, fields: string[] | null) => {
+const getWireDefinition = (
+	collection: string,
+	fields: Record<string, unknown> | undefined
+) => {
 	if (!fields || !collection) return null
 	return {
 		collection,
-		fields: Object.fromEntries(fields.map((field) => [field, null])),
+		fields: Object.fromEntries(
+			Object.entries(fields).map(([fieldId]) => [fieldId, null])
+		),
 	}
 }
 
@@ -33,10 +38,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		collection
 	)
 
-	const wireDef = getWireDefinition(
-		collection,
-		fieldsMeta && Object.keys(fieldsMeta)
-	)
+	const wireDef = getWireDefinition(collection, fieldsMeta)
 
 	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef, true)
 
@@ -61,9 +63,9 @@ const DataManager: FunctionComponent<Props> = (props) => {
 						],
 					},
 				],
-				columns: Object.keys(fieldsMeta).map((record) => ({
+				columns: Object.keys(fieldsMeta).map((fieldId) => ({
 					["uesio/io.column"]: {
-						field: `${record}`,
+						field: fieldId,
 					},
 				})),
 			}}

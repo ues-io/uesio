@@ -28,7 +28,7 @@ const List: FunctionComponent<ListProps> = (props) => {
 					definition={definition}
 					listName="components"
 					path={path}
-					accepts={["uesio.standalone"]}
+					accepts={["uesio.standalone", "uesio.field"]}
 					context={newContext.addFrame({
 						record: record.getId(),
 						fieldMode: mode,

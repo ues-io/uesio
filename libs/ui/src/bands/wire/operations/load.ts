@@ -57,6 +57,7 @@ function getWireRequest(
 		order: wiredef.order,
 		batchsize: wiredef.batchsize,
 		batchnumber,
+		requirewriteaccess: wiredef.requirewriteaccess,
 	}
 }
 

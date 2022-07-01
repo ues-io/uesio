@@ -105,8 +105,14 @@ type BasePropDescriptor = {
 type DisplayCondition = {
 	property: string
 } & (
-	| { values: DefinitionValue[]; value?: never }
-	| { value: DefinitionValue; values?: never }
+	| {
+			type?: "EQUALS" | "NOT_EQUALS"
+			value: DefinitionValue
+	  }
+	| { type: "INCLUDES"; values: DefinitionValue[] }
+	| {
+			type: "BLANK" | "NOT_BLANK" | "SET" | "NOT_SET"
+	  }
 )
 
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {

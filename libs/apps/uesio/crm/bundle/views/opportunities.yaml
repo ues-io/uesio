@@ -44,7 +44,7 @@ definition:
               columnGap: 24px
               uesio.styles:
                 root:
-                  padding-bottom: 40px
+                  paddingBottom: 40px
               items:
                 - uesio/io.linechart:
                     uesio.styles:
