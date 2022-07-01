@@ -12,6 +12,7 @@
 		"declaration": false,
 		"moduleResolution": "node",
 		"importHelpers": true,
+		"noUnusedLocals": true,
 		"target": "es6",
 		"module": "esnext",
 		"typeRoots": ["node_modules/@types"],
