@@ -10,6 +10,7 @@ import (
 
 type ComponentPack struct {
 	ID              string              `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey       string              `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace       string              `yaml:"-" uesio:"-"`
 	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -46,7 +47,7 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 func (cp *ComponentPack) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, cp.Name)
+	return fmt.Sprintf("%s:%s", workspace, cp.Name)
 }
 
 func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
@@ -111,12 +112,6 @@ func (cp *ComponentPack) GetNamespace() string {
 
 func (cp *ComponentPack) SetNamespace(namespace string) {
 	cp.Namespace = namespace
-}
-
-func (cp *ComponentPack) SetWorkspace(workspace string) {
-	cp.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (cp *ComponentPack) SetModified(mod time.Time) {

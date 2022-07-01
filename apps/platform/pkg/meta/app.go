@@ -2,7 +2,10 @@ package meta
 
 type App struct {
 	ID          string    `uesio:"uesio/core.id"`
+	UniqueKey   string    `yaml:"-" uesio:"uesio/core.uniquekey"`
+	FullName    string    `yaml:"-" uesio:"uesio/studio.fullname"`
 	Name        string    `uesio:"uesio/studio.name"`
+	User        *User     `yaml:"-" uesio:"uesio/studio.user"`
 	Description string    `uesio:"uesio/studio.description"`
 	Color       string    `uesio:"uesio/studio.color"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`

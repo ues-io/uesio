@@ -6,12 +6,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -151,10 +149,6 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 					return
 				}
 
-				// Special exception for the system user
-				if collectionMetadata.GetFullName() == "uesio/core.user" && referencedCollection == "uesio/core.user" && foreignKeyString == "uesio" {
-					return
-				}
 				// Special exception for the siteadmin context
 				siteadmin := session.GetSiteAdmin()
 				isBuiltinUserField := fieldName == "uesio/core.owner" || fieldName == "uesio/core.createdby" || fieldName == "uesio/core.updatedby"
@@ -202,31 +196,7 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 
 	referenceRegistry := &adapt.ReferenceRegistry{}
 
-	// Process Inserts
-	idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
-	if err != nil {
-		return err
-	}
-
-	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		if change.IsNew {
-			// This is kind of randomly placed, but we want to populate new field id here
-			newID, err := templating.Execute(idTemplate, change.FieldChanges)
-			if err != nil {
-				return err
-			}
-
-			if newID == "" {
-				newID = uuid.New().String()
-			}
-
-			err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
-			if err != nil {
-				return err
-			}
-
-			change.IDValue = newID
-		}
+	err := op.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		for _, validation := range validations {
 			err := validation(change)

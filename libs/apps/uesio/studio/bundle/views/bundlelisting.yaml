@@ -11,8 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     apps:
       collection: uesio/studio.app
       fields:
@@ -21,19 +21,19 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
 
     listing:
       collection: uesio/studio.bundlelisting
       fields:
-        uesio/core.id:
+        uesio/core.uniquekey:
         uesio/studio.description:
         uesio/studio.icon:
         uesio/studio.color:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           value: $Param{id}
 
     versions:
@@ -57,7 +57,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.app:
-
       conditions:
         - field: uesio/studio.app
           value: $Param{id}
@@ -108,7 +107,9 @@ definition:
             uesio/studio.patch:
       conditions:
         - field: uesio/studio.workspace
-          value: $Param{app}_$Param{workspacename}
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
       defaults:
         - field: uesio/studio.bundle
           valueSource: LOOKUP
@@ -203,7 +204,7 @@ definition:
                                       components:
                                         - uesio/io.text:
                                             element: h2
-                                            text: ${uesio/core.id}
+                                            text: ${uesio/core.uniquekey}
                                         - uesio/io.text:
                                             element: p
                                             text: ${uesio/studio.description}
@@ -220,7 +221,7 @@ definition:
                                                       value: $Param{id}
                                                       operator: NOT_EQUALS
                                                   uesio.variant: uesio/io.primary
-                                                  text: Install ${uesio/core.id}
+                                                  text: Install ${uesio/core.uniquekey}
                                                   signals:
                                                     - signal: wire/CREATE_RECORD
                                                       wire: dependencies

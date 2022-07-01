@@ -15,6 +15,7 @@ type SelectListOption struct {
 
 type SelectList struct {
 	ID               string             `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey        string             `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name             string             `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace        string             `yaml:"-" uesio:"-"`
 	Options          []SelectListOption `yaml:"options" uesio:"uesio/studio.options"`
@@ -64,7 +65,7 @@ func (sl *SelectList) GetCollection() CollectionableGroup {
 }
 
 func (sl *SelectList) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, sl.Name)
+	return fmt.Sprintf("%s:%s", workspace, sl.Name)
 }
 
 func (sl *SelectList) GetBundleGroup() BundleableGroup {
@@ -98,12 +99,6 @@ func (sl *SelectList) GetNamespace() string {
 
 func (sl *SelectList) SetNamespace(namespace string) {
 	sl.Namespace = namespace
-}
-
-func (sl *SelectList) SetWorkspace(workspace string) {
-	sl.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (sl *SelectList) SetModified(mod time.Time) {

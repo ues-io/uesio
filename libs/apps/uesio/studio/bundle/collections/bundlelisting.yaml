@@ -1,4 +1,5 @@
 name: bundlelisting
-idFormat: ${uesio/studio.app}
+uniqueKey:
+  - uesio/studio.app
 label: bundlelisting
 pluralLabel: Bundle Listings

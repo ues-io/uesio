@@ -37,6 +37,7 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 
 type Field struct {
 	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey              string                  `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
 	CollectionRef          string                  `yaml:"-" uesio:"uesio/studio.collection"`
 	Namespace              string                  `yaml:"-" uesio:"-"`
@@ -99,7 +100,7 @@ func (f *Field) GetCollection() CollectionableGroup {
 }
 
 func (f *Field) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s_%s", workspace, f.CollectionRef, f.Name)
+	return fmt.Sprintf("%s:%s:%s", workspace, f.CollectionRef, f.Name)
 }
 
 func (f *Field) GetBundleGroup() BundleableGroup {
@@ -135,12 +136,6 @@ func (f *Field) GetNamespace() string {
 
 func (f *Field) SetNamespace(namespace string) {
 	f.Namespace = namespace
-}
-
-func (f *Field) SetWorkspace(workspace string) {
-	f.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (f *Field) SetModified(mod time.Time) {

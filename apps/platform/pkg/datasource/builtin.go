@@ -2,7 +2,7 @@ package datasource
 
 import "github.com/thecloudmasters/uesio/pkg/adapt"
 
-var BUILTIN_FIELDS = [...]adapt.FieldMetadata{ID_FIELD_METADATA, OWNER_FIELD_METADATA, CREATEDBY_FIELD_METADATA, UPDATEDBY_FIELD_METADATA, CREATEDAT_FIELD_METADATA, UPDATEDAT_FIELD_METADATA}
+var BUILTIN_FIELDS = [...]adapt.FieldMetadata{ID_FIELD_METADATA, UNIQUE_KEY_FIELD_METADATA, OWNER_FIELD_METADATA, CREATEDBY_FIELD_METADATA, UPDATEDBY_FIELD_METADATA, CREATEDAT_FIELD_METADATA, UPDATEDAT_FIELD_METADATA}
 
 var ID_FIELD_METADATA = adapt.FieldMetadata{
 	Name:       "id",
@@ -12,6 +12,16 @@ var ID_FIELD_METADATA = adapt.FieldMetadata{
 	Updateable: false,
 	Type:       "TEXT",
 	Label:      "Id",
+}
+
+var UNIQUE_KEY_FIELD_METADATA = adapt.FieldMetadata{
+	Name:       "uniquekey",
+	Namespace:  "uesio/core",
+	Createable: false,
+	Accessible: true,
+	Updateable: false,
+	Type:       "TEXT",
+	Label:      "Unique Key",
 }
 
 var OWNER_FIELD_METADATA = adapt.FieldMetadata{
@@ -71,6 +81,7 @@ var UPDATEDAT_FIELD_METADATA = adapt.FieldMetadata{
 
 func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 	collectionMetadata.SetField(&ID_FIELD_METADATA)
+	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
 	collectionMetadata.SetField(&OWNER_FIELD_METADATA)
 	collectionMetadata.SetField(&CREATEDBY_FIELD_METADATA)
 	collectionMetadata.SetField(&UPDATEDBY_FIELD_METADATA)
@@ -81,6 +92,7 @@ func addAllBuiltinFields(collectionMetadata *adapt.CollectionMetadata) {
 
 func addBuiltinFields(collectionMetadata *adapt.CollectionMetadata, requestedFields FieldsMap) {
 	collectionMetadata.SetField(&ID_FIELD_METADATA)
+	collectionMetadata.SetField(&UNIQUE_KEY_FIELD_METADATA)
 	_, ok := requestedFields["uesio/core.owner"]
 	if ok {
 		collectionMetadata.SetField(&OWNER_FIELD_METADATA)

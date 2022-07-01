@@ -1,5 +1,7 @@
 name: sitedomain
-idFormat: "${uesio/studio.domain}_${uesio/studio.type}"
+uniqueKey:
+  - uesio/studio.domain
+  - uesio/studio.type
 nameField: uesio/studio.domain
 label: site domain
 pluralLabel: site domains

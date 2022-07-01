@@ -1,5 +1,7 @@
 name: workspace
-idFormat: "${uesio/studio.app}_${uesio/studio.name}"
+uniqueKey:
+  - uesio/studio.app
+  - uesio/studio.name
 nameField: uesio/studio.name
 access: "protected"
 accessField: uesio/studio.app

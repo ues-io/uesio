@@ -3,7 +3,6 @@ package meta
 type FieldMapping struct {
 	Type       string    `json:"type" uesio:"type"`
 	ColumnName string    `json:"columnname" uesio:"columnname"`
-	MatchField string    `json:"matchfield" uesio:"matchfield"`
 	Value      string    `json:"value" uesio:"value"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }

@@ -10,7 +10,7 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     sites:
@@ -25,8 +25,10 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{sitename}
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     domains:
       collection: uesio/studio.sitedomain
       fields:
@@ -35,8 +37,9 @@ definition:
         uesio/studio.domain:
       conditions:
         - field: uesio/studio.site
-          valueSource: VALUE
-          value: $Param{app}_$Param{sitename}
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
     newdomain:
       collection: uesio/studio.sitedomain
       fields:

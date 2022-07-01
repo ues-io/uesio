@@ -10,6 +10,7 @@ import (
 
 type Theme struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
@@ -58,7 +59,7 @@ func (t *Theme) GetCollection() CollectionableGroup {
 }
 
 func (t *Theme) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, t.Name)
+	return fmt.Sprintf("%s:%s", workspace, t.Name)
 }
 
 func (t *Theme) GetBundleGroup() BundleableGroup {
@@ -110,12 +111,6 @@ func (t *Theme) GetNamespace() string {
 
 func (t *Theme) SetNamespace(namespace string) {
 	t.Namespace = namespace
-}
-
-func (t *Theme) SetWorkspace(workspace string) {
-	t.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (t *Theme) SetModified(mod time.Time) {

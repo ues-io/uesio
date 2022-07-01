@@ -2,6 +2,7 @@ package meta
 
 type UserFileMetadata struct {
 	ID               string    `uesio:"uesio/core.id" json:"uesio/core.id"`
+	UniqueKey        string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	CollectionID     string    `uesio:"uesio/core.collectionid" json:"-"`
 	MimeType         string    `uesio:"uesio/core.mimetype" json:"uesio/core.mimetype"`
 	FieldID          string    `uesio:"uesio/core.fieldid" json:"-"`

@@ -16,6 +16,18 @@ const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		components: [],
 	}),
+	properties: [
+		{
+			name: "column",
+			type: "TEXT",
+			label: "Column",
+		},
+		{
+			name: "area",
+			type: "TEXT",
+			label: "Area",
+		},
+	],
 	sections: [],
 	classes: ["root"],
 	type: "component",

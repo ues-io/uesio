@@ -1,4 +1,6 @@
 name: lesson
 label: Lesson
 pluralLabel: Lessons
-idFormat: "${uesio/docs.slug}_${uesio/docs.track}"
+uniqueKey:
+  - uesio/docs.slug
+  - uesio/docs.track

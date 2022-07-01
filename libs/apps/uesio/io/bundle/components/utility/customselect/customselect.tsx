@@ -1,4 +1,4 @@
-import { useState, FunctionComponent, ReactNode, MouseEvent } from "react"
+import { useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
@@ -9,6 +9,7 @@ type CustomSelectProps<T> = {
 	setValue: (value: T) => void
 	items: T[]
 	itemToString: (item: T) => string
+	allowSearch?: true
 	itemRenderer: (
 		item: T,
 		index: number,
@@ -21,9 +22,10 @@ const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {
-		value,
+		allowSearch = true,
 		items,
 		setValue,
+		value,
 		itemToString,
 		itemRenderer = (item) => <div>{itemToString(item)}</div>,
 		tagRenderer = (item) => <div>{itemToString(item)}</div>,
@@ -50,7 +52,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				color: "#444",
 				border: "none",
 				outline: "none",
-				padding: "6px 10px 6px 0",
+				padding: "6px 3px 6px 0",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",
@@ -63,6 +65,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				alignItems: "center",
 				border: "1px solid #00000044",
 				cursor: "pointer",
+				padding: "3px",
 			},
 			searchbox: {
 				minWidth: "200px",
@@ -81,7 +84,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	const {
 		isOpen,
-		selectedItem,
 		getMenuProps,
 		getComboboxProps,
 		getToggleButtonProps,
@@ -89,14 +91,13 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		highlightedIndex,
 		getItemProps,
 		getInputProps,
-		selectItem,
 		inputValue,
 		openMenu,
 	} = useCombobox({
-		itemToString,
 		items,
 		selectedItem: value,
 		onSelectedItemChange: (changes) => {
+			console.log(changes)
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
 		},
@@ -109,29 +110,16 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	})
 
 	return (
-		<div ref={setAnchorEl}>
+		<div style={{ position: "relative" }} ref={setAnchorEl}>
 			<label {...getLabelProps()} className={classes.label}>
 				<div
 					onFocus={openMenu}
 					tabIndex={isOpen ? -1 : 0}
 					className={classes.displayarea}
 				>
-					{tagRenderer(selectedItem)}
+					{tagRenderer}
 				</div>
-				{selectedItem && (
-					<button
-						tabIndex={-1}
-						className={classes.editbutton}
-						type="button"
-						onClick={(event: MouseEvent) => {
-							event.preventDefault() // Prevent the label from triggering
-							setValue(undefined)
-							selectItem(null)
-						}}
-					>
-						<Icon icon="close" context={context} />
-					</button>
-				)}
+
 				<button
 					className={classes.editbutton}
 					type="button"
@@ -157,22 +145,28 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 							autoFocus
 							className={classes.searchbox}
 							placeholder="Search..."
+							style={{ display: allowSearch ? "auto" : "none" }}
 							{...getInputProps()}
 						/>
 					</div>
-					{items
-						.filter((item) =>
-							itemToString(item).includes(inputValue)
-						)
-						.map((item, index) => (
+					{items.map((item: string, index) => {
+						// hacky, but downshift needs the index in order to determine what element this is.
+						// That's why we can't filter the items array beforehand.
+						if (allowSearch && !item.includes(inputValue))
+							return null
+						return (
 							<div
 								className={classes.menuitem}
 								key={index}
-								{...getItemProps({ item, index })}
+								{...getItemProps({
+									item,
+									index,
+								})}
 							>
 								{itemRenderer(item, index, highlightedIndex)}
 							</div>
-						))}
+						)
+					})}
 				</div>
 			</div>
 		</div>
