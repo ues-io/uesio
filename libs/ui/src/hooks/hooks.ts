@@ -15,7 +15,7 @@ import { NotificationAPI } from "./notificationapi"
 import { FeatureFlagAPI } from "./featureflagapi"
 import { BotAPI } from "./botapi"
 
-// Create a new Uesio API instance for use inside a component
+// Create a new Uesio API instance for use inside of a component
 class Uesio {
 	constructor(props: BaseProps) {
 		this._path = props.path || ""

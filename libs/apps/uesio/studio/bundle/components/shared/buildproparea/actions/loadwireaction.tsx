@@ -9,7 +9,7 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const { path, action, context } = props
 	const wireName = component.path.getKeyAtPath(path || "")
 	const viewId = context.getViewDefId()
-	if (!viewId) throw new Error("No view Id provided")
+	if (!viewId) throw new Error("No View Id provided")
 
 	const viewDef = uesio.view.getViewDef(context.getViewDefId() || "")
 	const wire = uesio.wire.useWire(wireName || "")
