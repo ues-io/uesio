@@ -7,7 +7,7 @@ const SelectField = component.getUtility("uesio/io.selectfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
-const Field: FunctionComponent<FilterProps> = (props) => {
+const Filter: FunctionComponent<FilterProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId } = definition
 	const uesio = hooks.useUesio(props)
@@ -66,4 +66,4 @@ const Field: FunctionComponent<FilterProps> = (props) => {
 	}
 }
 
-export default Field
+export default Filter

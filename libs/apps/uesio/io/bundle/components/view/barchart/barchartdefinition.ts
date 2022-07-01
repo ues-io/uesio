@@ -18,7 +18,13 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		text: "New chart",
 	}),
-	properties: [],
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+	],
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
