@@ -14,7 +14,7 @@ const ViewPropertyDefinition: BuildPropertiesDefinition = {
 	description: "Just a view",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
-		viewid: "",
+		view: "",
 	}),
 	properties: [
 		{
@@ -23,14 +23,13 @@ const ViewPropertyDefinition: BuildPropertiesDefinition = {
 			metadataType: "VIEW",
 			label: "View",
 		},
-	],
-	sections: [
 		{
-			title: "Signals",
-			type: "SIGNALS",
+			name: "params",
+			type: "PARAMS",
+			label: "Params",
 		},
 	],
-
+	sections: [],
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",

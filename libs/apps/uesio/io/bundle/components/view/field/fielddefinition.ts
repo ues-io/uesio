@@ -101,10 +101,6 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "PREVIEW",
 					value: "PREVIEW",
 				},
-				{
-					label: "MARKDOWN",
-					value: "MARKDOWN",
-				},
 			],
 		},
 		{

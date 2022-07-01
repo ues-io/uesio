@@ -14,12 +14,7 @@ const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
-	sections: [
-		{
-			title: "Signals",
-			type: "SIGNALS",
-		},
-	],
+	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
 	classes: ["root"],
