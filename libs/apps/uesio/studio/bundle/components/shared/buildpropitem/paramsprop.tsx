@@ -2,7 +2,6 @@ import { FunctionComponent } from "react"
 import { component, builder, definition, hooks } from "@uesio/ui"
 
 const TextField = component.getUtility("uesio/io.textfield")
-
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const ParamsProp: FunctionComponent<builder.PropRendererProps> = (props) => {
