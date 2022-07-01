@@ -183,7 +183,6 @@ definition:
                     searchFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
-                      - uesio/core.picture
                     returnFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
