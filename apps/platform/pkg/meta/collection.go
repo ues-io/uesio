@@ -55,7 +55,7 @@ type Collection struct {
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
-	UniqueKeyFields       []string                          `yaml:"uniqueKey" uesio:"uesio/studio.uniquekey"`
+	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" uesio:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
