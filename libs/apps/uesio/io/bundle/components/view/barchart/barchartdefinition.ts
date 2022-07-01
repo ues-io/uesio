@@ -22,7 +22,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 		{
 			name: "title",
 			type: "TEXT",
-			label: "Title	",
+			label: "Title",
 		},
 	],
 	sections: [],
