@@ -34,8 +34,11 @@ func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 
 func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		change[fieldMetadata.GetFullName()] = map[string]interface{}{
-			adapt.UNIQUE_KEY_FIELD: getValue(data, mapping, index),
+		value := getValue(data, mapping, index)
+		if value != "" {
+			change[fieldMetadata.GetFullName()] = map[string]interface{}{
+				adapt.UNIQUE_KEY_FIELD: value,
+			}
 		}
 	}
 }
