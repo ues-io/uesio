@@ -17,7 +17,8 @@ import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
-import { MetadataKey } from "../metadataexports"
+import { MetadataKey } from "../bands/builder/types"
+
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
 		const frame: ContextFrame = {}

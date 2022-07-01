@@ -1,8 +1,9 @@
 import { CSSInterpolation } from "@emotion/css"
 import { ReactNode } from "react"
 import yaml from "yaml"
+import { MetadataKey } from "../bands/builder/types"
 import { Context } from "../context/context"
-import { MetadataKey } from "../metadataexports"
+
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
 	"uesio.variant"?: MetadataKey

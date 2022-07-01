@@ -6,7 +6,7 @@ import {
 } from "../definition/definition"
 import { Component, getUtility } from "../component/component"
 import { unWrapDefinition } from "../component/path"
-import { MetadataKey } from "../metadataexports"
+import { MetadataKey } from "../bands/builder/types"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string

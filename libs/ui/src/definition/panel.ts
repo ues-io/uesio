@@ -1,5 +1,6 @@
+import { MetadataKey } from "../bands/builder/types"
 import { DefinitionMap } from "./definition"
-import { MetadataKey } from "../metadataexports"
+
 export type PanelDefinition = {
 	"uesio.type": MetadataKey
 	title: string

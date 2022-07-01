@@ -22,7 +22,7 @@ import {
 	getPanelPropsDef,
 	getParamPropsDef,
 } from "./builtinpropsdefs"
-import { MetadataKey } from "../metadataexports"
+import { MetadataKey } from "../bands/builder/types"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}

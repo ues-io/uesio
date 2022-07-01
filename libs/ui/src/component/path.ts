@@ -1,6 +1,7 @@
 import toPath from "lodash/toPath"
+import { MetadataKey } from "../bands/builder/types"
 import { DefinitionMap } from "../definition/definition"
-import { MetadataKey } from "../metadataexports"
+
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
 		return ["", ""]
