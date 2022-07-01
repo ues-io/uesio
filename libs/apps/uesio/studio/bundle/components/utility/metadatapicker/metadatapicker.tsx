@@ -10,7 +10,7 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	grouping?: string
 	defaultNamespace?: string
 	selectVariant?: string
-	fieldWrapperVariant?: string
+	fieldWrapperVariant?: metadata.MetadataKey
 }
 
 type MetadataItem = string
