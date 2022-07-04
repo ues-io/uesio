@@ -16,7 +16,7 @@ class WireRecord {
 
 	getId = () => this.id
 	getWire = () => this.wire
-	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
+	getFieldValue = <T extends FieldValue>(fieldName: string): T | null => {
 		const fieldNameParts = fieldName?.split("->")
 		return get(
 			this.source,
