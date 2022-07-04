@@ -28,6 +28,7 @@ const validHosts = [
 	"https://studio.uesio-dev.com:3000",
 	"https://studio.ues.io",
 	"https://studio.ues-dev.io",
+	"https://studio.ues-uat.io",
 ]
 
 const DEFAULT_HOST = "https://studio.uesio-dev.com:3000"
