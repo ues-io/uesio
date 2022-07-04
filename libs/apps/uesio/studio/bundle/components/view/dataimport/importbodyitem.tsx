@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
-import ImportBodyItemRef from "./importbodyitemref"
+// import ImportBodyItemRef from "./importbodyitemref"
 
 interface Props extends definition.BaseProps {
 	csvOptions: collection.SelectOption[]
@@ -83,12 +83,12 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 					</div>
 					{field.getType() === "REFERENCE" && (
 						<div className={classes.headerItem}>
-							<ImportBodyItemRef
+							{/* <ImportBodyItemRef
 								setMapping={setMapping}
 								mapping={mapping}
 								field={field}
 								context={context}
-							/>
+							/> */}
 						</div>
 					)}
 				</>
