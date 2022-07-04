@@ -16,7 +16,7 @@ type QueryBuilder struct {
 	Parent      *QueryBuilder
 }
 
-func NewQueryBuilder(index int) *QueryBuilder {
+func NewQueryBuilder() *QueryBuilder {
 	return &QueryBuilder{
 		Values: []interface{}{},
 		Parts:  []string{},

@@ -58,7 +58,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	joins := []string{}
 
-	builder := NewQueryBuilder(0)
+	builder := NewQueryBuilder()
 
 	err = getConditions(op, metadata, collectionMetadata, credentials, builder)
 	if err != nil {

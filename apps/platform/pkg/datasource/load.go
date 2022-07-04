@@ -105,7 +105,7 @@ func getMetadataForLoad(
 
 	for _, condition := range op.Conditions {
 
-		if condition.Type == "SEARCH" || condition.Type == "GROUP" {
+		if condition.Type == "SEARCH" {
 			// We don't need any extra field metadata for search conditions yet
 			continue
 		}
