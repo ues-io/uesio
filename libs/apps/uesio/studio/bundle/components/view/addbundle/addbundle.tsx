@@ -86,6 +86,9 @@ async function updateBundle(
 	return installBundle(namespace, version, depWire, workspaceId, context)
 }
 const AddBundle: FunctionComponent<Props> = (props) => {
+	// Deprecated, commented out in this PR to avoid build errors, should be deleted in seperate PR
+	return null
+
 	const {
 		definition: { installablebundleswire, currentdependencies },
 		context,

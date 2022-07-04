@@ -62,9 +62,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		return item[nameField] || ""
 	}
 
-	const value = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
+	const value = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 
 	if (mode === "READ") {
 		return (

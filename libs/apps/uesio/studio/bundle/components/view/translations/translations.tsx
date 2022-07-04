@@ -22,7 +22,8 @@ const Translation: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
-	const originalValue = record.getFieldValue<wire.PlainWireRecord>(fieldId)
+	const originalValue =
+		record.getFieldValue<wire.PlainWireRecord>(fieldId) || {}
 	const namespaces = uesio.builder.useAvailableNamespaces(context, "LABEL")
 
 	if (!namespaces) return null

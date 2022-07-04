@@ -17,7 +17,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { mode, record, fieldId, context } = props
 	const readonly = mode === "READ"
 
-	const user = record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId)
+	const user = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const firstName = user?.["uesio/core.firstname"] as string
 	const lastName = user?.["uesio/core.lastname"] as string
 

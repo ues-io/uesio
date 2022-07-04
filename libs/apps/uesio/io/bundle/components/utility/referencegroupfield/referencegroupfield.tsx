@@ -57,9 +57,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 		return items
 	}
 
-	const value = record.getFieldValue<wire.PlainWireRecord[] | undefined>(
-		fieldId
-	)
+	const value = record.getFieldValue<wire.PlainWireRecord[]>(fieldId)
 
 	if (components) {
 		return (
