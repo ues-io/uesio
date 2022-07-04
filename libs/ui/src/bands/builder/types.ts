@@ -12,6 +12,7 @@ const METADATA = {
 	CREDENTIALS: "credentials",
 	ROUTE: "routes",
 	PROFILE: "profiles",
+	PERMISSIONSET: "permissionsets",
 	COMPONENTVARIANT: "componentvariants",
 	COMPONENTPACK: "componentpacks",
 	COMPONENT: "components",
@@ -20,6 +21,7 @@ const METADATA = {
 }
 
 type MetadataType = keyof typeof METADATA
+type MetadataKey = `${string}/${string}.${string}`
 
 type BuilderState = {
 	activeNode?: string
@@ -36,4 +38,10 @@ type MetadataListResponse = {
 	metadata: Record<string, boolean>
 }
 
-export { BuilderState, MetadataListResponse, MetadataType, METADATA }
+export {
+	BuilderState,
+	MetadataListResponse,
+	MetadataType,
+	METADATA,
+	MetadataKey,
+}

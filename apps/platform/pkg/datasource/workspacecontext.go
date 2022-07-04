@@ -9,13 +9,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, connection adapt.Connection) error {
-
+func addWorkspaceContext(workspace *meta.Workspace, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetPermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppID() != "uesio/studio" {
+	if site.GetAppFullName() != "uesio/studio" {
 		return errors.New("this site does not allow working with workspaces")
 	}
 	// 2. we should have a profile that allows modifying workspaces
@@ -27,21 +26,11 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	workspace := &meta.Workspace{
-		ID:   appName + "_" + workspaceName,
-		Name: workspaceName,
-		App: &meta.App{
-			ID:   appName,
-			Name: appName,
-		},
-		// Get the workspace permissions and set them on the session
-		// For now give workspace users access to everything.
-		Permissions: &meta.PermissionSet{
-			AllowAllViews:       true,
-			AllowAllRoutes:      true,
-			AllowAllFiles:       true,
-			AllowAllCollections: true,
-		},
+	workspace.Permissions = &meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
 	}
 
 	session.AddWorkspaceContext(workspace)
@@ -53,5 +42,46 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session, c
 
 	workspace.SetAppBundle(bundleDef)
 	return nil
+}
 
+func AddWorkspaceContextByKey(workspaceKey string, session *sess.Session, connection adapt.Connection) error {
+	var workspace meta.Workspace
+	err := PlatformLoadOne(
+		&workspace,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.UNIQUE_KEY_FIELD,
+					Value: workspaceKey,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
+	}
+	return addWorkspaceContext(&workspace, session, connection)
+}
+
+func AddWorkspaceContextByID(workspaceID string, session *sess.Session, connection adapt.Connection) error {
+	var workspace meta.Workspace
+	err := PlatformLoadOne(
+		&workspace,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.ID_FIELD,
+					Value: workspaceID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
+	}
+	return addWorkspaceContext(&workspace, session, connection)
 }

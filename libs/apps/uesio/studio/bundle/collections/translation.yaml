@@ -1,5 +1,7 @@
 name: translation
-idFormat: "${uesio/studio.workspace}_${uesio/studio.language}"
+uniqueKey:
+  - uesio/studio.workspace
+  - uesio/studio.language
 nameField: uesio/studio.language
 label: translation
 pluralLabel: translations

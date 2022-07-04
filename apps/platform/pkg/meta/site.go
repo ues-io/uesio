@@ -2,6 +2,7 @@ package meta
 
 type Site struct {
 	ID          string  `uesio:"uesio/core.id"`
+	UniqueKey   string  `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name        string  `uesio:"uesio/studio.name"`
 	Bundle      *Bundle `uesio:"uesio/studio.bundle"`
 	App         *App    `uesio:"uesio/studio.app"`
@@ -18,12 +19,12 @@ type Site struct {
 }
 
 func (s *Site) GetFullName() string {
-	return s.Name + "_" + s.GetAppID()
+	return s.Name + ":" + s.GetAppFullName()
 }
 
-func (s *Site) GetAppID() string {
+func (s *Site) GetAppFullName() string {
 	if s.App != nil {
-		return s.App.ID
+		return s.App.UniqueKey
 	}
 	return ""
 }

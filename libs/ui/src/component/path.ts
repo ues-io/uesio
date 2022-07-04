@@ -1,4 +1,5 @@
 import toPath from "lodash/toPath"
+import { MetadataKey } from "../bands/builder/types"
 import { DefinitionMap } from "../definition/definition"
 
 const parseKey = (fullName: string): [string, string] => {
@@ -144,10 +145,10 @@ const getAncestorPath = (path: string, parents: number): string =>
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
-const getFullPathParts = (path: string): [string, string, string] => {
+const getFullPathParts = (path: string): [string, MetadataKey, string] => {
 	const pathArray = toPath(path)
 	const metadataType = pathArray.shift() || ""
-	const metadataItem = pathArray.shift() || ""
+	const metadataItem = (pathArray.shift() || "") as MetadataKey
 	return [metadataType, metadataItem, fromPath(pathArray)]
 }
 

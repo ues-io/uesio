@@ -2,6 +2,7 @@ package meta
 
 type SiteDomain struct {
 	ID        string    `uesio:"uesio/core.id"`
+	UniqueKey string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Site      *Site     `uesio:"uesio/studio.site"`
 	Type      string    `uesio:"uesio/studio.type"`
 	Domain    string    `uesio:"uesio/studio.domain"`

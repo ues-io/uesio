@@ -10,6 +10,7 @@ import (
 
 type Secret struct {
 	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Store     string     `yaml:"store,omitempty" uesio:"uesio/studio.store"`
@@ -45,7 +46,7 @@ func (s *Secret) GetCollection() CollectionableGroup {
 }
 
 func (s *Secret) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, s.Name)
+	return fmt.Sprintf("%s:%s", workspace, s.Name)
 }
 
 func (s *Secret) GetBundleGroup() BundleableGroup {
@@ -79,12 +80,6 @@ func (s *Secret) GetNamespace() string {
 
 func (s *Secret) SetNamespace(namespace string) {
 	s.Namespace = namespace
-}
-
-func (s *Secret) SetWorkspace(workspace string) {
-	s.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (s *Secret) SetModified(mod time.Time) {

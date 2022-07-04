@@ -21,6 +21,7 @@ func NewUserFileCollection(key string) (*UserFileCollection, error) {
 
 type UserFileCollection struct {
 	ID         string `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string `yaml:"-" uesio:"-"`
 	FileSource string
@@ -66,7 +67,7 @@ func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
 }
 
 func (ufc *UserFileCollection) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, ufc.Name)
+	return fmt.Sprintf("%s:%s", workspace, ufc.Name)
 }
 
 func (ufc *UserFileCollection) GetBundleGroup() BundleableGroup {
@@ -88,12 +89,6 @@ func (ufc *UserFileCollection) GetNamespace() string {
 
 func (ufc *UserFileCollection) SetNamespace(namespace string) {
 	ufc.Namespace = namespace
-}
-
-func (ufc *UserFileCollection) SetWorkspace(workspace string) {
-	ufc.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (ufc *UserFileCollection) SetModified(mod time.Time) {

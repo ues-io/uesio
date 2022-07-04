@@ -1,4 +1,6 @@
 name: contact
+uniqueKey:
+  - uesio/crm.externalid
 nameField: uesio/crm.lastname
 label: contact
 pluralLabel: contacts

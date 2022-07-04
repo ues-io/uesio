@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
-import ImportBodyItemRef from "./importbodyitemref"
 
 interface Props extends definition.BaseProps {
 	csvOptions: collection.SelectOption[]
@@ -26,7 +25,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				display: "flex",
 				justifyContent: "start",
 			},
-			headerItem: { width: "200px", paddingRight: "10px" },
+			headerItem: { width: "200px", padding: "2px" },
 		},
 		null
 	)
@@ -34,12 +33,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	return (
 		<div className={classes.gridItem}>
 			<div className={classes.headerItem}>
-				<TextField
-					context={context}
-					label="Field"
-					value={uesioField}
-					mode="READ"
-				/>
+				<TextField context={context} value={uesioField} mode="READ" />
 			</div>
 			<div className={classes.headerItem}>
 				<SelectField
@@ -71,32 +65,20 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				/>
 			</div>
 			{mapping && mapping.type === "IMPORT" && (
-				<>
-					<div className={classes.headerItem}>
-						<SelectField
-							context={context}
-							label={"Column"}
-							value={mapping?.columnname}
-							options={csvOptions}
-							setValue={(value: string) => {
-								setMapping({
-									...mapping,
-									columnname: value,
-								})
-							}}
-						/>
-					</div>
-					{field.getType() === "REFERENCE" && (
-						<div className={classes.headerItem}>
-							<ImportBodyItemRef
-								setMapping={setMapping}
-								mapping={mapping}
-								field={field}
-								context={context}
-							/>
-						</div>
-					)}
-				</>
+				<div className={classes.headerItem}>
+					<SelectField
+						context={context}
+						label={"Column"}
+						value={mapping?.columnname}
+						options={csvOptions}
+						setValue={(value: string) => {
+							setMapping({
+								...mapping,
+								columnname: value,
+							})
+						}}
+					/>
+				</div>
 			)}
 			{mapping && mapping.type === "VALUE" && (
 				<div className={classes.headerItem}>

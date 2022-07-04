@@ -14,7 +14,7 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 	perms := session.GetPermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.GetAppID() != "uesio/studio" {
+	if site.GetAppFullName() != "uesio/studio" {
 		return errors.New("this site does not allow administering other sites")
 	}
 	// 2. we should have a profile that allows modifying workspaces
@@ -26,8 +26,8 @@ func AddSiteAdminContext(appName, siteName string, session *sess.Session) error 
 		return errors.New("your profile does not allow you to administer sites")
 	}
 
-	// Get the Workspace from the DB
-	siteadmin, err := querySite(appName+"_"+siteName, session)
+	// Get the Site from the DB
+	siteadmin, err := querySiteByKey(appName+":"+siteName, session)
 	if err != nil {
 		return err
 	}

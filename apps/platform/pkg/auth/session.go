@@ -39,12 +39,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 		return sess.NewPublic(site), nil
 	}
 
-	fakeSession := sess.NewSession(nil, &meta.User{
-		ID:        "system",
-		FirstName: "Super",
-		LastName:  "Admin",
-		Profile:   "uesio/core.public",
-	}, site)
+	fakeSession := sess.NewSession(nil, &meta.User{}, site)
 	fakeSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
 			"uesio/core.user":     true,
@@ -69,21 +64,18 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 
 func getUserFromSession(userid string, session *sess.Session) (*meta.User, error) {
 
-	if userid == "guest" {
-		return sess.GetPublicUser(session.GetSite()), nil
-	}
 	// Get Cache site info for the host
-	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppID())
+	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppFullName())
 	if ok {
 		return cachedUser, nil
 	}
 
-	user, err := GetUserByID(userid, session)
+	user, err := GetUserByID(userid, session, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = SetUserCache(userid, session.GetSite().GetAppID(), user)
+	err = SetUserCache(userid, session.GetSite().GetAppFullName(), user)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package meta
 
 type Workspace struct {
 	ID            string         `uesio:"uesio/core.id"`
+	UniqueKey     string         `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name          string         `uesio:"uesio/studio.name"`
 	LoginRoute    string         `uesio:"uesio/studio.loginroute"`
 	HomeRoute     string         `uesio:"uesio/studio.homeroute"`
@@ -18,11 +19,11 @@ type Workspace struct {
 	CreatedAt     int64     `yaml:"-" uesio:"uesio/core.createdat"`
 }
 
-func (w *Workspace) GetAppID() string {
+func (w *Workspace) GetAppFullName() string {
 	if w.App == nil {
 		return ""
 	}
-	return w.App.ID
+	return w.App.UniqueKey
 }
 
 func (w *Workspace) SetAppBundle(bundleDef *BundleDef) {

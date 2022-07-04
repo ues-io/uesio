@@ -25,8 +25,9 @@ func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session
 		Deletes: &DeletesAPI{
 			op: request,
 		},
-		session: session,
-		op:      request,
+		session:    session,
+		op:         request,
+		connection: connection,
 	}
 }
 

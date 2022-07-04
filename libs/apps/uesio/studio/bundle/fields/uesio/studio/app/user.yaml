@@ -1,0 +1,5 @@
+name: user
+type: USER
+label: User
+required: true
+createOnly: true

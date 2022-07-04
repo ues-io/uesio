@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, wire, hooks, component } from "@uesio/ui"
+import { definition, wire, hooks, component, builder } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ConditionItem from "../buildpropitem/conditionItem"
 
@@ -22,6 +22,131 @@ const defaultConditionGroupDef = {
 		},
 	],
 }
+
+const getConditionProperties = (): builder.PropDescriptor[] => [
+	{
+		name: "field",
+		type: "METADATA",
+		metadataType: "FIELD",
+		label: "Field",
+		groupingParents: 2,
+		groupingProperty: "collection",
+	},
+	{
+		name: "operator",
+		type: "SELECT",
+		label: "Operator",
+		options: [
+			{
+				label: "Equals",
+				value: "EQ",
+			},
+			{
+				label: "Not Equal To",
+				value: "NOT_EQ",
+			},
+			{
+				label: "Greater Than",
+				value: "GT",
+			},
+			{
+				label: "Less Than",
+				value: "LT",
+			},
+			{
+				label: "Greater Than or Equal To",
+				value: "GTE",
+			},
+			{
+				label: "Less Than or Equal To",
+				value: "LTE",
+			},
+			{
+				label: "In",
+				value: "IN",
+			},
+			{
+				label: "Is Blank",
+				value: "IS_BLANK",
+			},
+			{
+				label: "Is Not Blank",
+				value: "IS_NOT_BLANK",
+			},
+		],
+	},
+	{
+		name: "valueSource",
+		type: "SELECT",
+		label: "Value Source",
+		options: [
+			{
+				label: "Value",
+				value: "VALUE",
+			},
+			{
+				label: "Lookup",
+				value: "LOOKUP",
+			},
+			{
+				label: "Param",
+				value: "PARAM",
+			},
+		],
+		display: [
+			{
+				property: "operator",
+				type: "INCLUDES",
+				values: ["EQ", "NOT_EQ", "GT", "LT", "GTE", "LTE", "IN"],
+			},
+		],
+	},
+	{
+		name: "value",
+		type: "TEXT",
+		label: "Value",
+		display: [
+			{
+				property: "valueSource",
+				value: "VALUE",
+			},
+		],
+	},
+	{
+		name: "lookupWire",
+		type: "WIRE",
+		label: "Lookup Wire",
+		display: [
+			{
+				property: "valueSource",
+				value: "LOOKUP",
+			},
+		],
+	},
+	{
+		//TO-DO This should be a dynamic metadatapicker
+		name: "lookupField",
+		type: "TEXT",
+		label: "Lookup Field",
+		display: [
+			{
+				property: "valueSource",
+				value: "LOOKUP",
+			},
+		],
+	},
+	{
+		name: "param",
+		type: "TEXT",
+		label: "Param",
+		display: [
+			{
+				property: "valueSource",
+				value: "PARAM",
+			},
+		],
+	},
+]
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props

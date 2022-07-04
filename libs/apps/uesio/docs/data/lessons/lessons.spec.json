@@ -2,11 +2,8 @@
 	"jobtype": "IMPORT",
 	"collection": "uesio/docs.lesson",
 	"filetype": "CSV",
-	"upsertkey": "uesio/core.id",
-	"upserttemplate": "${uesio/docs.slug}_${uesio/docs.track}",
 	"mappings": {
 		"uesio/docs.article": {
-			"matchfield": "uesio/cms.slug",
 			"columnname": "article"
 		},
 		"uesio/docs.track": {

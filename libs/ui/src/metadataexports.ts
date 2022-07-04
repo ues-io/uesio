@@ -1,3 +1,3 @@
-import { METADATA, MetadataType } from "./bands/builder/types"
+import { METADATA, MetadataType, MetadataKey } from "./bands/builder/types"
 
-export { METADATA, MetadataType }
+export { METADATA, MetadataType, MetadataKey }

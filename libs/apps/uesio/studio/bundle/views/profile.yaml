@@ -11,8 +11,8 @@ definition:
           fields:
             uesio/studio.color:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     profiles:
       collection: uesio/studio.profile
       fields:
@@ -132,5 +132,11 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - uesio/io.field:
+                                  - uesio/studio.multimetadatafield:
                                       fieldId: uesio/studio.permissionsetsrefs
+                                      metadataType: "PERMISSIONSET"
+                                      label: "Select Permission Set"
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}

@@ -9,6 +9,7 @@ import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
 import MetadataProp from "../buildpropitem/metadataprop"
 import NumberProp from "../buildpropitem/numberprop"
+import ParamsProp from "../buildpropitem/paramsprop"
 import BooleanProp from "../buildpropitem/booleanprop"
 import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
@@ -52,36 +53,52 @@ function getPropHandler(type?: string) {
 			return IconProp
 		case "CUSTOM":
 			return CustomProp
+		case "PARAMS":
+			return ParamsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp
 	}
 }
 
-const PropList: FunctionComponent<Props> = ({
-	path,
-	propsDef,
-	context,
-	properties,
-	valueAPI,
-}) => {
-	const displayConditionsAreMet = (conditions: builder.DisplayCondition[]) =>
-		conditions.some(({ property, value, values }) => {
-			const key = valueAPI.get(
-				`${path}['${property}']`
-			) as definition.DefinitionValue
+export const propsToRender = (
+	properties: builder.PropDescriptor[],
+	conditionValues: definition.DefinitionMap
+) =>
+	properties.filter((descriptor) => {
+		if (!descriptor.display) return true
+		return descriptor.display.some((condition) => {
+			const { type, property } = condition
 
-			return [...(values ? values : [value])].includes(key)
+			if (!property) {
+				console.warn("Displaycondition is missing the property key")
+				return true
+			}
+
+			const isSet = property in conditionValues
+			if (type === "SET") return !isSet
+			if (type === "NOT_SET") return !isSet
+
+			const key = conditionValues[property] as definition.DefinitionValue
+
+			if (type === "BLANK") return !key && key !== false
+			if (type === "NOT_BLANK") return key === false || !!key
+			if (type === "INCLUDES") return condition.values.includes(key)
+			if (type === "EQUALS" || !type) return key === condition.value
+			if (type === "NOT_EQUALS") return key !== condition.value
+			return true
 		})
+	})
+
+const PropList: FunctionComponent<Props> = (props) => {
+	const { path, propsDef, context, properties, valueAPI } = props
+
+	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
+	const propertiesToRender = propsToRender(properties, conditionValues)
+
 	return (
 		<>
-			{properties.map((descriptor, index) => {
-				if (
-					descriptor.display &&
-					!displayConditionsAreMet(descriptor.display)
-				)
-					return null
-
+			{propertiesToRender.map((descriptor, index) => {
 				const newPath =
 					descriptor.type === "KEY"
 						? path

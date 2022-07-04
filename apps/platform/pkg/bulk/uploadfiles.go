@@ -7,16 +7,13 @@ import (
 	"io"
 	"io/ioutil"
 	"path/filepath"
-	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -54,8 +51,10 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		}
 		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
 			FileName: fileName,
-			Path:     strings.TrimSuffix(fileName, filepath.Ext(fileName)),
-			Data:     f,
+			// For this to work, the filename (without the extension) must
+			// be the uniquekey of the record to attach to
+			Path: strings.TrimSuffix(fileName, filepath.Ext(fileName)),
+			Data: f,
 		})
 		defer f.Close()
 	}
@@ -69,64 +68,16 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	connection.SetMetadata(metadata)
 
-	// If we need to use an upsert key
-	if spec.UpsertKey != "" {
-		idMap := adapt.LocatorMap{}
-		for i := range fileStreams {
-			idMap.AddID(fileStreams[i].Path, adapt.ReferenceLocator{
-				Item: fileStreams[i],
-			})
-		}
-
-		err := adapt.LoadLooper(connection, spec.Collection, idMap, []adapt.LoadRequestField{
-			{
-				ID: adapt.ID_FIELD,
+	for i := range fileStreams {
+		uploadOps = append(uploadOps, filesource.FileUploadOp{
+			Data: fileStreams[i].Data,
+			Details: &fileadapt.FileDetails{
+				Name:            fileStreams[i].FileName,
+				CollectionID:    spec.Collection,
+				RecordUniqueKey: fileStreams[i].Path,
+				FieldID:         spec.UploadField,
 			},
-			{
-				ID: spec.UpsertKey,
-			},
-		}, spec.UpsertKey, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
-			if len(matchIndexes) != 1 {
-				return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
-			}
-
-			match := matchIndexes[0].Item
-
-			fileStream := match.(bundlestore.ReadItemStream)
-
-			idValue, err := item.GetField(adapt.ID_FIELD)
-			if err != nil {
-				return err
-			}
-
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: fileStream.Data,
-				Details: &fileadapt.FileDetails{
-					Name:         fileStream.FileName,
-					CollectionID: spec.Collection,
-					RecordID:     idValue.(string),
-					FieldID:      spec.UploadField,
-				},
-			})
-
-			// We need to match this to a filestream
-			return nil
 		})
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		for i := range fileStreams {
-			uploadOps = append(uploadOps, filesource.FileUploadOp{
-				Data: fileStreams[i].Data,
-				Details: &fileadapt.FileDetails{
-					Name:         fileStreams[i].FileName,
-					CollectionID: spec.Collection,
-					RecordID:     fileStreams[i].Path,
-					FieldID:      spec.UploadField,
-				},
-			})
-		}
 	}
 
 	_, err = filesource.Upload(uploadOps, connection, session)

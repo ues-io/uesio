@@ -10,7 +10,7 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     teams:
@@ -25,8 +25,9 @@ definition:
             uesio/studio.color:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.name
           valueSource: PARAM
           param: teamname
@@ -43,10 +44,13 @@ definition:
         uesio/studio.team:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.team
-          value: $Param{app}_$Param{teamname}
+          valueSource: LOOKUP
+          lookupWire: teams
+          lookupField: uesio/core.id
     newteammember:
       collection: uesio/studio.teammember
       fields:
@@ -179,7 +183,6 @@ definition:
                     searchFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
-                      - uesio/core.picture
                     returnFields:
                       - uesio/core.firstname
                       - uesio/core.lastname

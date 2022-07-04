@@ -12,7 +12,7 @@ type loaderFunc func(change adapt.Item, data interface{})
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		number, err := strconv.ParseInt(getValue(data, mapping, index), 10, 64)
+		number, err := strconv.ParseFloat(getValue(data, mapping, index), 64)
 		if err != nil {
 			return
 		}
@@ -33,12 +33,12 @@ func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.F
 }
 
 func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	if mapping.MatchField == "" {
-		return getTextLoader(index, mapping, fieldMetadata, getValue)
-	}
 	return func(change adapt.Item, data interface{}) {
-		change[fieldMetadata.GetFullName()] = map[string]interface{}{
-			mapping.MatchField: getValue(data, mapping, index),
+		value := getValue(data, mapping, index)
+		if value != "" {
+			change[fieldMetadata.GetFullName()] = map[string]interface{}{
+				adapt.UNIQUE_KEY_FIELD: value,
+			}
 		}
 	}
 }

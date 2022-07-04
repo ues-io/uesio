@@ -1,5 +1,6 @@
 name: bulkbatch
-idFormat: ${uesio/core.autoid}
+uniqueKey:
+  - uesio/core.autoid
 public: true
 label: bulk batch
 pluralLabel: bulk batches

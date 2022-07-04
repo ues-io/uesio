@@ -2,10 +2,8 @@
 	"jobtype": "IMPORT",
 	"collection": "uesio/crm.contact",
 	"filetype": "CSV",
-	"upsertkey": "uesio/crm.externalid",
 	"mappings": {
 		"uesio/crm.account": {
-			"matchfield": "uesio/crm.externalid",
 			"columnname": "account"
 		},
 		"uesio/crm.externalid": {

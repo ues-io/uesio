@@ -2,6 +2,7 @@ package meta
 
 type ConfigStoreValue struct {
 	ID        string    `uesio:"uesio/core.id"`
+	UniqueKey string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Key       string    `uesio:"uesio/core.key"`
 	Value     string    `uesio:"uesio/core.value"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`

@@ -7,6 +7,8 @@ const VALUE = "VALUE"
 const SEARCH = "SEARCH"
 const GROUP = "GROUP"
 
+type Conjunction = "AND" | "OR"
+
 type ConditionOperators =
 	| "EQ"
 	| "NOT_EQ"
@@ -17,8 +19,6 @@ type ConditionOperators =
 	| "IN"
 	| "IS_BLANK"
 	| "IS_NOT_BLANK"
-
-type ConjunctionOperators = "AND" | "OR"
 
 type WireConditionState =
 	| ParamConditionState
@@ -36,7 +36,7 @@ type ConditionBase = {
 
 type GroupConditionDefinition = ConditionBase & {
 	type: typeof GROUP
-	conjunction: ConjunctionOperators
+	conjunction: Conjunction
 	conditions: ConditionBase[]
 }
 
