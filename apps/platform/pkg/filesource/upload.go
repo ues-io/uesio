@@ -181,7 +181,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{
 		Collection: &ufms,
 		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
+			Upsert: true,
 		},
 	}, connection, session)
 	if err != nil {
@@ -213,7 +213,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 					},
 				},
 				Options: &adapt.SaveOptions{
-					Upsert: &adapt.UpsertOptions{},
+					Upsert: true,
 				},
 			})
 		}

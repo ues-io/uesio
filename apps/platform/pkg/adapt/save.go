@@ -154,10 +154,8 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 }
 
-type UpsertOptions struct{}
-
 type SaveOptions struct {
-	Upsert *UpsertOptions
+	Upsert bool `json:"upsert"`
 }
 
 func GetFieldValue(value interface{}, key string) (interface{}, error) {

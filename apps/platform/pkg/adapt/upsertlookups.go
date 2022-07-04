@@ -15,7 +15,7 @@ func HandleUpsertLookup(
 	op.InsertCount = len(op.Inserts)
 	metadata := connection.GetMetadata()
 	options := op.Options
-	skipUpsertQuery := options == nil || options.Upsert == nil
+	skipUpsertQuery := options == nil || !options.Upsert
 	if skipUpsertQuery {
 		return nil
 	}

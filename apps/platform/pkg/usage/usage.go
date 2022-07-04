@@ -71,7 +71,7 @@ func RunJob() error {
 				Collection: "uesio/core.usage",
 				Wire:       "CoolWireName",
 				Changes:    &changes,
-				Options:    &adapt.SaveOptions{Upsert: &adapt.UpsertOptions{}},
+				Options:    &adapt.SaveOptions{Upsert: true},
 			},
 		}
 
