@@ -83,32 +83,60 @@ type BotParam struct {
 	Name         string              `yaml:"name" uesio:"uesio/studio.name" json:"name"`
 	Prompt       string              `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
 	Type         string              `yaml:"type" uesio:"uesio/studio.type" json:"type"`
-	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType"`
+	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType,omitempty"`
 	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
 	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
 	Choices      []string            `yaml:"choices" uesio:"uesio/studio.choices" json:"choices"`
 	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
 }
 
+type BotParams []BotParam
+
+func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
+	if *bp == nil {
+		*bp = *(&[]BotParam{})
+	}
+	for i := range node.Content {
+		if i%2 == 0 {
+
+			var key string
+			var value BotParam
+			err := node.Content[i].Decode(&key)
+			if err != nil {
+				return err
+			}
+			err = node.Content[i+1].Decode(&value)
+			if err != nil {
+				return err
+			}
+
+			value.Name = key
+			*bp = append(*bp, value)
+		}
+	}
+
+	return nil
+}
+
 type Bot struct {
-	ID            string              `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey     string              `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name          string              `yaml:"name" uesio:"uesio/studio.name"`
-	CollectionRef string              `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Namespace     string              `yaml:"-" uesio:"-"`
-	Type          string              `yaml:"type" uesio:"uesio/studio.type"`
-	Dialect       string              `yaml:"dialect" uesio:"uesio/studio.dialect"`
-	Params        map[string]BotParam `yaml:"params,omitempty" uesio:"uesio/studio.params"`
-	Content       *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.content"`
-	FileContents  string              `yaml:"-" uesio:"-"`
-	Workspace     *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy     *User               `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner         *User               `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy     *User               `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt     int64               `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt     int64               `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta      *ItemMeta           `yaml:"-" uesio:"-"`
-	Public        bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID            string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey     string            `yaml:"-" uesio:"uesio/core.uniquekey"`
+	Name          string            `yaml:"name" uesio:"uesio/studio.name"`
+	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
+	Namespace     string            `yaml:"-" uesio:"-"`
+	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
+	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
+	Params        BotParams         `yaml:"params,omitempty" uesio:"uesio/studio.params"`
+	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
+	FileContents  string            `yaml:"-" uesio:"-"`
+	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
+	CreatedBy     *User             `yaml:"-" uesio:"uesio/core.createdby"`
+	Owner         *User             `yaml:"-" uesio:"uesio/core.owner"`
+	UpdatedBy     *User             `yaml:"-" uesio:"uesio/core.updatedby"`
+	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
+	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
+	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
+	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
 func GetBotTypes() map[string]string {

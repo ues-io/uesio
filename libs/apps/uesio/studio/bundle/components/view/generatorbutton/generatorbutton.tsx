@@ -1,5 +1,12 @@
 import { FunctionComponent, useState } from "react"
-import { hooks, definition, component, wire, context as ctx } from "@uesio/ui"
+import {
+	hooks,
+	param,
+	definition,
+	component,
+	wire,
+	context as ctx,
+} from "@uesio/ui"
 
 type GeneratorButtonDefinition = {
 	generator: string
@@ -15,6 +22,40 @@ const Dialog = component.getUtility("uesio/io.dialog")
 const Form = component.getUtility("uesio/io.form")
 
 const WIRE_NAME = "paramData"
+
+const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
+	switch (def.type) {
+		case "METADATA":
+			return {
+				"uesio/studio.metadatafield": {
+					fieldId: def.name,
+					metadataType: def.metadataType,
+					grouping: def.grouping,
+				},
+			}
+		case "METADATAMULTI":
+			return {
+				"uesio/studio.multimetadatafield": {
+					fieldId: def.name,
+					metadataType: def.metadataType,
+					grouping: def.grouping,
+				},
+			}
+		default:
+			return {
+				"uesio/io.field": {
+					fieldId: def.name,
+				},
+			}
+	}
+}
+
+const getLayoutFieldsFromParams = (
+	params: param.ParamDefinition[] | undefined
+) => {
+	if (!params) return []
+	return params.map((def) => getLayoutFieldFromParamDef(def))
+}
 
 const GeneratorButton: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
@@ -36,7 +77,7 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 
 	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
 		viewOnly: true,
-		fields: uesio.wire.getFieldsFromParams(params),
+		fields: uesio.wire.getWireFieldsFromParams(params),
 		init: {
 			create: true,
 		},
@@ -62,6 +103,7 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 						<Form
 							wire={WIRE_NAME}
 							context={context}
+							content={getLayoutFieldsFromParams(params)}
 							submitLabel="Generate"
 							onSubmit={async (record: wire.WireRecord) => {
 								await uesio.bot.callGenerator(

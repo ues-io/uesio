@@ -17,7 +17,7 @@ interface Props extends definition.BaseProps {
 const MultiMetadataField: FunctionComponent<Props> = (props) => {
 	const {
 		context,
-		definition: { fieldId, label, metadataType },
+		definition: { fieldId, metadataType },
 	} = props
 
 	const record = context.getRecord()
@@ -32,9 +32,12 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
-	if (!fieldMetadata) return null
-	const isList = fieldMetadata?.getType() === "LIST"
-	if (!isList) return null
+	if (!fieldMetadata) throw new Error("Invalid field provided: " + fieldId)
+	const label = props.definition.label || fieldMetadata.getLabel()
+	const fieldType = fieldMetadata.getType()
+	const isList = fieldType === "LIST"
+	if (!isList)
+		throw new Error("The field provided is not a LIST: " + fieldType)
 
 	const value = record.getFieldValue<string[]>(fieldId)
 
