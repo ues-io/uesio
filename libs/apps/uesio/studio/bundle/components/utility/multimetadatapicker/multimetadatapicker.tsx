@@ -141,7 +141,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 	return (
 		<FieldWrapper
 			labelPosition={labelPosition}
-			variant={fieldWrapperVariant}
+			variant={fieldWrapperVariant as metadata.MetadataKey}
 			label={label}
 			context={context}
 		>

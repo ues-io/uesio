@@ -63,7 +63,7 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 		<MultiMetadataPicker
 			metadataType={metadataType}
 			label={label}
-			value={value}
+			value={value || []}
 			setValue={(nvalue: string[]) => {
 				record.update(fieldId, nvalue)
 			}}
