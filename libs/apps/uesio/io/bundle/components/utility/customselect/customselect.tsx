@@ -1,4 +1,4 @@
-import { useState, FunctionComponent, ReactNode } from "react"
+import { useEffect, useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
@@ -86,7 +86,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		isOpen,
 		getMenuProps,
 		getComboboxProps,
-		getToggleButtonProps,
 		getLabelProps,
 		highlightedIndex,
 		getItemProps,
@@ -110,7 +109,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	return (
 		<div style={{ position: "relative" }} ref={setAnchorEl}>
-			<label className={classes.label}>
+			<div onClick={() => openMenu()} className={classes.label}>
 				<div
 					onFocus={openMenu}
 					tabIndex={isOpen ? -1 : 0}
@@ -120,13 +119,13 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				</div>
 
 				<button
+					tabIndex={1}
 					className={classes.editbutton}
 					type="button"
-					{...getToggleButtonProps()}
 				>
 					<Icon icon="expand_more" context={context} />
 				</button>
-			</label>
+			</div>
 			<div
 				ref={setPopperEl}
 				style={{
