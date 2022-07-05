@@ -207,21 +207,23 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: Save
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newteammember"
+                  - newteammember
               - signal: wire/RESET
                 wire: newteammember
               - signal: wire/LOAD
                 wires:
-                  - "teammembers"
-              - signal: "panel/TOGGLE"
-                panel: "newMember"
+                  - apps
+                  - teams
+                  - teammembers
+              - signal: panel/TOGGLE
+                panel: newMember
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
+            uesio.variant: uesio/io.secondary
             text: "Cancel"
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newMember"
+              - signal: panel/TOGGLE
+                panel: newMember
