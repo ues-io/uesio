@@ -42,6 +42,7 @@ var ORDERED_ITEMS = [...]string{
 	"componentpacks",
 	"labels",
 	"translations",
+	"useraccesstokens",
 }
 
 // Deploy func
