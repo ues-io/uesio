@@ -1,4 +1,4 @@
-import { useEffect, useState, FunctionComponent, ReactNode } from "react"
+import { useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
