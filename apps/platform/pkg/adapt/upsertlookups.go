@@ -51,7 +51,7 @@ func HandleUpsertLookup(
 		{
 			ID: UNIQUE_KEY_FIELD,
 		},
-	}, UNIQUE_KEY_FIELD, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+	}, UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
 
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
