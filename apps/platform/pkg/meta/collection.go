@@ -43,8 +43,8 @@ type RecordChallengeTokenDefinition struct {
 }
 
 type TokenCondition struct {
-	Field string `yaml:"field"`
-	Value string `yaml:"value"`
+	Field string `yaml:"field" uesio:"field" json:"field"`
+	Value string `yaml:"value" uesio:"value" json:"value"`
 }
 
 type Collection struct {
