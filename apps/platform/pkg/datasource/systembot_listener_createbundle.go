@@ -11,9 +11,9 @@ import (
 
 func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 
-	app := session.GetContextAppName()
+	appID := session.GetContextAppName()
 
-	if app == "" {
+	if appID == "" {
 		return errors.New("Error creating a new bundle, missing app")
 	}
 
@@ -23,9 +23,31 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return errors.New("Error creating a new bundle, missing workspace")
 	}
 
-	var bundles meta.BundleCollection
+	var app meta.App
+	err := PlatformLoadOne(
+		&app,
+		&PlatformLoadOptions{
+			Connection: connection,
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: adapt.ID_FIELD,
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: adapt.UNIQUE_KEY_FIELD,
+					Value: appID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return err
+	}
 
-	err := PlatformLoad(
+	var bundles meta.BundleCollection
+	err = PlatformLoad(
 		&bundles,
 		&PlatformLoadOptions{
 			Orders: []adapt.LoadRequestOrder{
@@ -45,7 +67,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: "uesio/studio.app",
-					Value: app,
+					Value: app.ID,
 				},
 			},
 		},
@@ -64,7 +86,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		patch = lastBundle.Patch + 1
 	}
 
-	bundle, err := meta.NewBundle(app, major, minor, patch, "")
+	bundle, err := meta.NewBundle(appID, major, minor, patch, "")
 	if err != nil {
 		return err
 	}
@@ -74,6 +96,6 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		return err
 	}
 
-	return CreateBundle(app, workspace.Name, bundle, wsbs, session)
+	return CreateBundle(appID, workspace.Name, bundle, wsbs, session)
 
 }
