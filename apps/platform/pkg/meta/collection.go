@@ -34,17 +34,17 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 type RecordChallengeTokenDefinition struct {
-	Type            string            `yaml:"type"`
-	Collection      string            `yaml:"collection"`
-	Token           string            `yaml:"token"`
-	UserAccessToken string            `yaml:"userAccessToken"`
-	Access          string            `yaml:"access"`
-	Conditions      []*TokenCondition `yaml:"conditions"`
+	Type            string            `yaml:"type,omitempty" uesio:"type" json:"type"`
+	Collection      string            `yaml:"collection,omitempty" uesio:"collection" json:"collection"`
+	Token           string            `yaml:"token" uesio:"token" json:"token"`
+	UserAccessToken string            `yaml:"userAccessToken" uesio:"userAccessToken" json:"userAccessToken"`
+	Access          string            `yaml:"access" uesio:"access" json:"access"`
+	Conditions      []*TokenCondition `yaml:"conditions,omitempty" uesio:"conditions" json:"conditions"`
 }
 
 type TokenCondition struct {
-	Field string `yaml:"field"`
-	Value string `yaml:"value"`
+	Field string `yaml:"field" uesio:"field" json:"field"`
+	Value string `yaml:"value" uesio:"value" json:"value"`
 }
 
 type Collection struct {
@@ -67,7 +67,7 @@ type Collection struct {
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
-	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
+	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
