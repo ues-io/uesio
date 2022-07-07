@@ -50,6 +50,11 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type EmptyWireCondition = {
+	type: "wireIsEmpty"
+	wire: string
+}
+
 type DisplayCondition =
 	| HasNoValueCondition
 	| HasValueCondition
@@ -59,6 +64,7 @@ type DisplayCondition =
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| EmptyWireCondition
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
@@ -97,6 +103,22 @@ function should(condition: DisplayCondition, context: Context) {
 		return false
 	}
 
+	if (condition.type === "wireIsEmpty") {
+		console.log("testing wire is empty", condition.wire)
+
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+
+		const ctxWire = ctx.getWire()
+		if (!ctxWire && !ctx.getWire() && !condition.wire) {
+			console.warn(
+				"No wire provided and no wire found in context to evaluate display condition"
+			)
+		}
+		return ctxWire && ctxWire.getData().length > 0
+	}
+
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.merge(condition.value as string)
@@ -129,6 +151,8 @@ function should(condition: DisplayCondition, context: Context) {
 		const ctxWire = ctx.getWire()
 		if (ctxWire) {
 			const records = ctxWire.getData()
+
+			if (condition.type === "wireIsEmpty") return records.length
 
 			// When we check for false condition, we want to check every record.
 			const arrayMethod =
