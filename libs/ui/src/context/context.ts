@@ -105,7 +105,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
 		const value = context.getRecord()?.getFieldValue(expression)
-		return value !== undefined || value !== null ? `${value}` : ""
+		return value !== undefined && value !== null ? `${value}` : ""
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
 	User: (expression, context) => {
@@ -115,10 +115,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 			return user.firstname
 				? user.firstname.charAt(0) + user.lastname.charAt(0)
 				: user.id.charAt(0)
-		} else if (expression === "picture") {
+		}
+		if (expression === "picture") {
 			// Remove the workspace context here
 			return getUserFileURL(new Context(), user.picture)
 		}
+		if (expression === "id") return user.id
 		return ""
 	},
 	RecordId: (expression, context, ancestors) => {

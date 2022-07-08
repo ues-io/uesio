@@ -28,8 +28,9 @@ definition:
             uesio/studio.color:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.major
           valueSource: PARAM
           param: major

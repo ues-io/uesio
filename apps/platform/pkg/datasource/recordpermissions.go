@@ -98,7 +98,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		return err
 	}
 
-	return adapt.HandleReferences(connection, referencedCollections)
+	return adapt.HandleReferences(connection, referencedCollections, false)
 }
 
 func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {

@@ -70,6 +70,7 @@ func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
 					Value: value,
 				},
 			},
+			SkipRecordSecurity: true,
 		},
 		session,
 	)
