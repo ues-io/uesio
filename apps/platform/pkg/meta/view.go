@@ -216,7 +216,7 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 		for i := range panels.Content {
 			if i%2 != 0 {
 				panel := panels.Content[i]
-				panelType, err := getMapNode(panel, "uesio.type")
+				panelType, err := getMapNode(panel, "uesio/core.type")
 				if err != nil {
 					return nil, nil, err
 				}
