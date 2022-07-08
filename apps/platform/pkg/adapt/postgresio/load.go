@@ -202,5 +202,5 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	return adapt.HandleReferences(c, referencedCollections)
+	return adapt.HandleReferences(c, referencedCollections, op.SkipRecordSecurity)
 }

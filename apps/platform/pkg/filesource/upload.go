@@ -118,7 +118,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
+		}, adapt.UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item

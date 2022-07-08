@@ -108,7 +108,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, false, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
