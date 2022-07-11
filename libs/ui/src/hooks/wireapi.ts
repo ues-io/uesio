@@ -42,10 +42,12 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 	const fieldKey = def.name
 	switch (def.type) {
 		case "RECORD":
-			return record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`)
+			return (
+				record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`) || ""
+			)
 		case "METADATAMULTI": {
-			const values = record.getFieldValue<string[]>(fieldKey)
-			return values && values.join(",")
+			const values = record.getFieldValue<string[]>(fieldKey) || []
+			return values.join(",")
 		}
 		default:
 			return record.getFieldValue<string>(fieldKey) || ""
