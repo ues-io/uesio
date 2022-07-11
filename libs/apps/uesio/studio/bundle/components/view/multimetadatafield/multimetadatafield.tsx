@@ -36,7 +36,7 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 	const isList = fieldMetadata?.getType() === "LIST"
 	if (!isList) return null
 
-	const value = record.getFieldValue<string[]>(fieldId)
+	const value = record.getFieldValue<string[]>(fieldId) || []
 
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
@@ -63,7 +63,7 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 		<MultiMetadataPicker
 			metadataType={metadataType}
 			label={label}
-			value={value}
+			value={value || []}
 			setValue={(nvalue: string[]) => {
 				record.update(fieldId, nvalue)
 			}}

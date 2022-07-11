@@ -42,6 +42,7 @@ var ORDERED_ITEMS = [...]string{
 	"componentpacks",
 	"labels",
 	"translations",
+	"useraccesstokens",
 }
 
 // Deploy func
@@ -243,15 +244,15 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		},
 	})
 
-	upsertOptions := &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
+	saveOptions := &adapt.SaveOptions{
+		Upsert: true,
 	}
 
 	saves := []datasource.PlatformSaveRequest{
 		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
 		{
 			Collection: &deps,
-			Options:    upsertOptions,
+			Options:    saveOptions,
 		},
 	}
 
@@ -259,7 +260,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		if dep[element] != nil {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
-				Options:    upsertOptions,
+				Options:    saveOptions,
 			})
 		}
 	}

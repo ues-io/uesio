@@ -8,7 +8,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 
 	return &Bundle{
 		App: &App{
-			ID: namespace,
+			UniqueKey: namespace,
 		},
 		Major:       major,
 		Minor:       minor,

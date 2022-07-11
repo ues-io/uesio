@@ -23,7 +23,7 @@ const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {
 		allowSearch = true,
-		items,
+		items = [],
 		setValue,
 		value,
 		itemToString,
@@ -86,7 +86,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		isOpen,
 		getMenuProps,
 		getComboboxProps,
-		getToggleButtonProps,
 		getLabelProps,
 		highlightedIndex,
 		getItemProps,
@@ -95,9 +94,8 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		openMenu,
 	} = useCombobox({
 		items,
-		selectedItem: value,
+		selectedItem: value || "",
 		onSelectedItemChange: (changes) => {
-			console.log(changes)
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
 		},
@@ -111,7 +109,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	return (
 		<div style={{ position: "relative" }} ref={setAnchorEl}>
-			<label {...getLabelProps()} className={classes.label}>
+			<div onClick={() => openMenu()} className={classes.label}>
 				<div
 					onFocus={openMenu}
 					tabIndex={isOpen ? -1 : 0}
@@ -121,13 +119,13 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				</div>
 
 				<button
+					tabIndex={1}
 					className={classes.editbutton}
 					type="button"
-					{...getToggleButtonProps()}
 				>
 					<Icon icon="expand_more" context={context} />
 				</button>
-			</label>
+			</div>
 			<div
 				ref={setPopperEl}
 				style={{
@@ -140,14 +138,18 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 			>
 				<div {...getMenuProps()}>
 					<div {...getComboboxProps()}>
-						<input
-							type="text"
-							autoFocus
-							className={classes.searchbox}
-							placeholder="Search..."
-							style={{ display: allowSearch ? "auto" : "none" }}
-							{...getInputProps()}
-						/>
+						<label {...getLabelProps()}>
+							<input
+								type="text"
+								autoFocus
+								className={classes.searchbox}
+								placeholder="Search..."
+								style={{
+									display: allowSearch ? "auto" : "none",
+								}}
+								{...getInputProps()}
+							/>
+						</label>
 					</div>
 					{items.map((item: string, index) => {
 						// hacky, but downshift needs the index in order to determine what element this is.

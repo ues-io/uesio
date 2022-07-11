@@ -4,6 +4,6 @@ uniqueKey:
   - uesio/studio.major
   - uesio/studio.minor
   - uesio/studio.patch
-nameField: uesio/core.id
+nameField: uesio/core.uniquekey
 label: bundle
 pluralLabel: bundles

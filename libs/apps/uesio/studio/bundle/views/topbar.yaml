@@ -113,7 +113,7 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: v${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
                                 element: div
                           avatar:
                             - uesio/io.text:

@@ -2,7 +2,7 @@ import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 
 import { ThunkFunc } from "../../store/store"
-import { ID_FIELD } from "../collection/types"
+import { UNIQUE_KEY_FIELD } from "../collection/types"
 
 import { PlainWireRecord } from "../wirerecord/types"
 import { save as saveBuilder } from "."
@@ -30,7 +30,7 @@ const save =
 				if (defState?.content) {
 					changes[defKey] = {
 						"uesio/studio.definition": defState.content,
-						[ID_FIELD]: `${workspace.app}_${workspace.name}_${name}`,
+						[UNIQUE_KEY_FIELD]: `${workspace.app}:${workspace.name}:${name}`,
 					}
 				}
 			}
@@ -43,6 +43,9 @@ const save =
 					collection: "uesio/studio.view",
 					changes,
 					deletes: {},
+					options: {
+						upsert: true,
+					},
 				},
 			],
 		})

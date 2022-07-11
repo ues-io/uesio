@@ -41,6 +41,6 @@ func (ffs *FeatureFlagStore) Set(key string, value bool, user string, session *s
 	}
 
 	return datasource.PlatformSaveOne(&ffa, &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
+		Upsert: true,
 	}, nil, session)
 }
