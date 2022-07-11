@@ -1,0 +1,11 @@
+name: conditions
+type: LIST
+label: Conditions
+subtype: MAP
+subfields:
+  - name: field
+    type: TEXT
+    label: Field
+  - name: value
+    type: TEXT
+    label: Value

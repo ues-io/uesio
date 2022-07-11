@@ -32,7 +32,7 @@ definition:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.footertext
-                                text: ©2020-2021
+                                text: ©2022
                                 element: div
                                 uesio.styles:
                                   root:

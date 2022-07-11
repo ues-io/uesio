@@ -17,7 +17,6 @@ type LoadOp struct {
 	BatchSize          int                    `json:"-"`
 	BatchNumber        int                    `json:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
-	UserResponseTokens []string               `json:"-"`
 	SkipRecordSecurity bool                   `json:"-"`
 	RequireWriteAccess bool                   `json:"-"`
 }

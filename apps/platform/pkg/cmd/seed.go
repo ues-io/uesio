@@ -41,7 +41,7 @@ func getPlatformSeedSR(collection meta.CollectionableGroup) datasource.SaveReque
 	return datasource.GetSaveRequestFromPlatformSave(datasource.PlatformSaveRequest{
 		Collection: collection,
 		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
+			Upsert: true,
 		},
 	})
 }
@@ -52,7 +52,7 @@ func getSeedSR(collectionName string, collection *adapt.Collection) datasource.S
 		Wire:       collectionName,
 		Changes:    collection,
 		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
+			Upsert: true,
 		},
 	}
 }

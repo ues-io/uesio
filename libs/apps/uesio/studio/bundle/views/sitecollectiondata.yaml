@@ -25,6 +25,9 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
+        - field: uesio/studio.name
+          valueSource: PARAM
+          param: sitename
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps

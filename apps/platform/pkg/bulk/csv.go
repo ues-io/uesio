@@ -131,7 +131,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			Wire:       "bulkupload",
 			Changes:    &changes,
 			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
+				Upsert: true,
 			},
 		},
 	}, nil

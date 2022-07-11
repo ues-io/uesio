@@ -163,3 +163,4 @@ collections:
   uesio/core.loginmethod: true
   uesio/core.usage: true
   uesio/core.featureflagassignment: true
+  uesio/studio.useraccesstoken: true

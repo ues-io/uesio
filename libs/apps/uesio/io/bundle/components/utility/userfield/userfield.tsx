@@ -27,13 +27,15 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 
 	if (!user) return null
 
+	const uniquekey = user?.[collection.UNIQUE_KEY_FIELD] as string
+
 	const initials =
-		firstName && lastName ? firstName.charAt(0) + lastName.charAt(0) : "?"
+		firstName && lastName
+			? firstName.charAt(0) + lastName.charAt(0)
+			: uniquekey.charAt(0)
 
 	const fullName =
-		firstName && lastName
-			? `${firstName} ${lastName}`
-			: user?.[collection.ID_FIELD]
+		firstName && lastName ? `${firstName} ${lastName}` : uniquekey
 
 	return (
 		<Tile

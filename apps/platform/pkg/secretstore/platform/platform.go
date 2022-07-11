@@ -47,6 +47,6 @@ func (ss *SecretStore) Set(key, value string) error {
 		return err
 	}
 	return datasource.PlatformSaveOne(&s, &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
+		Upsert: true,
 	}, nil, session)
 }

@@ -9,15 +9,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// SaveRequest struct
 type SaveRequest struct {
-	Collection         string             `json:"collection"`
-	Wire               string             `json:"wire"`
-	Changes            loadable.Group     `json:"changes"`
-	Deletes            loadable.Group     `json:"deletes"`
-	Errors             []adapt.SaveError  `json:"errors"`
-	Options            *adapt.SaveOptions `json:"-"`
-	UserResponseTokens *adapt.SaveOptions `json:"-"`
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
+	Changes    loadable.Group     `json:"changes"`
+	Deletes    loadable.Group     `json:"deletes"`
+	Errors     []adapt.SaveError  `json:"errors"`
+	Options    *adapt.SaveOptions `json:"options"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -56,7 +54,15 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 				return err
 			}
 			sr.Deletes = &d
+		case "options":
+			o := adapt.SaveOptions{}
+			err := json.Unmarshal(v, &o)
+			if err != nil {
+				return err
+			}
+			sr.Options = &o
 		}
+
 	}
 
 	return nil
