@@ -27,9 +27,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, fieldId, record, context, wire } = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
+	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
 	const userModDate = userFile?.["uesio/core.updatedat"] as string
 	const accept = fieldMetadata.getAccept()

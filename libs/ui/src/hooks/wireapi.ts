@@ -43,9 +43,11 @@ const getValueForParam = (
 	const fieldKey = `uesio/viewonly.${key}`
 	switch (def.type) {
 		case "RECORD":
-			return record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`)
+			return (
+				record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`) || ""
+			)
 		default:
-			return record.getFieldValue<string>(fieldKey)
+			return record.getFieldValue<string>(fieldKey) || ""
 	}
 }
 

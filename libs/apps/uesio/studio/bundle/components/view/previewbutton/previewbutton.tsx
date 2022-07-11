@@ -8,7 +8,8 @@ const Form = component.getUtility("uesio/io.form")
 const WIRE_NAME = "paramData"
 
 const getParamDefs = (record: wire.WireRecord): param.ParamDefinitionMap => {
-	const viewDef = record.getFieldValue<string>("uesio/studio.definition")
+	const viewDef =
+		record.getFieldValue<string>("uesio/studio.definition") || ""
 	const yamlDoc = util.yaml.parse(viewDef)
 	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
 	return params?.toJSON() || {}
