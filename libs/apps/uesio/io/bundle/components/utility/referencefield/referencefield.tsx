@@ -6,6 +6,7 @@ import {
 	definition,
 	component,
 	context,
+	metadata,
 } from "@uesio/ui"
 import { ReferenceFieldOptions } from "../../view/field/fielddefinition"
 
@@ -18,7 +19,7 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant: string
+	variant: metadata.MetadataKey
 	options?: ReferenceFieldOptions
 	placeholder?: string
 }
