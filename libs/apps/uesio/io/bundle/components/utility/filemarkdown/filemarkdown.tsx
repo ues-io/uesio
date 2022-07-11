@@ -46,9 +46,7 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 		options,
 	} = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
+	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const fileName = userFile?.["uesio/core.name"] as string
 	const mimeType = "text/markdown; charset=utf-8"
 
