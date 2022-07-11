@@ -53,9 +53,7 @@ class FileAPI {
 	useUserFile = (context: Context, record: WireRecord, fieldId: string) => {
 		const [content, setContent] = useState<string>("")
 		useEffect(() => {
-			const userFile = record.getFieldValue<PlainWireRecord | undefined>(
-				fieldId
-			)
+			const userFile = record.getFieldValue<PlainWireRecord>(fieldId)
 			const userFileId = userFile?.[ID_FIELD] as string
 			const fileUrl = getUserFileURL(context, userFileId)
 			if (!fileUrl) {

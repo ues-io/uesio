@@ -39,7 +39,7 @@ const MultiMetadataField: FunctionComponent<Props> = (props) => {
 	if (!isList)
 		throw new Error("The field provided is not a LIST: " + fieldType)
 
-	const value = record.getFieldValue<string[]>(fieldId)
+	const value = record.getFieldValue<string[]>(fieldId) || []
 
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()

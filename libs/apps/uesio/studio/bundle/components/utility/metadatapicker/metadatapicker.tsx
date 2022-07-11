@@ -42,7 +42,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		{
 			itemwrapper: {
 				color: "white",
-				display: "inline-flex",
+				display: "flex",
 				alignItems: "center",
 				margin: "5px 0",
 				padding: "0 3px",
@@ -160,6 +160,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				style={{
 					...(selected && {
 						padding: "0",
+						display: "inline-flex",
 						borderRadius: "14px",
 						backgroundColor: "#dcdcdc",
 					}),

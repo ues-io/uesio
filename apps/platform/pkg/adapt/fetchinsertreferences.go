@@ -86,11 +86,11 @@ func FetchInsertReferences(
 		}
 	}
 
-	err = HandleReferences(connection, referencedIDCollections)
+	err = HandleReferences(connection, referencedIDCollections, false)
 	if err != nil {
 		return err
 	}
 
-	return HandleReferences(connection, referencedUniqueKeyCollections)
+	return HandleReferences(connection, referencedUniqueKeyCollections, false)
 
 }

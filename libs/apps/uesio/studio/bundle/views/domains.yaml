@@ -25,6 +25,9 @@ definition:
             uesio/studio.name:
             uesio/studio.color:
       conditions:
+        - field: uesio/studio.name
+          valueSource: PARAM
+          param: sitename
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
@@ -51,8 +54,9 @@ definition:
         create: true
       defaults:
         - field: uesio/studio.site
-          valueSource: VALUE
-          value: $Param{app}_$Param{sitename}
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
         - field: uesio/studio.type
           valueSource: VALUE
           value: subdomain
@@ -145,6 +149,8 @@ definition:
                 wire: newdomain
               - signal: wire/LOAD
                 wires:
+                  - apps
+                  - sites
                   - domains
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"

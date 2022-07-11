@@ -115,10 +115,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 			return user.firstname
 				? user.firstname.charAt(0) + user.lastname.charAt(0)
 				: user.id.charAt(0)
-		} else if (expression === "picture") {
+		}
+		if (expression === "picture") {
 			// Remove the workspace context here
 			return getUserFileURL(new Context(), user.picture)
 		}
+		if (expression === "id") return user.id
 		return ""
 	},
 	RecordId: (expression, context, ancestors) => {

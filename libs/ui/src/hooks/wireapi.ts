@@ -45,10 +45,10 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 			return record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`)
 		case "METADATAMULTI": {
 			const values = record.getFieldValue<string[]>(fieldKey)
-			return values.join(",")
+			return values && values.join(",")
 		}
 		default:
-			return record.getFieldValue<string>(fieldKey)
+			return record.getFieldValue<string>(fieldKey) || ""
 	}
 }
 

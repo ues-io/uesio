@@ -24,8 +24,8 @@ type UserAccessToken struct {
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Type       string            `yaml:"type" uesio:"uesio/studio.type"`
 	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
-	Conditions []*TokenCondition `yaml:"conditions"`
-	Token      string            `yaml:"token"`
+	Conditions []*TokenCondition `yaml:"conditions"  uesio:"uesio/studio.conditions"`
+	Token      string            `yaml:"token"  uesio:"uesio/studio.token"`
 	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`

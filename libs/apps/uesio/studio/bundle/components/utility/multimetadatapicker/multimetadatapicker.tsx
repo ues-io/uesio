@@ -40,7 +40,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 			itemwrapper: {
 				padding: "6px",
 				color: "white",
-				display: "inline-block",
+				display: "block",
 			},
 			notfound: {
 				textTransform: "capitalize",
@@ -119,6 +119,13 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 					classes.itemwrapper,
 					highlighted && classes.highlighteditem
 				)}
+				style={{
+					...(selected && {
+						display: "inline-flex",
+						alignItems: "center",
+						margin: "2.5px",
+					}),
+				}}
 			>
 				{tag(ns, name, metadataInfo?.color || "#eee")}
 				{selected && (
@@ -127,7 +134,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 						className={classes.editbutton}
 						type="button"
 						onClick={(event) => {
-							event.preventDefault() // Prevent the label from triggering
+							event.nativeEvent.preventDefault()
 							setValue(value.filter((el) => el !== item))
 						}}
 					>

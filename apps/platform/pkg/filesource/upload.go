@@ -5,7 +5,6 @@ import (
 	"io"
 	"mime"
 	"path/filepath"
-	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -119,17 +118,17 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
-			if len(matchIndexes) != 1 {
-				return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))
+		}, adapt.UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
+			//One collection with more than 1 fields of type File
+			for i := range matchIndexes {
+				match := matchIndexes[i].Item
+				ufm := match.(*meta.UserFileMetadata)
+				idValue, err := item.GetField(adapt.ID_FIELD)
+				if err != nil {
+					return err
+				}
+				ufm.RecordID = idValue.(string)
 			}
-			match := matchIndexes[0].Item
-			ufm := match.(*meta.UserFileMetadata)
-			idValue, err := item.GetField(adapt.ID_FIELD)
-			if err != nil {
-				return err
-			}
-			ufm.RecordID = idValue.(string)
 			return nil
 		})
 		if err != nil {
@@ -138,7 +137,6 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 	}
 
 	for index, ufm := range ufms {
-		//details := op.Details
 		err := getUploadMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
 		if err != nil {
 			return nil, err
