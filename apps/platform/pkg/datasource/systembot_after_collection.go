@@ -10,19 +10,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func ParseKeyCollectionKey(key string) (string, string, string, string, error) {
-
-	keyArray := strings.Split(key, "_")
+func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
+	//ben/greenlink:dev:companymember to ben/greenlink.companymember
+	keyArray := strings.Split(uniquekey, ":")
 	if len(keyArray) != 3 {
-		return "", "", "", "", errors.New("Invalid Key: " + key)
+		return "", errors.New("Invalid Key: " + uniquekey)
 	}
 
-	keyArray2 := strings.Split(keyArray[0], "/")
-	if len(keyArray2) != 2 {
-		return "", "", "", "", errors.New("Invalid Key: " + key)
-	}
-
-	return keyArray2[0], keyArray2[1], keyArray[1], keyArray[2], nil
+	return keyArray[0] + "." + keyArray[2], nil
 }
 
 func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -30,23 +25,58 @@ func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, 
 	ids := []string{}
 	for i := range request.Deletes {
 		collectionID := request.Deletes[i].IDValue
-		ownerName, appName, _, collectionName, err := ParseKeyCollectionKey(collectionID)
-		if err != nil {
-			return err
-		}
-		ids = append(ids, ownerName+"/"+appName+"."+collectionName)
+		ids = append(ids, collectionID)
 	}
 
 	if len(ids) == 0 {
 		return nil
 	}
 
+	cc := meta.CollectionCollection{}
+	err := PlatformLoad(&cc, &PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    adapt.ID_FIELD,
+				Value:    ids,
+				Operator: "IN",
+			},
+		},
+	}, session)
+	if err != nil {
+		return err
+	}
+
+	fieldIds := []string{}
+	cc.Loop(func(item loadable.Item, _ string) error {
+		uniquekey, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
+		if err != nil {
+			return err
+		}
+
+		uniquekeyAsString, ok := uniquekey.(string)
+		if !ok {
+			return errors.New("Delete id must be a string")
+		}
+
+		fieldId, err := parseUniquekeyToCollectionKey(uniquekeyAsString)
+		if err != nil {
+			return err
+		}
+		fieldIds = append(fieldIds, fieldId)
+
+		return nil
+	})
+
+	if len(fieldIds) == 0 {
+		return nil
+	}
+
 	fc := meta.FieldCollection{}
-	err := PlatformLoad(&fc, &PlatformLoadOptions{
+	err = PlatformLoad(&fc, &PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field:    "uesio/studio.collection",
-				Value:    ids,
+				Value:    fieldIds,
 				Operator: "IN",
 			},
 		},
@@ -74,6 +104,10 @@ func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, 
 
 		return nil
 	})
+
+	if len(delIds) == 0 {
+		return nil
+	}
 
 	return SaveWithOptions([]SaveRequest{
 		{
