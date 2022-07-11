@@ -1,17 +1,11 @@
-import {
-	FunctionComponent,
-	DragEvent,
-	useState,
-	SyntheticEvent,
-	ChangeEvent,
-} from "react"
+import { FC, DragEvent, useState, SyntheticEvent, ChangeEvent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 
-const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
+const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const collectionKey = wireDef?.collection as string | undefined
@@ -61,6 +55,63 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
+	const items = [
+		{
+			name: "uesio/crm.user",
+			subfields: [
+				{
+					name: "uesio/crm.family",
+					subfields: [{ name: "uesio/crm.surname" }],
+				},
+				{ name: "uesio/crm.income" },
+			],
+		},
+		{
+			name: "uesio/crm.priority",
+		},
+	]
+
+	// const FieldTag1 = (item) => (
+	// 	<div style={{ padding: "0.5em", border: "1px solid red" }}>
+	// 		<p>{item.name}</p>
+	// 		{item.subfields && item.subfields.map((el) => FieldTag(el))}
+	// 	</div>
+	// )
+	const FieldTag: FC<{ fieldId: string; key: number }> = ({
+		fieldId,
+		key,
+	}) => {
+		const fields = uesio.builder.useMetadataList(
+			context,
+			"FIELD",
+			namespace,
+			collectionKey
+		)
+		const fieldDef = fieldsDef?.[fieldId]
+		const selected = fieldDef !== undefined
+		const onClick = (): void => {
+			const setPath = `${path}["fields"]["${fieldId}"]`
+			selected ? valueAPI.remove(setPath) : valueAPI.set(setPath, null)
+		}
+
+		return (
+			<PropNodeTag
+				draggable={`${collectionKey}:${fieldId}`}
+				title={fieldId}
+				icon={selected ? "check_box" : "check_box_outline_blank"}
+				iconColor={
+					selected ? theme.definition.palette.primary : undefined
+				}
+				key={key}
+				onClick={onClick}
+				selected={selected}
+				context={context}
+			>
+				{}
+			</PropNodeTag>
+		)
+	}
+
 	return (
 		<>
 			<TitleBar
@@ -92,36 +143,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{collectionKey &&
 					results &&
-					results.map((fieldId, index) => {
-						const fieldDef = fieldsDef?.[fieldId]
-						const selected = fieldDef !== undefined
-						const onClick = (): void => {
-							const setPath = `${path}["fields"]["${fieldId}"]`
-							selected
-								? valueAPI.remove(setPath)
-								: valueAPI.set(setPath, null)
-						}
-						return (
-							<PropNodeTag
-								draggable={`${collectionKey}:${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
-								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
-								}
-								key={index}
-								onClick={onClick}
-								selected={selected}
-								context={context}
-							/>
-						)
-					})}
+					results.map((fieldId, index) => FieldTag(fieldId, index))}
 			</div>
 		</>
 	)
