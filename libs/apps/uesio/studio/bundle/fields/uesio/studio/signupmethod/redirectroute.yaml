@@ -1,5 +1,0 @@
-name: redirectroute
-label: Redirect Route
-type: REFERENCE
-reference:
-  collection: uesio/studio.route

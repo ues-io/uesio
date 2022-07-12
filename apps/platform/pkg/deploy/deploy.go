@@ -43,6 +43,7 @@ var ORDERED_ITEMS = [...]string{
 	"labels",
 	"translations",
 	"useraccesstokens",
+	"signupmethods",
 }
 
 // Deploy func
