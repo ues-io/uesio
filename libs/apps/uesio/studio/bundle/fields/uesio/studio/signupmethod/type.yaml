@@ -1,5 +1,0 @@
-name: type
-type: SELECT
-selectList: uesio/studio.authsourcetypes
-label: Type
-required: true
