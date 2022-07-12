@@ -45,7 +45,7 @@ type AuthenticationType interface {
 
 type AuthConnection interface {
 	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
-	Signup(map[string]interface{}, string, *sess.Session) error
+	Signup(map[string]interface{}, string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {
@@ -147,7 +147,7 @@ func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
 	return site, nil
 }
 
-func CreateUser(username string, email string, claims *AuthenticationClaims, signupMethod *meta.SignupMethod, session *sess.Session) error {
+func CreateUser(username string, email string, signupMethod *meta.SignupMethod, session *sess.Session) error {
 
 	if signupMethod.Profile == "" {
 		return errors.New("Signup Method: " + signupMethod.Name + " is missing the profile property")
