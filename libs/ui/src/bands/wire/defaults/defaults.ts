@@ -5,6 +5,8 @@ import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD, PlainCollection } from "../../collection/types"
 import { WireDefinition } from "../../../definition/wire"
 import { getFullWireId } from ".."
+import toPath from "lodash/toPath"
+import get from "lodash/get"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -18,7 +20,6 @@ type LookupDefault = WireDefaultBase & {
 	valueSource: typeof LOOKUP
 	lookupWire: string
 	lookupField?: string
-	lookupTemplate?: string
 }
 
 type ValueDefault = WireDefaultBase & {
@@ -39,11 +40,10 @@ const getDefaultValue = (
 		if (!lookupWire) return
 
 		const firstRecord = Object.values(lookupWire.data)[0]
-		if (!firstRecord) return
+		if (!firstRecord || !item.lookupField) return
 
-		return item.lookupField
-			? firstRecord[item.lookupField]
-			: context.merge(item.lookupTemplate)
+		const path = toPath(item.lookupField.split("->"))
+		return get(firstRecord, path)
 	}
 	if (item.valueSource === "VALUE") {
 		return context.merge(item.value)
