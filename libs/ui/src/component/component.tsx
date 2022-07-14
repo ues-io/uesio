@@ -139,7 +139,7 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	return loader({
 		...props,
 		definition: mergedDefinition,
-		disabled: disabled,
+		disabled,
 		context: additionalContext(
 			context,
 			mergedDefinition?.["uesio.context"] as ContextFrame
