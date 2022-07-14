@@ -16,4 +16,6 @@ definition:
         boxShadow: "0 0 6px #00000093"
     label:
       textTransform: uppercase
+    disabled:
+      opacity: "0.6"
 public: true

@@ -14,6 +14,7 @@ import {
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
+import { shouldDisable } from "./disable"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
@@ -133,9 +134,12 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		context
 	)
 
+	const disabled = shouldDisable(context, definition)
+
 	return loader({
 		...props,
 		definition: mergedDefinition,
+		disabled: disabled,
 		context: additionalContext(
 			context,
 			mergedDefinition?.["uesio.context"] as ContextFrame

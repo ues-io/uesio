@@ -8,7 +8,7 @@ const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
-	const { definition, context } = props
+	const { definition, context, disabled } = props
 	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
 		{
@@ -33,6 +33,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 			onClick={handler}
 			context={context}
 			isSelected={isSelected}
+			disabled={disabled}
 			icon={
 				definition.icon ? (
 					<Icon
