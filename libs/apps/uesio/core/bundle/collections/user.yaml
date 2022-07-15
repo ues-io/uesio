@@ -4,3 +4,4 @@ uniqueKey:
 public: true
 label: user
 pluralLabel: users
+nameField: uesio/core.username

@@ -206,6 +206,9 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 					ID: "uesio/studio.workspace",
 				},
 				{
+					ID: "uesio/studio.app",
+				},
+				{
 					ID: "uesio/studio.bundle",
 					Fields: []adapt.LoadRequestField{
 						{
@@ -248,7 +251,8 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		// TODO: Possibly recurse here to get sub dependencies
 		bundleName := bdc[i].GetBundleName()
 		if bundleName == "" {
-			return nil, errors.New("Error getting bundle dependency name")
+			appName := bdc[i].GetAppName()
+			return nil, errors.New("Error getting bundle dependency, you don't have " + appName + " app installed")
 		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
 			Version: bdc[i].GetVersionString(),
