@@ -1,3 +1,3 @@
-import { ParamDefinition, ParamDefinitionMap } from "./definition/param"
+import { ParamDefinition } from "./definition/param"
 
-export { ParamDefinition, ParamDefinitionMap }
+export { ParamDefinition }
