@@ -72,7 +72,7 @@ const View: FunctionComponent<Props> = (props) => {
 				<p
 					style={{
 						textTransform: "uppercase",
-						fontSize: "8pt",
+						fontSize: "0.7em",
 						fontWeight: "bold",
 						margin: 0,
 					}}
