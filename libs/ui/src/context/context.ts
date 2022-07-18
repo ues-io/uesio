@@ -400,6 +400,11 @@ class Context {
 			: {}
 
 	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
+
+	getViewStack = () =>
+		this.stack
+			.map((contextFrame) => contextFrame?.viewDef)
+			.filter((def) => def)
 }
 
 export {
