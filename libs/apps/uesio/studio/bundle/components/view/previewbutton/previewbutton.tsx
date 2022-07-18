@@ -7,12 +7,20 @@ const Form = component.getUtility("uesio/io.form")
 
 const WIRE_NAME = "paramData"
 
-const getParamDefs = (record: wire.WireRecord): param.ParamDefinitionMap => {
+const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
 	const viewDef =
 		record.getFieldValue<string>("uesio/studio.definition") || ""
 	const yamlDoc = util.yaml.parse(viewDef)
 	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
-	return params?.toJSON() || {}
+	const paramObj = params?.toJSON() || {}
+
+	return Object.keys(paramObj).map((key) => {
+		const value = paramObj[key]
+		return {
+			...value,
+			name: key,
+		}
+	})
 }
 
 const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
@@ -36,7 +44,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
 		viewOnly: true,
-		fields: uesio.wire.getFieldsFromParams(params),
+		fields: uesio.wire.getWireFieldsFromParams(params),
 		init: {
 			create: true,
 		},

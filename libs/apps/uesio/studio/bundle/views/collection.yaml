@@ -53,15 +53,7 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-      defaults:
-        - field: uesio/studio.collection
-          valueSource: LOOKUP
-          lookupWire: collections
-          lookupTemplate: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+
     newfield:
       collection: uesio/studio.field
       fields:
@@ -77,9 +69,8 @@ definition:
         create: true
       defaults:
         - field: uesio/studio.collection
-          valueSource: LOOKUP
-          lookupWire: collections
-          lookupTemplate: $Param{app}.$Param{collectionname}
+          valueSource: VALUE
+          value: $Param{app}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces

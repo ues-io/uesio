@@ -1,5 +1,6 @@
 name: profile
 label: Profile
-type: REFERENCE
-reference:
-  collection: uesio/studio.profile
+type: TEXT
+# type: REFERENCE
+# reference:
+#   collection: uesio/studio.profile

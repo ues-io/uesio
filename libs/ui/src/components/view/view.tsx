@@ -29,10 +29,9 @@ const View: FunctionComponent<Props> = (props) => {
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && !isSubView
 	const scriptResult = uesio.component.usePacks(cpacks, buildMode)
-
 	const viewDef = buildMode ? getViewDef(viewDefId) : useViewDef(viewDefId)
-
 	const useBuildTime = buildMode && scriptResult.loaded
+	const viewStack = context.getViewStack()
 
 	const viewContext = context.addFrame({
 		view: viewId,
@@ -59,6 +58,34 @@ const View: FunctionComponent<Props> = (props) => {
 			context={viewContext}
 		/>
 	)
+
+	if (isSubView && viewStack?.includes(viewDefId)) {
+		return (
+			<div
+				style={{
+					color: "rgba(255, 128, 128)",
+					padding: "10px 10px 2px",
+					border: "1px solid rgba(255, 128, 128)",
+					borderLeft: "5px solid rgba(255, 128, 128)",
+				}}
+			>
+				<p
+					style={{
+						textTransform: "uppercase",
+						fontSize: "0.7em",
+						fontWeight: "bold",
+						margin: 0,
+					}}
+				>
+					uesio/core.view
+				</p>
+				<pre style={{ whiteSpace: "normal" }}>
+					View {viewDefId} cannot be selected in this context, please
+					try another one.
+				</pre>
+			</div>
+		)
+	}
 
 	if (isSubView && context.getBuildMode()) {
 		return <div className={subViewClass}>{slot}</div>

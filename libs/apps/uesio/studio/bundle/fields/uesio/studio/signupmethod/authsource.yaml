@@ -1,5 +1,6 @@
 name: authsource
 label: Auth source
-type: REFERENCE
-reference:
-  collection: uesio/studio.authsource
+type: TEXT
+# type: REFERENCE
+# reference:
+#   collection: uesio/studio.authsource

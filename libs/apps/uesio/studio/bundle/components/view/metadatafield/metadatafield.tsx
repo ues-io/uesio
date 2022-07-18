@@ -17,7 +17,7 @@ interface Props extends definition.BaseProps {
 const MetadataField: FunctionComponent<Props> = (props) => {
 	const {
 		context,
-		definition: { fieldId, label, metadataType },
+		definition: { fieldId, metadataType },
 	} = props
 
 	const record = context.getRecord()
@@ -35,6 +35,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const value = record.getFieldValue<string>(fieldId)
 
 	if (!fieldMetadata) return null
+
+	const label = props.definition.label || fieldMetadata.getLabel()
 
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
