@@ -52,7 +52,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				gridAutoFlow: "column",
 				gridTemplateColumns: "1fr 0fr",
 				alignItems: "center",
-				padding: "8px",
 			},
 			content: {
 				willChange: "max-height",
@@ -80,7 +79,8 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const setMaxHeight = () => {
 		const node = nodeRef.current
 		if (!node) return
-		node.style.maxHeight = node.scrollHeight + 20 + "px"
+		// node.style.maxHeight = node.scrollHeight + 20 + "px"
+		node.style.maxHeight = "inherit"
 	}
 
 	const unsetMaxHeight = () => {
