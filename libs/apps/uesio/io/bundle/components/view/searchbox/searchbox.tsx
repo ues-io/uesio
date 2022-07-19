@@ -27,6 +27,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 				signal: "wire/SEARCH",
 				search: searchValue,
 				wire: wire.getId(),
+				searchFields: definition.searchFields,
 			},
 			context
 		)

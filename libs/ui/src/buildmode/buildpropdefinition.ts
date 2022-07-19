@@ -93,6 +93,7 @@ type PropDescriptor =
 	| ConditionalDisplayProp
 	| IconProp
 	| ParamsProp
+	| WireFieldsProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -202,6 +203,10 @@ interface ComponentTargetProp extends BasePropDescriptor {
 	scope: string
 }
 
+interface WireFieldsProp extends BasePropDescriptor {
+	type: "WIRE_FIELDS"
+}
+
 type ActionDescriptor =
 	| AddAction
 	| RunSignalsAction
@@ -294,4 +299,5 @@ export {
 	PropListSection,
 	ConditionalDisplayProp,
 	OrderSection,
+	WireFieldsProp,
 }

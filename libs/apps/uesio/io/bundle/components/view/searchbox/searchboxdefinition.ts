@@ -16,9 +16,9 @@ const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "wire",
-			type: "WIRE",
-			label: "wire",
+			name: "searchFields",
+			type: "WIRE_FIELDS",
+			label: "Search Fields",
 		},
 		{
 			name: "placeholder",
