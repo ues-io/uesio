@@ -16,7 +16,6 @@ import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
-import { MetadataKey } from "../builder/types"
 
 type DeletePayload = {
 	recordId: string
@@ -55,10 +54,6 @@ type ToggleConditionPayload = {
 
 type AddConditionPayload = {
 	condition: WireConditionState
-} & EntityPayload
-
-type AddOrderPayload = {
-	order: { field: MetadataKey; desc: boolean }
 } & EntityPayload
 
 type RemoveConditionPayload = {
@@ -244,20 +239,6 @@ const wireSlice = createSlice({
 				})
 			}
 		),
-		addOrder: createEntityReducer<AddOrderPayload, PlainWire>(
-			(state, { order }) => {
-				const orderIndex = state.order.findIndex(
-					({ field }) => field === order.field
-				)
-				if (orderIndex === -1) {
-					state.order.push(order)
-					return
-				}
-				state.order = Object.assign([], state.order, {
-					[orderIndex]: order,
-				})
-			}
-		),
 		save: (state, { payload }: PayloadAction<SaveResponseBatch>) => {
 			payload.wires?.forEach((wire) => {
 				const wireId = wire.wire
@@ -369,7 +350,6 @@ export const {
 	reset,
 	save,
 	load,
-	addOrder,
 	init,
 	toggleCondition,
 	addCondition,
