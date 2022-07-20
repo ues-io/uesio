@@ -41,7 +41,6 @@ const hotkeyprovider: FC<T> = ({ children, uesio, setBuildMode }) => {
 				setBuildMode(!uesio.component.getState("buildmode"))
 		}
 		// Handle swapping between buildmode and runtime
-		// Option + U
 		window.addEventListener("keydown", toggleFunc)
 
 		window.onpopstate = (event: PopStateEvent) => {
