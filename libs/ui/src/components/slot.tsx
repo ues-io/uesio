@@ -7,7 +7,6 @@ import {
 import { Component, getUtility } from "../component/component"
 import { unWrapDefinition } from "../component/path"
 import { MetadataKey } from "../bands/builder/types"
-import { nanoid } from "nanoid"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
@@ -35,7 +34,7 @@ const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 							unWrapDefinition(itemDef)
 						return (
 							<Component
-								key={nanoid()}
+								key={index}
 								componentType={componentType as MetadataKey}
 								definition={unWrappedDef}
 								index={index}
