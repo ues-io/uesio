@@ -1,29 +1,43 @@
-import { FunctionComponent, useRef } from "react"
-import { definition, component, hooks } from "@uesio/ui"
-import type { EditorProps } from "@monaco-editor/react"
-import type monaco from "monaco-editor"
+import { FunctionComponent, useEffect, useRef } from "react"
+import yaml from "yaml"
 
-//const ANIMATION_DURATION = 3000
+import { definition, component, hooks, styles, util } from "@uesio/ui"
+import type { EditorProps } from "@monaco-editor/react"
+import type TMonaco from "monaco-editor"
 
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const IOCodeField = component.getUtility("uesio/io.codefield")
 
+const usePrevious = (value: string) => {
+	const ref = useRef("")
+	useEffect(() => {
+		ref.current = value
+	})
+	return ref.current
+}
+
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
-	/*
+
+	// When seting decorations, we need to save the return value for unsetting them again,
+	const decorationsRef = useRef<string[] | undefined>(undefined)
+
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
 				backgroundColor: "rgb(255,238,240)",
-				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
+				animation: `lineshighlight 0.3s ease-in-out`,
+			},
+			lineDecoration: {
+				background: "lightblue",
+				opacity: 0.4,
 			},
 		},
 		props
 	)
-	*/
 
 	const viewId = context.getViewDefId() || ""
 	const metadataType = uesio.builder.useSelectedType() || "viewdef"
@@ -37,81 +51,137 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
-
-	/*
+	const yamlDoc = util.yaml.parse(fullYaml)
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
-	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
-		component.path.getFullPathParts(lastModifiedNode || "")
-		*/
-
-	//const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
-	//currentAST.current = yamlDoc
-
-	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
-		undefined
+	const [, , selectedNodePath] = uesio.builder.useSelectedNode()
+	const [, , lastModifiedLocalPath] = component.path.getFullPathParts(
+		lastModifiedNode || ""
 	)
-	const monacoRef = useRef<typeof monaco | undefined>(undefined)
-	//const decorationsRef = useRef<string[] | undefined>(undefined)
+	const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
+	currentAST.current = yamlDoc
 
-	//const e = editorRef.current
-	//const m = monacoRef.current
+	const monacoObjects = useRef<{
+		editor: TMonaco.editor.IStandaloneCodeEditor
+		monaco: typeof TMonaco
+	} | null>(null)
 
-	/*
-	useEffect(() => {
-		if (
-			e &&
-			m &&
-			currentAST.current &&
-			lastModifiedNode &&
-			lastModifiedType === metadataType &&
-			lastModifiedItem === metadataItem &&
-			currentAST.current.contents
-		) {
-			const node = util.yaml.getNodeAtPath(
-				lastModifiedLocalPath,
-				currentAST.current.contents
-			)
-			const model = e.getModel()
-			if (!node || !model) return
-			const range = node.range
-			if (!range || !range.length) return
-
-			const startLine = model.getPositionAt(range[0]).lineNumber
-			let endLine = model.getPositionAt(range[1]).lineNumber
-
-			// Technically the yaml node for maps ends on the next line
-			// but we don't want to highlight that line.
-			if (node.constructor.name === "YAMLMap" && endLine > startLine) {
-				endLine--
-			}
-
-			decorationsRef.current = e.deltaDecorations(
-				decorationsRef.current || [],
-				[
-					{
-						range: new m.Range(startLine, 1, endLine, 1),
-						options: {
-							isWholeLine: true,
-							className: classes.highlightLines,
-						},
-					},
-				]
-			)
-
-			// scroll to the changes
-			e.revealLineInCenter(startLine)
-
-			// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
-			setTimeout(() => {
-				decorationsRef.current =
-					decorationsRef.current &&
-					e.deltaDecorations(decorationsRef.current, [])
-			}, ANIMATION_DURATION)
+	const onMount = (
+		editor: TMonaco.editor.IStandaloneCodeEditor,
+		monaco: typeof TMonaco
+	) => {
+		monacoObjects.current = {
+			editor,
+			monaco,
 		}
-	})
-	*/
 
-	const monacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+		monaco.languages.json.jsonDefaults
+
+		editor.onDidChangeCursorSelection((e) => {
+			// Monaco has reasons for cursor change, 3 being explicit within the editor.
+			// Everything else we don't want to capture (like updating a property in the ui)
+			if (e.reason !== 3) return
+			const model = editor.getModel()
+			if (!model || !currentAST.current?.contents) return
+			const { endColumn, startColumn, endLineNumber, startLineNumber } =
+				e.selection
+
+			// Check if text is selected, if so... stop
+			if (endColumn !== startColumn || endLineNumber !== startLineNumber)
+				return
+			const offset = model.getOffsetAt({
+				lineNumber: startLineNumber,
+				column: startColumn,
+			})
+			const [relevantNode, nodePath] = util.yaml.getNodeAtOffset(
+				offset,
+				currentAST.current.contents,
+				"",
+				true
+			)
+
+			// Remove decorations
+			decorationsRef.current =
+				decorationsRef.current &&
+				editor.deltaDecorations(decorationsRef.current, [])
+
+			if (relevantNode && nodePath)
+				uesio.builder.setSelectedNode(
+					metadataTypeRef.current,
+					metadataItemRef.current,
+					nodePath
+				)
+		})
+	}
+
+	const modifiedNode = util.yaml.getNodeAtPath(
+		lastModifiedLocalPath,
+		currentAST.current.contents
+	)
+	const selectedNode = util.yaml.getNodeAtPath(
+		selectedNodePath,
+		currentAST.current.contents
+	)
+
+	const getNodeLines = (
+		node: yaml.Node,
+		model: TMonaco.editor.ITextModel
+	) => {
+		const range = node.range
+		if (!range || !range.length) return []
+		let startLine = model.getPositionAt(range[0]).lineNumber
+		let endLine = model.getPositionAt(range[1]).lineNumber
+		if (node.constructor.name === "YAMLMap") {
+			startLine--
+		}
+		if (node.constructor.name === "Scalar" && endLine === startLine) {
+			endLine++
+		}
+		return [startLine, endLine]
+	}
+
+	const highlightNode = (node: yaml.Node | null) => {
+		if (!monacoObjects.current || !currentAST.current) return
+
+		const { monaco, editor } = monacoObjects.current
+
+		const model = editor.getModel()
+		if (!node || !model) return
+		const [startLine, endLine] = getNodeLines(node, model)
+
+		editor.revealLineInCenter(startLine)
+		decorationsRef.current = editor.deltaDecorations(
+			decorationsRef.current || [],
+			[
+				{
+					range: new monaco.Range(startLine, 1, endLine, 1),
+					options: {
+						className: classes.lineDecoration,
+					},
+				},
+				{
+					range: new monaco.Range(startLine, 1, endLine - 1, 1),
+					options: {
+						marginClassName: classes.lineDecoration,
+					},
+				},
+			]
+		)
+	}
+
+	// Highlight on Input
+	useEffect(() => {
+		console.log("Running Modified", { lastModifiedLocalPath })
+		highlightNode(modifiedNode)
+	}, [modifiedNode, monacoObjects, selectedNodePath])
+	// Highlight on selection
+	const prevSelectedPath = usePrevious(selectedNodePath)
+	useEffect(() => {
+		// When we modify nodes, this useEffect is still triggered, we don't want that
+		if (prevSelectedPath === selectedNodePath) return
+		highlightNode(selectedNode)
+	}, [selectedNode])
+
+	const monacoOptions: TMonaco.editor.IStandaloneEditorConstructionOptions = {
 		automaticLayout: true,
 		minimap: {
 			enabled: true,
@@ -119,7 +189,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		fontSize: 10,
 		scrollBeyondLastLine: false,
 		smoothScrolling: true,
-		//quickSuggestions: true,
+		quickSuggestions: false,
 	}
 
 	return (
@@ -238,85 +308,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						*/
 					}) as EditorProps["onChange"]
 				}
-				onMount={
-					((editor, monaco): void => {
-						editorRef.current = editor
-						monacoRef.current = monaco
-						// Set currentAST again because sometimes monaco reformats the text
-						// (like removing trailing spaces and such)
-						//currentAST.current = util.yaml.parse(editor.getValue())
-						// We want to:
-						// Or set the selected node when clicking
-						// Or clear the selected node when selecting text
-						/*
-						editor.onDidChangeCursorSelection((e) => {
-							const model = editor.getModel()
-							const {
-								endColumn,
-								startColumn,
-								endLineNumber,
-								startLineNumber,
-							} = e.selection
-							const hasSelection = !(
-								endColumn === startColumn &&
-								endLineNumber === startLineNumber
-							)
-
-							// Check if text is selected, if so... stop
-							if (hasSelection) return
-
-							const position = {
-								lineNumber: startLineNumber,
-								column: startColumn,
-							}
-
-							if (model && currentAST.current?.contents) {
-								const offset = model.getOffsetAt(position)
-								const [relevantNode, nodePath] =
-									util.yaml.getNodeAtOffset(
-										offset,
-										currentAST.current.contents,
-										"",
-										true
-									)
-
-								if (relevantNode && nodePath)
-									uesio.builder.setSelectedNode(
-										metadataTypeRef.current,
-										metadataItemRef.current,
-										nodePath
-									)
-							}
-						})
-
-						editor.onMouseMove((e) => {
-							const model = editor.getModel()
-							const position = e.target.position
-							if (
-								model &&
-								position &&
-								currentAST.current?.contents
-							) {
-								const offset = model.getOffsetAt(position)
-								const [relevantNode, nodePath] =
-									util.yaml.getNodeAtOffset(
-										offset,
-										currentAST.current.contents,
-										"",
-										true
-									)
-								if (relevantNode && nodePath) {
-									uesio.builder.setActiveNode(
-										metadataTypeRef.current,
-										metadataItemRef.current,
-										nodePath
-									)
-								}
-							}
-						})
-						*/
-					}) as EditorProps["onMount"]
-				}
+				onMount={onMount}
 			/>
 		</ScrollPanel>
 	)

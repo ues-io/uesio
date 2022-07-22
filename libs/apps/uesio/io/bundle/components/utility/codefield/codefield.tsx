@@ -36,6 +36,7 @@ const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
+					lineHeight: 17.5,
 					...options,
 				}}
 				language={language || "javascript"}
