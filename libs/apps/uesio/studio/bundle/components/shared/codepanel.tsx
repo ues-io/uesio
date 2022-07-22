@@ -170,7 +170,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	// Highlight on Input
 	useEffect(() => {
-		console.log("Running Modified", { lastModifiedLocalPath })
 		highlightNode(modifiedNode)
 	}, [modifiedNode, monacoObjects, selectedNodePath])
 	// Highlight on selection
