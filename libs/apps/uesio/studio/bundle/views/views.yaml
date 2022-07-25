@@ -116,7 +116,7 @@ definition:
                               wire: views
                               order:
                                 - field: uesio/studio.name
-                                  desc: true
+                                  desc: false
                             - signal: wire/LOAD
                               wires:
                                 - workspaces
@@ -130,7 +130,7 @@ definition:
                               wire: views
                               order:
                                 - field: uesio/core.updatedat
-                                  desc: false
+                                  desc: true
                             - signal: wire/LOAD
                               wires:
                                 - workspaces

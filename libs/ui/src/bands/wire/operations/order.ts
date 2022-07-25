@@ -47,7 +47,6 @@ export const remove =
 	(context: Context, wirename: string, fields: MetadataKey[]): ThunkFunc =>
 	(dispatch) => {
 		const viewId = context.getViewId()
-		console.log("removing")
 		if (viewId)
 			dispatch(
 				removeOrder({

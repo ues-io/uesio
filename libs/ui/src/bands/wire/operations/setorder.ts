@@ -11,7 +11,6 @@ export default (
 	): ThunkFunc =>
 	(dispatch) => {
 		const viewId = context.getViewId()
-		console.log("order!!", viewId)
 		if (viewId)
 			dispatch(
 				setOrder({

@@ -273,7 +273,6 @@ const wireSlice = createSlice({
 		),
 		removeOrder: createEntityReducer<RemoveOrderPayload, PlainWire>(
 			(state, { fields }) => {
-				console.log("in state removing", fields)
 				state.order = state.order.filter(
 					({ field }) => !fields.includes(field)
 				)
