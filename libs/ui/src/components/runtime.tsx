@@ -1,14 +1,12 @@
-import { useEffect, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
 import { useUesio } from "../hooks/hooks"
-import { Context } from "../context/context"
 import Route from "./route"
-import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
-import { appDispatch } from "../store/store"
+import HotkeyProvider from "./hotkeyprovider"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -28,47 +26,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const deps = buildMode ? ["uesio/studio.main", "uesio/io.main"] : []
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
 
-	useEffect(() => {
-		const toggleFunc = (event: KeyboardEvent) => {
-			if (event.metaKey && event.code === "KeyU") {
-				setBuildMode(!uesio.component.getState("buildmode"))
-			}
-		}
-		// Handle swapping between buildmode and runtime
-		// Option + U
-		window.addEventListener("keydown", toggleFunc)
-
-		window.onpopstate = (event: PopStateEvent) => {
-			if (!event.state.path || !event.state.namespace) {
-				// In some cases, our path and namespace aren't available in the history state.
-				// If that is the case, then just punt and do a plain redirect.
-				appDispatch()(
-					routeOps.redirect(new Context(), document.location.pathname)
-				)
-				return
-			}
-			appDispatch()(
-				routeOps.navigate(
-					new Context([
-						{
-							workspace: event.state.workspace,
-						},
-					]),
-					{
-						path: event.state.path,
-						namespace: event.state.namespace,
-					},
-					true
-				)
-			)
-		}
-
-		// Remove event listeners on cleanup
-		return () => {
-			window.removeEventListener("keyup", toggleFunc)
-		}
-	}, [])
-
 	const context = uesio.getContext().addFrame({
 		buildMode: buildMode && scriptResult.loaded,
 	})
@@ -76,7 +33,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	if (buildMode === undefined) return null
 
 	return (
-		<>
+		<HotkeyProvider uesio={uesio} setBuildMode={setBuildMode}>
 			<Route path={props.path} context={context} />
 			<div
 				className={css({
@@ -91,7 +48,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			>
 				<NotificationArea context={props.context} />
 			</div>
-		</>
+		</HotkeyProvider>
 	)
 }
 
