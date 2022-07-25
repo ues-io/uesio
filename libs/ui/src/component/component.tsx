@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import React, { FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
@@ -123,7 +123,7 @@ function mergeContextVariants(
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
-	const loader =
+	const component =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
 
 	if (!shouldDisplay(context, definition)) return null
@@ -133,7 +133,7 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		context
 	)
 
-	return loader({
+	return React.createElement(component, {
 		...props,
 		definition: mergedDefinition,
 		context: additionalContext(
