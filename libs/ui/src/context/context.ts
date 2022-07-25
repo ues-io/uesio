@@ -400,6 +400,23 @@ class Context {
 			: {}
 
 	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
+	addError = (error: string) => {
+		const itemIndex = this.stack.findIndex((frame) => frame?.errors)
+		if (itemIndex >= 0) this.stack[itemIndex].errors?.push(error)
+		return this.addFrame({ errors: [error] })
+	}
+	removeError = (error: string) => {
+		console.log("Removing", error)
+
+		const itemIndex = this.stack.findIndex((frame) => frame?.errors)
+		if (itemIndex >= 0) {
+			this.stack[itemIndex].errors = this.stack[itemIndex].errors?.filter(
+				(item) => item !== error
+			)
+		}
+
+		return this
+	}
 
 	getViewStack = () =>
 		this.stack
