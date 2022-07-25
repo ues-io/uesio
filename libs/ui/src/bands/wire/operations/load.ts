@@ -137,7 +137,6 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				original,
 				order: requestWire.order,
 				changes,
-				order: [],
 				deletes: {},
 				batchnumber: wire.batchnumber,
 				more: wire.more,
