@@ -135,6 +135,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				def: wireDef,
 				data,
 				original,
+				order: requestWire.order,
 				changes,
 				order: [],
 				deletes: {},
