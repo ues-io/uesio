@@ -1,0 +1,16 @@
+name: views
+label: Views
+extends: uesio/io.default
+definition:
+  uesio.styles:
+    headerCell:
+      textAlign: left
+      borderRight: none
+    cell:
+      borderRight: none
+    row:
+      position: relative
+      transition: all 0.15s ease
+      "&:hover":
+        backgroundColor: "#f7f7f7"
+public: true

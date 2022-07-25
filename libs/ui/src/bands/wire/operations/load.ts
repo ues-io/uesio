@@ -5,6 +5,7 @@ import { nanoid } from "nanoid"
 import { PlainWire } from "../types"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
+import { listLookupWires } from "../utils"
 import {
 	getWiresFromDefinitonOrContext,
 	load,
@@ -54,7 +55,7 @@ function getWireRequest(
 		collection: wiredef.collection,
 		fields: getFieldsRequest(wiredef.fields) || [],
 		conditions: getLoadRequestConditions(wire.conditions, context),
-		order: wiredef.order,
+		order: wire.order,
 		batchsize: wiredef.batchsize,
 		batchnumber,
 		requirewriteaccess: wiredef.requirewriteaccess,
@@ -65,6 +66,18 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// Turn the list of wires into a load request
 		const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+
+		// Some wires have conditions with lookup to other wires,
+		// When that wire isn't part of the load, the request will fail
+		const lookupWires = listLookupWires(wiresToLoad)
+		const missingLookupWires = lookupWires.filter(
+			(w) => !wires?.includes(w?.missingDependency || "")
+		)
+		if (missingLookupWires.length) {
+			console.table(missingLookupWires, ["wire", "missingDependency"])
+			throw new Error(`Wire dependency error, check the table above`)
+		}
+
 		const loadRequests = wiresToLoad
 			.filter((wire) => !wire.viewOnly)
 			.map((wire) => getWireRequest(wire, 0, context))
@@ -122,6 +135,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				def: wireDef,
 				data,
 				original,
+				order: requestWire.order,
 				changes,
 				deletes: {},
 				batchnumber: wire.batchnumber,

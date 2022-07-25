@@ -8,6 +8,13 @@ import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import resetWireOp from "./operations/reset"
+
+import {
+	add as addOrderOp,
+	set as setOrderOp,
+	remove as removeOrderOp,
+} from "./operations/order"
+
 import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
@@ -25,6 +32,7 @@ import {
 	WireConditionState,
 } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
+import { MetadataKey } from "../builder/types"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -66,6 +74,18 @@ interface RemoveConditionSignal extends SignalDefinition {
 interface SetConditionSignal extends SignalDefinition {
 	wire: string
 	condition: WireConditionState
+}
+interface SetOrderSignal extends SignalDefinition {
+	wire: string
+	order: { field: MetadataKey; desc: boolean }[]
+}
+interface AddOrderSignal extends SignalDefinition {
+	wire: string
+	order: { field: MetadataKey; desc: boolean }
+}
+interface RemoveOrderSignal extends SignalDefinition {
+	wire: string
+	fields: MetadataKey[]
 }
 
 interface LoadWiresSignal extends SignalDefinition {
@@ -242,6 +262,47 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/SET_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: SetOrderSignal, context: Context) =>
+			setOrderOp(context, signal.wire, signal.order),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/ADD_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: AddOrderSignal, context: Context) =>
+			addOrderOp(context, signal.wire, signal.order),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/REMOVE_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: RemoveOrderSignal, context: Context) =>
+			removeOrderOp(context, signal.wire, signal.fields),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "field",
+				type: "TEXT",
+				label: "FIELD",
 			},
 		],
 	},
