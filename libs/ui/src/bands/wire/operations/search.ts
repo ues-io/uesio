@@ -1,6 +1,12 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { addCondition, removeCondition, getFullWireId } from ".."
+import {
+	getWiresFromDefinitonOrContext,
+	addCondition,
+	removeCondition,
+	getFullWireId,
+} from ".."
+import { listLookupWires } from "../utils"
 import loadWiresOp from "./load"
 
 const SEARCH_CONDITION_ID = "uesio.search"
@@ -30,6 +36,11 @@ export default (
 						entity,
 				  })
 		)
-		await dispatch(loadWiresOp(context, [wirename]))
+		// We also want to load lookupwires from conditions
+		const plainWire = getWiresFromDefinitonOrContext(wirename, context)
+		const lookupWires = listLookupWires(plainWire).map(
+			(w) => w.missingDependency
+		)
+		await dispatch(loadWiresOp(context, [...lookupWires, wirename]))
 		return context
 	}
