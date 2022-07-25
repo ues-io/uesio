@@ -2,6 +2,7 @@ import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
 import { FieldType, ReferenceMetadata } from "../bands/field/types"
 import { SignalDefinition } from "./signal"
+import { MetadataKey } from "../metadataexports"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -61,7 +62,7 @@ type WireFieldDefinitionMap = {
 type WireFieldDefinition = RegularField | undefined | null
 
 type WireOrderDescription = {
-	field: string
+	field: MetadataKey
 	desc: boolean
 }
 
