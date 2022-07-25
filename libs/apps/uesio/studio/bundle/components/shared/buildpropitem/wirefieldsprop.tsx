@@ -10,7 +10,7 @@ const WireFieldsProp: FC<builder.PropRendererProps> = (props) => {
 	const wirePath = parentPath + '["wire"]'
 	const wireId = valueAPI.get(wirePath)
 
-	const wiresDef = (valueAPI.get('["wires"][' + wire + "]") ||
+	const wiresDef = (valueAPI.get('["wires"][' + wireId + "]") ||
 		{}) as wire.WireDefinition
 	const fields = wiresDef.fields || {}
 
