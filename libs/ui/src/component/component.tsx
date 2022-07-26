@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
@@ -123,7 +123,7 @@ function mergeContextVariants(
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
-	const component =
+	const Loader =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
 
 	if (!shouldDisplay(context, definition)) return null
@@ -133,14 +133,16 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		context
 	)
 
-	return React.createElement(component, {
-		...props,
-		definition: mergedDefinition,
-		context: additionalContext(
-			context,
-			mergedDefinition?.["uesio.context"] as ContextFrame
-		),
-	})
+	return (
+		<Loader
+			{...props}
+			definition={mergedDefinition}
+			context={additionalContext(
+				context,
+				mergedDefinition?.["uesio.context"] as ContextFrame
+			)}
+		/>
+	)
 }
 
 const getLoader = (key: MetadataKey, buildMode: boolean) =>
