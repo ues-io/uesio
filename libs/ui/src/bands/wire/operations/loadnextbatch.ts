@@ -50,6 +50,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				more: wire.more,
 				errors: undefined,
 				conditions: requestWire.conditions,
+				order: requestWire.order,
 				collection: wire.collection,
 			}
 		}

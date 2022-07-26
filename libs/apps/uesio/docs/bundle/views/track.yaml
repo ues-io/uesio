@@ -99,7 +99,8 @@ definition:
             uesio/docs.slug:
       conditions:
         - field: uesio/docs.track
-          param: track
-          valueSource: PARAM
+          valueSource: LOOKUP
+          lookupWire: track
+          lookupField: uesio/core.id
       order:
         - field: uesio/docs.order

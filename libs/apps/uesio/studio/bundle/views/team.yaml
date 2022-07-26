@@ -187,6 +187,7 @@ definition:
                       - uesio/core.firstname
                       - uesio/core.lastname
                       - uesio/core.picture
+                      - uesio/core.username
                     components:
                       - uesio/io.tile:
                           content:
@@ -194,7 +195,7 @@ definition:
                                 text: ${uesio/core.firstname} ${uesio/core.lastname}
                                 element: div
                             - uesio/io.text:
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.username}
                                 uesio.styles:
                                   root:
                                     fontSize: 9pt

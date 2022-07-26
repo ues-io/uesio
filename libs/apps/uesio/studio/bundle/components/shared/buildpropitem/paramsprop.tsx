@@ -11,7 +11,7 @@ const ParamsProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const definition = valueAPI.get(
 		component.path.getParentPath(path || "")
 	) as definition.DefinitionMap
-	if (!definition.view) return null
+	if (!definition?.view) return null
 	const params = uesio.view.useViewDef(definition.view as string)
 		?.params as Record<string, Record<"type", string>>
 

@@ -9,7 +9,7 @@ import { RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
-import { ParamDefinitionMap } from "../definition/param"
+import { ParamDefinition } from "../definition/param"
 
 type BotParams = {
 	[key: string]: string
@@ -209,7 +209,7 @@ const platform = {
 		namespace: string,
 		name: string,
 		type: string
-	): Promise<ParamDefinitionMap> => {
+	): Promise<ParamDefinition[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(
 			`${prefix}/bots/params/${type}/${namespace}/${name}`
