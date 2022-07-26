@@ -1,4 +1,3 @@
-import RunMode from "./components/runmode"
 import View from "./components/view/view"
 
 // For use in exports as the uesio api
@@ -23,7 +22,6 @@ import { materialIcons } from "./materialiconsexports"
 import { register, registerBuilder } from "./component/registry"
 import viewdefinition from "./components/view/viewdefinition"
 // Register with the component registry so that it's not an explicit dependency
-register("uesio/core.runtime", RunMode)
 register("uesio/core.view", View)
 registerBuilder("uesio/core.view", undefined, viewdefinition)
 

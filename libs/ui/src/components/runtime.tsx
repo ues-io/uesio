@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 
 import { BaseProps } from "../definition/definition"
 
@@ -7,6 +7,9 @@ import Route from "./route"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
 import HotkeyProvider from "./hotkeyprovider"
+import { Context } from "../context/context"
+import { appDispatch } from "../store/store"
+import routeOps from "../bands/route/operations"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -25,6 +28,33 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	// This tells us to load in the studio main component pack if we're in buildmode
 	const deps = buildMode ? ["uesio/studio.main", "uesio/io.main"] : []
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
+
+	useEffect(() => {
+		window.onpopstate = (event: PopStateEvent) => {
+			if (!event.state.path || !event.state.namespace) {
+				// In some cases, our path and namespace aren't available in the history state.
+				// If that is the case, then just punt and do a plain redirect.
+				appDispatch()(
+					routeOps.redirect(new Context(), document.location.pathname)
+				)
+				return
+			}
+			appDispatch()(
+				routeOps.navigate(
+					new Context([
+						{
+							workspace: event.state.workspace,
+						},
+					]),
+					{
+						path: event.state.path,
+						namespace: event.state.namespace,
+					},
+					true
+				)
+			)
+		}
+	}, [])
 
 	const context = uesio.getContext().addFrame({
 		buildMode: buildMode && scriptResult.loaded,

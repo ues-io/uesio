@@ -19,6 +19,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				height: "100%",
 				width: "100%",
 				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
+				pointerEvents: "auto",
 			},
 			root: {
 				position: "absolute",
