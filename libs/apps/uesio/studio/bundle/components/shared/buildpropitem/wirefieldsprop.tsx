@@ -4,7 +4,6 @@ import MultiSelectProp from "./multiselectprop"
 import WireProp from "./wireprop"
 
 const WireFieldsProp: FC<builder.PropRendererProps> = (props) => {
-	// const [options, setOptions] = useState<builder.PropertySelectOption[]>([])
 	const { valueAPI, path } = props
 	const parentPath = component.path.getParentPath(path || "")
 	const wirePath = parentPath + '["wire"]'
