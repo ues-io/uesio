@@ -20,19 +20,12 @@ const Grid = component.getUtility("uesio/io.grid")
 
 const defaultConditionDef = {
 	field: null,
-	valueSource: "VALUE",
-	value: "NEW_VALUE",
+	operator: "",
 }
 const defaultConditionGroupDef = {
 	type: "GROUP",
 	conjunction: "AND",
-	conditions: [
-		{
-			field: null,
-			valueSource: "VALUE",
-			value: "NEW_VALUE",
-		},
-	],
+	conditions: [defaultConditionDef],
 }
 
 const conditionItemActions: builder.ActionDescriptor[] = [
@@ -88,6 +81,13 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		label: "Field",
 		groupingParents: 2,
 		groupingProperty: "collection",
+		display: [
+			{
+				type: "NOT_EQUALS",
+				property: "type",
+				value: "GROUP",
+			},
+		],
 	},
 	{
 		name: "operator",
@@ -135,12 +135,23 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 				value: "IS_NOT_BLANK",
 			},
 		],
+		display: [
+			{
+				type: "NOT_EQUALS",
+				property: "type",
+				value: "GROUP",
+			},
+		],
 	},
 	{
 		name: "valueSource",
 		type: "SELECT",
 		label: "Value Source",
 		options: [
+			{
+				label: "",
+				value: "",
+			},
 			{
 				label: "Value",
 				value: "VALUE",
@@ -156,6 +167,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		],
 		display: [
 			{
+				type: "INCLUDES",
 				property: "operator",
 				values: ["EQ", "NOT_EQ", "GT", "LT", "GTE", "LTE", "IN"],
 			},
@@ -168,7 +180,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["VALUE"],
+				value: "VALUE",
 			},
 		],
 	},
@@ -180,7 +192,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["LOOKUP"],
+				value: "LOOKUP",
 			},
 		],
 	},
@@ -192,7 +204,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["LOOKUP"],
+				value: "LOOKUP",
 			},
 		],
 	},
@@ -203,7 +215,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "valueSource",
-				values: ["PARAM"],
+				value: "PARAM",
 			},
 		],
 	},
@@ -220,7 +232,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "type",
-				values: ["GROUP"],
+				value: "GROUP",
 			},
 		],
 	},
@@ -241,7 +253,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		display: [
 			{
 				property: "type",
-				values: ["GROUP"],
+				value: "GROUP",
 			},
 		],
 	},

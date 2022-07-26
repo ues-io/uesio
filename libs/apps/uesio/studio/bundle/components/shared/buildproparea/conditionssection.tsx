@@ -8,19 +8,12 @@ const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 const defaultConditionDef = {
 	field: null,
-	valueSource: "VALUE",
-	value: "NEW_VALUE",
+	operator: "",
 }
 const defaultConditionGroupDef = {
 	type: "GROUP",
 	conjunction: "AND",
-	conditions: [
-		{
-			field: null,
-			valueSource: "VALUE",
-			value: "NEW_VALUE",
-		},
-	],
+	conditions: [defaultConditionDef],
 }
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {

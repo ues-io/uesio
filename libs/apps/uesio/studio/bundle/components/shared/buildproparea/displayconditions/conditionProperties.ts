@@ -34,7 +34,7 @@ export const properties: builder.PropDescriptor[] = [
 		display: [
 			{
 				property: "type",
-				values: ["fieldValue"],
+				value: "fieldValue",
 			},
 		],
 	},
@@ -44,6 +44,7 @@ export const properties: builder.PropDescriptor[] = [
 		label: "Param",
 		display: [
 			{
+				type: "INCLUDES",
 				property: "type",
 				values: ["paramValue", "paramIsSet"],
 			},
@@ -55,6 +56,7 @@ export const properties: builder.PropDescriptor[] = [
 		label: "Value",
 		display: [
 			{
+				type: "INCLUDES",
 				property: "type",
 				values: ["paramValue", "fieldValue"],
 			},
