@@ -23,7 +23,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
-	classes: ["root"],
+	classes: ["root", "content", "tabLabels", "tab", "tabSelected"],
 	type: "component",
 }
 export { Props, TabsDefinition }
