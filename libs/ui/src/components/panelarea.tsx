@@ -35,7 +35,7 @@ const PanelArea: FC<BaseProps> = () => {
 						<ComponentInternal
 							key={panelId}
 							definition={{ ...panelDef, id: panelId }}
-							path={panelId}
+							path={`["panels"]["${panelId}"]`}
 							context={panelContext}
 							componentType={componentType}
 						/>,

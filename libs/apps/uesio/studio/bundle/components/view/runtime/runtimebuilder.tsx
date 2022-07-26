@@ -38,7 +38,8 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		"uesio/studio.default",
 		new ctx.Context()
 	)
-	if (!builderTheme || !viewDef) return <Canvas context={context} />
+	if (!builderTheme || !viewDef)
+		return <Canvas context={context} children={props.children} />
 
 	const builderContext = context.addFrame({
 		theme: "uesio/studio.default",
@@ -73,6 +74,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					gridColumn: showCode ? "2" : "2 / 4",
 				})}
 				context={canvasContext}
+				children={props.children}
 			/>
 			{showCode && (
 				<div
