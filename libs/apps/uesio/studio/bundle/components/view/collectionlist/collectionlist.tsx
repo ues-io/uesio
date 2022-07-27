@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, styles } from "@uesio/ui"
+import { definition, hooks, component } from "@uesio/ui"
 
 type CollectionListDefinition = {
 	collectionId: string
@@ -38,17 +38,35 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 		namespace
 	)
 
+	const isLocalNamespace = tenant.app === namespace
 	const collectionKeys = collections && Object.keys(collections)
 	if (collectionKeys && collectionKeys.length > 0) {
 		return (
-			<div>
-				<h4>{definition.namespace}</h4>
+			<div
+				style={{
+					...(isLocalNamespace
+						? {
+								gridColumnEnd: 3,
+								gridColumnStart: 1,
+								paddingBottom: "1em",
+								borderBottom: "1px solid #eee",
+								display: "flex",
+								flexFlow: "row wrap",
+								gap: "10px",
+						  }
+						: {
+								pointerEvents: "none",
+						  }),
+				}}
+			>
+				<h4 style={{ flex: "100%" }}>{definition.namespace}</h4>
+
 				{Object.keys(collections).map((collection) => (
 					<Tile
 						key={collection}
 						variant="uesio/io.item"
 						onClick={() => {
-							if (namespace !== tenant.app) return
+							if (isLocalNamespace) return
 							const [collectionNS, collectionName] =
 								component.path.parseKey(collection)
 							uesio.signal.run(
@@ -68,7 +86,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 						avatar={<Icon icon={"list"} context={context} />}
 						context={context}
 					>
-						{collection}
+						{collection.replace(definition.namespace + ".", "")}
 					</Tile>
 				))}
 			</div>
@@ -80,35 +98,37 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 const CollectionList: FunctionComponent<Props> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
-	const namespaces = uesio.builder.useAvailableNamespaces(context)
-
-	const gridCols = styles.getResponsiveStyles(
-		"gridTemplateColumns",
-		{ xs: "1fr 1fr 1fr", md: "1fr 1fr 1fr 1fr", lg: "1fr 1fr 1fr 1fr 1fr" },
-		context
+	const namespaces = Object.keys(
+		uesio.builder.useAvailableNamespaces(context) || {}
 	)
+	const tenant = context.getTenant()?.app
 
-	if (namespaces) {
-		return (
-			<Grid
-				styles={{
-					root: { ...gridCols, columnGap: "10px" },
-				}}
-				context={context}
-			>
-				{Object.keys(namespaces).map((namespace) => (
-					<Collection
-						key={namespace}
-						definition={{
-							namespace,
-						}}
-						context={context}
-					/>
-				))}
-			</Grid>
-		)
-	}
-	return null
+	const orderedNamespaces = tenant
+		? [tenant, ...namespaces.filter((el) => el !== tenant)]
+		: namespaces
+
+	if (!namespaces) return null
+	return (
+		<Grid
+			styles={{
+				root: {
+					gridTemplateColumns: "repeat(1fr, minmax(1fr, 1fr))",
+					columnGap: "10px",
+				},
+			}}
+			context={context}
+		>
+			{orderedNamespaces.map((namespace) => (
+				<Collection
+					key={namespace}
+					definition={{
+						namespace,
+					}}
+					context={context}
+				/>
+			))}
+		</Grid>
+	)
 }
 
 export default CollectionList
