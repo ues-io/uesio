@@ -66,7 +66,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 						key={collection}
 						variant="uesio/io.item"
 						onClick={() => {
-							if (isLocalNamespace) return
+							if (!isLocalNamespace) return
 							const [collectionNS, collectionName] =
 								component.path.parseKey(collection)
 							uesio.signal.run(
