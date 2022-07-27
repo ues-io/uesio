@@ -12,8 +12,11 @@ const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
 			root: {
 				display: "flex",
 				flexDirection: "column",
-				height: "100%",
 				overflow: "hidden",
+				margin: "6px",
+				borderRadius: "6px",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				background: "white",
 			},
 			inner: {
 				overflowY: "auto",
