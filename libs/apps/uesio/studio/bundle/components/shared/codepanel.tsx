@@ -154,6 +154,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					input: {
 						padding: 0,
 						height: "100%",
+						border: "none",
 					},
 				}}
 				language="yaml"
