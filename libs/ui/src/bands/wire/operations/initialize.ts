@@ -10,7 +10,6 @@ import {
 import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { FieldMetadataMap } from "../../field/types"
-import { parseKey } from "../../../component/path"
 import { getDefaultRecord } from "../defaults/defaults"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { nanoid } from "nanoid"
@@ -30,6 +29,7 @@ const initializeRegularWire = (
 	def: wireDef,
 	data: {},
 	original: {},
+	order: wireDef.order || [],
 	changes: {},
 	deletes: {},
 	collection: wireDef.collection,
@@ -56,18 +56,13 @@ const initializeViewOnlyWire = (
 	}
 	Object.keys(wireDef.fields).forEach((field) => {
 		const fieldDef = wireDef.fields[field]
-		const [namespace, name] = parseKey(field)
-		if (namespace !== viewOnlyNamespace)
-			throw new Error(
-				"Invalid namespace for viewOnly field: " + namespace
-			)
 
 		fieldMetadata[field] = {
 			accessible: true,
 			createable: true,
-			name,
+			name: field,
 			updateable: true,
-			namespace,
+			namespace: viewOnlyNamespace,
 			type: fieldDef.type,
 			label: fieldDef.label,
 			reference: fieldDef.reference,
@@ -124,6 +119,7 @@ const initializeViewOnlyWire = (
 		conditions: [],
 		name: wirename,
 		def: wireDef,
+		order: [],
 		batchid: "",
 		batchnumber: 0,
 		data,

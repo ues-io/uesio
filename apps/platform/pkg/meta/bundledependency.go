@@ -31,6 +31,13 @@ func (b *BundleDependency) GetBundleName() string {
 	return b.Bundle.App.UniqueKey
 }
 
+func (b *BundleDependency) GetAppName() string {
+	if b.App == nil {
+		return ""
+	}
+	return b.App.FullName
+}
+
 func (b *BundleDependency) GetCollectionName() string {
 	return b.GetCollection().GetName()
 }

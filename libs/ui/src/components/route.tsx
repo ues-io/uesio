@@ -1,12 +1,11 @@
 import { FunctionComponent, useEffect } from "react"
-import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
-import PanelArea from "./panelarea"
+import View from "./view/view"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -55,19 +54,16 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
-	const componentType = buildMode
-		? "uesio/studio.runtime"
-		: "uesio/core.runtime"
-
 	return (
 		<>
-			<ComponentInternal
-				componentType={componentType}
-				path=""
+			<View
 				context={routeContext}
+				definition={{
+					view: route.view,
+					params: route.params,
+				}}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
-			<PanelArea context={props.context} />
 		</>
 	)
 }

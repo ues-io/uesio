@@ -1,14 +1,15 @@
-import { useEffect, FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 
 import { BaseProps } from "../definition/definition"
 
 import { useUesio } from "../hooks/hooks"
-import { Context } from "../context/context"
 import Route from "./route"
-import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
+import HotkeyProvider from "./hotkeyprovider"
+import { Context } from "../context/context"
 import { appDispatch } from "../store/store"
+import routeOps from "../bands/route/operations"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -29,15 +30,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
 
 	useEffect(() => {
-		const toggleFunc = (event: KeyboardEvent) => {
-			if (event.metaKey && event.code === "KeyU") {
-				setBuildMode(!uesio.component.getState("buildmode"))
-			}
-		}
-		// Handle swapping between buildmode and runtime
-		// Option + U
-		window.addEventListener("keydown", toggleFunc)
-
 		window.onpopstate = (event: PopStateEvent) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
@@ -62,11 +54,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 				)
 			)
 		}
-
-		// Remove event listeners on cleanup
-		return () => {
-			window.removeEventListener("keyup", toggleFunc)
-		}
 	}, [])
 
 	const context = uesio.getContext().addFrame({
@@ -76,7 +63,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	if (buildMode === undefined) return null
 
 	return (
-		<>
+		<HotkeyProvider uesio={uesio} setBuildMode={setBuildMode}>
 			<Route path={props.path} context={context} />
 			<div
 				className={css({
@@ -91,7 +78,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			>
 				<NotificationArea context={props.context} />
 			</div>
-		</>
+		</HotkeyProvider>
 	)
 }
 

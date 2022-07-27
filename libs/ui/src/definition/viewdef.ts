@@ -1,7 +1,7 @@
 import { DefinitionList, DefinitionMap } from "./definition"
 import { WireDefinitionMap } from "./wire"
 import { PanelDefinitionMap } from "./panel"
-import { ParamDefinitionMap } from "./param"
+import { ParamDefinition } from "./param"
 import { SignalDefinition } from "./signal"
 
 type ComponentPackDependency = {
@@ -43,7 +43,7 @@ type ViewDefinition = {
 	wires?: WireDefinitionMap
 	panels?: PanelDefinitionMap
 	events?: ViewEventsDef
-	params?: ParamDefinitionMap
+	params?: Record<string, ParamDefinition>
 }
 
 export { PlainViewDef, PlainViewDefMap, Dependencies, ViewDefinition }

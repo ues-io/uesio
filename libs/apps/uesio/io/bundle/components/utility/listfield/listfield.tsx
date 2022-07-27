@@ -4,6 +4,7 @@ import {
 	collection,
 	definition,
 	context,
+	metadata,
 	component,
 	styles,
 } from "@uesio/ui"
@@ -21,8 +22,8 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	subType: string
 	autoAdd?: boolean
 	noAdd?: boolean
-	fieldVariant?: string
-	labelVariant?: string
+	fieldVariant?: metadata.MetadataKey
+	labelVariant?: metadata.MetadataKey
 }
 
 const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {

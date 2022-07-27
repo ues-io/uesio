@@ -110,22 +110,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	if (!route || !viewDefId) return null
 
-	const viewComponent = (
-		<component.View
-			context={context}
-			path=""
-			definition={{
-				view: route.view,
-				params: route.params,
-			}}
-		/>
-	)
-
-	if (!viewDef) {
-		// Shortcut to get the view loaded
-		return viewComponent
-	}
-
 	const componentCount = viewDef?.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
@@ -232,7 +216,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 						</div>
 					</div>
 				)}
-				{viewComponent}
+				{props.children}
 
 				<PanelPortal context={context} />
 			</div>

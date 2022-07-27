@@ -124,27 +124,28 @@ function mergeContextVariants(
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
-	const loader =
+	const Loader =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
 
 	if (!shouldDisplay(context, definition)) return null
+	const disabled = shouldDisable(context, definition)
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
-		context
+		context,
+		disabled
 	)
 
-	const disabled = shouldDisable(context, definition)
-
-	return loader({
-		...props,
-		definition: mergedDefinition,
-		disabled,
-		context: additionalContext(
-			context,
-			mergedDefinition?.["uesio.context"] as ContextFrame
-		),
-	})
+	return (
+		<Loader
+			{...props}
+			definition={mergedDefinition}
+			context={additionalContext(
+				context,
+				mergedDefinition?.["uesio.context"] as ContextFrame
+			)}
+		/>
+	)
 }
 
 const getLoader = (key: MetadataKey, buildMode: boolean) =>
