@@ -30,7 +30,6 @@ type WireConditionState =
 type ConditionBase = {
 	type?: typeof SEARCH | typeof GROUP
 	valueSource?: typeof VALUE | typeof LOOKUP | typeof PARAM
-	id?: string
 	operator?: ConditionOperators
 }
 

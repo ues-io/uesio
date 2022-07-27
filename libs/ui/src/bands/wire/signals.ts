@@ -63,7 +63,7 @@ interface ResetWireSignal extends SignalDefinition {
 
 interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
-	condition: string
+	path: string
 }
 
 interface RemoveConditionSignal extends SignalDefinition {
@@ -209,7 +209,7 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
-			toggleConditionOp(context, signal.wire, signal.condition),
+			toggleConditionOp(context, signal.wire, signal.path),
 		properties: (signal: SignalDefinition): PropDescriptor[] => [
 			{
 				name: "wire",
@@ -221,10 +221,10 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Wire",
 			},
 			{
-				name: "conditionId",
+				name: "condition",
 				type: "CONDITION",
 				filter: (def: Definition) =>
-					Boolean(def && (<WireConditionDefinition>def).id),
+					Boolean(def && <WireConditionDefinition>def),
 				wire: <string>signal.wire,
 				label: "condition",
 			},

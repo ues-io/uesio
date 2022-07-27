@@ -19,6 +19,7 @@ import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
+import get from "lodash/get"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -54,8 +55,7 @@ class Wire {
 
 	getConditions = () => this.source.conditions || []
 
-	getCondition = (id: string) =>
-		this.getConditions().find((c) => c.id === id) || null
+	getCondition = (path: string) => get(this.source.conditions, path)
 
 	hasMore = () => this.source.more
 
@@ -130,11 +130,11 @@ class Wire {
 		)
 	}
 
-	toggleCondition = (conditionId: string) => {
+	toggleCondition = (path: string) => {
 		appDispatch()(
 			toggleCondition({
 				entity: this.getFullId(),
-				conditionId,
+				path,
 			})
 		)
 	}
