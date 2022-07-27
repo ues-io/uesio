@@ -5,7 +5,11 @@ import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
 import { Component, getUtility } from "./component/component"
-import { shouldHaveClass, shouldDisplay } from "./component/display"
+import {
+	shouldHaveClass,
+	shouldDisplay,
+	DisplayCondition,
+} from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
 
 export {
@@ -21,4 +25,5 @@ export {
 	NotificationArea,
 	shouldHaveClass,
 	shouldDisplay,
+	DisplayCondition,
 }
