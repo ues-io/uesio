@@ -45,7 +45,7 @@ export type BaseProps = {
 	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
-	disabled?: boolean
+	enable?: boolean
 }
 
 export interface UtilityProps {

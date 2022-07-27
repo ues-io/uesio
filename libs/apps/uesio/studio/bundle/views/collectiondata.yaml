@@ -104,11 +104,6 @@ definition:
                                             signals:
                                               - signal: "wire/CANCEL"
                                                 wire: "collectionData"
-                                            uesio.disable:
-                                              - field: uesio/studio.name
-                                                wire: collections
-                                                value: IMPOSIBLE
-                                                operator: EQUALS
                                         - uesio/io.button:
                                             uesio.variant: uesio/io.secondary
                                             text: "Create"

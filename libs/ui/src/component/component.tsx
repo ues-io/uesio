@@ -14,7 +14,7 @@ import {
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
-import { shouldDisable } from "./disable"
+import { shouldEnable } from "./enable"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
@@ -128,17 +128,18 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
 
 	if (!shouldDisplay(context, definition)) return null
-	const disabled = shouldDisable(context, definition)
+
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
-		context,
-		disabled
+		context
 	)
+	const enable = !shouldEnable(context, definition)
 
 	return (
 		<Loader
 			{...props}
+			enable={enable}
 			definition={mergedDefinition}
 			context={additionalContext(
 				context,

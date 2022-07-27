@@ -93,7 +93,7 @@ const specialProps = [
 	"uesio.variant",
 	"uesio.display",
 	"uesio.styles",
-	"uesio.disable",
+	"uesio.enable",
 ]
 const trimPath = (pathArray: string[]): string[] => {
 	const size = pathArray.length

@@ -3,8 +3,8 @@ import { DefinitionMap } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import { should, DisplayCondition } from "./display"
 
-function shouldDisable(context: Context, definition?: DefinitionMap) {
-	const disabledLogic = definition?.["uesio.disable"] as
+function shouldEnable(context: Context, definition?: DefinitionMap) {
+	const disabledLogic = definition?.["uesio.enable"] as
 		| DisplayCondition[]
 		| undefined
 
@@ -15,16 +15,12 @@ function shouldDisable(context: Context, definition?: DefinitionMap) {
 			if (!condition.type && condition.wire) {
 				uesio.wire.useWire(condition.wire)
 			}
-
-			const test = !should(condition, context)
-			console.log("TEST: " + test)
-
 			if (!should(condition, context)) {
-				return true
+				return false
 			}
 		}
 	}
-	return false
+	return true
 }
 
-export { shouldDisable }
+export { shouldEnable }
