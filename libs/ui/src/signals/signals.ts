@@ -11,7 +11,6 @@ import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
 import { additionalContext } from "../component/component"
 import debounce from "lodash/debounce"
-import { getErrorString } from "../utilexports"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -35,36 +34,28 @@ const run = (signal: SignalDefinition, context: Context) => {
 	)
 }
 
+// TODO: write tests
 const runMany = async (signals: SignalDefinition[], context: Context) => {
 	for (const signal of signals) {
-		try {
-			const prevError = context.getErrors()
-			context = await run(signal, context)
+		context = await run(signal, context)
+		// Any errors in this stack are the result of the signal run above
+		const currentErrors = context.getCurrentErrors() || []
 
-			if (prevError) {
-				context = context.removeError(prevError[0])
-			}
-			const myselfErrors = context.getErrors()
+		if (currentErrors.length) {
+			const signals = [
+				...(signal?.onerror?.signals || []),
+				// Add error notification unless it's flagged false
+				...(signal.onerror?.notify === false
+					? []
+					: context.getCurrentErrors().map((text) => ({
+							signal: "notification/ADD",
+							text,
+							severity: "error",
+					  }))),
+			]
+			await runMany(signals, context.addFrame({}))
 
-			if (myselfErrors && myselfErrors.length > 0) {
-				if (signal.onerror?.signals) {
-					await runMany(signal.onerror.signals, context)
-				} else {
-					await runMany(
-						[{ signal: "notification/ADD_ERRORS" }],
-						context
-					)
-				}
-				break
-			}
-		} catch (error) {
-			//The specific operation does not have a try catch.
-			const message = getErrorString(error)
-			await runMany(
-				[{ signal: "notification/ADD_ERRORS" }],
-				context.addFrame({ errors: [message] })
-			)
-			break
+			if (!signal.onerror?.continue) break
 		}
 	}
 	return context

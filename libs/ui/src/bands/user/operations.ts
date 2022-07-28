@@ -51,7 +51,7 @@ const login =
 		} catch (error) {
 			//CAST the error and decide what error message show to the user, for this operation.
 			const message = getErrorString(error)
-			return context.addError(message)
+			return context.addFrame({ errors: [message] })
 		}
 	}
 
