@@ -54,10 +54,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				height: "100%",
 				position: "relative",
 				borderRadius: "8px",
+				background: "white",
 			},
 
 			inner: {
-				background: "white",
 				minHeight: "100vh",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
