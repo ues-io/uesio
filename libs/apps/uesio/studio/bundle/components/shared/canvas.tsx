@@ -2,6 +2,8 @@ import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
+import TopActions from "./topactions"
+import BottomActions from "./bottomactions"
 
 const Icon = component.getUtility("uesio/io.icon")
 
@@ -34,19 +36,28 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				overflowY: "scroll",
-				padding: "60px",
-				...styles.getBackgroundStyles(
-					{
-						image: "uesio/core.whitesplash",
-					},
-					context.getTheme(),
-					context
-				),
+				overflow: "hidden",
+				height: "100%",
+				padding: "44px 26px",
+				position: "relative",
+			},
+
+			outerwrapper: {
+				height: "100%",
+				position: "relative",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				borderRadius: "8px",
+			},
+
+			contentwrapper: {
+				overflow: "auto",
+				height: "100%",
+				position: "relative",
+				borderRadius: "8px",
+				background: "white",
 			},
 
 			inner: {
-				background: "white",
 				minHeight: "100vh",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
@@ -109,22 +120,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const route = context.getRoute()
 
 	if (!route || !viewDefId) return null
-
-	const viewComponent = (
-		<component.View
-			context={context}
-			path=""
-			definition={{
-				view: route.view,
-				params: route.params,
-			}}
-		/>
-	)
-
-	if (!viewDef) {
-		// Shortcut to get the view loaded
-		return viewComponent
-	}
 
 	const componentCount = viewDef?.components?.length
 
@@ -211,31 +206,38 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDrop={onDrop}
 			className={classes.root}
 		>
-			<div
-				className={classes.inner}
-				data-accepts="uesio.standalone"
-				data-path={'["components"]'}
-				data-insertindex={componentCount}
-			>
-				{/* No content yet */}
-				{!componentCount && (
-					<div className={classes.noContent}>
-						<div className="inner">
-							<Icon
-								className="icon"
-								icon={"flip_to_back"}
-								context={context}
-							/>
-							<h4 className="text">
-								Drag and drop any component here to get started
-							</h4>
-						</div>
+			<TopActions context={context} />
+			<div className={classes.outerwrapper}>
+				<div className={classes.contentwrapper}>
+					<div
+						className={classes.inner}
+						data-accepts="uesio.standalone"
+						data-path={'["components"]'}
+						data-insertindex={componentCount}
+					>
+						{/* No content yet */}
+						{!componentCount && (
+							<div className={classes.noContent}>
+								<div className="inner">
+									<Icon
+										className="icon"
+										icon={"flip_to_back"}
+										context={context}
+									/>
+									<h4 className="text">
+										Drag and drop any component here to get
+										started
+									</h4>
+								</div>
+							</div>
+						)}
+						{props.children}
+						<PanelPortal context={context} />
 					</div>
-				)}
-				{viewComponent}
-
-				<PanelPortal context={context} />
+				</div>
+				<component.PanelArea context={props.context} />
 			</div>
+			<BottomActions context={context} />
 		</div>
 	)
 }

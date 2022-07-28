@@ -7,6 +7,7 @@ import * as registry from "./component/registry"
 import { Component, getUtility } from "./component/component"
 import { shouldHaveClass, shouldDisplay } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
+import PanelArea from "./components/panelarea"
 
 export {
 	Slot,
@@ -18,6 +19,7 @@ export {
 	Component,
 	ComponentVariant,
 	Panel,
+	PanelArea,
 	NotificationArea,
 	shouldHaveClass,
 	shouldDisplay,
