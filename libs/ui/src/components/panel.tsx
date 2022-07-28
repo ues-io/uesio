@@ -1,9 +1,12 @@
 import { FC } from "react"
 import { BaseProps } from "../definition/definition"
 import { createPortal } from "react-dom"
-import usePortal from "../hooks/useportal"
+import { portalsDomNode } from "./runtime"
 
 const Panel: FC<BaseProps> = (props) =>
-	createPortal(props.children, usePortal())
+	createPortal(
+		props.children,
+		portalsDomNode?.current || document.createElement("div")
+	)
 
 export default Panel
