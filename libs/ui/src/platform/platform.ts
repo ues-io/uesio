@@ -108,7 +108,11 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 const respondJSON = async (response: Response) => {
 	if (response.status !== 200) {
 		const errorText = await response.text()
-		throw new Error(errorText)
+		throw new Error(
+			errorText
+				? errorText
+				: "We are sorry, something went wrong on our side"
+		)
 	}
 
 	return response.json()
