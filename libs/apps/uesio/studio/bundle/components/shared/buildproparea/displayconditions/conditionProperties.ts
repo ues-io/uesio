@@ -97,7 +97,7 @@ export const properties: builder.PropDescriptor[] = [
 	},
 	{
 		name: "param",
-		type: "PARAMS",
+		type: "PARAM",
 		label: "Param",
 		display: [
 			{
@@ -115,7 +115,7 @@ export const properties: builder.PropDescriptor[] = [
 			{
 				type: "INCLUDES",
 				property: "type",
-				values: ["paramValue", "fieldValue"],
+				values: ["paramValue", "fieldValue", "hasNoValue", "hasValue"],
 			},
 		],
 	},
