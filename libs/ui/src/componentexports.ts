@@ -11,6 +11,7 @@ import {
 	DisplayCondition,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
+import PanelArea from "./components/panelarea"
 
 export {
 	Slot,
@@ -22,6 +23,7 @@ export {
 	Component,
 	ComponentVariant,
 	Panel,
+	PanelArea,
 	NotificationArea,
 	shouldHaveClass,
 	shouldDisplay,

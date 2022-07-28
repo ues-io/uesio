@@ -44,7 +44,9 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 					data-placeholder="true"
 					data-index={index}
 					className={classes.placeholder}
-				/>
+				>
+					<div className={classes.placeholderInner} />
+				</div>
 			)}
 			<div
 				data-index={index}
@@ -88,16 +90,18 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
-				{
-					<div
-						className={classes.header}
-						onMouseDown={() => setCanDrag(true)}
-						onMouseUp={() => dragPath && setCanDrag(false)}
-					>
-						{title}
-					</div>
-				}
-				<div className={classes.inner}>{children}</div>
+				<div className={classes.wrapper}>
+					{
+						<div
+							className={classes.header}
+							onMouseDown={() => setCanDrag(true)}
+							onMouseUp={() => dragPath && setCanDrag(false)}
+						>
+							{title}
+						</div>
+					}
+					<div className={classes.inner}>{children}</div>
+				</div>
 			</div>
 			{addAfterPlaceholder && (
 				<div
@@ -107,7 +111,9 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 						classes.placeholder,
 						classes.afterPlaceholder
 					)}
-				/>
+				>
+					<div className={classes.placeholderInner} />
+				</div>
 			)}
 		</>
 	)

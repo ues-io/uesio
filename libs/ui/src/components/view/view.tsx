@@ -77,7 +77,6 @@ const View: FunctionComponent<ViewProps> = (props) => {
 				path=""
 			>
 				{slot}
-				<PanelArea context={props.context} />
 			</ComponentInternal>
 		)
 	}
