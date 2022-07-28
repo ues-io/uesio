@@ -33,10 +33,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		{
 			popper: {
 				zIndex: 1,
-				background: "white",
-				margin: "4px",
 				width: "350px",
-				boxShadow: "0 0 4px #00000033",
 			},
 		},
 		props
