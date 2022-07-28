@@ -42,30 +42,23 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				position: "relative",
 			},
 
-			outerwrapper: {
-				height: "100%",
-				position: "relative",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
-				borderRadius: "8px",
-			},
-
 			contentwrapper: {
 				overflow: "auto",
 				height: "100%",
 				position: "relative",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 				borderRadius: "8px",
+				background: "white",
 			},
 
 			inner: {
-				background: "white",
-				minHeight: "100vh",
+				minHeight: "100%",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
 			},
 
 			noContent: {
 				display: "flex",
-				height: "100%",
 				position: "absolute",
 				inset: "15px",
 				justifyContent: "center",
@@ -96,7 +89,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 				".inner": {
 					textAlign: "center",
-					border: "1px dashed rgba(238, 238, 238)",
 					padding: "2em",
 					borderRadius: "2em",
 				},
@@ -207,34 +199,34 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={classes.root}
 		>
 			<TopActions context={context} />
-			<div className={classes.outerwrapper}>
-				<div className={classes.contentwrapper}>
-					<div
-						className={classes.inner}
-						data-accepts="uesio.standalone"
-						data-path={'["components"]'}
-						data-insertindex={componentCount}
-					>
-						{/* No content yet */}
-						{!componentCount && (
-							<div className={classes.noContent}>
-								<div className="inner">
-									<Icon
-										className="icon"
-										icon={"flip_to_back"}
-										context={context}
-									/>
-									<h4 className="text">
-										Drag and drop any component here to get
-										started
-									</h4>
-								</div>
+
+			<div className={classes.contentwrapper}>
+				<div
+					className={classes.inner}
+					data-accepts="uesio.standalone"
+					data-path={'["components"]'}
+					data-insertindex={componentCount}
+				>
+					{/* No content yet */}
+					{!componentCount && (
+						<div className={classes.noContent}>
+							<div className="inner">
+								<Icon
+									className="icon"
+									icon={"flip_to_back"}
+									context={context}
+								/>
+								<h4 className="text">
+									Drag and drop any component here to get
+									started
+								</h4>
 							</div>
-						)}
-						{props.children}
-						<PanelPortal context={context} />
-					</div>
+						</div>
+					)}
+					{props.children}
+					<PanelPortal context={context} />
 				</div>
+
 				<component.PanelArea context={props.context} />
 			</div>
 			<BottomActions context={context} />

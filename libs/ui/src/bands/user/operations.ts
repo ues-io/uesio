@@ -44,9 +44,15 @@ const login =
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		const response = await platform.login(authSource, mergedPayload)
-		dispatch(setUser(response.user))
-		return responseRedirect(response, dispatch, context)
+		try {
+			const response = await platform.login(authSource, mergedPayload)
+			dispatch(setUser(response.user))
+			return responseRedirect(response, dispatch, context)
+		} catch (error) {
+			//CAST the error and decide what error message show to the user, for this operation.
+			const message = getErrorString(error)
+			return context.addFrame({ errors: [message] })
+		}
 	}
 
 const logout =
