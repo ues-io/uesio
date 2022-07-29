@@ -37,18 +37,22 @@ const run = (signal: SignalDefinition, context: Context) => {
 // TODO: write tests
 const runMany = async (signals: SignalDefinition[], context: Context) => {
 	for (const signal of signals) {
+		// Each signal fire needs a fresh error frame, otherwise errors from child signals are used to display error notifications
+		context = context.addFrame({})
+
+		// Some signal handlers don't handle errors, so we catch them here
 		try {
 			context = await run(signal, context)
 		} catch (error) {
 			context = context.addFrame({ errors: [getErrorString(error)] })
 		}
-		// Any errors in this stack are the result of the signal run above
+
+		// Any errors in this frame are the result of the signal run above, nothing else
 		const currentErrors = context.getCurrentErrors() || []
 
 		if (currentErrors.length) {
 			const signals = [
 				...(signal?.onerror?.signals || []),
-				// Add error notification unless it's flagged false
 				...(signal.onerror?.notify === false
 					? []
 					: context.getCurrentErrors().map((text) => ({
@@ -57,14 +61,11 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							severity: "error",
 					  }))),
 			]
-			runMany(signals, context.addFrame({}))
-
+			runMany(signals, context)
 			if (!signal.onerror?.continue) break
 		}
-
-		return context
 	}
-	console.log({ context })
+
 	return context
 }
 
