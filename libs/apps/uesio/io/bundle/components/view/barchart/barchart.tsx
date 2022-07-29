@@ -13,10 +13,6 @@ const ChartComponent: FC<Props> = (props) => {
 		console.warn("missing definition for chart")
 		return null
 	}
-	if (!definition) {
-		console.warn("missing definition for chart")
-		return null
-	}
 
 	const classes = styles.useStyles(
 		{
