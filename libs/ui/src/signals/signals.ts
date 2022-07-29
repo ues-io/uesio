@@ -11,6 +11,7 @@ import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
 import { additionalContext } from "../component/component"
 import debounce from "lodash/debounce"
+import { getErrorString } from "../bands/utils"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -37,28 +38,37 @@ const run = (signal: SignalDefinition, context: Context) => {
 // TODO: write tests
 const runMany = async (signals: SignalDefinition[], context: Context) => {
 	for (const signal of signals) {
-		context = await run(signal, context)
-		// Any errors in this stack are the result of the signal run above
-		const currentErrors = context.getCurrentErrors() || []
+		try {
+			context = await run(signal, context)
+			// Any errors in this stack are the result of the signal run above
+			const currentErrors = context.getCurrentErrors() || []
 
-		if (currentErrors.length) {
-			const signals = [
-				...(signal?.onerror?.signals || []),
-				// Add error notification unless it's flagged false
-				...(signal.onerror?.notify === false
-					? []
-					: context.getCurrentErrors().map((text) => ({
-							signal: "notification/ADD",
-							text,
-							severity: "error",
-					  }))),
-			]
-			await runMany(signals, context.addFrame({}))
+			if (currentErrors.length) {
+				const signals = [
+					...(signal?.onerror?.signals || []),
+					// Add error notification unless it's flagged false
+					...(signal.onerror?.notify === false
+						? []
+						: context.getCurrentErrors().map((text) => ({
+								signal: "notification/ADD",
+								text,
+								severity: "error",
+						  }))),
+				]
+				await runMany(signals, context.addFrame({}))
 
-			if (!signal.onerror?.continue) break
+				if (!signal.onerror?.continue) break
+			}
+		} catch (error) {
+			//The specific operation does not have a try catch.
+			await runMany(
+				[{ signal: "notification/ADD_ERRORS" }],
+				context.addFrame({ errors: [getErrorString(error)] })
+			)
+			break
 		}
+		return context
 	}
-	return context
 }
 
 const runManyThrottled = debounce(runMany, 250)
