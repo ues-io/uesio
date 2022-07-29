@@ -51,7 +51,8 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
 
-	// We use this for getting and setting the value, it needs to be unique
+	// If a user sets the id and the component is inside the loop of a list/deck/table,
+	// we expect unexpected behaviour. Maybe we should give some sort of warning
 	const componentId = id || record.getId() + fieldId
 
 	const currentValue = uesio.component.useExternalState<FieldState>(
@@ -77,24 +78,34 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	}, [fileContent])
 
 	return (
-		<MarkDownField
-			context={context}
-			fieldMetadata={fieldMetadata}
-			value={currentValue?.value || ""}
-			mode={mode}
-			setValue={(value: string) => {
-				uesio.signal.run(
-					{
-						signal: "component/uesio/io.field/SET_FILE",
-						target: componentId,
-						value,
-					},
-					context
-				)
-			}}
-			options={options}
-			variant={props.variant}
-		/>
+		<>
+			<MarkDownField
+				context={context}
+				fieldMetadata={fieldMetadata}
+				value={currentValue?.value || ""}
+				mode={mode}
+				setValue={(value: string) => {
+					uesio.signal.runMany(
+						[
+							{
+								signal: "component/uesio/io.field/SET_FILE",
+								target: componentId,
+								value,
+							},
+							{
+								signal: "component/uesio/io.field/SAVE_FILE",
+								target: componentId,
+								value,
+							},
+						],
+
+						context
+					)
+				}}
+				options={options}
+				variant={props.variant}
+			/>
+		</>
 	)
 }
 
