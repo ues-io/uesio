@@ -28,7 +28,6 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant?: string
 	options: MDOptions
 }
 
@@ -41,7 +40,7 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 		wire,
 		context,
 		id,
-		path,
+
 		mode,
 		options,
 	} = props
@@ -51,7 +50,10 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = id || path || ""
+
+	// We use this for getting and setting the value, it needs to be unique
+	const componentId = id || record.getId() + fieldId
+
 	const currentValue = uesio.component.useExternalState<FieldState>(
 		context.getViewId() || "",
 		"uesio/io.field",
