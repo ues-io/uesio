@@ -89,10 +89,31 @@ definition:
                                                   signals:
                                                     - signal: user/LOGIN
                                                       onerror:
+                                                        continue: true
+                                                        notify: true
                                                         signals:
-                                                          - signal: notification/ADD_ERRORS
+                                                          - signal: notification/ADD
+                                                            text: First attempt failed.
+                                                            details: Please check your email and confirm your identity.
+                                                            severity: success
+                                                          - signal: user/LOGIN
+                                                            authSource: uesio/core.platform
+                                                            payload:
+                                                              username: ${uesio/viewonly.username}
+                                                              password: ${uesio/viewonly.password}
+                                                            onerror:
+                                                              notify: true
+                                                              continue: true
+                                                              signals:
+                                                                - signal: notification/ADD
+                                                                  text: Second attempt failed.
+                                                                  details: Please check your email and confirm your identity.
+                                                                  severity: success
                                                       authSource: uesio/core.platform
                                                       payload:
                                                         username: ${uesio/viewonly.username}
                                                         password: ${uesio/viewonly.password}
-                                                  onerror:
+                                                    - signal: notification/ADD
+                                                      text: Cool stuff
+                                                      details: Dadum tks babab pipoo
+                                                      severity: success
