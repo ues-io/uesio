@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { component, hooks } from "@uesio/ui"
+import { component, hooks, styles } from "@uesio/ui"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"
@@ -13,9 +13,48 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { propsDef, path = "", context, valueAPI, className } = props
 
-	const subtitle = path
-		? component.path.toPath(path).join(" > ")
-		: "No Element Selected"
+	const classes = styles.useUtilityStyles(
+		{
+			crumbwrapper: {
+				lineHeight: "10px",
+			},
+			crumb: {
+				background: "white",
+				height: "3px",
+				width: "3px",
+				display: "inline-block",
+				marginRight: "3px",
+				borderRadius: "3px",
+			},
+		},
+		props
+	)
+	const subtitlenode = (
+		<div className={classes.crumbwrapper}>
+			{component.path.toPath(path).map((segment, index) => {
+				// Try to parse the path into a number
+				const num = parseInt(segment, 10)
+				if (!isNaN(num)) {
+					return (
+						<>
+							{[...Array(num + 1)].map((index) => (
+								<div className={classes.crumb} key={index} />
+							))}
+						</>
+					)
+				}
+				return (
+					<div
+						className={classes.crumb}
+						style={{
+							width: segment.length + "px",
+						}}
+						key={index}
+					/>
+				)
+			})}
+		</div>
+	)
 
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
 		"propertiespanel:" + path,
@@ -35,7 +74,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					<TitleBar
 						title={propsDef.title || "Properties"}
 						variant="uesio/io.primary"
-						subtitle={subtitle}
+						subtitlenode={subtitlenode}
 						actions={
 							props.path && (
 								<IconButton
@@ -48,9 +87,14 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						}
 						context={context}
 					/>
-					{propsDef.sections && (
+					{propsDef.sections && !!propsDef.sections.length && (
 						<TabLabels
 							variant="uesio/studio.mainsection"
+							styles={{
+								root: {
+									paddingTop: "2px",
+								},
+							}}
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={[{ id: "", label: "", icon: "home" }].concat(

@@ -92,6 +92,7 @@ type PropDescriptor =
 	| ComponentTargetProp
 	| ConditionalDisplayProp
 	| IconProp
+	| ParamProp
 	| ParamsProp
 
 type BasePropDescriptor = {
@@ -146,6 +147,9 @@ interface ConditionalDisplayProp extends BasePropDescriptor {
 
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
+}
+interface ParamProp extends DefinitionBasedPropDescriptor {
+	type: "PARAM"
 }
 interface ParamsProp extends BasePropDescriptor {
 	type: "PARAMS"

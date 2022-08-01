@@ -38,34 +38,33 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "hidden",
 				height: "100%",
-				padding: "44px 26px",
+				padding: "38px 26px",
 				position: "relative",
 			},
 
 			outerwrapper: {
 				height: "100%",
 				position: "relative",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 				borderRadius: "8px",
+				overflow: "hidden",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				background: "white",
 			},
 
 			contentwrapper: {
 				overflow: "auto",
 				height: "100%",
 				position: "relative",
-				borderRadius: "8px",
-				background: "white",
 			},
 
 			inner: {
-				minHeight: "100vh",
+				minHeight: "100%",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
 			},
 
 			noContent: {
 				display: "flex",
-				height: "100%",
 				position: "absolute",
 				inset: "15px",
 				justifyContent: "center",
@@ -96,7 +95,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 				".inner": {
 					textAlign: "center",
-					border: "1px dashed rgba(238, 238, 238)",
 					padding: "2em",
 					borderRadius: "2em",
 				},

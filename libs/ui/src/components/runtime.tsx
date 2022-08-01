@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 
 import { BaseProps } from "../definition/definition"
 
@@ -11,8 +11,12 @@ import { Context } from "../context/context"
 import { appDispatch } from "../store/store"
 import routeOps from "../bands/route/operations"
 
+let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
+
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
+
+	portalsDomNode = useRef<HTMLDivElement>(null)
 	// Hardcode the component type since this component is called
 	// in an unusual way by the loader
 	uesio._componentType = "uesio/studio.runtime"
@@ -78,8 +82,10 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			>
 				<NotificationArea context={props.context} />
 			</div>
+			<div ref={portalsDomNode} />
 		</HotkeyProvider>
 	)
 }
+export { portalsDomNode }
 
 export default Runtime

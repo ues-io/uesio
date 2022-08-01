@@ -99,12 +99,16 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
 		},
+		onIsOpenChange: () => {
+			popper.forceUpdate?.()
+		},
 	})
 
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
 	const popper = usePopper(anchorEl, popperEl, {
 		placement: "bottom-start",
+		modifiers: [{ name: "offset", options: { offset: [0, 4] } }],
 	})
 
 	return (
@@ -118,59 +122,61 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 					{tagRenderer}
 				</div>
 
-				<button
-					tabIndex={1}
-					className={classes.editbutton}
-					type="button"
-				>
+				<button className={classes.editbutton} type="button">
 					<Icon icon="expand_more" context={context} />
 				</button>
 			</div>
-			<div
-				ref={setPopperEl}
-				style={{
-					...popper.styles.popper,
-					zIndex: "1",
-					...(!isOpen && { visibility: "hidden" }),
-				}}
-				{...popper.attributes.popper}
-				className={classes.menu}
-			>
-				<div {...getMenuProps()}>
-					<div {...getComboboxProps()}>
-						<label {...getLabelProps()}>
-							<input
-								type="text"
-								autoFocus
-								className={classes.searchbox}
-								placeholder="Search..."
-								style={{
-									display: allowSearch ? "auto" : "none",
-								}}
-								{...getInputProps()}
-							/>
-						</label>
+			<component.Panel context={context}>
+				<div
+					ref={setPopperEl}
+					style={{
+						...popper.styles.popper,
+						zIndex: "2",
+						...(!isOpen && { visibility: "hidden" }),
+					}}
+					{...popper.attributes.popper}
+					className={classes.menu}
+				>
+					<div {...getMenuProps()}>
+						<div {...getComboboxProps()}>
+							<label {...getLabelProps()}>
+								<input
+									type="text"
+									//autoFocus
+									className={classes.searchbox}
+									placeholder="Search..."
+									style={{
+										display: allowSearch ? "auto" : "none",
+									}}
+									{...getInputProps()}
+								/>
+							</label>
+						</div>
+						{items.map((item: string, index) => {
+							// hacky, but downshift needs the index in order to determine what element this is.
+							// That's why we can't filter the items array beforehand.
+							if (allowSearch && !item.includes(inputValue))
+								return null
+							return (
+								<div
+									className={classes.menuitem}
+									key={index}
+									{...getItemProps({
+										item,
+										index,
+									})}
+								>
+									{itemRenderer(
+										item,
+										index,
+										highlightedIndex
+									)}
+								</div>
+							)
+						})}
 					</div>
-					{items.map((item: string, index) => {
-						// hacky, but downshift needs the index in order to determine what element this is.
-						// That's why we can't filter the items array beforehand.
-						if (allowSearch && !item.includes(inputValue))
-							return null
-						return (
-							<div
-								className={classes.menuitem}
-								key={index}
-								{...getItemProps({
-									item,
-									index,
-								})}
-							>
-								{itemRenderer(item, index, highlightedIndex)}
-							</div>
-						)
-					})}
 				</div>
-			</div>
+			</component.Panel>
 		</div>
 	)
 }

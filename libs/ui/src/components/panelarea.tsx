@@ -1,19 +1,15 @@
-import { FC, RefObject, useRef } from "react"
+import { FC } from "react"
 import { usePanels } from "../bands/panel/selectors"
 import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
 import { PanelDefinitionMap } from "../definition/panel"
 import { Context } from "../context/context"
 
-let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
-
 const PanelArea: FC<BaseProps> = () => {
 	const panels = usePanels()
-	const newPanelsNode = useRef<HTMLDivElement>(null)
-	panelsDomNode = newPanelsNode
 
 	return (
-		<div ref={newPanelsNode}>
+		<>
 			{panels &&
 				panels.map((panel) => {
 					const panelContext = new Context(panel.context || [])
@@ -41,9 +37,8 @@ const PanelArea: FC<BaseProps> = () => {
 						/>,
 					]
 				})}
-		</div>
+		</>
 	)
 }
 
 export default PanelArea
-export { panelsDomNode }

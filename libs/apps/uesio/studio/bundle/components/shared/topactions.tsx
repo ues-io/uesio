@@ -13,7 +13,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		{
 			root: {
 				position: "absolute",
-				top: "8px",
+				top: "2px",
 				right: "26px",
 				left: "26px",
 			},
