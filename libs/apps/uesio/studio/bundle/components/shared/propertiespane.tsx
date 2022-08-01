@@ -87,7 +87,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						}
 						context={context}
 					/>
-					{propsDef.sections && (
+					{propsDef.sections && !!propsDef.sections.length && (
 						<TabLabels
 							variant="uesio/studio.mainsection"
 							styles={{
