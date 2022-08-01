@@ -42,6 +42,13 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				position: "relative",
 			},
 
+			outerwrapper: {
+				height: "100%",
+				position: "relative",
+				borderRadius: "8px",
+				overflow: "hidden",
+			},
+
 			contentwrapper: {
 				overflow: "auto",
 				height: "100%",
@@ -199,34 +206,34 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={classes.root}
 		>
 			<TopActions context={context} />
-
-			<div className={classes.contentwrapper}>
-				<div
-					className={classes.inner}
-					data-accepts="uesio.standalone"
-					data-path={'["components"]'}
-					data-insertindex={componentCount}
-				>
-					{/* No content yet */}
-					{!componentCount && (
-						<div className={classes.noContent}>
-							<div className="inner">
-								<Icon
-									className="icon"
-									icon={"flip_to_back"}
-									context={context}
-								/>
-								<h4 className="text">
-									Drag and drop any component here to get
-									started
-								</h4>
+			<div className={classes.outerwrapper}>
+				<div className={classes.contentwrapper}>
+					<div
+						className={classes.inner}
+						data-accepts="uesio.standalone"
+						data-path={'["components"]'}
+						data-insertindex={componentCount}
+					>
+						{/* No content yet */}
+						{!componentCount && (
+							<div className={classes.noContent}>
+								<div className="inner">
+									<Icon
+										className="icon"
+										icon={"flip_to_back"}
+										context={context}
+									/>
+									<h4 className="text">
+										Drag and drop any component here to get
+										started
+									</h4>
+								</div>
 							</div>
-						</div>
-					)}
-					{props.children}
-					<PanelPortal context={context} />
+						)}
+						{props.children}
+						<PanelPortal context={context} />
+					</div>
 				</div>
-
 				<component.PanelArea context={props.context} />
 			</div>
 			<BottomActions context={context} />

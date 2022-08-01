@@ -61,6 +61,8 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 						context.getTheme(),
 						context
 					),
+					padding: "6px",
+					rowGap: "6px",
 				},
 			}}
 		>
