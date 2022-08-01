@@ -12,7 +12,5 @@ definition:
               fieldId: uesio/studio.name
           - uesio/io.field:
               fieldId: uesio/studio.description
-          - uesio/io.field:
-              fieldId: uesio/studio.color
           - uesio/studio.colorpicker:
               fieldId: uesio/studio.color
