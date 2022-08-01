@@ -4,12 +4,13 @@ import { definition, styles } from "@uesio/ui"
 interface TitleBarUtilityProps extends definition.UtilityProps {
 	title?: string
 	subtitle?: string
+	subtitlenode?: ReactNode
 	actions?: ReactNode
 	onClick?: () => void
 }
 
 const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
-	const { context, title, subtitle, actions, onClick } = props
+	const { context, title, subtitle, subtitlenode, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -54,6 +55,7 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 						)}
 					</p>
 				)}
+				{subtitlenode}
 			</div>
 			<div className={classes.actions}>{actions}</div>
 		</div>

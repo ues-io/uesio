@@ -38,7 +38,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "hidden",
 				height: "100%",
-				padding: "44px 26px",
+				padding: "38px 26px",
 				position: "relative",
 			},
 
@@ -47,15 +47,14 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				position: "relative",
 				borderRadius: "8px",
 				overflow: "hidden",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				background: "white",
 			},
 
 			contentwrapper: {
 				overflow: "auto",
 				height: "100%",
 				position: "relative",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
-				borderRadius: "8px",
-				background: "white",
 			},
 
 			inner: {
