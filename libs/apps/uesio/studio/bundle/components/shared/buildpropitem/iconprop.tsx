@@ -7,6 +7,7 @@ const Popper = component.getUtility("uesio/io.popper")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
@@ -102,41 +103,51 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 					context={context}
 					placement="right"
 				>
-					<TitleBar
-						title={"Icons"}
-						variant="uesio/io.primary"
-						subtitle={"Material Icons"}
-						actions={
-							props.path && (
-								<IconButton
+					<ScrollPanel
+						header={
+							<>
+								<TitleBar
+									title={"Icons"}
+									variant="uesio/io.primary"
+									subtitle={"Material Icons"}
+									actions={
+										props.path && (
+											<IconButton
+												context={context}
+												variant="uesio/studio.buildtitle"
+												icon="close"
+												onClick={() =>
+													uesio.builder.unSelectNode()
+												}
+											/>
+										)
+									}
 									context={context}
-									variant="uesio/studio.buildtitle"
-									icon="close"
-									onClick={() => uesio.builder.unSelectNode()}
 								/>
-							)
+								<input
+									className={classes.search}
+									value={searchTerm}
+									onChange={handleChange}
+									type="search"
+									placeholder="Search..."
+								/>
+							</>
 						}
 						context={context}
-					/>
-					<input
-						className={classes.search}
-						value={searchTerm}
-						onChange={handleChange}
-						type="search"
-						placeholder="Search..."
-					/>
-					<div className={classes.icons}>
-						{results.map((iconName) => (
-							<IconButton
-								key={iconName}
-								icon={iconName}
-								context={context}
-								onClick={(): void =>
-									valueAPI.set(path, iconName)
-								}
-							/>
-						))}
-					</div>
+					>
+						<div className={classes.icons}>
+							{results.map((iconName) => (
+								<IconButton
+									key={iconName}
+									icon={iconName}
+									context={context}
+									onClick={(): void =>
+										valueAPI.set(path, iconName)
+									}
+								/>
+							))}
+						</div>
+					</ScrollPanel>
 				</Popper>
 			)}
 		</div>

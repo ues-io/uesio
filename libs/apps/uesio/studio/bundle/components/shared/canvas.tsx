@@ -38,17 +38,23 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "hidden",
 				height: "100%",
-				padding: "44px 26px",
+				padding: "38px 26px",
 				position: "relative",
+			},
+
+			outerwrapper: {
+				height: "100%",
+				position: "relative",
+				borderRadius: "8px",
+				overflow: "hidden",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				background: "white",
 			},
 
 			contentwrapper: {
 				overflow: "auto",
 				height: "100%",
 				position: "relative",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
-				borderRadius: "8px",
-				background: "white",
 			},
 
 			inner: {
@@ -199,34 +205,34 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={classes.root}
 		>
 			<TopActions context={context} />
-
-			<div className={classes.contentwrapper}>
-				<div
-					className={classes.inner}
-					data-accepts="uesio.standalone"
-					data-path={'["components"]'}
-					data-insertindex={componentCount}
-				>
-					{/* No content yet */}
-					{!componentCount && (
-						<div className={classes.noContent}>
-							<div className="inner">
-								<Icon
-									className="icon"
-									icon={"flip_to_back"}
-									context={context}
-								/>
-								<h4 className="text">
-									Drag and drop any component here to get
-									started
-								</h4>
+			<div className={classes.outerwrapper}>
+				<div className={classes.contentwrapper}>
+					<div
+						className={classes.inner}
+						data-accepts="uesio.standalone"
+						data-path={'["components"]'}
+						data-insertindex={componentCount}
+					>
+						{/* No content yet */}
+						{!componentCount && (
+							<div className={classes.noContent}>
+								<div className="inner">
+									<Icon
+										className="icon"
+										icon={"flip_to_back"}
+										context={context}
+									/>
+									<h4 className="text">
+										Drag and drop any component here to get
+										started
+									</h4>
+								</div>
 							</div>
-						</div>
-					)}
-					{props.children}
-					<PanelPortal context={context} />
+						)}
+						{props.children}
+						<PanelPortal context={context} />
+					</div>
 				</div>
-
 				<component.PanelArea context={props.context} />
 			</div>
 			<BottomActions context={context} />
