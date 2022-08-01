@@ -214,6 +214,15 @@ type ActionDescriptor =
 	| CloneAction
 	| DeleteAction
 	| MoveAction
+	| AddCondition
+
+type AddCondition = {
+	label: string
+	type: "ADD_CONDITION"
+	path: string
+	definition: Definition
+	logo: string
+}
 
 type AddAction = {
 	label: string
@@ -298,4 +307,5 @@ export {
 	PropListSection,
 	ConditionalDisplayProp,
 	OrderSection,
+	AddCondition,
 }
