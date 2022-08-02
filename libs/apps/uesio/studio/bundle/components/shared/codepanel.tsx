@@ -56,7 +56,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			},
 			lineDecoration: {
 				background: "lightblue",
-				opacity: 0.4,
+				opacity: 0.3,
 			},
 		},
 		props
@@ -107,30 +107,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			const model = e.getModel()
 			if (!node || !model) return
 			const [startLine, endLine] = getNodeLines(node, model)
-
-			/*
-			decorationsRef.current = e.deltaDecorations(
-				decorationsRef.current || [],
-				[
-					{
-						range: new m.Range(startLine, 1, endLine, 1),
-						options: {
-							isWholeLine: true,
-							className: classes.highlightLines,
-						},
-					},
-				]
-			)
-			*/
-
 			const range = new m.Range(startLine, 1, endLine - 1, 1)
 			decorationsRef.current = e.deltaDecorations(
 				decorationsRef.current || [],
 				getSelectedAreaDecorations(range, classes.lineDecoration)
 			)
 
-			// scroll to the changes
-			e.revealLineInCenter(startLine)
+			// scroll to the changes, but only if we're not focused on the editor
+			if (!e.hasTextFocus()) {
+				e.revealLineInCenter(startLine)
+			}
 
 			/*
 			// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
@@ -153,6 +139,72 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		smoothScrolling: true,
 		//quickSuggestions: true,
 	}
+
+	const onMount = ((editor, monaco): void => {
+		editorRef.current = editor
+		monacoRef.current = monaco
+
+		editor.onDidChangeCursorSelection((e) => {
+			// Monaco has reasons for cursor change, 3 being explicit within the editor.
+			// Everything else we don't want to capture (like updating a property in the ui)
+			if (e.reason !== 3) return
+			const model = editor.getModel()
+			if (!model || !ast.current?.contents) return
+			const { endColumn, startColumn, endLineNumber, startLineNumber } =
+				e.selection
+
+			// Check if text is selected, if so... stop
+			if (endColumn !== startColumn || endLineNumber !== startLineNumber)
+				return
+
+			const offset = model.getOffsetAt({
+				lineNumber: startLineNumber,
+				column: startColumn,
+			})
+
+			const [relevantNode, nodePath] = util.yaml.getNodeAtOffset(
+				offset,
+				ast.current.contents,
+				"",
+				true
+			)
+
+			if (relevantNode && nodePath)
+				uesio.builder.setSelectedNode(
+					metadataTypeRef.current,
+					metadataItemRef.current,
+					nodePath
+				)
+		})
+		/*
+
+		editor.onMouseMove((e) => {
+			const model = editor.getModel()
+			const position = e.target.position
+			if (
+				model &&
+				position &&
+				currentAST.current?.contents
+			) {
+				const offset = model.getOffsetAt(position)
+				const [relevantNode, nodePath] =
+					util.yaml.getNodeAtOffset(
+						offset,
+						currentAST.current.contents,
+						"",
+						true
+					)
+				if (relevantNode && nodePath) {
+					uesio.builder.setActiveNode(
+						metadataTypeRef.current,
+						metadataItemRef.current,
+						nodePath
+					)
+				}
+			}
+		})
+		*/
+	}) as EditorProps["onMount"]
 
 	return (
 		<ScrollPanel
@@ -197,159 +249,9 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							metadataItemRef.current,
 							newValue || ""
 						)
-						/*
-						const newAST = util.yaml.parse(newValue || "")
-
-						if (
-							!currentAST.current ||
-							!currentAST.current.contents
-						) {
-							currentAST.current = newAST
-							return
-						}
-
-						const curASTContents = currentAST.current.contents
-						// If we have any parsing errors, don't continue.
-						if (newAST.errors.length > 0) {
-							currentAST.current = newAST
-							return
-						}
-
-						// If there was no actual change to the JSON output, don't continue
-						// We may be able to improve performance here with a different approach,
-						// but this works for now.
-						if (
-							JSON.stringify(newAST.toJSON()) ===
-							JSON.stringify(currentAST.current?.toJSON())
-						) {
-							currentAST.current = newAST
-							return
-						}
-
-						event.changes.forEach((change) => {
-							// We need to find the first shared parent of the start offset and end offset
-							const [, startPath] = util.yaml.getNodeAtOffset(
-								change.rangeOffset,
-								curASTContents,
-								""
-							)
-							const [, endPath] = util.yaml.getNodeAtOffset(
-								change.rangeOffset + change.rangeLength,
-								curASTContents,
-								""
-							)
-							const commonPath = util.yaml.getCommonAncestorPath(
-								startPath,
-								endPath
-							)
-							const commonNode = util.yaml.getNodeAtPath(
-								commonPath,
-								curASTContents
-							)
-							if (commonNode && commonPath) {
-								const newNode = util.yaml.getNodeAtPath(
-									commonPath,
-									newAST.contents
-								)
-								if (newNode) {
-									const yamlDoc = util.yaml.newDoc()
-									yamlDoc.contents = newNode
-									uesio.builder.setYaml(
-										component.path.makeFullPath(
-											metadataTypeRef.current,
-											metadataItemRef.current,
-											util.yaml.getPathFromPathArray(
-												commonPath
-											)
-										),
-										yamlDoc
-									)
-								}
-							}
-						})
-						currentAST.current = newAST
-						*/
 					}) as EditorProps["onChange"]
 				}
-				onMount={
-					((editor, monaco): void => {
-						editorRef.current = editor
-						monacoRef.current = monaco
-						// Set currentAST again because sometimes monaco reformats the text
-						// (like removing trailing spaces and such)
-						//currentAST.current = util.yaml.parse(editor.getValue())
-						// We want to:
-						// Or set the selected node when clicking
-						// Or clear the selected node when selecting text
-						/*
-						editor.onDidChangeCursorSelection((e) => {
-							const model = editor.getModel()
-							const {
-								endColumn,
-								startColumn,
-								endLineNumber,
-								startLineNumber,
-							} = e.selection
-							const hasSelection = !(
-								endColumn === startColumn &&
-								endLineNumber === startLineNumber
-							)
-
-							// Check if text is selected, if so... stop
-							if (hasSelection) return
-
-							const position = {
-								lineNumber: startLineNumber,
-								column: startColumn,
-							}
-
-							if (model && currentAST.current?.contents) {
-								const offset = model.getOffsetAt(position)
-								const [relevantNode, nodePath] =
-									util.yaml.getNodeAtOffset(
-										offset,
-										currentAST.current.contents,
-										"",
-										true
-									)
-
-								if (relevantNode && nodePath)
-									uesio.builder.setSelectedNode(
-										metadataTypeRef.current,
-										metadataItemRef.current,
-										nodePath
-									)
-							}
-						})
-
-						editor.onMouseMove((e) => {
-							const model = editor.getModel()
-							const position = e.target.position
-							if (
-								model &&
-								position &&
-								currentAST.current?.contents
-							) {
-								const offset = model.getOffsetAt(position)
-								const [relevantNode, nodePath] =
-									util.yaml.getNodeAtOffset(
-										offset,
-										currentAST.current.contents,
-										"",
-										true
-									)
-								if (relevantNode && nodePath) {
-									uesio.builder.setActiveNode(
-										metadataTypeRef.current,
-										metadataItemRef.current,
-										nodePath
-									)
-								}
-							}
-						})
-						*/
-					}) as EditorProps["onMount"]
-				}
+				onMount={onMount}
 			/>
 		</ScrollPanel>
 	)
