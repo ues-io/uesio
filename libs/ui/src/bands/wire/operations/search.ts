@@ -14,7 +14,8 @@ const SEARCH_CONDITION_ID = "uesio.search"
 export default (
 		context: Context,
 		wirename: string,
-		search: string
+		search: string,
+		fields?: string[]
 	): ThunkFunc =>
 	async (dispatch) => {
 		const viewId = context.getViewId()
@@ -28,6 +29,7 @@ export default (
 							value: search,
 							active: true,
 							id: SEARCH_CONDITION_ID,
+							fields,
 						},
 						entity,
 				  })

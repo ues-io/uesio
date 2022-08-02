@@ -16,7 +16,7 @@ const WiresProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 					value: wireId,
 					label: wireId,
 				})),
-				type: "SELECT",
+				type: "MULTISELECT",
 			}}
 		/>
 	)

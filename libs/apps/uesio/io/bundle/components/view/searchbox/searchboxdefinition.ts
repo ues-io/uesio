@@ -1,8 +1,9 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, metadata } from "@uesio/ui"
 
 type SearchBoxDefinition = {
 	placeholder?: string
 	wire: string
+	searchFields: metadata.MetadataKey[]
 } & definition.BaseDefinition
 
 interface SearchBoxProps extends definition.BaseProps {
@@ -16,9 +17,9 @@ const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "wire",
-			type: "WIRE",
-			label: "wire",
+			name: "searchFields",
+			type: "WIRE_FIELDS",
+			label: "Search Fields",
 		},
 		{
 			name: "placeholder",
