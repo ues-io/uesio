@@ -5,7 +5,7 @@ type ViewDefinition = {
 	params?: Record<string, string>
 } & BaseDefinition
 
-export interface Props extends BaseProps {
+export interface ViewProps extends BaseProps {
 	definition: ViewDefinition
 }
 

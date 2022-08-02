@@ -13,7 +13,10 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
 	const popper = usePopper(props.referenceEl, popperEl, {
 		placement: props.placement,
-		modifiers: [{ name: "offset", options: { offset: [0, 8] } }],
+		modifiers: [
+			{ name: "offset", options: { offset: [0, 6] } },
+			{ name: "preventOverflow", options: { padding: 6 } },
+		],
 	})
 
 	useEffect(() => {
@@ -33,10 +36,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		{
 			popper: {
 				zIndex: 1,
-				background: "white",
-				margin: "4px",
 				width: "350px",
-				boxShadow: "0 0 4px #00000033",
 			},
 		},
 		props

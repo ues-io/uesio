@@ -399,7 +399,7 @@ class Context {
 			  )
 			: {}
 
-	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
+	getCurrentErrors = () => this.stack[0].errors || []
 
 	getViewStack = () =>
 		this.stack

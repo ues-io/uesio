@@ -49,25 +49,6 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
-	[`${NOTIFICATION_BAND}/ADD_ERRORS`]: {
-		dispatcher:
-			(signal: AddNotificationSignal, context: Context) => (dispatch) => {
-				const errors = context.getErrors()
-				errors?.forEach((error) => {
-					dispatch(
-						addNotification({
-							id: nanoid(),
-							severity: "error",
-							text: error,
-						})
-					)
-				})
-
-				return context
-			},
-		label: "Add Notification Errors from context",
-		properties: () => [],
-	},
 }
 
 export default signals

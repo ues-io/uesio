@@ -35,7 +35,11 @@ type ComponentSignalDescriptor = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
-	onerror?: { signals: SignalDefinition[] }
+	onerror?: {
+		continue: boolean
+		notify: boolean
+		signals: SignalDefinition[]
+	}
 }
 
 export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

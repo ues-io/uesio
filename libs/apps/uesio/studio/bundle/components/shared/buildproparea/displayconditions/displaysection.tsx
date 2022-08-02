@@ -5,7 +5,6 @@ import { SectionRendererProps } from "../sectionrendererdefinition"
 import PropNodeTag from "../../buildpropitem/propnodetag"
 import PropertiesPane from "../../propertiespane"
 import conditionProperties from "./conditionProperties"
-import Condition from "./conditiontypes"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
@@ -21,7 +20,8 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
 
-	const conditions = (valueAPI.get(displayPath) as Condition[]) || []
+	const conditions =
+		(valueAPI.get(displayPath) as component.DisplayCondition[]) || []
 
 	return (
 		<>
@@ -69,21 +69,21 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 									conditionPath
 								)
 							}}
-							popChildren
+							popperChildren={
+								<PropertiesPane
+									path={conditionPath}
+									context={context}
+									propsDef={{
+										title: "Condition",
+										sections: [],
+										defaultDefinition: () => ({}),
+										properties: conditionProperties,
+									}}
+									valueAPI={valueAPI}
+								/>
+							}
 							context={context}
-						>
-							<PropertiesPane
-								path={conditionPath}
-								context={context}
-								propsDef={{
-									title: "Condition",
-									sections: [],
-									defaultDefinition: () => ({}),
-									properties: conditionProperties,
-								}}
-								valueAPI={valueAPI}
-							/>
-						</PropNodeTag>
+						/>
 					)
 				})}
 		</>

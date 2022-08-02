@@ -1,7 +1,4 @@
 import { FC, useState, useEffect } from "react"
-import { appDispatch } from "../store/store"
-import routeOps from "../bands/route/operations"
-import { Context } from "../context/context"
 import { hooks } from ".."
 
 type T = {
@@ -42,31 +39,6 @@ const hotkeyprovider: FC<T> = ({ children, uesio, setBuildMode }) => {
 		}
 		// Handle swapping between buildmode and runtime
 		window.addEventListener("keydown", toggleFunc)
-
-		window.onpopstate = (event: PopStateEvent) => {
-			if (!event.state.path || !event.state.namespace) {
-				// In some cases, our path and namespace aren't available in the history state.
-				// If that is the case, then just punt and do a plain redirect.
-				appDispatch()(
-					routeOps.redirect(new Context(), document.location.pathname)
-				)
-				return
-			}
-			appDispatch()(
-				routeOps.navigate(
-					new Context([
-						{
-							workspace: event.state.workspace,
-						},
-					]),
-					{
-						path: event.state.path,
-						namespace: event.state.namespace,
-					},
-					true
-				)
-			)
-		}
 
 		// Remove event listeners on cleanup
 		return () => {
