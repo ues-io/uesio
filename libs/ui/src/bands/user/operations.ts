@@ -42,7 +42,7 @@ const signup =
 const login =
 	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
-		if (!payload) return context
+		if (!payload) throw new Error("No credentials were provided for login.")
 		const mergedPayload = context.mergeMap(payload)
 		try {
 			const response = await platform.login(authSource, mergedPayload)
