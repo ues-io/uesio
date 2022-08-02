@@ -1,29 +1,66 @@
-import { FunctionComponent, useRef } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { FunctionComponent, useEffect, useRef } from "react"
+import { definition, component, hooks, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
-//const ANIMATION_DURATION = 3000
+const ANIMATION_DURATION = 3000
 
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const IOCodeField = component.getUtility("uesio/io.codefield")
 
+const getNodeLines = (
+	node: util.yaml.lib.Node,
+	model: monaco.editor.ITextModel
+) => {
+	const range = node.range
+	if (!range || !range.length) return []
+	let startLine = model.getPositionAt(range[0]).lineNumber
+	let endLine = model.getPositionAt(range[1]).lineNumber
+	if (util.yaml.lib.isMap(node)) {
+		startLine--
+	}
+
+	if (util.yaml.lib.isScalar(node) && endLine === startLine) {
+		endLine++
+	}
+	return [startLine, endLine]
+}
+
+const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
+	{
+		range,
+		options: {
+			isWholeLine: true,
+			className,
+		},
+	},
+	{
+		range,
+		options: {
+			marginClassName: className,
+		},
+	},
+]
+
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
-	/*
+
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
 				backgroundColor: "rgb(255,238,240)",
-				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
+				animation: `lineshighlight ${ANIMATION_DURATION}s ease-in-out`,
+			},
+			lineDecoration: {
+				background: "lightblue",
+				opacity: 0.4,
 			},
 		},
 		props
 	)
-	*/
 
 	const viewId = context.getViewDefId() || ""
 	const metadataType = uesio.builder.useSelectedType() || "viewdef"
@@ -38,53 +75,40 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const fullYaml =
 		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
 
+	const yamlDoc = util.yaml.parse(fullYaml)
+
+	const [, , selectedNodePath] = uesio.builder.useSelectedNode()
+
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
 		component.path.getFullPathParts(lastModifiedNode || "")
 		*/
 
-	//const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
-	//currentAST.current = yamlDoc
+	const ast = useRef<definition.YamlDoc | undefined>(yamlDoc)
+	ast.current = yamlDoc
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
 		undefined
 	)
 	const monacoRef = useRef<typeof monaco | undefined>(undefined)
-	//const decorationsRef = useRef<string[] | undefined>(undefined)
+	const decorationsRef = useRef<string[] | undefined>(undefined)
 
-	//const e = editorRef.current
-	//const m = monacoRef.current
+	const e = editorRef.current
+	const m = monacoRef.current
 
-	/*
 	useEffect(() => {
-		if (
-			e &&
-			m &&
-			currentAST.current &&
-			lastModifiedNode &&
-			lastModifiedType === metadataType &&
-			lastModifiedItem === metadataItem &&
-			currentAST.current.contents
-		) {
+		if (e && m && ast.current && ast.current.contents) {
 			const node = util.yaml.getNodeAtPath(
-				lastModifiedLocalPath,
-				currentAST.current.contents
+				selectedNodePath,
+				ast.current.contents
 			)
+
 			const model = e.getModel()
 			if (!node || !model) return
-			const range = node.range
-			if (!range || !range.length) return
+			const [startLine, endLine] = getNodeLines(node, model)
 
-			const startLine = model.getPositionAt(range[0]).lineNumber
-			let endLine = model.getPositionAt(range[1]).lineNumber
-
-			// Technically the yaml node for maps ends on the next line
-			// but we don't want to highlight that line.
-			if (node.constructor.name === "YAMLMap" && endLine > startLine) {
-				endLine--
-			}
-
+			/*
 			decorationsRef.current = e.deltaDecorations(
 				decorationsRef.current || [],
 				[
@@ -97,19 +121,27 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				]
 			)
+			*/
+
+			const range = new m.Range(startLine, 1, endLine - 1, 1)
+			decorationsRef.current = e.deltaDecorations(
+				decorationsRef.current || [],
+				getSelectedAreaDecorations(range, classes.lineDecoration)
+			)
 
 			// scroll to the changes
 			e.revealLineInCenter(startLine)
 
+			/*
 			// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
 			setTimeout(() => {
 				decorationsRef.current =
 					decorationsRef.current &&
 					e.deltaDecorations(decorationsRef.current, [])
 			}, ANIMATION_DURATION)
+			*/
 		}
 	})
-	*/
 
 	const monacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 		automaticLayout: true,
