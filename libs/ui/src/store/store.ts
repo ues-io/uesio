@@ -47,6 +47,9 @@ type InitialState = {
 	user?: UserState
 	site?: SiteState
 	theme?: EntityState<MetadataState>
+	viewdef?: EntityState<MetadataState>
+	componentvariant?: EntityState<MetadataState>
+	componentpack?: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -55,12 +58,29 @@ let store: ReturnType<typeof create>
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
-	// handle cached themes coming from the route
 	const themeState = initialState.theme
 	if (themeState && themeState.ids?.length) {
 		themeState.ids.forEach((id: string) => {
 			const theme = themeState.entities[id] as MetadataState
 			theme.parsed = parse(theme.content).toJSON()
+		})
+	}
+
+	const viewDefState = initialState.viewdef
+	if (viewDefState && viewDefState.ids?.length) {
+		viewDefState.ids.forEach((id: string) => {
+			const viewDef = viewDefState.entities[id] as MetadataState
+			viewDef.parsed = parse(viewDef.content).toJSON()
+		})
+	}
+
+	const componentVariantState = initialState.componentvariant
+	if (componentVariantState && componentVariantState.ids?.length) {
+		componentVariantState.ids.forEach((id: string) => {
+			const componentVariant = componentVariantState.entities[
+				id
+			] as MetadataState
+			componentVariant.parsed = parse(componentVariant.content).toJSON()
 		})
 	}
 

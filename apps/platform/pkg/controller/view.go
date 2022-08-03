@@ -1,35 +1,22 @@
 package controller
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
 // ViewResponse struct
 type ViewResponse struct {
-	Name         string
-	Namespace    string
-	Definition   *yaml.Node        `yaml:"definition"`
-	Dependencies *ViewDependencies `yaml:"dependencies"`
-}
-
-type ViewDependencies struct {
-	ComponentPacks    map[string]bool                   `yaml:"componentpacks,omitempty"`
-	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
-	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
-	FeatureFlags      map[string]*FeatureFlagResponse   `yaml:"featureflags,omitempty"`
-	Labels            map[string]string                 `yaml:"labels,omitempty"`
+	Name       string
+	Namespace  string
+	Definition *yaml.Node `yaml:"definition"`
 }
 
 // ViewPreview is also good
@@ -98,214 +85,6 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	ExecuteIndexTemplate(w, route, nil, true, session)
 }
 
-func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCollection, error) {
-	// Get all avaliable namespaces
-	packs := map[string]meta.ComponentPackCollection{}
-	namespaces := session.GetContextNamespaces()
-	for namespace := range namespaces {
-		groupAbstract, err := meta.GetBundleableGroupFromType("componentpacks")
-		if err != nil {
-			return nil, err
-		}
-		group := groupAbstract.(*meta.ComponentPackCollection)
-		err = bundle.LoadAll(group, namespace, nil, session)
-		if err != nil {
-			return nil, err
-		}
-		packs[namespace] = *group
-	}
-	return packs, nil
-}
-
-func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
-
-	packsByNamespace, err := getPacksByNamespace(session)
-	if err != nil {
-		return nil, errors.New("Failed to load packs: " + err.Error())
-	}
-	var variants meta.ComponentVariantCollection
-	err = bundle.LoadAllFromAny(&variants, nil, session)
-	if err != nil {
-		return nil, errors.New("Failed to load variants: " + err.Error())
-	}
-
-	// Also load in studio variants
-	err = bundle.LoadAllFromAny(&variants, nil, session.RemoveWorkspaceContext())
-	if err != nil {
-		return nil, errors.New("Failed to load studio variants: " + err.Error())
-	}
-
-	labels, err := translate.GetTranslatedLabels(session)
-	if err != nil {
-		return nil, errors.New("Failed to get translated labels: " + err.Error())
-	}
-
-	deps := ViewDependencies{
-		ComponentPacks:    map[string]bool{},
-		ComponentVariants: map[string]*meta.ComponentVariant{},
-		ConfigValues:      map[string]string{},
-		FeatureFlags:      map[string]*FeatureFlagResponse{},
-		Labels:            labels,
-	}
-
-	for namespace, packs := range packsByNamespace {
-		for _, pack := range packs {
-			deps.ComponentPacks[pack.GetKey()] = true
-			for key := range pack.Components.ViewComponents {
-				err := getDepsForComponent(namespace+"."+key, &deps, packsByNamespace, session)
-				if err != nil {
-					return nil, err
-				}
-			}
-		}
-
-	}
-	for i := range variants {
-		variant := variants[i]
-		deps.ComponentVariants[variant.GetKey()] = variant
-	}
-
-	ffr, _ := getFeatureFlags(session, "")
-	for i := range ffr {
-		featureFlag := ffr[i]
-		deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	}
-
-	return &deps, nil
-}
-
-func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, error) {
-
-	variantDep, err := meta.NewComponentVariant(key)
-	if err != nil {
-		return nil, err
-	}
-
-	err = bundle.Load(variantDep, session)
-	if err != nil {
-		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
-	}
-	return variantDep, nil
-}
-
-func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
-	namespace, componentName, err := meta.ParseKey(key)
-	if err != nil {
-		return err
-	}
-
-	packsForNamespace, ok := packs[namespace]
-	if !ok {
-		var nspacks meta.ComponentPackCollection
-		err = bundle.LoadAll(&nspacks, namespace, nil, session)
-		if err != nil {
-			return err
-		}
-		packsForNamespace = nspacks
-	}
-
-	for _, pack := range packsForNamespace {
-		componentInfo, ok := pack.Components.ViewComponents[componentName]
-		if ok {
-
-			deps.ComponentPacks[pack.GetKey()] = true
-			if componentInfo != nil {
-				for _, key := range componentInfo.ConfigValues {
-					_, ok := deps.ConfigValues[key]
-					if !ok {
-						value, err := configstore.GetValueFromKey(key, session)
-						if err != nil {
-							return err
-						}
-						deps.ConfigValues[key] = value
-					}
-				}
-
-				for _, key := range componentInfo.Variants {
-					variantDep, err := loadVariant(key, session)
-					if err != nil {
-						return err
-					}
-					deps.ComponentVariants[key] = variantDep
-				}
-
-				for _, key := range componentInfo.Utilities {
-					err = getDepsForComponent(key, deps, packs, session)
-					if err != nil {
-						return err
-					}
-				}
-			}
-		}
-	}
-	return nil
-}
-
-func addVariantDep(deps *ViewDependencies, key string, session *sess.Session) error {
-	variantDep, err := loadVariant(key, session)
-	if err != nil {
-		return err
-	}
-	if variantDep.Extends != "" {
-		err = addVariantDep(deps, variantDep.Component+":"+variantDep.Extends, session)
-		if err != nil {
-			return err
-		}
-	}
-	deps.ComponentVariants[key] = variantDep
-	return nil
-}
-
-func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
-	workspace := session.GetWorkspaceID()
-	if workspace != "" {
-		return getBuilderDependencies(session)
-	}
-
-	// Process Configuration Value Dependencies
-	componentsUsed, variantsUsed, err := view.GetComponentsAndVariants()
-	if err != nil {
-		return nil, err
-	}
-
-	labels, err := translate.GetTranslatedLabels(session)
-	if err != nil {
-		return nil, errors.New("Failed to get translated labels: " + err.Error())
-	}
-
-	deps := ViewDependencies{
-		ComponentPacks:    map[string]bool{},
-		ComponentVariants: map[string]*meta.ComponentVariant{},
-		ConfigValues:      map[string]string{},
-		FeatureFlags:      map[string]*FeatureFlagResponse{},
-		Labels:            labels,
-	}
-
-	packs := map[string]meta.ComponentPackCollection{}
-
-	for key := range variantsUsed {
-		err := addVariantDep(&deps, key, session)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	for key := range componentsUsed {
-		err := getDepsForComponent(key, &deps, packs, session)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	ffr, _ := getFeatureFlags(session, session.GetUserID())
-	for i := range ffr {
-		featureFlag := ffr[i]
-		deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	}
-
-	return &deps, nil
-}
-
 // View is good
 func View(w http.ResponseWriter, r *http.Request) {
 
@@ -328,17 +107,9 @@ func View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dependencies, err := getViewDependencies(&view, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	respondYAML(w, r, &ViewResponse{
-		Name:         view.Name,
-		Namespace:    view.Namespace,
-		Definition:   &view.Definition,
-		Dependencies: dependencies,
+		Name:       view.Name,
+		Namespace:  view.Namespace,
+		Definition: &view.Definition,
 	})
 }

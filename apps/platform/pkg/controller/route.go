@@ -69,13 +69,20 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		return
+	}
+
 	respondJSON(w, r, &RouteMergeData{
-		View:      route.ViewRef,
-		Params:    route.Params,
-		Namespace: route.Namespace,
-		Theme:     route.ThemeRef,
-		Path:      route.Path,
-		Workspace: GetWorkspaceMergeData(workspace),
+		View:         route.ViewRef,
+		Params:       route.Params,
+		Namespace:    route.Namespace,
+		Theme:        route.ThemeRef,
+		Path:         route.Path,
+		Workspace:    GetWorkspaceMergeData(workspace),
+		Dependencies: depsCache,
 	})
 
 }

@@ -17,12 +17,13 @@ import (
 
 // RouteMergeData stuff to merge
 type RouteMergeData struct {
-	View      string              `json:"view"`
-	Params    map[string]string   `json:"params"`
-	Namespace string              `json:"namespace"`
-	Path      string              `json:"path"`
-	Workspace *WorkspaceMergeData `json:"workspace"`
-	Theme     string              `json:"theme"`
+	View         string                   `json:"view"`
+	Params       map[string]string        `json:"params"`
+	Namespace    string                   `json:"namespace"`
+	Path         string                   `json:"path"`
+	Workspace    *WorkspaceMergeData      `json:"workspace"`
+	Theme        string                   `json:"theme"`
+	Dependencies *routing.PreloadMetadata `json:"dependencies"`
 }
 
 // UserMergeData stuff to merge
@@ -65,13 +66,16 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route        *RouteMergeData            `json:"route"`
-	User         *UserMergeData             `json:"user"`
-	Site         *SiteMergeData             `json:"site"`
-	Workspace    *WorkspaceMergeData        `json:"workspace,omitempty"`
-	Component    *ComponentsMergeData       `json:"component,omitempty"`
-	ThemePreload *routing.MetadataMergeData `json:"theme,omitempty"`
-	ReactBundle  string                     `json:"-"`
+	Route            *RouteMergeData            `json:"route"`
+	User             *UserMergeData             `json:"user"`
+	Site             *SiteMergeData             `json:"site"`
+	Workspace        *WorkspaceMergeData        `json:"workspace,omitempty"`
+	Component        *ComponentsMergeData       `json:"component,omitempty"`
+	ThemePreload     *routing.MetadataMergeData `json:"theme,omitempty"`
+	ViewDef          *routing.MetadataMergeData `json:"viewdef,omitempty"`
+	ComponentPack    *routing.MetadataMergeData `json:"componentpack,omitempty"`
+	ComponentVariant *routing.MetadataMergeData `json:"componentvariant,omitempty"`
+	ReactBundle      string                     `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -163,9 +167,12 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		ThemePreload: preload.GetThemes(),
-		Component:    GetComponentMergeData(buildMode),
-		ReactBundle:  ReactSrc,
+		ThemePreload:     preload.GetThemes(),
+		ViewDef:          preload.GetViewDef(),
+		Component:        GetComponentMergeData(buildMode),
+		ComponentPack:    preload.GetComponenPack(),
+		ComponentVariant: preload.GetComponentVariant(),
+		ReactBundle:      ReactSrc,
 	}
 
 	// Not checking this error for now.
