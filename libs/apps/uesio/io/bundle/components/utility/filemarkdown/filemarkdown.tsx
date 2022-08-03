@@ -71,29 +71,27 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	}, [fileContent])
 
 	return (
-		<>
-			<MarkDownField
-				context={context}
-				fieldMetadata={fieldMetadata}
-				value={currentValue?.value || ""}
-				mode={mode}
-				setValue={(value: string) => {
-					uesio.signal.runMany(
-						[
-							{
-								signal: "component/uesio/io.field/SET_FILE",
-								target: componentId,
-								value,
-							},
-						],
+		<MarkDownField
+			context={context}
+			fieldMetadata={fieldMetadata}
+			value={currentValue?.value || ""}
+			mode={mode}
+			setValue={(value: string) => {
+				uesio.signal.runMany(
+					[
+						{
+							signal: "component/uesio/io.field/SET_FILE",
+							target: componentId,
+							value,
+						},
+					],
 
-						context
-					)
-				}}
-				options={options}
-				variant={props.variant}
-			/>
-		</>
+					context
+				)
+			}}
+			options={options}
+			variant={props.variant}
+		/>
 	)
 }
 
