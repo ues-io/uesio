@@ -24,6 +24,14 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
+	hooks.useHotKeyCallback("command+s", () => {
+		uesio.builder.save()
+	})
+
+	hooks.useHotKeyCallback("command+shift+c", () => {
+		uesio.builder.cancel()
+	})
+
 	return (
 		<div className={classes.root}>
 			{hasChanges && (

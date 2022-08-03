@@ -1,11 +1,10 @@
 import { SignalDefinition } from "../definition/signal"
-import { Uesio } from "./hooks"
+import { Uesio, useHotKeyCallback } from "./hooks"
 import { Context } from "../context/context"
 import componentSignal from "../bands/component/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { registry, run, runMany } from "../signals/signals"
 import { addBlankSelectOption } from "../collectionexports"
-import { useHotkeys } from "react-hotkeys-hook"
 
 class SignalAPI {
 	constructor(uesio: Uesio) {
@@ -26,18 +25,11 @@ class SignalAPI {
 	useRegisterHotKey = (
 		keycode: string | undefined,
 		signals: SignalDefinition[] | undefined
-	) => {
-		useHotkeys(
-			keycode || "",
-			(event: KeyboardEvent) => {
-				event.preventDefault()
-				this.getHandler(signals)?.()
-			},
-			{
-				enabled: !!keycode,
-			}
-		)
-	}
+	) =>
+		useHotKeyCallback(keycode, (event) => {
+			event.preventDefault()
+			this.getHandler(signals)?.()
+		})
 
 	runMany = async (signals: SignalDefinition[], context: Context) =>
 		runMany(signals, context)
