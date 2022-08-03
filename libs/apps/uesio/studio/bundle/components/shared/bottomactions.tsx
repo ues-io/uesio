@@ -24,6 +24,16 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
+	const toggleCode = uesio.signal.getHandler([
+		{
+			signal: "component/uesio/studio.runtime/TOGGLE_CODE",
+		},
+	])
+
+	hooks.useHotKeyCallback("command+y", () => {
+		toggleCode?.()
+	})
+
 	return (
 		<div className={classes.root}>
 			<Group
@@ -37,19 +47,8 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					icon={<Icon context={context} icon="wysiwyg" />}
 					variant="uesio/studio.minoricontoolbar"
 					onClick={() => {
-						const workspace = props.context.getWorkspace()
-						const route = props.context.getRoute()
-						if (!workspace || !route) {
-							return
-						}
-
-						const [, viewName] = component.path.parseKey(route.view)
-
 						uesio.signal.run(
-							{
-								signal: "route/REDIRECT",
-								path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`,
-							},
+							{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
 							props.context
 						)
 					}}
@@ -79,11 +78,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					label=""
 					icon={<Icon context={context} icon="code" />}
 					variant="uesio/studio.minoricontoolbar"
-					onClick={uesio.signal.getHandler([
-						{
-							signal: "component/uesio/studio.runtime/TOGGLE_CODE",
-						},
-					])}
+					onClick={toggleCode}
 				/>
 			</Group>
 		</div>

@@ -2,7 +2,7 @@ import { FunctionComponent, useEffect } from "react"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
-import { useUesio } from "../hooks/hooks"
+import { useHotKeyCallback, useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
 import View from "./view/view"
@@ -50,6 +50,17 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 			""
 		)
 	})
+
+	useHotKeyCallback(
+		"command+p",
+		() => {
+			uesio.signal.run(
+				{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
+				routeContext
+			)
+		},
+		!!(route && route.workspace)
+	)
 
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
