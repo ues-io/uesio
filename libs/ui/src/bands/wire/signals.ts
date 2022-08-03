@@ -102,6 +102,7 @@ interface SaveWiresSignal extends SignalDefinition {
 interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
+	searchFields?: string[]
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -151,7 +152,11 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
-			updateRecordOp(context, [signal.field], signal.value),
+			updateRecordOp(
+				context,
+				[signal.field],
+				context.merge(signal.value)
+			),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",
@@ -198,13 +203,23 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Wire",
 			},
 			{
+				name: "searchFields",
+				type: "WIRE_FIELDS",
+				label: "Search Fields",
+			},
+			{
 				name: "search",
 				type: "TEXT",
 				label: "Search",
 			},
 		],
 		dispatcher: (signal: SearchWireSignal, context: Context) =>
-			searchWireOp(context, signal.wire, signal.search),
+			searchWireOp(
+				context,
+				signal.wire,
+				signal.search,
+				signal?.searchFields
+			),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",

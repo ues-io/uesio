@@ -9,6 +9,7 @@ import {
 } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
 import { mergeDefinitionMaps } from "../component/merge"
+import * as colors from "./colors"
 
 type ResponsiveDefinition =
 	| string
@@ -287,4 +288,5 @@ export {
 	useUtilityStyles,
 	useStyles,
 	useStyle,
+	colors,
 }

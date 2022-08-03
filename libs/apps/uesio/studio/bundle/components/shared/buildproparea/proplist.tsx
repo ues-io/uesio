@@ -17,6 +17,7 @@ import NamespaceProp from "../buildpropitem/namespaceprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
+import WireFieldsProp from "../buildpropitem/wirefieldsprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -58,6 +59,8 @@ function getPropHandler(type?: string) {
 			return ParamProp
 		case "PARAMS":
 			return ParamsProp
+		case "WIRE_FIELDS":
+			return WireFieldsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp

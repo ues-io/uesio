@@ -69,21 +69,21 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 									conditionPath
 								)
 							}}
-							popChildren
+							popperChildren={
+								<PropertiesPane
+									path={conditionPath}
+									context={context}
+									propsDef={{
+										title: "Condition",
+										sections: [],
+										defaultDefinition: () => ({}),
+										properties: conditionProperties,
+									}}
+									valueAPI={valueAPI}
+								/>
+							}
 							context={context}
-						>
-							<PropertiesPane
-								path={conditionPath}
-								context={context}
-								propsDef={{
-									title: "Condition",
-									sections: [],
-									defaultDefinition: () => ({}),
-									properties: conditionProperties,
-								}}
-								valueAPI={valueAPI}
-							/>
-						</PropNodeTag>
+						/>
 					)
 				})}
 		</>
