@@ -5,6 +5,7 @@ import componentSignal from "../bands/component/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { registry, run, runMany } from "../signals/signals"
 import { addBlankSelectOption } from "../collectionexports"
+import { useHotkeys } from "react-hotkeys-hook"
 
 class SignalAPI {
 	constructor(uesio: Uesio) {
@@ -20,6 +21,22 @@ class SignalAPI {
 	) => {
 		if (!signals) return undefined
 		return async () => this.runMany(signals, context)
+	}
+
+	useRegisterHotKey = (
+		keycode: string | undefined,
+		signals: SignalDefinition[] | undefined
+	) => {
+		useHotkeys(
+			keycode || "",
+			(event: KeyboardEvent) => {
+				event.preventDefault()
+				this.getHandler(signals)?.()
+			},
+			{
+				enabled: !!keycode,
+			}
+		)
 	}
 
 	runMany = async (signals: SignalDefinition[], context: Context) =>
