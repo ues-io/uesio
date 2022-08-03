@@ -3,25 +3,32 @@ import { FieldState } from "./fielddefinition"
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	SAVE_FILE: {
-		dispatcher: (signal, context, getState, setState, platform) => {
-			const state = getState() as FieldState
-			const blob = new Blob([state.value], { type: state.mimeType })
-			const fileName = state.fileName
-			const file = new File([blob], fileName, { type: state.mimeType })
-			platform.uploadFile(
-				context,
-				file,
-				state.collectionId,
-				state.recordId,
-				state.fieldId
-			)
+		dispatcher: (signal, context, getters, setState, platform) => {
+			const states = getters.all() as FieldState[]
+			//Are we in the context of repeating records?
+			states.forEach((state) => {
+				const blob = new Blob([state.value], {
+					type: state.mimeType,
+				})
+				const fileName = state.fileName
+				const file = new File([blob], fileName, {
+					type: state.mimeType,
+				})
+				platform.uploadFile(
+					context,
+					file,
+					state.collectionId,
+					state.recordId,
+					state.fieldId
+				)
+			})
 		},
 		label: "Save File",
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as FieldState
+		dispatcher: (signal, context, getters, setState) => {
+			const state = getters.single() as FieldState
 			setState({
 				...state,
 				value: state.originalValue,
@@ -31,11 +38,11 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 		properties: () => [],
 	},
 	SET_FILE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as FieldState
+		dispatcher: (signal, context, getters, setState) => {
+			const state = getters.single() as { state: FieldState }[]
 			setState({
 				...state,
-				value: signal.value as string,
+				value: signal.value,
 			})
 		},
 		label: "Set File",
@@ -52,6 +59,8 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 				collectionId: signal.collectionId as string,
 				fileName: signal.fileName as string,
 			})
+
+			// Save recordID to wire as "file to save?"
 		},
 		label: "Init File",
 		properties: () => [],

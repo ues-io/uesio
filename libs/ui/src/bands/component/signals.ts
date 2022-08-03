@@ -3,7 +3,7 @@ import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
 import { PlainWireRecord } from "../wirerecord/types"
-import { selectState } from "./selectors"
+import { selectComponent, selectComponentsById } from "./selectors"
 import { PlainComponentState } from "./types"
 
 interface ComponentSignal extends SignalDefinition {
@@ -24,11 +24,10 @@ export default {
 			const viewId = context.getViewId()
 			const target = signalTarget || handler.target || ""
 
-			handler.dispatcher(
-				signal,
-				context,
-				() => {
-					const fullState = selectState(
+			const getters = {
+				all: () => selectComponentsById(getState(), target),
+				single: () => {
+					const fullState = selectComponent(
 						getState(),
 						scope,
 						target,
@@ -38,7 +37,15 @@ export default {
 						? (fullState as PlainWireRecord)?.[handler.slice]
 						: fullState
 				},
+			}
+
+			handler.dispatcher(
+				signal,
+				context,
+				getters,
+				// Setstate
 				(state: PlainComponentState | undefined) => {
+					console.log({ set: target })
 					dispatch({
 						type: "component/set",
 						payload: {
@@ -47,7 +54,7 @@ export default {
 							view: viewId,
 							state: handler.slice
 								? {
-										...(selectState(
+										...(selectComponent(
 											getState(),
 											scope,
 											target,

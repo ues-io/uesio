@@ -3,8 +3,8 @@ import { hooks, signal, context, definition } from "@uesio/ui"
 const MODE_SLICE = "mode"
 
 const toggleMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const mode = getState() as string
+	dispatcher: (signal, context, getters, setState) => {
+		const mode = getters.single() as string
 		setState(mode === "READ" || !mode ? "EDIT" : "READ")
 	},
 	label: "Toggle Mode",
@@ -12,7 +12,7 @@ const toggleMode: signal.ComponentSignalDescriptor = {
 	slice: MODE_SLICE,
 }
 const setReadMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
+	dispatcher: (signal, context, getters, setState) => {
 		setState("READ")
 	},
 	label: "Toggle Mode",
@@ -20,7 +20,7 @@ const setReadMode: signal.ComponentSignalDescriptor = {
 	slice: MODE_SLICE,
 }
 const setEditMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
+	dispatcher: (signal, context, getters, setState) => {
 		setState("EDIT")
 	},
 	label: "Toggle Mode",

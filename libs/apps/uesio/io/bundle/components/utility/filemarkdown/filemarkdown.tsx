@@ -33,28 +33,21 @@ interface FileMarkDownProps extends definition.UtilityProps {
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const {
-		fieldId,
-		fieldMetadata,
-		record,
-		wire,
-		context,
-		id,
-
-		mode,
-		options,
-	} = props
+	const { fieldId, fieldMetadata, record, wire, context, id, mode, options } =
+		props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const fileName = userFile?.["uesio/core.name"] as string
+	const fileName = (userFile?.["uesio/core.name"] as string) || "unnamed"
 	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
 
 	// If a user sets the id and the component is inside the loop of a list/deck/table,
 	// we expect unexpected behaviour. Maybe we should give some sort of warning
-	const componentId = id || record.getId() + fieldId
+	const recordId = record.getIdFieldValue()
+	const componentId = `${id || null}/${recordId}/${fieldId}`
 
+	console.log({ componentId })
 	const currentValue = uesio.component.useExternalState<FieldState>(
 		context.getViewId() || "",
 		"uesio/io.field",
@@ -67,7 +60,7 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 				signal: "component/uesio/io.field/INIT_FILE",
 				target: componentId,
 				value: currentValue?.value || fileContent,
-				recordId: record.getIdFieldValue(),
+				recordId,
 				fieldId,
 				collectionId: wire.getCollection().getFullName(),
 				fileName,
@@ -89,11 +82,6 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 						[
 							{
 								signal: "component/uesio/io.field/SET_FILE",
-								target: componentId,
-								value,
-							},
-							{
-								signal: "component/uesio/io.field/SAVE_FILE",
 								target: componentId,
 								value,
 							},

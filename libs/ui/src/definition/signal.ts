@@ -13,7 +13,10 @@ type SignalDispatcher = (
 type ComponentSignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context,
-	getState: () => PlainComponentState | undefined,
+	getters: {
+		single: () => PlainComponentState
+		all: () => PlainComponentState[]
+	},
 	setState: (state: PlainComponentState | undefined) => void,
 	platform: Platform
 ) => void
