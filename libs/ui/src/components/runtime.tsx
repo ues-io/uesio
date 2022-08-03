@@ -6,10 +6,10 @@ import { useUesio } from "../hooks/hooks"
 import Route from "./route"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
-import HotkeyProvider from "./hotkeyprovider"
 import { Context } from "../context/context"
 import { appDispatch } from "../store/store"
 import routeOps from "../bands/route/operations"
+import { useHotkeys } from "react-hotkeys-hook"
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
@@ -60,6 +60,10 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		}
 	}, [])
 
+	useHotkeys("u", () => {
+		setBuildMode(!uesio.component.getState("buildmode"))
+	})
+
 	const context = uesio.getContext().addFrame({
 		buildMode: buildMode && scriptResult.loaded,
 	})
@@ -67,7 +71,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	if (buildMode === undefined) return null
 
 	return (
-		<HotkeyProvider uesio={uesio} setBuildMode={setBuildMode}>
+		<>
 			<Route path={props.path} context={context} />
 			<div
 				className={css({
@@ -83,7 +87,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 				<NotificationArea context={props.context} />
 			</div>
 			<div ref={portalsDomNode} />
-		</HotkeyProvider>
+		</>
 	)
 }
 export { portalsDomNode }

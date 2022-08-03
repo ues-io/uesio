@@ -14,6 +14,7 @@ import { ThemeAPI } from "./themeapi"
 import { NotificationAPI } from "./notificationapi"
 import { FeatureFlagAPI } from "./featureflagapi"
 import { BotAPI } from "./botapi"
+import { useHotkeys } from "react-hotkeys-hook"
 
 // Create a new Uesio API instance for use inside of a component
 class Uesio {
@@ -72,4 +73,4 @@ class Uesio {
 
 const useUesio = (props: BaseProps) => new Uesio(props)
 
-export { useUesio, Uesio }
+export { useUesio, Uesio, useHotkeys }

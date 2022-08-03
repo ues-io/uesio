@@ -75,12 +75,14 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Build"
+                                      hotkey: "b"
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
+                                      hotkey: "s"
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -88,6 +90,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
+                                      hotkey: "c"
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "views"
