@@ -2,25 +2,24 @@ import { hooks, signal, definition } from "@uesio/ui"
 import { useEffect } from "react"
 
 const PAGINATION_SLICE = "pagination"
-
-const nextPage: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const currentPage = (getState() as number) ?? 0
-		setState(currentPage + 1)
+type State = { pagination: number }
+const nextPage: signal.ComponentSignalDescriptor<State> = {
+	dispatcher: ({ state, setState }) => {
+		const currentPage = state[PAGINATION_SLICE] ?? 0
+		setState({ ...state, [PAGINATION_SLICE]: currentPage + 1 })
 	},
 	label: "Next Page",
 	properties: () => [],
-	slice: PAGINATION_SLICE,
 }
 
-const prevPage: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const currentPage = (getState() as number) ?? 0
-		if (currentPage > 0) setState(currentPage - 1)
+const prevPage: signal.ComponentSignalDescriptor<State> = {
+	dispatcher: ({ state, setState }) => {
+		const currentPage = state[PAGINATION_SLICE] ?? 0
+		if (currentPage > 0)
+			setState({ ...state, [PAGINATION_SLICE]: currentPage - 1 })
 	},
 	label: "Previous Page",
 	properties: () => [],
-	slice: PAGINATION_SLICE,
 }
 
 const usePagination = (

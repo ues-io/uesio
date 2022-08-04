@@ -1,30 +1,30 @@
-import { hooks, signal, context, definition } from "@uesio/ui"
+import { hooks, signal, context, definition, state } from "@uesio/ui"
 
 const MODE_SLICE = "mode"
-
-const toggleMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
-	dispatcher: (signal, context, mode, setState) => {
-		setState(mode === "READ" || !mode ? "EDIT" : "READ")
+type State = { mode: "READ" | "EDIT" }
+const toggleMode: signal.ComponentSignalDescriptor<State> = {
+	dispatcher: ({ state, setState }) => {
+		setState({
+			...state,
+			[MODE_SLICE]: state && state.mode === "EDIT" ? "READ" : "EDIT",
+		})
 	},
 	label: "Toggle Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
-const setReadMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
-	dispatcher: (signal, context, mode, setState) => {
-		setState("READ")
+const setReadMode: signal.ComponentSignalDescriptor<State> = {
+	dispatcher: ({ setState }) => {
+		setState({ ...state, [MODE_SLICE]: "READ" })
 	},
 	label: "Toggle Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
-const setEditMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
-	dispatcher: (signal, context, mode, setState) => {
-		setState("EDIT")
+const setEditMode: signal.ComponentSignalDescriptor<State> = {
+	dispatcher: ({ setState }) => {
+		setState({ [MODE_SLICE]: "EDIT" })
 	},
 	label: "Toggle Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
 
 const useMode = (

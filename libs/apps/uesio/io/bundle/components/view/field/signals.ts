@@ -2,7 +2,7 @@ import { signal } from "@uesio/ui"
 import { FieldState } from "./fielddefinition"
 const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 	SAVE_FILE: {
-		dispatcher: (signal, context, state, setState, platform) => {
+		dispatcher: ({ context, state, platform }) => {
 			const blob = new Blob([state.value], { type: state.mimeType })
 			const fileName = state.fileName
 			const file = new File([blob], fileName, { type: state.mimeType })
@@ -18,7 +18,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (signal, context, state, setState) => {
+		dispatcher: ({ state, setState }) => {
 			setState({
 				...state,
 				value: state.originalValue,
@@ -28,7 +28,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 		properties: () => [],
 	},
 	SET_FILE: {
-		dispatcher: (signal, context, state, setState) => {
+		dispatcher: ({ signal, state, setState }) => {
 			setState({
 				...state,
 				value: signal.value as string,
@@ -38,7 +38,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 		properties: () => [],
 	},
 	INIT_FILE: {
-		dispatcher: (signal, context, state, setState) => {
+		dispatcher: ({ signal, setState }) => {
 			const value = signal.value as string
 			setState({
 				originalValue: value,

@@ -35,17 +35,8 @@ interface FileMarkDownProps extends definition.UtilityProps {
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const {
-		fieldId,
-		fieldMetadata,
-		record,
-		wire,
-		context,
-		id,
-		path,
-		mode,
-		options,
-	} = props
+	const { fieldId, fieldMetadata, record, wire, context, id, mode, options } =
+		props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const fileName = userFile?.["uesio/core.name"] as string
