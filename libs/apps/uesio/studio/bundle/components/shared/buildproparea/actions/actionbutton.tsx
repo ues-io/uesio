@@ -6,7 +6,7 @@ interface Props extends definition.BaseProps {
 	icon: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
-	className: string
+	className?: string
 }
 
 const IconButton = component.getUtility("uesio/io.iconbutton")

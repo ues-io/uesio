@@ -1,5 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, builder, component, hooks, util } from "@uesio/ui"
+import {
+	definition,
+	builder,
+	component,
+	hooks,
+	util,
+	metadata,
+} from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 
 const standardActions: builder.ActionDescriptor[] = [
@@ -53,7 +60,9 @@ const augmentPropsDef = (
 	}
 	if (propsDef.type === "panel") {
 		const panelDef = util.get(definition, path) as definition.DefinitionMap
-		const componentType = panelDef["uesio.type"] as string | undefined
+		const componentType = panelDef["uesio.type"] as
+			| metadata.MetadataKey
+			| undefined
 		if (!componentType) return propsDef
 		const componentPropsDef =
 			component.registry.getPropertiesDefinition(componentType)

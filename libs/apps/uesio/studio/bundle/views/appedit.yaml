@@ -14,3 +14,6 @@ definition:
               fieldId: uesio/studio.description
           - uesio/studio.colorpicker:
               fieldId: uesio/studio.color
+          - uesio/studio.appiconpicker:
+              fieldId: uesio/studio.icon
+              colorFieldId: uesio/studio.color

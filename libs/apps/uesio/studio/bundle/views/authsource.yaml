@@ -9,6 +9,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}

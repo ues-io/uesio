@@ -1,4 +1,4 @@
-name: color
+name: icon
 type: TEXT
-label: Color
+label: Icon
 required: true
