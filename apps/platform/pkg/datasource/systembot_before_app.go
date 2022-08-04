@@ -8,7 +8,7 @@ import (
 )
 
 func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return request.LoopChanges(func(change *adapt.ChangeItem) error {
+	return request.LoopInserts(func(change *adapt.ChangeItem) error {
 		user, err := change.GetField("uesio/studio.user")
 		if err != nil {
 			return err

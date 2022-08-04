@@ -9,6 +9,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           valueSource: PARAM
@@ -296,7 +297,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Edit App
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit

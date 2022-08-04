@@ -8,6 +8,7 @@ type App struct {
 	User        *User     `yaml:"-" uesio:"uesio/studio.user"`
 	Description string    `uesio:"uesio/studio.description"`
 	Color       string    `uesio:"uesio/studio.color"`
+	Icon        string    `uesio:"uesio/studio.icon"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`

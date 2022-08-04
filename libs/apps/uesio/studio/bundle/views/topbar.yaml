@@ -47,7 +47,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: "${uesio/studio.color}"
-                                text: circle
+                                text: ${uesio/studio.icon}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
@@ -68,7 +68,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: ${uesio/studio.app->uesio/studio.color}
-                                text: circle
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -104,7 +104,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: ${uesio/studio.app->uesio/studio.color}
-                                text: circle
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -140,7 +140,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: ${uesio/studio.app->uesio/studio.color}
-                                text: circle
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -176,7 +176,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: ${uesio/studio.app->uesio/studio.color}
-                                text: circle
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"

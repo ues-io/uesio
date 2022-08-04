@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, materialIcons } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
 interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
@@ -20,16 +20,14 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				wordWrap: "normal",
 				whiteSpace: "nowrap",
 				direction: "ltr",
+				fontDisplay: "block",
+				fontVariationSettings: "'FILL' 1",
 			},
 		},
 		props
 	)
 
 	if (props.icon === undefined) return null
-
-	if (props.icon === "" || !materialIcons.includes(props.icon)) {
-		return <span className={classes.root}>&nbsp;</span>
-	}
 
 	return <span className={classes.root}>{props.icon}</span>
 }

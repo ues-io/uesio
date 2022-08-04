@@ -36,6 +36,9 @@ func getAppData(namespaces []string, session *sess.Session) (map[string]*meta.Ap
 			{
 				ID: "uesio/studio.color",
 			},
+			{
+				ID: "uesio/studio.icon",
+			},
 		},
 		SkipRecordSecurity: true,
 	}, session.RemoveWorkspaceContext())

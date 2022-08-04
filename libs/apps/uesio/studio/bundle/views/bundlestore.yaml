@@ -10,6 +10,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -20,13 +21,13 @@ definition:
         create: false
       fields:
         uesio/core.id:
-        uesio/studio.color:
-        uesio/studio.icon:
         uesio/studio.description:
         uesio/studio.app:
           fields:
             uesio/core.id:
             uesio/studio.fullname:
+            uesio/studio.color:
+            uesio/studio.icon:
     dependencies:
       collection: uesio/studio.bundledependency
       fields:
