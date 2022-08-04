@@ -7,7 +7,7 @@ import {
 } from "../bands/component/selectors"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
-import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
+import { FieldValue } from "../bands/wirerecord/types"
 import { useComponentVariantKeys } from "../bands/componentvariant"
 import { platform } from "../platform/platform"
 
@@ -46,15 +46,7 @@ class ComponentAPI {
 	): [T | undefined, (state: T) => void] => {
 		const viewId = this.uesio.getViewId()
 		const componentType = cType || this.uesio.getComponentType()
-		const fullState = useComponentState<T>(
-			componentType,
-			componentId,
-			viewId
-		)
-		console.log({ fullState })
-		const state = slice
-			? ((fullState as PlainWireRecord)?.[slice] as T) ?? undefined
-			: fullState
+		const state = useComponentState<T>(componentType, componentId, viewId)
 
 		const setState = (state: T) => {
 			appDispatch()({
@@ -63,17 +55,7 @@ class ComponentAPI {
 					id: componentId,
 					componentType,
 					view: viewId,
-					state: slice
-						? {
-								...(selectComponent<T>(
-									getCurrentState(),
-									componentType,
-									componentId,
-									viewId
-								) as PlainWireRecord),
-								[slice]: state,
-						  }
-						: state,
+					state,
 				},
 			})
 		}

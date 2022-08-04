@@ -2,7 +2,7 @@ import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
-import { selectComponentsById } from "./selectors"
+import { selectComponentsByTarget } from "./selectors"
 import { PlainComponentState } from "./types"
 
 interface ComponentSignal extends SignalDefinition {
@@ -22,7 +22,10 @@ export default {
 			const handler = getSignal(scope, type)
 			const view = context.getViewId()
 			const target = signalTarget || handler.target || ""
-			const targetComponents = selectComponentsById(getState(), target)
+			const targetComponents = selectComponentsByTarget(
+				getState(),
+				target
+			)
 
 			// When we have no matches in state, we still want the signal to fire.
 			const targets = targetComponents.length

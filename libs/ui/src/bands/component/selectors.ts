@@ -24,10 +24,10 @@ const selectComponent = <T extends PlainComponentState>(
 		getComponentStateKey(componentType, componentId, viewId)
 	)?.state as T | undefined
 
-export const selectComponentsById = (state: RootState, componentId: string) => [
+const selectComponentsByTarget = (state: RootState, componentId: string) => [
 	...selectors
 		.selectAll(state)
 		.filter((el) => el.id && el.id.startsWith(componentId)),
 ]
 
-export { useComponentState, selectComponent }
+export { useComponentState, selectComponent, selectComponentsByTarget }
