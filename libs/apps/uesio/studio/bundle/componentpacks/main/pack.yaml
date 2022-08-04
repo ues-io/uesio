@@ -2,12 +2,7 @@ name: main
 components:
   view:
     colorpicker:
-      variants:
-        - uesio/io.button:uesio/io.secondary
-        - uesio/io.button:uesio/io.primary
-        - uesio/io.selectfield:uesio/io.default
-        - uesio/io.tile:uesio/io.item
-        - uesio/io.titlebar:uesio/io.default
+    appiconpicker:
     metadatafield:
       utilities:
         - uesio/io.textfield

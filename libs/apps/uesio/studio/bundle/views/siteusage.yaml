@@ -9,6 +9,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           valueSource: PARAM
@@ -24,6 +25,7 @@ definition:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/studio.name
           valueSource: PARAM

@@ -31,6 +31,12 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	)
 	const subtitlenode = (
 		<div className={classes.crumbwrapper}>
+			<div
+				className={classes.crumb}
+				style={{
+					width: "16px",
+				}}
+			/>
 			{component.path.toPath(path).map((segment, index) => {
 				// Try to parse the path into a number
 				const num = parseInt(segment, 10)

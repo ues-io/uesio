@@ -15,7 +15,7 @@ const CloneAction: FunctionComponent<ActionProps> = ({
 		<ActionButton
 			title="Clone"
 			onClick={() => valueAPI.clone(clonePath)}
-			icon="copy"
+			icon="content_copy"
 			context={context}
 		/>
 	)

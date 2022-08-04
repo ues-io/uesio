@@ -288,4 +288,12 @@ const ACCENT_COLORS: (keyof typeof COLORS)[] = [
 
 const MEDIUM_SHADES = [400, 500, 600, 700, 800] as const
 
-export { COLORS, ACCENT_COLORS, MEDIUM_SHADES }
+const getRandomHue = () =>
+	ACCENT_COLORS[Math.floor(Math.random() * ACCENT_COLORS.length)]
+
+const getRandomShade = () =>
+	MEDIUM_SHADES[Math.floor(Math.random() * MEDIUM_SHADES.length)]
+
+const getRandomColor = () => COLORS[getRandomHue()][getRandomShade()]
+
+export { COLORS, ACCENT_COLORS, MEDIUM_SHADES, getRandomColor }

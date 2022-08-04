@@ -10,6 +10,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -24,6 +25,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           valueSource: PARAM
@@ -35,8 +37,10 @@ definition:
       fields:
         uesio/core.uniquekey:
         uesio/studio.description:
-        uesio/studio.icon:
-        uesio/studio.color:
+        uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{id}
@@ -212,7 +216,7 @@ definition:
                                       uesio.styles:
                                         root:
                                           background: "#eee"
-                                          backgroundColor: ${uesio/studio.color}
+                                          backgroundColor: ${uesio/studio.app->uesio/studio.color}
                                           paddingTop: 50%;
                                           display: flex
                                           alignItems: center
@@ -226,7 +230,7 @@ definition:
                                                 inset: 0 0 0 0
                                                 position: absolute
                                                 fontSize: 4em
-                                            icon: ${uesio/studio.icon}
+                                            icon: ${uesio/studio.app->uesio/studio.icon}
                       # Section Description
                       - uesio/io.box:
                           components:

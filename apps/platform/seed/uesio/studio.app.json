@@ -4,6 +4,7 @@
 		"fullname": "uesio/core",
 		"description": "Base Uesio Functionality",
 		"color": "#a05195",
+		"icon": "hub",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -13,6 +14,7 @@
 		"fullname": "uesio/io",
 		"description": "A Component library for uesio",
 		"color": "#2f4b7c",
+		"icon": "widgets",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -22,6 +24,7 @@
 		"fullname": "uesio/studio",
 		"description": "The Uesio Configuration App",
 		"color": "#ff7c43",
+		"icon": "design_services",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -31,6 +34,7 @@
 		"fullname": "uesio/crm",
 		"description": "A Sample CRM App",
 		"color": "#a05195",
+		"icon": "person",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -40,6 +44,7 @@
 		"fullname": "uesio/cms",
 		"description": "Content Management Tools",
 		"color": "#665191",
+		"icon": "description",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -49,6 +54,7 @@
 		"fullname": "uesio/docs",
 		"description": "Docs for Uesio",
 		"color": "#d45087",
+		"icon": "support",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -58,6 +64,7 @@
 		"fullname": "uesio/web",
 		"description": "Uesio Website",
 		"color": "#003f5c",
+		"icon": "public",
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -67,6 +74,7 @@
 		"fullname": "uesio/lab",
 		"description": "Experimental Components",
 		"color": "#003f5c",
+		"icon": "science",
 		"user": {
 			"uniquekey": "uesio"
 		}

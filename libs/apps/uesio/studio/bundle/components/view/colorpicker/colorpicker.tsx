@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
 type ColorPickerDefinition = {
@@ -33,7 +33,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 				display: "inline-block",
 				margin: "2px",
 				borderRadius: "20px",
-				transition: "all 0.2s ease",
+				transition: "all 0.2s ease-in",
 			},
 			selected: {
 				height: "17px",
@@ -48,8 +48,17 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 	)
 	const record = context.getRecord()
 	const wire = context.getWire()
+
+	useEffect(() => {
+		if (!colorValue && record) {
+			// Update to a random color if we haven't set one.
+			record.update(fieldId, styles.colors.getRandomColor())
+		}
+	}, [])
+
 	if (!wire || !record) return null
 
+	const colorValue = record.getFieldValue(fieldId)
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
 
@@ -70,8 +79,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 						<div key={index}>
 							{styles.colors.MEDIUM_SHADES.map((shade) => {
 								const hex = palette[shade]
-								const isSelected =
-									record.getFieldValue(fieldId) === hex
+								const isSelected = colorValue === hex
 								return (
 									<div
 										key={color}

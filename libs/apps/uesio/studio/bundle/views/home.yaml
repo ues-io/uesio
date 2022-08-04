@@ -9,6 +9,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       order:
         - field: uesio/studio.name
           desc: false
@@ -20,6 +21,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       init:
         query: false
         create: true
@@ -73,7 +75,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: "${uesio/studio.color}"
-                                text: circle
+                                text: ${uesio/studio.icon}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -167,7 +169,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New App
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit

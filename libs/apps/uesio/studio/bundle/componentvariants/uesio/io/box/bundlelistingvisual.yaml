@@ -4,7 +4,7 @@ definition:
   uesio.styles:
     root:
       background: "#eee"
-      backgroundColor: ${uesio/studio.color}
+      backgroundColor: ${uesio/studio.app->uesio/studio.color}
       paddingTop: 50%;
       display: flex
       alignItems: center
@@ -18,4 +18,4 @@ definition:
             inset: 0 0 0 0
             position: absolute
             fontSize: 4em
-        icon: ${uesio/studio.icon}
+        icon: ${uesio/studio.app->uesio/studio.icon}
