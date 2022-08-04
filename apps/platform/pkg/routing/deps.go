@@ -23,10 +23,13 @@ type MetadataMergeData struct {
 }
 
 func (mmd *MetadataMergeData) AddItem(id, content string) {
-	mmd.IDs = append(mmd.IDs, id)
-	mmd.Entities[id] = MetadataState{
-		Key:     id,
-		Content: content,
+	_, ok := mmd.Entities[id]
+	if !ok {
+		mmd.IDs = append(mmd.IDs, id)
+		mmd.Entities[id] = MetadataState{
+			Key:     id,
+			Content: content,
+		}
 	}
 }
 
@@ -35,6 +38,7 @@ func (mmd *MetadataMergeData) AddViewDef(id string, view meta.View) {
 
 	bytes, err := yaml.Marshal(&view.Definition)
 	if err != nil {
+		println("This?")
 		println(err)
 	}
 
@@ -80,6 +84,20 @@ func (pm *PreloadMetadata) GetComponentVariant() *MetadataMergeData {
 		return nil
 	}
 	return pm.ComponentVariant
+}
+
+func (pm *PreloadMetadata) GetLabel() *MetadataMergeData {
+	if pm == nil {
+		return nil
+	}
+	return pm.Label
+}
+
+func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
+	if pm == nil {
+		return nil
+	}
+	return pm.ConfigValue
 }
 
 func (pm *PreloadMetadata) AddTheme(id, content string) {
@@ -176,7 +194,6 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		return err
 	}
 	if variantDep.Extends != "" {
-		println(key)
 		err = addVariantDep(deps, variantDep.Component+":"+variantDep.Extends, session)
 		if err != nil {
 			return err
@@ -193,7 +210,10 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 	return nil
 }
 
-func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
+func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
+
+	packs := map[string]meta.ComponentPackCollection{}
+
 	namespace, componentName, err := meta.ParseKey(key)
 	if err != nil {
 		return err
@@ -230,7 +250,7 @@ func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]met
 				}
 
 				for _, key := range componentInfo.Utilities {
-					err = getDepsForComponent(key, deps, packs, session)
+					err = getDepsForComponent(key, deps, session)
 					if err != nil {
 						return err
 					}
@@ -242,8 +262,6 @@ func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]met
 }
 
 func processView(key string, deps *PreloadMetadata, session *sess.Session) error {
-
-	println("Processing: " + key)
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -260,9 +278,8 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		addVariantDep(deps, key, session)
 	}
 
-	packs := map[string]meta.ComponentPackCollection{}
 	for key := range componentsUsed {
-		err := getDepsForComponent(key, deps, packs, session)
+		err := getDepsForComponent(key, deps, session)
 		if err != nil {
 			return err
 		}
@@ -333,7 +350,7 @@ func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 		for _, pack := range packs {
 			deps.AddComponentPack(pack.GetKey(), "")
 			for key := range pack.Components.ViewComponents {
-				err := getDepsForComponent(namespace+"."+key, deps, packsByNamespace, session)
+				err := getDepsForComponent(namespace+"."+key, deps, session)
 				if err != nil {
 					return nil, err
 				}
@@ -363,10 +380,10 @@ func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
 
-	workspace := session.GetWorkspaceID()
-	if workspace != "" {
-		return getBuilderDependencies(session)
-	}
+	// workspace := session.GetWorkspaceID()
+	// if workspace != "" {
+	// 	return getBuilderDependencies(session)
+	// }
 
 	deps := &PreloadMetadata{}
 

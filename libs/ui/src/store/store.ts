@@ -51,6 +51,8 @@ type InitialState = {
 	viewdef?: EntityState<MetadataState>
 	componentvariant?: EntityState<MetadataState>
 	componentpack?: EntityState<MetadataState>
+	label?: EntityState<MetadataState>
+	configvalue?: EntityState<MetadataState>
 }
 
 let platform: Platform

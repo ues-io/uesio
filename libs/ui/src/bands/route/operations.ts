@@ -5,7 +5,7 @@ import { setMany as setComponentPack } from "../componentpack"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
-//import { setMany as setViewDef } from "../viewdef"
+import { setMany as setViewDef } from "../viewdef"
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
 import { MetadataState } from "../metadata/types"
@@ -103,6 +103,7 @@ const navigate =
 		if (viewDefState && viewDefState.ids?.length) {
 			viewDefState.ids.forEach((id: string) => {
 				const viewDef = viewDefState.entities[id] as MetadataState
+				viewDef.parsed = parse(viewDef.content).toJSON()
 				viewDefToAdd.push(viewDef)
 			})
 		}
@@ -127,7 +128,7 @@ const navigate =
 
 		// TODO: This can be removed once we move to React 18
 		batch(() => {
-			//dispatch(setViewDef(viewDefToAdd))
+			dispatch(setViewDef(viewDefToAdd))
 			dispatch(setComponentPack(componentPacksToAdd))
 			dispatch(setConfigValue(configValuesToAdd))
 			dispatch(setLabel(labelsToAdd))

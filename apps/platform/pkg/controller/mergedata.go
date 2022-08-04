@@ -75,6 +75,8 @@ type MergeData struct {
 	ViewDef          *routing.MetadataMergeData `json:"viewdef,omitempty"`
 	ComponentPack    *routing.MetadataMergeData `json:"componentpack,omitempty"`
 	ComponentVariant *routing.MetadataMergeData `json:"componentvariant,omitempty"`
+	Label            *routing.MetadataMergeData `json:"label,omitempty"`
+	ConfigValue      *routing.MetadataMergeData `json:"configvalue,omitempty"`
 	ReactBundle      string                     `json:"-"`
 }
 
@@ -172,6 +174,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		Component:        GetComponentMergeData(buildMode),
 		ComponentPack:    preload.GetComponenPack(),
 		ComponentVariant: preload.GetComponentVariant(),
+		Label:            preload.GetLabel(),
+		ConfigValue:      preload.GetConfigValue(),
 		ReactBundle:      ReactSrc,
 	}
 
