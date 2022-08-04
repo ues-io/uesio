@@ -66,18 +66,13 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route            *RouteMergeData            `json:"route"`
-	User             *UserMergeData             `json:"user"`
-	Site             *SiteMergeData             `json:"site"`
-	Workspace        *WorkspaceMergeData        `json:"workspace,omitempty"`
-	Component        *ComponentsMergeData       `json:"component,omitempty"`
-	ThemePreload     *routing.MetadataMergeData `json:"theme,omitempty"`
-	ViewDef          *routing.MetadataMergeData `json:"viewdef,omitempty"`
-	ComponentPack    *routing.MetadataMergeData `json:"componentpack,omitempty"`
-	ComponentVariant *routing.MetadataMergeData `json:"componentvariant,omitempty"`
-	Label            *routing.MetadataMergeData `json:"label,omitempty"`
-	ConfigValue      *routing.MetadataMergeData `json:"configvalue,omitempty"`
-	ReactBundle      string                     `json:"-"`
+	Route     *RouteMergeData      `json:"route"`
+	User      *UserMergeData       `json:"user"`
+	Site      *SiteMergeData       `json:"site"`
+	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component *ComponentsMergeData `json:"component,omitempty"`
+	routing.PreloadMetadata
+	ReactBundle string `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -169,14 +164,15 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		ThemePreload:     preload.GetThemes(),
-		ViewDef:          preload.GetViewDef(),
-		Component:        GetComponentMergeData(buildMode),
-		ComponentPack:    preload.GetComponenPack(),
-		ComponentVariant: preload.GetComponentVariant(),
-		Label:            preload.GetLabel(),
-		ConfigValue:      preload.GetConfigValue(),
-		ReactBundle:      ReactSrc,
+		Component: GetComponentMergeData(buildMode),
+		PreloadMetadata: routing.PreloadMetadata{Themes: preload.GetThemes(),
+			ViewDef:          preload.GetViewDef(),
+			ComponentPack:    preload.GetComponenPack(),
+			ComponentVariant: preload.GetComponentVariant(),
+			Label:            preload.GetLabel(),
+			ConfigValue:      preload.GetConfigValue(),
+		},
+		ReactBundle: ReactSrc,
 	}
 
 	// Not checking this error for now.
