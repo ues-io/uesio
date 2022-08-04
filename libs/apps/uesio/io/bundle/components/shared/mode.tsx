@@ -2,25 +2,24 @@ import { hooks, signal, context, definition } from "@uesio/ui"
 
 const MODE_SLICE = "mode"
 
-const toggleMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const mode = getState() as string
+const toggleMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
+	dispatcher: (signal, context, mode, setState) => {
 		setState(mode === "READ" || !mode ? "EDIT" : "READ")
 	},
 	label: "Toggle Mode",
 	properties: () => [],
 	slice: MODE_SLICE,
 }
-const setReadMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
+const setReadMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
+	dispatcher: (signal, context, mode, setState) => {
 		setState("READ")
 	},
 	label: "Toggle Mode",
 	properties: () => [],
 	slice: MODE_SLICE,
 }
-const setEditMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
+const setEditMode: signal.ComponentSignalDescriptor<"READ" | "EDIT"> = {
+	dispatcher: (signal, context, mode, setState) => {
 		setState("EDIT")
 	},
 	label: "Toggle Mode",

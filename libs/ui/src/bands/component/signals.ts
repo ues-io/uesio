@@ -2,8 +2,9 @@ import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
-import { PlainWireRecord } from "../wirerecord/types"
-import { selectState } from "./selectors"
+import { FieldValue } from "../wirerecord/types"
+
+import { selectComponentsById } from "./selectors"
 import { PlainComponentState } from "./types"
 
 interface ComponentSignal extends SignalDefinition {
@@ -23,44 +24,43 @@ export default {
 			const handler = getSignal(scope, type)
 			const viewId = context.getViewId()
 			const target = signalTarget || handler.target || ""
+			const targetComponents = selectComponentsById(getState(), target)
 
-			handler.dispatcher(
-				signal,
-				context,
-				() => {
-					const fullState = selectState(
-						getState(),
-						scope,
-						target,
-						viewId
-					)
-					return handler.slice
-						? (fullState as PlainWireRecord)?.[handler.slice]
-						: fullState
-				},
-				(state: PlainComponentState | undefined) => {
-					dispatch({
-						type: "component/set",
-						payload: {
-							id: target,
-							componentType: scope,
-							view: viewId,
-							state: handler.slice
-								? {
-										...(selectState(
-											getState(),
-											scope,
-											target,
-											viewId
-										) as PlainWireRecord),
-										[handler.slice]: state,
-								  }
-								: state,
-						},
-					})
-				},
-				platform
-			)
+			// When we have no matches in state, we still want the signal to fire.
+			const targets = targetComponents.length
+				? targetComponents
+				: [{ id: target, state: {} }]
+
+			for (const component of targets) {
+				const { state } = component as any
+				handler.dispatcher(
+					signal,
+					context,
+					handler.slice && state
+						? state[handler.slice]
+						: component.state,
+					(state: PlainComponentState | undefined) => {
+						dispatch({
+							type: "component/set",
+							payload: {
+								id: component.id,
+								componentType: scope,
+								view: viewId,
+								state: handler.slice
+									? {
+											...(component.state as Record<
+												string,
+												any
+											>),
+											[handler.slice]: state,
+									  }
+									: state,
+							},
+						})
+					},
+					platform
+				)
+			}
 
 			return context
 		},

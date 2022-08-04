@@ -2,7 +2,7 @@ import { Context } from "../context/context"
 import { Definition } from "./definition"
 import { ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { PlainComponentState } from "../bands/component/types"
+import { ComponentState, PlainComponentState } from "../bands/component/types"
 import { Platform } from "../platform/platform"
 
 type SignalDispatcher = (
@@ -13,10 +13,20 @@ type SignalDispatcher = (
 type ComponentSignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context,
-	getState: () => PlainComponentState | undefined,
+	state: Record<string, unknown>,
 	setState: (state: PlainComponentState | undefined) => void,
 	platform: Platform
 ) => void
+
+// interface ComponentSignalDispatcher<T> {
+// 	(
+// 		signal: SignalDefinition,
+// 		context: Context,
+// 		state: T,
+// 		setState: (state: PlainComponentState | undefined) => void,
+// 		platform: Platform
+// 	): void
+// }
 
 type SignalDescriptor = {
 	label: string
@@ -31,6 +41,13 @@ type ComponentSignalDescriptor = {
 	target?: string
 	slice?: string
 }
+// interface ComponentSignalDescriptor<T> {
+// 	label?: string
+// 	properties?: (signal: SignalDefinition) => PropDescriptor[]
+// 	dispatcher: ComponentSignalDispatcher<T>
+// 	target?: string
+// 	slice?: string
+// }
 
 type SignalDefinition = {
 	signal: string

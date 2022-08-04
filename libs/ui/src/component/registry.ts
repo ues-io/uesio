@@ -74,7 +74,7 @@ const getRuntimeLoader = (key: MetadataKey) => registry[key]
 
 const getUtilityLoader = (key: MetadataKey) => utilityRegistry[key]
 
-const getSignal = (key: string, signal: string) =>
+const getSignal = (key: string, signal: string): ComponentSignalDescriptor =>
 	componentSignalsRegistry[key]?.[signal]
 
 const getPropertiesDefinition = (key: MetadataKey) => {

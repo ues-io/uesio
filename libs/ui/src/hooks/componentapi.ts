@@ -1,7 +1,10 @@
 import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
-import { selectState, useComponentState } from "../bands/component/selectors"
+import {
+	selectComponent,
+	useComponentState,
+} from "../bands/component/selectors"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
 import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
@@ -48,6 +51,7 @@ class ComponentAPI {
 			componentId,
 			viewId
 		)
+		console.log({ fullState })
 		const state = slice
 			? ((fullState as PlainWireRecord)?.[slice] as T) ?? undefined
 			: fullState
@@ -61,7 +65,7 @@ class ComponentAPI {
 					view: viewId,
 					state: slice
 						? {
-								...(selectState<T>(
+								...(selectComponent<T>(
 									getCurrentState(),
 									componentType,
 									componentId,
@@ -83,7 +87,7 @@ class ComponentAPI {
 		const state = getCurrentState()
 		const componentType = this.uesio.getComponentType()
 		const viewId = this.uesio.getViewId()
-		return selectState(state, componentType, componentId, viewId)
+		return selectComponent(state, componentType, componentId, viewId)
 	}
 
 	useExternalState = <T extends PlainComponentState>(

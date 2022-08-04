@@ -1,10 +1,8 @@
 import { signal } from "@uesio/ui"
 import { FieldState } from "./fielddefinition"
-
-const signals: Record<string, signal.ComponentSignalDescriptor> = {
+const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 	SAVE_FILE: {
-		dispatcher: (signal, context, getState, setState, platform) => {
-			const state = getState() as FieldState
+		dispatcher: (signal, context, state, setState, platform) => {
 			const blob = new Blob([state.value], { type: state.mimeType })
 			const fileName = state.fileName
 			const file = new File([blob], fileName, { type: state.mimeType })
@@ -20,8 +18,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as FieldState
+		dispatcher: (signal, context, state, setState) => {
 			setState({
 				...state,
 				value: state.originalValue,
@@ -31,8 +28,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 		properties: () => [],
 	},
 	SET_FILE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as FieldState
+		dispatcher: (signal, context, state, setState) => {
 			setState({
 				...state,
 				value: signal.value as string,
@@ -42,7 +38,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 		properties: () => [],
 	},
 	INIT_FILE: {
-		dispatcher: (signal, context, getState, setState) => {
+		dispatcher: (signal, context, state, setState) => {
 			const value = signal.value as string
 			setState({
 				originalValue: value,

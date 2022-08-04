@@ -8,6 +8,7 @@ import {
 	wire,
 	hooks,
 	component,
+	metadata,
 } from "@uesio/ui"
 
 import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
@@ -28,7 +29,7 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant?: string
+	variant?: metadata.MetadataKey
 	options: MDOptions
 }
 
@@ -51,7 +52,10 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = id || path || ""
+	// If a user sets the id and the component is inside the loop of a list/deck/table,
+	// we expect unexpected behaviour. Maybe we should give some sort of warning
+	const recordId = record.getIdFieldValue()
+	const componentId = `${id || null}/${recordId}/${fieldId}`
 	const currentValue = uesio.component.useExternalState<FieldState>(
 		context.getViewId() || "",
 		"uesio/io.field",
