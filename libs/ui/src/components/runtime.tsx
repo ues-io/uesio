@@ -2,14 +2,13 @@ import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import { useUesio } from "../hooks/hooks"
+import { useHotKeyCallback, useUesio } from "../hooks/hooks"
 import Route from "./route"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
 import { Context } from "../context/context"
 import { appDispatch } from "../store/store"
 import routeOps from "../bands/route/operations"
-import { useHotkeys } from "react-hotkeys-hook"
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
@@ -60,7 +59,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		}
 	}, [])
 
-	useHotkeys("u", () => {
+	useHotKeyCallback("command+u", () => {
 		setBuildMode(!uesio.component.getState("buildmode"))
 	})
 
