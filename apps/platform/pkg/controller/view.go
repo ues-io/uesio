@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
 // ViewResponse struct
@@ -52,7 +53,13 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			ThemeRef: session.GetDefaultTheme(),
 		}
 
-		ExecuteIndexTemplate(w, route, nil, buildMode, session)
+		depsCache, err := routing.GetMetadataDeps(route, session)
+		if err != nil {
+			HandleMissingRoute(w, r, session, "", err)
+			return
+		}
+
+		ExecuteIndexTemplate(w, route, depsCache, buildMode, session)
 	}
 }
 
@@ -82,7 +89,13 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 		ThemeRef: session.GetDefaultTheme(),
 	}
 
-	ExecuteIndexTemplate(w, route, nil, true, session)
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		HandleMissingRoute(w, r, session, "", err)
+		return
+	}
+
+	ExecuteIndexTemplate(w, route, depsCache, true, session)
 }
 
 // View is good

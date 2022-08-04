@@ -10,6 +10,7 @@ import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
 import { MetadataState } from "../metadata/types"
 import { parse } from "../../yamlutils/yamlutils"
+import { parseVariantKey } from "../../component/path"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -76,9 +77,14 @@ const navigate =
 				const componentVariant = componentVariantState.entities[
 					id
 				] as MetadataState
-				componentVariant.parsed = parse(
-					componentVariant.content
-				).toJSON()
+
+				const [cns, cn, ns] = parseVariantKey(id)
+				componentVariant.parsed = {
+					...parse(componentVariant.content).toJSON(),
+					component: cns + "." + cn,
+					namespace: ns,
+				}
+
 				componentVariantsToAdd.push(componentVariant)
 			})
 		}

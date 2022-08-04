@@ -26,6 +26,7 @@ import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
 import { parse } from "../yamlutils/yamlutils"
+import { parseVariantKey } from "../component/path"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -80,7 +81,13 @@ const create = (plat: Platform, initialState: InitialState) => {
 			const componentVariant = componentVariantState.entities[
 				id
 			] as MetadataState
-			componentVariant.parsed = parse(componentVariant.content).toJSON()
+
+			const [cns, cn, ns] = parseVariantKey(id)
+			componentVariant.parsed = {
+				...parse(componentVariant.content).toJSON(),
+				component: cns + "." + cn,
+				namespace: ns,
+			}
 		})
 	}
 
