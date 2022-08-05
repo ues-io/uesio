@@ -13,6 +13,7 @@ import { MetadataState } from "../../metadata/types"
 import { getNodeAtPath, newDoc, parse } from "../../../yamlutils/yamlutils"
 import { batch } from "react-redux"
 import { ThunkFunc } from "../../../store/store"
+import { selectWire } from "../../wire"
 
 export default (context: Context): ThunkFunc =>
 	async (dispatch, getState, api) => {
@@ -113,17 +114,26 @@ export default (context: Context): ThunkFunc =>
 				dispatch(setComponentVariant(componentVariantsToAdd))
 			})
 		}
-		viewDef = viewSelectors.selectById(getState(), viewDefId)
+		const state = getState()
+		viewDef = viewSelectors.selectById(state, viewDefId)
 		if (!viewDef) throw new Error("Could not get View Def")
 
 		const definition = viewDef.parsed as ViewDefinition
 		const wires = definition.wires || {}
-		const wireNames = wires ? Object.keys(wires) : []
 
-		if (wireNames?.length) {
+		const wiresToInit = Object.fromEntries(
+			Object.entries(wires).filter(
+				([wirename]) =>
+					!selectWire(state, context.getViewId(), wirename)
+			)
+		)
+
+		const wiresToInitNames = wires ? Object.keys(wiresToInit) : []
+
+		if (wiresToInitNames?.length) {
 			// Initialize Wires
-			dispatch(initializeWiresOp(context, wires))
-			await dispatch(loadWiresOp(context, wireNames))
+			dispatch(initializeWiresOp(context, wiresToInit))
+			await dispatch(loadWiresOp(context, wiresToInitNames))
 		}
 
 		// Handle Events

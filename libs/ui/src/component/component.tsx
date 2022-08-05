@@ -13,7 +13,7 @@ import {
 } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
-import { shouldDisplay } from "./display"
+import { useShouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
@@ -122,11 +122,11 @@ function mergeContextVariants(
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
+	if (!useShouldDisplay(context, definition)) return null
 	if (!componentType) return <NotFound {...props} />
 	const Loader =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
 
-	if (!shouldDisplay(context, definition)) return null
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,

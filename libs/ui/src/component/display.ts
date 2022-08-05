@@ -153,24 +153,35 @@ function should(condition: DisplayCondition, context: Context) {
 	return true
 }
 
-function shouldDisplay(context: Context, definition?: DefinitionMap) {
+function useShouldDisplay(context: Context, definition?: DefinitionMap) {
 	const displayLogic = definition?.["uesio.display"] as
 		| DisplayCondition[]
 		| undefined
 
 	const uesio = useUesio({ context })
+	// Create a list of all of the wires that we're going to care about
+	const contextWire = context.getWireId()
+	const wireNames = contextWire ? [contextWire] : []
+
+	let result = true
+
 	if (displayLogic?.length) {
 		for (const condition of displayLogic) {
 			// Weird hack for now
 			if (!condition.type && condition.wire) {
-				uesio.wire.useWire(condition.wire)
+				wireNames.push(condition.wire)
 			}
 			if (!should(condition, context)) {
-				return false
+				result = false
+				break
 			}
 		}
 	}
-	return true
+
+	// We need to subscribe to changes on these wires
+	uesio.wire.useWires(wireNames)
+
+	return result
 }
 
 function shouldHaveClass(
@@ -193,4 +204,4 @@ function shouldHaveClass(
 	return true
 }
 
-export { shouldDisplay, shouldHaveClass, DisplayCondition }
+export { useShouldDisplay, shouldHaveClass, DisplayCondition }

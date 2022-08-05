@@ -1,4 +1,4 @@
-import { Context } from "../../context/context"
+import { Context, newContext } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import { setMany as setComponentPack } from "../componentpack"
@@ -10,7 +10,9 @@ import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
 import { MetadataState } from "../metadata/types"
 import { parse } from "../../yamlutils/yamlutils"
-import { parseVariantKey } from "../../component/path"
+import { parseKey, parseVariantKey } from "../../component/path"
+import loadViewOp from "../view/operations/load"
+import { loadScripts } from "../../hooks/usescripts"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -48,21 +50,7 @@ const navigate =
 		const routeResponse = await platform.getRoute(context, request)
 
 		if (!routeResponse) return context
-		// const view = routeResponse.view
-
-		// // Pre-load the view for faster appearances and no white flash
-		// await dispatch(
-		// 	loadViewOp(
-		// 		newContext({
-		// 			view: `${view}()`,
-		// 			viewDef: view,
-		// 			workspace,
-		// 			params: routeResponse.params,
-		// 		})
-		// 	)
-		// )
-
-		console.log({ routeResponse })
+		const view = routeResponse.view
 
 		const componentPacksToAdd: MetadataState[] = []
 		const componentVariantsToAdd: MetadataState[] = []
@@ -126,16 +114,6 @@ const navigate =
 			})
 		}
 
-		// TODO: This can be removed once we move to React 18
-		batch(() => {
-			dispatch(setViewDef(viewDefToAdd))
-			dispatch(setComponentPack(componentPacksToAdd))
-			dispatch(setConfigValue(configValuesToAdd))
-			dispatch(setLabel(labelsToAdd))
-			dispatch(setComponentVariant(componentVariantsToAdd))
-		})
-		//END
-
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
 			window.history.pushState(
@@ -148,7 +126,47 @@ const navigate =
 				prefix + routeResponse.path
 			)
 		}
-		dispatch(setRoute(routeResponse))
+
+		// We don't need to store the dependencies in redux
+		delete routeResponse.dependencies
+
+		dispatch(setViewDef(viewDefToAdd))
+		// TODO: This can be removed once we move to React 18
+
+		//END
+
+		await loadScripts(
+			componentPacksToAdd.map(({ key }) => {
+				const [namespace, name] = parseKey(key)
+				return platform.getComponentPackURL(
+					context,
+					namespace,
+					name,
+					false
+				)
+			})
+		)
+
+		// Pre-load the view for faster appearances and no white flash
+		await dispatch(
+			loadViewOp(
+				newContext({
+					view: `${view}()`,
+					viewDef: view,
+					workspace,
+					params: routeResponse.params,
+				})
+			)
+		)
+
+		batch(() => {
+			dispatch(setComponentPack(componentPacksToAdd))
+			dispatch(setConfigValue(configValuesToAdd))
+			dispatch(setLabel(labelsToAdd))
+			dispatch(setComponentVariant(componentVariantsToAdd))
+			dispatch(setRoute(routeResponse))
+		})
+
 		return context
 	}
 
