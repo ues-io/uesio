@@ -10,6 +10,7 @@ import { appDispatch } from "../../store/store"
 import { ViewProps } from "./viewdefinition"
 import { ComponentInternal } from "../../component/component"
 import PanelArea from "./../panelarea"
+import { makeViewId } from "../../bands/view"
 const View: FunctionComponent<ViewProps> = (props) => {
 	const uesio = useUesio(props)
 	const {
@@ -18,7 +19,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		definition: { params, view: viewDefId },
 	} = props
 
-	const viewId = `${viewDefId}(${path || ""})`
+	const viewId = makeViewId(viewDefId, path)
 	const cpacks = getComponentPackKeys()
 
 	const subViewClass = css({

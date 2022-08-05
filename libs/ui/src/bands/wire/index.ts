@@ -17,6 +17,8 @@ import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
 import { MetadataKey } from "../builder/types"
+import { set as setRoute } from "../route"
+import { makeViewId } from "../view"
 
 type DeletePayload = {
 	recordId: string
@@ -327,6 +329,21 @@ const wireSlice = createSlice({
 		load: (state, { payload: [wires] }: WireLoadAction) => {
 			wireAdapter.upsertMany(state, wires)
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(setRoute, (state, { payload }) => {
+			if (!payload?.view) return state
+			// Remove all wires except for ones that were preloaded for this view
+			const match = makeViewId(payload.view) + ":"
+			const wiresToKeep = Object.entries(state.entities).flatMap(
+				([key, value]) => {
+					if (key.startsWith(match) && value) return [value]
+					return []
+				}
+			)
+			wireAdapter.removeAll(state)
+			return wireAdapter.addMany(state, wiresToKeep)
+		})
 	},
 })
 
