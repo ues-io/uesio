@@ -154,7 +154,6 @@ const ColumnSection: FunctionComponent<SectionRendererProps> = (props) => {
 												i + 1 < columns.length - 1
 													? i + 1
 													: null
-											console.log({ newIndex })
 											newIndex &&
 												uesio.builder.moveDefinition(
 													`["viewdef"]["${viewDefId}"]${path}["columns"]["${i}"]`,

@@ -134,17 +134,22 @@ const metadataSlice = createSlice({
 				payload.fromPath
 			)
 			if (
-				toType === "viewdef" &&
-				fromType === "viewdef" &&
-				toItem === fromItem
+				toType !== "viewdef" ||
+				fromType !== "viewdef" ||
+				toItem !== fromItem
 			) {
-				const entityState = state.entities[toItem]
-				entityState &&
-					moveDef(entityState, {
-						fromPath,
-						toPath,
-					})
+				return console.warn(
+					"Invalid move path(s), probably 'viewdef' is missing. ",
+					payload
+				)
 			}
+
+			const entityState = state.entities[toItem]
+			entityState &&
+				moveDef(entityState, {
+					fromPath,
+					toPath,
+				})
 		})
 		builder.addCase(save, saveAllDefs)
 		builder.addCase(cancel, cancelAllDefs)
