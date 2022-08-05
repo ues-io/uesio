@@ -5,7 +5,7 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataType, METADATA } from "../bands/builder/types"
-import { RouteState } from "../bands/route/types"
+import { Dependencies, RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
@@ -435,6 +435,11 @@ const platform = {
 		})
 
 		return respondVoid(response)
+	},
+	getBuilderDeps: async (context: Context): Promise<Dependencies> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(`${prefix}/metadata/builder`)
+		return respondJSON(response)
 	},
 }
 

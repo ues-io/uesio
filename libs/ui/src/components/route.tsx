@@ -62,6 +62,8 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		!!(route && route.workspace)
 	)
 
+	uesio.builder.useBuilderDeps(buildMode, routeContext)
+
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 

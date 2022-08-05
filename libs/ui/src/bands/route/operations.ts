@@ -1,21 +1,12 @@
 import { Context, newContext } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
-import { setMany as setComponentPack } from "../componentpack"
-import { setMany as setComponentVariant } from "../componentvariant"
-import { setMany as setConfigValue } from "../configvalue"
-import { setMany as setLabel } from "../label"
-import { setMany as setViewDef } from "../viewdef"
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
-import { MetadataState } from "../metadata/types"
 import { parseKey } from "../../component/path"
 import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
-import { parseRouteResponse } from "./utils"
-import { EntityId } from "@reduxjs/toolkit"
-
-type EntityMap = Record<EntityId, MetadataState>
+import { dispatchRouteDeps, parseRouteResponse } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -73,9 +64,7 @@ const navigate =
 		}
 
 		// Dispatch the view first so we can preload it
-		if (deps?.viewdef) {
-			dispatch(setViewDef(deps?.viewdef.entities as EntityMap))
-		}
+		dispatchRouteDeps({ viewdef: deps?.viewdef }, dispatch)
 
 		const newPacks = deps?.componentpack?.ids.map((key) => {
 			const [namespace, name] = parseKey(key as string)
@@ -98,31 +87,12 @@ const navigate =
 			)
 		)
 
+		// We don't need to store the dependencies in redux
+		delete routeResponse.dependencies
+		if (deps?.viewdef) delete deps.viewdef
+
 		batch(() => {
-			if (deps?.componentpack) {
-				dispatch(
-					setComponentPack(deps?.componentpack.entities as EntityMap)
-				)
-			}
-			if (deps?.configvalue) {
-				dispatch(
-					setConfigValue(deps?.configvalue.entities as EntityMap)
-				)
-			}
-
-			if (deps?.label) {
-				dispatch(setLabel(deps?.label.entities as EntityMap))
-			}
-
-			if (deps?.componentvariant) {
-				dispatch(
-					setComponentVariant(
-						deps?.componentvariant.entities as EntityMap
-					)
-				)
-			}
-			// We don't need to store the dependencies in redux
-			delete routeResponse.dependencies
+			dispatchRouteDeps(deps, dispatch)
 			dispatch(setRoute(routeResponse))
 		})
 

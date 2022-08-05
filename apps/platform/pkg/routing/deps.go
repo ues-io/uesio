@@ -315,7 +315,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	return packs, nil
 }
 
-func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
+func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 
 	packsByNamespace, err := getPacksByNamespace(session)
 	if err != nil {
@@ -354,7 +354,13 @@ func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 	}
 	for i := range variants {
 		variant := variants[i]
-		addVariantDep(deps, variant.GetKey(), session)
+		bytes, err := yaml.Marshal(&variant)
+		if err != nil {
+			return nil, err
+		}
+
+		deps.AddComponentVariant(variant.GetKey(), string(bytes))
+
 	}
 
 	for key, value := range labels {
@@ -373,11 +379,6 @@ func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
-
-	// workspace := session.GetWorkspaceID()
-	// if workspace != "" {
-	// 	return getBuilderDependencies(session)
-	// }
 
 	deps := &PreloadMetadata{}
 
