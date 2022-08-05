@@ -25,8 +25,7 @@ import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
-import { parse } from "../yamlutils/yamlutils"
-import { parseVariantKey } from "../component/path"
+import { parseRouteResponse } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -61,38 +60,7 @@ let store: ReturnType<typeof create>
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
-	const themeState = initialState.theme
-	if (themeState && themeState.ids?.length) {
-		themeState.ids.forEach((id: string) => {
-			const theme = themeState.entities[id] as MetadataState
-			theme.parsed = parse(theme.content).toJSON()
-		})
-	}
-
-	const viewDefState = initialState.viewdef
-	if (viewDefState && viewDefState.ids?.length) {
-		viewDefState.ids.forEach((id: string) => {
-			const viewDef = viewDefState.entities[id] as MetadataState
-			viewDef.original = viewDef.content
-			viewDef.parsed = parse(viewDef.content).toJSON()
-		})
-	}
-
-	const componentVariantState = initialState.componentvariant
-	if (componentVariantState && componentVariantState.ids?.length) {
-		componentVariantState.ids.forEach((id: string) => {
-			const componentVariant = componentVariantState.entities[
-				id
-			] as MetadataState
-
-			const [cns, cn, ns] = parseVariantKey(id)
-			componentVariant.parsed = {
-				...parse(componentVariant.content).toJSON(),
-				component: cns + "." + cn,
-				namespace: ns,
-			}
-		})
-	}
+	parseRouteResponse(initialState)
 
 	const newStore = configureStore({
 		reducer: {

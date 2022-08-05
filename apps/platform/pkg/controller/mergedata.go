@@ -77,7 +77,8 @@ var indexTemplate *template.Template
 
 func init() {
 	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
-	indexTemplate = template.Must(template.ParseFiles(indexPath))
+	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
+	indexTemplate = template.Must(template.ParseFiles(indexPath, cssPath))
 }
 
 // String function controls how MergeData is marshalled
@@ -159,7 +160,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		Component: GetComponentMergeData(buildMode),
 		PreloadMetadata: routing.PreloadMetadata{Themes: preload.GetThemes(),
 			ViewDef:          preload.GetViewDef(),
-			ComponentPack:    preload.GetComponenPack(),
+			ComponentPack:    preload.GetComponentPack(),
 			ComponentVariant: preload.GetComponentVariant(),
 			Label:            preload.GetLabel(),
 			ConfigValue:      preload.GetConfigValue(),

@@ -33,12 +33,12 @@ func (mmd *MetadataMergeData) AddItem(id, content string) {
 }
 
 type PreloadMetadata struct {
-	Themes           *MetadataMergeData `json:"theme"`
-	ViewDef          *MetadataMergeData `json:"viewdef"`
-	ComponentPack    *MetadataMergeData `json:"componentpack"`
-	ComponentVariant *MetadataMergeData `json:"componentvariant"`
-	ConfigValue      *MetadataMergeData `json:"configvalue"`
-	Label            *MetadataMergeData `json:"label"`
+	Themes           *MetadataMergeData `json:"theme,omitempty"`
+	ViewDef          *MetadataMergeData `json:"viewdef,omitempty"`
+	ComponentPack    *MetadataMergeData `json:"componentpack,omitempty"`
+	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
+	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
+	Label            *MetadataMergeData `json:"label,omitempty"`
 }
 
 func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
@@ -55,7 +55,7 @@ func (pm *PreloadMetadata) GetViewDef() *MetadataMergeData {
 	return pm.ViewDef
 }
 
-func (pm *PreloadMetadata) GetComponenPack() *MetadataMergeData {
+func (pm *PreloadMetadata) GetComponentPack() *MetadataMergeData {
 	if pm == nil {
 		return nil
 	}

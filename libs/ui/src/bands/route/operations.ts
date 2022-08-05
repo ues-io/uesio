@@ -9,10 +9,13 @@ import { setMany as setViewDef } from "../viewdef"
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
 import { MetadataState } from "../metadata/types"
-import { parse } from "../../yamlutils/yamlutils"
-import { parseKey, parseVariantKey } from "../../component/path"
+import { parseKey } from "../../component/path"
 import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
+import { parseRouteResponse } from "./utils"
+import { EntityId } from "@reduxjs/toolkit"
+
+type EntityMap = Record<EntityId, MetadataState>
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -50,70 +53,11 @@ const navigate =
 		const routeResponse = await platform.getRoute(context, request)
 
 		if (!routeResponse) return context
+
+		const deps = routeResponse.dependencies
+
+		parseRouteResponse(deps)
 		const view = routeResponse.view
-
-		const componentPacksToAdd: MetadataState[] = []
-		const componentVariantsToAdd: MetadataState[] = []
-		const viewDefToAdd: MetadataState[] = []
-		const configValuesToAdd: MetadataState[] = []
-		const labelsToAdd: MetadataState[] = []
-
-		const componentVariantState =
-			routeResponse.dependencies?.componentvariant
-		if (componentVariantState && componentVariantState.ids?.length) {
-			componentVariantState.ids.forEach((id: string) => {
-				const componentVariant = componentVariantState.entities[
-					id
-				] as MetadataState
-
-				const [cns, cn, ns] = parseVariantKey(id)
-				componentVariant.parsed = {
-					...parse(componentVariant.content).toJSON(),
-					component: cns + "." + cn,
-					namespace: ns,
-				}
-
-				componentVariantsToAdd.push(componentVariant)
-			})
-		}
-
-		const componentPacksState = routeResponse.dependencies?.componentpack
-		if (componentPacksState && componentPacksState.ids?.length) {
-			componentPacksState.ids.forEach((id: string) => {
-				const componentPack = componentPacksState.entities[
-					id
-				] as MetadataState
-				componentPacksToAdd.push(componentPack)
-			})
-		}
-
-		const viewDefState = routeResponse.dependencies?.viewdef
-		if (viewDefState && viewDefState.ids?.length) {
-			viewDefState.ids.forEach((id: string) => {
-				const viewDef = viewDefState.entities[id] as MetadataState
-				viewDef.original = viewDef.content
-				viewDef.parsed = parse(viewDef.content).toJSON()
-				viewDefToAdd.push(viewDef)
-			})
-		}
-
-		const configValueState = routeResponse.dependencies?.configvalue
-		if (configValueState && configValueState.ids?.length) {
-			configValueState.ids.forEach((id: string) => {
-				const configvalue = configValueState.entities[
-					id
-				] as MetadataState
-				configValuesToAdd.push(configvalue)
-			})
-		}
-
-		const labelState = routeResponse.dependencies?.label
-		if (labelState && labelState.ids?.length) {
-			labelState.ids.forEach((id: string) => {
-				const label = labelState.entities[id] as MetadataState
-				labelsToAdd.push(label)
-			})
-		}
 
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
@@ -128,25 +72,19 @@ const navigate =
 			)
 		}
 
-		// We don't need to store the dependencies in redux
-		delete routeResponse.dependencies
+		// Dispatch the view first so we can preload it
+		if (deps?.viewdef) {
+			dispatch(setViewDef(deps?.viewdef.entities as EntityMap))
+		}
 
-		dispatch(setViewDef(viewDefToAdd))
-		// TODO: This can be removed once we move to React 18
+		const newPacks = deps?.componentpack?.ids.map((key) => {
+			const [namespace, name] = parseKey(key as string)
+			return platform.getComponentPackURL(context, namespace, name, false)
+		})
 
-		//END
-
-		await loadScripts(
-			componentPacksToAdd.map(({ key }) => {
-				const [namespace, name] = parseKey(key)
-				return platform.getComponentPackURL(
-					context,
-					namespace,
-					name,
-					false
-				)
-			})
-		)
+		if (newPacks && newPacks.length) {
+			await loadScripts(newPacks)
+		}
 
 		// Pre-load the view for faster appearances and no white flash
 		await dispatch(
@@ -161,10 +99,30 @@ const navigate =
 		)
 
 		batch(() => {
-			dispatch(setComponentPack(componentPacksToAdd))
-			dispatch(setConfigValue(configValuesToAdd))
-			dispatch(setLabel(labelsToAdd))
-			dispatch(setComponentVariant(componentVariantsToAdd))
+			if (deps?.componentpack) {
+				dispatch(
+					setComponentPack(deps?.componentpack.entities as EntityMap)
+				)
+			}
+			if (deps?.configvalue) {
+				dispatch(
+					setConfigValue(deps?.configvalue.entities as EntityMap)
+				)
+			}
+
+			if (deps?.label) {
+				dispatch(setLabel(deps?.label.entities as EntityMap))
+			}
+
+			if (deps?.componentvariant) {
+				dispatch(
+					setComponentVariant(
+						deps?.componentvariant.entities as EntityMap
+					)
+				)
+			}
+			// We don't need to store the dependencies in redux
+			delete routeResponse.dependencies
 			dispatch(setRoute(routeResponse))
 		})
 

@@ -26,4 +26,4 @@ type RouteState = {
 	dependencies?: Dependencies
 } | null
 
-export { RouteState, TenantState }
+export { RouteState, TenantState, Dependencies }
