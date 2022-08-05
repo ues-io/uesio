@@ -91,6 +91,7 @@ const navigate =
 		if (viewDefState && viewDefState.ids?.length) {
 			viewDefState.ids.forEach((id: string) => {
 				const viewDef = viewDefState.entities[id] as MetadataState
+				viewDef.original = viewDef.content
 				viewDef.parsed = parse(viewDef.content).toJSON()
 				viewDefToAdd.push(viewDef)
 			})

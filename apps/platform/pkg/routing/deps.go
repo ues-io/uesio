@@ -12,9 +12,8 @@ import (
 )
 
 type MetadataState struct {
-	Key      string `json:"key"`
-	Content  string `json:"content"`
-	Original string `json:"original,omitempty"`
+	Key     string `json:"key"`
+	Content string `json:"content"`
 }
 
 type MetadataMergeData struct {
@@ -30,22 +29,6 @@ func (mmd *MetadataMergeData) AddItem(id, content string) {
 			Key:     id,
 			Content: content,
 		}
-	}
-}
-
-func (mmd *MetadataMergeData) AddViewDef(id string, view meta.View) {
-	mmd.IDs = append(mmd.IDs, id)
-
-	bytes, err := yaml.Marshal(&view.Definition)
-	if err != nil {
-		println("This?")
-		println(err)
-	}
-
-	mmd.Entities[id] = MetadataState{
-		Key:      id,
-		Content:  string(bytes),
-		Original: string(bytes),
 	}
 }
 
@@ -120,14 +103,21 @@ func (pm *PreloadMetadata) AddComponentPack(id, content string) {
 	pm.ComponentPack.AddItem(id, content)
 }
 
-func (pm *PreloadMetadata) AddViewDef(id string, view meta.View) {
+func (pm *PreloadMetadata) AddViewDef(id string, view meta.View) error {
 	if pm.ViewDef == nil {
 		pm.ViewDef = &MetadataMergeData{
 			IDs:      []string{},
 			Entities: map[string]MetadataState{},
 		}
 	}
-	pm.ViewDef.AddViewDef(id, view)
+
+	bytes, err := yaml.Marshal(&view.Definition)
+	if err != nil {
+		return err
+	}
+
+	pm.ViewDef.AddItem(id, string(bytes))
+	return nil
 }
 
 func (pm *PreloadMetadata) AddComponentVariant(id, content string) {
@@ -267,7 +257,11 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	if err != nil {
 		return err
 	}
-	deps.AddViewDef(key, *view)
+
+	err = deps.AddViewDef(key, *view)
+	if err != nil {
+		return err
+	}
 
 	componentsUsed, variantsUsed, viewsUsed, err := view.GetDependencies()
 	if err != nil {
