@@ -160,7 +160,7 @@ const moveDef = (state: MetadataState, payload: MoveDefinitionPayload) => {
 
 	if (moveType === "unknown")
 		return console.warn(
-			"That type of Yanl movement is not supported... yet"
+			"That type of Yaml movement is not supported... yet"
 		)
 	state.content = yamlDoc.toString()
 	state.parsed = yamlDoc.toJSON()
