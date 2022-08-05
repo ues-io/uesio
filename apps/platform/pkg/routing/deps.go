@@ -6,6 +6,7 @@ import (
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -21,6 +22,11 @@ type MetadataMergeData struct {
 	Entities map[string]MetadataState `json:"entities"`
 }
 
+type FeatureFlagMergeData struct {
+	IDs      []string                                        `json:"ids"`
+	Entities map[string]featureflagstore.FeatureFlagResponse `json:"entities"`
+}
+
 func (mmd *MetadataMergeData) AddItem(id, content string) {
 	_, ok := mmd.Entities[id]
 	if !ok {
@@ -32,13 +38,28 @@ func (mmd *MetadataMergeData) AddItem(id, content string) {
 	}
 }
 
+func (mmd *FeatureFlagMergeData) AddItem(ffr featureflagstore.FeatureFlagResponse) {
+	_, ok := mmd.Entities[ffr.Key]
+	if !ok {
+		mmd.IDs = append(mmd.IDs, ffr.Key)
+		mmd.Entities[ffr.Key] = featureflagstore.FeatureFlagResponse{
+			Key:       ffr.Key,
+			Name:      ffr.Name,
+			Namespace: ffr.Namespace,
+			Value:     ffr.Value,
+			User:      ffr.User,
+		}
+	}
+}
+
 type PreloadMetadata struct {
-	Themes           *MetadataMergeData `json:"theme"`
-	ViewDef          *MetadataMergeData `json:"viewdef"`
-	ComponentPack    *MetadataMergeData `json:"componentpack"`
-	ComponentVariant *MetadataMergeData `json:"componentvariant"`
-	ConfigValue      *MetadataMergeData `json:"configvalue"`
-	Label            *MetadataMergeData `json:"label"`
+	Themes           *MetadataMergeData    `json:"theme"`
+	ViewDef          *MetadataMergeData    `json:"viewdef"`
+	ComponentPack    *MetadataMergeData    `json:"componentpack"`
+	ComponentVariant *MetadataMergeData    `json:"componentvariant"`
+	ConfigValue      *MetadataMergeData    `json:"configvalue"`
+	Label            *MetadataMergeData    `json:"label"`
+	FeatureFlag      *FeatureFlagMergeData `json:"featureflag"`
 }
 
 func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
@@ -81,6 +102,13 @@ func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
 		return nil
 	}
 	return pm.ConfigValue
+}
+
+func (pm *PreloadMetadata) GetFeatureFlags() *FeatureFlagMergeData {
+	if pm == nil {
+		return nil
+	}
+	return pm.FeatureFlag
 }
 
 func (pm *PreloadMetadata) AddTheme(id, content string) {
@@ -148,6 +176,18 @@ func (pm *PreloadMetadata) AddLabel(id, content string) {
 		}
 	}
 	pm.Label.AddItem(id, content)
+}
+
+func (pm *PreloadMetadata) AddFeatureFlag(id string, ffr featureflagstore.FeatureFlagResponse) error {
+	if pm.FeatureFlag == nil {
+		pm.FeatureFlag = &FeatureFlagMergeData{
+			IDs:      []string{},
+			Entities: map[string]featureflagstore.FeatureFlagResponse{},
+		}
+	}
+
+	pm.FeatureFlag.AddItem(ffr)
+	return nil
 }
 
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
@@ -361,13 +401,15 @@ func getBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 		deps.AddLabel(key, value)
 	}
 
-	//TO-DO Fix this
+	ffr, _ := featureflagstore.GetFeatureFlags(session, "")
+	for i := range ffr {
+		featureFlag := ffr[i]
 
-	// ffr, _ := getFeatureFlags(session, "")
-	// for i := range ffr {
-	// 	featureFlag := ffr[i]
-	// 	deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	// }
+		err := deps.AddFeatureFlag(featureFlag.Key, featureFlag)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return deps, nil
 }
@@ -406,6 +448,16 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	err = processView(route.ViewRef, deps, session)
 	if err != nil {
 		return nil, err
+	}
+
+	ffr, _ := featureflagstore.GetFeatureFlags(session, session.GetUserID())
+	for i := range ffr {
+		featureFlag := ffr[i]
+
+		err := deps.AddFeatureFlag(featureFlag.Key, featureFlag)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil

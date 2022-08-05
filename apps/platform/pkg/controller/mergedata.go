@@ -163,6 +163,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			ComponentVariant: preload.GetComponentVariant(),
 			Label:            preload.GetLabel(),
 			ConfigValue:      preload.GetConfigValue(),
+			FeatureFlag:      preload.GetFeatureFlags(),
 		},
 	}
 

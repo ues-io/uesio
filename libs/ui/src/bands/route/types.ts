@@ -1,4 +1,5 @@
 import { EntityState } from "@reduxjs/toolkit"
+import { FeatureFlagState } from "../featureflag/types"
 import { MetadataState } from "../metadata/types"
 
 type TenantState = {
@@ -13,6 +14,7 @@ type Dependencies = {
 	componentpack?: EntityState<MetadataState>
 	configvalue?: EntityState<MetadataState>
 	label?: EntityState<MetadataState>
+	featureflag?: EntityState<FeatureFlagState>
 }
 
 type RouteState = {

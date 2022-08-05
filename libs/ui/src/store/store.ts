@@ -19,6 +19,7 @@ import label from "../bands/label"
 import theme from "../bands/theme"
 import componentvariant from "../bands/componentvariant"
 import configvalue from "../bands/configvalue"
+import featureflag from "../bands/featureflag"
 import componentpack from "../bands/componentpack"
 import notification from "../bands/notification"
 import { RouteState } from "../bands/route/types"
@@ -27,6 +28,7 @@ import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
 import { parse } from "../yamlutils/yamlutils"
 import { parseVariantKey } from "../component/path"
+import { FeatureFlagState } from "../bands/featureflag/types"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -53,6 +55,7 @@ type InitialState = {
 	componentpack?: EntityState<MetadataState>
 	label?: EntityState<MetadataState>
 	configvalue?: EntityState<MetadataState>
+	featureflag?: EntityState<FeatureFlagState>
 }
 
 let platform: Platform
@@ -109,6 +112,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 			label,
 			componentvariant,
 			configvalue,
+			featureflag,
 			componentpack,
 			site,
 			workspace: (state) => state || {},

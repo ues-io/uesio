@@ -6,6 +6,7 @@ import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
 import { setMany as setViewDef } from "../viewdef"
+import { setMany as setFeatureFlag } from "../featureflag"
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
 import { MetadataState } from "../metadata/types"
@@ -13,6 +14,7 @@ import { parse } from "../../yamlutils/yamlutils"
 import { parseKey, parseVariantKey } from "../../component/path"
 import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
+import { FeatureFlagState } from "../featureflag/types"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -57,6 +59,7 @@ const navigate =
 		const viewDefToAdd: MetadataState[] = []
 		const configValuesToAdd: MetadataState[] = []
 		const labelsToAdd: MetadataState[] = []
+		const featureFlagsToAdd: FeatureFlagState[] = []
 
 		const componentVariantState =
 			routeResponse.dependencies?.componentvariant
@@ -115,6 +118,16 @@ const navigate =
 			})
 		}
 
+		const featureFlagState = routeResponse.dependencies?.featureflag
+		if (featureFlagState && featureFlagState.ids?.length) {
+			featureFlagState.ids.forEach((id: string) => {
+				const featureFlag = featureFlagState.entities[
+					id
+				] as FeatureFlagState
+				featureFlagsToAdd.push(featureFlag)
+			})
+		}
+
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
 			window.history.pushState(
@@ -166,6 +179,7 @@ const navigate =
 			dispatch(setLabel(labelsToAdd))
 			dispatch(setComponentVariant(componentVariantsToAdd))
 			dispatch(setRoute(routeResponse))
+			dispatch(setFeatureFlag(featureFlagsToAdd))
 		})
 
 		return context
