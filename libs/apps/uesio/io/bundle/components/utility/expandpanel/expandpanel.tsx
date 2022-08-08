@@ -6,6 +6,7 @@ import {
 	Children,
 	Dispatch,
 	SetStateAction,
+	SyntheticEvent,
 } from "react"
 
 import { CSSTransition } from "react-transition-group"
@@ -44,7 +45,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				cursor: "pointer",
 			},
 			icon: {
-				transform: expanded ? "rotate(0deg)" : "rotate(180deg)",
+				transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
 				transition: "all 0.3s ease",
 				fontSize: "18px",
 			},
@@ -92,15 +93,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<IOGrid
-				context={context}
-				className={classes.grid}
-				onClick={
-					hasChildren
-						? () => setExpanded && setExpanded(!expanded)
-						: undefined
-				}
-			>
+			<IOGrid context={context} className={classes.grid}>
 				{toggle}
 				{showArrow && hasChildren && (
 					<IconButton
@@ -109,6 +102,10 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 						icon="expand_more"
 						color="#999"
 						context={context}
+						onClick={(e: SyntheticEvent) => {
+							e.stopPropagation()
+							hasChildren && setExpanded && setExpanded(!expanded)
+						}}
 					/>
 				)}
 			</IOGrid>
