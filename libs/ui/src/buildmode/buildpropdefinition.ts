@@ -291,6 +291,7 @@ interface PropRendererProps extends BaseProps {
 }
 
 export {
+	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
