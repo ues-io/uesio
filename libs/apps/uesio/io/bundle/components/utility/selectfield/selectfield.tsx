@@ -48,7 +48,12 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				value={value}
 			>
 				{options?.map((option) => (
-					<option key={option.value} value={option.value}>
+					<option
+						disabled={option.disabled}
+						key={option.value}
+						value={option.value}
+						hidden={option.disabled}
+					>
 						{option.label}
 					</option>
 				))}

@@ -1,5 +1,6 @@
 import { WireDefinition } from "../../definition/wire"
 import { SaveError } from "../../load/saveresponse"
+import { MetadataKey } from "../builder/types"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
 
@@ -9,6 +10,7 @@ type PlainWire = {
 	changes: Record<string, PlainWireRecord>
 	collection: string
 	conditions: WireConditionState[]
+	order: { field: MetadataKey; desc: boolean }[]
 	data: Record<string, PlainWireRecord>
 	def: WireDefinition
 	deletes: Record<string, PlainWireRecord>

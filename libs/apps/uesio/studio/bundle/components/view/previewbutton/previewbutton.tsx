@@ -50,6 +50,12 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 		},
 	})
 
+	const togglePreview = () => (hasParams ? setOpen(true) : previewHandler())
+
+	hooks.useHotKeyCallback("command+p", () => {
+		togglePreview()
+	})
+
 	const previewHandler = (record?: wire.WireRecord) => {
 		const urlParams =
 			hasParams && record
@@ -72,7 +78,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 				context={context}
 				variant="uesio/io.secondary"
 				label="Preview"
-				onClick={() => (hasParams ? setOpen(true) : previewHandler())}
+				onClick={togglePreview}
 			/>
 			{open && (
 				<component.Panel key="previewpanel" context={context}>

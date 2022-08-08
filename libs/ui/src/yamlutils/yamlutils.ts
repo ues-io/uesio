@@ -170,4 +170,5 @@ export {
 	getPathFromPathArray,
 	parse,
 	newDoc,
+	yaml as lib,
 }

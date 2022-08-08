@@ -92,7 +92,9 @@ type PropDescriptor =
 	| ComponentTargetProp
 	| ConditionalDisplayProp
 	| IconProp
+	| ParamProp
 	| ParamsProp
+	| WireFieldsProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -146,6 +148,9 @@ interface ConditionalDisplayProp extends BasePropDescriptor {
 
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
+}
+interface ParamProp extends DefinitionBasedPropDescriptor {
+	type: "PARAM"
 }
 interface ParamsProp extends BasePropDescriptor {
 	type: "PARAMS"
@@ -202,6 +207,10 @@ interface ComponentTargetProp extends BasePropDescriptor {
 	scope: string
 }
 
+interface WireFieldsProp extends BasePropDescriptor {
+	type: "WIRE_FIELDS"
+}
+
 type ActionDescriptor =
 	| AddAction
 	| RunSignalsAction
@@ -210,6 +219,15 @@ type ActionDescriptor =
 	| CloneAction
 	| DeleteAction
 	| MoveAction
+	| AddCondition
+
+type AddCondition = {
+	label: string
+	type: "ADD_CONDITION"
+	path: string
+	definition: Definition
+	logo: string
+}
 
 type AddAction = {
 	label: string
@@ -294,4 +312,6 @@ export {
 	PropListSection,
 	ConditionalDisplayProp,
 	OrderSection,
+	WireFieldsProp,
+	AddCondition,
 }

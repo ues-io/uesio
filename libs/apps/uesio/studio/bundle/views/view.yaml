@@ -10,6 +10,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -75,12 +76,14 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Build"
+                                      hotkey: "command+b"
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
+                                      hotkey: "command+s"
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
@@ -88,6 +91,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
+                                      hotkey: "command+shift+c"
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "views"

@@ -9,7 +9,7 @@ Chart.register(...registerables)
 
 const ChartComponent: FC<Props> = (props) => {
 	const { definition } = props
-	if (!definition) {
+	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for chart")
 		return null
 	}

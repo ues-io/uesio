@@ -5,4 +5,6 @@ definition:
     root:
       fontFamily: Material Icons
       verticalAlign: middle
+      fontDisplay: block
+      fontVariationSettings: "'FILL' 1"
 public: true

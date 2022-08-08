@@ -90,7 +90,8 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 		paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
 		subbuilder := builder.getSubBuilder("OR")
 		for field := range searchFields {
-			subbuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", field, paramNumber))
+			fieldCast := "(" + field + ")::text"
+			subbuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldCast, paramNumber))
 		}
 		builder.addQueryPart(subbuilder.String())
 	}

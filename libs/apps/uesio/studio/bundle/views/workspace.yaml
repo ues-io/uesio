@@ -10,6 +10,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
         uesio/studio.homeroute:
         uesio/studio.loginroute:
         uesio/studio.publicprofile:
@@ -26,6 +27,7 @@ definition:
             uesio/studio.app:
               fields:
                 uesio/studio.color:
+                uesio/studio.icon:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
@@ -173,7 +175,7 @@ definition:
                                               - uesio/io.text:
                                                   uesio.variant: uesio/io.icon
                                                   color: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}"
-                                                  text: circle
+                                                  text: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}"
   panels:
     deleteWorkspace:
       uesio.type: uesio/io.dialog

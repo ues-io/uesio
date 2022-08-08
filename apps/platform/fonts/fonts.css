@@ -43,8 +43,7 @@
 	font-family: "Material Icons";
 	font-style: normal;
 	font-weight: 400;
-	src: local("Material Icons"), local("MaterialIcons-Sharp"),
-		url("/fonts/MaterialIconsSharp-Regular.otf") format("opentype");
+	src: url("/fonts/materialsymbols.woff2") format("woff2");
 }
 
 @font-face {

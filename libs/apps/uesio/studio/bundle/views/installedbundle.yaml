@@ -10,6 +10,7 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -24,6 +25,7 @@ definition:
             uesio/studio.app:
               fields:
                 uesio/studio.color:
+                uesio/studio.icon:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:

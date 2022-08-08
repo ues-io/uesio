@@ -6,7 +6,7 @@ interface Props extends definition.BaseProps {
 	icon: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
-	className: string
+	className?: string
 }
 
 const IconButton = component.getUtility("uesio/io.iconbutton")
@@ -21,7 +21,7 @@ const ActionButton: FunctionComponent<Props> = (props) => {
 			disabled={disabled}
 			icon={icon}
 			className={className}
-			variant="uesio/studio.sidebar"
+			variant="uesio/studio.actionbutton"
 			label={title}
 			tooltipPlacement="bottom"
 			context={context}

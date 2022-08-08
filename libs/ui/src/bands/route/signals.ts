@@ -1,3 +1,4 @@
+import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import {
@@ -33,6 +34,22 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Path",
 			},
 		],
+	},
+	[`${ROUTE_BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
+		dispatcher: (signal: RedirectSignal, context: Context) => {
+			const workspace = context.getWorkspace()
+			const route = context.getRoute()
+			if (!workspace || !route) {
+				throw new Error("Not in a Workspace Context")
+			}
+			const [, viewName] = parseKey(route.view)
+			return operations.redirect(
+				context,
+				`/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`
+			)
+		},
+		label: "Redirect to View Config",
+		properties: () => [],
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
 		dispatcher:

@@ -120,10 +120,9 @@ export default (context: Context): ThunkFunc =>
 		const wires = definition.wires || {}
 		const wireNames = wires ? Object.keys(wires) : []
 
-		// Initialize Wires
-		dispatch(initializeWiresOp(context, wires))
-
 		if (wireNames?.length) {
+			// Initialize Wires
+			dispatch(initializeWiresOp(context, wires))
 			await dispatch(loadWiresOp(context, wireNames))
 		}
 

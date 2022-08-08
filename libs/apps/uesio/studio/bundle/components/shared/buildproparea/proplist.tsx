@@ -9,6 +9,7 @@ import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
 import MetadataProp from "../buildpropitem/metadataprop"
 import NumberProp from "../buildpropitem/numberprop"
+import ParamProp from "../buildpropitem/paramprop"
 import ParamsProp from "../buildpropitem/paramsprop"
 import BooleanProp from "../buildpropitem/booleanprop"
 import ConditionProp from "../buildpropitem/conditionprop"
@@ -16,6 +17,7 @@ import NamespaceProp from "../buildpropitem/namespaceprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
+import WireFieldsProp from "../buildpropitem/wirefieldsprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -53,8 +55,12 @@ function getPropHandler(type?: string) {
 			return IconProp
 		case "CUSTOM":
 			return CustomProp
+		case "PARAM":
+			return ParamProp
 		case "PARAMS":
 			return ParamsProp
+		case "WIRE_FIELDS":
+			return WireFieldsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp

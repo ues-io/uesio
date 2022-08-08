@@ -1,8 +1,6 @@
-import React, { useEffect, FunctionComponent, useState } from "react"
+import React, { useEffect, FC, useState, ReactNode } from "react"
 
 import { component, context, styles } from "@uesio/ui"
-
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type Props = {
 	title: string
@@ -14,27 +12,33 @@ type Props = {
 	context: context.Context
 	tooltip?: string
 	expandChildren?: boolean
-	popChildren?: boolean
+	panelAlwaysExpanded?: boolean
+	panelChildren?: ReactNode
+	popperChildren?: ReactNode
 }
 
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
 const Icon = component.getUtility("uesio/io.icon")
 const Button = component.getUtility("uesio/io.button")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
-const PropNodeTag: FunctionComponent<Props> = React.memo((props) => {
+const PropNodeTag: FC<Props> = React.memo((props) => {
 	const {
 		title,
 		onClick,
-		children,
 		draggable,
 		selected,
 		context,
-		popChildren,
-		expandChildren,
+		panelAlwaysExpanded,
+		panelChildren,
+		popperChildren,
 	} = props
 
 	const [expanded, setExpanded] = useState<boolean>()
+	// const [expanded, setExpanded] = useState<boolean>(
+	// 	panelAlwaysExpanded ? panelAlwaysExpanded : false
+	// )
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -70,10 +74,10 @@ const PropNodeTag: FunctionComponent<Props> = React.memo((props) => {
 			ref={setAnchorEl}
 			draggable={!!draggable && !expanded}
 			data-type={draggable}
+			onClick={(e) => e.stopPropagation()}
 		>
 			<Tile
 				variant="uesio/studio.propnodetag"
-				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
 				isSelected={selected}
@@ -113,18 +117,22 @@ const PropNodeTag: FunctionComponent<Props> = React.memo((props) => {
 						</div>
 					}
 					showArrow={false}
-					expandState={[expanded, setExpanded]}
+					expandState={
+						panelAlwaysExpanded
+							? [true, null]
+							: [expanded, setExpanded]
+					}
 				>
-					{expandChildren && children}
+					{panelChildren}
 				</IOExpandPanel>
 			</Tile>
-			{selected && popChildren && anchorEl && children && (
+			{selected && anchorEl && popperChildren && (
 				<Popper
 					referenceEl={anchorEl}
 					context={context}
 					placement="right"
 				>
-					{children}
+					{popperChildren}
 				</Popper>
 			)}
 		</div>

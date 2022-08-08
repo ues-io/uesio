@@ -95,7 +95,11 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			<IOGrid
 				context={context}
 				className={classes.grid}
-				onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
+				onClick={
+					hasChildren
+						? () => setExpanded && setExpanded(!expanded)
+						: undefined
+				}
 			>
 				{toggle}
 				{showArrow && hasChildren && (

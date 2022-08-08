@@ -54,8 +54,6 @@ const navigate =
 			)
 		)
 
-		dispatch(setRoute(routeResponse))
-
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
 			window.history.pushState(
@@ -68,6 +66,7 @@ const navigate =
 				prefix + routeResponse.path
 			)
 		}
+		dispatch(setRoute(routeResponse))
 		return context
 	}
 

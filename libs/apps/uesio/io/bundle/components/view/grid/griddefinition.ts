@@ -22,7 +22,7 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 		{
 			name: "templateColumns",
 			type: "TEXT",
-			label: "Templace Columns",
+			label: "Template Columns",
 		},
 		{
 			name: "columnGap",
@@ -32,17 +32,12 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 		{
 			name: "templateRows",
 			type: "TEXT",
-			label: "Templace Rows",
+			label: "Template Rows",
 		},
 		{
 			name: "rowGap",
 			type: "TEXT",
 			label: "Row Gap",
-		},
-		{
-			name: "gap",
-			type: "TEXT",
-			label: "Gap",
 		},
 	],
 	sections: [],

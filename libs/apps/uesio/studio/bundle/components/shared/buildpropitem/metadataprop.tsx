@@ -13,7 +13,10 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 
 	if (!path) return null
 
-	const getGrouping = (): string | undefined => {
+	const getGrouping = (
+		path: string | undefined,
+		descriptor: builder.MetadataProp
+	): string | undefined => {
 		const {
 			groupingParents = 1,
 			groupingProperty,
@@ -37,7 +40,15 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 		if (getGroupingFromKey)
 			return component.path.getDefinitionKey(groupingNode)
 
-		if (groupingProperty) return groupingNode[groupingProperty] as string
+		if (groupingProperty) {
+			const lgroupingValue = groupingNode[groupingProperty] as string
+			if (lgroupingValue) return lgroupingValue
+		}
+
+		return getGrouping(
+			component.path.getGrandParentPath(path || ""),
+			descriptor
+		)
 	}
 
 	return (
@@ -48,7 +59,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			value={value}
 			setValue={(value) => valueAPI.set(path, value)}
 			context={context}
-			grouping={getGrouping()}
+			grouping={getGrouping(path, descriptor)}
 			selectVariant="uesio/studio.propfield"
 			fieldWrapperVariant="uesio/studio.propfield"
 		/>

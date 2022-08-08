@@ -1,5 +1,5 @@
 import { SignalDefinition } from "../definition/signal"
-import { Uesio } from "./hooks"
+import { Uesio, useHotKeyCallback } from "./hooks"
 import { Context } from "../context/context"
 import componentSignal from "../bands/component/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
@@ -21,6 +21,15 @@ class SignalAPI {
 		if (!signals) return undefined
 		return async () => this.runMany(signals, context)
 	}
+
+	useRegisterHotKey = (
+		keycode: string | undefined,
+		signals: SignalDefinition[] | undefined
+	) =>
+		useHotKeyCallback(keycode, (event) => {
+			event.preventDefault()
+			this.getHandler(signals)?.()
+		})
 
 	runMany = async (signals: SignalDefinition[], context: Context) =>
 		runMany(signals, context)

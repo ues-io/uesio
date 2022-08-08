@@ -1,17 +1,21 @@
-import { useEffect, FunctionComponent } from "react"
+import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import { useUesio } from "../hooks/hooks"
-import { Context } from "../context/context"
+import { useHotKeyCallback, useUesio } from "../hooks/hooks"
 import Route from "./route"
-import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
+import { Context } from "../context/context"
 import { appDispatch } from "../store/store"
+import routeOps from "../bands/route/operations"
+
+let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
+
+	portalsDomNode = useRef<HTMLDivElement>(null)
 	// Hardcode the component type since this component is called
 	// in an unusual way by the loader
 	uesio._componentType = "uesio/studio.runtime"
@@ -29,15 +33,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
 
 	useEffect(() => {
-		const toggleFunc = (event: KeyboardEvent) => {
-			if (event.metaKey && event.code === "KeyU") {
-				setBuildMode(!uesio.component.getState("buildmode"))
-			}
-		}
-		// Handle swapping between buildmode and runtime
-		// Option + U
-		window.addEventListener("keydown", toggleFunc)
-
 		window.onpopstate = (event: PopStateEvent) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
@@ -62,12 +57,11 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 				)
 			)
 		}
-
-		// Remove event listeners on cleanup
-		return () => {
-			window.removeEventListener("keyup", toggleFunc)
-		}
 	}, [])
+
+	useHotKeyCallback("command+u", () => {
+		setBuildMode(!uesio.component.getState("buildmode"))
+	})
 
 	const context = uesio.getContext().addFrame({
 		buildMode: buildMode && scriptResult.loaded,
@@ -91,8 +85,10 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			>
 				<NotificationArea context={props.context} />
 			</div>
+			<div ref={portalsDomNode} />
 		</>
 	)
 }
+export { portalsDomNode }
 
 export default Runtime
