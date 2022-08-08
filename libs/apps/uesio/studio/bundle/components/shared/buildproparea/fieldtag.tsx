@@ -14,19 +14,11 @@ const FieldTag: FC<{
 	valueAPI: builder.ValueAPI
 }> = (props) => {
 	const { fieldId, path, collection, context, uesio, valueAPI } = props
-	console.log({ path })
+
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 	const isFieldSelected = (path: string) => {
 		const pathArray = toPath(path).slice(-1)
-		if (path.includes("slug")) {
-			console.log({
-				isFieldSelectedPath: path,
-				fieldsDef,
-				pathArray,
-				return: !!has(fieldsDef, pathArray),
-			})
-		}
 		return !!has(fieldsDef, pathArray)
 	}
 	const field = collection?.getField(fieldId)
