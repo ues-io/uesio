@@ -62,6 +62,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Page size",
 		},
 	],
+	sections: [],
 	actions: [],
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
