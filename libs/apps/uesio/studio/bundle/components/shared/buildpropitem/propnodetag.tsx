@@ -1,4 +1,5 @@
-import { FunctionComponent, ReactNode, useState } from "react"
+import React, { useEffect, FC, useState, ReactNode } from "react"
+
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
@@ -18,9 +19,11 @@ type Props = {
 
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
+const Icon = component.getUtility("uesio/io.icon")
+const Button = component.getUtility("uesio/io.button")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
-const PropNodeTag: FunctionComponent<Props> = (props) => {
+const PropNodeTag: FC<Props> = React.memo((props) => {
 	const {
 		title,
 		onClick,
@@ -32,9 +35,10 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		popperChildren,
 	} = props
 
-	const [expanded, setExpanded] = useState<boolean>(
-		panelAlwaysExpanded ? panelAlwaysExpanded : false
-	)
+	const [expanded, setExpanded] = useState<boolean>()
+	// const [expanded, setExpanded] = useState<boolean>(
+	// 	panelAlwaysExpanded ? panelAlwaysExpanded : false
+	// )
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -56,6 +60,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			title: {
 				textTransform: "uppercase",
 				overflow: "hidden",
+				padding: "8px",
 				textOverflow: "ellipsis",
 			},
 		},
@@ -80,7 +85,37 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				<IOExpandPanel
 					defaultExpanded={false}
 					context={context}
-					toggle={<div className={classes.title}>{title}</div>}
+					toggle={
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+							}}
+						>
+							<div className={classes.title}>{title}</div>
+							{expandChildren && children && (
+								<Button
+									context={context}
+									icon={
+										<div style={{ padding: "8px" }}>
+											<Icon
+												context={context}
+												icon={`expand_${
+													expanded ? "less" : "more"
+												}`}
+											/>
+										</div>
+									}
+									onClick={(e) => {
+										e.stopPropagation()
+										setExpanded(!expanded)
+									}}
+								>
+									toggle
+								</Button>
+							)}
+						</div>
+					}
 					showArrow={false}
 					expandState={
 						panelAlwaysExpanded
@@ -102,6 +137,6 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			)}
 		</div>
 	)
-}
+})
 
 export default PropNodeTag

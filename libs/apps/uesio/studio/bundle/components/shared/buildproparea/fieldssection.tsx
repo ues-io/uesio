@@ -1,53 +1,25 @@
-import React, {
-	FunctionComponent,
-	DragEvent,
-	useState,
-	SyntheticEvent,
-	useEffect,
-	ChangeEvent,
-} from "react"
+import { FC, DragEvent, useState } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, component, definition } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetag"
-
+import FieldTag from "./fieldtag"
 const TitleBar = component.getUtility("uesio/io.titlebar")
 
-const useExpand = (
-	initialExpanded?: boolean,
-	onExpand?: () => void,
-	onClose?: () => void
-): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
-	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
-
-	useEffect(() => {
-		if (isExpanded) {
-			console.log("expanded")
-		}
-		if (!isExpanded) {
-			console.log("folded")
-		}
-	}, [isExpanded])
-
-	console.log({ isExpanded })
-	return [isExpanded, setIsExpanded]
-}
-
-const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
+const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
+	const [searchTerm, setSearchTerm] = useState("")
+
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
-	const collectionKey = wireDef?.collection as string | undefined
-
-	if (!collectionKey) {
-		return null
-	}
-
+	const collectionKey = (wireDef?.collection as string) || ""
 	// Limit the fields to just the same namespace as the collection for now.
 	// In theory, you could have fields from a different namespace attached to
 	// this collection.
 	const [namespace] = component.path.parseKey(collectionKey)
 
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
+
+	// Get field metadata
+	// const collection = uesio.collection.useCollection(context, collectionKey)
+	// const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
@@ -55,7 +27,9 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		collectionKey
 	)
 
-	const fieldsDef = wireDef?.fields as definition.DefinitionMap
+	if (!collectionKey) {
+		return null
+	}
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -69,11 +43,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	}
 
 	const fieldKeys = fields && Object.keys(fields)
-
-	const [searchTerm, setSearchTerm] = useState("")
-	const handleChange = (value: string) => {
-		setSearchTerm(value)
-	}
 
 	const results = !searchTerm
 		? fieldKeys
@@ -99,12 +68,8 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							background: "#eee",
 							borderRadius: "4px",
 						}}
-						onChange={(event: ChangeEvent<HTMLInputElement>) => {
-							handleChange(event.target.value)
-						}}
-						onClick={(event: SyntheticEvent): void => {
-							event.stopPropagation()
-						}}
+						onChange={(event) => setSearchTerm(event.target.value)}
+						onClick={(event) => event.stopPropagation()}
 						type="search"
 						placeholder="Search..."
 					/>
@@ -113,36 +78,18 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{collectionKey &&
 					results &&
-					results.map((fieldId, index) => {
-						const fieldDef = fieldsDef?.[fieldId]
-						const selected = fieldDef !== undefined
-						const onClick = (): void => {
-							const setPath = `${path}["fields"]["${fieldId}"]`
-							selected
-								? valueAPI.remove(setPath)
-								: valueAPI.set(setPath, null)
-						}
-						return (
-							<PropNodeTag
-								draggable={`${collectionKey}:${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
-								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
-								}
-								key={index}
-								onClick={onClick}
-								selected={selected}
-								context={context}
-							/>
-						)
-					})}
+					results.map((fieldId, index) => (
+						<FieldTag
+							context={context}
+							uesio={uesio}
+							fieldId={fieldId}
+							key={index}
+							path={path || ""}
+							namespace={namespace}
+							valueAPI={valueAPI}
+							collectionKey={collectionKey}
+						/>
+					))}
 			</div>
 		</>
 	)
