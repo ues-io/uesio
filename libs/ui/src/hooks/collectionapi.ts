@@ -17,7 +17,7 @@ class CollectionAPI {
 		const plainCollection = useCollection(collectionName)
 
 		useEffect(() => {
-			if (!plainCollection) {
+			if (!plainCollection && collectionName) {
 				appDispatch()(getMetadata(collectionName, context))
 			}
 		}, [])

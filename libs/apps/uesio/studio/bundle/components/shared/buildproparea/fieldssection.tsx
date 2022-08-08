@@ -30,7 +30,10 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	if (!collectionKey) {
 		return null
 	}
-
+	const collection = uesio.collection.useCollection(context, collectionKey)
+	if (!collection) {
+		return null
+	}
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
@@ -43,6 +46,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	}
 
 	const fieldKeys = fields && Object.keys(fields)
+
+	if (!fieldKeys) return null
 
 	const results = !searchTerm
 		? fieldKeys
@@ -87,7 +92,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 							path={path || ""}
 							namespace={namespace}
 							valueAPI={valueAPI}
-							collectionKey={collectionKey}
+							collection={collection}
 						/>
 					))}
 			</div>

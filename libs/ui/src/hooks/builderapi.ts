@@ -301,16 +301,17 @@ class BuilderAPI {
 		namespace: string,
 		grouping?: string
 	) =>
-		usePlatformFunc(
-			() =>
-				platform.getMetadataList(
-					context,
-					metadataType,
-					namespace,
-					grouping
-				),
-			[metadataType, namespace, grouping]
-		)
+		usePlatformFunc(() => {
+			if (!metadataType || !namespace || !grouping) {
+				return null
+			}
+			return platform.getMetadataList(
+				context,
+				metadataType,
+				namespace,
+				grouping
+			)
+		}, [metadataType, namespace, grouping])
 
 	useAvailableNamespaces = (context: Context, metadataType?: MetadataType) =>
 		usePlatformFunc(
