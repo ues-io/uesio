@@ -32,12 +32,16 @@ const usePagination = (
 	const batchId = batch || ""
 	const [currentPage, setPagination] = uesio.component.useState<number>(
 		id || props.path || "",
-		undefined,
+		0,
 		PAGINATION_SLICE
 	)
+
 	useEffect(() => {
-		setPagination(0)
+		if (currentPage !== 0) {
+			setPagination(0)
+		}
 	}, [batchId])
+
 	return [currentPage, setPagination]
 }
 

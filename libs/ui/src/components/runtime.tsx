@@ -28,10 +28,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		false
 	)
 
-	// This tells us to load in the studio main component pack if we're in buildmode
-	const deps = buildMode ? ["uesio/studio.main", "uesio/io.main"] : []
-	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
-
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
 			if (!event.state.path || !event.state.namespace) {
@@ -64,7 +60,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	})
 
 	const context = uesio.getContext().addFrame({
-		buildMode: buildMode && scriptResult.loaded,
+		buildMode,
 	})
 
 	if (buildMode === undefined) return null

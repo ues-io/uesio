@@ -62,13 +62,22 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		!!(route && route.workspace)
 	)
 
+	const isLoaded = uesio.builder.useBuilderDeps(buildMode, routeContext)
+
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
 	return (
 		<>
 			<View
-				context={routeContext}
+				context={
+					// Prevent build mode if the deps haven't been loaded yet.
+					buildMode && !isLoaded
+						? routeContext.addFrame({
+								buildMode: false,
+						  })
+						: routeContext
+				}
 				definition={{
 					view: route.view,
 					params: route.params,

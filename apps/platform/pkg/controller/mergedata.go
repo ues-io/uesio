@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	// Using text/template here instead of html/template
@@ -17,12 +16,13 @@ import (
 
 // RouteMergeData stuff to merge
 type RouteMergeData struct {
-	View      string              `json:"view"`
-	Params    map[string]string   `json:"params"`
-	Namespace string              `json:"namespace"`
-	Path      string              `json:"path"`
-	Workspace *WorkspaceMergeData `json:"workspace"`
-	Theme     string              `json:"theme"`
+	View         string                   `json:"view"`
+	Params       map[string]string        `json:"params"`
+	Namespace    string                   `json:"namespace"`
+	Path         string                   `json:"path"`
+	Workspace    *WorkspaceMergeData      `json:"workspace"`
+	Theme        string                   `json:"theme"`
+	Dependencies *routing.PreloadMetadata `json:"dependencies"`
 }
 
 // UserMergeData stuff to merge
@@ -65,20 +65,20 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route        *RouteMergeData            `json:"route"`
-	User         *UserMergeData             `json:"user"`
-	Site         *SiteMergeData             `json:"site"`
-	Workspace    *WorkspaceMergeData        `json:"workspace,omitempty"`
-	Component    *ComponentsMergeData       `json:"component,omitempty"`
-	ThemePreload *routing.MetadataMergeData `json:"theme,omitempty"`
-	ReactBundle  string                     `json:"-"`
+	Route     *RouteMergeData      `json:"route"`
+	User      *UserMergeData       `json:"user"`
+	Site      *SiteMergeData       `json:"site"`
+	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component *ComponentsMergeData `json:"component,omitempty"`
+	routing.PreloadMetadata
 }
 
 var indexTemplate *template.Template
 
 func init() {
 	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
-	indexTemplate = template.Must(template.ParseFiles(indexPath))
+	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
+	indexTemplate = template.Must(template.ParseFiles(indexPath, cssPath))
 }
 
 // String function controls how MergeData is marshalled
@@ -141,12 +141,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	ReactSrc := "production.min"
-	val, _ := os.LookupEnv("UESIO_DEV")
-	if val == "true" {
-		ReactSrc = "development"
-	}
-
 	mergeData := MergeData{
 		Route: &RouteMergeData{
 			View:      route.ViewRef,
@@ -163,9 +157,14 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		ThemePreload: preload.GetThemes(),
-		Component:    GetComponentMergeData(buildMode),
-		ReactBundle:  ReactSrc,
+		Component: GetComponentMergeData(buildMode),
+		PreloadMetadata: routing.PreloadMetadata{Themes: preload.GetThemes(),
+			ViewDef:          preload.GetViewDef(),
+			ComponentPack:    preload.GetComponentPack(),
+			ComponentVariant: preload.GetComponentVariant(),
+			Label:            preload.GetLabel(),
+			ConfigValue:      preload.GetConfigValue(),
+		},
 	}
 
 	// Not checking this error for now.

@@ -25,7 +25,7 @@ import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
-import { parse } from "../yamlutils/yamlutils"
+import { parseRouteResponse } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -47,6 +47,11 @@ type InitialState = {
 	user?: UserState
 	site?: SiteState
 	theme?: EntityState<MetadataState>
+	viewdef?: EntityState<MetadataState>
+	componentvariant?: EntityState<MetadataState>
+	componentpack?: EntityState<MetadataState>
+	label?: EntityState<MetadataState>
+	configvalue?: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -55,14 +60,7 @@ let store: ReturnType<typeof create>
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
-	// handle cached themes coming from the route
-	const themeState = initialState.theme
-	if (themeState && themeState.ids?.length) {
-		themeState.ids.forEach((id: string) => {
-			const theme = themeState.entities[id] as MetadataState
-			theme.parsed = parse(theme.content).toJSON()
-		})
-	}
+	parseRouteResponse(initialState)
 
 	const newStore = configureStore({
 		reducer: {

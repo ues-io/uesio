@@ -109,6 +109,7 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
 	workspaceAPI(wr, "/metadata/generate/"+getNSParam("namespace")+"/{name}", controller.GenerateToWorkspace).Methods("POST")
+	workspaceAPI(wr, "/metadata/builder", controller.BuilderMetadata).Methods("GET")
 
 	workspaceAPI(wr, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")

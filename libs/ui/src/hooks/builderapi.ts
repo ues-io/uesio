@@ -46,6 +46,9 @@ import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
 import { nanoid } from "nanoid"
+import { useEffect, useState } from "react"
+import { dispatchRouteDeps, parseRouteResponse } from "../bands/route/utils"
+import { loadScripts } from "./usescripts"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -320,6 +323,35 @@ class BuilderAPI {
 
 	getSignalProperties = (signal: SignalDefinition) =>
 		this.uesio.signal.getProperties(signal)
+
+	useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
+		const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)
+		useEffect(() => {
+			if (!buildMode || isLoaded) return
+			;(async () => {
+				const response = await platform.getBuilderDeps(context)
+				parseRouteResponse(response)
+				await loadScripts([
+					platform.getComponentPackURL(
+						new Context(),
+						"uesio/studio",
+						"main",
+						false
+					),
+					platform.getComponentPackURL(
+						new Context(),
+						"uesio/studio",
+						"main",
+						true
+					),
+				])
+
+				dispatchRouteDeps(response, appDispatch())
+				setIsLoaded(true)
+			})()
+		}, [buildMode])
+		return isLoaded
+	}
 }
 
 export { BuilderAPI }

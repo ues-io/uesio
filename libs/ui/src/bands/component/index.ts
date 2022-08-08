@@ -25,10 +25,7 @@ const componentSlice = createSlice({
 		set: componentAdapter.upsertOne,
 	},
 	extraReducers: (builder) => {
-		builder.addCase(setRoute, (state) => {
-			state.entities = {}
-			state.ids = []
-		})
+		builder.addCase(setRoute, componentAdapter.removeAll)
 	},
 })
 

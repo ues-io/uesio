@@ -152,7 +152,7 @@ func (v *View) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode(v)
 }
 
-func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {
+func getComponentsAndVariantsAndViewsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool, usedViews *map[string]bool) {
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return
 	}
@@ -171,7 +171,20 @@ func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, u
 						}
 					}
 				}
-				getComponentsAndVariantsUsed(prop, usedComps, usedVariants)
+				getComponentsAndVariantsAndViewsUsed(prop, usedComps, usedVariants, usedViews)
+			}
+			if compName == "uesio/core.view" {
+				for i, prop := range comp.Content[1].Content {
+					if prop.Kind == yaml.ScalarNode && prop.Value == "view" {
+						if len(comp.Content[1].Content) > i {
+							valueNode := comp.Content[1].Content[i+1]
+							if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+								(*usedViews)[valueNode.Value] = true
+							}
+						}
+					}
+					getComponentsAndVariantsAndViewsUsed(prop, usedComps, usedVariants, usedViews)
+				}
 			}
 		}
 	}
@@ -196,11 +209,11 @@ func isComponentLike(node *yaml.Node) bool {
 	return true
 }
 
-func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, error) {
+func (v *View) GetDependencies() (map[string]bool, map[string]bool, map[string]bool, error) {
 
 	components, err := getMapNode(&v.Definition, "components")
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	panels, err := getMapNode(&v.Definition, "panels")
 	if err != nil {
@@ -209,8 +222,9 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 
 	usedComps := map[string]bool{}
 	usedVariants := map[string]bool{}
+	usedViews := map[string]bool{}
 
-	getComponentsAndVariantsUsed(components, &usedComps, &usedVariants)
+	getComponentsAndVariantsAndViewsUsed(components, &usedComps, &usedVariants, &usedViews)
 
 	if panels != nil && panels.Kind == yaml.MappingNode {
 		for i := range panels.Content {
@@ -218,7 +232,7 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 				panel := panels.Content[i]
 				panelType, err := getMapNode(panel, "uesio.type")
 				if err != nil {
-					return nil, nil, err
+					return nil, nil, nil, err
 				}
 				if panelType.Kind == yaml.ScalarNode {
 					usedComps[panelType.Value] = true
@@ -226,12 +240,12 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 				for i := range panel.Content {
 					if i%2 != 0 {
 						node := panel.Content[i]
-						getComponentsAndVariantsUsed(node, &usedComps, &usedVariants)
+						getComponentsAndVariantsAndViewsUsed(node, &usedComps, &usedVariants, &usedViews)
 					}
 				}
 			}
 		}
 	}
 
-	return usedComps, usedVariants, nil
+	return usedComps, usedVariants, usedViews, nil
 }

@@ -1,8 +1,12 @@
 import { Context, newContext } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
-import loadViewOp from "../view/operations/load"
 import { NavigateRequest } from "../../platform/platform"
+import { batch } from "react-redux"
+import { parseKey } from "../../component/path"
+import loadViewOp from "../view/operations/load"
+import { loadScripts } from "../../hooks/usescripts"
+import { dispatchRouteDeps, parseRouteResponse } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -40,19 +44,11 @@ const navigate =
 		const routeResponse = await platform.getRoute(context, request)
 
 		if (!routeResponse) return context
-		const view = routeResponse.view
 
-		// Pre-load the view for faster appearances and no white flash
-		await dispatch(
-			loadViewOp(
-				newContext({
-					view: `${view}()`,
-					viewDef: view,
-					workspace,
-					params: routeResponse.params,
-				})
-			)
-		)
+		const deps = routeResponse.dependencies
+
+		parseRouteResponse(deps)
+		const view = routeResponse.view
 
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
@@ -66,7 +62,40 @@ const navigate =
 				prefix + routeResponse.path
 			)
 		}
-		dispatch(setRoute(routeResponse))
+
+		// Dispatch the view first so we can preload it
+		dispatchRouteDeps({ viewdef: deps?.viewdef }, dispatch)
+
+		const newPacks = deps?.componentpack?.ids.map((key) => {
+			const [namespace, name] = parseKey(key as string)
+			return platform.getComponentPackURL(context, namespace, name, false)
+		})
+
+		if (newPacks && newPacks.length) {
+			await loadScripts(newPacks)
+		}
+
+		// Pre-load the view for faster appearances and no white flash
+		await dispatch(
+			loadViewOp(
+				newContext({
+					view: `${view}()`,
+					viewDef: view,
+					workspace,
+					params: routeResponse.params,
+				})
+			)
+		)
+
+		// We don't need to store the dependencies in redux
+		delete routeResponse.dependencies
+		if (deps?.viewdef) delete deps.viewdef
+
+		batch(() => {
+			dispatchRouteDeps(deps, dispatch)
+			dispatch(setRoute(routeResponse))
+		})
+
 		return context
 	}
 
