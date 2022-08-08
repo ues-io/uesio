@@ -1,8 +1,9 @@
-import {
+import React, {
 	FunctionComponent,
 	DragEvent,
 	useState,
 	SyntheticEvent,
+	useEffect,
 	ChangeEvent,
 } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
@@ -10,6 +11,26 @@ import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
+
+const useExpand = (
+	initialExpanded?: boolean,
+	onExpand?: () => void,
+	onClose?: () => void
+): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
+	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
+
+	useEffect(() => {
+		if (isExpanded) {
+			console.log("expanded")
+		}
+		if (!isExpanded) {
+			console.log("folded")
+		}
+	}, [isExpanded])
+
+	console.log({ isExpanded })
+	return [isExpanded, setIsExpanded]
+}
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
