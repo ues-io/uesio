@@ -1,5 +1,5 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
-
+import ColumnSection from "./columnsection"
 interface TableDefinition extends definition.BaseDefinition {
 	id: string
 	wire: string
@@ -62,7 +62,13 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Page size",
 		},
 	],
-	sections: [],
+	sections: [
+		{
+			title: "Colums",
+			type: "CUSTOM",
+			renderFunc: ColumnSection,
+		},
+	],
 	actions: [],
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
