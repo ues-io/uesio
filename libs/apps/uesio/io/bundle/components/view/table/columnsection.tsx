@@ -1,13 +1,15 @@
 import { Fragment, FunctionComponent } from "react"
-import { SectionRendererProps } from "../../../../../studio/bundle/components/shared/buildproparea/sectionrendererdefinition"
-import { styles, component, definition, hooks } from "@uesio/ui"
+
+import { styles, component, definition, hooks, builder } from "@uesio/ui"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 const SelectField = component.getUtility("uesio/io.selectfield")
 
-const ColumnSection: FunctionComponent<SectionRendererProps> = (props) => {
+const ColumnSection: FunctionComponent<builder.SectionRendererProps> = (
+	props
+) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const viewDefId = uesio.getViewDefId()
