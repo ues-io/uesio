@@ -39,6 +39,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| CustomSection
 	| OrderSection
 	| ConditionalDisplaySection
 
@@ -70,6 +71,17 @@ interface PropListSection extends BasePropSection {
 
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
+}
+
+// Duplicate code from the studio
+interface SectionRendererProps extends BaseProps {
+	section: PropertySection
+	propsDef: BuildPropertiesDefinition
+	valueAPI: ValueAPI
+}
+interface CustomSection extends BasePropSection {
+	type: "CUSTOM"
+	renderFunc: FC<SectionRendererProps>
 }
 interface ConditionalDisplaySection extends BasePropSection {
 	type: "CONDITIONALDISPLAY"
@@ -279,6 +291,7 @@ interface PropRendererProps extends BaseProps {
 }
 
 export {
+	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
