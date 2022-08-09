@@ -57,6 +57,7 @@ components:
       variants:
         - uesio/io.text:uesio/io.icon
     titlebar:
+    markdown:
   utility:
     alert:
     avatar:

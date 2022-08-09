@@ -10,11 +10,11 @@ const defaultMDOptions: MDOptions = {
 }
 
 interface MarkDownFieldProps extends definition.UtilityProps {
-	setValue: (value: string) => void
+	setValue?: (value: string) => void
 	value: string | null
-	fieldMetadata: collection.Field
+	fieldMetadata?: collection.Field
 	mode?: context.FieldMode
-	options: MDOptions
+	options?: MDOptions
 }
 
 const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
@@ -69,7 +69,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 		disabled: readonly,
 		onChange: (
 			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-		) => setValue(event.target.value),
+		) => setValue && setValue(event.target.value),
 	}
 
 	const hashheadings = options.hashheadings
