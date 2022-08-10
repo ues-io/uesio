@@ -29,7 +29,6 @@ const useExpand = (
 		if (isExpanded) onClose && onClose()
 	}, [isExpanded])
 
-	console.log({ isExpanded })
 	return [isExpanded, setIsExpanded]
 }
 
@@ -64,14 +63,13 @@ const PropNodeTag: FC<Props> = (props) => {
 				textTransform: "uppercase",
 				overflow: "hidden",
 				textOverflow: "ellipsis",
+				padding: "8px",
 			},
 		},
 		props
 	)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	useEffect(() => {
-		console.log({ ec: props.expandChildren })
-	}, [props])
+
 	return (
 		<div
 			className={classes.root}
@@ -86,18 +84,23 @@ const PropNodeTag: FC<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
-				{/* {props.expandChildren && ( */}
-				<IOExpandPanel
-					context={context}
-					toggle={
-						<div className={classes.title}>{props.children}</div>
-					}
-					showArrow={true}
-					expandState={[isExpanded, setIsExpanded]}
-				>
-					{props.expandChildren}
-				</IOExpandPanel>
-				{/* )} */}
+				{!props.expandChildren && (
+					<div className={classes.title}>{props.children}</div>
+				)}
+				{props.expandChildren && (
+					<IOExpandPanel
+						context={context}
+						toggle={
+							<div className={classes.title}>
+								{props.children}
+							</div>
+						}
+						showArrow={true}
+						expandState={[isExpanded, setIsExpanded]}
+					>
+						{props.expandChildren}
+					</IOExpandPanel>
+				)}
 			</Tile>
 			{selected && anchorEl && popperChildren && (
 				<Popper
