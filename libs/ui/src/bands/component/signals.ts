@@ -1,10 +1,9 @@
+import produce from "immer"
 import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
-import { PlainWireRecord } from "../wirerecord/types"
 import { selectState } from "./selectors"
-import { PlainComponentState } from "./types"
 
 interface ComponentSignal extends SignalDefinition {
 	target?: string
@@ -24,43 +23,23 @@ export default {
 			const viewId = context.getViewId()
 			const target = signalTarget || handler.target || ""
 
-			handler.dispatcher(
-				signal,
-				context,
-				() => {
-					const fullState = selectState(
-						getState(),
-						scope,
-						target,
-						viewId
-					)
-					return handler.slice
-						? (fullState as PlainWireRecord)?.[handler.slice]
-						: fullState
-				},
-				(state: PlainComponentState | undefined) => {
-					dispatch({
-						type: "component/set",
-						payload: {
-							id: target,
-							componentType: scope,
-							view: viewId,
-							state: handler.slice
-								? {
-										...(selectState(
-											getState(),
-											scope,
-											target,
-											viewId
-										) as PlainWireRecord),
-										[handler.slice]: state,
-								  }
-								: state,
-						},
-					})
-				},
-				platform
+			const state = selectState(getState(), scope, target, viewId)
+
+			// If the return value of calling dispatcher is a value,
+			// then just set the state to that value.
+			const dispatchResult = produce(state, (draft) =>
+				handler.dispatcher(draft, signal, context, platform)
 			)
+
+			dispatch({
+				type: "component/set",
+				payload: {
+					id: target,
+					componentType: scope,
+					view: viewId,
+					state: dispatchResult,
+				},
+			})
 
 			return context
 		},

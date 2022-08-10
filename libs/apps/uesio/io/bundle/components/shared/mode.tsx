@@ -1,31 +1,29 @@
 import { hooks, signal, context, definition } from "@uesio/ui"
 
-const MODE_SLICE = "mode"
+type ModeState = {
+	mode?: context.FieldMode
+}
 
-const toggleMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const mode = getState() as string
-		setState(mode === "READ" || !mode ? "EDIT" : "READ")
+const toggleMode: signal.ComponentSignalDescriptor<ModeState> = {
+	dispatcher: (state) => {
+		state.mode = state.mode === "READ" || !state.mode ? "EDIT" : "READ"
 	},
 	label: "Toggle Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
-const setReadMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		setState("READ")
+const setReadMode: signal.ComponentSignalDescriptor<ModeState> = {
+	dispatcher: (state) => {
+		state.mode = "READ"
 	},
-	label: "Toggle Mode",
+	label: "Read Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
-const setEditMode: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		setState("EDIT")
+const setEditMode: signal.ComponentSignalDescriptor<ModeState> = {
+	dispatcher: (state) => {
+		state.mode = "EDIT"
 	},
-	label: "Toggle Mode",
+	label: "Edit Mode",
 	properties: () => [],
-	slice: MODE_SLICE,
 }
 
 const useMode = (
@@ -34,10 +32,10 @@ const useMode = (
 	props: definition.BaseProps
 ) => {
 	const uesio = hooks.useUesio(props)
-	return uesio.component.useState<context.FieldMode>(
+	return uesio.component.useStateSlice<context.FieldMode>(
+		"mode",
 		id || props.path || "",
-		initialMode || "READ",
-		MODE_SLICE
+		initialMode || "READ"
 	)
 }
 
