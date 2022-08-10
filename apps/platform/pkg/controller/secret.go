@@ -38,7 +38,6 @@ func getSecrets(session *sess.Session) ([]SecretResponse, error) {
 	return response, nil
 }
 
-//Secret function
 func Secrets(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
@@ -57,7 +56,6 @@ type SecretSetRequest struct {
 	Value string `json:"value"`
 }
 
-//SetSecret function
 func SetSecret(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)

@@ -29,6 +29,7 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	// dumb comment
 
 	value, err := configstore.GetValue(configValue, session)
 	if err != nil {
@@ -101,7 +102,6 @@ type ConfigValueSetRequest struct {
 	Value string `json:"value"`
 }
 
-//SetConfigValue function
 func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
