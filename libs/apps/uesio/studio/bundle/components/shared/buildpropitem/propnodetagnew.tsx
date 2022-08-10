@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useEffect } from "react"
+import React, { FC, ReactNode, useState } from "react"
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
@@ -17,29 +17,15 @@ type Props = {
 	) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 }
 
-const useExpand = (
-	initialExpanded?: boolean,
-	onExpand?: () => void,
-	onClose?: () => void
-): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
-	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
-
-	useEffect(() => {
-		if (isExpanded) onExpand && onExpand()
-		if (isExpanded) onClose && onClose()
-	}, [isExpanded])
-
-	return [isExpanded, setIsExpanded]
-}
-
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const PropNodeTag: FC<Props> = (props) => {
 	const { onClick, draggable, selected, context, popperChildren } = props
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] =
-		(props.useExpand && props.useExpand()) || useExpand()
+		(props.useExpand && props.useExpand()) || useState(false)
 
 	const classes = styles.useStyles(
 		{
@@ -68,7 +54,6 @@ const PropNodeTag: FC<Props> = (props) => {
 		},
 		props
 	)
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
 	return (
 		<div
@@ -76,7 +61,6 @@ const PropNodeTag: FC<Props> = (props) => {
 			ref={setAnchorEl}
 			draggable={!!draggable && !isExpanded}
 			data-type={draggable}
-			onClick={(e) => e.stopPropagation()}
 		>
 			<Tile
 				variant="uesio/studio.propnodetag"
@@ -84,10 +68,9 @@ const PropNodeTag: FC<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
-				{!props.expandChildren && (
+				{!props.expandChildren ? (
 					<div className={classes.title}>{props.children}</div>
-				)}
-				{props.expandChildren && (
+				) : (
 					<IOExpandPanel
 						context={context}
 						toggle={
