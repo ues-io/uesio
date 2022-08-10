@@ -11,10 +11,7 @@ import usePanels from "./usePanels"
 
 component.registry.registerSignals("uesio/studio.runtime", {
 	TOGGLE_CODE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const showCode = getState() as boolean
-			setState(!showCode)
-		},
+		dispatcher: (state) => !state,
 		target: "codepanel",
 	},
 })
