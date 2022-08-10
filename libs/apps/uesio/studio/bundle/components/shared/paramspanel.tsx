@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, panel } from "@uesio/ui"
-import PropNodeTag from "./buildpropitem/propnodetag"
+import PropNodeTag from "./buildpropitem/propnodetagnew"
 
 const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
@@ -21,7 +21,6 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				const paramPath = `${localPath}["${paramId}"]`
 				return (
 					<PropNodeTag
-						title={paramId}
 						onClick={() =>
 							uesio.builder.setSelectedNode(
 								metadataType,
@@ -37,7 +36,9 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							paramPath === selectedNode
 						}
 						context={context}
-					/>
+					>
+						<span>{paramId}</span>
+					</PropNodeTag>
 				)
 			})}
 		</div>

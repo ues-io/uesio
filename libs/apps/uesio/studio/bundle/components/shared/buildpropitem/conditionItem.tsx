@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react"
+import React, { FunctionComponent, useState } from "react"
 import { component, context, builder, wire, hooks } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetag"
+import PropNodeTag from "../buildpropitem/propnodetagnew"
 import PropertiesPane from "../propertiespane"
 
 type Props = {
@@ -15,7 +15,14 @@ type Props = {
 	valueAPI: builder.ValueAPI
 	onClick: (e: MouseEvent) => void
 }
+const useExpand = (): [
+	boolean,
+	React.Dispatch<React.SetStateAction<boolean>>
+] => {
+	const [isExpanded] = useState(true)
 
+	return [isExpanded, () => null]
+}
 const Grid = component.getUtility("uesio/io.grid")
 
 const defaultConditionDef = {
@@ -280,15 +287,12 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 
 	return (
 		<PropNodeTag
-			title={getConditionTitle(condition)}
 			icon={"filter_list"}
 			selected={selected}
 			iconColor={primaryColor}
 			key={index}
 			onClick={onClick}
-			expandChildren={true}
 			context={context}
-			panelAlwaysExpanded={true}
 			popperChildren={
 				<PropertiesPane
 					path={conditionPath}
@@ -322,8 +326,9 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					valueAPI={valueAPI}
 				/>
 			}
-			panelChildren={
-				groupConditions && (
+			useExpand={() => useExpand()}
+			expandChildren={
+				!!groupConditions && (
 					<Grid
 						styles={{
 							root: {
@@ -371,7 +376,9 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					</Grid>
 				)
 			}
-		/>
+		>
+			{getConditionTitle(condition)}
+		</PropNodeTag>
 	)
 }
 
