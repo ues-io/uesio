@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/humandad/yaml"
@@ -12,8 +13,9 @@ import (
 )
 
 type MetadataState struct {
-	Key     string `json:"key"`
-	Content string `json:"content"`
+	Key     string          `json:"key"`
+	Content string          `json:"content"`
+	Parsed  json.RawMessage `json:"parsed"`
 }
 
 type MetadataMergeData struct {
@@ -30,6 +32,54 @@ func (mmd *MetadataMergeData) AddItem(id, content string) {
 			Content: content,
 		}
 	}
+}
+
+func convert(i interface{}) interface{} {
+	switch x := i.(type) {
+	case map[interface{}]interface{}:
+		m2 := map[string]interface{}{}
+		for k, v := range x {
+			m2[k.(string)] = convert(v)
+		}
+		return m2
+	case []interface{}:
+		for i, v := range x {
+			x[i] = convert(v)
+		}
+	}
+	return i
+}
+
+func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
+	_, ok := mmd.Entities[id]
+	if !ok {
+
+		bytes, err := yaml.Marshal(&view.Definition)
+		if err != nil {
+			return err
+		}
+
+		var body interface{}
+		err = yaml.Unmarshal(bytes, &body)
+		if err != nil {
+			return err
+		}
+
+		res := convert(body)
+
+		b, err := json.Marshal(res)
+		if err != nil {
+			return err
+		}
+
+		mmd.IDs = append(mmd.IDs, id)
+		mmd.Entities[id] = MetadataState{
+			Key:    id,
+			Parsed: b,
+		}
+	}
+
+	return nil
 }
 
 type PreloadMetadata struct {
@@ -111,13 +161,7 @@ func (pm *PreloadMetadata) AddViewDef(id string, view meta.View) error {
 		}
 	}
 
-	bytes, err := yaml.Marshal(&view.Definition)
-	if err != nil {
-		return err
-	}
-
-	pm.ViewDef.AddItem(id, string(bytes))
-	return nil
+	return pm.ViewDef.AddView(id, view)
 }
 
 func (pm *PreloadMetadata) AddComponentVariant(id, content string) {
