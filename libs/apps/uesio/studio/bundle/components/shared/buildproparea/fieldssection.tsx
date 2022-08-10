@@ -1,9 +1,8 @@
-import React, {
+import {
 	FunctionComponent,
 	DragEvent,
 	useState,
 	SyntheticEvent,
-	useEffect,
 	ChangeEvent,
 } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
@@ -11,26 +10,6 @@ import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
-
-const useExpand = (
-	initialExpanded?: boolean,
-	onExpand?: () => void,
-	onClose?: () => void
-): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
-	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
-
-	useEffect(() => {
-		if (isExpanded) {
-			console.log("expanded")
-		}
-		if (!isExpanded) {
-			console.log("folded")
-		}
-	}, [isExpanded])
-
-	console.log({ isExpanded })
-	return [isExpanded, setIsExpanded]
-}
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
@@ -125,22 +104,13 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						return (
 							<PropNodeTag
 								draggable={`${collectionKey}:${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
-								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
-								}
 								key={index}
 								onClick={onClick}
 								selected={selected}
 								context={context}
-							/>
+							>
+								<span>{fieldId}</span>
+							</PropNodeTag>
 						)
 					})}
 			</div>

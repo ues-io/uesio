@@ -2,7 +2,7 @@ import React, { FunctionComponent, DragEvent, useEffect, useState } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 import ExpandPanel from "./expandpanel"
-import PropNodeTag from "./buildpropitem/propnodetagnew"
+import PropNodeTag from "./buildpropitem/propnodetag"
 
 const Grid = component.getUtility("uesio/io.grid")
 

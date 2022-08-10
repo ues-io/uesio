@@ -22,7 +22,6 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				const panelPath = `${localPath}["${panelId}"]`
 				return (
 					<PropNodeTag
-						title={panelId}
 						onClick={() =>
 							uesio.builder.setSelectedNode(
 								metadataType,
@@ -30,7 +29,6 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								panelPath
 							)
 						}
-						icon="power"
 						key={panelPath}
 						selected={
 							selectedMetadataType === metadataType &&
@@ -38,7 +36,9 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							panelPath === selectedNode
 						}
 						context={context}
-					/>
+					>
+						<span>{panelId}</span>
+					</PropNodeTag>
 				)
 			})}
 		</div>
