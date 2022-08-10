@@ -19,7 +19,6 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
 		"viewinfopanel",
 		"components",
-		undefined,
 		"uesio/studio.runtime"
 	)
 

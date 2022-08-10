@@ -4,9 +4,10 @@ import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
-import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 import { useComponentVariantKeys } from "../bands/componentvariant"
 import { platform } from "../platform/platform"
+import { Definition } from "../definition/definition"
+import { useEffect } from "react"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -35,22 +36,14 @@ class ComponentAPI {
 			}) || []
 		)
 
-	useState = <T extends FieldValue>(
+	useState = <T extends PlainComponentState>(
 		componentId: string,
 		initialState?: T,
-		slice?: string,
 		cType?: string
 	): [T | undefined, (state: T) => void] => {
 		const viewId = this.uesio.getViewId()
 		const componentType = cType || this.uesio.getComponentType()
-		const fullState = useComponentState<T>(
-			componentType,
-			componentId,
-			viewId
-		)
-		const state = slice
-			? ((fullState as PlainWireRecord)?.[slice] as T) ?? undefined
-			: fullState
+		const state = useComponentState<T>(componentType, componentId, viewId)
 
 		const setState = (state: T) => {
 			appDispatch()({
@@ -59,20 +52,59 @@ class ComponentAPI {
 					id: componentId,
 					componentType,
 					view: viewId,
-					state: slice
-						? {
-								...(selectState<T>(
-									getCurrentState(),
-									componentType,
-									componentId,
-									viewId
-								) as PlainWireRecord),
-								[slice]: state,
-						  }
-						: state,
+					state,
 				},
 			})
 		}
+		useEffect(() => {
+			if (state === undefined && initialState !== undefined) {
+				setState(initialState)
+			}
+		}, [])
+
+		return [state ?? initialState, setState]
+	}
+
+	useStateSlice = <T extends Definition>(
+		slice: string,
+		componentId: string,
+		initialState?: T,
+		cType?: string
+	): [T | undefined, (state: T) => void] => {
+		const viewId = this.uesio.getViewId()
+		const componentType = cType || this.uesio.getComponentType()
+		const fullState = useComponentState<Record<string, T>>(
+			componentType,
+			componentId,
+			viewId
+		)
+		const state = fullState?.[slice] ?? undefined
+
+		const setState = (state: T) => {
+			appDispatch()({
+				type: "component/set",
+				payload: {
+					id: componentId,
+					componentType,
+					view: viewId,
+					state: {
+						...selectState<Record<string, T>>(
+							getCurrentState(),
+							componentType,
+							componentId,
+							viewId
+						),
+						[slice]: state,
+					},
+				},
+			})
+		}
+
+		useEffect(() => {
+			if (state === undefined && initialState !== undefined) {
+				setState(initialState)
+			}
+		}, [])
 
 		return [state ?? initialState, setState]
 	}

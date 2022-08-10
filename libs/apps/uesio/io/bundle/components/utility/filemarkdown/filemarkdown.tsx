@@ -8,6 +8,7 @@ import {
 	wire,
 	hooks,
 	component,
+	metadata,
 } from "@uesio/ui"
 
 import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
@@ -28,7 +29,7 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant?: string
+	variant?: metadata.MetadataKey
 	options: MDOptions
 }
 
