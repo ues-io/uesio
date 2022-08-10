@@ -102,7 +102,6 @@ type ConfigValueSetRequest struct {
 	Value string `json:"value"`
 }
 
-//SetConfigValue function
 func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
