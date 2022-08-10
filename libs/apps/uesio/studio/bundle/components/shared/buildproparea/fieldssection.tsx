@@ -104,13 +104,22 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						return (
 							<PropNodeTag
 								draggable={`${collectionKey}:${fieldId}`}
+								title={fieldId}
+								icon={
+									selected
+										? "check_box"
+										: "check_box_outline_blank"
+								}
+								iconColor={
+									selected
+										? theme.definition.palette.primary
+										: undefined
+								}
 								key={index}
 								onClick={onClick}
 								selected={selected}
 								context={context}
-							>
-								<span>{fieldId}</span>
-							</PropNodeTag>
+							/>
 						)
 					})}
 			</div>
