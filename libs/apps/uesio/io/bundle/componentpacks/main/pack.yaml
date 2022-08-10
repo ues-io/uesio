@@ -17,6 +17,7 @@ components:
     field:
       variants:
         - uesio/io.textfield:uesio/io.default
+        - uesio/io.textareafield:uesio/io.default
         - uesio/io.codefield:uesio/io.default
         - uesio/io.userfield:uesio/io.default
         - uesio/io.checkboxfield:uesio/io.default
@@ -43,6 +44,7 @@ components:
     table:
       variants:
         - uesio/io.textfield:uesio/io.table
+        - uesio/io.textareafield:uesio/io.table
         - uesio/io.selectfield:uesio/io.table
         - uesio/io.checkboxfield:uesio/io.table
         - uesio/io.autocomplete:uesio/io.table
@@ -111,3 +113,4 @@ components:
     referencegroupfield:
     markdownfield:
     filemarkdown:
+    textareafield:

@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 
-import { component, builder, collection } from "@uesio/ui"
+import { component, builder } from "@uesio/ui"
 
-const TextField = component.getUtility("uesio/io.textfield")
+const TextAreaField = component.getUtility("uesio/io.textareafield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 const TextAreaProp: FunctionComponent<builder.PropRendererProps> = ({
@@ -17,20 +17,9 @@ const TextAreaProp: FunctionComponent<builder.PropRendererProps> = ({
 		context={context}
 		variant="uesio/studio.propfield"
 	>
-		<TextField
+		<TextAreaField
 			variant="uesio/studio.propfieldtextarea"
 			value={valueAPI.get(path)}
-			fieldMetadata={
-				new collection.Field({
-					name: "",
-					namespace: "",
-					label: "",
-					createable: true,
-					accessible: true,
-					updateable: true,
-					type: "LONGTEXT",
-				})
-			}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			context={context}
 		/>
