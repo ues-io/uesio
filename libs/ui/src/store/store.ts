@@ -17,6 +17,7 @@ import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
 import label from "../bands/label"
 import theme from "../bands/theme"
+import featureflag from "../bands/featureflag"
 import componentvariant from "../bands/componentvariant"
 import configvalue from "../bands/configvalue"
 import componentpack from "../bands/componentpack"
@@ -25,6 +26,7 @@ import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
+import { FeatureFlagState } from "../bands/featureflag/types"
 import { parseRouteResponse } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
@@ -52,6 +54,7 @@ type InitialState = {
 	componentpack?: EntityState<MetadataState>
 	label?: EntityState<MetadataState>
 	configvalue?: EntityState<MetadataState>
+	featureflag?: EntityState<FeatureFlagState>
 }
 
 let platform: Platform
@@ -77,6 +80,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 			label,
 			componentvariant,
 			configvalue,
+			featureflag,
 			componentpack,
 			site,
 			workspace: (state) => state || {},

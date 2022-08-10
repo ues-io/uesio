@@ -6,14 +6,17 @@ import { Platform } from "../../platform/platform"
 import { RootState } from "../../store/store"
 import { parse } from "../../yamlutils/yamlutils"
 import { MetadataState } from "../metadata/types"
+import { FeatureFlagState } from "../featureflag/types"
 import { Dependencies } from "./types"
 import { setMany as setComponentPack } from "../componentpack"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
 import { setMany as setViewDef } from "../viewdef"
+import { setMany as setFeatureFlag } from "../featureflag"
 
 type EntityMap = Record<EntityId, MetadataState>
+type FeatureFlagEntityMap = Record<EntityId, FeatureFlagState>
 
 const dispatchRouteDeps = (
 	deps: Dependencies | undefined,
@@ -31,6 +34,12 @@ const dispatchRouteDeps = (
 
 	if (deps?.label) {
 		dispatch(setLabel(deps?.label.entities as EntityMap))
+	}
+
+	if (deps?.featureflag) {
+		dispatch(
+			setFeatureFlag(deps?.featureflag.entities as FeatureFlagEntityMap)
+		)
 	}
 
 	if (deps?.componentvariant) {
