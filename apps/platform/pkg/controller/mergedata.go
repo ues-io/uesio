@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -75,10 +76,28 @@ type MergeData struct {
 
 var indexTemplate *template.Template
 
+func getPackUrl(key string, workspace *WorkspaceMergeData) string {
+	namespace, name, err := meta.ParseKey(key)
+	if err != nil {
+		return ""
+	}
+	user, namepart, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return ""
+	}
+	if workspace != nil {
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name)
+	}
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s", user, namepart, name)
+
+}
+
 func init() {
 	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
 	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
-	indexTemplate = template.Must(template.ParseFiles(indexPath, cssPath))
+	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
+		"getPackURL": getPackUrl,
+	}).ParseFiles(indexPath, cssPath))
 }
 
 // String function controls how MergeData is marshalled
@@ -134,7 +153,6 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 	}
 }
 
-// ExecuteIndexTemplate function
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
@@ -158,7 +176,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Domain:    site.Domain,
 		},
 		Component: GetComponentMergeData(buildMode),
-		PreloadMetadata: routing.PreloadMetadata{Themes: preload.GetThemes(),
+		PreloadMetadata: routing.PreloadMetadata{
+			Themes:           preload.GetThemes(),
 			ViewDef:          preload.GetViewDef(),
 			ComponentPack:    preload.GetComponentPack(),
 			ComponentVariant: preload.GetComponentVariant(),

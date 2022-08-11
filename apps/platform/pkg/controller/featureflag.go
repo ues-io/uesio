@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-//FeatureFlag function
 func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
@@ -32,7 +31,6 @@ type FeatureFlagSetRequest struct {
 	User  string `json:"user"`
 }
 
-//SetFeatureFlag function
 func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)

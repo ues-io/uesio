@@ -51,7 +51,7 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
-	conditionId: string
+	id: string
 } & EntityPayload
 
 type AddConditionPayload = {
@@ -235,9 +235,9 @@ const wireSlice = createSlice({
 			}
 		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
-			(state, { conditionId }) => {
+			(state, { id }) => {
 				const conditionIndex = state.conditions.findIndex(
-					(condition) => condition.id === conditionId
+					(condition) => condition.id === id
 				)
 				if (conditionIndex === -1) {
 					return

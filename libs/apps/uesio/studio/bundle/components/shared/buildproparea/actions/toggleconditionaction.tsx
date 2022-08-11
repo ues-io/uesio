@@ -8,10 +8,10 @@ const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 	const { path = "", valueAPI } = props
 
 	const def = valueAPI.get(path) as definition.DefinitionMap
-	const [, wirePath] =
-		component.registry.getPropertiesDefinitionFromPath(path)
-	const wireName = component.path.getKeyAtPath(wirePath)
+	const pathArray = component.path.toPath(path)
+	if (!pathArray) return null
 
+	const wireName = component.path.getKeyAtPath(pathArray[1])
 	const wire = uesio.wire.useWire(wireName || "")
 
 	const conditionId = def.id as string

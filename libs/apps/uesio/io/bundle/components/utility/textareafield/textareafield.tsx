@@ -1,16 +1,15 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context } from "@uesio/ui"
 
-interface TextFieldProps extends definition.UtilityProps {
+interface TextAreaFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string | null
 	mode?: context.FieldMode
 	placeholder?: string
-	password?: boolean
 }
 
-const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder, password } = props
+const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
+	const { setValue, value, mode, placeholder } = props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -32,9 +31,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		) => setValue(event.target.value),
 	}
 
-	const inputType = password ? "password" : "text"
-
-	return <input type={inputType} {...commonProps} />
+	return <textarea {...commonProps} />
 }
 
-export default TextField
+export default TextAreaField
