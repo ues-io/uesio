@@ -60,7 +60,7 @@ class ComponentAPI {
 			if (state === undefined && initialState !== undefined) {
 				setState(initialState)
 			}
-		}, [])
+		}, [viewId])
 
 		return [state ?? initialState, setState]
 	}
@@ -104,7 +104,7 @@ class ComponentAPI {
 			if (state === undefined && initialState !== undefined) {
 				setState(initialState)
 			}
-		}, [])
+		}, [viewId])
 
 		return [state ?? initialState, setState]
 	}
