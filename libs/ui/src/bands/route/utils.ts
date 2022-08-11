@@ -63,11 +63,7 @@ const parseRouteResponse = (deps: Dependencies | undefined) => {
 	if (viewDefState && viewDefState.ids?.length) {
 		viewDefState.ids.forEach((id: string) => {
 			const viewDef = viewDefState.entities[id] as MetadataState
-
-			console.log({ viewDef })
-
 			viewDef.original = viewDef.content
-			//viewDef.parsed = parse(viewDef.content).toJSON()
 		})
 	}
 

@@ -60,22 +60,20 @@ func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
 		}
 
 		var body interface{}
-		err = yaml.Unmarshal(bytes, &body)
+		err = view.Definition.Decode(&body)
 		if err != nil {
 			return err
 		}
-
-		res := convert(body)
-
-		b, err := json.Marshal(res)
+		b, err := json.Marshal(body)
 		if err != nil {
 			return err
 		}
 
 		mmd.IDs = append(mmd.IDs, id)
 		mmd.Entities[id] = MetadataState{
-			Key:    id,
-			Parsed: b,
+			Key:     id,
+			Parsed:  b,
+			Content: string(bytes),
 		}
 	}
 
