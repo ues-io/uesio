@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -43,12 +44,7 @@ func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
 			return err
 		}
 
-		var body interface{}
-		err = view.Definition.Decode(&body)
-		if err != nil {
-			return err
-		}
-		b, err := json.Marshal(body)
+		parsedbytes, err := gojay.MarshalJSONObject((*meta.ViewDefinition)(&view.Definition))
 		if err != nil {
 			return err
 		}
@@ -56,7 +52,7 @@ func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
 		mmd.IDs = append(mmd.IDs, id)
 		mmd.Entities[id] = MetadataState{
 			Key:     id,
-			Parsed:  b,
+			Parsed:  parsedbytes,
 			Content: string(bytes),
 		}
 	}

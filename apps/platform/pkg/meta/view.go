@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -23,6 +24,77 @@ type View struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+type ViewDefinition yaml.Node
+
+func (vd *ViewDefinition) MarshalJSONArray(enc *gojay.Encoder) {
+	for i := range vd.Content {
+		item := ViewDefinition(*vd.Content[i])
+		if item.Kind == yaml.ScalarNode {
+			var value interface{}
+			err := vd.Content[i].Decode(&value)
+			if err != nil {
+				fmt.Println("Got an error decoding scalar: " + item.Value)
+				continue
+			}
+			if value == nil {
+				enc.AddNull()
+			} else {
+				enc.AddInterface(value)
+			}
+		}
+		if item.Kind == yaml.SequenceNode {
+			enc.AddArray(&item)
+		}
+		if item.Kind == yaml.MappingNode {
+			enc.AddObject(&item)
+		}
+	}
+}
+
+func (vd *ViewDefinition) MarshalJSONObject(enc *gojay.Encoder) {
+
+	if vd.Kind == yaml.ScalarNode {
+		enc.AddString(vd.Value)
+	}
+	if vd.Kind == yaml.SequenceNode {
+		vd.MarshalJSONArray(enc)
+	}
+	if vd.Kind == yaml.MappingNode {
+		for i := range vd.Content {
+			if i%2 != 0 {
+				continue
+			}
+			keyItem := vd.Content[i]
+			valueItem := ViewDefinition(*vd.Content[i+1])
+			if valueItem.Kind == yaml.ScalarNode {
+				var value interface{}
+				err := vd.Content[i+1].Decode(&value)
+				if err != nil {
+					fmt.Println("Got an error decoding scalar in map: " + keyItem.Value + " : " + valueItem.Value)
+					continue
+				}
+				if value == nil {
+					enc.AddNullKey(keyItem.Value)
+				} else {
+					enc.AddInterfaceKey(keyItem.Value, value)
+				}
+
+			}
+			if valueItem.Kind == yaml.SequenceNode {
+				enc.AddArrayKey(keyItem.Value, &valueItem)
+			}
+			if valueItem.Kind == yaml.MappingNode {
+				enc.AddObjectKey(keyItem.Value, &valueItem)
+			}
+
+		}
+	}
+
+}
+func (vd *ViewDefinition) IsNil() bool {
+	return vd == nil
 }
 
 func NewView(key string) (*View, error) {
