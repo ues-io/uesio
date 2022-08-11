@@ -89,6 +89,7 @@ interface ConditionalDisplaySection extends BasePropSection {
 
 type PropDescriptor =
 	| TextProp
+	| TextAreaProp
 	| NumberProp
 	| CustomProp
 	| SelectProp
@@ -148,6 +149,10 @@ interface NamespaceProp extends BasePropDescriptor {
 
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
+}
+
+interface TextAreaProp extends BasePropDescriptor {
+	type: "TEXT_AREA"
 }
 
 interface IconProp extends BasePropDescriptor {
@@ -306,6 +311,7 @@ export {
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	TextAreaProp,
 	IconProp,
 	NumberProp,
 	CustomProp,

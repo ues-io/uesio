@@ -12,14 +12,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-//ThemeResponse struct
 type ThemeResponse struct {
 	Name       string     `yaml:"name"`
 	Namespace  string     `yaml:"namespace"`
 	Definition *yaml.Node `yaml:"definition"`
 }
 
-//Theme function
 func Theme(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

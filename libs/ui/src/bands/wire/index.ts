@@ -1,7 +1,6 @@
 import {
 	createEntityAdapter,
 	createSlice,
-	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -354,16 +353,11 @@ const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 const useWires = (
 	fullWireIds: string[]
 ): Record<string, PlainWire | undefined> =>
-	useSelector((state: RootState) => selectWires(state, fullWireIds))
-
-const selectWires = createSelector(
-	selectors.selectEntities,
-	(state: RootState, fullWireIds: string[]) => fullWireIds,
-	(items, fullWireIds) =>
-		Object.fromEntries(
-			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+	Object.fromEntries(
+		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
+			fullWireIds.includes(key)
 		)
-)
+	)
 
 const selectWire = (
 	state: RootState,

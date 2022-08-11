@@ -22,6 +22,7 @@ const EmailField = component.getUtility("uesio/io.emailfield")
 const ReferenceGroupField = component.getUtility("uesio/io.referencegroupfield")
 const MarkDownField = component.getUtility("uesio/io.markdownfield")
 const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
+const TextAreaField = component.getUtility("uesio/io.textareafield")
 
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
@@ -60,9 +61,11 @@ const getFieldContent = (
 			return <DateField {...common} />
 		case type === "LONGTEXT" && displayAs === "MARKDOWN":
 			return <MarkDownField {...common} />
+		case type === "LONGTEXT":
+			return <TextAreaField {...common} />
 		case type === "TEXT" && displayAs === "PASSWORD":
 			return <TextField {...common} password={true} />
-		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
+		case type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
 		case type === "NUMBER":
 			return <NumberField {...common} />
