@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks } from "@uesio/ui"
-import PropNodeTag from "../shared/buildpropitem/propnodetagnew"
+import PropNodeTag from "./buildpropitem/propnodetag"
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
@@ -30,7 +30,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								wirePath
 							)
 						}
-						icon="power"
 						key={index}
 						selected={
 							selectedMetadataType === metadataType &&

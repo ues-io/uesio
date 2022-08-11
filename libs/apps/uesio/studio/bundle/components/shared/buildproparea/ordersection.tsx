@@ -81,10 +81,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 				const selected = selectedNode.startsWith(orderPath)
 				return (
 					<PropNodeTag
-						title={getOrderTitle(order)}
-						icon={"filter_list"}
 						selected={selected}
-						iconColor={primaryColor}
 						key={index}
 						onClick={() => {
 							uesio.builder.setSelectedNode(
@@ -109,7 +106,9 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 							/>
 						}
 						context={context}
-					/>
+					>
+						{getOrderTitle(order)}
+					</PropNodeTag>
 				)
 			})}
 		</>

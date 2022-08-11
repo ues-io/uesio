@@ -63,10 +63,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				const selected = selectedNode.startsWith(signalPath)
 				return (
 					<PropNodeTag
-						title={signal?.signal}
-						icon="router"
 						selected={selected}
-						iconColor={primaryColor}
 						key={index}
 						onClick={(): void =>
 							uesio.builder.setSelectedNode(
@@ -94,7 +91,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								valueAPI={valueAPI}
 							/>
 						}
-					/>
+					>
+						{signal?.signal}
+					</PropNodeTag>
 				)
 			})}
 		</>

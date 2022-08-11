@@ -52,7 +52,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				gridAutoFlow: "column",
 				gridTemplateColumns: "1fr 0fr",
 				alignItems: "center",
-				padding: "8px",
 			},
 			content: {
 				willChange: "max-height",

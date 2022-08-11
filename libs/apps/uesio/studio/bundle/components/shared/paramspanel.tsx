@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, panel } from "@uesio/ui"
-import PropNodeTag from "./buildpropitem/propnodetagnew"
+import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
@@ -28,7 +28,6 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								paramPath
 							)
 						}
-						icon="power"
 						key={paramPath}
 						selected={
 							selectedMetadataType === metadataType &&

@@ -24,15 +24,10 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		return null
 	}
 
-	// Limit the fields to just the same namespace as the collection for now.
-	// In theory, you could have fields from a different namespace attached to
-	// this collection.
-	const [namespace] = component.path.parseKey(collectionKey)
-
 	const fields = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
-		namespace,
+		"",
 		collectionKey
 	)
 
@@ -40,7 +35,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
-		console.log("dragstart", target, target.dataset.type)
 		if (target && target.dataset.type) {
 			uesio.builder.setDragNode("field", target.dataset.type, "")
 		}
@@ -92,7 +86,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 			))}
 		</PropNodeTag>
 	)
-	const [showPopper, setShowPopper] = useState(true)
+	const [showPopper, setShowPopper] = useState(false)
 
 	// Scroll logic for shaow on the search bar
 	const scrollBoxRef = useRef<HTMLDivElement | null>(null)
