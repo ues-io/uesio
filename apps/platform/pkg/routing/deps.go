@@ -34,22 +34,6 @@ func (mmd *MetadataMergeData) AddItem(id, content string) {
 	}
 }
 
-func convert(i interface{}) interface{} {
-	switch x := i.(type) {
-	case map[interface{}]interface{}:
-		m2 := map[string]interface{}{}
-		for k, v := range x {
-			m2[k.(string)] = convert(v)
-		}
-		return m2
-	case []interface{}:
-		for i, v := range x {
-			x[i] = convert(v)
-		}
-	}
-	return i
-}
-
 func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
