@@ -1,11 +1,58 @@
-import { FC, DragEvent, useState, useRef, ChangeEvent, useEffect } from "react"
+import React, {
+	FC,
+	DragEvent,
+	useState,
+	useRef,
+	ChangeEvent,
+	useEffect,
+	useCallback,
+} from "react"
+import throttle from "lodash/throttle"
+
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, component, definition } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetagnew"
+import PropNodeTag from "../buildpropitem/propnodetag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
+
+const useScroll = (
+	// refEl: React.MutableRefObject<HTMLDivElement | null>,
+	dependencies?: unknown[]
+) => {
+	// Scroll logic for shaow on the search bar
+	const [hasScroll, setHasScroll] = useState(false)
+	const refEl = useRef<HTMLDivElement | null>(null)
+
+	useEffect(() => {
+		console.log("effect")
+		const element = refEl.current
+		if (!element) return
+
+		const onScroll = () => {
+			console.log("scrolling")
+			setHasScroll(element.scrollTop > 0)
+		}
+		const db = throttle(onScroll, 200)
+
+		element.removeEventListener("scroll", db)
+		element.addEventListener("scroll", db)
+		return () => {
+			element.removeEventListener("scroll", db)
+		}
+	}, [refEl, refEl.current, ...(dependencies || [])])
+
+	return [
+		refEl,
+		{
+			transition: "all 0.3s ease",
+			boxShadow: hasScroll
+				? "rgb(0 0 0 / 40%) 0px 0px 20px -6px"
+				: "none",
+		},
+	]
+}
 
 type FieldProp = { fieldId: string; fields: FieldProp[] }
 type FieldDef = null | { fields: FieldDef }
@@ -16,7 +63,10 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+	const [searchTerm, setSearchTerm] = useState("")
+	const [showPopper, setShowPopper] = useState(false)
 
+	const [scrollBoxRef, scrolledStyles] = useScroll([showPopper])
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const collectionKey = wireDef?.collection as string | undefined
 
@@ -30,6 +80,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		"",
 		collectionKey
 	)
+
+	console.log({ fields })
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 
@@ -46,7 +98,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 
 	const fieldKeys = fields && Object.keys(fields)
 
-	const [searchTerm, setSearchTerm] = useState("")
 	const handleChange = (value: string) => {
 		setSearchTerm(value)
 	}
@@ -76,7 +127,17 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 			key={fieldId}
 			context={context}
 		>
-			<span>{fieldId}</span>
+			<div style={{ display: "flex" }}>
+				<span>{fieldId}</span>
+				<IconButton
+					context={context}
+					variant="uesio/studio.buildtitle"
+					icon="delete"
+					onClick={(): void => {
+						setShowPopper(!showPopper)
+					}}
+				/>
+			</div>
 			{fields?.map((el) => (
 				<FieldRenderer
 					key={fieldId}
@@ -86,30 +147,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 			))}
 		</PropNodeTag>
 	)
-	const [showPopper, setShowPopper] = useState(false)
-
-	// Scroll logic for shaow on the search bar
-	const scrollBoxRef = useRef<HTMLDivElement | null>(null)
-	const [hasScroll, setHasScroll] = useState(false)
-	useEffect(() => {
-		if (showPopper) setHasScroll(false)
-	}, [showPopper])
-	useEffect(() => {
-		if (!scrollBoxRef || !scrollBoxRef.current) return
-
-		const onScroll = () => {
-			if (!scrollBoxRef.current) return
-			setHasScroll(scrollBoxRef.current.scrollTop > 0)
-		}
-
-		scrollBoxRef.current.removeEventListener("scroll", onScroll)
-		scrollBoxRef.current.addEventListener("scroll", onScroll)
-		return () => {
-			if (!scrollBoxRef || !scrollBoxRef.current) return
-
-			scrollBoxRef.current.removeEventListener("scroll", onScroll)
-		}
-	}, [scrollBoxRef, scrollBoxRef.current, showPopper])
 
 	return (
 		<>
@@ -144,10 +181,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 								padding: "8px",
 								position: "relative",
 								zIndex: 1,
-								transition: "all 0.3s ease",
-								boxShadow: hasScroll
-									? "rgb(0 0 0 / 40%) 0px 0px 20px -6px"
-									: "none",
+								...scrolledStyles,
 							}}
 						>
 							<input
