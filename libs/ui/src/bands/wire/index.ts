@@ -1,7 +1,6 @@
 import {
 	createEntityAdapter,
 	createSlice,
-	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -52,7 +51,7 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
-	conditionId: string
+	id: string
 } & EntityPayload
 
 type AddConditionPayload = {
@@ -236,9 +235,9 @@ const wireSlice = createSlice({
 			}
 		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
-			(state, { conditionId }) => {
+			(state, { id }) => {
 				const conditionIndex = state.conditions.findIndex(
-					(condition) => condition.id === conditionId
+					(condition) => condition.id === id
 				)
 				if (conditionIndex === -1) {
 					return
@@ -354,16 +353,11 @@ const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 const useWires = (
 	fullWireIds: string[]
 ): Record<string, PlainWire | undefined> =>
-	useSelector((state: RootState) => selectWires(state, fullWireIds))
-
-const selectWires = createSelector(
-	selectors.selectEntities,
-	(state: RootState, fullWireIds: string[]) => fullWireIds,
-	(items, fullWireIds) =>
-		Object.fromEntries(
-			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+	Object.fromEntries(
+		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
+			fullWireIds.includes(key)
 		)
-)
+	)
 
 const selectWire = (
 	state: RootState,

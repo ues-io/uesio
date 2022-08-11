@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
 
 import TextProp from "../buildpropitem/textprop"
+import TextAreaProp from "../buildpropitem/textareaprop"
 import SelectProp from "../buildpropitem/selectprop"
 import MultiSelectProp from "../buildpropitem/multiselectprop"
 import KeyProp from "../buildpropitem/keyprop"
@@ -51,6 +52,8 @@ function getPropHandler(type?: string) {
 			return BooleanProp
 		case "TEXT":
 			return TextProp
+		case "TEXT_AREA":
+			return TextAreaProp
 		case "ICON":
 			return IconProp
 		case "CUSTOM":

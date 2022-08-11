@@ -1,6 +1,19 @@
 import { useState, useEffect } from "react"
 // Hook
 const cachedScripts: ScriptMap = {}
+
+const js = document.scripts
+for (let i = 0; i < js.length; i++) {
+	const scriptNode = js[i]
+	const srcAttribute = scriptNode.getAttribute("src")
+	if (!srcAttribute) continue
+	cachedScripts[srcAttribute] = {
+		loaded: true,
+		script: js[i],
+		fullKey: scriptNode.src,
+	}
+}
+
 interface ScriptMap {
 	[key: string]: ScriptCache
 }
