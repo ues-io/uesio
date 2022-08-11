@@ -17,8 +17,6 @@ const standardActions: builder.ActionDescriptor[] = [
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
-	const primaryColor = theme.definition.palette.primary
 	const [metadataType, metadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 

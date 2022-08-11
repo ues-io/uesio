@@ -39,13 +39,11 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.DefinitionMap
 		| undefined
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
 	const [, , selectedNode] = uesio.builder.useSelectedNode()
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
 
 	const orderDef = wireDef?.order as definition.Definition[] | undefined
-	const primaryColor = theme.definition.palette.primary
 
 	const ordersPath = `${path}["order"]`
 
