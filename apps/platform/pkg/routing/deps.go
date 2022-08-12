@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -24,39 +23,23 @@ type MetadataMergeData struct {
 	Entities map[string]MetadataState `json:"entities"`
 }
 
-func (mmd *MetadataMergeData) AddItem(id, content string) {
-	_, ok := mmd.Entities[id]
-	if !ok {
-		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = MetadataState{
-			Key:     id,
-			Content: content,
-		}
+func NewItem() *MetadataMergeData {
+	return &MetadataMergeData{
+		IDs:      []string{},
+		Entities: map[string]MetadataState{},
 	}
 }
 
-func (mmd *MetadataMergeData) AddView(id string, view meta.View) error {
+func (mmd *MetadataMergeData) AddItem(id, content string, parsed []byte) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
-
-		bytes, err := yaml.Marshal(&view.Definition)
-		if err != nil {
-			return err
-		}
-
-		parsedbytes, err := gojay.MarshalJSONObject((*meta.ViewDefinition)(&view.Definition))
-		if err != nil {
-			return err
-		}
-
 		mmd.IDs = append(mmd.IDs, id)
 		mmd.Entities[id] = MetadataState{
 			Key:     id,
-			Parsed:  parsedbytes,
-			Content: string(bytes),
+			Parsed:  parsed,
+			Content: content,
 		}
 	}
-
 	return nil
 }
 
@@ -111,65 +94,87 @@ func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
 	return pm.ConfigValue
 }
 
-func (pm *PreloadMetadata) AddTheme(id, content string) {
+func (pm *PreloadMetadata) AddTheme(id string, theme *meta.Theme) error {
 	if pm.Themes == nil {
-		pm.Themes = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.Themes = NewItem()
 	}
-	pm.Themes.AddItem(id, content)
+	/*
+		bytes, err := yaml.Marshal(&theme)
+		if err != nil {
+			return err
+		}
+	*/
+
+	parsedbytes, err := gojay.MarshalJSONObject(theme)
+	if err != nil {
+		return err
+	}
+	//return pm.Themes.AddItem(id, string(bytes), nil)
+	return pm.Themes.AddItem(id, "", parsedbytes)
 }
 
-func (pm *PreloadMetadata) AddComponentPack(id, content string) {
+func (pm *PreloadMetadata) AddComponentPack(id string, componentPack *meta.ComponentPack) error {
 	if pm.ComponentPack == nil {
-		pm.ComponentPack = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.ComponentPack = NewItem()
 	}
-	pm.ComponentPack.AddItem(id, content)
+	return pm.ComponentPack.AddItem(id, "", nil)
 }
 
-func (pm *PreloadMetadata) AddViewDef(id string, view meta.View) error {
+func (pm *PreloadMetadata) AddViewDef(id string, view *meta.View) error {
 	if pm.ViewDef == nil {
-		pm.ViewDef = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.ViewDef = NewItem()
 	}
 
-	return pm.ViewDef.AddView(id, view)
+	/*
+		bytes, err := yaml.Marshal(&view.Definition)
+		if err != nil {
+			return err
+		}
+	*/
+
+	parsedbytes, err := gojay.MarshalJSONObject((*meta.YAMLDefinition)(&view.Definition))
+	if err != nil {
+		return err
+	}
+
+	//return pm.ViewDef.AddItem(id, string(bytes), parsedbytes)
+	return pm.ViewDef.AddItem(id, "", parsedbytes)
+
 }
 
-func (pm *PreloadMetadata) AddComponentVariant(id, content string) {
+func (pm *PreloadMetadata) AddComponentVariant(id string, variant *meta.ComponentVariant) error {
 	if pm.ComponentVariant == nil {
-		pm.ComponentVariant = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.ComponentVariant = NewItem()
 	}
-	pm.ComponentVariant.AddItem(id, content)
+
+	/*
+		bytes, err := yaml.Marshal(&variant)
+		if err != nil {
+			return err
+		}
+	*/
+
+	parsedbytes, err := gojay.MarshalJSONObject(variant)
+	if err != nil {
+		return err
+	}
+
+	//return pm.ComponentVariant.AddItem(id, string(bytes), parsedbytes)
+	return pm.ComponentVariant.AddItem(id, "", parsedbytes)
 }
 
-func (pm *PreloadMetadata) AddConfigValue(id, content string) {
+func (pm *PreloadMetadata) AddConfigValue(id, content string) error {
 	if pm.ConfigValue == nil {
-		pm.ConfigValue = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.ConfigValue = NewItem()
 	}
-	pm.ConfigValue.AddItem(id, content)
+	return pm.ConfigValue.AddItem(id, content, nil)
 }
 
-func (pm *PreloadMetadata) AddLabel(id, content string) {
+func (pm *PreloadMetadata) AddLabel(id, content string) error {
 	if pm.Label == nil {
-		pm.Label = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
+		pm.Label = NewItem()
 	}
-	pm.Label.AddItem(id, content)
+	return pm.Label.AddItem(id, content, nil)
 }
 
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
@@ -212,14 +217,8 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
-	bytes, err := yaml.Marshal(&variantDep)
-	if err != nil {
-		return err
-	}
+	return deps.AddComponentVariant(key, variantDep)
 
-	deps.AddComponentVariant(key, string(bytes))
-
-	return nil
 }
 
 func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
@@ -244,17 +243,22 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 	for _, pack := range packsForNamespace {
 		componentInfo, ok := pack.Components.ViewComponents[componentName]
 		if ok {
-			deps.AddComponentPack(pack.GetKey(), "")
+			err := deps.AddComponentPack(pack.GetKey(), pack)
+			if err != nil {
+				return err
+			}
 			if componentInfo != nil {
 				for _, key := range componentInfo.ConfigValues {
-					// _, ok := deps.ConfigValues[key]
-					// if !ok {
+
 					value, err := configstore.GetValueFromKey(key, session)
 					if err != nil {
 						return err
 					}
-					deps.AddConfigValue(key, value)
-					//}
+					err = deps.AddConfigValue(key, value)
+					if err != nil {
+						return err
+					}
+
 				}
 
 				for _, key := range componentInfo.Variants {
@@ -280,7 +284,7 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		return err
 	}
 
-	err = deps.AddViewDef(key, *view)
+	err = deps.AddViewDef(key, view)
 	if err != nil {
 		return err
 	}
@@ -307,7 +311,10 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	}
 
 	for key, value := range labels {
-		deps.AddLabel(key, value)
+		err := deps.AddLabel(key, value)
+		if err != nil {
+			return err
+		}
 	}
 
 	for key := range viewsUsed {
@@ -364,7 +371,10 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
-			deps.AddComponentPack(pack.GetKey(), "")
+			err := deps.AddComponentPack(pack.GetKey(), pack)
+			if err != nil {
+				return nil, err
+			}
 			for key := range pack.Components.ViewComponents {
 				err := getDepsForComponent(namespace+"."+key, deps, session)
 				if err != nil {
@@ -375,18 +385,17 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 
 	}
 	for i := range variants {
-		variant := variants[i]
-		bytes, err := yaml.Marshal(&variant)
+		err := deps.AddComponentVariant(variants[i].GetKey(), variants[i])
 		if err != nil {
 			return nil, err
 		}
-
-		deps.AddComponentVariant(variant.GetKey(), string(bytes))
-
 	}
 
 	for key, value := range labels {
-		deps.AddLabel(key, value)
+		err := deps.AddLabel(key, value)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	//TO-DO Fix this
@@ -419,12 +428,10 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	bytes, err := yaml.Marshal(&theme)
+	err = deps.AddTheme(route.ThemeRef, &theme)
 	if err != nil {
 		return nil, err
 	}
-
-	deps.AddTheme(route.ThemeRef, string(bytes))
 
 	err = processView(route.ViewRef, deps, session)
 	if err != nil {

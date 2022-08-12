@@ -6,7 +6,7 @@ import { batch } from "react-redux"
 import { parseKey } from "../../component/path"
 import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
-import { dispatchRouteDeps, parseRouteResponse } from "./utils"
+import { dispatchRouteDeps } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -47,7 +47,6 @@ const navigate =
 
 		const deps = routeResponse.dependencies
 
-		parseRouteResponse(deps)
 		const view = routeResponse.view
 
 		if (!noPushState) {

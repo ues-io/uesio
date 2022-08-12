@@ -25,7 +25,6 @@ import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 import { MetadataState } from "../bands/metadata/types"
-import { parseRouteResponse } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -59,8 +58,6 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
-
-	parseRouteResponse(initialState)
 
 	const newStore = configureStore({
 		reducer: {

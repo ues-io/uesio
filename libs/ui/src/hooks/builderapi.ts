@@ -47,7 +47,7 @@ import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
 import { nanoid } from "nanoid"
 import { useEffect, useState } from "react"
-import { dispatchRouteDeps, parseRouteResponse } from "../bands/route/utils"
+import { dispatchRouteDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 
 class BuilderAPI {
@@ -330,7 +330,6 @@ class BuilderAPI {
 			if (!buildMode || isLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
-				parseRouteResponse(response)
 				await loadScripts([
 					platform.getComponentPackURL(
 						new Context(),

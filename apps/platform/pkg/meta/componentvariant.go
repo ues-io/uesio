@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -43,6 +44,17 @@ type ComponentVariant struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
+	enc.AddStringKey("extends", c.Extends)
+	enc.AddStringKey("component", c.Component)
+	enc.AddStringKey("namespace", c.Namespace)
+}
+
+func (c *ComponentVariant) IsNil() bool {
+	return c == nil
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {

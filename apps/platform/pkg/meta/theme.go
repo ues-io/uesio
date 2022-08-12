@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -22,6 +23,15 @@ type Theme struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (t *Theme) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddObjectKey("definition", (*YAMLDefinition)(&t.Definition))
+	enc.AddStringKey("namespace", t.Namespace)
+}
+
+func (t *Theme) IsNil() bool {
+	return t == nil
 }
 
 func NewTheme(key string) (*Theme, error) {
