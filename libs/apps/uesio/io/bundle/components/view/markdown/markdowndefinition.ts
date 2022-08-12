@@ -28,6 +28,7 @@ const MarkDownPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "MIXED",
 }
 export { MarkDownProps, MarkDownDefinition }
 

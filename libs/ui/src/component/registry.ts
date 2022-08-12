@@ -177,6 +177,24 @@ const getComponents = (trait: string) =>
 
 const getBuilderComponents = () => getComponents("uesio.standalone")
 
+const getBuilderComponentsSortedByCategory = () =>
+	Object.keys(definitionRegistry).reduce((acc, fullName) => {
+		const [namespace, name] = parseKey(fullName)
+		const definition = getPropertiesDefinition(
+			`${namespace}.${name}` as MetadataKey
+		)
+
+		const category = definition?.category || "UNCATEGORIZED"
+
+		if (definition?.traits?.includes("uesio.standalone")) {
+			if (!acc[category]) {
+				acc[category] = {}
+			}
+			acc[category][name] = definition
+		}
+		return acc
+	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
+
 export {
 	register,
 	registerUtilityComponent,
@@ -190,4 +208,5 @@ export {
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
 	getBuilderComponents,
+	getBuilderComponentsSortedByCategory,
 }

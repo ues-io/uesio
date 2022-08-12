@@ -19,6 +19,7 @@ type Props = {
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const Icon = component.getUtility("uesio/io.icon")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {
@@ -30,6 +31,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		panelAlwaysExpanded,
 		panelChildren,
 		popperChildren,
+		icon,
 	} = props
 
 	const [expanded, setExpanded] = useState<boolean>(
@@ -76,6 +78,9 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				context={context}
 				onClick={onClick}
 				isSelected={selected}
+				avatar={
+					icon !== "" ? <Icon context={context} icon={icon} /> : null
+				}
 			>
 				<IOExpandPanel
 					defaultExpanded={false}

@@ -30,6 +30,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "VISUALIZATION",
 }
 
 export default PropertyDefinition

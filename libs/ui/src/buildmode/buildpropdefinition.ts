@@ -31,7 +31,15 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
+	category?: Categories
 }
+
+type Categories =
+	| "LAYOUT"
+	| "DATA"
+	| "MIXED"
+	| "VISUALIZATION"
+	| "UNCATEGORIZED"
 
 type PropertySection =
 	| FieldsSection
