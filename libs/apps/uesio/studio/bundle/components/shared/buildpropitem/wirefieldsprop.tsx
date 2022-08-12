@@ -34,7 +34,7 @@ const WireFieldsProp: FC<builder.PropRendererProps> = (props) => {
 					{...props}
 					descriptor={{
 						name: "searchFields",
-						label: "Search Fields",
+						label: "Fields",
 						type: "MULTISELECT",
 						options: Object.keys(fields).map((label) => ({
 							value: label.toLowerCase(),
