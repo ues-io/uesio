@@ -8,6 +8,7 @@ import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
 import { setMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
+import { setMany as setMetadataText } from "../metadatatext"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -15,6 +16,7 @@ import { LabelState } from "../../definition/label"
 import { Context } from "../../context/context"
 import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
+import { MetadataState } from "../metadata/types"
 
 type Dep<T> = Record<string, T> | undefined
 
@@ -38,6 +40,9 @@ const dispatchRouteDeps = (
 
 	const themes = deps.theme?.entities as Dep<ThemeState>
 	if (themes) dispatch(setTheme(themes))
+
+	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
+	if (metadatatext) dispatch(setMetadataText(metadatatext))
 }
 
 const getPackUrlsForDeps = (

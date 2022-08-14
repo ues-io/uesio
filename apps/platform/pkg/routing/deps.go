@@ -19,32 +19,11 @@ type MetadataMergeData struct {
 	Entities map[string]json.RawMessage `json:"entities"`
 }
 
-type MetadataTextData struct {
-	IDs      []string          `json:"ids"`
-	Entities map[string]string `json:"entities"`
-}
-
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
 		Entities: map[string]json.RawMessage{},
 	}
-}
-
-func NewText() *MetadataTextData {
-	return &MetadataTextData{
-		IDs:      []string{},
-		Entities: map[string]string{},
-	}
-}
-
-func (mmt *MetadataTextData) AddText(id string, content string) error {
-	_, ok := mmt.Entities[id]
-	if !ok {
-		mmt.IDs = append(mmt.IDs, id)
-		mmt.Entities[id] = content
-	}
-	return nil
 }
 
 func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
@@ -64,7 +43,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		ComponentVariant: NewItem(),
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
-		MetadataText:     NewText(),
+		MetadataText:     NewItem(),
 	}
 }
 
@@ -75,31 +54,53 @@ type PreloadMetadata struct {
 	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
 	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
 	Label            *MetadataMergeData `json:"label,omitempty"`
-	MetadataText     *MetadataTextData  `json:"metadatatext,omitempty"`
+	MetadataText     *MetadataMergeData `json:"metadatatext,omitempty"`
+}
+
+type MetadataTextItem struct {
+	Content      string
+	Key          string
+	MetadataType string
+}
+
+func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("content", mti.Content)
+	enc.AddStringKey("key", mti.Key)
+	enc.AddStringKey("metadatatype", mti.MetadataType)
+}
+
+func (mti *MetadataTextItem) IsNil() bool {
+	return mti == nil
 }
 
 type Depable interface {
 	gojay.MarshalerJSONObject
 	GetKey() string
-	GetCollectionName() string
 }
 
 func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 
 	var bucket *MetadataMergeData
+	var metadataType string
 	switch v := item.(type) {
 	case *meta.Theme:
 		bucket = pm.Theme
+		metadataType = "theme"
 	case *meta.View:
 		bucket = pm.ViewDef
+		metadataType = "view"
 	case *meta.ComponentVariant:
 		bucket = pm.ComponentVariant
+		metadataType = "componentvariant"
 	case *meta.ComponentPack:
 		bucket = pm.ComponentPack
+		metadataType = "componentpack"
 	case *meta.ConfigValue:
 		bucket = pm.ConfigValue
+		metadataType = "configvalue"
 	case *meta.Label:
 		bucket = pm.Label
+		metadataType = "label"
 	default:
 		return fmt.Errorf("Cannot add this type to dependencies: %T", v)
 	}
@@ -110,9 +111,18 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 			return err
 		}
 		if pm.MetadataText == nil {
-			pm.MetadataText = NewText()
+			pm.MetadataText = NewItem()
 		}
-		pm.MetadataText.AddText(item.GetCollectionName()+":"+item.GetKey(), string(bytes))
+		fullKey := metadataType + ":" + item.GetKey()
+		bytes, err = gojay.MarshalJSONObject(&MetadataTextItem{
+			Content:      string(bytes),
+			Key:          item.GetKey(),
+			MetadataType: metadataType,
+		})
+		if err != nil {
+			return err
+		}
+		pm.MetadataText.AddItem(fullKey, bytes)
 	}
 
 	parsedbytes, err := gojay.MarshalJSONObject(item)
@@ -343,7 +353,18 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	return packs, nil
 }
 
-func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
+func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Session) (*PreloadMetadata, error) {
+
+	deps := NewPreloadMetadata()
+	view, err := loadViewDef(viewNamespace+"."+viewName, session)
+	if err != nil {
+		return nil, err
+	}
+
+	err = deps.AddItem(view, true)
+	if err != nil {
+		return nil, err
+	}
 
 	packsByNamespace, err := getPacksByNamespace(session)
 	if err != nil {
@@ -365,8 +386,6 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 	if err != nil {
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
-
-	deps := NewPreloadMetadata()
 
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {

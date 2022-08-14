@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// ServeComponentPack serves a component pack
 func ServeComponentPack(buildMode bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

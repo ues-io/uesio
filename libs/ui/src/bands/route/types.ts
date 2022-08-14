@@ -5,6 +5,7 @@ import { ConfigValueState } from "../../definition/configvalue"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { PlainViewDef } from "../../definition/viewdef"
+import { MetadataState } from "../metadata/types"
 
 type TenantState = {
 	name: string
@@ -18,6 +19,7 @@ type Dependencies = {
 	componentpack?: EntityState<ComponentPackState>
 	configvalue?: EntityState<ConfigValueState>
 	label?: EntityState<LabelState>
+	metadatatext?: EntityState<MetadataState>
 }
 
 type RouteState = {
