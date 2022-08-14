@@ -1,5 +1,10 @@
 import { EntityState } from "@reduxjs/toolkit"
-import { MetadataState } from "../metadata/types"
+import { ComponentPackState } from "../../definition/componentpack"
+import { ComponentVariant } from "../../definition/componentvariant"
+import { ConfigValueState } from "../../definition/configvalue"
+import { LabelState } from "../../definition/label"
+import { ThemeState } from "../../definition/theme"
+import { PlainViewDef } from "../../definition/viewdef"
 
 type TenantState = {
 	name: string
@@ -7,12 +12,12 @@ type TenantState = {
 }
 
 type Dependencies = {
-	theme?: EntityState<MetadataState>
-	viewdef?: EntityState<MetadataState>
-	componentvariant?: EntityState<MetadataState>
-	componentpack?: EntityState<MetadataState>
-	configvalue?: EntityState<MetadataState>
-	label?: EntityState<MetadataState>
+	theme?: EntityState<ThemeState>
+	viewdef?: EntityState<PlainViewDef>
+	componentvariant?: EntityState<ComponentVariant>
+	componentpack?: EntityState<ComponentPackState>
+	configvalue?: EntityState<ConfigValueState>
+	label?: EntityState<LabelState>
 }
 
 type RouteState = {

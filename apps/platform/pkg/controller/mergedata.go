@@ -74,6 +74,18 @@ type MergeData struct {
 	routing.PreloadMetadata
 }
 
+// String function controls how MergeData is marshalled
+// This is actually pretty silly but I did it to make the output
+// look pretty in the html source.
+func (md MergeData) String() string {
+	json, err := json.MarshalIndent(md, "        ", "  ")
+	//json, err := json.Marshal(md)
+	if err != nil {
+		return ""
+	}
+	return string(json)
+}
+
 var indexTemplate *template.Template
 
 func getPackUrl(key string, workspace *WorkspaceMergeData) string {
@@ -98,17 +110,6 @@ func init() {
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getPackURL": getPackUrl,
 	}).ParseFiles(indexPath, cssPath))
-}
-
-// String function controls how MergeData is marshalled
-// This is actually pretty silly but I did it to make the output
-// look pretty in the html source.
-func (md MergeData) String() string {
-	json, err := json.MarshalIndent(md, "        ", "    ")
-	if err != nil {
-		return ""
-	}
-	return string(json)
 }
 
 // GetUserMergeData function

@@ -1,40 +1,21 @@
-import { createSlice, createEntityAdapter, EntityState } from "@reduxjs/toolkit"
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { getFullPathParts } from "../../component/path"
-import {
-	addDef,
-	changeDefKey,
-	cloneDef,
-	moveDef,
-	removeDef,
-	setDef,
-} from "../../store/reducers"
+
+import { PlainViewDef } from "../../definition/viewdef"
+
 import { RootState, getCurrentState } from "../../store/store"
-import { parse } from "../../yamlutils/yamlutils"
 
-import {
-	addDefinition,
-	cancel,
-	save,
-	changeDefinitionKey,
-	cloneDefinition,
-	moveDefinition,
-	removeDefinition,
-	setDefinition,
-	setDefinitionContent,
-} from "../builder"
-import { MetadataState } from "../metadata/types"
-
-const adapter = createEntityAdapter<MetadataState>({
-	selectId: (metadata) => metadata.key,
+const adapter = createEntityAdapter<PlainViewDef>({
+	selectId: (v) => `${v.namespace}.${v.name}`,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.viewdef)
 
+/*
 const getViewDefState = (
-	state: EntityState<MetadataState>,
+	state: EntityState<PlainViewDef>,
 	path: string
-): [string, MetadataState | undefined] => {
+): [string, PlainViewDef | undefined] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	return [
 		localPath,
@@ -82,6 +63,7 @@ const cancelAllDefs = (state: EntityState<MetadataState>) => {
 
 	return state
 }
+*/
 
 const metadataSlice = createSlice({
 	name: "viewdef",
@@ -90,7 +72,9 @@ const metadataSlice = createSlice({
 		set: adapter.upsertOne,
 		setMany: adapter.upsertMany,
 	},
+	/*
 	extraReducers: (builder) => {
+
 		builder.addCase(addDefinition, (state, { payload }) => {
 			const [localPath, viewDef] = getViewDefState(state, payload.path)
 			if (viewDef) {
@@ -166,14 +150,17 @@ const metadataSlice = createSlice({
 			}
 		})
 	},
+	*/
 })
 
 const useViewDef = (key: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, key))
+		?.definition
 
 // This function doesn't run a selector so it will only get the current
 // state of the store and not update with changes
-const getViewDef = (key: string) => selectors.selectById(getCurrentState(), key)
+const getViewDef = (key: string) =>
+	selectors.selectById(getCurrentState(), key)?.definition
 
 export { useViewDef, selectors, getViewDef }
 

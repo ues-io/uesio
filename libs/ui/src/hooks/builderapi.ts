@@ -37,17 +37,20 @@ import {
 	toPath,
 } from "../component/path"
 import { Definition, DefinitionMap } from "../definition/definition"
-import { useSelector } from "react-redux"
+import { batch, useSelector } from "react-redux"
 
 import { selectors as viewSelectors } from "../bands/viewdef"
-import { PlainViewDef } from "../definition/viewdef"
 import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
 import { nanoid } from "nanoid"
 import { useEffect, useState } from "react"
-import { dispatchRouteDeps } from "../bands/route/utils"
+import {
+	dispatchRouteDeps,
+	getPackUrls,
+	getPackUrlsForDeps,
+} from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 
 class BuilderAPI {
@@ -86,7 +89,9 @@ class BuilderAPI {
 	useHasChanges = () =>
 		useSelector(({ viewdef }: RootState) => {
 			const entities = viewdef?.entities
+			console.log(entities)
 			// Loop over view defs
+			/*
 			if (entities) {
 				for (const defKey of Object.keys(entities)) {
 					const viewDef = entities[defKey]
@@ -95,6 +100,7 @@ class BuilderAPI {
 					}
 				}
 			}
+			*/
 			return false
 		})
 
@@ -254,9 +260,12 @@ class BuilderAPI {
 
 	useDefinitionContent = (metadataType: string, metadataItem: string) =>
 		useSelector((state: RootState) => {
+			/*
 			if (metadataType === "viewdef" && metadataItem) {
 				return viewSelectors.selectById(state, metadataItem)?.content
 			}
+			*/
+			console.log(state)
 
 			if (metadataType === "componentvariant" && metadataItem) {
 				//return getComponentVariant(state, metadataItem, localPath)
@@ -285,8 +294,10 @@ class BuilderAPI {
 		localPath: string
 	) => {
 		if (metadataType === "viewdef" && metadataItem) {
-			const viewDef = viewSelectors.selectById(state, metadataItem)
-				?.parsed as PlainViewDef
+			const viewDef = viewSelectors.selectById(
+				state,
+				metadataItem
+			)?.definition
 			if (!localPath) {
 				return viewDef as DefinitionMap
 			}
@@ -330,22 +341,19 @@ class BuilderAPI {
 			if (!buildMode || isLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
-				await loadScripts([
-					platform.getComponentPackURL(
-						new Context(),
-						"uesio/studio",
-						"main",
-						false
-					),
-					platform.getComponentPackURL(
-						new Context(),
-						"uesio/studio",
-						"main",
-						true
-					),
-				])
 
-				dispatchRouteDeps(response, appDispatch())
+				const packsToLoad = getPackUrlsForDeps(response, context, true)
+				const studioPacks = getPackUrls(
+					"uesio/studio.main",
+					new Context(),
+					true
+				)
+
+				await loadScripts([...packsToLoad, ...studioPacks])
+				batch(() => {
+					dispatchRouteDeps(response, appDispatch())
+				})
+
 				setIsLoaded(true)
 			})()
 		}, [buildMode])

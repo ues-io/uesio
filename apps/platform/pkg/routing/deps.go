@@ -12,33 +12,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
-type MetadataState struct {
-	Key     string          `json:"key"`
-	Content string          `json:"content"`
-	Parsed  json.RawMessage `json:"parsed"`
-}
-
 type MetadataMergeData struct {
-	IDs      []string                 `json:"ids"`
-	Entities map[string]MetadataState `json:"entities"`
+	IDs      []string                   `json:"ids"`
+	Entities map[string]json.RawMessage `json:"entities"`
 }
 
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
-		Entities: map[string]MetadataState{},
+		Entities: map[string]json.RawMessage{},
 	}
 }
 
-func (mmd *MetadataMergeData) AddItem(id, content string, parsed []byte) error {
+func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
 		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = MetadataState{
-			Key:     id,
-			Parsed:  parsed,
-			Content: content,
-		}
+		mmd.Entities[id] = content
 	}
 	return nil
 }
@@ -110,14 +100,18 @@ func (pm *PreloadMetadata) AddTheme(id string, theme *meta.Theme) error {
 		return err
 	}
 	//return pm.Themes.AddItem(id, string(bytes), nil)
-	return pm.Themes.AddItem(id, "", parsedbytes)
+	return pm.Themes.AddItem(id, parsedbytes)
 }
 
 func (pm *PreloadMetadata) AddComponentPack(id string, componentPack *meta.ComponentPack) error {
 	if pm.ComponentPack == nil {
 		pm.ComponentPack = NewItem()
 	}
-	return pm.ComponentPack.AddItem(id, "", nil)
+	parsedbytes, err := gojay.MarshalJSONObject(componentPack)
+	if err != nil {
+		return err
+	}
+	return pm.ComponentPack.AddItem(id, parsedbytes)
 }
 
 func (pm *PreloadMetadata) AddViewDef(id string, view *meta.View) error {
@@ -132,13 +126,13 @@ func (pm *PreloadMetadata) AddViewDef(id string, view *meta.View) error {
 		}
 	*/
 
-	parsedbytes, err := gojay.MarshalJSONObject((*meta.YAMLDefinition)(&view.Definition))
+	parsedbytes, err := gojay.MarshalJSONObject(view)
 	if err != nil {
 		return err
 	}
 
 	//return pm.ViewDef.AddItem(id, string(bytes), parsedbytes)
-	return pm.ViewDef.AddItem(id, "", parsedbytes)
+	return pm.ViewDef.AddItem(id, parsedbytes)
 
 }
 
@@ -160,21 +154,29 @@ func (pm *PreloadMetadata) AddComponentVariant(id string, variant *meta.Componen
 	}
 
 	//return pm.ComponentVariant.AddItem(id, string(bytes), parsedbytes)
-	return pm.ComponentVariant.AddItem(id, "", parsedbytes)
+	return pm.ComponentVariant.AddItem(id, parsedbytes)
 }
 
-func (pm *PreloadMetadata) AddConfigValue(id, content string) error {
+func (pm *PreloadMetadata) AddConfigValue(id string, configvalue *meta.ConfigValue) error {
 	if pm.ConfigValue == nil {
 		pm.ConfigValue = NewItem()
 	}
-	return pm.ConfigValue.AddItem(id, content, nil)
+	parsedbytes, err := gojay.MarshalJSONObject(configvalue)
+	if err != nil {
+		return err
+	}
+	return pm.ConfigValue.AddItem(id, parsedbytes)
 }
 
-func (pm *PreloadMetadata) AddLabel(id, content string) error {
+func (pm *PreloadMetadata) AddLabel(id string, label *meta.Label) error {
 	if pm.Label == nil {
 		pm.Label = NewItem()
 	}
-	return pm.Label.AddItem(id, content, nil)
+	parsedbytes, err := gojay.MarshalJSONObject(label)
+	if err != nil {
+		return err
+	}
+	return pm.Label.AddItem(id, parsedbytes)
 }
 
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
@@ -254,7 +256,12 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 					if err != nil {
 						return err
 					}
-					err = deps.AddConfigValue(key, value)
+					configvalue, err := meta.NewConfigValue(key)
+					if err != nil {
+						return err
+					}
+					configvalue.Value = value
+					err = deps.AddConfigValue(key, configvalue)
 					if err != nil {
 						return err
 					}
@@ -311,7 +318,12 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	}
 
 	for key, value := range labels {
-		err := deps.AddLabel(key, value)
+		label, err := meta.NewLabel(key)
+		if err != nil {
+			return err
+		}
+		label.Value = value
+		err = deps.AddLabel(key, label)
 		if err != nil {
 			return err
 		}
@@ -392,10 +404,32 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 	}
 
 	for key, value := range labels {
-		err := deps.AddLabel(key, value)
+
+		label, err := meta.NewLabel(key)
 		if err != nil {
 			return nil, err
 		}
+		label.Value = value
+		err = deps.AddLabel(key, label)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Load in the studio theme.
+	theme, err := meta.NewTheme("uesio/studio.default")
+	if err != nil {
+		return nil, err
+	}
+
+	err = bundle.Load(theme, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	err = deps.AddTheme("uesio/studio.default", theme)
+	if err != nil {
+		return nil, err
 	}
 
 	//TO-DO Fix this
@@ -413,22 +447,17 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	deps := &PreloadMetadata{}
 
-	themeNamespace, themeName, err := meta.ParseKey(route.ThemeRef)
+	theme, err := meta.NewTheme(route.ThemeRef)
 	if err != nil {
 		return nil, err
 	}
 
-	theme := meta.Theme{
-		Name:      themeName,
-		Namespace: themeNamespace,
-	}
-
-	err = bundle.Load(&theme, session)
+	err = bundle.Load(theme, session)
 	if err != nil {
 		return nil, err
 	}
 
-	err = deps.AddTheme(route.ThemeRef, &theme)
+	err = deps.AddTheme(route.ThemeRef, theme)
 	if err != nil {
 		return nil, err
 	}

@@ -270,7 +270,7 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		buildMode: boolean
+		buildMode?: boolean
 	) => {
 		const prefix = getPrefix(context)
 		const buildModeSuffix = buildMode ? "/builder" : ""

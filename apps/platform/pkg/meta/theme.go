@@ -28,6 +28,7 @@ type Theme struct {
 func (t *Theme) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddObjectKey("definition", (*YAMLDefinition)(&t.Definition))
 	enc.AddStringKey("namespace", t.Namespace)
+	enc.AddStringKey("name", t.Name)
 }
 
 func (t *Theme) IsNil() bool {

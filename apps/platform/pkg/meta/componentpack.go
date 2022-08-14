@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -24,6 +25,15 @@ type ComponentPack struct {
 	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
 	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cp.Namespace)
+	enc.AddStringKey("name", cp.Name)
+}
+
+func (cp *ComponentPack) IsNil() bool {
+	return cp == nil
 }
 
 type ComponentsRegistry struct {

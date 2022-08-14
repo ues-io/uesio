@@ -1,8 +1,6 @@
-import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 
 import { ThunkFunc } from "../../store/store"
-import { UNIQUE_KEY_FIELD } from "../collection/types"
 
 import { PlainWireRecord } from "../wirerecord/types"
 import { save as saveBuilder } from "."
@@ -16,7 +14,9 @@ const save =
 
 		if (!workspace) throw new Error("No Workspace in context")
 
+		console.log(state)
 		// Loop over view defs
+		/*
 		if (state) {
 			for (const defKey of Object.keys(state)) {
 				const defState = state[defKey]
@@ -35,6 +35,7 @@ const save =
 				}
 			}
 		}
+		*/
 
 		await platform.saveData(new Context(), {
 			wires: [
