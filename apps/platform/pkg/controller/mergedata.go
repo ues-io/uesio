@@ -178,7 +178,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		},
 		Component: GetComponentMergeData(buildMode),
 		PreloadMetadata: routing.PreloadMetadata{
-			Themes:           preload.GetThemes(),
+			Theme:            preload.GetThemes(),
 			ViewDef:          preload.GetViewDef(),
 			ComponentPack:    preload.GetComponentPack(),
 			ComponentVariant: preload.GetComponentVariant(),
