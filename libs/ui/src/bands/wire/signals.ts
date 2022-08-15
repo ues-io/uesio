@@ -142,7 +142,7 @@ const signals: Record<string, SignalDescriptor> = {
 		properties: (): PropDescriptor[] => [
 			{
 				name: "field",
-				type: "WIRE_FIELDS",
+				type: "WIRE_FIELD",
 				label: "Field",
 			},
 			{
