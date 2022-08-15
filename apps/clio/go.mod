@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/PaesslerAG/gval v1.1.2 // indirect
+	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9 // indirect
 	github.com/icza/session v1.2.0 // indirect

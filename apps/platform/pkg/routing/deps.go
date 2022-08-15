@@ -82,13 +82,21 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 
 	var bucket *MetadataMergeData
 	var metadataType string
+	var metadataText string
 	switch v := item.(type) {
 	case *meta.Theme:
 		bucket = pm.Theme
 		metadataType = "theme"
 	case *meta.View:
 		bucket = pm.ViewDef
-		metadataType = "view"
+		metadataType = "viewdef"
+		if includeText {
+			bytes, err := yaml.Marshal(v.Definition)
+			if err != nil {
+				return err
+			}
+			metadataText = string(bytes)
+		}
 	case *meta.ComponentVariant:
 		bucket = pm.ComponentVariant
 		metadataType = "componentvariant"
@@ -106,16 +114,13 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 	}
 
 	if includeText {
-		bytes, err := yaml.Marshal(item)
-		if err != nil {
-			return err
-		}
+
 		if pm.MetadataText == nil {
 			pm.MetadataText = NewItem()
 		}
 		fullKey := metadataType + ":" + item.GetKey()
-		bytes, err = gojay.MarshalJSONObject(&MetadataTextItem{
-			Content:      string(bytes),
+		bytes, err := gojay.MarshalJSONObject(&MetadataTextItem{
+			Content:      metadataText,
 			Key:          item.GetKey(),
 			MetadataType: metadataType,
 		})

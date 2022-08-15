@@ -22,9 +22,8 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setDefinitionContent,
-	cancel,
 } from "../bands/builder"
-import builderOps from "../bands/builder/operations"
+import { save as saveOp, cancel as cancelOp } from "../bands/builder/operations"
 import { appDispatch, RootState, getCurrentState } from "../store/store"
 
 import { PlainComponentState } from "../bands/component/types"
@@ -40,6 +39,7 @@ import { Definition, DefinitionMap } from "../definition/definition"
 import { batch, useSelector } from "react-redux"
 
 import { selectors as viewSelectors } from "../bands/viewdef"
+import { selectors as metadataTextSelectors } from "../bands/metadatatext"
 import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
@@ -87,20 +87,20 @@ class BuilderAPI {
 		getFullPathParts(useDropNode())
 
 	useHasChanges = () =>
-		useSelector(({ viewdef }: RootState) => {
-			const entities = viewdef?.entities
-			console.log(entities)
-			// Loop over view defs
-			/*
+		useSelector(({ metadatatext }: RootState) => {
+			const entities = metadatatext?.entities
 			if (entities) {
 				for (const defKey of Object.keys(entities)) {
-					const viewDef = entities[defKey]
-					if (viewDef && viewDef.content !== viewDef.original) {
+					const entity = entities[defKey]
+					if (
+						entity &&
+						entity.original &&
+						entity.content !== entity.original
+					) {
 						return true
 					}
 				}
 			}
-			*/
 			return false
 		})
 
@@ -169,10 +169,10 @@ class BuilderAPI {
 		appDispatch()(setDropNode(""))
 	}
 
-	save = () =>
-		appDispatch()(builderOps.save(this.uesio.getContext() || new Context()))
+	save = () => appDispatch()(saveOp(this.uesio.getContext() || new Context()))
 
-	cancel = () => appDispatch()(cancel())
+	cancel = () =>
+		appDispatch()(cancelOp(this.uesio.getContext() || new Context()))
 
 	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
 
@@ -259,18 +259,13 @@ class BuilderAPI {
 	}
 
 	useDefinitionContent = (metadataType: string, metadataItem: string) =>
-		useSelector((state: RootState) => {
-			/*
-			if (metadataType === "viewdef" && metadataItem) {
-				return viewSelectors.selectById(state, metadataItem)?.content
-			}
-			*/
-			console.log(state)
-
-			if (metadataType === "componentvariant" && metadataItem) {
-				//return getComponentVariant(state, metadataItem, localPath)
-			}
-		})
+		useSelector(
+			(state: RootState) =>
+				metadataTextSelectors.selectById(
+					state,
+					`${metadataType}:${metadataItem}`
+				)?.content
+		)
 
 	useDefinition = (
 		metadataType: string,

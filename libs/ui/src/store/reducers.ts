@@ -1,29 +1,19 @@
 import toPath from "lodash/toPath"
 import yaml, { YAMLMap, YAMLSeq } from "yaml"
 import {
-	AddDefinitionPayload,
 	ChangeDefinitionKeyPayload,
 	CloneDefinitionPayload,
 	MoveDefinitionPayload,
-	RemoveDefinitionPayload,
-	SetDefinitionPayload,
 } from "../bands/builder"
 import {
 	isNumberIndex,
 	getKeyAtPath,
 	getParentPath,
 	getIndexFromPath,
-	getParentPathArray,
 } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
 
-import {
-	addNodeAtPath,
-	getNodeAtPath,
-	parse,
-	removeNodeAtPath,
-	setNodeAtPath,
-} from "../yamlutils/yamlutils"
+import { getNodeAtPath, parse } from "../yamlutils/yamlutils"
 import { MetadataState } from "../bands/metadata/types"
 
 type MoveType =
@@ -41,59 +31,6 @@ const moveInArray = (
 	oldIndex: number | string,
 	newIndex: number | string
 ) => arr.splice(Number(newIndex), 0, arr.splice(Number(oldIndex), 1)[0])
-
-const setDef = (state: MetadataState, payload: SetDefinitionPayload) => {
-	const { path, definition } = payload
-
-	if (!state.content) return
-	const yamlDoc = parse(state.content)
-	const pathArray = toPath(path)
-	const parentPath = getParentPathArray(pathArray)
-	const parentNode = yamlDoc.getIn(parentPath)
-	// create a new document so components using useYaml will rerender
-	// --
-	// if the parent is "null" or "undefined", the yaml library won't set our pair in the object.
-	// We need to
-	const newNodeSrc = parentNode
-		? definition
-		: {
-				[`${toPath(path).pop()}`]: definition,
-		  }
-
-	const pathToUpdate = parentNode ? pathArray : parentPath
-	const newNode = yamlDoc.createNode(newNodeSrc)
-
-	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
-	state.content = yamlDoc.toString()
-	state.parsed = yamlDoc.toJSON()
-}
-
-const addDef = (state: MetadataState, payload: AddDefinitionPayload) => {
-	const { path, definition, index } = payload
-
-	if (state.content && definition) {
-		const yamlDoc = parse(state.content)
-		const newNode = yamlDoc.createNode(definition)
-		const pathArray = toPath(path)
-		if (newNode) {
-			addNodeAtPath(pathArray, yamlDoc.contents, newNode, index || 0)
-		}
-
-		state.content = yamlDoc.toString()
-		state.parsed = yamlDoc.toJSON()
-	}
-}
-
-const removeDef = (state: MetadataState, payload: RemoveDefinitionPayload) => {
-	const pathArray = toPath(payload.path)
-	const index = pathArray.pop() // Get the index
-	if (index) {
-		const yamlDoc = parse(state.content)
-		removeNodeAtPath(pathArray.concat([index]), yamlDoc.contents)
-		state.content = yamlDoc.toString()
-		state.parsed = yamlDoc.toJSON()
-	}
-}
 
 const getDefFromPath = (state: MetadataState, path: string | string[]) => {
 	const yamlDoc = parse(state.content)
