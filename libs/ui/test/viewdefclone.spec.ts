@@ -26,6 +26,7 @@ test("viewdef clone component", () => {
 		{
 			key: "ben/planets.page",
 			content: buttonclonetest,
+			metadatatype: "viewdef",
 		},
 		{
 			path: `["components"]["0"]`,
@@ -33,6 +34,7 @@ test("viewdef clone component", () => {
 		{
 			key: "ben/planets.page",
 			content: buttonclonetestresult,
+			metadatatype: "viewdef",
 		}
 	)
 })
@@ -61,6 +63,7 @@ test("viewdef clone wire", () => {
 		{
 			key: "ben/planets.page",
 			content: wireclonetest,
+			metadatatype: "viewdef",
 		},
 		{
 			path: `["wires"]["mywire"]`,
@@ -68,6 +71,7 @@ test("viewdef clone wire", () => {
 		{
 			key: "ben/planets.page",
 			content: wireclonetestresult,
+			metadatatype: "viewdef",
 		}
 	)
 })

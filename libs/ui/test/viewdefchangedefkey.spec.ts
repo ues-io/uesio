@@ -94,11 +94,13 @@ tests.map(({ data, payload, expected }) =>
 			{
 				key: "ben/planets.page",
 				content: data,
+				metadatatype: "viewdef",
 			},
 			payload,
 			{
 				key: "ben/planets.page",
 				content: expected,
+				metadatatype: "viewdef",
 			}
 		)
 	})

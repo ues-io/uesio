@@ -26,6 +26,7 @@ test("viewdef delete component", () => {
 		{
 			key: "ben/planets.page",
 			content: buttondeletetest,
+			metadatatype: "viewdef",
 		},
 		{
 			path: `["components"]["1"]`,
@@ -33,6 +34,7 @@ test("viewdef delete component", () => {
 		{
 			key: "ben/planets.page",
 			content: buttondeletetestresult,
+			metadatatype: "viewdef",
 		}
 	)
 })
@@ -63,6 +65,7 @@ test("viewdef delete wire", () => {
 		{
 			key: "ben/planets.page",
 			content: wiredeletetest,
+			metadatatype: "viewdef",
 		},
 		{
 			path: `["wires"]["mywire"]`,
@@ -70,6 +73,7 @@ test("viewdef delete wire", () => {
 		{
 			key: "ben/planets.page",
 			content: wiredeletetestresult,
+			metadatatype: "viewdef",
 		}
 	)
 })

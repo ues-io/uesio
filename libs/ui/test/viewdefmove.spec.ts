@@ -24,6 +24,7 @@ test("Move within same parent", () => {
 		{
 			key: "ben/planets.page",
 			content: moveComponentTest,
+			metadatatype: "viewdef",
 		},
 		{
 			toPath: `["components"]["0"]`,
@@ -32,6 +33,7 @@ test("Move within same parent", () => {
 		{
 			key: "ben/planets.page",
 			content: moveComponentTestResult,
+			metadatatype: "viewdef",
 		}
 	)
 })
@@ -63,6 +65,7 @@ test("viewdef move wire", () => {
 		{
 			key: "ben/planets.page",
 			content: moveWireTest,
+			metadatatype: "viewdef",
 		},
 		{
 			toPath: `["wires"]["mywire"]`,
@@ -71,6 +74,7 @@ test("viewdef move wire", () => {
 		{
 			key: "ben/planets.page",
 			content: moveWireTestResult,
+			metadatatype: "viewdef",
 		}
 	)
 })
@@ -116,6 +120,7 @@ test("viewdef move component different parent", () => {
 		{
 			key: "ben/planets.page",
 			content: moveComponentDifferentParentTest,
+			metadatatype: "viewdef",
 		},
 		{
 			toPath: `["components"]["1"]["uesio/io.group"]["components"]["0"]`,
@@ -125,6 +130,7 @@ test("viewdef move component different parent", () => {
 		{
 			key: "ben/planets.page",
 			content: moveComponentDifferentParentTestResult,
+			metadatatype: "viewdef",
 		}
 	)
 })
