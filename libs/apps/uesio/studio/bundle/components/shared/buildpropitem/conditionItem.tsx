@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 import { component, context, builder, wire, hooks } from "@uesio/ui"
 import PropNodeTag from "./propnodetag"
 import PropertiesPane from "../propertiespane"
