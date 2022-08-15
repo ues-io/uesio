@@ -1,72 +1,29 @@
-import React, {
-	FC,
-	DragEvent,
-	useState,
-	useRef,
-	ChangeEvent,
-	useEffect,
-	useCallback,
-} from "react"
-import throttle from "lodash/throttle"
+import React, { FC, DragEvent, useState, ChangeEvent } from "react"
 
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
+import useShadowOnScroll from "../hooks/useshadowonscroll"
+import FieldPropTag, {
+	FieldProp,
+} from "../../utility/fieldproptag/fieldproptag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
-
-const useScroll = (
-	// refEl: React.MutableRefObject<HTMLDivElement | null>,
-	dependencies?: unknown[]
-) => {
-	// Scroll logic for shaow on the search bar
-	const [hasScroll, setHasScroll] = useState(false)
-	const refEl = useRef<HTMLDivElement | null>(null)
-
-	useEffect(() => {
-		console.log("effect")
-		const element = refEl.current
-		if (!element) return
-
-		const onScroll = () => {
-			console.log("scrolling")
-			setHasScroll(element.scrollTop > 0)
-		}
-		const db = throttle(onScroll, 200)
-
-		element.removeEventListener("scroll", db)
-		element.addEventListener("scroll", db)
-		return () => {
-			element.removeEventListener("scroll", db)
-		}
-	}, [refEl, refEl.current, ...(dependencies || [])])
-
-	return [
-		refEl,
-		{
-			transition: "all 0.3s ease",
-			boxShadow: hasScroll
-				? "rgb(0 0 0 / 40%) 0px 0px 20px -6px"
-				: "none",
-		},
-	]
-}
-
-type FieldProp = { fieldId: string; fields: FieldProp[] }
-type FieldDef = null | { fields: FieldDef }
 const Popper = component.getUtility("uesio/io.popper")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
+
+type FieldDef = null | { fields: FieldDef }
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 	const [searchTerm, setSearchTerm] = useState("")
 	const [showPopper, setShowPopper] = useState(false)
+	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([showPopper])
 
-	const [scrollBoxRef, scrolledStyles] = useScroll([showPopper])
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const collectionKey = wireDef?.collection as string | undefined
 
@@ -80,8 +37,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		"",
 		collectionKey
 	)
-
-	console.log({ fields })
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 
@@ -98,8 +53,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 
 	const fieldKeys = fields && Object.keys(fields)
 
-	const handleChange = (value: string) => {
-		setSearchTerm(value)
+	const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(e.target.value)
 	}
 
 	const results = !searchTerm
@@ -109,44 +64,42 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
-	const handleField = ([key, value]: [string, FieldDef]): FieldProp => ({
+	// Create field objects for the render function to loop over
+	const prepareFieldForDisplay = (
+		[key, value]: [string, FieldDef],
+		path: string
+	): FieldProp => ({
+		collectionKey, // We need to make this dynamic to support ref field selection
 		fieldId: key,
+		fieldPath: `${path}["fields"]["${key}"]`,
 		fields:
 			value && value.fields
-				? Object.entries(value.fields).map((el) => handleField(el))
+				? Object.entries(value.fields).map((el) =>
+						prepareFieldForDisplay(
+							el,
+							`${path}["fields"]["${key}"]`
+						)
+				  )
 				: [],
 	})
 
-	const formattedFields = Object.entries(wireDef?.fields || {}).map((el) =>
-		handleField(el)
+	const selectedFields = Object.entries(wireDef?.fields || {}).map((el) =>
+		prepareFieldForDisplay(el, path || "")
 	)
 
-	const FieldRenderer: FC<FieldProp> = ({ fieldId, fields }) => (
-		<PropNodeTag
-			draggable={`${collectionKey}:${fieldId}`}
-			key={fieldId}
-			context={context}
-		>
-			<div style={{ display: "flex" }}>
-				<span>{fieldId}</span>
-				<IconButton
-					context={context}
-					variant="uesio/studio.buildtitle"
-					icon="delete"
-					onClick={(): void => {
-						setShowPopper(!showPopper)
-					}}
-				/>
-			</div>
-			{fields?.map((el) => (
-				<FieldRenderer
-					key={fieldId}
-					fieldId={el.fieldId}
-					fields={el.fields}
-				/>
-			))}
-		</PropNodeTag>
-	)
+	// Scroll to the bottom of the list when adding new fields
+	const itemsRef = React.useRef<(HTMLDivElement | null)[]>([])
+	const prevLength = itemsRef.current.length
+	React.useEffect(() => {
+		itemsRef.current = itemsRef.current.slice(0, selectedFields.length)
+		if (prevLength !== 0 && prevLength < itemsRef.current.length)
+			itemsRef.current[itemsRef.current.length - 1]?.scrollIntoView({
+				block: "end",
+				behavior: "smooth",
+			})
+	}, [selectedFields])
+
+	// const items = React.useState()
 
 	return (
 		<>
@@ -195,11 +148,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 									borderRadius: "4px",
 									width: "100%",
 								}}
-								onChange={(
-									event: ChangeEvent<HTMLInputElement>
-								) => {
-									handleChange(event.target.value)
-								}}
+								onChange={onSearch}
 								type="search"
 								placeholder="Search..."
 							/>
@@ -213,7 +162,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 								results.map((fieldId, index) => {
 									const fieldDef = fieldsDef?.[fieldId]
 									const selected = fieldDef !== undefined
-									const onClick = (): void => {
+									const onClick = () => {
 										const setPath = `${path}["fields"]["${fieldId}"]`
 										selected
 											? valueAPI.remove(setPath)
@@ -235,46 +184,55 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 					</ScrollPanel>
 				</Popper>
 			)}
+			{/* Just an element for popper to anchor on */}
+			<div
+				style={{
+					pointerEvents: "none",
+					position: "absolute",
+					inset: 0,
+				}}
+				ref={setAnchorEl}
+			/>
 			<TitleBar
 				variant="uesio/studio.propsubsection"
 				title={""}
 				context={context}
 				actions={
-					<>
-						<div ref={setAnchorEl}>
-							<Button
+					<Button
+						context={context}
+						variant="uesio/studio.actionbutton"
+						icon={
+							<Icon
 								context={context}
-								variant="uesio/studio.actionbutton"
-								icon={
-									<Icon
-										context={context}
-										icon="library_add"
-										variant="uesio/studio.actionicon"
-									/>
-								}
-								label="Add fields"
-								onClick={(): void => {
-									setShowPopper(!showPopper)
-								}}
+								icon="library_add"
+								variant="uesio/studio.actionicon"
 							/>
-						</div>
-					</>
+						}
+						label="Set fields"
+						onClick={() => setShowPopper(!showPopper)}
+					/>
 				}
 			/>
+
+			{/* List of selected fields, from here we can only delete */}
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{collectionKey &&
-					formattedFields.map(({ fieldId, fields }) => (
-						// const onClick = (): void => {
-						// 	const setPath = `${path}["fields"]["${fieldId}"]`
-						// 	selected
-						// 		? valueAPI.remove(setPath)
-						// 		: valueAPI.set(setPath, null)
-						// }
-						<FieldRenderer
-							key={fieldId}
-							fieldId={fieldId}
-							fields={fields}
-						/>
+					selectedFields.map((el, i) => (
+						<div
+							key={el.fieldId}
+							ref={(el) => (itemsRef.current[i] = el)}
+						>
+							<FieldPropTag
+								{...el}
+								context={context}
+								togglePopper={() => setShowPopper(!showPopper)}
+								removeField={() =>
+									valueAPI.remove(
+										`${path}["fields"]["${el.fieldId}"]`
+									)
+								}
+							/>
+						</div>
 					))}
 			</div>
 		</>

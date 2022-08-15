@@ -9,6 +9,7 @@ type Props = {
 	tooltip?: string
 	expandChildren?: ReactNode
 	popperChildren?: ReactNode
+	className?: string
 	useExpand?: (
 		initialState?: boolean
 	) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
@@ -54,7 +55,7 @@ const PropNodeTag: FC<Props> = (props) => {
 
 	return (
 		<div
-			className={classes.root}
+			className={styles.cx(classes.root, props.className)}
 			ref={setAnchorEl}
 			draggable={!!draggable && !isExpanded}
 			data-type={draggable}
