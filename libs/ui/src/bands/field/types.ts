@@ -28,6 +28,7 @@ type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 type SelectOption = {
 	label: string
 	value: string
+	disabled?: boolean
 }
 
 type NumberMetadata = {
