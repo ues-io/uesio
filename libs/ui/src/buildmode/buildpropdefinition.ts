@@ -114,6 +114,7 @@ type PropDescriptor =
 	| ParamProp
 	| ParamsProp
 	| WireFieldsProp
+	| FieldProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -233,6 +234,10 @@ interface ComponentTargetProp extends BasePropDescriptor {
 interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
 }
+interface FieldProp extends BasePropDescriptor {
+	type: "FIELD"
+	wireField: string
+}
 
 type ActionDescriptor =
 	| AddAction
@@ -339,5 +344,6 @@ export {
 	ConditionalDisplayProp,
 	OrderSection,
 	WireFieldsProp,
+	FieldProp,
 	AddCondition,
 }
