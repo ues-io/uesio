@@ -234,6 +234,7 @@ type ActionDescriptor =
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| CloneKeyAction
 	| DeleteAction
 	| MoveAction
 	| AddCondition
@@ -263,6 +264,10 @@ type MoveAction = {
 
 type CloneAction = {
 	type: "CLONE"
+}
+
+type CloneKeyAction = {
+	type: "CLONEKEY"
 }
 
 type LoadWireAction = {
