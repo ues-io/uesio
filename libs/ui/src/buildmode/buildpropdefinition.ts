@@ -38,6 +38,7 @@ type PropertySection =
 	| ConditionsSection
 	| SignalsSection
 	| PropListSection
+	| PropListsSection
 	| StylesSection
 	| CustomSection
 	| OrderSection
@@ -66,6 +67,11 @@ interface SignalsSection extends BasePropSection {
 
 interface PropListSection extends BasePropSection {
 	type: "PROPLIST"
+	properties: PropDescriptor[]
+}
+interface PropListsSection extends BasePropSection {
+	name: string
+	type: "PROPLISTS"
 	properties: PropDescriptor[]
 }
 
@@ -329,6 +335,7 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
+	PropListsSection,
 	ConditionalDisplayProp,
 	OrderSection,
 	WireFieldsProp,
