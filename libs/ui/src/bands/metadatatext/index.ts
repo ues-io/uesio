@@ -193,7 +193,17 @@ const metadataSlice = createSlice({
 			const yamlDoc = parse(item.content)
 			const parentPath = getParentPath(localPath)
 			const index = getIndexFromPath(localPath)
-			if (!index && index !== 0) return
+			if (!index && index !== 0) {
+				// no index eq map clone
+				const newKey = (getKeyAtPath(path) || "") + "_copy"
+				const cloneNode = getNodeAtPath(localPath, yamlDoc.contents)
+				const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+				if (!isMap(parentNode)) return
+				parentNode.setIn([newKey], cloneNode)
+				if (!item.original) item.original = item.content
+				item.content = yamlDoc.toString()
+				return
+			}
 			const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
 			if (!isSeq(parentNode)) return
 			const items = parentNode.items
