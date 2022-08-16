@@ -1,10 +1,25 @@
-import { FunctionComponent, DragEvent } from "react"
+import React, { FunctionComponent, DragEvent, useEffect, useState } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 import ExpandPanel from "./expandpanel"
 import PropNodeTag from "./buildpropitem/propnodetag"
 
 const Grid = component.getUtility("uesio/io.grid")
+
+const useExpand = (
+	initialExpanded?: boolean,
+	onExpand?: () => void,
+	onClose?: () => void
+): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
+	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
+
+	useEffect(() => {
+		if (isExpanded) onExpand && onExpand()
+		if (isExpanded) onClose && onClose()
+	}, [isExpanded])
+
+	return [isExpanded, setIsExpanded]
+}
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -88,9 +103,10 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								// Loop over the variants for this component
 								return (
 									<PropNodeTag
+										useExpand={() => useExpand(isSelected)}
 										key={fullName}
 										{...sharedProps}
-										panelChildren={
+										expandChildren={
 											variants && (
 												<Grid
 													styles={{
@@ -113,7 +129,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 																variantFullName
 														return (
 															<PropNodeTag
-																title={variant}
 																key={variant}
 																onClick={(
 																	e: MouseEvent
@@ -132,13 +147,17 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 																context={
 																	context
 																}
-															/>
+															>
+																{variant}
+															</PropNodeTag>
 														)
 													})}
 												</Grid>
 											)
 										}
-									/>
+									>
+										{componentName}
+									</PropNodeTag>
 								)
 							}
 						)}
