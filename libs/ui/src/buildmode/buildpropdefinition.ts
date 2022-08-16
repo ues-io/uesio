@@ -230,7 +230,7 @@ interface WireFieldsProp extends BasePropDescriptor {
 }
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
-	wire: string
+	wireField: string
 }
 
 type ActionDescriptor =
