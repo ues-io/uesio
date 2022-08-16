@@ -289,13 +289,14 @@ type SignalProperties = {
 	name: string
 }
 
-interface PropRendererProps extends BaseProps {
-	descriptor: PropDescriptor
+interface PropRendererProps<T = PropDescriptor> extends BaseProps {
+	descriptor: T
 	propsDef: BuildPropertiesDefinition
 	valueAPI: ValueAPI
 }
 
 export {
+	ConditionProp,
 	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
