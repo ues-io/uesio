@@ -15,6 +15,12 @@ const standardActions: builder.ActionDescriptor[] = [
 	{ type: "CLONE" },
 ]
 
+const standardMapActions: builder.ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONEKEY" },
+]
+
 const augmentPropsDef = (
 	propsDef: builder.BuildPropertiesDefinition | undefined,
 	definition: definition.DefinitionMap,
@@ -30,7 +36,7 @@ const augmentPropsDef = (
 	if (propsDef.type === "wire") {
 		return {
 			...propsDef,
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 	if (propsDef.type === "component") {
@@ -72,14 +78,14 @@ const augmentPropsDef = (
 			properties: propsDef?.properties?.concat(
 				componentPropsDef.properties
 			),
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 
 	if (propsDef.type === "param") {
 		return {
 			...propsDef,
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 
@@ -129,6 +135,14 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				},
 				clone: (path: string) =>
 					uesio.builder.cloneDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						)
+					),
+				cloneKey: (path: string) =>
+					uesio.builder.cloneKeyDefinition(
 						component.path.makeFullPath(
 							metadataType,
 							metadataItem,

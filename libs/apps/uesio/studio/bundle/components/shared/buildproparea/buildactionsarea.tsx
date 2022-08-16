@@ -5,6 +5,7 @@ import DeleteAction from "./actions/deleteaction"
 import MoveActions from "./actions/moveactions"
 import AddAction from "./actions/addaction"
 import CloneAction from "./actions/cloneaction"
+import CloneKeyAction from "./actions/clonekeyaction"
 import RunSignalsAction from "./actions/runsignalsaction"
 import LoadWireAction from "./actions/loadwireaction"
 import ToggleConditionAction from "./actions/toggleconditionaction"
@@ -22,6 +23,7 @@ const ACTION_TO_COMPONENT: {
 } = {
 	ADD: AddAction,
 	CLONE: CloneAction,
+	CLONEKEY: CloneKeyAction,
 	RUN_SIGNALS: RunSignalsAction,
 	TOGGLE_CONDITION: ToggleConditionAction,
 	LOAD_WIRE: LoadWireAction,
