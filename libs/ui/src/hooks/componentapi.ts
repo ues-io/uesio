@@ -2,10 +2,7 @@ import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
-import useScripts from "./usescripts"
-import { parseKey } from "../component/path"
 import { useComponentVariantKeys } from "../bands/componentvariant"
-import { platform } from "../platform/platform"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
 
@@ -15,26 +12,6 @@ class ComponentAPI {
 	}
 
 	uesio: Uesio
-
-	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
-		platform.getComponentPackURL(
-			this.uesio.getContext(),
-			namespace,
-			name,
-			buildMode
-		)
-
-	usePacks = (packs: string[] | undefined, buildMode: boolean) =>
-		useScripts(
-			packs?.flatMap((key) => {
-				const [namespace, name] = parseKey(key)
-				const result = [this.getPackURL(namespace, name, false)]
-				if (buildMode) {
-					result.push(this.getPackURL(namespace, name, true))
-				}
-				return result
-			}) || []
-		)
 
 	useState = <T extends PlainComponentState>(
 		componentId: string,

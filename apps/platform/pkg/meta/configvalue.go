@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -23,6 +24,17 @@ type ConfigValue struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	Value     string
+}
+
+func (cv *ConfigValue) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cv.Namespace)
+	enc.AddStringKey("name", cv.Name)
+	enc.AddStringKey("value", cv.Value)
+}
+
+func (cv *ConfigValue) IsNil() bool {
+	return cv == nil
 }
 
 func NewConfigValue(key string) (*ConfigValue, error) {

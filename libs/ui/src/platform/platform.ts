@@ -270,7 +270,7 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		buildMode: boolean
+		buildMode?: boolean
 	) => {
 		const prefix = getPrefix(context)
 		const buildModeSuffix = buildMode ? "/builder" : ""
@@ -438,7 +438,12 @@ const platform = {
 	},
 	getBuilderDeps: async (context: Context): Promise<Dependencies> => {
 		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/metadata/builder`)
+		const viewId = context.getViewDefId()
+		if (!viewId) throw new Error("No View Context Provided")
+		const [namespace, name] = parseKey(viewId)
+		const response = await fetch(
+			`${prefix}/metadata/builder/${namespace}/${name}`
+		)
 		return respondJSON(response)
 	},
 }

@@ -1,40 +1,48 @@
 import { createSlice, createEntityAdapter, EntityState } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { getFullPathParts } from "../../component/path"
 import {
-	addDef,
-	changeDefKey,
-	cloneDef,
-	moveDef,
-	removeDef,
-	setDef,
-} from "../../store/reducers"
-import { RootState, getCurrentState } from "../../store/store"
-import { parse } from "../../yamlutils/yamlutils"
+	getFullPathParts,
+	getIndexFromPath,
+	getKeyAtPath,
+	getParentPath,
+	toPath,
+} from "../../component/path"
+import set from "lodash/set"
+import get from "lodash/get"
+
+import { PlainViewDef } from "../../definition/viewdef"
 
 import {
 	addDefinition,
-	cancel,
-	save,
-	changeDefinitionKey,
-	cloneDefinition,
-	moveDefinition,
-	removeDefinition,
 	setDefinition,
 	setDefinitionContent,
+	removeDefinition,
+	cloneDefinition,
+	cloneKeyDefinition,
+	changeDefinitionKey,
 } from "../builder"
-import { MetadataState } from "../metadata/types"
 
-const adapter = createEntityAdapter<MetadataState>({
-	selectId: (metadata) => metadata.key,
+import { RootState, getCurrentState } from "../../store/store"
+import { parse } from "../../yamlutils/yamlutils"
+
+const removeAtPath = (viewdef: PlainViewDef, path: string) => {
+	const pathArray = toPath(path)
+	const index = pathArray.pop() // Get the index
+	const parent = get(viewdef.definition, pathArray)
+	if (!parent || !index) return
+	delete parent[index]
+}
+
+const adapter = createEntityAdapter<PlainViewDef>({
+	selectId: (v) => `${v.namespace}.${v.name}`,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.viewdef)
 
 const getViewDefState = (
-	state: EntityState<MetadataState>,
+	state: EntityState<PlainViewDef>,
 	path: string
-): [string, MetadataState | undefined] => {
+): [string, PlainViewDef | undefined] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	return [
 		localPath,
@@ -42,92 +50,44 @@ const getViewDefState = (
 	]
 }
 
-const saveAllDefs = (state: EntityState<MetadataState>) => {
-	const viewdefs = state.entities
-
-	for (const defKey of Object.keys(viewdefs)) {
-		const defState = viewdefs[defKey]
-
-		if (!defState) continue
-		const content = defState.content
-		const original = defState.original
-		if (content === original) continue
-
-		const yamlDoc = parse(content)
-
-		defState.original = defState.content
-		defState.parsed = yamlDoc.toJSON()
-	}
-
-	return state
-}
-
-const cancelAllDefs = (state: EntityState<MetadataState>) => {
-	const viewdefs = state.entities
-
-	for (const defKey of Object.keys(viewdefs)) {
-		const defState = viewdefs[defKey]
-
-		if (!defState) continue
-		const content = defState.content
-		const original = defState.original
-		if (content === original) continue
-		if (!original) continue
-
-		const yamlDoc = parse(original)
-
-		defState.content = original
-		defState.parsed = yamlDoc.toJSON()
-	}
-
-	return state
-}
-
 const metadataSlice = createSlice({
 	name: "viewdef",
 	initialState: adapter.getInitialState(),
 	reducers: {
-		set: adapter.upsertOne,
 		setMany: adapter.upsertMany,
 	},
+
 	extraReducers: (builder) => {
 		builder.addCase(addDefinition, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				addDef(viewDef, {
-					path: localPath,
-					definition: payload.definition,
-					index: payload.index,
-				})
+			const { definition, path, index } = payload
+			const [localPath, viewDef] = getViewDefState(state, path)
+			if (!viewDef) return
+			const parent = get(viewDef.definition, localPath)
+			if (!parent) {
+				set(viewDef.definition, localPath, [definition])
+				return
 			}
+			parent.splice(index || 0, 0, definition)
 		})
 		builder.addCase(setDefinition, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				setDef(viewDef, {
-					path: localPath,
-					definition: payload.definition,
-				})
-			}
+			const { definition, path } = payload
+			const [localPath, viewDef] = getViewDefState(state, path)
+			if (!viewDef) return
+			set(viewDef.definition, localPath, definition)
 		})
 		builder.addCase(setDefinitionContent, (state, { payload }) => {
-			if (payload.metadataType === "viewdef") {
-				const viewDef = state.entities[payload.metadataItem]
-				if (viewDef) {
-					const defDoc = parse(payload.content)
-					viewDef.content = payload.content
-					viewDef.parsed = defDoc.toJSON()
-				}
-			}
+			if (payload.metadataType !== "viewdef") return
+			const viewDef = state.entities[payload.metadataItem]
+			if (!viewDef) return
+			const defDoc = parse(payload.content)
+			viewDef.definition = defDoc.toJSON()
 		})
 		builder.addCase(removeDefinition, (state, { payload }) => {
 			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				removeDef(viewDef, {
-					path: localPath,
-				})
-			}
+			if (!viewDef) return
+			removeAtPath(viewDef, localPath)
 		})
+		/*
 		builder.addCase(moveDefinition, (state, { payload }) => {
 			const [toType, toItem, toPath] = getFullPathParts(payload.toPath)
 			const [fromType, fromItem, fromPath] = getFullPathParts(
@@ -146,36 +106,52 @@ const metadataSlice = createSlice({
 					})
 			}
 		})
-		builder.addCase(save, saveAllDefs)
-		builder.addCase(cancel, cancelAllDefs)
+		*/
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				changeDefKey(viewDef, {
-					path: localPath,
-					key: payload.key,
-				})
-			}
+			const { path, key: newKey } = payload
+			const [localPath, viewDef] = getViewDefState(state, path)
+			if (!viewDef) return
+			const pathArray = toPath(localPath)
+			// Stop if old and new key are equal
+			if (getKeyAtPath(localPath) === newKey) return
+			const old = get(viewDef.definition, localPath)
+			// replace the old with the new key
+			pathArray.splice(-1, 1, newKey)
+			set(viewDef.definition, pathArray, old)
+			removeAtPath(viewDef, localPath)
 		})
 		builder.addCase(cloneDefinition, (state, { payload }) => {
 			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				cloneDef(viewDef, {
-					path: localPath,
-				})
-			}
+			if (!viewDef) return
+			const parentPath = getParentPath(localPath)
+			const index = getIndexFromPath(localPath)
+			if (!index && index !== 0) return
+			const parent = get(viewDef.definition, parentPath)
+			if (!parent) return
+			parent.splice(index, 0, parent[index])
+		})
+		builder.addCase(cloneKeyDefinition, (state, { payload }) => {
+			const [localPath, viewDef] = getViewDefState(state, payload.path)
+			if (!viewDef) return
+			const parentPath = getParentPath(localPath)
+			const clone = get(viewDef.definition, localPath)
+			const parent = get(viewDef.definition, parentPath)
+			if (!parent || !clone) return
+			set(viewDef.definition, `${parentPath}["${payload.newKey}"]`, clone)
 		})
 	},
 })
 
 const useViewDef = (key: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, key))
+		?.definition
 
 // This function doesn't run a selector so it will only get the current
 // state of the store and not update with changes
-const getViewDef = (key: string) => selectors.selectById(getCurrentState(), key)
+const getViewDef = (key: string) =>
+	selectors.selectById(getCurrentState(), key)?.definition
 
 export { useViewDef, selectors, getViewDef }
 
-export const { set, setMany } = metadataSlice.actions
+export const { setMany } = metadataSlice.actions
 export default metadataSlice.reducer

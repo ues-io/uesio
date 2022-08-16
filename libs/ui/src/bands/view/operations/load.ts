@@ -3,7 +3,6 @@ import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { selectors as viewSelectors } from "../../viewdef"
-import { ViewDefinition } from "../../../definition/viewdef"
 import { ThunkFunc } from "../../../store/store"
 import { selectWire } from "../../wire"
 
@@ -18,7 +17,7 @@ export default (context: Context): ThunkFunc =>
 
 		if (!viewDef) throw new Error("Could not get View Def")
 
-		const definition = viewDef.parsed as ViewDefinition
+		const definition = viewDef.definition
 		const wires = definition.wires || {}
 
 		const wiresToInit = Object.fromEntries(

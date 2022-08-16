@@ -99,10 +99,9 @@ const getBackgroundImage = (
 
 const getBackgroundStyles = (
 	definition: BackgroundDefinition,
-	theme: ThemeState,
 	context: Context
 ): CSSProperties => ({
-	backgroundColor: getColor(definition?.color, theme, context),
+	backgroundColor: getColor(definition?.color, context),
 	backgroundImage: getBackgroundImage(definition, context),
 	backgroundSize: "cover",
 })
@@ -135,7 +134,6 @@ const getFloatStyles = (definition: FloatDefinition): CSSProperties =>
 		  }
 const getColor = (
 	definition: ColorDefinition,
-	theme: ThemeState,
 	context: Context
 ): undefined | string => {
 	if (!definition) return undefined
@@ -145,7 +143,7 @@ const getColor = (
 	} else if (definition.value) {
 		result = context.merge(definition.value)
 	} else if (definition.intention) {
-		result = theme.definition.palette[definition.intention]
+		result = context.getTheme().definition.palette[definition.intention]
 	}
 	if (result && isValidColor(result)) return result
 }
@@ -163,7 +161,7 @@ function getSpacing(theme: ThemeState, ...marginCounts: number[]) {
 
 const defaultTheme: ThemeState = {
 	name: "default",
-	namespace: "system",
+	namespace: "uesio/core",
 	definition: {
 		palette: {
 			primary: "#1976d2",
