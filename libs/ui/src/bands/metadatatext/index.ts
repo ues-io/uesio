@@ -9,18 +9,27 @@ import {
 	removeDefinition,
 	save,
 	cancel,
+	cloneDefinition,
+	cloneKeyDefinition,
+	changeDefinitionKey,
+	moveDefinition,
 } from "../builder"
 import {
 	getFullPathParts,
+	getIndexFromPath,
+	getKeyAtPath,
+	getParentPath,
 	getParentPathArray,
 	toPath,
 } from "../../component/path"
 import {
 	addNodeAtPath,
+	getNodeAtPath,
 	parse,
 	removeNodeAtPath,
 	setNodeAtPath,
 } from "../../yamlutils/yamlutils"
+import { isMap, isSeq, Scalar } from "yaml"
 
 const adapter = createEntityAdapter<MetadataState>({
 	selectId: (metadatatext) =>
@@ -125,43 +134,111 @@ const metadataSlice = createSlice({
 			if (!item.original) item.original = item.content
 			item.content = yamlDoc.toString()
 		})
-		/*
 		builder.addCase(moveDefinition, (state, { payload }) => {
-			const [toType, toItem, toPath] = getFullPathParts(payload.toPath)
-			const [fromType, fromItem, fromPath] = getFullPathParts(
+			const [toType, toItem, localToPath] = getFullPathParts(
+				payload.toPath
+			)
+			const [fromType, fromItem, localFromPath] = getFullPathParts(
 				payload.fromPath
 			)
-			if (
-				toType === "viewdef" &&
-				fromType === "viewdef" &&
-				toItem === fromItem
-			) {
-				const entityState = state.entities[toItem]
-				entityState &&
-					moveDef(entityState, {
-						fromPath,
-						toPath,
-					})
-			}
-		})
-		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				changeDefKey(viewDef, {
-					path: localPath,
-					key: payload.key,
+
+			if (toType !== fromType) return
+			if (toItem !== fromItem) return
+			const item = state.entities[`${toType}:${toItem}`]
+			if (!item) return
+			const yamlDoc = parse(item.content)
+			// First get the content of the from item
+			const fromNode = getNodeAtPath(localFromPath, yamlDoc.contents)
+			const fromParentPath = getParentPath(localFromPath)
+			const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
+			const toParentPath = getParentPath(localToPath)
+			const toParent = getNodeAtPath(toParentPath, yamlDoc.contents)
+			const clonedNode = fromNode?.clone()
+			if (!isMap(clonedNode) && !isSeq(clonedNode)) return
+			const isArrayMove = isSeq(fromParent) && isSeq(toParent)
+			const isMapMove =
+				isMap(fromParent) && fromParentPath === toParentPath
+			if (isArrayMove) {
+				// Set that content at the to item
+				const index = getIndexFromPath(localToPath) || 0
+				addNodeAtPath(toParentPath, yamlDoc.contents, clonedNode, index)
+				// Loop over the items of the from parent
+				fromParent.items.forEach((item, index) => {
+					if (item === fromNode) {
+						fromParent.items.splice(index, 1)
+					}
 				})
 			}
+			if (isMapMove) {
+				const fromKey = getKeyAtPath(localFromPath)
+				const toKey = getKeyAtPath(localToPath)
+				const fromIndex = fromParent.items.findIndex(
+					(item) => (item.key as Scalar).value === fromKey
+				)
+				const toIndex = fromParent.items.findIndex(
+					(item) => (item.key as Scalar).value === toKey
+				)
+				const temp = fromParent.items[fromIndex]
+				fromParent.items[fromIndex] = fromParent.items[toIndex]
+				fromParent.items[toIndex] = temp
+			}
+
+			if (!item.original) item.original = item.content
+			item.content = yamlDoc.toString()
 		})
 		builder.addCase(cloneDefinition, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				cloneDef(viewDef, {
-					path: localPath,
-				})
-			}
+			const { path } = payload
+			const [localPath, item] = getItem(state, path)
+			if (!item) return
+			const yamlDoc = parse(item.content)
+			const parentPath = getParentPath(localPath)
+			const index = getIndexFromPath(localPath)
+			if (!index && index !== 0) return
+			const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+			if (!isSeq(parentNode)) return
+			const items = parentNode.items
+			items.splice(index, 0, items[index])
+			if (!item.original) item.original = item.content
+			item.content = yamlDoc.toString()
 		})
-		*/
+		builder.addCase(cloneKeyDefinition, (state, { payload }) => {
+			const { path, newKey } = payload
+			const [localPath, item] = getItem(state, path)
+			if (!item) return
+			const yamlDoc = parse(item.content)
+			const parentPath = getParentPath(localPath)
+			const cloneNode = getNodeAtPath(localPath, yamlDoc.contents)
+			const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+			if (!isMap(parentNode)) return
+			parentNode.setIn([newKey], cloneNode)
+			if (!item.original) item.original = item.content
+			item.content = yamlDoc.toString()
+		})
+		builder.addCase(changeDefinitionKey, (state, { payload }) => {
+			const { path, key: newKey } = payload
+			const [localPath, item] = getItem(state, path)
+			if (!item) return
+			const pathArray = toPath(localPath)
+			// Stop if old and new key are equal
+			if (getKeyAtPath(localPath) === newKey) return
+			// create a new document so components using useYaml will rerender
+			const yamlDoc = parse(item.content)
+			// make a copy so we can place with a new key and delete the old node
+			const newNode = yamlDoc.getIn(pathArray)
+			// replace the old with the new key
+			pathArray.splice(-1, 1, newKey)
+
+			/*
+			Keys need to be unique.
+			TEST:oldKeyEqualsNew
+			*/
+			if (yamlDoc.getIn(pathArray)) return
+
+			yamlDoc.setIn(pathArray, newNode)
+			yamlDoc.deleteIn(toPath(localPath))
+			if (!item.original) item.original = item.content
+			item.content = yamlDoc.toString()
+		})
 	},
 })
 

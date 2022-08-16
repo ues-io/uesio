@@ -22,6 +22,7 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setDefinitionContent,
+	cloneKeyDefinition,
 } from "../bands/builder"
 import { save as saveOp, cancel as cancelOp } from "../bands/builder/operations"
 import { appDispatch, RootState, getCurrentState } from "../store/store"
@@ -31,6 +32,7 @@ import { MetadataType } from "../bands/builder/types"
 import {
 	fromPath,
 	getFullPathParts,
+	getKeyAtPath,
 	getParentPath,
 	makeFullPath,
 	toPath,
@@ -176,13 +178,14 @@ class BuilderAPI {
 
 	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
 
+	cloneKeyDefinition = (path: string) => {
+		const newKey =
+			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
+		appDispatch()(cloneKeyDefinition({ path, newKey }))
+	}
+
 	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(
-			setDefinition({
-				path,
-				definition,
-			})
-		)
+		appDispatch()(setDefinition({ path, definition }))
 
 	addDefinition(
 		path: string,

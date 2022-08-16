@@ -1,6 +1,12 @@
 import { createSlice, createEntityAdapter, EntityState } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { getFullPathParts, toPath } from "../../component/path"
+import {
+	getFullPathParts,
+	getIndexFromPath,
+	getKeyAtPath,
+	getParentPath,
+	toPath,
+} from "../../component/path"
 import set from "lodash/set"
 import get from "lodash/get"
 
@@ -11,10 +17,21 @@ import {
 	setDefinition,
 	setDefinitionContent,
 	removeDefinition,
+	cloneDefinition,
+	cloneKeyDefinition,
+	changeDefinitionKey,
 } from "../builder"
 
 import { RootState, getCurrentState } from "../../store/store"
 import { parse } from "../../yamlutils/yamlutils"
+
+const removeAtPath = (viewdef: PlainViewDef, path: string) => {
+	const pathArray = toPath(path)
+	const index = pathArray.pop() // Get the index
+	const parent = get(viewdef.definition, pathArray)
+	if (!parent || !index) return
+	delete parent[index]
+}
 
 const adapter = createEntityAdapter<PlainViewDef>({
 	selectId: (v) => `${v.namespace}.${v.name}`,
@@ -68,11 +85,7 @@ const metadataSlice = createSlice({
 		builder.addCase(removeDefinition, (state, { payload }) => {
 			const [localPath, viewDef] = getViewDefState(state, payload.path)
 			if (!viewDef) return
-			const pathArray = toPath(localPath)
-			const index = pathArray.pop() // Get the index
-			const parent = get(viewDef.definition, pathArray)
-			if (!parent || !index) return
-			delete parent[index]
+			removeAtPath(viewDef, localPath)
 		})
 		/*
 		builder.addCase(moveDefinition, (state, { payload }) => {
@@ -93,24 +106,39 @@ const metadataSlice = createSlice({
 					})
 			}
 		})
+		*/
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				changeDefKey(viewDef, {
-					path: localPath,
-					key: payload.key,
-				})
-			}
+			const { path, key: newKey } = payload
+			const [localPath, viewDef] = getViewDefState(state, path)
+			if (!viewDef) return
+			const pathArray = toPath(localPath)
+			// Stop if old and new key are equal
+			if (getKeyAtPath(localPath) === newKey) return
+			const old = get(viewDef.definition, localPath)
+			// replace the old with the new key
+			pathArray.splice(-1, 1, newKey)
+			set(viewDef.definition, pathArray, old)
+			removeAtPath(viewDef, localPath)
 		})
 		builder.addCase(cloneDefinition, (state, { payload }) => {
 			const [localPath, viewDef] = getViewDefState(state, payload.path)
-			if (viewDef) {
-				cloneDef(viewDef, {
-					path: localPath,
-				})
-			}
+			if (!viewDef) return
+			const parentPath = getParentPath(localPath)
+			const index = getIndexFromPath(localPath)
+			if (!index && index !== 0) return
+			const parent = get(viewDef.definition, parentPath)
+			if (!parent) return
+			parent.splice(index, 0, parent[index])
 		})
-		*/
+		builder.addCase(cloneKeyDefinition, (state, { payload }) => {
+			const [localPath, viewDef] = getViewDefState(state, payload.path)
+			if (!viewDef) return
+			const parentPath = getParentPath(localPath)
+			const clone = get(viewDef.definition, localPath)
+			const parent = get(viewDef.definition, parentPath)
+			if (!parent || !clone) return
+			set(viewDef.definition, `${parentPath}["${payload.newKey}"]`, clone)
+		})
 	},
 })
 
