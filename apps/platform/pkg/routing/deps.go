@@ -427,11 +427,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	featureflags, err := featureflagstore.GetFeatureFlags(session, "")
-	if err != nil {
-		return nil, errors.New("Failed to get feature flags: " + err.Error())
-	}
-
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
 			err := deps.AddItem(pack, false)
@@ -481,23 +476,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 	err = deps.AddItem(theme, false)
 	if err != nil {
 		return nil, err
-	}
-
-	for i := range featureflags {
-		FeatureFlagResponse := featureflags[i]
-
-		FeatureFlag, err := meta.NewFeatureFlag(FeatureFlagResponse.Key)
-		if err != nil {
-			return nil, err
-		}
-
-		FeatureFlag.Value = FeatureFlagResponse.Value
-		FeatureFlag.User = FeatureFlagResponse.User
-
-		err = deps.AddItem(FeatureFlag, false)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return deps, nil
