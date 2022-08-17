@@ -186,6 +186,7 @@ func Pack(options *PackOptions) error {
 				}
 			},
 		}
+		buildOptions.Define = map[string]string{"process.env.NODE_ENV": `"development"`}
 	}
 
 	// Then pack with esbuild
