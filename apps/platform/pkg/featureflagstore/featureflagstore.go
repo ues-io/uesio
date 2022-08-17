@@ -17,6 +17,46 @@ type FeatureFlagStore interface {
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
+type FeatureFlagResponse struct {
+	Key       string `json:"key"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+	Value     bool   `json:"value"`
+	User      string `json:"user"`
+}
+
+func GetFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse, error) {
+	var featureFlags meta.FeatureFlagCollection
+	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
+	if err != nil {
+		return nil, err
+	}
+
+	response := []FeatureFlagResponse{}
+
+	for _, ff := range featureFlags {
+		ffa, err := GetValue(ff, user, session)
+		if err != nil {
+			response = append(response, FeatureFlagResponse{
+				Key:       ff.GetKey(),
+				Name:      ff.Name,
+				Namespace: ff.Namespace,
+				User:      "",
+				Value:     false,
+			})
+			continue
+		}
+		response = append(response, FeatureFlagResponse{
+			Key:       ff.GetKey(),
+			Name:      ff.Name,
+			Namespace: ff.Namespace,
+			User:      ffa.User,
+			Value:     ffa.Value,
+		})
+	}
+	return response, nil
+}
+
 func getKeyParts(cv *meta.FeatureFlag, user string, session *sess.Session) []string {
 	parts := []string{cv.Namespace, cv.Name}
 	if user != "" {

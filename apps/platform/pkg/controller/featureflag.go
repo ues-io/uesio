@@ -5,12 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type FeatureFlagResponse struct {
@@ -20,43 +17,13 @@ type FeatureFlagResponse struct {
 	User      string `json:"user"`
 }
 
-func getFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse, error) {
-	var featureFlags meta.FeatureFlagCollection
-	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
-	if err != nil {
-		return nil, err
-	}
-
-	response := []FeatureFlagResponse{}
-
-	for _, cv := range featureFlags {
-		ffa, err := featureflagstore.GetValue(cv, user, session)
-		if err != nil {
-			response = append(response, FeatureFlagResponse{
-				Name:      cv.Name,
-				Namespace: cv.Namespace,
-				User:      "",
-				Value:     false,
-			})
-			continue
-		}
-		response = append(response, FeatureFlagResponse{
-			Name:      cv.Name,
-			Namespace: cv.Namespace,
-			User:      ffa.User,
-			Value:     ffa.Value,
-		})
-	}
-	return response, nil
-}
-
 func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
 	user := vars["user"]
 
-	response, err := getFeatureFlags(session, user)
+	response, err := featureflagstore.GetFeatureFlags(session, user)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -9,6 +9,7 @@ import (
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -44,6 +45,7 @@ func NewPreloadMetadata() *PreloadMetadata {
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
 		MetadataText:     NewItem(),
+		FeatureFlag:      NewItem(),
 	}
 }
 
@@ -54,6 +56,7 @@ type PreloadMetadata struct {
 	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
 	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
 	Label            *MetadataMergeData `json:"label,omitempty"`
+	FeatureFlag      *MetadataMergeData `json:"featureflag,omitempty"`
 	MetadataText     *MetadataMergeData `json:"metadatatext,omitempty"`
 }
 
@@ -109,6 +112,9 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 	case *meta.Label:
 		bucket = pm.Label
 		metadataType = "label"
+	case *meta.FeatureFlag:
+		bucket = pm.FeatureFlag
+		metadataType = "featureflag"
 	default:
 		return fmt.Errorf("Cannot add this type to dependencies: %T", v)
 	}
@@ -179,6 +185,13 @@ func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
 		return nil
 	}
 	return pm.ConfigValue
+}
+
+func (pm *PreloadMetadata) GetFeatureFlags() *MetadataMergeData {
+	if pm == nil {
+		return nil
+	}
+	return pm.FeatureFlag
 }
 
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
@@ -319,6 +332,11 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		return errors.New("Failed to get translated labels: " + err.Error())
 	}
 
+	featureflags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
+	if err != nil {
+		return errors.New("Failed to get feature flags: " + err.Error())
+	}
+
 	for key, value := range labels {
 		label, err := meta.NewLabel(key)
 		if err != nil {
@@ -326,6 +344,23 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		}
 		label.Value = value
 		err = deps.AddItem(label, false)
+		if err != nil {
+			return err
+		}
+	}
+
+	for i := range featureflags {
+		FeatureFlagResponse := featureflags[i]
+
+		FeatureFlag, err := meta.NewFeatureFlag(FeatureFlagResponse.Key)
+		if err != nil {
+			return err
+		}
+
+		FeatureFlag.Value = FeatureFlagResponse.Value
+		FeatureFlag.User = FeatureFlagResponse.User
+
+		err = deps.AddItem(FeatureFlag, false)
 		if err != nil {
 			return err
 		}
@@ -392,6 +427,11 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
+	featureflags, err := featureflagstore.GetFeatureFlags(session, "")
+	if err != nil {
+		return nil, errors.New("Failed to get feature flags: " + err.Error())
+	}
+
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
 			err := deps.AddItem(pack, false)
@@ -443,13 +483,22 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 		return nil, err
 	}
 
-	//TO-DO Fix this
+	for i := range featureflags {
+		FeatureFlagResponse := featureflags[i]
 
-	// ffr, _ := getFeatureFlags(session, "")
-	// for i := range ffr {
-	// 	featureFlag := ffr[i]
-	// 	deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	// }
+		FeatureFlag, err := meta.NewFeatureFlag(FeatureFlagResponse.Key)
+		if err != nil {
+			return nil, err
+		}
+
+		FeatureFlag.Value = FeatureFlagResponse.Value
+		FeatureFlag.User = FeatureFlagResponse.User
+
+		err = deps.AddItem(FeatureFlag, false)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return deps, nil
 }
