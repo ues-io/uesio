@@ -1,7 +1,6 @@
 import {
 	createEntityAdapter,
 	createSlice,
-	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -17,6 +16,8 @@ import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
 import { MetadataKey } from "../builder/types"
+import { set as setRoute } from "../route"
+import { makeViewId } from "../view"
 
 type DeletePayload = {
 	recordId: string
@@ -50,7 +51,7 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
-	conditionId: string
+	id: string
 } & EntityPayload
 
 type AddConditionPayload = {
@@ -234,9 +235,9 @@ const wireSlice = createSlice({
 			}
 		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
-			(state, { conditionId }) => {
+			(state, { id }) => {
 				const conditionIndex = state.conditions.findIndex(
-					(condition) => condition.id === conditionId
+					(condition) => condition.id === id
 				)
 				if (conditionIndex === -1) {
 					return
@@ -328,6 +329,21 @@ const wireSlice = createSlice({
 			wireAdapter.upsertMany(state, wires)
 		},
 	},
+	extraReducers: (builder) => {
+		builder.addCase(setRoute, (state, { payload }) => {
+			if (!payload?.view) return state
+			// Remove all wires except for ones that were preloaded for this view
+			const match = makeViewId(payload.view) + ":"
+			const wiresToKeep = Object.entries(state.entities).flatMap(
+				([key, value]) => {
+					if (key.startsWith(match) && value) return [value]
+					return []
+				}
+			)
+			wireAdapter.removeAll(state)
+			return wireAdapter.addMany(state, wiresToKeep)
+		})
+	},
 })
 
 // Both gets wire state and subscribes the component to wire changes
@@ -337,16 +353,11 @@ const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 const useWires = (
 	fullWireIds: string[]
 ): Record<string, PlainWire | undefined> =>
-	useSelector((state: RootState) => selectWires(state, fullWireIds))
-
-const selectWires = createSelector(
-	selectors.selectEntities,
-	(state: RootState, fullWireIds: string[]) => fullWireIds,
-	(items, fullWireIds) =>
-		Object.fromEntries(
-			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+	Object.fromEntries(
+		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
+			fullWireIds.includes(key)
 		)
-)
+	)
 
 const selectWire = (
 	state: RootState,

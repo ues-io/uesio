@@ -89,7 +89,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "test -z $(gofmt -l ./pkg/**)",
+            "command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
             "cwd": "apps/platform"
           }
         },
@@ -151,7 +151,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "test -z $(gofmt -l ./pkg/**)",
+            "command": "output=$(gofmt -l ./pkg/**) && echo \"$output\" && test -z \"$output\"",
             "cwd": "apps/clio"
           }
         },
@@ -517,7 +517,9 @@
           "options": {
             "commands": [
               "mkdir -p dist/vendor/monaco-editor/min/vs",
+              "mkdir -p dist/vendor/monaco-editor/min-maps",
               "cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
+              "cp -r node_modules/monaco-editor/min-maps/vs dist/vendor/monaco-editor/min-maps",
               "echo Done!"
             ],
             "parallel": false

@@ -11,14 +11,11 @@ import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
-import { ThemeState } from "../definition/theme"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
-import { ViewDefinition } from "../definition/viewdef"
-import { ComponentVariant } from "../definition/componentvariant"
 import { getErrorString } from "../bands/utils"
 
 type FieldMode = "READ" | "EDIT"
@@ -210,8 +207,7 @@ const inject = (template: string, context: Context): string =>
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
-		? (viewSelectors.selectById(getCurrentState(), viewDefId)
-				?.parsed as ViewDefinition)
+		? viewSelectors.selectById(getCurrentState(), viewDefId)?.definition
 		: undefined
 
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
@@ -279,8 +275,8 @@ class Context {
 		get(this.getViewDef(), getAncestorPath(path, 3))
 
 	getTheme = () =>
-		(themeSelectors.selectById(getCurrentState(), this.getThemeId() || "")
-			?.parsed || defaultTheme) as ThemeState
+		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
+		defaultTheme
 
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
@@ -288,10 +284,10 @@ class Context {
 		componentVariantSelectors.selectById(
 			getCurrentState(),
 			`${componentType}:${variantName}`
-		)?.parsed as ComponentVariant
+		)
 
 	getLabel = (labelKey: string) =>
-		labelSelectors.selectById(getCurrentState(), labelKey)?.content
+		labelSelectors.selectById(getCurrentState(), labelKey)?.value
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 

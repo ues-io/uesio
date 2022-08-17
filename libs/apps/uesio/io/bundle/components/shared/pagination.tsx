@@ -1,26 +1,26 @@
 import { hooks, signal, definition } from "@uesio/ui"
 import { useEffect } from "react"
 
-const PAGINATION_SLICE = "pagination"
+type PaginationState = {
+	pagination?: number
+}
 
-const nextPage: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const currentPage = (getState() as number) ?? 0
-		setState(currentPage + 1)
+const nextPage: signal.ComponentSignalDescriptor<PaginationState> = {
+	dispatcher: (state) => {
+		const currentPage = state.pagination ?? 0
+		state.pagination = currentPage + 1
 	},
 	label: "Next Page",
 	properties: () => [],
-	slice: PAGINATION_SLICE,
 }
 
-const prevPage: signal.ComponentSignalDescriptor = {
-	dispatcher: (signal, context, getState, setState) => {
-		const currentPage = (getState() as number) ?? 0
-		if (currentPage > 0) setState(currentPage - 1)
+const prevPage: signal.ComponentSignalDescriptor<PaginationState> = {
+	dispatcher: (state) => {
+		const currentPage = state.pagination ?? 0
+		state.pagination = currentPage - 1
 	},
 	label: "Previous Page",
 	properties: () => [],
-	slice: PAGINATION_SLICE,
 }
 
 const usePagination = (
@@ -30,14 +30,16 @@ const usePagination = (
 ): [number | undefined, (page: number) => void] => {
 	const uesio = hooks.useUesio(props)
 	const batchId = batch || ""
-	const [currentPage, setPagination] = uesio.component.useState<number>(
-		id || props.path || "",
-		undefined,
-		PAGINATION_SLICE
-	)
+	const [currentPage, setPagination] = uesio.component.useStateSlice<
+		number | undefined
+	>("pagination", id || props.path || "", 0)
+
 	useEffect(() => {
-		setPagination(0)
+		if (currentPage !== 0) {
+			setPagination(0)
+		}
 	}, [batchId])
+
 	return [currentPage, setPagination]
 }
 

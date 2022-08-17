@@ -10,9 +10,7 @@ const notificationSlice = createSlice({
 		remove: notificationAdapter.removeOne,
 	},
 	extraReducers: (builder) => {
-		builder.addCase(setRoute, (state) =>
-			notificationAdapter.removeAll(state)
-		)
+		builder.addCase(setRoute, notificationAdapter.removeAll)
 	},
 })
 

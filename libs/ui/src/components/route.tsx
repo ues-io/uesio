@@ -20,7 +20,6 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		viewDef: route?.view,
 		theme: route?.theme,
 	})
-	const theme = uesio.theme.useTheme(route?.theme || "", routeContext)
 
 	// This applies the global styles
 	injectGlobal({
@@ -62,13 +61,22 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		!!(route && route.workspace)
 	)
 
+	const isLoaded = uesio.builder.useBuilderDeps(buildMode, routeContext)
+
 	// Quit rendering early if we don't have our theme yet.
-	if (!theme || !route) return null
+	if (!route) return null
 
 	return (
 		<>
 			<View
-				context={routeContext}
+				context={
+					// Prevent build mode if the deps haven't been loaded yet.
+					buildMode && !isLoaded
+						? routeContext.addFrame({
+								buildMode: false,
+						  })
+						: routeContext
+				}
 				definition={{
 					view: route.view,
 					params: route.params,

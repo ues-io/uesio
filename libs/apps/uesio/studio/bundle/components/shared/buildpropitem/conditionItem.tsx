@@ -75,6 +75,11 @@ function getConditionTitle(condition: wire.WireConditionDefinition): string {
 
 const getConditionProperties = (): builder.PropDescriptor[] => [
 	{
+		name: "id",
+		type: "TEXT",
+		label: "Id",
+	},
+	{
 		name: "field",
 		type: "METADATA",
 		metadataType: "FIELD",

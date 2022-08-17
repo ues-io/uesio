@@ -39,6 +39,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| CustomSection
 	| OrderSection
 	| ConditionalDisplaySection
 
@@ -71,12 +72,24 @@ interface PropListSection extends BasePropSection {
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
 }
+
+// Duplicate code from the studio
+interface SectionRendererProps extends BaseProps {
+	section: PropertySection
+	propsDef: BuildPropertiesDefinition
+	valueAPI: ValueAPI
+}
+interface CustomSection extends BasePropSection {
+	type: "CUSTOM"
+	renderFunc: FC<SectionRendererProps>
+}
 interface ConditionalDisplaySection extends BasePropSection {
 	type: "CONDITIONALDISPLAY"
 }
 
 type PropDescriptor =
 	| TextProp
+	| TextAreaProp
 	| NumberProp
 	| CustomProp
 	| SelectProp
@@ -136,6 +149,10 @@ interface NamespaceProp extends BasePropDescriptor {
 
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
+}
+
+interface TextAreaProp extends BasePropDescriptor {
+	type: "TEXT_AREA"
 }
 
 interface IconProp extends BasePropDescriptor {
@@ -217,6 +234,7 @@ type ActionDescriptor =
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| CloneKeyAction
 	| DeleteAction
 	| MoveAction
 	| AddCondition
@@ -246,6 +264,10 @@ type MoveAction = {
 
 type CloneAction = {
 	type: "CLONE"
+}
+
+type CloneKeyAction = {
+	type: "CLONEKEY"
 }
 
 type LoadWireAction = {
@@ -279,6 +301,7 @@ interface PropRendererProps extends BaseProps {
 }
 
 export {
+	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
@@ -293,6 +316,7 @@ export {
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	TextAreaProp,
 	IconProp,
 	NumberProp,
 	CustomProp,

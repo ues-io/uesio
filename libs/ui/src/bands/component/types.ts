@@ -1,6 +1,6 @@
-import { FieldValue } from "../wirerecord/types"
+import { Definition } from "../../definition/definition"
 
-type PlainComponentState = FieldValue
+type PlainComponentState = Definition
 
 type ComponentState = {
 	view: string

@@ -1,5 +1,5 @@
 import { FunctionComponent, ComponentType } from "react"
-import { builder } from "@uesio/ui"
+
 import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"
 import ConditionsSection from "./conditionssection"
@@ -10,7 +10,7 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import OrderSection from "./ordersection"
 
 const SECTION_TO_COMPONENT: {
-	[K in builder.PropertySection["type"]]: ComponentType<SectionRendererProps>
+	[key: string]: ComponentType<SectionRendererProps>
 } = {
 	FIELDS: FieldsSection,
 	CONDITIONS: ConditionsSection,
@@ -22,7 +22,10 @@ const SECTION_TO_COMPONENT: {
 }
 
 const BuildSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const SectionHandler = SECTION_TO_COMPONENT[props.section.type]
+	const SectionHandler =
+		props.section.type === "CUSTOM"
+			? props.section.renderFunc
+			: SECTION_TO_COMPONENT[props.section.type]
 	return <SectionHandler {...props} />
 }
 

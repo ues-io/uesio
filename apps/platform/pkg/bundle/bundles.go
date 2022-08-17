@@ -173,7 +173,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
-		fmt.Println("Failed load one: " + item.GetKey())
+		fmt.Println("Failed load one: " + item.GetKey() + " : " + err.Error())
 		return err
 	}
 	return bs.GetItem(item, version, session)
