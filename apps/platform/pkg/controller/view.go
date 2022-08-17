@@ -120,9 +120,23 @@ func View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondYAML(w, r, &ViewResponse{
-		Name:       view.Name,
-		Namespace:  view.Namespace,
-		Definition: &view.Definition,
+	route := &meta.Route{
+		ViewRef:  view.GetKey(),
+		ThemeRef: session.GetDefaultTheme(),
+	}
+
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		HandleMissingRoute(w, r, session, "", err)
+		return
+	}
+
+	respondJSON(w, r, &RouteMergeData{
+		View:         route.ViewRef,
+		Params:       route.Params,
+		Namespace:    route.Namespace,
+		Theme:        route.ThemeRef,
+		Path:         route.Path,
+		Dependencies: depsCache,
 	})
 }

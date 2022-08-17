@@ -148,10 +148,14 @@ const postJSON = (url: string, body?: Record<string, unknown>) =>
 	})
 
 const platform = {
-	getView: async (context: Context, namespace: string, name: string) => {
+	getView: async (
+		context: Context,
+		namespace: string,
+		name: string
+	): Promise<RouteState> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/views/${namespace}/${name}`)
-		return respondText(response)
+		return respondJSON(response)
 	},
 	getTheme: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
