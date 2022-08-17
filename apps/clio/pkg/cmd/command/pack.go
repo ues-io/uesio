@@ -202,7 +202,7 @@ func Pack(options *PackOptions) error {
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("Done Packings: %v", time.Since(start)))
+	fmt.Println(fmt.Sprintf("Done Packing: %v", time.Since(start)))
 
 	// Returning from pack() exits immediately in Go.
 	// Block forever so we keep watching and don't exit.
