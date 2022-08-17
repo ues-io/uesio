@@ -52,6 +52,7 @@ type BundleStore interface {
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
+	DeleteBundle(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 }
 
 // GetBundleStore function
