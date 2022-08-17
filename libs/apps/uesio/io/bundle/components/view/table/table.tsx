@@ -66,7 +66,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
 
 	const paginated = paginate(data, currentPage, pageSize)
-
+	console.log({ x: "ssssssssss" })
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),
