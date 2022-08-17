@@ -11,8 +11,6 @@ const Icon = component.getUtility("uesio/io.icon")
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
-	const primaryColor = theme.definition.palette.primary
 	const [metadataType, metadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 
@@ -57,10 +55,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				const selected = selectedNode.startsWith(signalPath)
 				return (
 					<PropNodeTag
-						title={signal?.signal}
-						icon="router"
 						selected={selected}
-						iconColor={primaryColor}
 						key={index}
 						onClick={(): void =>
 							uesio.builder.setSelectedNode(
@@ -92,7 +87,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								valueAPI={valueAPI}
 							/>
 						}
-					/>
+					>
+						{signal?.signal}
+					</PropNodeTag>
 				)
 			})}
 		</>
