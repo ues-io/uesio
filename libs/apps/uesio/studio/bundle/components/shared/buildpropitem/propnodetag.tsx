@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from "react"
+import { FC, ReactNode, useState } from "react"
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
@@ -9,9 +9,6 @@ type Props = {
 	tooltip?: string
 	expandChildren?: ReactNode
 	popperChildren?: ReactNode
-	useExpand?: (
-		initialState?: boolean
-	) => [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 }
 
 const Tile = component.getUtility("uesio/io.tile")
@@ -21,8 +18,7 @@ const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 const PropNodeTag: FC<Props> = (props) => {
 	const { onClick, draggable, selected, context, popperChildren } = props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const [isExpanded, setIsExpanded] =
-		(props.useExpand && props.useExpand()) || useState(false)
+	const [isExpanded, setIsExpanded] = useState(false)
 
 	const classes = styles.useStyles(
 		{
