@@ -26,7 +26,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const [namespace] = component.path.parseKey(collectionKey)
 
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
