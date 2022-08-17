@@ -1,10 +1,7 @@
 import { FunctionComponent, useEffect } from "react"
-import { useUesio } from "../../hooks/hooks"
 import Slot from "../slot"
 import { css } from "@emotion/css"
-import { ViewDefinition } from "../../definition/viewdef"
 import { useViewDef } from "../../bands/viewdef"
-import { getComponentPackKeys } from "../../bands/componentpack"
 import loadViewOp from "../../bands/view/operations/load"
 import { appDispatch } from "../../store/store"
 import { ViewProps } from "./viewdefinition"
@@ -12,7 +9,6 @@ import { ComponentInternal } from "../../component/component"
 import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
 const View: FunctionComponent<ViewProps> = (props) => {
-	const uesio = useUesio(props)
 	const {
 		path,
 		context,
@@ -20,7 +16,6 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	} = props
 
 	const viewId = makeViewId(viewDefId, path)
-	const cpacks = getComponentPackKeys()
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -31,9 +26,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && !isSubView
-	const scriptResult = uesio.component.usePacks(cpacks, buildMode)
+
 	const viewDef = useViewDef(viewDefId)
-	const useBuildTime = buildMode && scriptResult.loaded
+	const useBuildTime = buildMode
 	const viewStack = context.getViewStack()
 
 	const viewContext = context.addFrame({
@@ -48,7 +43,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		appDispatch()(loadViewOp(viewContext))
 	}, [viewDefId, JSON.stringify(params)])
 
-	if (!viewDef || !scriptResult.loaded) return null
+	if (!viewDef) return null
 
 	if (isSubView && viewStack?.includes(viewDefId)) {
 		throw new Error(
@@ -58,7 +53,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	const slot = (
 		<Slot
-			definition={viewDef.parsed as ViewDefinition}
+			definition={viewDef}
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}

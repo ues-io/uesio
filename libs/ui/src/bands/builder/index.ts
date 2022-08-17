@@ -42,6 +42,11 @@ type CloneDefinitionPayload = {
 	path: string
 }
 
+type CloneKeyDefinitionPayload = {
+	path: string
+	newKey: string
+}
+
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -52,10 +57,16 @@ const builderSlice = createSlice({
 		) => {
 			state.lastModifiedNode = payload.path
 		},
-		//
 		cloneDefinition: (
 			state,
 			{ payload }: PayloadAction<CloneDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+			state.lastModifiedNode = payload.path
+		},
+		cloneKeyDefinition: (
+			state,
+			{ payload }: PayloadAction<CloneKeyDefinitionPayload>
 		) => {
 			// nothing actually happens here, just something for others to listen to.
 			state.lastModifiedNode = payload.path
@@ -137,8 +148,8 @@ export const {
 	setDropNode,
 	setDefinition,
 	cloneDefinition,
+	cloneKeyDefinition,
 	addDefinition,
-
 	removeDefinition,
 	moveDefinition,
 	changeDefinitionKey,
@@ -148,6 +159,7 @@ export const {
 } = builderSlice.actions
 export {
 	CloneDefinitionPayload,
+	CloneKeyDefinitionPayload,
 	SetDefinitionPayload,
 	AddDefinitionPayload,
 	RemoveDefinitionPayload,

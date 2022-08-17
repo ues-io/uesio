@@ -10,7 +10,6 @@ import { BaseProps } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
-import { ThemeAPI } from "./themeapi"
 import { NotificationAPI } from "./notificationapi"
 import { FeatureFlagAPI } from "./featureflagapi"
 import { BotAPI } from "./botapi"
@@ -34,7 +33,6 @@ class Uesio {
 		this.configvalue = new ConfigValueAPI(this)
 		this.secret = new SecretAPI(this)
 		this.featureflag = new FeatureFlagAPI(this)
-		this.theme = new ThemeAPI(this)
 		this.notification = new NotificationAPI(this)
 		this.bot = new BotAPI(this)
 	}
@@ -51,7 +49,6 @@ class Uesio {
 	configvalue: ConfigValueAPI
 	secret: SecretAPI
 	featureflag: FeatureFlagAPI
-	theme: ThemeAPI
 	notification: NotificationAPI
 	bot: BotAPI
 

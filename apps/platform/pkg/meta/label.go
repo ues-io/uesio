@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -22,6 +23,16 @@ type Label struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (l *Label) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", l.Namespace)
+	enc.AddStringKey("name", l.Name)
+	enc.AddStringKey("value", l.Value)
+}
+
+func (l *Label) IsNil() bool {
+	return l == nil
 }
 
 func NewLabel(key string) (*Label, error) {

@@ -11,7 +11,7 @@ interface Palette {
 	[key: string]: string
 }
 
-interface ThemeState {
+type ThemeState = {
 	name: string
 	namespace: string
 	definition: {

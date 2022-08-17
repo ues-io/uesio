@@ -1,10 +1,9 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { ThemeState } from "../../definition/theme"
 import { RootState } from "../../store/store"
-import { MetadataState } from "../metadata/types"
 
-const adapter = createEntityAdapter<MetadataState>({
-	selectId: (metadata) => metadata.key,
+const adapter = createEntityAdapter<ThemeState>({
+	selectId: (theme) => `${theme.namespace}.${theme.name}`,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.theme)
@@ -18,12 +17,7 @@ const metadataSlice = createSlice({
 	},
 })
 
-const useTheme = (key: string) =>
-	useSelector((state: RootState) => selectors.selectById(state, key))
-
-const useThemeKeys = () => useSelector(selectors.selectIds) as string[]
-
-export { useTheme, useThemeKeys, selectors }
+export { selectors }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer
