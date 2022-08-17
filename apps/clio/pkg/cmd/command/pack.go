@@ -177,15 +177,7 @@ func Pack(options *PackOptions) error {
 	}
 
 	if options.Watch {
-		buildOptions.Watch = &api.WatchMode{
-			OnRebuild: func(result api.BuildResult) {
-				if len(result.Errors) > 0 {
-					fmt.Printf("watch build failed: %d errors\n", len(result.Errors))
-				} else {
-					fmt.Printf("watch build succeeded: %d warnings\n", len(result.Warnings))
-				}
-			},
-		}
+		buildOptions.Watch = &api.WatchMode{}
 		buildOptions.Define = map[string]string{"process.env.NODE_ENV": `"development"`}
 	}
 
