@@ -187,6 +187,10 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
+func (b *WorkspaceBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+	return errors.New("Tried to delete bundle in the workspace bundle store")
+}
+
 // GetBundleDef function
 func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	workspace := session.GetWorkspace()

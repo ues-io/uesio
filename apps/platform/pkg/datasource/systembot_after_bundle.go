@@ -2,77 +2,74 @@ package datasource
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func runBundlenAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	println("Running After Bundle")
 	return cleanBundleFiles(request, connection, session)
-
 }
 
 func cleanBundleFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	ids := []string{}
+	uniqueKeys := []string{}
 	for i := range request.Deletes {
 		ids = append(ids, request.Deletes[i].IDValue)
+		uniqueKeys = append(uniqueKeys, request.Deletes[i].UniqueKey)
 	}
 
 	if len(ids) == 0 {
 		return nil
 	}
 
-	//
-	workspace := session.GetWorkspace()
-
-	if workspace == nil {
-		return errors.New("Error deliting bundle, missing workspace")
-	}
-
-	//
-
-	dest, err := bundlestore.GetBundleStore(workspace.Name, session.RemoveWorkspaceContext())
+	bundleDependency := meta.BundleDependencyCollection{}
+	err := PlatformLoad(&bundleDependency, &PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio/studio.bundle",
+				Value:    ids,
+				Operator: "IN",
+			},
+		},
+		Connection: connection,
+	}, session)
 	if err != nil {
 		return err
 	}
 
-	dest.DeleteBundle()
+	if len(bundleDependency) > 0 {
+		return errors.New("Tried to delete a Bundle that is in use")
+	}
 
-	// Load all the userfile records
-	// ufmc := meta.UserFileMetadataCollection{}
-	// err := PlatformLoad(&ufmc, &PlatformLoadOptions{
-	// 	Conditions: []adapt.LoadRequestCondition{
-	// 		{
-	// 			Field:    adapt.ID_FIELD,
-	// 			Value:    ids,
-	// 			Operator: "IN",
-	// 		},
-	// 	},
-	// 	Connection: connection,
-	// }, session)
-	// if err != nil {
-	// 	return err
-	// }
+	return clearFilesForBundles(uniqueKeys, session)
 
-	// for i := range ufmc {
-	// 	ufm := ufmc[i]
+}
 
-	// 	_, fs, err := fileadapt.GetFileSourceAndCollection(ufm.FileCollectionID, session)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
-	// 	if err != nil {
-	// 		return err
-	// 	}
+func parseUniqueKey(UniqueKey string) (appName, appVersion string) {
+	s := strings.Split(UniqueKey, ":")
+	if len(s) != 4 {
+		return "", ""
+	}
+	app := "v" + s[1] + "." + s[2] + "." + s[3]
+	return s[0], app
+}
 
-	// 	err = conn.Delete(ufm.Path)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
+func clearFilesForBundles(ids []string, session *sess.Session) error {
+	for _, id := range ids {
+		appName, appVersion := parseUniqueKey(id)
+		dest, err := bundlestore.GetBundleStore(appName, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+		err = dest.DeleteBundle(appName, appVersion, session)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

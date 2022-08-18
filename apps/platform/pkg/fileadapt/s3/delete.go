@@ -21,3 +21,7 @@ func (c *Connection) Delete(path string) error {
 
 	return nil
 }
+
+func (c *Connection) EmptyDir(path string) error {
+	return nil
+}

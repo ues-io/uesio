@@ -179,6 +179,23 @@ func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemS
 	return nil
 }
 
+func (b *PlatformBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+
+	fullFilePath := filepath.Join(namespace, version)
+
+	conn, err := getPlatformFileConnection(session)
+	if err != nil {
+		return err
+	}
+
+	err = conn.EmptyDir(fullFilePath)
+	if err != nil {
+		return errors.New("Error Deleting Bundle: " + err.Error())
+	}
+
+	return nil
+}
+
 func storeItem(namespace string, version string, itemStream bundlestore.ItemStream, session *sess.Session) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 

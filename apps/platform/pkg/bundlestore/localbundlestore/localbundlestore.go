@@ -8,13 +8,29 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type LocalBundleStore struct{}
+
+func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
+
+	//This si the same as platfrom why??
+	//TO-DOA
+
+	fakeSession, err := auth.GetStudioAdminSession()
+	if err != nil {
+		return nil, err
+	}
+
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", fakeSession)
+
+}
 
 func getBasePath(namespace, version string) string {
 	return filepath.Join("bundle")
@@ -150,7 +166,27 @@ func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool
 }
 
 func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
-	return errors.New("Cannot Write to System Bundle Store")
+	return errors.New("Cannot Write to Local Bundle Store")
+}
+
+func (b *LocalBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+
+	//This never used ask Ben why
+	//TO-DOA
+
+	fullFilePath := filepath.Join(namespace, version)
+
+	conn, err := getPlatformFileConnection(session)
+	if err != nil {
+		return err
+	}
+
+	err = conn.EmptyDir(fullFilePath)
+	if err != nil {
+		return errors.New("Error Deleting Bundle: " + err.Error())
+	}
+
+	return nil
 }
 
 func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
