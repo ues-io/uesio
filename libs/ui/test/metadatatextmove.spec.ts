@@ -127,14 +127,13 @@ panels: null
 
 tests.map(({ name, fromPath, toPath, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				moveDefinition({
-					fromPath: getTestPath(fromPath),
-					toPath: getTestPath(toPath),
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			moveDefinition({
+				fromPath: getTestPath(fromPath),
+				toPath: getTestPath(toPath),
+			})
+		)
 	})
 )

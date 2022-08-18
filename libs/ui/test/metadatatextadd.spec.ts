@@ -50,15 +50,14 @@ components:
 
 tests.map(({ name, path, definition, index, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				addDefinition({
-					path: getTestPath(path),
-					definition,
-					index,
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			addDefinition({
+				path: getTestPath(path),
+				definition,
+				index,
+			})
+		)
 	})
 )

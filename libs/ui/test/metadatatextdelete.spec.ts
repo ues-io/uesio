@@ -49,13 +49,12 @@ panels: null
 
 tests.map(({ name, path, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				removeDefinition({
-					path: getTestPath(path),
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			removeDefinition({
+				path: getTestPath(path),
+			})
+		)
 	})
 )
