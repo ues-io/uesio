@@ -107,24 +107,4 @@ const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
 	return false
 }
 
-const getDropIndex = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number
-): number => {
-	const [metadataType] = component.path.getFullPathParts(dragNode)
-	if (metadataType === "viewdef") {
-		const dragIndex = component.path.getIndexFromPath(dragNode)
-		// The parent path is actually the grandparent path here.
-		const dragParentPath = component.path.getGrandParentPath(dragNode)
-		// Only continue if we are children of the same parent
-		if ((dragIndex || dragIndex === 0) && dragParentPath === dropNode) {
-			if (dragIndex < dropIndex) {
-				return dropIndex - 1
-			}
-		}
-	}
-	return dropIndex
-}
-
-export { handleDrop, getDropIndex, isDropAllowed, isNextSlot }
+export { handleDrop, isDropAllowed, isNextSlot }

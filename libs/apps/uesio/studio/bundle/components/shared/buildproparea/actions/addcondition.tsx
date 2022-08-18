@@ -3,8 +3,10 @@ import { builder } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
-const AddCondition: FunctionComponent<ActionProps> = (props) => {
-	const action = props.action as builder.AddCondition
+const AddCondition: FunctionComponent<ActionProps<builder.AddCondition>> = (
+	props
+) => {
+	const action = props.action
 
 	if (!action) {
 		return null
