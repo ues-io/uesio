@@ -235,6 +235,7 @@ interface PropListProp extends BasePropDescriptor {
 
 type ActionDescriptor =
 	| AddAction
+	| CustomAction
 	| RunSignalsAction
 	| LoadWireAction
 	| ToggleConditionAction
@@ -261,6 +262,14 @@ type AddAction = {
 
 type DeleteAction = {
 	type: "DELETE"
+}
+
+type CustomAction = {
+	type: "CUSTOM"
+	handler: () => void
+	label: string
+	icon: string
+	disabled?: boolean
 }
 
 type MoveAction = {
@@ -318,6 +327,7 @@ export {
 	PropertySelectOption,
 	ActionDescriptor,
 	AddAction,
+	CustomAction,
 	CloneAction,
 	RunSignalsAction,
 	LoadWireAction,
