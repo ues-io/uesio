@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { component, context, builder, wire, hooks } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetag"
+import PropNodeTag from "./propnodetag"
 import PropertiesPane from "../propertiespane"
 
 type Props = {
@@ -285,15 +285,10 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 
 	return (
 		<PropNodeTag
-			title={getConditionTitle(condition)}
-			icon={"filter_list"}
 			selected={selected}
-			iconColor={primaryColor}
 			key={index}
 			onClick={onClick}
-			expandChildren={true}
 			context={context}
-			panelAlwaysExpanded={true}
 			popperChildren={
 				<PropertiesPane
 					path={conditionPath}
@@ -327,56 +322,56 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					valueAPI={valueAPI}
 				/>
 			}
-			panelChildren={
-				groupConditions && (
-					<Grid
-						styles={{
-							root: {
-								gridTemplateColumns: "1fr",
-								columnGap: "8px",
-								rowGap: "8px",
-								padding: "8px",
-							},
-						}}
-						context={context}
-					>
-						{groupConditions.map(
-							(
-								conditionOnGroup: wire.WireConditionDefinition,
-								index
-							) => {
-								const conditionOnGroupPath = `${conditionPath}["conditions"]["${index}"]`
-								const conditionOnGroupSelected =
-									selectedNode === conditionOnGroupPath
+		>
+			{getConditionTitle(condition)}
+			{!!groupConditions && (
+				<Grid
+					styles={{
+						root: {
+							gridTemplateColumns: "1fr",
+							columnGap: "8px",
+							rowGap: "8px",
+							padding: "8px",
+						},
+					}}
+					context={context}
+				>
+					{groupConditions.map(
+						(
+							conditionOnGroup: wire.WireConditionDefinition,
+							index
+						) => {
+							const conditionOnGroupPath = `${conditionPath}["conditions"]["${index}"]`
+							const conditionOnGroupSelected =
+								selectedNode === conditionOnGroupPath
 
-								return (
-									<ConditionItem
-										key={conditionOnGroupPath}
-										conditionPath={conditionOnGroupPath}
-										selected={conditionOnGroupSelected}
-										index={index}
-										selectedNode={selectedNode}
-										primaryColor={primaryColor}
-										viewDefId={viewDefId}
-										context={context}
-										condition={conditionOnGroup}
-										valueAPI={valueAPI}
-										onClick={(e: MouseEvent) => {
-											e.stopPropagation()
-											uesio.builder.setSelectedNode(
-												"viewdef",
-												viewDefId,
-												conditionOnGroupPath
-											)
-										}}
-									/>
-								)
-							}
-						)}
-					</Grid>
-				)
-			}
-		/>
+							return (
+								<ConditionItem
+									key={conditionOnGroupPath}
+									conditionPath={conditionOnGroupPath}
+									selected={conditionOnGroupSelected}
+									index={index}
+									selectedNode={selectedNode}
+									primaryColor={primaryColor}
+									viewDefId={viewDefId}
+									context={context}
+									condition={conditionOnGroup}
+									valueAPI={valueAPI}
+									onClick={(e: MouseEvent) => {
+										e.stopPropagation()
+										uesio.builder.setSelectedNode(
+											"viewdef",
+											viewDefId,
+											conditionOnGroupPath
+										)
+									}}
+								/>
+							)
+						}
+					)}
+				</Grid>
+			)}
+		</PropNodeTag>
 	)
 }
 

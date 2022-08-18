@@ -20,10 +20,12 @@ import {
 	cloneDefinition,
 	cloneKeyDefinition,
 	changeDefinitionKey,
+	moveDefinition,
 } from "../builder"
 
 import { RootState, getCurrentState } from "../../store/store"
 import { parse } from "../../yamlutils/yamlutils"
+import { Definition } from "../../definition/definition"
 
 const removeAtPath = (viewdef: PlainViewDef, path: string) => {
 	const pathArray = toPath(path)
@@ -31,6 +33,20 @@ const removeAtPath = (viewdef: PlainViewDef, path: string) => {
 	const parent = get(viewdef.definition, pathArray)
 	if (!parent || !index) return
 	delete parent[index]
+}
+
+const addAtPath = (
+	viewdef: PlainViewDef,
+	path: string,
+	definition: Definition,
+	index: number | undefined
+) => {
+	const parent = get(viewdef.definition, path)
+	if (!parent) {
+		set(viewdef.definition, path, [definition])
+		return
+	}
+	parent.splice(index || 0, 0, definition)
 }
 
 const adapter = createEntityAdapter<PlainViewDef>({
@@ -62,12 +78,7 @@ const metadataSlice = createSlice({
 			const { definition, path, index } = payload
 			const [localPath, viewDef] = getViewDefState(state, path)
 			if (!viewDef) return
-			const parent = get(viewDef.definition, localPath)
-			if (!parent) {
-				set(viewDef.definition, localPath, [definition])
-				return
-			}
-			parent.splice(index || 0, 0, definition)
+			addAtPath(viewDef, localPath, definition, index)
 		})
 		builder.addCase(setDefinition, (state, { payload }) => {
 			const { definition, path } = payload
@@ -87,26 +98,58 @@ const metadataSlice = createSlice({
 			if (!viewDef) return
 			removeAtPath(viewDef, localPath)
 		})
-		/*
 		builder.addCase(moveDefinition, (state, { payload }) => {
-			const [toType, toItem, toPath] = getFullPathParts(payload.toPath)
-			const [fromType, fromItem, fromPath] = getFullPathParts(
+			const [toType, toItem, localToPath] = getFullPathParts(
+				payload.toPath
+			)
+			const [fromType, fromItem, localFromPath] = getFullPathParts(
 				payload.fromPath
 			)
-			if (
-				toType === "viewdef" &&
-				fromType === "viewdef" &&
-				toItem === fromItem
-			) {
-				const entityState = state.entities[toItem]
-				entityState &&
-					moveDef(entityState, {
-						fromPath,
-						toPath,
-					})
+			if (toType !== fromType) return
+			if (toItem !== fromItem) return
+			const viewDef = state.entities[toItem]
+			if (!viewDef) return
+
+			const fromNode = get(viewDef.definition, localFromPath)
+			const fromParentPath = getParentPath(localFromPath)
+			const fromParent = get(viewDef.definition, fromParentPath)
+			const toParentPath = getParentPath(localToPath)
+			const toParent = get(viewDef.definition, toParentPath)
+
+			const clonedNode = JSON.parse(JSON.stringify(fromNode))
+
+			const isArrayMove =
+				Array.isArray(fromParent) && Array.isArray(toParent)
+			const isMapMove = !isArrayMove && fromParentPath === toParentPath
+
+			if (isArrayMove) {
+				// Set that content at the to item
+				const index = getIndexFromPath(localToPath) || 0
+				addAtPath(viewDef, toParentPath, clonedNode, index)
+
+				// Loop over the items of the from parent
+				fromParent.forEach((item, index) => {
+					if (item === fromNode) {
+						fromParent.splice(index, 1)
+					}
+				})
+			}
+			if (isMapMove) {
+				const fromKey = getKeyAtPath(localFromPath)
+				const toKey = getKeyAtPath(localToPath)
+				const entries = Object.entries(fromParent)
+				const fromIndex = entries.findIndex(([key]) => key === fromKey)
+				const toIndex = entries.findIndex(([key]) => key === toKey)
+				const temp = entries[fromIndex]
+				entries[fromIndex] = entries[toIndex]
+				entries[toIndex] = temp
+				set(
+					viewDef.definition,
+					fromParentPath,
+					Object.fromEntries(entries)
+				)
 			}
 		})
-		*/
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
 			const { path, key: newKey } = payload
 			const [localPath, viewDef] = getViewDefState(state, path)

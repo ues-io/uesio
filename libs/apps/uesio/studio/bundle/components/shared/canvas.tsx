@@ -1,6 +1,6 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
-import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
+import { handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
 import TopActions from "./topactions"
 import BottomActions from "./bottomactions"
@@ -189,12 +189,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			viewDefId,
 			component.path.getParentPath(dropPath)
 		)
-		handleDrop(
-			fullDragPath,
-			fullDropPath,
-			getDropIndex(fullDragPath, fullDropPath, index),
-			uesio
-		)
+		handleDrop(fullDragPath, fullDropPath, index, uesio)
 	}
 
 	return (
