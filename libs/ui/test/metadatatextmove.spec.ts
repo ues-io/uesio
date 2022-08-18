@@ -22,7 +22,26 @@ components:
 `,
 	},
 	{
-		name: "Move component within same parent forwards",
+		name: "Move component within same parent forwards by 1",
+		fromPath: `["components"]["0"]`,
+		toPath: `["components"]["1"]`,
+		data: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+`,
+		expected: `
+components:
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button1
+`,
+	},
+	{
+		name: "Move component within same parent forwards by 2, non existing index",
 		fromPath: `["components"]["0"]`,
 		toPath: `["components"]["2"]`,
 		data: `
