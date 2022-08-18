@@ -269,6 +269,7 @@ type CustomAction = {
 	handler: () => void
 	label: string
 	icon: string
+	disabled?: boolean
 }
 
 type MoveAction = {
