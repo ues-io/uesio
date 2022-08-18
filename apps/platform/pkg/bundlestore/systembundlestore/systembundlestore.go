@@ -187,6 +187,10 @@ func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStr
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
+func (b *SystemBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+	return errors.New("Tried to delete bundle in System Bundle Store")
+}
+
 func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	file, err := getFile(namespace, version, "", "bundle.yaml")
