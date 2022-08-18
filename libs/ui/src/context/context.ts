@@ -6,6 +6,7 @@ import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
 import { selectors as themeSelectors } from "../bands/theme"
+import { selectByName } from "../bands/featureflag"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
@@ -288,6 +289,8 @@ class Context {
 
 	getLabel = (labelKey: string) =>
 		labelSelectors.selectById(getCurrentState(), labelKey)?.value
+
+	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
