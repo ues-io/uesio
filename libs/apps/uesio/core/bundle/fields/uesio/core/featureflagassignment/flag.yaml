@@ -1,4 +1,4 @@
-name: user
+name: flag
 type: "TEXT"
-label: User
+label: Flag
 required: true

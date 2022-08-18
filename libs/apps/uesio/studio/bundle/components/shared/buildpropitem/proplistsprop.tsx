@@ -2,7 +2,8 @@ import { FC } from "react"
 import { builder, component, hooks } from "@uesio/ui"
 import PropList from "../buildproparea/proplist"
 import PropNodeTag from "../buildpropitem/propnodetag"
-
+import BuildActionsArea from "../buildproparea/buildactionsarea"
+import toPath from "lodash/toPath"
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -16,6 +17,10 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
 	const selected = selectedPath.startsWith(path)
+	const selectedItem = !isNaN(parseFloat(toPath(selectedPath).pop() || ""))
+		? selectedPath
+		: null
+
 	return (
 		<PropNodeTag
 			context={context}
@@ -51,19 +56,53 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 						/>
 					}
 					footer={
-						<>
-							<button onClick={() => valueAPI.add(path, {})}>
-								add
-							</button>
-							<button
-								onClick={() => {
-									valueAPI.remove(selectedPath)
-								}}
-							>
-								Remove
-							</button>
-						</>
+						<BuildActionsArea
+							path={selectedItem || ""}
+							context={context}
+							valueAPI={valueAPI}
+							actions={[
+								{
+									type: "MOVE",
+								},
+								{
+									type: "CUSTOM",
+									label: "Add item",
+									handler: () => valueAPI.add(path, {}),
+									icon: "add",
+								},
+								...(selectedItem
+									? [
+											{
+												type: "CUSTOM",
+												label: "Remove",
+												disabled:
+													!selected || !selectedItem,
+												handler: () =>
+													valueAPI.remove(
+														selectedPath
+													),
+												icon: "delete",
+											} as builder.ActionDescriptor,
+									  ]
+									: []),
+							]}
+							propsDef={{ ...propsDef, type: "" }}
+						/>
 					}
+					// footer={
+					// 	<>
+					// 		<button onClick={() => valueAPI.add(path, {})}>
+					// 			add
+					// 		</button>
+					// 		<button
+					// 			onClick={() => {
+					// 				valueAPI.remove(selectedPath)
+					// 			}}
+					// 		>
+					// 			Remove
+					// 		</button>
+					// 	</>
+					// }
 					context={context}
 				>
 					{items.map((item, i) => (

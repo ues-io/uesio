@@ -293,6 +293,7 @@ type RunSignalsAction = {
 type PropertySelectOption = {
 	value: string
 	label: string
+	disabled?: boolean
 }
 
 type SignalProperties = {
