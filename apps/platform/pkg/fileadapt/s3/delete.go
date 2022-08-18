@@ -30,6 +30,10 @@ func (c *Connection) EmptyDir(path string) error {
 		return errors.New("failed to EmptyDir")
 	}
 
+	if len(objKeys) == 0 {
+		return nil
+	}
+
 	s3Ids := make([]types.ObjectIdentifier, len(objKeys))
 	for i, key := range objKeys {
 		s3Ids[i] = types.ObjectIdentifier{Key: aws.String(key)}
