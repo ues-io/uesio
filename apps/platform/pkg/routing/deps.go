@@ -327,45 +327,6 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		}
 	}
 
-	labels, err := translate.GetTranslatedLabels(session)
-	if err != nil {
-		return errors.New("Failed to get translated labels: " + err.Error())
-	}
-
-	featureflags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
-	if err != nil {
-		return errors.New("Failed to get feature flags: " + err.Error())
-	}
-
-	for key, value := range labels {
-		label, err := meta.NewLabel(key)
-		if err != nil {
-			return err
-		}
-		label.Value = value
-		err = deps.AddItem(label, false)
-		if err != nil {
-			return err
-		}
-	}
-
-	for i := range featureflags {
-		FeatureFlagResponse := featureflags[i]
-
-		FeatureFlag, err := meta.NewFeatureFlag(FeatureFlagResponse.Key)
-		if err != nil {
-			return err
-		}
-
-		FeatureFlag.Value = FeatureFlagResponse.Value
-		FeatureFlag.User = FeatureFlagResponse.User
-
-		err = deps.AddItem(FeatureFlag, false)
-		if err != nil {
-			return err
-		}
-	}
-
 	for key := range viewsUsed {
 		processView(key, deps, session)
 	}
@@ -503,6 +464,35 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	err = processView(route.ViewRef, deps, session)
 	if err != nil {
 		return nil, err
+	}
+
+	labels, err := translate.GetTranslatedLabels(session)
+	if err != nil {
+		return nil, errors.New("Failed to get translated labels: " + err.Error())
+	}
+
+	featureflags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
+	if err != nil {
+		return nil, errors.New("Failed to get feature flags: " + err.Error())
+	}
+
+	for key, value := range labels {
+		label, err := meta.NewLabel(key)
+		if err != nil {
+			return nil, err
+		}
+		label.Value = value
+		err = deps.AddItem(label, false)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for _, flag := range *featureflags {
+		err = deps.AddItem(flag, false)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil

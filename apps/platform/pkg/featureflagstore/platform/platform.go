@@ -11,36 +11,32 @@ import (
 type FeatureFlagStore struct {
 }
 
-// Get function
-func (ffs *FeatureFlagStore) Get(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
-	var ffa meta.FeatureFlagAssignment
-	err := datasource.PlatformLoadOne(
-		&ffa,
+func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssignmentCollection, session *sess.Session) error {
+	return datasource.PlatformLoad(
+		assignments,
 		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/core.value",
+				},
+				{
+					ID: "uesio/core.flag",
+				},
+			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.UNIQUE_KEY_FIELD,
-					Value: key,
+					Field:    "uesio/core.user",
+					Value:    user,
+					Operator: "=",
 				},
 			},
 		},
 		session,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &ffa, nil
 }
 
-// Set function
-func (ffs *FeatureFlagStore) Set(key string, value bool, user string, session *sess.Session) error {
-	ffa := meta.FeatureFlagAssignment{
-		Key:   key,
-		Value: value,
-		User:  user,
-	}
-
-	return datasource.PlatformSaveOne(&ffa, &adapt.SaveOptions{
+func (ffs *FeatureFlagStore) Set(flag *meta.FeatureFlagAssignment, session *sess.Session) error {
+	return datasource.PlatformSaveOne(flag, &adapt.SaveOptions{
 		Upsert: true,
 	}, nil, session)
 }

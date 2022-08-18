@@ -4,18 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/francoispqt/gojay"
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
-
-type FeatureFlagResponse struct {
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
-	Value     bool   `json:"value"`
-	User      string `json:"user"`
-}
 
 func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
@@ -30,7 +24,14 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, response)
+	bytes, err := gojay.MarshalJSONArray(response)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(w, r, json.RawMessage(bytes))
 }
 
 type FeatureFlagSetRequest struct {
