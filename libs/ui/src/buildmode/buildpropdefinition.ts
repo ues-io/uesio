@@ -360,4 +360,5 @@ export {
 	WireFieldsProp,
 	PropListProp,
 	AddCondition,
+	FieldProp,
 }
