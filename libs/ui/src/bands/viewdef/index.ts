@@ -165,7 +165,6 @@ const metadataSlice = createSlice({
 			const pathArray = toPath(localPath)
 			// Stop if old and new key are equal
 			if (getKeyAtPath(localPath) === newKey) return
-
 			const old = get(viewDef.definition, localPath)
 			// replace the old with the new key
 			pathArray.splice(-1, 1, newKey)
