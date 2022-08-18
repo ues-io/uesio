@@ -13,6 +13,7 @@ const AddAction: FC<ActionProps<builder.CustomAction>> = ({
 			onClick={action.handler}
 			icon={action.icon}
 			context={context}
+			disabled={action.disabled}
 		/>
 	)
 
