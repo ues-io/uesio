@@ -1,7 +1,8 @@
 import { definition, builder } from "@uesio/ui"
 
-interface ActionProps extends definition.BaseProps {
-	action?: builder.ActionDescriptor
+interface ActionProps<T = builder.ActionDescriptor>
+	extends definition.BaseProps {
+	action?: T
 	valueAPI: builder.ValueAPI
 	propsDef: builder.BuildPropertiesDefinition
 }
