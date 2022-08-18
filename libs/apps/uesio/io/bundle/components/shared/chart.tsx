@@ -1,4 +1,4 @@
-import { wire, collection } from "@uesio/ui"
+import { wire, collection, builder } from "@uesio/ui"
 
 type Buckets = Record<string, number>
 type Categories = Record<string, string>
@@ -153,5 +153,156 @@ const getDataSets = (
 			},
 		]
 	})
+// const seriesSection: builder.PropertySection = {
+// type: "PROPLISTS",
+// name: "series",
+// title: "Series",
+// properties: [
+// 	{
+// 		name: "wire",
+// 		type: "WIRE",
+// 		label: "Wire",
+// 	},
+// {
+// 	name: "CategoryField",
+// 	type: "FIELD",
+// 	wireField: "wire",
+// 	label: "Category field",
+// },
+// {
+// 	name: "valueField",
+// 	type: "FIELD",
+// 	wireField: "wire",
+// 	label: "Value field",
+// },
+// 	{
+// 		name: "name",
+// 		type: "TEXT",
+// 		label: "Name",
+// 	},
+// 	{
+// 		name: "label",
+// 		type: "TEXT",
+// 		label: "Label",
+// 	},
+// ],
+// }
 
-export { getDataSets, getLabels, SeriesDefinition, LabelsDefinition }
+const chartProperties: builder.PropDescriptor[] = [
+	{
+		name: "title",
+		type: "TEXT",
+		label: "Title",
+	},
+	{
+		name: "source",
+		type: "SELECT",
+		label: "Source",
+		options: [
+			{
+				value: "",
+				label: "Select a source",
+			},
+			{
+				value: "WIRE",
+				label: "Wire",
+			},
+			{
+				value: "VALUE",
+				label: "Value",
+			},
+			{
+				value: "DATA",
+				label: "Data",
+			},
+		],
+	},
+
+	// SOURCE: Wire
+	{
+		name: "wire",
+		type: "WIRE",
+		label: "Wire",
+		display: [
+			{
+				property: "source",
+				value: "WIRE",
+			},
+		],
+	},
+	// {
+	// 	name: "categoryField",
+	// 	type: "FIELD",
+	// 	label: "Category Field",
+	// 	wireField: "wireSomething",
+	// 	display: [
+	// 		{
+	// 			property: "source",
+	// 			value: "WIRE",
+	// 		},
+	// 	],
+	// },
+
+	// Source: Value
+	{
+		name: "values",
+		type: "PROPLISTS",
+		label: "Values",
+		properties: [
+			{
+				name: "key",
+				type: "TEXT",
+				label: "Key",
+			},
+			{
+				name: "value",
+				type: "TEXT",
+				label: "Value",
+			},
+		],
+		display: [
+			{
+				property: "source",
+				value: "VALUE",
+			},
+		],
+	},
+	// Source: Data
+	{
+		name: "timeunit",
+		type: "SELECT",
+		label: "Time Unit",
+		options: [
+			{
+				value: "",
+				label: "Select a time interval",
+			},
+			{
+				value: "DAY",
+				label: "Day",
+			},
+			{
+				value: "MONTH",
+				label: "Month",
+			},
+			{
+				value: "YEAR",
+				label: "Year",
+			},
+		],
+		display: [
+			{
+				property: "source",
+				value: "DATA",
+			},
+		],
+	},
+]
+export {
+	getDataSets,
+	getLabels,
+	SeriesDefinition,
+	LabelsDefinition,
+	chartProperties,
+	// seriesSection,
+}

@@ -1,5 +1,10 @@
 import { definition, builder } from "@uesio/ui"
-import { LabelsDefinition, SeriesDefinition } from "../../shared/chart"
+import {
+	LabelsDefinition,
+	SeriesDefinition,
+	chartProperties,
+	// seriesSection,
+} from "../../shared/chart"
 
 export type LineChartDefinition = {
 	labels: LabelsDefinition
@@ -12,19 +17,14 @@ export interface Props extends definition.BaseProps {
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Chart",
+	title: "Line Chart",
 	description: "Just a chart",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "New chart",
 	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-	],
+	properties: chartProperties,
+
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
