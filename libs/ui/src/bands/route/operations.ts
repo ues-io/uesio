@@ -1,8 +1,11 @@
 import { Context, newContext } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
-import loadViewOp from "../view/operations/load"
 import { NavigateRequest } from "../../platform/platform"
+import { batch } from "react-redux"
+import loadViewOp from "../view/operations/load"
+import { loadScripts } from "../../hooks/usescripts"
+import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -40,21 +43,10 @@ const navigate =
 		const routeResponse = await platform.getRoute(context, request)
 
 		if (!routeResponse) return context
+
+		const deps = routeResponse.dependencies
+
 		const view = routeResponse.view
-
-		// Pre-load the view for faster appearances and no white flash
-		await dispatch(
-			loadViewOp(
-				newContext({
-					view: `${view}()`,
-					viewDef: view,
-					workspace,
-					params: routeResponse.params,
-				})
-			)
-		)
-
-		dispatch(setRoute(routeResponse))
 
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
@@ -68,6 +60,37 @@ const navigate =
 				prefix + routeResponse.path
 			)
 		}
+
+		// Dispatch the view first so we can preload it
+		dispatchRouteDeps({ viewdef: deps?.viewdef }, dispatch)
+
+		const newPacks = getPackUrlsForDeps(deps, context)
+
+		if (newPacks && newPacks.length) {
+			await loadScripts(newPacks)
+		}
+
+		// Pre-load the view for faster appearances and no white flash
+		await dispatch(
+			loadViewOp(
+				newContext({
+					view: `${view}()`,
+					viewDef: view,
+					workspace,
+					params: routeResponse.params,
+				})
+			)
+		)
+
+		// We don't need to store the dependencies in redux
+		delete routeResponse.dependencies
+		if (deps?.viewdef) delete deps.viewdef
+
+		batch(() => {
+			dispatchRouteDeps(deps, dispatch)
+			dispatch(setRoute(routeResponse))
+		})
+
 		return context
 	}
 

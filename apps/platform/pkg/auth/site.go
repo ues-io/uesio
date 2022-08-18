@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -11,7 +10,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
+var SYSTEM_USER = &meta.User{}
+
+func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
 	err := datasource.PlatformLoadOne(
 		&s,
@@ -21,6 +22,9 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 					ID: adapt.ID_FIELD,
 				},
 				{
+					ID: adapt.UNIQUE_KEY_FIELD,
+				},
+				{
 					ID: "uesio/studio.name",
 				},
 				{
@@ -28,6 +32,9 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 					Fields: []adapt.LoadRequestField{
 						{
 							ID: adapt.ID_FIELD,
+						},
+						{
+							ID: adapt.UNIQUE_KEY_FIELD,
 						},
 					},
 				},
@@ -39,6 +46,9 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 							Fields: []adapt.LoadRequestField{
 								{
 									ID: adapt.ID_FIELD,
+								},
+								{
+									ID: adapt.UNIQUE_KEY_FIELD,
 								},
 							},
 						},
@@ -56,18 +66,26 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
-					Value: siteid,
+					Field: field,
+					Value: value,
 				},
 			},
+			SkipRecordSecurity: true,
 		},
 		session,
 	)
 	if err != nil {
-		fmt.Println("Faillll hrrrrrr: " + siteid)
 		return nil, err
 	}
 	return &s, nil
+}
+
+func querySiteByID(siteid string, session *sess.Session) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, session)
+}
+
+func querySiteByKey(sitekey string, session *sess.Session) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session)
 }
 
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
@@ -111,37 +129,58 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return querySite(siteDomain.Site.ID, headlessSession)
+	return querySiteByID(siteDomain.Site.ID, headlessSession)
 }
 
-func GetStudioAdminSession() (*sess.Session, error) {
+func GetStudioSite() (*meta.Site, error) {
+	app := &meta.App{
+		UniqueKey: "uesio/studio",
+	}
 	site := &meta.Site{
-		ID:   "uesio/studio_prod",
-		Name: "prod",
+		UniqueKey: "uesio/studio:prod",
+		Name:      "prod",
 		Bundle: &meta.Bundle{
-			App: &meta.App{
-				ID: "uesio/studio",
-			},
+			App:   app,
 			Major: 0,
 			Minor: 0,
 			Patch: 1,
 		},
-		App: &meta.App{
-			ID: "uesio/studio",
-		},
+		App: app,
 	}
 	bundleDef, err := bundle.GetSiteAppBundle(site)
 	if err != nil {
 		return nil, err
 	}
 	site.SetAppBundle(bundleDef)
+	return site, nil
+}
 
-	session := sess.NewSession(nil, &meta.User{
-		ID:        "uesio",
-		FirstName: "Super",
-		LastName:  "Admin",
-		Profile:   "uesio/core.public",
-	}, site)
+func GetStudioAnonSession() (*sess.Session, error) {
+	site, err := GetStudioSite()
+	if err != nil {
+		return nil, err
+	}
+
+	session := sess.NewSession(nil, &meta.User{}, site)
+
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+	})
+
+	return session, nil
+}
+
+func GetStudioAdminSession() (*sess.Session, error) {
+
+	site, err := GetStudioSite()
+	if err != nil {
+		return nil, err
+	}
+
+	session := sess.NewSession(nil, SYSTEM_USER, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:       true,

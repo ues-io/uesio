@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// PlatformSaveRequest struct
 type PlatformSaveRequest struct {
 	Collection meta.CollectionableGroup
 	Options    *adapt.SaveOptions

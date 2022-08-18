@@ -1,5 +1,9 @@
 name: userfile
-idFormat: "${uesio/core.collectionid}_${uesio/core.recordid}_${uesio/core.type}_${uesio/core.name}"
+uniqueKey:
+  - uesio/core.collectionid
+  - uesio/core.recordid
+  - uesio/core.type
+  - uesio/core.name
 nameField: uesio/core.name
 public: true
 label: user file

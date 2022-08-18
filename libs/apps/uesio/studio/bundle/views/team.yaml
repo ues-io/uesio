@@ -9,8 +9,9 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     teams:
@@ -23,10 +24,12 @@ definition:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.name
           valueSource: PARAM
           param: teamname
@@ -43,10 +46,13 @@ definition:
         uesio/studio.team:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.team
-          value: $Param{app}_$Param{teamname}
+          valueSource: LOOKUP
+          lookupWire: teams
+          lookupField: uesio/core.id
     newteammember:
       collection: uesio/studio.teammember
       fields:
@@ -179,11 +185,11 @@ definition:
                     searchFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
-                      - uesio/core.picture
                     returnFields:
                       - uesio/core.firstname
                       - uesio/core.lastname
                       - uesio/core.picture
+                      - uesio/core.username
                     components:
                       - uesio/io.tile:
                           content:
@@ -191,7 +197,7 @@ definition:
                                 text: ${uesio/core.firstname} ${uesio/core.lastname}
                                 element: div
                             - uesio/io.text:
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.username}
                                 uesio.styles:
                                   root:
                                     fontSize: 9pt
@@ -204,21 +210,23 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: Save
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newteammember"
+                  - newteammember
               - signal: wire/RESET
                 wire: newteammember
               - signal: wire/LOAD
                 wires:
-                  - "teammembers"
-              - signal: "panel/TOGGLE"
-                panel: "newMember"
+                  - apps
+                  - teams
+                  - teammembers
+              - signal: panel/TOGGLE
+                panel: newMember
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
+            uesio.variant: uesio/io.secondary
             text: "Cancel"
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newMember"
+              - signal: panel/TOGGLE
+                panel: newMember

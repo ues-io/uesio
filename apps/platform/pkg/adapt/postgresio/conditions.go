@@ -10,8 +10,10 @@ import (
 )
 
 type QueryBuilder struct {
-	Values []interface{}
-	Parts  []string
+	Values      []interface{}
+	Parts       []string
+	Conjunction string
+	Parent      *QueryBuilder
 }
 
 func NewQueryBuilder() *QueryBuilder {
@@ -21,17 +23,82 @@ func NewQueryBuilder() *QueryBuilder {
 	}
 }
 
+func (qb *QueryBuilder) getSubBuilder(conjunction string) *QueryBuilder {
+	return &QueryBuilder{
+		Parts:       []string{},
+		Conjunction: conjunction,
+		Parent:      qb,
+	}
+}
+
+func (qb *QueryBuilder) getBase() *QueryBuilder {
+	if qb.Parent == nil {
+		return qb
+	}
+	return qb.Parent.getBase()
+}
+
 func (qb *QueryBuilder) addValue(value interface{}) string {
-	qb.Values = append(qb.Values, value)
-	return "$" + strconv.Itoa(len(qb.Values))
+	base := qb.getBase()
+	base.Values = append(base.Values, value)
+	return "$" + strconv.Itoa(len(base.Values))
 }
 
 func (qb *QueryBuilder) addQueryPart(part string) {
 	qb.Parts = append(qb.Parts, part)
 }
 
-func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+func (qb *QueryBuilder) String() string {
+	conjunction := qb.Conjunction
+	if conjunction == "" {
+		conjunction = "AND"
+	}
+	conjunctionWithSpace := fmt.Sprintf(" %s ", conjunction)
+	if qb.Parent != nil {
+		// Use parens if we are a sub builder
+		return fmt.Sprintf("(%s)", strings.Join(qb.Parts, conjunctionWithSpace))
+	}
+	return strings.Join(qb.Parts, conjunctionWithSpace)
+}
 
+func processSearchCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+
+	nameFieldMetadata, err := collectionMetadata.GetNameField()
+	if err != nil {
+		return err
+	}
+
+	nameFieldDB := getFieldName(nameFieldMetadata)
+
+	searchToken := condition.Value.(string)
+	if searchToken == "" {
+		return nil
+	}
+	searchFields := map[string]bool{
+		nameFieldDB: true,
+	}
+	for _, field := range condition.SearchFields {
+		fieldMetadata, err := collectionMetadata.GetField(field)
+		if err != nil {
+			return err
+		}
+		searchFields[getFieldName(fieldMetadata)] = true
+	}
+	// Split the search token on spaces to tokenize the search
+	tokens := strings.Fields(searchToken)
+	for _, token := range tokens {
+		paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
+		subbuilder := builder.getSubBuilder("OR")
+		for field := range searchFields {
+			fieldCast := "(" + field + ")::text"
+			subbuilder.addQueryPart(fmt.Sprintf("%s ILIKE %s", fieldCast, paramNumber))
+		}
+		builder.addQueryPart(subbuilder.String())
+	}
+	return nil
+}
+
+func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
 		return err
@@ -74,21 +141,46 @@ func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *
 	return nil
 }
 
+func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+	subbuilder := builder.getSubBuilder(condition.Conjunction)
+	for _, subcondition := range condition.SubConditions {
+		err := processCondition(subcondition, collectionMetadata, subbuilder)
+		if err != nil {
+			return err
+		}
+	}
+	builder.addQueryPart(subbuilder.String())
+	return nil
+}
+
+func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+
+	if condition.Type == "SEARCH" {
+		return processSearchCondition(condition, collectionMetadata, builder)
+	}
+
+	if condition.Type == "GROUP" {
+		return processGroupCondition(condition, collectionMetadata, builder)
+	}
+
+	return processValueCondition(condition, collectionMetadata, builder)
+}
+
 func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder) {
 	if condition.Operator != "IN" {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, condition.Value))))
 		return
 	}
 
 	values := condition.Value.([]string)
 	if len(values) == 1 {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(fmt.Sprintf("%s:%s", collectionName, values[0]))))
+		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, values[0]))))
 		return
 	}
 
 	appendedValues := make([]string, len(values))
 	for i, v := range values {
-		appendedValues[i] = fmt.Sprintf("%s:%s", collectionName, v)
+		appendedValues[i] = makeDBId(collectionName, v)
 	}
 	builder.addQueryPart(fmt.Sprintf("main.id = ANY(%s)", builder.addValue(appendedValues)))
 	return
@@ -118,45 +210,7 @@ func getConditions(
 	builder.addQueryPart(fmt.Sprintf("main.collection = %s", builder.addValue(collectionName)))
 
 	for _, condition := range op.Conditions {
-
-		if condition.Type == "SEARCH" {
-			nameFieldMetadata, err := collectionMetadata.GetNameField()
-			if err != nil {
-				return err
-			}
-
-			nameFieldDB := getFieldName(nameFieldMetadata)
-
-			searchToken := condition.Value.(string)
-			if searchToken == "" {
-				continue
-			}
-			searchFields := map[string]bool{
-				nameFieldDB: true,
-			}
-			for _, field := range condition.SearchFields {
-				fieldMetadata, err := collectionMetadata.GetField(field)
-				if err != nil {
-					return err
-				}
-				searchFields[getFieldName(fieldMetadata)] = true
-			}
-			// Split the search token on spaces to tokenize the search
-			tokens := strings.Fields(searchToken)
-			for _, token := range tokens {
-				searchConditions := []string{}
-				paramNumber := builder.addValue(fmt.Sprintf("%%%v%%", token))
-				for field := range searchFields {
-					searchConditions = append(searchConditions, field+" ILIKE "+paramNumber)
-				}
-				builder.addQueryPart("(" + strings.Join(searchConditions, " OR ") + ")")
-			}
-
-			continue
-		}
-
 		processCondition(condition, collectionMetadata, builder)
-
 	}
 
 	return nil

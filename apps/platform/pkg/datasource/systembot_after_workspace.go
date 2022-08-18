@@ -17,20 +17,20 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 
 		newDeps = append(newDeps, &adapt.Item{
 			"uesio/studio.app": map[string]interface{}{
-				"uesio/core.id": "uesio/core",
+				"uesio/core.uniquekey": "uesio/core",
 			},
 			"uesio/studio.bundle": map[string]interface{}{
-				"uesio/core.id": "uesio/core_v0.0.1",
+				"uesio/core.uniquekey": "uesio/core:0:0:1",
 			},
 			"uesio/studio.workspace": map[string]interface{}{
 				"uesio/core.id": workspaceID,
 			},
 		}, &adapt.Item{
 			"uesio/studio.app": map[string]interface{}{
-				"uesio/core.id": "uesio/io",
+				"uesio/core.uniquekey": "uesio/io",
 			},
 			"uesio/studio.bundle": map[string]interface{}{
-				"uesio/core.id": "uesio/io_v0.0.1",
+				"uesio/core.uniquekey": "uesio/io:0:0:1",
 			},
 			"uesio/studio.workspace": map[string]interface{}{
 				"uesio/core.id": workspaceID,

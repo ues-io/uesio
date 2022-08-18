@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
 type Label struct {
 	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Value     string     `yaml:"value" uesio:"uesio/studio.value"`
 	Namespace string     `yaml:"-" uesio:"-"`
@@ -21,6 +23,16 @@ type Label struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (l *Label) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", l.Namespace)
+	enc.AddStringKey("name", l.Name)
+	enc.AddStringKey("value", l.Value)
+}
+
+func (l *Label) IsNil() bool {
+	return l == nil
 }
 
 func NewLabel(key string) (*Label, error) {
@@ -58,7 +70,7 @@ func (l *Label) GetCollection() CollectionableGroup {
 }
 
 func (l *Label) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, l.Name)
+	return fmt.Sprintf("%s:%s", workspace, l.Name)
 }
 
 func (l *Label) GetBundleGroup() BundleableGroup {
@@ -92,12 +104,6 @@ func (l *Label) GetNamespace() string {
 
 func (l *Label) SetNamespace(namespace string) {
 	l.Namespace = namespace
-}
-
-func (l *Label) SetWorkspace(workspace string) {
-	l.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (l *Label) SetModified(mod time.Time) {

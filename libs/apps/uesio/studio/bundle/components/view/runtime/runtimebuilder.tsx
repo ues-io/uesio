@@ -1,7 +1,6 @@
 import { FC, useRef } from "react"
-import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
+import { definition, component, hooks, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
-import RightNav from "../../shared/rightnav"
 import PropertiesPanel from "../../shared/propertiespanel"
 import CodePanel from "../../shared/codepanel"
 import ViewInfoPanel from "../../shared/viewinfopanel"
@@ -12,15 +11,11 @@ import usePanels from "./usePanels"
 
 component.registry.registerSignals("uesio/studio.runtime", {
 	TOGGLE_CODE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const showCode = getState() as boolean
-			setState(!showCode)
-		},
+		dispatcher: (state) => !state,
 		target: "codepanel",
 	},
 })
 
-const NAV_WIDTH = 50
 const LEFT_PANEL_WIDTH = 300
 
 const Buildtime: FC<definition.BaseProps> = (props) => {
@@ -32,20 +27,11 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 	const { context } = props
 
-	const viewDef = uesio.view.useViewDef(context.getViewDefId() || "")
-
-	const builderTheme = uesio.theme.useTheme(
-		"uesio/studio.default",
-		new ctx.Context()
-	)
-	if (!builderTheme || !viewDef) return <Canvas context={context} />
-
 	const builderContext = context.addFrame({
 		theme: "uesio/studio.default",
 	})
 	const canvasContext = context.addFrame({
-		mediaOffset:
-			NAV_WIDTH * 2 + LEFT_PANEL_WIDTH + (showCode ? codePanelWidth : 0),
+		mediaOffset: LEFT_PANEL_WIDTH + (showCode ? codePanelWidth : 0),
 	})
 
 	return (
@@ -54,8 +40,16 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 			styles={{
 				root: {
 					height: "100vh",
-					gridTemplateColumns: `${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth}px ${NAV_WIDTH}px`,
+					gridTemplateColumns: `${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth}px`,
 					gridTemplateRows: "1fr 1fr",
+					...styles.getBackgroundStyles(
+						{
+							image: "uesio/core.whitesplash",
+						},
+						builderContext
+					),
+					padding: "6px",
+					rowGap: "6px",
 				},
 			}}
 		>
@@ -73,6 +67,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					gridColumn: showCode ? "2" : "2 / 4",
 				})}
 				context={canvasContext}
+				children={props.children}
 			/>
 			{showCode && (
 				<div
@@ -81,6 +76,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 						gridRow: "1 / 3",
 						gridColumn: 3,
 						position: "relative",
+						display: "grid",
 					})}
 				>
 					{/* Whole box, from top to down that is slidable */}
@@ -94,7 +90,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 							cursor: "ew-resize",
 							width: "10px",
 							position: "absolute",
-							left: "-3px",
+							left: 0,
 							top: 0,
 							height: "100%",
 							zIndex: 1,
@@ -130,11 +126,6 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					/>
 				</div>
 			)}
-
-			<RightNav
-				context={builderContext}
-				className={styles.css({ gridRow: "1 / 3", gridColumn: 4 })}
-			/>
 		</Grid>
 	)
 }

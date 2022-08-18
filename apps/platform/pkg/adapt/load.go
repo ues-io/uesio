@@ -6,52 +6,46 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// LoadOp type
 type LoadOp struct {
-	CollectionName        string                 `json:"collection"`
-	WireName              string                 `json:"wire"`
-	Collection            loadable.Group         `json:"data"`
-	Conditions            []LoadRequestCondition `json:"-"`
-	Fields                []LoadRequestField     `json:"-"`
-	Query                 bool                   `json:"-"`
-	Order                 []LoadRequestOrder     `json:"-"`
-	BatchSize             int                    `json:"-"`
-	BatchNumber           int                    `json:"batchnumber"`
-	HasMoreBatches        bool                   `json:"more"`
-	ReferencedCollections ReferenceRegistry      `json:"-"`
-	UserResponseTokens    []string               `json:"-"`
-	SkipRecordSecurity    bool                   `json:"-"`
-	RequireWriteAccess    bool                   `json:"-"`
+	CollectionName     string                 `json:"collection"`
+	WireName           string                 `json:"wire"`
+	Collection         loadable.Group         `json:"data"`
+	Conditions         []LoadRequestCondition `json:"-"`
+	Fields             []LoadRequestField     `json:"-"`
+	Query              bool                   `json:"-"`
+	Order              []LoadRequestOrder     `json:"-"`
+	BatchSize          int                    `json:"-"`
+	BatchNumber        int                    `json:"batchnumber"`
+	HasMoreBatches     bool                   `json:"more"`
+	SkipRecordSecurity bool                   `json:"-"`
+	RequireWriteAccess bool                   `json:"-"`
 }
 
-// LoadRequestField struct
 type LoadRequestField struct {
 	ID     string             `json:"id" bot:"id"`
 	Fields []LoadRequestField `json:"fields" bot:"fields"`
 }
 
-// LoadRequestCondition struct
 type LoadRequestCondition struct {
-	Field        string      `json:"field" bot:"field"`
-	Value        interface{} `json:"value" bot:"value"`
-	ValueSource  string      `json:"valueSource"`
-	Type         string      `json:"type"`
-	Operator     string      `json:"operator"`
-	LookupWire   string      `json:"lookupWire"`
-	LookupField  string      `json:"lookupField"`
-	SearchFields []string    `json:"fields"`
+	Field         string                 `json:"field" bot:"field"`
+	Value         interface{}            `json:"value" bot:"value"`
+	ValueSource   string                 `json:"valueSource"`
+	Type          string                 `json:"type"`
+	Operator      string                 `json:"operator"`
+	LookupWire    string                 `json:"lookupWire"`
+	LookupField   string                 `json:"lookupField"`
+	SearchFields  []string               `json:"fields"`
+	SubConditions []LoadRequestCondition `json:"conditions"`
+	Conjunction   string                 `json:"conjunction"`
 }
 
-// LoadRequestOrder struct
 type LoadRequestOrder struct {
 	Field string `json:"field" bot:"field"`
 	Desc  bool   `json:"desc" bot:"desc"`
 }
 
-// FieldsMap type
 type FieldsMap map[string]*FieldMetadata
 
-// GetKeys function
 func (fm *FieldsMap) GetKeys() []string {
 	fieldIDIndex := 0
 	fieldIDs := make([]string, len(*fm))
@@ -63,6 +57,7 @@ func (fm *FieldsMap) GetKeys() []string {
 }
 
 var ID_FIELD = "uesio/core.id"
+var UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {
@@ -82,13 +77,11 @@ func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) s
 	return dbNames, nil
 }
 
-// AddField function
 func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
 	(*fm)[fieldMetadata.GetFullName()] = fieldMetadata
 	return nil
 }
 
-// GetFieldsMap function returns a map of field DB names to field UI names to be used in a load request
 func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, map[string]*FieldMetadata, error) {
 	fieldIDMap := FieldsMap{}
 	referencedCollections := ReferenceRegistry{}

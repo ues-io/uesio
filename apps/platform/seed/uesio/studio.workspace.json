@@ -2,25 +2,25 @@
 	{
 		"name": "dev",
 		"app": {
-			"id": "uesio/crm"
+			"uniquekey": "uesio/crm"
 		}
 	},
 	{
 		"name": "test",
 		"app": {
-			"id": "uesio/crm"
+			"uniquekey": "uesio/crm"
 		}
 	},
 	{
 		"name": "dev",
 		"app": {
-			"id": "uesio/cms"
+			"uniquekey": "uesio/cms"
 		}
 	},
 	{
 		"name": "dev",
 		"app": {
-			"id": "uesio/docs"
+			"uniquekey": "uesio/docs"
 		}
 	}
 ]

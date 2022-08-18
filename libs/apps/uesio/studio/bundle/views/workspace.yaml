@@ -10,13 +10,14 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
         uesio/studio.homeroute:
         uesio/studio.loginroute:
         uesio/studio.publicprofile:
         uesio/studio.defaulttheme:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     installedapps:
       collection: uesio/studio.bundledependency
       fields:
@@ -26,13 +27,16 @@ definition:
             uesio/studio.app:
               fields:
                 uesio/studio.color:
+                uesio/studio.icon:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
             uesio/studio.version:
       conditions:
         - field: uesio/studio.workspace
-          value: $Param{app}_$Param{workspacename}
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -163,15 +167,15 @@ definition:
                                             uesio.variant: uesio/io.item
                                             signals:
                                               - signal: "route/NAVIGATE"
-                                                path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.id}"
+                                                path: "app/$Param{app}/workspace/$Param{workspacename}/installed/${uesio/core.uniquekey}"
                                             content:
                                               - uesio/io.text:
-                                                  text: ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.version"]}
+                                                  text: ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey} v${["uesio/studio.bundle"]["uesio/studio.version"]}
                                             avatar:
                                               - uesio/io.text:
                                                   uesio.variant: uesio/io.icon
                                                   color: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.color}"
-                                                  text: circle
+                                                  text: "${uesio/studio.bundle->uesio/studio.app->uesio/studio.icon}"
   panels:
     deleteWorkspace:
       uesio.type: uesio/io.dialog

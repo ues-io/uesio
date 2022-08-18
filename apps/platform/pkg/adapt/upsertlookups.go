@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func HandleUpsertLookup(
@@ -14,44 +13,31 @@ func HandleUpsertLookup(
 ) error {
 
 	op.InsertCount = len(op.Inserts)
-
+	metadata := connection.GetMetadata()
 	options := op.Options
-	if options == nil || options.Upsert == nil {
+	skipUpsertQuery := options == nil || !options.Upsert
+	if skipUpsertQuery {
 		return nil
 	}
-
-	metadata := connection.GetMetadata()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
 	}
 
-	// If we have a match field option, use that, otherwise, use the name field
-	upsertKey := GetStringWithDefault(options.Upsert.MatchField, ID_FIELD)
-	matchTemplate := GetStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
-
-	template, err := NewFieldChanges(matchTemplate, collectionMetadata)
-	if err != nil {
-		return err
-	}
-
-	// Go through all the changes and get a list of the upsert keys
 	idMap := LocatorMap{}
 	for _, change := range op.Inserts {
-		upsertKeyStringValue, err := templating.Execute(template, change.FieldChanges)
+		// Actually set the unique Keys here for inserts
+		uniqueKey, err := SetUniqueKey(change, collectionMetadata)
 		if err != nil {
-			continue
+			return err
 		}
 
-		if upsertKeyStringValue == "" {
-			continue
-		}
+		change.UniqueKey = uniqueKey
 
-		idMap.AddID(upsertKeyStringValue, ReferenceLocator{
+		idMap.AddID(change.UniqueKey, ReferenceLocator{
 			Item: change,
 		})
-
 	}
 
 	if len(idMap) == 0 {
@@ -63,9 +49,9 @@ func HandleUpsertLookup(
 			ID: ID_FIELD,
 		},
 		{
-			ID: upsertKey,
+			ID: UNIQUE_KEY_FIELD,
 		},
-	}, upsertKey, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+	}, UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
 
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))

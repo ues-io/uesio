@@ -1,0 +1,4 @@
+name: icon
+type: TEXT
+label: Icon
+required: true

@@ -4,8 +4,9 @@
         <title>My view - Uesio</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no" />
-        <link rel="preload" href="/fonts/MaterialIconsSharp-Regular.otf" as="font" crossorigin>
-        <link rel="stylesheet" href="/fonts/fonts.css" />
+        <style>
+            {{template "fonts.css"}}
+        </style>
         <script src="/static/ui/uesio.js" type="module"></script>
     </head>
 <body>
@@ -13,6 +14,15 @@
     <script type="module">
         import * as uesio from "/static/ui/uesio.js"
         window.uesio = uesio
+    </script>
+    {{$workspace := .Route.Workspace -}}
+    {{- range .PreloadMetadata.ComponentPack.IDs -}}
+    {{- $packURL := getPackURL . $workspace -}}
+    {{- if $packURL -}}
+    <script src="{{$packURL}}" type="module"></script>
+    {{- end -}}
+    {{- end }}
+    <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>
 </body>

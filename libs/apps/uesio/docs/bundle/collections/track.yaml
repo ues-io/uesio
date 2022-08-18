@@ -1,4 +1,6 @@
 name: track
 label: Track
 pluralLabel: tracks
-idFormat: ${uesio/docs.slug}
+nameField: uesio/docs.slug
+uniqueKey:
+  - uesio/docs.slug

@@ -9,8 +9,9 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     sites:
@@ -24,9 +25,15 @@ definition:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{sitename}
+        - field: uesio/studio.name
+          valueSource: PARAM
+          param: sitename
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     users:
       collection: uesio/core.user
       fields:
@@ -48,18 +55,21 @@ definition:
       collection: uesio/core.loginmethod
       fields:
         uesio/core.id:
+        uesio/core.user:
         uesio/core.auth_source:
         uesio/core.federation_id:
       conditions:
         - field: uesio/core.user
-          valueSource: VALUE
-          value: $Param{userid}
+          valueSource: LOOKUP
+          lookupWire: users
+          lookupField: uesio/core.id
       init:
         query: false
     newloginmethod:
       collection: uesio/core.loginmethod
       fields:
         uesio/core.id:
+        uesio/core.user:
         uesio/core.auth_source:
         uesio/core.federation_id:
       init:
@@ -67,11 +77,12 @@ definition:
         create: true
       defaults:
         - field: uesio/core.user
-          valueSource: VALUE
-          value: $Param{userid}
+          valueSource: LOOKUP
+          lookupWire: users
+          lookupField: uesio/core.id
   events:
     onload:
-      - signal: "wire/LOAD"
+      - signal: wire/LOAD
         uesio.context:
           siteadmin:
             name: $Param{sitename}
@@ -79,6 +90,8 @@ definition:
         wires:
           - users
           - loginmethods
+      - signal: wire/RESET
+        wire: newloginmethod
   components:
     - uesio/io.grid:
         uesio.variant: uesio/studio.mainlayout
@@ -186,6 +199,10 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.configfeatureflags:
+                                      uesio.context:
+                                        siteadmin:
+                                          name: $Param{sitename}
+                                          app: $Param{app}
                                       user: ${uesio/core.id}
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
@@ -258,11 +275,11 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
-            text: "Save"
+            text: Save
             signals:
               - signal: wire/SAVE
                 wires:
-                  - "newloginmethod"
+                  - newloginmethod
                 uesio.context:
                   siteadmin:
                     name: $Param{sitename}
@@ -271,12 +288,13 @@ definition:
                 wire: newloginmethod
               - signal: wire/LOAD
                 wires:
-                  - "loginmethods"
-              - signal: "panel/TOGGLE"
-                panel: "newLoginMethod"
+                  - users
+                  - loginmethods
+              - signal: panel/TOGGLE
+                panel: newLoginMethod
         - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
+            uesio.variant: uesio/io.secondary
+            text: Cancel
             signals:
-              - signal: "panel/TOGGLE"
-                panel: "newLoginMethod"
+              - signal: panel/TOGGLE
+                panel: newLoginMethod

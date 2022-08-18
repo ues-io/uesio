@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -38,9 +39,10 @@ func (ol *OpList) getCurrentIndex() int {
 	return ol.CurrentIndex
 }
 
-func (ol *OpList) addInsert(item loadable.Item, recordKey string) {
+func (ol *OpList) addInsert(item loadable.Item, recordKey, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Inserts = append(ol.List[currentIndex].Inserts, &adapt.ChangeItem{
+		IDValue:      idValue,
 		FieldChanges: item,
 		RecordKey:    recordKey,
 		IsNew:        true,
@@ -74,7 +76,7 @@ func NewOpList(request *SaveRequest) *OpList {
 	}
 }
 
-func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
+func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
 	opList := NewOpList(request)
 
@@ -82,7 +84,13 @@ func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 		err := request.Changes.Loop(func(item loadable.Item, recordKey string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
-				opList.addInsert(item, recordKey)
+				newID := uuid.New().String()
+				err := item.SetField(adapt.ID_FIELD, newID)
+				if err != nil {
+					return err
+				}
+
+				opList.addInsert(item, recordKey, newID)
 			} else {
 				opList.addUpdate(item, recordKey, idValue.(string))
 			}

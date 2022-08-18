@@ -32,18 +32,24 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		return
+	}
+
 	respondJSON(w, r, &RouteMergeData{
-		View:      route.ViewRef,
-		Params:    route.Params,
-		Namespace: route.Namespace,
-		Theme:     route.ThemeRef,
-		Path:      route.Path,
-		Workspace: GetWorkspaceMergeData(workspace),
+		View:         route.ViewRef,
+		Params:       route.Params,
+		Namespace:    route.Namespace,
+		Theme:        route.ThemeRef,
+		Path:         route.Path,
+		Workspace:    GetWorkspaceMergeData(workspace),
+		Dependencies: depsCache,
 	})
 
 }
 
-// Route is good
 func Route(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -56,7 +62,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	prefix := "/site/routes/path/" + namespace + "/"
 
 	if workspace != nil {
-		prefix = "/workspace/" + workspace.GetAppID() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
+		prefix = "/workspace/" + workspace.GetAppFullName() + "/" + workspace.Name + "/routes/path/" + namespace + "/"
 	}
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
@@ -69,13 +75,20 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	depsCache, err := routing.GetMetadataDeps(route, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		return
+	}
+
 	respondJSON(w, r, &RouteMergeData{
-		View:      route.ViewRef,
-		Params:    route.Params,
-		Namespace: route.Namespace,
-		Theme:     route.ThemeRef,
-		Path:      route.Path,
-		Workspace: GetWorkspaceMergeData(workspace),
+		View:         route.ViewRef,
+		Params:       route.Params,
+		Namespace:    route.Namespace,
+		Theme:        route.ThemeRef,
+		Path:         route.Path,
+		Workspace:    GetWorkspaceMergeData(workspace),
+		Dependencies: depsCache,
 	})
 
 }
@@ -155,7 +168,7 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetSite()
 
-	route, err := routing.GetRouteFromPath(r, site.GetAppID(), path, "/", session)
+	route, err := routing.GetRouteFromPath(r, site.GetAppFullName(), path, "/", session)
 	if err != nil {
 		HandleMissingRoute(w, r, session, path, err)
 		return

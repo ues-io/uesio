@@ -108,7 +108,7 @@ const getCategoryKey = (
 	labels: LabelsDefinition,
 	categoryField: collection.Field
 ) => {
-	const value = record.getFieldValue<string>(categoryField.getId())
+	const value = record.getFieldValue<string>(categoryField.getId()) || ""
 	if (categoryField.getType() === "DATE") {
 		if (labels.source === "DATA" && labels.timeunit === "MONTH") {
 			const dateValue = new Date(value)
@@ -138,7 +138,8 @@ const getDataSets = (
 
 		wire?.getData().forEach((record) => {
 			const category = getCategoryKey(record, labels, bucketField)
-			const aggValue = record.getFieldValue<number>(series.valueField)
+			const aggValue =
+				record.getFieldValue<number>(series.valueField) || 0
 			const currentValue = buckets[category]
 			buckets[category] = currentValue + aggValue
 		})

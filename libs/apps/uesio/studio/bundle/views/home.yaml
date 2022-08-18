@@ -9,6 +9,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       order:
         - field: uesio/studio.name
           desc: false
@@ -20,6 +21,7 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       init:
         query: false
         create: true
@@ -53,13 +55,13 @@ definition:
                           uesio.variant: uesio/io.nav
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/${uesio/core.id}"
+                              path: "app/${uesio/core.uniquekey}"
                           content:
                             - uesio/io.text:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.uniquekey}
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/studio.description}
@@ -73,7 +75,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: "${uesio/studio.color}"
-                                text: circle
+                                text: ${uesio/studio.icon}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -167,7 +169,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New App
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit
@@ -182,7 +184,7 @@ definition:
                 wires:
                   - "newapp"
               - signal: "route/NAVIGATE"
-                path: "app/${uesio/core.id}"
+                path: "app/${uesio/core.uniquekey}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

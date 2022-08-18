@@ -100,6 +100,7 @@ func LoadLooper(
 	idMap LocatorMap,
 	fields []LoadRequestField,
 	matchField string,
+	skipRecordSecurity bool,
 	looper func(loadable.Item, []ReferenceLocator) error,
 ) error {
 	ids := idMap.GetIDs()
@@ -118,7 +119,8 @@ func LoadLooper(
 				Value:    ids,
 			},
 		},
-		Query: true,
+		Query:              true,
+		SkipRecordSecurity: skipRecordSecurity,
 	}
 
 	err := connection.Load(op)
@@ -151,6 +153,7 @@ func LoadLooper(
 func HandleReferences(
 	connection Connection,
 	referencedCollections ReferenceRegistry,
+	skipRecordSecurity bool,
 ) error {
 
 	for collectionName, ref := range referencedCollections {
@@ -163,9 +166,12 @@ func HandleReferences(
 			{
 				ID: ID_FIELD,
 			},
+			{
+				ID: UNIQUE_KEY_FIELD,
+			},
 		})
 
-		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), func(refItem loadable.Item, matchIndexes []ReferenceLocator) error {
+		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), skipRecordSecurity, func(refItem loadable.Item, matchIndexes []ReferenceLocator) error {
 
 			if matchIndexes == nil {
 				return nil

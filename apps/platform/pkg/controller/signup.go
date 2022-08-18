@@ -77,15 +77,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = authconn.Signup(payload, username, publicSession)
-	if err != nil {
-		msg := "Signup failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	claims, err := authconn.Login(payload, publicSession)
+	claims, err := authconn.Signup(payload, username, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -95,7 +87,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	email, _ := auth.GetPayloadValue(payload, "email")
 
-	err = auth.CreateUser(username, email, claims, signupMethod, publicSession)
+	err = auth.CreateUser(username, email, signupMethod, publicSession)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -103,7 +95,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.GetUserByID(username, publicSession)
+	user, err := auth.GetUserByKey(username, publicSession, nil)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -119,7 +111,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectResponse(w, r, signupMethod.LandingRoute, user, site)
+	//Use the Guest user since the user might not be confirmed yet
+	redirectResponse(w, r, signupMethod.LandingRoute, sess.GetPublicUser(site), site)
 
 }
 

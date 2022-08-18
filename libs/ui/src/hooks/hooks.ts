@@ -10,10 +10,10 @@ import { BaseProps } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
-import { ThemeAPI } from "./themeapi"
 import { NotificationAPI } from "./notificationapi"
 import { FeatureFlagAPI } from "./featureflagapi"
 import { BotAPI } from "./botapi"
+import { useHotkeys } from "react-hotkeys-hook"
 
 // Create a new Uesio API instance for use inside of a component
 class Uesio {
@@ -33,7 +33,6 @@ class Uesio {
 		this.configvalue = new ConfigValueAPI(this)
 		this.secret = new SecretAPI(this)
 		this.featureflag = new FeatureFlagAPI(this)
-		this.theme = new ThemeAPI(this)
 		this.notification = new NotificationAPI(this)
 		this.bot = new BotAPI(this)
 	}
@@ -50,7 +49,6 @@ class Uesio {
 	configvalue: ConfigValueAPI
 	secret: SecretAPI
 	featureflag: FeatureFlagAPI
-	theme: ThemeAPI
 	notification: NotificationAPI
 	bot: BotAPI
 
@@ -72,4 +70,26 @@ class Uesio {
 
 const useUesio = (props: BaseProps) => new Uesio(props)
 
-export { useUesio, Uesio }
+const useHotKeyCallback = (
+	keycode: string | undefined,
+	callback: Parameters<typeof useHotkeys>[1] | undefined,
+	enabled?: boolean
+) => {
+	// This may not be the best function to determine this, but it works for now.
+	const isTypeable = keycode?.length === 1
+	return useHotkeys(
+		keycode || "",
+		(event, handler) => {
+			event.preventDefault()
+			callback?.(event, handler)
+		},
+		{
+			enabled: enabled !== false && !!keycode,
+			enableOnTags: !isTypeable
+				? ["INPUT", "TEXTAREA", "SELECT"]
+				: undefined,
+		}
+	)
+}
+
+export { useUesio, Uesio, useHotKeyCallback }

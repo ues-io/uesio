@@ -10,9 +10,10 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     collections:
       collection: uesio/studio.collection
       fields:
@@ -53,15 +54,7 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-      defaults:
-        - field: uesio/studio.collection
-          valueSource: LOOKUP
-          lookupWire: collections
-          lookupTemplate: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+
     newfield:
       collection: uesio/studio.field
       fields:
@@ -77,9 +70,8 @@ definition:
         create: true
       defaults:
         - field: uesio/studio.collection
-          valueSource: LOOKUP
-          lookupWire: collections
-          lookupTemplate: $Param{app}.$Param{collectionname}
+          valueSource: VALUE
+          value: $Param{app}.$Param{collectionname}
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces

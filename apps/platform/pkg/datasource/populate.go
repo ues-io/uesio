@@ -53,6 +53,7 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 		if ((field.AutoPopulate == "CREATE") && change.IsNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
 				adapt.ID_FIELD:         user.ID,
+				adapt.UNIQUE_KEY_FIELD: user.UniqueKey, //TO-DO this not sure should be UUIIDD
 				"uesio/core.firstname": user.FirstName,
 				"uesio/core.lastname":  user.LastName,
 				"uesio/core.picture": map[string]interface{}{

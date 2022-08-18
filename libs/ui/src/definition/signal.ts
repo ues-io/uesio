@@ -3,6 +3,7 @@ import { Definition } from "./definition"
 import { ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
+import { Draft } from "@reduxjs/toolkit"
 import { Platform } from "../platform/platform"
 
 type SignalDispatcher = (
@@ -10,11 +11,10 @@ type SignalDispatcher = (
 	context: Context
 ) => ThunkFunc
 
-type ComponentSignalDispatcher = (
+type ComponentSignalDispatcher<T> = (
+	state: Draft<T>,
 	signal: SignalDefinition,
 	context: Context,
-	getState: () => PlainComponentState | undefined,
-	setState: (state: PlainComponentState | undefined) => void,
 	platform: Platform
 ) => void
 
@@ -24,18 +24,21 @@ type SignalDescriptor = {
 	dispatcher: SignalDispatcher
 }
 
-type ComponentSignalDescriptor = {
+type ComponentSignalDescriptor<T = PlainComponentState> = {
 	label?: string
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
-	dispatcher: ComponentSignalDispatcher
+	dispatcher: ComponentSignalDispatcher<T>
 	target?: string
-	slice?: string
 }
 
 type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
-	onerror?: { signals: SignalDefinition[] }
+	onerror?: {
+		continue: boolean
+		notify: boolean
+		signals: SignalDefinition[]
+	}
 }
 
 export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

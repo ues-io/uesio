@@ -6,13 +6,14 @@ interface FormProps extends definition.UtilityProps {
 	wire?: string
 	submitLabel?: string
 	onSubmit?: (record: wire.WireRecord) => void
+	content: definition.DefinitionList
 }
 
 const Button = component.getUtility("uesio/io.button")
 const Group = component.getUtility("uesio/io.group")
 
 const Form: FunctionComponent<FormProps> = (props) => {
-	const { context, path, onSubmit, submitLabel } = props
+	const { context, path, onSubmit, submitLabel, content } = props
 	const uesio = hooks.useUesio(props)
 	const wireName = props.wire
 	const wire = uesio.wire.useWire(wireName)
@@ -32,18 +33,31 @@ const Form: FunctionComponent<FormProps> = (props) => {
 				// Loop over all the fields in the wire
 				return (
 					<>
-						{Object.entries(wire.getFields()).map(([key]) => (
-							<component.Component
-								key={record.getId() + key}
-								componentType="uesio/io.field"
+						{content ? (
+							<component.Slot
 								definition={{
-									fieldId: key,
+									content,
 								}}
-								index={i}
-								path={`${path}["${key}"]["${i}"]`}
+								listName="content"
+								path={`${path}["content"]`}
+								accepts={[]}
+								direction="horizontal"
 								context={recordContext}
 							/>
-						))}
+						) : (
+							Object.entries(wire.getFields()).map(([key]) => (
+								<component.Component
+									key={record.getId() + key}
+									componentType="uesio/io.field"
+									definition={{
+										fieldId: key,
+									}}
+									index={i}
+									path={`${path}["${key}"]["${i}"]`}
+									context={recordContext}
+								/>
+							))
+						)}
 						<Group
 							styles={{
 								root: {

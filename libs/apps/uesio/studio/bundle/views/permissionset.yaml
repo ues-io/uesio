@@ -10,9 +10,10 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     permissionsets:
       collection: uesio/studio.permissionset
       fields:

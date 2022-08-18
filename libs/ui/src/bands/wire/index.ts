@@ -1,7 +1,6 @@
 import {
 	createEntityAdapter,
 	createSlice,
-	createSelector,
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
@@ -16,6 +15,9 @@ import get from "lodash/get"
 import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
+import { MetadataKey } from "../builder/types"
+import { set as setRoute } from "../route"
+import { makeViewId } from "../view"
 
 type DeletePayload = {
 	recordId: string
@@ -49,11 +51,23 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
-	conditionId: string
+	id: string
 } & EntityPayload
 
 type AddConditionPayload = {
 	condition: WireConditionState
+} & EntityPayload
+
+type RemoveOrderPayload = {
+	fields: string[]
+} & EntityPayload
+
+type AddOrderPayload = {
+	order: { field: MetadataKey; desc: boolean }
+} & EntityPayload
+
+type SetOrderPayload = {
+	order: { field: MetadataKey; desc: boolean }[]
 } & EntityPayload
 
 type RemoveConditionPayload = {
@@ -221,9 +235,9 @@ const wireSlice = createSlice({
 			}
 		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
-			(state, { conditionId }) => {
+			(state, { id }) => {
 				const conditionIndex = state.conditions.findIndex(
-					(condition) => condition.id === conditionId
+					(condition) => condition.id === id
 				)
 				if (conditionIndex === -1) {
 					return
@@ -237,6 +251,32 @@ const wireSlice = createSlice({
 						active: !oldCondition.active,
 					},
 				})
+			}
+		),
+		setOrder: createEntityReducer<SetOrderPayload, PlainWire>(
+			(state, { order }) => {
+				state.order = order
+			}
+		),
+		addOrder: createEntityReducer<AddOrderPayload, PlainWire>(
+			(state, { order }) => {
+				const orderIndex = state.order.findIndex(
+					({ field }) => field === order.field
+				)
+				if (orderIndex === -1) {
+					state.order.push(order)
+					return
+				}
+				state.order = Object.assign([], state.order, {
+					[orderIndex]: order,
+				})
+			}
+		),
+		removeOrder: createEntityReducer<RemoveOrderPayload, PlainWire>(
+			(state, { fields }) => {
+				state.order = state.order.filter(
+					({ field }) => !fields.includes(field)
+				)
 			}
 		),
 		save: (state, { payload }: PayloadAction<SaveResponseBatch>) => {
@@ -289,6 +329,21 @@ const wireSlice = createSlice({
 			wireAdapter.upsertMany(state, wires)
 		},
 	},
+	extraReducers: (builder) => {
+		builder.addCase(setRoute, (state, { payload }) => {
+			if (!payload?.view) return state
+			// Remove all wires except for ones that were preloaded for this view
+			const match = makeViewId(payload.view) + ":"
+			const wiresToKeep = Object.entries(state.entities).flatMap(
+				([key, value]) => {
+					if (key.startsWith(match) && value) return [value]
+					return []
+				}
+			)
+			wireAdapter.removeAll(state)
+			return wireAdapter.addMany(state, wiresToKeep)
+		})
+	},
 })
 
 // Both gets wire state and subscribes the component to wire changes
@@ -298,16 +353,11 @@ const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 const useWires = (
 	fullWireIds: string[]
 ): Record<string, PlainWire | undefined> =>
-	useSelector((state: RootState) => selectWires(state, fullWireIds))
-
-const selectWires = createSelector(
-	selectors.selectEntities,
-	(state: RootState, fullWireIds: string[]) => fullWireIds,
-	(items, fullWireIds) =>
-		Object.fromEntries(
-			Object.entries(items).filter(([key]) => fullWireIds.includes(key))
+	Object.fromEntries(
+		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
+			fullWireIds.includes(key)
 		)
-)
+	)
 
 const selectWire = (
 	state: RootState,
@@ -350,6 +400,9 @@ export const {
 	reset,
 	save,
 	load,
+	addOrder,
+	setOrder,
+	removeOrder,
 	init,
 	toggleCondition,
 	addCondition,

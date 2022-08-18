@@ -2,7 +2,8 @@ package meta
 
 type FeatureFlagAssignment struct {
 	ID        string    `uesio:"uesio/core.id"`
-	Key       string    `uesio:"uesio/core.key"`
+	UniqueKey string    `yaml:"-" uesio:"uesio/core.uniquekey"`
+	Flag      string    `uesio:"uesio/core.flag"`
 	Value     bool      `uesio:"uesio/core.value"`
 	User      string    `uesio:"uesio/core.user"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`

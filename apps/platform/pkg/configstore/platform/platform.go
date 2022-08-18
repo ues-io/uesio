@@ -46,6 +46,6 @@ func (cs *ConfigStore) Set(key, value string) error {
 		return err
 	}
 	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
+		Upsert: true,
 	}, nil, headlessSession)
 }

@@ -9,8 +9,9 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     workspaces:
@@ -20,8 +21,9 @@ definition:
         uesio/studio.name:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     bundles:
       collection: uesio/studio.bundle
       fields:
@@ -32,8 +34,9 @@ definition:
         uesio/studio.description:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
       order:
         - field: uesio/studio.major
           desc: true
@@ -48,8 +51,9 @@ definition:
         uesio/studio.name:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     teams:
       collection: uesio/studio.team
       fields:
@@ -58,8 +62,9 @@ definition:
         uesio/studio.app:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     newworkspace:
       collection: uesio/studio.workspace
       fields:
@@ -292,7 +297,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Edit App
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit

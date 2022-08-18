@@ -21,6 +21,7 @@ func NewProfile(key string) (*Profile, error) {
 
 type Profile struct {
 	ID                string          `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey         string          `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name              string          `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"uesio/studio.permissionsetsrefs"`
@@ -45,7 +46,7 @@ func (p *Profile) GetCollection() CollectionableGroup {
 }
 
 func (p *Profile) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, p.Name)
+	return fmt.Sprintf("%s:%s", workspace, p.Name)
 }
 
 func (p *Profile) GetBundleGroup() BundleableGroup {
@@ -79,12 +80,6 @@ func (p *Profile) GetNamespace() string {
 
 func (p *Profile) SetNamespace(namespace string) {
 	p.Namespace = namespace
-}
-
-func (p *Profile) SetWorkspace(workspace string) {
-	p.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (p *Profile) SetModified(mod time.Time) {

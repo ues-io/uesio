@@ -2,6 +2,7 @@ package retrieve
 
 import (
 	"archive/zip"
+	"errors"
 	"io"
 	"path/filepath"
 
@@ -15,7 +16,11 @@ import (
 
 // Retrieve func
 func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
-	namespace := session.GetWorkspaceApp()
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return nil, errors.New("No Workspace provided for retrieve")
+	}
+	namespace := workspace.GetAppFullName()
 	version, bs, err := bundle.GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return nil, err

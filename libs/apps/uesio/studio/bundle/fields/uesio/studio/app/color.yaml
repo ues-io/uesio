@@ -1,3 +1,4 @@
 name: color
 type: TEXT
 label: Color
+required: true

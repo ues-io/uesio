@@ -21,7 +21,7 @@ definition:
                     value: bots
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/bots
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/bots
               content:
                 - uesio/io.text:
                     text: Bots
@@ -38,7 +38,7 @@ definition:
                     value: collections
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/collections
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/collections
               content:
                 - uesio/io.text:
                     text: Collections
@@ -58,7 +58,7 @@ definition:
                     value: datasources
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/datasources
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/datasources
               content:
                 - uesio/io.text:
                     text: Data Sources
@@ -75,7 +75,7 @@ definition:
                     value: selectlists
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/selectlists
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/selectlists
               content:
                 - uesio/io.text:
                     text: Select Lists
@@ -98,7 +98,7 @@ definition:
                     value: components
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/components
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/components
               content:
                 - uesio/io.text:
                     text: Components
@@ -115,7 +115,7 @@ definition:
                     value: routes
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/routes
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
               content:
                 - uesio/io.text:
                     text: Routes
@@ -132,7 +132,7 @@ definition:
                     value: themes
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/themes
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/themes
               content:
                 - uesio/io.text:
                     text: Themes
@@ -149,7 +149,7 @@ definition:
                     value: views
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/views
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
               content:
                 - uesio/io.text:
                     text: Views
@@ -166,7 +166,7 @@ definition:
                     value: labels
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/labels
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/labels
               content:
                 - uesio/io.text:
                     text: Labels
@@ -189,7 +189,7 @@ definition:
                     value: configvalues
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/configvalues
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/configvalues
               content:
                 - uesio/io.text:
                     text: Config Values
@@ -209,7 +209,7 @@ definition:
                     value: credentials
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/credentials
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/credentials
               content:
                 - uesio/io.text:
                     text: Credentials
@@ -226,7 +226,7 @@ definition:
                     value: files
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/files
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/files
               content:
                 - uesio/io.text:
                     text: Files
@@ -243,7 +243,7 @@ definition:
                     value: permissionsets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/permissionsets
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/permissionsets
               content:
                 - uesio/io.text:
                     text: Permission Sets
@@ -260,7 +260,7 @@ definition:
                     value: profiles
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/profiles
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/profiles
               content:
                 - uesio/io.text:
                     text: Profiles
@@ -280,7 +280,7 @@ definition:
                     value: secrets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/secrets
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/secrets
               content:
                 - uesio/io.text:
                     text: Secrets
@@ -300,7 +300,7 @@ definition:
                     value: featureflags
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/featureflags
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/featureflags
               content:
                 - uesio/io.text:
                     text: Feature Flags
@@ -317,7 +317,7 @@ definition:
                     value: translations
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/translations
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/translations
               content:
                 - uesio/io.text:
                     text: Translations
@@ -337,7 +337,7 @@ definition:
                     value: authsources
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/authsources
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/authsources
               content:
                 - uesio/io.text:
                     text: Auth Methods

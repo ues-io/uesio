@@ -26,7 +26,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const [namespace] = component.path.parseKey(collectionKey)
 
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
@@ -104,22 +103,13 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						return (
 							<PropNodeTag
 								draggable={`${collectionKey}:${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
-								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
-								}
 								key={index}
 								onClick={onClick}
 								selected={selected}
 								context={context}
-							/>
+							>
+								{fieldId}
+							</PropNodeTag>
 						)
 					})}
 			</div>

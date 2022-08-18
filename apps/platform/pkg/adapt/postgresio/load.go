@@ -113,7 +113,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		" FROM data as \"main\" " +
 		strings.Join(joins, " ") +
 		" WHERE " +
-		strings.Join(builder.Parts, " AND ")
+		builder.String()
 
 	orders := make([]string, len(op.Order))
 	for i, order := range op.Order {
@@ -202,5 +202,5 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	return adapt.HandleReferences(c, referencedCollections)
+	return adapt.HandleReferences(c, referencedCollections, op.SkipRecordSecurity)
 }

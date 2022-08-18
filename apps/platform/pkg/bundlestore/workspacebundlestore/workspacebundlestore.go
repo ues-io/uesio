@@ -21,17 +21,18 @@ type WorkspaceBundleStore struct {
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 
-	if session.GetWorkspace() == nil {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
-	item.SetNamespace(session.GetWorkspaceApp())
+	item.SetNamespace(workspace.GetAppFullName())
 
 	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field: adapt.ID_FIELD,
-				Value: item.GetDBID(session.GetWorkspaceID()),
+				Field: adapt.UNIQUE_KEY_FIELD,
+				Value: item.GetDBID(workspace.UniqueKey),
 			},
 		},
 	}, session.RemoveWorkspaceContext())
@@ -47,17 +48,17 @@ func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, ver
 
 func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
 
-	if session.GetWorkspace() == nil {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
 	collectionIDs := map[string][]string{}
 	itemMap := map[string]meta.BundleableItem{}
-	workspace := session.GetWorkspaceID()
-	namespace := session.GetWorkspaceApp()
+	namespace := workspace.GetAppFullName()
 	for _, item := range items {
 		collectionName := item.GetBundleGroup().GetBundleFolderName()
-		dbID := item.GetDBID(workspace)
+		dbID := item.GetDBID(workspace.UniqueKey)
 		item.SetNamespace(namespace)
 		_, ok := collectionIDs[collectionName]
 		if !ok {
@@ -79,7 +80,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		}, &datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    adapt.ID_FIELD,
+					Field:    adapt.UNIQUE_KEY_FIELD,
 					Value:    ids,
 					Operator: "IN",
 				},
@@ -90,7 +91,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 
 		if group.Len() != len(items) {
 			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.ID_FIELD)
+				value, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 				if err != nil {
 					return ""
 				}
@@ -100,13 +101,13 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 				return err
 			}
 			if len(badValues) > 0 {
-				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+				return errors.New("Could not load workspace metadata item: " + collectionName + " : " + strings.Join(badValues, " : "))
 			}
 		}
 
 		return group.Loop(func(item loadable.Item, _ string) error {
 			bundleable := item.(meta.BundleableItem)
-			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
+			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace.UniqueKey)]
 			meta.Copy(match, item)
 			return nil
 		})
@@ -188,26 +189,35 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 
 // GetBundleDef function
 func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return nil, errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
-	workspaceID := namespace + "_" + version
 	err := datasource.PlatformLoad(
 		&bdc,
 		&datasource.PlatformLoadOptions{
 			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
-					ID: adapt.ID_FIELD,
+					ID: "uesio/studio.workspace",
 				},
 				{
-					ID: "uesio/studio.workspace",
+					ID: "uesio/studio.app",
 				},
 				{
 					ID: "uesio/studio.bundle",
 					Fields: []adapt.LoadRequestField{
 						{
 							ID: "uesio/studio.app",
+							Fields: []adapt.LoadRequestField{
+								{
+									ID: adapt.UNIQUE_KEY_FIELD,
+								},
+							},
 						},
 						{
 							ID: "uesio/studio.major",
@@ -224,7 +234,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    "uesio/studio.workspace",
-					Value:    workspaceID,
+					Value:    workspace.ID,
 					Operator: "=",
 				},
 			},
@@ -241,29 +251,12 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		// TODO: Possibly recurse here to get sub dependencies
 		bundleName := bdc[i].GetBundleName()
 		if bundleName == "" {
-			return nil, errors.New("Error getting bundle dependency name")
+			appName := bdc[i].GetAppName()
+			return nil, errors.New("Error getting bundle dependency, you don't have " + appName + " app installed")
 		}
 		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
 			Version: bdc[i].GetVersionString(),
 		}
-	}
-
-	var workspace meta.Workspace
-	err = datasource.PlatformLoadOne(
-		&workspace,
-		&datasource.PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: adapt.ID_FIELD,
-					Value: workspaceID,
-				},
-			},
-		},
-		session.RemoveWorkspaceContext(),
-	)
-	if err != nil {
-		return nil, err
 	}
 
 	by.PublicProfile = workspace.PublicProfile
@@ -276,17 +269,18 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 
 func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
-	if session.GetWorkspace() == nil {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
 	}
 
 	collectionIDs := map[string][]string{}
 
-	workspace := session.GetWorkspaceID()
-	namespace := session.GetWorkspaceApp()
+	workspaceKey := workspace.UniqueKey
+	namespace := workspace.GetAppFullName()
 	for _, item := range items {
 		collectionName := item.GetBundleGroup().GetBundleFolderName()
-		dbID := item.GetDBID(workspace)
+		dbID := item.GetDBID(workspaceKey)
 		_, ok := collectionIDs[collectionName]
 		if !ok {
 			collectionIDs[collectionName] = []string{}
@@ -307,7 +301,7 @@ func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version 
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field:    adapt.ID_FIELD,
+					Field:    adapt.UNIQUE_KEY_FIELD,
 					Value:    ids,
 					Operator: "IN",
 				},
@@ -318,7 +312,7 @@ func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version 
 
 		if group.Len() != len(items) {
 			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.ID_FIELD)
+				value, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 				if err != nil {
 					return ""
 				}
@@ -328,7 +322,7 @@ func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version 
 				return err
 			}
 			if len(badValues) > 0 {
-				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+				return errors.New("Could not find workspace metadata item: " + collectionName + " : " + strings.Join(badValues, " : "))
 			}
 		}
 

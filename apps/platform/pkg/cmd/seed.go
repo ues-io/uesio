@@ -41,7 +41,7 @@ func getPlatformSeedSR(collection meta.CollectionableGroup) datasource.SaveReque
 	return datasource.GetSaveRequestFromPlatformSave(datasource.PlatformSaveRequest{
 		Collection: collection,
 		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
+			Upsert: true,
 		},
 	})
 }
@@ -52,7 +52,7 @@ func getSeedSR(collectionName string, collection *adapt.Collection) datasource.S
 		Wire:       collectionName,
 		Changes:    collection,
 		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
+			Upsert: true,
 		},
 	}
 }
@@ -67,8 +67,39 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func runSeeds(connection adapt.Connection, session *sess.Session) error {
+func setSystemUser(session *sess.Session, connection adapt.Connection) error {
+	if session == nil {
+		anonSession, err := auth.GetStudioAnonSession()
+		if err != nil {
+			return err
+		}
+		session = anonSession
+	}
+
+	user, err := auth.GetUserByKey("system", session, connection)
+	if err != nil {
+		return err
+	}
+
+	auth.SYSTEM_USER = user
+
+	return nil
+
+}
+
+func runSeeds(connection adapt.Connection, anonSession *sess.Session) error {
 	err := connection.Migrate()
+	if err != nil {
+		return err
+	}
+
+	err = setSystemUser(anonSession, connection)
+	if err != nil {
+		return err
+	}
+
+	// After migration, let's get a session with the system user since we have it now.
+	session, err := auth.GetStudioAdminSession()
 	if err != nil {
 		return err
 	}
@@ -80,7 +111,6 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
 	var loginmethods meta.LoginMethodCollection
-	var configstorevalues meta.ConfigStoreValueCollection
 
 	err = populateSeedData(
 		&apps,
@@ -90,7 +120,6 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 		&sitedomains,
 		&users,
 		&loginmethods,
-		&configstorevalues,
 	)
 	if err != nil {
 		return err
@@ -122,7 +151,6 @@ func runSeeds(connection adapt.Connection, session *sess.Session) error {
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
-		getPlatformSeedSR(&configstorevalues),
 		getSeedSR("uesio/studio.team", &teams),
 		getSeedSR("uesio/studio.teammember", &teammembers),
 		getSeedSR("uesio/studio.bundlelisting", &bundlelistings),
@@ -133,41 +161,26 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
-	session, err := auth.GetStudioAdminSession()
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
+	anonSession, err := auth.GetStudioAnonSession()
+	cobra.CheckErr(err)
 
-	connection, err := datasource.GetPlatformConnection(session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
+	connection, err := datasource.GetPlatformConnection(anonSession)
+	cobra.CheckErr(err)
 
 	err = connection.BeginTransaction()
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
+	cobra.CheckErr(err)
 
-	err = runSeeds(connection, session)
+	err = runSeeds(connection, anonSession)
 	if err != nil {
 		logger.Log("Seeds Failed", logger.ERROR)
-		logger.LogError(err)
-		err := connection.RollbackTransaction()
-		if err != nil {
-			logger.LogError(err)
-			return
-		}
+		rollbackErr := connection.RollbackTransaction()
+		cobra.CheckErr(rollbackErr)
+		cobra.CheckErr(err)
 		return
 	}
 
 	err = connection.CommitTransaction()
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
+	cobra.CheckErr(err)
 
 	logger.Log("Success", logger.INFO)
 

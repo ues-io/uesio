@@ -1,6 +1,6 @@
 module github.com/thecloudmasters/uesio
 
-go 1.17
+go 1.19
 
 require (
 	cloud.google.com/go/storage v1.22.0
@@ -60,6 +60,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6 // indirect
 	github.com/aws/smithy-go v1.11.2 // indirect
+	github.com/dimchansky/utfbom v1.1.1
 	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect

@@ -15,9 +15,7 @@ interface FilePreviewProps extends definition.UtilityProps {
 const FilePreview: FC<FilePreviewProps> = (props) => {
 	const { fieldId, record } = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
+	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const mimeType = userFile?.["uesio/core.mimetype"] as string
 	if (!mimeType) return <File {...props} />
 

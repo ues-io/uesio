@@ -9,15 +9,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// SaveRequest struct
 type SaveRequest struct {
-	Collection         string             `json:"collection"`
-	Wire               string             `json:"wire"`
-	Changes            loadable.Group     `json:"changes"`
-	Deletes            loadable.Group     `json:"deletes"`
-	Errors             []adapt.SaveError  `json:"errors"`
-	Options            *adapt.SaveOptions `json:"-"`
-	UserResponseTokens *adapt.SaveOptions `json:"-"`
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
+	Changes    loadable.Group     `json:"changes"`
+	Deletes    loadable.Group     `json:"deletes"`
+	Errors     []adapt.SaveError  `json:"errors"`
+	Options    *adapt.SaveOptions `json:"options"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -56,7 +54,15 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 				return err
 			}
 			sr.Deletes = &d
+		case "options":
+			o := adapt.SaveOptions{}
+			err := json.Unmarshal(v, &o)
+			if err != nil {
+				return err
+			}
+			sr.Options = &o
 		}
+
 	}
 
 	return nil
@@ -101,21 +107,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
-		if request.Options != nil && request.Options.Lookups != nil {
-			for _, lookup := range request.Options.Lookups {
-				var subFields *FieldsMap
-				if lookup.MatchField != "" {
-					subFields = &FieldsMap{
-						lookup.MatchField: FieldsMap{},
-					}
-				}
-				err := collections.AddField(collectionKey, lookup.RefField, subFields)
-				if err != nil {
-					return err
-				}
-			}
-		}
-
 		err = collections.Load(metadataResponse, session)
 		if err != nil {
 			return err
@@ -128,7 +119,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 
 		// Split changes into inserts, updates, and deletes
-		ops, err := SplitSave(request, collectionMetadata, session)
+		ops, err := splitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
@@ -198,7 +189,12 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
-		// Do Upsert Lookups Here First
+		err = adapt.FetchInsertReferences(connection, op)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
 		err = adapt.HandleUpsertLookup(connection, op)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
@@ -233,12 +229,14 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
 		}
 
-		// Now do Reference Lookups and Reference Integrity Lookups
-		err = adapt.HandleReferenceLookups(connection, op)
-		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
-		}
+		/*
+			// Now do Reference Lookups and Reference Integrity Lookups
+			err = adapt.HandleReferenceLookups(connection, op)
+			if err != nil {
+				op.AddError(adapt.NewGenericSaveError(err))
+				return err
+			}
+		*/
 
 		err = Validate(op, collectionMetadata, connection, session)
 		if err != nil {
@@ -249,6 +247,22 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		// Check for validate errors here
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with validation"))
+		}
+
+		// Set the unique keys for the last time
+
+		// Set the unique keys for inserts
+		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
+			uniqueKey, err := adapt.SetUniqueKey(change, collectionMetadata)
+			if err != nil {
+				return err
+			}
+			change.UniqueKey = uniqueKey
+			return nil
+		})
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
 		}
 
 		err = GenerateRecordChallengeTokens(op, collectionMetadata, connection, session)
@@ -278,12 +292,6 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		// Check for after save errors here
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
-		}
-
-		err = EvalFormulaFields(op, collectionMetadata, connection, session)
-		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
 		}
 
 		go RegisterUsageEvent("SAVE", session.GetUserID(), "DATASOURCE", dsKey, connection)

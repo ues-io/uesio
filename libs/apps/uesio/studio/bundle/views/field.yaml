@@ -10,9 +10,10 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     collections:
       collection: uesio/studio.collection
       fields:
@@ -56,15 +57,6 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: fieldname
-      defaults:
-        - field: uesio/studio.collection
-          valueSource: LOOKUP
-          lookupWire: collections
-          lookupTemplate: $Param{app}.$Param{collectionname}
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

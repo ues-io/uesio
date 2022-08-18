@@ -56,6 +56,6 @@ func (c *Connection) Login(payload map[string]interface{}, session *sess.Session
 
 }
 
-func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) error {
-	return nil
+func (c *Connection) Signup(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+	return nil, nil
 }

@@ -21,8 +21,6 @@ export default (
 			cursor: "pointer",
 			position: "relative",
 			userSelect: "none",
-			border: `1px solid ${borderColor}`,
-			marginTop: "-1px",
 			zIndex: isSelected ? 1 : 0,
 			transition: "all 0.18s ease",
 			"&:hover": {
@@ -31,12 +29,23 @@ export default (
 			...(isDraggingMe && {
 				display: "none",
 			}),
+			padding: "6px",
+		},
+		wrapper: {
+			border: `1px solid ${borderColor}`,
+			borderRadius: "4px",
+			overflow: "hidden",
 		},
 		placeholder: {
+			padding: "6px",
+		},
+		placeholderInner: {
 			minWidth: "40px",
 			minHeight: "40px",
+			borderRadius: "4px",
 			border: "1px dashed #ccc",
 			backgroundColor: "#e5e5e5",
+			height: "100%",
 		},
 		afterPlaceholder: {
 			display: "none",

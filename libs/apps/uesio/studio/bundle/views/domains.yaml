@@ -9,8 +9,9 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     sites:
@@ -24,9 +25,15 @@ definition:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{sitename}
+        - field: uesio/studio.name
+          valueSource: PARAM
+          param: sitename
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
     domains:
       collection: uesio/studio.sitedomain
       fields:
@@ -35,8 +42,9 @@ definition:
         uesio/studio.domain:
       conditions:
         - field: uesio/studio.site
-          valueSource: VALUE
-          value: $Param{app}_$Param{sitename}
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
     newdomain:
       collection: uesio/studio.sitedomain
       fields:
@@ -48,8 +56,9 @@ definition:
         create: true
       defaults:
         - field: uesio/studio.site
-          valueSource: VALUE
-          value: $Param{app}_$Param{sitename}
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
         - field: uesio/studio.type
           valueSource: VALUE
           value: subdomain
@@ -142,6 +151,8 @@ definition:
                 wire: newdomain
               - signal: wire/LOAD
                 wires:
+                  - apps
+                  - sites
                   - domains
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"

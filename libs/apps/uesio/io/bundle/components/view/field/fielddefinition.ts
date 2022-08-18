@@ -68,6 +68,46 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+		{
+			name: "displayAs",
+			type: "SELECT",
+			label: "Display as",
+			options: [
+				{
+					label: "MARKDOWN",
+					value: "MARKDOWN",
+				},
+				{
+					label: "PASSWORD",
+					value: "PASSWORD",
+				},
+				{
+					label: "RADIO",
+					value: "RADIO",
+				},
+				{
+					label: "TOGGLE",
+					value: "TOGGLE",
+				},
+				{
+					label: "TEXT",
+					value: "TEXT",
+				},
+				{
+					label: "IMAGE",
+					value: "IMAGE",
+				},
+				{
+					label: "PREVIEW",
+					value: "PREVIEW",
+				},
+			],
+		},
+		{
+			name: "id",
+			type: "TEXT",
+			label: "ID",
+		},
 	],
 	sections: [],
 	actions: [],

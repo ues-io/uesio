@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
 type Theme struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
@@ -21,6 +23,16 @@ type Theme struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (t *Theme) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddObjectKey("definition", (*YAMLDefinition)(&t.Definition))
+	enc.AddStringKey("namespace", t.Namespace)
+	enc.AddStringKey("name", t.Name)
+}
+
+func (t *Theme) IsNil() bool {
+	return t == nil
 }
 
 func NewTheme(key string) (*Theme, error) {
@@ -58,7 +70,7 @@ func (t *Theme) GetCollection() CollectionableGroup {
 }
 
 func (t *Theme) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, t.Name)
+	return fmt.Sprintf("%s:%s", workspace, t.Name)
 }
 
 func (t *Theme) GetBundleGroup() BundleableGroup {
@@ -110,12 +122,6 @@ func (t *Theme) GetNamespace() string {
 
 func (t *Theme) SetNamespace(namespace string) {
 	t.Namespace = namespace
-}
-
-func (t *Theme) SetWorkspace(workspace string) {
-	t.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (t *Theme) SetModified(mod time.Time) {

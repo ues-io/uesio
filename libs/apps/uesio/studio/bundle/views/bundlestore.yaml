@@ -10,9 +10,10 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     bundlelistings:
       collection: uesio/studio.bundlelisting
       init:
@@ -20,10 +21,13 @@ definition:
         create: false
       fields:
         uesio/core.id:
-        uesio/studio.color:
-        uesio/studio.icon:
         uesio/studio.description:
-
+        uesio/studio.app:
+          fields:
+            uesio/core.id:
+            uesio/studio.fullname:
+            uesio/studio.color:
+            uesio/studio.icon:
     dependencies:
       collection: uesio/studio.bundledependency
       fields:
@@ -37,7 +41,9 @@ definition:
             uesio/studio.patch:
       conditions:
         - field: uesio/studio.workspace
-          value: $Param{app}_$Param{workspacename}
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -86,7 +92,7 @@ definition:
                               background: white
                               boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
                           signals:
-                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/core.id}
+                            - path: app/$Param{app}/workspace/$Param{workspacename}/bundlestore/${uesio/studio.app->uesio/studio.fullname}
                               signal: route/NAVIGATE
                           content:
                             - uesio/io.box:
@@ -97,7 +103,7 @@ definition:
                                     padding: 24px
                                 components:
                                   - uesio/io.text:
-                                      text: ${uesio/core.id}
+                                      text: ${uesio/studio.app->uesio/studio.fullname}
                                       element: span
                                       uesio.styles:
                                         root:
@@ -113,7 +119,7 @@ definition:
                                       uesio.display:
                                         - field: uesio/studio.bundle->uesio/studio.app->uesio/core.id
                                           wire: dependencies
-                                          value: ${uesio/core.id}
+                                          value: ${uesio/studio.app->uesio/core.id}
                                           operator: EQUALS
                                       text: "verified"
 

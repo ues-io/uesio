@@ -1,11 +1,24 @@
 import { FunctionComponent } from "react"
-import { definition, builder, component, hooks, util } from "@uesio/ui"
+import {
+	definition,
+	builder,
+	component,
+	hooks,
+	util,
+	metadata,
+} from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 
 const standardActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
 	{ type: "MOVE" },
 	{ type: "CLONE" },
+]
+
+const standardMapActions: builder.ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONEKEY" },
 ]
 
 const augmentPropsDef = (
@@ -23,7 +36,7 @@ const augmentPropsDef = (
 	if (propsDef.type === "wire") {
 		return {
 			...propsDef,
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 	if (propsDef.type === "component") {
@@ -53,7 +66,9 @@ const augmentPropsDef = (
 	}
 	if (propsDef.type === "panel") {
 		const panelDef = util.get(definition, path) as definition.DefinitionMap
-		const componentType = panelDef["uesio.type"] as string | undefined
+		const componentType = panelDef["uesio.type"] as
+			| metadata.MetadataKey
+			| undefined
 		if (!componentType) return propsDef
 		const componentPropsDef =
 			component.registry.getPropertiesDefinition(componentType)
@@ -63,14 +78,14 @@ const augmentPropsDef = (
 			properties: propsDef?.properties?.concat(
 				componentPropsDef.properties
 			),
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 
 	if (propsDef.type === "param") {
 		return {
 			...propsDef,
-			actions: standardActions.concat(...(propsDef.actions || [])),
+			actions: standardMapActions.concat(...(propsDef.actions || [])),
 		}
 	}
 
@@ -120,6 +135,14 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				},
 				clone: (path: string) =>
 					uesio.builder.cloneDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						)
+					),
+				cloneKey: (path: string) =>
+					uesio.builder.cloneKeyDefinition(
 						component.path.makeFullPath(
 							metadataType,
 							metadataItem,

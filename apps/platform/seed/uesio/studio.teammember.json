@@ -1,92 +1,200 @@
 [
 	{
-		"uesio/studio.app": "uesio/crm",
-		"uesio/studio.team": "uesio/crm_maintainers",
-		"uesio/studio.member": "ben"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/crm:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/crm",
-		"uesio/studio.team": "uesio/crm_maintainers",
-		"uesio/studio.member": "abel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/crm:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/crm",
-		"uesio/studio.team": "uesio/crm_maintainers",
-		"uesio/studio.member": "wessel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/crm:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "wessel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/crm",
-		"uesio/studio.team": "uesio/crm_maintainers",
-		"uesio/studio.member": "gregg"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/crm:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "gregg"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/cms",
-		"uesio/studio.team": "uesio/cms_maintainers",
-		"uesio/studio.member": "ben"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/cms:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/cms",
-		"uesio/studio.team": "uesio/cms_maintainers",
-		"uesio/studio.member": "abel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/cms:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/cms",
-		"uesio/studio.team": "uesio/cms_maintainers",
-		"uesio/studio.member": "wessel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/cms:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "wessel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/cms",
-		"uesio/studio.team": "uesio/cms_maintainers",
-		"uesio/studio.member": "gregg"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/cms:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "gregg"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/studio",
-		"uesio/studio.team": "uesio/studio_maintainers",
-		"uesio/studio.member": "ben"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/studio"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/studio:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/studio",
-		"uesio/studio.team": "uesio/studio_maintainers",
-		"uesio/studio.member": "abel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/studio"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/studio:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/docs",
-		"uesio/studio.team": "uesio/docs_maintainers",
-		"uesio/studio.member": "ben"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/docs:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/docs",
-		"uesio/studio.team": "uesio/docs_maintainers",
-		"uesio/studio.member": "abel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/docs:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/docs",
-		"uesio/studio.team": "uesio/docs_maintainers",
-		"uesio/studio.member": "wessel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/docs:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "wessel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/docs",
-		"uesio/studio.team": "uesio/docs_maintainers",
-		"uesio/studio.member": "gregg"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/docs:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "gregg"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/web",
-		"uesio/studio.team": "uesio/web_maintainers",
-		"uesio/studio.member": "ben"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/web:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/web",
-		"uesio/studio.team": "uesio/web_maintainers",
-		"uesio/studio.member": "abel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/web:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/web",
-		"uesio/studio.team": "uesio/web_maintainers",
-		"uesio/studio.member": "wessel"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/web:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "wessel"
+		}
 	},
 	{
-		"uesio/studio.app": "uesio/web",
-		"uesio/studio.team": "uesio/web_maintainers",
-		"uesio/studio.member": "gregg"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/web:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "gregg"
+		}
 	}
 ]

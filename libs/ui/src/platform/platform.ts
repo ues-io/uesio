@@ -5,11 +5,11 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataType, METADATA } from "../bands/builder/types"
-import { RouteState } from "../bands/route/types"
+import { Dependencies, RouteState } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
-import { ParamDefinitionMap } from "../definition/param"
+import { ParamDefinition } from "../definition/param"
 
 type BotParams = {
 	[key: string]: string
@@ -108,7 +108,11 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 const respondJSON = async (response: Response) => {
 	if (response.status !== 200) {
 		const errorText = await response.text()
-		throw new Error(errorText)
+		throw new Error(
+			errorText
+				? errorText
+				: "We are sorry, something went wrong on our side"
+		)
 	}
 
 	return response.json()
@@ -209,7 +213,7 @@ const platform = {
 		namespace: string,
 		name: string,
 		type: string
-	): Promise<ParamDefinitionMap> => {
+	): Promise<ParamDefinition[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(
 			`${prefix}/bots/params/${type}/${namespace}/${name}`
@@ -266,7 +270,7 @@ const platform = {
 		context: Context,
 		namespace: string,
 		name: string,
-		buildMode: boolean
+		buildMode?: boolean
 	) => {
 		const prefix = getPrefix(context)
 		const buildModeSuffix = buildMode ? "/builder" : ""
@@ -431,6 +435,16 @@ const platform = {
 		})
 
 		return respondVoid(response)
+	},
+	getBuilderDeps: async (context: Context): Promise<Dependencies> => {
+		const prefix = getPrefix(context)
+		const viewId = context.getViewDefId()
+		if (!viewId) throw new Error("No View Context Provided")
+		const [namespace, name] = parseKey(viewId)
+		const response = await fetch(
+			`${prefix}/metadata/builder/${namespace}/${name}`
+		)
+		return respondJSON(response)
 	},
 }
 

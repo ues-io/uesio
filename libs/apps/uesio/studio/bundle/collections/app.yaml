@@ -1,12 +1,13 @@
 name: app
-idFormat: "${uesio/core.owner}/${uesio/studio.name}"
-nameField: uesio/studio.name
+uniqueKey:
+  - uesio/studio.fullname
+nameField: uesio/studio.fullname
 access: "protected"
 recordChallengeTokens:
   - token: "${uesio/core.id}"
     userAccessToken: "uesio/studio.teammember"
     access: readwrite
-  - token: "${uesio/core.id}"
+  - token: "${uesio/core.uniquekey}"
     userAccessToken: "uesio.installed"
     access: read
 label: app

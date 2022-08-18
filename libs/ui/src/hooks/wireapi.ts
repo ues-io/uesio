@@ -7,45 +7,50 @@ import initializeWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { ViewOnlyField, WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
-import { ParamDefinitionMap, ParamDefinition } from "../definition/param"
+import { ParamDefinition } from "../definition/param"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../bands/collection/types"
 import { appDispatch } from "../store/store"
 
-const getFieldFromParamDef = (
-	key: string,
-	def: ParamDefinition
-): ViewOnlyField => {
+const getWireFieldFromParamDef = (def: ParamDefinition): ViewOnlyField => {
 	switch (def.type) {
 		case "RECORD":
 			return {
-				label: key,
+				label: def.prompt || def.name,
 				required: !!def.required,
 				type: "REFERENCE" as const,
 				reference: {
 					collection: def.collection,
 				},
 			}
+		case "METADATAMULTI":
+			return {
+				label: def.prompt || def.name,
+				required: !!def.required,
+				type: "LIST" as const,
+			}
 		default:
 			return {
-				label: key,
+				label: def.prompt || def.name,
 				required: !!def.required,
 				type: "TEXT" as const,
 			}
 	}
 }
 
-const getValueForParam = (
-	key: string,
-	def: ParamDefinition,
-	record: WireRecord
-) => {
-	const fieldKey = `uesio/viewonly.${key}`
+const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
+	const fieldKey = def.name
 	switch (def.type) {
 		case "RECORD":
-			return record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`)
+			return (
+				record.getFieldValue<string>(`${fieldKey}->${ID_FIELD}`) || ""
+			)
+		case "METADATAMULTI": {
+			const values = record.getFieldValue<string[]>(fieldKey) || []
+			return values.join(",")
+		}
 		default:
-			return record.getFieldValue<string>(fieldKey)
+			return record.getFieldValue<string>(fieldKey) || ""
 	}
 }
 
@@ -116,23 +121,17 @@ class WireAPI {
 		return appDispatch()(initializeWiresOp(context, wireDefs))
 	}
 
-	getFieldsFromParams(params: ParamDefinitionMap | undefined) {
+	getWireFieldsFromParams(params: ParamDefinition[] | undefined) {
 		if (!params) return {}
 		return Object.fromEntries(
-			Object.entries(params).map(([key, def]) => [
-				`uesio/viewonly.${key}`,
-				getFieldFromParamDef(key, def),
-			])
+			params.map((def) => [def.name, getWireFieldFromParamDef(def)])
 		)
 	}
 
-	getParamValues(params: ParamDefinitionMap | undefined, record: WireRecord) {
+	getParamValues(params: ParamDefinition[] | undefined, record: WireRecord) {
 		if (!params) return {}
 		return Object.fromEntries(
-			Object.entries(params).map(([key, def]) => [
-				key,
-				getValueForParam(key, def, record),
-			])
+			params.map((def) => [def.name, getValueForParam(def, record)])
 		)
 	}
 }

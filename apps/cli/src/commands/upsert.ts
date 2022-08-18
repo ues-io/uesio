@@ -15,7 +15,6 @@ export default class Upsert extends Command {
 		spec: flags.string({ char: "s" }),
 		file: flags.string({ char: "f" }),
 		collection: flags.string({ char: "c" }),
-		upsertkey: flags.string({ char: "u" }),
 	}
 
 	static args = []
@@ -41,9 +40,6 @@ export default class Upsert extends Command {
 		let payload: BodyInit = ""
 
 		if (spec.jobtype === "IMPORT") {
-			if (flags.upsertkey) {
-				spec.upsertkey = flags.upsertkey
-			}
 			if (!spec.collection) {
 				console.log("No collection specified", spec)
 				return

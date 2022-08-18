@@ -1,16 +1,5 @@
-import { FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
-
-const COLORS = [
-	"#003f5c",
-	"#2f4b7c",
-	"#665191",
-	"#a05195",
-	"#d45087",
-	"#f95d6a",
-	"#ff7c43",
-	"#ffa600",
-]
+import { FunctionComponent, useEffect } from "react"
+import { definition, styles, component } from "@uesio/ui"
 
 type ColorPickerDefinition = {
 	fieldId: string
@@ -20,6 +9,8 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+
 const ColorPicker: FunctionComponent<Props> = (props) => {
 	const {
 		context,
@@ -28,54 +19,92 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {
-				margin: "20px 0",
 				lineHeight: 0,
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr 1fr 1fr",
+				gridTemplateRows: "1fr 1fr 1fr 1fr",
+				gridAutoFlow: "column",
+				columnGap: "4px",
+				cursor: "pointer",
 			},
 			color: {
-				height: "20px",
-				width: "20px",
+				height: "13px",
+				width: "13px",
 				display: "inline-block",
-				margin: "4px 4px 4px 0",
+				margin: "2px",
+				borderRadius: "20px",
+				transition: "all 0.2s ease-in",
 			},
 			selected: {
-				height: "28px",
-				width: "28px",
-				margin: "0 4px 0 0",
+				height: "17px",
+				width: "17px",
+				backgroundColor: "white",
+				borderWidth: "5px",
+				borderStyle: "solid",
+				margin: "0px",
 			},
 		},
 		props
 	)
 	const record = context.getRecord()
 	const wire = context.getWire()
+
+	useEffect(() => {
+		if (!colorValue && record) {
+			// Update to a random color if we haven't set one.
+			record.update(fieldId, styles.colors.getRandomColor())
+		}
+	}, [])
+
 	if (!wire || !record) return null
 
+	const colorValue = record.getFieldValue(fieldId)
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
-
-	const mode = context.getFieldMode() || "READ"
 
 	if (!fieldMetadata) return null
 
 	return (
-		<div className={classes.root}>
-			{COLORS.map((color) => {
-				const isSelected = record.getFieldValue(fieldId) === color
-				const isReadMode = mode === "READ"
-				if ((isReadMode && isSelected) || !isReadMode) {
+		<FieldWrapper
+			label={"Color"}
+			context={context}
+			wire={wire}
+			record={record}
+			fieldId={fieldId}
+		>
+			<div className={classes.root}>
+				{styles.colors.ACCENT_COLORS.map((color, index) => {
+					const palette = styles.colors.COLORS[color]
 					return (
-						<div
-							key={color}
-							className={styles.cx(classes.color, {
-								[classes.selected]: isSelected,
+						<div key={index}>
+							{styles.colors.MEDIUM_SHADES.map((shade) => {
+								const hex = palette[shade]
+								const isSelected = colorValue === hex
+								return (
+									<div
+										key={color}
+										className={styles.cx(classes.color, {
+											[classes.selected]: isSelected,
+										})}
+										onClick={() =>
+											record.update(fieldId, hex)
+										}
+										style={{
+											...(!isSelected && {
+												backgroundColor: hex,
+											}),
+											...(isSelected && {
+												borderColor: hex,
+											}),
+										}}
+									/>
+								)
 							})}
-							onClick={() => record.update(fieldId, color)}
-							style={{ backgroundColor: color }}
-						/>
+						</div>
 					)
-				}
-				return null
-			})}
-		</div>
+				})}
+			</div>
+		</FieldWrapper>
 	)
 }
 

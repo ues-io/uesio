@@ -10,23 +10,27 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     installedapp:
       collection: uesio/studio.bundledependency
       fields:
         uesio/core.id:
+        uesio/core.uniquekey:
+        uesio/studio.app:
         uesio/studio.bundle:
           fields:
             uesio/studio.app:
+              fields:
+                uesio/studio.color:
+                uesio/studio.icon:
             uesio/studio.major:
             uesio/studio.minor:
             uesio/studio.patch:
       conditions:
-        - field: uesio/studio.workspace
-          value: $Param{app}_$Param{workspacename}
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           value: $Param{bundledep}
     versions:
       collection: uesio/studio.bundle
@@ -73,7 +77,7 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: Bundle - ${["uesio/studio.bundle"]["uesio/studio.app"]["uesio/core.id"]} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
+                          title: Bundle - ${uesio/studio.bundle->uesio/studio.app->uesio/core.uniquekey} v${["uesio/studio.bundle"]["uesio/studio.major"]}.${["uesio/studio.bundle"]["uesio/studio.minor"]}.${["uesio/studio.bundle"]["uesio/studio.patch"]}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -87,21 +91,21 @@ definition:
                                             - "installedapp"
                                         - signal: "route/NAVIGATE"
                                           path: app/$Param{app}/workspace/$Param{workspacename}
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
-                          components:
-                            - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
-                                items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.bundle
+                      # - uesio/io.box:
+                      #     uesio.variant: uesio/io.section
+                      #     uesio.styles:
+                      #       root:
+                      #         padding: 40px
+                      #     components:
+                      #       - uesio/io.grid:
+                      #           templateColumns:
+                      #             xs: 1fr
+                      #             md: 1fr 1fr
+                      #             lg: 1fr 1fr 1fr 1fr
+                      #           columnGap: 10px
+                      #           items:
+                      #             - uesio/io.field:
+                      #                 fieldId: uesio/core.uniquekey
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

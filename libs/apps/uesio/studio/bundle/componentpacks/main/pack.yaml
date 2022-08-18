@@ -2,19 +2,7 @@ name: main
 components:
   view:
     colorpicker:
-    addbundle:
-      utilities:
-        - uesio/io.grid
-        - uesio/io.tile
-        - uesio/io.selectfield
-        - uesio/io.button
-        - uesio/io.titlebar
-      variants:
-        - uesio/io.button:uesio/io.secondary
-        - uesio/io.button:uesio/io.primary
-        - uesio/io.selectfield:uesio/io.default
-        - uesio/io.tile:uesio/io.item
-        - uesio/io.titlebar:uesio/io.default
+    appiconpicker:
     metadatafield:
       utilities:
         - uesio/io.textfield
@@ -90,6 +78,11 @@ components:
         - uesio/io.button:uesio/io.primary
       utilities:
         - uesio/io.button
+    multimetadatafield:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.selectfield
+        - uesio/io.grid
     # Define a builder for the uesio runtime and slot
     runtime:
     # uesio.view:

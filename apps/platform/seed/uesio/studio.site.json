@@ -2,28 +2,28 @@
 	{
 		"name": "prod",
 		"bundle": {
-			"id": "uesio/studio_v0.0.1"
+			"uniquekey": "uesio/studio:0:0:1"
 		},
 		"app": {
-			"id": "uesio/studio"
+			"uniquekey": "uesio/studio"
 		}
 	},
 	{
 		"name": "prod",
 		"bundle": {
-			"id": "uesio/docs_v0.0.1"
+			"uniquekey": "uesio/docs:0:0:1"
 		},
 		"app": {
-			"id": "uesio/docs"
+			"uniquekey": "uesio/docs"
 		}
 	},
 	{
 		"name": "prod",
 		"bundle": {
-			"id": "uesio/web_v0.0.1"
+			"uniquekey": "uesio/web:0:0:1"
 		},
 		"app": {
-			"id": "uesio/web"
+			"uniquekey": "uesio/web"
 		}
 	}
 ]

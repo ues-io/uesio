@@ -93,5 +93,5 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	op.BatchNumber++
 
-	return adapt.HandleReferences(c, referencedCollections)
+	return adapt.HandleReferences(c, referencedCollections, op.SkipRecordSecurity)
 }

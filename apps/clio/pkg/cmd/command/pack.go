@@ -60,7 +60,8 @@ func fileExists(path string) bool {
 }
 
 type PackOptions struct {
-	Zip bool
+	Zip   bool
+	Watch bool
 }
 
 func Pack(options *PackOptions) error {
@@ -161,8 +162,7 @@ func Pack(options *PackOptions) error {
 
 	start := time.Now()
 
-	// Then pack with esbuild
-	result := api.Build(api.BuildOptions{
+	buildOptions := &api.BuildOptions{
 		EntryPoints:       entryPoints,
 		Bundle:            true,
 		Outdir:            "bundle/componentpacks",
@@ -174,7 +174,21 @@ func Pack(options *PackOptions) error {
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
-	})
+	}
+
+	if options.Watch {
+		buildOptions.Watch = &api.WatchMode{OnRebuild: func(result api.BuildResult) {
+			if len(result.Errors) > 0 {
+				fmt.Printf("watch build failed: %d errors\n", len(result.Errors))
+			} else {
+				fmt.Printf("watch build succeeded: %d warnings\n", len(result.Warnings))
+			}
+		}}
+		buildOptions.Define = map[string]string{"process.env.NODE_ENV": `"development"`}
+	}
+
+	// Then pack with esbuild
+	result := api.Build(*buildOptions)
 	if result.Errors != nil {
 		fmt.Println(result.Errors)
 	}
@@ -187,6 +201,12 @@ func Pack(options *PackOptions) error {
 	}
 
 	fmt.Println(fmt.Sprintf("Done Packing: %v", time.Since(start)))
+
+	// Returning from pack() exits immediately in Go.
+	// Block forever so we keep watching and don't exit.
+	if options.Watch {
+		<-make(chan bool)
+	}
 	return nil
 }
 

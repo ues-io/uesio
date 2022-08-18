@@ -1,5 +1,6 @@
 name: bulkjob
-idFormat: ${uesio/core.autoid}
+uniqueKey:
+  - uesio/core.autoid
 public: true
 label: bulkjob
 pluralLabel: bulk jobs

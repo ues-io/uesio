@@ -32,7 +32,8 @@ func Delete(userFileID string, session *sess.Session) error {
 	collectionID := userFile.CollectionID
 	fieldID := userFile.FieldID
 
-	metadataResponse, err := getUploadMetadataResponse(collectionID, fieldID, session)
+	metadataResponse := &adapt.MetadataCache{}
+	err = getUploadMetadataResponse(metadataResponse, collectionID, fieldID, session)
 	if err != nil {
 		return err
 	}

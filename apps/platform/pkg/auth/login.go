@@ -27,7 +27,7 @@ func getUserFromClaims(authSourceID string, claims *AuthenticationClaims, sessio
 		return nil, errors.New("no Login Method found that matches your claims")
 	}
 
-	user, err := GetUserByID(loginmethod.User.ID, session)
+	user, err := GetUserByID(loginmethod.User.ID, session, nil)
 	if err != nil {
 		return nil, errors.New("failed Getting user Data: " + err.Error())
 	}

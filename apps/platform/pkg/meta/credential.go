@@ -26,6 +26,7 @@ type CredentialEntry struct {
 
 type Credential struct {
 	ID        string                     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string                     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string                     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string                     `yaml:"-" uesio:"-"`
 	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"uesio/studio.entries"`
@@ -49,7 +50,7 @@ func (c *Credential) GetCollection() CollectionableGroup {
 }
 
 func (c *Credential) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, c.Name)
+	return fmt.Sprintf("%s:%s", workspace, c.Name)
 }
 
 func (c *Credential) GetBundleGroup() BundleableGroup {
@@ -83,12 +84,6 @@ func (c *Credential) GetNamespace() string {
 
 func (c *Credential) SetNamespace(namespace string) {
 	c.Namespace = namespace
-}
-
-func (c *Credential) SetWorkspace(workspace string) {
-	c.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (c *Credential) SetModified(mod time.Time) {

@@ -5,11 +5,13 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
 type ComponentPack struct {
 	ID              string              `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey       string              `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace       string              `yaml:"-" uesio:"-"`
 	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -23,6 +25,15 @@ type ComponentPack struct {
 	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
 	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cp.Namespace)
+	enc.AddStringKey("name", cp.Name)
+}
+
+func (cp *ComponentPack) IsNil() bool {
+	return cp == nil
 }
 
 type ComponentsRegistry struct {
@@ -46,7 +57,7 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 func (cp *ComponentPack) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, cp.Name)
+	return fmt.Sprintf("%s:%s", workspace, cp.Name)
 }
 
 func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
@@ -111,12 +122,6 @@ func (cp *ComponentPack) GetNamespace() string {
 
 func (cp *ComponentPack) SetNamespace(namespace string) {
 	cp.Namespace = namespace
-}
-
-func (cp *ComponentPack) SetWorkspace(workspace string) {
-	cp.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (cp *ComponentPack) SetModified(mod time.Time) {

@@ -17,9 +17,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 
 	const uesio = hooks.useUesio(props)
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
+	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 
 	const userFileId = userFile?.[collection.ID_FIELD] as string
 

@@ -1,5 +1,7 @@
 name: teammember
-idFormat: "${uesio/studio.team}_${uesio/studio.member}"
+uniqueKey:
+  - uesio/studio.team
+  - uesio/studio.member
 nameField: uesio/studio.member
 label: team member
 pluralLabel: team members

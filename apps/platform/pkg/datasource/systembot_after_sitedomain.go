@@ -10,5 +10,5 @@ func runDomainAfterSaveSiteBot(request *adapt.SaveOp, connection adapt.Connectio
 }
 
 func clearHostCacheForDomain(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return clearHostForDomains(getIDsFromUpdatesAndDeletes(request))
+	return clearHostForDomains(getUniqueKeysFromUpdatesAndDeletes(request))
 }

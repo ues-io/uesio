@@ -2,6 +2,7 @@ package meta
 
 type BulkBatch struct {
 	ID        string            `uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	AutoID    string            `uesio:"uesio/core.autoid"`
 	BulkJobID string            `uesio:"uesio/core.bulkjobid"`
 	Status    string            `uesio:"uesio/core.status"`

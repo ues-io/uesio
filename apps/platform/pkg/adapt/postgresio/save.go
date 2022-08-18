@@ -12,10 +12,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-const INSERT_QUERY = "INSERT INTO public.data (id,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5)"
-const UPDATE_QUERY = "UPDATE public.data SET fields = fields || $3 WHERE id = $1 and collection = $2"
+const INSERT_QUERY = "INSERT INTO public.data (id,uniquekey,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5,$6)"
+const UPDATE_QUERY = "UPDATE public.data SET uniquekey = $2, fields = fields || $4 WHERE id = $1 and collection = $3"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2"
-const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1) and collection = $2"
+const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE fullid = ANY($1)"
 const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (fullid,recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5,$6)"
 
 type DataArrayMarshaler struct {
@@ -220,12 +220,13 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 		if err != nil {
 			return err
 		}
-		fullRecordID := fmt.Sprintf("%s:%s", collectionName, change.IDValue)
+		fullRecordID := makeDBId(collectionName, change.IDValue)
+		uniqueID := makeDBId(collectionName, change.UniqueKey)
 
 		if change.IsNew {
-			batch.Queue(INSERT_QUERY, fullRecordID, collectionName, tenantID, change.Autonumber, fieldJSON)
+			batch.Queue(INSERT_QUERY, fullRecordID, uniqueID, collectionName, tenantID, change.Autonumber, fieldJSON)
 		} else {
-			batch.Queue(UPDATE_QUERY, fullRecordID, collectionName, fieldJSON)
+			batch.Queue(UPDATE_QUERY, fullRecordID, uniqueID, collectionName, fieldJSON)
 		}
 
 		if collectionMetadata.Access == "protected" {
@@ -245,7 +246,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 	if deleteCount > 0 {
 		deleteIDs := make([]string, deleteCount)
 		for i, delete := range request.Deletes {
-			deleteIDs[i] = fmt.Sprintf("%s:%s", collectionName, delete.IDValue)
+			deleteIDs[i] = makeDBId(collectionName, delete.IDValue)
 		}
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
@@ -253,7 +254,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 	collectionNameLength := len(collectionName) + 1
 
 	if len(resetTokenIDs) > 0 {
-		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs, collectionName)
+		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs)
 	}
 
 	if len(readWriteTokens) > 0 {
@@ -293,6 +294,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 	for i := 0; i < execCount; i++ {
 		_, err := results.Exec()
 		if err != nil {
+			fmt.Println("Error saving: " + request.CollectionName)
 			results.Close()
 			return err
 		}

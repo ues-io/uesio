@@ -4,6 +4,7 @@ import "fmt"
 
 type BundleDependency struct {
 	ID        string     `uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	App       *App       `yaml:"-" uesio:"uesio/studio.app"`
 	Bundle    *Bundle    `uesio:"uesio/studio.bundle"`
@@ -27,7 +28,14 @@ func (b *BundleDependency) GetBundleName() string {
 	if b.Bundle == nil {
 		return ""
 	}
-	return b.Bundle.App.ID
+	return b.Bundle.App.UniqueKey
+}
+
+func (b *BundleDependency) GetAppName() string {
+	if b.App == nil {
+		return ""
+	}
+	return b.App.FullName
 }
 
 func (b *BundleDependency) GetCollectionName() string {

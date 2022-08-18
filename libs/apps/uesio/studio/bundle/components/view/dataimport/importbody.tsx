@@ -18,8 +18,6 @@ interface Props extends definition.BaseProps {
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const Button = component.getUtility("uesio/io.button")
-const SelectField = component.getUtility("uesio/io.selectfield")
-const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 const ImportBody: FunctionComponent<Props> = (props) => {
 	const { context, collection, csvFields, file } = props
@@ -31,12 +29,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 
 	if (!collection?.source.fields) return null
 	const collectionFields = Object.keys(collection?.source.fields)
-	const options = addBlankSelectOption(
-		collectionFields.map((key) => ({
-			value: key,
-			label: key,
-		}))
-	)
+
 	const csvOptions = addBlankSelectOption(
 		csvFields.map((key) => ({
 			value: key,
@@ -72,7 +65,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	const [spec, setSpec] = useState<definition.ImportSpec>({
 		jobtype: "IMPORT",
 		collection: collection.getFullName(),
-		upsertkey: "",
 		filetype: "CSV",
 		mappings: getInitialMatch(csvFields, collectionFields),
 	})
@@ -100,28 +92,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		)
 	}
 
-	const isValidMapping = (): boolean => {
-		const upsertkey = spec.upsertkey
-
-		for (const [key, value] of Object.entries(spec.mappings)) {
-			const field = collection.getField(key)
-			const fieldType = field?.getType()
-			if (fieldType === "REFERENCE" && !value.matchfield) {
-				uesio.notification.addError(
-					"missing Ref. Field for row: " + key,
-					context
-				)
-				return false
-			}
-			if (fieldType === "REFERENCE" && !upsertkey) {
-				uesio.notification.addError("missing upsertKey", context)
-				return false
-			}
-		}
-
-		return true
-	}
-
 	const classes = styles.useUtilityStyles(
 		{
 			header: { display: "flex", justifyContent: "space-between" },
@@ -134,25 +104,12 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	return (
 		<>
 			<div className={classes.header}>
-				<div className={classes.headerItem}>
-					<FieldLabel label="Upsert key" context={context} />
-					<SelectField
-						context={context}
-						options={options}
-						setValue={(value: string) => {
-							setSpec({
-								...spec,
-								upsertkey: value,
-							})
-						}}
-					/>
-				</div>
 				<div>
 					<Button
 						context={context}
 						variant={"uesio/io.secondary"}
 						onClick={() => {
-							isValidMapping() && file && upload(file)
+							file && upload(file)
 						}}
 						label={"start import"}
 					/>

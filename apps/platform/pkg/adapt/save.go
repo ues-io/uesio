@@ -73,6 +73,7 @@ type ChangeItems []*ChangeItem
 type ChangeItem struct {
 	FieldChanges    loadable.Item
 	IDValue         string
+	UniqueKey       string
 	Error           error
 	RecordKey       string
 	OldValues       loadable.Item
@@ -136,30 +137,25 @@ func (ci *ChangeItem) Len() int {
 }
 
 func (ci *ChangeItem) GetOwnerID() (string, error) {
-	ownerVal, err := ci.GetField("uesio/core.owner")
+
+	if ci.IsNew {
+		ownerVal, err := ci.GetField("uesio/core.owner->uesio/core.id")
+		if err != nil {
+			return "", err
+		}
+		return GetReferenceKey(ownerVal)
+	}
+
+	ownerVal, err := ci.GetOldField("uesio/core.owner->uesio/core.id")
 	if err != nil {
 		return "", err
 	}
 	return GetReferenceKey(ownerVal)
+
 }
 
-// Lookup struct
-type Lookup struct {
-	RefField      string // The name of the reference field to lookup
-	MatchField    string // The name of the field to use to match based on provided data
-	MatchTemplate string // The template to use against the provided change data to equal the match field
-}
-
-// UpsertOptions struct
-type UpsertOptions struct {
-	MatchField    string // The field to pull from the database to determine a match
-	MatchTemplate string // The template to use against the provided change data to equal the match field
-}
-
-// SaveOptions struct
 type SaveOptions struct {
-	Upsert  *UpsertOptions
-	Lookups []Lookup
+	Upsert bool `json:"upsert"`
 }
 
 func GetFieldValue(value interface{}, key string) (interface{}, error) {

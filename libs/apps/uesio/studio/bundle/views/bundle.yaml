@@ -9,8 +9,9 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
+        - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
     bundles:
@@ -26,10 +27,12 @@ definition:
             uesio/core.id:
             uesio/studio.name:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
         - field: uesio/studio.app
-          valueSource: PARAM
-          param: app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
         - field: uesio/studio.major
           valueSource: PARAM
           param: major

@@ -1,15 +1,16 @@
 module github.com/thecloudmasters/clio
 
-go 1.17
+go 1.19
 
 require (
+	github.com/evanw/esbuild v0.14.39
 	github.com/spf13/cobra v1.4.0
 	github.com/thecloudmasters/uesio v0.0.0-00010101000000-000000000000
 )
 
 require (
 	github.com/PaesslerAG/gval v1.1.2 // indirect
-	github.com/evanw/esbuild v0.14.39 // indirect
+	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9 // indirect
 	github.com/icza/session v1.2.0 // indirect

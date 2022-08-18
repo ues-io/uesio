@@ -21,6 +21,7 @@ func NewRoute(key string) (*Route, error) {
 
 type Route struct {
 	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string            `uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
@@ -49,7 +50,7 @@ func (r *Route) GetCollection() CollectionableGroup {
 }
 
 func (r *Route) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, r.Name)
+	return fmt.Sprintf("%s:%s", workspace, r.Name)
 }
 
 func (r *Route) GetBundleGroup() BundleableGroup {
@@ -88,12 +89,6 @@ func (r *Route) GetNamespace() string {
 
 func (r *Route) SetNamespace(namespace string) {
 	r.Namespace = namespace
-}
-
-func (r *Route) SetWorkspace(workspace string) {
-	r.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (r *Route) SetModified(mod time.Time) {

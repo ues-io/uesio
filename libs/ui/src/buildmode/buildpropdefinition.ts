@@ -4,9 +4,9 @@ import {
 	DefinitionMap,
 	DefinitionValue,
 } from "../definition/definition"
+import { FC } from "react"
 import { Uesio } from "../hooks/hooks"
 import { MetadataType } from "../bands/builder/types"
-import { FunctionComponent } from "react"
 import ValueAPI from "./valueapi"
 
 type BuildPropertiesDefinition = {
@@ -39,6 +39,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| CustomSection
 	| OrderSection
 	| ConditionalDisplaySection
 
@@ -71,12 +72,24 @@ interface PropListSection extends BasePropSection {
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
 }
+
+// Duplicate code from the studio
+interface SectionRendererProps extends BaseProps {
+	section: PropertySection
+	propsDef: BuildPropertiesDefinition
+	valueAPI: ValueAPI
+}
+interface CustomSection extends BasePropSection {
+	type: "CUSTOM"
+	renderFunc: FC<SectionRendererProps>
+}
 interface ConditionalDisplaySection extends BasePropSection {
 	type: "CONDITIONALDISPLAY"
 }
 
 type PropDescriptor =
 	| TextProp
+	| TextAreaProp
 	| NumberProp
 	| CustomProp
 	| SelectProp
@@ -92,6 +105,10 @@ type PropDescriptor =
 	| ComponentTargetProp
 	| ConditionalDisplayProp
 	| IconProp
+	| ParamProp
+	| ParamsProp
+	| WireFieldsProp
+	| PropListProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -135,6 +152,10 @@ interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
 
+interface TextAreaProp extends BasePropDescriptor {
+	type: "TEXT_AREA"
+}
+
 interface IconProp extends BasePropDescriptor {
 	type: "ICON"
 }
@@ -146,10 +167,16 @@ interface ConditionalDisplayProp extends BasePropDescriptor {
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
 }
+interface ParamProp extends DefinitionBasedPropDescriptor {
+	type: "PARAM"
+}
+interface ParamsProp extends BasePropDescriptor {
+	type: "PARAMS"
+}
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FunctionComponent<CustomPropRendererProps>
+	renderFunc: FC<CustomPropRendererProps>
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -198,14 +225,33 @@ interface ComponentTargetProp extends BasePropDescriptor {
 	scope: string
 }
 
+interface WireFieldsProp extends BasePropDescriptor {
+	type: "WIRE_FIELDS"
+}
+interface PropListProp extends BasePropDescriptor {
+	type: "PROPLISTS"
+	properties: PropDescriptor[]
+}
+
 type ActionDescriptor =
 	| AddAction
+	| CustomAction
 	| RunSignalsAction
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| CloneKeyAction
 	| DeleteAction
 	| MoveAction
+	| AddCondition
+
+type AddCondition = {
+	label: string
+	type: "ADD_CONDITION"
+	path: string
+	definition: Definition
+	logo: string
+}
 
 type AddAction = {
 	label: string
@@ -218,12 +264,24 @@ type DeleteAction = {
 	type: "DELETE"
 }
 
+type CustomAction = {
+	type: "CUSTOM"
+	handler: () => void
+	label: string
+	icon: string
+	disabled?: boolean
+}
+
 type MoveAction = {
 	type: "MOVE"
 }
 
 type CloneAction = {
 	type: "CLONE"
+}
+
+type CloneKeyAction = {
+	type: "CLONEKEY"
 }
 
 type LoadWireAction = {
@@ -244,6 +302,7 @@ type RunSignalsAction = {
 type PropertySelectOption = {
 	value: string
 	label: string
+	disabled?: boolean
 }
 
 type SignalProperties = {
@@ -257,6 +316,7 @@ interface PropRendererProps extends BaseProps {
 }
 
 export {
+	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
@@ -267,10 +327,12 @@ export {
 	PropertySelectOption,
 	ActionDescriptor,
 	AddAction,
+	CustomAction,
 	CloneAction,
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	TextAreaProp,
 	IconProp,
 	NumberProp,
 	CustomProp,
@@ -290,4 +352,7 @@ export {
 	PropListSection,
 	ConditionalDisplayProp,
 	OrderSection,
+	WireFieldsProp,
+	PropListProp,
+	AddCondition,
 }

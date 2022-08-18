@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
 type ConfigValue struct {
 	ID        string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Store     string     `yaml:"store,omitempty" uesio:"uesio/studio.store"`
@@ -22,6 +24,17 @@ type ConfigValue struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	Value     string
+}
+
+func (cv *ConfigValue) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", cv.Namespace)
+	enc.AddStringKey("name", cv.Name)
+	enc.AddStringKey("value", cv.Value)
+}
+
+func (cv *ConfigValue) IsNil() bool {
+	return cv == nil
 }
 
 func NewConfigValue(key string) (*ConfigValue, error) {
@@ -45,7 +58,7 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 }
 
 func (cv *ConfigValue) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, cv.Name)
+	return fmt.Sprintf("%s:%s", workspace, cv.Name)
 }
 
 func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
@@ -79,12 +92,6 @@ func (cv *ConfigValue) GetNamespace() string {
 
 func (cv *ConfigValue) SetNamespace(namespace string) {
 	cv.Namespace = namespace
-}
-
-func (cv *ConfigValue) SetWorkspace(workspace string) {
-	cv.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (cv *ConfigValue) SetModified(mod time.Time) {

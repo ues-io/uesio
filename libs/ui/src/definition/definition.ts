@@ -1,11 +1,12 @@
 import { CSSInterpolation } from "@emotion/css"
 import { ReactNode } from "react"
 import yaml from "yaml"
+import { MetadataKey } from "../bands/builder/types"
 import { Context } from "../context/context"
 
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
-	"uesio.variant"?: string
+	"uesio.variant"?: MetadataKey
 } & DefinitionMap
 
 export type YamlDoc = yaml.Document<yaml.Node>
@@ -13,7 +14,6 @@ export type YamlDoc = yaml.Document<yaml.Node>
 export type ImportMapping = {
 	type: "IMPORT" | "VALUE"
 	columnname?: string
-	matchfield?: string
 	value?: string
 }
 
@@ -23,7 +23,6 @@ export type ImportSpec = {
 	jobtype: "IMPORT"
 	collection: string
 	filetype: "CSV" | "TAB" | undefined
-	upsertkey: string
 	mappings: Record<string, ImportMapping>
 }
 
@@ -36,7 +35,6 @@ export type ExportSpec = {
 export type UploadSpec = {
 	jobtype: "UPLOADFILES"
 	collection: string
-	upsertkey: string
 	uploadfield?: string
 }
 
@@ -44,7 +42,7 @@ export type BaseProps = {
 	definition?: BaseDefinition
 	index?: number
 	path?: string
-	componentType?: string
+	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
 }
@@ -52,14 +50,14 @@ export type BaseProps = {
 export interface UtilityProps {
 	index?: number
 	path?: string
-	variant?: string
+	variant?: MetadataKey
 	styles?: Record<string, CSSInterpolation>
 	classes?: Record<string, string>
 	className?: string
 	context: Context
 	definition?: BaseDefinition
 	children?: ReactNode
-	componentType?: string
+	componentType?: MetadataKey
 }
 
 export interface UtilityPropsPlus extends UtilityProps {

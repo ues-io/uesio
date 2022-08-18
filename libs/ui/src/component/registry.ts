@@ -22,6 +22,7 @@ import {
 	getPanelPropsDef,
 	getParamPropsDef,
 } from "./builtinpropsdefs"
+import { MetadataKey } from "../bands/builder/types"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -36,7 +37,7 @@ const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
 }
 
 const register = (
-	key: string,
+	key: MetadataKey,
 	componentType: FC<BaseProps>,
 	signals?: Registry<ComponentSignalDescriptor>
 ) => {
@@ -45,21 +46,21 @@ const register = (
 }
 
 const registerSignals = (
-	key: string,
+	key: MetadataKey,
 	signals: Registry<ComponentSignalDescriptor>
 ) => {
 	addToRegistry(componentSignalsRegistry, key, signals)
 }
 
 const registerUtilityComponent = (
-	key: string,
+	key: MetadataKey,
 	componentType: FC<UtilityProps>
 ) => {
 	addToRegistry(utilityRegistry, key, componentType)
 }
 
 const registerBuilder = (
-	key: string,
+	key: MetadataKey,
 	componentType?: FC<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
@@ -67,16 +68,16 @@ const registerBuilder = (
 	definition && addToRegistry(definitionRegistry, key, definition)
 }
 
-const getBuildtimeLoader = (key: string) => builderRegistry[key]
+const getBuildtimeLoader = (key: MetadataKey) => builderRegistry[key]
 
-const getRuntimeLoader = (key: string) => registry[key]
+const getRuntimeLoader = (key: MetadataKey) => registry[key]
 
-const getUtilityLoader = (key: string) => utilityRegistry[key]
+const getUtilityLoader = (key: MetadataKey) => utilityRegistry[key]
 
 const getSignal = (key: string, signal: string) =>
 	componentSignalsRegistry[key]?.[signal]
 
-const getPropertiesDefinition = (key: string) => {
+const getPropertiesDefinition = (key: MetadataKey) => {
 	const propDef = definitionRegistry[key]
 	const [namespace, name] = parseKey(key)
 	return {
@@ -110,7 +111,9 @@ const getPropertiesDefinitionFromPath = (
 		return [getPropertiesDefinition(metadataItem), localPath]
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		const propDef = getPropertiesDefinition(`${namespace}.${name}`)
+		const propDef = getPropertiesDefinition(
+			`${namespace}.${name}` as MetadataKey
+		)
 		propDef.type = "componentvariant"
 		return [propDef, localPath]
 	}
@@ -149,7 +152,7 @@ const getPropertiesDefinitionFromPath = (
 		const componentFullName = getKeyAtPath(fromPath(trimmedPath))
 		if (componentFullName) {
 			return [
-				getPropertiesDefinition(componentFullName),
+				getPropertiesDefinition(componentFullName as MetadataKey),
 				fromPath(trimmedPath),
 			]
 		}
@@ -160,7 +163,9 @@ const getPropertiesDefinitionFromPath = (
 const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
-		const definition = getPropertiesDefinition(`${namespace}.${name}`)
+		const definition = getPropertiesDefinition(
+			`${namespace}.${name}` as MetadataKey
+		)
 		if (definition?.traits?.includes(trait)) {
 			if (!acc[namespace]) {
 				acc[namespace] = {}

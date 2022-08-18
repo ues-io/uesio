@@ -5,6 +5,9 @@ type SaveRequest = {
 	collection: string
 	changes: Record<string, PlainWireRecord>
 	deletes: Record<string, PlainWireRecord>
+	options?: {
+		upsert: boolean
+	}
 }
 
 type SaveRequestBatch = {

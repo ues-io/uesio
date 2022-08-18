@@ -18,24 +18,42 @@ export default class Work extends Command {
 
 		const user = await authorize()
 
-		const app = await getApp()
+		const appName = await getApp()
 
 		let workspaceName = args.workspace
 
 		const workspaces = getMetadataByTypePlural("workspaces")
+		const apps = getMetadataByTypePlural("apps")
+
+		// Figure out app ID
+		const appResponse = await load(apps, user, [
+			{
+				field: "uesio/core.uniquekey",
+				valueSource: "VALUE",
+				value: appName,
+				active: true,
+			},
+		])
+		const appData = appResponse.wires[0].data
+		if (!appData || !appData.length) {
+			throw new Error("No app data found for app: " + appName)
+		}
+		const appId = `${appData[0]["uesio/core.id"]}`
+
+		// Load app's workspaces
 		const response = await load(workspaces, user, [
 			{
 				field: "uesio/studio.app",
 				valueSource: "VALUE",
-				value: app,
+				value: appId,
 				active: true,
 			},
 		])
 
 		const workspaceList = response.wires[0].data
 
-		if (!workspaceList || workspaceList.length === 0) {
-			throw new Error("No workspaces found for app: " + app)
+		if (!workspaceList || !workspaceList.length) {
+			throw new Error("No workspaces found for app: " + appName)
 		}
 
 		if (workspaceName) {
@@ -66,6 +84,6 @@ export default class Work extends Command {
 		}
 
 		await setWorkspace(workspaceName)
-		printWorkspace(app, workspaceName)
+		printWorkspace(appName, workspaceName)
 	}
 }

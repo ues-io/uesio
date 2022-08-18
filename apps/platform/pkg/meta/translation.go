@@ -9,6 +9,7 @@ import (
 
 type Translation struct {
 	ID        string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Workspace *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	Labels    map[string]string `yaml:"labels" uesio:"uesio/studio.labels"`
@@ -40,7 +41,7 @@ func (t *Translation) GetPath() string {
 }
 
 func (t *Translation) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, t.Language)
+	return fmt.Sprintf("%s:%s", workspace, t.Language)
 }
 
 func (t *Translation) SetNamespace(namespace string) {
@@ -49,12 +50,6 @@ func (t *Translation) SetNamespace(namespace string) {
 
 func (t *Translation) GetNamespace() string {
 	return t.Namespace
-}
-
-func (t *Translation) SetWorkspace(workspace string) {
-	t.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (t *Translation) SetModified(mod time.Time) {

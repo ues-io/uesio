@@ -23,14 +23,36 @@ import (
 )
 
 type FileRecord struct {
-	RecordID  string
-	FieldName string
+	RecordUniqueKey string
+	FieldName       string
 }
 
-var ORDERED_ITEMS = [...]string{"collections", "selectlists", "fields", "themes", "views", "routes", "files", "bots", "permissionsets", "profiles", "componentvariants", "componentpacks", "labels", "translations"}
+var ORDERED_ITEMS = [...]string{
+	"collections",
+	"selectlists",
+	"fields",
+	"themes",
+	"views",
+	"routes",
+	"files",
+	"bots",
+	"permissionsets",
+	"profiles",
+	"componentvariants",
+	"componentpacks",
+	"labels",
+	"translations",
+	"useraccesstokens",
+	"signupmethods",
+}
 
 // Deploy func
 func Deploy(body io.ReadCloser, session *sess.Session) error {
+
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return errors.New("No Workspace provided for deployment")
+	}
 
 	// Unfortunately, we have to read the whole thing into memory
 	bodybytes, err := ioutil.ReadAll(body)
@@ -43,12 +65,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		return err
 	}
 
-	workspace := session.GetWorkspaceID()
-	namespace := session.GetWorkspaceApp()
-
-	if workspace == "" {
-		return errors.New("No Workspace provided for deployment")
-	}
+	namespace := workspace.GetAppFullName()
 
 	dep := map[string]meta.BundleableGroup{}
 
@@ -121,8 +138,8 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if metadataType == "files" {
 				file := collectionItem.(*meta.File)
 				fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
-					RecordID:  file.Name,
-					FieldName: "uesio/studio.content",
+					RecordUniqueKey: file.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.content",
 				}
 			}
 
@@ -130,8 +147,8 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if metadataType == "bots" {
 				bot := collectionItem.(*meta.Bot)
 				fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
-					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
-					FieldName: "uesio/studio.content",
+					RecordUniqueKey: bot.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.content",
 				}
 			}
 
@@ -139,16 +156,19 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if metadataType == "componentpacks" {
 				cpack := collectionItem.(*meta.ComponentPack)
 				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
-					RecordID:  cpack.Name,
-					FieldName: "uesio/studio.runtimebundle",
+					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.runtimebundle",
 				}
 				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
-					RecordID:  cpack.Name,
-					FieldName: "uesio/studio.buildtimebundle",
+					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
+					FieldName:       "uesio/studio.buildtimebundle",
 				}
 			}
 
-			collectionItem.SetWorkspace(workspace)
+			collectionItem.SetField("uesio/studio.workspace", &meta.Workspace{
+				ID: workspace.ID,
+			})
+
 			continue
 		}
 
@@ -176,10 +196,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		uploadOps = append(uploadOps, filesource.FileUploadOp{
 			Data: fileStream.Data,
 			Details: &fileadapt.FileDetails{
-				Name:         fileStream.FileName,
-				CollectionID: fileStream.Type,
-				RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-				FieldID:      fileRecord.FieldName,
+				Name:            fileStream.FileName,
+				CollectionID:    fileStream.Type,
+				RecordUniqueKey: fileRecord.RecordUniqueKey,
+				FieldID:         fileRecord.FieldName,
 			},
 		})
 	}
@@ -189,21 +209,22 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		dep := by.Dependencies[key]
 		deps = append(deps, &meta.BundleDependency{
 			Workspace: &meta.Workspace{
-				ID: workspace,
+				ID: workspace.ID,
 			},
 			App: &meta.App{
-				ID: key,
+				UniqueKey: key,
 			},
 			Bundle: &meta.Bundle{
-				ID: key + "_" + dep.Version,
+				UniqueKey: key + ":" + dep.Version,
 			},
 		})
 	}
+
 	// Upload workspace properties like homeRoute and loginRoute
 	workspaceItem := (&meta.Workspace{
-		ID: workspace,
+		ID: workspace.ID,
 		App: &meta.App{
-			ID: namespace,
+			UniqueKey: namespace,
 		},
 		LoginRoute:    by.LoginRoute,
 		HomeRoute:     by.HomeRoute,
@@ -224,15 +245,15 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		},
 	})
 
-	upsertOptions := &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
+	saveOptions := &adapt.SaveOptions{
+		Upsert: true,
 	}
 
 	saves := []datasource.PlatformSaveRequest{
 		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
 		{
 			Collection: &deps,
-			Options:    upsertOptions,
+			Options:    saveOptions,
 		},
 	}
 
@@ -240,7 +261,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		if dep[element] != nil {
 			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: dep[element],
-				Options:    upsertOptions,
+				Options:    saveOptions,
 			})
 		}
 	}

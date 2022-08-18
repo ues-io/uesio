@@ -1,5 +1,11 @@
 name: usage
-idFormat: ${uesio/core.site}_${uesio/core.user}_${uesio/core.day}_${uesio/core.actiontype}_${uesio/core.metadatatype}_${uesio/core.metadataname}
+uniqueKey:
+  - uesio/core.site
+  - uesio/core.user
+  - uesio/core.day
+  - uesio/core.actiontype
+  - uesio/core.metadatatype
+  - uesio/core.metadataname
 public: true
 label: usage
 pluralLabel: usages

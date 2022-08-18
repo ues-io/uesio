@@ -1,4 +1,6 @@
 name: account
+uniqueKey:
+  - uesio/crm.externalid
 nameField: uesio/crm.name
 label: account
 pluralLabel: accounts

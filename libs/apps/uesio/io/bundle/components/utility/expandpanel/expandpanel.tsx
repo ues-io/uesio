@@ -52,7 +52,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				gridAutoFlow: "column",
 				gridTemplateColumns: "1fr 0fr",
 				alignItems: "center",
-				padding: "8px",
 			},
 			content: {
 				willChange: "max-height",
@@ -95,7 +94,11 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			<IOGrid
 				context={context}
 				className={classes.grid}
-				onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
+				onClick={
+					hasChildren
+						? () => setExpanded && setExpanded(!expanded)
+						: undefined
+				}
 			>
 				{toggle}
 				{showArrow && hasChildren && (

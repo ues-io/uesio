@@ -60,6 +60,21 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+		{
+			name: "loading",
+			type: "SELECT",
+			label: "Loading",
+			options: [
+				{
+					value: "lazy",
+					label: "Lazy",
+				},
+				{
+					value: "eager",
+					label: "Eager",
+				},
+			],
+		},
 	],
 	sections: [
 		{

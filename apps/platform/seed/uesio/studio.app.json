@@ -1,66 +1,82 @@
 [
 	{
 		"name": "core",
+		"fullname": "uesio/core",
 		"description": "Base Uesio Functionality",
 		"color": "#a05195",
-		"owner": {
-			"id": "uesio"
+		"icon": "hub",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "io",
+		"fullname": "uesio/io",
 		"description": "A Component library for uesio",
 		"color": "#2f4b7c",
-		"owner": {
-			"id": "uesio"
+		"icon": "widgets",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "studio",
+		"fullname": "uesio/studio",
 		"description": "The Uesio Configuration App",
 		"color": "#ff7c43",
-		"owner": {
-			"id": "uesio"
+		"icon": "design_services",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "crm",
+		"fullname": "uesio/crm",
 		"description": "A Sample CRM App",
 		"color": "#a05195",
-		"owner": {
-			"id": "uesio"
+		"icon": "person",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "cms",
+		"fullname": "uesio/cms",
 		"description": "Content Management Tools",
 		"color": "#665191",
-		"owner": {
-			"id": "uesio"
+		"icon": "description",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "docs",
+		"fullname": "uesio/docs",
 		"description": "Docs for Uesio",
 		"color": "#d45087",
-		"owner": {
-			"id": "uesio"
+		"icon": "support",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "web",
+		"fullname": "uesio/web",
 		"description": "Uesio Website",
 		"color": "#003f5c",
-		"owner": {
-			"id": "uesio"
+		"icon": "public",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	},
 	{
 		"name": "lab",
+		"fullname": "uesio/lab",
 		"description": "Experimental Components",
 		"color": "#003f5c",
-		"owner": {
-			"id": "uesio"
+		"icon": "science",
+		"user": {
+			"uniquekey": "uesio"
 		}
 	}
 ]

@@ -2,7 +2,6 @@
 	"jobtype": "IMPORT",
 	"collection": "uesio/cms.article",
 	"filetype": "CSV",
-	"upsertkey": "uesio/cms.slug",
 	"mappings": {
 		"uesio/cms.name": {
 			"columnname": "name"

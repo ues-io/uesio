@@ -45,32 +45,32 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
-                                            uesio.variant: uesio/web.secondary
+                                            uesio.variant: uesio/web.calltoaction
                                             text: Login
                                             signals:
                                               - signal: "route/REDIRECT"
                                                 path: "https://studio.$Site{domain}"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.secondary
-                                            text: Blog
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "blog"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.secondary
-                                            text: Docs
-                                            signals:
-                                              - signal: "route/REDIRECT"
-                                                path: "https://docs.$Site{domain}"
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            uesio.variant: uesio/web.calltoaction
-                                            text: Early Access
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "earlyaccess"
+                                  # - uesio/io.group:
+                                  #     components:
+                                  #       - uesio/io.button:
+                                  #           uesio.variant: uesio/web.secondary
+                                  #           text: Blog
+                                  #           signals:
+                                  #             - signal: "route/NAVIGATE"
+                                  #               path: "blog"
+                                  # - uesio/io.group:
+                                  #     components:
+                                  #       - uesio/io.button:
+                                  #           uesio.variant: uesio/web.secondary
+                                  #           text: Docs
+                                  #           signals:
+                                  #             - signal: "route/REDIRECT"
+                                  #               path: "https://docs.$Site{domain}"
+                                  # - uesio/io.group:
+                                  #     components:
+                                  #       - uesio/io.button:
+                                  #           uesio.variant: uesio/web.calltoaction
+                                  #           text: Early Access
+                                  #           signals:
+                                  #             - signal: "route/NAVIGATE"
+                                  #               path: "earlyaccess"

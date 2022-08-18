@@ -1,11 +1,6 @@
 package adapt
 
-import (
-	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/templating"
-)
-
+/*
 func HandleReferenceLookups(
 	connection Connection,
 	op *SaveOp,
@@ -40,35 +35,26 @@ func HandleReferenceLookups(
 			return err
 		}
 
-		matchField := GetStringWithDefault(lookup.MatchField, ID_FIELD)
-		matchTemplate := GetStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
-
-		template, err := NewFieldChanges(matchTemplate, refCollectionMetadata)
-		if err != nil {
-			return err
-		}
-
-		if template == nil {
-			return errors.New("Cannot get reference op without id format metadata")
-		}
-
 		refReq := referencedCollections.Get(fieldMetadata.ReferenceMetadata.Collection)
 		refReq.Metadata = refCollectionMetadata
-		refReq.MatchField = matchField
+		refReq.MatchField = UNIQUE_KEY_FIELD
 
 		refReq.AddFields([]LoadRequestField{
 			{
-				ID: matchField,
+				ID: UNIQUE_KEY_FIELD,
 			},
 		})
 
-		op.LoopChanges(func(change *ChangeItem) error {
+		err = op.LoopChanges(func(change *ChangeItem) error {
 			matchKeyValue, err := change.FieldChanges.GetField(lookup.RefField)
 			if err != nil {
 				return nil
 			}
 
-			matchKeyValueItem := Item(matchKeyValue.(map[string]interface{}))
+			matchKeyValueItem, ok := matchKeyValue.(loadable.Item)
+			if !ok {
+				return errors.New("Not a valid reference item provided")
+			}
 
 			// check to see if this item already has its id field set.
 			// if so, we can just skip checking for it.
@@ -77,13 +63,18 @@ func HandleReferenceLookups(
 				return nil
 			}
 
-			referenceKeyValue, err := templating.Execute(template, &matchKeyValueItem)
-			if err != nil {
-				return err
+			uniqueKeyFieldValue, err := matchKeyValueItem.GetField(UNIQUE_KEY_FIELD)
+			if err == nil && uniqueKeyFieldValue != "" {
+				refReq.AddID(uniqueKeyFieldValue, ReferenceLocator{
+					Item:  change,
+					Field: fieldMetadata,
+				})
+				return nil
 			}
 
-			if referenceKeyValue == "" {
-				return nil
+			referenceKeyValue, err := SetUniqueKey(matchKeyValueItem, refCollectionMetadata)
+			if err != nil {
+				return err
 			}
 
 			refReq.AddID(referenceKeyValue, ReferenceLocator{
@@ -93,8 +84,12 @@ func HandleReferenceLookups(
 
 			return nil
 		})
+		if err != nil {
+			return err
+		}
 
 	}
 
 	return HandleReferences(connection, referencedCollections)
 }
+*/

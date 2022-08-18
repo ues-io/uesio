@@ -134,7 +134,7 @@ class Wire {
 		appDispatch()(
 			toggleCondition({
 				entity: this.getFullId(),
-				conditionId,
+				id: conditionId,
 			})
 		)
 	}

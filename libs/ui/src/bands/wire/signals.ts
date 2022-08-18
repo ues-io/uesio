@@ -8,6 +8,13 @@ import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import resetWireOp from "./operations/reset"
+
+import {
+	add as addOrderOp,
+	set as setOrderOp,
+	remove as removeOrderOp,
+} from "./operations/order"
+
 import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
@@ -25,6 +32,7 @@ import {
 	WireConditionState,
 } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
+import { MetadataKey } from "../builder/types"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -55,7 +63,7 @@ interface ResetWireSignal extends SignalDefinition {
 
 interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
-	condition: string
+	conditionId: string
 }
 
 interface RemoveConditionSignal extends SignalDefinition {
@@ -66,6 +74,18 @@ interface RemoveConditionSignal extends SignalDefinition {
 interface SetConditionSignal extends SignalDefinition {
 	wire: string
 	condition: WireConditionState
+}
+interface SetOrderSignal extends SignalDefinition {
+	wire: string
+	order: { field: MetadataKey; desc: boolean }[]
+}
+interface AddOrderSignal extends SignalDefinition {
+	wire: string
+	order: { field: MetadataKey; desc: boolean }
+}
+interface RemoveOrderSignal extends SignalDefinition {
+	wire: string
+	fields: MetadataKey[]
 }
 
 interface LoadWiresSignal extends SignalDefinition {
@@ -82,6 +102,7 @@ interface SaveWiresSignal extends SignalDefinition {
 interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
+	searchFields?: string[]
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -131,7 +152,11 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
-			updateRecordOp(context, [signal.field], signal.value),
+			updateRecordOp(
+				context,
+				[signal.field],
+				context.merge(signal.value)
+			),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",
@@ -178,18 +203,28 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Wire",
 			},
 			{
+				name: "searchFields",
+				type: "WIRE_FIELDS",
+				label: "Search Fields",
+			},
+			{
 				name: "search",
 				type: "TEXT",
 				label: "Search",
 			},
 		],
 		dispatcher: (signal: SearchWireSignal, context: Context) =>
-			searchWireOp(context, signal.wire, signal.search),
+			searchWireOp(
+				context,
+				signal.wire,
+				signal.search,
+				signal?.searchFields
+			),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
-			toggleConditionOp(context, signal.wire, signal.condition),
+			toggleConditionOp(context, signal.wire, signal.conditionId),
 		properties: (signal: SignalDefinition): PropDescriptor[] => [
 			{
 				name: "wire",
@@ -231,6 +266,47 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/SET_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: SetOrderSignal, context: Context) =>
+			setOrderOp(context, signal.wire, signal.order),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/ADD_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: AddOrderSignal, context: Context) =>
+			addOrderOp(context, signal.wire, signal.order),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/REMOVE_ORDER`]: {
+		label: "Set Wire Order",
+		dispatcher: (signal: RemoveOrderSignal, context: Context) =>
+			removeOrderOp(context, signal.wire, signal.fields),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "field",
+				type: "TEXT",
+				label: "FIELD",
 			},
 		],
 	},

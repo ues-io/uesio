@@ -35,6 +35,13 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
+	const columnsToDisplay = definition.columns?.filter((columnDef) =>
+		component.useShouldDisplay(
+			context,
+			columnDef["uesio/io.column"] as definition.DefinitionMap
+		)
+	)
+
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyles(
@@ -45,13 +52,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 
 	const collection = wire.getCollection()
-
-	const columnsToDisplay = definition.columns?.filter((columnDef) =>
-		component.shouldDisplay(
-			context,
-			columnDef["uesio/io.column"] as definition.DefinitionMap
-		)
-	)
 
 	const columns = columnsToDisplay?.map((columnDef) => {
 		const column = columnDef["uesio/io.column"] as ColumnDefinition
@@ -66,7 +66,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
 
 	const paginated = paginate(data, currentPage, pageSize)
-
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),

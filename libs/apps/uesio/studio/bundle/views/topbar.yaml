@@ -41,13 +41,13 @@ definition:
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${uesio/core.id}
+                                text: ${uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
                                 color: "${uesio/studio.color}"
-                                text: circle
+                                text: ${uesio/studio.icon}
                 - uesio/io.list:
                     uesio.display:
                       - type: collectionContext
@@ -57,22 +57,22 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
-                                text: circle
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/site/${uesio/studio.name}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -93,27 +93,27 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
-                                text: circle
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/bundle/${uesio/studio.major}/${uesio/studio.minor}/${uesio/studio.patch}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: v${["uesio/studio.app"]["uesio/core.id"]}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
                                 element: div
                           avatar:
                             - uesio/io.text:
@@ -129,22 +129,22 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
-                                text: circle
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/teams/${uesio/studio.name}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/teams/${uesio/studio.name}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -165,22 +165,22 @@ definition:
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
-                                text: ${["uesio/studio.app"]["uesio/core.id"]}
+                                text: ${uesio/studio.app->uesio/core.uniquekey}
                                 element: div
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
-                                color: ${["uesio/studio.app"]["uesio/studio.color"]}
-                                text: circle
+                                color: ${uesio/studio.app->uesio/studio.color}
+                                text: ${uesio/studio.app->uesio/studio.icon}
                       - uesio/io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -198,7 +198,7 @@ definition:
                               param: itemType
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/$Param{itemType}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:
@@ -218,7 +218,7 @@ definition:
                               param: itemType
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio/studio.app"]["uesio/core.id"]}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
+                              path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/$Param{itemType}/$Param{itemName}
                           uesio.variant: uesio/io.tag
                           content:
                             - uesio/io.text:

@@ -8,7 +8,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 
 	return &Bundle{
 		App: &App{
-			ID: namespace,
+			UniqueKey: namespace,
 		},
 		Major:       major,
 		Minor:       minor,
@@ -19,6 +19,7 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 
 type Bundle struct {
 	ID          string    `uesio:"uesio/core.id"`
+	UniqueKey   string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Major       int       `uesio:"uesio/studio.major"`
 	Minor       int       `uesio:"uesio/studio.minor"`
 	Patch       int       `uesio:"uesio/studio.patch"`

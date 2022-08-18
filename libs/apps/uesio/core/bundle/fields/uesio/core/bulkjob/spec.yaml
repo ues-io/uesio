@@ -11,12 +11,6 @@ subfields:
   - name: uesio/core.collection
     label: Collection
     type: TEXT
-  - name: uesio/core.upsertkey
-    label: Upsert Key
-    type: TEXT
-  - name: uesio/core.upserttemplate
-    label: Upsert Template
-    type: TEXT
   - name: uesio/core.mappings
     label: Mappings
     type: MAP

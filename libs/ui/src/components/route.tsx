@@ -1,12 +1,11 @@
 import { FunctionComponent, useEffect } from "react"
-import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
-import { useUesio } from "../hooks/hooks"
+import { useHotKeyCallback, useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
-import PanelArea from "./panelarea"
+import View from "./view/view"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -21,7 +20,6 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		viewDef: route?.view,
 		theme: route?.theme,
 	})
-	const theme = uesio.theme.useTheme(route?.theme || "", routeContext)
 
 	// This applies the global styles
 	injectGlobal({
@@ -52,22 +50,39 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		)
 	})
 
-	// Quit rendering early if we don't have our theme yet.
-	if (!theme || !route) return null
+	useHotKeyCallback(
+		"command+p",
+		() => {
+			uesio.signal.run(
+				{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
+				routeContext
+			)
+		},
+		!!(route && route.workspace)
+	)
 
-	const componentType = buildMode
-		? "uesio/studio.runtime"
-		: "uesio/core.runtime"
+	const isLoaded = uesio.builder.useBuilderDeps(buildMode, routeContext)
+
+	// Quit rendering early if we don't have our theme yet.
+	if (!route) return null
 
 	return (
 		<>
-			<ComponentInternal
-				componentType={componentType}
-				path=""
-				context={routeContext}
+			<View
+				context={
+					// Prevent build mode if the deps haven't been loaded yet.
+					buildMode && !isLoaded
+						? routeContext.addFrame({
+								buildMode: false,
+						  })
+						: routeContext
+				}
+				definition={{
+					view: route.view,
+					params: route.params,
+				}}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
-			<PanelArea context={props.context} />
 		</>
 	)
 }

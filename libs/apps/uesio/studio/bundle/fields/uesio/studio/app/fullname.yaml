@@ -1,0 +1,5 @@
+name: fullname
+type: TEXT
+label: Full Name
+required: true
+createOnly: true

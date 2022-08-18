@@ -1,5 +1,9 @@
 name: bundle
-idFormat: "${uesio/studio.app}_v${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}"
-nameField: uesio/core.id
+uniqueKey:
+  - uesio/studio.app
+  - uesio/studio.major
+  - uesio/studio.minor
+  - uesio/studio.patch
+nameField: uesio/core.uniquekey
 label: bundle
 pluralLabel: bundles

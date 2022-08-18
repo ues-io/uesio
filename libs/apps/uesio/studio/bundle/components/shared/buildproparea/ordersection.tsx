@@ -39,13 +39,11 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.DefinitionMap
 		| undefined
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
 	const [, , selectedNode] = uesio.builder.useSelectedNode()
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
 
 	const orderDef = wireDef?.order as definition.Definition[] | undefined
-	const primaryColor = theme.definition.palette.primary
 
 	const ordersPath = `${path}["order"]`
 
@@ -81,10 +79,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 				const selected = selectedNode.startsWith(orderPath)
 				return (
 					<PropNodeTag
-						title={getOrderTitle(order)}
-						icon={"filter_list"}
 						selected={selected}
-						iconColor={primaryColor}
 						key={index}
 						onClick={() => {
 							uesio.builder.setSelectedNode(
@@ -93,10 +88,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 								orderPath
 							)
 						}}
-						popChildren
-						context={context}
-					>
-						{
+						popperChildren={
 							<PropertiesPane
 								path={orderPath}
 								index={0}
@@ -111,6 +103,9 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 								valueAPI={valueAPI}
 							/>
 						}
+						context={context}
+					>
+						{getOrderTitle(order)}
 					</PropNodeTag>
 				)
 			})}

@@ -1,10 +1,10 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
+import { ConfigValueState } from "../../definition/configvalue"
 import { RootState } from "../../store/store"
-import { MetadataState } from "../metadata/types"
 
-const adapter = createEntityAdapter<MetadataState>({
-	selectId: (metadata) => metadata.key,
+const adapter = createEntityAdapter<ConfigValueState>({
+	selectId: (cv) => `${cv.namespace}.${cv.name}`,
 })
 
 const selectors = adapter.getSelectors((state: RootState) => state.configvalue)

@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
 
 import TextProp from "../buildpropitem/textprop"
+import TextAreaProp from "../buildpropitem/textareaprop"
 import SelectProp from "../buildpropitem/selectprop"
 import MultiSelectProp from "../buildpropitem/multiselectprop"
 import KeyProp from "../buildpropitem/keyprop"
@@ -9,12 +10,15 @@ import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
 import MetadataProp from "../buildpropitem/metadataprop"
 import NumberProp from "../buildpropitem/numberprop"
+import ParamProp from "../buildpropitem/paramprop"
+import ParamsProp from "../buildpropitem/paramsprop"
 import BooleanProp from "../buildpropitem/booleanprop"
 import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
+import WireFieldsProp from "../buildpropitem/wirefieldsprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -48,10 +52,18 @@ function getPropHandler(type?: string) {
 			return BooleanProp
 		case "TEXT":
 			return TextProp
+		case "TEXT_AREA":
+			return TextAreaProp
 		case "ICON":
 			return IconProp
 		case "CUSTOM":
 			return CustomProp
+		case "PARAM":
+			return ParamProp
+		case "PARAMS":
+			return ParamsProp
+		case "WIRE_FIELDS":
+			return WireFieldsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp

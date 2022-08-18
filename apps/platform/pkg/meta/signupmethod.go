@@ -21,6 +21,7 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 
 type SignupMethod struct {
 	ID               string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey        string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name             string     `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace        string     `yaml:"-" uesio:"-"`
 	AuthSource       string     `yaml:"authsource" uesio:"uesio/studio.authsource"`
@@ -48,7 +49,7 @@ func (sm *SignupMethod) GetCollection() CollectionableGroup {
 }
 
 func (sm *SignupMethod) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, sm.Name)
+	return fmt.Sprintf("%s:%s", workspace, sm.Name)
 }
 
 func (sm *SignupMethod) GetBundleGroup() BundleableGroup {
@@ -82,12 +83,6 @@ func (sm *SignupMethod) GetNamespace() string {
 
 func (sm *SignupMethod) SetNamespace(namespace string) {
 	sm.Namespace = namespace
-}
-
-func (sm *SignupMethod) SetWorkspace(workspace string) {
-	sm.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (sm *SignupMethod) SetModified(mod time.Time) {

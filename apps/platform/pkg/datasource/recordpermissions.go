@@ -98,7 +98,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		return err
 	}
 
-	return adapt.HandleReferences(connection, referencedCollections)
+	return adapt.HandleReferences(connection, referencedCollections, false)
 }
 
 func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
@@ -136,7 +136,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 	}
 
 	if !hasToken {
-		return errors.New("User does not have access to write to this field: " + change.IDValue)
+		return errors.New("User does not have access to write to this field: " + change.UniqueKey)
 	}
 
 	return nil

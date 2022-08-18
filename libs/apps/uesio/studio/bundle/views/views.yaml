@@ -10,9 +10,10 @@ definition:
         uesio/studio.app:
           fields:
             uesio/studio.color:
+            uesio/studio.icon:
       conditions:
-        - field: uesio/core.id
-          value: $Param{app}_$Param{workspacename}
+        - field: uesio/core.uniquekey
+          value: $Param{app}:$Param{workspacename}
     views:
       collection: uesio/studio.view
       fields:
@@ -22,6 +23,9 @@ definition:
         uesio/core.createdat:
         uesio/core.createdby:
         uesio/studio.name:
+      order:
+        - field: uesio/core.updatedat
+          desc: false
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -94,46 +98,88 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newView
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        display: flex
+                        alignItems: center
+                        gap: 5px
+                        padding: 10px
+                        margin: 40px 40px 0 40px
                     components:
-                      - uesio/io.deck:
-                          id: viewsDeck
+                      - uesio/io.searchbox:
                           wire: views
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
-                                content:
-                                  - uesio/io.grid:
-                                      columnGap: 10px
-                                      templateColumns:
-                                        xs: 1fr 1fr 1fr
-                                        md: 1fr 1fr 1fr
-                                        lg: 1fr 1fr 1fr
-                                      items:
-                                        - uesio/io.griditem:
-                                            components:
-                                              - uesio/io.field:
-                                                  #labelPosition: none
-                                                  fieldId: uesio/studio.name
-                                  - uesio/io.grid:
-                                      templateColumns:
-                                        xs: 1fr
-                                        md: 1fr 1fr
-                                        lg: 1fr 1fr 1fr 1fr
-                                      columnGap: 10px
-                                      items:
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.createdby
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.createdat
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.updatedby
-                                        - uesio/io.field:
-                                            fieldId: uesio/core.updatedat
+                      - uesio/io.button:
+                          icon: sort
+                          text: A-Z
+                          uesio.variant: uesio/io.secondary
+                          signals:
+                            - signal: wire/SET_ORDER
+                              wire: views
+                              order:
+                                - field: uesio/studio.name
+                                  desc: false
+                            - signal: wire/LOAD
+                              wires:
+                                - workspaces
+                                - views
+                      - uesio/io.button:
+                          icon: sort
+                          text: Updated
+                          uesio.variant: uesio/io.secondary
+                          signals:
+                            - signal: wire/SET_ORDER
+                              wire: views
+                              order:
+                                - field: uesio/core.updatedat
+                                  desc: true
+                            - signal: wire/LOAD
+                              wires:
+                                - workspaces
+                                - views
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        marginTop: 0px
+                    components:
+                      - uesio/io.table:
+                          uesio.variant: uesio/io.views
+                          id: viewsTable
+                          wire: views
+                          columns:
+                            - uesio/io.column:
+                                # field: uesio/studio.name
+                                label: View
+                                components:
+                                  - uesio/io.button:
+                                      icon: palette
+                                      uesio.styles:
+                                        root:
+                                          paddingLeft: 16px
+                                          display: flex;
+                                          position: absolute
+                                          inset: 0
+                                      text: ${uesio/studio.name}
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
+                                    # Empty element to take up space in the table as the real button is absolute
+                                  - uesio/io.button:
+                                      icon: palette
+                                      uesio.styles:
+                                        root:
+                                          opacity: 0
+                                          pointerEvents: 0
+                                          position: relative
+                                          z-index: -99
+                                      text: ${uesio/studio.name}
+                            - uesio/io.column:
+                                label: Updated
+                                field: uesio/core.updatedat
+                            - uesio/io.column:
+                                field: uesio/core.updatedby
+                            - uesio/io.column:
+                                field: uesio/core.createdby
 
   panels:
     newView:

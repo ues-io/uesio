@@ -34,27 +34,28 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 type RecordChallengeTokenDefinition struct {
-	Type            string            `yaml:"type"`
-	Collection      string            `yaml:"collection"`
-	Token           string            `yaml:"token"`
-	UserAccessToken string            `yaml:"userAccessToken"`
-	Access          string            `yaml:"access"`
-	Conditions      []*TokenCondition `yaml:"conditions"`
+	Type            string            `yaml:"type,omitempty" uesio:"type" json:"type"`
+	Collection      string            `yaml:"collection,omitempty" uesio:"collection" json:"collection"`
+	Token           string            `yaml:"token" uesio:"token" json:"token"`
+	UserAccessToken string            `yaml:"userAccessToken" uesio:"userAccessToken" json:"userAccessToken"`
+	Access          string            `yaml:"access" uesio:"access" json:"access"`
+	Conditions      []*TokenCondition `yaml:"conditions,omitempty" uesio:"conditions" json:"conditions"`
 }
 
 type TokenCondition struct {
-	Field string `yaml:"field"`
-	Value string `yaml:"value"`
+	Field string `yaml:"field" uesio:"field" json:"field"`
+	Value string `yaml:"value" uesio:"value" json:"value"`
 }
 
 type Collection struct {
 	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey             string                            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
 	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
-	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"uesio/studio.idformat"`
+	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" uesio:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
@@ -66,7 +67,7 @@ type Collection struct {
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
 	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
-	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
+	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
@@ -81,7 +82,7 @@ func (c *Collection) GetCollection() CollectionableGroup {
 }
 
 func (c *Collection) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, c.Name)
+	return fmt.Sprintf("%s:%s", workspace, c.Name)
 }
 
 func (c *Collection) GetBundleGroup() BundleableGroup {
@@ -120,12 +121,6 @@ func (c *Collection) GetNamespace() string {
 
 func (c *Collection) SetNamespace(namespace string) {
 	c.Namespace = namespace
-}
-
-func (c *Collection) SetWorkspace(workspace string) {
-	c.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (c *Collection) SetModified(mod time.Time) {

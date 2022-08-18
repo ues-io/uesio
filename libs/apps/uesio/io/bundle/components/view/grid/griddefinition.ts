@@ -20,9 +20,24 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
+			name: "templateColumns",
+			type: "TEXT",
+			label: "Template Columns",
+		},
+		{
 			name: "columnGap",
 			type: "TEXT",
 			label: "Column Gap",
+		},
+		{
+			name: "templateRows",
+			type: "TEXT",
+			label: "Template Rows",
+		},
+		{
+			name: "rowGap",
+			type: "TEXT",
+			label: "Row Gap",
 		},
 	],
 	sections: [],

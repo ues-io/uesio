@@ -19,6 +19,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				height: "100%",
 				width: "100%",
 				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
+				pointerEvents: "auto",
 			},
 			root: {
 				position: "absolute",
@@ -28,10 +29,10 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				width: "100%",
 				display: "grid",
 				gridTemplateColumns: `minmax(${minPagePadding},1fr) minmax(auto,${
-					props.width || "100%"
+					props.width || "auto"
 				}) minmax(${minPagePadding},1fr)`,
 				gridTemplateRows: `minmax(${minPagePadding},1fr) minmax(auto,${
-					props.height || "100%"
+					props.height || "auto"
 				}) minmax(${minPagePadding},1fr)`,
 				pointerEvents: "none",
 			},

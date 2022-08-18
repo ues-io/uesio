@@ -2,8 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	// Using text/template here instead of html/template
@@ -17,12 +17,13 @@ import (
 
 // RouteMergeData stuff to merge
 type RouteMergeData struct {
-	View      string              `json:"view"`
-	Params    map[string]string   `json:"params"`
-	Namespace string              `json:"namespace"`
-	Path      string              `json:"path"`
-	Workspace *WorkspaceMergeData `json:"workspace"`
-	Theme     string              `json:"theme"`
+	View         string                   `json:"view"`
+	Params       map[string]string        `json:"params"`
+	Namespace    string                   `json:"namespace"`
+	Path         string                   `json:"path"`
+	Workspace    *WorkspaceMergeData      `json:"workspace"`
+	Theme        string                   `json:"theme"`
+	Dependencies *routing.PreloadMetadata `json:"dependencies"`
 }
 
 // UserMergeData stuff to merge
@@ -65,31 +66,50 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route        *RouteMergeData            `json:"route"`
-	User         *UserMergeData             `json:"user"`
-	Site         *SiteMergeData             `json:"site"`
-	Workspace    *WorkspaceMergeData        `json:"workspace,omitempty"`
-	Component    *ComponentsMergeData       `json:"component,omitempty"`
-	ThemePreload *routing.MetadataMergeData `json:"theme,omitempty"`
-	ReactBundle  string                     `json:"-"`
-}
-
-var indexTemplate *template.Template
-
-func init() {
-	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
-	indexTemplate = template.Must(template.ParseFiles(indexPath))
+	Route     *RouteMergeData      `json:"route"`
+	User      *UserMergeData       `json:"user"`
+	Site      *SiteMergeData       `json:"site"`
+	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component *ComponentsMergeData `json:"component,omitempty"`
+	routing.PreloadMetadata
 }
 
 // String function controls how MergeData is marshalled
 // This is actually pretty silly but I did it to make the output
 // look pretty in the html source.
 func (md MergeData) String() string {
-	json, err := json.MarshalIndent(md, "        ", "    ")
+	json, err := json.MarshalIndent(md, "        ", "  ")
+	//json, err := json.Marshal(md)
 	if err != nil {
 		return ""
 	}
 	return string(json)
+}
+
+var indexTemplate *template.Template
+
+func getPackUrl(key string, workspace *WorkspaceMergeData) string {
+	namespace, name, err := meta.ParseKey(key)
+	if err != nil {
+		return ""
+	}
+	user, namepart, err := meta.ParseNamespace(namespace)
+	if err != nil {
+		return ""
+	}
+	if workspace != nil {
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name)
+	}
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s", user, namepart, name)
+
+}
+
+func init() {
+	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
+	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
+	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
+		"getPackURL": getPackUrl,
+	}).ParseFiles(indexPath, cssPath))
 }
 
 // GetUserMergeData function
@@ -113,7 +133,7 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *WorkspaceMergeData {
 	}
 	return &WorkspaceMergeData{
 		Name: workspace.Name,
-		App:  workspace.GetAppID(),
+		App:  workspace.GetAppFullName(),
 	}
 }
 
@@ -134,18 +154,11 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 	}
 }
 
-// ExecuteIndexTemplate function
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
-
-	ReactSrc := "production.min"
-	val, _ := os.LookupEnv("UESIO_DEV")
-	if val == "true" {
-		ReactSrc = "development"
-	}
 
 	mergeData := MergeData{
 		Route: &RouteMergeData{
@@ -159,13 +172,20 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
 			Name:      site.Name,
-			App:       site.GetAppID(),
+			App:       site.GetAppFullName(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		ThemePreload: preload.GetThemes(),
-		Component:    GetComponentMergeData(buildMode),
-		ReactBundle:  ReactSrc,
+		Component: GetComponentMergeData(buildMode),
+		PreloadMetadata: routing.PreloadMetadata{
+			Theme:            preload.GetThemes(),
+			ViewDef:          preload.GetViewDef(),
+			ComponentPack:    preload.GetComponentPack(),
+			ComponentVariant: preload.GetComponentVariant(),
+			Label:            preload.GetLabel(),
+			ConfigValue:      preload.GetConfigValue(),
+			FeatureFlag:      preload.GetFeatureFlags(),
+		},
 	}
 
 	// Not checking this error for now.

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -28,6 +29,7 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 
 type ComponentVariant struct {
 	ID         string     `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
 	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
@@ -42,6 +44,18 @@ type ComponentVariant struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
+	enc.AddStringKey("extends", c.Extends)
+	enc.AddStringKey("component", c.Component)
+	enc.AddStringKey("namespace", c.Namespace)
+	enc.AddStringKey("name", c.Name)
+}
+
+func (c *ComponentVariant) IsNil() bool {
+	return c == nil
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -64,7 +78,7 @@ func (c *ComponentVariant) GetPath() string {
 }
 
 func (c *ComponentVariant) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s_%s", workspace, c.Component, c.Name)
+	return fmt.Sprintf("%s:%s:%s", workspace, c.Component, c.Name)
 }
 
 func (c *ComponentVariant) SetNamespace(namespace string) {
@@ -73,12 +87,6 @@ func (c *ComponentVariant) SetNamespace(namespace string) {
 
 func (c *ComponentVariant) GetNamespace() string {
 	return c.Namespace
-}
-
-func (c *ComponentVariant) SetWorkspace(workspace string) {
-	c.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (c *ComponentVariant) SetModified(mod time.Time) {

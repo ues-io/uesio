@@ -3,19 +3,19 @@ dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
   name:
-    prompt: View name
+    prompt: View Name
     type: METADATANAME
   collection:
     prompt: Collection
     type: METADATA
     metadataType: COLLECTION
+  fields:
+    prompt: Fields
+    type: METADATAMULTI
+    metadataType: FIELD
+    grouping: ${collection}
   wirename:
     prompt: Wire Name
     type: TEXT
-    default: $Answer{name}Wire
-  fields:
-    prompt: fields
-    type: METADATAMULTI
-    metadataType: FIELD
-    grouping: $Answer{collection}
+    default: ${name}Wire
 public: true

@@ -1,63 +1,63 @@
 [
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "localhost"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "uesio-dev.com"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "ues-dev.io"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "ues-uat.io"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "uesio.com"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "domain",
 		"domain": "ues.io"
 	},
 	{
 		"site": {
-			"id": "uesio/web_prod"
+			"uniquekey": "uesio/web:prod"
 		},
 		"type": "subdomain",
 		"domain": "www"
 	},
 	{
 		"site": {
-			"id": "uesio/studio_prod"
+			"uniquekey": "uesio/studio:prod"
 		},
 		"type": "subdomain",
 		"domain": "studio"
 	},
 	{
 		"site": {
-			"id": "uesio/docs_prod"
+			"uniquekey": "uesio/docs:prod"
 		},
 		"type": "subdomain",
 		"domain": "docs"

@@ -35,7 +35,7 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session, nil)
+	return getAppBundleInternal(site.GetAppFullName(), site.Bundle.GetVersionString(), session, nil)
 }
 
 func ClearAppBundleCache(session *sess.Session) {
@@ -173,7 +173,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
-		fmt.Println("Failed load one: " + item.GetKey())
+		fmt.Println("Failed load one: " + item.GetKey() + " : " + err.Error())
 		return err
 	}
 	return bs.GetItem(item, version, session)

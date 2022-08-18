@@ -1,7 +1,7 @@
 [
 	{
 		"app": {
-			"id": "uesio/core"
+			"uniquekey": "uesio/core"
 		},
 		"description": "Uesio Base Functionality",
 		"major": 0,
@@ -10,7 +10,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/studio"
+			"uniquekey": "uesio/studio"
 		},
 		"description": "The Uesio Configuration App",
 		"major": 0,
@@ -19,7 +19,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/io"
+			"uniquekey": "uesio/io"
 		},
 		"description": "Base Uesio Components",
 		"major": 0,
@@ -28,7 +28,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/lab"
+			"uniquekey": "uesio/lab"
 		},
 		"description": "Experimental Components",
 		"major": 0,
@@ -37,7 +37,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/docs"
+			"uniquekey": "uesio/docs"
 		},
 		"description": "Uesio Docs",
 		"major": 0,
@@ -46,7 +46,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/web"
+			"uniquekey": "uesio/web"
 		},
 		"description": "Uesio Website",
 		"major": 0,
@@ -55,7 +55,7 @@
 	},
 	{
 		"app": {
-			"id": "uesio/cms"
+			"uniquekey": "uesio/cms"
 		},
 		"description": "Uesio CMS",
 		"major": 0,

@@ -2,6 +2,7 @@ package meta
 
 type BulkJob struct {
 	ID         string    `uesio:"uesio/core.id"`
+	UniqueKey  string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	AutoID     string    `uesio:"uesio/core.autoid"`
 	Spec       *JobSpec  `uesio:"uesio/core.spec"`
 	Collection string    `uesio:"uesio/core.collection"`

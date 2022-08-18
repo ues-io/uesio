@@ -1,4 +1,4 @@
-import { useState, FunctionComponent, ReactNode, MouseEvent } from "react"
+import { useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
@@ -9,6 +9,7 @@ type CustomSelectProps<T> = {
 	setValue: (value: T) => void
 	items: T[]
 	itemToString: (item: T) => string
+	allowSearch?: true
 	itemRenderer: (
 		item: T,
 		index: number,
@@ -21,9 +22,10 @@ const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {
-		value,
-		items,
+		allowSearch = true,
+		items = [],
 		setValue,
+		value,
 		itemToString,
 		itemRenderer = (item) => <div>{itemToString(item)}</div>,
 		tagRenderer = (item) => <div>{itemToString(item)}</div>,
@@ -50,7 +52,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				color: "#444",
 				border: "none",
 				outline: "none",
-				padding: "6px 10px 6px 0",
+				padding: "6px 3px 6px 0",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",
@@ -63,6 +65,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				alignItems: "center",
 				border: "1px solid #00000044",
 				cursor: "pointer",
+				padding: "3px",
 			},
 			searchbox: {
 				minWidth: "200px",
@@ -81,24 +84,23 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	const {
 		isOpen,
-		selectedItem,
 		getMenuProps,
 		getComboboxProps,
-		getToggleButtonProps,
 		getLabelProps,
 		highlightedIndex,
 		getItemProps,
 		getInputProps,
-		selectItem,
 		inputValue,
 		openMenu,
 	} = useCombobox({
-		itemToString,
 		items,
-		selectedItem: value,
+		selectedItem: value || "",
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
+		},
+		onIsOpenChange: () => {
+			popper.forceUpdate?.()
 		},
 	})
 
@@ -106,75 +108,75 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
 	const popper = usePopper(anchorEl, popperEl, {
 		placement: "bottom-start",
+		modifiers: [{ name: "offset", options: { offset: [0, 4] } }],
 	})
 
 	return (
-		<div ref={setAnchorEl}>
-			<label {...getLabelProps()} className={classes.label}>
+		<div style={{ position: "relative" }} ref={setAnchorEl}>
+			<div onClick={() => openMenu()} className={classes.label}>
 				<div
 					onFocus={openMenu}
 					tabIndex={isOpen ? -1 : 0}
 					className={classes.displayarea}
 				>
-					{tagRenderer(selectedItem)}
+					{tagRenderer}
 				</div>
-				{selectedItem && (
-					<button
-						tabIndex={-1}
-						className={classes.editbutton}
-						type="button"
-						onClick={(event: MouseEvent) => {
-							event.preventDefault() // Prevent the label from triggering
-							setValue(undefined)
-							selectItem(null)
-						}}
-					>
-						<Icon icon="close" context={context} />
-					</button>
-				)}
-				<button
-					className={classes.editbutton}
-					type="button"
-					{...getToggleButtonProps()}
-				>
+
+				<button className={classes.editbutton} type="button">
 					<Icon icon="expand_more" context={context} />
 				</button>
-			</label>
-			<div
-				ref={setPopperEl}
-				style={{
-					...popper.styles.popper,
-					zIndex: "1",
-					...(!isOpen && { visibility: "hidden" }),
-				}}
-				{...popper.attributes.popper}
-				className={classes.menu}
-			>
-				<div {...getMenuProps()}>
-					<div {...getComboboxProps()}>
-						<input
-							type="text"
-							autoFocus
-							className={classes.searchbox}
-							placeholder="Search..."
-							{...getInputProps()}
-						/>
-					</div>
-					{items
-						.filter((item) =>
-							itemToString(item).includes(inputValue)
-						)
-						.map((item, index) => (
-							<div
-								className={classes.menuitem}
-								key={index}
-								{...getItemProps({ item, index })}
-							>
-								{itemRenderer(item, index, highlightedIndex)}
-							</div>
-						))}
-				</div>
 			</div>
+			<component.Panel context={context}>
+				<div
+					ref={setPopperEl}
+					style={{
+						...popper.styles.popper,
+						zIndex: "2",
+						...(!isOpen && { visibility: "hidden" }),
+					}}
+					{...popper.attributes.popper}
+					className={classes.menu}
+				>
+					<div {...getMenuProps()}>
+						<div {...getComboboxProps()}>
+							<label {...getLabelProps()}>
+								<input
+									type="text"
+									//autoFocus
+									className={classes.searchbox}
+									placeholder="Search..."
+									style={{
+										display: allowSearch ? "auto" : "none",
+									}}
+									{...getInputProps()}
+								/>
+							</label>
+						</div>
+						{items.map((item: string, index) => {
+							// hacky, but downshift needs the index in order to determine what element this is.
+							// That's why we can't filter the items array beforehand.
+							if (allowSearch && !item.includes(inputValue))
+								return null
+							return (
+								<div
+									className={classes.menuitem}
+									key={index}
+									{...getItemProps({
+										item,
+										index,
+									})}
+								>
+									{itemRenderer(
+										item,
+										index,
+										highlightedIndex
+									)}
+								</div>
+							)
+						})}
+					</div>
+				</div>
+			</component.Panel>
 		</div>
 	)
 }

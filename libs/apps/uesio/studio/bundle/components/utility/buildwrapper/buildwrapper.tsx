@@ -31,7 +31,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const title =
 		componentKey === "uesio/core.view"
-			? definition?.view
+			? definition?.view || componentKey
 			: propDef?.title || "unknown"
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
@@ -47,7 +47,9 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 					data-placeholder="true"
 					data-index={index}
 					className={classes.placeholder}
-				/>
+				>
+					<div className={classes.placeholderInner} />
+				</div>
 			)}
 			<div
 				data-index={index}
@@ -91,38 +93,39 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
-				{
-					<div
-						className={classes.header}
-						onMouseDown={() => setCanDrag(true)}
-						onMouseUp={() => dragPath && setCanDrag(false)}
-					>
-						{title}
-
-						{wireId && (
-							<div className={classes.wireIndicator}>
-								<span className="dottie" />
-								<span className="wireDash">&mdash;</span>
-								<span
-									className="wireName"
-									onClick={(e) => {
-										e.stopPropagation()
-										uesio.builder.setSelectedNode(
-											"viewdef",
-											uesio.getViewDefId() || "",
-											`["wires"]["${wireId}"]`
-										)
-									}}
-								>
-									<span title={"Edit wire"} role="button">
-										{wireId}
+				<div className={classes.wrapper}>
+					{
+						<div
+							className={classes.header}
+							onMouseDown={() => setCanDrag(true)}
+							onMouseUp={() => dragPath && setCanDrag(false)}
+						>
+							{title}
+							{wireId && (
+								<div className={classes.wireIndicator}>
+									<span className="dottie" />
+									<span className="wireDash">&mdash;</span>
+									<span
+										className="wireName"
+										onClick={(e) => {
+											e.stopPropagation()
+											uesio.builder.setSelectedNode(
+												"viewdef",
+												uesio.getViewDefId() || "",
+												`["wires"]["${wireId}"]`
+											)
+										}}
+									>
+										<span title={"Edit wire"} role="button">
+											{wireId}
+										</span>
 									</span>
-								</span>
-							</div>
-						)}
-					</div>
-				}
-				<div className={classes.inner}>{children}</div>
+								</div>
+							)}
+						</div>
+					}
+					<div className={classes.inner}>{children}</div>
+				</div>
 			</div>
 			{addAfterPlaceholder && (
 				<div
@@ -132,7 +135,9 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 						classes.placeholder,
 						classes.afterPlaceholder
 					)}
-				/>
+				>
+					<div className={classes.placeholderInner} />
+				</div>
 			)}
 		</>
 	)

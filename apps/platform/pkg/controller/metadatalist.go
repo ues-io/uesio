@@ -27,7 +27,7 @@ func getAppData(namespaces []string, session *sess.Session) (map[string]*meta.Ap
 	err := datasource.PlatformLoad(&apps, &datasource.PlatformLoadOptions{
 		Conditions: []adapt.LoadRequestCondition{
 			{
-				Field:    "uesio/core.id",
+				Field:    adapt.UNIQUE_KEY_FIELD,
 				Operator: "IN",
 				Value:    namespaces,
 			},
@@ -35,6 +35,9 @@ func getAppData(namespaces []string, session *sess.Session) (map[string]*meta.Ap
 		Fields: []adapt.LoadRequestField{
 			{
 				ID: "uesio/studio.color",
+			},
+			{
+				ID: "uesio/studio.icon",
 			},
 		},
 		SkipRecordSecurity: true,
@@ -47,7 +50,7 @@ func getAppData(namespaces []string, session *sess.Session) (map[string]*meta.Ap
 
 	for index := range apps {
 		app := apps[index]
-		appData[app.ID] = app
+		appData[app.UniqueKey] = app
 	}
 
 	return appData, nil

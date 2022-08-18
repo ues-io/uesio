@@ -19,12 +19,13 @@ func NewUserAccessToken(key string) (*UserAccessToken, error) {
 
 type UserAccessToken struct {
 	ID         string            `yaml:"-" uesio:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Name       string            `yaml:"name" uesio:"uesio/studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Type       string            `yaml:"type" uesio:"uesio/studio.type"`
 	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
-	Conditions []*TokenCondition `yaml:"conditions"`
-	Token      string            `yaml:"token"`
+	Conditions []*TokenCondition `yaml:"conditions"  uesio:"uesio/studio.conditions"`
+	Token      string            `yaml:"token"  uesio:"uesio/studio.token"`
 	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
@@ -44,7 +45,7 @@ func (uat *UserAccessToken) GetCollection() CollectionableGroup {
 }
 
 func (uat *UserAccessToken) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s_%s", workspace, uat.Name)
+	return fmt.Sprintf("%s:%s", workspace, uat.Name)
 }
 
 func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
@@ -78,12 +79,6 @@ func (uat *UserAccessToken) GetNamespace() string {
 
 func (uat *UserAccessToken) SetNamespace(namespace string) {
 	uat.Namespace = namespace
-}
-
-func (uat *UserAccessToken) SetWorkspace(workspace string) {
-	uat.Workspace = &Workspace{
-		ID: workspace,
-	}
 }
 
 func (uat *UserAccessToken) SetModified(mod time.Time) {
