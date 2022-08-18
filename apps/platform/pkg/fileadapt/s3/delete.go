@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 func (c *Connection) Delete(path string) error {
@@ -23,5 +24,28 @@ func (c *Connection) Delete(path string) error {
 }
 
 func (c *Connection) EmptyDir(path string) error {
+
+	objKeys, err := c.List(path)
+	if err != nil {
+		return errors.New("failed to EmptyDir")
+	}
+
+	s3Ids := make([]types.ObjectIdentifier, len(objKeys))
+	for i, key := range objKeys {
+		s3Ids[i] = types.ObjectIdentifier{Key: aws.String(key)}
+	}
+
+	_, err = c.client.DeleteObjects(context.Background(), &s3.DeleteObjectsInput{
+		Bucket: aws.String(c.bucket),
+		Delete: &types.Delete{
+			Objects: s3Ids,
+		},
+	})
+
+	if err != nil {
+		return errors.New("failed to EmptyDir")
+	}
+
 	return nil
+
 }
