@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -70,7 +70,7 @@ func Pack(options *PackOptions) error {
 		options = &PackOptions{}
 	}
 
-	sbs := &localbundlestore.LocalBundleStore{}
+	sbs := &systembundlestore.SystemBundleStore{}
 
 	def, err := sbs.GetBundleDef("", "", nil, nil)
 	if err != nil {

@@ -50,27 +50,25 @@ wires:
 
 cloneTests.map(({ name, path, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				cloneDefinition({
-					path: getTestPath(path),
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			cloneDefinition({
+				path: getTestPath(path),
+			})
+		)
 	})
 )
 
 cloneKeyTests.map(({ name, path, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				cloneKeyDefinition({
-					path: getTestPath(path),
-					newKey: "mynewkey",
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			cloneKeyDefinition({
+				path: getTestPath(path),
+				newKey: "mynewkey",
+			})
+		)
 	})
 )

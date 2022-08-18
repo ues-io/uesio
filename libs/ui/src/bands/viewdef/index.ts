@@ -32,7 +32,9 @@ const removeAtPath = (viewdef: PlainViewDef, path: string) => {
 	const index = pathArray.pop() // Get the index
 	const parent = get(viewdef.definition, pathArray)
 	if (!parent || !index) return
-	delete parent[index]
+	Array.isArray(parent)
+		? parent.splice(parseInt(index, 10), 1)
+		: delete parent[index]
 }
 
 const addAtPath = (
@@ -42,7 +44,6 @@ const addAtPath = (
 	index: number | undefined
 ) => {
 	const parent = get(viewdef.definition, path)
-	// console.log({ parent, path, index, definition })
 	if (!parent) {
 		set(viewdef.definition, path, [definition])
 		return
@@ -164,9 +165,13 @@ const metadataSlice = createSlice({
 			const pathArray = toPath(localPath)
 			// Stop if old and new key are equal
 			if (getKeyAtPath(localPath) === newKey) return
+
 			const old = get(viewDef.definition, localPath)
 			// replace the old with the new key
 			pathArray.splice(-1, 1, newKey)
+			const newItem = get(viewDef.definition, pathArray)
+			// Skip this process if we already have an item at the new key
+			if (newItem) return
 			set(viewDef.definition, pathArray, old)
 			removeAtPath(viewDef, localPath)
 		})
