@@ -11,7 +11,7 @@ import set from "lodash/set"
 import get from "lodash/get"
 
 import { PlainViewDef } from "../../definition/viewdef"
-
+import { move } from "../utils"
 import {
 	addDefinition,
 	setDefinition,
@@ -42,6 +42,7 @@ const addAtPath = (
 	index: number | undefined
 ) => {
 	const parent = get(viewdef.definition, path)
+	// console.log({ parent, path, index, definition })
 	if (!parent) {
 		set(viewdef.definition, path, [definition])
 		return
@@ -105,6 +106,7 @@ const metadataSlice = createSlice({
 			const [fromType, fromItem, localFromPath] = getFullPathParts(
 				payload.fromPath
 			)
+
 			if (toType !== fromType) return
 			if (toItem !== fromItem) return
 			const viewDef = state.entities[toItem]
@@ -124,9 +126,14 @@ const metadataSlice = createSlice({
 
 			if (isArrayMove) {
 				// Set that content at the to item
-				const index = getIndexFromPath(localToPath) || 0
-				addAtPath(viewDef, toParentPath, clonedNode, index)
+				const fromIndex = getIndexFromPath(localFromPath) || 0
+				const toIndex = getIndexFromPath(localToPath) || 0
+				if (fromParentPath === toParentPath) {
+					move(toParent, fromIndex, toIndex)
+					return
+				}
 
+				addAtPath(viewDef, toParentPath, clonedNode, toIndex)
 				// Loop over the items of the from parent
 				fromParent.forEach((item, index) => {
 					if (item === fromNode) {
