@@ -30,7 +30,7 @@ import {
 	removeNodeAtPath,
 	setNodeAtPath,
 } from "../../yamlutils/yamlutils"
-import { isMap, isSeq, Scalar } from "yaml"
+import { isCollection, isMap, isSeq, Scalar } from "yaml"
 
 const adapter = createEntityAdapter<MetadataState>({
 	selectId: (metadatatext) =>
@@ -153,11 +153,10 @@ const metadataSlice = createSlice({
 			const fromParentPath = getParentPath(localFromPath)
 			const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
 			const toParentPath = getParentPath(localToPath)
-			const toParent = getNodeAtPath(toParentPath, yamlDoc.contents)
+			//const toParent = getNodeAtPath(toParentPath, yamlDoc.contents)
 			const clonedNode = fromNode?.clone()
-			if (!isMap(clonedNode) && !isSeq(clonedNode)) return
-
-			const isArrayMove = isSeq(fromParent) && isSeq(toParent)
+			if (!isCollection(clonedNode)) return
+			const isArrayMove = isSeq(fromParent)
 			const isMapMove =
 				isMap(fromParent) && fromParentPath === toParentPath
 
