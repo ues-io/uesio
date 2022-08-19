@@ -24,17 +24,11 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	const isSubView = !!path
 
-	// Currently only going into buildtime for the base view. We could change this later.
-	const buildMode = !!context.getBuildMode() && !isSubView
-
 	const viewDef = useViewDef(viewDefId)
-	const useBuildTime = buildMode
-	const viewStack = context.getViewStack()
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		buildMode: useBuildTime,
 		params: context.mergeMap(params),
 	})
 
@@ -45,7 +39,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	if (!viewDef) return null
 
-	if (isSubView && viewStack?.includes(viewDefId)) {
+	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
 			`View {viewDefId} cannot be selected in this context, please try another one.`
 		)
@@ -57,7 +51,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}
-			context={viewContext}
+			context={viewContext.addFrame({
+				buildMode: !!context.getBuildMode() && !isSubView,
+			})}
 		/>
 	)
 
