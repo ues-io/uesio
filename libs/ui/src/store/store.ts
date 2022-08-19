@@ -32,6 +32,7 @@ import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
 import { MetadataState } from "../bands/metadata/types"
+import { ComponentPackState } from "../definition/componentpack"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -59,6 +60,7 @@ type InitialState = {
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	metadatatext?: EntityState<MetadataState>
+	componentpack?: EntityState<ComponentPackState>
 }
 
 let platform: Platform
@@ -66,6 +68,9 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
+
+	//remove componentpack from initialState
+	const { componentpack, ...initialStateFiltered } = initialState
 
 	const newStore = configureStore({
 		reducer: {
@@ -88,7 +93,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 			workspace: (state) => state || {},
 		},
 		devTools: true,
-		preloadedState: initialState,
+		preloadedState: initialStateFiltered,
 		middleware: (getDefaultMiddleware) =>
 			getDefaultMiddleware({
 				thunk: {
