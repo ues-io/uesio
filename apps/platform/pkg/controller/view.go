@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -96,47 +95,4 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ExecuteIndexTemplate(w, route, depsCache, true, session)
-}
-
-// View is good
-func View(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-
-	viewNamespace := vars["namespace"]
-	viewName := vars["name"]
-
-	session := middleware.GetSession(r)
-
-	view := meta.View{
-		Name:      viewName,
-		Namespace: viewNamespace,
-	}
-
-	err := bundle.Load(&view, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.NotFound(w, r)
-		return
-	}
-
-	route := &meta.Route{
-		ViewRef:  view.GetKey(),
-		ThemeRef: session.GetDefaultTheme(),
-	}
-
-	depsCache, err := routing.GetMetadataDeps(route, session)
-	if err != nil {
-		HandleMissingRoute(w, r, session, "", err)
-		return
-	}
-
-	respondJSON(w, r, &RouteMergeData{
-		View:         route.ViewRef,
-		Params:       route.Params,
-		Namespace:    route.Namespace,
-		Theme:        route.ThemeRef,
-		Path:         route.Path,
-		Dependencies: depsCache,
-	})
 }

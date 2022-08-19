@@ -102,8 +102,6 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/"+getItemParam(), controller.GetBotParams, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/files/"+getItemParam(), controller.ServeFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/app/"+getNSParam("namespace")+"/{route:.*}", controller.ServeRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/views/"+getItemParam(), controller.View, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/themes/"+getItemParam(), controller.Theme, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}/{id}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
