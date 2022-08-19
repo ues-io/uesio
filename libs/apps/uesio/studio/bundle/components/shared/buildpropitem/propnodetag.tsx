@@ -60,6 +60,15 @@ const PropNodeTag: FC<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
+				{selected && anchorEl && popperChildren && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="right"
+					>
+						{popperChildren}
+					</Popper>
+				)}
 				{!props.expandChildren ? (
 					<div className={classes.inner}>{props.children}</div>
 				) : (
@@ -77,17 +86,10 @@ const PropNodeTag: FC<Props> = (props) => {
 					</IOExpandPanel>
 				)}
 			</Tile>
-			{selected && anchorEl && popperChildren && (
-				<Popper
-					referenceEl={anchorEl}
-					context={context}
-					placement="right"
-				>
-					{popperChildren}
-				</Popper>
-			)}
 		</div>
 	)
 }
+
+PropNodeTag.displayName = "PropNodeTag"
 
 export default PropNodeTag
