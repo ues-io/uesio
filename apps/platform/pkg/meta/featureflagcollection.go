@@ -3,10 +3,21 @@ package meta
 import (
 	"strconv"
 
+	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FeatureFlagCollection []*FeatureFlag
+
+func (ffc *FeatureFlagCollection) MarshalJSONArray(enc *gojay.Encoder) {
+	for _, ff := range *ffc {
+		enc.AddObject(ff)
+	}
+}
+
+func (ffc *FeatureFlagCollection) IsNil() bool {
+	return ffc == nil
+}
 
 func (ffc *FeatureFlagCollection) GetName() string {
 	return "uesio/studio.featureflag"

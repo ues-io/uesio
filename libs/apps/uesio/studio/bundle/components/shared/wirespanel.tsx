@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks } from "@uesio/ui"
-import PropNodeTag from "../shared/buildpropitem/propnodetag"
+import PropNodeTag from "./buildpropitem/propnodetag"
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
@@ -23,7 +23,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				const wirePath = `${localPath}["${key}"]`
 				return (
 					<PropNodeTag
-						title={key}
 						onClick={() =>
 							uesio.builder.setSelectedNode(
 								metadataType,
@@ -31,7 +30,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								wirePath
 							)
 						}
-						icon="power"
 						key={index}
 						selected={
 							selectedMetadataType === metadataType &&
@@ -39,7 +37,9 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							wirePath === selectedNode
 						}
 						context={context}
-					/>
+					>
+						<span>{key}</span>
+					</PropNodeTag>
 				)
 			})}
 		</div>

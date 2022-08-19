@@ -56,10 +56,6 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 
 					return (
 						<PropNodeTag
-							title={Object.values(c)
-								.filter((el) => el)
-								.join(" | ")}
-							icon={"filter_list"}
 							selected={selected}
 							key={index}
 							onClick={() => {
@@ -83,7 +79,13 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 								/>
 							}
 							context={context}
-						/>
+						>
+							<span>
+								{Object.values(c)
+									.filter((el) => el)
+									.join(" | ")}
+							</span>
+						</PropNodeTag>
 					)
 				})}
 		</>

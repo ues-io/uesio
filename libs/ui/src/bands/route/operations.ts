@@ -3,10 +3,9 @@ import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
-import { parseKey } from "../../component/path"
 import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
-import { dispatchRouteDeps, parseRouteResponse } from "./utils"
+import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
 	const mergedPath = context.merge(path)
@@ -47,7 +46,6 @@ const navigate =
 
 		const deps = routeResponse.dependencies
 
-		parseRouteResponse(deps)
 		const view = routeResponse.view
 
 		if (!noPushState) {
@@ -66,10 +64,7 @@ const navigate =
 		// Dispatch the view first so we can preload it
 		dispatchRouteDeps({ viewdef: deps?.viewdef }, dispatch)
 
-		const newPacks = deps?.componentpack?.ids.map((key) => {
-			const [namespace, name] = parseKey(key as string)
-			return platform.getComponentPackURL(context, namespace, name, false)
-		})
+		const newPacks = getPackUrlsForDeps(deps, context)
 
 		if (newPacks && newPacks.length) {
 			await loadScripts(newPacks)

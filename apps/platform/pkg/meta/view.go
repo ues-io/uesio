@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -23,6 +24,16 @@ type View struct {
 	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+}
+
+func (v *View) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddObjectKey("definition", (*YAMLDefinition)(&v.Definition))
+	enc.AddStringKey("namespace", v.Namespace)
+	enc.AddStringKey("name", v.Name)
+}
+
+func (v *View) IsNil() bool {
+	return v == nil
 }
 
 func NewView(key string) (*View, error) {

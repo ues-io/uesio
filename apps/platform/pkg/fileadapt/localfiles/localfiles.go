@@ -106,3 +106,12 @@ func (c *Connection) Delete(path string) error {
 	removeEmptyDir(filepath.Dir(fullPath))
 	return nil
 }
+
+func (c *Connection) EmptyDir(path string) error {
+	fullPath := filepath.Join(c.bucket, path)
+	err := os.RemoveAll(fullPath)
+	if err != nil {
+		return errors.New("Error Reading File: " + err.Error())
+	}
+	return nil
+}
