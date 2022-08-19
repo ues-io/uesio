@@ -15,11 +15,13 @@
         import * as uesio from "/static/ui/uesio.js"
         window.uesio = uesio
     </script>
-    {{$workspace := .Route.Workspace}}
-    {{range .PreloadMetadata.ComponentPack.IDs}}
-    {{$packURL := getPackURL . $workspace}}
-    {{if $packURL}}<script src="{{$packURL}}" type="module"></script>{{end}}
-    {{end}}
+    {{$workspace := .Route.Workspace -}}
+    {{- range .PreloadMetadata.ComponentPack.IDs -}}
+    {{- $packURL := getPackURL . $workspace -}}
+    {{- if $packURL -}}
+    <script src="{{$packURL}}" type="module"></script>
+    {{- end -}}
+    {{- end }}
     <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>

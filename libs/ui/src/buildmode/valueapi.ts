@@ -30,6 +30,7 @@ type ValueAPI = {
 	changeKey: KeyChanger
 	move: ValueMover
 	clone: ValueCloner
+	cloneKey: ValueCloner
 }
 
 export default ValueAPI

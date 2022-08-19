@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
 )
 
@@ -21,6 +22,19 @@ type FeatureFlag struct {
 	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	Value     bool
+	User      string
+}
+
+func (ff *FeatureFlag) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", ff.Namespace)
+	enc.AddStringKey("name", ff.Name)
+	enc.AddBoolKey("value", ff.Value)
+	enc.AddStringKey("user", ff.User)
+}
+
+func (ff *FeatureFlag) IsNil() bool {
+	return ff == nil
 }
 
 func NewFeatureFlag(key string) (*FeatureFlag, error) {

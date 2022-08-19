@@ -91,10 +91,7 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 
 	if (condition.type === "featureFlag") {
-		// const featureflags = context.getViewDef()?.dependencies?.featureflags
-		// const featureFlag = featureflags && featureflags[condition.name]
-		// return featureFlag && featureFlag?.value
-		return false
+		return context.getFeatureFlag(condition.name)?.value
 	}
 
 	const compareToValue =

@@ -24,6 +24,7 @@ const PropNodeTag: FC<Props> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] =
 		(props.useExpand && props.useExpand()) || useState(false)
+	// const [isExpanded, setIsExpanded] = useState(false)
 
 	const classes = styles.useStyles(
 		{
@@ -43,8 +44,7 @@ const PropNodeTag: FC<Props> = (props) => {
 					},
 				},
 			},
-			title: {
-				textTransform: "uppercase",
+			inner: {
 				overflow: "hidden",
 				textOverflow: "ellipsis",
 				padding: "8px",
@@ -67,12 +67,12 @@ const PropNodeTag: FC<Props> = (props) => {
 				isSelected={selected}
 			>
 				{!props.expandChildren ? (
-					<div className={classes.title}>{props.children}</div>
+					<div className={classes.inner}>{props.children}</div>
 				) : (
 					<IOExpandPanel
 						context={context}
 						toggle={
-							<div className={classes.title}>
+							<div className={classes.inner}>
 								{props.children}
 							</div>
 						}
