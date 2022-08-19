@@ -90,7 +90,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									<PropNodeTag
 										key={fullName}
 										{...sharedProps}
-										panelChildren={
+										expandChildren={
 											variants && (
 												<Grid
 													styles={{
@@ -113,7 +113,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 																variantFullName
 														return (
 															<PropNodeTag
-																title={variant}
 																key={variant}
 																onClick={(
 																	e: MouseEvent
@@ -132,13 +131,17 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 																context={
 																	context
 																}
-															/>
+															>
+																{variant}
+															</PropNodeTag>
 														)
 													})}
 												</Grid>
 											)
 										}
-									/>
+									>
+										{componentName}
+									</PropNodeTag>
 								)
 							}
 						)}

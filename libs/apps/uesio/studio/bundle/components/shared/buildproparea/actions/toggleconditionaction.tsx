@@ -3,7 +3,9 @@ import { builder, hooks, signal, definition, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
-const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
+const ToggleConditionAction: FunctionComponent<
+	ActionProps<builder.AddAction>
+> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path = "", valueAPI } = props
 
@@ -37,7 +39,7 @@ const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 	const clickHandler =
 		signals && signals.length && uesio.signal.getHandler(signals)
 
-	const action = props.action as builder.AddAction
+	const action = props.action
 	if (!action || !clickHandler || !condition) {
 		return null
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
@@ -96,33 +95,4 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ExecuteIndexTemplate(w, route, depsCache, true, session)
-}
-
-// View is good
-func View(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-
-	viewNamespace := vars["namespace"]
-	viewName := vars["name"]
-
-	session := middleware.GetSession(r)
-
-	view := meta.View{
-		Name:      viewName,
-		Namespace: viewNamespace,
-	}
-
-	err := bundle.Load(&view, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.NotFound(w, r)
-		return
-	}
-
-	respondYAML(w, r, &ViewResponse{
-		Name:       view.Name,
-		Namespace:  view.Namespace,
-		Definition: &view.Definition,
-	})
 }
