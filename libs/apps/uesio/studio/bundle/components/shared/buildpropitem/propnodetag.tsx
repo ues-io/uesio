@@ -61,13 +61,15 @@ const PropNodeTag: FC<Props> = (props) => {
 				isSelected={selected}
 			>
 				{selected && anchorEl && popperChildren && (
-					<Popper
-						referenceEl={anchorEl}
-						context={context}
-						placement="right"
-					>
-						{popperChildren}
-					</Popper>
+					<div onClick={(e) => e.stopPropagation()}>
+						<Popper
+							referenceEl={anchorEl}
+							context={context}
+							placement="right"
+						>
+							{popperChildren}
+						</Popper>
+					</div>
 				)}
 				{!props.expandChildren ? (
 					<div className={classes.inner}>{props.children}</div>

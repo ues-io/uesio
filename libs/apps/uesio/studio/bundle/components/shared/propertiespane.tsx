@@ -86,10 +86,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 									variant="uesio/studio.buildtitle"
 									context={context}
 									icon="close"
-									onClick={(e: MouseEvent) => {
-										e.stopPropagation()
-										uesio.builder.unSelectNode()
-									}}
+									onClick={() => uesio.builder.unSelectNode()}
 								/>
 							)
 						}
