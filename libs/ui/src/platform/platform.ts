@@ -48,12 +48,14 @@ type JobResponse = {
 type PathNavigateRequest = {
 	namespace: string
 	path: string
+	forceWireReload?: boolean
 }
 
 type CollectionNavigateRequest = {
 	collection: string
 	viewtype?: string
 	recordid?: string
+	forceWireReload?: boolean
 }
 
 type MetadataInfo = {

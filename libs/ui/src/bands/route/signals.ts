@@ -61,6 +61,7 @@ const signals: Record<string, SignalDescriptor> = {
 					operations.navigate(context, {
 						namespace: routeState.namespace,
 						path: routeState.path,
+						forceWireReload: true,
 					})
 				)
 			},

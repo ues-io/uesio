@@ -97,6 +97,17 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newView
+                            - uesio/io.button:
+                                text: RELOAD
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: route/RELOAD
+                            - uesio/io.button:
+                                signals:
+                                  - signal: wire/CREATE_RECORD
+                                    wire: views
+                                text: Create
+                                uesio.variant: uesio/io.secondary
                 - uesio/io.box:
                     uesio.styles:
                       root:

@@ -7,7 +7,7 @@ import { selectWire } from "../../wire"
 import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
 
-export default (context: Context): ThunkFunc =>
+export default (context: Context, forceWireReload?: boolean): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// First check to see if we have the viewDef
 		const viewDefId = context.getViewDefId()
@@ -30,14 +30,18 @@ export default (context: Context): ThunkFunc =>
 		const definition = viewDef.definition
 		const wires = definition.wires || {}
 
-		const wiresToInit = Object.fromEntries(
-			Object.entries(wires).filter(
-				([wirename]) =>
-					!selectWire(state, context.getViewId(), wirename)
-			)
-		)
+		const wiresToInit = forceWireReload
+			? Object.fromEntries(Object.entries(wires))
+			: Object.fromEntries(
+					Object.entries(wires).filter(
+						([wirename]) =>
+							!selectWire(state, context.getViewId(), wirename)
+					)
+			  )
 
 		const wiresToInitNames = wires ? Object.keys(wiresToInit) : []
+
+		console.log({ wires, wiresToInit, wiresToInitNames })
 
 		if (wiresToInitNames?.length) {
 			// Initialize Wires
