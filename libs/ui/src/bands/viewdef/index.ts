@@ -121,8 +121,7 @@ const metadataSlice = createSlice({
 
 			const clonedNode = JSON.parse(JSON.stringify(fromNode))
 
-			const isArrayMove =
-				Array.isArray(fromParent) && Array.isArray(toParent)
+			const isArrayMove = Array.isArray(fromParent)
 			const isMapMove = !isArrayMove && fromParentPath === toParentPath
 
 			if (isArrayMove) {

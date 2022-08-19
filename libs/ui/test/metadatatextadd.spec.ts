@@ -46,6 +46,27 @@ components:
       text: button2
 `,
 	},
+	{
+		name: "Add To Non Existing node",
+		path: `["components"]["0"]["uesio/io.box"]["components"]`,
+		index: 0,
+		definition: {
+			"uesio/io.button": {
+				text: "button2",
+			},
+		},
+		data: `
+components:
+  - uesio/io.box: null
+`,
+		expected: `
+components:
+  - uesio/io.box:
+      components:
+        - uesio/io.button:
+            text: button2
+`,
+	},
 ]
 
 tests.map(({ name, path, definition, index, data, expected }) =>

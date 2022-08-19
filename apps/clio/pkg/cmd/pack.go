@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/thecloudmasters/clio/pkg/cmd/command"
+	"github.com/thecloudmasters/clio/pkg/command"
 )
 
 var watch bool
