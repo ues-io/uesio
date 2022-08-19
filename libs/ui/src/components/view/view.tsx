@@ -26,8 +26,6 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	const viewDef = useViewDef(viewDefId)
 
-	const viewStack = context.getViewStack()
-
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
@@ -41,7 +39,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	if (!viewDef) return null
 
-	if (isSubView && viewStack?.includes(viewDefId)) {
+	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
 			`View {viewDefId} cannot be selected in this context, please try another one.`
 		)
