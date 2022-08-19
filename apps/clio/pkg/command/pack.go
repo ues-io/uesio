@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
+	"github.com/thecloudmasters/clio/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 

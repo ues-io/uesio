@@ -22,7 +22,26 @@ components:
 `,
 	},
 	{
-		name: "Move component within same parent forwards",
+		name: "Move component within same parent forwards by 1",
+		fromPath: `["components"]["0"]`,
+		toPath: `["components"]["1"]`,
+		data: `
+components:
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button1
+`,
+		expected: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+`,
+	},
+	{
+		name: "Move component within same parent forwards by 2, non existing index",
 		fromPath: `["components"]["0"]`,
 		toPath: `["components"]["2"]`,
 		data: `
@@ -41,6 +60,28 @@ components:
 `,
 	},
 	{
+		name: "Move component to another non-existent node",
+		fromPath: `["components"]["0"]["uesio/io.group"]["components"]["0"]`,
+		toPath: `["components"]["1"]["uesio/io.group"]["components"]["0"]`,
+		data: `
+components:
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+  - uesio/io.group:
+`,
+		expected: `
+components:
+  - uesio/io.group:
+      components: []
+  - uesio/io.group:
+      components:
+        - uesio/io.button:
+            text: button1
+`,
+	},
+	{
 		name: "Move wire",
 		fromPath: `["wires"]["myotherwire"]`,
 		toPath: `["wires"]["mywire"]`,
@@ -52,17 +93,17 @@ wires:
   mywire:
     collection: mycollection
     fields:
-panels: null
+panels:
 `,
 		expected: `
 wires:
   mywire:
     collection: mycollection
-    fields: null
+    fields:
   myotherwire:
     collection: myothercollection
-    fields: null
-panels: null
+    fields:
+panels:
 `,
 	},
 	{
@@ -83,8 +124,8 @@ components:
             text: button3
         - uesio/io.button:
             text: button4
-wires: null
-panels: null
+wires:
+panels:
 `,
 		expected: `
 components:
@@ -100,22 +141,21 @@ components:
             text: button3
         - uesio/io.button:
             text: button4
-wires: null
-panels: null
+wires:
+panels:
 `,
 	},
 ]
 
 tests.map(({ name, fromPath, toPath, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				moveDefinition({
-					fromPath: getTestPath(fromPath),
-					toPath: getTestPath(toPath),
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			moveDefinition({
+				fromPath: getTestPath(fromPath),
+				toPath: getTestPath(toPath),
+			})
+		)
 	})
 )

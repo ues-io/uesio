@@ -74,14 +74,13 @@ wires:
 
 tests.map(({ name, path, key, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				changeDefinitionKey({
-					path: getTestPath(path),
-					key,
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			changeDefinitionKey({
+				path: getTestPath(path),
+				key,
+			})
+		)
 	})
 )
