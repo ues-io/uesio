@@ -78,6 +78,9 @@ type MergeData struct {
 // This is actually pretty silly but I did it to make the output
 // look pretty in the html source.
 func (md MergeData) String() string {
+	// Remove the component pack dep info because we don't need it on the client
+	md.ComponentPack = nil
+
 	json, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)
 	if err != nil {
