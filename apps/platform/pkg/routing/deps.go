@@ -317,7 +317,10 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	}
 
 	for key := range variantsUsed {
-		addVariantDep(deps, key, session)
+		err := addVariantDep(deps, key, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	for key := range componentsUsed {
@@ -328,7 +331,10 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	}
 
 	for key := range viewsUsed {
-		processView(key, deps, session)
+		err := processView(key, deps, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
