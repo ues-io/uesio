@@ -311,31 +311,40 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		return err
 	}
 
-	componentsUsed, variantsUsed, viewsUsed, err := view.GetDependencies()
+	depMap, err := view.GetDependencies()
 	if err != nil {
 		return err
 	}
 
-	for key := range variantsUsed {
+	for key := range depMap.Variants {
 		err := addVariantDep(deps, key, session)
 		if err != nil {
 			return err
 		}
 	}
 
-	for key := range componentsUsed {
+	for key := range depMap.Components {
 		err := getDepsForComponent(key, deps, session)
 		if err != nil {
 			return err
 		}
 	}
 
-	for key := range viewsUsed {
+	for key := range depMap.Views {
 		err := processView(key, deps, session)
 		if err != nil {
 			return err
 		}
 	}
+
+	/*
+		// Not using this for now, but it's a placeholder
+		// for when we want to process wires on the server
+		// for even more performance gainz.
+		for key := range depMap.Wires {
+			fmt.Println("Found a wire: " + key)
+		}
+	*/
 
 	return nil
 
