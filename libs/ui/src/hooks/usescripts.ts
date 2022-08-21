@@ -1,17 +1,5 @@
 const cachedScripts: ScriptMap = {}
 
-const js = document.scripts
-for (let i = 0; i < js.length; i++) {
-	const scriptNode = js[i]
-	const srcAttribute = scriptNode.getAttribute("src")
-	if (!srcAttribute) continue
-	cachedScripts[srcAttribute] = {
-		loaded: true,
-		script: js[i],
-		fullKey: scriptNode.src,
-	}
-}
-
 interface ScriptMap {
 	[key: string]: ScriptCache
 }
@@ -43,6 +31,20 @@ const getScriptsToLoad = (
 	sources: string[],
 	callback: (result: ScriptResult) => void
 ) => {
+	if (!Object.keys(cachedScripts).length) {
+		const js = document.scripts
+		for (let i = 0; i < js.length; i++) {
+			const scriptNode = js[i]
+			const srcAttribute = scriptNode.getAttribute("src")
+			if (!srcAttribute) continue
+			cachedScripts[srcAttribute] = {
+				loaded: true,
+				script: js[i],
+				fullKey: scriptNode.src,
+			}
+		}
+	}
+
 	const scriptsToLoad: ScriptMap = {}
 
 	const registerScriptEvents = (elem: HTMLScriptElement) => {
