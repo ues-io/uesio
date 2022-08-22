@@ -157,9 +157,13 @@ const addNodeAtPath = (
 	const parentNode = node.getIn(pathArray) as yaml.YAMLSeq
 	fixFlow(pathArray, node)
 
-	parentNode
-		? parentNode.items.splice(index, 0, setNode)
-		: node.addIn(pathArray, [setNode])
+	if (!parentNode) {
+		node.addIn(pathArray, [setNode])
+		return
+	}
+
+	const startIndex = index === -1 ? parentNode.items.length : index
+	parentNode.items.splice(startIndex, 0, setNode)
 }
 
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
