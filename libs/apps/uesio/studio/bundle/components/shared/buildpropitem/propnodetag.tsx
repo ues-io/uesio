@@ -20,6 +20,7 @@ const PropNodeTag: FC<Props> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] = useState(false)
 
+	const innerPadding = 8
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -41,7 +42,9 @@ const PropNodeTag: FC<Props> = (props) => {
 			inner: {
 				overflow: "hidden",
 				textOverflow: "ellipsis",
-				padding: "8px",
+				padding: `${innerPadding}px`,
+				// Make empty nodes still take up at least 1 lineheight
+				minHeight: `calc(1em + ${innerPadding * 2}px)`,
 			},
 		},
 		props
