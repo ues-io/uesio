@@ -3,7 +3,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 import { builder, context, hooks, component, styles } from "@uesio/ui"
 import PropList from "./buildproparea/proplist"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
-
+import useListScroll from "../shared/hooks/uselistscroll"
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -48,13 +48,13 @@ const PropListsList: FC<T> = (props) => {
 			item: {
 				"&-enter": {
 					opacity: "0.01",
-					transform: "translate(-40px, 0)",
+					transform: "translate(0. -5px)",
 				},
 
 				"&-enter-active": {
 					opacity: 1,
 					transform: "translate(0, 0)",
-					transition: "all 500ms ease-in",
+					transition: "all 300ms ease-in",
 				},
 
 				"&-exit": {
@@ -64,8 +64,8 @@ const PropListsList: FC<T> = (props) => {
 
 				"&-exit-active": {
 					opacity: "0.01",
-					transform: "translate(40px, 0)",
-					transition: "all 500ms ease-in",
+					transform: "translate(0, 5px)",
+					transition: "all 300ms ease-in",
 				},
 			},
 		},
@@ -74,13 +74,14 @@ const PropListsList: FC<T> = (props) => {
 
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
-
+	const itemsRef = useListScroll(items.length)
 	return (
 		<TransitionGroup className="items-section__list">
 			{items.map((item, i) => (
 				<CSSTransition key={i} timeout={500} classNames={classes.item}>
 					<div
 						key={i}
+						ref={(el) => (itemsRef.current[i] = el)}
 						style={{
 							display: "flex",
 							alignItems: "center",

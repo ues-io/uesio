@@ -1,4 +1,4 @@
-import { FC } from "react"
+import React, { FC } from "react"
 import { builder, component, hooks } from "@uesio/ui"
 
 import PropNodeTag from "../buildpropitem/propnodetag"
@@ -102,7 +102,7 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 						style={{ maxHeight: "400px", overflow: "scroll" }}
 					>
 						<PropListsList
-							items={items}
+							items={items.length ? items : [{}]}
 							context={context}
 							path={path}
 							propsDef={propsDef}
