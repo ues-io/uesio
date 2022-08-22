@@ -2,21 +2,20 @@ import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
 import { set as setRoute } from "../route"
-
-const getComponentStateKey = (
-	componentType: string,
-	componentId: string,
-	viewId: string | undefined
-) => `${viewId}/${componentType}/${componentId}`
+import { Context } from "../../context/context"
 
 const componentAdapter = createEntityAdapter<ComponentState>({
-	selectId: (component) =>
-		getComponentStateKey(
-			component.componentType,
-			component.id,
-			component.view
-		),
+	selectId: (component) => component.id,
 })
+
+const makeComponentId = (
+	context: Context,
+	componentType: string,
+	id: string
+) => {
+	const viewId = context.getViewId()
+	return `${viewId}:${componentType}:${id}`
+}
 
 const componentSlice = createSlice({
 	name: "component",
@@ -33,5 +32,5 @@ const selectors = componentAdapter.getSelectors(
 	(state: RootState) => state.component
 )
 export const { set } = componentSlice.actions
-export { selectors, getComponentStateKey }
+export { selectors, makeComponentId }
 export default componentSlice.reducer
