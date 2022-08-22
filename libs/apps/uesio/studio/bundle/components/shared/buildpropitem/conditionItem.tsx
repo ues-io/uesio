@@ -5,15 +5,9 @@ import PropertiesPane from "../propertiespane"
 
 type Props = {
 	conditionPath: string
-	selected: boolean
-	index: number
-	selectedNode: string
-	primaryColor: string
-	viewDefId: string
 	context: context.Context
 	condition: wire.WireConditionDefinition
 	valueAPI: builder.ValueAPI
-	onClick: (e: MouseEvent) => void
 }
 
 const Grid = component.getUtility("uesio/io.grid")
@@ -265,28 +259,25 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 ]
 
 const ConditionItem: FunctionComponent<Props> = (props) => {
-	const {
-		conditionPath,
-		selected,
-		index,
-		selectedNode,
-		primaryColor,
-		viewDefId,
-		context,
-		condition,
-		valueAPI,
-		onClick,
-	} = props
+	const { conditionPath, context, condition, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 
 	const isGroup = condition.type === "GROUP"
 	const groupConditions =
 		isGroup && !condition.valueSource ? condition.conditions : null
 
+	const onClick = (e: MouseEvent) => {
+		e.stopPropagation()
+		const viewDefId = uesio.getViewDefId()
+		viewDefId &&
+			uesio.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
+	}
+
+	const [, , selectedNode] = uesio.builder.useSelectedNode()
+
 	return (
 		<PropNodeTag
-			selected={selected}
-			key={index}
+			selected={selectedNode === conditionPath}
 			onClick={onClick}
 			context={context}
 			popperChildren={
@@ -342,29 +333,14 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 							index
 						) => {
 							const conditionOnGroupPath = `${conditionPath}["conditions"]["${index}"]`
-							const conditionOnGroupSelected =
-								selectedNode === conditionOnGroupPath
 
 							return (
 								<ConditionItem
 									key={conditionOnGroupPath}
 									conditionPath={conditionOnGroupPath}
-									selected={conditionOnGroupSelected}
-									index={index}
-									selectedNode={selectedNode}
-									primaryColor={primaryColor}
-									viewDefId={viewDefId}
 									context={context}
 									condition={conditionOnGroup}
 									valueAPI={valueAPI}
-									onClick={(e: MouseEvent) => {
-										e.stopPropagation()
-										uesio.builder.setSelectedNode(
-											"viewdef",
-											viewDefId,
-											conditionOnGroupPath
-										)
-									}}
 								/>
 							)
 						}
@@ -374,5 +350,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 		</PropNodeTag>
 	)
 }
+
+ConditionItem.displayName = "ConditionItem"
 
 export default ConditionItem
