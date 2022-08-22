@@ -41,15 +41,15 @@ const addAtPath = (
 	viewdef: PlainViewDef,
 	path: string,
 	definition: Definition,
-	index: number | undefined
+	index: number | undefined = 0
 ) => {
 	const parent = get(viewdef.definition, path)
 	if (!parent) {
 		set(viewdef.definition, path, [definition])
 		return
 	}
-	const startIndex = index === -1 ? parent.length : index
-	parent.splice(startIndex || 0, 0, definition)
+	const startIndex = index > 0 ? index : parent.length + index + 1
+	parent.splice(startIndex, 0, definition)
 }
 
 const adapter = createEntityAdapter<PlainViewDef>({

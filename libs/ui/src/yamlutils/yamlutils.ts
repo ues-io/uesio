@@ -148,7 +148,7 @@ const addNodeAtPath = (
 	path: string | string[],
 	node: Node | null,
 	setNode: Node,
-	index: number
+	index = 0
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 	const pathArray = makePathArray(path)
@@ -162,7 +162,7 @@ const addNodeAtPath = (
 		return
 	}
 
-	const startIndex = index === -1 ? parentNode.items.length : index
+	const startIndex = index > 0 ? index : parentNode.items.length + index + 1
 	parentNode.items.splice(startIndex, 0, setNode)
 }
 
