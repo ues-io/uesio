@@ -73,6 +73,7 @@ interface PropListsSection extends BasePropSection {
 	name: string
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
+	nameTemplate: string
 }
 
 interface StylesSection extends BasePropSection {
@@ -237,6 +238,7 @@ interface WireFieldsProp extends BasePropDescriptor {
 interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
+	nameTemplate: string
 }
 
 type ActionDescriptor =
@@ -272,7 +274,7 @@ type DeleteAction = {
 
 type CustomAction = {
 	type: "CUSTOM"
-	handler: () => void
+	handler: (e: MouseEvent) => void
 	label: string
 	icon: string
 	disabled?: boolean
