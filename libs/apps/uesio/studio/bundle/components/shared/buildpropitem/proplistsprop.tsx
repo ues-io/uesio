@@ -72,7 +72,7 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 										// Adding in this scenario would mean we need to add 2 to get 2 real items
 										if (items.length === 0)
 											valueAPI.add(path, {})
-										valueAPI.add(path, {})
+										valueAPI.add(path, {}, -1)
 									},
 									icon: "add",
 								},
@@ -108,6 +108,7 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 							propsDef={propsDef}
 							valueAPI={valueAPI}
 							properties={descriptor.properties}
+							nameTemplate={descriptor.nameTemplate}
 						/>
 					</div>
 				</ScrollPanel>

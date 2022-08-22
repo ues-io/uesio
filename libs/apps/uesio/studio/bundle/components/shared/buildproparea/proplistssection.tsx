@@ -38,7 +38,9 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 							/>
 						}
 						label="Add"
-						onClick={() => valueAPI.add(itemsPath, defaultItemDef)}
+						onClick={() =>
+							valueAPI.add(itemsPath, defaultItemDef, -1)
+						}
 					/>
 				}
 			/>
@@ -49,6 +51,7 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 					path={itemsPath}
 					propsDef={propsDef}
 					valueAPI={valueAPI}
+					nameTemplate={section.nameTemplate}
 					properties={section.properties}
 					expandType={"popper"}
 				/>
