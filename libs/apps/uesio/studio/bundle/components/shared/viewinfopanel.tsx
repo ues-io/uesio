@@ -16,10 +16,13 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const uesio = hooks.useUesio(props)
 
-	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+	const componentId = uesio.component.getId(
 		"viewinfopanel",
-		"components",
 		"uesio/studio.runtime"
+	)
+	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+		componentId,
+		"components"
 	)
 
 	return (

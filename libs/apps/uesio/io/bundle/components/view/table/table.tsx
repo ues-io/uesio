@@ -27,9 +27,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const [mode] = useMode(definition.id, definition.mode, props)
+	const componentId = uesio.component.getId(definition.id)
+	const [mode] = useMode(componentId, definition.mode, props)
 	const [currentPage, setCurrentPage] = usePagination(
-		definition.id,
+		componentId,
 		wire?.getBatchId(),
 		props
 	)
