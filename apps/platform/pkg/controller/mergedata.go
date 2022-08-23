@@ -144,14 +144,13 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 	if !buildMode {
 		return nil
 	}
+	componentID := "$root:uesio/studio.runtime:buildmode"
 	return &ComponentsMergeData{
-		IDs: []string{"$root/uesio/studio.runtime/buildmode"},
+		IDs: []string{componentID},
 		Entities: map[string]ComponentMergeData{
-			"$root/uesio/studio.runtime/buildmode": {
-				ID:            "buildmode",
-				ComponentType: "uesio/studio.runtime",
-				View:          "$root",
-				State:         true,
+			componentID: {
+				ID:    componentID,
+				State: true,
 			},
 		},
 	}
