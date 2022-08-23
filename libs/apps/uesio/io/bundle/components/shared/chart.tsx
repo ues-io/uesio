@@ -153,66 +153,51 @@ const getDataSets = (
 			},
 		]
 	})
+
+// Series
 const seriesSection: builder.PropertySection = {
 	type: "PROPLISTS",
 	name: "series",
 	title: "Series",
-	nameTemplate: "${wire} something",
-	fallbackTemplate: "empty item",
+	nameTemplate: "${label}",
+	nameFallback: "Serie",
 	properties: [
+		{
+			name: "name",
+			type: "TEXT",
+			label: "Name",
+		},
+		{
+			name: "label",
+			type: "TEXT",
+			label: "Label",
+		},
 		{
 			name: "wire",
 			type: "WIRE",
 			label: "Wire",
 		},
+		{
+			name: "CategoryField",
+			type: "FIELD",
+			wireField: "wire",
+			label: "Category field",
+		},
+		{
+			name: "valueField",
+			type: "FIELD",
+			wireField: "wire",
+			label: "Value field",
+		},
 	],
 }
-const chartProperties: builder.PropDescriptor[] = [
+
+const sourceEquals = (str: string) => [
 	{
-		name: "title",
-		type: "TEXT",
-		label: "Title",
+		property: "source",
+		value: str,
 	},
-	{
-		name: "source",
-		type: "SELECT",
-		label: "Source",
-		options: [
-			{
-				value: "",
-				label: "Select a source",
-			},
-			{
-				value: "WIRE",
-				label: "Wire",
-			},
-			{
-				value: "VALUE",
-				label: "Value",
-			},
-			{
-				value: "DATA",
-				label: "Data",
-			},
-		],
-	}
 ]
-
-
-		// {
-		// 	name: "CategoryField",
-		// 	type: "FIELD",
-		// 	wireField: "wire",
-		// 	label: "Category field",
-		// },
-		// {
-		// 	name: "valueField",
-		// 	type: "FIELD",
-		// 	wireField: "wire",
-		// 	label: "Value field",
-		// },
-
-
 const chartProperties: builder.PropDescriptor[] = [
 	{
 		name: "title",
@@ -243,37 +228,28 @@ const chartProperties: builder.PropDescriptor[] = [
 		],
 	},
 
-	// SOURCE: Wire
+	// Optional fields when source is WIRE
 	{
 		name: "wire",
 		type: "WIRE",
 		label: "Wire",
-		display: [
-			{
-				property: "source",
-				value: "WIRE",
-			},
-		],
+		display: sourceEquals("WIRE"),
 	},
-	// {
-	// 	name: "categoryField",
-	// 	type: "FIELD",
-	// 	label: "Category Field",
-	// 	wireField: "wireSomething",
-	// 	display: [
-	// 		{
-	// 			property: "source",
-	// 			value: "WIRE",
-	// 		},
-	// 	],
-	// },
+	{
+		name: "categoryField",
+		type: "FIELD",
+		label: "Category Field",
+		wireField: "wireSomething",
+		display: sourceEquals("WIRE"),
+	},
 
-	// Source: Value
+	// Optional fields when source is VALUE
 	{
 		name: "values",
 		type: "PROPLISTS",
 		label: "Values",
-		nameTemplate: "",
+		nameTemplate: "${key}: ${value}",
+		fallback: "unset value",
 		properties: [
 			{
 				name: "key",
@@ -286,15 +262,10 @@ const chartProperties: builder.PropDescriptor[] = [
 				label: "Value",
 			},
 		],
-	}
-		display: [
-			{
-				property: "source",
-				value: "VALUE",
-			},
-		],
+		display: sourceEquals("VALUE"),
 	},
-	// Source: Data
+
+	// Optional fields when source is VALUE
 	{
 		name: "timeunit",
 		type: "SELECT",
@@ -317,12 +288,7 @@ const chartProperties: builder.PropDescriptor[] = [
 				label: "Year",
 			},
 		],
-		display: [
-			{
-				property: "source",
-				value: "DATA",
-			},
-		],
+		display: sourceEquals("DATA"),
 	},
 ]
 export {
