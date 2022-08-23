@@ -108,6 +108,7 @@ type PropDescriptor =
 	| ParamProp
 	| ParamsProp
 	| WireFieldsProp
+	| FieldProp
 	| PropListProp
 
 type BasePropDescriptor = {
@@ -227,6 +228,10 @@ interface ComponentTargetProp extends BasePropDescriptor {
 
 interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
+}
+interface FieldProp extends BasePropDescriptor {
+	type: "FIELD"
+	wireField: string
 }
 interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"
@@ -355,4 +360,5 @@ export {
 	WireFieldsProp,
 	PropListProp,
 	AddCondition,
+	FieldProp,
 }
