@@ -26,7 +26,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const toggleCode = uesio.signal.getHandler([
 		{
-			signal: "component/uesio/studio.runtime/TOGGLE_CODE",
+			signal: "component/uesio/studio.runtime/TOGGLE_CODE/codepanel",
 		},
 	])
 

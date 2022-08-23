@@ -34,10 +34,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	err = datasource.CallListenerBot(namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

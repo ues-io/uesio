@@ -27,14 +27,14 @@ const setEditMode: signal.ComponentSignalDescriptor<ModeState> = {
 }
 
 const useMode = (
-	id: string | undefined,
+	id: string,
 	initialMode: context.FieldMode | undefined,
 	props: definition.BaseProps
 ) => {
 	const uesio = hooks.useUesio(props)
 	return uesio.component.useStateSlice<context.FieldMode>(
 		"mode",
-		id || props.path || "",
+		id,
 		initialMode || "READ"
 	)
 }

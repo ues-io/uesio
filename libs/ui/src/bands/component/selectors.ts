@@ -1,27 +1,31 @@
 import { useSelector } from "react-redux"
-import { getComponentStateKey, selectors } from "."
+import { selectors } from "."
 import { RootState } from "../../store/store"
-import { PlainComponentState } from "./types"
+import { ComponentState, PlainComponentState } from "./types"
 
 // Both gets component state and subscribes to component changes
 const useComponentState = <T extends PlainComponentState>(
-	componentType: string,
-	componentId: string,
-	viewId: string | undefined
-) =>
-	useSelector((state: RootState) =>
-		selectState<T>(state, componentType, componentId, viewId || "")
-	)
+	componentId: string
+) => useSelector((state: RootState) => selectState<T>(state, componentId))
 
 const selectState = <T extends PlainComponentState>(
 	state: RootState,
-	componentType: string,
-	componentId: string,
-	viewId: string | undefined
-) =>
-	selectors.selectById(
-		state,
-		getComponentStateKey(componentType, componentId, viewId)
-	)?.state as T | undefined
+	componentId: string
+) => selectors.selectById(state, componentId)?.state as T | undefined
 
-export { useComponentState, selectState }
+const selectTarget = (state: RootState, target: string) => {
+	const matches: ComponentState[] = []
+	const entities = selectors.selectEntities(state)
+	if (!entities) return matches
+	Object.keys(entities).forEach((key) => {
+		if (key.startsWith(target)) {
+			const componentState = entities[key]
+			if (componentState) {
+				matches.push(componentState)
+			}
+		}
+	})
+	return matches
+}
+
+export { useComponentState, selectState, selectTarget }
