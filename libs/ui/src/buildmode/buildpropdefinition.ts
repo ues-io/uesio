@@ -74,6 +74,7 @@ interface PropListsSection extends BasePropSection {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
 	nameTemplate: string
+	nameFallback: string
 }
 
 interface StylesSection extends BasePropSection {
