@@ -12,10 +12,13 @@ type T = {
 	context: context.Context
 	path: string
 	propsDef: builder.BuildPropertiesDefinition
-	properties: builder.PropDescriptor[]
-	nameTemplate: string
 	valueAPI: builder.ValueAPI
 	expandType?: "popper"
+	descriptor: {
+		properties: builder.PropDescriptor[]
+		nameTemplate?: string
+		nameFallback?: string
+	}
 }
 
 // TODO: Write test
@@ -23,12 +26,15 @@ export const mergeTemplate = (
 	template: string,
 	basePath: string,
 	valueAPI: builder.ValueAPI
-): string =>
-	template.replace(
+) => {
+	const res = template.replace(
 		/\${(\w*)}/g,
 		(expression, key: string) =>
 			valueAPI.get(basePath + `[${key}]`) as string
 	)
+	console.log({ res })
+	return res === "undefined" || res === "null" ? null : res
+}
 
 const PropListsList: FC<T> = (props) => {
 	const {
@@ -36,10 +42,9 @@ const PropListsList: FC<T> = (props) => {
 		context,
 		expandType,
 		path = "",
-		properties,
+		descriptor: { properties, nameTemplate, nameFallback },
 		valueAPI,
 		propsDef,
-		nameTemplate,
 	} = props
 	const uesio = hooks.useUesio(props)
 
@@ -172,10 +177,10 @@ const PropListsList: FC<T> = (props) => {
 								) : (
 									<span>
 										{mergeTemplate(
-											nameTemplate,
+											nameTemplate || "",
 											path + `[${i}]`,
 											valueAPI
-										)}
+										) || nameFallback}
 									</span>
 								)}
 							</PropNodeTag>

@@ -51,8 +51,7 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 					path={itemsPath}
 					propsDef={propsDef}
 					valueAPI={valueAPI}
-					nameTemplate={section.nameTemplate}
-					properties={section.properties}
+					descriptor={section}
 					expandType={"popper"}
 				/>
 			)}

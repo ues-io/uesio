@@ -107,8 +107,7 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 							path={path}
 							propsDef={propsDef}
 							valueAPI={valueAPI}
-							properties={descriptor.properties}
-							nameTemplate={descriptor.nameTemplate}
+							descriptor={descriptor}
 						/>
 					</div>
 				</ScrollPanel>
