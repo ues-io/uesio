@@ -19,6 +19,7 @@ const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "LAYOUT",
 }
 export { BoxProps, BoxDefinition }
 

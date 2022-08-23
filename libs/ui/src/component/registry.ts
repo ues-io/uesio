@@ -77,7 +77,9 @@ const getUtilityLoader = (key: MetadataKey) => utilityRegistry[key]
 const getSignal = (key: string, signal: string) =>
 	componentSignalsRegistry[key]?.[signal]
 
-const getPropertiesDefinition = (key: MetadataKey) => {
+const getPropertiesDefinition = (
+	key: MetadataKey
+): BuildPropertiesDefinition => {
 	const propDef = definitionRegistry[key]
 	const [namespace, name] = parseKey(key)
 	return {
@@ -161,19 +163,10 @@ const getPropertiesDefinitionFromPath = (
 	return [undefined, localPath]
 }
 const getComponents = (trait: string) =>
-	Object.keys(definitionRegistry).reduce((acc, fullName) => {
-		const [namespace, name] = parseKey(fullName)
-		const definition = getPropertiesDefinition(
-			`${namespace}.${name}` as MetadataKey
-		)
-		if (definition?.traits?.includes(trait)) {
-			if (!acc[namespace]) {
-				acc[namespace] = {}
-			}
-			acc[namespace][name] = definition
-		}
-		return acc
-	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
+	Object.keys(definitionRegistry).flatMap((fullName) => {
+		const definition = getPropertiesDefinition(fullName as MetadataKey)
+		return definition?.traits?.includes(trait) ? [definition] : []
+	})
 
 const getBuilderComponents = () => getComponents("uesio.standalone")
 
