@@ -3,7 +3,9 @@ import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
-import { selectState } from "./selectors"
+import { selectTarget } from "./selectors"
+import { makeComponentId, set as setComponent } from "../component"
+import { batch } from "react-redux"
 
 interface ComponentSignal extends SignalDefinition {
 	target?: string
@@ -20,25 +22,32 @@ export default {
 
 			const scope = `${owner}/${component}`
 			const handler = getSignal(scope, type)
-			const viewId = context.getViewId()
+
 			const target = signalTarget || handler.target || ""
 
-			const state = selectState(getState(), scope, target, viewId)
+			// This is where we select state based on even partial target ids
+			const targetSearch = makeComponentId(context, scope, target)
 
-			// If the return value of calling dispatcher is a value,
-			// then just set the state to that value.
-			const dispatchResult = produce(state, (draft) =>
-				handler.dispatcher(draft, signal, context, platform)
-			)
+			const componentStates = selectTarget(getState(), targetSearch)
 
-			dispatch({
-				type: "component/set",
-				payload: {
-					id: target,
-					componentType: scope,
-					view: viewId,
-					state: dispatchResult,
-				},
+			// Loop over all ids that match the target and dispatch
+			// to them all
+			batch(() => {
+				componentStates.forEach((componentState) => {
+					dispatch(
+						setComponent({
+							id: componentState.id,
+							state: produce(componentState.state, (draft) =>
+								handler.dispatcher(
+									draft,
+									signal,
+									context,
+									platform
+								)
+							),
+						})
+					)
+				})
 			})
 
 			return context

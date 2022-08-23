@@ -1,80 +1,84 @@
-import { EntityId } from "@reduxjs/toolkit"
 import { AnyAction } from "redux"
 import { ThunkDispatch } from "redux-thunk"
-import { parseVariantKey } from "../../component/path"
-import { Platform } from "../../platform/platform"
+import { platform, Platform } from "../../platform/platform"
 import { RootState } from "../../store/store"
-import { parse } from "../../yamlutils/yamlutils"
-import { MetadataState } from "../metadata/types"
 import { Dependencies } from "./types"
-import { setMany as setComponentPack } from "../componentpack"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
 import { setMany as setViewDef } from "../viewdef"
+import { setMany as setTheme } from "../theme"
+import { setMany as setMetadataText } from "../metadatatext"
+import { setMany as setFeatureFlag } from "../featureflag"
+import { setNamespaceInfo } from "../builder"
+import { PlainViewDef } from "../../definition/viewdef"
+import { ComponentVariant } from "../../definition/componentvariant"
+import { ConfigValueState } from "../../definition/configvalue"
+import { LabelState } from "../../definition/label"
+import { Context } from "../../context/context"
+import { parseKey } from "../../component/path"
+import { ThemeState } from "../../definition/theme"
+import { MetadataState } from "../metadata/types"
+import { FeatureFlagState } from "../../definition/featureflag"
 
-type EntityMap = Record<EntityId, MetadataState>
+type Dep<T> = Record<string, T> | undefined
 
 const dispatchRouteDeps = (
 	deps: Dependencies | undefined,
 	dispatch: ThunkDispatch<RootState, Platform, AnyAction>
 ) => {
-	if (deps?.viewdef) {
-		dispatch(setViewDef(deps?.viewdef.entities as EntityMap))
-	}
-	if (deps?.componentpack) {
-		dispatch(setComponentPack(deps?.componentpack.entities as EntityMap))
-	}
-	if (deps?.configvalue) {
-		dispatch(setConfigValue(deps?.configvalue.entities as EntityMap))
-	}
-
-	if (deps?.label) {
-		dispatch(setLabel(deps?.label.entities as EntityMap))
-	}
-
-	if (deps?.componentvariant) {
-		dispatch(
-			setComponentVariant(deps?.componentvariant.entities as EntityMap)
-		)
-	}
-}
-
-const parseRouteResponse = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
-	const componentVariantState = deps.componentvariant
-	if (componentVariantState && componentVariantState.ids?.length) {
-		componentVariantState.ids.forEach((id: string) => {
-			const componentVariant = componentVariantState.entities[
-				id
-			] as MetadataState
+	const entities = deps.viewdef?.entities as Dep<PlainViewDef>
+	if (entities) dispatch(setViewDef(entities))
 
-			const [cns, cn, ns] = parseVariantKey(id)
-			componentVariant.parsed = {
-				...parse(componentVariant.content).toJSON(),
-				component: cns + "." + cn,
-				namespace: ns,
-			}
-		})
-	}
+	const configvalues = deps.configvalue?.entities as Dep<ConfigValueState>
+	if (configvalues) dispatch(setConfigValue(configvalues))
 
-	const viewDefState = deps.viewdef
-	if (viewDefState && viewDefState.ids?.length) {
-		viewDefState.ids.forEach((id: string) => {
-			const viewDef = viewDefState.entities[id] as MetadataState
-			viewDef.original = viewDef.content
-			viewDef.parsed = parse(viewDef.content).toJSON()
-		})
-	}
+	const featureflags = deps.featureflag?.entities as Dep<FeatureFlagState>
+	if (featureflags) dispatch(setFeatureFlag(featureflags))
 
-	const themeState = deps.theme
-	if (themeState && themeState.ids?.length) {
-		themeState.ids.forEach((id: string) => {
-			const theme = themeState.entities[id] as MetadataState
-			theme.parsed = parse(theme.content).toJSON()
-		})
-	}
+	const labels = deps.label?.entities as Dep<LabelState>
+	if (labels) dispatch(setLabel(labels))
+
+	const variants = deps.componentvariant?.entities as Dep<ComponentVariant>
+	if (variants) dispatch(setComponentVariant(variants))
+
+	const themes = deps.theme?.entities as Dep<ThemeState>
+	if (themes) dispatch(setTheme(themes))
+
+	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
+	if (metadatatext) dispatch(setMetadataText(metadatatext))
+
+	const namespaceinfo = deps.namespaces
+	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
 }
 
-export { parseRouteResponse, dispatchRouteDeps }
+const getPackUrlsForDeps = (
+	deps: Dependencies | undefined,
+	context: Context,
+	includeBuilder?: boolean
+) =>
+	deps?.componentpack?.ids.flatMap((key) =>
+		getPackUrls(key as string, context, includeBuilder)
+	) || []
+
+const getPackUrls = (
+	key: string,
+	context: Context,
+	includeBuilder?: boolean
+) => {
+	const [namespace, name] = parseKey(key as string)
+	const runtime = platform.getComponentPackURL(context, namespace, name)
+	if (!includeBuilder) return [runtime]
+
+	const buildtime = platform.getComponentPackURL(
+		context,
+		namespace,
+		name,
+		true
+	)
+	return [runtime, buildtime]
+}
+
+export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls }

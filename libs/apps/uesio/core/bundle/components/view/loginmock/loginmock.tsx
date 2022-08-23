@@ -22,16 +22,6 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 		return null
 	}
 
-	const mode = uesio.component.useExternalState(
-		context.getViewId() || "",
-		"uesio.logincognito",
-		"mode"
-	)
-
-	if (mode) {
-		return null
-	}
-
 	return (
 		<LoginWrapper align={definition.align}>
 			<Grid

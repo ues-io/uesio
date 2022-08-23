@@ -3,152 +3,15 @@ package routing
 import (
 	"errors"
 
-	"github.com/humandad/yaml"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/translate"
 )
-
-type MetadataState struct {
-	Key     string `json:"key"`
-	Content string `json:"content"`
-}
-
-type MetadataMergeData struct {
-	IDs      []string                 `json:"ids"`
-	Entities map[string]MetadataState `json:"entities"`
-}
-
-func (mmd *MetadataMergeData) AddItem(id, content string) {
-	_, ok := mmd.Entities[id]
-	if !ok {
-		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = MetadataState{
-			Key:     id,
-			Content: content,
-		}
-	}
-}
-
-type PreloadMetadata struct {
-	Themes           *MetadataMergeData `json:"theme,omitempty"`
-	ViewDef          *MetadataMergeData `json:"viewdef,omitempty"`
-	ComponentPack    *MetadataMergeData `json:"componentpack,omitempty"`
-	ComponentVariant *MetadataMergeData `json:"componentvariant,omitempty"`
-	ConfigValue      *MetadataMergeData `json:"configvalue,omitempty"`
-	Label            *MetadataMergeData `json:"label,omitempty"`
-}
-
-func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.Themes
-}
-
-func (pm *PreloadMetadata) GetViewDef() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ViewDef
-}
-
-func (pm *PreloadMetadata) GetComponentPack() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ComponentPack
-}
-
-func (pm *PreloadMetadata) GetComponentVariant() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ComponentVariant
-}
-
-func (pm *PreloadMetadata) GetLabel() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.Label
-}
-
-func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ConfigValue
-}
-
-func (pm *PreloadMetadata) AddTheme(id, content string) {
-	if pm.Themes == nil {
-		pm.Themes = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-	pm.Themes.AddItem(id, content)
-}
-
-func (pm *PreloadMetadata) AddComponentPack(id, content string) {
-	if pm.ComponentPack == nil {
-		pm.ComponentPack = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-	pm.ComponentPack.AddItem(id, content)
-}
-
-func (pm *PreloadMetadata) AddViewDef(id string, view meta.View) error {
-	if pm.ViewDef == nil {
-		pm.ViewDef = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-
-	bytes, err := yaml.Marshal(&view.Definition)
-	if err != nil {
-		return err
-	}
-
-	pm.ViewDef.AddItem(id, string(bytes))
-	return nil
-}
-
-func (pm *PreloadMetadata) AddComponentVariant(id, content string) {
-	if pm.ComponentVariant == nil {
-		pm.ComponentVariant = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-	pm.ComponentVariant.AddItem(id, content)
-}
-
-func (pm *PreloadMetadata) AddConfigValue(id, content string) {
-	if pm.ConfigValue == nil {
-		pm.ConfigValue = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-	pm.ConfigValue.AddItem(id, content)
-}
-
-func (pm *PreloadMetadata) AddLabel(id, content string) {
-	if pm.Label == nil {
-		pm.Label = &MetadataMergeData{
-			IDs:      []string{},
-			Entities: map[string]MetadataState{},
-		}
-	}
-	pm.Label.AddItem(id, content)
-}
 
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 
@@ -190,14 +53,8 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
-	bytes, err := yaml.Marshal(&variantDep)
-	if err != nil {
-		return err
-	}
+	return deps.AddItem(variantDep, false)
 
-	deps.AddComponentVariant(key, string(bytes))
-
-	return nil
 }
 
 func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
@@ -222,17 +79,27 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 	for _, pack := range packsForNamespace {
 		componentInfo, ok := pack.Components.ViewComponents[componentName]
 		if ok {
-			deps.AddComponentPack(pack.GetKey(), "")
+			err := deps.AddItem(pack, false)
+			if err != nil {
+				return err
+			}
 			if componentInfo != nil {
 				for _, key := range componentInfo.ConfigValues {
-					// _, ok := deps.ConfigValues[key]
-					// if !ok {
+
 					value, err := configstore.GetValueFromKey(key, session)
 					if err != nil {
 						return err
 					}
-					deps.AddConfigValue(key, value)
-					//}
+					configvalue, err := meta.NewConfigValue(key)
+					if err != nil {
+						return err
+					}
+					configvalue.Value = value
+					err = deps.AddItem(configvalue, false)
+					if err != nil {
+						return err
+					}
+
 				}
 
 				for _, key := range componentInfo.Variants {
@@ -258,39 +125,45 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 		return err
 	}
 
-	err = deps.AddViewDef(key, *view)
+	err = deps.AddItem(view, false)
 	if err != nil {
 		return err
 	}
 
-	componentsUsed, variantsUsed, viewsUsed, err := view.GetDependencies()
+	depMap, err := view.GetDependencies()
 	if err != nil {
 		return err
 	}
 
-	for key := range variantsUsed {
-		addVariantDep(deps, key, session)
+	for key := range depMap.Variants {
+		err := addVariantDep(deps, key, session)
+		if err != nil {
+			return err
+		}
 	}
 
-	for key := range componentsUsed {
+	for key := range depMap.Components {
 		err := getDepsForComponent(key, deps, session)
 		if err != nil {
 			return err
 		}
 	}
 
-	labels, err := translate.GetTranslatedLabels(session)
-	if err != nil {
-		return errors.New("Failed to get translated labels: " + err.Error())
+	for key := range depMap.Views {
+		err := processView(key, deps, session)
+		if err != nil {
+			return err
+		}
 	}
 
-	for key, value := range labels {
-		deps.AddLabel(key, value)
-	}
-
-	for key := range viewsUsed {
-		processView(key, deps, session)
-	}
+	/*
+		// Not using this for now, but it's a placeholder
+		// for when we want to process wires on the server
+		// for even more performance gainz.
+		for key := range depMap.Wires {
+			fmt.Println("Found a wire: " + key)
+		}
+	*/
 
 	return nil
 
@@ -315,7 +188,57 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	return packs, nil
 }
 
-func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
+func GetAppData(namespaces []string, session *sess.Session) (map[string]MetadataResponse, error) {
+	apps := meta.AppCollection{}
+
+	// Load in App Settings
+	err := datasource.PlatformLoad(&apps, &datasource.PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    adapt.UNIQUE_KEY_FIELD,
+				Operator: "IN",
+				Value:    namespaces,
+			},
+		},
+		Fields: []adapt.LoadRequestField{
+			{
+				ID: "uesio/studio.color",
+			},
+			{
+				ID: "uesio/studio.icon",
+			},
+		},
+		SkipRecordSecurity: true,
+	}, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	appData := map[string]MetadataResponse{}
+
+	for index := range apps {
+		app := apps[index]
+		appData[app.UniqueKey] = MetadataResponse{
+			Color: app.Color,
+			Icon:  app.Icon,
+		}
+	}
+
+	return appData, nil
+}
+
+func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Session) (*PreloadMetadata, error) {
+
+	deps := NewPreloadMetadata()
+	view, err := loadViewDef(viewNamespace+"."+viewName, session)
+	if err != nil {
+		return nil, err
+	}
+
+	err = deps.AddItem(view, true)
+	if err != nil {
+		return nil, err
+	}
 
 	packsByNamespace, err := getPacksByNamespace(session)
 	if err != nil {
@@ -338,11 +261,12 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	deps := &PreloadMetadata{}
-
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
-			deps.AddComponentPack(pack.GetKey(), "")
+			err := deps.AddItem(pack, false)
+			if err != nil {
+				return nil, err
+			}
 			for key := range pack.Components.ViewComponents {
 				err := getDepsForComponent(namespace+"."+key, deps, session)
 				if err != nil {
@@ -353,60 +277,109 @@ func GetBuilderDependencies(session *sess.Session) (*PreloadMetadata, error) {
 
 	}
 	for i := range variants {
-		variant := variants[i]
-		bytes, err := yaml.Marshal(&variant)
+		err := deps.AddItem(variants[i], false)
 		if err != nil {
 			return nil, err
 		}
-
-		deps.AddComponentVariant(variant.GetKey(), string(bytes))
-
 	}
 
 	for key, value := range labels {
-		deps.AddLabel(key, value)
+
+		label, err := meta.NewLabel(key)
+		if err != nil {
+			return nil, err
+		}
+		label.Value = value
+		err = deps.AddItem(label, false)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	//TO-DO Fix this
+	// Load in the studio theme.
+	theme, err := meta.NewTheme("uesio/studio.default")
+	if err != nil {
+		return nil, err
+	}
 
-	// ffr, _ := getFeatureFlags(session, "")
-	// for i := range ffr {
-	// 	featureFlag := ffr[i]
-	// 	deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	// }
+	err = bundle.Load(theme, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+
+	err = deps.AddItem(theme, false)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the metadata list
+	namespaces := session.GetContextNamespaces()
+	appNames := []string{}
+	for ns := range namespaces {
+		appNames = append(appNames, ns)
+	}
+
+	appData, err := GetAppData(appNames, session)
+	if err != nil {
+		return nil, err
+	}
+
+	deps.Namespaces = appData
 
 	return deps, nil
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
 
-	deps := &PreloadMetadata{}
+	deps := NewPreloadMetadata()
 
-	themeNamespace, themeName, err := meta.ParseKey(route.ThemeRef)
+	theme, err := meta.NewTheme(route.ThemeRef)
 	if err != nil {
 		return nil, err
 	}
 
-	theme := meta.Theme{
-		Name:      themeName,
-		Namespace: themeNamespace,
-	}
-
-	err = bundle.Load(&theme, session)
+	err = bundle.Load(theme, session)
 	if err != nil {
 		return nil, err
 	}
 
-	bytes, err := yaml.Marshal(&theme)
+	err = deps.AddItem(theme, false)
 	if err != nil {
 		return nil, err
 	}
-
-	deps.AddTheme(route.ThemeRef, string(bytes))
 
 	err = processView(route.ViewRef, deps, session)
 	if err != nil {
 		return nil, err
+	}
+
+	labels, err := translate.GetTranslatedLabels(session)
+	if err != nil {
+		return nil, errors.New("Failed to get translated labels: " + err.Error())
+	}
+
+	featureflags, err := featureflagstore.GetFeatureFlags(session, session.GetUserID())
+	if err != nil {
+		return nil, errors.New("Failed to get feature flags: " + err.Error())
+	}
+
+	for key, value := range labels {
+		label, err := meta.NewLabel(key)
+		if err != nil {
+			return nil, err
+		}
+		label.Value = value
+		err = deps.AddItem(label, false)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for _, flag := range *featureflags {
+		err = deps.AddItem(flag, false)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return deps, nil

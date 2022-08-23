@@ -168,7 +168,6 @@ func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version str
 	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
 }
 
-// StoreItems function
 func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	for _, itemStream := range itemStreams {
 		err := storeItem(namespace, version, itemStream, session)
@@ -176,6 +175,23 @@ func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemS
 			return err
 		}
 	}
+	return nil
+}
+
+func (b *PlatformBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+
+	fullFilePath := filepath.Join(namespace, version)
+
+	conn, err := getPlatformFileConnection(session)
+	if err != nil {
+		return err
+	}
+
+	err = conn.EmptyDir(fullFilePath)
+	if err != nil {
+		return errors.New("Error Deleting Bundle: " + err.Error())
+	}
+
 	return nil
 }
 
@@ -195,7 +211,6 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 	return nil
 }
 
-// GetBundleDef function
 func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml", session)

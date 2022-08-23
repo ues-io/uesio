@@ -19,9 +19,11 @@ const Tabs: FunctionComponent<Props> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 
+	const componentId = uesio.component.getId(definition.id)
+
 	const [selectedTabId, setSelectedTab] = uesio.component.useState<string>(
 		"tabs",
-		definition.id || path
+		componentId
 	)
 	const tabs = definition.tabs ? definition.tabs : []
 	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)

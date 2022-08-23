@@ -1,18 +1,4 @@
-import { useState, useEffect } from "react"
-// Hook
 const cachedScripts: ScriptMap = {}
-
-const js = document.scripts
-for (let i = 0; i < js.length; i++) {
-	const scriptNode = js[i]
-	const srcAttribute = scriptNode.getAttribute("src")
-	if (!srcAttribute) continue
-	cachedScripts[srcAttribute] = {
-		loaded: true,
-		script: js[i],
-		fullKey: scriptNode.src,
-	}
-}
 
 interface ScriptMap {
 	[key: string]: ScriptCache
@@ -30,26 +16,10 @@ type ScriptResult = {
 	loaded: boolean
 }
 
-const depsHaveNotLoaded = (want: string[], have: string[]) =>
-	want.some((key) => !have.includes(key))
-
-const depsHaveLoaded = (want: string[], have: string[]) =>
-	!depsHaveNotLoaded(want, have)
-
 const areNotAllLoaded = (cache: ScriptMap) =>
 	Object.keys(cache).some((key) => !cache[key].loaded)
 
 const areAllLoaded = (cache: ScriptMap) => !areNotAllLoaded(cache)
-
-const allScriptsLoaded = (sources: string[]) => {
-	for (const src of sources) {
-		const cache = cachedScripts[src]
-		if (!cache || !cache.loaded) {
-			return false
-		}
-	}
-	return true
-}
 
 const getLoadedScripts = (cache: ScriptMap) =>
 	Object.keys(cache).reduce(
@@ -61,6 +31,20 @@ const getScriptsToLoad = (
 	sources: string[],
 	callback: (result: ScriptResult) => void
 ) => {
+	if (!Object.keys(cachedScripts).length) {
+		const js = document.scripts
+		for (let i = 0; i < js.length; i++) {
+			const scriptNode = js[i]
+			const srcAttribute = scriptNode.getAttribute("src")
+			if (!srcAttribute) continue
+			cachedScripts[srcAttribute] = {
+				loaded: true,
+				script: js[i],
+				fullKey: scriptNode.src,
+			}
+		}
+	}
+
 	const scriptsToLoad: ScriptMap = {}
 
 	const registerScriptEvents = (elem: HTMLScriptElement) => {
@@ -150,38 +134,5 @@ const loadScripts = async (sources: string[]): Promise<ScriptResult> =>
 			result.error ? reject(result) : resolve(result)
 		})
 	})
-
-const useScripts = (sources: string[]): ScriptResult => {
-	// Keeping track of script loaded and error state
-	const [state, setState] = useState({
-		loaded: false,
-		error: false,
-		scripts: getLoadedScripts(cachedScripts),
-	})
-
-	useEffect(
-		() =>
-			getScriptsToLoad(sources, (result) => {
-				if (result.scripts.length) setState(result)
-			}),
-		[sources.join(":")] // Only re-run effect if script src changes
-	)
-
-	if (allScriptsLoaded(sources)) {
-		return {
-			error: false,
-			scripts: state.scripts,
-			loaded: true,
-		}
-	}
-
-	return {
-		error: state.error,
-		scripts: state.scripts,
-		loaded: depsHaveLoaded(sources, state.scripts),
-	}
-}
-
-export default useScripts
 
 export { loadScripts }

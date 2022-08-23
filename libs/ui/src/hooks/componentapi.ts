@@ -2,10 +2,8 @@ import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
-import useScripts from "./usescripts"
-import { parseKey } from "../component/path"
 import { useComponentVariantKeys } from "../bands/componentvariant"
-import { platform } from "../platform/platform"
+import { makeComponentId, set as setComponent } from "../bands/component"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
 
@@ -16,51 +14,31 @@ class ComponentAPI {
 
 	uesio: Uesio
 
-	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
-		platform.getComponentPackURL(
-			this.uesio.getContext(),
-			namespace,
-			name,
-			buildMode
-		)
-
-	usePacks = (packs: string[] | undefined, buildMode: boolean) =>
-		useScripts(
-			packs?.flatMap((key) => {
-				const [namespace, name] = parseKey(key)
-				const result = [this.getPackURL(namespace, name, false)]
-				if (buildMode) {
-					result.push(this.getPackURL(namespace, name, true))
-				}
-				return result
-			}) || []
-		)
+	getId = (namedId?: string, componentType?: string) => {
+		const context = this.uesio.getContext()
+		const cType = componentType || this.uesio.getComponentType()
+		const id = namedId || this.uesio.getPath()
+		return makeComponentId(context, cType, id)
+	}
 
 	useState = <T extends PlainComponentState>(
 		componentId: string,
-		initialState?: T,
-		cType?: string
+		initialState?: T
 	): [T | undefined, (state: T) => void] => {
-		const viewId = this.uesio.getViewId()
-		const componentType = cType || this.uesio.getComponentType()
-		const state = useComponentState<T>(componentType, componentId, viewId)
-
-		const setState = (state: T) => {
-			appDispatch()({
-				type: "component/set",
-				payload: {
+		const state = useComponentState<T>(componentId)
+		const setState = (state: T | undefined) => {
+			appDispatch()(
+				setComponent({
 					id: componentId,
-					componentType,
-					view: viewId,
 					state,
-				},
-			})
+				})
+			)
 		}
 		useEffect(() => {
-			if (state === undefined && initialState !== undefined) {
+			if (state === undefined) {
 				setState(initialState)
 			}
-		}, [viewId])
+		}, [componentId])
 
 		return [state ?? initialState, setState]
 	}
@@ -68,61 +46,38 @@ class ComponentAPI {
 	useStateSlice = <T extends Definition>(
 		slice: string,
 		componentId: string,
-		initialState?: T,
-		cType?: string
+		initialState?: T
 	): [T | undefined, (state: T) => void] => {
-		const viewId = this.uesio.getViewId()
-		const componentType = cType || this.uesio.getComponentType()
-		const fullState = useComponentState<Record<string, T>>(
-			componentType,
-			componentId,
-			viewId
-		)
+		const fullState = useComponentState<Record<string, T>>(componentId)
 		const state = fullState?.[slice] ?? undefined
 
 		const setState = (state: T) => {
-			appDispatch()({
-				type: "component/set",
-				payload: {
+			appDispatch()(
+				setComponent({
 					id: componentId,
-					componentType,
-					view: viewId,
 					state: {
 						...selectState<Record<string, T>>(
 							getCurrentState(),
-							componentType,
-							componentId,
-							viewId
+							componentId
 						),
 						[slice]: state,
 					},
-				},
-			})
+				})
+			)
 		}
 
 		useEffect(() => {
 			if (state === undefined && initialState !== undefined) {
 				setState(initialState)
 			}
-		}, [viewId])
+		}, [componentId])
 
 		return [state ?? initialState, setState]
 	}
 
-	getState = <T extends PlainComponentState>(
-		componentId: string
-	): T | undefined => {
-		const state = getCurrentState()
-		const componentType = this.uesio.getComponentType()
-		const viewId = this.uesio.getViewId()
-		return selectState(state, componentType, componentId, viewId)
-	}
-
 	useExternalState = <T extends PlainComponentState>(
-		viewId: string,
-		componentType: string,
 		componentId: string
-	): T | undefined => useComponentState<T>(componentType, componentId, viewId)
+	): T | undefined => useComponentState<T>(componentId)
 
 	useAllVariants = () => useComponentVariantKeys()
 }

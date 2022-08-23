@@ -16,7 +16,8 @@ const List: FunctionComponent<ListProps> = (props) => {
 		  })
 		: context
 
-	const [mode] = useMode(definition.id, definition.mode, props)
+	const componentId = uesio.component.getId(definition.id)
+	const [mode] = useMode(componentId, definition.mode, props)
 
 	if (!wire || !mode) return null
 

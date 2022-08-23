@@ -7,3 +7,4 @@ definition:
       fontSize: 10pt
       color: "#444"
       fontWeight: 300
+      padding: 8px

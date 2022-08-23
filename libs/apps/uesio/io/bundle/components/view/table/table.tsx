@@ -27,9 +27,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const [mode] = useMode(definition.id, definition.mode, props)
+	const componentId = uesio.component.getId(definition.id)
+	const [mode] = useMode(componentId, definition.mode, props)
 	const [currentPage, setCurrentPage] = usePagination(
-		definition.id,
+		componentId,
 		wire?.getBatchId(),
 		props
 	)
@@ -66,7 +67,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
 
 	const paginated = paginate(data, currentPage, pageSize)
-
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),
