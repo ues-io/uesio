@@ -18,8 +18,8 @@ components:
       text: button1
   - uesio/io.button:
       text: button1
-wires:
-panels:
+wires: null
+panels: null
 `,
 	},
 ]
@@ -29,21 +29,21 @@ const cloneKeyTests = [
 		name: "Clone Wire",
 		path: `["wires"]["mywire"]`,
 		data: `
-components:
+components: 
 wires:
   mywire:
     collection: mycollection
     fields:
 `,
 		expected: `
-components:
+components: null
 wires:
   mywire:
     collection: mycollection
-    fields:
+    fields: null
   mynewkey:
     collection: mycollection
-    fields:
+    fields: null
 `,
 	},
 ]

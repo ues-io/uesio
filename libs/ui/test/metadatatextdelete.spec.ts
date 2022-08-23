@@ -18,8 +18,8 @@ panels:
 components:
   - uesio/io.button:
       text: button1
-wires:
-panels:
+wires: null
+panels: null
 `,
 	},
 	{
@@ -37,12 +37,12 @@ wires:
 panels:
 `,
 		expected: `
-components:
+components: null
 wires:
   myotherwire:
     collection: myothercollection
-    fields:
-panels:
+    fields: null
+panels: null
 `,
 	},
 ]

@@ -99,11 +99,11 @@ panels:
 wires:
   mywire:
     collection: mycollection
-    fields:
+    fields: null
   myotherwire:
     collection: myothercollection
-    fields:
-panels:
+    fields: null
+panels: null
 `,
 	},
 	{
@@ -141,8 +141,8 @@ components:
             text: button3
         - uesio/io.button:
             text: button4
-wires:
-panels:
+wires: null
+panels: null
 `,
 	},
 ]
