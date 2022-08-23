@@ -67,6 +67,8 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		"uesio/studio.runtime"
 	)
 
+	console.log({ componentId })
+
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
 		componentId,
 		""
@@ -76,6 +78,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		(section, index) => section.title + index === selectedTab
 	)
 
+	console.log({ selectedTab, propsDef, properties: propsDef.properties })
 	return (
 		<ScrollPanel
 			header={
@@ -135,7 +138,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			className={className}
 			context={context}
 		>
-			{selectedTab === "" && propsDef && propsDef.properties && (
+			{propsDef && propsDef.properties && (
 				<PropList
 					path={path}
 					propsDef={propsDef}
