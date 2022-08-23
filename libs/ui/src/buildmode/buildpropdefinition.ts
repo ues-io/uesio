@@ -34,12 +34,7 @@ type BuildPropertiesDefinition = {
 	category?: Categories
 }
 
-type Categories =
-	| "LAYOUT"
-	| "DATA"
-	| "MIXED"
-	| "VISUALIZATION"
-	| "UNCATEGORIZED"
+type Categories = "LAYOUT" | "DATA" | "VISUALIZATION" | "UNCATEGORIZED"
 
 type PropertySection =
 	| FieldsSection

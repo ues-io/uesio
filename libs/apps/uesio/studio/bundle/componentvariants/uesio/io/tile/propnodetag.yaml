@@ -3,21 +3,15 @@ label: Property Node Tag
 definition:
   uesio.styles:
     root:
-      border: "1px solid #eee"
-      margin: 8px
-      fontSize: "9pt"
+      border: "1px solid #ddd"
+      fontSize: "10pt"
       color: "#444"
       borderRadius: 4px
-      alignItems: center
       overflow: hidden
       backgroundColor: white
       userSelect: none
     content:
-      verticalAlign: middle
-      alignItems: center
       justifyContent: space-between
-    avatar:
-      marginLeft: 8px
-      color: "#aaa"
+      padding: 10px
     selected:
       border: "1px solid $Theme{color.primary}"

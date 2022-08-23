@@ -11,7 +11,8 @@ export interface ViewProps extends BaseProps {
 
 const ViewPropertyDefinition: BuildPropertiesDefinition = {
 	title: "View",
-	description: "Just a view",
+	description:
+		"A collection of wires, components and panels that represent a user interface.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		view: "",
@@ -33,7 +34,6 @@ const ViewPropertyDefinition: BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
-	category: "MIXED",
 }
 
 export default ViewPropertyDefinition

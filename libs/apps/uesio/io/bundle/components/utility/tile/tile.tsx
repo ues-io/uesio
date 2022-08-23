@@ -23,9 +23,7 @@ const Tile: FunctionComponent<TileUtilityProps> = (props) => {
 			content: {
 				flex: 1,
 			},
-			avatar: {
-				marginRight: "8px",
-			},
+			avatar: {},
 			selected: {},
 		},
 		props
