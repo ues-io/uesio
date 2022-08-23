@@ -3,7 +3,7 @@ import {
 	LabelsDefinition,
 	SeriesDefinition,
 	chartProperties,
-	// seriesSection,
+	seriesSection,
 } from "../../shared/chart"
 
 export type LineChartDefinition = {
@@ -24,8 +24,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 		text: "New chart",
 	}),
 	properties: chartProperties,
-
-	sections: [],
+	sections: [seriesSection],
 	actions: [],
 	traits: ["uesio.standalone"],
 	classes: ["root"],

@@ -153,40 +153,65 @@ const getDataSets = (
 			},
 		]
 	})
-// const seriesSection: builder.PropertySection = {
-// type: "PROPLISTS",
-// name: "series",
-// title: "Series",
-// properties: [
-// 	{
-// 		name: "wire",
-// 		type: "WIRE",
-// 		label: "Wire",
-// 	},
-// {
-// 	name: "CategoryField",
-// 	type: "FIELD",
-// 	wireField: "wire",
-// 	label: "Category field",
-// },
-// {
-// 	name: "valueField",
-// 	type: "FIELD",
-// 	wireField: "wire",
-// 	label: "Value field",
-// },
-// 	{
-// 		name: "name",
-// 		type: "TEXT",
-// 		label: "Name",
-// 	},
-// 	{
-// 		name: "label",
-// 		type: "TEXT",
-// 		label: "Label",
-// 	},
-// ],
-// }
+const seriesSection: builder.PropertySection = {
+	type: "PROPLISTS",
+	name: "series",
+	title: "Series",
+	nameTemplate: "${wire} something",
+	fallbackTemplate: "empty item",
+	properties: [
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "Wire",
+		},
+	],
+}
+const chartProperties: builder.PropDescriptor[] = [
+	{
+		name: "title",
+		type: "TEXT",
+		label: "Title",
+	},
+	{
+		name: "source",
+		type: "SELECT",
+		label: "Source",
+		options: [
+			{
+				value: "",
+				label: "Select a source",
+			},
+			{
+				value: "WIRE",
+				label: "Wire",
+			},
+			{
+				value: "VALUE",
+				label: "Value",
+			},
+			{
+				value: "DATA",
+				label: "Data",
+			},
+		],
+	}
+]
+
+
+		// {
+		// 	name: "CategoryField",
+		// 	type: "FIELD",
+		// 	wireField: "wire",
+		// 	label: "Category field",
+		// },
+		// {
+		// 	name: "valueField",
+		// 	type: "FIELD",
+		// 	wireField: "wire",
+		// 	label: "Value field",
+		// },
+
 
 const chartProperties: builder.PropDescriptor[] = [
 	{
@@ -248,6 +273,7 @@ const chartProperties: builder.PropDescriptor[] = [
 		name: "values",
 		type: "PROPLISTS",
 		label: "Values",
+		nameTemplate: "",
 		properties: [
 			{
 				name: "key",
@@ -260,6 +286,7 @@ const chartProperties: builder.PropDescriptor[] = [
 				label: "Value",
 			},
 		],
+	}
 		display: [
 			{
 				property: "source",
@@ -304,5 +331,5 @@ export {
 	SeriesDefinition,
 	LabelsDefinition,
 	chartProperties,
-	// seriesSection,
+	seriesSection,
 }
