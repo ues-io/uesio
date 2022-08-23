@@ -14,7 +14,9 @@ const makeComponentId = (
 	id: string
 ) => {
 	const viewId = context.getViewId()
-	return `${viewId}:${componentType}:${id}`
+	const recordId = context.getRecordId()
+	const recordSuffix = recordId ? `:${recordId}` : ""
+	return `${viewId}:${componentType}:${id}${recordSuffix}`
 }
 
 const componentSlice = createSlice({
