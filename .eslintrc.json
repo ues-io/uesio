@@ -14,7 +14,7 @@
 			"rules": {}
 		},
 		{
-			"files": ["**/*.spec.ts", "**/*.spec.tsx"],
+			"files": ["**/*.spec.ts", "**/*.spec.tsx", "**/test/utils/*.ts"],
 			"env": {
 				"jest": true,
 				"browser": true

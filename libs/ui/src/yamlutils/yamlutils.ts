@@ -121,6 +121,13 @@ const fixFlow = (
 		const fixNode = node.getIn(pathArray) as
 			| yaml.YAMLMap<unknown, unknown>
 			| yaml.YAMLSeq<unknown>
+		if (fixNode === null) {
+			// This is somewhat counter-intuitive, but we want to
+			// remove any null nodes so that they can be converted
+			// to the appropriate sequence or map by the addIn utility.
+			node.deleteIn(pathArray)
+			return
+		}
 		fixNode && fixNode.flow && (fixNode.flow = false)
 		fixFlow(getParentPathArray(pathArray), node)
 	}

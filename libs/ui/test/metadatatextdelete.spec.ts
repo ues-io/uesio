@@ -18,8 +18,8 @@ panels:
 components:
   - uesio/io.button:
       text: button1
-wires: null
-panels: null
+wires:
+panels:
 `,
 	},
 	{
@@ -37,25 +37,24 @@ wires:
 panels:
 `,
 		expected: `
-components: null
+components:
 wires:
   myotherwire:
     collection: myothercollection
-    fields: null
-panels: null
+    fields:
+panels:
 `,
 	},
 ]
 
 tests.map(({ name, path, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				removeDefinition({
-					path: getTestPath(path),
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			removeDefinition({
+				path: getTestPath(path),
+			})
+		)
 	})
 )

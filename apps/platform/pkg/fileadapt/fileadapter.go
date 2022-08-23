@@ -22,6 +22,7 @@ type FileConnection interface {
 	Download(path string) (io.ReadCloser, error)
 	Delete(path string) error
 	List(path string) ([]string, error)
+	EmptyDir(path string) error
 }
 
 var adapterMap = map[string]FileAdapter{}

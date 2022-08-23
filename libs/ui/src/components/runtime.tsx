@@ -23,8 +23,9 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	uesio.addContextFrame({
 		view: "$root",
 	})
+	const componentId = uesio.component.getId("buildmode")
 	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
-		"buildmode",
+		componentId,
 		false
 	)
 
@@ -56,7 +57,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	useHotKeyCallback("command+u", () => {
-		setBuildMode(!uesio.component.getState("buildmode"))
+		setBuildMode(!buildMode)
 	})
 
 	const context = uesio.getContext().addFrame({

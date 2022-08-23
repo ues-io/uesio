@@ -20,6 +20,7 @@ const PropNodeTag: FC<Props> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] = useState(false)
 
+	const innerPadding = 8
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -41,7 +42,9 @@ const PropNodeTag: FC<Props> = (props) => {
 			inner: {
 				overflow: "hidden",
 				textOverflow: "ellipsis",
-				padding: "8px",
+				padding: `${innerPadding}px`,
+				// Make empty nodes still take up at least 1 lineheight
+				minHeight: `calc(1em + ${innerPadding * 2}px)`,
 			},
 		},
 		props
@@ -60,6 +63,15 @@ const PropNodeTag: FC<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
+				{selected && anchorEl && popperChildren && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="right"
+					>
+						{popperChildren}
+					</Popper>
+				)}
 				{!props.expandChildren ? (
 					<div className={classes.inner}>{props.children}</div>
 				) : (
@@ -77,17 +89,10 @@ const PropNodeTag: FC<Props> = (props) => {
 					</IOExpandPanel>
 				)}
 			</Tile>
-			{selected && anchorEl && popperChildren && (
-				<Popper
-					referenceEl={anchorEl}
-					context={context}
-					placement="right"
-				>
-					{popperChildren}
-				</Popper>
-			)}
 		</div>
 	)
 }
+
+PropNodeTag.displayName = "PropNodeTag"
 
 export default PropNodeTag

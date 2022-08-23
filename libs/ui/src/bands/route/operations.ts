@@ -78,7 +78,8 @@ const navigate =
 					viewDef: view,
 					workspace,
 					params: routeResponse.params,
-				})
+				}),
+				true
 			)
 		)
 

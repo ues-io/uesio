@@ -118,7 +118,7 @@
     "tslint": "6.1.3",
     "typescript": "4.7.2",
     "unzipper": "^0.10.11",
-    "yaml": "2.0.0-10"
+    "yaml": "2.1.1"
   },
   "imports": {
     "#uesio/ui": "./dist/cli/lib/libs/ui/src/index.js"

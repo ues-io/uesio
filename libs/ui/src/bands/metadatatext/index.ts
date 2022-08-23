@@ -1,6 +1,7 @@
 import { createSlice, createEntityAdapter, EntityState } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { MetadataState } from "../metadata/types"
+import { move } from "../utils"
 
 import {
 	addDefinition,
@@ -29,7 +30,7 @@ import {
 	removeNodeAtPath,
 	setNodeAtPath,
 } from "../../yamlutils/yamlutils"
-import { isMap, isSeq, Scalar } from "yaml"
+import { isCollection, isMap, isSeq, Scalar } from "yaml"
 
 const adapter = createEntityAdapter<MetadataState>({
 	selectId: (metadatatext) =>
@@ -152,22 +153,35 @@ const metadataSlice = createSlice({
 			const fromParentPath = getParentPath(localFromPath)
 			const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
 			const toParentPath = getParentPath(localToPath)
-			const toParent = getNodeAtPath(toParentPath, yamlDoc.contents)
+			//const toParent = getNodeAtPath(toParentPath, yamlDoc.contents)
 			const clonedNode = fromNode?.clone()
-			if (!isMap(clonedNode) && !isSeq(clonedNode)) return
-			const isArrayMove = isSeq(fromParent) && isSeq(toParent)
+			if (!isCollection(clonedNode)) return
+			const isArrayMove = isSeq(fromParent)
 			const isMapMove =
 				isMap(fromParent) && fromParentPath === toParentPath
+
 			if (isArrayMove) {
-				// Set that content at the to item
 				const index = getIndexFromPath(localToPath) || 0
-				addNodeAtPath(toParentPath, yamlDoc.contents, clonedNode, index)
-				// Loop over the items of the from parent
-				fromParent.items.forEach((item, index) => {
-					if (item === fromNode) {
-						fromParent.items.splice(index, 1)
-					}
-				})
+				if (fromParentPath === toParentPath) {
+					const fromIndex = getIndexFromPath(localFromPath) || 0
+					// When in the same list parent, we can just swap
+					move(fromParent.items, fromIndex, index)
+				} else {
+					// Set that content at the to item
+					addNodeAtPath(
+						toParentPath,
+						yamlDoc.contents,
+						clonedNode,
+						index
+					)
+
+					// Loop over the items of the from parent
+					fromParent.items.forEach((item, index) => {
+						if (item === fromNode) {
+							fromParent.items.splice(index, 1)
+						}
+					})
+				}
 			}
 			if (isMapMove) {
 				const fromKey = getKeyAtPath(localFromPath)
@@ -184,6 +198,7 @@ const metadataSlice = createSlice({
 			}
 
 			if (!item.original) item.original = item.content
+
 			item.content = yamlDoc.toString()
 		})
 		builder.addCase(cloneDefinition, (state, { payload }) => {

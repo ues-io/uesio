@@ -35,29 +35,17 @@ interface FileMarkDownProps extends definition.UtilityProps {
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const {
-		fieldId,
-		fieldMetadata,
-		record,
-		wire,
-		context,
-		id,
-		path,
-		mode,
-		options,
-	} = props
+	const { fieldId, fieldMetadata, record, wire, context, id, mode, options } =
+		props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const fileName = userFile?.["uesio/core.name"] as string
 	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = id || path || ""
-	const currentValue = uesio.component.useExternalState<FieldState>(
-		context.getViewId() || "",
-		"uesio/io.field",
-		componentId
-	)
+	const componentId = uesio.component.getId(id, "uesio/io.field")
+	const currentValue =
+		uesio.component.useExternalState<FieldState>(componentId)
 
 	useEffect(() => {
 		uesio.signal.run(

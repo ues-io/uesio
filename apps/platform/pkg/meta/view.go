@@ -163,7 +163,7 @@ func (v *View) UnmarshalYAML(node *yaml.Node) error {
 	return node.Decode(v)
 }
 
-func getComponentsAndVariantsAndViewsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool, usedViews *map[string]bool) {
+func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {
 	if node == nil || node.Kind != yaml.SequenceNode {
 		return
 	}
@@ -172,17 +172,17 @@ func getComponentsAndVariantsAndViewsUsed(node *yaml.Node, usedComps *map[string
 		comp := node.Content[i]
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
-			(*usedComps)[compName] = true
+			depMap.Components[compName] = true
 			for i, prop := range comp.Content[1].Content {
 				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
 					if len(comp.Content[1].Content) > i {
 						valueNode := comp.Content[1].Content[i+1]
 						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							(*usedVariants)[compName+":"+valueNode.Value] = true
+							depMap.Variants[compName+":"+valueNode.Value] = true
 						}
 					}
 				}
-				getComponentsAndVariantsAndViewsUsed(prop, usedComps, usedVariants, usedViews)
+				getComponentAreaDeps(prop, depMap)
 			}
 			if compName == "uesio/core.view" {
 				for i, prop := range comp.Content[1].Content {
@@ -190,11 +190,11 @@ func getComponentsAndVariantsAndViewsUsed(node *yaml.Node, usedComps *map[string
 						if len(comp.Content[1].Content) > i {
 							valueNode := comp.Content[1].Content[i+1]
 							if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-								(*usedViews)[valueNode.Value] = true
+								depMap.Views[valueNode.Value] = true
 							}
 						}
 					}
-					getComponentsAndVariantsAndViewsUsed(prop, usedComps, usedVariants, usedViews)
+					getComponentAreaDeps(prop, depMap)
 				}
 			}
 		}
@@ -220,22 +220,46 @@ func isComponentLike(node *yaml.Node) bool {
 	return true
 }
 
-func (v *View) GetDependencies() (map[string]bool, map[string]bool, map[string]bool, error) {
+type ViewDepMap struct {
+	Components map[string]bool
+	Variants   map[string]bool
+	Views      map[string]bool
+	//Wires      map[string]*yaml.Node
+}
+
+func NewViewDefMap() *ViewDepMap {
+	return &ViewDepMap{
+		Components: map[string]bool{},
+		Variants:   map[string]bool{},
+		Views:      map[string]bool{},
+		//Wires:      map[string]*yaml.Node{},
+	}
+}
+
+func (v *View) GetDependencies() (*ViewDepMap, error) {
 
 	components, err := getMapNode(&v.Definition, "components")
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
 	panels, err := getMapNode(&v.Definition, "panels")
 	if err != nil {
 		panels = nil
 	}
 
-	usedComps := map[string]bool{}
-	usedVariants := map[string]bool{}
-	usedViews := map[string]bool{}
+	/*
+		// Not using this for now, but it's a placeholder
+		// for when we want to process wires on the server
+		// for even more performance gainz.
+		wires, err := getMapNode(&v.Definition, "wires")
+		if err != nil {
+			wires = nil
+		}
+	*/
 
-	getComponentsAndVariantsAndViewsUsed(components, &usedComps, &usedVariants, &usedViews)
+	depMap := NewViewDefMap()
+
+	getComponentAreaDeps(components, depMap)
 
 	if panels != nil && panels.Kind == yaml.MappingNode {
 		for i := range panels.Content {
@@ -243,20 +267,35 @@ func (v *View) GetDependencies() (map[string]bool, map[string]bool, map[string]b
 				panel := panels.Content[i]
 				panelType, err := getMapNode(panel, "uesio.type")
 				if err != nil {
-					return nil, nil, nil, err
+					return nil, err
 				}
 				if panelType.Kind == yaml.ScalarNode {
-					usedComps[panelType.Value] = true
+					depMap.Components[panelType.Value] = true
 				}
 				for i := range panel.Content {
 					if i%2 != 0 {
 						node := panel.Content[i]
-						getComponentsAndVariantsAndViewsUsed(node, &usedComps, &usedVariants, &usedViews)
+						getComponentAreaDeps(node, depMap)
 					}
 				}
 			}
 		}
 	}
 
-	return usedComps, usedVariants, usedViews, nil
+	/*
+		// Not using this for now, but it's a placeholder
+		// for when we want to process wires on the server
+		// for even more performance gainz.
+		if wires != nil && wires.Kind == yaml.MappingNode {
+			for i := range wires.Content {
+				if i%2 != 0 {
+					wire := wires.Content[i]
+					wireID := wires.Content[i-1]
+					depMap.Wires[wireID.Value] = wire
+				}
+			}
+		}
+	*/
+
+	return depMap, nil
 }
