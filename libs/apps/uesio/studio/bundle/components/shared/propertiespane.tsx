@@ -63,7 +63,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	)
 
 	const componentId = uesio.component.getId(
-		"propertiespanel",
+		"propertiespanel" + path,
 		"uesio/studio.runtime"
 	)
 
