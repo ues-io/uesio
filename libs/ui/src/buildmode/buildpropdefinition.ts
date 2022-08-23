@@ -42,6 +42,7 @@ type PropertySection =
 	| CustomSection
 	| OrderSection
 	| ConditionalDisplaySection
+	| ContextSection
 
 type BasePropSection = {
 	title: string
@@ -85,6 +86,10 @@ interface CustomSection extends BasePropSection {
 }
 interface ConditionalDisplaySection extends BasePropSection {
 	type: "CONDITIONALDISPLAY"
+}
+
+interface ContextSection extends BasePropSection {
+	type: "CONTEXT"
 }
 
 type PropDescriptor =

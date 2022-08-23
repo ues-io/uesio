@@ -272,8 +272,10 @@ class Context {
 
 	getParam = (param: string) => this.getParams()?.[param]
 
-	getParentComponentDef = (path: string) =>
-		get(this.getViewDef(), getAncestorPath(path, 3))
+	getParentComponentDef = (path: string) => {
+		const ancestorsPath = getAncestorPath(path, 3)
+		return [get(this.getViewDef(), ancestorsPath), ancestorsPath]
+	}
 
 	getTheme = () =>
 		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
@@ -328,6 +330,14 @@ class Context {
 		return new Context(this.stack.slice(index))
 	}
 
+	findWireFrameByID = (id?: string) => {
+		const index = this.stack.findIndex((frame) => frame?.wire === id)
+		if (index < 0) {
+			return undefined
+		}
+		return new Context(this.stack.slice(index))
+	}
+
 	findRecordFrame = () => {
 		const index = this.stack.findIndex(
 			(frame) => frame?.recordData || frame?.record || frame?.wire
@@ -336,9 +346,9 @@ class Context {
 		return this.stack[index]
 	}
 
-	getWire = () => {
+	getWire = (id?: string) => {
 		const state = getCurrentState()
-		const plainWire = this.getPlainWire()
+		const plainWire = this.getPlainWire(id)
 		const wire = new Wire(plainWire)
 		const plainCollection = collectionSelectors.selectById(
 			state,
@@ -350,8 +360,8 @@ class Context {
 		return wire
 	}
 
-	getPlainWire = () => {
-		const wireFrame = this.findWireFrame()
+	getPlainWire = (id?: string) => {
+		const wireFrame = id ? this.findWireFrameByID(id) : this.findWireFrame()
 		const wireId = wireFrame?.getWireId()
 		if (!wireId) return undefined
 		return getWire(wireFrame?.getViewId(), wireId)

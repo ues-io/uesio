@@ -6,8 +6,8 @@ const BuildWrapper = component.getUtility("uesio/studio.buildwrapper")
 
 const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 	const { path = "", context, index = 0 } = props
-
-	const template = context.getParentComponentDef(path)?.template
+	const [parentDef] = context.getParentComponentDef(path)
+	const template = parentDef?.template
 
 	const classes = styles.useStyles(
 		{

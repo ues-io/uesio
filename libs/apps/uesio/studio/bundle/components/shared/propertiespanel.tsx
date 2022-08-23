@@ -51,6 +51,11 @@ const augmentPropsDef = (
 					title: "Display",
 					type: "CONDITIONALDISPLAY",
 				},
+				{
+					//TO-DO if we categorized the components we can filter by that here
+					title: "Context",
+					type: "CONTEXT",
+				},
 			]),
 			actions: standardActions.concat(...(propsDef.actions || [])),
 		}

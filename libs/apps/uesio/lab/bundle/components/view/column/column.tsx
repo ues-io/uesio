@@ -17,7 +17,8 @@ export const getColumnFlexStyles = (
 
 const Column: FC<definition.BaseProps> = (props) => {
 	const { definition, context, path = "", index = 0 } = props
-	const template = context.getParentComponentDef(path)?.template
+	const [parentDef] = context.getParentComponentDef(path)
+	const template = parentDef?.template
 
 	const classes = styles.useStyles(
 		{
