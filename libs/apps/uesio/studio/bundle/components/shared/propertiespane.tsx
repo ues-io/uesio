@@ -62,10 +62,14 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		</div>
 	)
 
-	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
-		"propertiespanel:" + path,
-		"",
+	const componentId = uesio.component.getId(
+		"propertiespanel",
 		"uesio/studio.runtime"
+	)
+
+	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+		componentId,
+		""
 	)
 
 	const selectedSection = propsDef.sections?.find(
