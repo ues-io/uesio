@@ -4,6 +4,7 @@ import { BuilderState } from "./types"
 import { Definition, DefinitionMap } from "../../definition/definition"
 
 import { getParentPath } from "../../component/path"
+import { MetadataInfo } from "../../platform/platform"
 
 type SetDefinitionPayload = {
 	path: string
@@ -138,6 +139,12 @@ const builderSlice = createSlice({
 		setDropNode: (state, { payload }: PayloadAction<string>) => {
 			state.droppingNode = payload
 		},
+		setNamespaceInfo: (
+			state,
+			{ payload }: PayloadAction<Record<string, MetadataInfo>>
+		) => {
+			state.namespaces = payload
+		},
 	},
 })
 
@@ -154,6 +161,7 @@ export const {
 	moveDefinition,
 	changeDefinitionKey,
 	setDefinitionContent,
+	setNamespaceInfo,
 	save,
 	cancel,
 } = builderSlice.actions

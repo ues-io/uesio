@@ -58,6 +58,7 @@ type CollectionNavigateRequest = {
 
 type MetadataInfo = {
 	color: string
+	icon: string
 }
 
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
@@ -443,4 +444,5 @@ export {
 	CollectionNavigateRequest,
 	NavigateRequest,
 	JobResponse,
+	MetadataInfo,
 }
