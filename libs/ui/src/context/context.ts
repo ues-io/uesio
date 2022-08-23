@@ -330,14 +330,6 @@ class Context {
 		return new Context(this.stack.slice(index))
 	}
 
-	findWireFrameByID = (id?: string) => {
-		const index = this.stack.findIndex((frame) => frame?.wire === id)
-		if (index < 0) {
-			return undefined
-		}
-		return new Context(this.stack.slice(index))
-	}
-
 	findRecordFrame = () => {
 		const index = this.stack.findIndex(
 			(frame) => frame?.recordData || frame?.record || frame?.wire
@@ -346,9 +338,9 @@ class Context {
 		return this.stack[index]
 	}
 
-	getWire = (id?: string) => {
+	getWire = () => {
 		const state = getCurrentState()
-		const plainWire = this.getPlainWire(id)
+		const plainWire = this.getPlainWire()
 		const wire = new Wire(plainWire)
 		const plainCollection = collectionSelectors.selectById(
 			state,
@@ -360,8 +352,8 @@ class Context {
 		return wire
 	}
 
-	getPlainWire = (id?: string) => {
-		const wireFrame = id ? this.findWireFrameByID(id) : this.findWireFrame()
+	getPlainWire = () => {
+		const wireFrame = this.findWireFrame()
 		const wireId = wireFrame?.getWireId()
 		if (!wireId) return undefined
 		return getWire(wireFrame?.getViewId(), wireId)

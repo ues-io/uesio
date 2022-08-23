@@ -19,6 +19,7 @@ import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
+import { DisplayCondition } from "../../componentexports"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -35,10 +36,52 @@ class Wire {
 	isViewOnly = () => this.source.viewOnly
 	getBatchId = () => this.source.batchid
 
-	getData = () =>
-		this.source?.data
+	getData = (context?: Context, filter?: DisplayCondition[]) => {
+		if (filter) {
+			console.log({ filter })
+			console.log({ wire: this.source }) //contacts
+			console.log({ context: context?.stack })
+
+			const test = context?.merge("${uesio/crm.name}")
+
+			console.log({ test })
+
+			//GET the value of the context Wire --> feild
+			//maybe usewire()???
+			//const wire = context?.getWire("accounts") //from the filter contextWire
+			//const record = wire?.getRecord("uesio/core.id") //from the filter contextField
+			//console.log(wire?.source.data)
+
+			// const contextValue = "Acme Toothbrush Co ben is cool!!"
+			// //filter the this.source?.data using that value
+			// const field = "uesio/crm.firstname"
+
+			// wire: contacts
+			// field: uesio/crm.firstname
+			// operator: EQUALS
+			// contextWire: accounts
+			// contextField: uesio/crm.name
+
+			// console.log("To Filter")
+			// console.log(this.source?.data)
+
+			// console.log("FILTER")
+			// return this.source?.data
+			// 	? Object.keys(this.source.data)
+			// 			.map((id) => {
+			// 				const record = this.source.data[id]
+			// 				if (record[field] === contextValue)
+			// 					return this.getRecord(id)
+			// 				return null
+			// 			})
+			// 			.filter((x) => x)
+			// 	: []
+		}
+
+		return this.source?.data
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
+	}
 
 	getErrors = () => this.source?.errors
 

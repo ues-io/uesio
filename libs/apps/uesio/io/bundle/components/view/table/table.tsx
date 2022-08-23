@@ -63,7 +63,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		}
 	})
 
-	const data = wire.getData()
+	const uesioFilter =
+		(definition["uesio.filter"] as component.DisplayCondition[]) || []
+
+	const data = wire.getData(newContext, uesioFilter)
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
 
 	const paginated = paginate(data, currentPage, pageSize)
