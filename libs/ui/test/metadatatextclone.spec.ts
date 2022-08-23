@@ -36,14 +36,14 @@ wires:
     fields:
 `,
 		expected: `
-components: null
+components:
 wires:
   mywire:
     collection: mycollection
-    fields: null
+    fields:
   mynewkey:
     collection: mycollection
-    fields: null
+    fields:
 `,
 	},
 ]
