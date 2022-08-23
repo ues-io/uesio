@@ -48,7 +48,7 @@ const addAtPath = (
 		set(viewdef.definition, path, [definition])
 		return
 	}
-	const startIndex = index > 0 ? index : parent.length + index + 1
+	const startIndex = index >= 0 ? index : parent.length + index + 1
 	parent.splice(startIndex, 0, definition)
 }
 

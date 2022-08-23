@@ -162,7 +162,7 @@ const addNodeAtPath = (
 		return
 	}
 
-	const startIndex = index > 0 ? index : parentNode.items.length + index + 1
+	const startIndex = index >= 0 ? index : parentNode.items.length + index + 1
 	parentNode.items.splice(startIndex, 0, setNode)
 }
 
