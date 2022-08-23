@@ -32,7 +32,7 @@ export const mergeTemplate = (
 		(expression, key: string) =>
 			valueAPI.get(basePath + `[${key}]`) as string
 	)
-	console.log({ res })
+
 	return res === "undefined" || res === "null" ? null : res
 }
 
