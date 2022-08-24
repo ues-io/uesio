@@ -11,7 +11,7 @@ interface MarkDownProps extends definition.BaseProps {
 
 const MarkDownPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "MarkDown",
-	description: "MarkDown",
+	description: "Display formatted markdown text.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		markdown: "MarkDown Goes Here",
@@ -28,7 +28,7 @@ const MarkDownPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
-	category: "DATA",
+	category: "CONTENT",
 }
 export { MarkDownProps, MarkDownDefinition }
 

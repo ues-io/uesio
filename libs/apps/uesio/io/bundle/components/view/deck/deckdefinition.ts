@@ -12,7 +12,8 @@ interface DeckProps extends definition.BaseProps {
 
 const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Deck",
-	description: "Deck",
+	description:
+		"Iterate over records in a wire and render content into a grid layout.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [
@@ -47,6 +48,7 @@ const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root"],
+	category: "DATA",
 }
 export { DeckProps, DeckDefinition }
 

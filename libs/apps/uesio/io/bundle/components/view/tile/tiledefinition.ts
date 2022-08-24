@@ -12,7 +12,7 @@ interface TileProps extends definition.BaseProps {
 
 const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Tile",
-	description: "Title",
+	description: "A clickable tag representing a record.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
@@ -26,6 +26,7 @@ const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root", "content", "avatar"],
+	category: "CONTENT",
 }
 export { TileProps, TileDefinition }
 

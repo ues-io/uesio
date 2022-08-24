@@ -12,8 +12,8 @@ export interface Props extends definition.BaseProps {
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Chart",
-	description: "Just a chart",
+	title: "Bar Chart",
+	description: "Visualize data with bars.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "New chart",

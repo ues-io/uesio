@@ -16,7 +16,7 @@ interface Props extends definition.BaseProps {
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Tabs",
-	description: "Tab component",
+	description: "Organized view content in to tabbed sections",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
@@ -25,6 +25,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root", "content", "tabLabels", "tab", "tabSelected"],
 	type: "component",
+	category: "LAYOUT",
 }
 export { Props, TabsDefinition }
 

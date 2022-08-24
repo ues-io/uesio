@@ -16,7 +16,7 @@ interface ImageProps extends definition.BaseProps {
 
 const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Image",
-	description: "Visible impression obtained by a camera",
+	description: "Display an image.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [
@@ -85,6 +85,7 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root", "inner"],
 	type: "component",
+	category: "CONTENT",
 }
 export { ImageProps, ImageDefinition }
 
