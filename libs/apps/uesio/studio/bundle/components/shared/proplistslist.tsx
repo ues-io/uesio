@@ -117,7 +117,7 @@ const PropListsList: FC<T> = (props) => {
 								<PropNodeTag
 									key={i}
 									context={context}
-									onClick={(e: MouseEvent) =>
+									onClick={() =>
 										uesio.builder.setSelectedNode(
 											metadataType,
 											metadataItem,
