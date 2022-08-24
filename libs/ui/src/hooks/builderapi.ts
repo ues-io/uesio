@@ -277,6 +277,8 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
+	getNamespaceInfo = () => getCurrentState().builder.namespaces
+
 	getDefinition = (
 		state: RootState,
 		metadataType: string,

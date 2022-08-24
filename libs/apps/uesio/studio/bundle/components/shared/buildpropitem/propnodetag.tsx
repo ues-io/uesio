@@ -6,7 +6,6 @@ type Props = {
 	onClick?: (e: MouseEvent) => void
 	draggable?: string
 	context: context.Context
-	tooltip?: string
 	expandChildren?: ReactNode
 	popperChildren?: ReactNode
 }
@@ -20,8 +19,7 @@ const PropNodeTag: FC<Props> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] = useState(false)
 
-	const innerPadding = 8
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				cursor: draggable ? "grab" : "inherit",
@@ -38,13 +36,7 @@ const PropNodeTag: FC<Props> = (props) => {
 						opacity: 1,
 					},
 				},
-			},
-			inner: {
-				overflow: "hidden",
-				textOverflow: "ellipsis",
-				padding: `${innerPadding}px`,
-				// Make empty nodes still take up at least 1 lineheight
-				minHeight: `calc(1em + ${innerPadding * 2}px)`,
+				margin: "8px",
 			},
 		},
 		props
@@ -73,15 +65,11 @@ const PropNodeTag: FC<Props> = (props) => {
 					</Popper>
 				)}
 				{!props.expandChildren ? (
-					<div className={classes.inner}>{props.children}</div>
+					props.children
 				) : (
 					<IOExpandPanel
 						context={context}
-						toggle={
-							<div className={classes.inner}>
-								{props.children}
-							</div>
-						}
+						toggle={props.children}
 						showArrow={true}
 						expandState={[isExpanded, setIsExpanded]}
 					>

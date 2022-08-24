@@ -19,6 +19,7 @@ import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
 import WireFieldsProp from "../buildpropitem/wirefieldsprop"
+import FieldProp from "../buildpropitem/fieldprop"
 import PropListsProp from "../buildpropitem/proplistsprop"
 
 interface Props extends definition.BaseProps {
@@ -65,6 +66,8 @@ function getPropHandler(type?: string) {
 			return ParamsProp
 		case "WIRE_FIELDS":
 			return WireFieldsProp
+		case "FIELD":
+			return FieldProp
 		case "PROPLISTS":
 			return PropListsProp
 		default:

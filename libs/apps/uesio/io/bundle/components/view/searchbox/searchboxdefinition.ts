@@ -12,7 +12,7 @@ interface SearchBoxProps extends definition.BaseProps {
 
 const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Search Box",
-	description: "Searches for stuff",
+	description: "Filter a wire based on a user's text search.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [
@@ -32,6 +32,7 @@ const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "INTERACTION",
 }
 export { SearchBoxProps, SearchBoxDefinition }
 

@@ -11,7 +11,7 @@ interface TitleBarProps extends definition.BaseProps {
 
 const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Title Bar",
-	description: "Title Bar",
+	description: "A section description with a main title and subtitle.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ title: "New Title" }),
 	properties: [
@@ -30,6 +30,7 @@ const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	traits: ["uesio.standalone"],
 	type: "component",
+	category: "CONTENT",
 }
 export { TitleBarProps, TitleBarDefinition }
 

@@ -12,7 +12,7 @@ interface GroupProps extends definition.BaseProps {
 
 const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Group",
-	description: "Group",
+	description: "Create a horizontal line of inline elements.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ columnGap: "10px" }),
 	properties: [
@@ -32,6 +32,7 @@ const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "LAYOUT",
 }
 export { GroupProps, GroupDefinition }
 

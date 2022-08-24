@@ -10,4 +10,6 @@ definition:
       marginLeft: 8px
       fontSize: 10pt
       alignItems: center
+    avatar:
+      marginRight: 8px
 public: true
