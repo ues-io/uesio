@@ -1,7 +1,8 @@
 name: featureflagassignment
 uniqueKey:
-  - uesio/core.key
-nameField: uesio/core.key
+  - uesio/core.flag
+  - uesio/core.user
+nameField: uesio/core.uniquekey
 public: true
 label: feature flag assignment
 pluralLabel: feature flag assignments

@@ -1,18 +1,12 @@
-import { FunctionComponent, ReactNode, useState } from "react"
+import { FC, ReactNode, useState } from "react"
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
-	title: string
-	icon?: string
-	iconColor?: string
 	selected?: boolean
 	onClick?: (e: MouseEvent) => void
 	draggable?: string
 	context: context.Context
-	tooltip?: string
-	expandChildren?: boolean
-	panelAlwaysExpanded?: boolean
-	panelChildren?: ReactNode
+	expandChildren?: ReactNode
 	popperChildren?: ReactNode
 }
 
@@ -20,22 +14,12 @@ const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
-const PropNodeTag: FunctionComponent<Props> = (props) => {
-	const {
-		title,
-		onClick,
-		draggable,
-		selected,
-		context,
-		panelAlwaysExpanded,
-		panelChildren,
-		popperChildren,
-	} = props
+const PropNodeTag: FC<Props> = (props) => {
+	const { onClick, draggable, selected, context, popperChildren } = props
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+	const [isExpanded, setIsExpanded] = useState(false)
 
-	const [expanded, setExpanded] = useState<boolean>(
-		panelAlwaysExpanded ? panelAlwaysExpanded : false
-	)
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				cursor: draggable ? "grab" : "inherit",
@@ -52,24 +36,18 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 						opacity: 1,
 					},
 				},
-			},
-			title: {
-				textTransform: "uppercase",
-				overflow: "hidden",
-				textOverflow: "ellipsis",
+				margin: "8px",
 			},
 		},
 		props
 	)
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
 	return (
 		<div
 			className={classes.root}
 			ref={setAnchorEl}
-			draggable={!!draggable && !expanded}
+			draggable={!!draggable && !isExpanded}
 			data-type={draggable}
-			onClick={(e) => e.stopPropagation()}
 		>
 			<Tile
 				variant="uesio/studio.propnodetag"
@@ -77,31 +55,32 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
-				<IOExpandPanel
-					defaultExpanded={false}
-					context={context}
-					toggle={<div className={classes.title}>{title}</div>}
-					showArrow={false}
-					expandState={
-						panelAlwaysExpanded
-							? [true, null]
-							: [expanded, setExpanded]
-					}
-				>
-					{panelChildren}
-				</IOExpandPanel>
+				{selected && anchorEl && popperChildren && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="right"
+					>
+						{popperChildren}
+					</Popper>
+				)}
+				{!props.expandChildren ? (
+					props.children
+				) : (
+					<IOExpandPanel
+						context={context}
+						toggle={props.children}
+						showArrow={true}
+						expandState={[isExpanded, setIsExpanded]}
+					>
+						{props.expandChildren}
+					</IOExpandPanel>
+				)}
 			</Tile>
-			{selected && anchorEl && popperChildren && (
-				<Popper
-					referenceEl={anchorEl}
-					context={context}
-					placement="right"
-				>
-					{popperChildren}
-				</Popper>
-			)}
 		</div>
 	)
 }
+
+PropNodeTag.displayName = "PropNodeTag"
 
 export default PropNodeTag

@@ -78,6 +78,9 @@ type MergeData struct {
 // This is actually pretty silly but I did it to make the output
 // look pretty in the html source.
 func (md MergeData) String() string {
+	// Remove the component pack dep info because we don't need it on the client
+	md.ComponentPack = nil
+
 	json, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)
 	if err != nil {
@@ -141,14 +144,13 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 	if !buildMode {
 		return nil
 	}
+	componentID := "$root:uesio/studio.runtime:buildmode"
 	return &ComponentsMergeData{
-		IDs: []string{"$root/uesio/studio.runtime/buildmode"},
+		IDs: []string{componentID},
 		Entities: map[string]ComponentMergeData{
-			"$root/uesio/studio.runtime/buildmode": {
-				ID:            "buildmode",
-				ComponentType: "uesio/studio.runtime",
-				View:          "$root",
-				State:         true,
+			componentID: {
+				ID:    componentID,
+				State: true,
 			},
 		},
 	}
@@ -184,6 +186,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			ComponentVariant: preload.GetComponentVariant(),
 			Label:            preload.GetLabel(),
 			ConfigValue:      preload.GetConfigValue(),
+			FeatureFlag:      preload.GetFeatureFlags(),
 		},
 	}
 

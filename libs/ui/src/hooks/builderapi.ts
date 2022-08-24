@@ -27,7 +27,6 @@ import {
 import { save as saveOp, cancel as cancelOp } from "../bands/builder/operations"
 import { appDispatch, RootState, getCurrentState } from "../store/store"
 
-import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import {
 	fromPath,
@@ -61,13 +60,6 @@ class BuilderAPI {
 	}
 
 	uesio: Uesio
-
-	useBuilderState = <T extends PlainComponentState>(scope: string) =>
-		this.uesio.component.useExternalState<T>(
-			"$root",
-			"uesio/studio.runtime",
-			scope
-		)
 
 	useNodeState = useNodeState
 	useSelectedNode = (): [string, string, string] => {
@@ -284,6 +276,8 @@ class BuilderAPI {
 			getFullPathParts(fullPath)
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
+
+	getNamespaceInfo = () => getCurrentState().builder.namespaces
 
 	getDefinition = (
 		state: RootState,

@@ -12,7 +12,8 @@ interface ListProps extends definition.BaseProps {
 
 const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "List",
-	description: "List",
+	description:
+		"Iterate over records in a wire and render content in the context of each record.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
 	properties: [
@@ -64,6 +65,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root"],
+	category: "DATA",
 }
 export { ListProps, ListDefinition }
 

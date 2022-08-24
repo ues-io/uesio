@@ -6,58 +6,18 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type MetadataResponse struct {
-	Color string `json:"color"`
-}
-
-func getAppData(namespaces []string, session *sess.Session) (map[string]*meta.App, error) {
-	apps := meta.AppCollection{}
-
-	// Load in App Settings
-	err := datasource.PlatformLoad(&apps, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
-			{
-				Field:    adapt.UNIQUE_KEY_FIELD,
-				Operator: "IN",
-				Value:    namespaces,
-			},
-		},
-		Fields: []adapt.LoadRequestField{
-			{
-				ID: "uesio/studio.color",
-			},
-			{
-				ID: "uesio/studio.icon",
-			},
-		},
-		SkipRecordSecurity: true,
-	}, session.RemoveWorkspaceContext())
-	if err != nil {
-		return nil, err
-	}
-
-	appData := map[string]*meta.App{}
-
-	for index := range apps {
-		app := apps[index]
-		appData[app.UniqueKey] = app
-	}
-
-	return appData, nil
-}
-
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]MetadataResponse, error) {
-	collectionKeyMap := map[string]MetadataResponse{}
+func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]routing.MetadataResponse, error) {
+	collectionKeyMap := map[string]routing.MetadataResponse{}
 
 	conditions := meta.BundleConditions{}
 	// Special handling for fields for now
@@ -94,9 +54,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	// Create an appMap
-
-	appData, err := getAppData(appNames, session)
+	appData, err := routing.GetAppData(appNames, session)
 	if err != nil {
 		return nil, err
 	}
@@ -107,9 +65,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 			return nil, errors.New("Could not find app info")
 		}
 		for _, field := range datasource.BUILTIN_FIELDS {
-			collectionKeyMap[field.GetFullName()] = MetadataResponse{
-				Color: appInfo.Color,
-			}
+			collectionKeyMap[field.GetFullName()] = appInfo
 		}
 	}
 
@@ -126,9 +82,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		if !ok {
 			return errors.New("Could not find app info")
 		}
-		collectionKeyMap[key] = MetadataResponse{
-			Color: appInfo.Color,
-		}
+		collectionKeyMap[key] = appInfo
 		return nil
 	})
 	if err != nil {

@@ -58,6 +58,7 @@ type CollectionNavigateRequest = {
 
 type MetadataInfo = {
 	color: string
+	icon: string
 }
 
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
@@ -127,15 +128,6 @@ const respondVoid = async (response: Response) => {
 	return
 }
 
-const respondText = async (response: Response) => {
-	if (response.status !== 200) {
-		const errorText = await response.text()
-		throw new Error(errorText)
-	}
-
-	return response.text()
-}
-
 const postJSON = (url: string, body?: Record<string, unknown>) =>
 	fetch(url, {
 		method: "POST",
@@ -148,16 +140,6 @@ const postJSON = (url: string, body?: Record<string, unknown>) =>
 	})
 
 const platform = {
-	getView: async (context: Context, namespace: string, name: string) => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/views/${namespace}/${name}`)
-		return respondText(response)
-	},
-	getTheme: async (context: Context, namespace: string, name: string) => {
-		const prefix = getPrefix(context)
-		const response = await fetch(`${prefix}/themes/${namespace}/${name}`)
-		return respondText(response)
-	},
 	getRoute: async (
 		context: Context,
 		request: NavigateRequest
@@ -462,4 +444,5 @@ export {
 	CollectionNavigateRequest,
 	NavigateRequest,
 	JobResponse,
+	MetadataInfo,
 }

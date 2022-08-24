@@ -31,7 +31,16 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
+	category?: Categories
 }
+
+type Categories =
+	| "LAYOUT"
+	| "CONTENT"
+	| "DATA"
+	| "INTERACTION"
+	| "VISUALIZATION"
+	| "UNCATEGORIZED"
 
 type PropertySection =
 	| FieldsSection
@@ -108,6 +117,8 @@ type PropDescriptor =
 	| ParamProp
 	| ParamsProp
 	| WireFieldsProp
+	| FieldProp
+	| PropListProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -227,13 +238,23 @@ interface ComponentTargetProp extends BasePropDescriptor {
 interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
 }
+interface FieldProp extends BasePropDescriptor {
+	type: "FIELD"
+	wireField: string
+}
+interface PropListProp extends BasePropDescriptor {
+	type: "PROPLISTS"
+	properties: PropDescriptor[]
+}
 
 type ActionDescriptor =
 	| AddAction
+	| CustomAction
 	| RunSignalsAction
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| CloneKeyAction
 	| DeleteAction
 	| MoveAction
 	| AddCondition
@@ -257,12 +278,24 @@ type DeleteAction = {
 	type: "DELETE"
 }
 
+type CustomAction = {
+	type: "CUSTOM"
+	handler: () => void
+	label: string
+	icon: string
+	disabled?: boolean
+}
+
 type MoveAction = {
 	type: "MOVE"
 }
 
 type CloneAction = {
 	type: "CLONE"
+}
+
+type CloneKeyAction = {
+	type: "CLONEKEY"
 }
 
 type LoadWireAction = {
@@ -283,6 +316,7 @@ type RunSignalsAction = {
 type PropertySelectOption = {
 	value: string
 	label: string
+	disabled?: boolean
 }
 
 type SignalProperties = {
@@ -308,6 +342,7 @@ export {
 	PropertySelectOption,
 	ActionDescriptor,
 	AddAction,
+	CustomAction,
 	CloneAction,
 	RunSignalsAction,
 	LoadWireAction,
@@ -333,5 +368,7 @@ export {
 	ConditionalDisplayProp,
 	OrderSection,
 	WireFieldsProp,
+	PropListProp,
 	AddCondition,
+	FieldProp,
 }

@@ -64,14 +64,13 @@ components:
 
 tests.map(({ name, path, definition, data, expected }) =>
 	test(name, () => {
-		expect(
-			testTextAction(
-				data,
-				setDefinition({
-					path: getTestPath(path),
-					definition,
-				})
-			)
-		).toStrictEqual(expected.trim())
+		testTextAction(
+			data,
+			expected,
+			setDefinition({
+				path: getTestPath(path),
+				definition,
+			})
+		)
 	})
 )

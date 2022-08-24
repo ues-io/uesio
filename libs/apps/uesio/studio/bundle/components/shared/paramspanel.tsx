@@ -21,7 +21,6 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				const paramPath = `${localPath}["${paramId}"]`
 				return (
 					<PropNodeTag
-						title={paramId}
 						onClick={() =>
 							uesio.builder.setSelectedNode(
 								metadataType,
@@ -29,7 +28,6 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								paramPath
 							)
 						}
-						icon="power"
 						key={paramPath}
 						selected={
 							selectedMetadataType === metadataType &&
@@ -37,7 +35,9 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							paramPath === selectedNode
 						}
 						context={context}
-					/>
+					>
+						<span>{paramId}</span>
+					</PropNodeTag>
 				)
 			})}
 		</div>

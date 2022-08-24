@@ -1,24 +1,16 @@
 import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropNodeTag from "../buildpropitem/propnodetag"
-import { hooks, definition, signal, component, builder } from "@uesio/ui"
+import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
-const standardActions: builder.ActionDescriptor[] = [
-	{ type: "DELETE" },
-	{ type: "MOVE" },
-	{ type: "CLONE" },
-]
-
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
-	const primaryColor = theme.definition.palette.primary
 	const [metadataType, metadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 
@@ -63,10 +55,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				const selected = selectedNode.startsWith(signalPath)
 				return (
 					<PropNodeTag
-						title={signal?.signal}
-						icon="router"
 						selected={selected}
-						iconColor={primaryColor}
 						key={index}
 						onClick={(): void =>
 							uesio.builder.setSelectedNode(
@@ -89,12 +78,18 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 										uesio.builder.getSignalProperties(
 											signal
 										),
-									actions: standardActions,
+									actions: [
+										{ type: "DELETE" },
+										{ type: "MOVE" },
+										{ type: "CLONE" },
+									],
 								}}
 								valueAPI={valueAPI}
 							/>
 						}
-					/>
+					>
+						{signal?.signal}
+					</PropNodeTag>
 				)
 			})}
 		</>

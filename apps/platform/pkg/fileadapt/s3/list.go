@@ -2,7 +2,6 @@ package s3
 
 import (
 	"context"
-	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -15,19 +14,17 @@ func (c *Connection) List(path string) ([]string, error) {
 		Prefix: aws.String(path),
 	}
 
-	result, err := c.client.ListObjectsV2(context.Background(), input)
-	if err != nil {
-		return nil, err
-	}
+	paginator := s3.NewListObjectsV2Paginator(c.client, input)
 
-	if result.IsTruncated {
-		return nil, errors.New("S3 Limit exceeded")
-	}
-
-	var paths = make([]string, len(result.Contents))
-
-	for i, fileMetadata := range result.Contents {
-		paths[i] = *fileMetadata.Key
+	var paths []string
+	for paginator.HasMorePages() {
+		result, err := paginator.NextPage(context.Background())
+		if err != nil {
+			return nil, err
+		}
+		for _, fileMetadata := range result.Contents {
+			paths = append(paths, *fileMetadata.Key)
+		}
 	}
 
 	return paths, nil

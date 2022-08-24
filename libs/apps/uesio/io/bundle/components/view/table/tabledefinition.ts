@@ -27,7 +27,7 @@ type ColumnDefinition = {
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
-	description: "Table",
+	description: "View and edit tabular data.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
 	properties: [
@@ -85,6 +85,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	},
 	type: "component",
 	classes: ["root"],
+	category: "DATA",
 }
 export { TableProps, TableDefinition, ColumnDefinition, RowAction }
 

@@ -10,7 +10,8 @@ interface BoxProps extends definition.BaseProps {
 
 const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Box",
-	description: "Used for grouping elements",
+	description:
+		"A container that can group other components and apply styles around them.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
@@ -19,6 +20,7 @@ const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "LAYOUT",
 }
 export { BoxProps, BoxDefinition }
 

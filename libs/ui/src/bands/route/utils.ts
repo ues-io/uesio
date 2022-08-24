@@ -9,6 +9,8 @@ import { setMany as setLabel } from "../label"
 import { setMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
 import { setMany as setMetadataText } from "../metadatatext"
+import { setMany as setFeatureFlag } from "../featureflag"
+import { setNamespaceInfo } from "../builder"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -17,6 +19,7 @@ import { Context } from "../../context/context"
 import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
 import { MetadataState } from "../metadata/types"
+import { FeatureFlagState } from "../../definition/featureflag"
 
 type Dep<T> = Record<string, T> | undefined
 
@@ -32,6 +35,9 @@ const dispatchRouteDeps = (
 	const configvalues = deps.configvalue?.entities as Dep<ConfigValueState>
 	if (configvalues) dispatch(setConfigValue(configvalues))
 
+	const featureflags = deps.featureflag?.entities as Dep<FeatureFlagState>
+	if (featureflags) dispatch(setFeatureFlag(featureflags))
+
 	const labels = deps.label?.entities as Dep<LabelState>
 	if (labels) dispatch(setLabel(labels))
 
@@ -43,6 +49,9 @@ const dispatchRouteDeps = (
 
 	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
 	if (metadatatext) dispatch(setMetadataText(metadatatext))
+
+	const namespaceinfo = deps.namespaces
+	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
 }
 
 const getPackUrlsForDeps = (

@@ -8,6 +8,7 @@ import { ViewProps } from "./viewdefinition"
 import { ComponentInternal } from "../../component/component"
 import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
+import { useUesio } from "../../hooks/hooks"
 const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
@@ -15,7 +16,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		definition: { params, view: viewDefId },
 	} = props
 
-	const viewId = makeViewId(viewDefId, path)
+	const uesio = useUesio(props)
+	const componentId = path ? uesio.component.getId() : ""
+	const viewId = makeViewId(viewDefId, componentId)
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -24,17 +27,11 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	const isSubView = !!path
 
-	// Currently only going into buildtime for the base view. We could change this later.
-	const buildMode = !!context.getBuildMode() && !isSubView
-
 	const viewDef = useViewDef(viewDefId)
-	const useBuildTime = buildMode
-	const viewStack = context.getViewStack()
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		buildMode: useBuildTime,
 		params: context.mergeMap(params),
 	})
 
@@ -45,7 +42,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	if (!viewDef) return null
 
-	if (isSubView && viewStack?.includes(viewDefId)) {
+	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
 			`View {viewDefId} cannot be selected in this context, please try another one.`
 		)
@@ -57,7 +54,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}
-			context={viewContext}
+			context={viewContext.addFrame({
+				buildMode: !!context.getBuildMode() && !isSubView,
+			})}
 		/>
 	)
 
