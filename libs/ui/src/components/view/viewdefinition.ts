@@ -34,6 +34,7 @@ const ViewPropertyDefinition: BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "LAYOUT",
 }
 
 export default ViewPropertyDefinition

@@ -63,7 +63,7 @@ const CodePropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
-	traits: ["uesio.standalone"],
+	//traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root"],
 }
