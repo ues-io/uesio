@@ -1,12 +1,7 @@
-import { FunctionComponent } from "react"
 import { definition, component, builder } from "@uesio/ui"
 import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
 
-interface MetadataPropRendererProps extends builder.PropRendererProps {
-	descriptor: builder.MetadataProp
-}
-
-const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
+const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 	const { path, valueAPI, context, descriptor } = props
 	const metadataType = descriptor.metadataType
 	const value = valueAPI.get(path) as string

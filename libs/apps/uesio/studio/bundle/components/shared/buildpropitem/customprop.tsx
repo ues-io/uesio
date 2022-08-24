@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
 import { builder } from "@uesio/ui"
 
-const CustomProp: FunctionComponent<builder.CustomPropRendererProps> = ({
+const CustomProp: builder.PropComponent<builder.CustomProp> = ({
 	descriptor,
 	valueAPI,
 	context,

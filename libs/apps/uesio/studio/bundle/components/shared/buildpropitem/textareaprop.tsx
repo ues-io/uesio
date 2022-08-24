@@ -5,7 +5,7 @@ import { component, builder } from "@uesio/ui"
 const TextAreaField = component.getUtility("uesio/io.textareafield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const TextAreaProp: FunctionComponent<builder.PropRendererProps> = ({
+const TextAreaProp: builder.PropComponent<builder.TextAreaProp> = ({
 	descriptor,
 	valueAPI,
 	context,

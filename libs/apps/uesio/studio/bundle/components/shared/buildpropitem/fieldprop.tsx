@@ -1,10 +1,8 @@
-import { FC } from "react"
 import { builder, component, wire, util } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-const FieldsProp: FC<builder.PropRendererProps> = (props) => {
-	const { valueAPI, path } = props
-	const descriptor = props.descriptor as builder.FieldProp
+const FieldsProp: builder.PropComponent<builder.FieldProp> = (props) => {
+	const { valueAPI, path, descriptor } = props
 
 	const parentPath = component.path.getParentPath(path || "")
 	const wirePath = parentPath + `["${descriptor.wireField}"]`

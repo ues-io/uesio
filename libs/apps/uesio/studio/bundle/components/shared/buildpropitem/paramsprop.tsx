@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react"
 import { component, builder, definition, hooks } from "@uesio/ui"
 
 const TextField = component.getUtility("uesio/io.textfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const ParamsProp: FunctionComponent<builder.PropRendererProps> = (props) => {
+const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 	const { valueAPI, path, context } = props
 	const uesio = hooks.useUesio(props)
 	if (!path) return null

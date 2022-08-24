@@ -1,12 +1,7 @@
-import { FunctionComponent } from "react"
 import { hooks, builder } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-interface BotPropRendererProps extends builder.PropRendererProps {
-	descriptor: builder.BotProp
-}
-
-const BotProp: FunctionComponent<BotPropRendererProps> = (props) => {
+const BotProp: builder.PropComponent<builder.BotProp> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, descriptor } = props
 	const botType = descriptor.botType

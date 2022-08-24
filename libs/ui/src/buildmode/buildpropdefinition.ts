@@ -145,10 +145,6 @@ interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 	filter?: (def: Definition, id: string) => boolean
 }
 
-interface CustomPropRendererProps extends PropRendererProps {
-	descriptor: CustomProp
-}
-
 interface ConditionProp extends DefinitionBasedPropDescriptor {
 	type: "CONDITION"
 	wire?: string
@@ -329,13 +325,17 @@ interface PropRendererProps<T = PropDescriptor> extends BaseProps {
 	valueAPI: ValueAPI
 }
 
+type PropComponent<T = PropDescriptor> = FC<PropRendererProps<T>>
+
 export {
+	PropComponent,
+	NamespaceProp,
 	ConditionProp,
+	ParamsProp,
 	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
-	CustomPropRendererProps,
 	BuildPropertiesDefinition,
 	PropertySection,
 	PropDescriptor,
@@ -356,6 +356,7 @@ export {
 	BooleanProp,
 	BotProp,
 	MultiSelectProp,
+	ParamProp,
 	KeyProp,
 	WireProp,
 	WiresProp,

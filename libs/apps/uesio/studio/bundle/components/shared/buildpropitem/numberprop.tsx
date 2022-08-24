@@ -5,7 +5,7 @@ import { component, builder } from "@uesio/ui"
 const NumberField = component.getUtility("uesio/io.numberfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const NumberProp: FunctionComponent<builder.PropRendererProps> = ({
+const NumberProp: builder.PropComponent<builder.NumberProp> = ({
 	descriptor,
 	valueAPI,
 	context,
