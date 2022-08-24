@@ -6,7 +6,6 @@ type Props = {
 	onClick?: (e: MouseEvent) => void
 	draggable?: string
 	context: context.Context
-	tooltip?: string
 	expandChildren?: ReactNode
 	popperChildren?: ReactNode
 	className?: string
@@ -26,7 +25,7 @@ const PropNodeTag: FC<Props> = (props) => {
 		(props.useExpand && props.useExpand()) || useState(false)
 	// const [isExpanded, setIsExpanded] = useState(false)
 
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				cursor: draggable ? "grab" : "inherit",
@@ -43,11 +42,7 @@ const PropNodeTag: FC<Props> = (props) => {
 						opacity: 1,
 					},
 				},
-			},
-			inner: {
-				overflow: "hidden",
-				textOverflow: "ellipsis",
-				padding: "8px",
+				margin: "8px",
 			},
 		},
 		props
@@ -66,16 +61,21 @@ const PropNodeTag: FC<Props> = (props) => {
 				onClick={onClick}
 				isSelected={selected}
 			>
+				{selected && anchorEl && popperChildren && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="right"
+					>
+						{popperChildren}
+					</Popper>
+				)}
 				{!props.expandChildren ? (
-					<div className={classes.inner}>{props.children}</div>
+					props.children
 				) : (
 					<IOExpandPanel
 						context={context}
-						toggle={
-							<div className={classes.inner}>
-								{props.children}
-							</div>
-						}
+						toggle={props.children}
 						showArrow={true}
 						expandState={[isExpanded, setIsExpanded]}
 					>
@@ -83,17 +83,10 @@ const PropNodeTag: FC<Props> = (props) => {
 					</IOExpandPanel>
 				)}
 			</Tile>
-			{selected && anchorEl && popperChildren && (
-				<Popper
-					referenceEl={anchorEl}
-					context={context}
-					placement="right"
-				>
-					{popperChildren}
-				</Popper>
-			)}
 		</div>
 	)
 }
+
+PropNodeTag.displayName = "PropNodeTag"
 
 export default PropNodeTag

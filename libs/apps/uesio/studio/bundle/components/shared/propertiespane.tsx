@@ -62,10 +62,14 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		</div>
 	)
 
-	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
-		"propertiespanel:" + path,
-		"",
+	const componentId = uesio.component.getId(
+		"propertiespanel" + path,
 		"uesio/studio.runtime"
+	)
+
+	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+		componentId,
+		""
 	)
 
 	const selectedSection = propsDef.sections?.find(
@@ -86,7 +90,10 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 									variant="uesio/studio.buildtitle"
 									context={context}
 									icon="close"
-									onClick={() => uesio.builder.unSelectNode()}
+									onClick={(e: MouseEvent) => {
+										e.stopPropagation()
+										uesio.builder.unSelectNode()
+									}}
 								/>
 							)
 						}

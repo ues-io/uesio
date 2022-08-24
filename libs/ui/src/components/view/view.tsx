@@ -8,6 +8,7 @@ import { ViewProps } from "./viewdefinition"
 import { ComponentInternal } from "../../component/component"
 import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
+import { useUesio } from "../../hooks/hooks"
 const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
@@ -15,7 +16,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		definition: { params, view: viewDefId },
 	} = props
 
-	const viewId = makeViewId(viewDefId, path)
+	const uesio = useUesio(props)
+	const componentId = path ? uesio.component.getId() : ""
+	const viewId = makeViewId(viewDefId, componentId)
 
 	const subViewClass = css({
 		pointerEvents: "none",

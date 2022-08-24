@@ -13,7 +13,7 @@ interface TextProps extends definition.BaseProps {
 
 const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Text",
-	description: "Text",
+	description: "Display text content",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "Text Goes Here",
@@ -92,6 +92,7 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "CONTENT",
 }
 export { TextProps, TextDefinition }
 

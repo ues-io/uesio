@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, wire, hooks, component } from "@uesio/ui"
+import { definition, wire, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ConditionItem from "../buildpropitem/conditionItem"
 
@@ -21,17 +21,11 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
-	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
-	const [, , selectedNode] = uesio.builder.useSelectedNode()
-	const viewDefId = uesio.getViewDefId()
-	if (!viewDefId) return null
 
 	const conditionsDef = wireDef?.conditions as
 		| definition.Definition[]
 		| undefined
 
-	const primaryColor = theme.definition.palette.primary
 	const conditionsPath = `${path}["conditions"]`
 
 	return (
@@ -84,27 +78,14 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			{conditionsDef?.map(
 				(condition: wire.WireConditionDefinition, index) => {
 					const conditionPath = `${conditionsPath}["${index}"]`
-					const selected = selectedNode === conditionPath
 
 					return (
 						<ConditionItem
 							key={conditionPath}
 							conditionPath={conditionPath}
-							selected={selected}
-							index={index}
-							selectedNode={selectedNode}
-							primaryColor={primaryColor}
-							viewDefId={viewDefId}
 							context={context}
 							condition={condition}
 							valueAPI={valueAPI}
-							onClick={() => {
-								uesio.builder.setSelectedNode(
-									"viewdef",
-									viewDefId,
-									conditionPath
-								)
-							}}
 						/>
 					)
 				}

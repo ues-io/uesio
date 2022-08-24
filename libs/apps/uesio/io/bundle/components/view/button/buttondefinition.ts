@@ -13,7 +13,7 @@ interface ButtonProps extends definition.BaseProps {
 
 const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Button",
-	description: "Just a button",
+	description: "Run signals based on user interaction.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "New Button",
@@ -46,6 +46,7 @@ const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "INTERACTION",
 }
 export { ButtonProps, ButtonDefinition }
 

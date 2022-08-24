@@ -31,7 +31,16 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
+	category?: Categories
 }
+
+type Categories =
+	| "LAYOUT"
+	| "CONTENT"
+	| "DATA"
+	| "INTERACTION"
+	| "VISUALIZATION"
+	| "UNCATEGORIZED"
 
 type PropertySection =
 	| FieldsSection
@@ -108,6 +117,7 @@ type PropDescriptor =
 	| ParamProp
 	| ParamsProp
 	| WireFieldsProp
+	| FieldProp
 	| PropListProp
 
 type BasePropDescriptor = {
@@ -227,6 +237,10 @@ interface ComponentTargetProp extends BasePropDescriptor {
 
 interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
+}
+interface FieldProp extends BasePropDescriptor {
+	type: "FIELD"
+	wireField: string
 }
 interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"
@@ -355,4 +369,5 @@ export {
 	WireFieldsProp,
 	PropListProp,
 	AddCondition,
+	FieldProp,
 }

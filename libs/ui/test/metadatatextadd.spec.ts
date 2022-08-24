@@ -25,6 +25,63 @@ components:
 `,
 	},
 	{
+		name: "Add to the end",
+		path: `["components"]`,
+		index: -1,
+		definition: {
+			"uesio/io.button": {
+				text: "button3",
+			},
+		},
+		data: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+
+`,
+		expected: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button3
+`,
+	},
+	{
+		name: "Add to first to last",
+		path: `["components"]`,
+		index: -2,
+		definition: {
+			"uesio/io.button": {
+				text: "button3",
+			},
+		},
+		data: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button4
+`,
+		expected: `
+components:
+  - uesio/io.button:
+      text: button1
+  - uesio/io.button:
+      text: button2
+  - uesio/io.button:
+      text: button3
+  - uesio/io.button:
+      text: button4
+`,
+	},
+	{
 		name: "Add After",
 		path: `["components"]`,
 		index: 1,
