@@ -66,7 +66,7 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 								{
 									type: "CUSTOM",
 									label: "Add item",
-									handler: (e: MouseEvent) => {
+									handler: (e) => {
 										e.stopPropagation()
 										// When items is 0 we still show 1 empty item in the ui.
 										// Adding in this scenario would mean we need to add 2 to get 2 real items
