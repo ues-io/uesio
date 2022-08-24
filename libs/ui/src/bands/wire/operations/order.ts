@@ -7,7 +7,8 @@ export const add =
 	(
 		context: Context,
 		wirename: string,
-		order: { field: MetadataKey; desc: boolean }
+		field: MetadataKey,
+		desc: boolean
 	): ThunkFunc =>
 	(dispatch) => {
 		const viewId = context.getViewId()
@@ -15,7 +16,10 @@ export const add =
 			dispatch(
 				addOrder({
 					entity: getFullWireId(viewId, wirename),
-					order,
+					order: {
+						field,
+						desc,
+					},
 				})
 			)
 		return context

@@ -81,7 +81,8 @@ interface SetOrderSignal extends SignalDefinition {
 }
 interface AddOrderSignal extends SignalDefinition {
 	wire: string
-	order: { field: MetadataKey; desc: boolean }
+	field: MetadataKey
+	desc: boolean
 }
 interface RemoveOrderSignal extends SignalDefinition {
 	wire: string
@@ -198,11 +199,6 @@ const signals: Record<string, SignalDescriptor> = {
 		label: "Search Wire",
 		properties: (): PropDescriptor[] => [
 			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-			{
 				name: "searchFields",
 				type: "WIRE_FIELDS",
 				label: "Search Fields",
@@ -282,19 +278,30 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${WIRE_BAND}/ADD_ORDER`]: {
-		label: "Set Wire Order",
+		label: "Add Wire Order",
 		dispatcher: (signal: AddOrderSignal, context: Context) =>
-			addOrderOp(context, signal.wire, signal.order),
+			addOrderOp(context, signal.wire, signal.field, signal.desc),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
 			},
+			{
+				name: "field",
+				type: "FIELD",
+				label: "Field",
+				wireField: "wire",
+			},
+			{
+				name: "desc",
+				type: "BOOLEAN",
+				label: "Descending",
+			},
 		],
 	},
 	[`${WIRE_BAND}/REMOVE_ORDER`]: {
-		label: "Set Wire Order",
+		label: "Remove Wire Order",
 		dispatcher: (signal: RemoveOrderSignal, context: Context) =>
 			removeOrderOp(context, signal.wire, signal.fields),
 		properties: (): PropDescriptor[] => [
@@ -311,7 +318,7 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${WIRE_BAND}/INIT`]: {
-		label: "Load Wire(s)",
+		label: "Init Wire(s)",
 		dispatcher: (signal: InitializeWiresSignal, context: Context) =>
 			initWiresOp(context, signal.wireDefs),
 		properties: (): PropDescriptor[] => [
