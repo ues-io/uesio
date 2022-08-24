@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { wire, builder } from "@uesio/ui"
 import MultiSelectProp from "./multiselectprop"
 
-const WiresProp: FunctionComponent<builder.PropRendererProps> = (props) => {
+const WiresProp: builder.PropComponent<builder.WiresProp> = (props) => {
 	const { descriptor, valueAPI } = props
 	const availableWires = (valueAPI.get('["wires"]') ||
 		{}) as wire.WireDefinitionMap

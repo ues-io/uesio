@@ -1,4 +1,3 @@
-import { FC } from "react"
 import { builder, component, hooks } from "@uesio/ui"
 
 import PropNodeTag from "../buildpropitem/propnodetag"
@@ -9,7 +8,7 @@ const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 
-const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
+const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
 
