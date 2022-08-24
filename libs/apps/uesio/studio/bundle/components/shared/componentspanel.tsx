@@ -96,7 +96,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 			}
 			draggable={`component:${fullName}`}
 			selected={
-				selectedType === "componentvariant" && selectedItem === fullName
+				selectedType === "componenttype" && selectedItem === fullName
 			}
 			expandChildren={
 				variants && (
@@ -236,11 +236,6 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "auto",
 				flex: 1,
-			},
-			categoryLabel: {
-				margin: "16px 10px 0 10px",
-				fontSize: "8pt",
-				fontWeight: "300",
 			},
 		},
 		props
