@@ -246,7 +246,6 @@ interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
 }
-
 type ActionDescriptor =
 	| AddAction
 	| CustomAction
