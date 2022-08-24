@@ -182,7 +182,7 @@ interface ParamsProp extends BasePropDescriptor {
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FC<CustomPropRendererProps>
+	renderFunc: PropComponent<CustomProp>
 }
 
 interface MetadataProp extends BasePropDescriptor {

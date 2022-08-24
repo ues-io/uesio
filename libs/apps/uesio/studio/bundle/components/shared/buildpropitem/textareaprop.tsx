@@ -1,5 +1,3 @@
-import { FunctionComponent } from "react"
-
 import { component, builder } from "@uesio/ui"
 
 const TextAreaField = component.getUtility("uesio/io.textareafield")

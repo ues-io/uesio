@@ -1,5 +1,3 @@
-import { FunctionComponent } from "react"
-
 import { component, builder } from "@uesio/ui"
 
 const NumberField = component.getUtility("uesio/io.numberfield")
