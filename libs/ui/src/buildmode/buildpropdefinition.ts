@@ -4,7 +4,7 @@ import {
 	DefinitionMap,
 	DefinitionValue,
 } from "../definition/definition"
-import { FC } from "react"
+import React, { FC } from "react"
 import { Uesio } from "../hooks/hooks"
 import { MetadataType } from "../bands/builder/types"
 import ValueAPI from "./valueapi"
@@ -280,7 +280,7 @@ type DeleteAction = {
 
 type CustomAction = {
 	type: "CUSTOM"
-	handler: (e: MouseEvent) => void
+	handler: (e: React.SyntheticEvent<Element, Event>) => void
 	label: string
 	icon: string
 	disabled?: boolean
