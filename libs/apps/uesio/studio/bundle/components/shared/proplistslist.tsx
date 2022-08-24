@@ -99,10 +99,9 @@ const PropListsList: FC<T> = (props) => {
 								display: "flex",
 								alignItems: "center",
 							}}
-							onClick={(e: React.MouseEvent<HTMLElement>) => {
-								console.log("stopping here")
+							onClick={(e: React.MouseEvent<HTMLElement>) =>
 								e.stopPropagation()
-							}}
+							}
 						>
 							<div
 								style={{

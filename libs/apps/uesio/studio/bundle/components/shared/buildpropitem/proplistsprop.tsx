@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import { builder, component, hooks } from "@uesio/ui"
 
 import PropNodeTag from "../buildpropitem/propnodetag"
