@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { hooks, component } from "@uesio/ui"
+import { hooks, component, builder } from "@uesio/ui"
 import { SectionRendererProps } from "../sectionrendererdefinition"
 
 import PropNodeTag from "../../buildpropitem/propnodetag"
@@ -13,8 +13,12 @@ const Icon = component.getUtility("uesio/io.icon")
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 
+	//TO-DO use SectionRendererProps generic to ge tthe right type
+	const section = props?.section as builder.ConditionalDisplaySection
+	const specialPropsKey = section?.specialPropsKey
+
 	const uesio = hooks.useUesio(props)
-	const displayPath = `${path}["uesio.display"]`
+	const displayPath = `${path}["${specialPropsKey}"]`
 
 	const [, , selectedNode] = uesio.builder.useSelectedNode()
 	const viewDefId = uesio.getViewDefId()

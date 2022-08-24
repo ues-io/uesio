@@ -19,7 +19,8 @@ import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
-
+import { DefinitionMap } from "../../definition/definition"
+import { useFilterByConditions } from "../../component/conditions"
 class Wire {
 	constructor(source?: PlainWire) {
 		this.source = source || ({} as PlainWire)
@@ -35,10 +36,21 @@ class Wire {
 	isViewOnly = () => this.source.viewOnly
 	getBatchId = () => this.source.batchid
 
-	getData = () =>
-		this.source?.data
-			? Object.keys(this.source.data).map((id) => this.getRecord(id))
-			: []
+	getData = (context?: Context, definition?: DefinitionMap) => {
+		const data = this.source?.data
+		if (definition && data && context) {
+			const keys = Object.keys(data).filter((id) => {
+				const newContext = context.addFrame({
+					record: id,
+					wire: this.getId(),
+				})
+				return useFilterByConditions(newContext, definition)
+			})
+
+			return keys.map((id) => this.getRecord(id))
+		}
+		return data ? Object.keys(data).map((id) => this.getRecord(id)) : []
+	}
 
 	getErrors = () => this.source?.errors
 

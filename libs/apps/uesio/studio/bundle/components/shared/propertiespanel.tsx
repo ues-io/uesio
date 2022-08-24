@@ -50,6 +50,12 @@ const augmentPropsDef = (
 				{
 					title: "Display",
 					type: "CONDITIONALDISPLAY",
+					specialPropsKey: "uesio.display",
+				},
+				{
+					title: "Context",
+					type: "CONDITIONALDISPLAY",
+					specialPropsKey: "uesio.filter",
 				},
 			]),
 			actions: standardActions.concat(...(propsDef.actions || [])),

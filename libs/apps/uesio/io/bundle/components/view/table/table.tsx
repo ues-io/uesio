@@ -63,10 +63,11 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		}
 	})
 
-	const data = wire.getData()
+	//TO-DO not sure what is the right context to send in context or newContext
+	const data = wire.getData(context, definition)
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
-
 	const paginated = paginate(data, currentPage, pageSize)
+
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),

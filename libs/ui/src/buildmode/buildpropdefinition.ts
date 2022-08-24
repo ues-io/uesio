@@ -94,8 +94,8 @@ interface CustomSection extends BasePropSection {
 }
 interface ConditionalDisplaySection extends BasePropSection {
 	type: "CONDITIONALDISPLAY"
+	specialPropsKey?: string
 }
-
 type PropDescriptor =
 	| TextProp
 	| TextAreaProp
@@ -370,4 +370,5 @@ export {
 	PropListProp,
 	AddCondition,
 	FieldProp,
+	ConditionalDisplaySection,
 }

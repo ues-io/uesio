@@ -201,4 +201,4 @@ function shouldHaveClass(
 	return true
 }
 
-export { useShouldDisplay, shouldHaveClass, DisplayCondition }
+export { useShouldDisplay, shouldHaveClass, DisplayCondition, should }

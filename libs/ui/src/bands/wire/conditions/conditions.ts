@@ -194,4 +194,5 @@ export {
 	SearchConditionState,
 	getLoadRequestConditions,
 	getInitializedConditions,
+	ConditionOperators,
 }

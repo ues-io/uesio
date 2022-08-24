@@ -12,6 +12,7 @@ import {
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
+import { useFilterByConditions } from "./component/conditions"
 
 export {
 	Slot,
@@ -28,4 +29,5 @@ export {
 	shouldHaveClass,
 	useShouldDisplay,
 	DisplayCondition,
+	useFilterByConditions,
 }

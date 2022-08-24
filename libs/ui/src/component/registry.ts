@@ -91,7 +91,12 @@ const getPropertiesDefinition = (
 
 // Trims any path to the last element that is fully namespaced
 // (meaning the path element contains a dot)
-const specialProps = ["uesio.variant", "uesio.display", "uesio.styles"]
+const specialProps = [
+	"uesio.variant",
+	"uesio.display",
+	"uesio.styles",
+	"uesio.filter",
+]
 const trimPath = (pathArray: string[]): string[] => {
 	const size = pathArray.length
 	if (size === 0) {
