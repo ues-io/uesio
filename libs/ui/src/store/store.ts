@@ -19,13 +19,19 @@ import label from "../bands/label"
 import theme from "../bands/theme"
 import componentvariant from "../bands/componentvariant"
 import configvalue from "../bands/configvalue"
-import componentpack from "../bands/componentpack"
+import featureflag from "../bands/featureflag"
 import notification from "../bands/notification"
+import metadatatext from "../bands/metadatatext"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
+import { PlainViewDef } from "../definition/viewdef"
+import { ThemeState } from "../definition/theme"
+import { ComponentVariant } from "../definition/componentvariant"
+import { LabelState } from "../definition/label"
+import { ConfigValueState } from "../definition/configvalue"
+import { FeatureFlagState } from "../definition/featureflag"
 import { MetadataState } from "../bands/metadata/types"
-import { parseRouteResponse } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -46,12 +52,13 @@ type InitialState = {
 	route?: RouteState
 	user?: UserState
 	site?: SiteState
-	theme?: EntityState<MetadataState>
-	viewdef?: EntityState<MetadataState>
-	componentvariant?: EntityState<MetadataState>
-	componentpack?: EntityState<MetadataState>
-	label?: EntityState<MetadataState>
-	configvalue?: EntityState<MetadataState>
+	theme?: EntityState<ThemeState>
+	viewdef?: EntityState<PlainViewDef>
+	componentvariant?: EntityState<ComponentVariant>
+	label?: EntityState<LabelState>
+	configvalue?: EntityState<ConfigValueState>
+	featureflag?: EntityState<FeatureFlagState>
+	metadatatext?: EntityState<MetadataState>
 }
 
 let platform: Platform
@@ -59,8 +66,6 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
-
-	parseRouteResponse(initialState)
 
 	const newStore = configureStore({
 		reducer: {
@@ -77,7 +82,8 @@ const create = (plat: Platform, initialState: InitialState) => {
 			label,
 			componentvariant,
 			configvalue,
-			componentpack,
+			featureflag,
+			metadatatext,
 			site,
 			workspace: (state) => state || {},
 		},

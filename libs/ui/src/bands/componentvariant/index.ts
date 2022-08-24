@@ -1,10 +1,10 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
+import { ComponentVariant } from "../../definition/componentvariant"
 import { RootState } from "../../store/store"
-import { MetadataState } from "../metadata/types"
 
-const adapter = createEntityAdapter<MetadataState>({
-	selectId: (metadata) => metadata.key,
+const adapter = createEntityAdapter<ComponentVariant>({
+	selectId: (cv) => `${cv.component}:${cv.namespace}.${cv.name}`,
 })
 
 const selectors = adapter.getSelectors(

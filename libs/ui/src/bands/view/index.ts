@@ -1,4 +1,4 @@
-const makeViewId = (viewdef: string, path?: string) =>
-	`${viewdef}(${path || ""})`
+const makeViewId = (viewdef: string, componentId?: string) =>
+	`${viewdef}(${componentId || ""})`
 
 export { makeViewId }

@@ -12,8 +12,8 @@ export interface Props extends definition.BaseProps {
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Chart",
-	description: "Just a chart",
+	title: "Line Chart",
+	description: "Visualized data with lines.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "New chart",
@@ -30,6 +30,7 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
+	category: "VISUALIZATION",
 }
 
 export default PropertyDefinition

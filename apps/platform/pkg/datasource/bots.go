@@ -150,6 +150,8 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runCollectionAfterSaveBot
 	case "uesio/studio.workspace":
 		botFunction = runWorkspaceAfterSaveBot
+	case "uesio/studio.bundle":
+		botFunction = runBundlenAfterSaveBot
 	}
 
 	if botFunction != nil {

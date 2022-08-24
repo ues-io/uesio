@@ -121,6 +121,13 @@ const fixFlow = (
 		const fixNode = node.getIn(pathArray) as
 			| yaml.YAMLMap<unknown, unknown>
 			| yaml.YAMLSeq<unknown>
+		if (fixNode === null) {
+			// This is somewhat counter-intuitive, but we want to
+			// remove any null nodes so that they can be converted
+			// to the appropriate sequence or map by the addIn utility.
+			node.deleteIn(pathArray)
+			return
+		}
 		fixNode && fixNode.flow && (fixNode.flow = false)
 		fixFlow(getParentPathArray(pathArray), node)
 	}
@@ -141,7 +148,7 @@ const addNodeAtPath = (
 	path: string | string[],
 	node: Node | null,
 	setNode: Node,
-	index: number
+	index = 0
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 	const pathArray = makePathArray(path)
@@ -150,9 +157,13 @@ const addNodeAtPath = (
 	const parentNode = node.getIn(pathArray) as yaml.YAMLSeq
 	fixFlow(pathArray, node)
 
-	parentNode
-		? parentNode.items.splice(index, 0, setNode)
-		: node.addIn(pathArray, [setNode])
+	if (!parentNode) {
+		node.addIn(pathArray, [setNode])
+		return
+	}
+
+	const startIndex = index >= 0 ? index : parentNode.items.length + index + 1
+	parentNode.items.splice(startIndex, 0, setNode)
 }
 
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {

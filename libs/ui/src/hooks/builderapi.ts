@@ -22,32 +22,36 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setDefinitionContent,
-	cancel,
+	cloneKeyDefinition,
 } from "../bands/builder"
-import builderOps from "../bands/builder/operations"
+import { save as saveOp, cancel as cancelOp } from "../bands/builder/operations"
 import { appDispatch, RootState, getCurrentState } from "../store/store"
 
-import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import {
 	fromPath,
 	getFullPathParts,
+	getKeyAtPath,
 	getParentPath,
 	makeFullPath,
 	toPath,
 } from "../component/path"
 import { Definition, DefinitionMap } from "../definition/definition"
-import { useSelector } from "react-redux"
+import { batch, useSelector } from "react-redux"
 
 import { selectors as viewSelectors } from "../bands/viewdef"
-import { PlainViewDef } from "../definition/viewdef"
+import { selectors as metadataTextSelectors } from "../bands/metadatatext"
 import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
 import { nanoid } from "nanoid"
 import { useEffect, useState } from "react"
-import { dispatchRouteDeps, parseRouteResponse } from "../bands/route/utils"
+import {
+	dispatchRouteDeps,
+	getPackUrls,
+	getPackUrlsForDeps,
+} from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 
 class BuilderAPI {
@@ -56,13 +60,6 @@ class BuilderAPI {
 	}
 
 	uesio: Uesio
-
-	useBuilderState = <T extends PlainComponentState>(scope: string) =>
-		this.uesio.component.useExternalState<T>(
-			"$root",
-			"uesio/studio.runtime",
-			scope
-		)
 
 	useNodeState = useNodeState
 	useSelectedNode = (): [string, string, string] => {
@@ -84,13 +81,16 @@ class BuilderAPI {
 		getFullPathParts(useDropNode())
 
 	useHasChanges = () =>
-		useSelector(({ viewdef }: RootState) => {
-			const entities = viewdef?.entities
-			// Loop over view defs
+		useSelector(({ metadatatext }: RootState) => {
+			const entities = metadatatext?.entities
 			if (entities) {
 				for (const defKey of Object.keys(entities)) {
-					const viewDef = entities[defKey]
-					if (viewDef && viewDef.content !== viewDef.original) {
+					const entity = entities[defKey]
+					if (
+						entity &&
+						entity.original &&
+						entity.content !== entity.original
+					) {
 						return true
 					}
 				}
@@ -163,20 +163,21 @@ class BuilderAPI {
 		appDispatch()(setDropNode(""))
 	}
 
-	save = () =>
-		appDispatch()(builderOps.save(this.uesio.getContext() || new Context()))
+	save = () => appDispatch()(saveOp(this.uesio.getContext() || new Context()))
 
-	cancel = () => appDispatch()(cancel())
+	cancel = () =>
+		appDispatch()(cancelOp(this.uesio.getContext() || new Context()))
 
 	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
 
+	cloneKeyDefinition = (path: string) => {
+		const newKey =
+			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
+		appDispatch()(cloneKeyDefinition({ path, newKey }))
+	}
+
 	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(
-			setDefinition({
-				path,
-				definition,
-			})
-		)
+		appDispatch()(setDefinition({ path, definition }))
 
 	addDefinition(
 		path: string,
@@ -253,15 +254,13 @@ class BuilderAPI {
 	}
 
 	useDefinitionContent = (metadataType: string, metadataItem: string) =>
-		useSelector((state: RootState) => {
-			if (metadataType === "viewdef" && metadataItem) {
-				return viewSelectors.selectById(state, metadataItem)?.content
-			}
-
-			if (metadataType === "componentvariant" && metadataItem) {
-				//return getComponentVariant(state, metadataItem, localPath)
-			}
-		})
+		useSelector(
+			(state: RootState) =>
+				metadataTextSelectors.selectById(
+					state,
+					`${metadataType}:${metadataItem}`
+				)?.content
+		)
 
 	useDefinition = (
 		metadataType: string,
@@ -278,6 +277,8 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
+	getNamespaceInfo = () => getCurrentState().builder.namespaces
+
 	getDefinition = (
 		state: RootState,
 		metadataType: string,
@@ -285,8 +286,10 @@ class BuilderAPI {
 		localPath: string
 	) => {
 		if (metadataType === "viewdef" && metadataItem) {
-			const viewDef = viewSelectors.selectById(state, metadataItem)
-				?.parsed as PlainViewDef
+			const viewDef = viewSelectors.selectById(
+				state,
+				metadataItem
+			)?.definition
 			if (!localPath) {
 				return viewDef as DefinitionMap
 			}
@@ -330,23 +333,19 @@ class BuilderAPI {
 			if (!buildMode || isLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
-				parseRouteResponse(response)
-				await loadScripts([
-					platform.getComponentPackURL(
-						new Context(),
-						"uesio/studio",
-						"main",
-						false
-					),
-					platform.getComponentPackURL(
-						new Context(),
-						"uesio/studio",
-						"main",
-						true
-					),
-				])
 
-				dispatchRouteDeps(response, appDispatch())
+				const packsToLoad = getPackUrlsForDeps(response, context, true)
+				const studioPacks = getPackUrls(
+					"uesio/studio.main",
+					new Context(),
+					true
+				)
+
+				await loadScripts([...packsToLoad, ...studioPacks])
+				batch(() => {
+					dispatchRouteDeps(response, appDispatch())
+				})
+
 				setIsLoaded(true)
 			})()
 		}, [buildMode])

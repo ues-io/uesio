@@ -1,5 +1,5 @@
 import { FC, useRef } from "react"
-import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
+import { definition, component, hooks, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import PropertiesPanel from "../../shared/propertiespanel"
 import CodePanel from "../../shared/codepanel"
@@ -23,18 +23,9 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
 
-	const [showCode] = uesio.component.useState<boolean>("codepanel")
-
+	const componentId = uesio.component.getId("codepanel")
+	const [showCode] = uesio.component.useState<boolean>(componentId)
 	const { context } = props
-
-	const viewDef = uesio.view.useViewDef(context.getViewDefId() || "")
-
-	const builderTheme = uesio.theme.useTheme(
-		"uesio/studio.default",
-		new ctx.Context()
-	)
-	if (!builderTheme || !viewDef)
-		return <Canvas context={context} children={props.children} />
 
 	const builderContext = context.addFrame({
 		theme: "uesio/studio.default",
@@ -55,8 +46,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 						{
 							image: "uesio/core.whitesplash",
 						},
-						context.getTheme(),
-						context
+						builderContext
 					),
 					padding: "6px",
 					rowGap: "6px",

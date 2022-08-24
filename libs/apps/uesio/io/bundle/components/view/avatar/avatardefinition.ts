@@ -11,7 +11,7 @@ interface AvatarProps extends definition.BaseProps {
 
 const AvatarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Avatar",
-	description: "Smile you look so beautiful",
+	description: "Display an image or initials to represent a record.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "$User{initials}",
@@ -34,6 +34,7 @@ const AvatarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: ["uesio.standalone"],
 	type: "component",
 	classes: ["root"],
+	category: "CONTENT",
 }
 export { AvatarProps, AvatarDefinition }
 
