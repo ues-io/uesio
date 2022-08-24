@@ -141,9 +141,15 @@ const signals: Record<string, SignalDescriptor> = {
 		label: "Update Record",
 		properties: (): PropDescriptor[] => [
 			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
 				name: "field",
-				type: "WIRE_FIELD",
+				type: "FIELD",
 				label: "Field",
+				wireField: "wire",
 			},
 			{
 				name: "value",
