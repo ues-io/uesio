@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { builder, component, wire, util, hooks } from "@uesio/ui"
+import { builder, component, wire, util } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
 const FieldsProp: FC<builder.PropRendererProps> = (props) => {
