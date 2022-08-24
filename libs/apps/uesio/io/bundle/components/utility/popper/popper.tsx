@@ -37,6 +37,11 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 			popper: {
 				zIndex: 1,
 				width: "350px",
+				/* Hide the popper when the reference is hidden */
+				'&[data-popper-reference-hidden="true"]': {
+					visibility: "hidden",
+					pointerEvents: "none",
+				},
 			},
 		},
 		props
