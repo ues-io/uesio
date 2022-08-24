@@ -52,6 +52,7 @@ func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("component", c.Component)
 	enc.AddStringKey("namespace", c.Namespace)
 	enc.AddStringKey("name", c.Name)
+	enc.AddStringKey("label", c.Label)
 }
 
 func (c *ComponentVariant) IsNil() bool {
