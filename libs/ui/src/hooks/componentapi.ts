@@ -2,10 +2,11 @@ import { appDispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
-import { useComponentVariants } from "../bands/componentvariant"
+import { selectId, useComponentVariants } from "../bands/componentvariant"
 import { makeComponentId, set as setComponent } from "../bands/component"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
+import { ComponentVariant } from "../definition/componentvariant"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -78,6 +79,8 @@ class ComponentAPI {
 	useExternalState = <T extends PlainComponentState>(
 		componentId: string
 	): T | undefined => useComponentState<T>(componentId)
+
+	getVariantId = selectId as (variant: ComponentVariant) => string
 
 	useAllVariants = () => useComponentVariants()
 }
