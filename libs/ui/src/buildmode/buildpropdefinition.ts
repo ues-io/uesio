@@ -4,7 +4,7 @@ import {
 	DefinitionMap,
 	DefinitionValue,
 } from "../definition/definition"
-import { FC } from "react"
+import React, { FC } from "react"
 import { Uesio } from "../hooks/hooks"
 import { MetadataType } from "../bands/builder/types"
 import ValueAPI from "./valueapi"
@@ -47,6 +47,7 @@ type PropertySection =
 	| ConditionsSection
 	| SignalsSection
 	| PropListSection
+	| PropListsSection
 	| StylesSection
 	| CustomSection
 	| OrderSection
@@ -76,6 +77,13 @@ interface SignalsSection extends BasePropSection {
 interface PropListSection extends BasePropSection {
 	type: "PROPLIST"
 	properties: PropDescriptor[]
+}
+interface PropListsSection extends BasePropSection {
+	name: string
+	type: "PROPLISTS"
+	properties: PropDescriptor[]
+	nameTemplate: string
+	nameFallback: string
 }
 
 interface StylesSection extends BasePropSection {
@@ -145,10 +153,6 @@ interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 	filter?: (def: Definition, id: string) => boolean
 }
 
-interface CustomPropRendererProps extends PropRendererProps {
-	descriptor: CustomProp
-}
-
 interface ConditionProp extends DefinitionBasedPropDescriptor {
 	type: "CONDITION"
 	wire?: string
@@ -186,7 +190,7 @@ interface ParamsProp extends BasePropDescriptor {
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FC<CustomPropRendererProps>
+	renderFunc: PropComponent<CustomProp>
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -245,8 +249,8 @@ interface FieldProp extends BasePropDescriptor {
 interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
+	nameTemplate: string
 }
-
 type ActionDescriptor =
 	| AddAction
 	| CustomAction
@@ -280,7 +284,7 @@ type DeleteAction = {
 
 type CustomAction = {
 	type: "CUSTOM"
-	handler: () => void
+	handler: (e: React.SyntheticEvent<Element, Event>) => void
 	label: string
 	icon: string
 	disabled?: boolean
@@ -323,18 +327,23 @@ type SignalProperties = {
 	name: string
 }
 
-interface PropRendererProps extends BaseProps {
-	descriptor: PropDescriptor
+interface PropRendererProps<T = PropDescriptor> extends BaseProps {
+	descriptor: T
 	propsDef: BuildPropertiesDefinition
 	valueAPI: ValueAPI
 }
 
+type PropComponent<T = PropDescriptor> = FC<PropRendererProps<T>>
+
 export {
+	PropComponent,
+	NamespaceProp,
+	ConditionProp,
+	ParamsProp,
 	SectionRendererProps,
 	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
-	CustomPropRendererProps,
 	BuildPropertiesDefinition,
 	PropertySection,
 	PropDescriptor,
@@ -355,6 +364,7 @@ export {
 	BooleanProp,
 	BotProp,
 	MultiSelectProp,
+	ParamProp,
 	KeyProp,
 	WireProp,
 	WiresProp,
@@ -364,6 +374,7 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
+	PropListsSection,
 	ConditionalDisplayProp,
 	OrderSection,
 	WireFieldsProp,

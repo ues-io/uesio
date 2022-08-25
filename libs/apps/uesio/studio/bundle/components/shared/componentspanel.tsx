@@ -1,5 +1,12 @@
-import { FunctionComponent, DragEvent } from "react"
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { FC, DragEvent } from "react"
+import {
+	definition,
+	component,
+	hooks,
+	styles,
+	builder,
+	metadata,
+} from "@uesio/ui"
 
 import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
@@ -7,7 +14,221 @@ import groupBy from "lodash/groupBy"
 const Grid = component.getUtility("uesio/io.grid")
 const Text = component.getUtility("uesio/io.text")
 
-const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+type VariantsBlockProps = {
+	variants: component.ComponentVariant[]
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+} & definition.UtilityProps
+
+const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+	const uesio = hooks.useUesio(props)
+	const { context, variants, selectedItem } = props
+	const classes = styles.useUtilityStyles(
+		{
+			variantarea: {
+				gridTemplateColumns: "1fr",
+				columnGap: "8px",
+				rowGap: "8px",
+				padding: "8px",
+			},
+		},
+		props
+	)
+
+	return (
+		<Grid context={context} classes={{ root: classes.variantarea }}>
+			{variants.map((variant) => {
+				const variantFullName = `${variant.component}:${variant.namespace}/${variant.name}`
+				const isVariantSelected = selectedItem === variantFullName
+				return (
+					<PropNodeTag
+						key={variantFullName}
+						onClick={(e: MouseEvent) => {
+							e.stopPropagation()
+							uesio.builder.setSelectedNode(
+								"componentvariant",
+								variantFullName,
+								""
+							)
+						}}
+						selected={isVariantSelected}
+						draggable={`componentvariant:${variantFullName}`}
+						context={context}
+					>
+						{variant.label}
+					</PropNodeTag>
+				)
+			})}
+		</Grid>
+	)
+}
+
+type ComponentBlockProps = {
+	propDef: builder.BuildPropertiesDefinition
+	variants: component.ComponentVariant[]
+	namespaceInfo: metadata.MetadataInfo
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+} & definition.UtilityProps
+
+const ComponentBlock: FC<ComponentBlockProps> = (props) => {
+	const uesio = hooks.useUesio(props)
+
+	const {
+		context,
+		propDef,
+		namespaceInfo,
+		variants,
+		selectedType,
+		selectedItem,
+	} = props
+	const { namespace, name } = propDef
+	if (!namespace) throw new Error("Invalid Property Definition")
+	const fullName = `${namespace}.${name}`
+
+	// Loop over the variants for this component
+	return (
+		<PropNodeTag
+			context={context}
+			key={fullName}
+			onClick={() =>
+				uesio.builder.setSelectedNode("componenttype", fullName, "")
+			}
+			draggable={`component:${fullName}`}
+			selected={
+				selectedType === "componenttype" && selectedItem === fullName
+			}
+			expandChildren={
+				variants && (
+					<VariantsBlock
+						selectedItem={selectedItem}
+						selectedType={selectedType}
+						variants={variants}
+						context={context}
+					/>
+				)
+			}
+		>
+			<ComponentTag
+				namespaceInfo={namespaceInfo}
+				propDef={propDef}
+				context={context}
+			/>
+		</PropNodeTag>
+	)
+}
+
+type CategoryBlockProps = {
+	propDefs: builder.BuildPropertiesDefinition[]
+	variants: Record<string, component.ComponentVariant[]>
+	namespaceInfo: Record<string, metadata.MetadataInfo>
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+	category: string
+} & definition.UtilityProps
+
+const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+	const classes = styles.useUtilityStyles(
+		{
+			categoryLabel: {
+				margin: "16px 10px 0 10px",
+				fontSize: "8pt",
+				fontWeight: "300",
+			},
+		},
+		props
+	)
+	const {
+		context,
+		propDefs,
+		category,
+		variants,
+		namespaceInfo,
+		selectedType,
+		selectedItem,
+	} = props
+	const comps = propDefs
+	if (!comps || !comps.length) return null
+	comps.sort((a, b) => {
+		if (!a.name) return 1
+		if (!b.name) return -1
+		return a.name.localeCompare(b.name)
+	})
+	return (
+		<>
+			<div className={classes.categoryLabel}>{category}</div>
+			{comps.map((propDef) => {
+				const { namespace, name } = propDef
+				if (!namespace) throw new Error("Invalid Property Definition")
+				const fullName = `${namespace}.${name}`
+				return (
+					<ComponentBlock
+						key={fullName}
+						variants={variants[fullName]}
+						propDef={propDef}
+						context={context}
+						namespaceInfo={namespaceInfo[namespace]}
+						selectedType={selectedType}
+						selectedItem={selectedItem}
+					/>
+				)
+			})}
+		</>
+	)
+}
+
+type ComponentTagProps = {
+	namespaceInfo: metadata.MetadataInfo
+	propDef: builder.BuildPropertiesDefinition
+} & definition.UtilityProps
+
+const ComponentTag: FC<ComponentTagProps> = (props) => {
+	const { context, namespaceInfo, propDef } = props
+	const classes = styles.useUtilityStyles(
+		{
+			title: {
+				verticalAlign: "middle",
+				marginLeft: "6px",
+			},
+			desc: {
+				fontSize: "8pt",
+				fontWeight: 300,
+				lineHeight: "10pt",
+				marginTop: "8px",
+			},
+		},
+		props
+	)
+	return (
+		<div>
+			<div>
+				<Text
+					variant="uesio/io.icon"
+					text={namespaceInfo.icon}
+					color={namespaceInfo.color}
+					context={context}
+				/>
+				<Text
+					text={propDef.title}
+					context={context}
+					classes={{
+						root: classes.title,
+					}}
+				/>
+			</div>
+			<Text
+				element="div"
+				text={propDef.description}
+				context={context}
+				classes={{
+					root: classes.desc,
+				}}
+			/>
+		</div>
+	)
+}
+
+const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context } = props
 	const classes = styles.useUtilityStyles(
@@ -15,21 +236,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "auto",
 				flex: 1,
-			},
-			componentTitle: {
-				verticalAlign: "middle",
-				marginLeft: "6px",
-			},
-			componentDesc: {
-				fontSize: "8pt",
-				fontWeight: 300,
-				lineHeight: "10pt",
-				marginTop: "8px",
-			},
-			categoryLabel: {
-				margin: "16px 10px 0 10px",
-				fontSize: "8pt",
-				fontWeight: "300",
 			},
 		},
 		props
@@ -66,24 +272,12 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		builderComponents,
 		(propDef) => propDef.category || "UNCATEGORIZED"
 	)
-	const namespaceInfoMap = uesio.builder.getNamespaceInfo()
+	const namespaceInfo = uesio.builder.getNamespaceInfo()
 	const variants = uesio.component.useAllVariants()
-	// loop over variants and group by component
-	const variantsMap: Record<string, string[]> = {}
-	variants.forEach((key) => {
-		const [
-			componentNamespace,
-			componentName,
-			variantNamespace,
-			variantName,
-		] = component.path.parseVariantKey(key)
-
-		const componentKey = `${componentNamespace}.${componentName}`
-		const variantKey = `${variantNamespace}.${variantName}`
-
-		if (!variantsMap[componentKey]) variantsMap[componentKey] = []
-		variantsMap[componentKey].push(variantKey)
-	})
+	const variantsByComponent = groupBy(
+		variants,
+		(variant) => variant.component
+	)
 
 	return (
 		<div
@@ -91,125 +285,18 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDragEnd={onDragEnd}
 			className={classes.root}
 		>
-			{categoryOrder.map((category) => {
-				const comps = componentsByCategory[category]
-				if (!comps || !comps.length) return null
-				comps.sort((a, b) => {
-					if (!a.name) return 1
-					if (!b.name) return -1
-					return a.name.localeCompare(b.name)
-				})
-				return (
-					<>
-						<div className={classes.categoryLabel}>{category}</div>
-						{comps.map((propDef) => {
-							const { namespace, name, title, description } =
-								propDef
-							if (!namespace)
-								throw new Error("Invalid Property Definition")
-							const fullName = `${namespace}.${name}`
-
-							const variants = variantsMap[fullName]
-							const namespaceInfo = namespaceInfoMap?.[namespace]
-							if (!namespaceInfo)
-								throw new Error("Invalid Namespace Info")
-
-							// Loop over the variants for this component
-							return (
-								<PropNodeTag
-									context={context}
-									key={fullName}
-									onClick={() =>
-										uesio.builder.setSelectedNode(
-											"componenttype",
-											fullName,
-											""
-										)
-									}
-									draggable={`component:${fullName}`}
-									selected={
-										selectedType === "componenttype" &&
-										selectedItem === fullName
-									}
-									expandChildren={
-										variants && (
-											<Grid
-												styles={{
-													root: {
-														gridTemplateColumns:
-															"1fr",
-														columnGap: "8px",
-														rowGap: "8px",
-														padding: "8px",
-													},
-												}}
-												context={context}
-											>
-												{variants.map((variant) => {
-													const variantFullName = `${fullName}:${variant}`
-													const isVariantSelected =
-														selectedType ===
-															"componentvariant" &&
-														selectedItem ===
-															variantFullName
-													return (
-														<PropNodeTag
-															key={variant}
-															onClick={(
-																e: MouseEvent
-															) => {
-																e.stopPropagation()
-																uesio.builder.setSelectedNode(
-																	"componentvariant",
-																	variantFullName,
-																	""
-																)
-															}}
-															selected={
-																isVariantSelected
-															}
-															draggable={`componentvariant:${variantFullName}`}
-															context={context}
-														>
-															{variant}
-														</PropNodeTag>
-													)
-												})}
-											</Grid>
-										)
-									}
-								>
-									<div>
-										<div>
-											<Text
-												variant="uesio/io.icon"
-												text={namespaceInfo.icon}
-												color={namespaceInfo.color}
-												context={context}
-											/>
-											<Text
-												text={title}
-												context={context}
-												classes={{
-													root: classes.componentTitle,
-												}}
-											/>
-										</div>
-										<Text
-											element="div"
-											text={description}
-											context={context}
-											classes={{
-												root: classes.componentDesc,
-											}}
-										/>
-									</div>
-								</PropNodeTag>
-							)
-						})}
-					</>
-				)
-			})}
+			{categoryOrder.map((category) => (
+				<CategoryBlock
+					key={category}
+					namespaceInfo={namespaceInfo}
+					variants={variantsByComponent}
+					propDefs={componentsByCategory[category]}
+					category={category}
+					selectedType={selectedType}
+					selectedItem={selectedItem}
+					context={context}
+				/>
+			))}
 		</div>
 	)
 }
