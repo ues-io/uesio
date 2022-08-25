@@ -14,10 +14,7 @@ type ViewOnlyField = {
 	reference?: ReferenceMetadata
 }
 
-type RegularField = {
-	id: string
-	fields: WireFieldDefinitionMap
-}
+type RegularField = null | { fields: WireFieldDefinitionMap }
 
 type OnChangeEvent = {
 	field: string

@@ -2,6 +2,8 @@ import {
 	WireDefinitionMap,
 	WireDefinition,
 	WireFieldDefinitionMap,
+	RegularWireDefinition,
+	WireFieldDefinition,
 } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
@@ -29,6 +31,7 @@ export {
 	Wire,
 	FieldValue,
 	WireDefinition,
+	RegularWireDefinition,
 	WireDefinitionMap,
 	WireConditionState,
 	WireConditionDefinition,
@@ -36,4 +39,5 @@ export {
 	ParamConditionDefinition,
 	LookupConditionDefinition,
 	WireFieldDefinitionMap,
+	WireFieldDefinition,
 }
