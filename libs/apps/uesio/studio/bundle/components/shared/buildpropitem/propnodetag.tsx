@@ -1,5 +1,5 @@
 import { FC, ReactNode, useState } from "react"
-import { component, context, styles } from "@uesio/ui"
+import { component, context } from "@uesio/ui"
 
 type Props = {
 	selected?: boolean
@@ -8,6 +8,7 @@ type Props = {
 	context: context.Context
 	expandChildren?: ReactNode
 	popperChildren?: ReactNode
+	variant?: string
 }
 
 const Tile = component.getUtility("uesio/io.tile")
@@ -15,69 +16,45 @@ const Popper = component.getUtility("uesio/io.popper")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const PropNodeTag: FC<Props> = (props) => {
-	const { onClick, draggable, selected, context, popperChildren } = props
+	const { onClick, draggable, selected, context, popperChildren, variant } =
+		props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [isExpanded, setIsExpanded] = useState(false)
 
-	const classes = styles.useUtilityStyles(
-		{
-			root: {
-				cursor: draggable ? "grab" : "inherit",
-				"&:hover .tooltip": {
-					opacity: 0.3,
-				},
-
-				".tooltip": {
-					cursor: "initial",
-					opacity: 0,
-					textTransform: "initial",
-					transition: "opacity 0.125s ease",
-					"&:hover": {
-						opacity: 1,
-					},
-				},
-				margin: "8px",
-			},
-		},
-		props
-	)
-
 	return (
-		<div
-			className={classes.root}
+		<Tile
 			ref={setAnchorEl}
-			draggable={!!draggable && !isExpanded}
-			data-type={draggable}
+			rootAttributes={{
+				draggable: !!draggable && !isExpanded,
+				"data-type": draggable,
+			}}
+			variant={variant || "uesio/studio.propnodetag"}
+			context={context}
+			onClick={onClick}
+			isSelected={selected}
 		>
-			<Tile
-				variant="uesio/studio.propnodetag"
-				context={context}
-				onClick={onClick}
-				isSelected={selected}
-			>
-				{selected && anchorEl && popperChildren && (
-					<Popper
-						referenceEl={anchorEl}
-						context={context}
-						placement="right"
-					>
-						{popperChildren}
-					</Popper>
-				)}
-				{!props.expandChildren ? (
-					props.children
-				) : (
-					<IOExpandPanel
-						context={context}
-						toggle={props.children}
-						showArrow={true}
-						expandState={[isExpanded, setIsExpanded]}
-					>
-						{props.expandChildren}
-					</IOExpandPanel>
-				)}
-			</Tile>
-		</div>
+			{selected && popperChildren && (
+				<Popper
+					referenceEl={anchorEl}
+					context={context}
+					placement="right"
+				>
+					{popperChildren}
+				</Popper>
+			)}
+			{!props.expandChildren ? (
+				props.children
+			) : (
+				<IOExpandPanel
+					context={context}
+					toggle={props.children}
+					showArrow={true}
+					expandState={[isExpanded, setIsExpanded]}
+				>
+					{props.expandChildren}
+				</IOExpandPanel>
+			)}
+		</Tile>
 	)
 }
 
