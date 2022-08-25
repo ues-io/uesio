@@ -1,8 +1,7 @@
 import React, { FC, DragEvent, useState, ChangeEvent } from "react"
-
+import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { hooks, component, definition } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetag"
+import { hooks, component, context, wire } from "@uesio/ui"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 import FieldPropTag, {
 	FieldProp,
@@ -15,7 +14,61 @@ const Popper = component.getUtility("uesio/io.popper")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
-type FieldDef = null | { fields: FieldDef }
+const prepareFieldForDisplay = (
+	[key, value]: [string, wire.WireFieldDefinition],
+	path: string,
+	collectionKey: string
+): FieldProp => ({
+	collectionKey, // We need to make this dynamic to support ref field selection
+	fieldId: key,
+	fieldPath: `${path}["fields"]["${key}"]`,
+	fields:
+		value && value.fields
+			? Object.entries(value.fields).map((el) =>
+					prepareFieldForDisplay(
+						el,
+						`${path}["fields"]["${key}"]`,
+						collectionKey // This should be the referenced collection
+					)
+			  )
+			: [],
+})
+
+const useFields = (
+	uesio: hooks.Uesio,
+	wireDef: wire.RegularWireDefinition | undefined,
+	path: string | undefined,
+	context: context.Context,
+	collectionKey?: string
+): [
+	FieldProp[],
+	string[],
+	string,
+	React.Dispatch<React.SetStateAction<string>>
+] => {
+	const { fields: fieldsDef, collection: wireCollection } = wireDef || {}
+
+	// We want to allow calling the hook with another collection as defined in the wire def.
+	const [collection, setCollection] = useState(
+		collectionKey || wireCollection || ""
+	)
+
+	const collectionFields = uesio.builder.useMetadataList(
+		context,
+		"FIELD",
+		"",
+		collection
+	)
+
+	// All the fields keys available in a collection
+	const collectionFieldKeys = Object.keys(collectionFields || {})
+
+	const selectedFields = Object.entries(fieldsDef || {}).map((el) =>
+		prepareFieldForDisplay(el, path || "", collection)
+	)
+	return [selectedFields, collectionFieldKeys, collection, setCollection]
+}
+
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
@@ -23,22 +76,14 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const [searchTerm, setSearchTerm] = useState("")
 	const [showPopper, setShowPopper] = useState(false)
 	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([showPopper])
-
-	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
-	const collectionKey = wireDef?.collection as string | undefined
-
-	if (!collectionKey) {
-		return null
-	}
-
-	const fields = uesio.builder.useMetadataList(
+	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
+	const [selectedFields, fieldKeys, collectionKey, setCollection] = useFields(
+		uesio,
+		wireDef,
+		path,
 		context,
-		"FIELD",
-		"",
-		collectionKey
+		wireDef?.collection || ""
 	)
-
-	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -51,8 +96,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 
-	const fieldKeys = fields && Object.keys(fields)
-
 	const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value)
 	}
@@ -64,32 +107,10 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
-	// Create field objects for the render function to loop over
-	const prepareFieldForDisplay = (
-		[key, value]: [string, FieldDef],
-		path: string
-	): FieldProp => ({
-		collectionKey, // We need to make this dynamic to support ref field selection
-		fieldId: key,
-		fieldPath: `${path}["fields"]["${key}"]`,
-		fields:
-			value && value.fields
-				? Object.entries(value.fields).map((el) =>
-						prepareFieldForDisplay(
-							el,
-							`${path}["fields"]["${key}"]`
-						)
-				  )
-				: [],
-	})
-
-	const selectedFields = Object.entries(wireDef?.fields || {}).map((el) =>
-		prepareFieldForDisplay(el, path || "")
-	)
-
 	// Scroll to the bottom of the list when adding new fields
 	const itemsRef = React.useRef<(HTMLDivElement | null)[]>([])
 	const prevLength = itemsRef.current.length
+
 	React.useEffect(() => {
 		itemsRef.current = itemsRef.current.slice(0, selectedFields.length)
 		if (prevLength !== 0 && prevLength < itemsRef.current.length)
@@ -98,8 +119,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				behavior: "smooth",
 			})
 	}, [selectedFields])
-
-	// const items = React.useState()
 
 	return (
 		<>
@@ -153,34 +172,16 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 								placeholder="Search..."
 							/>
 						</div>
-						<div
-							ref={scrollBoxRef}
-							style={{ maxHeight: "400px", overflow: "scroll" }}
-						>
-							{collectionKey &&
-								results &&
-								results.map((fieldId, index) => {
-									const fieldDef = fieldsDef?.[fieldId]
-									const selected = fieldDef !== undefined
-									const onClick = () => {
-										const setPath = `${path}["fields"]["${fieldId}"]`
-										selected
-											? valueAPI.remove(setPath)
-											: valueAPI.set(setPath, null)
-									}
-									return (
-										<PropNodeTag
-											draggable={`${collectionKey}:${fieldId}`}
-											key={index}
-											onClick={onClick}
-											selected={selected}
-											context={context}
-										>
-											<span>{fieldId}</span>
-										</PropNodeTag>
-									)
-								})}
-						</div>
+						<FieldPicker
+							fieldsDef={wireDef?.fields}
+							scrollBoxRef={scrollBoxRef}
+							collectionKey={collectionKey}
+							context={context}
+							path={path || ""}
+							valueAPI={valueAPI}
+							results={results}
+							setCollection={setCollection}
+						/>
 					</ScrollPanel>
 				</Popper>
 			)}
@@ -216,24 +217,23 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 
 			{/* List of selected fields, from here we can only delete */}
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
-				{collectionKey &&
-					selectedFields.map((el, i) => (
-						<div
-							key={el.fieldId}
-							ref={(el) => (itemsRef.current[i] = el)}
-						>
-							<FieldPropTag
-								{...el}
-								context={context}
-								togglePopper={() => setShowPopper(!showPopper)}
-								removeField={() =>
-									valueAPI.remove(
-										`${path}["fields"]["${el.fieldId}"]`
-									)
-								}
-							/>
-						</div>
-					))}
+				{selectedFields.map((el, i) => (
+					<div
+						key={el.fieldId}
+						ref={(el) => (itemsRef.current[i] = el)}
+					>
+						<FieldPropTag
+							{...el}
+							context={context}
+							togglePopper={() => setShowPopper(!showPopper)}
+							removeField={() =>
+								valueAPI.remove(
+									`${path}["fields"]["${el.fieldId}"]`
+								)
+							}
+						/>
+					</div>
+				))}
 			</div>
 		</>
 	)
