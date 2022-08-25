@@ -1,8 +1,9 @@
-import React, { FC, DragEvent, useState, ChangeEvent } from "react"
+import React, { FC, DragEvent, useState } from "react"
 import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { hooks, component, context, wire } from "@uesio/ui"
-import useShadowOnScroll from "../hooks/useshadowonscroll"
+import { CSSTransition } from "react-transition-group"
+
+import { hooks, component, context, wire, styles } from "@uesio/ui"
 import FieldPropTag, {
 	FieldProp,
 } from "../../utility/fieldproptag/fieldproptag"
@@ -49,9 +50,9 @@ const useFields = (
 	const { fields: fieldsDef, collection: wireCollection } = wireDef || {}
 
 	// We want to allow calling the hook with another collection as defined in the wire def.
-	const [collection, setCollection] = useState(
-		collectionKey || wireCollection || ""
-	)
+	const collectionRef = React.useRef(collectionKey || wireCollection || "")
+	const collection = collectionRef.current
+	const setCollection = (key: string) => (collectionRef.current = key)
 
 	const collectionFields = uesio.builder.useMetadataList(
 		context,
@@ -73,9 +74,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-	const [searchTerm, setSearchTerm] = useState("")
+
 	const [showPopper, setShowPopper] = useState(false)
-	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([showPopper])
 	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
 	const [selectedFields, fieldKeys, collectionKey, setCollection] = useFields(
 		uesio,
@@ -83,6 +83,38 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		path,
 		context,
 		wireDef?.collection || ""
+	)
+
+	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
+	const transformStart = "translate(-5px, 0)"
+	const transformEnd = "translate(0, 0)"
+	const classes = styles.useStyles(
+		{
+			item: {
+				"&-enter": {
+					opacity: "0.01",
+					transform: transformStart,
+				},
+
+				"&-enter-active": {
+					opacity: 1,
+					transform: transformEnd,
+					transition,
+				},
+
+				"&-exit": {
+					opacity: 1,
+					transform: transformEnd,
+				},
+
+				"&-exit-active": {
+					opacity: "0.01",
+					transform: transformStart,
+					transition,
+				},
+			},
+		},
+		props
 	)
 
 	const onDragStart = (e: DragEvent) => {
@@ -95,17 +127,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		uesio.builder.clearDragNode()
 		uesio.builder.clearDropNode()
 	}
-
-	const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(e.target.value)
-	}
-
-	const results = !searchTerm
-		? fieldKeys
-		: fieldKeys &&
-		  fieldKeys.filter((field) =>
-				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-		  )
 
 	// Scroll to the bottom of the list when adding new fields
 	const itemsRef = React.useRef<(HTMLDivElement | null)[]>([])
@@ -148,40 +169,17 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 						}
 						context={context}
 					>
-						<div
-							style={{
-								padding: "8px",
-								position: "relative",
-								zIndex: 1,
-								...scrolledStyles,
-							}}
-						>
-							<input
-								value={searchTerm}
-								style={{
-									outline: "none",
-									padding: "8px",
-									fontSize: "9pt",
-									border: "none",
-									background: "#eee",
-									borderRadius: "4px",
-									width: "100%",
-								}}
-								onChange={onSearch}
-								type="search"
-								placeholder="Search..."
+						<CSSTransition timeout={300} classNames={classes.item}>
+							<FieldPicker
+								fieldsDef={wireDef?.fields}
+								fieldKeys={fieldKeys}
+								collectionKey={collectionKey}
+								context={context}
+								path={path || ""}
+								valueAPI={valueAPI}
+								setCollection={setCollection}
 							/>
-						</div>
-						<FieldPicker
-							fieldsDef={wireDef?.fields}
-							scrollBoxRef={scrollBoxRef}
-							collectionKey={collectionKey}
-							context={context}
-							path={path || ""}
-							valueAPI={valueAPI}
-							results={results}
-							setCollection={setCollection}
-						/>
+						</CSSTransition>
 					</ScrollPanel>
 				</Popper>
 			)}
