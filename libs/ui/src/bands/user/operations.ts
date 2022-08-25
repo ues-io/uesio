@@ -1,4 +1,3 @@
-import { LoginResponse } from "../../auth/auth"
 import { Context, newContext } from "../../context/context"
 import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
@@ -6,6 +5,7 @@ import wireAddError from "../wire/operations/adderror"
 import wireRemoveError from "../wire/operations/removeerror"
 import routeOps from "../../bands/route/operations"
 import { getErrorString } from "../utils"
+import { LoginResponse } from "../../platform/platform"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(
 	response: LoginResponse,

@@ -37,7 +37,8 @@ const PropNodeTag: FC<Props> = (props) => {
 				<Popper
 					referenceEl={anchorEl}
 					context={context}
-					placement="right"
+					placement="right-start"
+					useFirstRelativeParent
 				>
 					{popperChildren}
 				</Popper>
