@@ -1,9 +1,8 @@
 import React, { FC, DragEvent, useState } from "react"
 import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { CSSTransition } from "react-transition-group"
 
-import { hooks, component, context, wire, styles } from "@uesio/ui"
+import { hooks, component, wire } from "@uesio/ui"
 import FieldPropTag, {
 	FieldProp,
 } from "../../utility/fieldproptag/fieldproptag"
@@ -35,86 +34,16 @@ const prepareFieldForDisplay = (
 			: [],
 })
 
-const useFields = (
-	uesio: hooks.Uesio,
-	wireDef: wire.RegularWireDefinition | undefined,
-	path: string | undefined,
-	context: context.Context,
-	collectionKey?: string
-): [
-	FieldProp[],
-	string[],
-	string,
-	React.Dispatch<React.SetStateAction<string>>
-] => {
-	const { fields: fieldsDef, collection: wireCollection } = wireDef || {}
-
-	// We want to allow calling the hook with another collection as defined in the wire def.
-	const collectionRef = React.useRef(collectionKey || wireCollection || "")
-	const collection = collectionRef.current
-	const setCollection = (key: string) => (collectionRef.current = key)
-
-	const collectionFields = uesio.builder.useMetadataList(
-		context,
-		"FIELD",
-		"",
-		collection
-	)
-
-	// All the fields keys available in a collection
-	const collectionFieldKeys = Object.keys(collectionFields || {})
-
-	const selectedFields = Object.entries(fieldsDef || {}).map((el) =>
-		prepareFieldForDisplay(el, path || "", collection)
-	)
-	return [selectedFields, collectionFieldKeys, collection, setCollection]
-}
-
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-
 	const [showPopper, setShowPopper] = useState(false)
+
 	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
-	const [selectedFields, fieldKeys, collectionKey, setCollection] = useFields(
-		uesio,
-		wireDef,
-		path,
-		context,
-		wireDef?.collection || ""
-	)
 
-	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
-	const transformStart = "translate(-5px, 0)"
-	const transformEnd = "translate(0, 0)"
-	const classes = styles.useStyles(
-		{
-			item: {
-				"&-enter": {
-					opacity: "0.01",
-					transform: transformStart,
-				},
-
-				"&-enter-active": {
-					opacity: 1,
-					transform: transformEnd,
-					transition,
-				},
-
-				"&-exit": {
-					opacity: 1,
-					transform: transformEnd,
-				},
-
-				"&-exit-active": {
-					opacity: "0.01",
-					transform: transformStart,
-					transition,
-				},
-			},
-		},
-		props
+	const selectedFields = Object.entries(wireDef?.fields || {}).map((el) =>
+		prepareFieldForDisplay(el, path || "", "collection")
 	)
 
 	const onDragStart = (e: DragEvent) => {
@@ -169,17 +98,12 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 						}
 						context={context}
 					>
-						<CSSTransition timeout={300} classNames={classes.item}>
-							<FieldPicker
-								fieldsDef={wireDef?.fields}
-								fieldKeys={fieldKeys}
-								collectionKey={collectionKey}
-								context={context}
-								path={path || ""}
-								valueAPI={valueAPI}
-								setCollection={setCollection}
-							/>
-						</CSSTransition>
+						<FieldPicker
+							wireDef={wireDef}
+							context={context}
+							path={path || ""}
+							valueAPI={valueAPI}
+						/>
 					</ScrollPanel>
 				</Popper>
 			)}
