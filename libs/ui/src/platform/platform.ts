@@ -1,6 +1,5 @@
 import { LoadRequestBatch } from "../load/loadrequest"
 import { LoadResponseBatch } from "../load/loadresponse"
-import { LoginResponse } from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
@@ -10,6 +9,7 @@ import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
+import { UserState } from "../bands/user/types"
 
 type BotParams = {
 	[key: string]: string
@@ -62,6 +62,19 @@ type MetadataInfo = {
 }
 
 type NavigateRequest = PathNavigateRequest | CollectionNavigateRequest
+
+type LoginResponse = LoginResponsePath | LoginResponseRedirect
+
+type LoginResponsePath = {
+	user: UserState
+	redirectPath: string
+}
+
+type LoginResponseRedirect = {
+	user: UserState
+	redirectRouteNamespace: string
+	redirectRouteName: string
+}
 
 const getPrefix = (context: Context) => {
 	const workspace = context.getWorkspace()
@@ -445,4 +458,5 @@ export {
 	NavigateRequest,
 	JobResponse,
 	MetadataInfo,
+	LoginResponse,
 }
