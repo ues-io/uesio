@@ -109,7 +109,11 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{
-								wire: "search",
+								batchid: "0",
+								batchnumber: 1,
+								data: {},
+								view: context.getViewId() || "",
+								name: "search",
 								query: true,
 								collection: referencedCollection.getFullName(),
 								fields: returnFields.map((fieldName) => ({
@@ -127,7 +131,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 							},
 						],
 					})
-					callback(result.wires[0].data || [])
+					callback(result.wires || [])
 				}}
 				placeholder={placeholder}
 			/>

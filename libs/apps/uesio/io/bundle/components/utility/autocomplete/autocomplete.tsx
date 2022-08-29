@@ -102,6 +102,9 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 				if (inputChangeTimestamp < lastInputChange.current) return
 				lastInputChange.current = 0
 				setLoading(false)
+
+				console.log({ result })
+
 				setInputItems(result)
 			})
 		},
