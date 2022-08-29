@@ -182,6 +182,10 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		PreloadMetadata: preload,
 	}
 
-	// Not checking this error for now.
-	_ = indexTemplate.Execute(w, mergeData)
+	err := indexTemplate.Execute(w, mergeData)
+	if err != nil {
+		msg := "Error Merging Template: " + err.Error()
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
 }
