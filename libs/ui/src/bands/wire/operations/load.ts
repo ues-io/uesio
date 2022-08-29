@@ -1,19 +1,12 @@
 import { Context } from "../../../context/context"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
-import { LoadRequestField } from "../../../load/loadrequest"
-import { nanoid } from "nanoid"
+import { LoadRequest, LoadRequestField } from "../../../load/loadrequest"
 import { PlainWire } from "../types"
-import { PlainWireRecord } from "../../wirerecord/types"
-import { getLoadRequestConditions } from "../conditions/conditions"
 import { listLookupWires } from "../utils"
-import {
-	getWiresFromDefinitonOrContext,
-	load,
-	getFullWireId,
-	getWireParts,
-} from ".."
-import { getDefaultRecord } from "../defaults/defaults"
+import { getWiresFromDefinitonOrContext, load, getFullWireId } from ".."
 import { ThunkFunc } from "../../../store/store"
+import createrecord from "./createrecord"
+import { batch } from "react-redux"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -41,25 +34,24 @@ function getWiresMap(wires: PlainWire[]) {
 }
 
 function getWireRequest(
-	wire: PlainWire,
-	batchnumber: number,
+	wires: PlainWire[],
+	resetBatchNumber: boolean,
 	context: Context
-) {
-	const fullWireId = getFullWireId(wire.view, wire.name)
-	const wiredef = wire.def
-	if (wiredef.viewOnly)
-		throw new Error("Cannot get request for viewOnly wire: " + wire.name)
-	return {
-		wire: fullWireId,
-		query: wire.query,
-		collection: wiredef.collection,
-		fields: getFieldsRequest(wiredef.fields) || [],
-		conditions: getLoadRequestConditions(wire.conditions, context),
-		order: wire.order,
-		batchsize: wiredef.batchsize,
-		batchnumber,
-		requirewriteaccess: wiredef.requirewriteaccess,
-	}
+): LoadRequest[] {
+	return wires.flatMap((wire) => {
+		const wireDef = wire.def
+		if (!wireDef) throw new Error("Could not find wire def")
+		if (wireDef.viewOnly) return []
+		return [
+			{
+				...wire,
+				batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
+				fields: getFieldsRequest(wireDef.fields) || [],
+				params: context.getParams(),
+				requirewriteaccess: wireDef.requirewriteaccess,
+			},
+		]
+	})
 }
 
 export default (context: Context, wires?: string[]): ThunkFunc =>
@@ -78,9 +70,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			throw new Error(`Wire dependency error, check the table above`)
 		}
 
-		const loadRequests = wiresToLoad
-			.filter((wire) => !wire.viewOnly)
-			.map((wire) => getWireRequest(wire, 0, context))
+		const loadRequests = getWireRequest(wiresToLoad, true, context)
 
 		if (!loadRequests.length) {
 			return context
@@ -89,66 +79,16 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
-		// Add the local ids
-		const wiresRequestMap = getWiresMap(wiresToLoad)
-		const wiresResponse: Record<string, PlainWire> = {}
-		for (const wire of response?.wires || []) {
-			const requestWire = wiresRequestMap[wire.wire]
-			const [view, name] = getWireParts(wire.wire)
-			const data: Record<string, PlainWireRecord> = {}
-			const original: Record<string, PlainWireRecord> = {}
-			const changes: Record<string, PlainWireRecord> = {}
-
-			const wireDef = requestWire.def
-
-			if (!wireDef) throw new Error("No wiredef found")
-			if (wireDef.viewOnly) throw new Error("Cannot load viewOnly wire")
-			const autoCreateRecord = !!wireDef.init?.create
-
-			if (autoCreateRecord) {
-				wire.data?.push(
-					getDefaultRecord(
-						context,
-						wiresResponse,
-						response.collections,
-						view,
-						wireDef,
-						wireDef.collection
-					)
-				)
-			}
-
-			wire.data?.forEach((item) => {
-				const localId = nanoid()
-				data[localId] = item
-				original[localId] = item
-
-				if (autoCreateRecord) {
-					changes[localId] = item
+		batch(() => {
+			dispatch(load([response.wires, response.collections]))
+			response.wires.forEach((wire) => {
+				if (wire.def?.init?.create) {
+					dispatch(createrecord(context, wire.name))
 				}
 			})
-			wiresResponse[wire.wire] = {
-				name,
-				view,
-				query: true,
-				batchid: nanoid(),
-				def: wireDef,
-				data,
-				original,
-				order: requestWire.order,
-				changes,
-				deletes: {},
-				batchnumber: wire.batchnumber,
-				more: wire.more,
-				errors: undefined,
-				conditions: requestWire.conditions,
-				collection: wireDef.collection,
-			}
-		}
-
-		dispatch(load([Object.values(wiresResponse), response.collections]))
+		})
 
 		return context
 	}
 
-export { getWireRequest, getWiresMap }
+export { getWireRequest, getWiresMap, getFieldsRequest }

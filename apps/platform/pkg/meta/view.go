@@ -26,6 +26,10 @@ type View struct {
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+func (v *View) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(v)
+}
+
 func (v *View) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddObjectKey("definition", (*YAMLDefinition)(&v.Definition))
 	enc.AddStringKey("namespace", v.Namespace)
@@ -224,7 +228,7 @@ type ViewDepMap struct {
 	Components map[string]bool
 	Variants   map[string]bool
 	Views      map[string]bool
-	//Wires      map[string]*yaml.Node
+	Wires      []NodePair
 }
 
 func NewViewDefMap() *ViewDepMap {
@@ -232,30 +236,25 @@ func NewViewDefMap() *ViewDepMap {
 		Components: map[string]bool{},
 		Variants:   map[string]bool{},
 		Views:      map[string]bool{},
-		//Wires:      map[string]*yaml.Node{},
+		Wires:      []NodePair{},
 	}
 }
 
 func (v *View) GetDependencies() (*ViewDepMap, error) {
 
-	components, err := getMapNode(&v.Definition, "components")
+	components, err := GetMapNode(&v.Definition, "components")
 	if err != nil {
 		return nil, err
 	}
-	panels, err := getMapNode(&v.Definition, "panels")
+	panels, err := GetMapNode(&v.Definition, "panels")
 	if err != nil {
 		panels = nil
 	}
 
-	/*
-		// Not using this for now, but it's a placeholder
-		// for when we want to process wires on the server
-		// for even more performance gainz.
-		wires, err := getMapNode(&v.Definition, "wires")
-		if err != nil {
-			wires = nil
-		}
-	*/
+	wires, err := GetMapNode(&v.Definition, "wires")
+	if err != nil {
+		wires = nil
+	}
 
 	depMap := NewViewDefMap()
 
@@ -265,7 +264,7 @@ func (v *View) GetDependencies() (*ViewDepMap, error) {
 		for i := range panels.Content {
 			if i%2 != 0 {
 				panel := panels.Content[i]
-				panelType, err := getMapNode(panel, "uesio.type")
+				panelType, err := GetMapNode(panel, "uesio.type")
 				if err != nil {
 					return nil, err
 				}
@@ -282,20 +281,13 @@ func (v *View) GetDependencies() (*ViewDepMap, error) {
 		}
 	}
 
-	/*
-		// Not using this for now, but it's a placeholder
-		// for when we want to process wires on the server
-		// for even more performance gainz.
-		if wires != nil && wires.Kind == yaml.MappingNode {
-			for i := range wires.Content {
-				if i%2 != 0 {
-					wire := wires.Content[i]
-					wireID := wires.Content[i-1]
-					depMap.Wires[wireID.Value] = wire
-				}
-			}
+	if wires != nil && wires.Kind == yaml.MappingNode {
+		wirePairs, err := GetMapNodes(wires)
+		if err != nil {
+			return nil, err
 		}
-	*/
+		depMap.Wires = wirePairs
+	}
 
 	return depMap, nil
 }

@@ -32,6 +32,8 @@ import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
 import { MetadataState } from "../bands/metadata/types"
+import { PlainWire } from "../bands/wire/types"
+import { PlainCollection } from "../bands/collection/types"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -59,6 +61,8 @@ type InitialState = {
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	metadatatext?: EntityState<MetadataState>
+	wire?: EntityState<PlainWire>
+	collection?: EntityState<PlainCollection>
 }
 
 let platform: Platform
@@ -66,6 +70,8 @@ let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
+
+	//attachDefToWires(initialState)
 
 	const newStore = configureStore({
 		reducer: {

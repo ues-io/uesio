@@ -25,6 +25,10 @@ type Label struct {
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+func (l *Label) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(l)
+}
+
 func (l *Label) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", l.Namespace)
 	enc.AddStringKey("name", l.Name)

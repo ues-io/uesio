@@ -1,19 +1,18 @@
 package adapt
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-// MetadataCache type
 type MetadataCache struct {
 	Collections map[string]*CollectionMetadata
 	SelectLists map[string]*SelectListMetadata
 }
 
-// AddCollection function
 func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata) {
 	if mc.Collections == nil {
 		mc.Collections = map[string]*CollectionMetadata{}
@@ -21,7 +20,6 @@ func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata)
 	mc.Collections[key] = metadata
 }
 
-// GetCollection function
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
 	collectionMetadata, ok := mc.Collections[key]
 	if !ok {
@@ -30,7 +28,6 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 	return collectionMetadata, nil
 }
 
-// CollectionMetadata struct
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
 	Namespace             string                                 `json:"namespace"`
@@ -49,7 +46,19 @@ type CollectionMetadata struct {
 	Public                bool                                   `json:"public"`
 }
 
-// GetField function
+func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
+	bytes, err := json.Marshal(cm)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
+}
+
+// We need this to satisfy the Depable interface
+func (cm *CollectionMetadata) GetKey() string {
+	return cm.GetFullName()
+}
+
 func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 
 	names := strings.Split(key, "->")
@@ -74,24 +83,20 @@ func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
 	cm.Fields[metadata.GetFullName()] = metadata
 }
 
-// GetNameField function
 func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {
 	return cm.GetField(cm.NameField)
 }
 
-// GetFullName function
 func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
-// SelectListMetadata type
 type SelectListMetadata struct {
 	Name             string                  `json:"name"`
 	Options          []meta.SelectListOption `json:"options"`
 	BlankOptionLabel string                  `json:"blank_option_label"`
 }
 
-// FieldMetadata struct
 type FieldMetadata struct {
 	Name                   string                       `json:"name"`
 	Namespace              string                       `json:"namespace"`
@@ -117,7 +122,6 @@ type FieldMetadata struct {
 	IsFormula              bool                         `json:"-"`
 }
 
-// GetFullName function
 func (fm *FieldMetadata) GetFullName() string {
 	return fm.Namespace + "." + fm.Name
 }

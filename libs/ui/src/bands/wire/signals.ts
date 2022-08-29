@@ -27,10 +27,7 @@ import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { RegularWireDefinition, WireDefinition } from "../../definition/wire"
 
-import {
-	WireConditionDefinition,
-	WireConditionState,
-} from "./conditions/conditions"
+import { WireConditionState } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
 import { MetadataKey } from "../builder/types"
 
@@ -241,7 +238,7 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "conditionId",
 				type: "CONDITION",
 				filter: (def: Definition) =>
-					Boolean(def && (<WireConditionDefinition>def).id),
+					Boolean(def && (<WireConditionState>def).id),
 				wire: <string>signal.wire,
 				label: "condition",
 			},

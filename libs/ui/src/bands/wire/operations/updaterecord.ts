@@ -29,8 +29,7 @@ export default (
 		)
 
 		// Now run change events
-		const wireDef = wire.def
-		const changeEvents = wireDef.events?.onChange
+		const changeEvents = wire.def?.events?.onChange
 
 		if (changeEvents) {
 			for (const changeEvent of changeEvents) {

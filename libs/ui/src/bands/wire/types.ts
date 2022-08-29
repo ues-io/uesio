@@ -1,26 +1,30 @@
-import { WireDefinition } from "../../definition/wire"
 import { SaveError } from "../../load/saveresponse"
+import { WireDefinition } from "../../wireexports"
 import { MetadataKey } from "../builder/types"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
 
+type OrderState = {
+	field: MetadataKey
+	desc: boolean
+}
+
 type PlainWire = {
 	batchid: string
 	batchnumber: number
-	changes: Record<string, PlainWireRecord>
+	changes?: Record<string, PlainWireRecord>
 	collection: string
-	conditions: WireConditionState[]
-	order: { field: MetadataKey; desc: boolean }[]
+	conditions?: WireConditionState[]
+	order?: OrderState[]
+	def?: WireDefinition
 	data: Record<string, PlainWireRecord>
-	def: WireDefinition
-	deletes: Record<string, PlainWireRecord>
+	deletes?: Record<string, PlainWireRecord>
 	errors?: Record<string, SaveError[]>
 	more?: boolean
 	name: string
-	original: Record<string, PlainWireRecord>
+	original?: Record<string, PlainWireRecord>
 	query: boolean
 	view: string
-	viewOnly?: boolean
 }
 
 export { PlainWire }

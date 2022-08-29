@@ -2,6 +2,7 @@ import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { PlainCollection, PlainCollectionMap } from "./types"
 import collectionAdapter from "./adapter"
 import { init as initWire, load as loadWire, WireLoadAction } from "../wire"
+import { initEntity } from "../utils"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
@@ -32,6 +33,8 @@ const collectionSlice = createSlice({
 	reducers: {
 		set: (state, { payload }: SetCollectionAction) =>
 			mergeCollection(state, payload),
+		setMany: collectionAdapter.upsertMany,
+		init: initEntity<PlainCollection>
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
@@ -49,5 +52,5 @@ const collectionSlice = createSlice({
 	},
 })
 
-export const { set } = collectionSlice.actions
+export const { set, setMany, init } = collectionSlice.actions
 export default collectionSlice.reducer
