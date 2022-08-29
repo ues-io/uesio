@@ -12,41 +12,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
 
 const Text = component.getUtility("uesio/io.text")
-
-type VariantTagProps = {
-	namespaceInfo: metadata.MetadataInfo
-	variantInfo: component.ComponentVariant
-} & definition.UtilityProps
-
-const VariantTag: FC<VariantTagProps> = (props) => {
-	const { context, namespaceInfo, variantInfo } = props
-	const classes = styles.useUtilityStyles(
-		{
-			title: {
-				verticalAlign: "middle",
-				marginLeft: "4px",
-			},
-		},
-		props
-	)
-	return (
-		<div>
-			<Text
-				variant="uesio/io.icon"
-				text={namespaceInfo.icon}
-				color={namespaceInfo.color}
-				context={context}
-			/>
-			<Text
-				text={variantInfo.name}
-				context={context}
-				classes={{
-					root: classes.title,
-				}}
-			/>
-		</div>
-	)
-}
+const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
@@ -91,10 +57,10 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 						context={context}
 						variant="uesio/studio.smallpropnodetag"
 					>
-						<VariantTag
+						<NamespaceLabel
+							metadatakey={variant.namespace}
+							title={variant.name}
 							context={context}
-							namespaceInfo={variantNsInfo}
-							variantInfo={variant}
 						/>
 					</PropNodeTag>
 				)
@@ -157,11 +123,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				)
 			}
 		>
-			<ComponentTag
-				namespaceInfo={namespaceInfo[namespace]}
-				propDef={propDef}
-				context={context}
-			/>
+			<ComponentTag propDef={propDef} context={context} />
 		</PropNodeTag>
 	)
 }
@@ -226,46 +188,39 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 }
 
 type ComponentTagProps = {
-	namespaceInfo: metadata.MetadataInfo
+	// namespaceInfo: metadata.MetadataInfo
 	propDef: builder.BuildPropertiesDefinition
 } & definition.UtilityProps
 
 const ComponentTag: FC<ComponentTagProps> = (props) => {
-	const { context, namespaceInfo, propDef } = props
+	const { context, propDef } = props
 	const classes = styles.useUtilityStyles(
 		{
 			title: {
 				verticalAlign: "middle",
-				marginLeft: "6px",
+				marginBottom: "0.5em",
 			},
 			desc: {
-				fontSize: "8pt",
+				fontSize: "0.9em",
 				fontWeight: 300,
-				lineHeight: "10pt",
-				marginTop: "8px",
+				margin: "0",
 			},
 		},
 		props
 	)
 	return (
 		<div>
-			<div>
-				<Text
-					variant="uesio/io.icon"
-					text={namespaceInfo.icon}
-					color={namespaceInfo.color}
-					context={context}
-				/>
-				<Text
-					text={propDef.title}
-					context={context}
-					classes={{
-						root: classes.title,
-					}}
-				/>
-			</div>
+			<NamespaceLabel
+				metadatakey={propDef.namespace}
+				title={propDef.title}
+				context={context}
+				classes={{
+					root: classes.title,
+				}}
+			/>
+
 			<Text
-				element="div"
+				element="p"
 				text={propDef.description}
 				context={context}
 				classes={{

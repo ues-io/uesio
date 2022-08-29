@@ -277,7 +277,15 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
-	getNamespaceInfo = () => getCurrentState().builder.namespaces || {}
+	getNamespaceInfo = (ns?: string) => {
+		const namespaces = getCurrentState().builder.namespaces || {}
+
+		if (!ns) return namespaces
+		if (ns && !(ns in namespaces)) {
+			throw new Error(`Namespaceinfo not found for: ${ns}`)
+		}
+		return namespaces[ns]
+	}
 
 	getDefinition = (
 		state: RootState,
