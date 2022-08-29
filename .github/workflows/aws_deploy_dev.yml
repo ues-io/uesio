@@ -50,7 +50,7 @@ jobs:
                       ${{ runner.os }}-go-
             - name: Run Build all resources
               shell: bash
-              run: npm run build-all
+              run: npm run build-all --skip-nx-cache
             - name: Build image
               run: npm run nx -- build-image platform
             # Now run steps to deploy to AWS
