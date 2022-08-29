@@ -60,6 +60,8 @@ class Wire {
 
 	hasMore = () => this.source.more
 
+	getWireDef = () => this.source.def
+
 	getFields = () => this.source.def?.fields || {}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {

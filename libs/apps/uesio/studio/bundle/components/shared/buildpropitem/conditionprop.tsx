@@ -14,8 +14,8 @@ const ConditionPropComponent: builder.PropComponent<builder.ConditionProp> = (
 			{...props}
 			filter={filter}
 			definitionPath={`["wires"]["${wire}"]["conditions"]`}
-			valueGrabber={(def: wire.WireConditionDefinition) => def.id}
-			labelGrabber={(def: wire.WireConditionDefinition) => def.id}
+			valueGrabber={(def: wire.WireConditionState) => def.id}
+			labelGrabber={(def: wire.WireConditionState) => def.id}
 		/>
 	)
 }
