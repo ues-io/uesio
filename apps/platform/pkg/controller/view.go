@@ -56,6 +56,27 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			return
 		}
 
+		if buildMode {
+
+			pack := &meta.ComponentPack{
+				Name:      "main",
+				Namespace: "uesio/io",
+			}
+
+			err = bundle.Load(pack, session)
+			if err != nil {
+				HandleMissingRoute(w, r, session, "", err)
+				return
+			}
+
+			err := depsCache.AddItem(pack, false)
+			if err != nil {
+				HandleMissingRoute(w, r, session, "", err)
+				return
+			}
+
+		}
+
 		ExecuteIndexTemplate(w, route, depsCache, buildMode, session)
 	}
 }
