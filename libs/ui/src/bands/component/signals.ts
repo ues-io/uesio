@@ -24,11 +24,23 @@ export default {
 			const handler = getSignal(scope, type)
 
 			const target = signalTarget || handler.target || ""
+			const state = getState()
 
 			// This is where we select state based on even partial target ids
 			const targetSearch = makeComponentId(context, scope, target)
 
-			const componentStates = selectTarget(getState(), targetSearch)
+			let componentStates = selectTarget(state, targetSearch)
+
+			// If we couldn't find targets in our record context, try without it.
+			if (!componentStates.length) {
+				const targetSearch = makeComponentId(
+					context,
+					scope,
+					target,
+					true
+				)
+				componentStates = selectTarget(state, targetSearch)
+			}
 
 			// Loop over all ids that match the target and dispatch
 			// to them all

@@ -79,6 +79,12 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
+		// merge the old info back in.
+		response.wires.forEach((wire, index) => {
+			const oldWire = wiresToLoad[index]
+			wire.def = oldWire.def
+		})
+
 		batch(() => {
 			dispatch(load([response.wires, response.collections]))
 			response.wires.forEach((wire) => {

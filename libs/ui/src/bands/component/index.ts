@@ -11,11 +11,12 @@ const componentAdapter = createEntityAdapter<ComponentState>({
 const makeComponentId = (
 	context: Context,
 	componentType: string,
-	id: string
+	id: string,
+	noRecordContext?: boolean
 ) => {
 	const viewId = context.getViewId()
 	const recordId = context.getRecordId()
-	const recordSuffix = recordId ? `:${recordId}` : ""
+	const recordSuffix = !noRecordContext && recordId ? `:${recordId}` : ""
 	return `${viewId}:${componentType}:${id}${recordSuffix}`
 }
 
