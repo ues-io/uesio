@@ -159,7 +159,7 @@ const wireSlice = createSlice({
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data}
+				if (!state.original) state.original = { ...state.data }
 				if (!state.changes) state.changes = {}
 				const usePath = [recordId].concat(path)
 				const basePath = [recordId].concat([path[0]])
@@ -173,7 +173,7 @@ const wireSlice = createSlice({
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data}
+				if (!state.original) state.original = { ...state.data }
 				const usePath = [recordId].concat(path)
 				set(state.data, usePath, record)
 				set(state.original, usePath, record)
@@ -181,7 +181,7 @@ const wireSlice = createSlice({
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
 			(state, { record, recordId, prepend }) => {
-				if (!state.original) state.original = { ...state.data}
+				if (!state.original) state.original = { ...state.data }
 				const newRecord = { [recordId]: record || {} }
 
 				state.data = {
@@ -373,8 +373,6 @@ const getWireParts = (fullWireId: string): [string, string] => {
 	return [parts[0], parts[1]]
 }
 
-
-
 export {
 	useWire,
 	useWires,
@@ -407,6 +405,6 @@ export const {
 	addCondition,
 	removeCondition,
 	initAll,
-	upsertMany
+	upsertMany,
 } = wireSlice.actions
 export default wireSlice.reducer
