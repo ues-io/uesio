@@ -10,6 +10,7 @@ import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { FieldMetadataMap } from "../../field/types"
+import createrecord from "./createrecord"
 
 const initializeRegularWire = (
 	viewId: string,
@@ -101,11 +102,12 @@ export default (
 		wireDefs: Record<string, WireDefinition>
 	): ThunkFunc =>
 	(dispatch, getState) => {
-		const collectionMetadata: PlainCollectionMap = {}
+		const collections: PlainCollectionMap = {}
 		const viewId = context.getViewId()
 		if (!viewId) throw new Error("Could not get View Def Id")
 		const state = getState()
 
+		const viewOnlyDefs: Record<string, WireDefinition> = {}
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
 			const wireDef = wireDefs[wirename]
 			const existingWire = selectWire(state, viewId, wirename)
@@ -115,17 +117,21 @@ export default (
 					def: wireDef,
 				}
 			}
+			if (wireDef.viewOnly) {
+				viewOnlyDefs[wirename] = wireDef
+			}
 			return wireDef.viewOnly
-				? initializeViewOnlyWire(
-						viewId,
-						wirename,
-						wireDef,
-						collectionMetadata
-				  )
+				? initializeViewOnlyWire(viewId, wirename, wireDef, collections)
 				: initializeRegularWire(viewId, wirename, wireDef)
 		})
 
-		dispatch(init([initializedWires, collectionMetadata]))
+		dispatch(init([initializedWires, collections]))
+		Object.keys(viewOnlyDefs).forEach((wirename) => {
+			const wireDef = viewOnlyDefs[wirename]
+			if (wireDef.init?.create) {
+				dispatch(createrecord(context, wirename))
+			}
+		})
 
 		return context
 	}

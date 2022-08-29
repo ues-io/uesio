@@ -39,8 +39,7 @@ export default (context: Context): ThunkFunc =>
 		const wiresToLoad = Object.fromEntries(
 			Object.entries(wires).filter(([wirename, wireDef]) => {
 				const foundWire = selectWire(state, viewId, wirename)
-				if (foundWire || wireDef.viewOnly)
-					preloadedDefs[wirename] = wireDef
+				if (foundWire) preloadedDefs[wirename] = wireDef
 				return !foundWire
 			})
 		)

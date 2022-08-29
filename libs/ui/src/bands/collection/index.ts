@@ -34,7 +34,7 @@ const collectionSlice = createSlice({
 		set: (state, { payload }: SetCollectionAction) =>
 			mergeCollection(state, payload),
 		setMany: collectionAdapter.upsertMany,
-		init: initEntity<PlainCollection>
+		init: initEntity<PlainCollection>,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
