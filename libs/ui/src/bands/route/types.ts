@@ -7,7 +7,9 @@ import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { PlainViewDef } from "../../definition/viewdef"
 import { MetadataInfo } from "../../platform/platform"
+import { PlainCollection } from "../collection/types"
 import { MetadataState } from "../metadata/types"
+import { PlainWire } from "../wire/types"
 
 type TenantState = {
 	name: string
@@ -24,6 +26,8 @@ type Dependencies = {
 	label?: EntityState<LabelState>
 	metadatatext?: EntityState<MetadataState>
 	namespaces?: Record<string, MetadataInfo>
+	wire?: EntityState<PlainWire>
+	collection?: EntityState<PlainCollection>
 }
 
 type RouteState = {

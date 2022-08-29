@@ -50,7 +50,7 @@ export default class Work extends Command {
 			},
 		])
 
-		const workspaceList = response.wires[0].data
+		const workspaceList = Object.values(response.wires[0].data)
 
 		if (!workspaceList || !workspaceList.length) {
 			throw new Error("No workspaces found for app: " + appName)

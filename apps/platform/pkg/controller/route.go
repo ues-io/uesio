@@ -78,6 +78,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

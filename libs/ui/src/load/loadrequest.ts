@@ -1,19 +1,9 @@
-import { WireConditionState } from "../bands/wire/conditions/conditions"
+import { PlainWire } from "../bands/wire/types"
 
-type LoadRequest = {
-	wire: string
-	query?: boolean
-	collection: string
+type LoadRequest = PlainWire & {
+	params?: Record<string, string>
 	fields: LoadRequestField[]
-	conditions?: WireConditionState[]
-	order?: OrderDescription[]
-	batchsize?: number
-	batchnumber?: number
-}
-
-type OrderDescription = {
-	field: string
-	desc: boolean
+	requirewriteaccess?: boolean
 }
 
 type LoadRequestField = {
