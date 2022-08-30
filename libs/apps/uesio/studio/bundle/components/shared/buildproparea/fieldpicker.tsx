@@ -7,8 +7,10 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 
-const Tooltip = component.getUtility("uesio/io.tooltip")
 const IconButton = component.getUtility("uesio/io.iconbutton")
+const Text = component.getUtility("uesio/io.text")
+const Button = component.getUtility("uesio/io.button")
+const Icon = component.getUtility("uesio/io.icon")
 
 type T = {
 	valueAPI: builder.ValueAPI
@@ -75,7 +77,7 @@ const useSearch = (items: string[] = []) => {
 const FieldPicker: FC<T> = (props) => {
 	const { valueAPI, path, context, wireDef } = props
 	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([])
-	const [frameHoverIndex, setFrameHoverIndex] = React.useState<number>(-1)
+
 	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
 	const transformStart = "translate(-5px, 0)"
 	const transformEnd = "translate(0, 0)"
@@ -180,6 +182,7 @@ const FieldPicker: FC<T> = (props) => {
 	const { searchTerm, setSearchTerm, result } = useSearch(fieldKeys)
 
 	const collection = uesio.collection.useCollection(context, collectionKey)
+
 	return (
 		<div>
 			<div
@@ -192,81 +195,65 @@ const FieldPicker: FC<T> = (props) => {
 			>
 				{/* Breadcrumbs */}
 				{stack.length > 1 && (
-					<Tooltip
-						text={`collection: ${stack[frameHoverIndex]?.collection}, field: ${stack[frameHoverIndex]?.fieldId}`}
-						context={context}
-						placement={"auto"}
+					<div
+						style={{
+							paddingBottom: "8px ",
+							whiteSpace: "nowrap",
+							overflow: "scroll",
+						}}
 					>
-						<div
-							style={{
-								paddingBottom: "8px ",
-								whiteSpace: "nowrap",
-								overflow: "scroll",
-							}}
-						>
-							<TransitionGroup className={classes.breadcrumbs}>
-								{stack.map((frame, i) => {
-									const isFirst = i === 0
-									const isLast = stack.length === i + 1
-									return (
-										<CSSTransition
-											key={frame.collection + i}
-											timeout={300}
-											classNames={classes.item}
+						<TransitionGroup className={classes.breadcrumbs}>
+							{stack.map((frame, i) => {
+								const isFirst = i === 0
+								const isLast = stack.length === i + 1
+								return (
+									<CSSTransition
+										key={frame.collection + i}
+										timeout={300}
+										classNames={classes.item}
+									>
+										<div
+											role="button"
+											onClick={() =>
+												isLast ? null : goToFrame(i)
+											}
+											className={classes.crumb}
+											style={{
+												color: isLast ? "#000" : "#888",
+												zIndex: stack.length - i,
+												marginLeft: !isFirst
+													? "-6px"
+													: "auto",
+												paddingLeft: !isFirst
+													? "10px"
+													: "auto",
+											}}
 										>
-											<div
-												role="button"
-												onClick={() =>
-													isLast ? null : goToFrame(i)
-												}
-												onMouseOver={() =>
-													setFrameHoverIndex(i)
-												}
-												onMouseLeave={() =>
-													setFrameHoverIndex(-1)
-												}
-												className={classes.crumb}
-												style={{
-													color: isLast
-														? "#000"
-														: "#888",
-													zIndex: stack.length - i,
-													marginLeft: !isFirst
-														? "-6px"
-														: "auto",
-													paddingLeft: !isFirst
-														? "10px"
-														: "auto",
-												}}
-											>
-												{isFirst || isLast ? (
-													<span>
+											{isFirst || isLast ? (
+												<span>{frame.collection}</span>
+											) : (
+												<span
+													className={styles.cx(
+														classes.crumbLabel,
+														!isFirst &&
+															!isLast &&
+															"shorten"
+													)}
+												>
+													<span className="dots">
+														...
+													</span>
+													<span className="label">
 														{frame.collection}
 													</span>
-												) : (
-													<span
-														className={styles.cx(
-															classes.crumbLabel,
-															!isFirst &&
-																!isLast &&
-																"shorten"
-														)}
-													>
-														<span className="dots">
-															...
-														</span>
-														<span className="label">
-															{frame.collection}
-														</span>
-													</span>
-												)}
-											</div>
-										</CSSTransition>
-									)
-								})}
-							</TransitionGroup>
-						</div>
-					</Tooltip>
+												</span>
+											)}
+										</div>
+									</CSSTransition>
+								)
+							})}
+						</TransitionGroup>
+					</div>
 				)}
 				<input
 					value={searchTerm}
@@ -310,9 +297,10 @@ const FieldPicker: FC<T> = (props) => {
 							const setPath = currentFrame.path + `["${fieldId}"]`
 							const selected = isFieldSelected(setPath)
 
+							const nsInfo =
+								uesio.builder.getNamespaceInfoFromKey(fieldId)
 							return (
 								<PropNodeTag
-									draggable={`${collectionKey}:${fieldId}`}
 									key={index}
 									onClick={() => {
 										selected
@@ -328,25 +316,61 @@ const FieldPicker: FC<T> = (props) => {
 											justifyContent: "space-between",
 										}}
 									>
-										<span>{fieldId}</span>
+										{/* <span>{fieldId}</span> */}
+										<span>
+											<Text
+												variant="uesio/io.icon"
+												text={nsInfo.icon}
+												color={nsInfo.color}
+												context={context}
+											/>
+											<Text
+												text={" " + nsInfo.name}
+												context={context}
+												// classes={{
+												// 	root: classes.title,
+												// }}
+											/>
+										</span>
+
 										{referencedCollection && (
-											<span
+											<button
 												style={{
-													transform: "rotate(-90deg)",
+													display: "flex",
+													alignItems: "center",
+													background: "none",
+													border: "none",
+													cursor: "pointer",
 												}}
+												onClick={() =>
+													addFrame({
+														fieldId,
+														collection:
+															referencedCollection,
+													})
+												}
 											>
-												<IconButton
-													context={context}
-													icon="expand_more"
-													onClick={() =>
-														addFrame({
-															fieldId,
-															collection:
-																referencedCollection,
-														})
-													}
-												/>
-											</span>
+												<span
+													style={{
+														opacity: 0.8,
+														fontSize: "0.8em",
+													}}
+												>
+													{referencedCollection}
+												</span>
+												<span
+													style={{
+														display: "inline-block",
+														transform:
+															"rotate(-90deg)",
+													}}
+												>
+													<Icon
+														context={context}
+														icon={"expand_more"}
+													/>
+												</span>
+											</button>
 										)}
 									</div>
 								</PropNodeTag>
