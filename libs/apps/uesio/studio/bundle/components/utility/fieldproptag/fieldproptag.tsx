@@ -47,9 +47,11 @@ const FieldPropTag: FC<T> = (props) => {
 			draggable={`${collectionKey}:${fieldId}`}
 			key={fieldId}
 			context={context}
-			className={classes.fieldTag}
 		>
-			<div style={{ display: "flex", justifyContent: "space-between" }}>
+			<div
+				className={classes.fieldTag}
+				style={{ display: "flex", justifyContent: "space-between" }}
+			>
 				<span>{fieldId}</span>
 				<div className="trashIcon">
 					<IconButton
