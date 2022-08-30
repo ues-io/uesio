@@ -7,9 +7,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const Text = component.getUtility("uesio/io.text")
-const Button = component.getUtility("uesio/io.button")
+const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 const Icon = component.getUtility("uesio/io.icon")
 
 type T = {
@@ -85,6 +83,7 @@ const FieldPicker: FC<T> = (props) => {
 		{
 			breadcrumbs: {
 				maxWidth: "100%",
+				display: "flex",
 				overflow: "scroll",
 				"&::-webkit-scrollbar": {
 					display: "none",
@@ -118,7 +117,7 @@ const FieldPicker: FC<T> = (props) => {
 				},
 			},
 			crumbLabel: {
-				texOverflow: "ellipsis",
+				textOverflow: "ellipsis",
 				display: "inline-block",
 				overflow: "hidden",
 				verticalAlign: "bottom",
@@ -183,6 +182,11 @@ const FieldPicker: FC<T> = (props) => {
 
 	const collection = uesio.collection.useCollection(context, collectionKey)
 
+	// Scroll the fieldlist div to the top when switching collections
+	React.useEffect(() => {
+		if (scrollBoxRef.current) scrollBoxRef.current.scrollTop = 0
+	}, [currentFrame])
+
 	return (
 		<div>
 			<div
@@ -223,15 +227,21 @@ const FieldPicker: FC<T> = (props) => {
 												zIndex: stack.length - i,
 												marginLeft: !isFirst
 													? "-6px"
-													: "auto",
+													: "initial",
 												paddingLeft: !isFirst
 													? "10px"
-													: "auto",
+													: "5px",
 											}}
 										>
 											{isFirst || isLast ? (
-												<span>{frame.collection}</span>
+												<NamespaceLabel
+													context={context}
+													metadatakey={
+														frame.collection
+													}
+												/>
 											) : (
+												// Short crumb
 												<span
 													className={styles.cx(
 														classes.crumbLabel,
@@ -240,11 +250,18 @@ const FieldPicker: FC<T> = (props) => {
 															"shorten"
 													)}
 												>
+													{/* Hidden when hovering */}
 													<span className="dots">
 														...
 													</span>
+													{/* Shown when hovering */}
 													<span className="label">
-														{frame.collection}
+														<NamespaceLabel
+															context={context}
+															metadatakey={
+																frame.collection
+															}
+														/>
 													</span>
 												</span>
 											)}
@@ -297,8 +314,6 @@ const FieldPicker: FC<T> = (props) => {
 							const setPath = currentFrame.path + `["${fieldId}"]`
 							const selected = isFieldSelected(setPath)
 
-							const nsInfo =
-								uesio.builder.getNamespaceInfoFromKey(fieldId)
 							return (
 								<PropNodeTag
 									key={index}
@@ -316,23 +331,12 @@ const FieldPicker: FC<T> = (props) => {
 											justifyContent: "space-between",
 										}}
 									>
-										{/* <span>{fieldId}</span> */}
-										<span>
-											<Text
-												variant="uesio/io.icon"
-												text={nsInfo.icon}
-												color={nsInfo.color}
-												context={context}
-											/>
-											<Text
-												text={" " + nsInfo.name}
-												context={context}
-												// classes={{
-												// 	root: classes.title,
-												// }}
-											/>
-										</span>
+										<NamespaceLabel
+											context={context}
+											metadatakey={fieldId}
+										/>
 
+										{/* We probably want to use an io/button here but that doesn't support icons on the right yet */}
 										{referencedCollection && (
 											<button
 												style={{

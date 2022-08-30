@@ -2,8 +2,9 @@ import PropNodeTag from "../../shared/buildpropitem/propnodetag"
 import { builder, component, definition, styles } from "@uesio/ui"
 
 const IconButton = component.getUtility("uesio/io.iconbutton")
+const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
-import React, { FC } from "react"
+import { FC } from "react"
 
 export type FieldProp = {
 	fieldId: string
@@ -52,7 +53,7 @@ const FieldPropTag: FC<T> = (props) => {
 				className={classes.fieldTag}
 				style={{ display: "flex", justifyContent: "space-between" }}
 			>
-				<span>{fieldId}</span>
+				<NamespaceLabel context={context} metadatakey={fieldId} />
 				<div className="trashIcon">
 					<IconButton
 						context={context}
