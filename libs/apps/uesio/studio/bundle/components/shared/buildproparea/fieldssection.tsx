@@ -147,12 +147,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 						<FieldPropTag
 							{...el}
 							context={context}
+							valueAPI={valueAPI}
 							togglePopper={() => setShowPopper(!showPopper)}
-							removeField={() =>
-								valueAPI.remove(
-									`${path}["fields"]["${el.fieldId}"]`
-								)
-							}
 						/>
 					</div>
 				))}
