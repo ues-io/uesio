@@ -27,6 +27,10 @@ type ConfigValue struct {
 	Value     string
 }
 
+func (cv *ConfigValue) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(cv)
+}
+
 func (cv *ConfigValue) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cv.Namespace)
 	enc.AddStringKey("name", cv.Name)

@@ -190,7 +190,7 @@ func IsValidMetadataName(name string) bool {
 
 func validateNodeLanguage(node *yaml.Node, expectedName string) error {
 	node.SkipCustom = true
-	name := getNodeValueAsString(node, "language")
+	name := GetNodeValueAsString(node, "language")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
 	}
@@ -202,7 +202,7 @@ func validateNodeLanguage(node *yaml.Node, expectedName string) error {
 
 func validateNodeName(node *yaml.Node, expectedName string) error {
 	node.SkipCustom = true
-	name := getNodeValueAsString(node, "name")
+	name := GetNodeValueAsString(node, "name")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
 	}
@@ -213,7 +213,7 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 }
 
 func validateRequiredMetadataItem(node *yaml.Node, property string) error {
-	value := getNodeValueAsString(node, property)
+	value := GetNodeValueAsString(node, property)
 	if value == "" {
 		return fmt.Errorf("Required Metadata Propety Missing: %s", property)
 	}
@@ -228,8 +228,8 @@ func validateRequiredMetadataItem(node *yaml.Node, property string) error {
 	return nil
 }
 
-func getNodeValueAsString(node *yaml.Node, key string) string {
-	keyNode, err := getMapNode(node, key)
+func GetNodeValueAsString(node *yaml.Node, key string) string {
+	keyNode, err := GetMapNode(node, key)
 	if err != nil {
 		return ""
 	}
@@ -239,6 +239,17 @@ func getNodeValueAsString(node *yaml.Node, key string) string {
 	return keyNode.Value
 }
 
+func GetNodeValueAsBool(node *yaml.Node, key string, defaultValue bool) bool {
+	keyNode, err := GetMapNode(node, key)
+	if err != nil {
+		return defaultValue
+	}
+	if keyNode.Kind != yaml.ScalarNode {
+		return defaultValue
+	}
+	return keyNode.Value != "false"
+}
+
 func addNodeToMap(mapNode *yaml.Node, key string, valueNode *yaml.Node) {
 	newKeyNode := &yaml.Node{}
 	newKeyNode.SetString(key)
@@ -246,7 +257,7 @@ func addNodeToMap(mapNode *yaml.Node, key string, valueNode *yaml.Node) {
 }
 
 func getOrCreateMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
-	subNode, err := getMapNode(node, key)
+	subNode, err := GetMapNode(node, key)
 	if err != nil {
 		newValueNode := &yaml.Node{}
 		_ = newValueNode.Encode(&map[string]interface{}{})
@@ -257,7 +268,31 @@ func getOrCreateMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	return subNode, nil
 }
 
-func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
+type NodePair struct {
+	Node *yaml.Node
+	Key  string
+}
+
+func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
+	if node.Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("Definition is not a mapping node.")
+	}
+
+	contentSize := len(node.Content) / 2
+	nodes := make([]NodePair, contentSize)
+
+	for i := 0; i < contentSize; i++ {
+		j := i * 2
+		nodes[i] = NodePair{
+			Node: node.Content[j+1],
+			Key:  node.Content[j].Value,
+		}
+	}
+
+	return nodes, nil
+}
+
+func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -273,7 +308,7 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 }
 
 func setDefaultValue(node *yaml.Node, key, value string) error {
-	existing := getNodeValueAsString(node, key)
+	existing := GetNodeValueAsString(node, key)
 	if existing != "" {
 		return nil
 	}

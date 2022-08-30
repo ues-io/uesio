@@ -9,10 +9,7 @@ const panelSlice = createSlice({
 		set: panelAdapter.upsertOne,
 	},
 	extraReducers: (builder) => {
-		builder.addCase(setRoute, () => ({
-			ids: [],
-			entities: {},
-		}))
+		builder.addCase(setRoute, panelAdapter.removeAll)
 	},
 })
 

@@ -1,8 +1,8 @@
-import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
 import { FieldType, ReferenceMetadata } from "../bands/field/types"
 import { SignalDefinition } from "./signal"
 import { MetadataKey } from "../metadataexports"
+import { WireConditionState } from "../bands/wire/conditions/conditions"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -46,7 +46,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 	collection: string
 	order?: WireOrderDescription[]
 	batchsize?: number
-	conditions?: WireConditionDefinition[]
+	conditions?: WireConditionState[]
 	requirewriteaccess?: boolean
 }
 
@@ -66,6 +66,7 @@ type WireOrderDescription = {
 export {
 	WireDefinition,
 	WireDefinitionMap,
+	WireEvents,
 	WireFieldDefinition,
 	WireFieldDefinitionMap,
 	RegularWireDefinition,

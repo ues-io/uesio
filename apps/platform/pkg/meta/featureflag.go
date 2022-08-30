@@ -26,6 +26,10 @@ type FeatureFlag struct {
 	User      string
 }
 
+func (ff *FeatureFlag) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(ff)
+}
+
 func (ff *FeatureFlag) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", ff.Namespace)
 	enc.AddStringKey("name", ff.Name)

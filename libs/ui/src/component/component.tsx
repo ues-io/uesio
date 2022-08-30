@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { forwardRef, FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
@@ -200,18 +200,14 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
-	key: MetadataKey
-) => {
-	const returnFunc = (props: T) => {
-		const loader = getUtilityLoader(key) || NotFound
+const getUtility = <T extends UtilityPropsPlus>(key: MetadataKey) => {
+	const returnFunc = forwardRef((props: T, ref) => {
+		const Loader = getUtilityLoader(key) || NotFound
 		const styles = getVariantStyleInfo(props, key)
-		return loader({
-			...(props as unknown as UtilityPropsPlus),
-			styles,
-			componentType: key,
-		})
-	}
+		return (
+			<Loader ref={ref} {...props} styles={styles} componentType={key} />
+		)
+	})
 	returnFunc.displayName = key
 	return returnFunc
 }

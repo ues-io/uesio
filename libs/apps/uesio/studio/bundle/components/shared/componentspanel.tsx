@@ -11,62 +11,102 @@ import {
 import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
 
-const Grid = component.getUtility("uesio/io.grid")
 const Text = component.getUtility("uesio/io.text")
+
+type VariantTagProps = {
+	namespaceInfo: metadata.MetadataInfo
+	variantInfo: component.ComponentVariant
+} & definition.UtilityProps
+
+const VariantTag: FC<VariantTagProps> = (props) => {
+	const { context, namespaceInfo, variantInfo } = props
+	const classes = styles.useUtilityStyles(
+		{
+			title: {
+				verticalAlign: "middle",
+				marginLeft: "4px",
+			},
+		},
+		props
+	)
+	return (
+		<div>
+			<Text
+				variant="uesio/io.icon"
+				text={namespaceInfo.icon}
+				color={namespaceInfo.color}
+				context={context}
+			/>
+			<Text
+				text={variantInfo.name}
+				context={context}
+				classes={{
+					root: classes.title,
+				}}
+			/>
+		</div>
+	)
+}
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
+	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context, variants, selectedItem } = props
+	const { context, variants, selectedItem, namespaceInfo } = props
+
 	const classes = styles.useUtilityStyles(
 		{
-			variantarea: {
-				gridTemplateColumns: "1fr",
-				columnGap: "8px",
-				rowGap: "8px",
-				padding: "8px",
+			root: {
+				marginTop: "8px",
 			},
 		},
 		props
 	)
 
 	return (
-		<Grid context={context} classes={{ root: classes.variantarea }}>
+		<div className={classes.root}>
 			{variants.map((variant) => {
-				const variantFullName = `${variant.component}:${variant.namespace}/${variant.name}`
-				const isVariantSelected = selectedItem === variantFullName
+				const variantKey = uesio.component.getVariantId(variant)
+				const isVariantSelected = selectedItem === variantKey
+				const variantNsInfo = namespaceInfo[variant.namespace]
+				if (!variantNsInfo) return null
 				return (
 					<PropNodeTag
-						key={variantFullName}
+						key={variantKey}
 						onClick={(e: MouseEvent) => {
 							e.stopPropagation()
 							uesio.builder.setSelectedNode(
 								"componentvariant",
-								variantFullName,
+								variantKey,
 								""
 							)
 						}}
 						selected={isVariantSelected}
-						draggable={`componentvariant:${variantFullName}`}
+						draggable={`componentvariant:${variantKey}`}
 						context={context}
+						variant="uesio/studio.smallpropnodetag"
 					>
-						{variant.label}
+						<VariantTag
+							context={context}
+							namespaceInfo={variantNsInfo}
+							variantInfo={variant}
+						/>
 					</PropNodeTag>
 				)
 			})}
-		</Grid>
+		</div>
 	)
 }
 
 type ComponentBlockProps = {
 	propDef: builder.BuildPropertiesDefinition
 	variants: component.ComponentVariant[]
-	namespaceInfo: metadata.MetadataInfo
+	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
@@ -86,6 +126,12 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}`
 
+	// Filter out variants that aren't in one of our namespaces
+	// (this is for filtering out variants from the studio namespace)
+	const validVariants = variants
+		? variants.filter((variant) => !!namespaceInfo[variant.namespace])
+		: []
+
 	// Loop over the variants for this component
 	return (
 		<PropNodeTag
@@ -99,18 +145,20 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				selectedType === "componenttype" && selectedItem === fullName
 			}
 			expandChildren={
-				variants && (
+				validVariants &&
+				validVariants.length && (
 					<VariantsBlock
+						namespaceInfo={namespaceInfo}
 						selectedItem={selectedItem}
 						selectedType={selectedType}
-						variants={variants}
+						variants={validVariants}
 						context={context}
 					/>
 				)
 			}
 		>
 			<ComponentTag
-				namespaceInfo={namespaceInfo}
+				namespaceInfo={namespaceInfo[namespace]}
 				propDef={propDef}
 				context={context}
 			/>
@@ -167,7 +215,7 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 						variants={variants[fullName]}
 						propDef={propDef}
 						context={context}
-						namespaceInfo={namespaceInfo[namespace]}
+						namespaceInfo={namespaceInfo}
 						selectedType={selectedType}
 						selectedItem={selectedItem}
 					/>

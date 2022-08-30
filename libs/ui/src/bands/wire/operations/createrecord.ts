@@ -12,8 +12,6 @@ export default (
 	(dispatch, getState) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		const viewDef = context.getViewDef()
-		if (!viewDef) return context
 
 		const recordId = nanoid()
 		const state = getState()
@@ -27,9 +25,7 @@ export default (
 					context,
 					state.wire.entities,
 					state.collection.entities,
-					viewId,
-					wire.def,
-					wire.collection
+					wire
 				),
 				entity: wireId,
 				prepend: !!prepend,

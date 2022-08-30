@@ -118,7 +118,7 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 	return nil
 }
 
-func processView(key string, deps *PreloadMetadata, session *sess.Session) error {
+func processView(key string, deps *PreloadMetadata, params map[string]string, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -150,20 +150,54 @@ func processView(key string, deps *PreloadMetadata, session *sess.Session) error
 	}
 
 	for key := range depMap.Views {
-		err := processView(key, deps, session)
+		err := processView(key, deps, nil, session)
 		if err != nil {
 			return err
 		}
 	}
 
-	/*
-		// Not using this for now, but it's a placeholder
-		// for when we want to process wires on the server
-		// for even more performance gainz.
-		for key := range depMap.Wires {
-			fmt.Println("Found a wire: " + key)
+	if params != nil {
+		ops := []*adapt.LoadOp{}
+
+		for _, pair := range depMap.Wires {
+
+			viewOnly := meta.GetNodeValueAsBool(pair.Node, "viewOnly", false)
+			if viewOnly {
+				continue
+			}
+
+			loadOp := &adapt.LoadOp{
+				WireName: pair.Key,
+				View:     view.GetKey() + "()",
+				Query:    true,
+				Params:   params,
+			}
+			err := pair.Node.Decode(loadOp)
+			if err != nil {
+				return err
+			}
+			ops = append(ops, loadOp)
 		}
-	*/
+
+		metadata, err := datasource.Load(ops, session, nil)
+		if err != nil {
+			return err
+		}
+
+		for _, collection := range metadata.Collections {
+			err = deps.AddItem(collection, false)
+			if err != nil {
+				return err
+			}
+		}
+
+		for _, op := range ops {
+			err = deps.AddItem(op, false)
+			if err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 
@@ -348,7 +382,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = processView(route.ViewRef, deps, session)
+	err = processView(route.ViewRef, deps, route.Params, session)
 	if err != nil {
 		return nil, err
 	}

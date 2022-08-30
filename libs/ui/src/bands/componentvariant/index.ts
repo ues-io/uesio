@@ -20,12 +20,14 @@ const metadataSlice = createSlice({
 	},
 })
 
+const selectId = adapter.selectId
+
 const useComponentVariant = (key: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, key))
 
 const useComponentVariants = () => useSelector(selectors.selectAll)
 
-export { useComponentVariant, useComponentVariants, selectors }
+export { useComponentVariant, useComponentVariants, selectors, selectId }
 
 export const { set, setMany } = metadataSlice.actions
 export default metadataSlice.reducer

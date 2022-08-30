@@ -112,5 +112,9 @@ func GetRouteFromCollection(r *http.Request, namespace, collection string, viewt
 		}
 	}
 
+	if viewtype == "list" {
+		route.Params = map[string]string{}
+	}
+
 	return route, nil
 }

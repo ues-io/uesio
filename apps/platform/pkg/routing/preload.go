@@ -6,6 +6,7 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/humandad/yaml"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
@@ -31,16 +32,7 @@ func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
-	return &PreloadMetadata{
-		Theme:            NewItem(),
-		ViewDef:          NewItem(),
-		ComponentPack:    NewItem(),
-		ComponentVariant: NewItem(),
-		ConfigValue:      NewItem(),
-		Label:            NewItem(),
-		MetadataText:     NewItem(),
-		FeatureFlag:      NewItem(),
-	}
+	return &PreloadMetadata{}
 }
 
 type MetadataResponse struct {
@@ -57,6 +49,8 @@ type PreloadMetadata struct {
 	Label            *MetadataMergeData          `json:"label,omitempty"`
 	FeatureFlag      *MetadataMergeData          `json:"featureflag,omitempty"`
 	MetadataText     *MetadataMergeData          `json:"metadatatext,omitempty"`
+	Wire             *MetadataMergeData          `json:"wire,omitempty"`
+	Collection       *MetadataMergeData          `json:"collection,omitempty"`
 	Namespaces       map[string]MetadataResponse `json:"namespaces,omitempty"`
 }
 
@@ -77,8 +71,8 @@ func (mti *MetadataTextItem) IsNil() bool {
 }
 
 type Depable interface {
-	gojay.MarshalerJSONObject
 	GetKey() string
+	GetBytes() ([]byte, error)
 }
 
 func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
@@ -88,9 +82,15 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 	var metadataText string
 	switch v := item.(type) {
 	case *meta.Theme:
+		if pm.Theme == nil {
+			pm.Theme = NewItem()
+		}
 		bucket = pm.Theme
 		metadataType = "theme"
 	case *meta.View:
+		if pm.ViewDef == nil {
+			pm.ViewDef = NewItem()
+		}
 		bucket = pm.ViewDef
 		metadataType = "viewdef"
 		if includeText {
@@ -101,20 +101,47 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 			metadataText = string(bytes)
 		}
 	case *meta.ComponentVariant:
+		if pm.ComponentVariant == nil {
+			pm.ComponentVariant = NewItem()
+		}
 		bucket = pm.ComponentVariant
 		metadataType = "componentvariant"
 	case *meta.ComponentPack:
+		if pm.ComponentPack == nil {
+			pm.ComponentPack = NewItem()
+		}
 		bucket = pm.ComponentPack
 		metadataType = "componentpack"
 	case *meta.ConfigValue:
+		if pm.ConfigValue == nil {
+			pm.ConfigValue = NewItem()
+		}
 		bucket = pm.ConfigValue
 		metadataType = "configvalue"
 	case *meta.Label:
+		if pm.Label == nil {
+			pm.Label = NewItem()
+		}
 		bucket = pm.Label
 		metadataType = "label"
 	case *meta.FeatureFlag:
+		if pm.FeatureFlag == nil {
+			pm.FeatureFlag = NewItem()
+		}
 		bucket = pm.FeatureFlag
 		metadataType = "featureflag"
+	case *adapt.CollectionMetadata:
+		if pm.Collection == nil {
+			pm.Collection = NewItem()
+		}
+		bucket = pm.Collection
+		metadataType = "collection"
+	case *adapt.LoadOp:
+		if pm.Wire == nil {
+			pm.Wire = NewItem()
+		}
+		bucket = pm.Wire
+		metadataType = "wire"
 	default:
 		return fmt.Errorf("Cannot add this type to dependencies: %T", v)
 	}
@@ -136,60 +163,11 @@ func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
 		pm.MetadataText.AddItem(fullKey, bytes)
 	}
 
-	parsedbytes, err := gojay.MarshalJSONObject(item)
+	parsedbytes, err := item.GetBytes()
 	if err != nil {
 		return err
 	}
 
 	return bucket.AddItem(item.GetKey(), parsedbytes)
 
-}
-
-func (pm *PreloadMetadata) GetThemes() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.Theme
-}
-
-func (pm *PreloadMetadata) GetViewDef() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ViewDef
-}
-
-func (pm *PreloadMetadata) GetComponentPack() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ComponentPack
-}
-
-func (pm *PreloadMetadata) GetComponentVariant() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ComponentVariant
-}
-
-func (pm *PreloadMetadata) GetLabel() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.Label
-}
-
-func (pm *PreloadMetadata) GetConfigValue() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.ConfigValue
-}
-
-func (pm *PreloadMetadata) GetFeatureFlags() *MetadataMergeData {
-	if pm == nil {
-		return nil
-	}
-	return pm.FeatureFlag
 }

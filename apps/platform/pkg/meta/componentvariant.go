@@ -46,6 +46,10 @@ type ComponentVariant struct {
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+func (c *ComponentVariant) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(c)
+}
+
 func (c *ComponentVariant) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddObjectKey("definition", (*YAMLDefinition)(&c.Definition))
 	enc.AddStringKey("extends", c.Extends)
