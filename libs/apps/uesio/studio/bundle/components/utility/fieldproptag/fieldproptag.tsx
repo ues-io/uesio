@@ -1,8 +1,9 @@
 import PropNodeTag from "../../shared/buildpropitem/propnodetag"
-import { component, definition, styles } from "@uesio/ui"
+import { builder, component, definition, styles } from "@uesio/ui"
+
 const IconButton = component.getUtility("uesio/io.iconbutton")
 
-import { FC } from "react"
+import React, { FC } from "react"
 
 export type FieldProp = {
 	fieldId: string
@@ -12,8 +13,9 @@ export type FieldProp = {
 }
 
 interface T extends definition.UtilityProps, FieldProp {
-	removeField: () => void
+	// removeField: (e: React.MouseEvent<HTMLButtonElement>) => void
 	togglePopper: () => void
+	valueAPI: builder.ValueAPI
 }
 const FieldPropTag: FC<T> = (props) => {
 	const {
@@ -22,7 +24,8 @@ const FieldPropTag: FC<T> = (props) => {
 		collectionKey,
 		context,
 		togglePopper,
-		removeField,
+		valueAPI,
+		fieldPath,
 	} = props
 	const classes = styles.useStyles(
 		{
@@ -52,7 +55,7 @@ const FieldPropTag: FC<T> = (props) => {
 					<IconButton
 						context={context}
 						icon="delete"
-						onClick={removeField}
+						onClick={() => valueAPI.remove(`${fieldPath}`)}
 						title="delete"
 					/>
 				</div>
@@ -63,7 +66,7 @@ const FieldPropTag: FC<T> = (props) => {
 					context={context}
 					key={el.fieldId}
 					togglePopper={togglePopper}
-					removeField={removeField}
+					valueAPI={valueAPI}
 				/>
 			))}
 		</PropNodeTag>
