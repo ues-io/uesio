@@ -11,8 +11,6 @@ interface T extends definition.UtilityProps {
 const NamespaceLabel: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const [ns, name] = props.metadatakey.split(".")
-	// const { icon, color } = uesio.builder.getNamespaceInfo(ns)
-
 	const { icon, color } = uesio.builder.getNamespaceInfo(ns)
 
 	const classes = styles.useUtilityStyles(
