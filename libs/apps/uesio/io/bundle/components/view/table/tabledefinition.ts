@@ -1,4 +1,11 @@
-import { definition, builder, signal, component, context } from "@uesio/ui"
+import {
+	definition,
+	builder,
+	signal,
+	component,
+	context,
+	wire,
+} from "@uesio/ui"
 
 interface TableDefinition extends definition.BaseDefinition {
 	id: string
@@ -39,7 +46,12 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 		{
 			name: "wire",
 			type: "WIRE",
-			label: "wire",
+			label: "Wire",
+		},
+		{
+			name: "rownumbers",
+			type: "BOOLEAN",
+			label: "Show Row Numbers",
 		},
 		{
 			name: "mode",
@@ -61,8 +73,65 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "TEXT",
 			label: "Page size",
 		},
+		{
+			type: "PROPLISTS",
+			name: "rowactions",
+			properties: [
+				{
+					type: "TEXT",
+					label: "Text",
+					name: "text",
+				},
+				// Idea: variant prop?
+				// idea: signal prop?
+			],
+			nameTemplate: "action",
+			label: "Row Actions",
+		},
 	],
-	sections: [],
+	sections: [
+		{
+			type: "PROPLISTS",
+			name: "columns",
+			title: "Columns",
+
+			properties: [
+				{
+					type: "FIELD",
+					lookups: [
+						{
+							name: "wire", // The name with which it's accessible in the proprenderer component
+							key: "wire", // the lookup key
+							layer: 3, // N layers upwards relative to the current prop
+						},
+					],
+					label: "Field",
+					name: "field",
+				},
+			],
+			nameTemplate: "column ${field}",
+			nameFallback: "column",
+		},
+		{
+			type: "PROPLISTS",
+			name: "rowactions",
+			title: "Row actions",
+			properties: [
+				{
+					type: "TEXT",
+					label: "Text",
+					name: "text",
+				},
+				// {
+				// 	type: "SIGNAL",
+				// 	label: "Text",
+				// 	name: "text",
+				// },
+			],
+			nameTemplate: "row action ${field}",
+			nameFallback: "row action",
+		},
+	],
 	actions: [],
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
@@ -75,9 +144,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			uesio.builder.addDefinition(
 				dropNode + '["columns"]',
 				{
-					"uesio/io.column": {
-						field: `${fieldNamespace}.${fieldName}`,
-					},
+					field: `${fieldNamespace}.${fieldName}`,
 				},
 				dropIndex
 			)
