@@ -39,18 +39,15 @@ function getWireRequest(
 	context: Context
 ): LoadRequest[] {
 	return wires.flatMap((wire) => {
-		const wireDef = wire.def
-		if (!wireDef) throw new Error("Could not find wire def")
-		if (wireDef.viewOnly) return []
-		return [
-			{
-				...wire,
-				batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
-				fields: getFieldsRequest(wireDef.fields) || [],
-				params: context.getParams(),
-				requirewriteaccess: wireDef.requirewriteaccess,
-			},
-		]
+		if (wire.viewOnly) return []
+		const fields = wire.fields as WireFieldDefinitionMap
+		return {
+			...wire,
+			batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
+			fields: getFieldsRequest(fields) || [],
+			params: context.getParams(),
+			requirewriteaccess: wire.requirewriteaccess,
+		} as LoadRequest
 	})
 }
 
@@ -79,16 +76,10 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
-		// merge the old info back in.
-		response.wires.forEach((wire, index) => {
-			const oldWire = wiresToLoad[index]
-			wire.def = oldWire.def
-		})
-
 		batch(() => {
 			dispatch(load([response.wires, response.collections]))
 			response.wires.forEach((wire) => {
-				if (wire.def?.init?.create) {
+				if (wire?.create) {
 					dispatch(createrecord(context, wire.name))
 				}
 			})

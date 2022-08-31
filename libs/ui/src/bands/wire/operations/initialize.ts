@@ -23,10 +23,16 @@ const initializeRegularWire = (
 	conditions: wireDef.conditions,
 	batchid: "",
 	batchnumber: 0,
-	def: wireDef,
 	data: {},
 	order: wireDef.order,
 	collection: wireDef.collection,
+	viewOnly: false,
+	fields: wireDef.fields,
+	create: !wireDef.init || wireDef.init.create || false,
+	defaults: wireDef.defaults,
+	events: wireDef.events,
+	batchsize: wireDef.batchsize,
+	requirewriteaccess: wireDef.requirewriteaccess,
 })
 
 const initializeViewOnlyWire = (
@@ -85,7 +91,6 @@ const initializeViewOnlyWire = (
 		query: !wireDef.init || wireDef.init.query || false,
 		conditions: [],
 		name: wirename,
-		def: wireDef,
 		order: [],
 		batchid: "",
 		batchnumber: 0,
@@ -94,6 +99,11 @@ const initializeViewOnlyWire = (
 		changes,
 		deletes: {},
 		collection: collectionFullname,
+		viewOnly: true,
+		fields: wireDef.fields,
+		create: !wireDef.init || wireDef.init.create || false,
+		defaults: wireDef.defaults,
+		events: wireDef.events,
 	}
 }
 
@@ -111,10 +121,19 @@ export default (
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
 			const wireDef = wireDefs[wirename]
 			const existingWire = selectWire(state, viewId, wirename)
-			if (existingWire) {
+
+			if (existingWire && !wireDef.viewOnly) {
 				return {
 					...existingWire,
-					def: wireDef,
+					conditions: wireDef.conditions,
+					order: wireDef.order,
+					query: !wireDef.init || wireDef.init.query || false,
+					create: !wireDef.init || wireDef.init.create || false,
+					defaults: wireDef.defaults,
+					events: wireDef.events,
+					batchsize: wireDef.batchsize,
+					requirewriteaccess: wireDef.requirewriteaccess,
+					fields: wireDef.fields,
 				}
 			}
 			if (wireDef.viewOnly) {

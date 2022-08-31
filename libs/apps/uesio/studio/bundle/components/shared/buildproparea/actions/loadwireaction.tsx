@@ -3,6 +3,7 @@ import { hooks, component, styles } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import isEqual from "lodash/isEqual"
+import { pick } from "lodash"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -14,12 +15,21 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const viewDef = uesio.view.getViewDef(context.getViewDefId() || "")
 	const wire = uesio.wire.useWire(wireName || "")
 	const wireDef = viewDef?.wires?.[wireName || ""]
+
+	const valuesToCompare = [
+		"conditions",
+		"order",
+		"collection",
+		"fields",
+		"collection",
+	]
+
+	const wirePick = pick(wire?.source, valuesToCompare)
+	const wireDefPick = pick(wireDef, valuesToCompare)
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				color: isEqual(wireDef, wire?.getWireDef())
-					? "inherit"
-					: "#FF5E2F",
+				color: isEqual(wireDefPick, wirePick) ? "inherit" : "#FF5E2F",
 			},
 		},
 		props
