@@ -125,12 +125,33 @@ const PropList: FunctionComponent<Props> = (props) => {
 						: newPath
 
 				const PropHandler = getPropHandler(descriptor.type)
+
+				// We might want to place this functionality somewhere wlese
+				const getLookups = (descriptor: any) => {
+					const lookedUpArr = descriptor.lookups.map((el) => [
+						el.name,
+						valueAPI.get(
+							component.path.trim(newPath || "", el.layer) +
+								el.key
+						),
+					])
+					return Object.fromEntries(lookedUpArr)
+				}
 				return (
 					<PropHandler
 						key={key}
 						path={newPath}
 						propsDef={propsDef}
-						descriptor={descriptor}
+						descriptor={
+							{
+								...descriptor,
+								...("lookups" in descriptor
+									? {
+											getLookups: getLookups(descriptor),
+									  }
+									: {}),
+							} as any
+						}
 						index={index}
 						context={context}
 						valueAPI={valueAPI}
