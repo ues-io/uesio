@@ -33,7 +33,7 @@ class Wire {
 	getCollection = () => this.collection
 	isMarkedForDeletion = (recordId: string) =>
 		!!this.source.deletes?.[recordId]
-	isViewOnly = () => this.source.def?.viewOnly || false
+	isViewOnly = () => this.source?.viewOnly || false
 	getBatchId = () => this.source.batchid
 
 	getData = () =>
@@ -60,9 +60,7 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	getWireDef = () => this.source.def
-
-	getFields = () => this.source.def?.fields || {}
+	getFields = () => this.source?.fields || {}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		const context = newContext({

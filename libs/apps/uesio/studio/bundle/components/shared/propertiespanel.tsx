@@ -114,6 +114,28 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		component.registry.getPropertiesDefinitionFromPath(fullPath)
 	const propsDef = augmentPropsDef(plainPropsDef, definition, trimmedPath)
 
+	const onUpdateHook = (path: string) => {
+		const pathArray = component.path.toPath(path)
+		// If it was a wire update, auto-reload the wire
+		if (pathArray[0] !== "wires") return
+		const wireName = pathArray[1]
+		if (!wireName) return
+
+		uesio.signal.runMany(
+			[
+				{
+					signal: "wire/INIT",
+					wireDefs: [wireName],
+				},
+				{
+					signal: "wire/LOAD",
+					wires: [wireName],
+				},
+			],
+			props.context
+		)
+	}
+
 	return (
 		<PropertiesPane
 			context={props.context}
@@ -132,23 +154,30 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						),
 						value
 					)
+					onUpdateHook(path)
 				},
-				clone: (path: string) =>
+				clone: (path: string) => {
+					if (path === undefined) return
 					uesio.builder.cloneDefinition(
 						component.path.makeFullPath(
 							metadataType,
 							metadataItem,
 							path
 						)
-					),
-				cloneKey: (path: string) =>
+					)
+					onUpdateHook(path)
+				},
+				cloneKey: (path: string) => {
+					if (path === undefined) return
 					uesio.builder.cloneKeyDefinition(
 						component.path.makeFullPath(
 							metadataType,
 							metadataItem,
 							path
 						)
-					),
+					)
+					onUpdateHook(path)
+				},
 				add: (path: string, value: string, number?: number) => {
 					if (path === undefined) return
 					uesio.builder.addDefinition(
@@ -160,6 +189,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						value,
 						number
 					)
+					onUpdateHook(path)
 				},
 				remove: (path: string) => {
 					if (path === undefined) return
@@ -170,6 +200,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							path
 						)
 					)
+					onUpdateHook(path)
 				},
 				changeKey: (path: string, key: string) => {
 					if (path === undefined) return
@@ -181,6 +212,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						),
 						key
 					)
+					onUpdateHook(path)
 				},
 				move: (
 					fromPath: string,
@@ -201,6 +233,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						),
 						selectKey
 					)
+					onUpdateHook(toPath)
 				},
 			}}
 		/>
