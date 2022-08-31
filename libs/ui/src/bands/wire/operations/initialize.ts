@@ -106,9 +106,9 @@ export default (
 		const collections: PlainCollectionMap = {}
 		const viewId = context.getViewId()
 		const viewDefId = context.getViewDefId()
-		if (!viewId || !viewDefId) throw new Error("Could not get View Def Id")
+		if (!viewId) throw new Error("Could not get View Def Id")
 		const state = getState()
-		const viewDef = state.viewdef.entities[viewDefId]
+		const viewDef = state.viewdef.entities[viewDefId || ""]
 
 		const viewOnlyDefs: Record<string, WireDefinition> = {}
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
