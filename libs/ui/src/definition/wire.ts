@@ -12,6 +12,7 @@ type ViewOnlyField = {
 	required: boolean
 	type: FieldType // get better type
 	reference?: ReferenceMetadata
+	fields?: Record<string, ViewOnlyField>
 }
 
 type RegularField = {

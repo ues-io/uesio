@@ -1,6 +1,6 @@
-import { ViewOnlyField, WireEvents } from "../../definition/wire"
+import { WireEvents } from "../../definition/wire"
+import { LoadRequestField } from "../../load/loadrequest"
 import { SaveError } from "../../load/saveresponse"
-import { WireFieldDefinitionMap } from "../../wireexports"
 import { MetadataKey } from "../builder/types"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
@@ -32,7 +32,7 @@ type PlainWire = {
 	batchsize?: number
 	requirewriteaccess?: boolean
 	viewOnly: boolean
-	fields: Record<string, ViewOnlyField> | WireFieldDefinitionMap
+	fields: LoadRequestField[]
 }
 
 export { PlainWire }

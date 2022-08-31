@@ -11,28 +11,19 @@ import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { FieldMetadataMap } from "../../field/types"
 import createrecord from "./createrecord"
+import { getFieldsRequest } from "./load"
 
-const initializeRegularWire = (
-	viewId: string,
-	wirename: string,
-	wireDef: RegularWireDefinition
-): PlainWire => ({
-	view: viewId || "",
-	query: !wireDef.init || wireDef.init.query || false,
-	name: wirename,
+const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 	conditions: wireDef.conditions,
-	batchid: "",
-	batchnumber: 0,
-	data: {},
-	order: wireDef.order,
 	collection: wireDef.collection,
-	viewOnly: false,
-	fields: wireDef.fields,
+	order: wireDef.order,
+	query: !wireDef.init || wireDef.init.query || false,
 	create: !wireDef.init || wireDef.init.create || false,
 	defaults: wireDef.defaults,
 	events: wireDef.events,
 	batchsize: wireDef.batchsize,
 	requirewriteaccess: wireDef.requirewriteaccess,
+	fields: getFieldsRequest(wireDef.fields) || [],
 })
 
 const initializeViewOnlyWire = (
@@ -100,7 +91,7 @@ const initializeViewOnlyWire = (
 		deletes: {},
 		collection: collectionFullname,
 		viewOnly: true,
-		fields: wireDef.fields,
+		fields: getFieldsRequest(wireDef.fields) || [],
 		create: !wireDef.init || wireDef.init.create || false,
 		defaults: wireDef.defaults,
 		events: wireDef.events,
@@ -109,39 +100,49 @@ const initializeViewOnlyWire = (
 
 export default (
 		context: Context,
-		wireDefs: Record<string, WireDefinition>
+		wireDefs: Record<string, WireDefinition | undefined>
 	): ThunkFunc =>
 	(dispatch, getState) => {
 		const collections: PlainCollectionMap = {}
 		const viewId = context.getViewId()
-		if (!viewId) throw new Error("Could not get View Def Id")
+		const viewDefId = context.getViewDefId()
+		if (!viewId || !viewDefId) throw new Error("Could not get View Def Id")
 		const state = getState()
+		const viewDef = state.viewdef.entities[viewDefId]
 
 		const viewOnlyDefs: Record<string, WireDefinition> = {}
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
-			const wireDef = wireDefs[wirename]
+			const wireDef =
+				wireDefs[wirename] || viewDef?.definition?.wires?.[wirename]
+			if (!wireDef) throw new Error("Could not get wire def")
 			const existingWire = selectWire(state, viewId, wirename)
 
-			if (existingWire && !wireDef.viewOnly) {
-				return {
-					...existingWire,
-					conditions: wireDef.conditions,
-					order: wireDef.order,
-					query: !wireDef.init || wireDef.init.query || false,
-					create: !wireDef.init || wireDef.init.create || false,
-					defaults: wireDef.defaults,
-					events: wireDef.events,
-					batchsize: wireDef.batchsize,
-					requirewriteaccess: wireDef.requirewriteaccess,
-					fields: wireDef.fields,
-				}
-			}
 			if (wireDef.viewOnly) {
 				viewOnlyDefs[wirename] = wireDef
+				return initializeViewOnlyWire(
+					viewId,
+					wirename,
+					wireDef,
+					collections
+				)
 			}
-			return wireDef.viewOnly
-				? initializeViewOnlyWire(viewId, wirename, wireDef, collections)
-				: initializeRegularWire(viewId, wirename, wireDef)
+
+			if (existingWire) {
+				return {
+					...existingWire,
+					...getWireDefInfo(wireDef),
+				}
+			}
+
+			return {
+				view: viewId || "",
+				name: wirename,
+				batchid: "",
+				batchnumber: 0,
+				data: {},
+				viewOnly: false,
+				...getWireDefInfo(wireDef),
+			}
 		})
 
 		dispatch(init([initializedWires, collections]))

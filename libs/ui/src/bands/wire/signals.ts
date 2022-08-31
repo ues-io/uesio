@@ -90,7 +90,7 @@ interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
 interface InitializeWiresSignal extends SignalDefinition {
-	wireDefs: Record<string, WireDefinition>
+	wireDefs: Record<string, WireDefinition> | string[]
 }
 
 interface SaveWiresSignal extends SignalDefinition {
@@ -322,8 +322,19 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/INIT`]: {
 		label: "Init Wire(s)",
-		dispatcher: (signal: InitializeWiresSignal, context: Context) =>
-			initWiresOp(context, signal.wireDefs),
+		dispatcher: (signal: InitializeWiresSignal, context: Context) => {
+			const wireDefs: Record<string, WireDefinition | undefined> =
+				Array.isArray(signal.wireDefs)
+					? Object.fromEntries(
+							signal.wireDefs.map((wirename) => [
+								wirename,
+								undefined,
+							])
+					  )
+					: signal.wireDefs
+
+			return initWiresOp(context, wireDefs)
+		},
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

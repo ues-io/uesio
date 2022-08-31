@@ -1,5 +1,5 @@
 import { Context } from "../../../context/context"
-import { WireFieldDefinitionMap } from "../../../definition/wire"
+import { ViewOnlyField, WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequest, LoadRequestField } from "../../../load/loadrequest"
 import { PlainWire } from "../types"
 import { listLookupWires } from "../utils"
@@ -9,7 +9,7 @@ import createrecord from "./createrecord"
 import { batch } from "react-redux"
 
 function getFieldsRequest(
-	fields?: WireFieldDefinitionMap
+	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
 ): LoadRequestField[] | undefined {
 	if (!fields) {
 		return undefined
@@ -40,14 +40,11 @@ function getWireRequest(
 ): LoadRequest[] {
 	return wires.flatMap((wire) => {
 		if (wire.viewOnly) return []
-		const fields = wire.fields as WireFieldDefinitionMap
 		return {
 			...wire,
 			batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
-			fields: getFieldsRequest(fields) || [],
 			params: context.getParams(),
-			requirewriteaccess: wire.requirewriteaccess,
-		} as LoadRequest
+		}
 	})
 }
 
