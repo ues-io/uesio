@@ -180,13 +180,13 @@ const seriesSection: builder.PropertySection = {
 		{
 			name: "CategoryField",
 			type: "FIELD",
-			wireField: "wire",
+			wireField: "./wire",
 			label: "Category field",
 		},
 		{
 			name: "valueField",
 			type: "FIELD",
-			wireField: "wire",
+			wireField: "./wire",
 			label: "Value field",
 		},
 	],
@@ -239,7 +239,7 @@ const chartProperties: builder.PropDescriptor[] = [
 		name: "categoryField",
 		type: "FIELD",
 		label: "Category Field",
-		wireField: "wireSomething",
+		wireField: "wire",
 		display: sourceEquals("WIRE"),
 	},
 
@@ -249,7 +249,7 @@ const chartProperties: builder.PropDescriptor[] = [
 		type: "PROPLISTS",
 		label: "Values",
 		nameTemplate: "${key}: ${value}",
-		fallback: "unset value",
+		// nameFallback: "unset value",
 		properties: [
 			{
 				name: "key",
