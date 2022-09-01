@@ -100,7 +100,19 @@ const getIndexFromPath = (path: string) => {
 	return indexString ? parseInt(indexString, 10) : null
 }
 
+/**
+ * Trims a path N levels up
+ * @param path
+ * @param n
+ * @returns A shorter path, shorter by N levels
+ */
+const trim = (path: string, n: number) => {
+	const arr = toPath(path)
+	return fromPath(arr.slice(0, arr.length - n))
+}
+
 export {
+	trim,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
