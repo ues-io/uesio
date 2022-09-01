@@ -101,29 +101,14 @@ const getIndexFromPath = (path: string) => {
 }
 
 /**
- *
- * @param path
- * @returns The path of the first component up in the tree
- */
-const getFirstComponent = (path: string) => {
-	const reversedPathArray = toPath(path).reverse()
-
-	const index = reversedPathArray.findIndex((str) =>
-		/(\w*)\/(\w*)\.(\w*)/.test(str)
-	)
-	const x = reversedPathArray.slice(index).reverse()
-
-	return fromPath(x)
-}
-
-/**
  * Trims a path N levels up
  * @param path
- * @returns A shorter path
+ * @param n
+ * @returns A shorter path, shorter by N levels
  */
-const trim = (path: string, index: number) => {
+const trim = (path: string, n: number) => {
 	const arr = toPath(path)
-	return fromPath(arr.slice(0, arr.length - index))
+	return fromPath(arr.slice(0, arr.length - n))
 }
 
 export {
@@ -131,7 +116,6 @@ export {
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
-	getFirstComponent,
 	unWrapDefinition,
 	fromPath,
 	toPath,
