@@ -31,7 +31,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 		println(err)
 	}
 
-	respondJSON(w, r, &LoadResponseBatch{
+	respondJSON(w, r, &adapt.LoadResponseBatch{
 		Collections: metadataResponse.Collections,
 	})
 

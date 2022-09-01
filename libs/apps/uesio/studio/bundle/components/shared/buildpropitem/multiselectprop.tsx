@@ -1,14 +1,9 @@
-import { FunctionComponent } from "react"
 import { builder, component } from "@uesio/ui"
-
-interface MultiSelectPropRendererProps extends builder.PropRendererProps {
-	descriptor: builder.MultiSelectProp
-}
 
 const MultiSelectField = component.getUtility("uesio/io.multiselectfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const MultiSelectProp: FunctionComponent<MultiSelectPropRendererProps> = ({
+const MultiSelectProp: builder.PropComponent<builder.MultiSelectProp> = ({
 	descriptor,
 	valueAPI,
 	context,

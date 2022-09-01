@@ -71,7 +71,7 @@ type MergeData struct {
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	routing.PreloadMetadata
+	*routing.PreloadMetadata
 }
 
 // String function controls how MergeData is marshalled
@@ -178,18 +178,14 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		Component: GetComponentMergeData(buildMode),
-		PreloadMetadata: routing.PreloadMetadata{
-			Theme:            preload.GetThemes(),
-			ViewDef:          preload.GetViewDef(),
-			ComponentPack:    preload.GetComponentPack(),
-			ComponentVariant: preload.GetComponentVariant(),
-			Label:            preload.GetLabel(),
-			ConfigValue:      preload.GetConfigValue(),
-			FeatureFlag:      preload.GetFeatureFlags(),
-		},
+		Component:       GetComponentMergeData(buildMode),
+		PreloadMetadata: preload,
 	}
 
-	// Not checking this error for now.
-	_ = indexTemplate.Execute(w, mergeData)
+	err := indexTemplate.Execute(w, mergeData)
+	if err != nil {
+		msg := "Error Merging Template: " + err.Error()
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
 }

@@ -31,8 +31,9 @@ class Wire {
 	getId = () => this.source.name
 	getFullId = () => getFullWireId(this.source.view, this.source.name)
 	getCollection = () => this.collection
-	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
-	isViewOnly = () => this.source.viewOnly
+	isMarkedForDeletion = (recordId: string) =>
+		!!this.source.deletes?.[recordId]
+	isViewOnly = () => this.source?.viewOnly || false
 	getBatchId = () => this.source.batchid
 
 	getData = () =>
@@ -59,9 +60,7 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	getWireDef = () => this.source.def
-
-	getFields = () => this.getWireDef().fields
+	getFields = () => this.source?.fields || {}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		const context = newContext({

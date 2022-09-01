@@ -1,9 +1,0 @@
-name: expandpanel
-label: Expand Panel
-definition:
-  uesio.styles:
-    root:
-      borderBottom: "1px solid #eee"
-    innerContent:
-      fontSize: "9pt"
-      color: "#444"

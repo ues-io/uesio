@@ -27,6 +27,10 @@ type ComponentPack struct {
 	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+func (cp *ComponentPack) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(cp)
+}
+
 func (cp *ComponentPack) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("namespace", cp.Namespace)
 	enc.AddStringKey("name", cp.Name)

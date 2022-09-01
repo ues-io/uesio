@@ -1,15 +1,14 @@
-import { FC } from "react"
 import { builder, component, hooks } from "@uesio/ui"
-import PropList from "../buildproparea/proplist"
+
 import PropNodeTag from "../buildpropitem/propnodetag"
 import BuildActionsArea from "../buildproparea/buildactionsarea"
 import toPath from "lodash/toPath"
-
+import PropListsList from "../proplistslist"
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 
-const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
+const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
 
@@ -26,13 +25,11 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 		<PropNodeTag
 			context={context}
 			onClick={() =>
-				selected
-					? uesio.builder.unSelectNode()
-					: uesio.builder.setSelectedNode(
-							metadataType,
-							metadataItem,
-							path
-					  )
+				uesio.builder.setSelectedNode(
+					metadataType,
+					metadataItem,
+					selected ? component.path.getParentPath(path) : path
+				)
 			}
 			selected={selected}
 			popperChildren={
@@ -68,12 +65,13 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 								{
 									type: "CUSTOM",
 									label: "Add item",
-									handler: () => {
+									handler: (e) => {
+										e.stopPropagation()
 										// When items is 0 we still show 1 empty item in the ui.
 										// Adding in this scenario would mean we need to add 2 to get 2 real items
 										if (items.length === 0)
 											valueAPI.add(path, {})
-										valueAPI.add(path, {})
+										valueAPI.add(path, {}, -1)
 									},
 									icon: "add",
 								},
@@ -98,50 +96,18 @@ const ProplistsProp: FC<builder.PropRendererProps> = (props) => {
 					}
 					context={context}
 				>
-					<div style={{ maxHeight: "400px", overflow: "scroll" }}>
-						{[...(items.length ? items : [{}])].map((item, i) => (
-							<div
-								key={i}
-								style={{
-									display: "flex",
-									alignItems: "center",
-								}}
-							>
-								<div
-									style={{
-										padding: "0 3px 0 6px",
-										opacity: 0.6,
-										fontSize: "0.6em",
-									}}
-								>
-									<span>{i + 1}</span>
-								</div>
-								<div style={{ flex: 1 }}>
-									<PropNodeTag
-										key={i}
-										context={context}
-										onClick={() =>
-											uesio.builder.setSelectedNode(
-												metadataType,
-												metadataItem,
-												path + `[${i}]`
-											)
-										}
-										selected={
-											selectedPath === path + `["${i}"]`
-										}
-									>
-										<PropList
-											path={path + `[${i}]`}
-											propsDef={propsDef}
-											properties={descriptor.properties}
-											context={context}
-											valueAPI={valueAPI}
-										/>
-									</PropNodeTag>
-								</div>
-							</div>
-						))}
+					<div
+						onClick={(e) => e.stopPropagation()}
+						style={{ maxHeight: "400px", overflow: "scroll" }}
+					>
+						<PropListsList
+							items={items.length ? items : [{}]}
+							context={context}
+							path={path}
+							propsDef={propsDef}
+							valueAPI={valueAPI}
+							descriptor={descriptor}
+						/>
 					</div>
 				</ScrollPanel>
 			}

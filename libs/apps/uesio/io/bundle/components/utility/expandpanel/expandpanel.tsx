@@ -46,12 +46,13 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			icon: {
 				transform: expanded ? "rotate(0deg)" : "rotate(180deg)",
 				transition: "all 0.3s ease",
-				fontSize: "18px",
+				fontSize: "14px",
+				padding: 0,
 			},
 			grid: {
 				gridAutoFlow: "column",
 				gridTemplateColumns: "1fr 0fr",
-				alignItems: "center",
+				alignItems: "start",
 			},
 			content: {
 				willChange: "max-height",

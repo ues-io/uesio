@@ -10,6 +10,9 @@ import { setMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
 import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
+import { initAll as initWire } from "../wire"
+import { init as initCollection } from "../collection"
+import { setNamespaceInfo } from "../builder"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -48,6 +51,15 @@ const dispatchRouteDeps = (
 
 	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
 	if (metadatatext) dispatch(setMetadataText(metadatatext))
+
+	const namespaceinfo = deps.namespaces
+	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
+
+	const wires = deps.wire
+	if (wires) dispatch(initWire(wires))
+
+	const collections = deps.collection
+	if (collections) dispatch(initCollection(collections))
 }
 
 const getPackUrlsForDeps = (

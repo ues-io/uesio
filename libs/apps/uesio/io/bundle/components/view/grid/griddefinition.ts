@@ -15,7 +15,8 @@ interface GridProps extends definition.BaseProps {
 
 const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Grid",
-	description: "Grid",
+	description:
+		"Layout areas of your page using low-level CSS grid functionality.",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [
@@ -62,6 +63,7 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 		}
 	},
 	type: "component",
+	category: "LAYOUT",
 }
 export { GridProps, GridDefinition }
 

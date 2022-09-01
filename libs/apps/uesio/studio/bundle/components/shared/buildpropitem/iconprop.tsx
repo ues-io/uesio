@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent, useState } from "react"
+import { ChangeEvent, useState } from "react"
 
 import { hooks, component, styles, materialIcons, builder } from "@uesio/ui"
 
@@ -9,7 +9,7 @@ const TitleBar = component.getUtility("uesio/io.titlebar")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
-const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
+const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
 
 	const uesio = hooks.useUesio(props)

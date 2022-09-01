@@ -1,47 +1,126 @@
 package adapt
 
 import (
+	"encoding/json"
 	"errors"
 
+	"github.com/francoispqt/gojay"
+	"github.com/humandad/yaml"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type LoadOp struct {
 	CollectionName     string                 `json:"collection"`
-	WireName           string                 `json:"wire"`
+	WireName           string                 `json:"name"`
+	View               string                 `json:"view"`
 	Collection         loadable.Group         `json:"data"`
 	Conditions         []LoadRequestCondition `json:"-"`
 	Fields             []LoadRequestField     `json:"-"`
-	Query              bool                   `json:"-"`
+	Query              bool                   `json:"query"`
 	Order              []LoadRequestOrder     `json:"-"`
-	BatchSize          int                    `json:"-"`
+	BatchSize          int                    `json:"batchsize"`
 	BatchNumber        int                    `json:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
 	SkipRecordSecurity bool                   `json:"-"`
 	RequireWriteAccess bool                   `json:"-"`
+	Params             map[string]string      `json:"-"`
 }
 
-type LoadRequestField struct {
-	ID     string             `json:"id" bot:"id"`
-	Fields []LoadRequestField `json:"fields" bot:"fields"`
+func (op *LoadOp) GetBytes() ([]byte, error) {
+	bytes, err := json.Marshal(op)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
 }
 
-type LoadRequestCondition struct {
-	Field         string                 `json:"field" bot:"field"`
-	Value         interface{}            `json:"value" bot:"value"`
-	ValueSource   string                 `json:"valueSource"`
-	Type          string                 `json:"type"`
-	Operator      string                 `json:"operator"`
-	LookupWire    string                 `json:"lookupWire"`
-	LookupField   string                 `json:"lookupField"`
-	SearchFields  []string               `json:"fields"`
-	SubConditions []LoadRequestCondition `json:"conditions"`
-	Conjunction   string                 `json:"conjunction"`
+func (op *LoadOp) GetKey() string {
+	return op.View + ":" + op.WireName
 }
 
-type LoadRequestOrder struct {
-	Field string `json:"field" bot:"field"`
-	Desc  bool   `json:"desc" bot:"desc"`
+func (op *LoadOp) UnmarshalJSON(data []byte) error {
+	return gojay.UnmarshalJSONObject(data, op)
+}
+
+func decodeEmbed(dec *gojay.Decoder, v interface{}) error {
+	var data gojay.EmbeddedJSON
+	err := dec.EmbeddedJSON(&data)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, v)
+}
+
+func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
+	switch key {
+	case "collection":
+		// Do some extra stuff
+		op.Collection = &Collection{}
+		return dec.String(&op.CollectionName)
+	case "name":
+		return dec.String(&op.WireName)
+	case "view":
+		return dec.String(&op.View)
+	case "conditions":
+		return decodeEmbed(dec, &op.Conditions)
+	case "order":
+		return decodeEmbed(dec, &op.Order)
+	case "fields":
+		return decodeEmbed(dec, &op.Fields)
+	case "requirewriteaccess":
+		return dec.Bool(&op.RequireWriteAccess)
+	case "query":
+		return dec.Bool(&op.Query)
+	case "params":
+		return decodeEmbed(dec, &op.Params)
+	}
+
+	return nil
+}
+func (op *LoadOp) NKeys() int {
+	return 0
+}
+
+func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
+
+	init, _ := meta.GetMapNode(node, "init")
+	if init != nil {
+		op.Query = meta.GetNodeValueAsBool(init, "query", false)
+	}
+
+	fields, err := unmarshalFields(node)
+	if err != nil {
+		return err
+	}
+
+	conditions, err := unmarshalConditions(node)
+	if err != nil {
+		return err
+	}
+
+	order, err := unmarshalOrder(node)
+	if err != nil {
+		return err
+	}
+
+	op.RequireWriteAccess = meta.GetNodeValueAsBool(node, "requirewriteaccess", false)
+	op.Collection = &Collection{}
+	op.CollectionName = meta.GetNodeValueAsString(node, "collection")
+	op.Fields = fields
+	op.Conditions = conditions
+	op.Order = order
+	return nil
+
+}
+
+type LoadRequestBatch struct {
+	Wires []*LoadOp `json:"wires"`
+}
+
+type LoadResponseBatch struct {
+	Wires       []*LoadOp                      `json:"wires"`
+	Collections map[string]*CollectionMetadata `json:"collections"`
 }
 
 type FieldsMap map[string]*FieldMetadata

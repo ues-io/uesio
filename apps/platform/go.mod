@@ -25,6 +25,7 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/simpleforce/simpleforce v0.0.0-20220429021116-acf4ac67ef68
 	github.com/spf13/cobra v1.4.0
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	golang.org/x/text v0.3.7
 	google.golang.org/api v0.80.0
 )

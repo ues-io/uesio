@@ -8,7 +8,7 @@ type TableColumn = {
 }
 
 const wiretable = (
-	response: wire.LoadResponse,
+	response: wire.PlainWire,
 	metadata: Record<string, collection.PlainCollection>,
 	columns: TableColumn[]
 ): void => {
@@ -32,7 +32,7 @@ const wiretable = (
 		tableColumns[column.id] = tableColumn
 	})
 	if (response.data) {
-		cli.table(response.data, tableColumns)
+		cli.table(Object.values(response.data), tableColumns)
 	}
 }
 

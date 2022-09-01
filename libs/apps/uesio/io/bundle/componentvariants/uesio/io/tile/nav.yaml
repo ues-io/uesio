@@ -12,4 +12,6 @@ definition:
     content:
       verticalAlign: middle
       fontSize: 10pt
+    avatar:
+      marginRight: 8px
 public: true

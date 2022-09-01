@@ -7,11 +7,24 @@ interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
+	useFirstRelativeParent?: boolean
+}
+
+const getRelativeParent = (elem: Element | null): Element | null => {
+	if (!elem) return null
+	const parent = elem.parentElement
+	if (!parent) return elem
+	const style = window.getComputedStyle(parent)
+	if (style.getPropertyValue("position") === "relative") return parent
+	return getRelativeParent(parent)
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const popper = usePopper(props.referenceEl, popperEl, {
+	const referenceEl = props.useFirstRelativeParent
+		? getRelativeParent(props.referenceEl)
+		: props.referenceEl
+	const popper = usePopper(referenceEl, popperEl, {
 		placement: props.placement,
 		modifiers: [
 			{ name: "offset", options: { offset: [0, 6] } },

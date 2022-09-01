@@ -1,29 +1,293 @@
-import React, { FunctionComponent, DragEvent, useEffect, useState } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { FC, DragEvent } from "react"
+import {
+	definition,
+	component,
+	hooks,
+	styles,
+	builder,
+	metadata,
+} from "@uesio/ui"
 
-import ExpandPanel from "./expandpanel"
 import PropNodeTag from "./buildpropitem/propnodetag"
+import groupBy from "lodash/groupBy"
 
-const Grid = component.getUtility("uesio/io.grid")
+const Text = component.getUtility("uesio/io.text")
 
-const useExpand = (
-	initialExpanded?: boolean,
-	onExpand?: () => void,
-	onClose?: () => void
-): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
-	const [isExpanded, setIsExpanded] = useState(!!initialExpanded)
+type VariantTagProps = {
+	namespaceInfo: metadata.MetadataInfo
+	variantInfo: component.ComponentVariant
+} & definition.UtilityProps
 
-	useEffect(() => {
-		if (isExpanded) onExpand && onExpand()
-		if (isExpanded) onClose && onClose()
-	}, [isExpanded])
-
-	return [isExpanded, setIsExpanded]
+const VariantTag: FC<VariantTagProps> = (props) => {
+	const { context, namespaceInfo, variantInfo } = props
+	const classes = styles.useUtilityStyles(
+		{
+			title: {
+				verticalAlign: "middle",
+				marginLeft: "4px",
+			},
+		},
+		props
+	)
+	return (
+		<div>
+			<Text
+				variant="uesio/io.icon"
+				text={namespaceInfo.icon}
+				color={namespaceInfo.color}
+				context={context}
+			/>
+			<Text
+				text={variantInfo.name}
+				context={context}
+				classes={{
+					root: classes.title,
+				}}
+			/>
+		</div>
+	)
 }
 
-const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+type VariantsBlockProps = {
+	variants: component.ComponentVariant[]
+	namespaceInfo: Record<string, metadata.MetadataInfo>
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+} & definition.UtilityProps
+
+const VariantsBlock: FC<VariantsBlockProps> = (props) => {
+	const uesio = hooks.useUesio(props)
+	const { context, variants, selectedItem, namespaceInfo } = props
+
+	const classes = styles.useUtilityStyles(
+		{
+			root: {
+				marginTop: "8px",
+			},
+		},
+		props
+	)
+
+	return (
+		<div className={classes.root}>
+			{variants.map((variant) => {
+				const variantKey = uesio.component.getVariantId(variant)
+				const isVariantSelected = selectedItem === variantKey
+				const variantNsInfo = namespaceInfo[variant.namespace]
+				if (!variantNsInfo) return null
+				return (
+					<PropNodeTag
+						key={variantKey}
+						onClick={(e: MouseEvent) => {
+							e.stopPropagation()
+							uesio.builder.setSelectedNode(
+								"componentvariant",
+								variantKey,
+								""
+							)
+						}}
+						selected={isVariantSelected}
+						draggable={`componentvariant:${variantKey}`}
+						context={context}
+						variant="uesio/studio.smallpropnodetag"
+					>
+						<VariantTag
+							context={context}
+							namespaceInfo={variantNsInfo}
+							variantInfo={variant}
+						/>
+					</PropNodeTag>
+				)
+			})}
+		</div>
+	)
+}
+
+type ComponentBlockProps = {
+	propDef: builder.BuildPropertiesDefinition
+	variants: component.ComponentVariant[]
+	namespaceInfo: Record<string, metadata.MetadataInfo>
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+} & definition.UtilityProps
+
+const ComponentBlock: FC<ComponentBlockProps> = (props) => {
+	const uesio = hooks.useUesio(props)
+
+	const {
+		context,
+		propDef,
+		namespaceInfo,
+		variants,
+		selectedType,
+		selectedItem,
+	} = props
+	const { namespace, name } = propDef
+	if (!namespace) throw new Error("Invalid Property Definition")
+	const fullName = `${namespace}.${name}`
+
+	// Filter out variants that aren't in one of our namespaces
+	// (this is for filtering out variants from the studio namespace)
+	const validVariants = variants
+		? variants.filter((variant) => !!namespaceInfo[variant.namespace])
+		: []
+
+	// Loop over the variants for this component
+	return (
+		<PropNodeTag
+			context={context}
+			key={fullName}
+			onClick={() =>
+				uesio.builder.setSelectedNode("componenttype", fullName, "")
+			}
+			draggable={`component:${fullName}`}
+			selected={
+				selectedType === "componenttype" && selectedItem === fullName
+			}
+			expandChildren={
+				validVariants &&
+				validVariants.length && (
+					<VariantsBlock
+						namespaceInfo={namespaceInfo}
+						selectedItem={selectedItem}
+						selectedType={selectedType}
+						variants={validVariants}
+						context={context}
+					/>
+				)
+			}
+		>
+			<ComponentTag
+				namespaceInfo={namespaceInfo[namespace]}
+				propDef={propDef}
+				context={context}
+			/>
+		</PropNodeTag>
+	)
+}
+
+type CategoryBlockProps = {
+	propDefs: builder.BuildPropertiesDefinition[]
+	variants: Record<string, component.ComponentVariant[]>
+	namespaceInfo: Record<string, metadata.MetadataInfo>
+	selectedItem: metadata.MetadataKey
+	selectedType: string
+	category: string
+} & definition.UtilityProps
+
+const CategoryBlock: FC<CategoryBlockProps> = (props) => {
+	const classes = styles.useUtilityStyles(
+		{
+			categoryLabel: {
+				margin: "16px 10px 0 10px",
+				fontSize: "8pt",
+				fontWeight: "300",
+			},
+		},
+		props
+	)
+	const {
+		context,
+		propDefs,
+		category,
+		variants,
+		namespaceInfo,
+		selectedType,
+		selectedItem,
+	} = props
+	const comps = propDefs
+	if (!comps || !comps.length) return null
+	comps.sort((a, b) => {
+		if (!a.name) return 1
+		if (!b.name) return -1
+		return a.name.localeCompare(b.name)
+	})
+	return (
+		<>
+			<div className={classes.categoryLabel}>{category}</div>
+			{comps.map((propDef) => {
+				const { namespace, name } = propDef
+				if (!namespace) throw new Error("Invalid Property Definition")
+				const fullName = `${namespace}.${name}`
+				return (
+					<ComponentBlock
+						key={fullName}
+						variants={variants[fullName]}
+						propDef={propDef}
+						context={context}
+						namespaceInfo={namespaceInfo}
+						selectedType={selectedType}
+						selectedItem={selectedItem}
+					/>
+				)
+			})}
+		</>
+	)
+}
+
+type ComponentTagProps = {
+	namespaceInfo: metadata.MetadataInfo
+	propDef: builder.BuildPropertiesDefinition
+} & definition.UtilityProps
+
+const ComponentTag: FC<ComponentTagProps> = (props) => {
+	const { context, namespaceInfo, propDef } = props
+	const classes = styles.useUtilityStyles(
+		{
+			title: {
+				verticalAlign: "middle",
+				marginLeft: "6px",
+			},
+			desc: {
+				fontSize: "8pt",
+				fontWeight: 300,
+				lineHeight: "10pt",
+				marginTop: "8px",
+			},
+		},
+		props
+	)
+	return (
+		<div>
+			<div>
+				<Text
+					variant="uesio/io.icon"
+					text={namespaceInfo.icon}
+					color={namespaceInfo.color}
+					context={context}
+				/>
+				<Text
+					text={propDef.title}
+					context={context}
+					classes={{
+						root: classes.title,
+					}}
+				/>
+			</div>
+			<Text
+				element="div"
+				text={propDef.description}
+				context={context}
+				classes={{
+					root: classes.desc,
+				}}
+			/>
+		</div>
+	)
+}
+
+const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context } = props
+	const classes = styles.useUtilityStyles(
+		{
+			root: {
+				overflow: "auto",
+				flex: 1,
+			},
+		},
+		props
+	)
 	const selectedItem = uesio.builder.useSelectedItem()
 	const selectedType = uesio.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {
@@ -42,128 +306,45 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 	const builderComponents = component.registry.getBuilderComponents()
+	const categoryOrder = [
+		"LAYOUT",
+		"CONTENT",
+		"DATA",
+		"INTERACTION",
+		"VISUALIZATION",
+		"UNCATEGORIZED",
+	]
+
+	// sort the variants by category
+	const componentsByCategory = groupBy(
+		builderComponents,
+		(propDef) => propDef.category || "UNCATEGORIZED"
+	)
+	const namespaceInfo = uesio.builder.getNamespaceInfo()
 	const variants = uesio.component.useAllVariants()
-	// loop over variants and group by component
-	const variantsMap: Record<string, string[]> = {}
-	variants.forEach((key) => {
-		const [
-			componentNamespace,
-			componentName,
-			variantNamespace,
-			variantName,
-		] = component.path.parseVariantKey(key)
-
-		const componentKey = `${componentNamespace}.${componentName}`
-		const variantKey = `${variantNamespace}.${variantName}`
-
-		if (!variantsMap[componentKey]) variantsMap[componentKey] = []
-		variantsMap[componentKey].push(variantKey)
-	})
+	const variantsByComponent = groupBy(
+		variants,
+		(variant) => variant.component
+	)
 
 	return (
 		<div
 			onDragStart={onDragStart}
 			onDragEnd={onDragEnd}
-			style={{
-				overflow: "auto",
-				flex: 1,
-			}}
+			className={classes.root}
 		>
-			{Object.entries(builderComponents).map(
-				([namespace, components], index) => (
-					<ExpandPanel
-						title={namespace}
-						defaultExpanded={true}
-						key={index}
-						context={context}
-					>
-						{Object.entries(components).map(
-							([componentName, propDef]) => {
-								const fullName = `${namespace}.${componentName}`
-								const isSelected =
-									selectedType === "componenttype" &&
-									selectedItem === fullName
-								const sharedProps = {
-									title: componentName,
-									onClick: () =>
-										uesio.builder.setSelectedNode(
-											"componenttype",
-											fullName,
-											""
-										),
-
-									tooltip: propDef.description,
-									context,
-									selected: isSelected,
-									draggable: `component:${fullName}`,
-									icon: "drag_indicator",
-								}
-								const variants = variantsMap[fullName]
-
-								// Loop over the variants for this component
-								return (
-									<PropNodeTag
-										useExpand={() => useExpand(isSelected)}
-										key={fullName}
-										{...sharedProps}
-										expandChildren={
-											variants && (
-												<Grid
-													styles={{
-														root: {
-															gridTemplateColumns:
-																"1fr",
-															columnGap: "8px",
-															rowGap: "8px",
-															padding: "8px",
-														},
-													}}
-													context={context}
-												>
-													{variants.map((variant) => {
-														const variantFullName = `${fullName}:${variant}`
-														const isVariantSelected =
-															selectedType ===
-																"componentvariant" &&
-															selectedItem ===
-																variantFullName
-														return (
-															<PropNodeTag
-																key={variant}
-																onClick={(
-																	e: MouseEvent
-																) => {
-																	e.stopPropagation()
-																	uesio.builder.setSelectedNode(
-																		"componentvariant",
-																		variantFullName,
-																		""
-																	)
-																}}
-																selected={
-																	isVariantSelected
-																}
-																draggable={`componentvariant:${variantFullName}`}
-																context={
-																	context
-																}
-															>
-																{variant}
-															</PropNodeTag>
-														)
-													})}
-												</Grid>
-											)
-										}
-									>
-										{componentName}
-									</PropNodeTag>
-								)
-							}
-						)}
-					</ExpandPanel>
-				)
-			)}
+			{categoryOrder.map((category) => (
+				<CategoryBlock
+					key={category}
+					namespaceInfo={namespaceInfo}
+					variants={variantsByComponent}
+					propDefs={componentsByCategory[category]}
+					category={category}
+					selectedType={selectedType}
+					selectedItem={selectedItem}
+					context={context}
+				/>
+			))}
 		</div>
 	)
 }

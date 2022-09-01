@@ -1,14 +1,9 @@
-import { FunctionComponent } from "react"
 import { builder, component } from "@uesio/ui"
-
-interface SelectPropRendererProps extends builder.PropRendererProps {
-	descriptor: builder.SelectProp
-}
 
 const SelectField = component.getUtility("uesio/io.selectfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
+const SelectProp: builder.PropComponent<builder.SelectProp> = ({
 	descriptor,
 	valueAPI,
 	context,

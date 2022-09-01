@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
 import { builder } from "@uesio/ui"
 import DefinitionSelectorProp from "./definitionselectorprop"
 
-const ParamProp: FunctionComponent<builder.PropRendererProps> = (props) => {
+const ParamProp: builder.PropComponent<builder.ParamProp> = (props) => {
 	if (props.descriptor.type !== "PARAM") {
 		return null
 	}
