@@ -21,6 +21,7 @@ import IconProp from "../buildpropitem/iconprop"
 import WireFieldsProp from "../buildpropitem/wirefieldsprop"
 import FieldProp from "../buildpropitem/fieldprop"
 import PropListsProp from "../buildpropitem/proplistsprop"
+import PropListProp from "../buildpropitem/proplistprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -70,6 +71,8 @@ function getPropHandler(type?: string) {
 			return FieldProp
 		case "PROPLISTS":
 			return PropListsProp
+		case "PROPLIST":
+			return PropListProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp
