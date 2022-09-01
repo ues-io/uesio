@@ -22,11 +22,10 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 
 		const requests = wiresToSave.flatMap((wire) => {
 			const wireId = getFullWireId(wire.view, wire.name)
+			const hasChanges = wire.changes && Object.keys(wire.changes).length
+			const hasDeletes = wire.deletes && Object.keys(wire.deletes).length
 			// Check to see if we need to go to the serve
-			if (
-				!Object.keys(wire.changes).length &&
-				!Object.keys(wire.deletes).length
-			) {
+			if (!hasChanges && !hasDeletes) {
 				response.wires.push({
 					wire: wireId,
 					errors: [],
@@ -39,8 +38,8 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				{
 					wire: wireId,
 					collection: wire.collection,
-					changes: wire.changes,
-					deletes: wire.deletes,
+					changes: wire.changes || {},
+					deletes: wire.deletes || {},
 				},
 			]
 		})

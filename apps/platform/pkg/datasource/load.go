@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
@@ -45,13 +46,49 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 	return &subFields
 }
 
-func processLookupConditions(
+func processConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
 ) error {
 
 	for i, condition := range op.Conditions {
+
+		if condition.ValueSource == "" {
+			// make sure the condition value is a string
+			stringValue, ok := condition.Value.(string)
+			if !ok {
+				continue
+			}
+			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, map[string]interface{}{
+				"Param": func(m map[string]interface{}, key string) (interface{}, error) {
+					val, ok := op.Params[key]
+					if !ok {
+						return nil, errors.New("missing param " + key)
+					}
+					return val, nil
+				},
+			})
+			if err != nil {
+				return err
+			}
+
+			mergedValue, err := templating.Execute(template, nil)
+			if err != nil {
+				return err
+			}
+
+			op.Conditions[i].Value = mergedValue
+		}
+
+		if condition.ValueSource == "PARAM" && condition.Param != "" {
+			value, ok := op.Params[condition.Param]
+			if !ok {
+				return errors.New("Invalid Condition: " + condition.Param)
+			}
+			op.Conditions[i].Value = value
+			op.Conditions[i].ValueSource = ""
+		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
@@ -296,7 +333,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		for _, op := range batch {
 
-			err := processLookupConditions(op, metadataResponse, batch)
+			err := processConditions(op, metadataResponse, batch)
 			if err != nil {
 				return nil, err
 			}

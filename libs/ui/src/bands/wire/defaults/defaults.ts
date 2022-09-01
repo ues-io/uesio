@@ -3,7 +3,6 @@ import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { ID_FIELD, PlainCollection } from "../../collection/types"
-import { WireDefinition } from "../../../definition/wire"
 import { getFullWireId } from ".."
 import toPath from "lodash/toPath"
 import get from "lodash/get"
@@ -54,14 +53,13 @@ const getDefaultRecord = (
 	context: Context,
 	wires: Dictionary<PlainWire>,
 	collections: Dictionary<PlainCollection>,
-	viewId: string,
-	wireDef: WireDefinition,
-	collectionName: string
+	wire: PlainWire
 ): PlainWireRecord => {
-	const collection = collections[collectionName]
-	const defaults = wireDef.defaults
+	const collection = collections[wire.collection]
 	const defaultRecord: PlainWireRecord = {}
-	defaults?.forEach((defaultItem) => {
+	const viewId = context.getViewId()
+	if (!viewId) throw new Error("No view id found for defaults")
+	wire?.defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
 		const fieldMetadata = collection?.fields[defaultItem.field]
 		if (value && fieldMetadata) {

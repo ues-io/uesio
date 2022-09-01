@@ -5,7 +5,7 @@ type EntityPayload = {
 	entity: string
 }
 
-/** 
+/**
 #move - Moves an array item from one position in an array to another.
 
 Note: This is an impure function so the given array will be altered, instead
@@ -18,6 +18,11 @@ Arguments:
 */
 const move = (arr: unknown[], fromIndex: number, toIndex: number) =>
 	arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
+
+const initEntity = <T>(
+	state: EntityState<T>,
+	action: PayloadAction<EntityState<T>>
+): EntityState<T> => action.payload
 
 const createEntityReducer =
 	<T extends EntityPayload, S>(reducer: (state: S, payload: T) => void) =>
@@ -55,4 +60,5 @@ export {
 	getErrorString,
 	getWireFieldSelectOptions,
 	move,
+	initEntity,
 }

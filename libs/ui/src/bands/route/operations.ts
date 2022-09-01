@@ -1,9 +1,8 @@
-import { Context, newContext } from "../../context/context"
+import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import { NavigateRequest } from "../../platform/platform"
 import { batch } from "react-redux"
-import loadViewOp from "../view/operations/load"
 import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 
@@ -46,8 +45,6 @@ const navigate =
 
 		const deps = routeResponse.dependencies
 
-		const view = routeResponse.view
-
 		if (!noPushState) {
 			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
 			window.history.pushState(
@@ -61,31 +58,14 @@ const navigate =
 			)
 		}
 
-		// Dispatch the view first so we can preload it
-		dispatchRouteDeps({ viewdef: deps?.viewdef }, dispatch)
-
 		const newPacks = getPackUrlsForDeps(deps, context)
 
 		if (newPacks && newPacks.length) {
 			await loadScripts(newPacks)
 		}
 
-		// Pre-load the view for faster appearances and no white flash
-		await dispatch(
-			loadViewOp(
-				newContext({
-					view: `${view}()`,
-					viewDef: view,
-					workspace,
-					params: routeResponse.params,
-				}),
-				true
-			)
-		)
-
 		// We don't need to store the dependencies in redux
 		delete routeResponse.dependencies
-		if (deps?.viewdef) delete deps.viewdef
 
 		batch(() => {
 			dispatchRouteDeps(deps, dispatch)

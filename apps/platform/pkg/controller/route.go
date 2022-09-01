@@ -78,6 +78,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -99,6 +100,17 @@ func getNotFoundRoute(path string) *meta.Route {
 		Namespace: "uesio/core",
 		Path:      path,
 		ThemeRef:  "uesio/core.default",
+	}
+}
+
+func getErrorRoute(path string, err string) *meta.Route {
+	params := map[string]string{"error": err}
+	return &meta.Route{
+		ViewRef:   "uesio/core.error",
+		Namespace: "uesio/core",
+		Path:      path,
+		ThemeRef:  "uesio/core.default",
+		Params:    params,
 	}
 }
 
@@ -133,8 +145,36 @@ func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Se
 		}
 	}
 
+	route := getNotFoundRoute(path)
+	depsCache, _ := routing.GetMetadataDeps(route, session)
+
 	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, getNotFoundRoute(path), nil, false, session)
+	ExecuteIndexTemplate(w, route, depsCache, false, session)
+}
+
+func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error) {
+	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
+	// If our profile is the public profile, redirect to the login route
+	if session.IsPublicProfile() {
+		loginRoute, err := getLoginRoute(session)
+		if err == nil {
+			requestedPath := r.URL.Path
+			redirectPath := "/" + loginRoute.Path
+			if redirectPath != requestedPath {
+				if requestedPath != "" && requestedPath != "/" {
+					redirectPath = redirectPath + "?r=" + requestedPath
+				}
+				http.Redirect(w, r, redirectPath, 302)
+				return
+			}
+		}
+	}
+
+	route := getErrorRoute(path, err.Error())
+	depsCache, _ := routing.GetMetadataDeps(route, session)
+
+	// If we're logged in, but still no route, return the uesio.notfound view
+	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }
 
 // ServeRoute serves a route

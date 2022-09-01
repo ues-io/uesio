@@ -1,17 +1,9 @@
 import { PlainCollectionMap } from "../bands/collection/types"
-import { PlainWireRecord } from "../bands/wirerecord/types"
-
-type LoadResponse = {
-	wire: string
-	collection: string
-	data?: PlainWireRecord[]
-	more?: boolean
-	batchnumber: number
-}
+import { PlainWire } from "../bands/wire/types"
 
 type LoadResponseBatch = {
-	wires: LoadResponse[]
+	wires: PlainWire[]
 	collections: PlainCollectionMap
 }
 
-export { LoadResponse, LoadResponseBatch }
+export { LoadResponseBatch }

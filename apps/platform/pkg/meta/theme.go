@@ -25,6 +25,10 @@ type Theme struct {
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+func (t *Theme) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(t)
+}
+
 func (t *Theme) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddObjectKey("definition", (*YAMLDefinition)(&t.Definition))
 	enc.AddStringKey("namespace", t.Namespace)

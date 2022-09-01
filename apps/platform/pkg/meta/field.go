@@ -163,7 +163,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	fieldType := getNodeValueAsString(node, "type")
+	fieldType := GetNodeValueAsString(node, "type")
 	_, ok := GetFieldTypes()[fieldType]
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
@@ -213,11 +213,11 @@ func validateFileField(node *yaml.Node, fieldKey string) error {
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {
-	numberNode, err := getMapNode(node, "number")
+	numberNode, err := GetMapNode(node, "number")
 	if err != nil {
 		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	decimals := getNodeValueAsString(numberNode, "decimals")
+	decimals := GetNodeValueAsString(numberNode, "decimals")
 	if decimals == "" {
 		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : No decimals value provided")
 	}
@@ -225,7 +225,7 @@ func validateNumberField(node *yaml.Node, fieldKey string) error {
 }
 
 func validateSelectListField(node *yaml.Node, fieldKey string) error {
-	selectListName := getNodeValueAsString(node, "selectList")
+	selectListName := GetNodeValueAsString(node, "selectList")
 	if selectListName == "" {
 		return fmt.Errorf("Invalid selectlist metadata provided for field: " + fieldKey + " : Missing select list name")
 	}
@@ -233,11 +233,11 @@ func validateSelectListField(node *yaml.Node, fieldKey string) error {
 }
 
 func validateReferenceField(node *yaml.Node, fieldKey string) error {
-	referenceNode, err := getMapNode(node, "reference")
+	referenceNode, err := GetMapNode(node, "reference")
 	if err != nil {
 		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	referencedCollection := getNodeValueAsString(referenceNode, "collection")
+	referencedCollection := GetNodeValueAsString(referenceNode, "collection")
 	if referencedCollection == "" {
 		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : No collection provided")
 	}
