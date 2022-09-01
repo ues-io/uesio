@@ -103,6 +103,17 @@ func getNotFoundRoute(path string) *meta.Route {
 	}
 }
 
+func getErrorRoute(path string, err string) *meta.Route {
+	params := map[string]string{"error": err}
+	return &meta.Route{
+		ViewRef:   "uesio/core.error",
+		Namespace: "uesio/core",
+		Path:      path,
+		ThemeRef:  "uesio/core.default",
+		Params:    params,
+	}
+}
+
 func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 	loginRoute, err := meta.NewRoute(session.GetLoginRoute())
 	if err != nil {
@@ -134,8 +145,11 @@ func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Se
 		}
 	}
 
+	route := getErrorRoute(path, err.Error())
+	depsCache, _ := routing.GetMetadataDeps(route, session)
+
 	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, getNotFoundRoute(path), nil, false, session)
+	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }
 
 // ServeRoute serves a route
