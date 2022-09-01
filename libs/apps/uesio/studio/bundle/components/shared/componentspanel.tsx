@@ -12,52 +12,17 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
 
 const Text = component.getUtility("uesio/io.text")
-
-type VariantTagProps = {
-	namespaceInfo: metadata.MetadataInfo
-	variantInfo: component.ComponentVariant
-} & definition.UtilityProps
-
-const VariantTag: FC<VariantTagProps> = (props) => {
-	const { context, namespaceInfo, variantInfo } = props
-	const classes = styles.useUtilityStyles(
-		{
-			title: {
-				verticalAlign: "middle",
-				marginLeft: "4px",
-			},
-		},
-		props
-	)
-	return (
-		<div>
-			<Text
-				variant="uesio/io.icon"
-				text={namespaceInfo.icon}
-				color={namespaceInfo.color}
-				context={context}
-			/>
-			<Text
-				text={variantInfo.name}
-				context={context}
-				classes={{
-					root: classes.title,
-				}}
-			/>
-		</div>
-	)
-}
+const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context, variants, selectedItem, namespaceInfo } = props
+	const { context, variants, selectedItem } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -73,8 +38,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 			{variants.map((variant) => {
 				const variantKey = uesio.component.getVariantId(variant)
 				const isVariantSelected = selectedItem === variantKey
-				const variantNsInfo = namespaceInfo[variant.namespace]
-				if (!variantNsInfo) return null
+
 				return (
 					<PropNodeTag
 						key={variantKey}
@@ -91,10 +55,10 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 						context={context}
 						variant="uesio/studio.smallpropnodetag"
 					>
-						<VariantTag
+						<NamespaceLabel
+							metadatakey={variant.namespace}
+							title={variant.name}
 							context={context}
-							namespaceInfo={variantNsInfo}
-							variantInfo={variant}
 						/>
 					</PropNodeTag>
 				)
@@ -106,7 +70,6 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 type ComponentBlockProps = {
 	propDef: builder.BuildPropertiesDefinition
 	variants: component.ComponentVariant[]
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
@@ -114,14 +77,7 @@ type ComponentBlockProps = {
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
-	const {
-		context,
-		propDef,
-		namespaceInfo,
-		variants,
-		selectedType,
-		selectedItem,
-	} = props
+	const { context, propDef, variants, selectedType, selectedItem } = props
 	const { namespace, name } = propDef
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}`
@@ -129,7 +85,9 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	// Filter out variants that aren't in one of our namespaces
 	// (this is for filtering out variants from the studio namespace)
 	const validVariants = variants
-		? variants.filter((variant) => !!namespaceInfo[variant.namespace])
+		? variants.filter(
+				(variant) => !!uesio.builder.getNamespaceInfo(variant.namespace)
+		  )
 		: []
 
 	// Loop over the variants for this component
@@ -148,7 +106,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				validVariants &&
 				validVariants.length && (
 					<VariantsBlock
-						namespaceInfo={namespaceInfo}
 						selectedItem={selectedItem}
 						selectedType={selectedType}
 						variants={validVariants}
@@ -157,11 +114,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				)
 			}
 		>
-			<ComponentTag
-				namespaceInfo={namespaceInfo[namespace]}
-				propDef={propDef}
-				context={context}
-			/>
+			<ComponentTag propDef={propDef} context={context} />
 		</PropNodeTag>
 	)
 }
@@ -169,7 +122,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 type CategoryBlockProps = {
 	propDefs: builder.BuildPropertiesDefinition[]
 	variants: Record<string, component.ComponentVariant[]>
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 	category: string
@@ -191,7 +143,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 		propDefs,
 		category,
 		variants,
-		namespaceInfo,
 		selectedType,
 		selectedItem,
 	} = props
@@ -215,7 +166,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 						variants={variants[fullName]}
 						propDef={propDef}
 						context={context}
-						namespaceInfo={namespaceInfo}
 						selectedType={selectedType}
 						selectedItem={selectedItem}
 					/>
@@ -226,46 +176,39 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 }
 
 type ComponentTagProps = {
-	namespaceInfo: metadata.MetadataInfo
+	// namespaceInfo: metadata.MetadataInfo
 	propDef: builder.BuildPropertiesDefinition
 } & definition.UtilityProps
 
 const ComponentTag: FC<ComponentTagProps> = (props) => {
-	const { context, namespaceInfo, propDef } = props
+	const { context, propDef } = props
 	const classes = styles.useUtilityStyles(
 		{
 			title: {
 				verticalAlign: "middle",
-				marginLeft: "6px",
+				marginBottom: "0.5em",
 			},
 			desc: {
-				fontSize: "8pt",
+				fontSize: "0.9em",
 				fontWeight: 300,
-				lineHeight: "10pt",
-				marginTop: "8px",
+				margin: "0",
 			},
 		},
 		props
 	)
 	return (
 		<div>
-			<div>
-				<Text
-					variant="uesio/io.icon"
-					text={namespaceInfo.icon}
-					color={namespaceInfo.color}
-					context={context}
-				/>
-				<Text
-					text={propDef.title}
-					context={context}
-					classes={{
-						root: classes.title,
-					}}
-				/>
-			</div>
+			<NamespaceLabel
+				metadatakey={propDef.namespace}
+				title={propDef.title}
+				context={context}
+				classes={{
+					root: classes.title,
+				}}
+			/>
+
 			<Text
-				element="div"
+				element="p"
 				text={propDef.description}
 				context={context}
 				classes={{
@@ -320,7 +263,7 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 		builderComponents,
 		(propDef) => propDef.category || "UNCATEGORIZED"
 	)
-	const namespaceInfo = uesio.builder.getNamespaceInfo()
+
 	const variants = uesio.component.useAllVariants()
 	const variantsByComponent = groupBy(
 		variants,
@@ -336,7 +279,6 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 			{categoryOrder.map((category) => (
 				<CategoryBlock
 					key={category}
-					namespaceInfo={namespaceInfo}
 					variants={variantsByComponent}
 					propDefs={componentsByCategory[category]}
 					category={category}
