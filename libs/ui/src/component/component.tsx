@@ -18,7 +18,7 @@ import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
-
+// import { GetUtility } from "../../../../utilitytypes"
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
 		const frame: ContextFrame = {}
@@ -199,6 +199,23 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 		undefined
 	)
 }
+
+// const getUtilityX: GetUtility = (key) => {
+// 	const returnFunc = forwardRef((props: UtilityProps, ref) => {
+// 		const Loader = getUtilityLoader(key) || NotFound
+// 		const styles = getVariantStyleInfo(props, key)
+// 		return (
+// 			<Loader ref={ref} {...props} styles={styles} componentType={key} />
+// 		)
+// 	})
+// 	returnFunc.displayName = key
+// 	return returnFunc
+// }
+
+// const foo = () => {
+// 	const Button = getUtilityX("uesio/io.button")
+// 	return <Button label="hello" context={{} as Context} />
+// }
 
 const getUtility = <T extends UtilityPropsPlus>(key: MetadataKey) => {
 	const returnFunc = forwardRef((props: T, ref) => {

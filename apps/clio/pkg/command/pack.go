@@ -92,6 +92,7 @@ func Pack(options *PackOptions) error {
 	// Create the entry files
 	for _, pack := range *packs {
 		runtimeImports := []string{"import { component } from \"@uesio/ui\";"}
+		propImports := []string{"import React from 'react'"}
 		runtimeRegistrations := []string{}
 		builderImports := []string{"import { component } from \"@uesio/ui\";"}
 		builderDefImports := []string{}
@@ -137,13 +138,28 @@ func Pack(options *PackOptions) error {
 			hasDefinition := fileExists(fmt.Sprintf("bundle/components/utility/%[1]s/%[1]s.tsx", key))
 			if hasDefinition {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"../../components/utility/%[1]s/%[1]s\";", key))
+				propImports = append(propImports, fmt.Sprintf("import {Props as %[1]sProps } from \"../../components/utility/%[1]s/%[1]s\";", key))
+
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", key, namespace))
 			}
 		}
 
+		propImports = append(propImports, "type T<Y> = React.ForwardRefExoticComponent<Y>")
+		propImports = append(propImports, "type GetUtility = {")
+		for key := range pack.Components.UtilityComponents {
+			hasDefinition := fileExists(fmt.Sprintf("bundle/components/utility/%[1]s/%[1]s.tsx", key))
+			if hasDefinition {
+				propImports = append(propImports, fmt.Sprintf("\t(key: \"%[2]s.%[1]s\"): T<%[1]sProps>;", key, namespace))
+			}
+		}
+		propImports = append(propImports, "}")
+		propImports = append(propImports, "export default GetUtility")
+
+		typesEntry := strings.Join(append(propImports), "\n")
 		runtimeEntry := strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
 		builderEntry := strings.Join(append(builderImports, append(builderDefImports, builderRegistrations...)...), "\n")
 
+		proptypesFilename := fmt.Sprintf("bundle/componentpacks/%[1]s/componenttypes.ts", pack.Name)
 		runtimeFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/runtime.ts", pack.Name)
 		builderFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/builder.ts", pack.Name)
 		err := os.WriteFile(runtimeFileName, []byte(runtimeEntry), 0777)
@@ -152,6 +168,11 @@ func Pack(options *PackOptions) error {
 		}
 
 		err = os.WriteFile(builderFileName, []byte(builderEntry), 0777)
+		if err != nil {
+			return err
+		}
+
+		err = os.WriteFile(proptypesFilename, []byte(typesEntry), 0777)
 		if err != nil {
 			return err
 		}
