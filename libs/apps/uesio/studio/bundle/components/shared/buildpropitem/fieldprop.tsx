@@ -8,7 +8,7 @@ const getWirePath = (str: string, path: string) => {
 	// get the N levels up the tree
 	const arr = niceString.split("../")
 
-	const startingPath = component.path.trim(path, arr.length - 1)
+	const startingPath = component.path.trim(path, arr.length)
 	const endingPath = arr
 		.pop()
 		?.split("/")
