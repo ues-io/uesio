@@ -15,7 +15,10 @@ type ViewOnlyField = {
 	fields?: Record<string, ViewOnlyField>
 }
 
-type RegularField = null | { fields: WireFieldDefinitionMap }
+type RegularField = {
+	id: string
+	fields: WireFieldDefinitionMap
+}
 
 type OnChangeEvent = {
 	field: string

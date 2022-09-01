@@ -24,7 +24,9 @@ const NamespaceLabel: FC<T> = (props) => {
 				alignItems: "center",
 			},
 			icon: {},
-			title: {},
+			title: {
+				paddingTop: "1px",
+			},
 		},
 		props
 	)
