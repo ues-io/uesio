@@ -1,11 +1,4 @@
-import {
-	definition,
-	builder,
-	signal,
-	component,
-	context,
-	wire,
-} from "@uesio/ui"
+import { definition, builder, signal, component, context } from "@uesio/ui"
 
 interface TableDefinition extends definition.BaseDefinition {
 	id: string
@@ -82,8 +75,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "Text",
 					name: "text",
 				},
-				// Idea: variant prop?
-				// idea: signal prop?
 			],
 			nameTemplate: "action",
 			label: "Row Actions",
@@ -116,11 +107,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "Text",
 					name: "text",
 				},
-				// {
-				// 	type: "SIGNAL",
-				// 	label: "Text",
-				// 	name: "text",
-				// },
 			],
 			nameTemplate: "row action ${field}",
 			nameFallback: "row action",
