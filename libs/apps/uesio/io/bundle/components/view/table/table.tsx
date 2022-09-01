@@ -39,7 +39,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const columnsToDisplay = definition.columns?.filter((columnDef) =>
 		component.useShouldDisplay(
 			context,
-			columnDef["uesio/io.column"] as definition.DefinitionMap
+			columnDef as definition.DefinitionMap
 		)
 	)
 
@@ -54,18 +54,15 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = columnsToDisplay?.map((columnDef) => {
-		const column = columnDef["uesio/io.column"] as ColumnDefinition
-		const fieldId = column.field
-		const fieldMetadata = collection.getField(fieldId)
-		return {
-			label: column.label || fieldMetadata?.getLabel() || "",
-		}
-	})
+	const columns = columnsToDisplay?.map((columnDef: ColumnDefinition) => ({
+		label:
+			columnDef.label ||
+			collection.getField(columnDef.field)?.getLabel() ||
+			"",
+	}))
 
 	const data = wire.getData()
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
-
 	const paginated = paginate(data, currentPage, pageSize)
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
@@ -74,13 +71,12 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			fieldMode: mode,
 		})
 		return {
-			cells: columnsToDisplay?.map((columnDef) => {
-				const column = columnDef["uesio/io.column"] as ColumnDefinition
-				return column.components ? (
+			cells: columnsToDisplay?.map((columnDef: ColumnDefinition) =>
+				columnDef.components ? (
 					<component.Slot
-						definition={column}
+						definition={columnDef}
 						listName="components"
-						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
+						path={`${path}["columns"]["${index}"]`}
 						accepts={["uesio.context"]}
 						direction="horizontal"
 						context={recordContext}
@@ -89,7 +85,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					<component.Component
 						componentType="uesio/io.field"
 						definition={{
-							fieldId: column.field,
+							fieldId: columnDef.field,
 							labelPosition: "none",
 							"uesio.variant": "uesio/io.table",
 						}}
@@ -98,7 +94,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 						context={recordContext}
 					/>
 				)
-			}),
+			),
 			rowactions: definition.rowactions && (
 				<Group
 					styles={{ root: { padding: "0 16px" } }}
@@ -126,6 +122,8 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			isDeleted: record.isDeleted(),
 		}
 	})
+
+	console.log({ data, paginated, rows, columnsToDisplay })
 
 	return (
 		<>

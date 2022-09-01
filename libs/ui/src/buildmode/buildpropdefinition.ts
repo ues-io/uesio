@@ -243,12 +243,9 @@ interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
 }
 
-interface Lookups {
-	lookups: { name: string; key: string; layer: number }[]
-}
-
-interface FieldProp extends BasePropDescriptor, Lookups {
+interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
+	wireField: string
 }
 interface PropListProp extends BasePropDescriptor {
 	type: "PROPLISTS"

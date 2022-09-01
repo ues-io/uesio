@@ -98,13 +98,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			properties: [
 				{
 					type: "FIELD",
-					lookups: [
-						{
-							name: "wire", // The name with which it's accessible in the proprenderer component
-							key: "wire", // the lookup key
-							layer: 3, // N layers upwards relative to the current prop
-						},
-					],
+					wireField: "./../../../wire",
 					label: "Field",
 					name: "field",
 				},
