@@ -1,5 +1,5 @@
 import { Context } from "../../../context/context"
-import { WireFieldDefinitionMap } from "../../../definition/wire"
+import { ViewOnlyField, WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequest, LoadRequestField } from "../../../load/loadrequest"
 import { PlainWire } from "../types"
 import { listLookupWires } from "../utils"
@@ -9,7 +9,7 @@ import createrecord from "./createrecord"
 import { batch } from "react-redux"
 
 function getFieldsRequest(
-	fields?: WireFieldDefinitionMap
+	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
 ): LoadRequestField[] | undefined {
 	if (!fields) {
 		return undefined
@@ -39,18 +39,12 @@ function getWireRequest(
 	context: Context
 ): LoadRequest[] {
 	return wires.flatMap((wire) => {
-		const wireDef = wire.def
-		if (!wireDef) throw new Error("Could not find wire def")
-		if (wireDef.viewOnly) return []
-		return [
-			{
-				...wire,
-				batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
-				fields: getFieldsRequest(wireDef.fields) || [],
-				params: context.getParams(),
-				requirewriteaccess: wireDef.requirewriteaccess,
-			},
-		]
+		if (wire.viewOnly) return []
+		return {
+			...wire,
+			batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
+			params: context.getParams(),
+		}
 	})
 }
 
@@ -79,16 +73,10 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
-		// merge the old info back in.
-		response.wires.forEach((wire, index) => {
-			const oldWire = wiresToLoad[index]
-			wire.def = oldWire.def
-		})
-
 		batch(() => {
 			dispatch(load([response.wires, response.collections]))
 			response.wires.forEach((wire) => {
-				if (wire.def?.init?.create) {
+				if (wire?.create) {
 					dispatch(createrecord(context, wire.name))
 				}
 			})

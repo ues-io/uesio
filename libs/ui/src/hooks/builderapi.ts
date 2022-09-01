@@ -53,7 +53,6 @@ import {
 	getPackUrlsForDeps,
 } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
-import { MetadataInfo } from "../metadataexports"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -278,17 +277,8 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
-	getNamespaceInfo(): Record<string, MetadataInfo>
-	getNamespaceInfo(ns: string): MetadataInfo
-	getNamespaceInfo(ns: ""): void
-	getNamespaceInfo(
-		ns?: string
-	): MetadataInfo | Record<string, MetadataInfo> | void {
+	getNamespaceInfo = (ns: string) => {
 		const namespaces = getCurrentState().builder.namespaces || {}
-		if (ns === "") return
-		if (typeof ns === "undefined") return namespaces
-		if (!(ns in namespaces))
-			throw new Error(`Namespaceinfo not found for: ${ns}`)
 		return namespaces[ns]
 	}
 

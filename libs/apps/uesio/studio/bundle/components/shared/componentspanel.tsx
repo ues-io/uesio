@@ -16,14 +16,13 @@ const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context, variants, selectedItem, namespaceInfo } = props
+	const { context, variants, selectedItem } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -39,8 +38,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 			{variants.map((variant) => {
 				const variantKey = uesio.component.getVariantId(variant)
 				const isVariantSelected = selectedItem === variantKey
-				const variantNsInfo = namespaceInfo[variant.namespace]
-				if (!variantNsInfo) return null
+
 				return (
 					<PropNodeTag
 						key={variantKey}
@@ -72,7 +70,6 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 type ComponentBlockProps = {
 	propDef: builder.BuildPropertiesDefinition
 	variants: component.ComponentVariant[]
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
@@ -80,14 +77,7 @@ type ComponentBlockProps = {
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
-	const {
-		context,
-		propDef,
-		namespaceInfo,
-		variants,
-		selectedType,
-		selectedItem,
-	} = props
+	const { context, propDef, variants, selectedType, selectedItem } = props
 	const { namespace, name } = propDef
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}`
@@ -95,7 +85,9 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	// Filter out variants that aren't in one of our namespaces
 	// (this is for filtering out variants from the studio namespace)
 	const validVariants = variants
-		? variants.filter((variant) => !!namespaceInfo[variant.namespace])
+		? variants.filter(
+				(variant) => !!uesio.builder.getNamespaceInfo(variant.namespace)
+		  )
 		: []
 
 	// Loop over the variants for this component
@@ -114,7 +106,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				validVariants &&
 				validVariants.length && (
 					<VariantsBlock
-						namespaceInfo={namespaceInfo}
 						selectedItem={selectedItem}
 						selectedType={selectedType}
 						variants={validVariants}
@@ -131,7 +122,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 type CategoryBlockProps = {
 	propDefs: builder.BuildPropertiesDefinition[]
 	variants: Record<string, component.ComponentVariant[]>
-	namespaceInfo: Record<string, metadata.MetadataInfo>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 	category: string
@@ -153,7 +143,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 		propDefs,
 		category,
 		variants,
-		namespaceInfo,
 		selectedType,
 		selectedItem,
 	} = props
@@ -177,7 +166,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 						variants={variants[fullName]}
 						propDef={propDef}
 						context={context}
-						namespaceInfo={namespaceInfo}
 						selectedType={selectedType}
 						selectedItem={selectedItem}
 					/>
@@ -275,7 +263,7 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 		builderComponents,
 		(propDef) => propDef.category || "UNCATEGORIZED"
 	)
-	const namespaceInfo = uesio.builder.getNamespaceInfo()
+
 	const variants = uesio.component.useAllVariants()
 	const variantsByComponent = groupBy(
 		variants,
@@ -291,7 +279,6 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 			{categoryOrder.map((category) => (
 				<CategoryBlock
 					key={category}
-					namespaceInfo={namespaceInfo}
 					variants={variantsByComponent}
 					propDefs={componentsByCategory[category]}
 					category={category}

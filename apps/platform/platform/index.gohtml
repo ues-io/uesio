@@ -16,14 +16,16 @@
         window.uesio = uesio
     </script>
     {{$workspace := .Route.Workspace -}}
-    {{- if .PreloadMetadata.ComponentPack -}}
-    {{- range .PreloadMetadata.ComponentPack.IDs -}}
-    {{- $packURL := getPackURL . $workspace -}}
-    {{- if $packURL -}}
-    <script src="{{$packURL}}" type="module"></script>
+    {{- if .PreloadMetadata -}}
+        {{- if .PreloadMetadata.ComponentPack -}}
+            {{- range .PreloadMetadata.ComponentPack.IDs -}}
+            {{- $packURL := getPackURL . $workspace -}}
+                {{- if $packURL -}}
+                <script src="{{$packURL}}" type="module"></script>
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
     {{- end -}}
-    {{- end -}}
-    {{- end }}
     <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>

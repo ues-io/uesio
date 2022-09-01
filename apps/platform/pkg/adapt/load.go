@@ -18,7 +18,7 @@ type LoadOp struct {
 	Conditions         []LoadRequestCondition `json:"-"`
 	Fields             []LoadRequestField     `json:"-"`
 	Query              bool                   `json:"query"`
-	Order              []LoadRequestOrder     `json:"order"`
+	Order              []LoadRequestOrder     `json:"-"`
 	BatchSize          int                    `json:"batchsize"`
 	BatchNumber        int                    `json:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
@@ -64,6 +64,8 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 		return dec.String(&op.View)
 	case "conditions":
 		return decodeEmbed(dec, &op.Conditions)
+	case "order":
+		return decodeEmbed(dec, &op.Order)
 	case "fields":
 		return decodeEmbed(dec, &op.Fields)
 	case "requirewriteaccess":
@@ -97,18 +99,19 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 
+	order, err := unmarshalOrder(node)
+	if err != nil {
+		return err
+	}
+
 	op.RequireWriteAccess = meta.GetNodeValueAsBool(node, "requirewriteaccess", false)
 	op.Collection = &Collection{}
 	op.CollectionName = meta.GetNodeValueAsString(node, "collection")
 	op.Fields = fields
 	op.Conditions = conditions
+	op.Order = order
 	return nil
 
-}
-
-type LoadRequestOrder struct {
-	Field string `json:"field" bot:"field"`
-	Desc  bool   `json:"desc" bot:"desc"`
 }
 
 type LoadRequestBatch struct {
