@@ -1,11 +1,14 @@
-import { FC } from "react"
 import { builder, component, wire, util } from "@uesio/ui"
 import MultiSelectProp from "./multiselectprop"
 
-const WireFieldsProp: FC<builder.PropRendererProps> = (props) => {
+const WireFieldsProp: builder.PropComponent<builder.WireFieldsProp> = (
+	props
+) => {
 	const { valueAPI, path } = props
-	const parentPath = component.path.getParentPath(path || "")
-	const wirePath = parentPath + '["wire"]'
+	const wirePath = component.path.createRelativePath(
+		props.descriptor.wireField,
+		path || ""
+	)
 	const wireId = valueAPI.get(wirePath)
 	const wireDef = (valueAPI.get('["wires"][' + wireId + "]") ||
 		{}) as wire.WireDefinition

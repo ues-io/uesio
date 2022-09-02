@@ -210,6 +210,7 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "searchFields",
 				type: "WIRE_FIELDS",
 				label: "Search Fields",
+				wireField: "wire",
 			},
 			{
 				name: "search",

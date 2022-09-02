@@ -241,6 +241,7 @@ interface ComponentTargetProp extends BasePropDescriptor {
 
 interface WireFieldsProp extends BasePropDescriptor {
 	type: "WIRE_FIELDS"
+	wireField: string
 }
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
