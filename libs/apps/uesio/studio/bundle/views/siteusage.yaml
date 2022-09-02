@@ -39,15 +39,19 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.site:
+        uesio/core.environment:
+        uesio/core.namespace:
+        uesio/core.name:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.site
-          value: $Param{app}_$Param{sitename}
+        - field: uesio/core.namespace
+          value: $Param{app}
+        - field: uesio/core.name
+          value: $Param{sitename}
 
   # Components are how we describe the layout of our view
   components:
@@ -93,6 +97,12 @@ definition:
                                 columns:
                                   - uesio/io.column:
                                       field: uesio/core.user
+                                  - uesio/io.column:
+                                      field: uesio/core.environment
+                                  - uesio/io.column:
+                                      field: uesio/core.namespace
+                                  - uesio/io.column:
+                                      field: uesio/core.name
                                   - uesio/io.column:
                                       field: uesio/core.day
                                   - uesio/io.column:

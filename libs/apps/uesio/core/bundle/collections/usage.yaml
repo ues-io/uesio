@@ -1,6 +1,8 @@
 name: usage
 uniqueKey:
-  - uesio/core.site
+  - uesio/core.environment
+  - uesio/core.namespace
+  - uesio/core.name
   - uesio/core.user
   - uesio/core.day
   - uesio/core.actiontype

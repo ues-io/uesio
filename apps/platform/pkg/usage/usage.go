@@ -50,16 +50,18 @@ func RunJob() error {
 	changes := adapt.Collection{}
 	for i, key := range keys {
 		keyParts := strings.Split(key, ":")
-		if len(keyParts) != 8 {
+		if len(keyParts) != 9 {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 		}
 		usageItem := adapt.Item{}
-		usageItem.SetField("uesio/core.site", keyParts[2])
-		usageItem.SetField("uesio/core.user", keyParts[3])
-		usageItem.SetField("uesio/core.day", keyParts[4])
-		usageItem.SetField("uesio/core.actiontype", keyParts[5])
-		usageItem.SetField("uesio/core.metadatatype", keyParts[6])
-		usageItem.SetField("uesio/core.metadataname", keyParts[7])
+		usageItem.SetField("uesio/core.environment", keyParts[1])
+		usageItem.SetField("uesio/core.namespace", keyParts[2])
+		usageItem.SetField("uesio/core.name", keyParts[3])
+		usageItem.SetField("uesio/core.user", keyParts[4])
+		usageItem.SetField("uesio/core.day", keyParts[5])
+		usageItem.SetField("uesio/core.actiontype", keyParts[6])
+		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
+		usageItem.SetField("uesio/core.metadataname", keyParts[8])
 		total, _ := strconv.ParseFloat(values[i], 64)
 		usageItem.SetField("uesio/core.total", total)
 		changes = append(changes, &usageItem)

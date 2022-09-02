@@ -14,6 +14,10 @@ func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, con
 		return nil
 	}
 
+	if user == "" {
+		user = "GUEST"
+	}
+
 	credentials := connection.GetCredentials()
 	// Connect to redis and increment the counter
 	conn := cache.GetRedisConn()
