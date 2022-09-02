@@ -54,9 +54,8 @@ func RunJob() error {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 		}
 		usageItem := adapt.Item{}
-		usageItem.SetField("uesio/core.environment", keyParts[1])
-		usageItem.SetField("uesio/core.namespace", keyParts[2])
-		usageItem.SetField("uesio/core.name", keyParts[3])
+		usageItem.SetField("uesio/core.tenanttype", keyParts[1])
+		usageItem.SetField("uesio/core.tenantid", keyParts[2]+":"+keyParts[3])
 		usageItem.SetField("uesio/core.user", keyParts[4])
 		usageItem.SetField("uesio/core.day", keyParts[5])
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])

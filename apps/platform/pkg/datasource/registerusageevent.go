@@ -24,7 +24,7 @@ func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, con
 	defer conn.Close()
 
 	currentTime := time.Now()
-	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", credentials.GetTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", credentials.GetSiteTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	_, err := conn.Do("SADD", "USAGE_KEYS", key)
 	if err != nil {
