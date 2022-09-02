@@ -202,6 +202,11 @@ const signals: Record<string, SignalDescriptor> = {
 		label: "Search Wire",
 		properties: (): PropDescriptor[] => [
 			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
 				name: "searchFields",
 				type: "WIRE_FIELDS",
 				label: "Search Fields",
