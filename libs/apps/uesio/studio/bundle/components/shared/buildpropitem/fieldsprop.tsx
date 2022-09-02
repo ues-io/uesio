@@ -1,9 +1,7 @@
 import { builder, component, wire, util } from "@uesio/ui"
 import MultiSelectProp from "./multiselectprop"
 
-const WireFieldsProp: builder.PropComponent<builder.WireFieldsProp> = (
-	props
-) => {
+const FieldsProp: builder.PropComponent<builder.FieldsProp> = (props) => {
 	const { valueAPI, path } = props
 	const wirePath = component.path.createRelativePath(
 		props.descriptor.wireField,
@@ -38,4 +36,4 @@ const WireFieldsProp: builder.PropComponent<builder.WireFieldsProp> = (
 	)
 }
 
-export default WireFieldsProp
+export default FieldsProp

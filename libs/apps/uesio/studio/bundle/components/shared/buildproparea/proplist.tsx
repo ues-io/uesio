@@ -18,7 +18,7 @@ import NamespaceProp from "../buildpropitem/namespaceprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
-import WireFieldsProp from "../buildpropitem/wirefieldsprop"
+import FieldsProp from "../buildpropitem/fieldsprop"
 import FieldProp from "../buildpropitem/fieldprop"
 import PropListsProp from "../buildpropitem/proplistsprop"
 
@@ -65,7 +65,7 @@ function getPropHandler(type?: string) {
 		case "PARAMS":
 			return ParamsProp
 		case "WIRE_FIELDS":
-			return WireFieldsProp
+			return FieldsProp
 		case "FIELD":
 			return FieldProp
 		case "PROPLISTS":
