@@ -103,14 +103,15 @@ func (v *View) GetPermChecker() *PermissionSet {
 func (v *View) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
-		err := yaml.Unmarshal([]byte(value.(string)), &definition)
-		if err != nil {
-			return err
+		if value != nil {
+			err := yaml.Unmarshal([]byte(value.(string)), &definition)
+			if err != nil {
+				return err
+			}
+			if len(definition.Content) > 0 {
+				v.Definition = *definition.Content[0]
+			}
 		}
-		if len(definition.Content) > 0 {
-			v.Definition = *definition.Content[0]
-		}
-
 		return nil
 	}
 	return StandardFieldSet(v, fieldName, value)
