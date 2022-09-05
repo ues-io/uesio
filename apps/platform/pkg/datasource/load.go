@@ -50,11 +50,12 @@ func processConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
+	session *sess.Session,
 ) error {
 
 	for i, condition := range op.Conditions {
 
-		if condition.ValueSource == "" {
+		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
 			// make sure the condition value is a string
 			stringValue, ok := condition.Value.(string)
 			if !ok {
@@ -67,6 +68,16 @@ func processConditions(
 						return nil, errors.New("missing param " + key)
 					}
 					return val, nil
+				},
+				"User": func(m map[string]interface{}, key string) (interface{}, error) {
+
+					userID := session.GetUserID()
+
+					if key == "id" {
+						return userID, nil
+					}
+
+					return nil, nil
 				},
 			})
 			if err != nil {
@@ -333,7 +344,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		for _, op := range batch {
 
-			err := processConditions(op, metadataResponse, batch)
+			err := processConditions(op, metadataResponse, batch, session)
 			if err != nil {
 				return nil, err
 			}
