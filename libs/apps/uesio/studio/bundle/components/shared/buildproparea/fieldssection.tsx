@@ -1,11 +1,9 @@
-import React, { FC, DragEvent, useState } from "react"
+import { FC, DragEvent, useState, useEffect } from "react"
 import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
 import { hooks, component, wire } from "@uesio/ui"
-import FieldPropTag, {
-	FieldProp,
-} from "../../utility/fieldproptag/fieldproptag"
+import FieldPropTag from "../../utility/fieldproptag/fieldproptag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
@@ -14,37 +12,15 @@ const Popper = component.getUtility("uesio/io.popper")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
-const prepareFieldForDisplay = (
-	[key, value]: [string, wire.WireFieldDefinition],
-	path: string,
-	collectionKey: string
-): FieldProp => ({
-	collectionKey, // We need to make this dynamic to support ref field selection
-	fieldId: key,
-	fieldPath: `${path}["fields"]["${key}"]`,
-	fields:
-		value && value.fields
-			? Object.entries(value.fields).map((el) =>
-					prepareFieldForDisplay(
-						el,
-						`${path}["fields"]["${key}"]`,
-						collectionKey // This should be the referenced collection
-					)
-			  )
-			: [],
-})
-
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [showPopper, setShowPopper] = useState(false)
 
 	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
 
-	const selectedFields = Object.entries(wireDef?.fields || {}).map((el) =>
-		prepareFieldForDisplay(el, path || "", "collection")
-	)
+	if (!wireDef) return null
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -57,18 +33,12 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 
-	// Scroll to the bottom of the list when adding new fields
-	const itemsRef = React.useRef<(HTMLDivElement | null)[]>([])
-	const prevLength = itemsRef.current.length
-
-	React.useEffect(() => {
-		itemsRef.current = itemsRef.current.slice(0, selectedFields.length)
-		if (prevLength !== 0 && prevLength < itemsRef.current.length)
-			itemsRef.current[itemsRef.current.length - 1]?.scrollIntoView({
-				block: "end",
-				behavior: "smooth",
-			})
-	}, [selectedFields])
+	useEffect(() => {
+		anchorEl?.querySelector(".selected")?.scrollIntoView({
+			block: "end",
+			behavior: "smooth",
+		})
+	}, [wireDef.fields])
 
 	return (
 		<>
@@ -76,7 +46,8 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				<Popper
 					referenceEl={anchorEl}
 					context={context}
-					placement="right"
+					placement="right-start"
+					useFirstRelativeParent
 				>
 					<ScrollPanel
 						header={
@@ -89,7 +60,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 										context={context}
 										variant="uesio/studio.buildtitle"
 										icon="close"
-										onClick={(): void => {
+										onClick={() => {
 											setShowPopper(!showPopper)
 										}}
 									/>
@@ -107,15 +78,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 					</ScrollPanel>
 				</Popper>
 			)}
-			{/* Just an element for popper to anchor on */}
-			<div
-				style={{
-					pointerEvents: "none",
-					position: "absolute",
-					inset: 0,
-				}}
-				ref={setAnchorEl}
-			/>
 			<TitleBar
 				variant="uesio/studio.propsubsection"
 				title={""}
@@ -138,19 +100,21 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 			/>
 
 			{/* List of selected fields, from here we can only delete */}
-			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
-				{selectedFields.map((el, i) => (
-					<div
-						key={el.fieldId}
-						ref={(el) => (itemsRef.current[i] = el)}
-					>
-						<FieldPropTag
-							{...el}
-							context={context}
-							valueAPI={valueAPI}
-							togglePopper={() => setShowPopper(!showPopper)}
-						/>
-					</div>
+			<div
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+				ref={setAnchorEl}
+			>
+				{Object.keys(wireDef.fields || {}).map((fieldId) => (
+					<FieldPropTag
+						collectionKey={wireDef.collection}
+						fieldId={fieldId}
+						path={`${path}["fields"]["${fieldId}"]`}
+						key={fieldId}
+						fieldDef={wireDef.fields[fieldId]}
+						context={context}
+						valueAPI={valueAPI}
+					/>
 				))}
 			</div>
 		</>

@@ -320,7 +320,7 @@ const FieldPicker: FC<T> = (props) => {
 									onClick={() => {
 										selected
 											? valueAPI.remove(setPath)
-											: valueAPI.set(setPath, null)
+											: valueAPI.set(setPath, null, true)
 									}}
 									selected={selected}
 									context={context}
@@ -346,13 +346,14 @@ const FieldPicker: FC<T> = (props) => {
 													border: "none",
 													cursor: "pointer",
 												}}
-												onClick={() =>
+												onClick={(e) => {
 													addFrame({
 														fieldId,
 														collection:
 															referencedCollection,
 													})
-												}
+													e.stopPropagation()
+												}}
 											>
 												<span
 													style={{

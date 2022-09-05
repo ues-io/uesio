@@ -16,7 +16,7 @@ import { ActionProps } from "./actions/actiondefinition"
 interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
 	valueAPI: builder.ValueAPI
-	propsDef: builder.BuildPropertiesDefinition
+	propsDef?: builder.BuildPropertiesDefinition
 }
 
 const ACTION_TO_COMPONENT: {
@@ -39,10 +39,10 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		{
 			wrapper: {
 				display: "flex",
-				justifyContent: "space-around",
+				justifyContent: "end",
 				padding: "8px",
 				position: "relative",
-				backgroundColor: "#fcfcfc",
+				backgroundColor: "#fafafa",
 			},
 		},
 		props

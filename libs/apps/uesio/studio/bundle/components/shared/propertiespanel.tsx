@@ -8,6 +8,7 @@ import {
 	metadata,
 } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
+import getValueAPI from "./valueapi"
 
 const standardActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
@@ -114,128 +115,20 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		component.registry.getPropertiesDefinitionFromPath(fullPath)
 	const propsDef = augmentPropsDef(plainPropsDef, definition, trimmedPath)
 
-	const onUpdateHook = (path: string) => {
-		const pathArray = component.path.toPath(path)
-		// If it was a wire update, auto-reload the wire
-		if (pathArray[0] !== "wires") return
-		const wireName = pathArray[1]
-		if (!wireName) return
-
-		uesio.signal.runMany(
-			[
-				{
-					signal: "wire/INIT",
-					wireDefs: [wireName],
-				},
-				{
-					signal: "wire/LOAD",
-					wires: [wireName],
-				},
-			],
-			props.context
-		)
-	}
-
 	return (
 		<PropertiesPane
 			context={props.context}
 			className={props.className}
 			propsDef={propsDef}
 			path={trimmedPath}
-			valueAPI={{
-				get: (path: string) => util.get(definition, path),
-				set: (path: string, value: string | number | null) => {
-					if (path === undefined) return
-					uesio.builder.setDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						value
-					)
-					onUpdateHook(path)
-				},
-				clone: (path: string) => {
-					if (path === undefined) return
-					uesio.builder.cloneDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						)
-					)
-					onUpdateHook(path)
-				},
-				cloneKey: (path: string) => {
-					if (path === undefined) return
-					uesio.builder.cloneKeyDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						)
-					)
-					onUpdateHook(path)
-				},
-				add: (path: string, value: string, number?: number) => {
-					if (path === undefined) return
-					uesio.builder.addDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						value,
-						number
-					)
-					onUpdateHook(path)
-				},
-				remove: (path: string) => {
-					if (path === undefined) return
-					uesio.builder.removeDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						)
-					)
-					onUpdateHook(path)
-				},
-				changeKey: (path: string, key: string) => {
-					if (path === undefined) return
-					uesio.builder.changeDefinitionKey(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						key
-					)
-					onUpdateHook(path)
-				},
-				move: (
-					fromPath: string,
-					toPath: string,
-					selectKey?: string
-				) => {
-					if (fromPath === undefined || toPath === undefined) return
-					uesio.builder.moveDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							fromPath
-						),
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							toPath
-						),
-						selectKey
-					)
-					onUpdateHook(toPath)
-				},
-			}}
+			valueAPI={getValueAPI(
+				metadataType,
+				metadataItem,
+				selectedPath,
+				definition,
+				uesio,
+				props.context
+			)}
 		/>
 	)
 }

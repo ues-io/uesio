@@ -1,77 +1,124 @@
 import PropNodeTag from "../../shared/buildpropitem/propnodetag"
-import { builder, component, definition, styles } from "@uesio/ui"
+import {
+	builder,
+	component,
+	definition,
+	wire,
+	hooks,
+	metadata,
+} from "@uesio/ui"
 
-const IconButton = component.getUtility("uesio/io.iconbutton")
 const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
-import { FC } from "react"
+import { FC, useState } from "react"
+import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 
-export type FieldProp = {
-	fieldId: string
-	fields: FieldProp[]
-	fieldPath: string
+interface T extends definition.UtilityProps {
 	collectionKey: string
-}
-
-interface T extends definition.UtilityProps, FieldProp {
-	// removeField: (e: React.MouseEvent<HTMLButtonElement>) => void
-	togglePopper: () => void
+	fieldId: string
+	fieldDef: wire.WireFieldDefinition
 	valueAPI: builder.ValueAPI
+	variant?: metadata.MetadataKey
 }
 const FieldPropTag: FC<T> = (props) => {
 	const {
 		fieldId,
-		fields,
+		fieldDef,
 		collectionKey,
 		context,
-		togglePopper,
 		valueAPI,
-		fieldPath,
+		variant,
+		path = "",
 	} = props
-	const classes = styles.useStyles(
-		{
-			fieldTag: {
-				".trashIcon": {
-					opacity: 0,
-					transition: "opacity 0.1s ease",
-				},
-				"&:hover .trashIcon": {
-					opacity: 0.8,
-				},
-			},
-		},
-		null
+	const uesio = hooks.useUesio(props)
+	const [expanded, setExpanded] = useState<boolean>(false)
+	const collectionMetadata = uesio.collection.useCollection(
+		context,
+		collectionKey
 	)
+	if (!collectionMetadata) return null
+	const fieldMetadata = collectionMetadata.getField(fieldId)
+	if (!fieldMetadata) return null
+
+	const selected = valueAPI.isSelected(path)
+	const hasSelectedChild = valueAPI.hasSelectedChild(path)
+	const subFields = Object.keys(fieldDef?.fields || {})
 
 	return (
 		<PropNodeTag
+			variant={variant}
 			draggable={`${collectionKey}:${fieldId}`}
 			key={fieldId}
+			selected={selected || hasSelectedChild}
 			context={context}
+			onClick={(e) => {
+				valueAPI.select(path)
+				e.stopPropagation()
+			}}
 		>
-			<div
-				className={classes.fieldTag}
-				style={{ display: "flex", justifyContent: "space-between" }}
-			>
-				<NamespaceLabel context={context} metadatakey={fieldId} />
-				<div className="trashIcon">
-					<IconButton
-						context={context}
-						icon="delete"
-						onClick={() => valueAPI.remove(`${fieldPath}`)}
-						title="delete"
-					/>
+			<div className="tagroot">
+				<NamespaceLabel
+					context={context}
+					metadatakey={fieldId}
+					title={fieldMetadata.getLabel()}
+				/>
+				<div>
+					{subFields && subFields.length > 0 && (
+						<span
+							onClick={(e) => {
+								setExpanded(!expanded)
+								e.stopPropagation()
+							}}
+							className="infotag"
+						>
+							{subFields.length}
+						</span>
+					)}
+					<span className="infotag">{fieldMetadata.getType()}</span>
 				</div>
 			</div>
-			{fields?.map((el) => (
-				<FieldPropTag
-					{...el}
+			{subFields && subFields.length > 0 && (
+				<IOExpandPanel
 					context={context}
-					key={el.fieldId}
-					togglePopper={togglePopper}
+					expanded={expanded || hasSelectedChild}
+				>
+					<div className="subarea">
+						{subFields.map((fieldId) => {
+							const referenceMetadata =
+								fieldMetadata.getReferenceMetadata()
+							if (!referenceMetadata) return null
+							return (
+								<FieldPropTag
+									variant="uesio/studio.subpropnodetag"
+									collectionKey={referenceMetadata.collection}
+									fieldId={fieldId}
+									fieldDef={fieldDef?.fields[fieldId]}
+									context={context}
+									key={fieldId}
+									valueAPI={valueAPI}
+									path={`${path}["fields"]["${fieldId}"]`}
+								/>
+							)
+						})}
+					</div>
+				</IOExpandPanel>
+			)}
+			<IOExpandPanel context={context} expanded={selected}>
+				<BuildActionsArea
+					context={context}
+					path={path}
 					valueAPI={valueAPI}
+					actions={[
+						{
+							type: "MOVE",
+						},
+						{
+							type: "DELETE",
+						},
+					]}
 				/>
-			))}
+			</IOExpandPanel>
 		</PropNodeTag>
 	)
 }
