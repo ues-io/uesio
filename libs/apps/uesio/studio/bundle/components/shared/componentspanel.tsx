@@ -13,6 +13,7 @@ import groupBy from "lodash/groupBy"
 
 const Text = component.getUtility("uesio/io.text")
 const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
@@ -27,7 +28,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				marginTop: "8px",
+				padding: "0px 10px 10px 10px",
 			},
 		},
 		props
@@ -84,11 +85,12 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 
 	// Filter out variants that aren't in one of our namespaces
 	// (this is for filtering out variants from the studio namespace)
-	const validVariants = variants
-		? variants.filter(
-				(variant) => !!uesio.builder.getNamespaceInfo(variant.namespace)
-		  )
-		: []
+	const validVariants = variants?.filter(
+		(variant) => !!uesio.builder.getNamespaceInfo(variant.namespace)
+	)
+
+	const selected =
+		selectedType === "componenttype" && selectedItem === fullName
 
 	// Loop over the variants for this component
 	return (
@@ -99,22 +101,19 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				uesio.builder.setSelectedNode("componenttype", fullName, "")
 			}
 			draggable={`component:${fullName}`}
-			selected={
-				selectedType === "componenttype" && selectedItem === fullName
-			}
-			expandChildren={
-				validVariants &&
-				validVariants.length && (
+			selected={selected}
+		>
+			<ComponentTag propDef={propDef} context={context} />
+			<IOExpandPanel context={context} expanded={selected}>
+				{validVariants && validVariants.length > 0 && (
 					<VariantsBlock
 						selectedItem={selectedItem}
 						selectedType={selectedType}
 						variants={validVariants}
 						context={context}
 					/>
-				)
-			}
-		>
-			<ComponentTag propDef={propDef} context={context} />
+				)}
+			</IOExpandPanel>
 		</PropNodeTag>
 	)
 }
@@ -184,6 +183,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 	const { context, propDef } = props
 	const classes = styles.useUtilityStyles(
 		{
+			root: {},
 			title: {
 				verticalAlign: "middle",
 				marginBottom: "0.5em",
@@ -197,7 +197,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 		props
 	)
 	return (
-		<div>
+		<div className={classes.root}>
 			<NamespaceLabel
 				metadatakey={propDef.namespace}
 				title={propDef.title}

@@ -68,11 +68,11 @@ const MoveActions: FunctionComponent<ActionProps> = ({
 	if (!path) return null
 
 	const trimmedPath =
-		propsDef.type === "component"
+		propsDef?.type === "component"
 			? component.path.getParentPath(path)
 			: path
 	const selectKey =
-		(propsDef.type === "component" && component.path.getKeyAtPath(path)) ||
+		(propsDef?.type === "component" && component.path.getKeyAtPath(path)) ||
 		undefined
 
 	const isArrayMove = component.path.isNumberIndex(

@@ -176,8 +176,11 @@ class BuilderAPI {
 		appDispatch()(cloneKeyDefinition({ path, newKey }))
 	}
 
-	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(setDefinition({ path, definition }))
+	setDefinition = (
+		path: string,
+		definition: Definition,
+		autoSelect?: boolean
+	) => appDispatch()(setDefinition({ path, definition, autoSelect }))
 
 	addDefinition(
 		path: string,

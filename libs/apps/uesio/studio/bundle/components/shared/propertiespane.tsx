@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { component, hooks, styles } from "@uesio/ui"
-import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
@@ -121,6 +120,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					)}
 				</>
 			}
+			/*
 			footer={
 				propsDef && (
 					<BuildActionsArea
@@ -132,6 +132,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					/>
 				)
 			}
+			*/
 			className={className}
 			context={context}
 		>

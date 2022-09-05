@@ -93,11 +93,7 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			type: "ORDER",
 		},
 	],
-	actions: [
-		{
-			type: "LOAD_WIRE",
-		},
-	],
+	actions: [],
 	type: "wire",
 })
 
