@@ -57,12 +57,6 @@ definition:
                           text: I am styled with the muted color
                           element: h1
                           color: muted
-                          uesio.styles:
-                            root:
-                              # color: mute
-                              paddingTop: "4px"
-                              color: "pink"
-                              py: 3
                       - uesio/core.loginmock:
                           text: Sign in with Mock
                           align: center
