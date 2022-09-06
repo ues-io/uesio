@@ -12,15 +12,16 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const { children, path = "", index = 0, definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const viewDefId = uesio.getViewDefId()
+	const viewDef = uesio.getViewDef()
 
-	if (!viewDefId) return null
+	if (!viewDefId || !viewDef) return null
 
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path),
-		definition
+		viewDef
 	)
 
 	if (!propDef) throw new Error("No Prop Def Provided")
@@ -40,7 +41,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 		"viewdef",
 		viewDefId,
 		path,
-		definition,
+		viewDef,
 		uesio,
 		context
 	)

@@ -12,3 +12,5 @@ definition:
       "&:focus":
         outline: none
         color: $Theme{color.primary.darken}
+    disabled:
+      opacity: "0.3"
