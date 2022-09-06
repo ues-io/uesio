@@ -45,12 +45,10 @@ const getPanelPropsDef = (): BuildPropertiesDefinition => {
 				type: "SELECT",
 				name: "uesio.type",
 				label: "Panel Component",
-				options: Object.entries(componentList).flatMap(([ns, nsdata]) =>
-					Object.entries(nsdata).map(([comp]) => ({
-						value: `${ns}.${comp}`,
-						label: `${ns}.${comp}`,
-					}))
-				),
+				options: componentList.map((comp) => ({
+					value: `${comp.namespace}.${comp.name}`,
+					label: `${comp.title}`,
+				})),
 			},
 		],
 		type: "panel",

@@ -120,19 +120,6 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					)}
 				</>
 			}
-			/*
-			footer={
-				propsDef && (
-					<BuildActionsArea
-						path={path}
-						context={context}
-						valueAPI={valueAPI}
-						actions={propsDef.actions}
-						propsDef={propsDef}
-					/>
-				)
-			}
-			*/
 			className={className}
 			context={context}
 		>

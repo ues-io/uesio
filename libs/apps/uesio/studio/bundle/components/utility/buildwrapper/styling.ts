@@ -64,5 +64,11 @@ export default (
 			position: "relative",
 			overflow: "auto",
 		},
+		titleicon: {
+			marginRight: "4px",
+		},
+		titletext: {
+			verticalAlign: "middle",
+		},
 	}
 }
