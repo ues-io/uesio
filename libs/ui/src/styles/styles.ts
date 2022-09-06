@@ -2,6 +2,7 @@ import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
 import { ThemeState } from "../definition/theme"
+import { css as cssx } from "@theme-ui/css"
 import {
 	BaseProps,
 	DefinitionMap,
@@ -10,7 +11,7 @@ import {
 import { css, cx, CSSInterpolation } from "@emotion/css"
 import { mergeDefinitionMaps } from "../component/merge"
 import * as colors from "./colors"
-
+import merge from "lodash/merge"
 type ResponsiveDefinition =
 	| string
 	| {
@@ -143,7 +144,7 @@ const getColor = (
 	} else if (definition.value) {
 		result = context.merge(definition.value)
 	} else if (definition.intention) {
-		result = context.getTheme().definition.palette[definition.intention]
+		result = context.getTheme().definition.colors[definition.intention]
 	}
 	if (result && isValidColor(result)) return result
 }
@@ -163,7 +164,7 @@ const defaultTheme: ThemeState = {
 	name: "default",
 	namespace: "uesio/core",
 	definition: {
-		palette: {
+		colors: {
 			primary: "#1976d2",
 			secondary: "#dc004e",
 			error: "#f44336",
@@ -172,7 +173,7 @@ const defaultTheme: ThemeState = {
 			success: "#4caf50",
 		},
 		variantOverrides: {},
-		spacing: 8,
+		space: [0, 4, 8, 16, 32, 64],
 	},
 }
 
@@ -204,36 +205,33 @@ function useStyle<K extends string>(
 	)
 }
 
+const themifyStyles = (
+	styleObjects: Record<string, CSSInterpolation>,
+	context?: Context
+) => {
+	const theme = context ? context.getTheme() || {} : ({} as any)
+	return cssx(styleObjects as any)(theme.definition)
+}
+
 function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps | null
 ) {
-	const styles = mergeDefinitionMaps(
-		{},
-		props?.styles as DefinitionMap,
+	// First, Theme the style objects
+	const { a, b } = themifyStyles(
+		{ a: defaults, b: props?.styles },
 		props?.context
 	)
-	return Object.keys(defaults).reduce(
-		(classNames: Record<string, string>, className: K) => {
-			classNames[className] = cx(
-				css([
-					defaults[className],
-					styles?.[className],
-					{
-						label: getClassNameLabel(
-							props?.componentType,
-							className
-						),
-					},
-				]),
-				props?.classes?.[className],
-				// A bit weird here... Only apply the passed-in className prop to root styles.
-				// Otherwise, it would be applied to every class sent in as defaults.
-				className === "root" && props?.className
-			)
-			return classNames
-		},
-		{} as Record<K, string>
+
+	// Then we can merge
+	const mergedStyles = merge(a, b)
+
+	// Finally we can create classNames with emotion
+	return Object.fromEntries(
+		Object.entries(mergedStyles || {}).map(([key, styles]) => [
+			key,
+			css(styles),
+		])
 	)
 }
 
