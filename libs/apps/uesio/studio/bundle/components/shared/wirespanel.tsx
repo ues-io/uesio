@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, styles, component, wire } from "@uesio/ui"
+import { definition, hooks, component, wire } from "@uesio/ui"
 import PropNodeTag from "./buildpropitem/propnodetag"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import getValueAPI from "./valueapi"
@@ -15,19 +15,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const metadataItem = uesio.getViewDefId() || ""
 	const localPath = '["wires"]'
 
-	const classes = styles.useStyles(
-		{
-			wireTag: {
-				display: "grid",
-				gridTemplateColumns: "1fr 0fr",
-				alignItems: "center",
-			},
-			collectionInfo: {},
-			keyInfo: {},
-		},
-		null
-	)
-
 	const def = uesio.builder.useDefinition(metadataType, metadataItem, "")
 
 	const valueAPI = getValueAPI(
@@ -40,6 +27,11 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const wireDefs = valueAPI.get(localPath) as definition.DefinitionMap
+
+	const [wirePropDef] = component.registry.getPropertiesDefinitionFromPath(
+		component.path.makeFullPath(metadataType, metadataItem, localPath),
+		def
+	)
 
 	return (
 		<div>
@@ -56,8 +48,8 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						selected={selected || hasSelectedChild}
 						context={context}
 					>
-						<div className={classes.wireTag}>
-							<span className={classes.keyInfo}>{key}</span>
+						<div className="tagroot">
+							{key}
 							<NamespaceLabel
 								context={context}
 								metadatakey={wireDef.collection}
@@ -68,14 +60,8 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								context={context}
 								path={wirePath}
 								valueAPI={valueAPI}
-								actions={[
-									{
-										type: "MOVE",
-									},
-									{
-										type: "DELETE",
-									},
-								]}
+								propsDef={wirePropDef}
+								actions={wirePropDef.actions}
 							/>
 						</IOExpandPanel>
 					</PropNodeTag>
