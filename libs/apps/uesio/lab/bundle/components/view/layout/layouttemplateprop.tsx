@@ -36,7 +36,7 @@ const LayoutTemplateButton: FC<T> = (props) => {
 			},
 			button: {
 				backgroundColor: selected
-					? theme.definition.palette.primary
+					? theme.definition.colors.primary
 					: "#74a5f0",
 			},
 		},

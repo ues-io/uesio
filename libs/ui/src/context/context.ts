@@ -130,9 +130,9 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const theme = context.getTheme()
 		if (scope === "color") {
 			if (op === "darken") {
-				return chroma(theme.definition.palette[value]).darken(0.5).hex()
+				return chroma(theme.definition.colors[value]).darken(0.5).hex()
 			}
-			return theme.definition.palette[value]
+			return theme.definition.colors[value]
 		}
 		return ""
 	},

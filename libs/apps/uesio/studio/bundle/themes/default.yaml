@@ -1,9 +1,32 @@
 name: default
 definition:
-  palette:
+  colors:
     primary: "#FF5E2F"
     secondary: "#dc004e"
+    text: "#000"
     error: "#f44336"
     warning: "#ff9800"
     info: "#2196f3"
     success: "#4caf50"
+    accent: "purple"
+    muted: "rgb(117, 117, 117)"
+
+  fontWeights:
+    body: 400,
+    heading: 700,
+    bold: 700,
+
+  lineHeights:
+    body: 1.5,
+    heading: 1.125,
+
+  space:
+    - 0
+    - 4
+    - 8
+    - 16
+    - 32
+    - 64
+    - 128
+    - 256
+    - 512

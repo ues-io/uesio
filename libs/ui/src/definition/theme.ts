@@ -1,6 +1,5 @@
-import { DefinitionMap } from "./definition"
-
-interface Palette {
+import { Theme } from "@theme-ui/css"
+interface Colors {
 	primary: string
 	secondary: string
 	error: string
@@ -11,14 +10,6 @@ interface Palette {
 	[key: string]: string
 }
 
-type ThemeState = {
-	name: string
-	namespace: string
-	definition: {
-		spacing: number
-		palette: Palette
-		variantOverrides: Record<string, DefinitionMap>
-	}
-}
+type ThemeState = Theme
 
-export { Palette, ThemeState }
+export { Colors, ThemeState }

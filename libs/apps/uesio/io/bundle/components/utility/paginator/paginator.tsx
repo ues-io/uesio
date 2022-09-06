@@ -37,7 +37,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 			currentpage: {
 				color: "white",
 				cursor: "default",
-				backgroundColor: context.getTheme().definition.palette.primary,
+				backgroundColor: context.getTheme().definition.colors.primary,
 			},
 		},
 		props

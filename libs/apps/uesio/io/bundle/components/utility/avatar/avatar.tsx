@@ -31,7 +31,7 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
 				backgroundPosition: "center",
 				backgroundColor: mergedImage
 					? "transparent"
-					: context.getTheme().definition.palette.primary,
+					: context.getTheme().definition.colors.primary,
 			},
 		},
 		props

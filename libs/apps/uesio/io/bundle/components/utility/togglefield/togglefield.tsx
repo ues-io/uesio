@@ -15,7 +15,7 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 
 	const {
 		definition: {
-			palette: { primary: primaryColor },
+			colors: { primary: primaryColor },
 		},
 	} = uesio.getTheme()
 
