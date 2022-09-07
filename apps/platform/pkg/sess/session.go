@@ -247,13 +247,13 @@ func (s *Session) AddVersionContext(versionInfo *VersionInfo) {
 	s.version = versionInfo
 }
 
-func (s *Session) GetContextNamespaces() map[string]bool {
+func (s *Session) GetContextNamespaces() []string {
 	bundleDef := s.GetContextAppBundle()
-	namespaces := map[string]bool{
-		bundleDef.Name: true,
+	namespaces := []string{
+		bundleDef.Name,
 	}
 	for name := range bundleDef.Dependencies {
-		namespaces[name] = true
+		namespaces = append(namespaces, name)
 	}
 	return namespaces
 }

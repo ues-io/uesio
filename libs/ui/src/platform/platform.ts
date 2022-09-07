@@ -299,7 +299,7 @@ const platform = {
 	getAvailableNamespaces: async (
 		context: Context,
 		metadataType?: MetadataType
-	): Promise<Record<string, boolean>> => {
+	): Promise<string[]> => {
 		const prefix = getPrefix(context)
 		const mdType = metadataType && METADATA[metadataType]
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
