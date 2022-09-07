@@ -49,7 +49,49 @@ definition:
       conditions:
         - field: uesio/core.tenantid
           value: $Param{app}:$Param{sitename}
-
+      order:
+        - field: uesio/core.user
+          desc: false
+    usage_load:
+      collection: uesio/core.usage
+      fields:
+        uesio/core.id:
+        uesio/core.total:
+        uesio/core.tenanttype:
+        uesio/core.tenantid:
+        uesio/core.user:
+        uesio/core.day:
+        uesio/core.actiontype:
+        uesio/core.metadatatype:
+        uesio/core.metadataname:
+      conditions:
+        - field: uesio/core.tenantid
+          value: $Param{app}:$Param{sitename}
+        - field: uesio/core.actiontype
+          value: LOAD
+      order:
+        - field: uesio/core.user
+          desc: false
+    usage_save:
+      collection: uesio/core.usage
+      fields:
+        uesio/core.id:
+        uesio/core.total:
+        uesio/core.tenanttype:
+        uesio/core.tenantid:
+        uesio/core.user:
+        uesio/core.day:
+        uesio/core.actiontype:
+        uesio/core.metadatatype:
+        uesio/core.metadataname:
+      conditions:
+        - field: uesio/core.tenantid
+          value: $Param{app}:$Param{sitename}
+        - field: uesio/core.actiontype
+          value: SAVE
+      order:
+        - field: uesio/core.user
+          desc: false
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -79,32 +121,65 @@ definition:
                     title: Usage
                     subtitle: Data really powers everything that we do.
                 - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        display: flex
+                        alignItems: center
+                        gap: 5px
+                        padding: 10px
+                        margin: 40px 40px 0 40px
+                    components:
+                      - uesio/io.barchart:
+                          uesio.styles:
+                            chart:
+                              height: 300px
+                          series:
+                            - name: revenue
+                              label: Load
+                              valueField: uesio/core.total
+                              categoryField: uesio/core.day
+                              wire: usage_load
+                            - name: amount
+                              label: Save
+                              valueField: uesio/core.total
+                              categoryField: uesio/core.day
+                              wire: usage_save
+                          labels:
+                            source: DATA
+                            timeunit: MONTH
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.text:
+                                text: "Current month costs: 400$"
+                                element: div
+                            - uesio/io.text:
+                                text: "Forecasted month end costs: 3000$"
+                                element: div
+                            - uesio/io.text:
+                                text: "Last month costs: 4000$"
+                                element: div
+                - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
-                              display: grid
-                          components:
-                            - uesio/io.table:
-                                id: usagetable
-                                wire: usage
-                                mode: READ
-                                columns:
-                                  - uesio/io.column:
-                                      field: uesio/core.user
-                                  - uesio/io.column:
-                                      field: uesio/core.tenanttype
-                                  - uesio/io.column:
-                                      field: uesio/core.tenantid
-                                  - uesio/io.column:
-                                      field: uesio/core.day
-                                  - uesio/io.column:
-                                      field: uesio/core.actiontype
-                                  - uesio/io.column:
-                                      field: uesio/core.metadatatype
-                                  - uesio/io.column:
-                                      field: uesio/core.metadataname
-                                  - uesio/io.column:
-                                      field: uesio/core.total
+                      - uesio/io.table:
+                          id: usagetable
+                          wire: usage
+                          mode: READ
+                          columns:
+                            - uesio/io.column:
+                                field: uesio/core.user
+                            - uesio/io.column:
+                                field: uesio/core.tenanttype
+                            - uesio/io.column:
+                                field: uesio/core.tenantid
+                            - uesio/io.column:
+                                field: uesio/core.day
+                            - uesio/io.column:
+                                field: uesio/core.actiontype
+                            - uesio/io.column:
+                                field: uesio/core.metadatatype
+                            - uesio/io.column:
+                                field: uesio/core.metadataname
+                            - uesio/io.column:
+                                field: uesio/core.total
