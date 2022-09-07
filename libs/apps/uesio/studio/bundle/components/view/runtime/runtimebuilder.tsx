@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import { FC, useRef, useState } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import PropertiesPanel from "../../shared/propertiespanel"
@@ -61,14 +61,14 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 				context={builderContext}
 				className={styles.css({ gridRow: 2, gridColumn: 1 })}
 			/>
-			<Canvas
+			<div
 				className={styles.css({
 					gridRow: "1 / 3",
 					gridColumn: showCode ? "2" : "2 / 4",
 				})}
-				context={canvasContext}
-				children={props.children}
-			/>
+			>
+				<Canvas context={canvasContext} children={props.children} />
+			</div>
 			{showCode && (
 				<div
 					ref={slideRef}

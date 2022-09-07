@@ -1,9 +1,10 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent, useState } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
 import TopActions from "./topactions"
 import BottomActions from "./bottomactions"
+import ViewPortSelector from "../view/viewportselector/viewportselector"
 
 const Icon = component.getUtility("uesio/io.icon")
 
@@ -31,24 +32,48 @@ const getIndex = (
 		: index
 }
 
-const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
+type T = definition.UtilityProps
+
+const Canvas: FunctionComponent<T> = (props) => {
+	const [canvasSize, setCanvasSize] = useState<[number, number]>([0, 0])
+	// const getWidth = (n: number) => {}
+	// const getViewportStyles = () => {
+	// 	const heightSet = !!canvasSize[1]
+	// 	const aspectRatio =
+
+	// 	maxWidth: canvasSize[0] ? canvasSize[0] + "px" : "100%",
+	// 			maxHeight: canvasSize[1] ? canvasSize[1] + "px" : "100%",
+	// }
 	const context = props.context
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				overflow: "hidden",
-				height: "100%",
 				padding: "38px 26px",
+				maxWidth: "100%",
+				maxHeight: "100%",
+				height: "100%",
+				overflow: "scroll",
+			},
+
+			innerx: {
+				overflow: "scroll",
+				maxWidth: "100%",
+				width: canvasSize[0] ? canvasSize[0] + "px" : "100%",
+				height: canvasSize[1] ? canvasSize[1] + "px" : "100%",
 				position: "relative",
+				margin: "0 auto",
+				transition: "all 0.3s ease",
+				maxHeight: "100%",
+				borderRadius: "8px",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
+				background: "white",
 			},
 
 			outerwrapper: {
-				height: "100%",
+				width: canvasSize[0] ? canvasSize[0] + "px" : "100%",
+				height: canvasSize[1] ? canvasSize[1] + "px" : "100%",
+				transition: "all 0.3s ease",
 				position: "relative",
-				borderRadius: "8px",
-				overflow: "hidden",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
-				background: "white",
 			},
 
 			contentwrapper: {
@@ -193,42 +218,48 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	}
 
 	return (
-		<div
-			onDragLeave={onDragLeave}
-			onDragOver={onDragOver}
-			onDrop={onDrop}
-			className={classes.root}
-		>
-			<TopActions context={context} />
-			<div className={classes.outerwrapper}>
-				<div className={classes.contentwrapper}>
-					<div
-						className={classes.inner}
-						data-accepts="uesio.standalone"
-						data-path={'["components"]'}
-						data-insertindex={componentCount}
-					>
-						{/* No content yet */}
-						{!componentCount && (
-							<div className={classes.noContent}>
-								<div className="inner">
-									<Icon
-										className="icon"
-										icon={"flip_to_back"}
-										context={context}
-									/>
-									<h4 className="text">
-										Drag and drop any component here to get
-										started
-									</h4>
+		<div className={classes.root}>
+			<ViewPortSelector
+				context={props.context}
+				onChange={(value) => setCanvasSize(value)}
+			/>
+			<div
+				onDragLeave={onDragLeave}
+				onDragOver={onDragOver}
+				onDrop={onDrop}
+				className={classes.innerx}
+			>
+				<TopActions context={context} />
+				<div className={classes.outerwrapper}>
+					<div className={classes.contentwrapper}>
+						<div
+							className={classes.inner}
+							data-accepts="uesio.standalone"
+							data-path={'["components"]'}
+							data-insertindex={componentCount}
+						>
+							{/* No content yet */}
+							{!componentCount && (
+								<div className={classes.noContent}>
+									<div className="inner">
+										<Icon
+											className="icon"
+											icon={"flip_to_back"}
+											context={context}
+										/>
+										<h4 className="text">
+											Drag and drop any component here to
+											get started
+										</h4>
+									</div>
 								</div>
-							</div>
-						)}
-						{props.children}
-						<PanelPortal context={context} />
+							)}
+							{props.children}
+							<PanelPortal context={context} />
+						</div>
 					</div>
+					<component.PanelArea context={props.context} />
 				</div>
-				<component.PanelArea context={props.context} />
 			</div>
 			<BottomActions context={context} />
 		</div>
