@@ -174,7 +174,6 @@ func Pack(options *PackOptions) error {
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
-		TreeShaking:       api.TreeShakingTrue,
 	}
 
 	if options.Watch {
