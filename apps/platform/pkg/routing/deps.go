@@ -207,7 +207,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	// Get all avaliable namespaces
 	packs := map[string]meta.ComponentPackCollection{}
 	namespaces := session.GetContextNamespaces()
-	for namespace := range namespaces {
+	for _, namespace := range namespaces {
 		groupAbstract, err := meta.GetBundleableGroupFromType("componentpacks")
 		if err != nil {
 			return nil, err
@@ -349,7 +349,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 	// Get the metadata list
 	namespaces := session.GetContextNamespaces()
 	appNames := []string{}
-	for ns := range namespaces {
+	for _, ns := range namespaces {
 		appNames = append(appNames, ns)
 	}
 
