@@ -27,7 +27,7 @@ func NewRedisSessionStore() session.Store {
 // it will attempt to fetch it from the filesystem.
 func (s *RedisSessionStore) Get(id string) session.Session {
 	//fmt.Println("Getting Redis Session: " + id)
-	conn := cache.GetRedisConn()
+	conn, _ := cache.GetRedisConn()
 	defer conn.Close()
 	value, err := redis.String(conn.Do("GET", getSessionKey(id)))
 	if err != nil {
@@ -48,13 +48,21 @@ func (s *RedisSessionStore) Get(id string) session.Session {
 // for when the server is restarted
 func (s *RedisSessionStore) Add(sess session.Session) {
 	fmt.Println("Adding Redis Session: " + sess.ID())
-	conn := cache.GetRedisConn()
+	conn, redisTTL := cache.GetRedisConn()
 	defer conn.Close()
 	byteSlice, _ := json.Marshal(sess)
-	_, err := conn.Do("SET", getSessionKey(sess.ID()), string(byteSlice))
+	key := getSessionKey(sess.ID())
+
+	_, err := conn.Do("SET", key, string(byteSlice))
 	if err != nil {
 		fmt.Println("Error Adding session: " + err.Error())
 	}
+
+	_, err = conn.Do("EXPIRE", key, redisTTL)
+	if err != nil {
+		fmt.Println("Error Adding session: " + err.Error())
+	}
+
 }
 
 // Remove is to implement Store.Remove().

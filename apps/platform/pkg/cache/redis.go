@@ -8,10 +8,17 @@ import (
 )
 
 var redisPool *redis.Pool
+var redisTTL = "3600"
 
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
+	redisTTLValue := os.Getenv("REDIS_TTL")
+
+	if redisTTLValue != "" {
+		redisTTL = redisTTLValue
+	}
+
 	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
 
 	const maxConnections = 10
@@ -21,15 +28,15 @@ func init() {
 	}
 }
 
-func GetRedisConn() redis.Conn {
-	return redisPool.Get()
+func GetRedisConn() (redis.Conn, string) {
+	return redisPool.Get(), redisTTL
 }
 
 func DeleteKeys(keys []string) error {
 	if len(keys) == 0 {
 		return nil
 	}
-	conn := GetRedisConn()
+	conn, _ := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
 	if err != nil {
@@ -39,7 +46,7 @@ func DeleteKeys(keys []string) error {
 }
 
 func SetHash(key string, data map[string]string) error {
-	conn := GetRedisConn()
+	conn, _ := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("HSET", redis.Args{}.Add(key).AddFlat(data)...)
 	if err != nil {
@@ -49,7 +56,7 @@ func SetHash(key string, data map[string]string) error {
 }
 
 func GetHash(key string) (map[string]string, error) {
-	conn := GetRedisConn()
+	conn, _ := GetRedisConn()
 	defer conn.Close()
 	result, err := redis.StringMap(conn.Do("HGETALL", key))
 	if err != nil {
