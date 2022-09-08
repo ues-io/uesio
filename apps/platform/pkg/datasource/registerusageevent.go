@@ -20,7 +20,7 @@ func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, con
 
 	credentials := connection.GetCredentials()
 	// Connect to redis and increment the counter
-	conn, _ := cache.GetRedisConn()
+	conn := cache.GetRedisConn()
 	defer conn.Close()
 
 	currentTime := time.Now()

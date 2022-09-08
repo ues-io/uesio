@@ -11,7 +11,8 @@ import (
 func getAutonumber(insertCount int, connection adapt.Connection, collectionMetadata *adapt.CollectionMetadata) (int, error) {
 	credentials := connection.GetCredentials()
 	// Connect to redis and increment the counter
-	conn, redisTTL := cache.GetRedisConn()
+	conn := cache.GetRedisConn()
+	redisTTL := cache.GetRedisTTL()
 	defer conn.Close()
 	key := fmt.Sprintf("autonumber:%s:%s", collectionMetadata.GetFullName(), credentials.GetTenantID())
 	keys, err := redis.Int(conn.Do("EXISTS", key))

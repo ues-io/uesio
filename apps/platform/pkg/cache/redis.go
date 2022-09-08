@@ -28,15 +28,19 @@ func init() {
 	}
 }
 
-func GetRedisConn() (redis.Conn, string) {
-	return redisPool.Get(), redisTTL
+func GetRedisConn() redis.Conn {
+	return redisPool.Get()
+}
+
+func GetRedisTTL() string {
+	return redisTTL
 }
 
 func DeleteKeys(keys []string) error {
 	if len(keys) == 0 {
 		return nil
 	}
-	conn, _ := GetRedisConn()
+	conn := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("DEL", redis.Args{}.AddFlat(keys)...)
 	if err != nil {
@@ -46,7 +50,7 @@ func DeleteKeys(keys []string) error {
 }
 
 func SetHash(key string, data map[string]string) error {
-	conn, _ := GetRedisConn()
+	conn := GetRedisConn()
 	defer conn.Close()
 	_, err := conn.Do("HSET", redis.Args{}.Add(key).AddFlat(data)...)
 	if err != nil {
@@ -62,7 +66,7 @@ func SetHash(key string, data map[string]string) error {
 }
 
 func GetHash(key string) (map[string]string, error) {
-	conn, _ := GetRedisConn()
+	conn := GetRedisConn()
 	defer conn.Close()
 	result, err := redis.StringMap(conn.Do("HGETALL", key))
 	if err != nil {

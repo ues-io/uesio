@@ -18,7 +18,7 @@ func RunJob() error {
 
 	logger.Log("RunJob", logger.INFO)
 
-	conn, _ := cache.GetRedisConn()
+	conn := cache.GetRedisConn()
 	defer conn.Close()
 
 	keys, err := redis.Strings(conn.Do("SMEMBERS", "USAGE_KEYS"))
