@@ -52,12 +52,17 @@ func DeleteKeys(keys []string) error {
 func SetHash(key string, data map[string]string) error {
 	conn := GetRedisConn()
 	defer conn.Close()
-	_, err := conn.Do("HSET", redis.Args{}.Add(key).AddFlat(data)...)
+
+	conn.Send("HSET", redis.Args{}.Add(key).AddFlat(data)...)
+	conn.Send("EXPIRE", key, redisTTL)
+	conn.Flush()
+
+	_, err := conn.Receive()
 	if err != nil {
 		return fmt.Errorf("Error Setting cache value: " + err.Error())
 	}
 
-	_, err = conn.Do("EXPIRE", key, redisTTL)
+	_, err = conn.Receive()
 	if err != nil {
 		fmt.Println("Error Setting cache value: " + err.Error())
 	}
