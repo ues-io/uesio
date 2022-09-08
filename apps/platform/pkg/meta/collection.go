@@ -50,6 +50,7 @@ type TokenCondition struct {
 type Collection struct {
 	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
 	UniqueKey             string                            `yaml:"-" uesio:"uesio/core.uniquekey"`
+	Type                  string                            `yaml:"type" uesio:"uesio/studio.type"`
 	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
 	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
