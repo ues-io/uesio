@@ -53,12 +53,7 @@ func (s *RedisSessionStore) Add(sess session.Session) {
 	byteSlice, _ := json.Marshal(sess)
 	key := getSessionKey(sess.ID())
 
-	_, err := conn.Do("SET", key, string(byteSlice))
-	if err != nil {
-		fmt.Println("Error Adding session: " + err.Error())
-	}
-
-	_, err = conn.Do("EXPIRE", key, redisTTL)
+	_, err := conn.Do("SET", key, string(byteSlice), "EX", redisTTL)
 	if err != nil {
 		fmt.Println("Error Adding session: " + err.Error())
 	}

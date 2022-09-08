@@ -52,6 +52,12 @@ func SetHash(key string, data map[string]string) error {
 	if err != nil {
 		return fmt.Errorf("Error Setting cache value: " + err.Error())
 	}
+
+	_, err = conn.Do("EXPIRE", key, redisTTL)
+	if err != nil {
+		fmt.Println("Error Setting cache value: " + err.Error())
+	}
+
 	return nil
 }
 
