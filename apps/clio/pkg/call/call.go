@@ -10,7 +10,7 @@ import (
 
 func Request(method, url string, body io.Reader, sessid string) (*http.Response, error) {
 
-	host, err := config.GetHost()
+	host, err := config.GetHostPrompt()
 	if err != nil {
 		return nil, err
 	}

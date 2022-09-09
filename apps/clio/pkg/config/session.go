@@ -1,30 +1,6 @@
 package config
 
-import (
-	"github.com/thecloudmasters/clio/pkg/localbundlestore"
-	"github.com/zalando/go-keyring"
-)
-
-func GetApp() (string, error) {
-
-	sbs := &localbundlestore.LocalBundleStore{}
-
-	def, err := sbs.GetBundleDef("", "", nil, nil)
-	if err != nil {
-		return "", err
-	}
-
-	return def.Name, nil
-
-}
-
-func GetWorkspace() (string, error) {
-	return "dev", nil
-}
-
-func GetHost() (string, error) {
-	return "https://studio.uesio-dev.com:3000", nil
-}
+import "github.com/zalando/go-keyring"
 
 func GetSessionID() (string, error) {
 	appName, err := GetApp()
