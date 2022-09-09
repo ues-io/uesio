@@ -43,6 +43,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 				padding: "8px",
 				position: "relative",
 				backgroundColor: "#fafafa",
+				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 			},
 		},
 		props

@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useEffect } from "react"
 import { definition, styles, component } from "@uesio/ui"
-import { usePopper } from "react-popper"
+import { usePopper, Modifier } from "react-popper"
 import type { Placement } from "@popperjs/core"
 
 interface TooltipProps extends definition.UtilityProps {
@@ -8,6 +8,7 @@ interface TooltipProps extends definition.UtilityProps {
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
 	useFirstRelativeParent?: boolean
+	modifiers?: Modifier<unknown, object>[]
 }
 
 const getRelativeParent = (elem: Element | null): Element | null => {
@@ -29,6 +30,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		modifiers: [
 			{ name: "offset", options: { offset: [0, 6] } },
 			{ name: "preventOverflow", options: { padding: 6 } },
+			...(props.modifiers ? props.modifiers : []),
 		],
 	})
 
