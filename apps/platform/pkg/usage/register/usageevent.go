@@ -1,14 +1,16 @@
-package datasource
+package register
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, connection adapt.Connection) error {
+func UsageEvent(actiontype, metadatatype, metadataname string, session *sess.Session) error {
+
+	user := session.GetUserID()
 
 	if user == "uesio" {
 		return nil
@@ -18,13 +20,11 @@ func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, con
 		user = "GUEST"
 	}
 
-	credentials := connection.GetCredentials()
-	// Connect to redis and increment the counter
 	conn := cache.GetRedisConn()
 	defer conn.Close()
 
 	currentTime := time.Now()
-	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", credentials.GetSiteTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	_, err := conn.Do("SADD", "USAGE_KEYS", key)
 	if err != nil {

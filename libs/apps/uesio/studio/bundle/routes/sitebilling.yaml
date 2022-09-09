@@ -1,0 +1,4 @@
+name: sitebilling
+path: app/{app:\w*\/\w*}/site/{sitename}/billing
+view: uesio/studio.sitebilling
+theme: uesio/studio.default

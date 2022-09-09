@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage/register"
 )
 
 func GetFileMetadataType(details *fileadapt.FileDetails) string {
@@ -173,6 +174,8 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		if err != nil {
 			return nil, err
 		}
+
+		go register.UsageEvent("UPLOAD", "FILESOURCE", fs.GetKey(), session)
 
 	}
 

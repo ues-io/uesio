@@ -1,4 +1,4 @@
-name: siteusage
+name: sitebilling
 definition:
   # Wires are how we pull in data
   wires:
@@ -92,46 +92,6 @@ definition:
       order:
         - field: uesio/core.user
           desc: false
-    usage_download:
-      collection: uesio/core.usage
-      fields:
-        uesio/core.id:
-        uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
-      conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
-        - field: uesio/core.actiontype
-          value: DOWNLOAD
-      order:
-        - field: uesio/core.user
-          desc: false
-    usage_upload:
-      collection: uesio/core.usage
-      fields:
-        uesio/core.id:
-        uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
-      conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
-        - field: uesio/core.actiontype
-          value: UPLOAD
-      order:
-        - field: uesio/core.user
-          desc: false
     users:
       collection: uesio/core.user
       fields:
@@ -172,13 +132,13 @@ definition:
                     uesio.context:
                       wire: sites
                     params:
-                      selected: siteusage
+                      selected: billing
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Site Usage
+                    title: Site Billing
                     subtitle: Data really powers everything that we do.
                 - uesio/io.box:
                     uesio.styles:
@@ -204,16 +164,6 @@ definition:
                               valueField: uesio/core.total
                               categoryField: uesio/core.day
                               wire: usage_save
-                            - name: upload
-                              label: Upload
-                              valueField: uesio/core.total
-                              categoryField: uesio/core.day
-                              wire: usage_upload
-                            - name: download
-                              label: Download
-                              valueField: uesio/core.total
-                              categoryField: uesio/core.day
-                              wire: usage_download
                           labels:
                             source: DATA
                             timeunit: MONTH
@@ -232,16 +182,6 @@ definition:
                               valueField: uesio/core.total
                               categoryField: uesio/core.day
                               wire: usage_save
-                            - name: upload
-                              label: Upload
-                              valueField: uesio/core.total
-                              categoryField: uesio/core.day
-                              wire: usage_upload
-                            - name: download
-                              label: Download
-                              valueField: uesio/core.total
-                              categoryField: uesio/core.day
-                              wire: usage_download
                           labels:
                             source: DATA
                             timeunit: MONTH
@@ -263,9 +203,6 @@ definition:
                       - uesio/io.box:
                           uesio.styles:
                             root:
-                              #     display: flex
-                              #     alignItems: center
-                              #     gap: 5px
                               paddingTop: 5px
                               margin: 40px 40px 0 40px
                           components:
@@ -300,27 +237,27 @@ definition:
                                   - uesio/io.avatar:
                                       image: $UserFile{uesio/core.picture}
                                       text: ${uesio/core.initials}
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.table:
-                          id: usagetable
-                          wire: usage
-                          mode: READ
-                          columns:
-                            - uesio/io.column:
-                                field: uesio/core.user
-                            - uesio/io.column:
-                                field: uesio/core.tenanttype
-                            - uesio/io.column:
-                                field: uesio/core.tenantid
-                            - uesio/io.column:
-                                field: uesio/core.day
-                            - uesio/io.column:
-                                field: uesio/core.actiontype
-                            - uesio/io.column:
-                                field: uesio/core.metadatatype
-                            - uesio/io.column:
-                                field: uesio/core.metadataname
-                            - uesio/io.column:
-                                field: uesio/core.total
+                # - uesio/io.box:
+                #     uesio.variant: uesio/io.section
+                #     components:
+                #       - uesio/io.table:
+                #           id: usagetable
+                #           wire: usage
+                #           mode: READ
+                #           columns:
+                #             - uesio/io.column:
+                #                 field: uesio/core.user
+                #             - uesio/io.column:
+                #                 field: uesio/core.tenanttype
+                #             - uesio/io.column:
+                #                 field: uesio/core.tenantid
+                #             - uesio/io.column:
+                #                 field: uesio/core.day
+                #             - uesio/io.column:
+                #                 field: uesio/core.actiontype
+                #             - uesio/io.column:
+                #                 field: uesio/core.metadatatype
+                #             - uesio/io.column:
+                #                 field: uesio/core.metadataname
+                #             - uesio/io.column:
+                #                 field: uesio/core.total

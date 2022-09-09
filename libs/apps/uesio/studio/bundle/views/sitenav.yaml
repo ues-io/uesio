@@ -77,3 +77,20 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: data_usage
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: billing
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/site/${uesio/studio.name}/billing
+              content:
+                - uesio/io.text:
+                    text: Billing
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: payments
