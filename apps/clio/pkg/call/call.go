@@ -5,12 +5,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/thecloudmasters/clio/pkg/config"
+	"github.com/thecloudmasters/clio/pkg/config/host"
 )
 
 func Request(method, url string, body io.Reader, sessid string) (*http.Response, error) {
 
-	host, err := config.GetHostPrompt()
+	host, err := host.GetHostPrompt()
 	if err != nil {
 		return nil, err
 	}
