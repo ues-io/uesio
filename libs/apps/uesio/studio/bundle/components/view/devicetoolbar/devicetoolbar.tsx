@@ -108,7 +108,7 @@ const useDimension = (
 	return { dimension, updateDimension, setCustom, options, toggleOrientation }
 }
 
-const ViewPortSelector: FC<T> = (props) => {
+const DeviceToolbar: FC<T> = (props) => {
 	const { context, onChange, canvasRef } = props
 	const {
 		dimension: {
@@ -204,4 +204,4 @@ const ViewPortSelector: FC<T> = (props) => {
 	)
 }
 
-export default ViewPortSelector
+export default DeviceToolbar

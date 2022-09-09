@@ -4,7 +4,7 @@ import { handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
 import TopActions from "./topactions"
 import BottomActions from "./bottomactions"
-import ViewPortSelector from "../view/viewportselector/viewportselector"
+import DeviceToolbar from "../view/devicetoolbar/devicetoolbar"
 
 const Icon = component.getUtility("uesio/io.icon")
 
@@ -214,7 +214,7 @@ const Canvas: FunctionComponent<T> = (props) => {
 	return (
 		<div className={classes.root}>
 			{showDeviceToolbar && (
-				<ViewPortSelector
+				<DeviceToolbar
 					context={props.context}
 					onChange={(value) => setCanvasSize(value)}
 					canvasRef={canvasRef.current}
