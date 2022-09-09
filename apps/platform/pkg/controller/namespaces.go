@@ -11,15 +11,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getNamespaces(metadataType string, session *sess.Session) (map[string]bool, error) {
+func getNamespaces(metadataType string, session *sess.Session) ([]string, error) {
 
-	namespaces := session.GetContextNamespaces()
 	if metadataType == "" {
-		return namespaces, nil
+		return session.GetContextNamespaces(), nil
 	}
 
+	filteredNamespaces := []string{}
 	// If a type was specified, filter out namespaces that have no items from that type.
-	for namespace := range namespaces {
+	for _, namespace := range session.GetContextNamespaces() {
+
 		collection, err := meta.GetBundleableGroupFromType(metadataType)
 		if err != nil {
 			return nil, err
@@ -28,12 +29,12 @@ func getNamespaces(metadataType string, session *sess.Session) (map[string]bool,
 		if err != nil {
 			return nil, err
 		}
-		if !hasSome {
-			delete(namespaces, namespace)
+		if hasSome {
+			filteredNamespaces = append(filteredNamespaces, namespace)
 		}
 	}
 
-	return namespaces, nil
+	return filteredNamespaces, nil
 }
 
 func NamespaceList(w http.ResponseWriter, r *http.Request) {

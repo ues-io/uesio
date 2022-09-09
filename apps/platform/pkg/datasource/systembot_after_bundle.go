@@ -10,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runBundlenAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+func runBundleAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	return cleanBundleFiles(request, connection, session)
 }
 

@@ -126,6 +126,7 @@ routes:
   uesio/studio.siteusage: true
 files:
 collections:
+  uesio/studio.allmetadata: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
   uesio/studio.app: true

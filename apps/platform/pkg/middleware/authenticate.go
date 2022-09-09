@@ -48,7 +48,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		vars := mux.Vars(r)
 		appName := vars["app"]
 		siteName := vars["site"]
-		err := auth.AddSiteAdminContext(appName, siteName, GetSession(r))
+		err := datasource.AddSiteAdminContextByKey(appName+":"+siteName, GetSession(r), nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying site admin: "+err.Error(), http.StatusInternalServerError)
