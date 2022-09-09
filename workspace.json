@@ -143,7 +143,7 @@
           ],
           "options": {
             "commands": [
-              "go build -o ../../dist/clio/uesio"
+              "go build -o ../../dist/clio/clio"
             ],
             "cwd": "apps/clio"
           }
@@ -174,14 +174,14 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/crm"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/crm"
           }
         },
@@ -214,14 +214,14 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/cms"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/cms"
           }
         },
@@ -254,14 +254,14 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/docs"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/docs"
           }
         }
@@ -284,14 +284,14 @@
             "libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/io"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/io"
           }
         },
@@ -322,14 +322,14 @@
             "libs/apps/uesio/lab/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/lab"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/lab"
           }
         },
@@ -360,14 +360,14 @@
             "libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/studio"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/studio"
           }
         },
@@ -408,14 +408,14 @@
             "libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
           ],
           "options": {
-            "command": "./../../../../dist/clio/uesio pack",
+            "command": "./../../../../dist/clio/clio pack",
             "cwd": "libs/apps/uesio/core"
           }
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../../../dist/clio/uesio pack -w",
+            "command": "./../../../../dist/clio/clio pack -w",
             "cwd": "libs/apps/uesio/core"
           }
         },

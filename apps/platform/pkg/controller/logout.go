@@ -6,10 +6,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Logout is good
 func Logout(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
@@ -28,7 +28,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &LoginResponse{
+	respondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,
