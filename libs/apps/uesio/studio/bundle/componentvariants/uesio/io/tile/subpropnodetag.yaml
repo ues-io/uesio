@@ -1,16 +1,15 @@
-name: propnodetag
-label: Property Node Tag
+name: subpropnodetag
+label: Sub Property Node Tag
 definition:
   uesio.styles:
     root:
-      border: "1px solid #ddd"
-      fontSize: "10pt"
+      fontSize: "9pt"
       color: "#444"
-      borderRadius: 4px
+      borderRadius: 0px
       overflow: hidden
       backgroundColor: white
       userSelect: none
-      margin: "8px"
+      padding: "0"
     content:
       justifyContent: space-between
       "& > div:first-child":
@@ -18,19 +17,15 @@ definition:
         "& .infotag":
           textTransform: "uppercase"
           color: "#666"
-          fontSize: "7pt"
-          backgroundColor: "#f0f0f0"
-          padding: "4px 8px 3px 8px"
-          borderRadius: "10px"
-          fontWeight: "bold"
+          fontSize: "8pt"
           marginLeft: "6px"
       "& > div > .subarea":
-        borderTop: "1px solid #f0f0f0"
-        backgroundColor: "#f6f6f6"
-        display: "flow-root"
+        paddingLeft: "12px"
       "& > .tagroot":
         display: "grid"
         gridTemplateColumns: "1fr 0fr"
         alignItems: "center"
     selected:
-      border: "1px solid $Theme{color.primary}"
+      margin: "8px"
+      border: "1px solid #ddd"
+      borderRadius: "8px"

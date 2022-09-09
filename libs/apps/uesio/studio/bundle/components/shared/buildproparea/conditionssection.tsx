@@ -75,21 +75,19 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					</>
 				}
 			/>
-			{conditionsDef?.map(
-				(condition: wire.WireConditionDefinition, index) => {
-					const conditionPath = `${conditionsPath}["${index}"]`
+			{conditionsDef?.map((condition: wire.WireConditionState, index) => {
+				const conditionPath = `${conditionsPath}["${index}"]`
 
-					return (
-						<ConditionItem
-							key={conditionPath}
-							conditionPath={conditionPath}
-							context={context}
-							condition={condition}
-							valueAPI={valueAPI}
-						/>
-					)
-				}
-			)}
+				return (
+					<ConditionItem
+						key={conditionPath}
+						conditionPath={conditionPath}
+						context={context}
+						condition={condition}
+						valueAPI={valueAPI}
+					/>
+				)
+			})}
 		</>
 	)
 }

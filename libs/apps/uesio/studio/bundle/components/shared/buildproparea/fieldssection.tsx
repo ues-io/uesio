@@ -1,39 +1,26 @@
-import {
-	FunctionComponent,
-	DragEvent,
-	useState,
-	SyntheticEvent,
-	ChangeEvent,
-} from "react"
+import { FC, DragEvent, useState, useEffect } from "react"
+import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { hooks, component, definition } from "@uesio/ui"
-import PropNodeTag from "../buildpropitem/propnodetag"
+
+import { hooks, component, wire } from "@uesio/ui"
+import FieldPropTag from "../../utility/fieldproptag/fieldproptag"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
+const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+const IconButton = component.getUtility("uesio/io.iconbutton")
+const Popper = component.getUtility("uesio/io.popper")
+const Button = component.getUtility("uesio/io.button")
+const Icon = component.getUtility("uesio/io.icon")
 
-const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
+const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
-	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
-	const collectionKey = wireDef?.collection as string | undefined
-
-	if (!collectionKey) {
-		return null
-	}
-
-	// Limit the fields to just the same namespace as the collection for now.
-	// In theory, you could have fields from a different namespace attached to
-	// this collection.
-	const [namespace] = component.path.parseKey(collectionKey)
-
 	const uesio = hooks.useUesio(props)
-	const fields = uesio.builder.useMetadataList(
-		context,
-		"FIELD",
-		namespace,
-		collectionKey
-	)
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+	const [showPopper, setShowPopper] = useState(false)
 
-	const fieldsDef = wireDef?.fields as definition.DefinitionMap
+	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
+
+	if (!wireDef) return null
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -46,72 +33,89 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 
-	const fieldKeys = fields && Object.keys(fields)
-
-	const [searchTerm, setSearchTerm] = useState("")
-	const handleChange = (value: string) => {
-		setSearchTerm(value)
-	}
-
-	const results = !searchTerm
-		? fieldKeys
-		: fieldKeys &&
-		  fieldKeys.filter((field) =>
-				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-		  )
+	useEffect(() => {
+		anchorEl?.querySelector(".selected")?.scrollIntoView({
+			block: "end",
+			behavior: "smooth",
+		})
+	}, [wireDef.fields])
 
 	return (
 		<>
+			{showPopper && anchorEl && (
+				<Popper
+					referenceEl={anchorEl}
+					context={context}
+					placement="right-start"
+					useFirstRelativeParent
+				>
+					<ScrollPanel
+						header={
+							<TitleBar
+								title="Field Selector"
+								variant="uesio/io.primary"
+								context={context}
+								actions={
+									<IconButton
+										context={context}
+										variant="uesio/studio.buildtitle"
+										icon="close"
+										onClick={() => {
+											setShowPopper(!showPopper)
+										}}
+									/>
+								}
+							/>
+						}
+						context={context}
+					>
+						<FieldPicker
+							wireDef={wireDef}
+							context={context}
+							path={path || ""}
+							valueAPI={valueAPI}
+						/>
+					</ScrollPanel>
+				</Popper>
+			)}
 			<TitleBar
 				variant="uesio/studio.propsubsection"
 				title={""}
 				context={context}
 				actions={
-					<input
-						value={searchTerm}
-						style={{
-							outline: "none",
-							padding: "4px",
-							fontSize: "9pt",
-							border: "none",
-							background: "#eee",
-							borderRadius: "4px",
-						}}
-						onChange={(event: ChangeEvent<HTMLInputElement>) => {
-							handleChange(event.target.value)
-						}}
-						onClick={(event: SyntheticEvent): void => {
-							event.stopPropagation()
-						}}
-						type="search"
-						placeholder="Search..."
+					<Button
+						context={context}
+						variant="uesio/studio.actionbutton"
+						icon={
+							<Icon
+								context={context}
+								icon="library_add"
+								variant="uesio/studio.actionicon"
+							/>
+						}
+						label="Set fields"
+						onClick={() => setShowPopper(!showPopper)}
 					/>
 				}
 			/>
-			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
-				{collectionKey &&
-					results &&
-					results.map((fieldId, index) => {
-						const fieldDef = fieldsDef?.[fieldId]
-						const selected = fieldDef !== undefined
-						const onClick = (): void => {
-							const setPath = `${path}["fields"]["${fieldId}"]`
-							selected
-								? valueAPI.remove(setPath)
-								: valueAPI.set(setPath, null)
-						}
-						return (
-							<PropNodeTag
-								draggable={`${collectionKey}:${fieldId}`}
-								key={index}
-								onClick={onClick}
-								selected={selected}
-								context={context}
-							>
-								{fieldId}
-							</PropNodeTag>
-						)
-					})}
+
+			{/* List of selected fields, from here we can only delete */}
+			<div
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+				ref={setAnchorEl}
+			>
+				{Object.keys(wireDef.fields || {}).map((fieldId) => (
+					<FieldPropTag
+						collectionKey={wireDef.collection}
+						fieldId={fieldId}
+						path={`${path}["fields"]["${fieldId}"]`}
+						key={fieldId}
+						fieldDef={wireDef.fields[fieldId]}
+						context={context}
+						valueAPI={valueAPI}
+					/>
+				))}
 			</div>
 		</>
 	)

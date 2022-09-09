@@ -49,7 +49,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 		namespaces := session.GetContextNamespaces()
 		appNames = []string{}
-		for ns := range namespaces {
+		for _, ns := range namespaces {
 			appNames = append(appNames, ns)
 		}
 	}

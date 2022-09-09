@@ -31,6 +31,7 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
 	Namespace             string                                 `json:"namespace"`
+	Type                  string                                 `json:"-"`
 	UniqueKey             []string                               `json:"uniqueKey"`
 	NameField             string                                 `json:"nameField"`
 	Createable            bool                                   `json:"createable"`

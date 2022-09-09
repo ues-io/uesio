@@ -117,9 +117,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const viewDef = context.getViewDef()
 	const route = context.getRoute()
 
-	if (!route || !viewDefId) return null
+	if (!route || !viewDefId || !viewDef) return null
 
-	const componentCount = viewDef?.components?.length
+	const componentCount = viewDef.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -189,7 +189,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			viewDefId,
 			component.path.getParentPath(dropPath)
 		)
-		handleDrop(fullDragPath, fullDropPath, index, uesio)
+		handleDrop(fullDragPath, fullDropPath, index, viewDef, uesio)
 	}
 
 	return (
