@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/clio/pkg/auth"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
+	"github.com/thecloudmasters/clio/pkg/config/ws"
 )
 
 func getLocalZip() io.Reader {
@@ -79,7 +80,7 @@ func Deploy() error {
 		return err
 	}
 
-	workspace, err := config.GetWorkspace()
+	workspace, err := ws.GetWorkspace()
 	if err != nil {
 		return err
 	}
@@ -89,8 +90,9 @@ func Deploy() error {
 		return err
 	}
 
-	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 	payload := getLocalZip()
+
+	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 
 	resp, err := call.Request("POST", url, payload, sessid)
 	if err != nil {

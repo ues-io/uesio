@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/clio/pkg/auth"
-	"github.com/thecloudmasters/clio/pkg/config"
+	"github.com/thecloudmasters/clio/pkg/config/host"
+	"github.com/thecloudmasters/clio/pkg/config/ws"
 	"github.com/thecloudmasters/clio/pkg/print"
 )
 
@@ -17,13 +18,19 @@ func Status() error {
 		return err
 	}
 
-	host, err := config.GetHost()
+	host, err := host.GetHost()
+	if err != nil {
+		return err
+	}
+
+	workspace, err := ws.GetWorkspace()
 	if err != nil {
 		return err
 	}
 
 	print.PrintHost(host)
 	print.PrintUser(user)
+	print.PrintWorkspace(workspace)
 
 	return nil
 }

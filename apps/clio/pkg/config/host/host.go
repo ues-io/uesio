@@ -1,6 +1,11 @@
-package config
+package host
 
-import "github.com/AlecAivazis/survey/v2"
+import (
+	"fmt"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/thecloudmasters/clio/pkg/config"
+)
 
 var validHosts = []string{
 	"https://studio.uesio-dev.com:3000",
@@ -9,12 +14,20 @@ var validHosts = []string{
 	"https://studio.ues-uat.io",
 }
 
+func GetHostURL(url string) (string, error) {
+	host, err := GetHostPrompt()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s/%s", host, url), nil
+}
+
 func GetHost() (string, error) {
-	return GetConfigValue("host")
+	return config.GetConfigValue("host")
 }
 
 func SetHost(value string) error {
-	return SetConfigValue("host", value)
+	return config.SetConfigValue("host", value)
 }
 
 func GetHostPrompt() (string, error) {

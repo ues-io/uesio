@@ -43,6 +43,7 @@ function getWireRequest(
 		return {
 			...wire,
 			batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
+			data: {},
 			params: context.getParams(),
 			query: true,
 		}
