@@ -3,7 +3,6 @@ package usage
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/gomodule/redigo/redis"
@@ -14,6 +13,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
+
+type Usage struct {
+	Total uint64 `redis:"total"`
+	Size  uint64 `redis:"size"`
+}
 
 func getUser(userid string) (*meta.User, error) {
 
@@ -57,13 +61,33 @@ func RunJob() error {
 
 	keyArgs := redis.Args{}.AddFlat(keys)
 
-	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
+	conn.Send("MULTI")
+	for _, key := range keys {
+		conn.Send("HGETALL", key)
+	}
+	results, err := redis.Values(conn.Do("EXEC"))
 	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		return fmt.Errorf("Error Setting cache value: " + err.Error())
+	}
+
+	if len(results) != len(keys) {
+		//Make sure all is good
+		println("this can be an error")
 	}
 
 	changes := adapt.Collection{}
-	for i, key := range keys {
+	for i, result := range results {
+		obj, err := redis.Values(result, nil)
+		if err != nil {
+			return fmt.Errorf("Error Setting cache value: " + err.Error())
+		}
+		var usage = new(Usage)
+		err = redis.ScanStruct(obj, usage)
+		if err != nil {
+			return fmt.Errorf("Error Setting cache value: " + err.Error())
+		}
+
+		key := keys[i]
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
@@ -81,8 +105,8 @@ func RunJob() error {
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/core.metadataname", keyParts[8])
-		total, _ := strconv.ParseFloat(values[i], 64)
-		usageItem.SetField("uesio/core.total", total)
+		usageItem.SetField("uesio/core.total", usage.Total)
+		usageItem.SetField("uesio/core.size", usage.Size)
 		changes = append(changes, &usageItem)
 	}
 

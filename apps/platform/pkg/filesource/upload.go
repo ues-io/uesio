@@ -81,13 +81,14 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		details := op.Details
 
 		ufm := meta.UserFileMetadata{
-			CollectionID: details.CollectionID,
-			MimeType:     mime.TypeByExtension(filepath.Ext(details.Name)),
-			FieldID:      details.FieldID,
-			Type:         GetFileMetadataType(details),
-			FileName:     details.Name,
-			Name:         GetFileUniqueName(details), // Different for file fields and attachments
-			RecordID:     details.RecordID,
+			CollectionID:  details.CollectionID,
+			MimeType:      mime.TypeByExtension(filepath.Ext(details.Name)),
+			FieldID:       details.FieldID,
+			Type:          GetFileMetadataType(details),
+			FileName:      details.Name,
+			Name:          GetFileUniqueName(details), // Different for file fields and attachments
+			RecordID:      details.RecordID,
+			ContentLength: details.ContentLength,
 		}
 
 		if details.RecordID == "" {
@@ -175,7 +176,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			return nil, err
 		}
 
-		go register.UsageEvent("UPLOAD", "FILESOURCE", fs.GetKey(), session)
+		go register.UsageEvent("UPLOAD", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
 
 	}
 

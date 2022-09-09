@@ -18,6 +18,7 @@ type UserFileMetadata struct {
 	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat" json:"uesio/core.updatedat"`
 	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat" json:"uesio/core.createdat"`
 	itemMeta         *ItemMeta `yaml:"-" uesio:"-" json:"-"`
+	ContentLength    uint64
 }
 
 func (ufm *UserFileMetadata) GetCollectionName() string {

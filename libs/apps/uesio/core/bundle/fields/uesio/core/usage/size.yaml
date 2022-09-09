@@ -1,0 +1,5 @@
+name: size
+type: NUMBER
+label: "Size"
+number:
+  decimals: 0

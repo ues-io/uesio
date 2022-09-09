@@ -1,0 +1,6 @@
+name: sizehr
+type: "FORMULA"
+label: "Size"
+formula:
+  expression: "BYTE_HR(uesio/core.size)"
+  returntype: "TEXT"

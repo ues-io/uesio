@@ -157,6 +157,8 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 				enc.IntKey(fieldID, v)
 			case int64:
 				enc.Int64Key(fieldID, v)
+			case uint64:
+				enc.Uint64Key(fieldID, v)
 			case float64:
 				enc.Float64Key(fieldID, v)
 			default:

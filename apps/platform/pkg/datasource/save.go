@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/usage/register"
 )
 
 type SaveRequest struct {
@@ -295,7 +294,8 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
 		}
 
-		go register.UsageEvent("SAVE", "DATASOURCE", dsKey, session)
+		// go register.UsageEvent("SAVE", "COLLECTION", collectionMetadata.GetFullName(), session)
+		// go register.UsageEvent("SAVE", "DATASOURCE", dsKey, session)
 	}
 
 	return nil

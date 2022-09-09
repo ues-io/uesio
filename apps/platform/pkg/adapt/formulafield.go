@@ -51,6 +51,13 @@ var UesioLanguage = gval.NewLanguage(
 		}
 		return valStr[0:1], nil
 	}),
+	gval.Function("BYTE_HR", func(args ...interface{}) (interface{}, error) {
+		b, ok := args[0].(float64)
+		if ok {
+			return ByteCountSI(b), nil
+		}
+		return "error", nil
+	}),
 	gval.Init(func(ctx context.Context, parser *gval.Parser) (gval.Evaluable, error) {
 		parser.SetIsIdentRuneFunc(func(r rune, pos int) bool {
 			return unicode.IsLetter(r) || r == '_' ||
@@ -111,4 +118,18 @@ func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
 		}
 		return nil
 	}
+}
+
+func ByteCountSI(b float64) string {
+	const unit = 1000
+	if b < unit {
+		return fmt.Sprintf("%f B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB",
+		float64(b)/float64(div), "kMGTPE"[exp])
 }
