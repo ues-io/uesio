@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react"
+import { FC, useRef } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import PropertiesPanel from "../../shared/propertiespanel"
