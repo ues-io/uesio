@@ -1,4 +1,4 @@
-import { FunctionComponent, DragEvent, useState } from "react"
+import { FunctionComponent, DragEvent, useState, useRef } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 import PanelPortal from "./panelportal"
@@ -36,14 +36,8 @@ type T = definition.UtilityProps
 
 const Canvas: FunctionComponent<T> = (props) => {
 	const [canvasSize, setCanvasSize] = useState<[number, number]>([0, 0])
-	// const getWidth = (n: number) => {}
-	// const getViewportStyles = () => {
-	// 	const heightSet = !!canvasSize[1]
-	// 	const aspectRatio =
-
-	// 	maxWidth: canvasSize[0] ? canvasSize[0] + "px" : "100%",
-	// 			maxHeight: canvasSize[1] ? canvasSize[1] + "px" : "100%",
-	// }
+	const [showDeviceToolbar, setShowDeviceToolbar] = useState(false)
+	const canvasRef = useRef<HTMLDivElement>(null)
 	const context = props.context
 	const classes = styles.useUtilityStyles(
 		{
@@ -55,7 +49,7 @@ const Canvas: FunctionComponent<T> = (props) => {
 				overflow: "scroll",
 			},
 
-			innerx: {
+			container: {
 				overflow: "scroll",
 				maxWidth: "100%",
 				width: canvasSize[0] ? canvasSize[0] + "px" : "100%",
@@ -219,15 +213,19 @@ const Canvas: FunctionComponent<T> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<ViewPortSelector
-				context={props.context}
-				onChange={(value) => setCanvasSize(value)}
-			/>
+			{showDeviceToolbar && (
+				<ViewPortSelector
+					context={props.context}
+					onChange={(value) => setCanvasSize(value)}
+					canvasRef={canvasRef.current}
+				/>
+			)}
 			<div
 				onDragLeave={onDragLeave}
 				onDragOver={onDragOver}
 				onDrop={onDrop}
-				className={classes.innerx}
+				className={classes.container}
+				ref={canvasRef}
 			>
 				<TopActions context={context} />
 				<div className={classes.outerwrapper}>
@@ -261,7 +259,13 @@ const Canvas: FunctionComponent<T> = (props) => {
 					<component.PanelArea context={props.context} />
 				</div>
 			</div>
-			<BottomActions context={context} />
+			<BottomActions
+				context={context}
+				toggleDeviceToolbar={() => {
+					setCanvasSize([0, 0])
+					setShowDeviceToolbar(!showDeviceToolbar)
+				}}
+			/>
 		</div>
 	)
 }

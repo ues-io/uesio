@@ -5,7 +5,11 @@ const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 const Group = component.getUtility("uesio/io.group")
 
-const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
+interface T extends definition.UtilityProps {
+	toggleDeviceToolbar: () => void
+}
+
+const BottomActions: FunctionComponent<T> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
 
@@ -72,6 +76,13 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 							props.context
 						)
 					}}
+				/>
+				<Button
+					context={props.context}
+					label=""
+					icon={<Icon context={context} icon="devices" />}
+					variant="uesio/studio.minoricontoolbar"
+					onClick={() => props.toggleDeviceToolbar()}
 				/>
 				<Button
 					context={context}
