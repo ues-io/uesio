@@ -229,6 +229,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			return err
 		}
 
+		if metadata.Type == "DYNAMIC" {
+			addAllBuiltinFields(metadata)
+			continue
+		}
+
 		if mr.Options != nil && mr.Options.LoadAllFields {
 			addAllBuiltinFields(metadata)
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session)

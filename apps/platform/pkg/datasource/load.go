@@ -271,33 +271,32 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// Loop over the ops and batch per data source
-	for i := range ops {
+	for _, op := range ops {
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
-		for j := range ops[i].Fields {
-			if ops[i].Fields[j].ID == adapt.ID_FIELD {
+		for i := range op.Fields {
+			if op.Fields[i].ID == adapt.ID_FIELD {
 				hasIDField = true
 				break
 			}
-			if ops[i].Fields[j].ID == adapt.UNIQUE_KEY_FIELD {
+			if op.Fields[i].ID == adapt.UNIQUE_KEY_FIELD {
 				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.ID_FIELD,
 			})
 		}
 
 		if !hasUniqueKeyField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			})
 		}
 
-		op := ops[i]
 		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
@@ -320,7 +319,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Query {
-			batch = append(batch, ops[i])
+			batch = append(batch, op)
 		}
 		collated[dsKey] = batch
 	}
@@ -350,13 +349,24 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				return nil, err
 			}
 
+			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+			if err != nil {
+				return nil, err
+			}
+
+			if collectionMetadata.Type == "DYNAMIC" {
+				err := runDynamicCollectionLoadBots(op, connection, session)
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			err = connection.Load(op)
 			if err != nil {
 				return nil, err
 			}
 			go register.UsageEvent("LOAD", "DATASOURCE", dsKey, session)
 		}
-
 	}
 	return metadataResponse, nil
 }
