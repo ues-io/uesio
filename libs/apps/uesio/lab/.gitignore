@@ -6,3 +6,4 @@ bundle/componentpacks/*/*.js.gz
 .idea
 *.js.map
 package-lock.json
+.clio

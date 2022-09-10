@@ -12,6 +12,25 @@ import (
 
 type Collection []*Item
 
+func (c *Collection) UnmarshalJSON(data []byte) error {
+	return gojay.UnmarshalJSONObject(data, c)
+}
+
+func (c *Collection) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
+	// Ignore the key and add to the collection
+	item := &Item{}
+	err := decodeEmbed(dec, item)
+	if err != nil {
+		return err
+	}
+	*c = append(*c, item)
+	return nil
+}
+
+func (c *Collection) NKeys() int {
+	return 0
+}
+
 func (c *Collection) MarshalJSON() ([]byte, error) {
 	return gojay.MarshalJSONObject(c)
 }

@@ -5,16 +5,13 @@ import (
 	"strings"
 )
 
-// Item struct
 type Item map[string]interface{}
 
-// SetField function
 func (i *Item) SetField(fieldName string, value interface{}) error {
 	(*i)[fieldName] = value
 	return nil
 }
 
-// GetField function
 func (i *Item) GetField(fieldName string) (interface{}, error) {
 	// Split the field name into tokens
 	names := strings.Split(fieldName, "->")
