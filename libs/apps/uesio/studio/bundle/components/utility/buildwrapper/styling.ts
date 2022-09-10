@@ -59,6 +59,15 @@ export default (
 			textTransform: "uppercase",
 			fontSize: "8pt",
 		},
+		popper: {
+			width: "auto",
+			border: "1px solid #ddd",
+			borderRadius: "8px",
+			boxShadow: "0 0 12px #00000033",
+		},
+		popperInner: {
+			borderRadius: "7px",
+		},
 		inner: {
 			padding: "8px",
 			position: "relative",

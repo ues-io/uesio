@@ -13,7 +13,7 @@ import AddCondition from "./actions/addcondition"
 import CustomAction from "./actions/customaction"
 import { ActionProps } from "./actions/actiondefinition"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	actions?: builder.ActionDescriptor[]
 	valueAPI: builder.ValueAPI
 	propsDef?: builder.BuildPropertiesDefinition
@@ -35,7 +35,7 @@ const ACTION_TO_COMPONENT: {
 }
 
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
 				display: "flex",
@@ -43,7 +43,6 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 				padding: "8px",
 				position: "relative",
 				backgroundColor: "#fafafa",
-				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 			},
 		},
 		props

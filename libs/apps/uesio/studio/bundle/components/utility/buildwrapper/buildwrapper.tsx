@@ -122,17 +122,16 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 						referenceEl={anchorEl}
 						context={context}
 						placement="top"
-						styles={{
-							popper: {
-								width: "auto",
-							},
+						classes={{
+							popper: classes.popper,
 						}}
-						modifiers={[
-							{ name: "offset", options: { offset: [0, -5] } },
-						]}
+						offset={[0, 0]}
 					>
 						<BuildActionsArea
 							context={context}
+							classes={{
+								wrapper: classes.popperInner,
+							}}
 							path={path}
 							valueAPI={valueAPI}
 							propsDef={propDef}
@@ -158,16 +157,6 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 						</div>
 					}
 					<div className={classes.inner}>{children}</div>
-
-					{/* <IOExpandPanel context={context} expanded={isSelected}>
-						<BuildActionsArea
-							context={context}
-							path={path}
-							valueAPI={valueAPI}
-							propsDef={propDef}
-							actions={propDef.actions}
-						/>
-					</IOExpandPanel> */}
 				</div>
 			</div>
 			{addAfterPlaceholder && (
