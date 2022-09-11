@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/clio/pkg/config/ws"
 )
 
-func getLocalZip() io.Reader {
+func getLocalZip(localPath string) io.Reader {
 	// Set up the pipe to write data directly into the Reader.
 	pr, pw := io.Pipe()
 	// Write JSON-encoded data to the Writer end of the pipe.
@@ -38,12 +38,7 @@ func getLocalZip() io.Reader {
 			}
 			defer file.Close()
 
-			// Ensure that `path` is not absolute; it should not start with "/".
-			// This snippet happens to work because I don't use
-			// absolute paths, but ensure your real-world code
-			// transforms path into a zip-root relative path.
-			pathParts := strings.SplitN(path, string(filepath.Separator), 2)
-			f, err := w.Create(pathParts[1])
+			f, err := w.Create(strings.TrimPrefix(path, localPath+string(filepath.Separator)))
 			if err != nil {
 				return err
 			}
@@ -55,7 +50,7 @@ func getLocalZip() io.Reader {
 
 			return nil
 		}
-		err := filepath.Walk("bundle", walker)
+		err := filepath.Walk(localPath, walker)
 		if err != nil {
 			fmt.Println("Error Zipping Bundle Dir: " + err.Error())
 		}
@@ -90,7 +85,7 @@ func Deploy() error {
 		return err
 	}
 
-	payload := getLocalZip()
+	payload := getLocalZip("bundle")
 
 	url := fmt.Sprintf("workspace/%s/%s/metadata/deploy", app, workspace)
 

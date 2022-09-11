@@ -13,11 +13,14 @@ import (
 type Collection []*Item
 
 func (c *Collection) UnmarshalJSON(data []byte) error {
-	return gojay.UnmarshalJSONObject(data, c)
+	err := gojay.UnmarshalJSONObject(data, c)
+	if err != nil {
+		return gojay.UnmarshalJSONArray(data, c)
+	}
+	return err
 }
 
-func (c *Collection) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
-	// Ignore the key and add to the collection
+func (c *Collection) UnmarshalJSONArray(dec *gojay.Decoder) error {
 	item := &Item{}
 	err := decodeEmbed(dec, item)
 	if err != nil {
@@ -25,6 +28,11 @@ func (c *Collection) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 	}
 	*c = append(*c, item)
 	return nil
+}
+
+func (c *Collection) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
+	// Ignore the key and add to the collection
+	return c.UnmarshalJSONArray(dec)
 }
 
 func (c *Collection) NKeys() int {

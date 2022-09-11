@@ -1,6 +1,8 @@
 package call
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,4 +24,33 @@ func Request(method, url string, body io.Reader, sessid string) (*http.Response,
 
 	req.Header.Set("Cookie", "sessid="+sessid)
 	return http.DefaultClient.Do(req)
+}
+
+func GetJSON(url, sessid string, response interface{}) error {
+	resp, err := Request("GET", url, nil, sessid)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return json.NewDecoder(resp.Body).Decode(response)
+}
+
+func PostJSON(url, sessid string, request interface{}, response interface{}) error {
+
+	payloadBytes := &bytes.Buffer{}
+
+	err := json.NewEncoder(payloadBytes).Encode(request)
+	if err != nil {
+		return err
+	}
+
+	resp, err := Request("POST", url, payloadBytes, sessid)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return json.NewDecoder(resp.Body).Decode(response)
+
 }
