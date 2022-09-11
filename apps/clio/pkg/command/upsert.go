@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
 	"github.com/thecloudmasters/clio/pkg/config/ws"
+	"github.com/thecloudmasters/clio/pkg/zip"
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -39,7 +40,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 		return os.Open(dataFile)
 	}
 	if jobType == "UPLOADFILES" {
-		return getLocalZip(dataFile), nil
+		return zip.ZipDir(dataFile), nil
 	}
 	return nil, errors.New("Invalid Job Type: " + jobType)
 }
