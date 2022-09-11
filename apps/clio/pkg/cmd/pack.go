@@ -23,7 +23,10 @@ func init() {
 func packer(cmd *cobra.Command, args []string) {
 	doZip, _ := cmd.Flags().GetBool("zip")
 	watch, _ := cmd.Flags().GetBool("watch")
-	err := command.Pack(&command.PackOptions{Zip: doZip, Watch: watch})
+	err := command.Pack(&command.PackOptions{
+		Zip:   doZip,
+		Watch: watch,
+	})
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return

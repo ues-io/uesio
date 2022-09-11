@@ -25,6 +25,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6 // indirect
 	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/danieljoos/wincred v1.1.0 // indirect
+	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/godbus/dbus/v5 v5.0.6 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
