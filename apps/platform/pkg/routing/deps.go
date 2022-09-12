@@ -261,50 +261,49 @@ func GetAppData(namespaces []string, session *sess.Session) (map[string]Metadata
 	return appData, nil
 }
 
-func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Session) (*PreloadMetadata, error) {
+func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadata, session *sess.Session) error {
 
-	deps := NewPreloadMetadata()
 	view, err := loadViewDef(viewNamespace+"."+viewName, session)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = deps.AddItem(view, true)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	packsByNamespace, err := getPacksByNamespace(session)
 	if err != nil {
-		return nil, errors.New("Failed to load packs: " + err.Error())
+		return errors.New("Failed to load packs: " + err.Error())
 	}
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session)
 	if err != nil {
-		return nil, errors.New("Failed to load variants: " + err.Error())
+		return errors.New("Failed to load variants: " + err.Error())
 	}
 
 	// Also load in studio variants
 	err = bundle.LoadAllFromAny(&variants, nil, session.RemoveWorkspaceContext())
 	if err != nil {
-		return nil, errors.New("Failed to load studio variants: " + err.Error())
+		return errors.New("Failed to load studio variants: " + err.Error())
 	}
 
 	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
-		return nil, errors.New("Failed to get translated labels: " + err.Error())
+		return errors.New("Failed to get translated labels: " + err.Error())
 	}
 
 	for namespace, packs := range packsByNamespace {
 		for _, pack := range packs {
 			err := deps.AddItem(pack, false)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			for key := range pack.Components.ViewComponents {
 				err := getDepsForComponent(namespace+"."+key, deps, session)
 				if err != nil {
-					return nil, err
+					return err
 				}
 			}
 		}
@@ -313,7 +312,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 	for i := range variants {
 		err := deps.AddItem(variants[i], false)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
@@ -321,29 +320,29 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 
 		label, err := meta.NewLabel(key)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		label.Value = value
 		err = deps.AddItem(label, false)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
 	// Load in the studio theme.
 	theme, err := meta.NewTheme("uesio/studio.default")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = bundle.Load(theme, session.RemoveWorkspaceContext())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = deps.AddItem(theme, false)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// Get the metadata list
@@ -355,12 +354,12 @@ func GetBuilderDependencies(viewNamespace, viewName string, session *sess.Sessio
 
 	appData, err := GetAppData(appNames, session)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	deps.Namespaces = appData
 
-	return deps, nil
+	return nil
 }
 
 func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata, error) {
