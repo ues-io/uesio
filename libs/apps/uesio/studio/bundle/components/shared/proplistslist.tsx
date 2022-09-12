@@ -4,6 +4,8 @@ import { builder, context, hooks, component, styles } from "@uesio/ui"
 import PropList from "./buildproparea/proplist"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "../shared/hooks/uselistscroll"
+import BuildActionsArea from "./buildproparea/buildactionsarea"
+
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -150,6 +152,36 @@ const PropListsList: FC<T> = (props) => {
 														context={context}
 													/>
 												}
+												footer={
+													<BuildActionsArea
+														path={
+															selectedPath || ""
+														}
+														context={context}
+														valueAPI={valueAPI}
+														actions={[
+															{
+																type: "MOVE",
+															},
+
+															{
+																type: "CUSTOM",
+																label: "Remove",
+																disabled:
+																	!selectedPath,
+																handler: () =>
+																	valueAPI.remove(
+																		selectedPath
+																	),
+																icon: "delete",
+															} as builder.ActionDescriptor,
+														]}
+														propsDef={{
+															...propsDef,
+															type: "",
+														}}
+													/>
+												}
 												context={context}
 											>
 												<div
@@ -182,7 +214,7 @@ const PropListsList: FC<T> = (props) => {
 											valueAPI={valueAPI}
 										/>
 									) : (
-										<span>
+										<span className="content">
 											{mergeTemplate(
 												nameTemplate || "",
 												path + `[${i}]`,
