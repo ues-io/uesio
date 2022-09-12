@@ -16,7 +16,7 @@ import (
 
 var indexTemplate *template.Template
 
-func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
+func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode bool) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -25,10 +25,15 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 	if err != nil {
 		return ""
 	}
-	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name)
+
+	builderSuffix := ""
+	if buildMode {
+		builderSuffix = "/builder"
 	}
-	return fmt.Sprintf("/site/componentpacks/%s/%s/%s", user, namepart, name)
+	if workspace != nil {
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
+	}
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s%s", user, namepart, name, builderSuffix)
 
 }
 
@@ -53,7 +58,6 @@ func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	}
 }
 
-// GetWorkspaceMergeData function
 func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {
 	if workspace == nil {
 		return nil
@@ -80,6 +84,17 @@ func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
 	}
 }
 
+func GetBuilderMergeData(preload *routing.PreloadMetadata, buildMode bool) *routing.BuilderMergeData {
+	if !buildMode {
+		return nil
+	}
+
+	return &routing.BuilderMergeData{
+		Namespaces: preload.Namespaces,
+	}
+
+}
+
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
@@ -102,7 +117,9 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
+		Builder:         GetBuilderMergeData(preload, buildMode),
 		Component:       GetComponentMergeData(buildMode),
+		BuildMode:       buildMode,
 		PreloadMetadata: preload,
 	}
 

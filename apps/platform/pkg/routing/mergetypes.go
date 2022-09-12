@@ -54,12 +54,18 @@ type ComponentsMergeData struct {
 	Entities map[string]ComponentMergeData `json:"entities"`
 }
 
+type BuilderMergeData struct {
+	Namespaces map[string]MetadataResponse `json:"namespaces,omitempty"`
+}
+
 type MergeData struct {
 	Route     *RouteMergeData      `json:"route"`
 	User      *UserMergeData       `json:"user"`
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
+	BuildMode bool
+	Builder   *BuilderMergeData `json:"builder"`
 	*PreloadMetadata
 }
 
