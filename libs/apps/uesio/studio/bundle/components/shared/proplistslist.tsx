@@ -6,6 +6,9 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "../shared/hooks/uselistscroll"
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+import BuildActionsArea from "./buildproparea/buildactionsarea"
+
 const TitleBar = component.getUtility("uesio/io.titlebar")
 type T = {
 	items: unknown[]
@@ -86,115 +89,142 @@ const PropListsList: FC<T> = (props) => {
 	return (
 		<div>
 			<TransitionGroup className="items-section__list">
-				{items.map((item, i) => (
-					<CSSTransition
-						key={path + i}
-						timeout={300}
-						classNames={classes.item}
-					>
-						<div
-							key={i}
-							ref={(el) => (itemsRef.current[i] = el)}
-							style={{
-								display: "flex",
-								alignItems: "center",
-							}}
-							onClick={(e: React.MouseEvent<HTMLElement>) =>
-								e.stopPropagation()
-							}
+				{items.map((item, i) => {
+					const selected = selectedPath === path + `["${i}"]`
+					console.log({ path: path + `[${i}]`, selectedPath })
+					return (
+						<CSSTransition
+							key={path + i}
+							timeout={300}
+							classNames={classes.item}
 						>
 							<div
+								key={i}
+								ref={(el) => (itemsRef.current[i] = el)}
 								style={{
-									padding: "0 3px 0 6px",
-									opacity: 0.6,
-									fontSize: "0.6em",
+									display: "flex",
+									alignItems: "center",
 								}}
+								onClick={(e: React.MouseEvent<HTMLElement>) =>
+									e.stopPropagation()
+								}
 							>
-								<span>{i + 1}</span>
-							</div>
-							<div style={{ flex: 1 }}>
-								<PropNodeTag
-									key={i}
-									context={context}
-									onClick={() =>
-										uesio.builder.setSelectedNode(
-											metadataType,
-											metadataItem,
-											path + `[${i}]`
-										)
-									}
-									selected={
-										selectedPath === path + `["${i}"]`
-									}
-									popperChildren={
-										expandType === "popper" && (
-											<ScrollPanel
-												header={
-													<TitleBar
-														title={"label"}
-														variant="uesio/io.primary"
-														actions={
-															props.path && (
-																<IconButton
-																	variant="uesio/studio.buildtitle"
-																	context={
-																		context
-																	}
-																	icon="close"
-																	onClick={() =>
-																		uesio.builder.unSelectNode()
-																	}
-																/>
-															)
-														}
-														context={context}
-													/>
-												}
-												context={context}
-											>
-												<div
-													onClick={(e) =>
-														e.stopPropagation()
-													}
-													style={{
-														maxHeight: "400px",
-														overflow: "scroll",
-													}}
-												>
-													<PropList
-														path={path + `[${i}]`}
-														propsDef={propsDef}
-														properties={properties}
-														context={context}
-														valueAPI={valueAPI}
-													/>
-												</div>
-											</ScrollPanel>
-										)
-									}
+								<div
+									style={{
+										padding: "0 3px 0 6px",
+										opacity: 0.6,
+										fontSize: "0.6em",
+									}}
 								>
-									{expandType !== "popper" ? (
-										<PropList
-											path={path + `[${i}]`}
-											propsDef={propsDef}
-											properties={properties}
+									<span>{i + 1}</span>
+								</div>
+								<div style={{ flex: 1 }}>
+									<PropNodeTag
+										key={i}
+										context={context}
+										onClick={() =>
+											uesio.builder.setSelectedNode(
+												metadataType,
+												metadataItem,
+												path + `[${i}]`
+											)
+										}
+										selected={selected}
+										popperChildren={
+											expandType === "popper" && (
+												<ScrollPanel
+													header={
+														<TitleBar
+															title={"label"}
+															variant="uesio/io.primary"
+															actions={
+																props.path && (
+																	<IconButton
+																		variant="uesio/studio.buildtitle"
+																		context={
+																			context
+																		}
+																		icon="close"
+																		onClick={() =>
+																			uesio.builder.unSelectNode()
+																		}
+																	/>
+																)
+															}
+															context={context}
+														/>
+													}
+													context={context}
+												>
+													<div
+														onClick={(e) =>
+															e.stopPropagation()
+														}
+														style={{
+															maxHeight: "400px",
+															overflow: "scroll",
+														}}
+													>
+														<PropList
+															path={
+																path + `[${i}]`
+															}
+															propsDef={propsDef}
+															properties={
+																properties
+															}
+															context={context}
+															valueAPI={valueAPI}
+														/>
+													</div>
+												</ScrollPanel>
+											)
+										}
+									>
+										<div>
+											{expandType !== "popper" ? (
+												<PropList
+													path={path + `[${i}]`}
+													propsDef={propsDef}
+													properties={properties}
+													context={context}
+													valueAPI={valueAPI}
+												/>
+											) : (
+												<span>
+													{mergeTemplate(
+														nameTemplate || "",
+														path + `[${i}]`,
+														valueAPI
+													) || nameFallback}
+												</span>
+											)}
+										</div>
+
+										<IOExpandPanel
 											context={context}
-											valueAPI={valueAPI}
-										/>
-									) : (
-										<span>
-											{mergeTemplate(
-												nameTemplate || "",
-												path + `[${i}]`,
-												valueAPI
-											) || nameFallback}
-										</span>
-									)}
-								</PropNodeTag>
+											expanded={selected}
+										>
+											<BuildActionsArea
+												context={context}
+												path={path + `[${i}]`}
+												valueAPI={valueAPI}
+												actions={[
+													{
+														type: "MOVE",
+													},
+													{
+														type: "DELETE",
+													},
+												]}
+											/>
+										</IOExpandPanel>
+									</PropNodeTag>
+								</div>
 							</div>
-						</div>
-					</CSSTransition>
-				))}
+						</CSSTransition>
+					)
+				})}
 			</TransitionGroup>
 		</div>
 	)
