@@ -4,10 +4,11 @@ import SelectProp from "./selectprop"
 const NamespaceProp: builder.PropComponent<builder.NamespaceProp> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const namespaces = uesio.builder.useAvailableNamespaces(props.context)
-	const options = Object.keys(namespaces || {}).map((entry) => ({
-		label: entry,
-		value: entry,
-	}))
+	const options =
+		namespaces?.map((entry) => ({
+			label: entry,
+			value: entry,
+		})) || []
 
 	return (
 		<SelectProp

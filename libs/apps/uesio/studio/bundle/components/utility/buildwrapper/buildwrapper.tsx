@@ -1,22 +1,33 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
+import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
+import getValueAPI from "../../shared/valueapi"
+
+const Text = component.getUtility("uesio/io.text")
+
+const Popper = component.getUtility("uesio/io.popper")
 
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { children, path = "", index = 0, definition } = props
+	const { children, path = "", index = 0, definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const viewDefId = uesio.getViewDefId()
+	const viewDef = uesio.getViewDef()
 
-	if (!viewDefId) return null
+	if (!viewDefId || !viewDef) return null
 
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
-		component.path.makeFullPath("viewdef", viewDefId, path)
+		component.path.makeFullPath("viewdef", viewDefId, path),
+		viewDef
 	)
-	const accepts = propDef?.accepts
+
+	if (!propDef) throw new Error("No Prop Def Provided")
+	const accepts = propDef.accepts
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [, , dropPath] = uesio.builder.useDropNode()
@@ -26,10 +37,25 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const wrapperPath = component.path.getGrandParentPath(path)
 	const componentKey = component.path.getKeyAtPath(path)
 
+	if (!componentKey) throw new Error("Bad component key")
+
+	const valueAPI = getValueAPI(
+		"viewdef",
+		viewDefId,
+		path,
+		viewDef,
+		uesio,
+		context
+	)
+
+	const [componentNamespace] = component.path.parseKey(componentKey)
+
 	const title =
 		componentKey === "uesio/core.view"
 			? definition?.view || componentKey
-			: propDef?.title || "unknown"
+			: propDef.title || "unknown"
+
+	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace)
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
@@ -50,6 +76,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 			)}
 			<div
 				data-index={index}
+				ref={setAnchorEl}
 				data-accepts={accepts?.join(",")}
 				data-path={path}
 				onDragStart={(e: DragEvent) => {
@@ -90,6 +117,28 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
+				{isSelected && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="top"
+						classes={{
+							popper: classes.popper,
+						}}
+						offset={[0, 0]}
+					>
+						<BuildActionsArea
+							context={context}
+							classes={{
+								wrapper: classes.popperInner,
+							}}
+							path={path}
+							valueAPI={valueAPI}
+							propsDef={propDef}
+							actions={propDef.actions}
+						/>
+					</Popper>
+				)}
 				<div className={classes.wrapper}>
 					{
 						<div
@@ -97,7 +146,14 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 							onMouseDown={() => setCanDrag(true)}
 							onMouseUp={() => dragPath && setCanDrag(false)}
 						>
-							{title}
+							<Text
+								variant="uesio/io.icon"
+								className={classes.titleicon}
+								text={nsInfo.icon}
+								color={nsInfo.color}
+								context={context}
+							/>
+							<span className={classes.titletext}>{title}</span>
 						</div>
 					}
 					<div className={classes.inner}>{children}</div>

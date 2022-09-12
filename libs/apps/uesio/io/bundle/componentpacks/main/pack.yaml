@@ -61,6 +61,7 @@ components:
     titlebar:
     markdown:
   utility:
+    namespacelabel:
     alert:
     avatar:
     autocomplete:

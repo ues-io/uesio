@@ -6,7 +6,11 @@ type ValueAdder = (
 	index?: number
 ) => void
 
-type ValueSetter = (path: string | undefined, value: Definition) => void
+type ValueSetter = (
+	path: string | undefined,
+	value: Definition,
+	autoSelect?: boolean
+) => void
 
 type ValueGetter = (path: string | undefined) => Definition
 
@@ -31,6 +35,9 @@ type ValueAPI = {
 	move: ValueMover
 	clone: ValueCloner
 	cloneKey: ValueCloner
+	select: (path: string) => void
+	isSelected: (path: string) => boolean
+	hasSelectedChild: (path: string) => boolean
 }
 
 export default ValueAPI

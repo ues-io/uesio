@@ -9,6 +9,7 @@ import { MetadataInfo } from "../../platform/platform"
 type SetDefinitionPayload = {
 	path: string
 	definition: Definition
+	autoSelect?: boolean
 }
 
 type AddDefinitionPayload = {
@@ -57,6 +58,9 @@ const builderSlice = createSlice({
 			{ payload }: PayloadAction<SetDefinitionPayload>
 		) => {
 			state.lastModifiedNode = payload.path
+			if (payload.autoSelect) {
+				state.selectedNode = payload.path
+			}
 		},
 		cloneDefinition: (
 			state,
@@ -89,7 +93,7 @@ const builderSlice = createSlice({
 		) => {
 			// nothing actually happens here, just something for others to listen to.
 			if (payload.path === state.selectedNode) {
-				state.selectedNode = ""
+				state.selectedNode = getParentPath(payload.path)
 			}
 			state.lastModifiedNode = ""
 		},

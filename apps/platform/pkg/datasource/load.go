@@ -50,11 +50,12 @@ func processConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
+	session *sess.Session,
 ) error {
 
 	for i, condition := range op.Conditions {
 
-		if condition.ValueSource == "" {
+		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
 			// make sure the condition value is a string
 			stringValue, ok := condition.Value.(string)
 			if !ok {
@@ -67,6 +68,16 @@ func processConditions(
 						return nil, errors.New("missing param " + key)
 					}
 					return val, nil
+				},
+				"User": func(m map[string]interface{}, key string) (interface{}, error) {
+
+					userID := session.GetUserID()
+
+					if key == "id" {
+						return userID, nil
+					}
+
+					return nil, nil
 				},
 			})
 			if err != nil {
@@ -259,33 +270,32 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// Loop over the ops and batch per data source
-	for i := range ops {
+	for _, op := range ops {
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
-		for j := range ops[i].Fields {
-			if ops[i].Fields[j].ID == adapt.ID_FIELD {
+		for i := range op.Fields {
+			if op.Fields[i].ID == adapt.ID_FIELD {
 				hasIDField = true
 				break
 			}
-			if ops[i].Fields[j].ID == adapt.UNIQUE_KEY_FIELD {
+			if op.Fields[i].ID == adapt.UNIQUE_KEY_FIELD {
 				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.ID_FIELD,
 			})
 		}
 
 		if !hasUniqueKeyField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			})
 		}
 
-		op := ops[i]
 		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
@@ -308,7 +318,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Query {
-			batch = append(batch, ops[i])
+			batch = append(batch, op)
 		}
 		collated[dsKey] = batch
 	}
@@ -333,9 +343,21 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		for _, op := range batch {
 
-			err := processConditions(op, metadataResponse, batch)
+			err := processConditions(op, metadataResponse, batch, session)
 			if err != nil {
 				return nil, err
+			}
+
+			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+			if err != nil {
+				return nil, err
+			}
+
+			if collectionMetadata.Type == "DYNAMIC" {
+				err := runDynamicCollectionLoadBots(op, connection, session)
+				if err != nil {
+					return nil, err
+				}
 			}
 
 			err = connection.Load(op)
@@ -344,7 +366,6 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			}
 			go RegisterUsageEvent("LOAD", session.GetUserID(), "DATASOURCE", dsKey, connection)
 		}
-
 	}
 	return metadataResponse, nil
 }

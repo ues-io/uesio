@@ -59,7 +59,7 @@ const getDefaultRecord = (
 	const defaultRecord: PlainWireRecord = {}
 	const viewId = context.getViewId()
 	if (!viewId) throw new Error("No view id found for defaults")
-	wire.def?.defaults?.forEach((defaultItem) => {
+	wire?.defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
 		const fieldMetadata = collection?.fields[defaultItem.field]
 		if (value && fieldMetadata) {

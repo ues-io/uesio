@@ -9,12 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// BatchResponse struct
-type BatchResponse struct {
-	ID string `json:"id"`
-}
-
-// BulkBatch is good
 func BulkBatch(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -30,7 +24,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &BatchResponse{
+	respondJSON(w, r, &bulk.BatchResponse{
 		ID: batch.ID,
 	})
 

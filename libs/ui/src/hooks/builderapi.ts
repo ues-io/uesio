@@ -176,8 +176,11 @@ class BuilderAPI {
 		appDispatch()(cloneKeyDefinition({ path, newKey }))
 	}
 
-	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(setDefinition({ path, definition }))
+	setDefinition = (
+		path: string,
+		definition: Definition,
+		autoSelect?: boolean
+	) => appDispatch()(setDefinition({ path, definition, autoSelect }))
 
 	addDefinition(
 		path: string,
@@ -277,7 +280,10 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
-	getNamespaceInfo = () => getCurrentState().builder.namespaces || {}
+	getNamespaceInfo = (ns: string) => {
+		const namespaces = getCurrentState().builder.namespaces || {}
+		return namespaces[ns]
+	}
 
 	getDefinition = (
 		state: RootState,

@@ -13,6 +13,24 @@ definition:
       margin: "8px"
     content:
       justifyContent: space-between
-      padding: 10px
+      "& > div:first-child":
+        padding: "10px"
+        "& .infotag":
+          textTransform: "uppercase"
+          color: "#666"
+          fontSize: "7pt"
+          backgroundColor: "#f0f0f0"
+          padding: "4px 8px 3px 8px"
+          borderRadius: "10px"
+          fontWeight: "bold"
+          marginLeft: "6px"
+      "& > div > .subarea":
+        borderTop: "1px solid #f0f0f0"
+        backgroundColor: "#f6f6f6"
+        display: "flow-root"
+      "& > .tagroot":
+        display: "grid"
+        gridTemplateColumns: "1fr 0fr"
+        alignItems: "center"
     selected:
       border: "1px solid $Theme{color.primary}"

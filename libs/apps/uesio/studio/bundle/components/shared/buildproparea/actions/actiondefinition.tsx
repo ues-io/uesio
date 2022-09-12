@@ -4,7 +4,7 @@ interface ActionProps<T = builder.ActionDescriptor>
 	extends definition.BaseProps {
 	action?: T
 	valueAPI: builder.ValueAPI
-	propsDef: builder.BuildPropertiesDefinition
+	propsDef?: builder.BuildPropertiesDefinition
 }
 
 export { ActionProps }

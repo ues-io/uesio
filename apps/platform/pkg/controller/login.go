@@ -10,15 +10,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-type LoginResponse struct {
-	User                   *UserMergeData `json:"user"`
-	RedirectPath           string         `json:"redirectPath,omitempty"`
-	RedirectRouteName      string         `json:"redirectRouteName,omitempty"`
-	RedirectRouteNamespace string         `json:"redirectRouteNamespace,omitempty"`
-}
 
 func getAuthSourceID(vars map[string]string) string {
 	authSourceNamespace := vars["namespace"]
@@ -57,7 +51,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 		}
 	}
 
-	respondJSON(w, r, &LoginResponse{
+	respondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,

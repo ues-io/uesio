@@ -16,7 +16,7 @@ const DeleteAction: FunctionComponent<ActionProps> = ({
 			title="Delete"
 			onClick={() =>
 				valueAPI.remove(
-					propsDef.type === "component"
+					propsDef?.type === "component"
 						? component.path.getParentPath(path)
 						: path
 				)

@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
-// AuthCheck is good
 func AuthCheck(w http.ResponseWriter, r *http.Request) {
-	respondJSON(w, r, &LoginResponse{
+	respondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(middleware.GetSession(r)),
 	})
 }

@@ -52,7 +52,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 
 		depsCache, err := routing.GetMetadataDeps(route, session)
 		if err != nil {
-			HandleMissingRoute(w, r, session, "", err)
+			HandleErrorRoute(w, r, session, "", err)
 			return
 		}
 
