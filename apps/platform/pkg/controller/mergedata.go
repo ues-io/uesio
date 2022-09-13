@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -15,83 +14,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// RouteMergeData stuff to merge
-type RouteMergeData struct {
-	View         string                   `json:"view"`
-	Params       map[string]string        `json:"params"`
-	Namespace    string                   `json:"namespace"`
-	Path         string                   `json:"path"`
-	Workspace    *WorkspaceMergeData      `json:"workspace"`
-	Theme        string                   `json:"theme"`
-	Dependencies *routing.PreloadMetadata `json:"dependencies"`
-}
-
-// UserMergeData stuff to merge
-type UserMergeData struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Profile   string `json:"profile"`
-	Site      string `json:"site"`
-	ID        string `json:"id"`
-	PictureID string `json:"picture"`
-	Language  string `json:"language"`
-}
-
-// SiteMergeData stuff to merge
-type SiteMergeData struct {
-	Name      string `json:"name"`
-	App       string `json:"app"`
-	Version   string `json:"version"`
-	Domain    string `json:"domain"`
-	Subdomain string `json:"subdomain"`
-}
-
-// WorkspaceMergeData stuff to merge
-type WorkspaceMergeData struct {
-	Name string `json:"name"`
-	App  string `json:"app"`
-}
-
-type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
-}
-
-type ComponentsMergeData struct {
-	IDs      []string                      `json:"ids"`
-	Entities map[string]ComponentMergeData `json:"entities"`
-}
-
-// MergeData stuff to merge
-type MergeData struct {
-	Route     *RouteMergeData      `json:"route"`
-	User      *UserMergeData       `json:"user"`
-	Site      *SiteMergeData       `json:"site"`
-	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component *ComponentsMergeData `json:"component,omitempty"`
-	*routing.PreloadMetadata
-}
-
-// String function controls how MergeData is marshalled
-// This is actually pretty silly but I did it to make the output
-// look pretty in the html source.
-func (md MergeData) String() string {
-	// Remove the component pack dep info because we don't need it on the client
-	md.ComponentPack = nil
-
-	json, err := json.MarshalIndent(md, "        ", "  ")
-	//json, err := json.Marshal(md)
-	if err != nil {
-		return ""
-	}
-	return string(json)
-}
-
 var indexTemplate *template.Template
 
-func getPackUrl(key string, workspace *WorkspaceMergeData) string {
+func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode bool) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -100,10 +25,15 @@ func getPackUrl(key string, workspace *WorkspaceMergeData) string {
 	if err != nil {
 		return ""
 	}
-	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name)
+
+	builderSuffix := ""
+	if buildMode {
+		builderSuffix = "/builder"
 	}
-	return fmt.Sprintf("/site/componentpacks/%s/%s/%s", user, namepart, name)
+	if workspace != nil {
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
+	}
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s%s", user, namepart, name, builderSuffix)
 
 }
 
@@ -115,10 +45,9 @@ func init() {
 	}).ParseFiles(indexPath, cssPath))
 }
 
-// GetUserMergeData function
-func GetUserMergeData(session *sess.Session) *UserMergeData {
+func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetUserInfo()
-	return &UserMergeData{
+	return &routing.UserMergeData{
 		ID:        userInfo.ID,
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
@@ -129,25 +58,24 @@ func GetUserMergeData(session *sess.Session) *UserMergeData {
 	}
 }
 
-// GetWorkspaceMergeData function
-func GetWorkspaceMergeData(workspace *meta.Workspace) *WorkspaceMergeData {
+func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {
 	if workspace == nil {
 		return nil
 	}
-	return &WorkspaceMergeData{
+	return &routing.WorkspaceMergeData{
 		Name: workspace.Name,
 		App:  workspace.GetAppFullName(),
 	}
 }
 
-func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
+func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
 	if !buildMode {
 		return nil
 	}
 	componentID := "$root:uesio/studio.runtime:buildmode"
-	return &ComponentsMergeData{
+	return &routing.ComponentsMergeData{
 		IDs: []string{componentID},
-		Entities: map[string]ComponentMergeData{
+		Entities: map[string]routing.ComponentMergeData{
 			componentID: {
 				ID:    componentID,
 				State: true,
@@ -156,14 +84,25 @@ func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
 	}
 }
 
+func GetBuilderMergeData(preload *routing.PreloadMetadata, buildMode bool) *routing.BuilderMergeData {
+	if !buildMode {
+		return nil
+	}
+
+	return &routing.BuilderMergeData{
+		Namespaces: preload.Namespaces,
+	}
+
+}
+
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	mergeData := MergeData{
-		Route: &RouteMergeData{
+	mergeData := routing.MergeData{
+		Route: &routing.RouteMergeData{
 			View:      route.ViewRef,
 			Params:    route.Params,
 			Namespace: route.Namespace,
@@ -172,13 +111,15 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Theme:     route.ThemeRef,
 		},
 		User: GetUserMergeData(session),
-		Site: &SiteMergeData{
+		Site: &routing.SiteMergeData{
 			Name:      site.Name,
 			App:       site.GetAppFullName(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
+		Builder:         GetBuilderMergeData(preload, buildMode),
 		Component:       GetComponentMergeData(buildMode),
+		BuildMode:       buildMode,
 		PreloadMetadata: preload,
 	}
 

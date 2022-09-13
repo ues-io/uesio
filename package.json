@@ -35,6 +35,7 @@
     "test": "nx test",
     "update": "nx migrate latest",
     "uesio": "WD=$PWD && cd $INIT_CWD && $WD/apps/cli/bin/run",
+    "clio": "WD=$PWD && cd $INIT_CWD && $WD/dist/clio/clio",
     "workspace-generator": "nx workspace-generator"
   },
   "files": [],
