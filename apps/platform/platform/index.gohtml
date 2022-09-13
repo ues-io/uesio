@@ -16,12 +16,25 @@
         window.uesio = uesio
     </script>
     {{$workspace := .Route.Workspace -}}
+    {{$buildMode := .BuildMode -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
             {{- range .PreloadMetadata.ComponentPack.IDs -}}
-            {{- $packURL := getPackURL . $workspace -}}
+                {{- $packURL := getPackURL . $workspace false -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
+                {{- end -}}
+            {{- end -}}
+            {{- if $buildMode -}}
+                {{- $studioPackURL := getPackURL "uesio/studio.main" nil false -}}
+                <script src="{{$studioPackURL}}" type="module"></script>
+                {{- $studioBuilderPackURL := getPackURL "uesio/studio.main" nil true -}}
+                <script src="{{$studioBuilderPackURL}}" type="module"></script>
+                {{- range .PreloadMetadata.ComponentPack.IDs -}}
+                    {{- $packURL := getPackURL . $workspace true -}}
+                    {{- if $packURL -}}
+                    <script src="{{$packURL}}" type="module"></script>
+                    {{- end -}}
                 {{- end -}}
             {{- end -}}
         {{- end -}}

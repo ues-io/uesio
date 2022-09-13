@@ -14,6 +14,10 @@ component.registry.registerSignals("uesio/studio.runtime", {
 		dispatcher: (state) => !state,
 		target: "codepanel",
 	},
+	SET_DIMENSIONS: {
+		dispatcher: (state, payload) => [payload.width, payload.height],
+		target: "dimensions",
+	},
 })
 
 const LEFT_PANEL_WIDTH = 300

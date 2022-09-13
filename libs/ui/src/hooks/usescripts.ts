@@ -12,7 +12,6 @@ type ScriptCache = {
 
 type ScriptResult = {
 	error: boolean
-	scripts: string[]
 	loaded: boolean
 }
 
@@ -21,16 +20,15 @@ const areNotAllLoaded = (cache: ScriptMap) =>
 
 const areAllLoaded = (cache: ScriptMap) => !areNotAllLoaded(cache)
 
-const getLoadedScripts = (cache: ScriptMap) =>
-	Object.keys(cache).reduce(
-		(acc, key) => [...acc, ...(cache[key].loaded ? [key] : [])],
+const getLoadedScripts = () => {
+	initializeScriptCache()
+	return Object.keys(cachedScripts).reduce(
+		(acc, key) => [...acc, ...(cachedScripts[key].loaded ? [key] : [])],
 		[]
 	)
+}
 
-const getScriptsToLoad = (
-	sources: string[],
-	callback: (result: ScriptResult) => void
-) => {
+const initializeScriptCache = () => {
 	if (!Object.keys(cachedScripts).length) {
 		const js = document.scripts
 		for (let i = 0; i < js.length; i++) {
@@ -44,6 +42,13 @@ const getScriptsToLoad = (
 			}
 		}
 	}
+}
+
+const getScriptsToLoad = (
+	sources: string[],
+	callback: (result: ScriptResult) => void
+) => {
+	initializeScriptCache()
 
 	const scriptsToLoad: ScriptMap = {}
 
@@ -76,7 +81,6 @@ const getScriptsToLoad = (
 				callback({
 					loaded: true,
 					error: false,
-					scripts: getLoadedScripts(cachedScripts),
 				})
 			}
 		}
@@ -89,7 +93,6 @@ const getScriptsToLoad = (
 		callback({
 			loaded: true,
 			error: true,
-			scripts: getLoadedScripts(cachedScripts),
 		})
 	}
 	sources.forEach((src: string) => {
@@ -122,7 +125,6 @@ const getScriptsToLoad = (
 		callback({
 			loaded: true,
 			error: false,
-			scripts: [],
 		})
 	}
 	return removeScriptEvents
@@ -135,4 +137,4 @@ const loadScripts = async (sources: string[]): Promise<ScriptResult> =>
 		})
 	})
 
-export { loadScripts }
+export { loadScripts, getLoadedScripts }
