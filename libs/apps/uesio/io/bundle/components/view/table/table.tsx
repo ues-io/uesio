@@ -1,5 +1,5 @@
-import { hooks, styles, component, definition } from "@uesio/ui"
-import { FunctionComponent } from "react"
+import { hooks, styles, component, definition, context } from "@uesio/ui"
+import { FC } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/button/button"
@@ -15,7 +15,7 @@ const IOTable = component.getUtility<TableUtilityProps>("uesio/io.table")
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
-const Table: FunctionComponent<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
@@ -36,13 +36,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
-	const columnsToDisplay = definition.columns?.filter((columnDef) =>
-		component.useShouldDisplay(
-			context,
-			columnDef["uesio/io.column"] as definition.DefinitionMap
-		)
-	)
-
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyles(
@@ -54,18 +47,50 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = columnsToDisplay?.map((columnDef) => {
-		const column = columnDef["uesio/io.column"] as ColumnDefinition
-		const fieldId = column.field
-		const fieldMetadata = collection.getField(fieldId)
-		return {
-			label: column.label || fieldMetadata?.getLabel() || "",
-		}
-	})
+	const columns = definition.columns.map((columnDef: ColumnDefinition) => ({
+		label:
+			columnDef.label ||
+			collection.getField(columnDef.field)?.getLabel() ||
+			"",
+	}))
+
+	const Column: FC<{
+		columnDef: ColumnDefinition
+		recordContext: context.Context
+		index: number
+	}> = ({ columnDef, recordContext, index }) => {
+		const shouldDisplay = component.useShouldDisplay(
+			context,
+			columnDef as definition.DefinitionMap
+		)
+		if (!shouldDisplay) return null
+
+		return columnDef.components ? (
+			<component.Slot
+				definition={columnDef}
+				listName="components"
+				path={`${path}["columns"]["${index}"]`}
+				accepts={["uesio.context"]}
+				direction="horizontal"
+				context={recordContext}
+			/>
+		) : (
+			<component.Component
+				componentType="uesio/io.field"
+				definition={{
+					fieldId: columnDef.field,
+					labelPosition: "none",
+					"uesio.variant": "uesio/io.table",
+				}}
+				index={props.index}
+				path={`${path}["columns"]["${index}"]`}
+				context={recordContext}
+			/>
+		)
+	}
 
 	const data = wire.getData()
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
-
 	const paginated = paginate(data, currentPage, pageSize)
 	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
@@ -74,31 +99,14 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			fieldMode: mode,
 		})
 		return {
-			cells: columnsToDisplay?.map((columnDef) => {
-				const column = columnDef["uesio/io.column"] as ColumnDefinition
-				return column.components ? (
-					<component.Slot
-						definition={column}
-						listName="components"
-						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
-						accepts={["uesio.context"]}
-						direction="horizontal"
-						context={recordContext}
-					/>
-				) : (
-					<component.Component
-						componentType="uesio/io.field"
-						definition={{
-							fieldId: column.field,
-							labelPosition: "none",
-							"uesio.variant": "uesio/io.table",
-						}}
-						index={index}
-						path={`${path}["columns"]["${index}"]`}
-						context={recordContext}
-					/>
-				)
-			}),
+			cells: definition.columns.map((columnDef, key) => (
+				<Column
+					key={key}
+					columnDef={columnDef}
+					index={index}
+					recordContext={recordContext}
+				/>
+			)),
 			rowactions: definition.rowactions && (
 				<Group
 					styles={{ root: { padding: "0 16px" } }}
