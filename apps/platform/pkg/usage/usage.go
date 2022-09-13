@@ -15,8 +15,8 @@ import (
 )
 
 type Usage struct {
-	Total uint64 `redis:"total"`
-	Size  uint64 `redis:"size"`
+	Total int64 `redis:"total"`
+	Size  int64 `redis:"size"`
 }
 
 func getUser(userid string) (*meta.User, error) {

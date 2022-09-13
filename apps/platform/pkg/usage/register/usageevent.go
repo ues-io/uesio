@@ -8,7 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func UsageEvent(actiontype, metadatatype, metadataname string, size uint64, session *sess.Session) error {
+func UsageEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
 
 	user := session.GetUserID()
 
@@ -27,8 +27,8 @@ func UsageEvent(actiontype, metadatatype, metadataname string, size uint64, sess
 	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	conn.Send("SADD", "USAGE_KEYS", key)
-	conn.Send("HINCRBY", key, "total", 1)
-	conn.Send("HINCRBY", key, "size", size)
+	conn.Send("INCR", key)
+	conn.Send("INCRBY", key+":size", size)
 	conn.Flush()
 	_, err := conn.Receive()
 	if err != nil {

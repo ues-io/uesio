@@ -30,14 +30,14 @@ func getTotal(change *adapt.ChangeItem) (float64, error) {
 	return oldTotal + newTotal, nil
 }
 
-func getSize(change *adapt.ChangeItem) (uint64, error) {
-	var oldSize, newSize uint64
+func getSize(change *adapt.ChangeItem) (float64, error) {
+	var oldSize, newSize float64
 	oldVal, err := change.GetOldField("uesio/core.size")
 	if err != nil {
 		return 0, err
 	}
 
-	oldInt, ok := oldVal.(uint64)
+	oldInt, ok := oldVal.(float64)
 	if ok {
 		oldSize = oldInt
 	}
@@ -47,7 +47,7 @@ func getSize(change *adapt.ChangeItem) (uint64, error) {
 		return 0, err
 	}
 
-	newInt, ok := newVal.(uint64)
+	newInt, ok := newVal.(float64)
 	if ok {
 		newSize = newInt
 	}
