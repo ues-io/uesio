@@ -92,19 +92,11 @@ definition:
                                 wire: usage
                                 mode: READ
                                 columns:
-                                  - uesio/io.column:
-                                      field: uesio/core.user
-                                  - uesio/io.column:
-                                      field: uesio/core.tenanttype
-                                  - uesio/io.column:
-                                      field: uesio/core.tenantid
-                                  - uesio/io.column:
-                                      field: uesio/core.day
-                                  - uesio/io.column:
-                                      field: uesio/core.actiontype
-                                  - uesio/io.column:
-                                      field: uesio/core.metadatatype
-                                  - uesio/io.column:
-                                      field: uesio/core.metadataname
-                                  - uesio/io.column:
-                                      field: uesio/core.total
+                                  - field: uesio/core.user
+                                  - field: uesio/core.tenanttype
+                                  - field: uesio/core.tenantid
+                                  - field: uesio/core.day
+                                  - field: uesio/core.actiontype
+                                  - field: uesio/core.metadatatype
+                                  - field: uesio/core.metadataname
+                                  - field: uesio/core.total

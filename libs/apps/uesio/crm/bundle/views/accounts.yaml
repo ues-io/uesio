@@ -51,20 +51,13 @@ definition:
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
-                - uesio/io.column:
-                    field: uesio/crm.contacts
-                - uesio/io.column:
-                    field: uesio/crm.externalid
-                - uesio/io.column:
-                    field: uesio/crm.name
-                - uesio/io.column:
-                    field: uesio/crm.description
-                - uesio/io.column:
-                    field: uesio/crm.no_of_employees
-                - uesio/io.column:
-                    field: uesio/core.createdat
-                - uesio/io.column:
-                    field: uesio/core.updatedat
+                - field: uesio/crm.contacts
+                - field: uesio/crm.externalid
+                - field: uesio/crm.name
+                - field: uesio/crm.description
+                - field: uesio/crm.no_of_employees
+                - field: uesio/core.createdat
+                - field: uesio/core.updatedat
               id: accountsTable
               mode: EDIT
               wire: accounts
