@@ -4,7 +4,7 @@ interface TableDefinition extends definition.BaseDefinition {
 	id: string
 	wire: string
 	mode: context.FieldMode
-	columns: definition.DefinitionList
+	columns: ColumnDefinition[]
 	rowactions?: RowAction[]
 	rownumbers: boolean
 	pagesize: string

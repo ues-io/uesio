@@ -92,18 +92,12 @@ definition:
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
-                - uesio/io.column:
-                    field: uesio/crm.name
-                - uesio/io.column:
-                    field: uesio/crm.status
-                - uesio/io.column:
-                    field: uesio/crm.account
-                - uesio/io.column:
-                    field: uesio/crm.close_date
-                - uesio/io.column:
-                    field: uesio/crm.expected_revenue
-                - uesio/io.column:
-                    field: uesio/crm.amount
+                - field: uesio/crm.name
+                - field: uesio/crm.status
+                - field: uesio/crm.account
+                - field: uesio/crm.close_date
+                - field: uesio/crm.expected_revenue
+                - field: uesio/crm.amount
               id: opportunitiesTable
               mode: EDIT
               wire: opportunities
