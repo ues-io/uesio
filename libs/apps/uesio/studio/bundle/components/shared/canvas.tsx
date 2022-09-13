@@ -51,7 +51,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			root: {
 				overflow: "hidden",
 				height: "100%",
-				padding: "38px 26px",
+				padding: "30px 18px",
 				position: "relative",
 			},
 
@@ -59,6 +59,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				overflow: "auto",
 				height: "100%",
 				width: "100%",
+				padding: "8px",
 			},
 
 			outerwrapper: {
