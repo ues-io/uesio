@@ -39,6 +39,10 @@ func (op *LoadOp) GetKey() string {
 	return op.View + ":" + op.WireName
 }
 
+func (op *LoadOp) Size() int64 {
+	return int64(len(op.Fields) + len(op.Conditions) + len(op.Order))
+}
+
 func (op *LoadOp) UnmarshalJSON(data []byte) error {
 	return gojay.UnmarshalJSONObject(data, op)
 }

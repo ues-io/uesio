@@ -3,6 +3,7 @@ package usage
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gomodule/redigo/redis"
@@ -13,11 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
-
-type Usage struct {
-	Total int64 `redis:"total"`
-	Size  int64 `redis:"size"`
-}
 
 func getUser(userid string) (*meta.User, error) {
 
@@ -59,35 +55,31 @@ func RunJob() error {
 		return nil
 	}
 
-	keyArgs := redis.Args{}.AddFlat(keys)
-
-	conn.Send("MULTI")
-	for _, key := range keys {
-		conn.Send("HGETALL", key)
+	keyArgsSize := redis.Args{}
+	keyArgs := redis.Args{}
+	for i := 0; i < len(keys); i++ {
+		key := keys[i]
+		keyArgs = append(keyArgs, key)
+		keyArgsSize = append(keyArgsSize, key+":size")
 	}
-	results, err := redis.Values(conn.Do("EXEC"))
+
+	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
 	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
+		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 	}
 
-	if len(results) != len(keys) {
-		//Make sure all is good
-		println("this can be an error")
+	valuesSize, err := redis.Strings(conn.Do("MGET", keyArgsSize...))
+	if err != nil {
+		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+	}
+
+	if len(values) != len(valuesSize) {
+		return fmt.Errorf("Error Getting Usage Event: Different Sizes ")
 	}
 
 	changes := adapt.Collection{}
-	for i, result := range results {
-		obj, err := redis.Values(result, nil)
-		if err != nil {
-			return fmt.Errorf("Error Setting cache value: " + err.Error())
-		}
-		var usage = new(Usage)
-		err = redis.ScanStruct(obj, usage)
-		if err != nil {
-			return fmt.Errorf("Error Setting cache value: " + err.Error())
-		}
+	for i, key := range keys {
 
-		key := keys[i]
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
@@ -97,6 +89,7 @@ func RunJob() error {
 		if err != nil {
 			return err
 		}
+
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/core.user", user)
 		usageItem.SetField("uesio/core.tenanttype", keyParts[1])
@@ -105,8 +98,10 @@ func RunJob() error {
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/core.metadataname", keyParts[8])
-		usageItem.SetField("uesio/core.total", usage.Total)
-		usageItem.SetField("uesio/core.size", usage.Size)
+		total, _ := strconv.ParseFloat(values[i], 64)
+		usageItem.SetField("uesio/core.total", total)
+		size, _ := strconv.ParseFloat(valuesSize[i], 64)
+		usageItem.SetField("uesio/core.size", size)
 		changes = append(changes, &usageItem)
 	}
 
@@ -136,14 +131,25 @@ func RunJob() error {
 			return errors.New("Failed to update usage events: " + err.Error())
 		}
 
-		_, err = conn.Do("DEL", keyArgs...)
+		err = conn.Send("DEL", keyArgs...)
 		if err != nil {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 		}
 
-		_, err = conn.Do("DEL", "USAGE_KEYS")
+		err = conn.Send("DEL", keyArgsSize...)
 		if err != nil {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		}
+
+		err = conn.Send("DEL", "USAGE_KEYS")
+		if err != nil {
+			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		}
+
+		conn.Flush()
+		_, err = conn.Receive()
+		if err != nil {
+			return fmt.Errorf("Error Setting cache value: " + err.Error())
 		}
 
 	}

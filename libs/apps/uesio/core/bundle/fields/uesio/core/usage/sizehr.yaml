@@ -2,5 +2,5 @@ name: sizehr
 type: "FORMULA"
 label: "Size"
 formula:
-  expression: "BYTE_HR(uesio/core.size)"
+  expression: 'uesio/core.actiontype == "UPLOAD" || uesio/core.actiontype == "DOWNLOAD" ? BYTE_HR(uesio/core.size) : TO_STRING(uesio/core.size)'
   returntype: "TEXT"

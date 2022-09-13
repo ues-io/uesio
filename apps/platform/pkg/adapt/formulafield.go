@@ -123,7 +123,7 @@ func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
 func ByteCountSI(b float64) string {
 	const unit = 1000
 	if b < unit {
-		return fmt.Sprintf("%f B", b)
+		return fmt.Sprintf("%.2f B", b)
 	}
 	div, exp := int64(unit), 0
 	for n := b / unit; n >= unit; n /= unit {

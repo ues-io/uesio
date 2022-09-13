@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"github.com/thecloudmasters/uesio/pkg/usage/register"
 )
 
 type SpecialReferences struct {
@@ -364,8 +365,8 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			if err != nil {
 				return nil, err
 			}
-			// go register.UsageEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), session)
-			// go register.UsageEvent("LOAD", "DATASOURCE", dsKey, session)
+			go register.UsageEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), op.Size(), session)
+			go register.UsageEvent("LOAD", "DATASOURCE", dsKey, op.Size(), session)
 		}
 	}
 	return metadataResponse, nil

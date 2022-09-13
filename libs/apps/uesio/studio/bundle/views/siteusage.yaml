@@ -326,7 +326,7 @@ definition:
                                 field: uesio/core.metadataname
                             - uesio/io.column:
                                 field: uesio/core.total
-                            - uesio/io.column:
-                                field: uesio/core.size
+                            # - uesio/io.column:
+                            #     field: uesio/core.size
                             - uesio/io.column:
                                 field: uesio/core.sizehr

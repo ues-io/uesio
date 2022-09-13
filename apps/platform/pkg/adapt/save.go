@@ -31,6 +31,10 @@ func (op *SaveOp) HasErrors() bool {
 	return len(*op.Errors) > 0
 }
 
+func (op *SaveOp) Size() int64 {
+	return int64(len(op.Inserts) + len(op.Updates))
+}
+
 func (op *SaveOp) LoopInserts(changeFunc func(change *ChangeItem) error) error {
 	if op.Inserts != nil {
 		for i := range op.Inserts {
