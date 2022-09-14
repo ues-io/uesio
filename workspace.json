@@ -148,6 +148,18 @@
             "cwd": "apps/clio"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/clio"
+          ],
+          "options": {
+            "commands": [
+              "go build -o ../../dist/clio/clio"
+            ],
+            "cwd": "apps/clio"
+          }
+        },
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
