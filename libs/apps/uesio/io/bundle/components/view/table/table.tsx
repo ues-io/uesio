@@ -1,4 +1,4 @@
-import { hooks, styles, component, definition, context } from "@uesio/ui"
+import { hooks, styles, component, definition } from "@uesio/ui"
 import { FC } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
