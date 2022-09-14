@@ -122,7 +122,7 @@ function mergeContextVariants(
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
-	if (!definition || !useShouldDisplay(context, definition)) return null
+	if (definition && !useShouldDisplay(context, definition)) return null
 	if (!componentType) return <NotFound {...props} />
 	const Loader =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound
