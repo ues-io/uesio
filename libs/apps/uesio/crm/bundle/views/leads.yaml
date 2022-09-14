@@ -68,28 +68,17 @@ definition:
                                 - bot: uesio/crm.convertlead
                                   signal: bot/CALL
                           columns:
-                            - uesio/io.column:
-                                field: uesio/crm.firstname
-                            - uesio/io.column:
-                                field: uesio/crm.lastname
-                            - uesio/io.column:
-                                field: uesio/crm.account
-                            - uesio/io.column:
-                                field: uesio/crm.phone_business
-                            - uesio/io.column:
-                                field: uesio/crm.email
-                            - uesio/io.column:
-                                field: uesio/crm.mailing_city
-                            - uesio/io.column:
-                                field: uesio/crm.mailing_country
-                            - uesio/io.column:
-                                field: uesio/crm.industry
-                            - uesio/io.column:
-                                field: uesio/crm.status
-                            - uesio/io.column:
-                                field: uesio/core.updatedat
-                            - uesio/io.column:
-                                field: uesio/core.createdat
+                            - field: uesio/crm.firstname
+                            - field: uesio/crm.lastname
+                            - field: uesio/crm.account
+                            - field: uesio/crm.phone_business
+                            - field: uesio/crm.email
+                            - field: uesio/crm.mailing_city
+                            - field: uesio/crm.mailing_country
+                            - field: uesio/crm.industry
+                            - field: uesio/crm.status
+                            - field: uesio/core.updatedat
+                            - field: uesio/core.createdat
                           id: leadsTable
                           mode: EDIT
                           wire: leads
@@ -106,26 +95,16 @@ definition:
                     id: closedleadstable
                     mode: READ
                     columns:
-                      - uesio/io.column:
-                          field: uesio/crm.converted_to_contact
-                      - uesio/io.column:
-                          field: uesio/crm.converted_to_account
-                      - uesio/io.column:
-                          field: uesio/crm.converted_opportunity
-                      - uesio/io.column:
-                          field: uesio/crm.converted_date
-                      - uesio/io.column:
-                          field: uesio/crm.firstname
-                      - uesio/io.column:
-                          field: uesio/crm.lastname
-                      - uesio/io.column:
-                          field: uesio/crm.mailing_city
-                      - uesio/io.column:
-                          field: uesio/crm.mailing_country
-                      - uesio/io.column:
-                          field: uesio/crm.industry
-                      - uesio/io.column:
-                          field: uesio/crm.status
+                      - field: uesio/crm.converted_to_contact
+                      - field: uesio/crm.converted_to_account
+                      - field: uesio/crm.converted_opportunity
+                      - field: uesio/crm.converted_date
+                      - field: uesio/crm.firstname
+                      - field: uesio/crm.lastname
+                      - field: uesio/crm.mailing_city
+                      - field: uesio/crm.mailing_country
+                      - field: uesio/crm.industry
+                      - field: uesio/crm.status
                     wire: closedleads
                     uesio.variant: uesio/io.default
               uesio.styles:

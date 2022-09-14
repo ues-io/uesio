@@ -215,14 +215,10 @@ definition:
                                 - signal: "route/NAVIGATE"
                                   path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{namespace}/$Param{collectionname}/fields/${uesio/studio.name}"
                           columns:
-                            - uesio/io.column:
-                                field: uesio/studio.name
-                            - uesio/io.column:
-                                field: uesio/studio.type
-                            - uesio/io.column:
-                                field: uesio/studio.label
-                            - uesio/io.column:
-                                field: uesio/studio.languagelabel
+                            - field: uesio/studio.name
+                            - field: uesio/studio.type
+                            - field: uesio/studio.label
+                            - field: uesio/studio.languagelabel
   panels:
     deleteCollection:
       uesio.type: uesio/io.dialog

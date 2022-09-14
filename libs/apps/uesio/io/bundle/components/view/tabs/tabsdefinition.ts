@@ -1,6 +1,6 @@
 import { definition, builder } from "@uesio/ui"
 
-interface TabsDefinition extends definition.BaseDefinition {
+type TabsDefinition = {
 	id?: string
 	tabs?: {
 		id: string
@@ -8,7 +8,7 @@ interface TabsDefinition extends definition.BaseDefinition {
 		components: definition.DefinitionList
 	}[]
 	footer?: definition.DefinitionList
-}
+} & definition.BaseDefinition
 
 interface Props extends definition.BaseProps {
 	definition: TabsDefinition
