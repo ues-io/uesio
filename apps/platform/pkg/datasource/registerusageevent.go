@@ -4,27 +4,32 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func RegisterUsageEvent(actiontype, user, metadatatype, metadataname string, connection adapt.Connection) error {
+func RegisterUsageEvent(actiontype, metadatatype, metadataname string, session *sess.Session) error {
 
-	if user == "uesio" {
+	user := session.GetUserInfo()
+
+	if user.Username == "uesio" || user.Username == "boot" {
 		return nil
 	}
 
-	if user == "" {
-		user = "GUEST"
+	userID := user.ID
+	if user.Username == "guest" {
+		userID = "GUEST"
 	}
 
-	credentials := connection.GetCredentials()
-	// Connect to redis and increment the counter
+	if userID == "" {
+		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
+	}
+
 	conn := cache.GetRedisConn()
 	defer conn.Close()
 
 	currentTime := time.Now()
-	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", credentials.GetSiteTenantID(), user, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), userID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	_, err := conn.Do("SADD", "USAGE_KEYS", key)
 	if err != nil {

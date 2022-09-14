@@ -85,7 +85,14 @@ func GetStudioAnonSession() (*sess.Session, error) {
 		return nil, err
 	}
 
-	session := sess.NewSession(nil, &meta.User{}, site)
+	//This is only used to query the system user the first time
+	var BOOT_USER = &meta.User{
+		Username:  "boot",
+		FirstName: "Boot",
+		LastName:  "User",
+	}
+
+	session := sess.NewSession(nil, BOOT_USER, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:       true,

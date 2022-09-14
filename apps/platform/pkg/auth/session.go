@@ -39,7 +39,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 		return sess.NewPublic(site), nil
 	}
 
-	fakeSession := sess.NewSession(nil, &meta.User{}, site)
+	fakeSession := sess.NewSession(nil, SYSTEM_USER, site)
 	fakeSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
 			"uesio/core.user":     true,

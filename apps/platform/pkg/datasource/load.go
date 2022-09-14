@@ -364,7 +364,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			if err != nil {
 				return nil, err
 			}
-			go RegisterUsageEvent("LOAD", session.GetUserID(), "DATASOURCE", dsKey, connection)
+			go RegisterUsageEvent("LOAD", "DATASOURCE", dsKey, session)
 		}
 	}
 	return metadataResponse, nil
