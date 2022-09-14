@@ -173,9 +173,6 @@ const useShouldDisplayFilter = (context: Context, items: DefinitionMap[]) => {
 	const allDisplayConditions = items
 		.flatMap((item) => item["uesio.display"] as DisplayCondition)
 		.filter((x) => x)
-
-	if (!allDisplayConditions.length) return items
-
 	const wireNames = allDisplayConditions.reduce<string[]>(
 		(acc, c) => (!c.type && c.wire ? [...acc, c.wire] : acc),
 		[]
@@ -185,7 +182,6 @@ const useShouldDisplayFilter = (context: Context, items: DefinitionMap[]) => {
 		...wireNames,
 		context.getWireId() || "",
 	])
-
 	return items.filter((def) => testDisplayConditions(context, def))
 }
 /**
@@ -193,10 +189,8 @@ const useShouldDisplayFilter = (context: Context, items: DefinitionMap[]) => {
  * @param Context
  * @param ComponentDefinition
  */
-function useShouldDisplay(context: Context, definition: DefinitionMap) {
-	console.log({ checking: useShouldDisplayFilter(context, [definition]) })
-	return !!useShouldDisplayFilter(context, [definition]).length
-}
+const useShouldDisplay = (context: Context, definition: DefinitionMap) =>
+	!!useShouldDisplayFilter(context, [definition]).length
 
 function shouldHaveClass(
 	context: Context,
