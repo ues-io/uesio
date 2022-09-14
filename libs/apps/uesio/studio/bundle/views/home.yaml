@@ -191,5 +191,7 @@ definition:
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newApp"
-              - signal: "wire/RESET"
+              - signal: wire/EMPTY
+                wire: newapp
+              - signal: wire/CREATE_RECORD
                 wire: newapp
