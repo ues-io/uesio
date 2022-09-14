@@ -10,8 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-var SYSTEM_USER = &meta.User{}
-
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOne(
@@ -111,7 +109,7 @@ func GetStudioAdminSession() (*sess.Session, error) {
 		return nil, err
 	}
 
-	session := sess.NewSession(nil, SYSTEM_USER, site)
+	session := sess.NewSession(nil, sess.SYSTEM_USER, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:       true,

@@ -16,12 +16,7 @@ func RegisterUsageEvent(actiontype, metadatatype, metadataname string, session *
 		return nil
 	}
 
-	userID := user.ID
-	if user.Username == "guest" {
-		userID = "GUEST"
-	}
-
-	if userID == "" {
+	if user.ID == "" {
 		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
 	}
 
@@ -29,7 +24,7 @@ func RegisterUsageEvent(actiontype, metadatatype, metadataname string, session *
 	defer conn.Close()
 
 	currentTime := time.Now()
-	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), userID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	_, err := conn.Do("SADD", "USAGE_KEYS", key)
 	if err != nil {
