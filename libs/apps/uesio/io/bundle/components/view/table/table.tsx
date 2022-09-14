@@ -36,9 +36,9 @@ const Table: FC<TableProps> = (props) => {
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
-	const columnsToDisplay = component.useShouldDisplayFilter(
-		context,
-		definition.columns
+	const columnsToDisplay = component.useShouldFilter(
+		definition.columns,
+		context
 	)
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
@@ -52,7 +52,7 @@ const Table: FC<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = definition.columns.map((columnDef: ColumnDefinition) => ({
+	const columns = columnsToDisplay.map((columnDef: ColumnDefinition) => ({
 		label:
 			columnDef.label ||
 			collection.getField(columnDef.field)?.getLabel() ||
@@ -75,7 +75,7 @@ const Table: FC<TableProps> = (props) => {
 					<component.Slot
 						definition={columnDef}
 						listName="components"
-						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
+						path={`${path}["columns"]["${index}"]`}
 						accepts={["uesio.context"]}
 						direction="horizontal"
 						context={recordContext}

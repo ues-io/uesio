@@ -7,8 +7,8 @@ import * as registry from "./component/registry"
 import { Component, getUtility } from "./component/component"
 import {
 	shouldHaveClass,
-	useShouldDisplay,
-	useShouldDisplayFilter,
+	useShould,
+	useShouldFilter,
 	DisplayCondition,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
@@ -27,7 +27,7 @@ export {
 	PanelArea,
 	NotificationArea,
 	shouldHaveClass,
-	useShouldDisplay,
-	useShouldDisplayFilter,
+	useShould,
+	useShouldFilter,
 	DisplayCondition,
 }

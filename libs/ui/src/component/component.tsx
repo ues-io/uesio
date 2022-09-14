@@ -13,11 +13,11 @@ import {
 } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
-import { useShouldDisplay } from "./display"
 import { ComponentVariant } from "../definition/componentvariant"
 import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
+import { useShould } from "./display"
 
 function additionalContext(context: Context, additional: ContextFrame) {
 	if (additional) {
@@ -122,7 +122,8 @@ function mergeContextVariants(
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
-	if (definition && !useShouldDisplay(context, definition)) return null
+	if (definition && !useShould(definition["uesio.display"], context))
+		return null
 	if (!componentType) return <NotFound {...props} />
 	const Loader =
 		getLoader(componentType, !!context.getBuildMode()) || NotFound

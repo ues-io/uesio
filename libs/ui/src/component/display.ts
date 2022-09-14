@@ -1,5 +1,5 @@
 import { Context } from "../context/context"
-import { DefinitionMap } from "../definition/definition"
+import { BaseDefinition, DefinitionMap } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 
 type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
@@ -91,7 +91,7 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 
 	if (condition.type === "featureFlag") {
-		return context.getFeatureFlag(condition.name)?.value
+		return !!context.getFeatureFlag(condition.name)?.value
 	}
 
 	const compareToValue =
@@ -150,47 +150,59 @@ function should(condition: DisplayCondition, context: Context) {
 	return true
 }
 
-const testDisplayConditions = (
-	context: Context,
-	definition?: DefinitionMap
+const shouldAll = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
 ) => {
-	const displayLogic = definition?.["uesio.display"] as
-		| DisplayCondition[]
-		| undefined
-
-	return !displayLogic
-		? true
-		: displayLogic.every((condition) => should(condition, context))
+	if (!conditions || !conditions.length) return true
+	return conditions.every((condition) => should(condition, context))
 }
 
-/**
- * Takes in an list of component definitions, returns the ones that should be displayed
- * @param Context
- * @param ComponentDefinitionList
- */
-const useShouldDisplayFilter = (context: Context, items: DefinitionMap[]) => {
-	// Create a list of all of the wires that we're going to care about
-	const allDisplayConditions = items
-		.flatMap((item) => item["uesio.display"] as DisplayCondition)
-		.filter((x) => x)
-	const wireNames = allDisplayConditions.reduce<string[]>(
-		(acc, c) => (!c.type && c.wire ? [...acc, c.wire] : acc),
-		[]
+// Create a list of all of the wires that we're going to care about
+const getWiresForConditions = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
+) => {
+	if (!conditions) return []
+	const contextWire = context.getWireId()
+	return [
+		...(contextWire ? [contextWire] : []),
+		...conditions.flatMap((condition) =>
+			!condition.type && condition.wire ? [condition.wire] : []
+		),
+	]
+}
+
+const useShouldFilter = <T extends BaseDefinition>(
+	items: T[],
+	context: Context
+) => {
+	const conditionsList = items.flatMap((item) => {
+		const conditions = item["uesio.display"]
+		return conditions ? [conditions] : []
+	})
+
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(
+		getWiresForConditions(
+			conditionsList.flatMap((c) => c),
+			context
+		)
 	)
-	// We need to subscribe to changes on these wires
-	useUesio({ context }).wire.useWires([
-		...wireNames,
-		context.getWireId() || "",
-	])
-	return items.filter((def) => testDisplayConditions(context, def))
+
+	return items.filter((item, index) =>
+		shouldAll(conditionsList[index], context)
+	)
 }
-/**
- * Checks if a component should be displayed
- * @param Context
- * @param ComponentDefinition
- */
-const useShouldDisplay = (context: Context, definition: DefinitionMap) =>
-	!!useShouldDisplayFilter(context, [definition]).length
+
+const useShould = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
+) => {
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	return shouldAll(conditions, context)
+}
 
 function shouldHaveClass(
 	context: Context,
@@ -203,18 +215,7 @@ function shouldHaveClass(
 	const classLogic = classesLogic?.[className]
 	if (!classLogic?.length) return false
 
-	for (const condition of classLogic) {
-		if (!should(condition, context)) {
-			return false
-		}
-	}
-
-	return true
+	return shouldAll(classLogic, context)
 }
 
-export {
-	useShouldDisplay,
-	useShouldDisplayFilter,
-	shouldHaveClass,
-	DisplayCondition,
-}
+export { useShould, useShouldFilter, shouldHaveClass, DisplayCondition }
