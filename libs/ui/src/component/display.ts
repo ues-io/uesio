@@ -150,35 +150,52 @@ function should(condition: DisplayCondition, context: Context) {
 	return true
 }
 
-function useShouldDisplay(context: Context, definition?: DefinitionMap) {
+const testDisplayConditions = (
+	context: Context,
+	definition?: DefinitionMap
+) => {
 	const displayLogic = definition?.["uesio.display"] as
 		| DisplayCondition[]
 		| undefined
 
-	const uesio = useUesio({ context })
+	return !displayLogic
+		? true
+		: displayLogic.every((condition) => should(condition, context))
+}
+
+/**
+ * Takes in an list of component definitions, returns the ones that should be displayed
+ * @param Context
+ * @param ComponentDefinitionList
+ */
+const useShouldDisplayFilter = (context: Context, items: DefinitionMap[]) => {
 	// Create a list of all of the wires that we're going to care about
-	const contextWire = context.getWireId()
-	const wireNames = contextWire ? [contextWire] : []
+	const allDisplayConditions = items
+		.flatMap((item) => item["uesio.display"] as DisplayCondition)
+		.filter((x) => x)
 
-	let result = true
+	if (!allDisplayConditions.length) return items
 
-	if (displayLogic?.length) {
-		for (const condition of displayLogic) {
-			// Weird hack for now
-			if (!condition.type && condition.wire) {
-				wireNames.push(condition.wire)
-			}
-			if (!should(condition, context)) {
-				result = false
-				break
-			}
-		}
-	}
-
+	const wireNames = allDisplayConditions.reduce<string[]>(
+		(acc, c) => (!c.type && c.wire ? [...acc, c.wire] : acc),
+		[]
+	)
 	// We need to subscribe to changes on these wires
-	uesio.wire.useWires(wireNames)
+	useUesio({ context }).wire.useWires([
+		...wireNames,
+		context.getWireId() || "",
+	])
 
-	return result
+	return items.filter((def) => testDisplayConditions(context, def))
+}
+/**
+ * Checks if a component should be displayed
+ * @param Context
+ * @param ComponentDefinition
+ */
+function useShouldDisplay(context: Context, definition: DefinitionMap) {
+	console.log({ checking: useShouldDisplayFilter(context, [definition]) })
+	return !!useShouldDisplayFilter(context, [definition]).length
 }
 
 function shouldHaveClass(
@@ -201,4 +218,9 @@ function shouldHaveClass(
 	return true
 }
 
-export { useShouldDisplay, shouldHaveClass, DisplayCondition }
+export {
+	useShouldDisplay,
+	useShouldDisplayFilter,
+	shouldHaveClass,
+	DisplayCondition,
+}

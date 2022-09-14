@@ -8,6 +8,7 @@ import { Component, getUtility } from "./component/component"
 import {
 	shouldHaveClass,
 	useShouldDisplay,
+	useShouldDisplayFilter,
 	DisplayCondition,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
@@ -27,5 +28,6 @@ export {
 	NotificationArea,
 	shouldHaveClass,
 	useShouldDisplay,
+	useShouldDisplayFilter,
 	DisplayCondition,
 }
