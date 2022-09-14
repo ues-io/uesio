@@ -12,11 +12,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 func RunJob() error {
 
-	logger.Log("RunJob", logger.INFO)
+	logger.Log("Job Running", logger.INFO)
 
 	conn := cache.GetRedisConn()
 	defer conn.Close()
@@ -53,10 +54,13 @@ func RunJob() error {
 		if len(keyParts) != 9 {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 		}
+
 		usageItem := adapt.Item{}
+		usageItem.SetField("uesio/core.user", &meta.User{
+			ID: keyParts[4],
+		})
 		usageItem.SetField("uesio/core.tenanttype", keyParts[1])
 		usageItem.SetField("uesio/core.tenantid", keyParts[2]+":"+keyParts[3])
-		usageItem.SetField("uesio/core.user", keyParts[4])
 		usageItem.SetField("uesio/core.day", keyParts[5])
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
