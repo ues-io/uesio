@@ -72,12 +72,6 @@ type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
-type ResetWirePayload = {
-	data: Record<string, PlainWireRecord>
-	original: Record<string, PlainWireRecord>
-	changes: Record<string, PlainWireRecord>
-} & EntityPayload
-
 type WireLoadAction = PayloadAction<
 	[PlainWire[], Record<string, PlainCollection>]
 >
@@ -206,15 +200,13 @@ const wireSlice = createSlice({
 			state.deletes = {}
 			state.errors = {}
 		}),
-		reset: createEntityReducer<ResetWirePayload, PlainWire>(
-			(state, { data, changes, original }) => {
-				state.data = data
-				state.changes = changes
-				state.original = original
-				state.deletes = {}
-				state.errors = {}
-			}
-		),
+		reset: createEntityReducer<EntityPayload, PlainWire>((state) => {
+			state.data = {}
+			state.changes = {}
+			state.original = {}
+			state.deletes = {}
+			state.errors = {}
+		}),
 		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
 			(state, { condition }) => {
 				if (!state.conditions) state.conditions = []
