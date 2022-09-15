@@ -69,16 +69,20 @@ const Table: FC<TableProps> = (props) => {
 			wire: wire.getId(),
 			fieldMode: mode,
 		})
+		const sharedProps = {
+			key: paginated.length + index,
+			path: `${path}["columns"]["${index}"]`,
+			context: recordContext,
+		}
 		return {
 			cells: columnsToDisplay?.map((columnDef) =>
 				columnDef.components ? (
 					<component.Slot
 						definition={columnDef}
 						listName="components"
-						path={`${path}["columns"]["${index}"]`}
 						accepts={["uesio.context"]}
 						direction="horizontal"
-						context={recordContext}
+						{...sharedProps}
 					/>
 				) : (
 					<component.Component
@@ -89,8 +93,7 @@ const Table: FC<TableProps> = (props) => {
 							"uesio.variant": "uesio/io.table",
 						}}
 						index={index}
-						path={`${path}["columns"]["${index}"]`}
-						context={recordContext}
+						{...sharedProps}
 					/>
 				)
 			),
