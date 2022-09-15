@@ -11,10 +11,10 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, value, mode, options } = props
+	const { setValue, value = "", mode, options } = props
+	const optionMatch = options?.find((option) => option.value === value)
 
 	if (mode === "READ") {
-		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
 		return <TextField {...props} value={valueLabel} />
 	}
@@ -45,7 +45,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 			<select
 				className={classes.input}
 				onChange={(e) => setValue(e.target.value)}
-				value={value}
+				value={optionMatch?.value}
 			>
 				{options?.map((option) => (
 					<option

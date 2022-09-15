@@ -10,7 +10,7 @@ interface EmailFieldProps extends definition.UtilityProps {
 }
 
 const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder } = props
+	const { setValue, value = "", mode, placeholder } = props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{

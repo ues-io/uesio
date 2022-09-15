@@ -23,7 +23,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 ) => {
 	const {
 		getItems,
-		value,
+		value = "",
 		setValue,
 		itemToString,
 		loadingRenderer = () => (
