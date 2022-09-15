@@ -7,7 +7,7 @@ import (
 
 // FileDetails struct
 type FileDetails struct {
-	ContentLength   uint64
+	ContentLength   int64
 	Name            string
 	CollectionID    string
 	RecordID        string

@@ -8,6 +8,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 // Download function
@@ -44,6 +45,9 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	if err != nil {
 		return nil, nil, err
 	}
+
+	go usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
+	go usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
 
 	return content, &userFile, nil
 
