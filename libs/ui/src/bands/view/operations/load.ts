@@ -45,15 +45,20 @@ export default (context: Context): ThunkFunc =>
 		)
 
 		const wiresToLoadNames = wires ? Object.keys(wiresToLoad) : []
+		const preloadedWireNames = Object.keys(preloadedDefs)
 
 		batch(() => {
-			dispatch(initializeWiresOp(context, wires))
-			Object.keys(preloadedDefs).forEach((wirename) => {
-				const wireDef = preloadedDefs[wirename]
-				if (wireDef.init?.create) {
-					dispatch(createrecord(context, wirename))
-				}
-			})
+			if (wiresToLoadNames.length > 0) {
+				dispatch(initializeWiresOp(context, wiresToLoad))
+			}
+			if (preloadedWireNames.length > 0) {
+				preloadedWireNames.forEach((wirename) => {
+					const wireDef = preloadedDefs[wirename]
+					if (wireDef.init?.create) {
+						dispatch(createrecord(context, wirename))
+					}
+				})
+			}
 		})
 
 		if (wiresToLoadNames?.length) {
