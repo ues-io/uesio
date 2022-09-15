@@ -139,7 +139,6 @@ const wireSlice = createSlice({
 		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
-				if (!state.deletes) state.deletes = {}
 				state.deletes[recordId] = {
 					[ID_FIELD]: state.data[recordId][ID_FIELD],
 				}
@@ -147,14 +146,11 @@ const wireSlice = createSlice({
 		),
 		unmarkForDelete: createEntityReducer<UndeletePayload, PlainWire>(
 			(state, { recordId }) => {
-				if (!state.deletes) return
 				delete state.deletes[recordId]
 			}
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data }
-				if (!state.changes) state.changes = {}
 				const usePath = [recordId].concat(path)
 				const basePath = [recordId].concat([path[0]])
 				set(state.data, usePath, record)
@@ -167,7 +163,6 @@ const wireSlice = createSlice({
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data }
 				const usePath = [recordId].concat(path)
 				set(state.data, usePath, record)
 				set(state.original, usePath, record)
@@ -175,9 +170,7 @@ const wireSlice = createSlice({
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
 			(state, { record, recordId, prepend }) => {
-				if (!state.original) state.original = { ...state.data }
 				const newRecord = { [recordId]: record || {} }
-
 				state.data = {
 					...(prepend && newRecord),
 					...state.data,
@@ -187,7 +180,7 @@ const wireSlice = createSlice({
 			}
 		),
 		cancel: createEntityReducer<EntityPayload, PlainWire>((state) => {
-			if (state.original) state.data = state.original
+			state.data = state.original
 			state.changes = {}
 			state.deletes = {}
 			state.errors = {}
@@ -323,7 +316,7 @@ const wireSlice = createSlice({
 				Object.keys(wire.deletes).forEach((tempId) => {
 					delete data[tempId]
 					delete original[tempId]
-					if (wireState.deletes) delete wireState.deletes[tempId]
+					delete wireState.deletes[tempId]
 				})
 
 				wireState.errors = undefined
