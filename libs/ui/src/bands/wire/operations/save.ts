@@ -22,8 +22,8 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 
 		const requests = wiresToSave.flatMap((wire) => {
 			const wireId = getFullWireId(wire.view, wire.name)
-			const hasChanges = wire.changes && Object.keys(wire.changes).length
-			const hasDeletes = wire.deletes && Object.keys(wire.deletes).length
+			const hasChanges = Object.keys(wire.changes).length
+			const hasDeletes = Object.keys(wire.deletes).length
 			// Check to see if we need to go to the serve
 			if (!hasChanges && !hasDeletes) {
 				response.wires.push({

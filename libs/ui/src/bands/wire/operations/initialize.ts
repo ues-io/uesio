@@ -130,6 +130,9 @@ export default (
 			if (existingWire) {
 				return {
 					...existingWire,
+					changes: {},
+					original: { ...existingWire.data },
+					deletes: {},
 					...getWireDefInfo(wireDef),
 				}
 			}
@@ -140,6 +143,9 @@ export default (
 				batchid: "",
 				batchnumber: 0,
 				data: {},
+				changes: {},
+				original: {},
+				deletes: {},
 				viewOnly: false,
 				...getWireDefInfo(wireDef),
 			}

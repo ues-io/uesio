@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect, useRef } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -35,12 +35,15 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		params: context.mergeMap(params),
 	})
 
+	const viewDefHasWires = viewDef?.wires && Object.keys(viewDef?.wires).length
+	const loaded = useRef<boolean>(!viewDefHasWires)
 	// We need to get load the wires here.
 	useEffect(() => {
+		loaded.current = true
 		appDispatch()(loadViewOp(viewContext))
 	}, [viewDefId, JSON.stringify(params)])
 
-	if (!viewDef) return null
+	if (!viewDef || !loaded.current) return null
 
 	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
