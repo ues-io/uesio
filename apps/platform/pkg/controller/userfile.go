@@ -24,7 +24,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	//Attach file length to the details
 	contentLenHeader := r.Header.Get("Content-Length")
-	contentLen, err := strconv.ParseUint(contentLenHeader, 10, 64)
+	contentLen, err := strconv.ParseInt(contentLenHeader, 10, 64)
 	if err != nil {
 		err := errors.New("must attach header 'content-length' with file upload")
 		logger.LogError(err)

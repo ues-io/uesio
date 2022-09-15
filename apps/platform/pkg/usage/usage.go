@@ -1,100 +1,47 @@
 package usage
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
-	"strings"
+	"time"
 
-	"github.com/gomodule/redigo/redis"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/cache"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func RunJob() error {
+func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
 
-	logger.Log("Job Running", logger.INFO)
+	user := session.GetUserInfo()
+
+	if user.Username == "uesio" || user.Username == "boot" {
+		return nil
+	}
+
+	if user.ID == "" {
+		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
+	}
 
 	conn := cache.GetRedisConn()
 	defer conn.Close()
 
-	keys, err := redis.Strings(conn.Do("SMEMBERS", "USAGE_KEYS"))
+	currentTime := time.Now()
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+
+	conn.Send("SADD", "USAGE_KEYS", key)
+
+	if size != 0 {
+		conn.Send("INCRBY", key, size)
+
+	} else {
+		conn.Send("INCR", key)
+	}
+
+	err := conn.Flush()
 	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		return fmt.Errorf("Error Setting cache value: " + err.Error())
 	}
-
-	if len(keys) == 0 {
-		return nil
-	}
-
-	keyArgs := redis.Args{}.AddFlat(keys)
-
-	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
+	_, err = conn.Receive()
 	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-	}
-
-	_, err = conn.Do("DEL", keyArgs...)
-	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-	}
-
-	_, err = conn.Do("DEL", "USAGE_KEYS")
-	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-	}
-
-	changes := adapt.Collection{}
-	for i, key := range keys {
-		keyParts := strings.Split(key, ":")
-		if len(keyParts) != 9 {
-			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-		}
-
-		usageItem := adapt.Item{}
-		usageItem.SetField("uesio/core.user", &meta.User{
-			ID: keyParts[4],
-		})
-		usageItem.SetField("uesio/core.tenanttype", keyParts[1])
-		usageItem.SetField("uesio/core.tenantid", keyParts[2]+":"+keyParts[3])
-		usageItem.SetField("uesio/core.day", keyParts[5])
-		usageItem.SetField("uesio/core.actiontype", keyParts[6])
-		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
-		usageItem.SetField("uesio/core.metadataname", keyParts[8])
-		total, _ := strconv.ParseFloat(values[i], 64)
-		usageItem.SetField("uesio/core.total", total)
-		changes = append(changes, &usageItem)
-	}
-
-	if len(changes) > 0 {
-		requests := []datasource.SaveRequest{
-			{
-				Collection: "uesio/core.usage",
-				Wire:       "CoolWireName",
-				Changes:    &changes,
-				Options:    &adapt.SaveOptions{Upsert: true},
-			},
-		}
-
-		session, err := auth.GetStudioAdminSession()
-		if err != nil {
-			logger.LogError(err)
-			return err
-		}
-		connection, err := datasource.GetPlatformConnection(session)
-		if err != nil {
-			logger.LogError(err)
-			return err
-		}
-
-		err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
-		if err != nil {
-			return errors.New("Failed to update usage events: " + err.Error())
-		}
+		return fmt.Errorf("Error Setting cache value: " + err.Error())
 	}
 
 	return nil
