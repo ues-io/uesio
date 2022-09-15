@@ -175,7 +175,8 @@
           }
         }
       },
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["platform"]
     },
     "apps-uesio-crm": {
       "root": "libs/apps/uesio/crm",
