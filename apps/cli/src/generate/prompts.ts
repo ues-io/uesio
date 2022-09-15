@@ -1,7 +1,7 @@
 import { User } from "../auth/login"
 import inquirer from "inquirer"
 import { get, parseJSON } from "../request/request"
-import { collection, metadata } from "#uesio/ui"
+import { metadata } from "#uesio/ui"
 import { getMetadataList } from "../config/config"
 
 type BotParam = {
@@ -103,7 +103,7 @@ const promptRenderers: Record<string, PromptRenderer> = {
 			name: param.name,
 			message: param.prompt,
 			type: "list",
-			choices: collection.FIELD_TYPES,
+			choices: [],
 		}),
 	LIST: async (param) =>
 		inquirer.prompt({
