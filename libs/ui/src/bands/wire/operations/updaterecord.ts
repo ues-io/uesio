@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context, getWire } from "../../../context/context"
-import { getFullWireId, updateRecord } from ".."
+import { getFullWireId, updateRecord, setOriginal } from ".."
 import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 
@@ -19,6 +19,7 @@ export default (
 		const wire = getWire(viewId, wireId)
 		if (!wire) return context
 
+		dispatch(setOriginal({ entity: getFullWireId(viewId, wireId) }))
 		dispatch(
 			updateRecord({
 				recordId,

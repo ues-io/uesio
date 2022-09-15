@@ -151,9 +151,13 @@ const wireSlice = createSlice({
 				delete state.deletes[recordId]
 			}
 		),
+		setOriginal: createEntityReducer<EntityPayload, PlainWire>(
+			(state) => {
+				if (!state.original) state.original = { ...state.data }
+			}
+		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data }
 				if (!state.changes) state.changes = {}
 				const usePath = [recordId].concat(path)
 				const basePath = [recordId].concat([path[0]])
@@ -398,5 +402,6 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	setOriginal,
 } = wireSlice.actions
 export default wireSlice.reducer
