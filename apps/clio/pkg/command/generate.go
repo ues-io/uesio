@@ -1,20 +1,25 @@
 package command
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/auth"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
+	"github.com/thecloudmasters/clio/pkg/zip"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getMetadataList(metadataType, app, version, grouping string) ([]string, error) {
+func getMetadataList(metadataType, app, version, sessid, grouping string) ([]string, error) {
 
 	if metadataType == "" {
 		return nil, errors.New("No Metadata Type Provided for Prompt")
@@ -35,6 +40,11 @@ func getMetadataList(metadataType, app, version, grouping string) ([]string, err
 
 	sbs := &localbundlestore.LocalBundleStore{}
 
+	def, err := sbs.GetBundleDef(app, version, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	err = sbs.GetAllItems(group, app, version, conditions, nil)
 	if err != nil {
 		return nil, err
@@ -44,11 +54,34 @@ func getMetadataList(metadataType, app, version, grouping string) ([]string, err
 
 	err = group.Loop(func(item loadable.Item, index string) error {
 		bundleableItem := item.(meta.BundleableItem)
-		results = append(results, bundleableItem.GetKey())
+		// Strip off the grouping part of the key
+		key := bundleableItem.GetKey()
+		if grouping != "" {
+			key = strings.TrimPrefix(key, grouping+":")
+		}
+		results = append(results, key)
 		return nil
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	for depNamespace, dep := range def.Dependencies {
+		groupingURL := ""
+		if grouping != "" {
+			groupingURL = "/" + grouping
+		}
+		url := fmt.Sprintf("version/%s/%s/%s/metadata/types/%s/list%s", app, depNamespace, dep.Version, metadataType, groupingURL)
+
+		metadataList := map[string]routing.MetadataResponse{}
+		err = call.GetJSON(url, sessid, &metadataList)
+		if err != nil {
+			return nil, err
+		}
+
+		for key := range metadataList {
+			results = append(results, key)
+		}
 	}
 
 	return results, nil
@@ -84,7 +117,7 @@ func mergeParam(templateString string, answers map[string]interface{}) (string, 
 	return mergedValue, nil
 }
 
-func ask(param meta.BotParam, app, version string, answers map[string]interface{}) error {
+func ask(param meta.BotParam, app, version, sessid string, answers map[string]interface{}) error {
 
 	switch param.Type {
 	case "TEXT":
@@ -116,7 +149,7 @@ func ask(param meta.BotParam, app, version string, answers map[string]interface{
 		if err != nil {
 			return err
 		}
-		items, err := getMetadataList(param.MetadataType, app, version, grouping)
+		items, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
 		if err != nil {
 			return err
 		}
@@ -134,14 +167,39 @@ func ask(param meta.BotParam, app, version string, answers map[string]interface{
 		if err != nil {
 			return err
 		}
-		items, err := getMetadataList(param.MetadataType, app, version, grouping)
+		items, err := getMetadataList(param.MetadataType, app, version, sessid, grouping)
 		if err != nil {
 			return err
 		}
 		err = survey.AskOne(&survey.MultiSelect{
 			Message: param.Prompt,
 			Options: items,
-		}, &answers)
+		}, &answer)
+		if err != nil {
+			return err
+		}
+		answers[param.Name] = answer
+	case "FIELDTYPE":
+		var answer string
+		options := []string{}
+		for fieldType := range meta.GetFieldTypes() {
+			options = append(options, fieldType)
+		}
+
+		err := survey.AskOne(&survey.Select{
+			Message: param.Prompt,
+			Options: options,
+		}, &answer)
+		if err != nil {
+			return err
+		}
+		answers[param.Name] = answer
+	case "LIST":
+		var answer string
+		err := survey.AskOne(&survey.Select{
+			Message: param.Prompt,
+			Options: param.Choices,
+		}, &answer)
 		if err != nil {
 			return err
 		}
@@ -183,10 +241,10 @@ func Generate(key string) error {
 		return err
 	}
 
-	url := fmt.Sprintf("version/%s/%s/%s/bots/params/generator/%s", app, namespace, version, name)
+	paramsURL := fmt.Sprintf("version/%s/%s/%s/bots/params/generator/%s", app, namespace, version, name)
 
 	botParams := &meta.BotParams{}
-	err = call.GetJSON(url, sessid, botParams)
+	err = call.GetJSON(paramsURL, sessid, botParams)
 	if err != nil {
 		return err
 	}
@@ -194,14 +252,31 @@ func Generate(key string) error {
 	answers := map[string]interface{}{}
 
 	for _, param := range *botParams {
-		err := ask(param, app, version, answers)
+		err := ask(param, app, version, sessid, answers)
 		if err != nil {
 			return err
 		}
 	}
 
-	fmt.Println("Answers")
-	fmt.Println(answers)
+	generateURL := fmt.Sprintf("version/%s/%s/%s/metadata/generate/%s", app, namespace, version, name)
+
+	payloadBytes := &bytes.Buffer{}
+
+	err = json.NewEncoder(payloadBytes).Encode(&answers)
+	if err != nil {
+		return err
+	}
+	resp, err := call.Request("POST", generateURL, payloadBytes, sessid)
+	if err != nil {
+		return err
+	}
+
+	err = zip.Unzip(resp.Body, "bundle")
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Generate Success")
 
 	return nil
 }
