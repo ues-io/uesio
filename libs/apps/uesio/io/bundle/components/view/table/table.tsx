@@ -70,7 +70,7 @@ const Table: FC<TableProps> = (props) => {
 			fieldMode: mode,
 		})
 		const sharedProps = {
-			key: paginated.length + index,
+			key: record.getId(),
 			path: `${path}["columns"]["${index}"]`,
 			context: recordContext,
 		}
