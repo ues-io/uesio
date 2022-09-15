@@ -151,11 +151,9 @@ const wireSlice = createSlice({
 				delete state.deletes[recordId]
 			}
 		),
-		setOriginal: createEntityReducer<EntityPayload, PlainWire>(
-			(state) => {
-				if (!state.original) state.original = { ...state.data }
-			}
-		),
+		setOriginal: createEntityReducer<EntityPayload, PlainWire>((state) => {
+			if (!state.original) state.original = { ...state.data }
+		}),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
 				if (!state.changes) state.changes = {}
