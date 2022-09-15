@@ -1,0 +1,36 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+    menu:
+      paddingLeft: 0,
+      borderRadius: "8px"
+      boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px"
+      background: "#fff"
+      overflow: "hidden"
+
+    menuItem:
+      listStyle: "none"
+      padding: 0.5em 0.25em
+
+    menuItemFocused:
+      outline: "none"
+      backgroundColor: "rgb(233, 233, 233)"
+
+    menuAnimation:
+      "&-enter":
+        opacity: "0.01"
+
+      "&-enter-active":
+        opacity: 1
+        transition: opacity 150ms ease-in
+
+      "&-exit":
+        opacity: 1
+
+      "&-exit-active":
+        opacity: "0.01"
+        transition: opacity 150ms ease-in
+
+public: true
