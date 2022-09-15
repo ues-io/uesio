@@ -75,6 +75,8 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
+		response.wires.forEach((wire) => (wire.original = { ...wire.data }))
+
 		batch(() => {
 			dispatch(load([response.wires, response.collections]))
 			response.wires.forEach((wire) => {
