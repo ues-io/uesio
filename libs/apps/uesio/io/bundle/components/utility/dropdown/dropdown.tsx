@@ -6,10 +6,10 @@ import {
 } from "downshift"
 import { definition, styles } from "@uesio/ui"
 
-type Item = { label: string; onClick: () => void }
+type Item = { label: string; onSelect: () => void }
 interface DropdownProps extends definition.UtilityProps {
 	onSelect: () => void
-	options: { label: string; onClick: () => void }[]
+	options: { label: string; onSelect: () => void }[]
 	TriggerElement: React.ReactElement
 }
 
@@ -21,7 +21,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			triggerWrapper: {}
+			triggerWrapper: {},
 			menu: {
 				paddingLeft: 0,
 				background: "#fff",
@@ -42,6 +42,12 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		props
 	)
 
+	// We want to prevent crashing the dom with calling functions that dont exist.
+	const sanitizedOptions = props.options.map((o) => ({
+		label: typeof o.label === "string" ? o.label : "unnamed",
+		onSelect: typeof o.onSelect === "function" ? o.onSelect : () => null,
+	}))
+
 	const stateReducer = (
 		state: UseSelectState<Item>,
 		actionAndChanges: UseSelectStateChangeOptions<Item>
@@ -52,7 +58,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		switch (type) {
 			case ItemClick:
 			case MenuKeyDownEnter:
-				changes.selectedItem?.onClick()
+				changes.selectedItem?.onSelect()
 				return { selectedItem: props.options[0] }
 			case MenuBlur:
 				return { selectedItem: props.options[0] }
@@ -69,14 +75,19 @@ const Dropdown: FC<DropdownProps> = (props) => {
 			highlightedIndex,
 			getItemProps,
 		} = useSelect({
-			items: props.options,
+			items: sanitizedOptions,
 			itemToString,
 			stateReducer,
 		})
 
 		return (
 			<div className={classes.root}>
-				<span classes={classes.triggerWrapper} {...getToggleButtonProps()}>{props.TriggerElement}</span>
+				<span
+					classes={classes.triggerWrapper}
+					{...getToggleButtonProps()}
+				>
+					{props.TriggerElement}
+				</span>
 
 				<ul {...getMenuProps()} className={classes.menu}>
 					{isOpen &&
@@ -84,13 +95,15 @@ const Dropdown: FC<DropdownProps> = (props) => {
 							<li
 								className={styles.cx([
 									classes.item,
-									highlightedIndex === index
-										&& classes.itemHighlighted,
+									highlightedIndex === index &&
+										classes.itemHighlighted,
 								])}
 								key={index}
 								{...getItemProps({ item, index })}
 							>
-								<span className={classes.itemLabel}>{item.label}</span>
+								<span className={classes.itemLabel}>
+									{item.label}
+								</span>
 							</li>
 						))}
 				</ul>
