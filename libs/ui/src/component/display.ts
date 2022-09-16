@@ -174,7 +174,7 @@ const getWiresForConditions = (
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
-	items: T[],
+	items: T[] | undefined,
 	context: Context
 ) => {
 	if (!items) return []
