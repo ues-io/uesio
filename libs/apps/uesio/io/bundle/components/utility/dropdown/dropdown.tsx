@@ -1,129 +1,104 @@
-import React, { FC, useState, useRef, useEffect } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { CSSTransition } from "react-transition-group"
-import type { Placement } from "@popperjs/core"
+import React, { FC } from "react"
+import {
+	useSelect,
+	UseSelectStateChangeOptions,
+	UseSelectState,
+} from "downshift"
+import { definition, styles } from "@uesio/ui"
 
-const Popper = component.getUtility("uesio/io.popper")
-
+type Item = { label: string; onClick: () => void }
 interface DropdownProps extends definition.UtilityProps {
 	onSelect: () => void
 	options: { label: string; onClick: () => void }[]
 	TriggerElement: React.ReactElement
-	placement?: Placement
 }
 
 const Dropdown: FC<DropdownProps> = (props) => {
-	const { options, context, TriggerElement } = props
-	const [anchorEl, setAnchorEl] = useState<HTMLSpanElement | null>(null)
-	const [focusedIndex, setFocusedIndex] = useState(0)
-	const refs = useRef<(HTMLLIElement | null)[]>([])
-
-	const [isOpen, setIsOpen] = useState(false)
+	function itemToString(item: Item) {
+		return item ? item.label : ""
+	}
 
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
+			triggerWrapper: {}
 			menu: {
 				paddingLeft: 0,
 				background: "#fff",
 				overflow: "hidden",
 				margin: 0,
+				position: "absolute",
 			},
-			menuItem: {
+			item: {
 				listStyle: "none",
 				cursor: "pointer",
 			},
-			menuItemFocused: {
+			itemHighlighted: {
 				outline: "none",
 			},
+			itemLabel: {},
 			menuAnimation: {},
 		},
 		props
 	)
 
-	const keyPressHandler = (e: KeyboardEvent) => {
-		if (e.key === "ArrowUp") {
-			setFocusedIndex((curr) =>
-				curr === 0 ? options.length - 1 : curr - 1
-			)
-		}
-		if (e.key === "ArrowDown") {
-			setFocusedIndex((curr) =>
-				curr === options.length - 1 ? 0 : curr + 1
-			)
-		}
-		if (e.key === "Enter") {
-			setFocusedIndex((curr) => {
-				options[curr].onClick()
-				return curr
-			})
+	const stateReducer = (
+		state: UseSelectState<Item>,
+		actionAndChanges: UseSelectStateChangeOptions<Item>
+	) => {
+		const { type, changes } = actionAndChanges
+		const { ItemClick, MenuKeyDownEnter, MenuBlur } =
+			useSelect.stateChangeTypes
+		switch (type) {
+			case ItemClick:
+			case MenuKeyDownEnter:
+				changes.selectedItem?.onClick()
+				return { selectedItem: props.options[0] }
+			case MenuBlur:
+				return { selectedItem: props.options[0] }
+			default:
+				return changes
 		}
 	}
 
-	useEffect(() => {
-		refs.current[focusedIndex]?.focus()
-	}, [focusedIndex])
+	function Select() {
+		const {
+			isOpen,
+			getToggleButtonProps,
+			getMenuProps,
+			highlightedIndex,
+			getItemProps,
+		} = useSelect({
+			items: props.options,
+			itemToString,
+			stateReducer,
+		})
 
-	useEffect(() => {
-		setFocusedIndex(0)
-		refs.current[0]?.focus()
-		if (isOpen) window.addEventListener("keyup", keyPressHandler)
-		return () => {
-			window.removeEventListener("keyup", keyPressHandler)
-		}
-	}, [isOpen])
+		return (
+			<div className={classes.root}>
+				<span classes={classes.triggerWrapper} {...getToggleButtonProps()}>{props.TriggerElement}</span>
 
-	return (
-		<div className={classes.root}>
-			<span
-				aria-expanded={isOpen}
-				tabIndex={-1}
-				ref={setAnchorEl}
-				onClick={() => setIsOpen(!isOpen)}
-			>
-				{TriggerElement}
-			</span>
+				<ul {...getMenuProps()} className={classes.menu}>
+					{isOpen &&
+						props.options.map((item, index) => (
+							<li
+								className={styles.cx([
+									classes.item,
+									highlightedIndex === index
+										&& classes.itemHighlighted,
+								])}
+								key={index}
+								{...getItemProps({ item, index })}
+							>
+								<span className={classes.itemLabel}>{item.label}</span>
+							</li>
+						))}
+				</ul>
+			</div>
+		)
+	}
 
-			<CSSTransition
-				in={isOpen}
-				timeout={300}
-				classNames={classes.menuAnimation}
-			>
-				{isOpen ? (
-					<Popper
-						referenceEl={anchorEl}
-						context={context}
-						placement={props.placement || "bottom-end"}
-						onOutsideClick={() => setIsOpen(false)}
-					>
-						<ul className={classes.menu}>
-							{options?.map((el, i) => (
-								<li
-									tabIndex={-1}
-									className={styles.cx([
-										classes.menuItem,
-										i === focusedIndex
-											? classes.menuItemFocused
-											: null,
-									])}
-									onMouseOver={() => {
-										setFocusedIndex(i)
-									}}
-									onClick={el.onClick}
-									key={el.label}
-									ref={(el) => (refs.current[i] = el)}
-								>
-									{el.label}
-								</li>
-							))}
-						</ul>
-					</Popper>
-				) : (
-					() => null
-				)}
-			</CSSTransition>
-		</div>
-	)
+	return <Select />
 }
 
 export default Dropdown
