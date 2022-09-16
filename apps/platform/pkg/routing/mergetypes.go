@@ -64,8 +64,8 @@ type MergeData struct {
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	BuildMode bool
-	Builder   *BuilderMergeData `json:"builder"`
+	BuildMode bool                 `json:"-"`
+	Builder   *BuilderMergeData    `json:"builder"`
 	*PreloadMetadata
 }
 
