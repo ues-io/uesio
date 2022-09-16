@@ -5,10 +5,7 @@ function view(bot) {
 	var wirename = bot.params.get("wirename")
 
 	var fieldsYaml = bot.repeatString(fields, "${key}:\n")
-	var tableColumnsYaml = bot.repeatString(
-		fields,
-		"- uesio/io.column:\n    field: ${key}\n"
-	)
+	var tableColumnsYaml = bot.repeatString(fields, "- field: ${key}\n")
 
 	var definition = bot.mergeYamlTemplate(
 		{

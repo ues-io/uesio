@@ -2,11 +2,13 @@ import { CSSInterpolation } from "@emotion/css"
 import { ReactNode } from "react"
 import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
+import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
 
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
 	"uesio.variant"?: MetadataKey
+	"uesio.display"?: DisplayCondition[]
 } & DefinitionMap
 
 export type YamlDoc = yaml.Document<yaml.Node>

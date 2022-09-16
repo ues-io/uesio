@@ -7,6 +7,7 @@ import { getWiresFromDefinitonOrContext, load, getFullWireId } from ".."
 import { ThunkFunc } from "../../../store/store"
 import createrecord from "./createrecord"
 import { batch } from "react-redux"
+import { initExistingWire } from "./initialize"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
@@ -75,8 +76,12 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			wires: loadRequests,
 		})
 
+		const processedWires = response.wires.map((wire) =>
+			initExistingWire(wire, undefined)
+		)
+
 		batch(() => {
-			dispatch(load([response.wires, response.collections]))
+			dispatch(load([processedWires, response.collections]))
 			response.wires.forEach((wire) => {
 				if (wire?.create) {
 					dispatch(createrecord(context, wire.name))

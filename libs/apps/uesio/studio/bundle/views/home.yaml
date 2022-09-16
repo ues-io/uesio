@@ -169,7 +169,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New App
       width: 400px
-      height: 600px
+      height: 640px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit
