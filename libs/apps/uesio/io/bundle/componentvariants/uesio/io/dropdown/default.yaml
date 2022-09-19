@@ -10,11 +10,11 @@ definition:
       background: "#fff"
       overflow: "hidden"
 
-    menuItem:
+    item:
       listStyle: "none"
       padding: 0.5em 0.25em
 
-    menuItemFocused:
+    itemHighlighted:
       outline: "none"
       backgroundColor: "rgb(233, 233, 233)"
 

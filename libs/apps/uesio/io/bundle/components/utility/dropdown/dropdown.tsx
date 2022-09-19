@@ -4,14 +4,17 @@ import {
 	UseSelectStateChangeOptions,
 	UseSelectState,
 } from "downshift"
-import { definition, styles } from "@uesio/ui"
+import type { Placement } from "@popperjs/core"
+import { definition, styles, component } from "@uesio/ui"
 
 type Item = { label: string; onSelect: () => void }
 interface DropdownProps extends definition.UtilityProps {
 	onSelect: () => void
 	options: { label: string; onSelect: () => void }[]
-	TriggerElement: React.ReactElement
+	trigger: React.ReactElement
+	placement: Placement
 }
+const Popper = component.getUtility("uesio/io.popper")
 
 const Dropdown: FC<DropdownProps> = (props) => {
 	function itemToString(item: Item) {
@@ -20,7 +23,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {},
+			root: { position: "relative" },
 			triggerWrapper: {},
 			menu: {
 				paddingLeft: 0,
@@ -67,9 +70,9 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		}
 	}
 
-	function Select() {
+	const Select = () => {
 		const {
-			isOpen,
+			// isOpen,
 			getToggleButtonProps,
 			getMenuProps,
 			highlightedIndex,
@@ -79,34 +82,50 @@ const Dropdown: FC<DropdownProps> = (props) => {
 			itemToString,
 			stateReducer,
 		})
+		const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(
+			null
+		)
+
+		const isOpen = true
 
 		return (
-			<div className={classes.root}>
+			<div ref={setAnchorEl} className={classes.root}>
 				<span
 					classes={classes.triggerWrapper}
 					{...getToggleButtonProps()}
 				>
-					{props.TriggerElement}
+					{props.trigger}
 				</span>
 
-				<ul {...getMenuProps()} className={classes.menu}>
-					{isOpen &&
-						props.options.map((item, index) => (
-							<li
-								className={styles.cx([
-									classes.item,
-									highlightedIndex === index &&
-										classes.itemHighlighted,
-								])}
-								key={index}
-								{...getItemProps({ item, index })}
-							>
-								<span className={classes.itemLabel}>
-									{item.label}
-								</span>
-							</li>
-						))}
-				</ul>
+				{isOpen ? (
+					<Popper
+						referenceEl={anchorEl}
+						context={props.context}
+						placement={props.placement || "right-start"}
+						useFirstRelativeParent
+					>
+						<ul {...getMenuProps()} className={classes.menu}>
+							{props.options.map((item, index) => (
+								<li
+									className={styles.cx([
+										classes.item,
+										highlightedIndex === index &&
+											classes.itemHighlighted,
+									])}
+									key={index}
+									{...getItemProps({ item, index })}
+								>
+									<span className={classes.itemLabel}>
+										{item.label}
+									</span>
+								</li>
+							))}
+						</ul>
+					</Popper>
+				) : (
+					// According to a11y standards, we should always show at least the ul.
+					<ul {...getMenuProps()} />
+				)}
 			</div>
 		)
 	}
