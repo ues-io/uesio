@@ -71,7 +71,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 
 	const Select = () => {
 		const {
-			// isOpen,
+			isOpen,
 			getToggleButtonProps,
 			getMenuProps,
 			highlightedIndex,
@@ -84,8 +84,6 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(
 			null
 		)
-
-		const isOpen = true
 
 		return (
 			<div ref={setAnchorEl} className={classes.root}>
