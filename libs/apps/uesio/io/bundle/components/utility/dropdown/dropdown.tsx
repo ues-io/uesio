@@ -9,10 +9,9 @@ import { definition, styles, component } from "@uesio/ui"
 
 type Item = { label: string; onSelect: () => void }
 interface DropdownProps extends definition.UtilityProps {
-	onSelect: () => void
 	options: { label: string; onSelect: () => void }[]
 	trigger: React.ReactElement
-	placement: Placement
+	placement?: Placement
 }
 const Popper = component.getUtility("uesio/io.popper")
 
