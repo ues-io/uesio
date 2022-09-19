@@ -46,7 +46,6 @@ var ORDERED_ITEMS = [...]string{
 	"signupmethods",
 }
 
-// Deploy func
 func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	workspace := session.GetWorkspace()

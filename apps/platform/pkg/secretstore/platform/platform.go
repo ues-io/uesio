@@ -7,11 +7,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-// SecretStore struct
 type SecretStore struct {
 }
 
-// Get function
 func (ss *SecretStore) Get(key string) (string, error) {
 	var s meta.SecretStoreValue
 	session, err := auth.GetStudioAdminSession()
@@ -36,7 +34,6 @@ func (ss *SecretStore) Get(key string) (string, error) {
 	return s.Value, nil
 }
 
-// Set function
 func (ss *SecretStore) Set(key, value string) error {
 	s := meta.SecretStoreValue{
 		Key:   key,

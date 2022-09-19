@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// FeatureFlagStore interface
 type FeatureFlagStore interface {
 	Get(user string, assignments *meta.FeatureFlagAssignmentCollection, session *sess.Session) error
 	Set(flag *meta.FeatureFlagAssignment, session *sess.Session) error
@@ -54,7 +53,6 @@ func GetFeatureFlagStore(configStoreType string) (FeatureFlagStore, error) {
 	return featureFlagAssignment, nil
 }
 
-// RegisterFeatureFlagStore function
 func RegisterFeatureFlagStore(name string, store FeatureFlagStore) {
 	featureFlagStoreMap[name] = store
 }

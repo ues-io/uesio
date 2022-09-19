@@ -14,7 +14,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Retrieve func
 func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -122,7 +121,6 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 }
 
-// Zip function
 func Zip(writer io.Writer, files []bundlestore.ItemStream, session *sess.Session) error {
 
 	// Create a new zip archive.

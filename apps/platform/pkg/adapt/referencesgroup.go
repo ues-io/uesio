@@ -6,7 +6,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// ReferenceGroupRequest type
 type ReferenceGroupRequest struct {
 	Fields    []LoadRequestField
 	FieldsMap map[string]bool
@@ -14,10 +13,8 @@ type ReferenceGroupRequest struct {
 	Field     *FieldMetadata
 }
 
-// ReferenceGroupRegistry type
 type ReferenceGroupRegistry map[string]*ReferenceGroupRequest
 
-// AddFields function
 func (rr *ReferenceGroupRequest) AddFields(fields []LoadRequestField) {
 	for _, field := range fields {
 		_, ok := rr.FieldsMap[field.ID]
@@ -28,7 +25,6 @@ func (rr *ReferenceGroupRequest) AddFields(fields []LoadRequestField) {
 	}
 }
 
-// Add function
 func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *FieldMetadata, collectionMetadata *CollectionMetadata) *ReferenceGroupRequest {
 
 	rgr := &ReferenceGroupRequest{
