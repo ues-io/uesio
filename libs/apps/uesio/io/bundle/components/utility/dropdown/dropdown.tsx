@@ -10,8 +10,9 @@ import { definition, styles, component } from "@uesio/ui"
 type Item = { label: string; onSelect: () => void }
 interface DropdownProps extends definition.UtilityProps {
 	options: { label: string; onSelect: () => void }[]
-	trigger: React.ReactElement
+	trigger: (isOpen: boolean) => FC<{ isOpen: boolean }>
 	placement?: Placement
+	onToggle?: (isOpen: boolean) => void
 }
 const Popper = component.getUtility("uesio/io.popper")
 
@@ -23,7 +24,9 @@ const Dropdown: FC<DropdownProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: { position: "relative" },
-			triggerWrapper: {},
+			triggerWrapper: {
+				cursor: "pointer",
+			},
 			menu: {
 				paddingLeft: 0,
 				background: "#fff",
@@ -50,26 +53,32 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		onSelect: typeof o.onSelect === "function" ? o.onSelect : () => null,
 	}))
 
-	const stateReducer = (
-		state: UseSelectState<Item>,
-		actionAndChanges: UseSelectStateChangeOptions<Item>
-	) => {
-		const { type, changes } = actionAndChanges
-		const { ItemClick, MenuKeyDownEnter, MenuBlur } =
-			useSelect.stateChangeTypes
-		switch (type) {
-			case ItemClick:
-			case MenuKeyDownEnter:
-				changes.selectedItem?.onSelect()
-				return { selectedItem: props.options[0] }
-			case MenuBlur:
-				return { selectedItem: props.options[0] }
-			default:
-				return changes
-		}
-	}
-
 	const Select = () => {
+		const [itemToFire, setItemToFire] = React.useState<
+			Item | null | undefined
+		>(null)
+		React.useEffect(() => {
+			itemToFire?.onSelect()
+		}, [itemToFire])
+		const stateReducer = (
+			state: UseSelectState<Item>,
+			actionAndChanges: UseSelectStateChangeOptions<Item>
+		) => {
+			const { type, changes } = actionAndChanges
+			const { ItemClick, MenuKeyDownEnter, MenuBlur } =
+				useSelect.stateChangeTypes
+			switch (type) {
+				case ItemClick:
+				case MenuKeyDownEnter:
+					// changes.selectedItem?.onSelect()
+					setItemToFire(changes.selectedItem)
+					return { selectedItem: props.options[0] }
+				case MenuBlur:
+					return { selectedItem: props.options[0] }
+				default:
+					return changes
+			}
+		}
 		const {
 			isOpen,
 			getToggleButtonProps,
@@ -81,25 +90,36 @@ const Dropdown: FC<DropdownProps> = (props) => {
 			itemToString,
 			stateReducer,
 		})
-		const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(
+		const [anchorEl, setAnchorEl] = React.useState<HTMLSpanElement | null>(
 			null
 		)
 
+		// React.useEffect(() => {
+		// 	if (!highlightedIndex) return
+		// 	const item = props.options[0]
+		// 	console.log({ highlightedIndex })
+		// 	item && item.onSelect()
+		// }, [highlightedIndex])
+
+		// React.useEffect(() => {
+		// 	props.onToggle && props.onToggle(isOpen)
+		// }, [isOpen])
+
 		return (
-			<div ref={setAnchorEl} className={classes.root}>
-				<span
-					classes={classes.triggerWrapper}
+			<div className={classes.root}>
+				<div
+					className={classes.triggerWrapper}
 					{...getToggleButtonProps()}
 				>
-					{props.trigger}
-				</span>
+					<span ref={setAnchorEl}>{props.trigger(isOpen)}</span>
+				</div>
 
 				{isOpen ? (
 					<Popper
 						referenceEl={anchorEl}
 						context={props.context}
 						placement={props.placement || "right-start"}
-						useFirstRelativeParent
+						offset={[0, 0]}
 					>
 						<ul {...getMenuProps()} className={classes.menu}>
 							{props.options.map((item, index) => (
@@ -121,7 +141,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 					</Popper>
 				) : (
 					// According to a11y standards, we should always show at least the ul.
-					<ul {...getMenuProps()} />
+					<ul {...getMenuProps()} style={{ display: "none" }} />
 				)}
 			</div>
 		)
@@ -129,5 +149,7 @@ const Dropdown: FC<DropdownProps> = (props) => {
 
 	return <Select />
 }
+
+Dropdown.displayName = "Dropdown"
 
 export default Dropdown
