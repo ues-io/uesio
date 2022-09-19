@@ -2,7 +2,6 @@ package loadable
 
 type GroupIterator func(item Item, index string) error
 
-// Group interface
 type Group interface {
 	GetItem(index int) Item
 	Loop(iter GroupIterator) error
@@ -15,7 +14,6 @@ type Gettable interface {
 	GetField(string) (interface{}, error)
 }
 
-// Item interface
 type Item interface {
 	Gettable
 	SetField(string, interface{}) error

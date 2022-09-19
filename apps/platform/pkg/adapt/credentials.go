@@ -8,10 +8,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Credentials struct
 type Credentials map[string]string
 
-// GetHash function
 func (c *Credentials) GetHash() string {
 	keys := make([]string, len(*c))
 	i := 0

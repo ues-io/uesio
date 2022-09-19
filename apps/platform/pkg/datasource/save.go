@@ -74,7 +74,6 @@ type SaveOptions struct {
 	Metadata    *adapt.MetadataCache
 }
 
-// Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 	return SaveWithOptions(requests, session, nil)
 }

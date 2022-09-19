@@ -5,7 +5,6 @@ import (
 	"net/url"
 )
 
-// FileDetails struct
 type FileDetails struct {
 	ContentLength   int64
 	Name            string
@@ -15,7 +14,6 @@ type FileDetails struct {
 	FieldID         string
 }
 
-// NewFileDetails function
 func NewFileDetails(query url.Values) (*FileDetails, error) {
 
 	name := query.Get("name")

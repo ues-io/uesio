@@ -67,7 +67,6 @@ func LogWithTrace(r *http.Request, message, severity string) {
 	})
 }
 
-// Log function
 func Log(message, severity string) {
 	log.Println(Entry{
 		Message:  message,
@@ -75,12 +74,10 @@ func Log(message, severity string) {
 	})
 }
 
-// LogError function
 func LogError(err error) {
 	Log(err.Error(), ERROR)
 }
 
-// LogErrorWithTrace function
 func LogErrorWithTrace(r *http.Request, err error) {
 	LogWithTrace(r, err.Error(), ERROR)
 }
