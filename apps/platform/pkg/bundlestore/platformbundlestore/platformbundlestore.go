@@ -17,7 +17,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// PlatformBundleStore struct
 type PlatformBundleStore struct {
 }
 
@@ -48,7 +47,6 @@ func getStream(namespace string, version string, objectname string, filename str
 
 }
 
-// GetItem function
 func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()

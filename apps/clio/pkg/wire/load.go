@@ -1,8 +1,6 @@
 package wire
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 
 	"github.com/thecloudmasters/clio/pkg/call"
@@ -44,7 +42,7 @@ func LoadOne(collectionName string, fields []adapt.LoadRequestField, conditions 
 
 func Load(collectionName string, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) (adapt.Collection, error) {
 
-	payload := LoadReqBatch{
+	payload := &LoadReqBatch{
 		Wires: []LoadRequest{
 			{
 				CollectionName: collectionName,
@@ -57,28 +55,14 @@ func Load(collectionName string, fields []adapt.LoadRequestField, conditions []a
 		},
 	}
 
-	payloadBytes := &bytes.Buffer{}
-
-	err := json.NewEncoder(payloadBytes).Encode(&payload)
-	if err != nil {
-		return nil, err
-	}
-
 	sessid, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := call.Request("POST", "site/wires/load", payloadBytes, sessid)
-	if err != nil {
-		return nil, err
-	}
+	loadResponse := &LoadResBatch{}
 
-	defer resp.Body.Close()
-
-	loadResponse := LoadResBatch{}
-
-	err = json.NewDecoder(resp.Body).Decode(&loadResponse)
+	err = call.PostJSON("site/wires/load", sessid, payload, loadResponse)
 	if err != nil {
 		return nil, err
 	}

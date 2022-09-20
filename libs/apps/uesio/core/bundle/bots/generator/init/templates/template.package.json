@@ -4,7 +4,6 @@
 	"devDependencies": {
 		"@types/react": "^17.0.39",
 		"@uesio/ui": "0.0.6",
-		"@uesio/cli": "0.0.4",
 		"react": "^17.0.2"
 	}
 }

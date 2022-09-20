@@ -5,14 +5,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// CallBotAPI type
 type CallBotAPI struct {
 	session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
 	connection adapt.Connection
 }
 
-// Save function
 func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
 	requests := []SaveRequest{
 		{

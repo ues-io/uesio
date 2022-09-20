@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
-// ConfigStore struct
 type ConfigStore struct {
 }
 
@@ -31,7 +30,6 @@ var configValues = map[string]string{
 	"uesio/core:bundlestore_bucket":               os.Getenv("UESIO_BUNDLES_BUCKET_NAME"),
 }
 
-// Get function
 func (cs *ConfigStore) Get(key string) (string, error) {
 	value, ok := configValues[key]
 	if !ok {
@@ -41,7 +39,6 @@ func (cs *ConfigStore) Get(key string) (string, error) {
 	return value, nil
 }
 
-// Set function
 func (cs *ConfigStore) Set(key, value string) error {
 	return errors.New("You cannot set config values in the environment store")
 }

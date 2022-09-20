@@ -69,7 +69,6 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// DownloadUserFile function
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")

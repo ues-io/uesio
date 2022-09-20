@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// ServeFile serves a file
 func ServeFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]

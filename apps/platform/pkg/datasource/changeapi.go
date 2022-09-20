@@ -4,13 +4,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-// ChangeAPI type
 type ChangeAPI struct {
 	change *adapt.ChangeItem
 	errors []string
 }
 
-// Get function
 func (c *ChangeAPI) Get(fieldName string) interface{} {
 	val, err := c.change.FieldChanges.GetField(fieldName)
 	if err != nil {
@@ -19,7 +17,6 @@ func (c *ChangeAPI) Get(fieldName string) interface{} {
 	return val
 }
 
-// GetOld function
 func (c *ChangeAPI) GetOld(fieldName string) interface{} {
 	if c.change.OldValues == nil {
 		return nil
@@ -31,12 +28,10 @@ func (c *ChangeAPI) GetOld(fieldName string) interface{} {
 	return val
 }
 
-// Set function
 func (c *ChangeAPI) Set(fieldName string, value interface{}) {
 	_ = c.change.FieldChanges.SetField(fieldName, value)
 }
 
-// AddError function
 func (c *ChangeAPI) AddError(message string) {
 	c.errors = append(c.errors, message)
 }

@@ -16,7 +16,6 @@ type PlatformLoadOptions struct {
 	Connection         adapt.Connection
 }
 
-// RecordNotFoundError struct
 type RecordNotFoundError struct {
 	message string
 }

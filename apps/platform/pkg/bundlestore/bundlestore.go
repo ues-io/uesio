@@ -12,7 +12,6 @@ import (
 
 var bundleStoreMap = map[string]BundleStore{}
 
-// RegisterBundleStore function
 func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
 }
@@ -25,21 +24,18 @@ func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	return adapter, nil
 }
 
-// PermissionError struct
 type PermissionError struct {
 	message string
 }
 
 func (e *PermissionError) Error() string { return e.message }
 
-// NewPermissionError creates a new permission error
 func NewPermissionError(message string) *PermissionError {
 	return &PermissionError{
 		message: message,
 	}
 }
 
-// BundleStore interface
 type BundleStore interface {
 	GetItem(item meta.BundleableItem, version string, session *sess.Session) error
 	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error
@@ -55,7 +51,6 @@ type BundleStore interface {
 	DeleteBundle(namespace, version string, session *sess.Session) error
 }
 
-// GetBundleStore function
 func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error) {
 	// If we're in a workspace context and the namespace we're looking for is that workspace,
 	// use the workspace bundlestore
@@ -79,7 +74,6 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	return GetBundleStoreByType("platform")
 }
 
-// DecodeYAML function
 func DecodeYAML(v interface{}, reader io.Reader) error {
 	decoder := yaml.NewDecoder(reader)
 	err := decoder.Decode(v)

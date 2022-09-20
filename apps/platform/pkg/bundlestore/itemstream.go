@@ -28,14 +28,12 @@ func (is *ItemStreams) AddFile(fileName, fileType string, stream io.Reader) {
 	*is = append(*is, file)
 }
 
-// ItemStream struct
 type ItemStream struct {
 	Type     string
 	FileName string
 	File     io.Reader
 }
 
-// ReadItemStream struct
 type ReadItemStream struct {
 	Type     string
 	FileName string

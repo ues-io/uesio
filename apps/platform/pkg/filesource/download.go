@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-// Download function
 func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
 
 	userFile := meta.UserFileMetadata{}

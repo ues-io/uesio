@@ -10,6 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+type SaveRequestBatch struct {
+	Wires []SaveRequest `json:"wires"`
+}
+
 type SaveRequest struct {
 	Collection string             `json:"collection"`
 	Wire       string             `json:"wire"`
@@ -74,7 +78,6 @@ type SaveOptions struct {
 	Metadata    *adapt.MetadataCache
 }
 
-// Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 	return SaveWithOptions(requests, session, nil)
 }
