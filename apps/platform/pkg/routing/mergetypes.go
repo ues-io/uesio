@@ -25,6 +25,7 @@ type UserMergeData struct {
 	Profile   string `json:"profile"`
 	Site      string `json:"site"`
 	ID        string `json:"id"`
+	Username  string `json:"username"`
 	PictureID string `json:"picture"`
 	Language  string `json:"language"`
 }
@@ -64,8 +65,8 @@ type MergeData struct {
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	BuildMode bool
-	Builder   *BuilderMergeData `json:"builder"`
+	BuildMode bool                 `json:"-"`
+	Builder   *BuilderMergeData    `json:"builder"`
 	*PreloadMetadata
 }
 

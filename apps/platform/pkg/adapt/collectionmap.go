@@ -6,30 +6,25 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
-// CollectionMap struct
 type CollectionMap struct {
 	Data map[string]Item
 	IDs  []string
 }
 
-// GetItem function
 func (c *CollectionMap) GetItem(index int) loadable.Item {
 	key := c.IDs[index]
 	item := c.Data[key]
 	return &item
 }
 
-// NewItem function
 func (c *CollectionMap) NewItem() loadable.Item {
 	return nil
 }
 
-// GetItems function
 func (c *CollectionMap) GetItems() interface{} {
 	return nil
 }
 
-// Loop function
 func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
 	for index, key := range c.IDs {
 		err := iter(c.GetItem(index), key)
@@ -40,7 +35,6 @@ func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (c *CollectionMap) Len() int {
 	return len(c.Data)
 }

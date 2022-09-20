@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// FeatureFlagStore struct
 type FeatureFlagStore struct {
 }
 

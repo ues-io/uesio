@@ -3,11 +3,7 @@ package config
 import "github.com/zalando/go-keyring"
 
 func GetSessionID() (string, error) {
-	appName, err := GetApp()
-	if err != nil {
-		return "", err
-	}
-	id, err := keyring.Get("uesio", appName)
+	id, err := keyring.Get("uesio", "clio")
 	if err != nil && err != keyring.ErrNotFound {
 		return "", err
 	}
@@ -15,11 +11,7 @@ func GetSessionID() (string, error) {
 }
 
 func SetSessionID(id string) error {
-	appName, err := GetApp()
-	if err != nil {
-		return err
-	}
-	return keyring.Set("uesio", appName, id)
+	return keyring.Set("uesio", "clio", id)
 }
 
 func DeleteSessionID() error {

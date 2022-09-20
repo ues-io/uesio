@@ -1,6 +1,6 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
 
-interface TableDefinition extends definition.BaseDefinition {
+type TableDefinition = {
 	id: string
 	wire: string
 	mode: context.FieldMode
@@ -8,7 +8,7 @@ interface TableDefinition extends definition.BaseDefinition {
 	rowactions?: RowAction[]
 	rownumbers: boolean
 	pagesize: string
-}
+} & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition

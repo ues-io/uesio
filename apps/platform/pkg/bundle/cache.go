@@ -14,7 +14,6 @@ func init() {
 	doCache = os.Getenv("UESIO_CACHE_SITE_BUNDLES") == "true"
 }
 
-// GetFileListFromCache function
 func GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]string, bool) {
 	if !doCache {
 		return nil, false
@@ -26,7 +25,6 @@ func GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]
 	return nil, false
 }
 
-// AddFileListToCache function
 func AddFileListToCache(basePath string, conditions meta.BundleConditions, files []string) {
 	if !doCache {
 		return
@@ -34,7 +32,6 @@ func AddFileListToCache(basePath string, conditions meta.BundleConditions, files
 	localcache.SetCacheEntry("file-list", basePath+fmt.Sprint(conditions), files)
 }
 
-// GetItemFromCache function
 func GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
 	if !doCache {
 		return nil, false
@@ -46,7 +43,6 @@ func GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.Bun
 	return nil, ok
 }
 
-// AddItemToCache function
 func AddItemToCache(item meta.BundleableItem, namespace, version string) {
 	if !doCache {
 		return

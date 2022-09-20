@@ -9,14 +9,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/cache"
 )
 
-// RedisSessionStore struct
 type RedisSessionStore struct{}
 
 func getSessionKey(id string) string {
 	return "session:" + id
 }
 
-// NewRedisSessionStore func
 func NewRedisSessionStore() session.Store {
 	s := &RedisSessionStore{}
 	return s

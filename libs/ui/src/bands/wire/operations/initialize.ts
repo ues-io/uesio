@@ -1,4 +1,4 @@
-import { ThunkFunc } from "../../../store/store"
+import { RootState, ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { init, selectWire } from ".."
 import {
@@ -26,7 +26,7 @@ const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 	fields: getFieldsRequest(wireDef.fields) || [],
 })
 
-const initializeViewOnlyWire = (
+const initViewOnlyWire = (
 	viewId: string,
 	wirename: string,
 	wireDef: ViewOnlyWireDefinition,
@@ -98,6 +98,49 @@ const initializeViewOnlyWire = (
 	}
 }
 
+const initExistingWire = (
+	existingWire: PlainWire,
+	wireDef: RegularWireDefinition | undefined
+) => ({
+	...existingWire,
+	changes: {},
+	original: { ...existingWire.data },
+	deletes: {},
+	...(wireDef && getWireDefInfo(wireDef)),
+})
+
+const initWire = (
+	state: RootState,
+	viewId: string,
+	wirename: string,
+	wireDef: WireDefinition,
+	existingWire: PlainWire | undefined,
+	collections: PlainCollectionMap
+) => {
+	if (wireDef.viewOnly) {
+		return initViewOnlyWire(viewId, wirename, wireDef, collections)
+	}
+
+	if (existingWire) {
+		return initExistingWire(existingWire, wireDef)
+	}
+
+	return {
+		view: viewId || "",
+		name: wirename,
+		batchid: "",
+		batchnumber: 0,
+		data: {},
+		changes: {},
+		original: {},
+		deletes: {},
+		viewOnly: false,
+		...getWireDefInfo(wireDef),
+	}
+}
+
+export { initExistingWire }
+
 export default (
 		context: Context,
 		wireDefs: Record<string, WireDefinition | undefined>
@@ -116,33 +159,17 @@ export default (
 				wireDefs[wirename] || viewDef?.definition?.wires?.[wirename]
 			if (!wireDef) throw new Error("Could not get wire def")
 			const existingWire = selectWire(state, viewId, wirename)
-
 			if (wireDef.viewOnly) {
 				viewOnlyDefs[wirename] = wireDef
-				return initializeViewOnlyWire(
-					viewId,
-					wirename,
-					wireDef,
-					collections
-				)
 			}
-
-			if (existingWire) {
-				return {
-					...existingWire,
-					...getWireDefInfo(wireDef),
-				}
-			}
-
-			return {
-				view: viewId || "",
-				name: wirename,
-				batchid: "",
-				batchnumber: 0,
-				data: {},
-				viewOnly: false,
-				...getWireDefInfo(wireDef),
-			}
+			return initWire(
+				state,
+				viewId,
+				wirename,
+				wireDef,
+				existingWire,
+				collections
+			)
 		})
 
 		dispatch(init([initializedWires, collections]))

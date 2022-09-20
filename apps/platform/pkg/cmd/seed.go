@@ -67,6 +67,27 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
+func setGuestUser(session *sess.Session, connection adapt.Connection) error {
+	if session == nil {
+		anonSession, err := auth.GetStudioAnonSession()
+		if err != nil {
+			return err
+		}
+
+		session = anonSession
+	}
+
+	user, err := auth.GetUserByKey("guest", session, connection)
+	if err != nil {
+		return err
+	}
+
+	sess.GUEST_USER = user
+
+	return nil
+
+}
+
 func setSystemUser(session *sess.Session, connection adapt.Connection) error {
 	if session == nil {
 		anonSession, err := auth.GetStudioAnonSession()
@@ -81,7 +102,7 @@ func setSystemUser(session *sess.Session, connection adapt.Connection) error {
 		return err
 	}
 
-	auth.SYSTEM_USER = user
+	sess.SYSTEM_USER = user
 
 	return nil
 
