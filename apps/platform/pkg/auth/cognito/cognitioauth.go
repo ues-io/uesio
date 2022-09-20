@@ -153,3 +153,43 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		Subject: *signUpOutput.UserSub,
 	}, nil
 }
+
+func (c *Connection) ResetPassword(payload map[string]interface{}, session *sess.Session) error {
+
+	username, err := auth.GetPayloadValue(payload, "username")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+	password, err := auth.GetPayloadValue(payload, "password")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+	poolID, ok := (*c.credentials)["poolid"]
+	if !ok {
+		return errors.New("no user pool provided in credentials")
+	}
+	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	if err != nil {
+		return err
+	}
+
+	site := session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, username)
+
+	authTry := &cognito.AdminSetUserPasswordInput{
+		Password:   &password,
+		Username:   &fqUsername,
+		UserPoolId: aws.String(poolID),
+		Permanent:  *aws.Bool(true),
+	}
+
+	client := cognito.NewFromConfig(cfg)
+
+	_, err = client.AdminSetUserPassword(context.Background(), authTry)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

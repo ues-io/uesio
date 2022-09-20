@@ -83,9 +83,25 @@ const checkAvailability =
 		return context
 	}
 
+const resetPassword =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload)
+			throw new Error("No credentials were provided for reset password.")
+		const mergedPayload = context.mergeMap(payload)
+		try {
+			await platform.resetPassword(authSource, mergedPayload)
+			return context
+		} catch (error) {
+			const message = getErrorString(error)
+			return context.addFrame({ errors: [message] })
+		}
+	}
+
 export default {
 	login,
 	logout,
 	signup,
 	checkAvailability,
+	resetPassword,
 }

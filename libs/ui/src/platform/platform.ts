@@ -401,6 +401,18 @@ const platform = {
 		const response = await postJSON("/site/auth/logout")
 		return respondJSON(response)
 	},
+	resetPassword: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/resetpassword`,
+			requestBody
+		)
+
+		return respondVoid(response)
+	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job`

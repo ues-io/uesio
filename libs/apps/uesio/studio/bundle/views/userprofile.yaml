@@ -17,6 +17,21 @@ definition:
         - field: uesio/core.username
           valueSource: VALUE
           value: $Param{username}
+    credentials:
+      viewOnly: true
+      fields:
+        uesio/viewonly.username:
+          label: Username
+          type: TEXT
+        uesio/viewonly.password:
+          label: New Password
+          type: TEXT
+      init:
+        create: true
+      defaults:
+        - field: uesio/viewonly.username
+          valueSource: VALUE
+          value: $Param{username}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -114,23 +129,44 @@ definition:
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
+                                    maxWidth: 300px
                                     padding: 40px
                                 components:
-                                  # - uesio/io.field:
-                                  #     fieldId: uesio/core.firstname
-                                  # - uesio/io.field:
-                                  #     fieldId: uesio/core.lastname
-                                  # - uesio/io.field:
-                                  #     fieldId: uesio/core.initials
-                                  # - uesio/io.field:
-                                  #     fieldId: uesio/core.username
-                                  # - uesio/studio.metadatafield:
-                                  #     uesio.context:
-                                  #       siteadmin:
-                                  #         name: $Param{sitename}
-                                  #         app: $Param{app}
-                                  #     fieldId: uesio/core.profile
-                                  #     metadataType: "PROFILE"
-                                  #     label: "Profile"
-                                  # - uesio/io.field:
-                                  #     fieldId: uesio/core.language
+                                  - uesio/io.list:
+                                      id: credslist
+                                      wire: credentials
+                                      mode: EDIT
+                                      components:
+                                        # - uesio/io.field:
+                                        #     fieldId: uesio/viewonly.username
+                                        - uesio/io.field:
+                                            fieldId: uesio/viewonly.password
+                                            displayAs: PASSWORD
+                                        - uesio/io.group:
+                                            uesio.styles:
+                                              root:
+                                                gridAutoColumns: initial
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.primary
+                                                  text: Change Password
+                                                  uesio.styles:
+                                                    root:
+                                                      marginTop: 26px
+                                                      marginBottom: 60px
+                                                    label:
+                                                      textTransform: none
+                                                  signals:
+                                                    - signal: user/RESET_PASSWORD
+                                                      onerror:
+                                                        signals:
+                                                          - signal: notification/ADD_ERRORS
+                                                      authSource: uesio/core.platform
+                                                      payload:
+                                                        username: ${uesio/viewonly.username}
+                                                        password: ${uesio/viewonly.password}
+                                                    - signal: notification/ADD
+                                                      text: Password Changed!
+                                                      severity: success
+                                                    - signal: "wire/RESET"
+                                                      wire: credentials

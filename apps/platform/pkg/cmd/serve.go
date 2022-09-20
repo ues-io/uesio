@@ -170,8 +170,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/signup", controller.Signup).Methods("POST")
 	// siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword", controller.Signup).Methods("POST")
-	// siteAPI(sr, "/auth/"+getItemParam()+"/resetpassword", controller.Signup).Methods("POST")
-	// siteAPI(sr, "/auth/"+getItemParam()+"/delete", controller.Delete).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/resetpassword", controller.ResetPassword).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
 
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
