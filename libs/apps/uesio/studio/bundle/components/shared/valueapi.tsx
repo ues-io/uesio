@@ -8,22 +8,51 @@ const getValueAPI = (
 	uesio: hooks.Uesio,
 	context: context.Context
 ) => {
-	const onUpdateHook = (path: string) => {
+	const onUpdateHook = (path: string, value?: string | number | null) => {
 		const pathArray = component.path.toPath(path)
 		// If it was a wire update, auto-reload the wire
 		if (pathArray[0] !== "wires") return
 		const wireName = pathArray[1]
 		if (!wireName) return
 
+		// When updating a wire's collection, unset the wire's fields
+		if ([...pathArray].pop() === "collection") {
+			const fieldsPath = [
+				...pathArray.slice(0, pathArray.length - 1),
+				"fields",
+			]
+			uesio.builder.setDefinition(
+				component.path.makeFullPath(
+					metadataType,
+					metadataItem,
+					component.path.fromPath(fieldsPath)
+				),
+				null
+			)
+
+			// If collection is removed, don't bother doing a load
+			if (!value)
+				return uesio.signal.runMany(
+					[
+						{
+							signal: "wire/INIT",
+							wireDefs: [wireName],
+						},
+					],
+					context
+				)
+		}
+
+		const isWireNameChange = pathArray.length === 2
 		uesio.signal.runMany(
 			[
 				{
 					signal: "wire/INIT",
-					wireDefs: [wireName],
+					wireDefs: [isWireNameChange ? value : wireName],
 				},
 				{
 					signal: "wire/LOAD",
-					wires: [wireName],
+					wires: [isWireNameChange ? value : wireName],
 				},
 			],
 			context
@@ -43,6 +72,7 @@ const getValueAPI = (
 				value,
 				autoSelect
 			)
+
 			onUpdateHook(path)
 		},
 		clone: (path: string) => {
@@ -81,7 +111,7 @@ const getValueAPI = (
 				component.path.makeFullPath(metadataType, metadataItem, path),
 				key
 			)
-			onUpdateHook(path)
+			onUpdateHook(path, key)
 		},
 		move: (fromPath: string, toPath: string, selectKey?: string) => {
 			if (fromPath === undefined || toPath === undefined) return
