@@ -169,6 +169,17 @@ definition:
                                             displayAs: IMAGE
                                   - uesio/io.griditem:
                                       components:
+                                        - uesio/io.box:
+                                            uesio.styles:
+                                              root:
+                                                text-align: right
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.secondary
+                                                  text: "DELETE"
+                                                  signals:
+                                                    - signal: panel/TOGGLE
+                                                      panel: deleteUser
                                         - uesio/io.field:
                                             fieldId: uesio/core.firstname
                                         - uesio/io.field:
@@ -249,8 +260,32 @@ definition:
                                                         - loginmethods
                                                   text: Remove
                                                   uesio.variant: uesio/io.nav
-
   panels:
+    deleteUser:
+      uesio.type: uesio/io.dialog
+      title: Delete User
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete this user?
+      actions:
+        - uesio/io.button:
+            text: Delete
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "users"
+              - signal: "route/NAVIGATE"
+                path: app/$Param{app}/site/$Param{sitename}/users
+        - uesio/io.button:
+            text: Cancel
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteUser
     newLoginMethod:
       uesio.type: uesio/io.dialog
       title: Create a New Login Method
