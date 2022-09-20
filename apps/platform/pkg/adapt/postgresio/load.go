@@ -65,7 +65,9 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 		return err
 	}
 
-	if collectionMetadata.Access == "protected" && userTokens != nil && op.SkipRecordSecurity == false {
+	needsAccessCheck := collectionMetadata.IsReadProtected() || (collectionMetadata.IsWriteProtected() && op.RequireWriteAccess)
+
+	if needsAccessCheck && userTokens != nil && op.SkipRecordSecurity == false {
 		accessFieldID := "main.id"
 
 		challengeMetadata := collectionMetadata
@@ -103,7 +105,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 		if op.RequireWriteAccess {
 			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
-		} else {
+		} else if collectionMetadata.IsReadProtected() {
 			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
 		}
 	}

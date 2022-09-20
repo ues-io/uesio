@@ -220,7 +220,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, c
 
 func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
-	if collectionMetadata.Access != "protected" {
+	if !collectionMetadata.IsWriteProtected() {
 		return nil
 	}
 

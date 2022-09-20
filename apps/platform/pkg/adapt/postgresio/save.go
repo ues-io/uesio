@@ -229,7 +229,7 @@ func (c *Connection) Save(request *adapt.SaveOp) error {
 			batch.Queue(UPDATE_QUERY, fullRecordID, uniqueID, collectionName, fieldJSON)
 		}
 
-		if collectionMetadata.Access == "protected" {
+		if collectionMetadata.IsWriteProtected() {
 			if !change.IsNew {
 				resetTokenIDs = append(resetTokenIDs, fullRecordID)
 			}
