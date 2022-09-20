@@ -52,7 +52,7 @@ import {
 	getPackUrls,
 	getPackUrlsForDeps,
 } from "../bands/route/utils"
-import { loadScripts } from "./usescripts"
+import { getLoadedScripts, loadScripts } from "./usescripts"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -176,8 +176,11 @@ class BuilderAPI {
 		appDispatch()(cloneKeyDefinition({ path, newKey }))
 	}
 
-	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(setDefinition({ path, definition }))
+	setDefinition = (
+		path: string,
+		definition: Definition,
+		autoSelect?: boolean
+	) => appDispatch()(setDefinition({ path, definition, autoSelect }))
 
 	addDefinition(
 		path: string,
@@ -277,7 +280,10 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
-	getNamespaceInfo = () => getCurrentState().builder.namespaces || {}
+	getNamespaceInfo = (ns: string) => {
+		const namespaces = getCurrentState().builder.namespaces || {}
+		return namespaces[ns]
+	}
 
 	getDefinition = (
 		state: RootState,
@@ -329,17 +335,25 @@ class BuilderAPI {
 
 	useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
 		const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)
+		const loadedScripts = getLoadedScripts()
+		const studioPacks = getPackUrls(
+			"uesio/studio.main",
+			new Context(),
+			true
+		)
+
+		const isPreLoaded =
+			isLoaded ||
+			studioPacks.every((packUrl: string) =>
+				loadedScripts.includes(packUrl)
+			)
+
 		useEffect(() => {
-			if (!buildMode || isLoaded) return
+			if (!buildMode || isLoaded || isPreLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
 
 				const packsToLoad = getPackUrlsForDeps(response, context, true)
-				const studioPacks = getPackUrls(
-					"uesio/studio.main",
-					new Context(),
-					true
-				)
 
 				await loadScripts([...packsToLoad, ...studioPacks])
 				batch(() => {
@@ -349,7 +363,7 @@ class BuilderAPI {
 				setIsLoaded(true)
 			})()
 		}, [buildMode])
-		return isLoaded
+		return isLoaded || isPreLoaded
 	}
 }
 

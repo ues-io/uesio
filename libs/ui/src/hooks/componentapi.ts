@@ -22,6 +22,8 @@ class ComponentAPI {
 		return makeComponentId(context, cType, id)
 	}
 
+	makeComponentId = makeComponentId
+
 	useState = <T extends PlainComponentState>(
 		componentId: string,
 		initialState?: T

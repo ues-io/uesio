@@ -33,22 +33,45 @@ const getIndex = (
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
+	const uesio = hooks.useUesio(props)
+
+	const [dimensions] = uesio.component.useState<[number, number]>(
+		uesio.component.makeComponentId(
+			context,
+			"uesio/studio.runtime",
+			"dimensions"
+		)
+	)
+
+	const width = dimensions && dimensions[0]
+	const height = dimensions && dimensions[1]
+
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				overflow: "hidden",
 				height: "100%",
-				padding: "38px 26px",
+				padding: "30px 18px",
 				position: "relative",
 			},
 
-			outerwrapper: {
+			scrollwrapper: {
+				overflow: "auto",
 				height: "100%",
+				width: "100%",
+				padding: "8px",
+			},
+
+			outerwrapper: {
 				position: "relative",
 				borderRadius: "8px",
-				overflow: "hidden",
+				overflow: "auto",
 				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 				background: "white",
+				width: width ? width + "px" : "100%",
+				height: height ? height + "px" : "100%",
+				margin: "0 auto",
+				transition: "all 0.3s ease",
 			},
 
 			contentwrapper: {
@@ -103,8 +126,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const uesio = hooks.useUesio(props)
-
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [, , dropPath] = uesio.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
@@ -117,9 +138,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const viewDef = context.getViewDef()
 	const route = context.getRoute()
 
-	if (!route || !viewDefId) return null
+	if (!route || !viewDefId || !viewDef) return null
 
-	const componentCount = viewDef?.components?.length
+	const componentCount = viewDef.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -189,7 +210,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			viewDefId,
 			component.path.getParentPath(dropPath)
 		)
-		handleDrop(fullDragPath, fullDropPath, index, uesio)
+		handleDrop(fullDragPath, fullDropPath, index, viewDef, uesio)
 	}
 
 	return (
@@ -200,35 +221,37 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={classes.root}
 		>
 			<TopActions context={context} />
-			<div className={classes.outerwrapper}>
-				<div className={classes.contentwrapper}>
-					<div
-						className={classes.inner}
-						data-accepts="uesio.standalone"
-						data-path={'["components"]'}
-						data-insertindex={componentCount}
-					>
-						{/* No content yet */}
-						{!componentCount && (
-							<div className={classes.noContent}>
-								<div className="inner">
-									<Icon
-										className="icon"
-										icon={"flip_to_back"}
-										context={context}
-									/>
-									<h4 className="text">
-										Drag and drop any component here to get
-										started
-									</h4>
+			<div className={classes.scrollwrapper}>
+				<div className={classes.outerwrapper}>
+					<div className={classes.contentwrapper}>
+						<div
+							className={classes.inner}
+							data-accepts="uesio.standalone"
+							data-path={'["components"]'}
+							data-insertindex={componentCount}
+						>
+							{/* No content yet */}
+							{!componentCount && (
+								<div className={classes.noContent}>
+									<div className="inner">
+										<Icon
+											className="icon"
+											icon={"flip_to_back"}
+											context={context}
+										/>
+										<h4 className="text">
+											Drag and drop any component here to
+											get started
+										</h4>
+									</div>
 								</div>
-							</div>
-						)}
-						{props.children}
-						<PanelPortal context={context} />
+							)}
+							{props.children}
+							<PanelPortal context={context} />
+						</div>
 					</div>
+					<component.PanelArea context={props.context} />
 				</div>
-				<component.PanelArea context={props.context} />
 			</div>
 			<BottomActions context={context} />
 		</div>

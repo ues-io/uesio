@@ -5,9 +5,8 @@ import (
 	"net/url"
 )
 
-// FileDetails struct
 type FileDetails struct {
-	ContentLength   uint64
+	ContentLength   int64
 	Name            string
 	CollectionID    string
 	RecordID        string
@@ -15,7 +14,6 @@ type FileDetails struct {
 	FieldID         string
 }
 
-// NewFileDetails function
 func NewFileDetails(query url.Values) (*FileDetails, error) {
 
 	name := query.Get("name")

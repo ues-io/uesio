@@ -35,7 +35,6 @@ func (as *AfterSaveAPI) AddError(message string) {
 	as.op.AddError(adapt.NewSaveError("", "", message))
 }
 
-// Save function
 func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
 	requests := []SaveRequest{
 		{

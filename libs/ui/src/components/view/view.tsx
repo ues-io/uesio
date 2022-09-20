@@ -35,7 +35,6 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		params: context.mergeMap(params),
 	})
 
-	// We need to get load the wires here.
 	useEffect(() => {
 		appDispatch()(loadViewOp(viewContext))
 	}, [viewDefId, JSON.stringify(params)])

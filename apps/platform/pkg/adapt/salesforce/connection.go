@@ -52,7 +52,6 @@ func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
 
-// Load function
 func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, datasource string, tokens []string) (adapt.Connection, error) {
 	client, err := connect(credentials)
 	if err != nil {

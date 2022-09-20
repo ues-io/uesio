@@ -63,7 +63,7 @@ views:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.siteusage: true
-
+  uesio/studio.userusage: true
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -124,8 +124,10 @@ routes:
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
   uesio/studio.siteusage: true
+  uesio/studio.userusage: true
 files:
 collections:
+  uesio/studio.allmetadata: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true
   uesio/studio.app: true

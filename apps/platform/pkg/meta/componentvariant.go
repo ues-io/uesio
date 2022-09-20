@@ -110,12 +110,14 @@ func (c *ComponentVariant) GetCollection() CollectionableGroup {
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
-		err := yaml.Unmarshal([]byte(value.(string)), &definition)
-		if err != nil {
-			return err
-		}
-		if len(definition.Content) > 0 {
-			v.Definition = *definition.Content[0]
+		if value != nil {
+			err := yaml.Unmarshal([]byte(value.(string)), &definition)
+			if err != nil {
+				return err
+			}
+			if len(definition.Content) > 0 {
+				v.Definition = *definition.Content[0]
+			}
 		}
 		return nil
 	}

@@ -9,7 +9,7 @@ const CloneAction: FunctionComponent<ActionProps> = ({
 	context,
 	propsDef,
 }) => {
-	const isComponent = propsDef.type === "component"
+	const isComponent = propsDef?.type === "component"
 	const clonePath = isComponent ? component.path.getParentPath(path) : path
 	return (
 		<ActionButton

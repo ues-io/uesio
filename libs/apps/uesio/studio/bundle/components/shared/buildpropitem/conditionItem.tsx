@@ -6,7 +6,7 @@ import PropertiesPane from "../propertiespane"
 type Props = {
 	conditionPath: string
 	context: context.Context
-	condition: wire.WireConditionDefinition
+	condition: wire.WireConditionState
 	valueAPI: builder.ValueAPI
 }
 
@@ -32,27 +32,27 @@ const conditionItemActions: builder.ActionDescriptor[] = [
 	},
 ]
 
-function getConditionTitle(condition: wire.WireConditionDefinition): string {
+function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
 		return `GROUP ${condition.conjunction}`
 	}
 
 	if (condition.valueSource === "VALUE" || !condition.valueSource) {
-		const valueCondition = condition as wire.ValueConditionDefinition
+		const valueCondition = condition as wire.ValueConditionState
 		return `${valueCondition.field} ${valueCondition.operator || ""} ${
 			valueCondition.value || ""
 		}`
 	}
 
 	if (condition.valueSource === "PARAM") {
-		const valueCondition = condition as wire.ParamConditionDefinition
+		const valueCondition = condition as wire.ParamConditionState
 		return `${valueCondition.field} ${
 			valueCondition.operator || ""
 		} Param{${valueCondition.param}}`
 	}
 
 	if (condition.valueSource === "LOOKUP") {
-		const valueCondition = condition as wire.LookupConditionDefinition
+		const valueCondition = condition as wire.LookupConditionState
 		return `${valueCondition.field} ${
 			valueCondition.operator || ""
 		} Lookup{${valueCondition.lookupWire || ""}.${
@@ -328,10 +328,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					context={context}
 				>
 					{groupConditions.map(
-						(
-							conditionOnGroup: wire.WireConditionDefinition,
-							index
-						) => {
+						(conditionOnGroup: wire.WireConditionState, index) => {
 							const conditionOnGroupPath = `${conditionPath}["conditions"]["${index}"]`
 
 							return (

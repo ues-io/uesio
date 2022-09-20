@@ -10,12 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// JobResponse struct
-type JobResponse struct {
-	ID string `json:"id"`
-}
-
-// BulkJob is good
 func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
 	var spec meta.JobSpec
@@ -37,7 +31,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &JobResponse{
+	respondJSON(w, r, &bulk.JobResponse{
 		ID: jobID,
 	})
 

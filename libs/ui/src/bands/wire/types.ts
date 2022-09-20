@@ -14,16 +14,16 @@ type OrderState = {
 type PlainWire = {
 	batchid: string
 	batchnumber: number
-	changes?: Record<string, PlainWireRecord>
+	changes: Record<string, PlainWireRecord>
 	collection: string
 	conditions?: WireConditionState[]
 	order?: OrderState[]
 	data: Record<string, PlainWireRecord>
-	deletes?: Record<string, PlainWireRecord>
+	deletes: Record<string, PlainWireRecord>
 	errors?: Record<string, SaveError[]>
 	more?: boolean
 	name: string
-	original?: Record<string, PlainWireRecord>
+	original: Record<string, PlainWireRecord>
 	query?: boolean
 	create?: boolean
 	view: string

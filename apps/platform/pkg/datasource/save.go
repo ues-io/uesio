@@ -7,7 +7,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
+
+type SaveRequestBatch struct {
+	Wires []SaveRequest `json:"wires"`
+}
 
 type SaveRequest struct {
 	Collection string             `json:"collection"`
@@ -73,7 +78,6 @@ type SaveOptions struct {
 	Metadata    *adapt.MetadataCache
 }
 
-// Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 	return SaveWithOptions(requests, session, nil)
 }
@@ -293,8 +297,8 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
 		}
-
-		go RegisterUsageEvent("SAVE", session.GetUserID(), "DATASOURCE", dsKey, connection)
+		go usage.RegisterEvent("SAVE", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		go usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
 	}
 
 	return nil

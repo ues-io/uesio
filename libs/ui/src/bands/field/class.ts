@@ -10,6 +10,7 @@ class Field {
 
 	getId = () => this.source.namespace + "." + this.source.name
 	getLabel = () => this.source.label
+	getReferenceMetadata = () => this.source.reference || undefined
 	getType = () => this.source.type
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable

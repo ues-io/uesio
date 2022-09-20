@@ -14,18 +14,11 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.plurallabel:
-        uesio/core.updatedat:
+    allcollections:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: "collections"
     newcollection:
       collection: uesio/studio.collection
       fields:
@@ -99,11 +92,17 @@ definition:
                         padding: 40px
                     uesio.variant: uesio/io.section
                     components:
-                      - uesio/studio.collectionlist:
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{app}
+                      - uesio/io.table:
+                          wire: allcollections
+                          columns:
+                            - field: uesio/studio.name
+                            - field: uesio/studio.namespace
+                          rowactions:
+                            - text: Details
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}"
+                          pagesize: 10
   panels:
     newCollection:
       uesio.type: uesio/io.dialog

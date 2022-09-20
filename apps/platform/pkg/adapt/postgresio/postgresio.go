@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-// Adapter struct
 type Adapter struct {
 }
 

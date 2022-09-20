@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// GetCredentials function
 func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, error) {
 	credmap := adapt.Credentials{}
 

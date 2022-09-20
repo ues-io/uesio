@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
-// Retrieve is good
 func Retrieve(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 

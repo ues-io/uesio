@@ -1,5 +1,5 @@
-import { hooks, styles, component, definition } from "@uesio/ui"
-import { FunctionComponent } from "react"
+import { hooks, styles, component } from "@uesio/ui"
+import { FC } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/button/button"
@@ -15,7 +15,7 @@ const IOTable = component.getUtility<TableUtilityProps>("uesio/io.table")
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
-const Table: FunctionComponent<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
@@ -36,11 +36,9 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
-	const columnsToDisplay = definition.columns?.filter((columnDef) =>
-		component.useShouldDisplay(
-			context,
-			columnDef["uesio/io.column"] as definition.DefinitionMap
-		)
+	const columnsToDisplay = component.useShouldFilter(
+		definition.columns,
+		context
 	)
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
@@ -54,14 +52,12 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = columnsToDisplay?.map((columnDef) => {
-		const column = columnDef["uesio/io.column"] as ColumnDefinition
-		const fieldId = column.field
-		const fieldMetadata = collection.getField(fieldId)
-		return {
-			label: column.label || fieldMetadata?.getLabel() || "",
-		}
-	})
+	const columns = columnsToDisplay.map((columnDef: ColumnDefinition) => ({
+		label:
+			columnDef.label ||
+			collection.getField(columnDef.field)?.getLabel() ||
+			"",
+	}))
 
 	const data = wire.getData()
 	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
@@ -73,32 +69,34 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			wire: wire.getId(),
 			fieldMode: mode,
 		})
+		const sharedProps = {
+			key: record.getId(),
+			path: `${path}["columns"]["${index}"]`,
+			context: recordContext,
+		}
 		return {
-			cells: columnsToDisplay?.map((columnDef) => {
-				const column = columnDef["uesio/io.column"] as ColumnDefinition
-				return column.components ? (
+			cells: columnsToDisplay?.map((columnDef) =>
+				columnDef.components ? (
 					<component.Slot
-						definition={column}
+						definition={columnDef}
 						listName="components"
-						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
 						accepts={["uesio.context"]}
 						direction="horizontal"
-						context={recordContext}
+						{...sharedProps}
 					/>
 				) : (
 					<component.Component
 						componentType="uesio/io.field"
 						definition={{
-							fieldId: column.field,
+							fieldId: columnDef.field,
 							labelPosition: "none",
 							"uesio.variant": "uesio/io.table",
 						}}
 						index={index}
-						path={`${path}["columns"]["${index}"]`}
-						context={recordContext}
+						{...sharedProps}
 					/>
 				)
-			}),
+			),
 			rowactions: definition.rowactions && (
 				<Group
 					styles={{ root: { padding: "0 16px" } }}

@@ -12,6 +12,11 @@
 		"type": "ORG"
 	},
 	{
+		"username": "amazon",
+		"profile": "uesio/studio.standard",
+		"type": "ORG"
+	},
+	{
 		"username": "guest",
 		"firstname": "Happy",
 		"lastname": "Guest",

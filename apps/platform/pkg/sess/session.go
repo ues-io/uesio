@@ -8,6 +8,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
+var SYSTEM_USER = &meta.User{}
+var GUEST_USER = &meta.User{}
+
 func createBrowserSession(userid, sitename string) *session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
@@ -52,11 +55,13 @@ func GetPublicUser(site *meta.Site) *meta.User {
 	if defaultSitePublicProfile == "" {
 		defaultSitePublicProfile = "uesio/core.public"
 	}
+
 	return &meta.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		UniqueKey: "guest",
-		Username:  "guest",
+		FirstName: GUEST_USER.FirstName,
+		LastName:  GUEST_USER.LastName,
+		UniqueKey: GUEST_USER.UniqueKey,
+		Username:  GUEST_USER.Username,
+		ID:        GUEST_USER.ID,
 		Profile:   defaultSitePublicProfile,
 	}
 }
@@ -247,13 +252,13 @@ func (s *Session) AddVersionContext(versionInfo *VersionInfo) {
 	s.version = versionInfo
 }
 
-func (s *Session) GetContextNamespaces() map[string]bool {
+func (s *Session) GetContextNamespaces() []string {
 	bundleDef := s.GetContextAppBundle()
-	namespaces := map[string]bool{
-		bundleDef.Name: true,
+	namespaces := []string{
+		bundleDef.Name,
 	}
 	for name := range bundleDef.Dependencies {
-		namespaces[name] = true
+		namespaces = append(namespaces, name)
 	}
 	return namespaces
 }

@@ -10,84 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-var SYSTEM_USER = &meta.User{}
-
-func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
-	var s meta.Site
-	err := datasource.PlatformLoadOne(
-		&s,
-		&datasource.PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: adapt.ID_FIELD,
-				},
-				{
-					ID: adapt.UNIQUE_KEY_FIELD,
-				},
-				{
-					ID: "uesio/studio.name",
-				},
-				{
-					ID: "uesio/studio.app",
-					Fields: []adapt.LoadRequestField{
-						{
-							ID: adapt.ID_FIELD,
-						},
-						{
-							ID: adapt.UNIQUE_KEY_FIELD,
-						},
-					},
-				},
-				{
-					ID: "uesio/studio.bundle",
-					Fields: []adapt.LoadRequestField{
-						{
-							ID: "uesio/studio.app",
-							Fields: []adapt.LoadRequestField{
-								{
-									ID: adapt.ID_FIELD,
-								},
-								{
-									ID: adapt.UNIQUE_KEY_FIELD,
-								},
-							},
-						},
-						{
-							ID: "uesio/studio.major",
-						},
-						{
-							ID: "uesio/studio.minor",
-						},
-						{
-							ID: "uesio/studio.patch",
-						},
-					},
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: field,
-					Value: value,
-				},
-			},
-			SkipRecordSecurity: true,
-		},
-		session,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &s, nil
-}
-
-func querySiteByID(siteid string, session *sess.Session) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, session)
-}
-
-func querySiteByKey(sitekey string, session *sess.Session) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session)
-}
-
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOne(
@@ -129,7 +51,7 @@ func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return querySiteByID(siteDomain.Site.ID, headlessSession)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, headlessSession)
 }
 
 func GetStudioSite() (*meta.Site, error) {
@@ -161,7 +83,14 @@ func GetStudioAnonSession() (*sess.Session, error) {
 		return nil, err
 	}
 
-	session := sess.NewSession(nil, &meta.User{}, site)
+	//This is only used to query the system user the first time
+	var BOOT_USER = &meta.User{
+		Username:  "boot",
+		FirstName: "Boot",
+		LastName:  "User",
+	}
+
+	session := sess.NewSession(nil, BOOT_USER, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:       true,
@@ -180,7 +109,7 @@ func GetStudioAdminSession() (*sess.Session, error) {
 		return nil, err
 	}
 
-	session := sess.NewSession(nil, SYSTEM_USER, site)
+	session := sess.NewSession(nil, sess.SYSTEM_USER, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:       true,

@@ -63,10 +63,8 @@ const DataManager: FunctionComponent<Props> = (props) => {
 						],
 					},
 				],
-				columns: Object.keys(fieldsMeta).map((fieldId) => ({
-					["uesio/io.column"]: {
-						field: fieldId,
-					},
+				columns: Object.keys(fieldsMeta).map((field) => ({
+					field,
 				})),
 			}}
 			path={props.path}
