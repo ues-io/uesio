@@ -104,7 +104,7 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	}
 	valueString, ok := value.(string)
 	if !ok {
-		return "", errors.New("Could not get value as string")
+		return "", errors.New("Could not get value as string: " + fieldID)
 	}
 	return valueString, nil
 }
