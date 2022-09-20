@@ -18,7 +18,7 @@ definition:
                     value: personalinfo
               signals:
                 - signal: "route/NAVIGATE"
-                  path: profile/$User{id}
+                  path: profile/$User{username}
               content:
                 - uesio/io.text:
                     text: Personal info
@@ -33,9 +33,9 @@ definition:
                   - type: paramValue
                     param: selected
                     value: payments
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: profile/$User{id}
+              # signals:
+              #   - signal: "route/NAVIGATE"
+              #     path: profile/$User{username}
               content:
                 - uesio/io.text:
                     text: Payments
