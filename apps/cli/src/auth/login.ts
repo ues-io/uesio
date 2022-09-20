@@ -13,6 +13,7 @@ type AuthCheckResponse = {
 }
 
 type User = {
+	username: string
 	firstname: string
 	lastname: string
 	profile: string

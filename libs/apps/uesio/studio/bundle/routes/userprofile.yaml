@@ -1,0 +1,4 @@
+name: userprofile
+path: profile/{username}
+view: uesio/studio.userprofile
+theme: uesio/studio.default

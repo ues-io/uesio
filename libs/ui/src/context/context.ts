@@ -119,6 +119,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 			return getUserFileURL(new Context(), user.picture)
 		}
 		if (expression === "id") return user.id
+		if (expression === "username") return user.username
 		return ""
 	},
 	RecordId: (expression, context, ancestors) => {

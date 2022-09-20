@@ -49,6 +49,7 @@ func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetUserInfo()
 	return &routing.UserMergeData{
 		ID:        userInfo.ID,
+		Username:  userInfo.Username,
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
 		Profile:   userInfo.Profile,

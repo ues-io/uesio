@@ -20,6 +20,7 @@ type RouteMergeData struct {
 }
 
 type UserMergeData struct {
+	Username  string `json:"username"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Profile   string `json:"profile"`
