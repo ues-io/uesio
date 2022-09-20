@@ -10,6 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+type SaveRequestBatch struct {
+	Wires []SaveRequest `json:"wires"`
+}
+
 type SaveRequest struct {
 	Collection string             `json:"collection"`
 	Wire       string             `json:"wire"`

@@ -25,6 +25,7 @@ type UserMergeData struct {
 	Profile   string `json:"profile"`
 	Site      string `json:"site"`
 	ID        string `json:"id"`
+	Username  string `json:"username"`
 	PictureID string `json:"picture"`
 	Language  string `json:"language"`
 }

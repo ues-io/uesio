@@ -9,13 +9,13 @@ import (
 
 func init() {
 
-	checkCommand := &cobra.Command{
+	generateCommand := &cobra.Command{
 		Use:   "generate",
 		Short: "clio generate",
 		Run:   generate,
 	}
 
-	rootCmd.AddCommand(checkCommand)
+	rootCmd.AddCommand(generateCommand)
 
 }
 

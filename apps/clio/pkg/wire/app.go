@@ -5,6 +5,21 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
+func CreateNewApp(user string, name string) (map[string]interface{}, error) {
+	response, err := Save("uesio/studio.app", []map[string]interface{}{
+		{
+			"uesio/studio.name":  name,
+			"uesio/studio.color": "green",
+			"uesio/studio.icon":  "shield",
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return response[0], nil
+}
+
 func GetAppID() (string, error) {
 	app, err := config.GetApp()
 	if err != nil {

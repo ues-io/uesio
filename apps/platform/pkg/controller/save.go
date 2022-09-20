@@ -10,14 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-type SaveRequestBatch struct {
-	Wires []datasource.SaveRequest `json:"wires"`
-}
-
 func Save(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
-	var saveRequestBatch SaveRequestBatch
+	var saveRequestBatch datasource.SaveRequestBatch
 	err := json.NewDecoder(r.Body).Decode(&saveRequestBatch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()

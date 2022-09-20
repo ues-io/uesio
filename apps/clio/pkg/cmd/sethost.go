@@ -9,13 +9,13 @@ import (
 
 func init() {
 
-	checkCommand := &cobra.Command{
+	setHostCommand := &cobra.Command{
 		Use:   "sethost",
 		Short: "clio sethost",
 		Run:   sethost,
 	}
 
-	rootCmd.AddCommand(checkCommand)
+	rootCmd.AddCommand(setHostCommand)
 
 }
 
