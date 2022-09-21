@@ -39,6 +39,8 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 		AllowAllRoutes:      true,
 		AllowAllFiles:       true,
 		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	}
 
 	if siteadmin.Bundle == nil {

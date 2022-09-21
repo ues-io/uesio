@@ -242,7 +242,6 @@ func GetAppData(namespaces []string, session *sess.Session) (map[string]Metadata
 				ID: "uesio/studio.icon",
 			},
 		},
-		SkipRecordSecurity: true,
 	}, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err

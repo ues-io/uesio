@@ -166,3 +166,5 @@ collections:
   uesio/core.usage: true
   uesio/core.featureflagassignment: true
   uesio/studio.useraccesstoken: true
+modifyallrecords: false
+viewallrecords: false

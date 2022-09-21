@@ -34,6 +34,8 @@ type PermissionSet struct {
 	AllowAllViews       bool            `yaml:"allowallviews" uesio:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
+	ModifyAllRecords    bool            `yaml:"modifyallrecords" uesio:"uesio/studio.modifyallrecords"`
+	ViewAllRecords      bool            `yaml:"viewallrecords" uesio:"uesio/studiolviewallrecords"`
 	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
 	CreatedBy           *User           `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner               *User           `yaml:"-" uesio:"uesio/core.owner"`
@@ -186,6 +188,8 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	allowAllRoutes := false
 	allowAllFiles := false
 	allowAllCollections := false
+	modifyAllRecords := false
+	viewAllRecords := false
 
 	for _, permissionSet := range permissionSets {
 		for key, value := range permissionSet.NamedRefs {
@@ -225,6 +229,12 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		if permissionSet.AllowAllCollections {
 			allowAllCollections = true
 		}
+		if permissionSet.ModifyAllRecords {
+			modifyAllRecords = true
+		}
+		if permissionSet.ViewAllRecords {
+			viewAllRecords = true
+		}
 	}
 
 	return &PermissionSet{
@@ -237,5 +247,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,
 		AllowAllCollections: allowAllCollections,
+		ModifyAllRecords:    modifyAllRecords,
+		ViewAllRecords:      viewAllRecords,
 	}
 }
