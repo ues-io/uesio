@@ -35,7 +35,7 @@ type PermissionSet struct {
 	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
 	ModifyAllRecords    bool            `yaml:"modifyallrecords" uesio:"uesio/studio.modifyallrecords"`
-	ViewAllRecords      bool            `yaml:"viewallrecords" uesio:"uesio/studiolviewallrecords"`
+	ViewAllRecords      bool            `yaml:"viewallrecords" uesio:"uesio/studio.viewallrecords"`
 	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
 	CreatedBy           *User           `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner               *User           `yaml:"-" uesio:"uesio/core.owner"`

@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 const INSERT_QUERY = "INSERT INTO public.data (id,uniquekey,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5,$6)"
@@ -187,13 +188,12 @@ func (dm *DataMarshaler) IsNil() bool {
 }
 
 // Save function
-func (c *Connection) Save(request *adapt.SaveOp) error {
+func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 
-	credentials := c.credentials
 	db := c.GetClient()
 	metadata := c.metadata
 
-	tenantID := credentials.GetTenantID()
+	tenantID := session.GetTenantID()
 
 	readWriteTokens := map[string][]string{}
 	readTokens := map[string][]string{}

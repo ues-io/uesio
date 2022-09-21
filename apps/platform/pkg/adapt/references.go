@@ -2,9 +2,11 @@ package adapt
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type LocatorMap map[string][]ReferenceLocator
@@ -19,15 +21,18 @@ func (lm *LocatorMap) GetIDs() []string {
 	return ids
 }
 
-func (lm *LocatorMap) AddID(value interface{}, locator ReferenceLocator) {
-	foreignKeyValueAsString, ok := value.(string)
-	if ok {
-		items, ok := (*lm)[foreignKeyValueAsString]
-		if !ok {
-			(*lm)[foreignKeyValueAsString] = []ReferenceLocator{}
-		}
-		(*lm)[foreignKeyValueAsString] = append(items, locator)
+func (lm *LocatorMap) AddID(value string, locator ReferenceLocator) error {
+
+	if value == "" {
+		return errors.New("Cannot add blank id to locator map")
 	}
+	items, ok := (*lm)[value]
+	if !ok {
+		(*lm)[value] = []ReferenceLocator{}
+	}
+	(*lm)[value] = append(items, locator)
+	return nil
+
 }
 
 type ReferenceRequest struct {
@@ -54,8 +59,8 @@ func (rr *ReferenceRequest) GetMatchField() string {
 	return ID_FIELD
 }
 
-func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
-	rr.IDMap.AddID(value, locator)
+func (rr *ReferenceRequest) AddID(value string, locator ReferenceLocator) error {
+	return rr.IDMap.AddID(value, locator)
 }
 
 func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
@@ -100,8 +105,8 @@ func LoadLooper(
 	idMap LocatorMap,
 	fields []LoadRequestField,
 	matchField string,
-	skipRecordSecurity bool,
-	looper func(loadable.Item, []ReferenceLocator) error,
+	session *sess.Session,
+	looper func(loadable.Item, []ReferenceLocator, string) error,
 ) error {
 	ids := idMap.GetIDs()
 	if len(ids) == 0 {
@@ -119,16 +124,15 @@ func LoadLooper(
 				Value:    ids,
 			},
 		},
-		Query:              true,
-		SkipRecordSecurity: skipRecordSecurity,
+		Query: true,
 	}
 
-	err := connection.Load(op)
+	err := connection.Load(op, session)
 	if err != nil {
 		return err
 	}
 
-	return op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+	err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 		refFK, err := refItem.GetField(matchField)
 		if err != nil {
 			return err
@@ -143,17 +147,28 @@ func LoadLooper(
 
 		matchIndexes, ok := idMap[refFKAsString]
 		if !ok {
-			return looper(refItem, nil)
+			return looper(refItem, nil, refFKAsString)
 		}
-		return looper(refItem, matchIndexes)
+		// Remove the id from the map, so we can figure out which ones weren't used
+		delete(idMap, refFKAsString)
+		return looper(refItem, matchIndexes, refFKAsString)
 	})
+	if err != nil {
+		return nil
+	}
+	// If we still have values in our idMap, then we didn't find some of our references.
+	for id, locator := range idMap {
+		return looper(nil, locator, id)
+	}
+	return nil
 
 }
 
 func HandleReferences(
 	connection Connection,
 	referencedCollections ReferenceRegistry,
-	skipRecordSecurity bool,
+	session *sess.Session,
+	allowMissingItems bool,
 ) error {
 
 	for collectionName, ref := range referencedCollections {
@@ -171,12 +186,24 @@ func HandleReferences(
 			},
 		})
 
-		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), skipRecordSecurity, func(refItem loadable.Item, matchIndexes []ReferenceLocator) error {
+		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
 
+			// This is a weird situation.
+			// It means we found a value that we didn't ask for.
+			// refItem will be that strange item.
 			if matchIndexes == nil {
 				return nil
 			}
 
+			// This means we tried to load some references, but they don't exist.
+			if refItem == nil {
+				if allowMissingItems {
+					return nil
+				}
+				return fmt.Errorf("Missing Reference Item For Key %s", ID)
+			}
+
+			// Loop over all matchIndexes and copy the data from the refItem
 			for _, locator := range matchIndexes {
 				referenceValue := &Item{}
 				concreteItem := locator.Item.(loadable.Item)

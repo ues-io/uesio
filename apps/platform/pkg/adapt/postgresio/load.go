@@ -9,6 +9,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
@@ -34,11 +35,10 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	}
 }
 
-func (c *Connection) Load(op *adapt.LoadOp) error {
+func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	metadata := c.metadata
-	credentials := c.credentials
-	userTokens := c.tokens
+	userTokens := session.GetTokens()
 	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -60,14 +60,16 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	builder := NewQueryBuilder()
 
-	err = getConditions(op, metadata, collectionMetadata, credentials, builder)
+	err = getConditions(op, metadata, collectionMetadata, session, builder)
 	if err != nil {
 		return err
 	}
 
 	needsAccessCheck := collectionMetadata.IsReadProtected() || (collectionMetadata.IsWriteProtected() && op.RequireWriteAccess)
 
-	if needsAccessCheck && userTokens != nil && op.SkipRecordSecurity == false {
+	userCanViewAllRecords := session.GetContextPermissions().ViewAllRecords
+
+	if needsAccessCheck && userTokens != nil && userCanViewAllRecords == false {
 		accessFieldID := "main.id"
 
 		challengeMetadata := collectionMetadata
@@ -86,7 +88,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 				return err
 			}
 
-			tenantID := credentials.GetTenantIDForCollection(challengeMetadata.GetFullName())
+			tenantID := session.GetTenantIDForCollection(challengeMetadata.GetFullName())
 
 			refCollectionName, err := getDBCollectionName(challengeMetadata, tenantID)
 			if err != nil {
@@ -199,10 +201,10 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	op.BatchNumber++
 
-	err = adapt.HandleReferencesGroup(c, op.Collection, referencedGroupCollections)
+	err = adapt.HandleReferencesGroup(c, op.Collection, referencedGroupCollections, session)
 	if err != nil {
 		return err
 	}
 
-	return adapt.HandleReferences(c, referencedCollections, op.SkipRecordSecurity)
+	return adapt.HandleReferences(c, referencedCollections, session, true)
 }

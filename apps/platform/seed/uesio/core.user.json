@@ -12,11 +12,6 @@
 		"type": "ORG"
 	},
 	{
-		"username": "amazon",
-		"profile": "uesio/studio.standard",
-		"type": "ORG"
-	},
-	{
 		"username": "guest",
 		"firstname": "Happy",
 		"lastname": "Guest",
@@ -50,5 +45,13 @@
 		"lastname": "Baxter",
 		"profile": "uesio/studio.standard",
 		"type": "PERSON"
+	},
+	{
+		"username": "amazon",
+		"profile": "uesio/studio.standard",
+		"type": "ORG",
+		"owner": {
+			"uniquekey": "ben"
+		}
 	}
 ]

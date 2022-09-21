@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type ReferenceGroupRequest struct {
@@ -39,13 +40,13 @@ func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *Field
 	return rgr
 }
 
-func loadData(op *LoadOp, connection Connection, index int) error {
+func loadData(op *LoadOp, connection Connection, session *sess.Session, index int) error {
 
 	if index == MAX_ITER_REF_GROUP {
 		return errors.New("You have reached the maximum limit of Reference Group")
 	}
 
-	err := connection.Load(op)
+	err := connection.Load(op, session)
 	if err != nil {
 		return err
 	}
@@ -54,13 +55,14 @@ func loadData(op *LoadOp, connection Connection, index int) error {
 		return nil
 	}
 
-	return loadData(op, connection, index+1)
+	return loadData(op, connection, session, index+1)
 }
 
 func HandleReferencesGroup(
 	connection Connection,
 	collection loadable.Group,
 	referencedGroupCollections ReferenceGroupRegistry,
+	session *sess.Session,
 ) error {
 	ops := []*LoadOp{}
 	for refKey, ref := range referencedGroupCollections {
@@ -122,7 +124,7 @@ func HandleReferencesGroup(
 	}
 
 	for _, op := range ops {
-		err := loadData(op, connection, 0)
+		err := loadData(op, connection, session, 0)
 		if err != nil {
 			return err
 		}

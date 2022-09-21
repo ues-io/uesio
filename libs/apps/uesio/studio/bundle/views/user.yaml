@@ -38,6 +38,7 @@ definition:
       collection: uesio/core.user
       fields:
         uesio/core.id:
+        uesio/core.type:
         uesio/core.firstname:
         uesio/core.lastname:
         uesio/core.username:
@@ -45,10 +46,13 @@ definition:
         uesio/core.profile:
         uesio/core.picture:
         uesio/core.language:
+        uesio/core.owner:
       conditions:
         - field: uesio/core.username
           valueSource: VALUE
           value: $Param{userid}
+        - field: uesio/core.type
+          value: PERSON
       init:
         query: false
     loginmethods:
@@ -198,6 +202,8 @@ definition:
                                             label: "Profile"
                                         - uesio/io.field:
                                             fieldId: uesio/core.language
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.owner
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:

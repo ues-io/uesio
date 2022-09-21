@@ -114,6 +114,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runAppBeforeSaveBot
 	case "uesio/core.usage":
 		botFunction = runUsageBeforeSaveBot
+	case "uesio/core.user":
+		botFunction = runUserBeforeSaveBot
 	}
 
 	if botFunction != nil {
