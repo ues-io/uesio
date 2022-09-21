@@ -88,17 +88,16 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		if err != nil {
 			return err
 		}
-		refReq.AddID(fkField, adapt.ReferenceLocator{
+		return refReq.AddID(fkField, adapt.ReferenceLocator{
 			Item:  change,
 			Field: fieldMetadata,
 		})
-		return nil
 	})
 	if err != nil {
 		return err
 	}
 
-	return adapt.HandleReferences(connection, referencedCollections, false)
+	return adapt.HandleReferences(connection, referencedCollections, session, false)
 }
 
 func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
@@ -110,6 +109,8 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 	change.AddReadWriteToken(ownerToken)
 
 	hasToken := false
+
+	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
 
 	for _, userToken := range session.GetTokens() {
 		if ownerToken == userToken {
@@ -135,7 +136,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 		}
 	}
 
-	if !hasToken {
+	if !hasToken && !userCanModifyAllRecords {
 		return errors.New("User does not have access to write to this field: " + change.UniqueKey)
 	}
 
@@ -150,6 +151,8 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, c
 	accessItem = change.FieldChanges
 
 	challengeMetadata := collectionMetadata
+
+	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
 
 	for challengeMetadata.AccessField != "" {
 		accessInterface, err := accessItem.GetField(challengeMetadata.AccessField)
@@ -211,7 +214,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, c
 		}
 	}
 
-	if !hasToken {
+	if !hasToken && !userCanModifyAllRecords {
 		return errors.New("User does not have parent access to write to this field: " + change.IDValue)
 	}
 
@@ -361,12 +364,12 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				return err
 			}
 
-			connection, err := GetConnection(loadCollectionMetadata.DataSource, session.GetTokens(), loadOptions.Metadata, session, loadOptions.Connections)
+			connection, err := GetConnection(loadCollectionMetadata.DataSource, loadOptions.Metadata, session, loadOptions.Connections)
 			if err != nil {
 				return err
 			}
 
-			err = connection.Load(loadOp)
+			err = connection.Load(loadOp, session)
 			if err != nil {
 				return err
 			}
