@@ -21,9 +21,11 @@ const UnusedPropsWarning: FC<T> = (props) => {
 	const values = valueAPI.get(path) as definition.DefinitionMap
 
 	// Get the keys we allow from other sections
-	const keysFromSections = propsDef.sections.flatMap((s) =>
-		"name" in s ? s.name : names[s.type]
-	)
+	const keysFromSections = propsDef.sections.flatMap((s) => {
+		if (s.type === "CUSTOM") return s.names
+		return "name" in s ? s.name : names[s.type]
+	})
+
 	const keysToSet = propertiesToRender.map((x) => x.name)
 	const keyToAllow = [...keysToSet, ...keysFromSections]
 	// get the keys we have

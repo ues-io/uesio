@@ -98,6 +98,7 @@ interface SectionRendererProps extends BaseProps {
 }
 interface CustomSection extends BasePropSection {
 	type: "CUSTOM"
+	names: string[]
 	renderFunc: FC<SectionRendererProps>
 }
 interface ConditionalDisplaySection extends BasePropSection {
