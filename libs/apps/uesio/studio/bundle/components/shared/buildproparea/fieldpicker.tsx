@@ -3,6 +3,7 @@ import React, { FC } from "react"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import has from "lodash/has"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
+import { FIELDS } from "./names"
 
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
@@ -44,7 +45,7 @@ const useRefStack = (
 	path: string
 ) => {
 	const [stack, setStack] = React.useState<Frame[]>([
-		{ collection: startingCollection, path: `${path}["fields"]` },
+		{ collection: startingCollection, path: `${path}[${FIELDS}]` },
 	])
 	const currentFrame = stack[stack.length - 1]
 	const addFrame = (frame: { collection: string; fieldId: string }) =>
@@ -52,7 +53,7 @@ const useRefStack = (
 			...stack,
 			{
 				...frame,
-				path: currentFrame.path + `["${frame.fieldId}"]["fields"]`,
+				path: currentFrame.path + `["${frame.fieldId}"][${FIELDS}]`,
 			},
 		])
 	const removeFrame = () => setStack(stack.slice(0, -1))

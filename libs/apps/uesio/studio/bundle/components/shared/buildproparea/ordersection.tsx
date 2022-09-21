@@ -3,6 +3,7 @@ import { definition, hooks, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import PropertiesPane from "../propertiespane"
+import { ORDER } from "./names"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
@@ -45,7 +46,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const orderDef = wireDef?.order as definition.Definition[] | undefined
 
-	const ordersPath = `${path}["order"]`
+	const ordersPath = `${path}["${ORDER}"]`
 
 	return (
 		<>

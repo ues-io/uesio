@@ -3,6 +3,7 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
+import { SIGNALS } from "./names"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
@@ -22,7 +23,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.Definition[]
 		| undefined
 
-	const signalsPath = `${path}["signals"]`
+	const signalsPath = `${path}["${SIGNALS}"]`
 
 	return (
 		<>

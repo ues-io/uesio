@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
 
+import UnusedPropsWarning from "./unusedpropswarning"
 import TextProp from "../buildpropitem/textprop"
 import TextAreaProp from "../buildpropitem/textareaprop"
 import SelectProp from "../buildpropitem/selectprop"
@@ -137,6 +138,13 @@ const PropList: FunctionComponent<Props> = (props) => {
 					/>
 				)
 			})}
+			<UnusedPropsWarning
+				propertiesToRender={propertiesToRender}
+				propsDef={propsDef}
+				valueAPI={valueAPI}
+				context={context}
+				path={path}
+			/>
 		</>
 	)
 }
