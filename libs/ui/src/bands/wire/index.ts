@@ -226,11 +226,10 @@ const wireSlice = createSlice({
 			PlainWire
 		>((state, { value, id }) => {
 			if (!state.conditions) state.conditions = []
-			const index = state.conditions.findIndex(
+			const condition = state.conditions.find(
 				(existingCondition) => existingCondition.id === id
 			)
-			if (!index) return
-			;(state.conditions[index] as ValueConditionState).value = value
+			if (condition && "value" in condition) condition.value = value
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
