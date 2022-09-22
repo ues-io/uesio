@@ -82,8 +82,8 @@ definition:
                                                   text: Sign In
                                                   uesio.styles:
                                                     root:
-                                                      marginTop: 26px
-                                                      marginBottom: 60px
+                                                      marginTop: 2em
+                                                      marginBottom: 1em
                                                     label:
                                                       textTransform: none
                                                   signals:
@@ -95,4 +95,17 @@ definition:
                                                       payload:
                                                         username: ${uesio/viewonly.username}
                                                         password: ${uesio/viewonly.password}
-                                                  onerror:
+                                        - uesio/io.group:
+                                            uesio.styles:
+                                              root:
+                                                gridAutoColumns: initial
+                                            components:
+                                              - uesio/io.button:
+                                                  uesio.variant: uesio/io.nav
+                                                  text: Forgot your password?
+                                                  uesio.styles:
+                                                    label:
+                                                      textTransform: none
+                                                  signals:
+                                                    - signal: route/REDIRECT
+                                                      path: requestpassword
