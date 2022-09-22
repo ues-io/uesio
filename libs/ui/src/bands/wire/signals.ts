@@ -108,6 +108,27 @@ interface SearchWireSignal extends SignalDefinition {
 	searchFields?: string[]
 }
 
+const getWiresWith = (key: "conditions" | "order") =>
+	({
+		name: "wire",
+		type: "WIRE",
+		filter: (def: RegularWireDefinition) => def && !!def[key]?.length,
+		label: "Wire",
+	} as PropDescriptor)
+
+const getConditionIdsDescriptor = (wire: string): PropDescriptor => ({
+	name: "conditionId",
+	type: "CONDITION",
+	filter: (def: WireConditionState) => !!def.id,
+	wire,
+	label: "condition",
+})
+
+const getWireAndConditionsDescriptor = (wire: string) => [
+	getWiresWith("conditions"),
+	getConditionIdsDescriptor(wire),
+]
+
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
@@ -230,20 +251,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
 			toggleConditionOp(context, signal.wire, signal.conditionId),
 		properties: (signal: SignalDefinition): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				filter: (def: RegularWireDefinition) =>
-					def && !!def.conditions?.length,
-				label: "Wire",
-			},
-			{
-				name: "conditionId",
-				type: "CONDITION",
-				filter: (def: WireConditionState) => !!def.id,
-				wire: <string>signal.wire,
-				label: "condition",
-			},
+			...getWireAndConditionsDescriptor(<string>signal.wire),
 		],
 	},
 
@@ -257,20 +265,7 @@ const signals: Record<string, SignalDescriptor> = {
 				signal.value
 			),
 		properties: (signal): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				filter: (def: RegularWireDefinition) =>
-					!!def?.conditions?.length,
-				label: "Wire",
-			},
-			{
-				name: "conditionId",
-				type: "CONDITION",
-				filter: (def: WireConditionState) => !!def?.id,
-				wire: <string>signal.wire,
-				label: "condition",
-			},
+			...getWireAndConditionsDescriptor(<string>signal.wire),
 			{
 				name: "value",
 				type: "TEXT",
@@ -295,20 +290,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
 			removeConditionOp(context, signal.wire, signal.conditionId),
 		properties: (signal: SignalDefinition): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				filter: (def: RegularWireDefinition) =>
-					!!def?.conditions?.length,
-				label: "Wire",
-			},
-			{
-				name: "conditionId",
-				type: "CONDITION",
-				filter: (def: WireConditionState) => !!def?.id,
-				wire: <string>signal.wire,
-				label: "condition",
-			},
+			...getWireAndConditionsDescriptor(<string>signal.wire),
 		],
 	},
 	[`${WIRE_BAND}/SET_ORDER`]: {
@@ -339,12 +321,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: AddOrderSignal, context: Context) =>
 			addOrderOp(context, signal.wire, signal.field, signal.desc),
 		properties: (): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				filter: (def: RegularWireDefinition) => !!def?.order?.length,
-				label: "Wire",
-			},
+			getWiresWith("order"),
 			{
 				name: "field",
 				type: "FIELD",
@@ -363,12 +340,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: RemoveOrderSignal, context: Context) =>
 			removeOrderOp(context, signal.wire, signal.fields),
 		properties: (): PropDescriptor[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				filter: (def: RegularWireDefinition) => !!def?.order?.length,
-				label: "Wire",
-			},
+			getWiresWith("order"),
 			{
 				name: "field",
 				type: "FIELD",

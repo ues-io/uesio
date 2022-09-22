@@ -254,6 +254,7 @@ const wireSlice = createSlice({
 					return
 				}
 				const oldCondition = state.conditions[conditionIndex]
+
 				// modify existing array without mutation
 				state.conditions = Object.assign([], state.conditions, {
 					[conditionIndex]: {
