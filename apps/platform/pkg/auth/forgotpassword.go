@@ -10,13 +10,7 @@ func ForgotPassword(authSourceID string, payload map[string]interface{}, session
 		return err
 	}
 
-	err = conn.ForgotPassword(payload, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-
+	return conn.ForgotPassword(payload, session)
 }
 
 func ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
@@ -25,11 +19,5 @@ func ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, 
 		return err
 	}
 
-	err = conn.ConfirmForgotPassword(payload, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-
+	return conn.ConfirmForgotPassword(payload, session)
 }

@@ -14,9 +14,9 @@ definition:
         uesio/core.picture:
         uesio/core.language:
       conditions:
-        - field: uesio/core.username
+        - field: uesio/core.id
           valueSource: VALUE
-          value: $Param{username}
+          value: $User{id}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
