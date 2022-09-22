@@ -18,6 +18,7 @@ import {
 import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
+import setConditionValueOp from "./operations/setconditionvalue"
 import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
 import initWiresOp from "./operations/initialize"
@@ -70,6 +71,11 @@ interface RemoveConditionSignal extends SignalDefinition {
 interface SetConditionSignal extends SignalDefinition {
 	wire: string
 	condition: WireConditionState
+}
+interface SetConditionValueSignal extends SignalDefinition {
+	wire: string
+	value: string
+	conditionId: string
 }
 interface SetOrderSignal extends SignalDefinition {
 	wire: string
@@ -240,161 +246,47 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+
+	[`${WIRE_BAND}/SET_CONDITION_VALUE`]: {
+		label: "Set Wire Condition value",
+		dispatcher: (signal: SetConditionValueSignal, context: Context) =>
+			setConditionValueOp(
+				context,
+				signal.wire,
+				signal.conditionId,
+				signal.value
+			),
+		properties: (signal): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				filter: (def: RegularWireDefinition) =>
+					!!def?.conditions?.length,
+				label: "Wire",
+			},
+			{
+				name: "conditionId",
+				type: "CONDITION",
+				filter: (def: WireConditionState) => !!def?.id,
+				wire: <string>signal.wire,
+				label: "condition",
+			},
+			{
+				name: "value",
+				type: "TEXT",
+				label: "value",
+			},
+		],
+	},
 	[`${WIRE_BAND}/SET_CONDITION`]: {
 		label: "Set Wire Condition",
 		dispatcher: (signal: SetConditionSignal, context: Context) =>
 			setConditionOp(context, signal.wire, signal.condition),
 		properties: (): PropDescriptor[] => [
 			{
-				name: "id",
-				type: "TEXT",
-				label: "Id",
-			},
-			{
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
-			},
-			{
-				name: "type",
-				type: "SELECT",
-				label: "Type",
-				options: [
-					{
-						label: "Select an option",
-						value: "",
-					},
-					{
-						label: "Param",
-						value: "PARAM",
-					},
-					{
-						label: "Lookup",
-						value: "LOOKUP",
-					},
-					{
-						label: "Value",
-						value: "VALUE",
-					},
-					{
-						label: "Search",
-						value: "SEARCH",
-					},
-					{
-						label: "Group",
-						value: "GROUP",
-					},
-				],
-			},
-			// Search
-			{
-				name: "value",
-				label: "Value",
-				type: "TEXT",
-				display: [
-					{
-						property: "type",
-						value: "SEARCH",
-					},
-				],
-			},
-			{
-				name: "fields",
-				label: "Fields",
-				type: "WIRE_FIELDS", // Update to fields when that PR is merged
-				display: [
-					{
-						property: "type",
-						value: "SEARCH",
-					},
-				],
-			},
-
-			// Param, Lookup, Value
-			{
-				type: "FIELD",
-				label: "field",
-				wireField: "wire",
-				name: "field",
-				display: [
-					{
-						property: "type",
-						value: "PARAM",
-					},
-					{
-						property: "type",
-						value: "LOOKUP",
-					},
-					{
-						property: "type",
-						value: "VALUE",
-					},
-				],
-			},
-			// Param
-			{
-				type: "PARAM",
-				label: "Param",
-				name: "param",
-				display: [
-					{
-						property: "type",
-						value: "PARAM",
-					},
-				],
-			},
-
-			// Lookup
-			{
-				name: "lookupWire",
-				type: "WIRE",
-				label: "Lookup Wire",
-				display: [
-					{
-						property: "type",
-						value: "LOOKUP",
-					},
-				],
-			},
-
-			{
-				name: "lookupField",
-				type: "FIELD",
-				wireField: "lookupWire",
-				label: "Lookup Wire",
-				display: [
-					{
-						property: "type",
-						value: "LOOKUP",
-					},
-				],
-			},
-
-			// Conjunction
-			{
-				name: "conjunction",
-				type: "SELECT",
-				label: "Conjunction",
-				options: [
-					{
-						label: "Select an option",
-						value: "",
-					},
-					{
-						label: "and",
-						value: "AND",
-					},
-					{
-						label: "or",
-						value: "OR",
-					},
-				],
-			},
-			// Todo: recursive proplist
-			{
-				name: "conditions",
-				type: "TEXT",
-				label: "Todo: add properties",
 			},
 		],
 	},

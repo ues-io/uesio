@@ -5,7 +5,7 @@ import {
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import { WireConditionState } from "../../wireexports"
+import { WireConditionState, ValueConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
@@ -54,6 +54,11 @@ type ToggleConditionPayload = {
 
 type AddConditionPayload = {
 	condition: WireConditionState
+} & EntityPayload
+
+type SetConditionValuePayload = {
+	id: string
+	value: string
 } & EntityPayload
 
 type RemoveOrderPayload = {
@@ -216,6 +221,17 @@ const wireSlice = createSlice({
 				})
 			}
 		),
+		setConditionValue: createEntityReducer<
+			SetConditionValuePayload,
+			PlainWire
+		>((state, { value, id }) => {
+			if (!state.conditions) state.conditions = []
+			const index = state.conditions.findIndex(
+				(existingCondition) => existingCondition.id === id
+			)
+			if (!index) return
+			;(state.conditions[index] as ValueConditionState).value = value
+		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
 				if (!state.conditions) return
@@ -238,7 +254,6 @@ const wireSlice = createSlice({
 					return
 				}
 				const oldCondition = state.conditions[conditionIndex]
-
 				// modify existing array without mutation
 				state.conditions = Object.assign([], state.conditions, {
 					[conditionIndex]: {
@@ -391,5 +406,6 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	setConditionValue,
 } = wireSlice.actions
 export default wireSlice.reducer
