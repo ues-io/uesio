@@ -89,8 +89,9 @@ const forgotPassword =
 		if (!payload)
 			throw new Error("No credentials were provided for forgot password.")
 		const mergedPayload = context.mergeMap(payload)
+		const mergedAuthSource = context.merge(authSource)
 		try {
-			await platform.forgotPassword(authSource, mergedPayload)
+			await platform.forgotPassword(mergedAuthSource, mergedPayload)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
