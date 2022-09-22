@@ -5,7 +5,7 @@ import {
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import { WireConditionState, ValueConditionState } from "../../wireexports"
+import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
