@@ -38,11 +38,10 @@ class SignalAPI {
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal?.signal] || componentSignal
-		let props = defaultSignalProps()
-		if (descriptor.properties) {
-			props = props.concat(descriptor.properties(signal))
-		}
-		return props
+		return [
+			...defaultSignalProps(),
+			...(descriptor.properties ? descriptor.properties(signal) : []),
+		]
 	}
 }
 
