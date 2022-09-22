@@ -256,7 +256,7 @@ definition:
                     text: Profile
                     signals:
                       - signal: "route/NAVIGATE"
-                        path: profile/$User{username}
+                        path: myprofile
           # Avatar
           - uesio/io.griditem:
               components:

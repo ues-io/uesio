@@ -1,4 +1,4 @@
 name: userprofile
-path: profile/{username}
+path: myprofile
 view: uesio/studio.userprofile
 theme: uesio/studio.default
