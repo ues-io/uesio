@@ -28,7 +28,6 @@ import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { RegularWireDefinition, WireDefinition } from "../../definition/wire"
 
 import { WireConditionState } from "./conditions/conditions"
-import { Definition } from "../../definition/definition"
 import { MetadataKey } from "../builder/types"
 
 // The key for the entire band
@@ -65,7 +64,7 @@ interface ToggleConditionSignal extends SignalDefinition {
 
 interface RemoveConditionSignal extends SignalDefinition {
 	wire: string
-	condition: string
+	conditionId: string
 }
 
 interface SetConditionSignal extends SignalDefinition {
@@ -203,7 +202,7 @@ const signals: Record<string, SignalDescriptor> = {
 		properties: (): PropDescriptor[] => [
 			{
 				name: "searchFields",
-				type: "WIRE_FIELDS",
+				type: "WIRE_FIELDS", // TODO: update to new format
 				label: "Search Fields",
 			},
 			{
@@ -228,17 +227,14 @@ const signals: Record<string, SignalDescriptor> = {
 			{
 				name: "wire",
 				type: "WIRE",
-				filter: (def: Definition) =>
-					Boolean(
-						def && (<RegularWireDefinition>def).conditions?.length
-					),
+				filter: (def: RegularWireDefinition) =>
+					def && !!def.conditions?.length,
 				label: "Wire",
 			},
 			{
 				name: "conditionId",
 				type: "CONDITION",
-				filter: (def: Definition) =>
-					Boolean(def && (<WireConditionState>def).id),
+				filter: (def: WireConditionState) => !!def.id,
 				wire: <string>signal.wire,
 				label: "condition",
 			},
@@ -250,21 +246,176 @@ const signals: Record<string, SignalDescriptor> = {
 			setConditionOp(context, signal.wire, signal.condition),
 		properties: (): PropDescriptor[] => [
 			{
+				name: "id",
+				type: "TEXT",
+				label: "Id",
+			},
+			{
 				name: "wire",
 				type: "WIRE",
 				label: "Wire",
+			},
+			{
+				name: "type",
+				type: "SELECT",
+				label: "Type",
+				options: [
+					{
+						label: "Select an option",
+						value: "",
+					},
+					{
+						label: "Param",
+						value: "PARAM",
+					},
+					{
+						label: "Lookup",
+						value: "LOOKUP",
+					},
+					{
+						label: "Value",
+						value: "VALUE",
+					},
+					{
+						label: "Search",
+						value: "SEARCH",
+					},
+					{
+						label: "Group",
+						value: "GROUP",
+					},
+				],
+			},
+			// Search
+			{
+				name: "value",
+				label: "Value",
+				type: "TEXT",
+				display: [
+					{
+						property: "type",
+						value: "SEARCH",
+					},
+				],
+			},
+			{
+				name: "fields",
+				label: "Fields",
+				type: "WIRE_FIELDS", // Update to fields when that PR is merged
+				display: [
+					{
+						property: "type",
+						value: "SEARCH",
+					},
+				],
+			},
+
+			// Param, Lookup, Value
+			{
+				type: "FIELD",
+				label: "field",
+				wireField: "wire",
+				name: "field",
+				display: [
+					{
+						property: "type",
+						value: "PARAM",
+					},
+					{
+						property: "type",
+						value: "LOOKUP",
+					},
+					{
+						property: "type",
+						value: "VALUE",
+					},
+				],
+			},
+			// Param
+			{
+				type: "PARAM",
+				label: "Param",
+				name: "param",
+				display: [
+					{
+						property: "type",
+						value: "PARAM",
+					},
+				],
+			},
+
+			// Lookup
+			{
+				name: "lookupWire",
+				type: "WIRE",
+				label: "Lookup Wire",
+				display: [
+					{
+						property: "type",
+						value: "LOOKUP",
+					},
+				],
+			},
+
+			{
+				name: "lookupField",
+				type: "FIELD",
+				wireField: "lookupWire",
+				label: "Lookup Wire",
+				display: [
+					{
+						property: "type",
+						value: "LOOKUP",
+					},
+				],
+			},
+
+			// Conjunction
+			{
+				name: "conjunction",
+				type: "SELECT",
+				label: "Conjunction",
+				options: [
+					{
+						label: "Select an option",
+						value: "",
+					},
+					{
+						label: "and",
+						value: "AND",
+					},
+					{
+						label: "or",
+						value: "OR",
+					},
+				],
+			},
+			// Todo: recursive proplist
+			{
+				name: "conditions",
+				type: "TEXT",
+				label: "Todo: add properties",
 			},
 		],
 	},
 	[`${WIRE_BAND}/REMOVE_CONDITION`]: {
 		label: "Remove Wire Condition",
 		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
-			removeConditionOp(context, signal.wire, signal.condition),
-		properties: (): PropDescriptor[] => [
+			removeConditionOp(context, signal.wire, signal.conditionId),
+		properties: (signal: SignalDefinition): PropDescriptor[] => [
 			{
 				name: "wire",
 				type: "WIRE",
+				filter: (def: RegularWireDefinition) =>
+					!!def?.conditions?.length,
 				label: "Wire",
+			},
+			{
+				name: "conditionId",
+				type: "CONDITION",
+				filter: (def: WireConditionState) => !!def?.id,
+				wire: <string>signal.wire,
+				label: "condition",
 			},
 		],
 	},
@@ -278,6 +429,17 @@ const signals: Record<string, SignalDescriptor> = {
 				type: "WIRE",
 				label: "Wire",
 			},
+			{
+				name: "field",
+				type: "FIELD",
+				label: "Field",
+				wireField: "wire",
+			},
+			{
+				name: "desc",
+				type: "BOOLEAN",
+				label: "Descending",
+			},
 		],
 	},
 	[`${WIRE_BAND}/ADD_ORDER`]: {
@@ -288,6 +450,7 @@ const signals: Record<string, SignalDescriptor> = {
 			{
 				name: "wire",
 				type: "WIRE",
+				filter: (def: RegularWireDefinition) => !!def?.order?.length,
 				label: "Wire",
 			},
 			{
@@ -311,12 +474,14 @@ const signals: Record<string, SignalDescriptor> = {
 			{
 				name: "wire",
 				type: "WIRE",
+				filter: (def: RegularWireDefinition) => !!def?.order?.length,
 				label: "Wire",
 			},
 			{
 				name: "field",
-				type: "TEXT",
-				label: "FIELD",
+				type: "FIELD",
+				label: "Field",
+				wireField: "wire",
 			},
 		],
 	},
