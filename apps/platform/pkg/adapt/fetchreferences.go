@@ -2,11 +2,15 @@ package adapt
 
 import (
 	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func FetchInsertReferences(
+func FetchReferences(
 	connection Connection,
 	op *SaveOp,
+	session *sess.Session,
 ) error {
 
 	metadata := connection.GetMetadata()
@@ -36,45 +40,44 @@ func FetchInsertReferences(
 			refUniqueKeyReq.Metadata = refCollectionMetadata
 			refUniqueKeyReq.MatchField = UNIQUE_KEY_FIELD
 
-			refIDReq.AddFields([]LoadRequestField{
-				{
-					ID: UNIQUE_KEY_FIELD,
-				},
-			})
-
-			refUniqueKeyReq.AddFields([]LoadRequestField{
-				{
-					ID: UNIQUE_KEY_FIELD,
-				},
-			})
-
 			err = op.LoopChanges(func(change *ChangeItem) error {
 
 				refValue, err := change.FieldChanges.GetField(field.GetFullName())
+				if err != nil || refValue == nil {
+					return nil
+				}
+
+				idFieldValue, err := GetFieldValueString(refValue, ID_FIELD)
 				if err != nil {
-					return nil
+					idFieldValue = ""
 				}
 
-				if refValue == nil {
-					return nil
+				uniqueKeyFieldValue, err := GetFieldValueString(refValue, UNIQUE_KEY_FIELD)
+				if err != nil {
+					uniqueKeyFieldValue = ""
 				}
 
-				idFieldValue, err := GetFieldValue(refValue, ID_FIELD)
-				if err == nil && idFieldValue != "" {
-					refIDReq.AddID(idFieldValue, ReferenceLocator{
+				if idFieldValue != "" {
+					return refIDReq.AddID(idFieldValue, ReferenceLocator{
 						Item:  change,
 						Field: field,
 					})
-					return nil
 				}
 
-				uniqueKeyFieldValue, err := GetFieldValue(refValue, UNIQUE_KEY_FIELD)
-				if err == nil && uniqueKeyFieldValue != "" {
-					refUniqueKeyReq.AddID(uniqueKeyFieldValue, ReferenceLocator{
+				if uniqueKeyFieldValue != "" {
+
+					// Special case for allowing self-references
+					if change.IsNew && collectionMetadata.GetFullName() == refCollectionMetadata.GetFullName() {
+						if change.UniqueKey == uniqueKeyFieldValue {
+							concreteItem := refValue.(loadable.Item)
+							return concreteItem.SetField(ID_FIELD, change.IDValue)
+						}
+					}
+
+					return refUniqueKeyReq.AddID(uniqueKeyFieldValue, ReferenceLocator{
 						Item:  change,
 						Field: field,
 					})
-					return nil
 				}
 
 				return errors.New("There was a problem here!!! Missing id or unique key")
@@ -86,11 +89,11 @@ func FetchInsertReferences(
 		}
 	}
 
-	err = HandleReferences(connection, referencedIDCollections, false)
+	err = HandleReferences(connection, referencedIDCollections, session, false)
 	if err != nil {
 		return err
 	}
 
-	return HandleReferences(connection, referencedUniqueKeyCollections, false)
+	return HandleReferences(connection, referencedUniqueKeyCollections, session, false)
 
 }

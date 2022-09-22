@@ -38,6 +38,7 @@ definition:
       collection: uesio/core.user
       fields:
         uesio/core.id:
+        uesio/core.type:
         uesio/core.firstname:
         uesio/core.lastname:
         uesio/core.username:
@@ -45,6 +46,9 @@ definition:
         uesio/core.picture:
       init:
         query: false
+      conditions:
+        - field: uesio/core.type
+          value: PERSON
     newuser:
       collection: uesio/core.user
       fields:

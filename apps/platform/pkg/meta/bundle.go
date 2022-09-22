@@ -1,7 +1,9 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 )
 
 func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
@@ -15,6 +17,18 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 		Patch:       patch,
 		Description: description,
 	}, nil
+}
+
+func ParseVersionString(version string) (string, string, string, error) {
+	//Remove the 'v' and split on dots
+	if !strings.HasPrefix(version, "v") {
+		return "", "", "", errors.New("Invalid version string")
+	}
+	parts := strings.Split(strings.Split(version, "v")[1], ".")
+	if len(parts) != 3 {
+		return "", "", "", errors.New("Invalid version string")
+	}
+	return parts[0], parts[1], parts[2], nil
 }
 
 type Bundle struct {

@@ -39,6 +39,8 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 		AllowAllRoutes:      true,
 		AllowAllFiles:       true,
 		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	}
 
 	if siteadmin.Bundle == nil {
@@ -122,7 +124,6 @@ func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
 					Value: value,
 				},
 			},
-			SkipRecordSecurity: true,
 		},
 		session,
 	)

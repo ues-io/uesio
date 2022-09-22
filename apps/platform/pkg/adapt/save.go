@@ -158,6 +158,18 @@ type SaveOptions struct {
 	Upsert bool `json:"upsert"`
 }
 
+func GetFieldValueString(value interface{}, key string) (string, error) {
+	value, err := GetFieldValue(value, key)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", fmt.Errorf("Could not get value as string: %T", value)
+	}
+	return valueString, nil
+}
+
 func GetFieldValue(value interface{}, key string) (interface{}, error) {
 	valueMap, ok := value.(map[string]interface{})
 	if ok {

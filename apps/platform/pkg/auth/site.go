@@ -116,6 +116,8 @@ func GetStudioAdminSession() (*sess.Session, error) {
 		AllowAllRoutes:      true,
 		AllowAllFiles:       true,
 		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	})
 
 	return session, nil
