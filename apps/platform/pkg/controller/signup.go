@@ -22,10 +22,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	publicSession := sess.NewPublic(site)
 	publicSession.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio/core.loginmethod": true,
-			"uesio/core.user":        true,
-			"uesio/core.userfile":    true,
+			"uesio/core.loginmethod":           true,
+			"uesio/core.user":                  true,
+			"uesio/core.userfile":              true,
+			"uesio/core.featureflagassignment": true,
 		},
+		ModifyAllRecords: true,
 	})
 
 	vars := mux.Vars(r)

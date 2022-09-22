@@ -24,3 +24,4 @@ collections:
   uesio/core.bulkjob: true
   uesio/core.bulkbatch: true
   uesio/core.featureflagassignment: true
+  uesio/core.user: true
