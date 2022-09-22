@@ -83,14 +83,31 @@ const checkAvailability =
 		return context
 	}
 
-const resetPassword =
+const forgotPassword =
 	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload)
-			throw new Error("No credentials were provided for reset password.")
+			throw new Error("No credentials were provided for forgot password.")
 		const mergedPayload = context.mergeMap(payload)
 		try {
-			await platform.resetPassword(authSource, mergedPayload)
+			await platform.forgotPassword(authSource, mergedPayload)
+			return context
+		} catch (error) {
+			const message = getErrorString(error)
+			return context.addFrame({ errors: [message] })
+		}
+	}
+
+const forgotPasswordConfirm =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload)
+			throw new Error(
+				"No credentials were provided for forgot password confirmation."
+			)
+		const mergedPayload = context.mergeMap(payload)
+		try {
+			await platform.forgotPasswordConfirm(authSource, mergedPayload)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
@@ -103,5 +120,6 @@ export default {
 	logout,
 	signup,
 	checkAvailability,
-	resetPassword,
+	forgotPassword,
+	forgotPasswordConfirm,
 }

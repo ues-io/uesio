@@ -60,6 +60,10 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 	return nil, nil
 }
 
-func (c *Connection) ResetPassword(payload map[string]interface{}, session *sess.Session) error {
+func (c *Connection) ForgotPassword(payload map[string]interface{}, session *sess.Session) error {
+	return nil
+}
+
+func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, session *sess.Session) error {
 	return nil
 }

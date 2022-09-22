@@ -95,4 +95,3 @@ definition:
                                                       payload:
                                                         username: ${uesio/viewonly.username}
                                                         password: ${uesio/viewonly.password}
-                                                  onerror:

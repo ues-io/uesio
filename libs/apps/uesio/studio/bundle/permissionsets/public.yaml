@@ -4,4 +4,5 @@ views:
 routes:
   uesio/studio.login: true
   uesio/studio.signup: true
+  uesio/studio.changepassword: true
 files:

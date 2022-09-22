@@ -17,21 +17,6 @@ definition:
         - field: uesio/core.username
           valueSource: VALUE
           value: $Param{username}
-    credentials:
-      viewOnly: true
-      fields:
-        uesio/viewonly.username:
-          label: Username
-          type: TEXT
-        uesio/viewonly.password:
-          label: New Password
-          type: TEXT
-      init:
-        create: true
-      defaults:
-        - field: uesio/viewonly.username
-          valueSource: VALUE
-          value: $Param{username}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -132,41 +117,29 @@ definition:
                                     maxWidth: 300px
                                     padding: 40px
                                 components:
-                                  - uesio/io.list:
-                                      id: credslist
-                                      wire: credentials
-                                      mode: EDIT
+                                  - uesio/io.group:
+                                      uesio.styles:
+                                        root:
+                                          gridAutoColumns: initial
                                       components:
-                                        # - uesio/io.field:
-                                        #     fieldId: uesio/viewonly.username
-                                        - uesio/io.field:
-                                            fieldId: uesio/viewonly.password
-                                            displayAs: PASSWORD
-                                        - uesio/io.group:
+                                        - uesio/io.button:
+                                            uesio.variant: uesio/io.primary
+                                            text: Request Password Change
                                             uesio.styles:
                                               root:
-                                                gridAutoColumns: initial
-                                            components:
-                                              - uesio/io.button:
-                                                  uesio.variant: uesio/io.primary
-                                                  text: Change Password
-                                                  uesio.styles:
-                                                    root:
-                                                      marginTop: 26px
-                                                      marginBottom: 60px
-                                                    label:
-                                                      textTransform: none
+                                                marginTop: 26px
+                                                marginBottom: 60px
+                                              label:
+                                                textTransform: none
+                                            signals:
+                                              - signal: user/FORGOT_PASSWORD
+                                                onerror:
                                                   signals:
-                                                    - signal: user/RESET_PASSWORD
-                                                      onerror:
-                                                        signals:
-                                                          - signal: notification/ADD_ERRORS
-                                                      authSource: uesio/core.platform
-                                                      payload:
-                                                        username: ${uesio/viewonly.username}
-                                                        password: ${uesio/viewonly.password}
-                                                    - signal: notification/ADD
-                                                      text: Password Changed!
-                                                      severity: success
-                                                    - signal: "wire/RESET"
-                                                      wire: credentials
+                                                    - signal: notification/ADD_ERRORS
+                                                authSource: uesio/core.platform
+                                                payload:
+                                                  username: $Param{username}
+                                              - signal: notification/ADD
+                                                text: An email has been sent!
+                                                details: Please check your inbox.
+                                                severity: success

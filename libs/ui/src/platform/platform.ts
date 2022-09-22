@@ -401,13 +401,25 @@ const platform = {
 		const response = await postJSON("/site/auth/logout")
 		return respondJSON(response)
 	},
-	resetPassword: async (
+	forgotPassword: async (
 		authSource: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/resetpassword`,
+			`/site/auth/${namespace}/${name}/forgotpassword`,
+			requestBody
+		)
+
+		return respondVoid(response)
+	},
+	forgotPasswordConfirm: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/forgotpassword/confirm`,
 			requestBody
 		)
 

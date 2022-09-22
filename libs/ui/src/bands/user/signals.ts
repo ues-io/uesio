@@ -18,7 +18,7 @@ interface UsernameTestSignal extends SignalDefinition {
 	signupMethod: string
 	fieldId: string
 }
-interface ResetPasswordSignal extends SignalDefinition {
+interface ForgotPasswordSignal extends SignalDefinition {
 	authSource: string
 	payload: Record<string, string>
 }
@@ -76,14 +76,35 @@ const signals: Record<string, SignalDescriptor> = {
 		label: "Test Username",
 		properties: () => [],
 	},
-	[`${USER_BAND}/RESET_PASSWORD`]: {
-		dispatcher: (signal: ResetPasswordSignal, context: Context) =>
-			operations.resetPassword(
+	[`${USER_BAND}/FORGOT_PASSWORD`]: {
+		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+			operations.forgotPassword(
 				context,
 				signal.authSource,
 				signal.payload
 			),
-		label: "Reset Password",
+		label: "Forgot Password",
+		properties: () => [
+			{
+				name: "authSource",
+				label: "Auth Source",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
+	},
+	[`${USER_BAND}/FORGOT_PASSWORD_CONFIRM`]: {
+		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+			operations.forgotPasswordConfirm(
+				context,
+				signal.authSource,
+				signal.payload
+			),
+		label: "Forgot Password Confirmation",
 		properties: () => [
 			{
 				name: "authSource",
