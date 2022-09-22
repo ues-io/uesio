@@ -75,7 +75,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		return err
 	}
 
-	autonumberStart, err := getAutonumber(op.InsertCount, connection, collectionMetadata)
+	autonumberStart, err := getAutonumber(op.InsertCount, connection, collectionMetadata, session)
 	if err != nil {
 		return err
 	}

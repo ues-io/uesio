@@ -169,6 +169,15 @@ func MakeWorkspaceTenantID(ID string) string {
 	return fmt.Sprintf("workspace:%s", ID)
 }
 
+func (s *Session) GetTenantIDForCollection(collectionKey string) string {
+	// If we're loading uesio/core.user from a workspace, always use the site
+	// tenant id, not the workspace tenant id. Since workspaces don't have users.
+	if collectionKey == "uesio/core.user" {
+		return s.GetSiteTenantID()
+	}
+	return s.GetTenantID()
+}
+
 func (s *Session) GetTenantID() string {
 	if s.workspace != nil {
 		return MakeWorkspaceTenantID(s.workspace.UniqueKey)

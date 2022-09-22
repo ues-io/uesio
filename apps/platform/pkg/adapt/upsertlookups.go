@@ -5,11 +5,13 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func HandleUpsertLookup(
 	connection Connection,
 	op *SaveOp,
+	session *sess.Session,
 ) error {
 
 	op.InsertCount = len(op.Inserts)
@@ -27,17 +29,21 @@ func HandleUpsertLookup(
 
 	idMap := LocatorMap{}
 	for _, change := range op.Inserts {
-		// Actually set the unique Keys here for inserts
-		uniqueKey, err := SetUniqueKey(change, collectionMetadata)
+
+		// It's ok to not handle this error here, because we'll try to
+		// set the unique key again later when we have more data.
+		_ = SetUniqueKey(change, collectionMetadata)
+
+		if change.UniqueKey == "" {
+			continue
+		}
+
+		err := idMap.AddID(change.UniqueKey, ReferenceLocator{
+			Item: change,
+		})
 		if err != nil {
 			return err
 		}
-
-		change.UniqueKey = uniqueKey
-
-		idMap.AddID(change.UniqueKey, ReferenceLocator{
-			Item: change,
-		})
 	}
 
 	if len(idMap) == 0 {
@@ -51,7 +57,19 @@ func HandleUpsertLookup(
 		{
 			ID: UNIQUE_KEY_FIELD,
 		},
-	}, UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+	}, UNIQUE_KEY_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+
+		// This is a weird situation.
+		// It means we found a value that we didn't ask for.
+		// refItem will be that strange item.
+		if matchIndexes == nil {
+			return nil
+		}
+
+		// We didn't find our item to upsert sad.
+		if item == nil {
+			return nil
+		}
 
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad Lookup Here: " + strconv.Itoa(len(matchIndexes)))

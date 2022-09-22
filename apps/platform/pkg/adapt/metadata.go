@@ -47,6 +47,14 @@ type CollectionMetadata struct {
 	Public                bool                                   `json:"public"`
 }
 
+func (cm *CollectionMetadata) IsWriteProtected() bool {
+	return cm.Access == "protected" || cm.Access == "protected_write"
+}
+
+func (cm *CollectionMetadata) IsReadProtected() bool {
+	return cm.Access == "protected"
+}
+
 func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
 	bytes, err := json.Marshal(cm)
 	if err != nil {
