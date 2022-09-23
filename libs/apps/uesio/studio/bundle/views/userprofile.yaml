@@ -138,7 +138,7 @@ definition:
                                                     - signal: notification/ADD_ERRORS
                                                 authSource: uesio/core.platform
                                                 payload:
-                                                  username: $Param{username}
+                                                  username: ${uesio/core.username}
                                               - signal: notification/ADD
                                                 text: An email has been sent!
                                                 details: Please check your inbox.
