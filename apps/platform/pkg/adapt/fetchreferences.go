@@ -3,9 +3,50 @@ package adapt
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func processLocalReferences(
+	op *SaveOp,
+	change *ChangeItem,
+	uniqueKeyFieldValue string,
+	refValue interface{},
+	collectionMetadata *CollectionMetadata,
+	refCollectionMetadata *CollectionMetadata,
+) (bool, error) {
+	// Special case for allowing self-references
+	if collectionMetadata.GetFullName() == refCollectionMetadata.GetFullName() {
+
+		if change.UniqueKey == uniqueKeyFieldValue {
+			concreteItem, err := GetLoadable(refValue)
+			if err != nil {
+				return false, err
+			}
+			return true, concreteItem.SetField(ID_FIELD, change.IDValue)
+		}
+		// As a final Fallback check to see if any of the changes have that id
+		foundMatch := false
+		err := op.LoopChanges(func(innerChange *ChangeItem) error {
+			if innerChange.UniqueKey == uniqueKeyFieldValue {
+				foundMatch = true
+				concreteItem, err := GetLoadable(refValue)
+				if err != nil {
+					return err
+				}
+				return concreteItem.SetField(ID_FIELD, innerChange.IDValue)
+			}
+			return nil
+		})
+		if err != nil {
+			return false, err
+		}
+		if foundMatch {
+			return true, nil
+		}
+		return false, nil
+	}
+	return false, nil
+}
 
 func FetchReferences(
 	connection Connection,
@@ -58,6 +99,15 @@ func FetchReferences(
 				}
 
 				if idFieldValue != "" {
+
+					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, collectionMetadata, refCollectionMetadata)
+					if err != nil {
+						return err
+					}
+					if foundMatch {
+						return nil
+					}
+
 					return refIDReq.AddID(idFieldValue, ReferenceLocator{
 						Item:  change,
 						Field: field,
@@ -66,12 +116,12 @@ func FetchReferences(
 
 				if uniqueKeyFieldValue != "" {
 
-					// Special case for allowing self-references
-					if change.IsNew && collectionMetadata.GetFullName() == refCollectionMetadata.GetFullName() {
-						if change.UniqueKey == uniqueKeyFieldValue {
-							concreteItem := refValue.(loadable.Item)
-							return concreteItem.SetField(ID_FIELD, change.IDValue)
-						}
+					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, collectionMetadata, refCollectionMetadata)
+					if err != nil {
+						return err
+					}
+					if foundMatch {
+						return nil
 					}
 
 					return refUniqueKeyReq.AddID(uniqueKeyFieldValue, ReferenceLocator{

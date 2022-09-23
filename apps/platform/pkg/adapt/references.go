@@ -200,7 +200,7 @@ func HandleReferences(
 				if allowMissingItems {
 					return nil
 				}
-				return fmt.Errorf("Missing Reference Item For Key %s", ID)
+				return fmt.Errorf("Missing Reference Item For Key: %s on %s -> %s", ID, collectionName, ref.GetMatchField())
 			}
 
 			// Loop over all matchIndexes and copy the data from the refItem

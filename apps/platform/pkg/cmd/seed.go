@@ -12,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func init() {
@@ -67,60 +66,14 @@ func populateSeedData(collections ...meta.CollectionableGroup) error {
 	return nil
 }
 
-func setGuestUser(session *sess.Session, connection adapt.Connection) error {
-	if session == nil {
-		anonSession, err := auth.GetStudioAnonSession()
-		if err != nil {
-			return err
-		}
-
-		session = anonSession
-	}
-
-	user, err := auth.GetUserByKey("guest", session, connection)
-	if err != nil {
-		return err
-	}
-
-	sess.GUEST_USER = user
-
-	return nil
-
-}
-
-func setSystemUser(session *sess.Session, connection adapt.Connection) error {
-	if session == nil {
-		anonSession, err := auth.GetStudioAnonSession()
-		if err != nil {
-			return err
-		}
-		session = anonSession
-	}
-
-	user, err := auth.GetUserByKey("system", session, connection)
-	if err != nil {
-		return err
-	}
-
-	sess.SYSTEM_USER = user
-
-	return nil
-
-}
-
-func runSeeds(connection adapt.Connection, anonSession *sess.Session) error {
+func runSeeds(connection adapt.Connection) error {
 	err := connection.Migrate()
 	if err != nil {
 		return err
 	}
 
-	err = setSystemUser(anonSession, connection)
-	if err != nil {
-		return err
-	}
-
 	// After migration, let's get a session with the system user since we have it now.
-	session, err := auth.GetStudioAdminSession()
+	session, err := auth.GetStudioSystemSession(connection)
 	if err != nil {
 		return err
 	}
@@ -134,12 +87,12 @@ func runSeeds(connection adapt.Connection, anonSession *sess.Session) error {
 	var loginmethods meta.LoginMethodCollection
 
 	err = populateSeedData(
+		&users,
 		&apps,
 		&bundles,
 		&workspaces,
 		&sites,
 		&sitedomains,
-		&users,
 		&loginmethods,
 	)
 	if err != nil {
@@ -191,7 +144,7 @@ func seed(cmd *cobra.Command, args []string) {
 	err = connection.BeginTransaction()
 	cobra.CheckErr(err)
 
-	err = runSeeds(connection, anonSession)
+	err = runSeeds(connection)
 	if err != nil {
 		logger.Log("Seeds Failed", logger.ERROR)
 		rollbackErr := connection.RollbackTransaction()

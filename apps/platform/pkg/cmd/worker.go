@@ -106,7 +106,7 @@ func UsageJob() error {
 			},
 		}
 
-		session, err := auth.GetStudioAdminSession()
+		session, err := auth.GetStudioSystemSession(nil)
 		if err != nil {
 			return err
 		}

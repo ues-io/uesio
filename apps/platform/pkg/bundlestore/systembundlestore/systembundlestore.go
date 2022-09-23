@@ -2,6 +2,7 @@ package systembundlestore
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -77,7 +78,8 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
+		message := fmt.Sprintf("No Permission to metadata item: %s : %s : %s : %s", item.GetCollectionName(), key, session.GetUserInfo().UniqueKey, session.GetProfile())
+		return bundlestore.NewPermissionError(message)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
