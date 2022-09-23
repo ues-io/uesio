@@ -8,8 +8,16 @@ definition:
         id: editapplist
         mode: EDIT
         components:
-          - uesio/io.field:
-              fieldId: uesio/studio.name
+          - uesio/io.grid:
+              templateColumns: 1fr 1fr
+              columnGap: 10px
+              items:
+                - uesio/io.field:
+                    fieldId: uesio/studio.user
+                    reference:
+                      requirewriteaccess: true
+                - uesio/io.field:
+                    fieldId: uesio/studio.name
           - uesio/io.field:
               fieldId: uesio/studio.description
           - uesio/studio.colorpicker:

@@ -34,9 +34,17 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
         uesio/studio.icon:
+        uesio/studio.user:
       init:
         query: false
         create: true
+      defaults:
+        - field: uesio/studio.user
+          valueSource: VALUE
+          value: $User{id}
+        - field: uesio/studio.user->uesio/core.uniquekey
+          valueSource: VALUE
+          value: $User{username}
     neworg:
       collection: uesio/core.user
       fields:
