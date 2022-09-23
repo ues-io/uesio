@@ -177,13 +177,11 @@ const useShouldFilter = <T extends BaseDefinition>(
 	items: T[] | undefined,
 	context: Context
 ) => {
-	if (!items) return []
-	const conditionsList = items.flatMap((item) => {
-		const conditions = item["uesio.display"]
-		return conditions ? [conditions] : []
-	})
-
 	const uesio = useUesio({ context })
+	const conditionsList = (items || []).flatMap((item) => {
+		const conditions = item["uesio.display"]
+		return [conditions || []]
+	})
 	uesio.wire.useWires(
 		getWiresForConditions(
 			conditionsList?.flatMap((c) => c),
@@ -191,7 +189,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 		)
 	)
 
-	return items?.filter((item, index) =>
+	return (items || []).filter((item, index) =>
 		shouldAll(conditionsList[index], context)
 	)
 }
