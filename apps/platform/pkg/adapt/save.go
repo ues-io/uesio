@@ -170,6 +170,21 @@ func GetFieldValueString(value interface{}, key string) (string, error) {
 	return valueString, nil
 }
 
+func GetLoadable(value interface{}) (loadable.Item, error) {
+	valueMap, ok := value.(map[string]interface{})
+	if ok {
+		loadableItem := Item(valueMap)
+		return &loadableItem, nil
+	}
+
+	loadableValueItem, ok := value.(loadable.Item)
+	if ok {
+		return loadableValueItem, nil
+	}
+
+	return nil, fmt.Errorf("Invalid Loadable type: %T", value)
+}
+
 func GetFieldValue(value interface{}, key string) (interface{}, error) {
 	valueMap, ok := value.(map[string]interface{})
 	if ok {

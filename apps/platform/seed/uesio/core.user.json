@@ -1,22 +1,8 @@
 [
 	{
-		"username": "system",
-		"firstname": "Super",
-		"lastname": "Admin",
-		"profile": "uesio/studio.standard",
-		"type": "PERSON"
-	},
-	{
 		"username": "uesio",
 		"profile": "uesio/studio.standard",
 		"type": "ORG"
-	},
-	{
-		"username": "guest",
-		"firstname": "Happy",
-		"lastname": "Guest",
-		"profile": "uesio/studio.public",
-		"type": "PERSON"
 	},
 	{
 		"username": "ben",
@@ -49,9 +35,6 @@
 	{
 		"username": "amazon",
 		"profile": "uesio/studio.standard",
-		"type": "ORG",
-		"owner": {
-			"uniquekey": "ben"
-		}
+		"type": "ORG"
 	}
 ]

@@ -40,18 +40,18 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 }
 
 func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
-	headlessSession, err := GetStudioAdminSession()
+	session, err := GetStudioAnonSession()
 	if err != nil {
 		return nil, err
 	}
-	siteDomain, err := getDomain(domainType, domain, headlessSession)
+	siteDomain, err := getDomain(domainType, domain, session)
 	if err != nil {
 		return nil, err
 	}
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, headlessSession)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, session, nil)
 }
 
 func GetStudioSite() (*meta.Site, error) {
@@ -77,48 +77,67 @@ func GetStudioSite() (*meta.Site, error) {
 	return site, nil
 }
 
+func GetAnonSession(site *meta.Site) *sess.Session {
+
+	session := sess.NewSession(nil, &meta.User{
+		Username:  "boot",
+		FirstName: "Boot",
+		LastName:  "User",
+	}, site)
+
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllCollections: true,
+		ViewAllRecords:      true,
+	})
+
+	return session
+}
+
 func GetStudioAnonSession() (*sess.Session, error) {
 	site, err := GetStudioSite()
 	if err != nil {
 		return nil, err
 	}
-
-	//This is only used to query the system user the first time
-	var BOOT_USER = &meta.User{
-		Username:  "boot",
-		FirstName: "Boot",
-		LastName:  "User",
-	}
-
-	session := sess.NewSession(nil, BOOT_USER, site)
-
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
-		AllowAllCollections: true,
-	})
-
-	return session, nil
+	return GetAnonSession(site), nil
 }
 
-func GetStudioAdminSession() (*sess.Session, error) {
+func GetPublicUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
+	return GetUserByKey("guest", GetAnonSession(site), connection)
+}
 
+func GetSystemUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
+	return GetUserByKey("system", GetAnonSession(site), connection)
+}
+
+func GetStudioSystemUser(connection adapt.Connection) (*meta.User, error) {
 	site, err := GetStudioSite()
 	if err != nil {
 		return nil, err
 	}
+	return GetSystemUser(site, connection)
+}
 
-	session := sess.NewSession(nil, sess.SYSTEM_USER, site)
-
+func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Session, error) {
+	user, err := GetSystemUser(site, connection)
+	if err != nil {
+		return nil, err
+	}
+	session := sess.NewSession(nil, user, site)
 	session.SetPermissions(&meta.PermissionSet{
-		AllowAllViews:       true,
-		AllowAllRoutes:      true,
-		AllowAllFiles:       true,
 		AllowAllCollections: true,
-		ModifyAllRecords:    true,
 		ViewAllRecords:      true,
+		ModifyAllRecords:    true,
+		NamedRefs: map[string]bool{
+			"uesio/studio.workspace_admin": true,
+		},
 	})
-
 	return session, nil
+}
+
+func GetStudioSystemSession(connection adapt.Connection) (*sess.Session, error) {
+	site, err := GetStudioSite()
+	if err != nil {
+		return nil, err
+	}
+	return GetSystemSession(site, connection)
 }

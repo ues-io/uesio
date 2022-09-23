@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -14,7 +15,13 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 	site := session.GetSite()
-	session = sess.Logout(w, session)
+	publicUser, err := auth.GetPublicUser(site, nil)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	session = sess.Logout(w, publicUser, session)
 
 	loginRoute := site.GetAppBundle().LoginRoute
 	if loginRoute == "" {
