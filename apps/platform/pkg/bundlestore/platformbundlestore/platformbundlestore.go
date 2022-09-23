@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -21,7 +22,13 @@ type PlatformBundleStore struct {
 }
 
 func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", session)
+
+	anonSession, err := auth.GetStudioAnonSession()
+	if err != nil {
+		return nil, err
+	}
+
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", anonSession)
 }
 
 func getBasePath(namespace, version string) string {
