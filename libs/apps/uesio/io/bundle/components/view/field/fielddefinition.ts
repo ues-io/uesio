@@ -10,6 +10,7 @@ type ReferenceFieldOptions = {
 	returnFields?: string[]
 	components?: definition.DefinitionList
 	template?: string
+	requirewriteaccess?: boolean
 }
 
 type FieldDefinition = {
