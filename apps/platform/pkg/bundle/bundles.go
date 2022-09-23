@@ -85,15 +85,20 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
+	if namespace == "uesio/core" {
+		// Everyone has access to uesio/core
+		return "v0.0.1", nil
+	}
+
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
-		return "", fmt.Errorf("%s version %s doesn't exist for %s ", appName, appVersion, namespace)
+		return "", fmt.Errorf("No Bundle info provided for: %s", appName)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
 	if !hasDep {
-		return "", fmt.Errorf("%s version %s doesn't have %s installed", appName, appVersion, namespace)
+		return "", fmt.Errorf("%s doesn't have %s installed", appName, namespace)
 	}
 
 	return depBundle.Version, nil
