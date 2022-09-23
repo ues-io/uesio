@@ -211,6 +211,11 @@ func (s *Session) IsPublicProfile() bool {
 
 func (s *Session) GetPublicProfile() string {
 	appBundle := s.site.GetAppBundle()
+
+	if s.siteadmin != nil {
+		appBundle = s.siteadmin.GetAppBundle()
+	}
+
 	if appBundle == nil {
 		return ""
 	}
