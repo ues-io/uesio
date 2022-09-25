@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"gopkg.in/yaml.v3"
 )
 
 type LoadOp struct {

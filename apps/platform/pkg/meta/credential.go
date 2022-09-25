@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewCredential(key string) (*Credential, error) {
@@ -39,6 +39,8 @@ type Credential struct {
 	CreatedAt int64                      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool                       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type CredentialWrapper Credential
 
 func (c *Credential) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
@@ -111,7 +113,7 @@ func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(c)
+	return node.Decode((*CredentialWrapper)(c))
 }
 func (c *Credential) IsPublic() bool {
 	return c.Public

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewBot(key string) (*Bot, error) {
@@ -139,6 +139,8 @@ type Bot struct {
 	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
 
+type BotWrapper Bot
+
 func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
@@ -256,7 +258,7 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(b)
+	return node.Decode((*BotWrapper)(b))
 }
 
 func (b *Bot) IsPublic() bool {

@@ -3,5 +3,6 @@ function init(bot) {
 	var params = {
 		name: name,
 	}
+	bot.generateFile(".gitignore", params, "template.gitignore")
 	bot.generateFile("bundle/bundle.yaml", params, "template.bundle.yaml")
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewCollection(key string) (*Collection, error) {
@@ -72,6 +72,8 @@ type Collection struct {
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type CollectionWrapper Collection
 
 func (c *Collection) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
@@ -157,7 +159,8 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(c)
+
+	return node.Decode((*CollectionWrapper)(c))
 }
 
 func (c *Collection) IsPublic() bool {
