@@ -38,15 +38,17 @@ func GetAvailaleWorkspaces() (adapt.Collection, error) {
 
 	return Load(
 		"uesio/studio.workspace",
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio/studio.name",
+		&LoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.name",
+				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio/studio.app",
-				Value: appID,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.app",
+					Value: appID,
+				},
 			},
 		},
 	)

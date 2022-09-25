@@ -5,12 +5,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-func CreateNewApp(user string, name string) (map[string]interface{}, error) {
+func CreateNewApp(user, name, color, icon string) (map[string]interface{}, error) {
 	response, err := Save("uesio/studio.app", []map[string]interface{}{
 		{
-			"uesio/studio.name":  name,
-			"uesio/studio.color": "green",
-			"uesio/studio.icon":  "shield",
+			"uesio/studio.name": name,
+			"uesio/studio.user": map[string]interface{}{
+				"uesio/core.uniquekey": user,
+			},
+			"uesio/studio.color": color,
+			"uesio/studio.icon":  icon,
 		},
 	})
 	if err != nil {
@@ -29,15 +32,17 @@ func GetAppID() (string, error) {
 	// Get the current app id
 	appResult, err := LoadOne(
 		"uesio/studio.app",
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio/studio.name",
+		&LoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.name",
+				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio/core.uniquekey",
-				Value: app,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/core.uniquekey",
+					Value: app,
+				},
 			},
 		},
 	)
