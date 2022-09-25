@@ -21,10 +21,7 @@
 		"skipDefaultLibCheck": true,
 		"useUnknownInCatchVariables": true,
 		"baseUrl": ".",
-		"paths": {
-			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"#uesio/ui": ["libs/ui/src/index.ts"]
-		}
+		"paths": {}
 	},
 	"exclude": ["node_modules", "tmp"]
 }
