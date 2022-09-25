@@ -1,7 +1,7 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
@@ -21,7 +21,9 @@
 		"skipDefaultLibCheck": true,
 		"useUnknownInCatchVariables": true,
 		"baseUrl": ".",
-		"paths": {}
+		"paths": {
+			"@uesio/ui": ["libs/ui/src/index.ts"]
+		}
 	},
 	"exclude": ["node_modules", "tmp"]
 }

@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/evanw/esbuild v0.15.9
+	github.com/evanw/esbuild v0.14.50
 	github.com/spf13/cobra v1.5.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/thecloudmasters/uesio v0.0.0-00010101000000-000000000000
