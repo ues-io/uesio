@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type ConfigValue struct {
@@ -26,6 +26,8 @@ type ConfigValue struct {
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 	Value     string
 }
+
+type ConfigValueWrapper ConfigValue
 
 func (cv *ConfigValue) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cv)
@@ -123,7 +125,7 @@ func (cv *ConfigValue) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(cv)
+	return node.Decode((*ConfigValueWrapper)(cv))
 }
 func (cv *ConfigValue) IsPublic() bool {
 	return cv.Public

@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
+	"gopkg.in/yaml.v3"
 )
 
 type ItemMeta struct {
@@ -239,7 +239,6 @@ func IsValidMetadataName(name string) bool {
 }
 
 func validateNodeLanguage(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "language")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
@@ -251,7 +250,6 @@ func validateNodeLanguage(node *yaml.Node, expectedName string) error {
 }
 
 func validateNodeName(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "name")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewRoute(key string) (*Route, error) {
@@ -39,6 +39,8 @@ type Route struct {
 	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type RouteWrapper Route
 
 func (r *Route) GetCollectionName() string {
 	return r.GetBundleGroup().GetName()
@@ -128,7 +130,7 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(r)
+	return node.Decode((*RouteWrapper)(r))
 }
 
 func (r *Route) IsPublic() bool {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewPermissionSet(key string) (*PermissionSet, error) {
@@ -44,6 +44,8 @@ type PermissionSet struct {
 	CreatedAt           int64           `yaml:"-" uesio:"uesio/core.createdat"`
 	Public              bool            `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type PermissionSetWrapper PermissionSet
 
 func (ps *PermissionSet) GetCollectionName() string {
 	return ps.GetBundleGroup().GetName()
@@ -116,7 +118,7 @@ func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(ps)
+	return node.Decode((*PermissionSetWrapper)(ps))
 }
 
 func (ps *PermissionSet) IsPublic() bool {

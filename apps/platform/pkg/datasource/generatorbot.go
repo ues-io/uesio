@@ -8,13 +8,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"gopkg.in/yaml.v3"
 )
 
 func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {

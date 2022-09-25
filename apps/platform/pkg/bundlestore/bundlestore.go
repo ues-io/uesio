@@ -4,10 +4,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
 var bundleStoreMap = map[string]BundleStore{}

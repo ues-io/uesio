@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type Label struct {
@@ -24,6 +24,8 @@ type Label struct {
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type LabelWrapper Label
 
 func (l *Label) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(l)
@@ -135,7 +137,7 @@ func (l *Label) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(l)
+	return node.Decode((*LabelWrapper)(l))
 }
 
 func (l *Label) IsPublic() bool {

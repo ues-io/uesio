@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"gopkg.in/yaml.v3"
 )
 
 type MetadataMergeData struct {

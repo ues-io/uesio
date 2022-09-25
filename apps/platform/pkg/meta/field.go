@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewField(collectionKey, fieldKey string) (*Field, error) {
@@ -67,6 +67,8 @@ type Field struct {
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"uesio/studio.languagelabel"`
 	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"uesio/studio.columnname"`
 }
+
+type FieldWrapper Field
 
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
@@ -201,7 +203,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 			return err
 		}
 	}
-	return node.Decode(f)
+	return node.Decode((*FieldWrapper)(f))
 }
 
 func validateFileField(node *yaml.Node, fieldKey string) error {
