@@ -1,7 +1,7 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"jsx": "react-jsx",
+		"jsx": "react",
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
