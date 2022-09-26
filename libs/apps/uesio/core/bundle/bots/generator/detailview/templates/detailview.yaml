@@ -5,7 +5,7 @@ wires:
     fields: ${fields}
     conditions:
       - field: uesio/core.id
-        value: $Param{id}
+        value: $Param{recordid}
 # Components determine the layout and composition of your view
 components:
   - uesio/io.titlebar:
@@ -39,3 +39,8 @@ components:
         - uesio/io.box:
             uesio.variant: uesio/io.section
             components: ${formFields}
+params:
+  recordid:
+    type: RECORD
+    required: true
+    collection: ${collection}
