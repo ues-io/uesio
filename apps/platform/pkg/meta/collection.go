@@ -55,9 +55,9 @@ type Collection struct {
 	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
-	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
+	DataSourceRef         string                            `yaml:"dataSource,omitempty" uesio:"uesio/studio.datasource"`
 	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" uesio:"uesio/studio.uniquekey"`
-	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
+	NameField             string                            `yaml:"nameField,omitempty" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
 	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
@@ -161,6 +161,19 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	}
 
 	return node.Decode((*CollectionWrapper)(c))
+}
+
+func (c *Collection) MarshalYAML() (interface{}, error) {
+
+	if c.DataSourceRef == "uesio/core.platform" {
+		c.DataSourceRef = ""
+	}
+
+	if c.NameField == "uesio/core.id" {
+		c.NameField = ""
+	}
+
+	return (*CollectionWrapper)(c), nil
 }
 
 func (c *Collection) IsPublic() bool {
