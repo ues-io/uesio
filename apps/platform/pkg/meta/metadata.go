@@ -376,6 +376,7 @@ func setMapNode(node *yaml.Node, key, value string) error {
 		}
 	}
 
+	// If we didn't find the node, then add it
 	newValueNode := &yaml.Node{}
 	newValueNode.SetString(value)
 	addNodeToMap(node, key, newValueNode)

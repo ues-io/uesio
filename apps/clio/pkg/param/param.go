@@ -125,8 +125,16 @@ func AskMany(params *meta.BotParams, app, version, sessid string) (map[string]in
 
 func Ask(param meta.BotParam, app, version, sessid string, answers map[string]interface{}) error {
 
+	if param.Conditions != nil {
+		for _, condition := range param.Conditions {
+			value := answers[condition.Param]
+			if value != condition.Value {
+				return nil
+			}
+		}
+	}
 	switch param.Type {
-	case "TEXT":
+	case "TEXT", "":
 		var answer string
 		defaultValue, err := mergeParam(param.Default, answers)
 		if err != nil {
