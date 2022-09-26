@@ -359,7 +359,7 @@
 					"builder": "@nrwl/workspace:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
-						"command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --inject:./src/react-shim.ts --minify",
+						"command": "./../../dist/clio/clio packui",
 						"cwd": "libs/ui"
 					}
 				},
@@ -381,7 +381,7 @@
 					"builder": "@nrwl/workspace:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
-						"command": "esbuild ./src/index.ts --bundle --outfile=../../dist/ui/uesio.js --format=esm --define:process.env.NODE_ENV=\\\"development\\\" --inject:./src/react-shim.ts --sourcemap --watch",
+						"command": "./../../dist/clio/clio packui --watch",
 						"cwd": "libs/ui"
 					}
 				},
@@ -400,7 +400,8 @@
 					"outputs": ["coverage/libs/ui"]
 				}
 			},
-			"tags": []
+			"tags": [],
+			"implicitDependencies": ["clio"]
 		},
 		"vendor": {
 			"root": "libs/vendor",
@@ -413,6 +414,13 @@
 					"outputs": ["dist/vendor"],
 					"options": {
 						"commands": [
+							"mkdir -p dist/vendor",
+							"npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} wget -O dist/vendor/react.development.js {}",
+							"npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} wget -O dist/vendor/react.production.min.js {}",
+							"npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} wget -O dist/vendor/react-dom.development.js {}",
+							"npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.production.min.js\" | xargs -I{} wget -O dist/vendor/react-dom.production.min.js {}",
+							"npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js {}",
+							"npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js.map\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js.map {}",
 							"mkdir -p dist/vendor/monaco-editor/min/vs",
 							"mkdir -p dist/vendor/monaco-editor/min-maps",
 							"cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",

@@ -10,7 +10,6 @@ import { selectByName } from "../bands/featureflag"
 import { selectWire } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
-import chroma from "chroma-js"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
@@ -27,7 +26,6 @@ type MergeType =
 	| "User"
 	| "RecordId"
 	| "Theme"
-	| "Color"
 	| "File"
 	| "UserFile"
 	| "Site"
@@ -127,22 +125,10 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return context.getRecordId() || ""
 	},
 	Theme: (expression, context) => {
-		const [scope, value, op] = expression.split(".")
+		const [scope, value] = expression.split(".")
 		const theme = context.getTheme()
 		if (scope === "color") {
-			if (op === "darken") {
-				return chroma(theme.definition.palette[value]).darken(0.5).hex()
-			}
 			return theme.definition.palette[value]
-		}
-		return ""
-	},
-	Color: (expression) => {
-		const [color, op] = expression.split(".")
-		if (chroma.valid(color)) {
-			if (op === "darken") {
-				return chroma(color).darken(0.5).hex()
-			}
 		}
 		return ""
 	},
