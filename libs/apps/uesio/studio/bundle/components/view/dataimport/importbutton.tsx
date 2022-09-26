@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component, styles } from "@uesio/ui"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 import Papa, { ParseResult } from "papaparse"
 
 interface Props extends definition.BaseProps {

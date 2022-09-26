@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	// Using text/template here instead of html/template
@@ -99,6 +100,12 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
+	devMode := false
+	val, _ := os.LookupEnv("UESIO_DEV")
+	if val == "true" {
+		devMode = true
+	}
+
 	mergeData := routing.MergeData{
 		Route: &routing.RouteMergeData{
 			View:      route.ViewRef,
@@ -115,6 +122,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
+		DevMode:         devMode,
 		Builder:         GetBuilderMergeData(preload, buildMode),
 		Component:       GetComponentMergeData(buildMode),
 		BuildMode:       buildMode,

@@ -45,7 +45,7 @@ import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 import { useEffect, useState } from "react"
 import {
 	dispatchRouteDeps,

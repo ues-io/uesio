@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 import { createRecord, getFullWireId } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
