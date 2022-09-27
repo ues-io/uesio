@@ -3,8 +3,10 @@ package call
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/thecloudmasters/clio/pkg/config/host"
@@ -23,7 +25,19 @@ func Request(method, url string, body io.Reader, sessid string) (*http.Response,
 	}
 
 	req.Header.Set("Cookie", "sessid="+sessid)
-	return http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		resp.Body.Close()
+		return nil, errors.New(string(data))
+	}
+	return resp, nil
 }
 
 func GetJSON(url, sessid string, response interface{}) error {

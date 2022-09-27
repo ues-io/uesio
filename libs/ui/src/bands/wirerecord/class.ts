@@ -28,7 +28,7 @@ class WireRecord {
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
-	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
+	getIdFieldValue = () => this.getFieldValue<string>(ID_FIELD)
 
 	getErrors = (fieldId: string) => {
 		const wire = this.wire

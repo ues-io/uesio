@@ -134,6 +134,10 @@ func Upsert(options *UpsertOptions) error {
 		return err
 	}
 
+	if workspace == "" {
+		return errors.New("No active workspace is set. Use \"clio work\" to set one.")
+	}
+
 	sessid, err := config.GetSessionID()
 	if err != nil {
 		return err

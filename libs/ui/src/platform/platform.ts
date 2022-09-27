@@ -268,8 +268,8 @@ const platform = {
 		buildMode?: boolean
 	) => {
 		const prefix = getPrefix(context)
-		const buildModeSuffix = buildMode ? "/builder" : ""
-		return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
+		const buildModeSuffix = buildMode ? "builder.js" : "runtime.js"
+		return `${prefix}/componentpacks/${namespace}/${name}/${buildModeSuffix}`
 	},
 	getMetadataList: async (
 		context: Context,

@@ -27,14 +27,14 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode boo
 		return ""
 	}
 
-	builderSuffix := ""
+	builderSuffix := "runtime.js"
 	if buildMode {
-		builderSuffix = "/builder"
+		builderSuffix = "builder.js"
 	}
 	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
 	}
-	return fmt.Sprintf("/site/componentpacks/%s/%s/%s%s", user, namepart, name, builderSuffix)
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s/%s", user, namepart, name, builderSuffix)
 
 }
 

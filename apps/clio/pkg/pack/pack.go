@@ -18,7 +18,6 @@ func ModifyWatchOptions(options *api.BuildOptions) {
 	options.MinifyWhitespace = false
 	options.MinifyIdentifiers = false
 	options.MinifySyntax = false
-	options.Sourcemap = api.SourceMapLinked
 }
 
 func HandleBuildErrors(errors []api.Message) {

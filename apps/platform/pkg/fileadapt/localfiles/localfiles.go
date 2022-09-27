@@ -2,6 +2,7 @@ package localfiles
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -90,7 +91,8 @@ func (c *Connection) Download(path string) (io.ReadCloser, error) {
 	fullPath := filepath.Join(c.bucket, path)
 	outFile, err := os.Open(fullPath)
 	if err != nil {
-		return nil, errors.New("Error Reading File: " + err.Error())
+		fmt.Println("Error Reading File: " + err.Error())
+		return io.NopCloser(strings.NewReader("")), nil
 	}
 	return outFile, nil
 }

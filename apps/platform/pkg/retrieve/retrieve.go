@@ -46,13 +46,14 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			// Grabs the componentpack javascript files
 			if metadataType == "componentpacks" {
 				cp := item.(*meta.ComponentPack)
-				builderStream, err := bs.GetComponentPackStream(version, true, cp, session)
+
+				builderStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(true), cp, session)
 				if err != nil {
 					return err
 				}
 				itemStreams.AddFile(cp.GetComponentPackFilePath(true), metadataType, builderStream)
 
-				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
+				runtimeStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(false), cp, session)
 				if err != nil {
 					return err
 				}
