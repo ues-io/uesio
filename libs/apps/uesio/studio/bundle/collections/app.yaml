@@ -2,7 +2,7 @@ name: app
 uniqueKey:
   - uesio/studio.fullname
 nameField: uesio/studio.fullname
-access: "protected"
+access: "protected_write"
 recordChallengeTokens:
   - token: "${uesio/core.id}"
     userAccessToken: "uesio/studio.teammember"
