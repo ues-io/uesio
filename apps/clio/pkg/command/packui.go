@@ -41,6 +41,7 @@ func PackUI(options *PackOptions) error {
 		Format:            api.FormatESModule,
 		LogLevel:          api.LogLevelDebug,
 		Metafile:          true,
+		Sourcemap:         api.SourceMapLinked,
 	}
 
 	if options.Watch {

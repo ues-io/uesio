@@ -192,12 +192,12 @@ func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error
 	return bs.GetFileStream(version, file, session)
 }
 
-func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
+func GetComponentPackStream(componentPack *meta.ComponentPack, path string, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetComponentPackStream(version, buildMode, componentPack, session)
+	return bs.GetComponentPackStream(version, path, componentPack, session)
 }
 
 func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

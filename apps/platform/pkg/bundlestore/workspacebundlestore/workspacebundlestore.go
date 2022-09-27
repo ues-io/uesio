@@ -158,9 +158,9 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 	return stream, nil
 }
 
-func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileID := componentPack.RuntimeBundle.ID
-	if buildMode {
+	if path == "builder.js" {
 		fileID = componentPack.BuildTimeBundle.ID
 	}
 	stream, _, err := filesource.Download(fileID, session.RemoveWorkspaceContext())

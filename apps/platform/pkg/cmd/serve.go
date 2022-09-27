@@ -102,8 +102,10 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}/{id}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder", controller.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam(), controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js", controller.ServeComponentPack(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js", controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js.map", controller.ServeComponentPackMap(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js.map", controller.ServeComponentPackMap(false), "GET")
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
