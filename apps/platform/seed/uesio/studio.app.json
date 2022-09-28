@@ -5,6 +5,7 @@
 		"description": "Base Uesio Functionality",
 		"color": "#a05195",
 		"icon": "hub",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -15,6 +16,7 @@
 		"description": "A Component library for uesio",
 		"color": "#2f4b7c",
 		"icon": "widgets",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -25,6 +27,7 @@
 		"description": "The Uesio Configuration App",
 		"color": "#ff7c43",
 		"icon": "design_services",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -35,6 +38,7 @@
 		"description": "A Sample CRM App",
 		"color": "#a05195",
 		"icon": "person",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -45,6 +49,7 @@
 		"description": "Content Management Tools",
 		"color": "#665191",
 		"icon": "description",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
@@ -75,6 +80,7 @@
 		"description": "Experimental Components",
 		"color": "#003f5c",
 		"icon": "science",
+		"public": true,
 		"user": {
 			"uniquekey": "uesio"
 		}
