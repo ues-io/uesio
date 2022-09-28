@@ -30,6 +30,15 @@ type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
 }
+
+type RecordIsNewCondition = {
+	type: "recordIsNew"
+}
+
+type RecordIsNotNewCondition = {
+	type: "recordIsNotNew"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -59,6 +68,8 @@ type DisplayCondition =
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| RecordIsNewCondition
+	| RecordIsNotNewCondition
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
@@ -92,6 +103,14 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "featureFlag") {
 		return !!context.getFeatureFlag(condition.name)?.value
+	}
+
+	if (condition.type === "recordIsNew") {
+		return !!context.getRecord()?.isNew()
+	}
+
+	if (condition.type === "recordIsNotNew") {
+		return !context.getRecord()?.isNew()
 	}
 
 	const compareToValue =

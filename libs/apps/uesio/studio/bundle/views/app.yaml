@@ -9,6 +9,8 @@ definition:
         uesio/studio.name:
         uesio/studio.description:
         uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
         uesio/studio.icon:
       conditions:
         - field: uesio/core.uniquekey
