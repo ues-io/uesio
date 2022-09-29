@@ -75,8 +75,8 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParamCondition struct {
-	Param string `yaml:"param" uesio:"uesio/studio.param" json:"param"`
-	Value string `yaml:"value" uesio:"uesio/studio.value" json:"value"`
+	Param string      `yaml:"param" uesio:"uesio/studio.param" json:"param"`
+	Value interface{} `yaml:"value" uesio:"uesio/studio.value" json:"value"`
 }
 
 type BotParam struct {

@@ -1,0 +1,43 @@
+# Wires are how we pull in data
+wires:
+# Components are how we describe the layout of our view
+components:
+  - uesio/io.grid:
+      uesio.styles:
+        root:
+          alignItems: center
+          backgroundColor: ${backgroundcolor}
+          padding: 10px
+      templateColumns: 0fr 0fr 1fr 0fr
+      items:
+        - uesio/io.griditem:
+            components:
+              - uesio/io.image:
+                  uesio.styles:
+                    root:
+                      margin: 0 16px
+                  file: ${logo}
+                  height: ${logoheight}
+        - uesio/io.griditem:
+            uesio.styles:
+              root:
+                display: flex
+            components: ${navcollections}
+        - uesio/io.griditem:
+            uesio.styles:
+              root:
+                textAlign: right
+            components:
+              - uesio/io.button:
+                  uesio.variant: uesio/io.nav
+                  text: Log Out
+                  signals:
+                    - signal: "user/LOGOUT"
+        - uesio/io.griditem:
+            components:
+              - uesio/io.avatar:
+                  uesio.styles:
+                    root:
+                      margin: 0 16px
+                  text: $User{initials}
+                  image: $User{picture}
