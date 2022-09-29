@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect, useRef } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -13,11 +13,11 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
 		context,
-		definition: { params, view: viewDefId },
+		definition: { params, view: viewDefId, id },
 	} = props
 
 	const uesio = useUesio(props)
-	const componentId = path ? uesio.component.getId() : ""
+	const componentId = path ? uesio.component.getId(id) : ""
 	const viewId = makeViewId(viewDefId, componentId)
 
 	const subViewClass = css({
@@ -28,16 +28,25 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
+	const [paramState] = uesio.component.useState<Record<string, string>>(
+		componentId,
+		params
+	)
+
+	const mergedParams = context.mergeMap(paramState)
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		params: context.mergeMap(params),
+		params: mergedParams,
 	})
 
+	const firstLoad = useRef(true)
+
 	useEffect(() => {
-		appDispatch()(loadViewOp(viewContext))
-	}, [viewDefId, JSON.stringify(params)])
+		appDispatch()(loadViewOp(viewContext, !firstLoad.current))
+		firstLoad.current = false
+	}, [viewDefId, JSON.stringify(mergedParams)])
 
 	if (!viewDef) return null
 

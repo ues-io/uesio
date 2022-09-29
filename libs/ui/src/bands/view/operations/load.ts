@@ -10,7 +10,7 @@ import { batch } from "react-redux"
 import createrecord from "../../wire/operations/createrecord"
 import { WireDefinition } from "../../../definition/wire"
 
-export default (context: Context): ThunkFunc =>
+export default (context: Context, forceReload: boolean): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// First check to see if we have the viewDef
 		const viewDefId = context.getViewDefId()
@@ -36,13 +36,15 @@ export default (context: Context): ThunkFunc =>
 
 		const preloadedDefs: Record<string, WireDefinition> = {}
 
-		const wiresToLoad = Object.fromEntries(
-			Object.entries(wires).filter(([wirename, wireDef]) => {
-				const foundWire = selectWire(state, viewId, wirename)
-				if (foundWire) preloadedDefs[wirename] = wireDef
-				return !foundWire
-			})
-		)
+		const wiresToLoad = forceReload
+			? wires
+			: Object.fromEntries(
+					Object.entries(wires).filter(([wirename, wireDef]) => {
+						const foundWire = selectWire(state, viewId, wirename)
+						if (foundWire) preloadedDefs[wirename] = wireDef
+						return !foundWire
+					})
+			  )
 
 		const wiresToLoadNames = wires ? Object.keys(wiresToLoad) : []
 		const preloadedWireNames = Object.keys(preloadedDefs)

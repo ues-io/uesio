@@ -152,7 +152,9 @@ func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateStri
 	mergedStrings := []string{}
 	for _, key := range repeater {
 		result, err := gba.MergeString(map[string]interface{}{
-			"key": key,
+			"key":   key,
+			"start": "${",
+			"end":   "}",
 		}, templateString)
 		if err != nil {
 			return "", err
@@ -188,9 +190,11 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 	}
 
 	// Traverse the node to find merges
-	err = mergeNodes(node.Content[0], params, true)
-	if err != nil {
-		return nil, err
+	if len(node.Content) > 0 {
+		err = mergeNodes(node.Content[0], params, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return node, nil
@@ -233,8 +237,12 @@ func mergeNodes(node *yaml.Node, params map[string]interface{}, allowYaml bool) 
 		for _, merge := range match {
 			mergeValue := params[merge]
 			mergeString, ok := mergeValue.(string)
-			if ok && mergeString != "" {
+			if ok {
 				if allowYaml {
+					if mergeString == "" {
+						node.SetString("")
+						continue
+					}
 					newNode, err := mergeYamlString(mergeString, nil)
 					if err != nil {
 						return err

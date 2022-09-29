@@ -1,0 +1,24 @@
+name: headerview
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: View Name
+    type: METADATANAME
+  logo:
+    prompt: Logo
+    type: METADATA
+    metadataType: FILE
+  logoheight:
+    prompt: Logo Height
+    type: TEXT
+    default: 36px
+  backgroundcolor:
+    prompt: Background Color
+    type: TEXT
+    default: rgb(32,29,29)
+  collections:
+    prompt: Collections
+    type: METADATAMULTI
+    metadataType: COLLECTION
+public: true

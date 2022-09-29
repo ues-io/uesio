@@ -148,6 +148,13 @@ func Ask(param meta.BotParam, app, version, sessid string, answers map[string]in
 			return err
 		}
 		answers[param.Name] = answer
+	case "BOOL":
+		var answer bool
+		err := survey.AskOne(&survey.Confirm{}, &answer)
+		if err != nil {
+			return err
+		}
+		answers[param.Name] = answer
 	case "METADATANAME":
 		var answer string
 		err := survey.AskOne(&survey.Input{

@@ -19,6 +19,11 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type ParamIsNotSetCondition = {
+	type: "paramIsNotSet"
+	param: string
+}
+
 type ParamValueCondition = {
 	type: "paramValue"
 	param: string
@@ -64,6 +69,7 @@ type DisplayCondition =
 	| HasValueCondition
 	| FieldValueCondition
 	| ParamIsSetCondition
+	| ParamIsNotSetCondition
 	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
@@ -95,6 +101,10 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "paramIsSet") {
 		return !!context.getParam(condition.param)
+	}
+
+	if (condition.type === "paramIsNotSet") {
+		return !context.getParam(condition.param)
 	}
 
 	if (condition.type === "fieldMode") {
