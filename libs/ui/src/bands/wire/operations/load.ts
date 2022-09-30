@@ -51,7 +51,8 @@ function getWireRequest(
 	})
 }
 
-export default (context: Context, wires?: string[]): ThunkFunc =>
+const loadOp =
+	(context: Context, wires?: string[]): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// Turn the list of wires into a load request
 		const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
@@ -91,5 +92,5 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 
 		return context
 	}
-
-export { getWireRequest, getWiresMap, getFieldsRequest }
+export default loadOp
+export { getWireRequest, getWiresMap, getFieldsRequest, loadOp }

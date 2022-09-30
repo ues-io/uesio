@@ -8,7 +8,7 @@ type SaveError = {
 
 type SaveResponse = {
 	wire: string
-	errors?: SaveError[]
+	errors: null | SaveError[]
 	changes: ChangeResults
 	deletes: ChangeResults
 }

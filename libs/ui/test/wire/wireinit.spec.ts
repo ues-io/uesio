@@ -1,8 +1,8 @@
-import { platform } from "../src/platform/platform"
-import { create } from "../src/store/store"
-import initializeWiresOp from "../src/bands/wire/operations/initialize"
-import { newContext } from "../src/context/context"
-import { selectWire } from "../src/bands/wire"
+import { platform } from "../../src/platform/platform"
+import { create } from "../../src/store/store"
+import initializeWiresOp from "../../src/bands/wire/operations/initialize"
+import { newContext } from "../../src/context/context"
+import { selectWire } from "../../src/bands/wire"
 
 // This is a somewhat trivial test to make sure UI only wires are
 // initialized correctly. It mostly tests our ability to create a
