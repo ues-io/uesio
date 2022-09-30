@@ -24,6 +24,7 @@ type LoadOp struct {
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"-"`
 	Params             map[string]string      `json:"-"`
+	Preloaded          bool                   `json:"preloaded"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
@@ -56,6 +57,7 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 	case "collection":
 		// Do some extra stuff
 		op.Collection = &Collection{}
+		op.Preloaded = true
 		return dec.String(&op.CollectionName)
 	case "name":
 		return dec.String(&op.WireName)
@@ -109,6 +111,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.Fields = fields
 	op.Conditions = conditions
 	op.Order = order
+	op.Preloaded = true
 	return nil
 
 }

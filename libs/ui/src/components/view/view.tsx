@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent, useEffect } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -41,11 +41,8 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		params: mergedParams,
 	})
 
-	const firstLoad = useRef(true)
-
 	useEffect(() => {
-		appDispatch()(loadViewOp(viewContext, !firstLoad.current))
-		firstLoad.current = false
+		appDispatch()(loadViewOp(viewContext))
 	}, [viewDefId, JSON.stringify(mergedParams)])
 
 	if (!viewDef) return null

@@ -3,14 +3,10 @@ import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { ThunkFunc } from "../../../store/store"
-import { selectWire } from "../../wire"
 import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
-import { batch } from "react-redux"
-import createrecord from "../../wire/operations/createrecord"
-import { WireDefinition } from "../../../definition/wire"
 
-export default (context: Context, forceReload: boolean): ThunkFunc =>
+export default (context: Context): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// First check to see if we have the viewDef
 		const viewDefId = context.getViewDefId()
@@ -32,39 +28,11 @@ export default (context: Context, forceReload: boolean): ThunkFunc =>
 
 		const definition = viewDef.definition
 		const wires = definition.wires || {}
-		const viewId = context.getViewId()
+		const wireNames = Object.keys(wires)
 
-		const preloadedDefs: Record<string, WireDefinition> = {}
-
-		const wiresToLoad = forceReload
-			? wires
-			: Object.fromEntries(
-					Object.entries(wires).filter(([wirename, wireDef]) => {
-						const foundWire = selectWire(state, viewId, wirename)
-						if (foundWire) preloadedDefs[wirename] = wireDef
-						return !foundWire
-					})
-			  )
-
-		const wiresToLoadNames = wires ? Object.keys(wiresToLoad) : []
-		const preloadedWireNames = Object.keys(preloadedDefs)
-
-		batch(() => {
-			if (wiresToLoadNames.length) {
-				dispatch(initializeWiresOp(context, wiresToLoad))
-			}
-			if (preloadedWireNames.length) {
-				preloadedWireNames.forEach((wirename) => {
-					const wireDef = preloadedDefs[wirename]
-					if (wireDef.init?.create) {
-						dispatch(createrecord(context, wirename))
-					}
-				})
-			}
-		})
-
-		if (wiresToLoadNames.length) {
-			await dispatch(loadWiresOp(context, wiresToLoadNames))
+		if (wireNames.length) {
+			dispatch(initializeWiresOp(context, wires))
+			await dispatch(loadWiresOp(context, wireNames))
 		}
 
 		// Handle Events
