@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent, useEffect } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -17,8 +17,9 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	} = props
 
 	const uesio = useUesio(props)
-	const componentId = path ? uesio.component.getId(id) : ""
-	const viewId = makeViewId(viewDefId, componentId)
+	uesio._componentType = "uesio/core.view"
+	const componentId = uesio.component.getId(id)
+	const viewId = makeViewId(viewDefId, path ? componentId : "")
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -41,11 +42,8 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		params: mergedParams,
 	})
 
-	const firstLoad = useRef(true)
-
 	useEffect(() => {
-		appDispatch()(loadViewOp(viewContext, !firstLoad.current))
-		firstLoad.current = false
+		appDispatch()(loadViewOp(viewContext))
 	}, [viewDefId, JSON.stringify(mergedParams)])
 
 	if (!viewDef) return null

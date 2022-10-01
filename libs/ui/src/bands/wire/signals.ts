@@ -375,7 +375,7 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
 		dispatcher: (signal: LoadWiresSignal, context: Context) =>
-			loadWiresOp(context, signal.wires),
+			loadWiresOp(context, signal.wires, true),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

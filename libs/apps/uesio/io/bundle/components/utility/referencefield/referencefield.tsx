@@ -117,7 +117,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 								name: "search",
 								batchnumber: 0,
 								batchid: "",
-								data: {},
 								view: context.getViewId() || "",
 								query: true,
 								collection: referencedCollection.getFullName(),
@@ -134,10 +133,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 									},
 								],
 								requirewriteaccess: options?.requirewriteaccess,
-								changes: {},
-								deletes: {},
-								original: {},
-								viewOnly: false,
 							},
 						],
 					})

@@ -26,6 +26,7 @@ type PlainWire = {
 	original: Record<string, PlainWireRecord>
 	query?: boolean
 	create?: boolean
+	preloaded?: boolean
 	view: string
 	defaults?: WireDefault[]
 	events?: WireEvents
@@ -35,4 +36,4 @@ type PlainWire = {
 	fields: LoadRequestField[]
 }
 
-export { PlainWire }
+export { PlainWire, OrderState }
