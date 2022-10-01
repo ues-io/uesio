@@ -21,15 +21,21 @@ function getWiresMap(wires: PlainWire[]) {
 const getWireRequest = (
 	wires: PlainWire[],
 	resetBatchNumber: boolean,
-	context: Context
+	context: Context,
+	forceQuery?: boolean
 ): LoadRequest[] =>
 	wires.map((wire) => ({
 		...wire,
 		batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
 		params: context.getParams(),
+		...(forceQuery && { query: true }),
 	}))
 
-export default (context: Context, wireNames?: string[]): ThunkFunc =>
+export default (
+		context: Context,
+		wireNames?: string[],
+		forceQuery?: boolean
+	): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		// Turn the list of wires into a load request
 		const wires = getWiresFromDefinitonOrContext(wireNames, context)
@@ -51,7 +57,7 @@ export default (context: Context, wireNames?: string[]): ThunkFunc =>
 			throw new Error(`Wire dependency error, check the table above`)
 		}
 
-		const loadRequests = getWireRequest(toLoad, true, context)
+		const loadRequests = getWireRequest(toLoad, true, context, forceQuery)
 
 		const response = loadRequests.length
 			? await platform.loadData(context, {
