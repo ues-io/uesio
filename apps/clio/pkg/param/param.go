@@ -150,7 +150,9 @@ func Ask(param meta.BotParam, app, version, sessid string, answers map[string]in
 		answers[param.Name] = answer
 	case "BOOL":
 		var answer bool
-		err := survey.AskOne(&survey.Confirm{}, &answer)
+		err := survey.AskOne(&survey.Confirm{
+			Message: param.Prompt,
+		}, &answer)
 		if err != nil {
 			return err
 		}

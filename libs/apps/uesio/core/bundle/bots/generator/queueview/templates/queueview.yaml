@@ -39,4 +39,4 @@ components:
                   id: detailview
                   view: ${detailviewname}
                   params:
-                    recordid: $Param{selectedid}
+                    recordid: ""
