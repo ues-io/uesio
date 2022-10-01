@@ -3,6 +3,7 @@ import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { ThunkFunc } from "../../../store/store"
+import { selectWire } from "../../wire"
 import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
 
@@ -28,10 +29,21 @@ export default (context: Context): ThunkFunc =>
 
 		const definition = viewDef.definition
 		const wires = definition.wires || {}
+		const viewId = context.getViewId()
 		const wireNames = Object.keys(wires)
 
+		const wiresToInit = Object.fromEntries(
+			Object.entries(wires).flatMap(([wirename, wireDef]) => {
+				const foundWire = selectWire(state, viewId, wirename)
+				return foundWire ? [] : [[wirename, wireDef]]
+			})
+		)
+
+		if (Object.keys(wiresToInit).length) {
+			dispatch(initializeWiresOp(context, wiresToInit))
+		}
+
 		if (wireNames.length) {
-			dispatch(initializeWiresOp(context, wires))
 			await dispatch(loadWiresOp(context, wireNames))
 		}
 

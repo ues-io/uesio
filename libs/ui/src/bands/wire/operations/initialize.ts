@@ -1,6 +1,6 @@
-import { RootState, ThunkFunc } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { init, selectWire } from ".."
+import { init } from ".."
 import {
 	RegularWireDefinition,
 	ViewOnlyField,
@@ -122,19 +122,13 @@ const initExistingWire = (
 })
 
 const initWire = (
-	state: RootState,
 	viewId: string,
 	wirename: string,
 	wireDef: WireDefinition,
-	existingWire: PlainWire | undefined,
 	collections: PlainCollectionMap
 ) => {
 	if (wireDef.viewOnly) {
 		return initViewOnlyWire(viewId, wirename, wireDef, collections)
-	}
-
-	if (existingWire) {
-		return initExistingWire(existingWire, wireDef)
 	}
 
 	return {
@@ -157,26 +151,15 @@ export default (
 		context: Context,
 		wireDefs: Record<string, WireDefinition | undefined>
 	): ThunkFunc =>
-	(dispatch, getState) => {
+	(dispatch) => {
 		const collections: PlainCollectionMap = {}
 		const viewId = context.getViewId()
-		const viewDefId = context.getViewDefId()
+
 		if (!viewId) throw new Error("Could not get View Def Id")
-		const state = getState()
-		const viewDef = state.viewdef.entities[viewDefId || ""]
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
-			const wireDef =
-				wireDefs[wirename] || viewDef?.definition?.wires?.[wirename]
+			const wireDef = wireDefs[wirename]
 			if (!wireDef) throw new Error("Could not get wire def")
-			const existingWire = selectWire(state, viewId, wirename)
-			return initWire(
-				state,
-				viewId,
-				wirename,
-				wireDef,
-				existingWire,
-				collections
-			)
+			return initWire(viewId, wirename, wireDef, collections)
 		})
 
 		dispatch(init([initializedWires, collections]))
