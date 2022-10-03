@@ -77,11 +77,7 @@ class WireAPI {
 		return new Wire(plainWire).attachCollection(plainCollection)
 	}
 
-	useDynamicWire(
-		wireName: string,
-		wireDef: WireDefinition | null,
-		doLoad?: boolean
-	) {
+	useDynamicWire(wireName: string, wireDef: WireDefinition | null) {
 		const context = this.uesio.getContext()
 		const wire = this.useWire(wireName)
 		useEffect(() => {
@@ -89,7 +85,7 @@ class WireAPI {
 			this.initWires(context, {
 				[wireName]: wireDef,
 			})
-			doLoad && this.loadWires(context, [wireName])
+			this.loadWires(context, [wireName])
 		}, [wireName, JSON.stringify(wireDef)])
 		return wire
 	}
