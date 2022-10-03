@@ -1,8 +1,8 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
-import { testEnv } from "../utils/x"
-const { viewId, wireId, collectionId, ns } = testEnv
+import { testEnv } from "../utils/defaults"
 
+const { viewId, wireId, collectionId, ns } = testEnv
 const SEARCH_CONDITION_ID = "uesio.search"
 const SEARCH_VALUE = "kepler"
 const tests: WireSignalTest[] = [

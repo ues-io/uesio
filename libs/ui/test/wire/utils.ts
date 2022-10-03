@@ -1,13 +1,10 @@
-// import { WireAPI } from "../../src/hooks/wireapi"
 import { useUesio } from "../../src/hooks/hooks"
 import { newContext, Context } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
-
 import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
-import { storeCollection, testEnv } from "../utils/x"
+import { storeCollection, testEnv } from "../utils/defaults"
 import { dispatchRouteDeps } from "../../src/bands/route/utils"
-// import { FieldMetadata } from "../../src/bands/field/types"
 import { SignalDefinition } from "../../src/signalexports"
 import { WireDefinition, PlainWire } from "../../src/wireexports"
 

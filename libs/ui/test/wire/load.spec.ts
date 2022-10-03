@@ -2,10 +2,8 @@ import testWireSignal, {
 	WireSignalTest,
 	defaultPlainWireProperties,
 } from "./utils"
-
-import { storeCollection, testEnv } from "../utils/x"
+import { storeCollection, testEnv } from "../utils/defaults"
 import { useUesio } from "../../src/hooks/hooks"
-
 import * as platformModule from "../../src/platform/platform"
 
 const { viewId, wireId, collectionId, ns } = testEnv

@@ -1,6 +1,6 @@
 import testWireSignal, { WireSignalTest } from "./utils"
+import { testEnv } from "../utils/defaults"
 
-import { testEnv } from "../utils/x"
 const { viewId, wireId, collectionId } = testEnv
 
 const tests: WireSignalTest[] = [

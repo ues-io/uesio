@@ -2,8 +2,10 @@ import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
 import { PlainWireRecord } from "../../src/wireexports"
 import { getFullWireId } from "../../src/bands/wire"
-import { testEnv } from "../utils/x"
+import { testEnv } from "../utils/defaults"
+
 const { viewId, wireId, collectionId, ns } = testEnv
+
 const tests: WireSignalTest[] = [
 	{
 		name: "Save",

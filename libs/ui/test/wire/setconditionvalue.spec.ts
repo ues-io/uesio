@@ -1,6 +1,6 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import { ValueConditionState } from "../../src/wireexports"
-import { testEnv } from "../utils/x"
+import { testEnv } from "../utils/defaults"
 const { viewId, wireId, collectionId } = testEnv
 
 const tests: WireSignalTest[] = [
