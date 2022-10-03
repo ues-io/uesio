@@ -24,6 +24,7 @@ type LoadOp struct {
 	HasMoreBatches     bool                   `json:"more"`
 	RequireWriteAccess bool                   `json:"-"`
 	Params             map[string]string      `json:"-"`
+	Preloaded          bool                   `json:"preloaded"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {

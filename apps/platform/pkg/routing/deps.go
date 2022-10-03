@@ -167,10 +167,11 @@ func processView(key string, deps *PreloadMetadata, params map[string]string, se
 			}
 
 			loadOp := &adapt.LoadOp{
-				WireName: pair.Key,
-				View:     view.GetKey() + "()",
-				Query:    true,
-				Params:   params,
+				WireName:  pair.Key,
+				View:      view.GetKey() + "()",
+				Query:     true,
+				Params:    params,
+				Preloaded: true,
 			}
 			err := pair.Node.Decode(loadOp)
 			if err != nil {

@@ -125,14 +125,34 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
 	if (!componentType) return <NotFound {...props} />
+	const isBuildMode = !!context.getBuildMode()
+	const RuntimeLoader = getRuntimeLoader(componentType) || NotFound
+	const BuildTimeLoader = isBuildMode
+		? getBuildtimeLoader(componentType)
+		: undefined
 	const Loader =
-		getLoader(componentType, !!context.getBuildMode()) || NotFound
+		isBuildMode && BuildTimeLoader ? BuildTimeLoader : RuntimeLoader
 
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
 		context
 	)
+
+	if (isBuildMode && !BuildTimeLoader) {
+		return (
+			<BuildWrapper {...props}>
+				<RuntimeLoader
+					{...props}
+					definition={mergedDefinition}
+					context={additionalContext(
+						context,
+						mergedDefinition?.["uesio.context"] as ContextFrame
+					)}
+				/>
+			</BuildWrapper>
+		)
+	}
 
 	return (
 		<Loader
@@ -145,11 +165,6 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		/>
 	)
 }
-
-const getLoader = (key: MetadataKey, buildMode: boolean) =>
-	buildMode
-		? getBuildtimeLoader(key) || getDefaultBuildtimeLoader(key)
-		: getRuntimeLoader(key)
 
 const getVariantInfo = (
 	fullName: MetadataKey | undefined,
@@ -213,22 +228,6 @@ const getUtility = <T extends UtilityPropsPlus>(key: MetadataKey) => {
 	return returnFunc
 }
 const BuildWrapper = getUtility("uesio/studio.buildwrapper")
-
-const getDefaultBuildtimeLoader = (key: MetadataKey) => (props: BaseProps) => {
-	const Loader = getRuntimeLoader(key)
-
-	// Don't use the buildwrapper for a panel component
-	if (props.definition && "uesio.type" in props.definition)
-		return <Loader {...props} />
-
-	return Loader ? (
-		<BuildWrapper {...props}>
-			<Loader {...props} />
-		</BuildWrapper>
-	) : (
-		<NotFound {...props} />
-	)
-}
 
 export {
 	ComponentInternal,
