@@ -203,10 +203,9 @@ const getWiresForConditions = (
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
-	items: T[] | undefined,
+	items: T[] | undefined = [],
 	context: Context
 ) => {
-	if (!items) return []
 	const conditionsList = items.flatMap((item) => {
 		const conditions = item["uesio.display"]
 		return conditions ? [conditions] : []
