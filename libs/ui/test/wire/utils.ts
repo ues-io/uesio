@@ -3,7 +3,7 @@ import { newContext, Context } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
 import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
-import { storeCollection, testEnv } from "../utils/defaults"
+import { getCollection, testEnv } from "../utils/defaults"
 import { dispatchRouteDeps } from "../../src/bands/route/utils"
 import { SignalDefinition } from "../../src/signalexports"
 import { WireDefinition, PlainWire } from "../../src/wireexports"
@@ -37,9 +37,7 @@ export const testWireSignal = async ({
 			collection: {
 				ids: [`ben/planets.${testEnv.collectionId}`],
 				entities: {
-					[`ben/planets.${testEnv.collectionId}`]: {
-						...storeCollection,
-					},
+					[`ben/planets.${testEnv.collectionId}`]: getCollection(),
 				},
 			},
 		},
@@ -69,36 +67,5 @@ export const defaultPlainWireProperties = {
 	viewOnly: false,
 	data: {},
 }
-
-// export const defaultCollectionResponse = {
-// 	name: "name",
-// 	namespace: "ben/planets",
-// 	createable: true,
-// 	accessible: true,
-// 	updateable: true,
-// 	deleteable: false,
-// 	nameField: "ben/planets.name",
-// 	fields: {
-// 		"ben/planets.name": {
-// 			name: "name",
-// 			namespace: "ben/planets",
-// 			createable: true,
-// 			accessible: true,
-// 			updateable: true,
-// 			type: "TEXT",
-// 			label: "Name",
-// 		},
-// 	},
-// }
-
-// export const defaultFieldMetadata: FieldMetadata = {
-// 	name: "name",
-// 	namespace: "ben/planets",
-// 	createable: true,
-// 	accessible: true,
-// 	updateable: true,
-// 	type: "TEXT",
-// 	label: "Name",
-// }
 
 export default testWireSignal

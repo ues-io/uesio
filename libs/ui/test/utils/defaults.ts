@@ -15,8 +15,9 @@ export const testEnv = {
 	wireId,
 }
 
-export const store = create(platform, {})
-export const storeFields: FieldMetadataMap = {
+export const getStore = () => create(platform, {})
+
+export const getFields = (): FieldMetadataMap => ({
 	"ben/planets.name": {
 		name: "name",
 		namespace: NS,
@@ -26,8 +27,9 @@ export const storeFields: FieldMetadataMap = {
 		type: "TEXT",
 		label: "Name",
 	},
-}
-export const storeCollection: PlainCollection = {
+})
+
+export const getCollection = (): PlainCollection => ({
 	name: COLLECTION_NAME,
 	namespace: NS,
 	createable: true,
@@ -35,15 +37,5 @@ export const storeCollection: PlainCollection = {
 	updateable: true,
 	deleteable: true,
 	nameField: `${NS}.name`,
-	fields: {
-		"ben/planets.name": {
-			name: "name",
-			namespace: NS,
-			createable: true,
-			accessible: true,
-			updateable: true,
-			type: "TEXT",
-			label: "Name",
-		},
-	},
-}
+	fields: getFields(),
+})

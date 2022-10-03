@@ -295,7 +295,6 @@ const wireSlice = createSlice({
 			payload.wires?.forEach((wire) => {
 				const wireId = wire.wire
 				const wireState = state.entities[wireId]
-				console.log("RUNNING", wireState)
 				if (!wireState) return
 
 				if (wire.errors) {
@@ -315,7 +314,6 @@ const wireSlice = createSlice({
 
 				const data = wireState.data
 				const original = wireState.original
-				console.log({ data, original })
 
 				if (!data || !original) return
 

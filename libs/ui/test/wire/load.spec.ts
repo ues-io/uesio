@@ -2,7 +2,7 @@ import testWireSignal, {
 	WireSignalTest,
 	defaultPlainWireProperties,
 } from "./utils"
-import { storeCollection, testEnv } from "../utils/defaults"
+import { getCollection, testEnv } from "../utils/defaults"
 import { useUesio } from "../../src/hooks/hooks"
 import * as platformModule from "../../src/platform/platform"
 
@@ -27,7 +27,7 @@ const tests: WireSignalTest[] = [
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {
-							"ben/planets.exoplanet": { ...storeCollection },
+							"ben/planets.exoplanet": getCollection(),
 						},
 						wires: [
 							{

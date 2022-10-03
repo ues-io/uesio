@@ -53,7 +53,6 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			const serverResponse = await platform.saveData(context, {
 				wires: requests,
 			})
-			console.log({ response: JSON.stringify(serverResponse, null, 4) })
 			serverResponse.wires.forEach((wire) => {
 				response.wires.push(wire)
 			})
