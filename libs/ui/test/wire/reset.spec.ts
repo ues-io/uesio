@@ -1,30 +1,33 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-const WIRE_NAME = "exoplanets"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId, ns } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Reset",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		view: viewId,
+
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/UPDATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				value: "Kepler-16b",
 			},
 			{
 				signal: "wire/MARK_FOR_DELETE",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/RESET",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 		],
 		run: () => (wire) => () => {
@@ -38,9 +41,11 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Reset with create on init.",
-		wireId: WIRE_NAME,
+		view: viewId,
+
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: `${ns}.${collectionId}`,
 			fields: {},
 			init: {
 				create: true,
@@ -49,11 +54,11 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/UPDATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				value: "Kepler-16b",
 			},
@@ -62,7 +67,7 @@ const tests: WireSignalTest[] = [
 			},
 			{
 				signal: "wire/RESET",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 		],
 		run: () => (wire) => {

@@ -1,13 +1,15 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-const WIRE_NAME = "exoplanets"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
+		view: viewId,
 		name: "toggling from undefined",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -21,7 +23,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/TOGGLE_CONDITION",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 			},
 		],
@@ -39,10 +41,12 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
+		view: viewId,
+
 		name: "toggling from false",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -57,7 +61,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/TOGGLE_CONDITION",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 			},
 		],
@@ -75,10 +79,12 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
+		view: viewId,
+
 		name: "toggling from true",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -93,7 +99,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/TOGGLE_CONDITION",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 			},
 		],
@@ -111,10 +117,11 @@ const tests: WireSignalTest[] = [
 			}),
 	},
 	{
+		view: viewId,
 		name: "toggling unexisting",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "000",
@@ -129,7 +136,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/TOGGLE_CONDITION",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 			},
 		],

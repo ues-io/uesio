@@ -1,31 +1,32 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
-import { PlainWireRecord } from "../..//src/wireexports"
-const WIRE_NAME = "exoplanets"
-const VIEW_NAME = "allPlanets"
-const NS = "ben/planets"
+import { PlainWireRecord } from "../../src/wireexports"
+import { getFullWireId } from "../../src/bands/wire"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId, ns } = testEnv
 const tests: WireSignalTest[] = [
 	{
 		name: "Save",
-		wireId: WIRE_NAME,
+		view: viewId,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: `${ns}.${collectionId}`,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/UPDATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				value: "Kepler-16b",
 			},
 			{
 				signal: "wire/SAVE",
-				wires: [WIRE_NAME],
+				wires: [wireId],
 			},
 		],
 		run: () => {
@@ -36,7 +37,7 @@ const tests: WireSignalTest[] = [
 					Promise.resolve({
 						wires: [
 							{
-								wire: `${NS}.${VIEW_NAME}():${WIRE_NAME}`,
+								wire: getFullWireId(viewId, wireId),
 								changes: {
 									record123: {
 										"ben/planets.name": "kepler",
@@ -50,7 +51,7 @@ const tests: WireSignalTest[] = [
 								deletes: {},
 								errors: null,
 								options: null,
-								collection: `${NS}.exoplanets`,
+								collection: `${ns}.${collectionId}`,
 							},
 						],
 					})
@@ -60,7 +61,7 @@ const tests: WireSignalTest[] = [
 				expect(wire).toMatchObject({
 					changes: {},
 				})
-				expect(wire.data).toEqual({
+				expect(wire.data).toMatchObject({
 					record123: {
 						"ben/planets.name": "kepler",
 					},

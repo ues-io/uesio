@@ -1,17 +1,19 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-const WIRE_NAME = "exoplanets"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId, ns } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
 		name: "adding 1 record",
-		wireId: WIRE_NAME,
+		wireId,
+		view: viewId,
 
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/MARK_FOR_DELETE",

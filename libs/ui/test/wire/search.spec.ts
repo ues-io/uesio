@@ -1,18 +1,21 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 import * as platformModule from "../../src/platform/platform"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId, ns } = testEnv
 
-const WIRE_NAME = "exoplanets"
 const SEARCH_CONDITION_ID = "uesio.search"
 const SEARCH_VALUE = "kepler"
 const tests: WireSignalTest[] = [
 	{
+		view: viewId,
+
 		name: "Search for a string",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/SEARCH",
-				wire: WIRE_NAME,
+				wire: wireId,
 				searchFields: ["ben/planets.name"],
 				search: SEARCH_VALUE,
 			},
@@ -21,14 +24,14 @@ const tests: WireSignalTest[] = [
 			const spy = jest
 				.spyOn(platformModule.platform, "loadData")
 				.mockResolvedValue({ wires: [] } as never)
-				.mockImplementation(
-					() =>
-						Promise.resolve({
-							wires: [],
-							collections: [],
-							// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						}) as any
+				.mockImplementation(() =>
+					// Promise.resolve({
+					// 	wires: [],
+					// 	collections: [],
+					// })
+					Promise.reject()
 				)
+
 			return (wire) => {
 				spy.mockRestore()
 				expect(wire.conditions).toMatchObject([
@@ -44,19 +47,21 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
+		view: viewId,
+
 		name: "Search for a string, then search for empty string",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/SEARCH",
-				wire: WIRE_NAME,
+				wire: wireId,
 				searchFields: ["ben/planets.name"],
 				search: SEARCH_VALUE,
 			},
 			{
 				signal: "wire/SEARCH",
-				wire: WIRE_NAME,
+				wire: wireId,
 				searchFields: ["ben/planets.name"],
 				search: "",
 			},

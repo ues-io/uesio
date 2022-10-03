@@ -9,20 +9,20 @@ import { selectWire } from "../../src/bands/wire"
 // new store and dispatch actions/thunks against it
 test("wire init", () => {
 	const store = create(platform, {})
-	const VIEW_NAME = "myview"
-	const WIRE_NAME = "mywire"
-	const context = newContext({ view: VIEW_NAME })
+	const viewId = "myview"
+	const wireId = "mywire"
+	const context = newContext({ view: viewId })
 	store.dispatch(
 		initializeWiresOp(context, {
-			[WIRE_NAME]: {
+			[wireId]: {
 				viewOnly: true,
 				fields: {},
 			},
 		})
 	)
-	const myWire = selectWire(store.getState(), VIEW_NAME, WIRE_NAME)
+	const myWire = selectWire(store.getState(), viewId, wireId)
 	if (!myWire) throw new Error("Wire not created")
 
-	expect(myWire.view).toStrictEqual(VIEW_NAME)
-	expect(myWire.name).toStrictEqual(WIRE_NAME)
+	expect(myWire.view).toStrictEqual(viewId)
+	expect(myWire.name).toStrictEqual(wireId)
 })

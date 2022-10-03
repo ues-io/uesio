@@ -1,24 +1,28 @@
 import testWireSignal, { WireSignalTest } from "./utils"
 
-const WIRE_NAME = "exoplanets"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Add order false",
-		wireId: WIRE_NAME,
+		wireId,
 
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
+			// Todo, do we need a field?
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
 			{
 				signal: "wire/ADD_ORDER",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				desc: false,
 			},
 		],
+		view: viewId,
+
 		run: () => (wire) => {
 			expect(wire.order).toEqual([
 				{ field: "ben/planets.name", desc: false },
@@ -27,16 +31,17 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Add order true",
-		wireId: WIRE_NAME,
+		wireId,
+		view: viewId,
 
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			fields: { "ben/planets.name": null },
 		},
 		signals: [
 			{
 				signal: "wire/ADD_ORDER",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				desc: true,
 			},

@@ -1,12 +1,15 @@
 import testWireSignal, { WireSignalTest } from "./utils"
-const WIRE_NAME = "exoplanets"
 import { ValueConditionState } from "../../src/wireexports"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId } = testEnv
+
 const tests: WireSignalTest[] = [
 	{
+		view: viewId,
 		name: "Changing the value of a condition to a string",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -20,7 +23,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 				value: "Foobar",
 			},
@@ -32,10 +35,12 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
+		view: viewId,
+
 		name: "Changing the value of a condition to a number",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -49,7 +54,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 				value: 100,
 			},
@@ -61,10 +66,12 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
+		view: viewId,
+
 		name: "Changing the value of a condition to undefined",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -78,7 +85,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 				value: undefined,
 			},
@@ -90,10 +97,12 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
+		view: viewId,
+
 		name: "Changing the value of an unexisting condition",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -107,7 +116,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "999",
 				value: "Foobar",
 			},
@@ -124,10 +133,12 @@ const tests: WireSignalTest[] = [
 		},
 	},
 	{
+		view: viewId,
+
 		name: "Changing the value of a condition without a value key",
-		wireId: WIRE_NAME,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: collectionId,
 			conditions: [
 				{
 					id: "123",
@@ -140,7 +151,7 @@ const tests: WireSignalTest[] = [
 		signals: [
 			{
 				signal: "wire/SET_CONDITION_VALUE",
-				wire: WIRE_NAME,
+				wire: wireId,
 				conditionId: "123",
 				value: "Foobar",
 			},

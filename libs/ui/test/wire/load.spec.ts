@@ -1,24 +1,25 @@
 import testWireSignal, {
 	WireSignalTest,
 	defaultPlainWireProperties,
-	defaultCollectionResponse,
-	defaultFieldMetadata,
 } from "./utils"
+
+import { storeCollection, testEnv } from "../utils/x"
 import { useUesio } from "../../src/hooks/hooks"
 
 import * as platformModule from "../../src/platform/platform"
 
-const WIRE_NAME = "exoplanets"
+const { viewId, wireId, collectionId, ns } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
 		name: "Load",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		view: viewId,
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/LOAD",
-				wires: [WIRE_NAME],
+				wires: [wireId],
 			},
 		],
 		run: () => {
@@ -28,22 +29,14 @@ const tests: WireSignalTest[] = [
 				.mockImplementation(() =>
 					Promise.resolve({
 						collections: {
-							"ben/planets.exoplanets": {
-								...defaultCollectionResponse,
-								name: "exoplanets",
-								namespace: "ben/planets",
-								nameField: "ben/planets.name",
-								fields: {
-									"ben/planets.name": defaultFieldMetadata,
-								},
-							},
+							"ben/planets.exoplanet": { ...storeCollection },
 						},
 						wires: [
 							{
 								...defaultPlainWireProperties,
-								view: "allPlanets",
-								collection: "ben/planets.exoplanets",
-								name: WIRE_NAME,
+								view: viewId,
+								collection: `${ns}.${collectionId}`,
+								name: wireId,
 								data: {
 									record1: {
 										"ben/planets.name": "kepler",
@@ -56,6 +49,7 @@ const tests: WireSignalTest[] = [
 						],
 					})
 				)
+			console.log(`${ns}.${collectionId}`)
 			return (wire) => {
 				expect(spy).toBeCalledTimes(1)
 				spy.mockRestore()
@@ -68,16 +62,17 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "Check if the error is thrown when the lookup wires are missing from the load",
-		wireId: WIRE_NAME,
+		view: viewId,
+		wireId,
 		wireDef: {
-			collection: "ben/planets.exoplanets",
+			collection: `${ns}.${collectionId}`,
 			fields: {},
 			conditions: [
 				{
-					field: "ben/planets.name",
+					field: "ben/planets.solarsystem",
 					valueSource: "LOOKUP",
 					lookupWire: "solarsystems",
-					lookupField: "ben/planets.solarsystem",
+					lookupField: "ben/planets.name",
 				},
 			],
 		},
@@ -89,7 +84,7 @@ const tests: WireSignalTest[] = [
 				[
 					{
 						signal: "wire/LOAD",
-						wires: [WIRE_NAME],
+						wires: [wireId],
 					},
 				],
 				context

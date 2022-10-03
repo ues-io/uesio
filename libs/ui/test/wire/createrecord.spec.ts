@@ -1,32 +1,35 @@
 import testWireSignal, { WireSignalTest } from "./utils"
-
-const WIRE_NAME = "exoplanets"
+import { testEnv } from "../utils/x"
+const { viewId, wireId, collectionId, ns } = testEnv
 
 const tests: WireSignalTest[] = [
 	{
 		name: "adding 1 record",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		wireId,
+		view: viewId,
+
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 		],
 		run: () => (wire) => expect(Object.keys(wire.data)).toHaveLength(1),
 	},
 	{
 		name: "adding 2 records",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		view: viewId,
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 		],
 		run: () => (wire) => {
@@ -35,22 +38,24 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "appending 1 record",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		view: viewId,
+
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/UPDATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				value: "Kepler-16b",
 			},
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 		],
 		run: () => (wire) => {
@@ -65,22 +70,24 @@ const tests: WireSignalTest[] = [
 	},
 	{
 		name: "prepending 1 record",
-		wireId: WIRE_NAME,
-		wireDef: { collection: "ben/planets.exoplanets", fields: {} },
+		view: viewId,
+
+		wireId,
+		wireDef: { collection: `${ns}.${collectionId}`, fields: {} },
 		signals: [
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 			},
 			{
 				signal: "wire/UPDATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				field: "ben/planets.name",
 				value: "Kepler-16b",
 			},
 			{
 				signal: "wire/CREATE_RECORD",
-				wire: WIRE_NAME,
+				wire: wireId,
 				prepend: false,
 			},
 		],
