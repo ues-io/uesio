@@ -97,6 +97,7 @@ definition:
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.namespace
+                            - field: uesio/core.createdby
                           rowactions:
                             - text: Details
                               signals:

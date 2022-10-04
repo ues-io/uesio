@@ -163,9 +163,9 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, c
 		if err != nil {
 			return err
 		}
-		var ok bool
-		accessItem, ok = accessInterface.(loadable.Item)
-		if !ok {
+
+		accessItem, err = adapt.GetLoadable(accessInterface)
+		if err != nil {
 			return fmt.Errorf("Couldn't convert item: %T", accessInterface)
 		}
 
