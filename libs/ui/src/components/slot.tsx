@@ -13,6 +13,7 @@ interface SlotUtilityProps extends UtilityProps {
 	definition?: BaseDefinition
 	accepts: string[]
 	direction?: string
+	label?: string
 }
 
 const SlotBuilder = getUtility("uesio/studio.slotbuilder")
