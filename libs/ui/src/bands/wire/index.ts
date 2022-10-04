@@ -314,7 +314,6 @@ const wireSlice = createSlice({
 
 				const data = wireState.data
 				const original = wireState.original
-
 				if (!data || !original) return
 
 				Object.keys(wire.changes).forEach((tempId) => {
