@@ -25,7 +25,7 @@ func (b *BundleDependency) GetVersionString() string {
 }
 
 func (b *BundleDependency) GetBundleName() string {
-	if b.Bundle == nil {
+	if b.Bundle == nil || b.Bundle.App == nil {
 		return ""
 	}
 	return b.Bundle.App.UniqueKey
