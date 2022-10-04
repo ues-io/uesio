@@ -16,7 +16,10 @@ const getIndex = (
 	}
 	const dataIndex = prevTarget.getAttribute("data-index")
 	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
-	const dataDirection = target?.getAttribute("data-direction")
+	const dataDirection =
+		target?.getAttribute("data-direction") === "HORIZONTAL"
+			? "HORIZONTAL"
+			: "VERTICAL"
 
 	if (!dataIndex) return 0
 	const index = parseInt(dataIndex, 10)
@@ -24,7 +27,7 @@ const getIndex = (
 		return index
 	}
 	const bounds = prevTarget.getBoundingClientRect()
-	return isNextSlot(bounds, dataDirection || "vertical", e.pageX, e.pageY)
+	return isNextSlot(bounds, dataDirection, e.pageX, e.pageY)
 		? index + 1
 		: index
 }

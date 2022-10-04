@@ -4,8 +4,17 @@ import { isDropAllowed } from "../../shared/dragdrop"
 import PlaceHolder from "../placeholder/placeholder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const { accepts, definition, listName, path, direction, label, message } =
-		props
+	const {
+		accepts,
+		definition,
+		listName,
+		path,
+		direction,
+		label,
+		message,
+		context,
+	} = props
+
 	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
@@ -42,7 +51,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					message={message}
 					index={0}
 					isHovering={isHovering}
-					context={props.context}
+					context={context}
+					direction={direction}
 				/>
 			)}
 			{props.children}

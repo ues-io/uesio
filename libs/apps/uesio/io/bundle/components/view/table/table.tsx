@@ -81,7 +81,7 @@ const Table: FC<TableProps> = (props) => {
 						definition={columnDef}
 						listName="components"
 						accepts={["uesio.context"]}
-						direction="horizontal"
+						direction="HORIZONTAL"
 						{...sharedProps}
 					/>
 				) : (
