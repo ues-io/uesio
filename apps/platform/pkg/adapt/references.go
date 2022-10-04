@@ -154,7 +154,7 @@ func LoadLooper(
 		return looper(refItem, matchIndexes, refFKAsString)
 	})
 	if err != nil {
-		return nil
+		return err
 	}
 	// If we still have values in our idMap, then we didn't find some of our references.
 	for id, locator := range idMap {
@@ -172,8 +172,8 @@ func HandleReferences(
 ) error {
 
 	for collectionName, ref := range referencedCollections {
-		ids := ref.GetIDs()
-		if len(ids) == 0 {
+
+		if len(ref.IDMap) == 0 {
 			continue
 		}
 
