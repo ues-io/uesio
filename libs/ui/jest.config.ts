@@ -5,7 +5,6 @@ export default {
 	transform: {
 		"^.+\\.[tj]sx?$": "ts-jest",
 	},
-	setupFiles: ["whatwg-fetch"],
 	moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
 	coverageDirectory: "../../coverage/libs/ui",
 }
