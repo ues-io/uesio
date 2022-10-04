@@ -5,8 +5,6 @@ import PanelPortal from "./panelportal"
 import TopActions from "./topactions"
 import BottomActions from "./bottomactions"
 
-const Icon = component.getUtility("uesio/io.icon")
-
 const getIndex = (
 	target: Element | null,
 	prevTarget: Element | null,
@@ -84,42 +82,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				minHeight: "100%",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
-			},
-
-			noContent: {
-				display: "flex",
-				position: "absolute",
-				inset: "15px",
-				justifyContent: "center",
-				alignItems: "center",
-
-				".icon": {
-					fontFamily: "Material Icons",
-					fontSize: "2em",
-					marginBottom: "0.5em",
-				},
-				".text": {
-					marginTop: 0,
-					fontWeight: 300,
-					color: "#444",
-				},
-
-				".quote": {
-					marginTop: "2em",
-					opacity: 0.5,
-					h4: {
-						marginBottom: "0.25em",
-					},
-					p: {
-						marginTop: 0,
-						fontSize: "0.8em",
-					},
-				},
-
-				".inner": {
-					textAlign: "center",
-					padding: "2em",
-					borderRadius: "2em",
+				"&.empty": {
+					display: "grid",
 				},
 			},
 		},
@@ -140,7 +104,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	if (!route || !viewDefId || !viewDef) return null
 
-	const componentCount = viewDef.components?.length
+	const isEmpty = !viewDef.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -225,27 +189,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
 						<div
-							className={classes.inner}
-							data-accepts="uesio.standalone"
-							data-path={'["components"]'}
-							data-insertindex={componentCount}
-						>
-							{/* No content yet */}
-							{!componentCount && (
-								<div className={classes.noContent}>
-									<div className="inner">
-										<Icon
-											className="icon"
-											icon={"flip_to_back"}
-											context={context}
-										/>
-										<h4 className="text">
-											Drag and drop any component here to
-											get started
-										</h4>
-									</div>
-								</div>
+							className={styles.cx(
+								classes.inner,
+								isEmpty && "empty"
 							)}
+						>
 							{props.children}
 							<PanelPortal context={context} />
 						</div>

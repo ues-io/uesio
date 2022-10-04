@@ -63,6 +63,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			context={viewContext.addFrame({
 				buildMode: !!context.getBuildMode() && !isSubView,
 			})}
+			message="Drag and drop any component here to get started."
 		/>
 	)
 

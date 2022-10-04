@@ -1,9 +1,11 @@
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { isDropAllowed } from "../../shared/dragdrop"
+import PlaceHolder from "../placeholder/placeholder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const { accepts, definition, listName, path, direction, label } = props
+	const { accepts, definition, listName, path, direction, label, message } =
+		props
 	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
@@ -18,31 +20,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		dragPath
 	)
 
-	const isHovering = dropPath === `${listPath}["0"]`
-	const classes = styles.useStyles(
-		{
-			label: {
-				opacity: 0,
-				fontSize: "0.7em",
-				transition: "all 0.125s ease",
-				...(isHovering && {
-					opacity: 0.5,
-				}),
-			},
-			placeholder: {
-				border: "1px solid rgba(0, 0, 0, 0)",
-				transition: "all 0.125s ease",
-				paddingLeft: "5px",
-				minWidth: "40px",
-				minHeight: "40px",
-				...(isHovering && {
-					border: "1px dashed #ccc",
-					backgroundColor: "#e5e5e5",
-				}),
-			},
-		},
-		props
-	)
+	const isHovering =
+		dropPath === `${listPath}["0"]` && isDropAllowed(accepts, fullDragPath)
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -52,15 +31,19 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			parentElem.setAttribute("data-path", listPath)
 			parentElem.setAttribute("data-insertindex", size + "")
 		}
-	}, [path])
+	}, [path, size, accepts, direction])
 
 	return (
 		<>
 			<div ref={ref} style={{ display: "contents" }} />
-			{size === 0 && isDropAllowed(accepts, fullDragPath) && (
-				<div className={classes.placeholder}>
-					{label && <span className={classes.label}>{label}</span>}
-				</div>
+			{size === 0 && (
+				<PlaceHolder
+					label={label}
+					message={message}
+					index={0}
+					isHovering={isHovering}
+					context={props.context}
+				/>
 			)}
 			{props.children}
 		</>
