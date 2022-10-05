@@ -10,4 +10,4 @@ definition:
       paddingTop: 20px
       paddingBottom: 0px
       textAlign: justify
-  element: div
+  element: p

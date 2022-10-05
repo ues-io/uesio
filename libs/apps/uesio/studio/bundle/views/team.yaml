@@ -195,14 +195,14 @@ definition:
                           content:
                             - uesio/io.text:
                                 text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                element: div
+                                element: p
                             - uesio/io.text:
                                 text: ${uesio/core.username}
                                 uesio.styles:
                                   root:
                                     fontSize: 9pt
                                     color: "#666"
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.avatar:
                                 image: $UserFile{uesio/core.picture}

@@ -7,4 +7,4 @@ definition:
       color: "#808B96"
       textAlign: center
       paddingBottom: 10px
-  element: div
+  element: p

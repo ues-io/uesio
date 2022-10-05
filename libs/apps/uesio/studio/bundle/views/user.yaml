@@ -254,10 +254,10 @@ definition:
                                                   components:
                                                     - uesio/io.text:
                                                         text: ${uesio/core.auth_source}
-                                                        element: div
+                                                        element: p
                                                     - uesio/io.text:
                                                         text: ${uesio/core.federation_id}
-                                                        element: div
+                                                        element: p
                                               - uesio/io.box:
                                                   components:
                                                     - uesio/io.button:

@@ -8,4 +8,4 @@ definition:
       color: "#888"
       fontWeight: 300
       margin: 20px 0
-  element: div
+  element: p

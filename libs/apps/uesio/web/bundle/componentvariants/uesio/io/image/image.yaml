@@ -8,4 +8,4 @@ definition:
       textAlign: center
       margin: 20px
   height: 280px
-  element: div
+  element: p

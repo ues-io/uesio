@@ -98,13 +98,15 @@ definition:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
+                                    display: block
                                 text: ${uesio/core.uniquekey}
-                                element: div
+                                element: span
                             - uesio/io.text:
                                 text: ${uesio/studio.description}
-                                element: div
+                                element: span
                                 uesio.styles:
                                   root:
+                                    display: block
                                     fontSize: 9pt
                                     color: "#777"
                                     lineHeight: 16pt
@@ -134,7 +136,7 @@ definition:
                                   root:
                                     color: "#21242D"
                                 text: ${uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -211,7 +213,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.smallcontent
                                 text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
-                                element: div
+                                element: p
                       - uesio/io.griditem:
                           uesio.styles:
                             root:
@@ -226,7 +228,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.smallcontent
                                 text: Documentation - Learn the basic concepts of ues.io and how to navigate the uesio/studio.
-                                element: div
+                                element: p
 
   panels:
     newApp:

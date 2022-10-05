@@ -33,14 +33,14 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.footertext
                                 text: ©2022
-                                element: div
+                                element: p
                                 uesio.styles:
                                   root:
                                     paddingBottom: 5px
                       # - uesio/io.text:
                       #     uesio.variant: uesio/web.footertext
                       #     text: The Cloud Masters LLC Switzerland - All rights reserved
-                      #     element: div
+                      #     element: p
                       # - uesio/io.griditem:
                       #     components:
                       #       - uesio/io.group:

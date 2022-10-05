@@ -24,7 +24,7 @@ definition:
                       root:
                         fontSize: 60pt
                         padding: 20px
-                    element: div
+                    element: p
                 - uesio/io.text:
                     text: "ERROR"
                     uesio.styles:
@@ -35,7 +35,7 @@ definition:
                         lineHeight: 20px
                         textShadow: 1px 1px rgba(250,250,250,.3)
                         padding: 40px
-                    element: div
+                    element: p
                 - uesio/io.text:
                     text: $Param{error}
                     uesio.styles:
@@ -49,7 +49,7 @@ definition:
                         border: 1px solid "#fcc2c3"
                         float: left
                         padding: 20px 30px
-                    element: div
+                    element: p
   params:
     error:
       type: TEXT

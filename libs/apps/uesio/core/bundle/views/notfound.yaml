@@ -24,21 +24,21 @@ definition:
                       root:
                         fontSize: 60pt
                         padding: 20px
-                    element: div
+                    element: p
                 - uesio/io.text:
                     text: "Nothing to see here."
                     uesio.styles:
                       root:
                         fontSize: 14pt
                         fontWeight: bold
-                    element: div
+                    element: p
                 - uesio/io.text:
                     text: "You may need to log in again"
                     uesio.styles:
                       root:
                         fontSize: 9pt
                         paddingBottom: 20pt
-                    element: div
+                    element: p
                 - uesio/io.button:
                     uesio.variant: uesio/io.secondary
                     text: "Go To Login Page"

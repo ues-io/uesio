@@ -69,14 +69,18 @@ definition:
                                   content:
                                     - uesio/io.text:
                                         text: ${uesio/crm.firstname}, ${uesio/crm.lastname}
-                                        element: div
+                                        element: span
+                                        uesio.styles:
+                                          root:
+                                            display: block
                                     - uesio/io.text:
                                         text: ${uesio/core.id}
                                         uesio.styles:
                                           root:
                                             fontSize: 9pt
+                                            display: block
                                             color: "#666"
-                                        element: div
+                                        element: span
                                   avatar:
                                     - uesio/io.avatar:
                                         text: "-"

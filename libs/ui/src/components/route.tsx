@@ -28,6 +28,9 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 			fontFamily: "Roboto, Helvetica, Arial, sans-serif",
 			fontWeight: 400,
 		},
+		p: {
+			marginTop: 0,
+		},
 		/* apply a natural box layout model to all elements, but allowing components to change */
 		html: {
 			boxSizing: "border-box",

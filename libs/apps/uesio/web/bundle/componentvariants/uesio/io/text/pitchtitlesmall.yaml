@@ -8,4 +8,4 @@ definition:
       color: white
       fontWeight: bold
       textShadow: "0 0 6px #00000033"
-  element: div
+  element: p

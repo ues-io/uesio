@@ -6,4 +6,4 @@ definition:
       fontSize: 24pt
       color: "#333"
       fontFamily: Gosha
-  element: div
+  element: p

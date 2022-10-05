@@ -57,7 +57,7 @@ definition:
                                           fontSize: 38pt
                                           color: "white"
                                           fontFamily: Gosha
-                                      element: div
+                                      element: p
                                       text: Build Rome in a day.
                                   - uesio/io.text:
                                       uesio.styles:
@@ -65,7 +65,7 @@ definition:
                                           fontSize: 22pt
                                           color: "white"
                                           fontFamily: Gosha
-                                      element: div
+                                      element: p
                                       text: The bundle store makes it easy.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout

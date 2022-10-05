@@ -123,14 +123,14 @@ definition:
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                      element: div
+                                      element: p
                                   - uesio/io.text:
                                       text: ${uesio/core.id}
                                       uesio.styles:
                                         root:
                                           fontSize: 9pt
                                           color: "#666"
-                                      element: div
+                                      element: p
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"

@@ -7,4 +7,4 @@ definition:
       fontFamily: Gosha
       color: white
       textShadow: "0 0 6px #00000033"
-  element: div
+  element: p

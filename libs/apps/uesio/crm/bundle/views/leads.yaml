@@ -51,7 +51,7 @@ definition:
                     components:
                       - uesio/io.text:
                           text: Open
-                          element: div
+                          element: p
                           align: left
                           uesio.variant: uesio/io.smalltitle
                       - uesio/io.table:
@@ -89,7 +89,7 @@ definition:
               components:
                 - uesio/io.text:
                     text: Closed
-                    element: div
+                    element: p
                     uesio.variant: uesio/io.smalltitle
                 - uesio/io.table:
                     id: closedleadstable

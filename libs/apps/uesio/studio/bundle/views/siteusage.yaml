@@ -298,13 +298,13 @@ definition:
                             #     components:
                             #       - uesio/io.text:
                             #           text: "Current month costs: 400$"
-                            #           element: div
+                            #           element: p
                             #       - uesio/io.text:
                             #           text: "Forecasted month end costs: 3000$"
-                            #           element: div
+                            #           element: p
                             #       - uesio/io.text:
                             #           text: "Last month costs: 4000$"
-                            #           element: div
+                            #           element: p
                       - uesio/io.box:
                           uesio.styles:
                             root:
@@ -330,14 +330,14 @@ definition:
                                 content:
                                   - uesio/io.text:
                                       text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                      element: div
+                                      element: p
                                   - uesio/io.text:
                                       text: ${uesio/core.username}
                                       uesio.styles:
                                         root:
                                           fontSize: 9pt
                                           color: "#666"
-                                      element: div
+                                      element: p
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{app}/site/$Param{sitename}/usage/users/${uesio/core.username}"
