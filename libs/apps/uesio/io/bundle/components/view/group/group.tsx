@@ -18,6 +18,7 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 			classes={classes}
 			columnGap={definition.columnGap}
 			alignItems={definition.alignItems}
+			justifyContent={definition.justifyContent}
 			context={context}
 		>
 			<component.Slot

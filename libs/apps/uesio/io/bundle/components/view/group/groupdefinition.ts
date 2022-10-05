@@ -3,6 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type GroupDefinition = {
 	columnGap: string
 	alignItems: string
+	justifyContent: string
 	components?: definition.DefinitionList
 }
 
@@ -23,8 +24,49 @@ const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 		{
 			name: "alignItems",
-			type: "TEXT",
-			label: "Align Items",
+			type: "SELECT",
+			label: "Vertical alignment",
+			options: [
+				{
+					label: "Start",
+					value: "start",
+				},
+				{
+					label: "Center",
+					value: "center",
+				},
+				{
+					label: "End",
+					value: "end",
+				},
+			],
+		},
+		{
+			name: "justifyContent",
+			type: "SELECT",
+			label: "Horizontal distribution",
+			options: [
+				{
+					label: "Start",
+					value: "start",
+				},
+				{
+					label: "Center",
+					value: "center",
+				},
+				{
+					label: "Space between",
+					value: "space-between",
+				},
+				{
+					label: "Space around",
+					value: "space-around",
+				},
+				{
+					label: "Space evenly",
+					value: "space-evenly",
+				},
+			],
 		},
 	],
 	sections: [],
