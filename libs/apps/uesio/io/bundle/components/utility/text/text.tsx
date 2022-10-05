@@ -19,7 +19,6 @@ interface TextProps extends definition.UtilityProps {
 type AcceptedElements =
 	| "p"
 	| "span"
-	| "div"
 	| "h2"
 	| "h1"
 	| "h3"
@@ -27,6 +26,18 @@ type AcceptedElements =
 	| "h5"
 	| "h6"
 	| "pre"
+
+const acceptedElements = [
+	"p",
+	"span",
+	"h2",
+	"h1",
+	"h3",
+	"h4",
+	"h5",
+	"h6",
+	"pre",
+]
 
 const Text: FunctionComponent<TextProps> = (props) => {
 	const { text, element, color, align } = props
@@ -42,7 +53,9 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		},
 		props
 	)
-	const Tag = (element ? element : "span") as AcceptedElements
+	const Tag = (
+		element && acceptedElements.includes(element) ? element : "span"
+	) as AcceptedElements
 	const mergedText = props.context.merge(text)
 	return <Tag className={classes.root}>{mergedText}</Tag>
 }
