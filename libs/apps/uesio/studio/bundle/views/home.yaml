@@ -98,7 +98,7 @@ definition:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio/core.uniquekey}
+                                text: ${uesio/studio.name}
                                 element: div
                             - uesio/io.text:
                                 text: ${uesio/studio.description}
