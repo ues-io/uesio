@@ -89,6 +89,8 @@ const Table: FC<TableProps> = (props) => {
 						componentType="uesio/io.field"
 						definition={{
 							fieldId: columnDef.field,
+							user: columnDef.user,
+							reference: columnDef.reference,
 							labelPosition: "none",
 							"uesio.variant": "uesio/io.table",
 						}}

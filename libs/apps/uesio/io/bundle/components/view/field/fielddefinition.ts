@@ -13,13 +13,18 @@ type ReferenceFieldOptions = {
 	requirewriteaccess?: boolean
 }
 
+type UserFieldOptions = {
+	subtitle?: string
+}
+
 type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
 	label?: string
 	id?: string
 	displayAs?: string
-	reference: ReferenceFieldOptions
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
 	placeholder: string
 } & definition.BaseDefinition
 
@@ -123,6 +128,7 @@ export {
 	LabelPosition,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
+	UserFieldOptions,
 }
 
 export default FieldPropertyDefinition
