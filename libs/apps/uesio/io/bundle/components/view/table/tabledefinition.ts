@@ -1,4 +1,8 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
+import {
+	ReferenceFieldOptions,
+	UserFieldOptions,
+} from "../field/fielddefinition"
 
 type TableDefinition = {
 	id: string
@@ -21,6 +25,8 @@ type RowAction = {
 
 type ColumnDefinition = {
 	field: string
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
 	label: string
 	components: definition.DefinitionList
 }

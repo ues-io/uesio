@@ -24,6 +24,7 @@ type MergeType =
 	| "Record"
 	| "Param"
 	| "User"
+	| "Time"
 	| "RecordId"
 	| "Theme"
 	| "File"
@@ -119,6 +120,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "id") return user.id
 		if (expression === "username") return user.username
 		return ""
+	},
+	Time: (expression, context) => {
+		const value = context.getRecord()?.getFieldValue(expression)
+		if (!value) return ""
+		const date = new Date(value as number)
+		return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 	},
 	RecordId: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)

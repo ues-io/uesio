@@ -97,7 +97,12 @@ definition:
                           columns:
                             - field: uesio/studio.name
                             - field: uesio/studio.namespace
+                            - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
                             - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
                               signals:
