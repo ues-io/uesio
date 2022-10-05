@@ -10,6 +10,15 @@ definition:
       marginLeft: 8px
       fontSize: 10pt
       alignItems: center
+      maxWidth: 180px
+      p:
+        text-overflow: ellipsis
+        white-space: nowrap
+        display: block
+        overflow: hidden
+        margin: 0
+    content:
+      width: 100%
     avatar:
       marginRight: 8px
 public: true

@@ -10,7 +10,7 @@ definition:
             alignItems: center
             height: 60px
             backgroundColor: "#F2F2F2"
-        templateColumns: 58px 0fr 1fr 0fr
+        templateColumns: 58px 1fr 1fr 0fr
         items:
           # Uesio Logo
           - uesio/io.griditem:
@@ -42,7 +42,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -63,7 +63,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -78,7 +78,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -99,7 +99,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -114,7 +114,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}.${uesio/studio.major}.${uesio/studio.minor}.${uesio/studio.patch}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -135,7 +135,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -150,7 +150,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -171,7 +171,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.app->uesio/core.uniquekey}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -186,7 +186,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: ${uesio/studio.name}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -204,7 +204,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: $Param{itemType}
-                                element: div
+                                element: p
                           avatar:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.icon
@@ -224,7 +224,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: $Param{itemName}
-                                element: div
+                                element: p
                       - uesio/io.tile:
                           uesio.display:
                             - type: paramIsSet
@@ -240,7 +240,7 @@ definition:
                             - uesio/io.text:
                                 uesio.variant: uesio/io.tag
                                 text: $Param{subItemName}
-                                element: div
+                                element: p
           - uesio/io.griditem:
               uesio.styles:
                 root:
