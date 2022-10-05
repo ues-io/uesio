@@ -2,9 +2,8 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "../../dist/ui/types",
-		"declaration": true,
-		"emitDeclarationOnly": true
+		"declaration": true
 	},
 	"exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-	"include": ["**/*.ts*", "src/react-shim.js"]
+	"include": ["**/*.ts*"]
 }

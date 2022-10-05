@@ -1,12 +1,12 @@
 import { Component } from "react"
-import { UtilityPropsPlus } from "../definition/definition"
+import { BaseProps } from "../definition/definition"
 import ComponentError from "./componenterror"
 
 interface State {
 	error: Error | null
 }
 
-class ErrorBoundary extends Component<UtilityPropsPlus, State> {
+class ErrorBoundary extends Component<BaseProps, State> {
 	public state: State = { error: null }
 	public updatedWithError = false
 

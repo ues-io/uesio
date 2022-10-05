@@ -61,10 +61,6 @@ export interface UtilityProps {
 	componentType?: MetadataKey
 }
 
-export interface UtilityPropsPlus extends UtilityProps {
-	[x: string]: unknown
-}
-
 export type DefinitionMap = {
 	[key: string]: Definition
 }

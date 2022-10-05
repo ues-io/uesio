@@ -3,7 +3,6 @@ import {
 	BaseProps,
 	DefinitionMap,
 	UtilityProps,
-	UtilityPropsPlus,
 } from "../definition/definition"
 import {
 	ActionDescriptor,
@@ -31,7 +30,7 @@ import get from "lodash/get"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
-const utilityRegistry: Registry<FC<UtilityPropsPlus>> = {}
+const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =

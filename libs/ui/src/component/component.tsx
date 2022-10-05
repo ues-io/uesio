@@ -2,7 +2,6 @@ import { forwardRef, FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
-	UtilityPropsPlus,
 	UtilityProps,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
@@ -216,9 +215,15 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility = <T extends UtilityPropsPlus>(key: MetadataKey) => {
+interface UtilityPropsPlus extends UtilityProps {
+	[x: string]: unknown
+}
+
+const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
+	key: MetadataKey
+) => {
 	const returnFunc = forwardRef((props: T, ref) => {
-		const Loader = getUtilityLoader(key) || NotFound
+		const Loader = getUtilityLoader(key)
 		const styles = getVariantStyleInfo(props, key)
 		return (
 			<Loader ref={ref} {...props} styles={styles} componentType={key} />
