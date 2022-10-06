@@ -6,7 +6,7 @@ const FieldsProp: builder.PropComponent<builder.FieldProp> = (props) => {
 
 	const parentPath = component.path.getParentPath(path || "")
 	const wirePath = parentPath + `["${descriptor.wireField}"]`
-
+	console.log({ wirePath })
 	const wireId = valueAPI.get(wirePath)
 
 	const wireDef = (valueAPI.get(

@@ -32,6 +32,7 @@ components:
         - uesio/io.listfield:uesio/io.default
         - uesio/io.markdownfield:uesio/io.default
         - uesio/io.filemarkdown:uesio/io.default
+    filters:
     filter:
       variants:
         - uesio/io.selectfield:uesio/io.filter

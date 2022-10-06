@@ -19,6 +19,8 @@ definition:
       conditions:
         - field: uesio/studio.type
           value: "collections"
+        - field: uesio/studio.namespace
+          value: "ss"
     newcollection:
       collection: uesio/studio.collection
       fields:
