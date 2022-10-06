@@ -64,15 +64,12 @@ function getPropHandler(type?: string) {
 			return ParamProp
 		case "PARAMS":
 			return ParamsProp
-		case "WIRE_FIELDS":
+		case "FIELDS":
 			return FieldsProp
 		case "FIELD":
 			return FieldProp
 		case "PROPLISTS":
 			return PropListsProp
-		default:
-			console.log(`type not recognized in buildPropItem: ${type}`)
-			return TextProp
 	}
 }
 
@@ -125,7 +122,8 @@ const PropList: FunctionComponent<Props> = (props) => {
 						: newPath
 
 				const PropHandler = getPropHandler(descriptor.type)
-				return (
+				// if (!PropHandler) return null
+				return PropHandler ? (
 					<PropHandler
 						key={key}
 						path={newPath}
@@ -135,7 +133,7 @@ const PropList: FunctionComponent<Props> = (props) => {
 						context={context}
 						valueAPI={valueAPI}
 					/>
-				)
+				) : null
 			})}
 		</>
 	)
