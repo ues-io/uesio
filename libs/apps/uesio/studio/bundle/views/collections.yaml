@@ -87,16 +87,21 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
                 - uesio/io.box:
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.table:
                           wire: allcollections
                           columns:
-                            - field: uesio/studio.name
-                            - field: uesio/studio.namespace
+                            - label: Collection
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.styles:
+                                      root:
+                                        padding: 16px
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/studio.label
                             - field: uesio/core.updatedby
                               user:
                                 subtitle: $Time{uesio/core.updatedat}

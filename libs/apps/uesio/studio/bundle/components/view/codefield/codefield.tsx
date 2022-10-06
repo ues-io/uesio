@@ -31,6 +31,7 @@ interface Props extends definition.BaseProps {
 }
 
 const IOCodeField = component.getUtility("uesio/io.codefield")
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 function getChangeHandler(
 	fieldType: collection.FieldType,
@@ -82,8 +83,9 @@ function getValue(
 }
 
 const CodeField: FunctionComponent<Props> = (props) => {
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
+	const { context, definition } = props
+	const record = context.getRecord()
+	const wire = context.getWire()
 	const [, setMessage] = useState("")
 	const [stringValue, setStringValue] = useState("")
 	if (!wire || !record) {
@@ -91,32 +93,35 @@ const CodeField: FunctionComponent<Props> = (props) => {
 	}
 
 	const collection = wire.getCollection()
-	const fieldId = props.definition.fieldId
+	const fieldId = definition.fieldId
 
 	const fieldMetadata = collection.getField(fieldId)
 	if (!fieldMetadata) return null
 	const fieldType = fieldMetadata.getType()
 	const value = record.getFieldValue(fieldId)
 
-	const language = props.definition.language || "yaml"
+	const language = definition.language || "yaml"
 
 	return (
-		<IOCodeField
-			label={fieldMetadata.getLabel()}
-			value={
-				stringValue || getValue(fieldType, language, value, setMessage)
-			}
-			setValue={getChangeHandler(
-				fieldType,
-				language,
-				record,
-				fieldId,
-				setMessage,
-				setStringValue
-			)}
-			language={language}
-			context={props.context}
-		/>
+		<FieldWrapper context={context}>
+			<IOCodeField
+				label={fieldMetadata.getLabel()}
+				value={
+					stringValue ||
+					getValue(fieldType, language, value, setMessage)
+				}
+				setValue={getChangeHandler(
+					fieldType,
+					language,
+					record,
+					fieldId,
+					setMessage,
+					setStringValue
+				)}
+				language={language}
+				context={props.context}
+			/>
+		</FieldWrapper>
 	)
 }
 

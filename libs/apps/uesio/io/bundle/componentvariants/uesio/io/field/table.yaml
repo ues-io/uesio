@@ -1,14 +1,14 @@
 name: table
 label: Table
+extends: uesio/io.field:uesio/io.default
 definition:
   uesio.styles:
     input:
       backgroundColor: transparent
-      padding: 16px
-      "&:focus":
-        outline: none
-        background: "#ddd"
+      border: "none"
+      padding: 6px
+      textOverflow: ellipsis;
     readonly:
-      backgroundColor: "transparent"
+      backgroundColor: transparent
       border: "none"
 public: true

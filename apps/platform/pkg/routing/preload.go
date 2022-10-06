@@ -6,6 +6,7 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
 )
@@ -35,23 +36,18 @@ func NewPreloadMetadata() *PreloadMetadata {
 	return &PreloadMetadata{}
 }
 
-type MetadataResponse struct {
-	Color string `json:"color"`
-	Icon  string `json:"icon"`
-}
-
 type PreloadMetadata struct {
-	Theme            *MetadataMergeData          `json:"theme,omitempty"`
-	ViewDef          *MetadataMergeData          `json:"viewdef,omitempty"`
-	ComponentPack    *MetadataMergeData          `json:"componentpack,omitempty"`
-	ComponentVariant *MetadataMergeData          `json:"componentvariant,omitempty"`
-	ConfigValue      *MetadataMergeData          `json:"configvalue,omitempty"`
-	Label            *MetadataMergeData          `json:"label,omitempty"`
-	FeatureFlag      *MetadataMergeData          `json:"featureflag,omitempty"`
-	MetadataText     *MetadataMergeData          `json:"metadatatext,omitempty"`
-	Wire             *MetadataMergeData          `json:"wire,omitempty"`
-	Collection       *MetadataMergeData          `json:"collection,omitempty"`
-	Namespaces       map[string]MetadataResponse `json:"namespaces,omitempty"`
+	Theme            *MetadataMergeData                     `json:"theme,omitempty"`
+	ViewDef          *MetadataMergeData                     `json:"viewdef,omitempty"`
+	ComponentPack    *MetadataMergeData                     `json:"componentpack,omitempty"`
+	ComponentVariant *MetadataMergeData                     `json:"componentvariant,omitempty"`
+	ConfigValue      *MetadataMergeData                     `json:"configvalue,omitempty"`
+	Label            *MetadataMergeData                     `json:"label,omitempty"`
+	FeatureFlag      *MetadataMergeData                     `json:"featureflag,omitempty"`
+	MetadataText     *MetadataMergeData                     `json:"metadatatext,omitempty"`
+	Wire             *MetadataMergeData                     `json:"wire,omitempty"`
+	Collection       *MetadataMergeData                     `json:"collection,omitempty"`
+	Namespaces       map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
 }
 
 type MetadataTextItem struct {

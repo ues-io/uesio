@@ -8,9 +8,9 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -68,7 +68,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		}
 		url := fmt.Sprintf("version/%s/%s/%s/metadata/types/%s/list%s", app, depNamespace, dep.Version, metadataType, groupingURL)
 
-		metadataList := map[string]routing.MetadataResponse{}
+		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
 		if err != nil {
 			return nil, err
