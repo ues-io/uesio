@@ -10,6 +10,7 @@ type TableDefinition = {
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
 	rowactions?: RowAction[]
+	recordDisplay?: component.DisplayCondition[]
 	rownumbers: boolean
 	pagesize: string
 } & definition.BaseDefinition

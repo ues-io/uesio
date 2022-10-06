@@ -87,13 +87,16 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
                 - uesio/io.box:
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.table:
+                          uesio.styles:
+                            root:
+                              padding: 40px
                           wire: allcollections
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              value: $Param{app}
                           columns:
                             - label: Collection
                               components:
@@ -117,6 +120,30 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}"
+                          pagesize: 10
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Installed Collections
+                      - uesio/io.table:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          wire: allcollections
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              operator: NOT_EQUALS
+                              value: $Param{app}
+                          columns:
+                            - label: Collection
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.styles:
+                                      root:
+                                        padding: 16px
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                            - field: uesio/studio.label
                           pagesize: 10
   panels:
     newCollection:
