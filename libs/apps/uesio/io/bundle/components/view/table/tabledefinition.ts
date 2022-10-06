@@ -21,6 +21,7 @@ interface TableProps extends definition.BaseProps {
 type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
 }
 
 type ColumnDefinition = {

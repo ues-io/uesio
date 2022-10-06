@@ -160,6 +160,7 @@ definition:
                             - field: uesio/core.createdby
                           rowactions:
                             - text: Details
+                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
                                   path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"

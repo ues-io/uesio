@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, context } from "@uesio/ui"
 
 type ColumnDef = {
 	label: string
@@ -7,26 +7,21 @@ type ColumnDef = {
 
 type RowDef = {
 	cells: ReactNode[]
-	rowactions?: ReactNode
 	isDeleted?: boolean
+	context: context.Context
 }
 
 interface TableUtilityProps extends definition.UtilityProps {
 	columns: ColumnDef[]
 	rows: RowDef[]
-	showRowNumbers?: boolean
-	showRowActions?: boolean
-	rowNumberStart?: number
+	rowNumberFunc?: (index: number) => string
+	defaultActionFunc?: (context: context.Context) => void
+	rowActionsFunc?: (context: context.Context) => ReactNode
 }
 
 const Table: FunctionComponent<TableUtilityProps> = (props) => {
-	const {
-		columns,
-		rows,
-		showRowNumbers,
-		showRowActions,
-		rowNumberStart = 0,
-	} = props
+	const { columns, rows, rowNumberFunc, defaultActionFunc, rowActionsFunc } =
+		props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -67,10 +62,15 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<table className={classes.table}>
+			<table
+				className={styles.cx(
+					classes.table,
+					defaultActionFunc && "defaultaction"
+				)}
+			>
 				<thead className={classes.header}>
 					<tr>
-						{showRowNumbers && (
+						{rowNumberFunc && (
 							<th
 								className={styles.cx(
 									classes.headerCell,
@@ -87,7 +87,7 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 								{columnDef.label}
 							</th>
 						))}
-						{showRowActions && (
+						{rowActionsFunc && (
 							<th
 								className={classes.headerCell}
 								key="rowactions"
@@ -96,15 +96,20 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 					</tr>
 				</thead>
 				<tbody>
-					{rows.map(({ isDeleted, rowactions, cells }, index) => (
+					{rows.map(({ isDeleted, cells, context }, index) => (
 						<tr
+							onClick={
+								defaultActionFunc
+									? () => defaultActionFunc(context)
+									: undefined
+							}
 							className={styles.cx(
 								classes.row,
 								isDeleted && classes.rowDeleted
 							)}
-							key={rowNumberStart + index + 1}
+							key={index + 1}
 						>
-							{showRowNumbers && (
+							{rowNumberFunc && (
 								<td
 									className={styles.cx(
 										classes.cell,
@@ -113,7 +118,7 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 									key="rownumbers"
 								>
 									<div className={classes.rowNumber}>
-										{rowNumberStart + index + 1}
+										{rowNumberFunc(index + 1)}
 									</div>
 								</td>
 							)}
@@ -125,9 +130,9 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 									{columnNode}
 								</td>
 							))}
-							{rowactions && (
+							{rowActionsFunc && (
 								<td key="rowactions" className={classes.cell}>
-									{rowactions}
+									{rowActionsFunc(context)}
 								</td>
 							)}
 						</tr>
