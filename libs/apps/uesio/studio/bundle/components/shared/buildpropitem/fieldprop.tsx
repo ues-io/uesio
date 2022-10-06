@@ -1,17 +1,17 @@
-import { builder, component, wire, util } from "@uesio/ui"
+import { builder, wire, util, component } from "@uesio/ui"
+
 import SelectProp from "./selectprop"
 
 const FieldsProp: builder.PropComponent<builder.FieldProp> = (props) => {
-	const { valueAPI, path, descriptor } = props
+	const { valueAPI, descriptor, path } = props
 
-	const parentPath = component.path.getParentPath(path || "")
-	const wirePath = parentPath + `["${descriptor.wireField}"]`
-	console.log({ wirePath })
+	const wirePath = component.path.createRelativePath(
+		descriptor.wireField,
+		path || ""
+	)
 	const wireId = valueAPI.get(wirePath)
-
-	const wireDef = (valueAPI.get(
-		'["wires"][' + valueAPI.get(wirePath) + "]"
-	) || {}) as wire.WireDefinition
+	const wireDef = (valueAPI.get('["wires"][' + wireId + "]") ||
+		{}) as wire.WireDefinition
 
 	const options = util.getWireFieldSelectOptions(wireDef) || []
 	const getOptionsLabel = () => {
@@ -19,6 +19,8 @@ const FieldsProp: builder.PropComponent<builder.FieldProp> = (props) => {
 		if (!options.length) return `No fields in ${wireId}`
 		return "Select a field"
 	}
+
+	if (!descriptor.wireField) return null
 
 	return (
 		<SelectProp
