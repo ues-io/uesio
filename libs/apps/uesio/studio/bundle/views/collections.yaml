@@ -87,6 +87,9 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
                 - uesio/io.box:
+                    uesio.styles:
+                      root:
+                        padding: 40px
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.table:
@@ -110,6 +113,7 @@ definition:
                                 subtitle: $Time{uesio/core.createdat}
                           rowactions:
                             - text: Details
+                              type: DEFAULT
                               signals:
                                 - signal: route/NAVIGATE
                                   path: "app/$Param{app}/workspace/$Param{workspacename}/collections/${uesio/studio.namespace}/${uesio/studio.name}"

@@ -1,4 +1,5 @@
-import { hooks, styles, component } from "@uesio/ui"
+import { hooks, styles, component, context } from "@uesio/ui"
+import partition from "lodash/partition"
 import { FC } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
@@ -75,6 +76,7 @@ const Table: FC<TableProps> = (props) => {
 			context: recordContext,
 		}
 		return {
+			context: recordContext,
 			cells: columnsToDisplay?.map((columnDef) =>
 				columnDef.components ? (
 					<component.Slot
@@ -100,16 +102,36 @@ const Table: FC<TableProps> = (props) => {
 					/>
 				)
 			),
-			rowactions: definition.rowactions && (
+			isDeleted: record.isDeleted(),
+		}
+	})
+
+	const [defaultActions, otherActions] = partition(
+		definition.rowactions,
+		(action) => action.type === "DEFAULT"
+	)
+
+	const defaultActionsFunc = defaultActions.length
+		? (context: context.Context) => {
+				const handler = uesio.signal.getHandler(
+					defaultActions.flatMap((action) => action.signals),
+					context
+				)
+				handler?.()
+		  }
+		: undefined
+
+	const rowActionsFunc = otherActions.length
+		? (context: context.Context) => (
 				<Group
 					styles={{ root: { padding: "0 16px" } }}
 					columnGap={0}
-					context={recordContext}
+					context={context}
 				>
-					{definition.rowactions.map((action, i) => {
+					{otherActions.map((action, i) => {
 						const handler = uesio.signal.getHandler(
 							action.signals,
-							recordContext
+							context
 						)
 						return (
 							<Button
@@ -117,16 +139,14 @@ const Table: FC<TableProps> = (props) => {
 								variant="uesio/io.nav"
 								className="rowaction"
 								label={action.text}
-								context={recordContext}
+								context={context}
 								onClick={handler}
 							/>
 						)
 					})}
 				</Group>
-			),
-			isDeleted: record.isDeleted(),
-		}
-	})
+		  )
+		: undefined
 
 	return (
 		<>
@@ -136,9 +156,13 @@ const Table: FC<TableProps> = (props) => {
 				columns={columns}
 				context={context}
 				classes={classes}
-				showRowNumbers={definition.rownumbers}
-				rowNumberStart={pageSize * currentPage}
-				showRowActions={!!definition.rowactions}
+				rowNumberFunc={
+					definition.rownumbers
+						? (index: number) => pageSize * currentPage + index + ""
+						: undefined
+				}
+				defaultActionFunc={defaultActionsFunc}
+				rowActionsFunc={rowActionsFunc}
 			/>
 			{pageSize > 0 && (
 				<Paginator
