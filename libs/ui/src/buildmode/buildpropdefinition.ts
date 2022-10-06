@@ -84,6 +84,7 @@ interface PropListsSection extends BasePropSection {
 	properties: PropDescriptor[]
 	nameTemplate: string
 	nameFallback: string
+	defaultDefinition?: () => Definition
 }
 
 interface StylesSection extends BasePropSection {

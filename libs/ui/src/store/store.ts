@@ -34,6 +34,7 @@ import { FeatureFlagState } from "../definition/featureflag"
 import { MetadataState } from "../bands/metadata/types"
 import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
+import { attachDefToWires } from "../bands/route/utils"
 
 type ThunkFunc = ThunkAction<
 	Promise<Context> | Context,
@@ -71,7 +72,7 @@ let store: ReturnType<typeof create>
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 
-	//attachDefToWires(initialState)
+	attachDefToWires(initialState.wire, initialState.viewdef)
 
 	const newStore = configureStore({
 		reducer: {

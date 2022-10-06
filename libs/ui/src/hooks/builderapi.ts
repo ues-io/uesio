@@ -45,14 +45,14 @@ import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 import { useEffect, useState } from "react"
 import {
 	dispatchRouteDeps,
 	getPackUrls,
 	getPackUrlsForDeps,
 } from "../bands/route/utils"
-import { loadScripts } from "./usescripts"
+import { getLoadedScripts, loadScripts } from "./usescripts"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -335,17 +335,25 @@ class BuilderAPI {
 
 	useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
 		const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)
+		const loadedScripts = getLoadedScripts()
+		const studioPacks = getPackUrls(
+			"uesio/studio.main",
+			new Context(),
+			true
+		)
+
+		const isPreLoaded =
+			isLoaded ||
+			studioPacks.every((packUrl: string) =>
+				loadedScripts.includes(packUrl)
+			)
+
 		useEffect(() => {
-			if (!buildMode || isLoaded) return
+			if (!buildMode || isLoaded || isPreLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
 
 				const packsToLoad = getPackUrlsForDeps(response, context, true)
-				const studioPacks = getPackUrls(
-					"uesio/studio.main",
-					new Context(),
-					true
-				)
 
 				await loadScripts([...packsToLoad, ...studioPacks])
 				batch(() => {
@@ -355,7 +363,7 @@ class BuilderAPI {
 				setIsLoaded(true)
 			})()
 		}, [buildMode])
-		return isLoaded
+		return isLoaded || isPreLoaded
 	}
 }
 

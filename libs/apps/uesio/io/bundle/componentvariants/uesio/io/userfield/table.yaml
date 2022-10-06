@@ -1,0 +1,8 @@
+name: table
+label: Table
+definition:
+  uesio.styles:
+    input:
+      width: "100%"
+      padding: 0 16px
+public: true

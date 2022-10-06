@@ -11,4 +11,4 @@ definition:
       textTransform: uppercase
       "&:focus":
         outline: none
-        color: $Theme{color.primary.darken}
+        color: $Theme{color.primary}

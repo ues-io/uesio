@@ -5,7 +5,7 @@ type FeatureFlagAssignment struct {
 	UniqueKey string    `yaml:"-" uesio:"uesio/core.uniquekey"`
 	Flag      string    `uesio:"uesio/core.flag"`
 	Value     bool      `uesio:"uesio/core.value"`
-	User      string    `uesio:"uesio/core.user"`
+	User      *User     `uesio:"uesio/core.user"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner     *User     `yaml:"-" uesio:"uesio/core.owner"`

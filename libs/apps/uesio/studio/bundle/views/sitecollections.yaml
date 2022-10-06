@@ -79,10 +79,8 @@ definition:
                             - uesio/io.table:
                                 wire: allcollections
                                 columns:
-                                  - uesio/io.column:
-                                      field: uesio/studio.name
-                                  - uesio/io.column:
-                                      field: uesio/studio.namespace
+                                  - field: uesio/studio.name
+                                  - field: uesio/studio.namespace
                                 rowactions:
                                   - text: Details
                                     signals:

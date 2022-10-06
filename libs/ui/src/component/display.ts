@@ -1,5 +1,5 @@
 import { Context } from "../context/context"
-import { DefinitionMap } from "../definition/definition"
+import { BaseDefinition, DefinitionMap } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 
 type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
@@ -19,6 +19,11 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type ParamIsNotSetCondition = {
+	type: "paramIsNotSet"
+	param: string
+}
+
 type ParamValueCondition = {
 	type: "paramValue"
 	param: string
@@ -30,6 +35,15 @@ type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
 }
+
+type RecordIsNewCondition = {
+	type: "recordIsNew"
+}
+
+type RecordIsNotNewCondition = {
+	type: "recordIsNotNew"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -55,10 +69,13 @@ type DisplayCondition =
 	| HasValueCondition
 	| FieldValueCondition
 	| ParamIsSetCondition
+	| ParamIsNotSetCondition
 	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| RecordIsNewCondition
+	| RecordIsNotNewCondition
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
@@ -86,12 +103,24 @@ function should(condition: DisplayCondition, context: Context) {
 		return !!context.getParam(condition.param)
 	}
 
+	if (condition.type === "paramIsNotSet") {
+		return !context.getParam(condition.param)
+	}
+
 	if (condition.type === "fieldMode") {
 		return condition.mode === context.getFieldMode()
 	}
 
 	if (condition.type === "featureFlag") {
-		return context.getFeatureFlag(condition.name)?.value
+		return !!context.getFeatureFlag(condition.name)?.value
+	}
+
+	if (condition.type === "recordIsNew") {
+		return !!context.getRecord()?.isNew()
+	}
+
+	if (condition.type === "recordIsNotNew") {
+		return !context.getRecord()?.isNew()
 	}
 
 	const compareToValue =
@@ -150,35 +179,58 @@ function should(condition: DisplayCondition, context: Context) {
 	return true
 }
 
-function useShouldDisplay(context: Context, definition?: DefinitionMap) {
-	const displayLogic = definition?.["uesio.display"] as
-		| DisplayCondition[]
-		| undefined
+const shouldAll = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
+) => {
+	if (!conditions || !conditions.length) return true
+	return conditions.every((condition) => should(condition, context))
+}
+
+// Create a list of all of the wires that we're going to care about
+const getWiresForConditions = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
+) => {
+	if (!conditions) return []
+	const contextWire = context.getWireId()
+	return [
+		...(contextWire ? [contextWire] : []),
+		...conditions.flatMap((condition) =>
+			!condition.type && condition.wire ? [condition.wire] : []
+		),
+	]
+}
+
+const useShouldFilter = <T extends BaseDefinition>(
+	items: T[] | undefined = [],
+	context: Context
+) => {
+	const conditionsList = items.flatMap((item) => {
+		const conditions = item["uesio.display"]
+		return conditions ? [conditions] : []
+	})
 
 	const uesio = useUesio({ context })
-	// Create a list of all of the wires that we're going to care about
-	const contextWire = context.getWireId()
-	const wireNames = contextWire ? [contextWire] : []
+	uesio.wire.useWires(
+		getWiresForConditions(
+			conditionsList?.flatMap((c) => c),
+			context
+		)
+	)
 
-	let result = true
+	return items?.filter((item, index) =>
+		shouldAll(conditionsList[index], context)
+	)
+}
 
-	if (displayLogic?.length) {
-		for (const condition of displayLogic) {
-			// Weird hack for now
-			if (!condition.type && condition.wire) {
-				wireNames.push(condition.wire)
-			}
-			if (!should(condition, context)) {
-				result = false
-				break
-			}
-		}
-	}
-
-	// We need to subscribe to changes on these wires
-	uesio.wire.useWires(wireNames)
-
-	return result
+const useShould = (
+	conditions: DisplayCondition[] | undefined,
+	context: Context
+) => {
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	return shouldAll(conditions, context)
 }
 
 function shouldHaveClass(
@@ -192,13 +244,7 @@ function shouldHaveClass(
 	const classLogic = classesLogic?.[className]
 	if (!classLogic?.length) return false
 
-	for (const condition of classLogic) {
-		if (!should(condition, context)) {
-			return false
-		}
-	}
-
-	return true
+	return shouldAll(classLogic, context)
 }
 
-export { useShouldDisplay, shouldHaveClass, DisplayCondition }
+export { useShould, useShouldFilter, shouldHaveClass, DisplayCondition }

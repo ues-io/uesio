@@ -3,14 +3,17 @@ import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
 import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 import getValueAPI from "../../shared/valueapi"
+import PlaceHolder from "../placeholder/placeholder"
 
 const Text = component.getUtility("uesio/io.text")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+
+const Popper = component.getUtility("uesio/io.popper")
 
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { children, path = "", index = 0, definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const viewDefId = uesio.getViewDefId()
 	const viewDef = uesio.getViewDef()
 
@@ -64,16 +67,16 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	return (
 		<>
 			{addBeforePlaceholder && (
-				<div
-					data-placeholder="true"
-					data-index={index}
-					className={classes.placeholder}
-				>
-					<div className={classes.placeholderInner} />
-				</div>
+				<PlaceHolder
+					label={""}
+					index={index}
+					isHovering={true}
+					context={context}
+				/>
 			)}
 			<div
 				data-index={index}
+				ref={setAnchorEl}
 				data-accepts={accepts?.join(",")}
 				data-path={path}
 				onDragStart={(e: DragEvent) => {
@@ -114,6 +117,28 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
+				{isSelected && (
+					<Popper
+						referenceEl={anchorEl}
+						context={context}
+						placement="top"
+						classes={{
+							popper: classes.popper,
+						}}
+						offset={[0, 0]}
+					>
+						<BuildActionsArea
+							context={context}
+							classes={{
+								wrapper: classes.popperInner,
+							}}
+							path={path}
+							valueAPI={valueAPI}
+							propsDef={propDef}
+							actions={propDef.actions}
+						/>
+					</Popper>
+				)}
 				<div className={classes.wrapper}>
 					{
 						<div
@@ -132,28 +157,16 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 						</div>
 					}
 					<div className={classes.inner}>{children}</div>
-					<IOExpandPanel context={context} expanded={isSelected}>
-						<BuildActionsArea
-							context={context}
-							path={path}
-							valueAPI={valueAPI}
-							propsDef={propDef}
-							actions={propDef.actions}
-						/>
-					</IOExpandPanel>
 				</div>
 			</div>
 			{addAfterPlaceholder && (
-				<div
-					data-placeholder="true"
-					data-index={index + 1}
-					className={styles.cx(
-						classes.placeholder,
-						classes.afterPlaceholder
-					)}
-				>
-					<div className={classes.placeholderInner} />
-				</div>
+				<PlaceHolder
+					label={""}
+					index={index + 1}
+					isHovering={true}
+					context={context}
+					hideIfNotLast={true}
+				/>
 			)}
 		</>
 	)

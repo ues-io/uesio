@@ -2,19 +2,17 @@ package adapt
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
-// Item struct
 type Item map[string]interface{}
 
-// SetField function
 func (i *Item) SetField(fieldName string, value interface{}) error {
 	(*i)[fieldName] = value
 	return nil
 }
 
-// GetField function
 func (i *Item) GetField(fieldName string) (interface{}, error) {
 	// Split the field name into tokens
 	names := strings.Split(fieldName, "->")
@@ -38,6 +36,18 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 	}
 
 	return value, nil
+}
+
+func (i *Item) GetFieldAsString(fieldName string) (string, error) {
+	value, err := i.GetField(fieldName)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", fmt.Errorf("Cannot get field as string: %T", value)
+	}
+	return valueString, nil
 }
 
 func (i *Item) Loop(iter func(string, interface{}) error) error {

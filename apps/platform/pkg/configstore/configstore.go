@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-// ConfigStore interface
 type ConfigStore interface {
 	Get(key string) (string, error)
 	Set(key, value string) error
@@ -44,12 +43,10 @@ func GetConfigStore(configStoreType string) (ConfigStore, error) {
 	return configStore, nil
 }
 
-// RegisterConfigStore function
 func RegisterConfigStore(name string, store ConfigStore) {
 	configStoreMap[name] = store
 }
 
-// Get key
 func GetValueFromKey(key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
@@ -99,7 +96,6 @@ func SetValue(cv *meta.ConfigValue, value string, session *sess.Session) error {
 	return store.Set(fullKey, value)
 }
 
-// Merge function
 func Merge(template string, session *sess.Session) (string, error) {
 	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
 		return GetValueFromKey(key, session)

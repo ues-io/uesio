@@ -60,7 +60,12 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 			})
 			return itemContext.merge(template)
 		}
-		return item[nameField] || ""
+		return (
+			item[nameField] ||
+			item[collection.UNIQUE_KEY_FIELD] ||
+			item[collection.ID_FIELD] ||
+			""
+		)
 	}
 
 	const value = record.getFieldValue<wire.PlainWireRecord>(fieldId)
@@ -112,7 +117,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 								name: "search",
 								batchnumber: 0,
 								batchid: "",
-								data: {},
 								view: context.getViewId() || "",
 								query: true,
 								collection: referencedCollection.getFullName(),
@@ -128,6 +132,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 										fields: searchFields,
 									},
 								],
+								requirewriteaccess: options?.requirewriteaccess,
 							},
 						],
 					})

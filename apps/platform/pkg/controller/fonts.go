@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Fonts serves files from the fonts directory
 func Fonts(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join("fonts", mux.Vars(r)["filename"]))
 }

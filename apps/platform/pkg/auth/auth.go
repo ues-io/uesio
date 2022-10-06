@@ -46,6 +46,8 @@ type AuthenticationType interface {
 type AuthConnection interface {
 	Login(map[string]interface{}, *sess.Session) (*AuthenticationClaims, error)
 	Signup(map[string]interface{}, string, *sess.Session) (*AuthenticationClaims, error)
+	ForgotPassword(map[string]interface{}, *sess.Session) error
+	ConfirmForgotPassword(map[string]interface{}, *sess.Session) error
 }
 
 func GetAuthConnection(authSourceID string, session *sess.Session) (AuthConnection, error) {

@@ -1,9 +1,20 @@
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { isDropAllowed } from "../../shared/dragdrop"
+import PlaceHolder from "../placeholder/placeholder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const { accepts, definition, listName, path, direction } = props
+	const {
+		accepts,
+		definition,
+		listName,
+		path,
+		direction,
+		label,
+		message,
+		context,
+	} = props
+
 	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
@@ -18,19 +29,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		dragPath
 	)
 
-	const classes = styles.useStyles(
-		{
-			placeholder: {
-				...(dropPath === `${listPath}["0"]` && {
-					border: "1px dashed #ccc",
-					backgroundColor: "#e5e5e5",
-				}),
-				minWidth: "40px",
-				minHeight: "40px",
-			},
-		},
-		props
-	)
+	const isHovering =
+		dropPath === `${listPath}["0"]` && isDropAllowed(accepts, fullDragPath)
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement
@@ -40,13 +40,20 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			parentElem.setAttribute("data-path", listPath)
 			parentElem.setAttribute("data-insertindex", size + "")
 		}
-	}, [])
+	}, [path, size, accepts, direction])
 
 	return (
 		<>
 			<div ref={ref} style={{ display: "contents" }} />
-			{size === 0 && isDropAllowed(accepts, fullDragPath) && (
-				<div className={classes.placeholder} />
+			{size === 0 && (
+				<PlaceHolder
+					label={label}
+					message={message}
+					index={0}
+					isHovering={isHovering}
+					context={context}
+					direction={direction}
+				/>
 			)}
 			{props.children}
 		</>

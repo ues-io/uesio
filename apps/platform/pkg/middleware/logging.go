@@ -86,7 +86,7 @@ func LogRequestHandler(h http.Handler) http.Handler {
 		duration := m.Duration.Round(time.Millisecond)
 		timestamp := time.Now().Format(time.Kitchen)
 		code := getColoredResponseCode(m.Code)
-		site := color.CyanString(session.GetSite().ID)
+		site := color.CyanString(session.GetSite().GetFullName())
 		user := color.MagentaString(session.GetUserUniqueKey())
 
 		log.Printf("[%v] %-4s %-32s %s %5s %16s %s %s\n", timestamp, method, uri, code, duration, size, site, user)

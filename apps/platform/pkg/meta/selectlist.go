@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type SelectListOption struct {
@@ -29,6 +29,8 @@ type SelectList struct {
 	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
 	Public           bool               `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type SelectListWrapper SelectList
 
 func NewSelectList(key string) (*SelectList, error) {
 	namespace, name, err := ParseKey(key)
@@ -126,7 +128,7 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(sl)
+	return node.Decode((*SelectListWrapper)(sl))
 }
 
 func (sl *SelectList) IsPublic() bool {

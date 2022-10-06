@@ -1,5 +1,14 @@
 import { FunctionComponent } from "react"
-import { definition, context, collection, wire, component } from "@uesio/ui"
+import {
+	definition,
+	context,
+	collection,
+	wire,
+	styles,
+	component,
+	hooks,
+} from "@uesio/ui"
+import { UserFieldOptions } from "../../view/field/fielddefinition"
 
 interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
@@ -7,50 +16,68 @@ interface UserFieldProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
+	options?: UserFieldOptions
 }
 
 const Tile = component.getUtility("uesio/io.tile")
+const TitleBar = component.getUtility("uesio/io.titlebar")
 const Avatar = component.getUtility("uesio/io.avatar")
 const ReferenceField = component.getUtility("uesio/io.referencefield")
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
-	const { mode, record, fieldId, context } = props
+	const { mode, record, fieldId, context, options } = props
 	const readonly = mode === "READ"
 
-	const user = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const firstName = user?.["uesio/core.firstname"] as string
-	const lastName = user?.["uesio/core.lastname"] as string
+	const uesio = hooks.useUesio(props)
+
+	const classes = styles.useUtilityStyles(
+		{
+			input: {},
+		},
+		props
+	)
 
 	if (!readonly) {
 		return <ReferenceField {...props} />
 	}
 
+	const user = record.getReferenceValue(fieldId)
+
 	if (!user) return null
 
-	const uniquekey = user?.[collection.UNIQUE_KEY_FIELD] as string
+	const firstName = user.getFieldValue<string>("uesio/core.firstname")
+	const lastName = user.getFieldValue<string>("uesio/core.lastname")
+
+	const uniquekey = user.getUniqueKey()
+	const picture = user.getReferenceValue("uesio/core.picture")
 
 	const initials =
 		firstName && lastName
 			? firstName.charAt(0) + lastName.charAt(0)
-			: uniquekey.charAt(0)
+			: uniquekey?.charAt(0)
 
 	const fullName =
 		firstName && lastName ? `${firstName} ${lastName}` : uniquekey
 
+	const fileURL = uesio.file.getUserFileURL(
+		context,
+		picture?.getIdFieldValue()
+	)
+
 	return (
 		<Tile
+			className={classes.input}
 			avatar={
-				<Avatar
-					image={`$UserFile{uesio/core.picture}`}
-					text={initials}
-					context={context.addFrame({
-						recordData: user,
-					})}
-				/>
+				<Avatar image={fileURL} text={initials} context={context} />
 			}
 			context={context}
 		>
-			{fullName}
+			<TitleBar
+				variant="uesio/io.infotag"
+				title={fullName}
+				subtitle={options?.subtitle}
+				context={context}
+			/>
 		</Tile>
 	)
 }

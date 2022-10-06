@@ -3,12 +3,13 @@ package cache
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/gomodule/redigo/redis"
 )
 
 var redisPool *redis.Pool
-var redisTTL = "3600"
+var redisTTL = strconv.Itoa(60 * 60 * 24)
 
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")

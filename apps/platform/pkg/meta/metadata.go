@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
+	"gopkg.in/yaml.v3"
 )
 
 type ItemMeta struct {
@@ -69,6 +69,17 @@ func ParseKey(key string) (string, string, error) {
 		return "", "", errors.New("Invalid Key: " + key)
 	}
 	return keyArray[0], keyArray[1], nil
+}
+
+func ParseKeyWithDefault(key, defaultNamespace string) (string, string, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) == 2 {
+		return keyArray[0], keyArray[1], nil
+	}
+	if len(keyArray) == 1 {
+		return defaultNamespace, key, nil
+	}
+	return "", "", errors.New("Invalid Key: " + key)
 }
 
 func ParseNamespace(namespace string) (string, string, error) {
@@ -135,6 +146,28 @@ func StandardItemLen(item CollectionableItem) int {
 
 type BundleableFactory func() BundleableGroup
 
+var METADATA_NAME_MAP = map[string]string{
+	"COLLECTION":       "collections",
+	"FIELD":            "fields",
+	"VIEW":             "views",
+	"DATASOURCE":       "datasources",
+	"AUTHSOURCE":       "authsources",
+	"SECRET":           "secrets",
+	"THEME":            "themes",
+	"SELECTLIST":       "selectlists",
+	"FILECOLLECTION":   "filecollections",
+	"BOT":              "bots",
+	"CREDENTIALS":      "credentials",
+	"ROUTE":            "routes",
+	"PROFILE":          "profiles",
+	"PERMISSIONSET":    "permissionsets",
+	"COMPONENTVARIANT": "componentvariants",
+	"COMPONENTPACK":    "componentpacks",
+	"COMPONENT":        "components",
+	"FILE":             "files",
+	"LABEL":            "labels",
+}
+
 var bundleableGroupMap = map[string]BundleableFactory{
 	(&SecretCollection{}).GetBundleFolderName():             func() BundleableGroup { return &SecretCollection{} },
 	(&ProfileCollection{}).GetBundleFolderName():            func() BundleableGroup { return &ProfileCollection{} },
@@ -160,6 +193,23 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&AuthSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &AuthSourceCollection{} },
 	(&UserAccessTokenCollection{}).GetBundleFolderName():    func() BundleableGroup { return &UserAccessTokenCollection{} },
 	(&SignupMethodCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SignupMethodCollection{} },
+}
+
+func GetGroupingConditions(metadataType, grouping string) BundleConditions {
+	if grouping == "" {
+		return nil
+	}
+	conditions := BundleConditions{}
+	// Special handling for fields for now
+	if metadataType == "fields" {
+		conditions["uesio/studio.collection"] = grouping
+	} else if metadataType == "bots" {
+		conditions["uesio/studio.type"] = grouping
+	} else if metadataType == "componentvariants" {
+		conditions["uesio/studio.component"] = grouping
+	}
+	return conditions
+
 }
 
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
@@ -189,7 +239,6 @@ func IsValidMetadataName(name string) bool {
 }
 
 func validateNodeLanguage(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "language")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
@@ -201,7 +250,6 @@ func validateNodeLanguage(node *yaml.Node, expectedName string) error {
 }
 
 func validateNodeName(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "name")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
@@ -328,6 +376,7 @@ func setMapNode(node *yaml.Node, key, value string) error {
 		}
 	}
 
+	// If we didn't find the node, then add it
 	newValueNode := &yaml.Node{}
 	newValueNode.SetString(value)
 	addNodeToMap(node, key, newValueNode)

@@ -5,14 +5,14 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func (c *Connection) GetAutonumber(collectionMetadata *adapt.CollectionMetadata) (int, error) {
+func (c *Connection) GetAutonumber(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (int, error) {
 
-	credentials := c.GetCredentials()
 	client := c.GetClient()
 
-	collectionName, err := getDBCollectionName(collectionMetadata, credentials.GetTenantID())
+	collectionName, err := getDBCollectionName(collectionMetadata, session.GetTenantID())
 	if err != nil {
 		return 0, err
 	}

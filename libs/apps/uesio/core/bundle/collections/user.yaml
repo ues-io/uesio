@@ -5,3 +5,4 @@ public: true
 label: user
 pluralLabel: users
 nameField: uesio/core.username
+access: "protected_write"

@@ -81,12 +81,16 @@ func (ds *DataScanner) Scan(src interface{}) error {
 			return (*ds.Item).SetField(fieldMetadata.GetFullName(), refItem)
 		}
 
-		reference.AddID(src, adapt.ReferenceLocator{
+		refKey, ok := src.(string)
+		if !ok {
+			return errors.New("Invalid reference key returned")
+		}
+
+		return reference.AddID(refKey, adapt.ReferenceLocator{
 			Item:  *ds.Item,
 			Field: fieldMetadata,
 		})
 
-		return nil
 	}
 
 	return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)

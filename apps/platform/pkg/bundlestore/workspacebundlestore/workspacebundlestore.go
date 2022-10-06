@@ -2,8 +2,8 @@ package workspacebundlestore
 
 import (
 	"errors"
+	"fmt"
 	"io"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -14,11 +14,75 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// WorkspaceBundleStore struct
+func processItems(items []meta.BundleableItem, session *sess.Session, looper func(loadable.Item, []adapt.ReferenceLocator, string) error) error {
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+	collectionLocatorMap := map[string]adapt.LocatorMap{}
+	namespace := workspace.GetAppFullName()
+
+	for _, item := range items {
+		collectionName := item.GetBundleGroup().GetBundleFolderName()
+		dbID := item.GetDBID(workspace.UniqueKey)
+		_, ok := collectionLocatorMap[collectionName]
+		if !ok {
+			collectionLocatorMap[collectionName] = adapt.LocatorMap{}
+		}
+		locatorMap := collectionLocatorMap[collectionName]
+		locatorMap.AddID(dbID, adapt.ReferenceLocator{
+			Item: item,
+		})
+	}
+
+	for collectionName, locatorMap := range collectionLocatorMap {
+		group, err := meta.GetBundleableGroupFromType(collectionName)
+		if err != nil {
+			return err
+		}
+
+		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+			Collection: group,
+			Namespace:  namespace,
+		}, &datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    adapt.UNIQUE_KEY_FIELD,
+					Value:    locatorMap.GetIDs(),
+					Operator: "IN",
+				},
+			}}, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+
+		err = group.Loop(func(item loadable.Item, _ string) error {
+			bundleable := item.(meta.BundleableItem)
+			dbID := bundleable.GetDBID(workspace.UniqueKey)
+			match, ok := locatorMap[dbID]
+			if !ok {
+				return looper(item, nil, dbID)
+			}
+			// Remove the id from the map, so we can figure out which ones weren't used
+			delete(locatorMap, dbID)
+			return looper(item, match, dbID)
+		})
+		if err != nil {
+			return err
+		}
+		// If we still have values in our idMap, then we didn't find some of our references.
+		for id, locator := range locatorMap {
+			return looper(nil, locator, id)
+		}
+		return nil
+
+	}
+	return nil
+}
+
 type WorkspaceBundleStore struct {
 }
 
-// GetItem function
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 
 	workspace := session.GetWorkspace()
@@ -47,73 +111,18 @@ func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, ver
 }
 
 func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
-
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return errors.New("Workspace bundle store, needs a workspace in context")
-	}
-
-	collectionIDs := map[string][]string{}
-	itemMap := map[string]meta.BundleableItem{}
-	namespace := workspace.GetAppFullName()
-	for _, item := range items {
-		collectionName := item.GetBundleGroup().GetBundleFolderName()
-		dbID := item.GetDBID(workspace.UniqueKey)
-		item.SetNamespace(namespace)
-		_, ok := collectionIDs[collectionName]
-		if !ok {
-			collectionIDs[collectionName] = []string{}
+	return processItems(items, session, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
+		if locators == nil {
+			return errors.New("Found an item we weren't expecting")
 		}
-
-		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
-		itemMap[collectionName+":"+dbID] = item
-	}
-	for collectionName, ids := range collectionIDs {
-		group, err := meta.GetBundleableGroupFromType(collectionName)
-		if err != nil {
-			return err
+		if item == nil {
+			return fmt.Errorf("Could not find workspace item: " + id)
 		}
-
-		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
-			Collection: group,
-			Namespace:  namespace,
-		}, &datasource.PlatformLoadOptions{
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field:    adapt.UNIQUE_KEY_FIELD,
-					Value:    ids,
-					Operator: "IN",
-				},
-			}}, session.RemoveWorkspaceContext())
-		if err != nil {
-			return err
+		for _, locator := range locators {
+			meta.Copy(locator.Item, item)
 		}
-
-		if group.Len() != len(items) {
-			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
-				if err != nil {
-					return ""
-				}
-				return value.(string)
-			}, ids)
-			if err != nil {
-				return err
-			}
-			if len(badValues) > 0 {
-				return errors.New("Could not load workspace metadata item: " + collectionName + " : " + strings.Join(badValues, " : "))
-			}
-		}
-
-		return group.Loop(func(item loadable.Item, _ string) error {
-			bundleable := item.(meta.BundleableItem)
-			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace.UniqueKey)]
-			meta.Copy(match, item)
-			return nil
-		})
-
-	}
-	return nil
+		return nil
+	})
 }
 
 func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
@@ -158,9 +167,9 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 	return stream, nil
 }
 
-func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileID := componentPack.RuntimeBundle.ID
-	if buildMode {
+	if path == "builder.js" {
 		fileID = componentPack.BuildTimeBundle.ID
 	}
 	stream, _, err := filesource.Download(fileID, session.RemoveWorkspaceContext())
@@ -271,63 +280,14 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 
 func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return errors.New("Workspace bundle store, needs a workspace in context")
-	}
-
-	collectionIDs := map[string][]string{}
-
-	workspaceKey := workspace.UniqueKey
-	namespace := workspace.GetAppFullName()
-	for _, item := range items {
-		collectionName := item.GetBundleGroup().GetBundleFolderName()
-		dbID := item.GetDBID(workspaceKey)
-		_, ok := collectionIDs[collectionName]
-		if !ok {
-			collectionIDs[collectionName] = []string{}
+	return processItems(items, session, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
+		if locators == nil {
+			return errors.New("Found an item we weren't expecting")
 		}
-
-		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
-	}
-	for collectionName, ids := range collectionIDs {
-		group, err := meta.GetBundleableGroupFromType(collectionName)
-		if err != nil {
-			return err
+		if item == nil {
+			return fmt.Errorf("Could not find workspace item: " + id)
 		}
+		return nil
+	})
 
-		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
-			Collection: group,
-			Namespace:  namespace,
-		}, &datasource.PlatformLoadOptions{
-			Connection: connection,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field:    adapt.UNIQUE_KEY_FIELD,
-					Value:    ids,
-					Operator: "IN",
-				},
-			}}, session.RemoveWorkspaceContext())
-		if err != nil {
-			return err
-		}
-
-		if group.Len() != len(items) {
-			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
-				if err != nil {
-					return ""
-				}
-				return value.(string)
-			}, ids)
-			if err != nil {
-				return err
-			}
-			if len(badValues) > 0 {
-				return errors.New("Could not find workspace metadata item: " + collectionName + " : " + strings.Join(badValues, " : "))
-			}
-		}
-
-	}
-	return nil
 }

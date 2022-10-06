@@ -6,7 +6,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// NewJob func
+type JobResponse struct {
+	ID string `json:"id"`
+}
+
 func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 
 	job := meta.BulkJob{

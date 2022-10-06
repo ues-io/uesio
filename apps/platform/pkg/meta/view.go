@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type View struct {
@@ -25,6 +25,8 @@ type View struct {
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type ViewWrapper View
 
 func (v *View) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(v)
@@ -165,7 +167,7 @@ func (v *View) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(v)
+	return node.Decode((*ViewWrapper)(v))
 }
 
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {

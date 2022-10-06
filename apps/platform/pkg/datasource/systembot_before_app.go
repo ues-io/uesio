@@ -1,8 +1,6 @@
 package datasource
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -25,19 +23,15 @@ func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 				return err
 			}
 		}
-		userKey, err := adapt.GetFieldValue(user, "uesio/core.uniquekey")
+		userKey, err := adapt.GetFieldValueString(user, "uesio/core.uniquekey")
 		if err != nil {
 			return err
-		}
-		userKeyString, ok := userKey.(string)
-		if !ok {
-			return errors.New("Invalid user Key string")
 		}
 		name, err := change.GetFieldAsString("uesio/studio.name")
 		if err != nil {
 			return err
 		}
-		return change.SetField("uesio/studio.fullname", userKeyString+"/"+name)
+		return change.SetField("uesio/studio.fullname", userKey+"/"+name)
 
 	})
 

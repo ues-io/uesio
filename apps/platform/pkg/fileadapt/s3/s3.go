@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 )
 
-// FileAdapter struct
 type FileAdapter struct {
 }
 

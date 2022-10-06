@@ -7,14 +7,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-// ConfigStore struct
 type ConfigStore struct {
 }
 
-// Get function
 func (cs *ConfigStore) Get(key string) (string, error) {
 	var cv meta.ConfigStoreValue
-	headlessSession, err := auth.GetStudioAdminSession()
+	headlessSession, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
 		return "", err
 	}
@@ -35,13 +33,12 @@ func (cs *ConfigStore) Get(key string) (string, error) {
 	return cv.Value, nil
 }
 
-// Set function
 func (cs *ConfigStore) Set(key, value string) error {
 	cv := meta.ConfigStoreValue{
 		Key:   key,
 		Value: value,
 	}
-	headlessSession, err := auth.GetStudioAdminSession()
+	headlessSession, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
 		return err
 	}

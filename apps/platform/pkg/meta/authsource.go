@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewAuthSource(key string) (*AuthSource, error) {
@@ -35,6 +35,8 @@ type AuthSource struct {
 	CreatedAt   int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public      bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type AuthSourceWrapper AuthSource
 
 func (as *AuthSource) GetCollectionName() string {
 	return as.GetBundleGroup().GetName()
@@ -107,7 +109,7 @@ func (as *AuthSource) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(as)
+	return node.Decode((*AuthSourceWrapper)(as))
 }
 
 func (as *AuthSource) IsPublic() bool {

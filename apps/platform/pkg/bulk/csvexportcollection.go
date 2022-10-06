@@ -29,7 +29,6 @@ type CSVExportItem struct {
 	collectionMetadata *adapt.CollectionMetadata
 }
 
-// SetField function
 func (i *CSVExportItem) SetField(fieldName string, value interface{}) error {
 	if value == nil {
 		return nil
@@ -59,7 +58,6 @@ func (i *CSVExportItem) GetData() []string {
 	return i.data
 }
 
-// GetField function
 func (i *CSVExportItem) GetField(fieldName string) (interface{}, error) {
 	return nil, nil
 }

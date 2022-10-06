@@ -10,16 +10,15 @@ const MAX_LOAD_BATCH_SIZE = 500
 const MAX_SAVE_BATCH_SIZE = 500
 const MAX_ITER_REF_GROUP = 10
 
-// Adapter interface
 type Adapter interface {
-	GetConnection(*Credentials, *MetadataCache, string, []string) (Connection, error)
+	GetConnection(*Credentials, *MetadataCache, string) (Connection, error)
 }
 
 type Connection interface {
-	Load(*LoadOp) error
-	Save(*SaveOp) error
+	Load(*LoadOp, *sess.Session) error
+	Save(*SaveOp, *sess.Session) error
 	Migrate() error
-	GetAutonumber(*CollectionMetadata) (int, error)
+	GetAutonumber(*CollectionMetadata, *sess.Session) (int, error)
 	GetMetadata() *MetadataCache
 	SetMetadata(*MetadataCache)
 	GetCredentials() *Credentials
@@ -41,7 +40,6 @@ func GetAdapter(adapterType string, session *sess.Session) (Adapter, error) {
 	return adapter, nil
 }
 
-// RegisterAdapter function
 func RegisterAdapter(name string, adapter Adapter) {
 	adapterMap[name] = adapter
 }

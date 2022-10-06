@@ -45,32 +45,12 @@ func New(user *meta.User, site *meta.Site) *Session {
 	return NewSession(browserSession, user, site)
 }
 
-func GetPublicUser(site *meta.Site) *meta.User {
-	// Get the site's default profile
-	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
-
-	if defaultSitePublicProfile == "" {
-		defaultSitePublicProfile = "uesio/core.public"
-	}
-	return &meta.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		UniqueKey: "guest",
-		Username:  "guest",
-		Profile:   defaultSitePublicProfile,
-	}
-}
-
-func NewPublic(site *meta.Site) *Session {
-	return New(GetPublicUser(site), site)
-}
-
-func Logout(w http.ResponseWriter, s *Session) *Session {
+func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
 	// Remove the logged out session
 	session.Remove(*s.browserSession, w)
 	site := s.GetSite()
 	// Login as the public user
-	return Login(w, GetPublicUser(site), site)
+	return Login(w, publicUser, site)
 }
 
 type VersionInfo struct {
@@ -136,6 +116,10 @@ func (s *Session) GetSite() *meta.Site {
 	return s.site
 }
 
+func (s *Session) SetUser(user *meta.User) {
+	s.user = user
+}
+
 func (s *Session) SetSiteAdmin(site *meta.Site) {
 	s.siteadmin = site
 }
@@ -162,6 +146,15 @@ func MakeSiteTenantID(ID string) string {
 
 func MakeWorkspaceTenantID(ID string) string {
 	return fmt.Sprintf("workspace:%s", ID)
+}
+
+func (s *Session) GetTenantIDForCollection(collectionKey string) string {
+	// If we're loading uesio/core.user from a workspace, always use the site
+	// tenant id, not the workspace tenant id. Since workspaces don't have users.
+	if collectionKey == "uesio/core.user" && s.GetWorkspace() != nil {
+		return s.GetSiteTenantID()
+	}
+	return s.GetTenantID()
 }
 
 func (s *Session) GetTenantID() string {
@@ -218,6 +211,11 @@ func (s *Session) IsPublicProfile() bool {
 
 func (s *Session) GetPublicProfile() string {
 	appBundle := s.site.GetAppBundle()
+
+	if s.siteadmin != nil {
+		appBundle = s.siteadmin.GetAppBundle()
+	}
+
 	if appBundle == nil {
 		return ""
 	}

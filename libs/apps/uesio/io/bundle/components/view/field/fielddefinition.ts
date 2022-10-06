@@ -10,6 +10,11 @@ type ReferenceFieldOptions = {
 	returnFields?: string[]
 	components?: definition.DefinitionList
 	template?: string
+	requirewriteaccess?: boolean
+}
+
+type UserFieldOptions = {
+	subtitle?: string
 }
 
 type FieldDefinition = {
@@ -18,7 +23,8 @@ type FieldDefinition = {
 	label?: string
 	id?: string
 	displayAs?: string
-	reference: ReferenceFieldOptions
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
 	placeholder: string
 } & definition.BaseDefinition
 
@@ -122,6 +128,7 @@ export {
 	LabelPosition,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
+	UserFieldOptions,
 }
 
 export default FieldPropertyDefinition

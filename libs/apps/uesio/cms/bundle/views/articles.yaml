@@ -56,8 +56,7 @@ definition:
                   signals:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
-                - uesio/io.column:
-                    field: uesio/cms.name
+                - field: uesio/cms.name
               id: table1
               mode: EDIT
               wire: articles
