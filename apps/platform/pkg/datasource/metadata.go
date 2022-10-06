@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// GetCollectionMetadata function
 func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
@@ -52,7 +51,6 @@ func GetFieldLabel(f *meta.Field, session *sess.Session) string {
 	return translation
 }
 
-// GetFieldMetadata function
 func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
 		Name:                   f.Name,
@@ -141,7 +139,6 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	return collectionMetadata, nil
 }
 
-// LoadAllFieldsMetadata function
 func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 	var fields meta.FieldCollection
 
@@ -162,7 +159,6 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	return nil
 }
 
-// LoadFieldsMetadata function
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 
 	fields := []meta.BundleableItem{}
@@ -190,7 +186,6 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	return nil
 }
 
-// LoadSelectListMetadata function
 func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) error {
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
@@ -232,7 +227,6 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	return nil
 }
 
-// CollateMetadata function
 func CollateMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, collatedMetadata map[string]*adapt.MetadataCache) {
 	dsKey := collectionMetadata.DataSource
 	_, ok := collatedMetadata[dsKey]

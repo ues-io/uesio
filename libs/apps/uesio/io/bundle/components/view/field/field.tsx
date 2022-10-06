@@ -33,7 +33,7 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs, reference, options, placeholder } =
+	const { fieldId, id, displayAs, reference, options, placeholder, user } =
 		definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
@@ -111,7 +111,7 @@ const getFieldContent = (
 		case type === "FILE":
 			return <File {...common} />
 		case type === "USER":
-			return <UserField {...common} options={reference} />
+			return <UserField {...common} options={user} />
 		case type === "LIST":
 			return (
 				<ListField

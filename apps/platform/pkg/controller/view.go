@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/routing"
+	"gopkg.in/yaml.v3"
 )
 
 type ViewResponse struct {
@@ -54,6 +54,14 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		if err != nil {
 			HandleErrorRoute(w, r, session, "", err)
 			return
+		}
+
+		if buildMode {
+			err = routing.GetBuilderDependencies(viewNamespace, viewName, depsCache, session)
+			if err != nil {
+				HandleErrorRoute(w, r, session, "", err)
+				return
+			}
 		}
 
 		ExecuteIndexTemplate(w, route, depsCache, buildMode, session)

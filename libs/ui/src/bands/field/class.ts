@@ -39,6 +39,10 @@ class Field {
 		}
 	}
 	getNumberMetadata = () => this.source.number || null
+	isReference = () =>
+		this.source.type === "REFERENCE" ||
+		this.source.type === "USER" ||
+		this.source.type === "FILE"
 }
 
 export default Field

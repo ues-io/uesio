@@ -1,0 +1,31 @@
+name: queueview
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  name:
+    prompt: View Name
+    type: METADATANAME
+  collection:
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  fields:
+    prompt: Fields
+    type: METADATAMULTI
+    metadataType: FIELD
+    grouping: ${collection}
+  detailview:
+    prompt: Detail View
+    type: METADATA
+    metadataType: VIEW
+  addheaderview:
+    prompt: Add Header View?
+    type: BOOL
+  headerview:
+    prompt: Header View
+    type: METADATA
+    metadataType: VIEW
+    conditions:
+      - param: "addheaderview"
+        value: true
+public: true

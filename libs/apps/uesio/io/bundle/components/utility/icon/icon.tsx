@@ -3,9 +3,11 @@ import { definition, styles } from "@uesio/ui"
 
 interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
+	fill?: boolean
 }
 
 const Icon: FunctionComponent<IconUtilityProps> = (props) => {
+	const fill = props.fill === undefined ? true : props.fill
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -21,7 +23,7 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				whiteSpace: "nowrap",
 				direction: "ltr",
 				fontDisplay: "block",
-				fontVariationSettings: "'FILL' 1",
+				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
 			},
 		},
 		props

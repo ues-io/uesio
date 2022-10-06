@@ -2,12 +2,10 @@ package datasource
 
 import "github.com/thecloudmasters/uesio/pkg/adapt"
 
-// InsertsAPI type
 type InsertsAPI struct {
 	op *adapt.SaveOp
 }
 
-// Get function
 func (c *InsertsAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 

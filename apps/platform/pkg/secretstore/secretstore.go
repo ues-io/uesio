@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// SecretStore interface
 type SecretStore interface {
 	Get(key string) (string, error)
 	Set(key, value string) error
@@ -43,12 +42,10 @@ func GetSecretStore(secretStoreType string) (SecretStore, error) {
 	return secretStore, nil
 }
 
-// RegisterSecretStore function
 func RegisterSecretStore(name string, store SecretStore) {
 	secretStoreMap[name] = store
 }
 
-// Get key
 func GetSecretFromKey(key string, session *sess.Session) (string, error) {
 	if key == "" {
 		return "", nil
@@ -66,7 +63,6 @@ func GetSecretFromKey(key string, session *sess.Session) (string, error) {
 	return GetSecret(secret, session)
 }
 
-// GetSecret key
 func GetSecret(secret *meta.Secret, session *sess.Session) (string, error) {
 	// Only use the environment secretstore for now
 	store, err := GetSecretStore(secret.Store)

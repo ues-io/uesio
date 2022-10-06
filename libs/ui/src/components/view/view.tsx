@@ -13,12 +13,13 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
 		context,
-		definition: { params, view: viewDefId },
+		definition: { params, view: viewDefId, id },
 	} = props
 
 	const uesio = useUesio(props)
-	const componentId = path ? uesio.component.getId() : ""
-	const viewId = makeViewId(viewDefId, componentId)
+	uesio._componentType = "uesio/core.view"
+	const componentId = uesio.component.getId(id)
+	const viewId = makeViewId(viewDefId, path ? componentId : "")
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -28,17 +29,22 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
+	const [paramState] = uesio.component.useState<Record<string, string>>(
+		componentId,
+		params
+	)
+
+	const mergedParams = context.mergeMap(paramState)
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		params: context.mergeMap(params),
+		params: mergedParams,
 	})
 
-	// We need to get load the wires here.
 	useEffect(() => {
 		appDispatch()(loadViewOp(viewContext))
-	}, [viewDefId, JSON.stringify(params)])
+	}, [viewDefId, JSON.stringify(mergedParams)])
 
 	if (!viewDef) return null
 
@@ -57,6 +63,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			context={viewContext.addFrame({
 				buildMode: !!context.getBuildMode() && !isSubView,
 			})}
+			message="Drag and drop any component here to get started."
 		/>
 	)
 

@@ -4,15 +4,14 @@ import (
 	"errors"
 	"io"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
 
-// RegisterBundleStore function
 func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
 }
@@ -25,21 +24,18 @@ func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	return adapter, nil
 }
 
-// PermissionError struct
 type PermissionError struct {
 	message string
 }
 
 func (e *PermissionError) Error() string { return e.message }
 
-// NewPermissionError creates a new permission error
 func NewPermissionError(message string) *PermissionError {
 	return &PermissionError{
 		message: message,
 	}
 }
 
-// BundleStore interface
 type BundleStore interface {
 	GetItem(item meta.BundleableItem, version string, session *sess.Session) error
 	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error
@@ -48,14 +44,13 @@ type BundleStore interface {
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
-	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
+	GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 	DeleteBundle(namespace, version string, session *sess.Session) error
 }
 
-// GetBundleStore function
 func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error) {
 	// If we're in a workspace context and the namespace we're looking for is that workspace,
 	// use the workspace bundlestore
@@ -79,7 +74,6 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	return GetBundleStoreByType("platform")
 }
 
-// DecodeYAML function
 func DecodeYAML(v interface{}, reader io.Reader) error {
 	decoder := yaml.NewDecoder(reader)
 	err := decoder.Decode(v)

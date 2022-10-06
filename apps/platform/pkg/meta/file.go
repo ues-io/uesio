@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewFile(key string) (*File, error) {
@@ -36,6 +36,8 @@ type File struct {
 	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type FileWrapper File
 
 func (f *File) GetCollectionName() string {
 	return f.GetBundleGroup().GetName()
@@ -117,7 +119,7 @@ func (f *File) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(f)
+	return node.Decode((*FileWrapper)(f))
 }
 
 func (f *File) IsPublic() bool {

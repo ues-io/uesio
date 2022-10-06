@@ -8,6 +8,7 @@ interface TooltipProps extends definition.UtilityProps {
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
 	useFirstRelativeParent?: boolean
+	offset?: [number, number]
 }
 
 const getRelativeParent = (elem: Element | null): Element | null => {
@@ -27,7 +28,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const popper = usePopper(referenceEl, popperEl, {
 		placement: props.placement,
 		modifiers: [
-			{ name: "offset", options: { offset: [0, 6] } },
+			{ name: "offset", options: { offset: props.offset ?? [0, 6] } },
 			{ name: "preventOverflow", options: { padding: 6 } },
 		],
 	})

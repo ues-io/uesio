@@ -22,8 +22,36 @@ import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
 import { MetadataState } from "../metadata/types"
 import { FeatureFlagState } from "../../definition/featureflag"
+import { initExistingWire } from "../wire/operations/initialize"
+import { RegularWireDefinition } from "../../definition/wire"
+import { EntityState } from "@reduxjs/toolkit"
+import { PlainWire } from "../wire/types"
 
 type Dep<T> = Record<string, T> | undefined
+
+const attachDefToWires = (
+	wires?: EntityState<PlainWire>,
+	viewdefs?: EntityState<PlainViewDef>
+) => {
+	if (!wires || !viewdefs) return
+	wires.ids.forEach((wirename) => {
+		const wire = wires.entities[wirename]
+		if (wire) {
+			const viewId = wire.view.split("(")[0]
+			const wireDef = viewdefs.entities?.[viewId]?.definition.wires?.[
+				wire.name
+			] as RegularWireDefinition
+			if (!wireDef)
+				throw new Error(
+					"Could not find wire def for wire: " +
+						wire.view +
+						" : " +
+						wire.name
+				)
+			wires.entities[wirename] = initExistingWire(wire, wireDef)
+		}
+	})
+}
 
 const dispatchRouteDeps = (
 	deps: Dependencies | undefined,
@@ -31,8 +59,8 @@ const dispatchRouteDeps = (
 ) => {
 	if (!deps) return
 
-	const entities = deps.viewdef?.entities as Dep<PlainViewDef>
-	if (entities) dispatch(setViewDef(entities))
+	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>
+	if (viewdefs) dispatch(setViewDef(viewdefs))
 
 	const configvalues = deps.configvalue?.entities as Dep<ConfigValueState>
 	if (configvalues) dispatch(setConfigValue(configvalues))
@@ -56,7 +84,10 @@ const dispatchRouteDeps = (
 	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
 
 	const wires = deps.wire
-	if (wires) dispatch(initWire(wires))
+	if (wires && viewdefs) {
+		attachDefToWires(wires, deps.viewdef)
+		dispatch(initWire(wires))
+	}
 
 	const collections = deps.collection
 	if (collections) dispatch(initCollection(collections))
@@ -89,4 +120,4 @@ const getPackUrls = (
 	return [runtime, buildtime]
 }
 
-export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls }
+export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls, attachDefToWires }

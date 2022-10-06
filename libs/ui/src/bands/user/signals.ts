@@ -9,7 +9,7 @@ interface LoginSignal extends SignalDefinition {
 	authSource: string
 	payload: Record<string, string>
 }
-interface LoginSignal extends SignalDefinition {
+interface SignupSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
@@ -18,11 +18,15 @@ interface UsernameTestSignal extends SignalDefinition {
 	signupMethod: string
 	fieldId: string
 }
+interface ForgotPasswordSignal extends SignalDefinition {
+	authSource: string
+	payload: Record<string, string>
+}
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/SIGNUP`]: {
-		dispatcher: (signal: LoginSignal, context: Context) =>
+		dispatcher: (signal: SignupSignal, context: Context) =>
 			operations.signup(context, signal.signupMethod, signal.payload),
 		label: "Signup",
 		properties: () => [
@@ -71,6 +75,48 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 		label: "Test Username",
 		properties: () => [],
+	},
+	[`${USER_BAND}/FORGOT_PASSWORD`]: {
+		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+			operations.forgotPassword(
+				context,
+				signal.authSource,
+				signal.payload
+			),
+		label: "Forgot Password",
+		properties: () => [
+			{
+				name: "authSource",
+				label: "Auth Source",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
+	},
+	[`${USER_BAND}/FORGOT_PASSWORD_CONFIRM`]: {
+		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+			operations.forgotPasswordConfirm(
+				context,
+				signal.authSource,
+				signal.payload
+			),
+		label: "Forgot Password Confirmation",
+		properties: () => [
+			{
+				name: "authSource",
+				label: "Auth Source",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
 	},
 }
 export default signals

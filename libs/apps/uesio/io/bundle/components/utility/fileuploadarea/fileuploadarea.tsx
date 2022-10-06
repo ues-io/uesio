@@ -24,7 +24,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	const upload = async (files: FileList | null) => {
 		if (files && files.length > 0) {
 			const collectionFullName = wire.getCollection().getFullName()
-			const recordId = record.getIdFieldValue() as string
+			const recordId = record.getIdFieldValue() || ""
 			const file = files[0]
 			const fileResponse = await uesio.file.uploadFile(
 				uesio.getContext(),

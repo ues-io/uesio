@@ -16,9 +16,17 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				bottom: "2px",
 				right: "26px",
 				left: "26px",
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr 1fr",
 			},
 			right: {
 				justifyContent: "right",
+			},
+			left: {
+				justifyContent: "left",
+			},
+			center: {
+				justifyContent: "center",
 			},
 		},
 		props
@@ -30,12 +38,72 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		},
 	])
 
+	const setDimensions = (height: number, width: number) =>
+		uesio.signal.getHandler([
+			{
+				signal: "component/uesio/studio.runtime/SET_DIMENSIONS/dimensions",
+				height,
+				width,
+			},
+		])
+
 	hooks.useHotKeyCallback("command+y", () => {
 		toggleCode?.()
 	})
 
 	return (
 		<div className={classes.root}>
+			<Group
+				className={classes.left}
+				alignItems="left"
+				context={context}
+			/>
+			<Group
+				className={classes.center}
+				alignItems="center"
+				context={context}
+			>
+				<Button
+					context={context}
+					label=""
+					icon={
+						<Icon
+							context={context}
+							fill={false}
+							icon="desktop_windows"
+						/>
+					}
+					variant="uesio/studio.minoricontoolbar"
+					onClick={setDimensions(0, 0)}
+				/>
+				<Button
+					context={context}
+					label=""
+					icon={<Icon context={context} fill={false} icon="laptop" />}
+					variant="uesio/studio.minoricontoolbar"
+					onClick={setDimensions(0, 1200)}
+				/>
+				<Button
+					context={context}
+					label=""
+					icon={<Icon context={context} fill={false} icon="tablet" />}
+					variant="uesio/studio.minoricontoolbar"
+					onClick={setDimensions(1024, 768)}
+				/>
+				<Button
+					context={context}
+					label=""
+					icon={
+						<Icon
+							context={context}
+							fill={false}
+							icon="smartphone"
+						/>
+					}
+					variant="uesio/studio.minoricontoolbar"
+					onClick={setDimensions(667, 375)}
+				/>
+			</Group>
 			<Group
 				className={classes.right}
 				alignItems="right"

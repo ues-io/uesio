@@ -17,7 +17,9 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
-	depsCache, err := routing.GetBuilderDependencies(namespace, name, session)
+	deps := routing.NewPreloadMetadata()
+
+	err := routing.GetBuilderDependencies(namespace, name, deps, session)
 	if err != nil {
 		msg := "Failed Getting Builder Metadata: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -25,6 +27,6 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &depsCache)
+	respondJSON(w, r, &deps)
 
 }

@@ -21,8 +21,9 @@ import * as param from "./paramexports"
 import { materialIcons } from "./materialiconsexports"
 import { register, registerBuilder } from "./component/registry"
 import viewdefinition from "./components/view/viewdefinition"
+import viewsignals from "./components/view/signals"
 // Register with the component registry so that it's not an explicit dependency
-register("uesio/core.view", View)
+register("uesio/core.view", View, viewsignals)
 registerBuilder("uesio/core.view", undefined, viewdefinition)
 
 export {

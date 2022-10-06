@@ -1,0 +1,5 @@
+name: contentlength
+type: NUMBER
+label: "Content Length"
+number:
+  decimals: 0

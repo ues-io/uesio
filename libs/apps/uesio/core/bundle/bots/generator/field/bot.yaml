@@ -2,15 +2,15 @@ name: field
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
+  collection:
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
   name:
     prompt: Field Name
     type: METADATANAME
   label:
     prompt: Label
-  collection:
-    prompt: Collection
-    type: METADATA
-    metadataType: COLLECTION
   type:
     prompt: Field Type
     type: FIELDTYPE

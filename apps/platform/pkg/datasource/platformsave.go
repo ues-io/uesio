@@ -117,5 +117,5 @@ func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.Save
 }
 
 func GetPlatformConnection(session *sess.Session) (adapt.Connection, error) {
-	return GetConnection("uesio/core.platform", nil, nil, session, nil)
+	return GetConnection("uesio/core.platform", nil, session, nil)
 }

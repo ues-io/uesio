@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewDataSource(key string) (*DataSource, error) {
@@ -35,6 +35,8 @@ type DataSource struct {
 	CreatedAt   int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public      bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type DataSourceWrapper DataSource
 
 func (ds *DataSource) GetCollectionName() string {
 	return ds.GetBundleGroup().GetName()
@@ -107,7 +109,7 @@ func (ds *DataSource) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(ds)
+	return node.Decode((*DataSourceWrapper)(ds))
 }
 
 func (ds *DataSource) IsPublic() bool {

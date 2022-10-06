@@ -3,3 +3,4 @@ bundle/componentpacks/*.bundle.js
 bundle/componentpacks/*.entry.ts
 bundle/componentpacks/*/*.js.gz
 .DS_Store
+.clio

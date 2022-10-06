@@ -27,6 +27,7 @@ components:
         - uesio/io.fieldlabel:uesio/io.default
         - uesio/io.fieldwrapper:uesio/io.default
         - uesio/io.tile:uesio/io.default
+        - uesio/io.titlebar:uesio/io.infotag
         - uesio/io.numberfield:uesio/io.default
         - uesio/io.listfield:uesio/io.default
         - uesio/io.markdownfield:uesio/io.default
@@ -54,6 +55,8 @@ components:
         - uesio/io.numberfield:uesio/io.table
         - uesio/io.markdownfield:uesio/io.table
         - uesio/io.filemarkdown:uesio/io.table
+        - uesio/io.userfield:uesio/io.table
+        - uesio/io.fieldwrapper:uesio/io.default
     text:
     tile:
       variants:

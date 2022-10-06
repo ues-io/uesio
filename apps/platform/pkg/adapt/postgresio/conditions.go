@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type QueryBuilder struct {
@@ -190,11 +191,11 @@ func getConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	collectionMetadata *adapt.CollectionMetadata,
-	credentials *adapt.Credentials,
+	session *sess.Session,
 	builder *QueryBuilder,
 ) error {
 
-	tenantID := credentials.GetTenantIDForCollection(collectionMetadata.GetFullName())
+	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
 	if err != nil {

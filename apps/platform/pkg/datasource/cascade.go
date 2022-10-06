@@ -11,6 +11,7 @@ import (
 func getCascadeDeletes(
 	wire *adapt.SaveOp,
 	connection adapt.Connection,
+	session *sess.Session,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
 
@@ -125,7 +126,7 @@ func getCascadeDeletes(
 					Query: true,
 				}
 
-				err := connection.Load(op)
+				err := connection.Load(op, session)
 				if err != nil {
 					return nil, errors.New("Cascade delete error")
 				}
@@ -168,7 +169,7 @@ func getCascadeDeletes(
 }
 
 func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	deletes, err := getCascadeDeletes(op, connection)
+	deletes, err := getCascadeDeletes(op, connection, session)
 	if err != nil {
 		return err
 	}
