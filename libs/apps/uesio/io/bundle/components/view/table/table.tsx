@@ -92,7 +92,8 @@ const Table: FC<TableProps> = (props) => {
 							user: columnDef.user,
 							reference: columnDef.reference,
 							labelPosition: "none",
-							"uesio.variant": "uesio/io.table",
+							wrapperVariant: "uesio/io.table",
+							"uesio.variant": "uesio/io.field:uesio/io.table",
 						}}
 						index={index}
 						{...sharedProps}

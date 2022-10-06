@@ -51,7 +51,8 @@ const getFieldContent = (
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
-		variant: definition["uesio.variant"],
+		variant:
+			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 		options,
 		placeholder,
 	}
@@ -151,6 +152,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			wire={wire}
 			record={record}
 			fieldId={fieldId}
+			variant={definition.wrapperVariant}
 		>
 			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>

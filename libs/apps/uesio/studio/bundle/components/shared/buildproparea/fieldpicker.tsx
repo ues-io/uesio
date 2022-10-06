@@ -7,7 +7,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 
-const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
 const Icon = component.getUtility("uesio/io.icon")
 
 type T = {
