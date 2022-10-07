@@ -19,6 +19,15 @@
 	},
 	{
 		"app": {
+			"uniquekey": "uesio/builder"
+		},
+		"description": "The viewbuilder App",
+		"major": 0,
+		"minor": 0,
+		"patch": 1
+	},
+	{
+		"app": {
 			"uniquekey": "uesio/io"
 		},
 		"description": "Base Uesio Components",

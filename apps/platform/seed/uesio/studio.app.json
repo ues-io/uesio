@@ -33,6 +33,17 @@
 		}
 	},
 	{
+		"name": "builder",
+		"fullname": "uesio/builder",
+		"description": "The viewbuilder app",
+		"color": "#253443",
+		"icon": "palette",
+		"public": true,
+		"user": {
+			"uniquekey": "uesio"
+		}
+	},
+	{
 		"name": "crm",
 		"fullname": "uesio/crm",
 		"description": "A Sample CRM App",
