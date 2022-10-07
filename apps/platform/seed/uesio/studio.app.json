@@ -2,7 +2,7 @@
 	{
 		"name": "core",
 		"fullname": "uesio/core",
-		"description": "Base Uesio Functionality",
+		"description": "Base uesio functionality",
 		"color": "#a05195",
 		"icon": "hub",
 		"public": true,
@@ -13,7 +13,7 @@
 	{
 		"name": "io",
 		"fullname": "uesio/io",
-		"description": "A Component library for uesio",
+		"description": "A component library for uesio",
 		"color": "#2f4b7c",
 		"icon": "widgets",
 		"public": true,
@@ -24,7 +24,7 @@
 	{
 		"name": "studio",
 		"fullname": "uesio/studio",
-		"description": "The Uesio Configuration App",
+		"description": "The uesio configuration app",
 		"color": "#ff7c43",
 		"icon": "design_services",
 		"public": true,
@@ -35,9 +35,9 @@
 	{
 		"name": "builder",
 		"fullname": "uesio/builder",
-		"description": "The viewbuilder app",
-		"color": "#253443",
-		"icon": "palette",
+		"description": "The view builder app",
+		"color": "#2dd4bf",
+		"icon": "build_circle",
 		"public": true,
 		"user": {
 			"uniquekey": "uesio"
@@ -46,7 +46,7 @@
 	{
 		"name": "crm",
 		"fullname": "uesio/crm",
-		"description": "A Sample CRM App",
+		"description": "A sample CRM app",
 		"color": "#a05195",
 		"icon": "person",
 		"public": true,
@@ -57,7 +57,7 @@
 	{
 		"name": "cms",
 		"fullname": "uesio/cms",
-		"description": "Content Management Tools",
+		"description": "Content management tools",
 		"color": "#665191",
 		"icon": "description",
 		"public": true,
@@ -68,7 +68,7 @@
 	{
 		"name": "docs",
 		"fullname": "uesio/docs",
-		"description": "Docs for Uesio",
+		"description": "Docs for uesio",
 		"color": "#d45087",
 		"icon": "support",
 		"user": {
@@ -78,7 +78,7 @@
 	{
 		"name": "web",
 		"fullname": "uesio/web",
-		"description": "Uesio Website",
+		"description": "Uesio website",
 		"color": "#003f5c",
 		"icon": "public",
 		"user": {
@@ -88,7 +88,7 @@
 	{
 		"name": "lab",
 		"fullname": "uesio/lab",
-		"description": "Experimental Components",
+		"description": "Experimental components",
 		"color": "#003f5c",
 		"icon": "science",
 		"public": true,

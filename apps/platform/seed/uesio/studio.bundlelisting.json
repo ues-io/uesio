@@ -1,24 +1,24 @@
 [
 	{
-		"uesio/studio.description": "Uesio Base Functionality",
+		"uesio/studio.description": "Uesio base functionality",
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/core"
 		}
 	},
 	{
-		"uesio/studio.description": "Uesio Viewbuilder",
+		"uesio/studio.description": "Uesio view builder",
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/builder"
 		}
 	},
 	{
-		"uesio/studio.description": "Base Uesio Components",
+		"uesio/studio.description": "Base uesio components",
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/io"
 		}
 	},
 	{
-		"uesio/studio.description": "Uesio Content Management System",
+		"uesio/studio.description": "Uesio content management system",
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/cms"
 		}
