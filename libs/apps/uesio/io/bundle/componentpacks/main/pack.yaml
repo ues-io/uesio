@@ -34,6 +34,7 @@ components:
         - uesio/io.filemarkdown:uesio/io.default
     filters:
     filter:
+    filternumber:
       variants:
         - uesio/io.selectfield:uesio/io.filter
     grid:

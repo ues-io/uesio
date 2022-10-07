@@ -34,7 +34,7 @@ const FiltersPropertyDefinition: builder.BuildPropertiesDefinition = {
 					name: "field",
 					type: "FIELD",
 					label: "field",
-					wireField: "../../../wire",
+					wireField: "../../wire",
 				},
 			],
 		},

@@ -1,5 +1,5 @@
 import { definition, builder } from "@uesio/ui"
-import FilterProperties from "./filterProperties"
+
 type FilterDefinition = {
 	fieldId: string
 	wire: string
@@ -21,16 +21,9 @@ const FilterPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Wire",
 		},
 		{
-			name: "field",
-			type: "FIELD",
-			label: "Field",
-			wireField: "wire",
-		},
-		{
-			type: "CUSTOM",
-			renderFunc: FilterProperties,
-			name: "custom",
-			label: "Custom",
+			name: "fieldId",
+			type: "TEXT",
+			label: "id",
 		},
 	],
 	sections: [],
