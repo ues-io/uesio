@@ -6,6 +6,12 @@
 		}
 	},
 	{
+		"uesio/studio.description": "Uesio Viewbuilder",
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		}
+	},
+	{
 		"uesio/studio.description": "Base Uesio Components",
 		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/io"
