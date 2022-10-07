@@ -233,6 +233,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	// Get all avaliable namespaces
 	packs := map[string]meta.ComponentPackCollection{}
 	namespaces := session.GetContextNamespaces()
+	namespaces = append(namespaces, "uesio/builder")
 	for _, namespace := range namespaces {
 		groupAbstract, err := meta.GetBundleableGroupFromType("componentpacks")
 		if err != nil {
