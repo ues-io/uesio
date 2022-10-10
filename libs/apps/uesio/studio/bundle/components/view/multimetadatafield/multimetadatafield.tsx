@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, component, metadata } from "@uesio/ui"
-import MultiMetadataPicker from "../../utility/multimetadatapicker/multimetadatapicker"
 
 type MultiMetadataFieldDefinition = {
 	fieldId: string
@@ -14,6 +13,9 @@ interface Props extends definition.BaseProps {
 	definition: MultiMetadataFieldDefinition
 }
 
+const MultiMetadataPicker = component.getUtility(
+	"uesio/builder.multimetadatapicker"
+)
 const MultiMetadataField: FunctionComponent<Props> = (props) => {
 	const {
 		context,

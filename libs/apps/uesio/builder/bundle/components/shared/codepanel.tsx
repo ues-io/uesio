@@ -219,7 +219,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{
-									signal: "component/uesio/studio.runtime/TOGGLE_CODE",
+									signal: "component/uesio/builder.runtime/TOGGLE_CODE",
 								},
 							])}
 						/>

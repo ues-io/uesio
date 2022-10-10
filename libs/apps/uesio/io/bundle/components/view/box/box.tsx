@@ -2,7 +2,6 @@ import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { BoxProps } from "./boxdefinition"
-
 const Box: FunctionComponent<BoxProps> = (props) => {
 	const classes = styles.useStyles(
 		{

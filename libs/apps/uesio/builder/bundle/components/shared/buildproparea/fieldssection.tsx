@@ -3,7 +3,8 @@ import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
 import { hooks, component, wire } from "@uesio/ui"
-import FieldPropTag from "../../utility/fieldproptag/fieldproptag"
+
+const FieldPropTag = component.getUtility("uesio/builder.fieldproptag")
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")

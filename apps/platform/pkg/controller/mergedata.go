@@ -71,7 +71,7 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 }
 
 func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
-	componentID := "$root:uesio/studio.runtime:buildmode"
+	componentID := "$root:uesio/builder.runtime:buildmode"
 	return &routing.ComponentsMergeData{
 		IDs: []string{componentID},
 		Entities: map[string]routing.ComponentMergeData{

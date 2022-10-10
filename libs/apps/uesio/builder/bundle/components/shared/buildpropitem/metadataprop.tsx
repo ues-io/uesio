@@ -1,5 +1,5 @@
 import { definition, component, builder } from "@uesio/ui"
-import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
+const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 
 const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 	const { path, valueAPI, context, descriptor } = props
@@ -52,7 +52,7 @@ const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 			label={descriptor.label}
 			labelPosition="left"
 			value={value}
-			setValue={(value) => valueAPI.set(path, value)}
+			setValue={(value: string) => valueAPI.set(path, value)}
 			context={context}
 			grouping={getGrouping(path, descriptor)}
 			selectVariant="uesio/studio.propfield"
