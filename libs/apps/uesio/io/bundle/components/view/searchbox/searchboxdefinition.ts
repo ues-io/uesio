@@ -23,7 +23,7 @@ const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 		{
 			name: "searchFields",
-			type: "WIRE_FIELDS",
+			type: "FIELDS",
 			label: "Search Fields",
 			wireField: "wire",
 		},
