@@ -3,7 +3,7 @@
 		"app": {
 			"uniquekey": "uesio/core"
 		},
-		"description": "Uesio Base Functionality",
+		"description": "Uesio base functionality",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
@@ -12,7 +12,16 @@
 		"app": {
 			"uniquekey": "uesio/studio"
 		},
-		"description": "The Uesio Configuration App",
+		"description": "The uesio configuration app",
+		"major": 0,
+		"minor": 0,
+		"patch": 1
+	},
+	{
+		"app": {
+			"uniquekey": "uesio/builder"
+		},
+		"description": "The view builder app",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
@@ -30,7 +39,7 @@
 		"app": {
 			"uniquekey": "uesio/io"
 		},
-		"description": "Base Uesio Components",
+		"description": "Base uesio components",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
@@ -39,7 +48,7 @@
 		"app": {
 			"uniquekey": "uesio/lab"
 		},
-		"description": "Experimental Components",
+		"description": "Experimental components",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
@@ -48,7 +57,7 @@
 		"app": {
 			"uniquekey": "uesio/docs"
 		},
-		"description": "Uesio Docs",
+		"description": "Uesio docs",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
@@ -57,7 +66,7 @@
 		"app": {
 			"uniquekey": "uesio/web"
 		},
-		"description": "Uesio Website",
+		"description": "Uesio website",
 		"major": 0,
 		"minor": 0,
 		"patch": 1
