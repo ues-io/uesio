@@ -85,8 +85,7 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
-	// Adding the builder for now, there is probably a better way to get it to work
-	if namespace == "uesio/core" || namespace == "uesio/builder" {
+	if namespace == "uesio/core" {
 		// Everyone has access to uesio/core
 		return "v0.0.1", nil
 	}

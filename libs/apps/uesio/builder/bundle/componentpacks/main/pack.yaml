@@ -2,4 +2,24 @@ name: main
 public: true
 components:
   utility:
-    but:
+    proplist:
+    metadataprop:
+    selectprop:
+    multiselectprop:
+    keyprop:
+    wireprop:
+    botprop:
+    conditionprop:
+    namespaceprop:
+    wiresprop:
+    numberprop:
+    booleanprop:
+    textprop:
+    textareaprop:
+    iconprop:
+    customprop:
+    paramprop:
+    paramsprop:
+    wireFieldsprop:
+    fieldprop:
+    proplistsprop:
