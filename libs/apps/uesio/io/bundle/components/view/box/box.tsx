@@ -2,7 +2,6 @@ import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { BoxProps } from "./boxdefinition"
-const Proplist = component.getUtility("uesio/builder.proplist")
 const Box: FunctionComponent<BoxProps> = (props) => {
 	const classes = styles.useStyles(
 		{
@@ -20,26 +19,6 @@ const Box: FunctionComponent<BoxProps> = (props) => {
 				uesio.signal.getHandler(definition.signals)
 			}
 		>
-			<Proplist
-				valueAPI={{
-					get: () => "",
-				}}
-				path={path}
-				properties={[
-					{
-						name: "text",
-						type: "TEXT",
-						label: "Text",
-					},
-					{
-						name: "icon",
-						type: "ICON",
-						label: "Icon",
-					},
-				]}
-				context={context}
-			/>
-
 			<component.Slot
 				definition={definition}
 				listName="components"

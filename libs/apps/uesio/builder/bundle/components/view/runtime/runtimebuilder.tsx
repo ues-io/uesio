@@ -9,7 +9,7 @@ const Grid = component.getUtility("uesio/io.grid")
 
 import usePanels from "./usePanels"
 
-component.registry.registerSignals("uesio/studio.runtime", {
+component.registry.registerSignals("uesio/builder.runtime", {
 	TOGGLE_CODE: {
 		dispatcher: (state) => !state,
 		target: "codepanel",

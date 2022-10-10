@@ -232,7 +232,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	returnFunc.displayName = key
 	return returnFunc
 }
-const BuildWrapper = getUtility("uesio/studio.buildwrapper")
+const BuildWrapper = getUtility("uesio/builder.buildwrapper")
 
 export {
 	ComponentInternal,

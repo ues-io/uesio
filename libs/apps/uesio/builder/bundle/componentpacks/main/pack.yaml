@@ -23,3 +23,12 @@ components:
     wireFieldsprop:
     fieldprop:
     proplistsprop:
+    slotbuilder:
+    placeholder:
+    multimetadatapicker:
+    metadatapicker:
+    buildwrapper:
+    fieldproptag:
+  view:
+    runtime:
+      
