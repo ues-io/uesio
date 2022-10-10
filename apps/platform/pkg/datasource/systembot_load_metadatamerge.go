@@ -75,6 +75,26 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "Namespace",
 	})
 
+	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appicon",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Icon",
+	})
+
+	dynamicCollectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "appcolor",
+		Namespace:  "uesio/studio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "App Color",
+	})
+
 	//This creates a copy of the session
 	inContextSession := session.RemoveWorkspaceContext()
 
@@ -99,13 +119,33 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
+	// Get the metadata list
+	namespaces := inContextSession.GetContextNamespaces()
+	appNames := []string{}
+	for _, ns := range namespaces {
+		appNames = append(appNames, ns)
+	}
+
+	appData, err := GetAppData(appNames, inContextSession)
+	if err != nil {
+		return err
+	}
+
 	return group.Loop(func(item loadable.Item, index string) error {
 		opItem := op.Collection.NewItem()
 		fakeID, _ := shortid.Generate()
 
 		groupableItem := item.(meta.BundleableItem)
+		namespace := groupableItem.GetNamespace()
+
+		appInfo, ok := appData[namespace]
+		if !ok {
+			return errors.New("Invalid Namespace: Could not get app data")
+		}
 		opItem.SetField("uesio/studio.id", fakeID)
-		opItem.SetField("uesio/studio.namespace", groupableItem.GetNamespace())
+		opItem.SetField("uesio/studio.namespace", namespace)
+		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
+		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
 		for _, fieldName := range group.GetFields() {
 			value, err := item.GetField(fieldName)
 			if err != nil {

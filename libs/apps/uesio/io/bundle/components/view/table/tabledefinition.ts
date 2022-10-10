@@ -10,6 +10,7 @@ type TableDefinition = {
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
 	rowactions?: RowAction[]
+	recordDisplay?: component.DisplayCondition[]
 	rownumbers: boolean
 	pagesize: string
 } & definition.BaseDefinition
@@ -21,6 +22,7 @@ interface TableProps extends definition.BaseProps {
 type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
 }
 
 type ColumnDefinition = {

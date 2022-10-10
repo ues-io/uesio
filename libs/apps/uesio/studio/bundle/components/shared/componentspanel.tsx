@@ -12,7 +12,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
 
 const Text = component.getUtility("uesio/io.text")
-const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type VariantsBlockProps = {

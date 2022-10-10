@@ -1,3 +1,4 @@
+import { MetadataKey } from "../bands/builder/types"
 import { DefinitionMap } from "./definition"
 
 export type ComponentVariant = {
@@ -5,6 +6,6 @@ export type ComponentVariant = {
 	namespace: string
 	label: string
 	extends?: string
-	component: string
+	component: MetadataKey
 	definition: DefinitionMap
 }

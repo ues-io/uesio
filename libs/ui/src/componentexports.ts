@@ -9,6 +9,8 @@ import {
 	shouldHaveClass,
 	useShould,
 	useShouldFilter,
+	useContextFilter,
+	ItemContext,
 	DisplayCondition,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
@@ -29,5 +31,7 @@ export {
 	shouldHaveClass,
 	useShould,
 	useShouldFilter,
+	useContextFilter,
+	ItemContext,
 	DisplayCondition,
 }

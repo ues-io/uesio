@@ -1,4 +1,4 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, metadata } from "@uesio/ui"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -26,6 +26,7 @@ type FieldDefinition = {
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	placeholder: string
+	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"

@@ -3,6 +3,9 @@ components:
   view:
     colorpicker:
     appiconpicker:
+    iconlabel:
+      utilities:
+        - uesio/studio.iconlabel
     metadatafield:
       utilities:
         - uesio/io.textfield
@@ -11,6 +14,8 @@ components:
     codefield:
       utilities:
         - uesio/io.codefield
+      variants:
+        - uesio/io.codefield:uesio/io.default
     permissionpicker:
       utilities:
         - uesio/io.checkboxfield
@@ -84,4 +89,6 @@ components:
   utility:
     buildwrapper:
     slotbuilder:
+    namespacelabel:
+    iconlabel:
 

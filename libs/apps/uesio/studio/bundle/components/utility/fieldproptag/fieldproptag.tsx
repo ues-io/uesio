@@ -8,7 +8,7 @@ import {
 	metadata,
 } from "@uesio/ui"
 
-const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 import { FC, useState } from "react"
