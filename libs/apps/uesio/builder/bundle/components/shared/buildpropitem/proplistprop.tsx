@@ -1,5 +1,5 @@
-import { builder } from "@uesio/ui"
-import PropList from "../buildproparea/proplist"
+import { builder, component } from "@uesio/ui"
+const PropList = component.getUtility("uesio/builder.proplist")
 
 const PropListProp: builder.PropComponent<builder.PropListProp> = (props) => (
 	<div style={{ padding: "8px" }}>
