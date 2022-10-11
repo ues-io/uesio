@@ -1,9 +1,9 @@
 import React, { FC } from "react"
 import PropNodeTag from "./buildpropitem/propnodetag"
 import { builder, context, hooks, component, styles } from "@uesio/ui"
-import PropList from "./buildproparea/proplist"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "../shared/hooks/uselistscroll"
+const PropList = component.getUtility("uesio/builder.proplist")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")

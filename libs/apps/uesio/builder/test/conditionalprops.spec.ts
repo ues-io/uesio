@@ -1,4 +1,4 @@
-import { propsToRender } from "../bundle/components/shared/buildproparea/proplist"
+import { propsToRender } from "../bundle/components/utility/proplist/proplist"
 import { builder, definition } from "@uesio/ui"
 
 type Test = {

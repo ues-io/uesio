@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react"
-import PropList from "./proplist"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { builder } from "@uesio/ui"
+import { builder, component } from "@uesio/ui"
+
+const PropList = component.getUtility("uesio/builder.proplist")
 
 const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, definition, context, propsDef, valueAPI } = props
