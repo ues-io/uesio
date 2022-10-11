@@ -6,6 +6,8 @@ import { ID_FIELD, PlainCollection } from "../../collection/types"
 import { getFullWireId } from ".."
 import toPath from "lodash/toPath"
 import get from "lodash/get"
+import Collection from "../../collection/class"
+import set from "lodash/set"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -55,24 +57,28 @@ const getDefaultRecord = (
 	collections: Dictionary<PlainCollection>,
 	wire: PlainWire
 ): PlainWireRecord => {
-	const collection = collections[wire.collection]
+	const plainCollection = collections[wire.collection]
+	if (!plainCollection)
+		throw new Error(
+			"No metadata for collection in default: " + wire.collection
+		)
+
+	const collection = new Collection(plainCollection)
+
 	const defaultRecord: PlainWireRecord = {}
 	const viewId = context.getViewId()
 	if (!viewId) throw new Error("No view id found for defaults")
 	wire?.defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
-		const fieldMetadata = collection?.fields[defaultItem.field]
-		if (value && fieldMetadata) {
-			if (
-				fieldMetadata.type === "REFERENCE" &&
-				fieldMetadata.reference?.collection
-			) {
-				defaultRecord[defaultItem.field] = {
-					[ID_FIELD]: value,
-				}
-				return
-			}
-			defaultRecord[defaultItem.field] = value
+		const fieldName = defaultItem.field
+		const field = collection.getField(fieldName)
+		if (!field)
+			throw new Error("No metadata for field in default: " + fieldName)
+
+		if (value) {
+			const fieldNameParts = fieldName?.split("->")
+			if (field.isReference()) fieldNameParts.push(ID_FIELD)
+			set(defaultRecord, fieldNameParts, value)
 		}
 	})
 	return defaultRecord

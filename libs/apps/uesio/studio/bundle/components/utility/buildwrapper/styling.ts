@@ -35,23 +35,6 @@ export default (
 			borderRadius: "4px",
 			overflow: "hidden",
 		},
-		placeholder: {
-			padding: "6px",
-		},
-		placeholderInner: {
-			minWidth: "40px",
-			minHeight: "40px",
-			borderRadius: "4px",
-			border: "1px dashed #ccc",
-			backgroundColor: "#e5e5e5",
-			height: "100%",
-		},
-		afterPlaceholder: {
-			display: "none",
-			"&:last-child": {
-				display: "block",
-			},
-		},
 		header: {
 			color: "#333",
 			backgroundColor: isSelected ? "white" : "transparent",

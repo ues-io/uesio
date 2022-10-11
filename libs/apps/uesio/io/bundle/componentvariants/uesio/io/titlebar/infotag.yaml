@@ -1,0 +1,14 @@
+name: infotag
+label: Info Tag
+definition:
+  uesio.styles:
+    root:
+    title:
+      fontSize: 10pt
+      color: "#21242D"
+      fontWeight: 400
+    subtitle:
+      fontSize: 9pt
+      color: "#777"
+      fontWeight: 300
+public: true

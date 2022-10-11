@@ -23,9 +23,6 @@ definition:
                     signals:
                       - signal: component/uesio/io.field/SAVE_FILE
                         target: mdcontent
-                      - signal: wire/LOAD
-                        wires:
-                          - articleWire
                     text: Save
                     uesio.variant: uesio/io.secondary
                 - uesio/io.button:

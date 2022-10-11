@@ -4,13 +4,24 @@ import (
 	"errors"
 	"io"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
+
+var systemBundles = map[string]bool{
+	"uesio/core":    true,
+	"uesio/studio":  true,
+	"uesio/io":      true,
+	"uesio/lab":     true,
+	"uesio/docs":    true,
+	"uesio/web":     true,
+	"uesio/cms":     true,
+	"uesio/builder": true,
+}
 
 func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
@@ -44,7 +55,7 @@ type BundleStore interface {
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
-	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
+	GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
@@ -67,7 +78,9 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if workspace != nil && workspace.GetAppFullName() == namespace {
 		return GetBundleStoreByType("workspace")
 	}
-	if namespace == "uesio/core" || namespace == "uesio/studio" || namespace == "uesio/io" || namespace == "uesio/lab" || namespace == "uesio/docs" || namespace == "uesio/web" || namespace == "uesio/cms" {
+
+	_, isSystemBundle := systemBundles[namespace]
+	if isSystemBundle {
 		return GetBundleStoreByType("system")
 	}
 

@@ -18,7 +18,7 @@ import { PlainWire } from "./types"
 import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 
 class Wire {
 	constructor(source?: PlainWire) {

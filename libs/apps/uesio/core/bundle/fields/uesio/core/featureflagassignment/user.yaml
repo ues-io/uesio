@@ -1,4 +1,6 @@
 name: user
-type: "TEXT"
+type: REFERENCE
 label: User
 required: true
+reference:
+  collection: uesio/core.user

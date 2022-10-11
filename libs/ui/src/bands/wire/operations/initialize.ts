@@ -1,24 +1,40 @@
-import { RootState, ThunkFunc } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { init, selectWire } from ".."
+import { init } from ".."
 import {
 	RegularWireDefinition,
+	ViewOnlyField,
 	ViewOnlyWireDefinition,
 	WireDefinition,
+	WireFieldDefinitionMap,
 } from "../../../definition/wire"
 import { PlainWire } from "../types"
 import { PlainCollection, PlainCollectionMap } from "../../collection/types"
-import { PlainWireRecord } from "../../wirerecord/types"
 import { FieldMetadataMap } from "../../field/types"
-import createrecord from "./createrecord"
-import { getFieldsRequest } from "./load"
+import { LoadRequestField } from "../../../load/loadrequest"
+
+const getFieldsRequest = (
+	fields?: WireFieldDefinitionMap | Record<string, ViewOnlyField>
+): LoadRequestField[] | undefined => {
+	if (!fields) {
+		return undefined
+	}
+	return Object.keys(fields).map((fieldName) => {
+		const fieldData = fields[fieldName]
+		const subFields = getFieldsRequest(fieldData?.fields)
+		return {
+			fields: subFields,
+			id: fieldName,
+		}
+	})
+}
 
 const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 	conditions: wireDef.conditions,
 	collection: wireDef.collection,
 	order: wireDef.order,
 	query: !wireDef.init || wireDef.init.query || false,
-	create: !wireDef.init || wireDef.init.create || false,
+	create: wireDef.init ? wireDef.init.create || false : false,
 	defaults: wireDef.defaults,
 	events: wireDef.events,
 	batchsize: wireDef.batchsize,
@@ -73,10 +89,6 @@ const initViewOnlyWire = (
 
 	metadata[collectionFullname] = viewOnlyMetadata
 
-	const data: Record<string, PlainWireRecord> = {}
-	const original: Record<string, PlainWireRecord> = {}
-	const changes: Record<string, PlainWireRecord> = {}
-
 	return {
 		view: viewId || "",
 		query: !wireDef.init || wireDef.init.query || false,
@@ -85,14 +97,14 @@ const initViewOnlyWire = (
 		order: [],
 		batchid: "",
 		batchnumber: 0,
-		data,
-		original,
-		changes,
+		data: {},
+		original: {},
+		changes: {},
 		deletes: {},
 		collection: collectionFullname,
 		viewOnly: true,
 		fields: getFieldsRequest(wireDef.fields) || [],
-		create: !wireDef.init || wireDef.init.create || false,
+		create: wireDef.init ? wireDef.init.create || false : false,
 		defaults: wireDef.defaults,
 		events: wireDef.events,
 	}
@@ -100,7 +112,7 @@ const initViewOnlyWire = (
 
 const initExistingWire = (
 	existingWire: PlainWire,
-	wireDef: RegularWireDefinition | undefined
+	wireDef: RegularWireDefinition
 ) => ({
 	...existingWire,
 	changes: {},
@@ -110,19 +122,13 @@ const initExistingWire = (
 })
 
 const initWire = (
-	state: RootState,
 	viewId: string,
 	wirename: string,
 	wireDef: WireDefinition,
-	existingWire: PlainWire | undefined,
 	collections: PlainCollectionMap
 ) => {
 	if (wireDef.viewOnly) {
 		return initViewOnlyWire(viewId, wirename, wireDef, collections)
-	}
-
-	if (existingWire) {
-		return initExistingWire(existingWire, wireDef)
 	}
 
 	return {
@@ -145,40 +151,18 @@ export default (
 		context: Context,
 		wireDefs: Record<string, WireDefinition | undefined>
 	): ThunkFunc =>
-	(dispatch, getState) => {
+	(dispatch) => {
 		const collections: PlainCollectionMap = {}
 		const viewId = context.getViewId()
-		const viewDefId = context.getViewDefId()
-		if (!viewId) throw new Error("Could not get View Def Id")
-		const state = getState()
-		const viewDef = state.viewdef.entities[viewDefId || ""]
 
-		const viewOnlyDefs: Record<string, WireDefinition> = {}
+		if (!viewId) throw new Error("Could not get View Def Id")
 		const initializedWires = Object.keys(wireDefs).map((wirename) => {
-			const wireDef =
-				wireDefs[wirename] || viewDef?.definition?.wires?.[wirename]
+			const wireDef = wireDefs[wirename]
 			if (!wireDef) throw new Error("Could not get wire def")
-			const existingWire = selectWire(state, viewId, wirename)
-			if (wireDef.viewOnly) {
-				viewOnlyDefs[wirename] = wireDef
-			}
-			return initWire(
-				state,
-				viewId,
-				wirename,
-				wireDef,
-				existingWire,
-				collections
-			)
+			return initWire(viewId, wirename, wireDef, collections)
 		})
 
 		dispatch(init([initializedWires, collections]))
-		Object.keys(viewOnlyDefs).forEach((wirename) => {
-			const wireDef = viewOnlyDefs[wirename]
-			if (wireDef.init?.create) {
-				dispatch(createrecord(context, wirename))
-			}
-		})
 
 		return context
 	}

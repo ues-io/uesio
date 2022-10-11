@@ -11,14 +11,83 @@ import (
 	"github.com/thecloudmasters/clio/pkg/param"
 	"github.com/thecloudmasters/clio/pkg/wire"
 	"github.com/thecloudmasters/clio/pkg/zip"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
+
+func getAnswerInfo(sessid string) (map[string]interface{}, error) {
+	users, err := wire.Load("uesio/core.user", &wire.LoadOptions{
+		Fields: []adapt.LoadRequestField{{
+			ID: "uesio/core.username",
+		}},
+		RequireWriteAccess: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	options := []string{}
+	for _, user := range users {
+		username, err := user.GetFieldAsString("uesio/core.username")
+		if err != nil {
+			return nil, err
+		}
+		options = append(options, username)
+	}
+
+	return param.AskMany(&meta.BotParams{
+		{
+			Name:    "user",
+			Prompt:  "Select user or org",
+			Choices: options,
+			Type:    "LIST",
+		},
+		{
+			Name:   "app",
+			Prompt: "App Name",
+			Type:   "METADATANAME",
+		},
+		{
+			Name:    "color",
+			Prompt:  "Select a color",
+			Choices: param.ACCENT_COLORS,
+			Type:    "LIST",
+		},
+		{
+			Name:    "shade",
+			Prompt:  "Select a shade",
+			Choices: param.SHADES,
+			Type:    "LIST",
+		},
+		{
+			Name:    "icon",
+			Prompt:  "Select an icon",
+			Choices: param.APP_ICONS,
+			Type:    "LIST",
+		},
+	}, "", "", sessid)
+
+}
+
+func getAnswers(sessid string) (string, string, string, string, error) {
+	answers, err := getAnswerInfo(sessid)
+	if err != nil {
+		return "", "", "", "", nil
+	}
+	username := answers["user"].(string)
+	appname := answers["app"].(string)
+	hue := answers["color"].(string)
+	shade := answers["shade"].(string)
+	icon := answers["icon"].(string)
+	color := param.COLORS[hue][shade]
+	return username, appname, color, icon, nil
+}
 
 func Initialize() error {
 
 	fmt.Println("Running Initialize Command 5")
 
-	user, err := auth.Login()
+	_, err := auth.Login()
 	if err != nil {
 		return err
 	}
@@ -32,29 +101,12 @@ func Initialize() error {
 	if err != nil {
 		// Create an app
 		fmt.Println("No bundle info found. Let's create a new app.")
-		answers, err := param.AskMany(&meta.BotParams{
-			{
-				Name:   "user",
-				Prompt: "Select User or Org",
-				Choices: []string{
-					user.Username,
-				},
-				Type: "LIST",
-			},
-			{
-				Name:   "app",
-				Prompt: "App Name",
-				Type:   "METADATANAME",
-			},
-		}, app, "", sessid)
+		username, appname, color, icon, err := getAnswers(sessid)
 		if err != nil {
 			return err
 		}
 
-		username := answers["user"].(string)
-		appname := answers["app"].(string)
-
-		appdata, err := wire.CreateNewApp(username, appname)
+		appdata, err := wire.CreateNewApp(username, appname, color, icon)
 		if err != nil {
 			return err
 		}

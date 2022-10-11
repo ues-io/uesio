@@ -30,8 +30,40 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
+		path := componentPack.GetComponentPackFilePath(buildMode)
+		stream, err := bundle.GetComponentPackStream(&componentPack, path, session)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
+			return
+		}
 
-		stream, err := bundle.GetComponentPackStream(&componentPack, buildMode, session)
+		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
+	}
+}
+
+func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		namespace := vars["namespace"]
+		name := vars["name"]
+
+		session := middleware.GetSession(r)
+
+		componentPack := meta.ComponentPack{
+			Name:      name,
+			Namespace: namespace,
+		}
+
+		err := bundle.Load(&componentPack, session)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Not Found", http.StatusNotFound)
+			return
+		}
+
+		path := componentPack.GetComponentPackFilePath(buildMode)
+		stream, err := bundle.GetComponentPackStream(&componentPack, path+".map", session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)

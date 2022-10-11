@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type Translation struct {
@@ -22,6 +22,8 @@ type Translation struct {
 	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type TranslationWrapper Translation
 
 func (t *Translation) GetBundleGroup() BundleableGroup {
 	var tc TranslationCollection
@@ -94,7 +96,7 @@ func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(t)
+	return node.Decode((*TranslationWrapper)(t))
 }
 
 func (t *Translation) IsPublic() bool {

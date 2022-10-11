@@ -2,7 +2,7 @@ import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { NotificationSeverity } from "./types"
 import { add as addNotification } from "."
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 
 // The key for the entire band
 const NOTIFICATION_BAND = "notification"

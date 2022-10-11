@@ -39,7 +39,8 @@ class Collection {
 
 			if (
 				baseFieldMetadata.type === "REFERENCE" ||
-				baseFieldMetadata.type === "FILE"
+				baseFieldMetadata.type === "FILE" ||
+				baseFieldMetadata.type === "USER"
 			) {
 				if (!baseFieldMetadata.reference?.collection) return undefined
 				const state =

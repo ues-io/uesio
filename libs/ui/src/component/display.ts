@@ -19,6 +19,11 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type ParamIsNotSetCondition = {
+	type: "paramIsNotSet"
+	param: string
+}
+
 type ParamValueCondition = {
 	type: "paramValue"
 	param: string
@@ -30,6 +35,15 @@ type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
 }
+
+type RecordIsNewCondition = {
+	type: "recordIsNew"
+}
+
+type RecordIsNotNewCondition = {
+	type: "recordIsNotNew"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -55,10 +69,18 @@ type DisplayCondition =
 	| HasValueCondition
 	| FieldValueCondition
 	| ParamIsSetCondition
+	| ParamIsNotSetCondition
 	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| RecordIsNewCondition
+	| RecordIsNotNewCondition
+
+type ItemContext<T> = {
+	item: T
+	context: Context
+}
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
@@ -86,12 +108,24 @@ function should(condition: DisplayCondition, context: Context) {
 		return !!context.getParam(condition.param)
 	}
 
+	if (condition.type === "paramIsNotSet") {
+		return !context.getParam(condition.param)
+	}
+
 	if (condition.type === "fieldMode") {
 		return condition.mode === context.getFieldMode()
 	}
 
 	if (condition.type === "featureFlag") {
 		return !!context.getFeatureFlag(condition.name)?.value
+	}
+
+	if (condition.type === "recordIsNew") {
+		return !!context.getRecord()?.isNew()
+	}
+
+	if (condition.type === "recordIsNotNew") {
+		return !context.getRecord()?.isNew()
 	}
 
 	const compareToValue =
@@ -174,10 +208,9 @@ const getWiresForConditions = (
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
-	items: T[] | undefined,
+	items: T[] | undefined = [],
 	context: Context
 ) => {
-	if (!items) return []
 	const conditionsList = items.flatMap((item) => {
 		const conditions = item["uesio.display"]
 		return conditions ? [conditions] : []
@@ -194,6 +227,27 @@ const useShouldFilter = <T extends BaseDefinition>(
 	return items?.filter((item, index) =>
 		shouldAll(conditionsList[index], context)
 	)
+}
+
+const useContextFilter = <T>(
+	items: T[],
+	conditions: DisplayCondition[] | undefined,
+	contextFunc: (item: T, context: Context) => Context,
+	context: Context
+): ItemContext<T>[] => {
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	return items.flatMap((item) => {
+		const newContext = contextFunc(item, context)
+		return shouldAll(conditions, newContext)
+			? [
+					{
+						item,
+						context: newContext,
+					},
+			  ]
+			: []
+	})
 }
 
 const useShould = (
@@ -219,4 +273,11 @@ function shouldHaveClass(
 	return shouldAll(classLogic, context)
 }
 
-export { useShould, useShouldFilter, shouldHaveClass, DisplayCondition }
+export {
+	useShould,
+	useShouldFilter,
+	useContextFilter,
+	shouldHaveClass,
+	DisplayCondition,
+	ItemContext,
+}

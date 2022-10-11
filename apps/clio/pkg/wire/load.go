@@ -8,13 +8,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
+type LoadOptions struct {
+	Conditions         []adapt.LoadRequestCondition `json:"conditions"`
+	Fields             []adapt.LoadRequestField     `json:"fields"`
+	Orders             []adapt.LoadRequestOrder     `json:"order"`
+	RequireWriteAccess bool                         `json:"requirewriteaccess"`
+}
+
 type LoadRequest struct {
-	CollectionName string                       `json:"collection"`
-	Fields         []adapt.LoadRequestField     `json:"fields"`
-	Conditions     []adapt.LoadRequestCondition `json:"conditions"`
-	Query          bool                         `json:"query"`
-	WireName       string                       `json:"name"`
-	View           string                       `json:"view"`
+	CollectionName string `json:"collection"`
+	LoadOptions
+	Query    bool   `json:"query"`
+	WireName string `json:"name"`
+	View     string `json:"view"`
 }
 
 type LoadReqBatch struct {
@@ -29,8 +35,8 @@ type LoadResBatch struct {
 	Wires []LoadResponse `json:"wires"`
 }
 
-func LoadOne(collectionName string, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) (*adapt.Item, error) {
-	result, err := Load(collectionName, fields, conditions)
+func LoadOne(collectionName string, options *LoadOptions) (*adapt.Item, error) {
+	result, err := Load(collectionName, options)
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +46,13 @@ func LoadOne(collectionName string, fields []adapt.LoadRequestField, conditions 
 	return result[0], nil
 }
 
-func Load(collectionName string, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) (adapt.Collection, error) {
+func Load(collectionName string, options *LoadOptions) (adapt.Collection, error) {
 
 	payload := &LoadReqBatch{
 		Wires: []LoadRequest{
 			{
 				CollectionName: collectionName,
-				Conditions:     conditions,
-				Fields:         fields,
+				LoadOptions:    *options,
 				WireName:       "cliowire",
 				View:           "clioview",
 				Query:          true,

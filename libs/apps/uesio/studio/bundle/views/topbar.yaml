@@ -251,7 +251,12 @@ definition:
                     text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
-
+                - uesio/io.button:
+                    uesio.variant: uesio/io.nav
+                    text: Profile
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: myprofile
           # Avatar
           - uesio/io.griditem:
               components:

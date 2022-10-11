@@ -2,13 +2,13 @@ package platformbundlestore
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -21,14 +21,7 @@ type PlatformBundleStore struct {
 }
 
 func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
-
-	fakeSession, err := auth.GetStudioAdminSession()
-	if err != nil {
-		return nil, err
-	}
-
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", fakeSession)
-
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", session)
 }
 
 func getBasePath(namespace, version string) string {
@@ -56,7 +49,8 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
+		message := fmt.Sprintf("No Permission to metadata item: %s : %s : %s : %s", item.GetCollectionName(), key, session.GetUserInfo().UniqueKey, session.GetProfile())
+		return bundlestore.NewPermissionError(message)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
@@ -153,9 +147,8 @@ func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, ses
 	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
 }
 
-func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
+func (b *PlatformBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(componentPack.Namespace, version, "componentpacks", path, session)
 }
 
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

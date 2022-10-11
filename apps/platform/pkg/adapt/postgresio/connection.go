@@ -19,7 +19,6 @@ type QueryAble interface {
 type Connection struct {
 	metadata    *adapt.MetadataCache
 	credentials *adapt.Credentials
-	tokens      []string
 	client      *pgxpool.Pool
 	transaction pgx.Tx
 	datasource  string
@@ -70,7 +69,7 @@ func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
 
-func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, datasource string, tokens []string) (adapt.Connection, error) {
+func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, datasource string) (adapt.Connection, error) {
 
 	client, err := connect(credentials)
 	if err != nil {
@@ -80,7 +79,6 @@ func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.
 	return &Connection{
 		metadata:    metadata,
 		credentials: credentials,
-		tokens:      tokens,
 		client:      client,
 		datasource:  datasource,
 	}, nil

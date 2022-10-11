@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
+func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection adapt.Connection) error {
 	site := session.GetSite()
 	perms := session.GetPermissions()
 
@@ -26,12 +26,6 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 		return errors.New("your profile does not allow you to administer sites")
 	}
 
-	// Get the Site from the DB
-	siteadmin, err := QuerySiteByKey(siteKey, session)
-	if err != nil {
-		return err
-	}
-
 	// For now give siteadmin users access to everything.
 	// Get the siteadmin permissions and set them on the session
 	siteadmin.Permissions = &meta.PermissionSet{
@@ -39,6 +33,8 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 		AllowAllRoutes:      true,
 		AllowAllFiles:       true,
 		AllowAllCollections: true,
+		ModifyAllRecords:    true,
+		ViewAllRecords:      true,
 	}
 
 	if siteadmin.Bundle == nil {
@@ -52,23 +48,44 @@ func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection 
 		return err
 	}
 
+	session.SetUser(&meta.User{
+		UniqueKey: "system",
+	})
+
 	session.GetSiteAdmin().SetAppBundle(bundleDef)
 	return nil
 }
 
-func QuerySiteByID(siteid string, session *sess.Session) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, session)
+func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) error {
+	siteadmin, err := QuerySiteByID(siteID, session, connection)
+	if err != nil {
+		return err
+	}
+	return addSiteAdminContext(siteadmin, session, connection)
 }
 
-func QuerySiteByKey(sitekey string, session *sess.Session) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session)
+func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
+	siteadmin, err := QuerySiteByKey(siteKey, session, connection)
+	if err != nil {
+		return err
+	}
+	return addSiteAdminContext(siteadmin, session, connection)
 }
 
-func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
+func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, session, connection)
+}
+
+func QuerySiteByKey(sitekey string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session, connection)
+}
+
+func querySite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
 	var s meta.Site
 	err := PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: adapt.ID_FIELD,
@@ -122,7 +139,6 @@ func querySite(value, field string, session *sess.Session) (*meta.Site, error) {
 					Value: value,
 				},
 			},
-			SkipRecordSecurity: true,
 		},
 		session,
 	)
