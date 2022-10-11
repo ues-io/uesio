@@ -39,7 +39,7 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					tab: classes.tab,
 					tabSelected: classes.tabSelected,
 				}}
-				selectedTab={selectedTab && selectedTab.id}
+				selectedTab={selectedTab?.id}
 				setSelectedTab={setSelectedTab}
 				tabs={tabs}
 				context={context}
@@ -51,7 +51,7 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					path={`${path}["tabs"]["${selectedIndex}"]`}
 					accepts={["uesio.standalone"]}
 					context={context}
-					label={selectedTab.label}
+					label={selectedTab?.label}
 				/>
 			</div>
 			<div className={classes.footer}>
