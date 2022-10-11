@@ -8,7 +8,7 @@ import {
 	wire,
 	hooks,
 } from "@uesio/ui"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 
 interface FileImageProps extends definition.UtilityProps {
 	width?: string

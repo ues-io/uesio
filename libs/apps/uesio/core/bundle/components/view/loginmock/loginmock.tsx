@@ -46,7 +46,6 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 									authSource: "uesio/core.mock",
 									payload: {
 										token: JSON.stringify({
-											authType: "mock",
 											subject: user,
 										}),
 									},

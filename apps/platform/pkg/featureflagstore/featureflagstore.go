@@ -3,12 +3,12 @@ package featureflagstore
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// FeatureFlagStore interface
 type FeatureFlagStore interface {
 	Get(user string, assignments *meta.FeatureFlagAssignmentCollection, session *sess.Session) error
 	Set(flag *meta.FeatureFlagAssignment, session *sess.Session) error
@@ -54,7 +54,6 @@ func GetFeatureFlagStore(configStoreType string) (FeatureFlagStore, error) {
 	return featureFlagAssignment, nil
 }
 
-// RegisterFeatureFlagStore function
 func RegisterFeatureFlagStore(name string, store FeatureFlagStore) {
 	featureFlagStoreMap[name] = store
 }
@@ -67,7 +66,7 @@ func GetValues(user string, assignments *meta.FeatureFlagAssignmentCollection, s
 	return store.Get(user, assignments, session)
 }
 
-func SetValueFromKey(key string, value bool, user string, session *sess.Session) error {
+func SetValueFromKey(key string, value bool, userID string, session *sess.Session) error {
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -76,10 +75,16 @@ func SetValueFromKey(key string, value bool, user string, session *sess.Session)
 	if err != nil {
 		return err
 	}
+
+	user, err := auth.GetUserByID(userID, session, nil)
+	if err != nil {
+		return err
+	}
+
 	return SetValue(FeatureFlag, value, user, session)
 }
 
-func SetValue(cv *meta.FeatureFlag, value bool, user string, session *sess.Session) error {
+func SetValue(cv *meta.FeatureFlag, value bool, user *meta.User, session *sess.Session) error {
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return err

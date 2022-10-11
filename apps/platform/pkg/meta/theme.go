@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type Theme struct {
@@ -24,6 +24,8 @@ type Theme struct {
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type ThemeWrapper Theme
 
 func (t *Theme) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(t)
@@ -97,12 +99,14 @@ func (t *Theme) GetPermChecker() *PermissionSet {
 func (t *Theme) SetField(fieldName string, value interface{}) error {
 	if fieldName == "uesio/studio.definition" {
 		var definition yaml.Node
-		err := yaml.Unmarshal([]byte(value.(string)), &definition)
-		if err != nil {
-			return err
-		}
-		if len(definition.Content) > 0 {
-			t.Definition = *definition.Content[0]
+		if value != nil {
+			err := yaml.Unmarshal([]byte(value.(string)), &definition)
+			if err != nil {
+				return err
+			}
+			if len(definition.Content) > 0 {
+				t.Definition = *definition.Content[0]
+			}
 		}
 		return nil
 	}
@@ -153,7 +157,7 @@ func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(t)
+	return node.Decode((*ThemeWrapper)(t))
 }
 
 func (t *Theme) IsPublic() bool {

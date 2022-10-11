@@ -1,0 +1,7 @@
+name: featureflagassignments
+type: REFERENCEGROUP
+label: feature flag assignment
+referenceGroup:
+  collection: uesio/core.featureflagassignment
+  field: uesio/core.user
+  onDelete: CASCADE

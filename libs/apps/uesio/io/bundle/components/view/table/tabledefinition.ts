@@ -1,14 +1,19 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
+import {
+	ReferenceFieldOptions,
+	UserFieldOptions,
+} from "../field/fielddefinition"
 
-interface TableDefinition extends definition.BaseDefinition {
+type TableDefinition = {
 	id: string
 	wire: string
 	mode: context.FieldMode
-	columns: definition.DefinitionList
+	columns: ColumnDefinition[]
 	rowactions?: RowAction[]
+	recordDisplay?: component.DisplayCondition[]
 	rownumbers: boolean
 	pagesize: string
-}
+} & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
@@ -17,10 +22,13 @@ interface TableProps extends definition.BaseProps {
 type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
 }
 
 type ColumnDefinition = {
 	field: string
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
 	label: string
 	components: definition.DefinitionList
 }
@@ -75,9 +83,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			uesio.builder.addDefinition(
 				dropNode + '["columns"]',
 				{
-					"uesio/io.column": {
-						field: `${fieldNamespace}.${fieldName}`,
-					},
+					field: `${fieldNamespace}.${fieldName}`,
 				},
 				dropIndex
 			)

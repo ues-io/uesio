@@ -1,13 +1,16 @@
-import { hooks, component } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 
 const handleDrop = (
 	dragNode: string,
 	dropNode: string,
 	dropIndex: number,
+	definition: definition.DefinitionMap,
 	uesio: hooks.Uesio
 ): void => {
-	const [propDef] =
-		component.registry.getPropertiesDefinitionFromPath(dragNode)
+	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
+		dragNode,
+		definition
+	)
 
 	uesio.builder.clearDragNode()
 	uesio.builder.clearDropNode()
@@ -23,7 +26,10 @@ const handleDrop = (
 	switch (metadataType) {
 		case "field": {
 			const [dropPropDef] =
-				component.registry.getPropertiesDefinitionFromPath(dropNode)
+				component.registry.getPropertiesDefinitionFromPath(
+					dropNode,
+					definition
+				)
 			const handler = dropPropDef?.handleFieldDrop
 			if (handler) {
 				handler(dragNode, dropNode, dropIndex, propDef, uesio)
@@ -77,21 +83,23 @@ const handleDrop = (
 
 const isNextSlot = (
 	bounds: DOMRect,
-	direction: string,
+	direction: "HORIZONTAL" | "VERTICAL",
 	pageX: number,
 	pageY: number
 ): boolean => {
 	const halfWay =
-		direction === "horizontal"
+		direction === "HORIZONTAL"
 			? bounds.x + window.scrollX + bounds.width / 2
 			: bounds.y + window.scrollY + bounds.height / 2
-	const position = direction === "horizontal" ? pageX : pageY
+	const position = direction === "HORIZONTAL" ? pageX : pageY
 	return position >= halfWay
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const [propDef] =
-		component.registry.getPropertiesDefinitionFromPath(dragNode)
+	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
+		dragNode,
+		definition
+	)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([

@@ -111,6 +111,39 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/builder:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/builder:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/builder:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "wessel"
+		}
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
 		"uesio/studio.team": {

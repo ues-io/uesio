@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewProfile(key string) (*Profile, error) {
@@ -35,6 +35,8 @@ type Profile struct {
 	CreatedAt         int64           `yaml:"-" uesio:"uesio/core.createdat"`
 	Public            bool            `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type ProfileWrapper Profile
 
 func (p *Profile) GetCollectionName() string {
 	return p.GetBundleGroup().GetName()
@@ -117,7 +119,7 @@ func (p *Profile) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(p)
+	return node.Decode((*ProfileWrapper)(p))
 }
 
 func (p *Profile) IsPublic() bool {

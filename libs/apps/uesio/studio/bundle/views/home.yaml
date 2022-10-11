@@ -14,6 +14,18 @@ definition:
         - field: uesio/studio.name
           desc: false
       requirewriteaccess: true
+    orgs:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.uniquekey:
+      conditions:
+        - field: uesio/core.type
+          value: "ORG"
+      order:
+        - field: uesio/core.username
+          desc: false
+      requirewriteaccess: true
     newapp:
       collection: uesio/studio.app
       fields:
@@ -22,9 +34,34 @@ definition:
         uesio/studio.description:
         uesio/studio.color:
         uesio/studio.icon:
+        uesio/studio.user:
       init:
         query: false
         create: true
+      defaults:
+        - field: uesio/studio.user
+          valueSource: VALUE
+          value: $User{id}
+        - field: uesio/studio.user->uesio/core.uniquekey
+          valueSource: VALUE
+          value: $User{username}
+    neworg:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.username:
+        uesio/core.type:
+        uesio/core.profile:
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/core.type
+          valueSource: VALUE
+          value: ORG
+        - field: uesio/core.profile
+          valueSource: VALUE
+          value: uesio/studio.standard
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -76,6 +113,33 @@ definition:
                                 uesio.variant: uesio/io.icon
                                 color: "${uesio/studio.color}"
                                 text: ${uesio/studio.icon}
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: My Organizations
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newOrg
+                - uesio/io.list:
+                    id: orglist
+                    wire: orgs
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          content:
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                text: ${uesio/core.uniquekey}
+                                element: div
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#21242D"
+                                text: domain
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -169,7 +233,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New App
       width: 400px
-      height: 600px
+      height: 640px
       components:
         - uesio/core.view:
             view: uesio/studio.appedit
@@ -193,3 +257,39 @@ definition:
                 panel: "newApp"
               - signal: "wire/RESET"
                 wire: newapp
+    newOrg:
+      uesio.type: uesio/io.dialog
+      title: Create a New Organization
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.list:
+            id: editorglist
+            mode: EDIT
+            wire: neworg
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/core.username
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "neworg"
+              - signal: wire/LOAD
+                wires:
+                  - orgs
+              - signal: "panel/TOGGLE"
+                panel: "newOrg"
+              - signal: "wire/RESET"
+                wire: neworg
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newOrg"
+              - signal: "wire/RESET"
+                wire: neworg

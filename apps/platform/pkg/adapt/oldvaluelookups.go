@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
@@ -23,23 +24,18 @@ func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
 		return strconv.Itoa(intValue), nil
 	}
 
-	keyValue, err := GetFieldValue(value, UNIQUE_KEY_FIELD)
-	if err != nil {
-		return "", err
-	}
-	keyString, ok := keyValue.(string)
-	if ok {
-		return keyString, nil
-	}
-
-	return "", fmt.Errorf("Invalid type for key field, %T", value)
+	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
-func SetUniqueKey(item loadable.Item, collectionMetadata *CollectionMetadata) (string, error) {
+func SetUniqueKey(change *ChangeItem, collectionMetadata *CollectionMetadata) error {
+	if change.UniqueKey != "" {
+		return nil
+	}
 	// First see if the unique key already exists.
-	existingKey, err := item.GetField(UNIQUE_KEY_FIELD)
-	if err == nil && existingKey != nil && existingKey != "" {
-		return existingKey.(string), nil
+	existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
+	if err == nil && existingKey != "" {
+		change.UniqueKey = existingKey
+		return nil
 	}
 	keyFields := collectionMetadata.UniqueKey
 	if len(keyFields) == 0 {
@@ -47,35 +43,32 @@ func SetUniqueKey(item loadable.Item, collectionMetadata *CollectionMetadata) (s
 	}
 	keyValues := make([]string, len(keyFields))
 	for i, keyField := range keyFields {
-		value, err := GetUniqueKeyPart(item, keyField)
+		value, err := GetUniqueKeyPart(change, keyField)
 		if err != nil {
-			fmt.Println("Failed to get part: " + keyField)
-			fmt.Println(fmt.Sprintf("%+v", item))
-			fmt.Println(keyFields)
-			fmt.Println(collectionMetadata.GetFullName())
-			fmt.Println(err)
-
-			return "", err
+			return fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, collectionMetadata.GetFullName(), err)
 		}
 		if value == "" {
-			return "", errors.New("Required Unique Key Value Not Provided: " + collectionMetadata.GetFullName() + " : " + keyField)
+			return fmt.Errorf("Required Unique Key Value Not Provided: %v : %v", collectionMetadata.GetFullName(), keyField)
 		}
 		keyValues[i] = value
 	}
 
 	uniqueKey := strings.Join(keyValues, ":")
 
-	err = item.SetField(UNIQUE_KEY_FIELD, uniqueKey)
+	err = change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return uniqueKey, nil
+	change.UniqueKey = uniqueKey
+
+	return nil
 }
 
 func HandleOldValuesLookup(
 	connection Connection,
 	op *SaveOp,
+	session *sess.Session,
 ) error {
 	metadata := connection.GetMetadata()
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -94,21 +87,27 @@ func HandleOldValuesLookup(
 	// Go through all the changes and get a list of the upsert keys
 	idMap := LocatorMap{}
 	for _, change := range op.Updates {
-		idMap.AddID(change.IDValue, ReferenceLocator{
+		err := idMap.AddID(change.IDValue, ReferenceLocator{
 			Item: change,
 		})
+		if err != nil {
+			return err
+		}
 	}
 	for _, change := range op.Deletes {
-		idMap.AddID(change.IDValue, ReferenceLocator{
+		err := idMap.AddID(change.IDValue, ReferenceLocator{
 			Item: change,
 		})
+		if err != nil {
+			return err
+		}
 	}
 
 	if len(idMap) == 0 {
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, false, func(item loadable.Item, matchIndexes []ReferenceLocator) error {
+	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
@@ -117,13 +116,7 @@ func HandleOldValuesLookup(
 		change := match.(*ChangeItem)
 		change.OldValues = item
 
-		uniqueKey, err := SetUniqueKey(change, collectionMetadata)
-		if err != nil {
-			return err
-		}
+		return SetUniqueKey(change, collectionMetadata)
 
-		change.UniqueKey = uniqueKey
-
-		return nil
 	})
 }

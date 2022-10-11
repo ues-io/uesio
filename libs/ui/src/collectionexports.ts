@@ -4,7 +4,6 @@ import {
 	NumberMetadata,
 	FieldMetadataMap,
 	FieldMetadata,
-	FIELD_TYPES,
 } from "./bands/field/types"
 import Collection from "./bands/collection/class"
 import Field from "./bands/field/class"
@@ -25,7 +24,6 @@ export {
 	FieldMetadataMap,
 	FieldMetadata,
 	addBlankSelectOption,
-	FIELD_TYPES,
 	ID_FIELD,
 	UNIQUE_KEY_FIELD,
 }
