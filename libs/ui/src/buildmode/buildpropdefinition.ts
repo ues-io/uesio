@@ -338,6 +338,7 @@ interface PropRendererProps<T = PropDescriptor> extends BaseProps {
 type PropComponent<T = PropDescriptor> = FC<PropRendererProps<T>>
 
 export {
+	BasePropDescriptor,
 	PropComponent,
 	NamespaceProp,
 	ConditionProp,

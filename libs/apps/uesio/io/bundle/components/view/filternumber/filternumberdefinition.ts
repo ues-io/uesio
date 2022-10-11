@@ -26,17 +26,6 @@ const Propdef: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "input",
-			type: "BOOLEAN",
-			label: "Input",
-		},
-		{
-			name: "slider",
-			type: "BOOLEAN",
-			label: "Slider",
-		},
-
-		{
 			name: "point",
 			type: "SELECT",
 			label: "Point",

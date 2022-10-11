@@ -1,7 +1,7 @@
 import { definition, builder } from "@uesio/ui"
 import FilterProperties from "./filterProperties"
 type FilterDefinition = {
-	fieldId: string
+	field: string
 	wire: string
 } & definition.BaseDefinition
 

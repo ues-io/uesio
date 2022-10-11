@@ -1,32 +1,27 @@
-import { builder, component, hooks } from "@uesio/ui"
-// import { FC } from "react"
+import { builder, component, hooks, definition } from "@uesio/ui"
+import getFilterComponentType from "./getfiltercomponenttype"
 
+const PropList = component.getUtility("uesio/builder.proplist")
 const FilterProperties: builder.PropComponent<builder.CustomProp> = (props) => {
-	// const uesio = hooks.useUesio(props)
-	const { path, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const parentPath = component.path.getParentPath(path || "")
-	const parentDef = valueAPI.get(parentPath) as any
-	console.log({ parentDef })
-
-	const wire = uesio.wire.useWire(parentDef.wire)
-	if (!wire) return null
-
-	const collection = wire.getCollection()
-	const fieldType = collection.getField(parentDef?.field)?.getType()
-
-	if (!fieldType) return
-	const properties = component.registry.getPropertiesDefinition(
-		`uesio/io.filter${fieldType.toLowerCase()}`
+	const parentPath = component.path.getParentPath(props.path || "")
+	const parentDef = props.valueAPI.get(parentPath) as definition.DefinitionMap
+	const componentType = getFilterComponentType(
+		uesio,
+		parentDef.wire as string,
+		parentDef.field as string
 	)
-	console.log({})
+
+	if (!componentType) return null
+	const properties =
+		component.registry.getPropertiesDefinition(componentType).properties
+
 	return (
 		<PropList
-			path={path}
-			propsDef={propsDef}
-			properties={propsDef.properties}
-			context={context}
-			valueAPI={valueAPI}
+			{...props}
+			propsdef={{}}
+			path={component.path.getParentPath(props.path || "")}
+			properties={properties}
 		/>
 	)
 }

@@ -1,28 +1,27 @@
-import { FunctionComponent } from "react"
+import { FC } from "react"
+import getFilterComponentType from "./getfiltercomponenttype"
 
 import { FilterProps } from "./filterdefinition"
-import { hooks } from "@uesio/ui"
+import { component, hooks } from "@uesio/ui"
 
-const Filter: FunctionComponent<FilterProps> = (props) => {
-	const { definition } = props
-	if (!definition) return null
-	const { fieldId } = definition
+const Filter: FC<FilterProps> = (props) => {
+	const { definition, context, path } = props
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
-	if (!wire) return null
 
-	const collection = wire.getCollection()
-
-	const fieldMetadata = collection.getField(fieldId)
-
-	if (!fieldMetadata) return null
-
-	// const type = fieldMetadata.getType
-
+	if (!definition) return null
+	const componentType = getFilterComponentType(
+		uesio,
+		definition.wire,
+		definition.field
+	)
+	if (!componentType) return null
 	return (
-		<div>
-			<p>filter</p>
-		</div>
+		<component.Component
+			componentType={componentType}
+			definition={definition}
+			context={context}
+			path={path}
+		/>
 	)
 }
 
