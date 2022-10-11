@@ -72,7 +72,7 @@ function getPropHandler(type?: string) {
 			return PropListsProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
-			return TextProp
+			return null
 	}
 }
 
@@ -126,15 +126,17 @@ const PropList: FunctionComponent<Props> = (props) => {
 
 				const PropHandler = getPropHandler(descriptor.type)
 				return (
-					<PropHandler
-						key={key}
-						path={newPath}
-						propsDef={propsDef}
-						descriptor={descriptor}
-						index={index}
-						context={context}
-						valueAPI={valueAPI}
-					/>
+					PropHandler && (
+						<PropHandler
+							key={key}
+							path={newPath}
+							propsDef={propsDef}
+							descriptor={descriptor}
+							index={index}
+							context={context}
+							valueAPI={valueAPI}
+						/>
+					)
 				)
 			})}
 		</>

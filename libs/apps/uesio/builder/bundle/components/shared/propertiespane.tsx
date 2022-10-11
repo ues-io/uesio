@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { component, hooks, styles } from "@uesio/ui"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
-import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
+const PropList = component.getUtility("uesio/builder.proplist")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const TabLabels = component.getUtility("uesio/io.tablabels")
