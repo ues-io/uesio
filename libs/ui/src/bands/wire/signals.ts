@@ -321,7 +321,11 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: AddOrderSignal, context: Context) =>
 			addOrderOp(context, signal.wire, signal.field, signal.desc),
 		properties: (): PropDescriptor[] => [
-			getWiresWith("order"),
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
 			{
 				name: "field",
 				type: "FIELD",
@@ -342,7 +346,7 @@ const signals: Record<string, SignalDescriptor> = {
 		properties: (): PropDescriptor[] => [
 			getWiresWith("order"),
 			{
-				name: "field",
+				name: "fields",
 				type: "FIELD",
 				label: "Field",
 				wireField: "wire",

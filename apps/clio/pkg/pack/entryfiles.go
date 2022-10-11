@@ -86,8 +86,15 @@ func CreateEntryFiles() ([]string, error) {
 			}
 		}
 
-		runtimeEntry := strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
-		builderEntry := strings.Join(append(builderImports, append(builderDefImports, builderRegistrations...)...), "\n")
+		runtimeEntry := ""
+		if len(runtimeRegistrations) > 0 {
+			runtimeEntry = strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
+		}
+
+		builderEntry := ""
+		if len(builderRegistrations) > 0 {
+			builderEntry = strings.Join(append(builderImports, append(builderDefImports, builderRegistrations...)...), "\n")
+		}
 
 		runtimeFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/runtime.ts", pack.Name)
 		builderFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/builder.ts", pack.Name)

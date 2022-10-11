@@ -1,0 +1,9 @@
+node_modules/
+bundle/componentpacks/*/*.js
+bundle/componentpacks/*/*.ts
+bundle/componentpacks/*/*.js.gz
+.DS_Store
+.idea
+*.js.map
+package-lock.json
+.clio

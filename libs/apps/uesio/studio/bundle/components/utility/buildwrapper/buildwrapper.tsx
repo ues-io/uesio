@@ -3,6 +3,7 @@ import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
 import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 import getValueAPI from "../../shared/valueapi"
+import PlaceHolder from "../placeholder/placeholder"
 
 const Text = component.getUtility("uesio/io.text")
 
@@ -66,13 +67,12 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	return (
 		<>
 			{addBeforePlaceholder && (
-				<div
-					data-placeholder="true"
-					data-index={index}
-					className={classes.placeholder}
-				>
-					<div className={classes.placeholderInner} />
-				</div>
+				<PlaceHolder
+					label={""}
+					index={index}
+					isHovering={true}
+					context={context}
+				/>
 			)}
 			<div
 				data-index={index}
@@ -160,16 +160,13 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				</div>
 			</div>
 			{addAfterPlaceholder && (
-				<div
-					data-placeholder="true"
-					data-index={index + 1}
-					className={styles.cx(
-						classes.placeholder,
-						classes.afterPlaceholder
-					)}
-				>
-					<div className={classes.placeholderInner} />
-				</div>
+				<PlaceHolder
+					label={""}
+					index={index + 1}
+					isHovering={true}
+					context={context}
+					hideIfNotLast={true}
+				/>
 			)}
 		</>
 	)

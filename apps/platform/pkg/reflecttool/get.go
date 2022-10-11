@@ -89,13 +89,32 @@ func getMap(from reflect.Value) (interface{}, error) {
 }
 
 func getStruct(from reflect.Value) (interface{}, error) {
-	return from.Interface(), nil
+
+	fieldNames, err := GetFieldNames(from.Interface())
+	if err != nil {
+		return nil, err
+	}
+	// Return the value as a map instead of a struct
+	returnMap := map[string]interface{}{}
+	for _, fieldName := range fieldNames {
+		v, err := GetField(from.Interface(), fieldName)
+		if err != nil {
+			return nil, err
+		}
+		returnMap[fieldName] = v
+	}
+	return returnMap, nil
 }
 
 func getPointer(from reflect.Value) (interface{}, error) {
 	if from.IsNil() {
 		return nil, nil
 	}
+
+	if reflect.Indirect(from).Kind() == reflect.Struct {
+		return getStruct(from)
+	}
+
 	return from.Interface(), nil
 }
 

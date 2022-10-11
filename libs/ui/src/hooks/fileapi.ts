@@ -16,7 +16,7 @@ const getURLFromFullName = (context: Context, fullName: string) => {
 
 const getUserFileURL = (
 	context: Context,
-	userfileid: string,
+	userfileid: string | undefined,
 	cacheBuster?: string
 ) => {
 	if (!userfileid) return ""

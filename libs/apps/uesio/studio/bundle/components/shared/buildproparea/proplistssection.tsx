@@ -17,9 +17,9 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 	const itemsPath = path + `["${section.name}"]`
 	const items = (valueAPI.get(itemsPath) as unknown[]) || []
 
-	const defaultItemDef = Object.fromEntries(
-		section.properties.map((el) => [el.name, null])
-	)
+	const defaultItemDef = section.defaultDefinition
+		? section.defaultDefinition()
+		: {}
 	return (
 		<>
 			<TitleBar

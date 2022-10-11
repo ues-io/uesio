@@ -26,7 +26,7 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 				path={path}
 				accepts={["uesio.standalone"]}
 				context={context}
-				direction="horizontal"
+				direction="HORIZONTAL"
 			/>
 		</IOGroup>
 	)

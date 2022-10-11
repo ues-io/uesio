@@ -83,15 +83,15 @@ const handleDrop = (
 
 const isNextSlot = (
 	bounds: DOMRect,
-	direction: string,
+	direction: "HORIZONTAL" | "VERTICAL",
 	pageX: number,
 	pageY: number
 ): boolean => {
 	const halfWay =
-		direction === "horizontal"
+		direction === "HORIZONTAL"
 			? bounds.x + window.scrollX + bounds.width / 2
 			: bounds.y + window.scrollY + bounds.height / 2
-	const position = direction === "horizontal" ? pageX : pageY
+	const position = direction === "HORIZONTAL" ? pageX : pageY
 	return position >= halfWay
 }
 

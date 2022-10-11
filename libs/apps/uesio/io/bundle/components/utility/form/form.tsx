@@ -41,7 +41,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								listName="content"
 								path={`${path}["content"]`}
 								accepts={[]}
-								direction="horizontal"
+								direction="HORIZONTAL"
 								context={recordContext}
 							/>
 						) : (
