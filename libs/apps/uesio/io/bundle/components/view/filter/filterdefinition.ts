@@ -1,4 +1,4 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, wire } from "@uesio/ui"
 import FilterProperties from "./filterProperties"
 type FilterDefinition = {
 	field: string
@@ -7,6 +7,7 @@ type FilterDefinition = {
 
 interface FilterProps extends definition.BaseProps {
 	definition: FilterDefinition
+	wire: wire.Wire
 }
 
 const FilterPropertyDefinition: builder.BuildPropertiesDefinition = {

@@ -5,7 +5,7 @@ import { FilterProps } from "./filterdefinition"
 import { component, hooks } from "@uesio/ui"
 
 const Filter: FC<FilterProps> = (props) => {
-	const { definition, context, path } = props
+	const { definition, context, path = "" } = props
 	const uesio = hooks.useUesio(props)
 
 	if (!definition) return null
@@ -14,13 +14,17 @@ const Filter: FC<FilterProps> = (props) => {
 		definition.wire,
 		definition.field
 	)
-	if (!componentType) return null
+	const wire = uesio.wire.useWire(definition.wire)
+
+	if (!componentType || !wire) return null
+
 	return (
-		<component.Component
+		<component.Component<FilterProps>
 			componentType={componentType}
 			definition={definition}
 			context={context}
 			path={path}
+			wire={wire}
 		/>
 	)
 }

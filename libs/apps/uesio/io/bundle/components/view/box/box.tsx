@@ -11,7 +11,6 @@ const Box: FunctionComponent<BoxProps> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
-	console.log({ definition })
 	return (
 		<div
 			className={classes.root}

@@ -1,4 +1,5 @@
 import { definition, builder } from "@uesio/ui"
+import { FilterProps } from "../filter/filterdefinition"
 interface NumberRangeFilter {
 	point: "range"
 	minLabel: string
@@ -15,9 +16,10 @@ type Definition = NumberOptions &
 		input: boolean
 	}
 
-interface Props extends definition.BaseProps {
+type Props = {
 	definition: Definition
-}
+} & definition.BaseProps &
+	FilterProps
 
 const Propdef: builder.BuildPropertiesDefinition = {
 	title: "Number filter",
