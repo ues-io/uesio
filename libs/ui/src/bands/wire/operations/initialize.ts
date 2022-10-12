@@ -156,11 +156,13 @@ export default (
 		const viewId = context.getViewId()
 
 		if (!viewId) throw new Error("Could not get View Def Id")
-		const initializedWires = Object.keys(wireDefs).map((wirename) => {
-			const wireDef = wireDefs[wirename]
-			if (!wireDef) throw new Error("Could not get wire def")
-			return initWire(viewId, wirename, wireDef, collections)
-		})
+
+		const initializedWires = Object.entries(wireDefs).map(
+			([wireName, wireDef]) => {
+				if (!wireDef) throw new Error("Could not get wire def")
+				return initWire(viewId, wireName, wireDef, collections)
+			}
+		)
 
 		dispatch(init([initializedWires, collections]))
 

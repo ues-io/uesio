@@ -14,6 +14,10 @@ const getValueAPI = (
 		if (pathArray[0] !== "wires") return
 		const wireName = pathArray[1]
 		if (!wireName) return
+		const wireDef = util.get(
+			definition,
+			component.path.toPath(pathArray.slice(0, 2))
+		)
 
 		// When updating a wire's collection, unset the wire's fields
 		if ([...pathArray].pop() === "collection") {
@@ -36,7 +40,7 @@ const getValueAPI = (
 					[
 						{
 							signal: "wire/INIT",
-							wireDefs: [wireName],
+							wireDefs: { [wireName]: wireDef },
 						},
 					],
 					context
@@ -44,15 +48,18 @@ const getValueAPI = (
 		}
 
 		const isWireNameChange = pathArray.length === 2
+		const currentName = isWireNameChange ? String(value) : wireName
 		uesio.signal.runMany(
 			[
 				{
 					signal: "wire/INIT",
-					wireDefs: [isWireNameChange ? value : wireName],
+					wireDefs: {
+						[currentName]: wireDef,
+					},
 				},
 				{
 					signal: "wire/LOAD",
-					wires: [isWireNameChange ? value : wireName],
+					wires: [currentName],
 				},
 			],
 			context
