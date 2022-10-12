@@ -14,7 +14,7 @@
 							"./../../../../dist/clio/clio pack",
 							"npx tsc --noEmit --project ./tsconfig.lib.json"
 						],
-						"parallel": false,
+						"parallel": true,
 						"cwd": "libs/apps/uesio/cms"
 					}
 				},
