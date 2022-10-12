@@ -1,0 +1,5 @@
+name: parent_account2
+type: REFERENCE
+label: Parent Account 2
+reference:
+  collection: uesio/crm.account2
