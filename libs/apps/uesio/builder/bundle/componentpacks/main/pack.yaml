@@ -29,6 +29,7 @@ components:
     metadatapicker:
     buildwrapper:
     fieldproptag:
+    propnodetag:
   view:
     runtime:
       
