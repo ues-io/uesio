@@ -127,6 +127,7 @@ type PropDescriptor =
 	| ParamsProp
 	| WireFieldsProp
 	| FieldProp
+	| PropListsProp
 	| PropListProp
 
 type BasePropDescriptor = {
@@ -247,11 +248,16 @@ interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
 	wireField: string
 }
-interface PropListProp extends BasePropDescriptor {
+interface PropListsProp extends BasePropDescriptor {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
 	nameTemplate: string
 }
+interface PropListProp extends BasePropDescriptor {
+	type: "PROPLIST"
+	properties: PropDescriptor[]
+}
+
 type ActionDescriptor =
 	| AddAction
 	| CustomAction
@@ -380,6 +386,7 @@ export {
 	OrderSection,
 	WireFieldsProp,
 	PropListProp,
+	PropListsProp,
 	AddCondition,
 	FieldProp,
 }
