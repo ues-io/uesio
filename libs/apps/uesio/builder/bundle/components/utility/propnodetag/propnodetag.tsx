@@ -1,14 +1,12 @@
 import { FC, ReactNode, useState } from "react"
-import { component, context, styles } from "@uesio/ui"
+import { component, styles, definition } from "@uesio/ui"
 
 type Props = {
 	selected?: boolean
 	onClick?: (e: MouseEvent) => void
 	draggable?: string
-	context: context.Context
 	popperChildren?: ReactNode
-	variant?: string
-}
+} & definition.UtilityProps
 
 const Tile = component.getUtility("uesio/io.tile")
 const Popper = component.getUtility("uesio/io.popper")
