@@ -8,7 +8,7 @@ const Filter: FC<FilterProps> = (props) => {
 	const { definition, context, path = "" } = props
 	const uesio = hooks.useUesio(props)
 
-	if (!definition) return null
+	if (!definition || !definition.wire || !definition.field) return null
 	const componentType = getFilterComponentType(
 		uesio,
 		definition.wire,

@@ -1,23 +1,11 @@
 import { definition, builder } from "@uesio/ui"
 import { FilterProps } from "../filter/filterdefinition"
-interface NumberRangeFilter {
-	point: "range"
-	minLabel: string
-	maxLabel: string
-}
-interface NumberPointFilter {
-	point: "point"
-}
-
-type NumberOptions = NumberRangeFilter | NumberPointFilter
-type Definition = NumberOptions &
-	definition.BaseDefinition & {
-		slider: boolean
-		input: boolean
-	}
 
 type Props = {
-	definition: Definition
+	definition: {
+		wire: string
+		field: string
+	}
 } & definition.BaseProps &
 	FilterProps
 
@@ -28,9 +16,9 @@ const Propdef: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "point",
+			name: "type",
 			type: "SELECT",
-			label: "Point",
+			label: "Type",
 			options: [
 				{ label: "Single point", value: "point" },
 				{ label: "Range", value: "range" },
@@ -43,6 +31,6 @@ const Propdef: builder.BuildPropertiesDefinition = {
 	classes: ["root"],
 }
 
-export { Props, Definition }
+export { Props }
 
 export default Propdef

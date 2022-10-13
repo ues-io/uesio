@@ -6,6 +6,8 @@ const FilterProperties: builder.PropComponent<builder.CustomProp> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const parentPath = component.path.getParentPath(props.path || "")
 	const parentDef = props.valueAPI.get(parentPath) as definition.DefinitionMap
+	if (!parentDef.wire || !parentDef.field) return null
+
 	const componentType = getFilterComponentType(
 		uesio,
 		parentDef.wire as string,

@@ -7,11 +7,12 @@ const TextField = component.getUtility("uesio/io.textfield")
 
 type Operator = "EQ" | "LT" | "GT"
 
-const Filter: FC<Props> = (props) => {
+const FilterNumber: FC<Props> = (props) => {
 	const { context, definition, wire, path = "" } = props
 	const uesio = hooks.useUesio(props)
-	const isRange = definition.point === "range"
+	const isRange = definition?.type === "range"
 	const firstFieldOperator = isRange ? "GT" : "EQ"
+
 	const onChange = (value: number | null, operator: Operator) => {
 		const id = props.path + `["${operator}"]`
 		const signals = [
@@ -21,7 +22,7 @@ const Filter: FC<Props> = (props) => {
 						wire: definition.wire,
 						condition: {
 							field: definition.field,
-							value,
+							value: operator === "GT" ? value - 1 : value,
 							active: true,
 							id,
 							operator,
@@ -37,34 +38,48 @@ const Filter: FC<Props> = (props) => {
 				wires: [definition.wire],
 			},
 		]
-
 		uesio.signal.runMany(signals, context)
 	}
 
-	const getValue = (operator: Operator) => {
-		const condition = wire.getCondition(
-			path + `["${operator}"]`
-		) as wire.ValueConditionState | null
-		if (!condition) return ""
-		return condition.value
+	const getDisplayValue = (operator: Operator) => {
+		const value = (
+			wire.getCondition(
+				path + `["${operator}"]`
+			) as wire.ValueConditionState | null
+		)?.value
+		if (!value) return ""
+		const options = {
+			GT: Number(value) + 1,
+			LT: Number(value) - 1,
+			EQ: value,
+		}
+		return String(options[operator])
 	}
 
 	return (
 		<div>
+			{/* Single point or lower bound */}
 			<TextField
-				value={getValue(firstFieldOperator)}
+				value={getDisplayValue(firstFieldOperator)}
 				setValue={(value: number | null): void =>
-					onChange(value, firstFieldOperator)
+					// We need to adjust the value for GT: when 5 is selected, we mean greater than 4
+					onChange(
+						value && firstFieldOperator === "GT"
+							? value - 1
+							: value,
+						firstFieldOperator
+					)
 				}
 				context={context}
 				variant="uesio/io.textfield:uesio/studio.propfield"
 			/>
 
-			{definition.point === "range" && (
+			{/* Upper bound */}
+			{isRange && (
 				<TextField
-					value={getValue("LT")}
+					value={getDisplayValue("LT")}
 					setValue={(value: number | null): void =>
-						onChange(value, "LT")
+						onChange(value ? Number(value) + 1 : value, "LT")
 					}
 					context={context}
 					variant="uesio/io.textfield:uesio/studio.propfield"
@@ -74,4 +89,4 @@ const Filter: FC<Props> = (props) => {
 	)
 }
 
-export default Filter
+export default FilterNumber

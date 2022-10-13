@@ -27,6 +27,7 @@ const FilterPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Field",
 			wireField: "wire",
 		},
+
 		{
 			type: "CUSTOM",
 			renderFunc: FilterProperties,
@@ -36,6 +37,8 @@ const FilterPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
+	category: "DATA",
 	type: "component",
 	classes: ["root"],
 }
