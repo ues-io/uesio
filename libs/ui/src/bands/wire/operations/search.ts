@@ -1,7 +1,13 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { addCondition, removeCondition, getFullWireId } from ".."
+import {
+	addCondition,
+	removeCondition,
+	getFullWireId,
+	getWiresFromDefinitonOrContext,
+} from ".."
 import loadWiresOp from "./load"
+import { listLookupWires } from "../utils"
 
 const SEARCH_CONDITION_ID = "uesio.search"
 
@@ -14,6 +20,20 @@ export default (
 	async (dispatch) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
+
+		const wireNames = [wirename]
+		const wires = getWiresFromDefinitonOrContext(wireNames, context)
+		const lookupWires = listLookupWires(wires)
+		const missingLookupWires = lookupWires.filter(
+			(w) => !wireNames?.includes(w?.missingDependency || "")
+		)
+
+		if (missingLookupWires.length) {
+			missingLookupWires.forEach((item) => {
+				wireNames.unshift(item.missingDependency)
+			})
+		}
+
 		const entity = getFullWireId(viewId, wirename)
 		dispatch(
 			search
@@ -33,6 +53,6 @@ export default (
 				  })
 		)
 
-		await dispatch(loadWiresOp(context, [wirename]))
+		await dispatch(loadWiresOp(context, wireNames))
 		return context
 	}
