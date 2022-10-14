@@ -55,6 +55,8 @@ type LookupConditionState = ConditionBase & {
 	valueSource: typeof LOOKUP
 	lookupWire: string
 	lookupField: string
+	//include lookup wire automatically into a load request
+	includeLookupOnLoad: boolean
 }
 
 type ValueConditionState = ConditionBase & {

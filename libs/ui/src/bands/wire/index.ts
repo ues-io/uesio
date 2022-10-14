@@ -96,9 +96,21 @@ const getWiresFromDefinitonOrContext = (
 		if (!viewId) throw new Error("No ViewId in Context")
 		const wiresArray = Array.isArray(wires) ? wires : [wires]
 		return wiresArray.flatMap((wirename) => {
-			const wire = getWire(viewId, wirename)
-			if (!wire) throw new Error("Bad Wire!")
-			return wire
+			const parentWire = getWire(viewId, wirename)
+			if (!parentWire) throw new Error("Bad Wire!")
+
+			const missingLookupWires = parentWire.conditions?.flatMap((c) => {
+				const include = "lookupWire" in c && c.includeLookupOnLoad
+				if (include) {
+					const wire = getWire(viewId, c.lookupWire)
+					if (!wire) throw new Error("Bad Lookup Wire!")
+					return wire
+				}
+				return []
+			})
+			//need to push the parent wire as well
+			missingLookupWires?.push(parentWire)
+			return missingLookupWires || [parentWire]
 		})
 	}
 	const wire = context.getPlainWire()

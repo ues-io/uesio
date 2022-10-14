@@ -49,7 +49,7 @@ export default (
 		// When that wire isn't part of the load, the request will fail
 		const lookupWires = listLookupWires(toLoad)
 		const missingLookupWires = lookupWires.filter(
-			(w) => !wireNames?.includes(w?.missingDependency || "")
+			(w) => !toLoad?.find((w1) => w1.name === w.missingDependency)
 		)
 
 		if (missingLookupWires.length) {
