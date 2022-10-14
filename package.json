@@ -2,7 +2,7 @@
   "name": "uesio",
   "version": "0.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "MITS",
   "scripts": {
     "get-module-version": "node -p \"require('./package').devDependencies['$npm_config_modulename']\" | sed 's/^\\^//g'",
     "clean": "rm -rf dist; rm -rf node_modules/.cache/nx",
