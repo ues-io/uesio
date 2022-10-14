@@ -71,6 +71,7 @@ const tests: WireSignalTest[] = [
 					valueSource: "LOOKUP",
 					lookupWire: "solarsystems",
 					lookupField: "ben/planets.name",
+					includeLookupOnLoad: false,
 				},
 			],
 		},
