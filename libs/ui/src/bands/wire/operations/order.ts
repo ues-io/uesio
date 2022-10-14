@@ -1,5 +1,5 @@
 import { Context } from "../../../context/context"
-import { addOrder, setOrder, removeOrder, getFullWireId } from ".."
+import { addOrder, setOrder, removeOrder, getFullWireId, toggleOrder } from ".."
 import { ThunkFunc } from "../../../store/store"
 import { MetadataKey } from "../../builder/types"
 
@@ -58,5 +58,36 @@ export const remove =
 					fields,
 				})
 			)
+		return context
+	}
+
+export const toggle =
+	(
+		context: Context,
+		wirename: string,
+		order: { field: MetadataKey; desc: boolean }
+	): ThunkFunc =>
+	(dispatch) => {
+		const viewId = context.getViewId()
+		const wire = context.getWire()
+		if (viewId && wire) {
+			const orderList = wire?.getOrder()
+			const isFound = orderList.some((item) => item.field === order.field)
+			if (!isFound) {
+				dispatch(
+					setOrder({
+						entity: getFullWireId(viewId, wirename),
+						order: [order],
+					})
+				)
+			} else {
+				dispatch(
+					toggleOrder({
+						entity: getFullWireId(viewId, wirename),
+						order,
+					})
+				)
+			}
+		}
 		return context
 	}

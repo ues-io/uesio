@@ -13,6 +13,7 @@ import {
 	add as addOrderOp,
 	set as setOrderOp,
 	remove as removeOrderOp,
+	toggle as toggleOrderOp,
 } from "./operations/order"
 
 import searchWireOp from "./operations/search"
@@ -81,6 +82,12 @@ interface SetOrderSignal extends SignalDefinition {
 	wire: string
 	order: { field: MetadataKey; desc: boolean }[]
 }
+
+interface ToggleOrderSignal extends SignalDefinition {
+	wire: string
+	order: { field: MetadataKey; desc: boolean }
+}
+
 interface AddOrderSignal extends SignalDefinition {
 	wire: string
 	field: MetadataKey
@@ -350,6 +357,29 @@ const signals: Record<string, SignalDescriptor> = {
 				type: "FIELD",
 				label: "Field",
 				wireField: "wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/TOGGLE_ORDER`]: {
+		label: "Toggle Wire Order",
+		dispatcher: (signal: ToggleOrderSignal, context: Context) =>
+			toggleOrderOp(context, signal.wire, signal.order),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "field",
+				type: "FIELD",
+				label: "Field",
+				wireField: "wire",
+			},
+			{
+				name: "desc",
+				type: "BOOLEAN",
+				label: "Descending",
 			},
 		],
 	},

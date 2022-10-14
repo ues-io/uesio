@@ -25,7 +25,7 @@ definition:
         uesio/studio.name:
       order:
         - field: uesio/core.updatedat
-          desc: false
+          desc: true
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -115,34 +115,6 @@ definition:
                     components:
                       - uesio/io.searchbox:
                           wire: views
-                      - uesio/io.button:
-                          icon: sort
-                          text: A-Z
-                          uesio.variant: uesio/io.secondary
-                          signals:
-                            - signal: wire/SET_ORDER
-                              wire: views
-                              order:
-                                - field: uesio/studio.name
-                                  desc: false
-                            - signal: wire/LOAD
-                              wires:
-                                - workspaces
-                                - views
-                      - uesio/io.button:
-                          icon: sort
-                          text: Updated
-                          uesio.variant: uesio/io.secondary
-                          signals:
-                            - signal: wire/SET_ORDER
-                              wire: views
-                              order:
-                                - field: uesio/core.updatedat
-                                  desc: true
-                            - signal: wire/LOAD
-                              wires:
-                                - workspaces
-                                - views
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.styles:
@@ -152,6 +124,8 @@ definition:
                       - uesio/io.table:
                           id: viewsTable
                           wire: views
+                          order: true
+                          pagesize: 10
                           columns:
                             - field: uesio/studio.name
                             - label: Updated

@@ -54,6 +54,8 @@ class Wire {
 
 	getConditions = () => this.source.conditions || []
 
+	getOrder = () => this.source.order || []
+
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 

@@ -73,6 +73,10 @@ type SetOrderPayload = {
 	order: { field: MetadataKey; desc: boolean }[]
 } & EntityPayload
 
+type ToggleOrderPayload = {
+	order: { field: MetadataKey; desc: boolean }
+} & EntityPayload
+
 type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
@@ -291,6 +295,27 @@ const wireSlice = createSlice({
 				)
 			}
 		),
+		toggleOrder: createEntityReducer<ToggleOrderPayload, PlainWire>(
+			(state, { order }) => {
+				if (!state.order) return
+				const fieldId = order.field
+				const orderIndex = state.order.findIndex(
+					(order) => order.field === fieldId
+				)
+
+				if (orderIndex === -1) {
+					return
+				}
+				const oldOrder = state.order[orderIndex]
+				// modify existing array without mutation
+				state.order = Object.assign([], state.order, {
+					[orderIndex]: {
+						...oldOrder,
+						desc: !oldOrder.desc,
+					},
+				})
+			}
+		),
 		save: (state, { payload }: PayloadAction<SaveResponseBatch>) => {
 			payload.wires?.forEach((wire) => {
 				const wireId = wire.wire
@@ -407,5 +432,6 @@ export const {
 	initAll,
 	upsertMany,
 	setConditionValue,
+	toggleOrder,
 } = wireSlice.actions
 export default wireSlice.reducer

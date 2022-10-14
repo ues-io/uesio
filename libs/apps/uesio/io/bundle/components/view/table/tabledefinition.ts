@@ -13,6 +13,7 @@ type TableDefinition = {
 	recordDisplay?: component.DisplayCondition[]
 	rownumbers: boolean
 	pagesize: string
+	order: boolean
 } & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {

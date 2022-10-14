@@ -20,6 +20,16 @@ const IOTable =
 	)
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
+const IconButton = component.getUtility("uesio/io.iconbutton")
+
+function getIcon(wire: wire.Wire, fieldId: string | undefined) {
+	const orderList = wire.getOrder()
+	const order = orderList.find((item) => item.field === fieldId)
+	if (!order) {
+		return "unfold_more"
+	}
+	return order.desc ? "expand_more" : "expand_less"
+}
 
 const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
@@ -118,8 +128,42 @@ const Table: FC<TableProps> = (props) => {
 		  )
 		: undefined
 
-	const columnHeaderFunc = (column: ColumnDefinition) =>
-		column.label || collection.getField(column.field)?.getLabel() || ""
+	const columnHeaderFunc = (column: ColumnDefinition) => {
+		const field = collection.getField(column.field)
+		const fieldId = field?.getId()
+		const icon = getIcon(wire, fieldId)
+
+		return !definition.order ? (
+			column.label || field?.getLabel() || ""
+		) : (
+			<>
+				{column.label || field?.getLabel() || ""}
+				<IconButton
+					icon={icon}
+					context={newContext}
+					onClick={() => {
+						uesio.signal.runMany(
+							[
+								{
+									signal: "wire/TOGGLE_ORDER",
+									wire: wire.getId(),
+									order: {
+										field: fieldId,
+										desc: true,
+									},
+								},
+								{
+									signal: "wire/LOAD",
+									wires: [wire.getId()],
+								},
+							],
+							newContext
+						)
+					}}
+				/>
+			</>
+		)
+	}
 
 	const cellFunc = (
 		column: ColumnDefinition,
