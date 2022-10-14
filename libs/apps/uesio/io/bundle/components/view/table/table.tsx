@@ -133,34 +133,34 @@ const Table: FC<TableProps> = (props) => {
 		const fieldId = field?.getId()
 		const icon = getIcon(wire, fieldId)
 
-		return !definition.order ? (
-			column.label || field?.getLabel() || ""
-		) : (
+		return (
 			<>
 				{column.label || field?.getLabel() || ""}
-				<IconButton
-					icon={icon}
-					context={newContext}
-					onClick={() => {
-						uesio.signal.runMany(
-							[
-								{
-									signal: "wire/TOGGLE_ORDER",
-									wire: wire.getId(),
-									order: {
-										field: fieldId,
-										desc: true,
+				{definition.order && (
+					<IconButton
+						icon={icon}
+						context={newContext}
+						onClick={() => {
+							uesio.signal.runMany(
+								[
+									{
+										signal: "wire/TOGGLE_ORDER",
+										wire: wire.getId(),
+										order: {
+											field: fieldId,
+											desc: true,
+										},
 									},
-								},
-								{
-									signal: "wire/LOAD",
-									wires: [wire.getId()],
-								},
-							],
-							newContext
-						)
-					}}
-				/>
+									{
+										signal: "wire/LOAD",
+										wires: [wire.getId()],
+									},
+								],
+								newContext
+							)
+						}}
+					/>
+				)}
 			</>
 		)
 	}

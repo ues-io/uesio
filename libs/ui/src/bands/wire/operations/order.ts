@@ -71,7 +71,7 @@ export const toggle =
 		const viewId = context.getViewId()
 		const wire = context.getWire()
 		if (viewId && wire) {
-			const orderList = wire?.getOrder()
+			const orderList = wire.getOrder()
 			const isFound = orderList.some((item) => item.field === order.field)
 			if (!isFound) {
 				dispatch(
