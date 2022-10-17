@@ -13,7 +13,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
 		context,
-		definition: { params, view: viewDefId, id },
+		definition: { params, view: viewDefId, id, keepContext },
 	} = props
 
 	const uesio = useUesio(props)
@@ -37,7 +37,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const mergedParams = context.mergeMap(paramState)
 
 	const viewContext = context.addFrame({
-		view: viewId,
+		...(keepContext ? {} : { view: viewId }),
 		viewDef: viewDefId,
 		params: mergedParams,
 	})

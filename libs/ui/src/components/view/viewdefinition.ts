@@ -4,6 +4,7 @@ type ViewDefinition = {
 	view: string
 	id?: string
 	params?: Record<string, string>
+	keepContext?: boolean
 } & BaseDefinition
 
 export interface ViewProps extends BaseProps {
