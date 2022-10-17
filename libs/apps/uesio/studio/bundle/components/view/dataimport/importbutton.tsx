@@ -80,11 +80,16 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 			uploadLabelId={uploadLabelId}
 		>
 			{type && type === "button" ? (
-				<Button
-					context={context}
-					variant={"uesio/io.secondary"}
-					label={"Upload another file"}
-				/>
+				<label htmlFor={uploadLabelId}>
+					{/* A bit hacky, we the button styling but not the click event*/}
+					<div style={{ pointerEvents: "none", cursor: "pointer" }}>
+						<Button
+							context={context}
+							variant={"uesio/io.secondary"}
+							label={"Upload another file"}
+						/>
+					</div>
+				</label>
 			) : (
 				<label htmlFor={uploadLabelId}>
 					<div className={classes.div}>

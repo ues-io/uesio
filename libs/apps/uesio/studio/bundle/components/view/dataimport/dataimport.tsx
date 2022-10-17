@@ -76,7 +76,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 				collection: collectionInstance?.getFullName() || "",
 				mappings: getInitialMatch(uploaded.csvFields, collectionFields),
 			})
-	}, [uploaded.success])
+	}, [uploaded])
 
 	if (!collectionInstance) return null
 
