@@ -17,7 +17,7 @@ interface SlotUtilityProps extends UtilityProps {
 	message?: string
 }
 
-const SlotBuilder = getUtility("uesio/studio.slotbuilder")
+const SlotBuilder = getUtility("uesio/builder.slotbuilder")
 
 const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 	const { path, context, listName, definition } = props

@@ -5,7 +5,7 @@ components:
     appiconpicker:
     iconlabel:
       utilities:
-        - uesio/studio.iconlabel
+        - uesio/builder.iconlabel
     metadatafield:
       utilities:
         - uesio/io.textfield
@@ -81,12 +81,6 @@ components:
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid
-    # Define a builder for the uesio runtime and slot
-    runtime:
     # uesio.view:
   utility:
-    buildwrapper:
-    slotbuilder:
-    namespacelabel:
-    iconlabel:
 

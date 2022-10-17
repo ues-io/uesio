@@ -18,7 +18,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	portalsDomNode = useRef<HTMLDivElement>(null)
 	// Hardcode the component type since this component is called
 	// in an unusual way by the loader
-	uesio._componentType = "uesio/studio.runtime"
+	uesio._componentType = "uesio/builder.runtime"
 
 	uesio.addContextFrame({
 		view: "$root",

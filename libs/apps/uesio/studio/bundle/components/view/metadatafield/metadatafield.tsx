@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, component, metadata } from "@uesio/ui"
-import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -14,6 +13,7 @@ interface Props extends definition.BaseProps {
 	definition: MetadataFieldDefinition
 }
 
+const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 const MetadataField: FunctionComponent<Props> = (props) => {
 	const {
 		context,

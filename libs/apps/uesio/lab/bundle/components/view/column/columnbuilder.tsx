@@ -2,7 +2,7 @@ import { FC } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import Column, { getColumnFlexStyles } from "./column"
 
-const BuildWrapper = component.getUtility("uesio/studio.buildwrapper")
+const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 	const { path = "", context, index = 0 } = props
