@@ -16,8 +16,6 @@ files:
   uesio/core.logo: true
   uesio/core.logowhite: true
   uesio/core.logosmall: true
-  uesio/core.amazonsmall: true
-  uesio/core.logoword: true
   uesio/core.splash: true
   uesio/core.whitesplash: true
 collections:

@@ -29,7 +29,6 @@ components:
         - uesio/io.dialog
       variants:
         - uesio/io.button:uesio/io.secondary
-        - uesio/io.textfield:uesio/io.default
         - uesio/io.titlebar:uesio/io.default
     datamanager:
       variants:
@@ -40,7 +39,6 @@ components:
       variants:
         - uesio/io.selectfield:uesio/io.default
         - uesio/io.fieldlabel:uesio/io.default
-        - uesio/io.textfield:uesio/io.default
       utilities:
         - uesio/io.tile
         - uesio/io.selectfield

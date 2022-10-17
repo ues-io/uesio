@@ -91,7 +91,6 @@ const PropListsList: FC<T> = (props) => {
 			<TransitionGroup className="items-section__list">
 				{items.map((item, i) => {
 					const selected = selectedPath === path + `["${i}"]`
-					console.log({ path: path + `[${i}]`, selectedPath })
 					return (
 						<CSSTransition
 							key={path + i}
@@ -145,9 +144,12 @@ const PropListsList: FC<T> = (props) => {
 																			context
 																		}
 																		icon="close"
-																		onClick={() =>
+																		onClick={(
+																			e: MouseEvent
+																		) => {
+																			e.stopPropagation()
 																			uesio.builder.unSelectNode()
-																		}
+																		}}
 																	/>
 																)
 															}
