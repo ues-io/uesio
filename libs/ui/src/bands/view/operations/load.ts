@@ -6,6 +6,7 @@ import { ThunkFunc } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
+import { batch } from "react-redux"
 
 export default (context: Context): ThunkFunc =>
 	async (dispatch, getState, platform) => {
@@ -18,7 +19,9 @@ export default (context: Context): ThunkFunc =>
 			if (!viewDef) {
 				const deps = await platform.getBuilderDeps(context)
 				if (!deps) throw new Error("Could not get View Def")
-				dispatchRouteDeps(deps, dispatch)
+				batch(() => {
+					dispatchRouteDeps(deps, dispatch)
+				})
 			}
 		}
 

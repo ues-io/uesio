@@ -8,12 +8,12 @@ import {
 	metadata,
 } from "@uesio/ui"
 
-import PropNodeTag from "./buildpropitem/propnodetag"
 import groupBy from "lodash/groupBy"
 
 const Text = component.getUtility("uesio/io.text")
-const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
@@ -54,7 +54,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 						selected={isVariantSelected}
 						draggable={`componentvariant:${variantKey}`}
 						context={context}
-						variant="uesio/studio.smallpropnodetag"
+						variant="uesio/builder.smallpropnodetag"
 					>
 						<NamespaceLabel
 							metadatakey={variant.namespace}

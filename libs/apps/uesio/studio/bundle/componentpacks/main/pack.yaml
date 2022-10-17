@@ -5,7 +5,7 @@ components:
     appiconpicker:
     iconlabel:
       utilities:
-        - uesio/studio.iconlabel
+        - uesio/builder.iconlabel
     metadatafield:
       utilities:
         - uesio/io.textfield
@@ -83,6 +83,4 @@ components:
         - uesio/io.grid
     # uesio.view:
   utility:
-    namespacelabel:
-    iconlabel:
 

@@ -11,7 +11,7 @@ interface T extends definition.UtilityProps {
 	tooltip?: string
 }
 
-const NamespaceLabel: FC<T> = (props) => {
+const IconLabel: FC<T> = (props) => {
 	const { icon, color, text, tooltip, context } = props
 
 	const classes = styles.useUtilityStyles(
@@ -60,4 +60,4 @@ const NamespaceLabel: FC<T> = (props) => {
 	)
 }
 
-export default NamespaceLabel
+export default IconLabel

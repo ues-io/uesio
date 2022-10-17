@@ -23,7 +23,7 @@ const PropNodeTag: FC<Props> = (props) => {
 				draggable: !!draggable,
 				"data-type": draggable,
 			}}
-			variant={variant || "uesio/studio.propnodetag"}
+			variant={variant || "uesio/builder.propnodetag"}
 			context={context}
 			onClick={onClick}
 			isSelected={selected}

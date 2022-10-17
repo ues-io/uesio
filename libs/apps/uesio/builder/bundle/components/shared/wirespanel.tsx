@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component, wire } from "@uesio/ui"
-import PropNodeTag from "./buildpropitem/propnodetag"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import getValueAPI from "./valueapi"
 
-const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props

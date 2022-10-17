@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, Fragment } from "react"
 import { component, hooks, styles } from "@uesio/ui"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import BuildSection from "./buildproparea/buildsection"
@@ -41,11 +41,11 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 				const num = parseInt(segment, 10)
 				if (!isNaN(num)) {
 					return (
-						<>
-							{[...Array(num + 1)].map((index) => (
+						<Fragment key={index}>
+							{Array(num + 1).map((_, index) => (
 								<div className={classes.crumb} key={index} />
 							))}
-						</>
+						</Fragment>
 					)
 				}
 				return (
@@ -86,7 +86,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						actions={
 							props.path && (
 								<IconButton
-									variant="uesio/studio.buildtitle"
+									variant="uesio/builder.buildtitle"
 									context={context}
 									icon="close"
 									onClick={(e: MouseEvent) => {
@@ -100,7 +100,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					/>
 					{propsDef.sections && !!propsDef.sections.length && (
 						<TabLabels
-							variant="uesio/studio.mainsection"
+							variant="uesio/builder.mainsection"
 							styles={{
 								root: {
 									paddingTop: "2px",

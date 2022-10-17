@@ -215,7 +215,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					actions={
 						<IconButton
 							context={context}
-							variant="uesio/studio.buildtitle"
+							variant="uesio/builder.buildtitle"
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{

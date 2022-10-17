@@ -43,7 +43,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 							actions={
 								props.path && (
 									<IconButton
-										variant="uesio/studio.buildtitle"
+										variant="uesio/builder.buildtitle"
 										context={context}
 										icon="close"
 										onClick={() =>

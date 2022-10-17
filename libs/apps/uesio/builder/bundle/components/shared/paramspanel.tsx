@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, panel } from "@uesio/ui"
-import PropNodeTag from "./buildpropitem/propnodetag"
+import { definition, hooks, panel, component } from "@uesio/ui"
+
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props

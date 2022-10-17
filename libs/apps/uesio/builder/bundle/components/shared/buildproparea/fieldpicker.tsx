@@ -1,14 +1,14 @@
 import { builder, context, hooks, wire, component, styles } from "@uesio/ui"
 import React, { FC } from "react"
-import PropNodeTag from "../buildpropitem/propnodetag"
 import has from "lodash/has"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 
-const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const Icon = component.getUtility("uesio/io.icon")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 type T = {
 	valueAPI: builder.ValueAPI

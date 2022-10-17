@@ -72,7 +72,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 				labelPosition="left"
 				label={descriptor.label}
 				context={context}
-				variant="uesio/studio.propfield"
+				variant="uesio/builder.propfield"
 			>
 				<div className={classes.iconfield}>
 					<TextField
@@ -80,7 +80,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 						label={descriptor.label}
 						setValue={(value: string) => valueAPI.set(path, value)}
 						context={context}
-						variant="uesio/studio.propfield"
+						variant="uesio/io.field:uesio/builder.propfield"
 					/>
 					<IconButton
 						className={classes.iconpreview}
@@ -114,7 +114,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 										props.path && (
 											<IconButton
 												context={context}
-												variant="uesio/studio.buildtitle"
+												variant="uesio/builder.buildtitle"
 												icon="close"
 												onClick={() =>
 													uesio.builder.unSelectNode()

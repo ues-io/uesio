@@ -30,6 +30,8 @@ components:
     buildwrapper:
     fieldproptag:
     propnodetag:
+    iconlabel:
+    namespacelabel:
   view:
     runtime:
-      
+
