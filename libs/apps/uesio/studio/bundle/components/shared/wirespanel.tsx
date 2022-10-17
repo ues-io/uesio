@@ -4,7 +4,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import getValueAPI from "./valueapi"
 
-const NamespaceLabel = component.getUtility("uesio/io.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {

@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, component, hooks, metadata, styles } from "@uesio/ui"
 
 interface MetadataPickerProps extends definition.UtilityProps {
-	value: string
+	value: string | undefined
 	setValue: (value: string) => void
 	metadataType: metadata.MetadataType
 	label: string

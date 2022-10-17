@@ -10,7 +10,11 @@
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/cms"
 					}
 				},
@@ -52,7 +56,11 @@
 						"libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
 					],
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/core"
 					}
 				},
@@ -89,7 +97,11 @@
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/crm"
 					}
 				},
@@ -127,7 +139,11 @@
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/docs"
 					}
 				},
@@ -155,7 +171,11 @@
 						"libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
 					],
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/io"
 					}
 				},
@@ -176,6 +196,44 @@
 			"tags": [],
 			"implicitDependencies": ["clio"]
 		},
+		"apps-uesio-builder": {
+			"root": "libs/apps/uesio/builder",
+			"sourceRoot": "libs/apps/uesio/studio/bundle",
+			"projectType": "library",
+			"schematics": {},
+			"architect": {
+				"build": {
+					"builder": "@nrwl/workspace:run-commands",
+					"outputs": [
+						"libs/apps/uesio/builder/bundle/componentpacks/main/builder.bundle.js",
+						"libs/apps/uesio/builder/bundle/componentpacks/main/runtime.bundle.js"
+					],
+					"options": {
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
+						"cwd": "libs/apps/uesio/builder"
+					}
+				},
+				"watch": {
+					"builder": "@nrwl/workspace:run-commands",
+					"options": {
+						"command": "./../../../../dist/clio/clio pack -w",
+						"cwd": "libs/apps/uesio/io"
+					}
+				},
+				"lint": {
+					"builder": "@nrwl/linter:eslint",
+					"options": {
+						"lintFilePatterns": ["libs/apps/uesio/builder/**/*.ts*"]
+					}
+				}
+			},
+			"tags": [],
+			"implicitDependencies": ["clio"]
+		},
 		"apps-uesio-lab": {
 			"root": "libs/apps/uesio/lab",
 			"sourceRoot": "libs/apps/uesio/studio/bundle",
@@ -189,7 +247,11 @@
 						"libs/apps/uesio/lab/bundle/componentpacks/main/runtime.bundle.js"
 					],
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/lab"
 					}
 				},
@@ -223,7 +285,11 @@
 						"libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
 					],
 					"options": {
-						"command": "./../../../../dist/clio/clio pack",
+						"commands": [
+							"./../../../../dist/clio/clio pack",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/apps/uesio/studio"
 					}
 				},
@@ -359,7 +425,11 @@
 					"builder": "@nrwl/workspace:run-commands",
 					"outputs": ["dist/ui"],
 					"options": {
-						"command": "./../../dist/clio/clio packui",
+						"commands": [
+							"./../../dist/clio/clio packui",
+							"npx tsc --noEmit --project ./tsconfig.lib.json"
+						],
+						"parallel": false,
 						"cwd": "libs/ui"
 					}
 				},

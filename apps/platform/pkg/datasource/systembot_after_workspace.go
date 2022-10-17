@@ -35,6 +35,16 @@ func runWorkspaceAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection
 			"uesio/studio.workspace": map[string]interface{}{
 				"uesio/core.id": workspaceID,
 			},
+		}, &adapt.Item{
+			"uesio/studio.app": map[string]interface{}{
+				"uesio/core.uniquekey": "uesio/builder",
+			},
+			"uesio/studio.bundle": map[string]interface{}{
+				"uesio/core.uniquekey": "uesio/builder:0:0:1",
+			},
+			"uesio/studio.workspace": map[string]interface{}{
+				"uesio/core.id": workspaceID,
+			},
 		})
 		return nil
 	})

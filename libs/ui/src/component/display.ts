@@ -77,6 +77,11 @@ type DisplayCondition =
 	| RecordIsNewCondition
 	| RecordIsNotNewCondition
 
+type ItemContext<T> = {
+	item: T
+	context: Context
+}
+
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
 		a &&
@@ -224,6 +229,27 @@ const useShouldFilter = <T extends BaseDefinition>(
 	)
 }
 
+const useContextFilter = <T>(
+	items: T[],
+	conditions: DisplayCondition[] | undefined,
+	contextFunc: (item: T, context: Context) => Context,
+	context: Context
+): ItemContext<T>[] => {
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	return items.flatMap((item) => {
+		const newContext = contextFunc(item, context)
+		return shouldAll(conditions, newContext)
+			? [
+					{
+						item,
+						context: newContext,
+					},
+			  ]
+			: []
+	})
+}
+
 const useShould = (
 	conditions: DisplayCondition[] | undefined,
 	context: Context
@@ -247,4 +273,11 @@ function shouldHaveClass(
 	return shouldAll(classLogic, context)
 }
 
-export { useShould, useShouldFilter, shouldHaveClass, DisplayCondition }
+export {
+	useShould,
+	useShouldFilter,
+	useContextFilter,
+	shouldHaveClass,
+	DisplayCondition,
+	ItemContext,
+}

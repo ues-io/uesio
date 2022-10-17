@@ -17,6 +17,8 @@ import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
 import { getErrorString } from "../bands/utils"
+import { parseVariantName } from "../component/component"
+import { MetadataKey } from "../bands/builder/types"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -24,6 +26,7 @@ type MergeType =
 	| "Record"
 	| "Param"
 	| "User"
+	| "Time"
 	| "RecordId"
 	| "Theme"
 	| "File"
@@ -119,6 +122,12 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "id") return user.id
 		if (expression === "username") return user.username
 		return ""
+	},
+	Time: (expression, context) => {
+		const value = context.getRecord()?.getFieldValue(expression)
+		if (!value) return ""
+		const date = new Date(value as number)
+		return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 	},
 	RecordId: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
@@ -268,11 +277,19 @@ class Context {
 
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
-	getComponentVariant = (componentType: string, variantName: string) =>
-		componentVariantSelectors.selectById(
-			getCurrentState(),
-			`${componentType}:${variantName}`
+	getComponentVariant = (
+		componentType: MetadataKey,
+		variantName: MetadataKey
+	) => {
+		const [component, variant] = parseVariantName(
+			variantName,
+			componentType
 		)
+		return componentVariantSelectors.selectById(
+			getCurrentState(),
+			`${component}:${variant}`
+		)
+	}
 
 	getLabel = (labelKey: string) =>
 		labelSelectors.selectById(getCurrentState(), labelKey)?.value

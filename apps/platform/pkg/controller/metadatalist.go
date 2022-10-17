@@ -12,12 +12,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]routing.MetadataResponse, error) {
-	collectionKeyMap := map[string]routing.MetadataResponse{}
+func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]datasource.MetadataResponse, error) {
+	collectionKeyMap := map[string]datasource.MetadataResponse{}
 
 	conditions := meta.GetGroupingConditions(metadatatype, grouping)
 
@@ -46,7 +45,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	appData, err := routing.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames, session)
 	if err != nil {
 		return nil, err
 	}

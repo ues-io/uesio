@@ -19,6 +19,12 @@
 	},
 	{
 		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		},
+		"uesio/studio.name": "maintainers"
+	},
+	{
+		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
 		"uesio/studio.name": "maintainers"
