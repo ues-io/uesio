@@ -1,6 +1,6 @@
 name: primarytoolbar
 label: Primary Toolbar Button
-extends: uesio/studio.secondarytoolbar
+extends: uesio/builder.secondarytoolbar
 definition:
   uesio.styles:
     root:

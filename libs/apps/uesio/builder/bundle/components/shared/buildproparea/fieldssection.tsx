@@ -59,7 +59,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 								actions={
 									<IconButton
 										context={context}
-										variant="uesio/studio.buildtitle"
+										variant="uesio/builder.buildtitle"
 										icon="close"
 										onClick={() => {
 											setShowPopper(!showPopper)
@@ -80,18 +80,18 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				</Popper>
 			)}
 			<TitleBar
-				variant="uesio/studio.propsubsection"
+				variant="uesio/builder.propsubsection"
 				title={""}
 				context={context}
 				actions={
 					<Button
 						context={context}
-						variant="uesio/studio.actionbutton"
+						variant="uesio/builder.actionbutton"
 						icon={
 							<Icon
 								context={context}
 								icon="library_add"
-								variant="uesio/studio.actionicon"
+								variant="uesio/builder.actionicon"
 							/>
 						}
 						label="Set fields"

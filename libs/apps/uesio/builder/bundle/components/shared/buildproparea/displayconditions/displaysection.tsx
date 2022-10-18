@@ -2,13 +2,13 @@ import { FC } from "react"
 import { hooks, component } from "@uesio/ui"
 import { SectionRendererProps } from "../sectionrendererdefinition"
 
-import PropNodeTag from "../../buildpropitem/propnodetag"
 import PropertiesPane from "../../propertiespane"
 import conditionProperties from "./conditionProperties"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
@@ -26,18 +26,18 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	return (
 		<>
 			<TitleBar
-				variant="uesio/studio.propsubsection"
+				variant="uesio/builder.propsubsection"
 				title={""}
 				context={context}
 				actions={
 					<Button
 						context={context}
-						variant="uesio/studio.actionbutton"
+						variant="uesio/builder.actionbutton"
 						icon={
 							<Icon
 								context={context}
 								icon="add"
-								variant="uesio/studio.actionicon"
+								variant="uesio/builder.actionicon"
 							/>
 						}
 						label="New Condition"

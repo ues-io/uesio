@@ -31,12 +31,12 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		<div className={classes.wrapper}>
 			<Button
 				context={context}
-				variant="uesio/studio.actionbutton"
+				variant="uesio/builder.actionbutton"
 				icon={
 					<Icon
 						context={context}
 						icon="add"
-						variant="uesio/studio.actionicon"
+						variant="uesio/builder.actionicon"
 					/>
 				}
 				label="New Panel"

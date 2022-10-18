@@ -21,7 +21,7 @@ const ActionButton: FunctionComponent<Props> = (props) => {
 			disabled={disabled}
 			icon={icon}
 			className={className}
-			variant="uesio/studio.actionbutton"
+			variant="uesio/builder.actionbutton"
 			label={title}
 			tooltipPlacement="bottom"
 			context={context}

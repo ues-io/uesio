@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import PropNodeTag from "../shared/buildpropitem/propnodetag"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import getValueAPI from "./valueapi"
 
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props

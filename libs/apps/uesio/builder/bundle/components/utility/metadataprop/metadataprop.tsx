@@ -56,8 +56,8 @@ const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 			setValue={(value: string) => valueAPI.set(path, value)}
 			context={context}
 			grouping={getGrouping(path, descriptor)}
-			selectVariant="uesio/studio.propfield"
-			fieldWrapperVariant="uesio/studio.propfield"
+			selectVariant="uesio/builder.propfield"
+			fieldWrapperVariant="uesio/builder.propfield"
 		/>
 	)
 }

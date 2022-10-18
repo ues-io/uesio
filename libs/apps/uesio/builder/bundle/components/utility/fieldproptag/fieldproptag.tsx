@@ -8,7 +8,7 @@ import {
 } from "@uesio/ui"
 
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const NamespaceLabel = component.getUtility("uesio/studio.namespacelabel")
+const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 import { FC, useState } from "react"
@@ -90,7 +90,7 @@ const FieldPropTag: FC<T> = (props) => {
 							if (!referenceMetadata) return null
 							return (
 								<FieldPropTag
-									variant="uesio/studio.subpropnodetag"
+									variant="uesio/builder.subpropnodetag"
 									collectionKey={referenceMetadata.collection}
 									fieldId={fieldId}
 									fieldDef={fieldDef?.fields[fieldId]}

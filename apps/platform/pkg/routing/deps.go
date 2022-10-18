@@ -270,12 +270,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to load variants: " + err.Error())
 	}
 
-	// Also load in studio variants
-	err = bundle.LoadAllFromAny(&variants, nil, session.RemoveWorkspaceContext())
-	if err != nil {
-		return errors.New("Failed to load studio variants: " + err.Error())
-	}
-
 	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
 		return errors.New("Failed to get translated labels: " + err.Error())

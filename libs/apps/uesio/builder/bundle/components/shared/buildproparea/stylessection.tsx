@@ -85,7 +85,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			{propsDef.classes?.map((className) => (
 				<>
 					<TitleBar
-						variant="uesio/studio.propsubsection"
+						variant="uesio/builder.propsubsection"
 						title={className}
 						context={context}
 					/>
@@ -104,9 +104,9 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						mode="EDIT"
 						context={context}
-						variant="uesio/studio.propfield"
-						labelVariant="uesio/studio.propfield"
-						fieldVariant="uesio/studio.propfield"
+						variant="uesio/builder.propfield"
+						labelVariant="uesio/builder.propfield"
+						fieldVariant="uesio/io.field:uesio/builder.propfield"
 					/>
 				</>
 			))}

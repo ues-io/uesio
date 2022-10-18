@@ -27,7 +27,7 @@ const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
 							{ value: "false", label: "False" },
 						]}
 						context={context}
-						variant="uesio/studio.propfield"
+						variant="uesio/builder.propfield"
 					/>
 				)
 			}
@@ -44,7 +44,7 @@ const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
 
 	return (
 		<FieldWrapper
-			variant="uesio/studio.propfield"
+			variant="uesio/builder.propfield"
 			labelPosition="left"
 			label={descriptor.label}
 			context={context}

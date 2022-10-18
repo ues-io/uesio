@@ -73,21 +73,21 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 							icon="desktop_windows"
 						/>
 					}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={setDimensions(0, 0)}
 				/>
 				<Button
 					context={context}
 					label=""
 					icon={<Icon context={context} fill={false} icon="laptop" />}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={setDimensions(0, 1200)}
 				/>
 				<Button
 					context={context}
 					label=""
 					icon={<Icon context={context} fill={false} icon="tablet" />}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={setDimensions(1024, 768)}
 				/>
 				<Button
@@ -100,7 +100,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 							icon="smartphone"
 						/>
 					}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={setDimensions(667, 375)}
 				/>
 			</Group>
@@ -113,7 +113,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					context={props.context}
 					label=""
 					icon={<Icon context={context} icon="wysiwyg" />}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={() => {
 						uesio.signal.run(
 							{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
@@ -125,7 +125,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					context={props.context}
 					label=""
 					icon={<Icon context={context} icon="view_quilt" />}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={() => {
 						const workspace = props.context.getWorkspace()
 						if (!workspace) {
@@ -145,7 +145,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					context={context}
 					label=""
 					icon={<Icon context={context} icon="code" />}
-					variant="uesio/studio.minoricontoolbar"
+					variant="uesio/builder.minoricontoolbar"
 					onClick={toggleCode}
 				/>
 			</Group>

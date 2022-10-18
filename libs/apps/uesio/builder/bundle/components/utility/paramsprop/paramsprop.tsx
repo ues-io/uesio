@@ -25,7 +25,7 @@ const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 							label={el}
 							context={context}
 							key={el}
-							variant="uesio/studio.propfield"
+							variant="uesio/builder.propfield"
 						>
 							<TextField
 								value={valueAPI.get(paramPath)}
@@ -34,7 +34,7 @@ const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 									valueAPI.set(paramPath, value)
 								}
 								context={context}
-								variant="uesio/studio.propfield"
+								variant="uesio/io.field:uesio/builder.propfield"
 							/>
 						</FieldWrapper>
 					)

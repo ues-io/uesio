@@ -1,5 +1,4 @@
 import React, { FC } from "react"
-import PropNodeTag from "./buildpropitem/propnodetag"
 import { builder, context, hooks, component, styles } from "@uesio/ui"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "../shared/hooks/uselistscroll"
@@ -7,6 +6,7 @@ const PropList = component.getUtility("uesio/builder.proplist")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -139,14 +139,17 @@ const PropListsList: FC<T> = (props) => {
 															actions={
 																props.path && (
 																	<IconButton
-																		variant="uesio/studio.buildtitle"
+																		variant="uesio/builder.buildtitle"
 																		context={
 																			context
 																		}
 																		icon="close"
-																		onClick={() =>
+																		onClick={(
+																			e: MouseEvent
+																		) => {
+																			e.stopPropagation()
 																			uesio.builder.unSelectNode()
-																		}
+																		}}
 																	/>
 																)
 															}

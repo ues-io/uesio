@@ -5,7 +5,10 @@ import Papa, { ParseResult } from "papaparse"
 
 interface Props extends definition.BaseProps {
 	changeUploaded: (success: boolean, csvFields: string[], file: File) => void
+	type?: "button" | "area"
 }
+
+const Button = component.getUtility("uesio/io.button")
 
 const getHeaderFields = async (files: FileList | null): Promise<string[]> => {
 	if (!files || files.length === 0) return []
@@ -36,7 +39,7 @@ const Icon = component.getUtility("uesio/io.icon")
 const UploadArea = component.getUtility("uesio/io.uploadarea")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
-	const { context, changeUploaded } = props
+	const { context, changeUploaded, type } = props
 	const uesio = hooks.useUesio(props)
 	const uploadLabelId = nanoid()
 
@@ -76,16 +79,29 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 			}}
 			uploadLabelId={uploadLabelId}
 		>
-			<label htmlFor={uploadLabelId}>
-				<div className={classes.div}>
-					<p>Drop your .csv file here or Click to browse.</p>
-					<Icon
-						className={classes.icon}
-						context={context}
-						icon="image"
-					/>
-				</div>
-			</label>
+			{type && type === "button" ? (
+				<label htmlFor={uploadLabelId}>
+					{/* A bit hacky, we the button styling but not the click event*/}
+					<div style={{ pointerEvents: "none", cursor: "pointer" }}>
+						<Button
+							context={context}
+							variant={"uesio/io.secondary"}
+							label={"Upload another file"}
+						/>
+					</div>
+				</label>
+			) : (
+				<label htmlFor={uploadLabelId}>
+					<div className={classes.div}>
+						<p>Drop your .csv file here or Click to browse.</p>
+						<Icon
+							className={classes.icon}
+							context={context}
+							icon="image"
+						/>
+					</div>
+				</label>
+			)}
 		</UploadArea>
 	)
 }
