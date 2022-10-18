@@ -44,6 +44,7 @@ components:
         - uesio/io.text:uesio/io.icon
     titlebar:
     markdown:
+    progress:
   utility:
     alert:
     avatar:
@@ -98,3 +99,6 @@ components:
     markdownfield:
     filemarkdown:
     textareafield:
+    progresscontainer:
+    progressbar:
+    progresscircle:
