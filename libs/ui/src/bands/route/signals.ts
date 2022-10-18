@@ -27,6 +27,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
 			operations.redirect(context, signal.path, signal.newtab),
 		label: "Redirect",
+		description: "Route redirect",
 		properties: () => [
 			{
 				type: "TEXT",
@@ -49,6 +50,7 @@ const signals: Record<string, SignalDescriptor> = {
 			)
 		},
 		label: "Redirect to View Config",
+		description: "Redirect to View Config",
 		properties: () => [],
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
@@ -65,12 +67,14 @@ const signals: Record<string, SignalDescriptor> = {
 				)
 			},
 		label: "Reload",
+		description: "Reload route",
 		properties: () => [],
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
 			operations.navigate(context, signal),
 		label: "Navigate",
+		description: "Navigate",
 		properties: () => [
 			{
 				type: "TEXT",

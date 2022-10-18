@@ -15,6 +15,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
 			operations.toggle(context, signal.panel),
 		label: "Toggle",
+		description: "Toggle panel status",
 		properties: () => [
 			{
 				type: "TEXT",
@@ -27,6 +28,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
 			operations.open(context, signal.panel),
 		label: "Open",
+		description: "Open panel",
 		properties: () => [
 			{
 				type: "TEXT",
@@ -39,6 +41,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
 			operations.close(context, signal.panel),
 		label: "Close",
+		description: "Close panel",
 		properties: () => [
 			{
 				type: "TEXT",

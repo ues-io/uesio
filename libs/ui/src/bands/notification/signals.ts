@@ -31,6 +31,7 @@ const signals: Record<string, SignalDescriptor> = {
 				return context
 			},
 		label: "Add Notification",
+		description: "Add Notification",
 		properties: () => [
 			{
 				type: "TEXT",
