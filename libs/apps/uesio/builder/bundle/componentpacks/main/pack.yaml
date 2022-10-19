@@ -3,35 +3,151 @@ public: true
 components:
   utility:
     proplist:
+      utilities:
+        - uesio/builder.textprop
+        - uesio/builder.textareaprop
+        - uesio/builder.selectprop
+        - uesio/builder.multiselectprop
+        - uesio/builder.keyprop
+        - uesio/builder.wireprop
+        - uesio/builder.wiresprop
+        - uesio/builder.metadataprop
+        - uesio/builder.numberprop
+        - uesio/builder.paramprop
+        - uesio/builder.paramsprop
+        - uesio/builder.booleanprop
+        - uesio/builder.conditionprop
+        - uesio/builder.namespaceprop
+        - uesio/builder.botprop
+        - uesio/builder.customprop
+        - uesio/builder.iconprop
+        - uesio/builder.wirefieldsprop
+        - uesio/builder.fieldprop
+        - uesio/builder.proplistsprop
     metadataprop:
+      utilities:
+        - uesio/builder.metadatapicker
     selectprop:
+      utilities:
+        - uesio/io.selectfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.selectfield:uesio/builder.propfield
+        - uesio/io.fieldwrapper:uesio/builder.propfield
     multiselectprop:
+      utilities:
+        - uesio/io.multiselectfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.multiselectfield:uesio/builder.propfield
+        - uesio/io.fieldwrapper:uesio/builder.propfield
     keyprop:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.field:uesio/builder.propfield
+        - uesio/io.fieldwrapper:uesio/builder.propfield
     wireprop:
     botprop:
     conditionprop:
     namespaceprop:
     wiresprop:
     numberprop:
+      utilities:
+        - uesio/io.numberfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.field:uesio/builder.propfield
     booleanprop:
+      utilities:
+        - uesio/io.selectfield
+        - uesio/io.checkboxfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.selectfield:uesio/builder.propfield
     textprop:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.field:uesio/builder.propfield
     textareaprop:
+      utilities:
+        - uesio/io.textareafield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.field:uesio/builder.propfield
     iconprop:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.popper
+        - uesio/io.iconbutton
+        - uesio/io.titlebar
+        - uesio/io.fieldwrapper
+        - uesio/io.scrollpanel
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.field:uesio/builder.propfield
+        - uesio/io.iconbutton:uesio/builder.buildtitle
     customprop:
     paramprop:
     paramsprop:
+      utilities:
+        - uesio/io.textfield
+        - uesio/io.fieldwrapper
+      variants:
+        - uesio/io.fieldwrapper:uesio/builder.propfield
+        - uesio/io.field:uesio/builder.propfield
     wireFieldsprop:
     fieldprop:
     proplistsprop:
+      utilities:
+        - uesio/builder.propnodetag
+        - uesio/builder.proplistslist
+        - uesio/io.scrollpanel
+        - uesio/io.iconbutton
+        - uesio/io.titlebar
+      variants:
+        - uesio/io.titlebar:uesio/io.primary
+        - uesio/io.iconbutton:uesio/builder.buildtitle
     slotbuilder:
     placeholder:
     multimetadatapicker:
+      utilities:
+        - uesio/io.fieldwrapper
+        - uesio/io.customselect
+        - uesio/io.icon
     metadatapicker:
+      utilities:
+        - uesio/io.fieldwrapper
+        - uesio/io.customselect
+        - uesio/io.icon
     buildwrapper:
+      utilities:
+        - uesio/io.text
+        - uesio/io.popper
+      variants:
+        - uesio/io.text:uesio/io.icon
     fieldproptag:
+      utilities:
+        - uesio/builder.propnodetag
+        - uesio/builder.namespacelabel
+        - uesio/io.expandpanel
     propnodetag:
+      utilities:
+        - uesio/io.tile
+        - uesio/io.popper
     iconlabel:
+      utilities:
+        - uesio/io.text
+        - uesio/io.tooltip
+      variants:
+        - uesio/io.text:uesio/io.icon
     namespacelabel:
   view:
     runtime:
-
