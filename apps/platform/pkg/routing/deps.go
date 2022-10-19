@@ -75,6 +75,71 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
+func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
+
+	packs := map[string]meta.ComponentPackCollection{}
+
+	namespace, componentName, err := meta.ParseKey(key)
+	if err != nil {
+		return err
+	}
+
+	packsForNamespace, ok := packs[namespace]
+	if !ok {
+		var nspacks meta.ComponentPackCollection
+		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		if err != nil {
+			return err
+		}
+		packsForNamespace = nspacks
+	}
+
+	for _, pack := range packsForNamespace {
+		componentInfo, ok := pack.Components.UtilityComponents[componentName]
+		if ok {
+			err := deps.AddItem(pack, false)
+			if err != nil {
+				return err
+			}
+			if componentInfo != nil {
+				for _, key := range componentInfo.ConfigValues {
+
+					value, err := configstore.GetValueFromKey(key, session)
+					if err != nil {
+						return err
+					}
+					configvalue, err := meta.NewConfigValue(key)
+					if err != nil {
+						return err
+					}
+					configvalue.Value = value
+					err = deps.AddItem(configvalue, false)
+					if err != nil {
+						return err
+					}
+
+				}
+
+				for _, key := range componentInfo.Variants {
+					err := addVariantDep(deps, key, session)
+					if err != nil {
+						return err
+					}
+				}
+
+				for _, key := range componentInfo.Utilities {
+					err = getDepsForUtilityComponent(key, deps, session)
+					if err != nil {
+						return err
+					}
+				}
+
+			}
+		}
+	}
+	return nil
+}
+
 func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
 
 	packs := map[string]meta.ComponentPackCollection{}
@@ -127,16 +192,13 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 					}
 				}
 
-				// TODO: If we are getting deps for a utility component
-				// We need to run something different.
-				/*
-					for _, key := range componentInfo.Utilities {
-						err = getDepsForComponent(key, deps, session)
-						if err != nil {
-							return err
-						}
+				for _, key := range componentInfo.Utilities {
+					err = getDepsForUtilityComponent(key, deps, session)
+					if err != nil {
+						return err
 					}
-				*/
+				}
+
 			}
 		}
 	}
