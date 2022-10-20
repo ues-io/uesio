@@ -20,10 +20,30 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
-	sections: [],
+	sections: [
+		{
+			type: "PROPLISTS",
+			name: "tabs",
+			nameFallback: "tab",
+			nameTemplate: "${label}",
+			title: "Tabs",
+			properties: [
+				{
+					name: "id",
+					type: "TEXT",
+					label: "ID",
+				},
+				{
+					name: "label",
+					type: "TEXT",
+					label: "Label",
+				},
+			],
+		},
+	],
 	actions: [],
 	traits: ["uesio.standalone"],
-	classes: ["root", "content", "tabLabels", "tab", "tabSelected"],
+	classes: ["root", "content", "tabLabels", "tab", "tabSelected", "footer"],
 	type: "component",
 	category: "LAYOUT",
 }

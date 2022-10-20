@@ -4,7 +4,6 @@ import {
 	context,
 	collection,
 	wire,
-	styles,
 	component,
 	hooks,
 } from "@uesio/ui"
@@ -29,13 +28,6 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const readonly = mode === "READ"
 
 	const uesio = hooks.useUesio(props)
-
-	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-		},
-		props
-	)
 
 	if (!readonly) {
 		return <ReferenceField {...props} />
@@ -66,7 +58,6 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 
 	return (
 		<Tile
-			className={classes.input}
 			avatar={
 				<Avatar image={fileURL} text={initials} context={context} />
 			}

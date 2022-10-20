@@ -14,6 +14,7 @@ const Tabs: FunctionComponent<Props> = (props) => {
 			tabLabels: {},
 			tab: {},
 			tabSelected: {},
+			footer: {},
 		},
 		props
 	)
@@ -25,7 +26,7 @@ const Tabs: FunctionComponent<Props> = (props) => {
 		"tabs",
 		componentId
 	)
-	const tabs = definition.tabs ? definition.tabs : []
+	const tabs = definition.tabs || []
 	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
 	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
 	const selectedTab = tabs[selectedIndex]
@@ -38,12 +39,11 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					tab: classes.tab,
 					tabSelected: classes.tabSelected,
 				}}
-				selectedTab={selectedTab && selectedTab.id}
+				selectedTab={selectedTab?.id}
 				setSelectedTab={setSelectedTab}
 				tabs={tabs}
 				context={context}
 			/>
-
 			<div className={classes.content}>
 				<component.Slot
 					definition={selectedTab}
@@ -51,11 +51,15 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					path={`${path}["tabs"]["${selectedIndex}"]`}
 					accepts={["uesio.standalone"]}
 					context={context}
+					label={selectedTab?.label}
 				/>
+			</div>
+			<div className={classes.footer}>
 				<component.Slot
 					definition={definition}
 					listName="footer"
 					path={path}
+					label="footer"
 					accepts={["uesio.standalone"]}
 					context={context}
 				/>

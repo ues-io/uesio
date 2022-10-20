@@ -1,0 +1,37 @@
+name: main
+public: true
+components:
+  utility:
+    proplist:
+    metadataprop:
+    selectprop:
+    multiselectprop:
+    keyprop:
+    wireprop:
+    botprop:
+    conditionprop:
+    namespaceprop:
+    wiresprop:
+    numberprop:
+    booleanprop:
+    textprop:
+    textareaprop:
+    iconprop:
+    customprop:
+    paramprop:
+    paramsprop:
+    wireFieldsprop:
+    fieldprop:
+    proplistsprop:
+    slotbuilder:
+    placeholder:
+    multimetadatapicker:
+    metadatapicker:
+    buildwrapper:
+    fieldproptag:
+    propnodetag:
+    iconlabel:
+    namespacelabel:
+  view:
+    runtime:
+
