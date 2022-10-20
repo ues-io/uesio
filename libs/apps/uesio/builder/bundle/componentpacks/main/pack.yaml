@@ -33,6 +33,7 @@ components:
     propnodetag:
     iconlabel:
     namespacelabel:
+    conditionitem:
   view:
     runtime:
 
