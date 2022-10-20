@@ -40,6 +40,9 @@ class Wire {
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
 
+	getRecordIds = () =>
+		this.source?.data ? Object.keys(this.source.data) : []
+
 	getErrors = () => this.source?.errors
 
 	getViewId = () => this.source?.view

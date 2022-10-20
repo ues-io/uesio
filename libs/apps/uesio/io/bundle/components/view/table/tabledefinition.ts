@@ -13,6 +13,7 @@ type TableDefinition = {
 	recordDisplay?: component.DisplayCondition[]
 	rownumbers: boolean
 	pagesize: string
+	multiselect: boolean
 } & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {
@@ -26,11 +27,11 @@ type RowAction = {
 }
 
 type ColumnDefinition = {
-	field: string
+	field?: string
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	label: string
-	components: definition.DefinitionList
+	components?: definition.DefinitionList
 }
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
@@ -68,6 +69,11 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "pagesize",
 			type: "TEXT",
 			label: "Page size",
+		},
+		{
+			name: "selectableRows",
+			type: "BOOLEAN",
+			label: "Selectable rows",
 		},
 	],
 	sections: [],
