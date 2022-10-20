@@ -176,6 +176,7 @@ const Table: FC<TableProps> = (props) => {
 		)
 
 		return {
+			selected,
 			toggleAll,
 			toggleAllCheckbox: getCheckbox(toggleAll, !!allSelected),
 			rowHelpers: (recordContext: RecordContext) => {

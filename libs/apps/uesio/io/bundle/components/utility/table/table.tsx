@@ -9,6 +9,7 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	cellFunc: (column: C, row: R, columnIndex: number) => ReactNode
 	rowNumberFunc: (index: number) => string | null
 	rowSelectFunc: () => {
+		selected: string[]
 		toggleAll: () => void
 		toggleAllCheckbox: ReactNode
 		rowHelpers: (recordContext: R) => {
@@ -71,7 +72,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 					"& div": {
 						opacity: 0,
 					},
-					"&:hover div": {
+					"&.hasSelection div, &:hover div": {
 						opacity: 1,
 					},
 				},
@@ -108,7 +109,10 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 								className={styles.cx(
 									classes.headerCell,
 									classes.rowPrefixCell,
-									rowSelectHelpers ? "hidden" : ""
+									rowSelectHelpers ? "hidden" : "",
+									rowSelectHelpers?.selected.length
+										? "hasSelection"
+										: ""
 								)}
 								onClick={() => rowSelectHelpers?.toggleAll()}
 								key="rownumbers"

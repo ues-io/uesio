@@ -27,11 +27,12 @@ class ComponentAPI {
 
 	useSelectedRecords = (componentId: string, wire: Wire | undefined) => {
 		const allIds = wire?.getRecordIds() || []
-		const [selected, setSelected] = this.useStateSlice<string[]>(
+		const [selectedState, setSelected] = this.useStateSlice<string[]>(
 			"selected",
 			componentId,
 			[]
 		)
+		const selected = selectedState || []
 		const [allSelected, setAllSelected] = this.useStateSlice<boolean>(
 			"allSelected",
 			componentId,
@@ -40,14 +41,19 @@ class ComponentAPI {
 		useEffect(() => {
 			// Check if all records are selected
 			setAllSelected(
-				!!selected?.length &&
-					allIds.every((el) => selected.includes(el))
+				!!selected.length && allIds.every((el) => selected.includes(el))
 			)
 		}, [selected])
+
 		const toggleAll = () => setSelected(allSelected ? [] : allIds)
 		// We also make sure we don't have duplicates
-		const selectRecord = (id: string) =>
-			setSelected([...new Set([...(selected || []), id])])
+		const selectRecord = (id: string) => {
+			setSelected(
+				selected.includes(id)
+					? selected.filter((el) => el !== id)
+					: [...selected, id]
+			)
+		}
 
 		return { selected, selectRecord, allSelected, toggleAll }
 	}
