@@ -1,8 +1,12 @@
 import { Context } from "../../../context/context"
 import { LoadRequest } from "../../../load/loadrequest"
 import { PlainWire } from "../types"
-import { listLookupWires } from "../utils"
-import { getWiresFromDefinitonOrContext, load, getFullWireId } from ".."
+import {
+	getWiresFromDefinitonOrContext,
+	load,
+	getFullWireId,
+	addLookupWires,
+} from ".."
 import { ThunkFunc } from "../../../store/store"
 import createrecord from "./createrecord"
 import partition from "lodash/partition"
@@ -45,19 +49,14 @@ export default (
 			(wire) => wire.preloaded || wire.viewOnly
 		)
 
-		// Some wires have conditions with lookup to other wires,
-		// When that wire isn't part of the load, the request will fail
-		const lookupWires = listLookupWires(toLoad)
-		const missingLookupWires = lookupWires.filter(
-			(w) => !toLoad?.find((w1) => w1.name === w.missingDependency)
+		const toLoadWithLookups = addLookupWires(toLoad, context)
+
+		const loadRequests = getWireRequest(
+			toLoadWithLookups,
+			true,
+			context,
+			forceQuery
 		)
-
-		if (missingLookupWires.length) {
-			console.table(missingLookupWires, ["wire", "missingDependency"])
-			throw new Error(`Wire dependency error, check the table above`)
-		}
-
-		const loadRequests = getWireRequest(toLoad, true, context, forceQuery)
 
 		const response = loadRequests.length
 			? await platform.loadData(context, {
@@ -66,7 +65,7 @@ export default (
 			: { wires: [], collections: {} }
 
 		const loadedResults = response.wires.map((wire, index) => ({
-			...toLoad[index],
+			...toLoadWithLookups[index],
 			...wire,
 			original: { ...wire.data },
 		}))

@@ -87,31 +87,48 @@ const wireAdapter = createEntityAdapter<PlainWire>({
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
 
+const getWires = (
+	wires: string[] | string | undefined,
+	context: Context
+): PlainWire[] => {
+	const viewId = context.getViewId()
+	if (!viewId) throw new Error("No ViewId in Context")
+	const wiresArray = Array.isArray(wires) ? wires : [wires]
+	return wiresArray.flatMap((wirename) => {
+		const wire = getWire(viewId, wirename)
+		if (!wire) throw new Error("Bad Wire!")
+		return wire
+	})
+}
+
+const addLookupWires = (wires: PlainWire[], context: Context): PlainWire[] => {
+	const wireNamesToLookup = wires.flatMap(
+		(wire) =>
+			wire.conditions?.flatMap((c) => {
+				const lookupWire = "lookupWire" in c && c.lookupWire
+				if (!lookupWire) return []
+				// Now check to make sure we're not already loading this wire
+				return wires.find((wire) => wire.name === lookupWire)
+					? []
+					: [lookupWire]
+			}) || []
+	)
+
+	// If we don't have any lookup wires, quit
+	if (!wireNamesToLookup.length) return wires
+
+	const lookupWires = getWires(wireNamesToLookup, context)
+
+	// Recursively lookup wires
+	return addLookupWires(lookupWires, context).concat(wires)
+}
+
 const getWiresFromDefinitonOrContext = (
 	wires: string[] | string | undefined,
 	context: Context
 ): PlainWire[] => {
 	if (wires) {
-		const viewId = context.getViewId()
-		if (!viewId) throw new Error("No ViewId in Context")
-		const wiresArray = Array.isArray(wires) ? wires : [wires]
-		return wiresArray.flatMap((wirename) => {
-			const parentWire = getWire(viewId, wirename)
-			if (!parentWire) throw new Error("Bad Wire!")
-
-			const missingLookupWires = parentWire.conditions?.flatMap((c) => {
-				const include = "lookupWire" in c && c.includeLookupOnLoad
-				if (include) {
-					const wire = getWire(viewId, c.lookupWire)
-					if (!wire) throw new Error("Bad Lookup Wire!")
-					return wire
-				}
-				return []
-			})
-			//need to push the parent wire as well
-			missingLookupWires?.push(parentWire)
-			return missingLookupWires || [parentWire]
-		})
+		return getWires(wires, context)
 	}
 	const wire = context.getPlainWire()
 	if (!wire) throw new Error("No Wire in Definition or Context")
@@ -394,6 +411,7 @@ export {
 	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
+	addLookupWires,
 }
 
 export const {

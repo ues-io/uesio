@@ -31,7 +31,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-          includeLookupOnLoad: true
     newview:
       collection: uesio/studio.view
       fields:
