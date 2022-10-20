@@ -108,13 +108,15 @@ const getIndexFromPath = (path: string) => {
 	return indexString ? parseInt(indexString, 10) : null
 }
 
-const createRelativePath = (str: string, path: string) => {
+const parseRelativePath = (relativePath: string, basePath: string) => {
 	// Clean strings starting with './', we don't need that
-	const niceString = str.startsWith("./") ? str.replace("./", "") : str
+	const niceString = relativePath.startsWith("./")
+		? relativePath.replace("./", "")
+		: relativePath
 	// get the N levels up the tree
 	const arr = niceString.split("../")
 
-	const startingPath = getAncestorPath(path, arr.length)
+	const startingPath = getAncestorPath(basePath, arr.length)
 	const endingPath = arr
 		.pop()
 		?.split("/")
@@ -142,5 +144,5 @@ export {
 	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,
-	createRelativePath,
+	parseRelativePath,
 }

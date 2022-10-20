@@ -4,7 +4,7 @@ const MultiSelectProp = component.getUtility("uesio/builder.multiselectprop")
 
 const FieldsProp: builder.PropComponent<builder.FieldsProp> = (props) => {
 	const { valueAPI, path } = props
-	const wirePath = component.path.createRelativePath(
+	const wirePath = component.path.parseRelativePath(
 		props.descriptor.wireField,
 		path || ""
 	)

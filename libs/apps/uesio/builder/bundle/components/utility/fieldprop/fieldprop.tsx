@@ -4,7 +4,7 @@ const SelectProp = component.getUtility("uesio/builder.selectprop")
 
 const FieldProp: builder.PropComponent<builder.FieldProp> = (props) => {
 	const { valueAPI, path, descriptor } = props
-	const wirePath = component.path.createRelativePath(
+	const wirePath = component.path.parseRelativePath(
 		descriptor.wireField,
 		path || ""
 	)
