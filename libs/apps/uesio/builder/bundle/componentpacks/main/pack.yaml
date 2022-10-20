@@ -22,6 +22,7 @@ components:
     paramsprop:
     wireFieldsprop:
     fieldprop:
+    fieldsprop:
     proplistsprop:
     slotbuilder:
     placeholder:
