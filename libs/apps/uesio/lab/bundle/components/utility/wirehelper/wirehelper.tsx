@@ -84,7 +84,7 @@ const wireHelper: FC<T> = (props) => {
 
 			const showWires = uesio.signal.getHandler([
 				{
-					signal: "component/uesio/studio.runtime/SHOW_WIRES",
+					signal: "component/uesio/builder.runtime/SHOW_WIRES",
 				},
 			])
 

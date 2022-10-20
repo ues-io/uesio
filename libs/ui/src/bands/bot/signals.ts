@@ -36,6 +36,7 @@ const signals: Record<string, SignalDescriptor> = {
 				return context
 			},
 		label: "Call Bot",
+		description: "Call a Bot",
 		properties: (signal: CallSignal) => [
 			{
 				type: "NAMESPACE",

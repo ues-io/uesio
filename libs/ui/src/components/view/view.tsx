@@ -75,7 +75,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		return (
 			<ComponentInternal
 				context={viewContext}
-				componentType="uesio/studio.runtime"
+				componentType="uesio/builder.runtime"
 				path=""
 			>
 				{slot}

@@ -34,10 +34,6 @@
                 {{- end -}}
             {{- end -}}
             {{- if $buildMode -}}
-                {{- $studioPackURL := getPackURL "uesio/studio.main" nil false -}}
-                <script src="{{$studioPackURL}}" type="module"></script>
-                {{- $studioBuilderPackURL := getPackURL "uesio/studio.main" nil true -}}
-                <script src="{{$studioBuilderPackURL}}" type="module"></script>
                 {{- range .PreloadMetadata.ComponentPack.IDs -}}
                     {{- $packURL := getPackURL . $workspace true -}}
                     {{- if $packURL -}}
