@@ -222,7 +222,7 @@ const getPropertiesDefinitionFromPath = (
 			return [
 				{
 					...componentPropsDef,
-					sections: componentPropsDef.sections.concat([
+					sections: componentPropsDef.sections?.concat([
 						{
 							title: "Styles",
 							type: "STYLES",

@@ -14,7 +14,7 @@ type BuildPropertiesDefinition = {
 	description?: string
 	link?: string
 	properties?: PropDescriptor[]
-	sections: PropertySection[]
+	sections?: PropertySection[]
 	actions?: ActionDescriptor[]
 	defaultDefinition: () => DefinitionMap
 	signals?: SignalProperties[]

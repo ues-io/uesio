@@ -1,5 +1,6 @@
 import { definition, builder, wire } from "@uesio/ui"
-import FilterProperties from "./filterProperties"
+import FilterProperties from "./filterproperties"
+
 type FilterDefinition = {
 	field: string
 	wire: string
