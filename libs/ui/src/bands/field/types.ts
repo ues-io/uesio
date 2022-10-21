@@ -2,32 +2,30 @@ type FieldMetadataMap = {
 	[key: string]: FieldMetadata
 }
 
-const FIELD_TYPES = [
-	"NUMBER",
-	"TEXT",
-	"REFERENCE",
-	"REFERENCEGROUP",
-	"LONGTEXT",
-	"SELECT",
-	"CHECKBOX",
-	"MULTISELECT",
-	"DATE",
-	"FILE",
-	"MAP",
-	"TIMESTAMP",
-	"LIST",
-	"USER",
-	"EMAIL",
-	"AUTONUMBER",
-] as const
-
-type FieldType = typeof FIELD_TYPES[number]
+type FieldType =
+	| "NUMBER"
+	| "TEXT"
+	| "REFERENCE"
+	| "REFERENCEGROUP"
+	| "LONGTEXT"
+	| "SELECT"
+	| "CHECKBOX"
+	| "MULTISELECT"
+	| "DATE"
+	| "FILE"
+	| "MAP"
+	| "TIMESTAMP"
+	| "LIST"
+	| "USER"
+	| "EMAIL"
+	| "AUTONUMBER"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
 type SelectOption = {
 	label: string
 	value: string
+	title?: string
 	disabled?: boolean
 }
 
@@ -79,5 +77,4 @@ export {
 	FieldType,
 	NumberMetadata,
 	ReferenceMetadata,
-	FIELD_TYPES,
 }

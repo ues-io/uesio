@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Delete function
 func Delete(userFileID string, session *sess.Session) error {
 	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(

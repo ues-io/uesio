@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 func GetFileMetadataType(details *fileadapt.FileDetails) string {
@@ -80,13 +81,14 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		details := op.Details
 
 		ufm := meta.UserFileMetadata{
-			CollectionID: details.CollectionID,
-			MimeType:     mime.TypeByExtension(filepath.Ext(details.Name)),
-			FieldID:      details.FieldID,
-			Type:         GetFileMetadataType(details),
-			FileName:     details.Name,
-			Name:         GetFileUniqueName(details), // Different for file fields and attachments
-			RecordID:     details.RecordID,
+			CollectionID:  details.CollectionID,
+			MimeType:      mime.TypeByExtension(filepath.Ext(details.Name)),
+			FieldID:       details.FieldID,
+			Type:          GetFileMetadataType(details),
+			FileName:      details.Name,
+			Name:          GetFileUniqueName(details), // Different for file fields and attachments
+			RecordID:      details.RecordID,
+			ContentLength: details.ContentLength,
 		}
 
 		if details.RecordID == "" {
@@ -98,9 +100,12 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 				idMap = adapt.LocatorMap{}
 				idMaps[details.CollectionID] = idMap
 			}
-			idMap.AddID(details.RecordUniqueKey, adapt.ReferenceLocator{
+			err := idMap.AddID(details.RecordUniqueKey, adapt.ReferenceLocator{
 				Item: &ufm,
 			})
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		ufms = append(ufms, &ufm)
@@ -118,7 +123,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
+		}, adapt.UNIQUE_KEY_FIELD, session, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
@@ -174,6 +179,8 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			return nil, err
 		}
 
+		go usage.RegisterEvent("UPLOAD", "FILESOURCE", fs.GetKey(), 0, session)
+		go usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{

@@ -2,18 +2,19 @@ package datasource
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"io/ioutil"
 	"regexp"
 	"strings"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
+	"gopkg.in/yaml.v3"
 )
 
 func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
@@ -22,6 +23,31 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 		return err
 	}
 	return template.Execute(file, params)
+}
+
+func getRepeaterSlice(input interface{}) ([]string, error) {
+	sliceString, ok := input.([]string)
+	if ok {
+		return sliceString, nil
+	}
+	sliceInterface, ok := input.([]interface{})
+	if ok {
+		sliceString := []string{}
+		for _, value := range sliceInterface {
+			stringValue, ok := value.(string)
+			if !ok {
+				return nil, errors.New("Invalid Parameter Value")
+			}
+			sliceString = append(sliceString, stringValue)
+		}
+		return sliceString, nil
+	}
+
+	repeaterString, ok := input.(string)
+	if !ok {
+		return nil, errors.New("Invalid Parameter Value")
+	}
+	return strings.Split(repeaterString, ","), nil
 }
 
 type GeneratorBotAPI struct {
@@ -118,21 +144,17 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
 	// This allows the repeater input to be either a string or a slice of strings
-	var repeater []string
-	repeaterSlice, ok := repeaterInput.([]string)
-	if ok {
-		repeater = repeaterSlice
-	} else {
-		repeaterString, ok := repeaterInput.(string)
-		if ok {
-			repeater = strings.Split(repeaterString, ",")
-		}
+	repeater, err := getRepeaterSlice(repeaterInput)
+	if err != nil {
+		return "", err
 	}
 
 	mergedStrings := []string{}
 	for _, key := range repeater {
 		result, err := gba.MergeString(map[string]interface{}{
-			"key": key,
+			"key":   key,
+			"start": "${",
+			"end":   "}",
 		}, templateString)
 		if err != nil {
 			return "", err
@@ -168,9 +190,11 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 	}
 
 	// Traverse the node to find merges
-	err = mergeNodes(node.Content[0], params, true)
-	if err != nil {
-		return nil, err
+	if len(node.Content) > 0 {
+		err = mergeNodes(node.Content[0], params, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return node, nil
@@ -213,8 +237,12 @@ func mergeNodes(node *yaml.Node, params map[string]interface{}, allowYaml bool) 
 		for _, merge := range match {
 			mergeValue := params[merge]
 			mergeString, ok := mergeValue.(string)
-			if ok && mergeString != "" {
+			if ok {
 				if allowYaml {
+					if mergeString == "" {
+						node.SetString("")
+						continue
+					}
 					newNode, err := mergeYamlString(mergeString, nil)
 					if err != nil {
 						return err

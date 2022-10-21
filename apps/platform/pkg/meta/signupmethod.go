@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewSignupMethod(key string) (*SignupMethod, error) {
@@ -38,6 +38,8 @@ type SignupMethod struct {
 	CreatedAt        int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public           bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type SignupMethodWrapper SignupMethod
 
 func (sm *SignupMethod) GetCollectionName() string {
 	return sm.GetBundleGroup().GetName()
@@ -110,7 +112,7 @@ func (sm *SignupMethod) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(sm)
+	return node.Decode((*SignupMethodWrapper)(sm))
 }
 
 func (sm *SignupMethod) IsPublic() bool {

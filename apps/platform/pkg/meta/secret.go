@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type Secret struct {
@@ -24,6 +24,8 @@ type Secret struct {
 	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type SecretWrapper Secret
 
 func NewSecret(key string) (*Secret, error) {
 	namespace, name, err := ParseKey(key)
@@ -107,7 +109,7 @@ func (s *Secret) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(s)
+	return node.Decode((*SecretWrapper)(s))
 }
 
 func (s *Secret) IsPublic() bool {

@@ -1,30 +1,40 @@
-import { Component, ErrorInfo } from "react"
-import { UtilityPropsPlus } from "../definition/definition"
+import { Component } from "react"
+import { BaseProps } from "../definition/definition"
 import ComponentError from "./componenterror"
 
 interface State {
-	error?: Error
+	error: Error | null
 }
 
-class ErrorBoundary extends Component<UtilityPropsPlus, State> {
-	public state: State = {}
+class ErrorBoundary extends Component<BaseProps, State> {
+	public state: State = { error: null }
+	public updatedWithError = false
 
 	public static getDerivedStateFromError(error: Error): State {
 		// Update state so the next render will show the fallback UI.
 		return { error }
 	}
 
-	public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-		console.error("Uncaught error:", error, errorInfo)
+	public componentDidMount() {
+		const { error } = this.state
+
+		if (error !== null) {
+			this.updatedWithError = true
+		}
 	}
 
 	public reset() {
-		this.setState({ error: undefined })
+		this.updatedWithError = false
+		this.setState({ error: null })
 	}
 
-	public componentDidUpdate(prevProps: UtilityPropsPlus, prevState: State) {
+	public componentDidUpdate() {
 		const { error } = this.state
-		if (error !== undefined && prevState.error !== undefined) {
+		if (error !== null && !this.updatedWithError) {
+			this.updatedWithError = true
+			return
+		}
+		if (error !== null) {
 			this.reset()
 		}
 	}

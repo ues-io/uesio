@@ -1,5 +1,6 @@
-import { hooks, styles, component, definition } from "@uesio/ui"
-import { FunctionComponent } from "react"
+import { hooks, styles, component, wire } from "@uesio/ui"
+import partition from "lodash/partition"
+import { FC } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/button/button"
@@ -9,13 +10,18 @@ import { TableUtilityProps } from "../../utility/table/table"
 
 import { ColumnDefinition, TableProps } from "./tabledefinition"
 
+type RecordContext = component.ItemContext<wire.WireRecord>
+
 const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
 const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
-const IOTable = component.getUtility<TableUtilityProps>("uesio/io.table")
+const IOTable =
+	component.getUtility<TableUtilityProps<RecordContext, ColumnDefinition>>(
+		"uesio/io.table"
+	)
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
-const Table: FunctionComponent<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
@@ -36,11 +42,23 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
-	const columnsToDisplay = definition.columns?.filter((columnDef) =>
-		component.useShouldDisplay(
-			context,
-			columnDef["uesio/io.column"] as definition.DefinitionMap
-		)
+	const columnsToDisplay = component.useShouldFilter(
+		definition.columns,
+		context
+	)
+
+	const data = wire?.getData() || []
+
+	const itemContexts = component.useContextFilter<wire.WireRecord>(
+		data,
+		definition.recordDisplay,
+		(record, context) =>
+			context.addFrame({
+				record: record.getId(),
+				wire: wire?.getId(),
+				fieldMode: mode,
+			}),
+		newContext
 	)
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
@@ -54,61 +72,36 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = columnsToDisplay?.map((columnDef) => {
-		const column = columnDef["uesio/io.column"] as ColumnDefinition
-		const fieldId = column.field
-		const fieldMetadata = collection.getField(fieldId)
-		return {
-			label: column.label || fieldMetadata?.getLabel() || "",
-		}
-	})
+	const maxPages = pageSize ? Math.ceil(itemContexts.length / pageSize) : 1
 
-	const data = wire.getData()
-	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
+	const paginated = paginate(itemContexts, currentPage, pageSize)
 
-	const paginated = paginate(data, currentPage, pageSize)
-	const rows = paginated.map((record, index) => {
-		const recordContext = newContext.addFrame({
-			record: record.getId(),
-			wire: wire.getId(),
-			fieldMode: mode,
-		})
-		return {
-			cells: columnsToDisplay?.map((columnDef) => {
-				const column = columnDef["uesio/io.column"] as ColumnDefinition
-				return column.components ? (
-					<component.Slot
-						definition={column}
-						listName="components"
-						path={`${path}["columns"]["${index}"]["uesio/io.column"]`}
-						accepts={["uesio.context"]}
-						direction="horizontal"
-						context={recordContext}
-					/>
-				) : (
-					<component.Component
-						componentType="uesio/io.field"
-						definition={{
-							fieldId: column.field,
-							labelPosition: "none",
-							"uesio.variant": "uesio/io.table",
-						}}
-						index={index}
-						path={`${path}["columns"]["${index}"]`}
-						context={recordContext}
-					/>
+	const [defaultActions, otherActions] = partition(
+		definition.rowactions,
+		(action) => action.type === "DEFAULT"
+	)
+
+	const defaultActionsFunc = defaultActions.length
+		? (recordContext: RecordContext) => {
+				const handler = uesio.signal.getHandler(
+					defaultActions.flatMap((action) => action.signals),
+					recordContext.context
 				)
-			}),
-			rowactions: definition.rowactions && (
+				handler?.()
+		  }
+		: undefined
+
+	const rowActionsFunc = otherActions.length
+		? (recordContext: RecordContext) => (
 				<Group
 					styles={{ root: { padding: "0 16px" } }}
 					columnGap={0}
-					context={recordContext}
+					context={recordContext.context}
 				>
-					{definition.rowactions.map((action, i) => {
+					{otherActions.map((action, i) => {
 						const handler = uesio.signal.getHandler(
 							action.signals,
-							recordContext
+							recordContext.context
 						)
 						return (
 							<Button
@@ -116,30 +109,72 @@ const Table: FunctionComponent<TableProps> = (props) => {
 								variant="uesio/io.nav"
 								className="rowaction"
 								label={action.text}
-								context={recordContext}
+								context={recordContext.context}
 								onClick={handler}
 							/>
 						)
 					})}
 				</Group>
-			),
-			isDeleted: record.isDeleted(),
+		  )
+		: undefined
+
+	const columnHeaderFunc = (column: ColumnDefinition) =>
+		column.label || collection.getField(column.field)?.getLabel() || ""
+
+	const cellFunc = (
+		column: ColumnDefinition,
+		recordContext: RecordContext,
+		columnIndex: number
+	) => {
+		const sharedProps = {
+			//key: recordContext.item.getId(),
+			path: `${path}["columns"]["${columnIndex}"]`,
+			context: recordContext.context,
 		}
-	})
+
+		return column.components ? (
+			<component.Slot
+				definition={column}
+				listName="components"
+				accepts={["uesio.context"]}
+				direction="HORIZONTAL"
+				{...sharedProps}
+			/>
+		) : (
+			<component.Component
+				componentType="uesio/io.field"
+				definition={{
+					fieldId: column.field,
+					user: column.user,
+					reference: column.reference,
+					labelPosition: "none",
+					wrapperVariant: "uesio/io.table",
+					"uesio.variant": "uesio/io.field:uesio/io.table",
+				}}
+				{...sharedProps}
+			/>
+		)
+	}
 
 	return (
 		<>
 			<IOTable
 				variant={definition["uesio.variant"]}
-				rows={rows}
-				columns={columns}
+				rows={paginated}
+				columns={columnsToDisplay}
 				context={context}
 				classes={classes}
-				showRowNumbers={definition.rownumbers}
-				rowNumberStart={pageSize * currentPage}
-				showRowActions={!!definition.rowactions}
+				rowNumberFunc={
+					definition.rownumbers
+						? (index: number) => pageSize * currentPage + index + ""
+						: undefined
+				}
+				defaultActionFunc={defaultActionsFunc}
+				rowActionsFunc={rowActionsFunc}
+				columnHeaderFunc={columnHeaderFunc}
+				cellFunc={cellFunc}
 			/>
-			{pageSize > 0 && (
+			{pageSize > 0 && maxPages > 1 && (
 				<Paginator
 					setPage={setCurrentPage}
 					currentPage={currentPage}

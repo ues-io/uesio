@@ -31,6 +31,7 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
 	Namespace             string                                 `json:"namespace"`
+	Type                  string                                 `json:"-"`
 	UniqueKey             []string                               `json:"uniqueKey"`
 	NameField             string                                 `json:"nameField"`
 	Createable            bool                                   `json:"createable"`
@@ -44,6 +45,14 @@ type CollectionMetadata struct {
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 	TableName             string                                 `json:"-"`
 	Public                bool                                   `json:"public"`
+}
+
+func (cm *CollectionMetadata) IsWriteProtected() bool {
+	return cm.Access == "protected" || cm.Access == "protected_write"
+}
+
+func (cm *CollectionMetadata) IsReadProtected() bool {
+	return cm.Access == "protected"
 }
 
 func (cm *CollectionMetadata) GetBytes() ([]byte, error) {

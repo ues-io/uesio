@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Migrate function
 func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
 	db := c.GetClient()

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type ComponentPack struct {
@@ -26,6 +26,8 @@ type ComponentPack struct {
 	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
 	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type ComponentPackWrapper ComponentPack
 
 func (cp *ComponentPack) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cp)
@@ -153,7 +155,7 @@ func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(cp)
+	return node.Decode((*ComponentPackWrapper)(cp))
 }
 
 func (cp *ComponentPack) IsPublic() bool {

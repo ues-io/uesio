@@ -61,8 +61,16 @@ const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
 
 const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))
 
-const getAncestorPath = (path: string, parents: number): string =>
-	path && parents ? getAncestorPath(getParentPath(path), parents - 1) : path
+/**
+ * Trims a path N levels up
+ * @param path
+ * @param n Number of items to slice off the path.
+ * @returns A shorter path, shorter by N items
+ */
+const getAncestorPath = (path: string, n: number): string => {
+	const arr = toPath(path)
+	return fromPath(arr.slice(0, arr.length - n))
+}
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
@@ -100,19 +108,25 @@ const getIndexFromPath = (path: string) => {
 	return indexString ? parseInt(indexString, 10) : null
 }
 
-/**
- * Trims a path N levels up
- * @param path
- * @param n
- * @returns A shorter path, shorter by N levels
- */
-const trim = (path: string, n: number) => {
-	const arr = toPath(path)
-	return fromPath(arr.slice(0, arr.length - n))
+const parseRelativePath = (relativePath: string, basePath: string) => {
+	// Clean strings starting with './', we don't need that
+	const niceString = relativePath.startsWith("./")
+		? relativePath.replace("./", "")
+		: relativePath
+	// get the N levels up the tree
+	const arr = niceString.split("../")
+
+	const startingPath = getAncestorPath(basePath, arr.length)
+	const endingPath = arr
+		.pop()
+		?.split("/")
+		.map((el) => `["${el}"]`)
+		.join("")
+
+	return startingPath + endingPath
 }
 
 export {
-	trim,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
@@ -130,4 +144,5 @@ export {
 	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,
+	parseRelativePath,
 }

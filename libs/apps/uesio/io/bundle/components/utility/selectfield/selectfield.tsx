@@ -53,6 +53,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 						key={option.value}
 						value={option.value}
 						hidden={option.disabled}
+						title={option.title}
 					>
 						{option.label}
 					</option>

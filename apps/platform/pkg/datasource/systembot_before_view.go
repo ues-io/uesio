@@ -6,10 +6,6 @@ import (
 )
 
 func runViewBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return processView(request, connection, session)
-}
-
-func processView(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	return request.LoopInserts(func(change *adapt.ChangeItem) error {
 		err := addViewDefaultDefinition(change)
 		if err != nil {

@@ -30,7 +30,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			{Object.keys(namespaces || {}).map((entry) => (
+			{namespaces.map((entry) => (
 				<TranslationItem
 					key={entry}
 					value={originalValue}

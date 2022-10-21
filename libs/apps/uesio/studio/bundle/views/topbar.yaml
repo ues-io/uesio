@@ -10,7 +10,7 @@ definition:
             alignItems: center
             height: 60px
             backgroundColor: "#F2F2F2"
-        templateColumns: 58px 0fr 1fr 0fr
+        templateColumns: 58px 1fr 1fr 0fr
         items:
           # Uesio Logo
           - uesio/io.griditem:
@@ -251,7 +251,12 @@ definition:
                     text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
-
+                - uesio/io.button:
+                    uesio.variant: uesio/io.nav
+                    text: Profile
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: myprofile
           # Avatar
           - uesio/io.griditem:
               components:

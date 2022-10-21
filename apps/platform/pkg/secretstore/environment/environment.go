@@ -5,7 +5,6 @@ import (
 	"os"
 )
 
-// SecretStore struct
 type SecretStore struct {
 }
 
@@ -19,7 +18,6 @@ var secretValues = map[string]string{
 	"uesio/core:db_database":           os.Getenv("UESIO_DB_DATABASE"),
 }
 
-// Get function
 func (ss *SecretStore) Get(key string) (string, error) {
 	value, ok := secretValues[key]
 	if !ok {
@@ -28,7 +26,6 @@ func (ss *SecretStore) Get(key string) (string, error) {
 	return value, nil
 }
 
-// Set function
 func (ss *SecretStore) Set(key, value string) error {
 	return errors.New("You cannot set secret values in the environment store")
 }

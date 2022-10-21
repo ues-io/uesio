@@ -268,8 +268,8 @@ const platform = {
 		buildMode?: boolean
 	) => {
 		const prefix = getPrefix(context)
-		const buildModeSuffix = buildMode ? "/builder" : ""
-		return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
+		const buildModeSuffix = buildMode ? "builder.js" : "runtime.js"
+		return `${prefix}/componentpacks/${namespace}/${name}/${buildModeSuffix}`
 	},
 	getMetadataList: async (
 		context: Context,
@@ -299,7 +299,7 @@ const platform = {
 	getAvailableNamespaces: async (
 		context: Context,
 		metadataType?: MetadataType
-	): Promise<Record<string, boolean>> => {
+	): Promise<string[]> => {
 		const prefix = getPrefix(context)
 		const mdType = metadataType && METADATA[metadataType]
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
@@ -400,6 +400,30 @@ const platform = {
 	logout: async (): Promise<LoginResponse> => {
 		const response = await postJSON("/site/auth/logout")
 		return respondJSON(response)
+	},
+	forgotPassword: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/forgotpassword`,
+			requestBody
+		)
+
+		return respondVoid(response)
+	},
+	forgotPasswordConfirm: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/forgotpassword/confirm`,
+			requestBody
+		)
+
+		return respondVoid(response)
 	},
 	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
 		const prefix = getPrefix(context)

@@ -1,10 +1,13 @@
 import { FC } from "react"
 import {
 	BaseProps,
+	DefinitionMap,
 	UtilityProps,
-	UtilityPropsPlus,
 } from "../definition/definition"
-import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
+import {
+	ActionDescriptor,
+	BuildPropertiesDefinition,
+} from "../buildmode/buildpropdefinition"
 import {
 	parseKey,
 	getFullPathParts,
@@ -23,10 +26,11 @@ import {
 	getParamPropsDef,
 } from "./builtinpropsdefs"
 import { MetadataKey } from "../bands/builder/types"
+import get from "lodash/get"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
-const utilityRegistry: Registry<FC<UtilityPropsPlus>> = {}
+const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
@@ -105,9 +109,22 @@ const trimPath = (pathArray: string[]): string[] => {
 	return trimPath(pathArray)
 }
 
+const standardActions: ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONE" },
+]
+
+const standardMapActions: ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONEKEY" },
+]
+
 const getPropertiesDefinitionFromPath = (
-	path: string
-): [BuildPropertiesDefinition | undefined, string] => {
+	path: string,
+	definition: DefinitionMap | undefined
+): [BuildPropertiesDefinition, string] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	if (metadataType === "component")
 		return [getPropertiesDefinition(metadataItem), localPath]
@@ -116,8 +133,16 @@ const getPropertiesDefinitionFromPath = (
 		const propDef = getPropertiesDefinition(
 			`${namespace}.${name}` as MetadataKey
 		)
-		propDef.type = "componentvariant"
-		return [propDef, localPath]
+		return [
+			{
+				...propDef,
+				title: "Component Variant",
+				type: "componentvariant",
+				sections: [],
+				properties: [],
+			},
+			localPath,
+		]
 	}
 	if (metadataType === "componenttype") {
 		return [
@@ -141,26 +166,89 @@ const getPropertiesDefinitionFromPath = (
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 		if (pathArray[0] === "wires") {
-			return [getWirePropsDef(), fromPath(pathArray.slice(0, 2))]
+			const wirePropsDef = getWirePropsDef()
+			return [
+				{
+					...wirePropsDef,
+					actions: standardMapActions.concat(
+						...(wirePropsDef.actions || [])
+					),
+				},
+				fromPath(pathArray.slice(0, 2)),
+			]
 		}
 		if (pathArray[0] === "panels" && pathArray.length === 2) {
-			return [getPanelPropsDef(), fromPath(pathArray.slice(0, 2))]
+			const panelsPropDef = getPanelPropsDef()
+			const trimmedPath = fromPath(pathArray.slice(0, 2))
+			const panelDef = get(definition, trimmedPath) as DefinitionMap
+			const componentType = panelDef["uesio.type"] as
+				| MetadataKey
+				| undefined
+			if (!componentType) return [panelsPropDef, trimmedPath]
+			const componentPropsDef = getPropertiesDefinition(componentType)
+			if (!componentPropsDef.properties)
+				return [panelsPropDef, trimmedPath]
+			return [
+				{
+					...panelsPropDef,
+					properties: panelsPropDef?.properties?.concat(
+						componentPropsDef.properties
+					),
+					actions: standardMapActions.concat(
+						...(panelsPropDef.actions || [])
+					),
+				},
+				trimmedPath,
+			]
 		}
 		if (pathArray[0] === "params") {
-			return [getParamPropsDef(), fromPath(pathArray.slice(0, 2))]
+			const paramsPropsDef = getParamPropsDef()
+			return [
+				{
+					...paramsPropsDef,
+					actions: standardMapActions.concat(
+						...(paramsPropsDef.actions || [])
+					),
+				},
+				fromPath(pathArray.slice(0, 2)),
+			]
 		}
 
 		const trimmedPath = trimPath(pathArray)
-		const componentFullName = getKeyAtPath(fromPath(trimmedPath))
+		const trimmedPathString = fromPath(trimmedPath)
+		const componentFullName = getKeyAtPath(trimmedPathString) as MetadataKey
 		if (componentFullName) {
+			const componentPropsDef = getPropertiesDefinition(componentFullName)
 			return [
-				getPropertiesDefinition(componentFullName as MetadataKey),
-				fromPath(trimmedPath),
+				{
+					...componentPropsDef,
+					sections: componentPropsDef.sections.concat([
+						{
+							title: "Styles",
+							type: "STYLES",
+						},
+						{
+							title: "Display",
+							type: "CONDITIONALDISPLAY",
+						},
+					]),
+					actions: standardActions.concat(
+						...(componentPropsDef.actions || [])
+					),
+				},
+				trimmedPathString,
 			]
 		}
 	}
 
-	return [undefined, localPath]
+	return [
+		{
+			title: "Nothing Selected",
+			defaultDefinition: () => ({}),
+			sections: [],
+		},
+		localPath,
+	]
 }
 const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).flatMap((fullName) => {

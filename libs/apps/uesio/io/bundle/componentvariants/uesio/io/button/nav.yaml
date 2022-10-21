@@ -9,5 +9,5 @@ definition:
       padding: 10px
       textTransform: uppercase
       "&:focus":
-        color: $Theme{color.primary.darken}
+        color: $Theme{color.primary}
 public: true

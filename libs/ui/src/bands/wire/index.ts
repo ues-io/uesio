@@ -56,6 +56,11 @@ type AddConditionPayload = {
 	condition: WireConditionState
 } & EntityPayload
 
+type SetConditionValuePayload = {
+	id: string
+	value: string
+} & EntityPayload
+
 type RemoveOrderPayload = {
 	fields: string[]
 } & EntityPayload
@@ -72,12 +77,6 @@ type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
-type ResetWirePayload = {
-	data: Record<string, PlainWireRecord>
-	original: Record<string, PlainWireRecord>
-	changes: Record<string, PlainWireRecord>
-} & EntityPayload
-
 type WireLoadAction = PayloadAction<
 	[PlainWire[], Record<string, PlainCollection>]
 >
@@ -88,19 +87,48 @@ const wireAdapter = createEntityAdapter<PlainWire>({
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
 
+const getWires = (
+	wires: string[] | string | undefined,
+	context: Context
+): PlainWire[] => {
+	const viewId = context.getViewId()
+	if (!viewId) throw new Error("No ViewId in Context")
+	const wiresArray = Array.isArray(wires) ? wires : [wires]
+	return wiresArray.flatMap((wirename) => {
+		const wire = getWire(viewId, wirename)
+		if (!wire) throw new Error("Bad Wire!")
+		return wire
+	})
+}
+
+const addLookupWires = (wires: PlainWire[], context: Context): PlainWire[] => {
+	const wireNamesToLookup = wires.flatMap(
+		(wire) =>
+			wire.conditions?.flatMap((c) => {
+				const lookupWire = "lookupWire" in c && c.lookupWire
+				if (!lookupWire) return []
+				// Now check to make sure we're not already loading this wire
+				return wires.find((wire) => wire.name === lookupWire)
+					? []
+					: [lookupWire]
+			}) || []
+	)
+
+	// If we don't have any lookup wires, quit
+	if (!wireNamesToLookup.length) return wires
+
+	const lookupWires = getWires(wireNamesToLookup, context)
+
+	// Recursively lookup wires
+	return addLookupWires(lookupWires, context).concat(wires)
+}
+
 const getWiresFromDefinitonOrContext = (
 	wires: string[] | string | undefined,
 	context: Context
 ): PlainWire[] => {
 	if (wires) {
-		const viewId = context.getViewId()
-		if (!viewId) throw new Error("No ViewId in Context")
-		const wiresArray = Array.isArray(wires) ? wires : [wires]
-		return wiresArray.flatMap((wirename) => {
-			const wire = getWire(viewId, wirename)
-			if (!wire) throw new Error("Bad Wire!")
-			return wire
-		})
+		return getWires(wires, context)
 	}
 	const wire = context.getPlainWire()
 	if (!wire) throw new Error("No Wire in Definition or Context")
@@ -145,7 +173,6 @@ const wireSlice = createSlice({
 		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
-				if (!state.deletes) state.deletes = {}
 				state.deletes[recordId] = {
 					[ID_FIELD]: state.data[recordId][ID_FIELD],
 				}
@@ -153,14 +180,11 @@ const wireSlice = createSlice({
 		),
 		unmarkForDelete: createEntityReducer<UndeletePayload, PlainWire>(
 			(state, { recordId }) => {
-				if (!state.deletes) return
 				delete state.deletes[recordId]
 			}
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data }
-				if (!state.changes) state.changes = {}
 				const usePath = [recordId].concat(path)
 				const basePath = [recordId].concat([path[0]])
 				set(state.data, usePath, record)
@@ -173,7 +197,6 @@ const wireSlice = createSlice({
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { record, recordId, path }) => {
-				if (!state.original) state.original = { ...state.data }
 				const usePath = [recordId].concat(path)
 				set(state.data, usePath, record)
 				set(state.original, usePath, record)
@@ -181,9 +204,7 @@ const wireSlice = createSlice({
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
 			(state, { record, recordId, prepend }) => {
-				if (!state.original) state.original = { ...state.data }
 				const newRecord = { [recordId]: record || {} }
-
 				state.data = {
 					...(prepend && newRecord),
 					...state.data,
@@ -193,7 +214,7 @@ const wireSlice = createSlice({
 			}
 		),
 		cancel: createEntityReducer<EntityPayload, PlainWire>((state) => {
-			if (state.original) state.data = state.original
+			state.data = state.original
 			state.changes = {}
 			state.deletes = {}
 			state.errors = {}
@@ -206,15 +227,13 @@ const wireSlice = createSlice({
 			state.deletes = {}
 			state.errors = {}
 		}),
-		reset: createEntityReducer<ResetWirePayload, PlainWire>(
-			(state, { data, changes, original }) => {
-				state.data = data
-				state.changes = changes
-				state.original = original
-				state.deletes = {}
-				state.errors = {}
-			}
-		),
+		reset: createEntityReducer<EntityPayload, PlainWire>((state) => {
+			state.data = {}
+			state.changes = {}
+			state.original = {}
+			state.deletes = {}
+			state.errors = {}
+		}),
 		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
 			(state, { condition }) => {
 				if (!state.conditions) state.conditions = []
@@ -231,6 +250,16 @@ const wireSlice = createSlice({
 				})
 			}
 		),
+		setConditionValue: createEntityReducer<
+			SetConditionValuePayload,
+			PlainWire
+		>((state, { value, id }) => {
+			if (!state.conditions) state.conditions = []
+			const condition = state.conditions.find(
+				(existingCondition) => existingCondition.id === id
+			)
+			if (condition && "value" in condition) condition.value = value
+		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
 				if (!state.conditions) return
@@ -331,7 +360,7 @@ const wireSlice = createSlice({
 				Object.keys(wire.deletes).forEach((tempId) => {
 					delete data[tempId]
 					delete original[tempId]
-					if (wireState.deletes) delete wireState.deletes[tempId]
+					delete wireState.deletes[tempId]
 				})
 
 				wireState.errors = undefined
@@ -382,6 +411,7 @@ export {
 	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
+	addLookupWires,
 }
 
 export const {
@@ -406,5 +436,6 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	setConditionValue,
 } = wireSlice.actions
 export default wireSlice.reducer

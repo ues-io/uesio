@@ -7,6 +7,14 @@
         <style>
             {{template "fonts.css"}}
         </style>
+        {{- if .DevMode -}}
+        <script src="/static/vendor/react.development.js"></script>
+        <script src="/static/vendor/react-dom.development.js"></script>
+        {{- else -}}
+        <script src="/static/vendor/react.production.min.js"></script>
+        <script src="/static/vendor/react-dom.production.min.js"></script>
+        {{- end -}}
+        <script src="/static/vendor/emotion-css.umd.min.js"></script>
         <script src="/static/ui/uesio.js" type="module"></script>
     </head>
 <body>
@@ -16,14 +24,25 @@
         window.uesio = uesio
     </script>
     {{$workspace := .Route.Workspace -}}
-    {{- if .PreloadMetadata.ComponentPack -}}
-    {{- range .PreloadMetadata.ComponentPack.IDs -}}
-    {{- $packURL := getPackURL . $workspace -}}
-    {{- if $packURL -}}
-    <script src="{{$packURL}}" type="module"></script>
+    {{$buildMode := .BuildMode -}}
+    {{- if .PreloadMetadata -}}
+        {{- if .PreloadMetadata.ComponentPack -}}
+            {{- range .PreloadMetadata.ComponentPack.IDs -}}
+                {{- $packURL := getPackURL . $workspace false -}}
+                {{- if $packURL -}}
+                <script src="{{$packURL}}" type="module"></script>
+                {{- end -}}
+            {{- end -}}
+            {{- if $buildMode -}}
+                {{- range .PreloadMetadata.ComponentPack.IDs -}}
+                    {{- $packURL := getPackURL . $workspace true -}}
+                    {{- if $packURL -}}
+                    <script src="{{$packURL}}" type="module"></script>
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
     {{- end -}}
-    {{- end -}}
-    {{- end }}
     <script type="module">
         uesio.loader(document.querySelector("#root"), {{.}});
     </script>

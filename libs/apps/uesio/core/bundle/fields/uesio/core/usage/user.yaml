@@ -1,3 +1,4 @@
 name: user
-type: "TEXT"
+type: USER
 label: "User"
+createOnly: true

@@ -12,22 +12,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]routing.MetadataResponse, error) {
-	collectionKeyMap := map[string]routing.MetadataResponse{}
+func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]datasource.MetadataResponse, error) {
+	collectionKeyMap := map[string]datasource.MetadataResponse{}
 
-	conditions := meta.BundleConditions{}
-	// Special handling for fields for now
-	if metadatatype == "fields" {
-		conditions["uesio/studio.collection"] = grouping
-	} else if metadatatype == "bots" {
-		conditions["uesio/studio.type"] = grouping
-	} else if metadatatype == "componentvariants" {
-		conditions["uesio/studio.component"] = grouping
-	}
+	conditions := meta.GetGroupingConditions(metadatatype, grouping)
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)
 	if err != nil {
@@ -49,12 +40,12 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 		namespaces := session.GetContextNamespaces()
 		appNames = []string{}
-		for ns := range namespaces {
+		for _, ns := range namespaces {
 			appNames = append(appNames, ns)
 		}
 	}
 
-	appData, err := routing.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames, session)
 	if err != nil {
 		return nil, err
 	}

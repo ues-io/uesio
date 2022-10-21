@@ -34,6 +34,11 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    allcollections:
+      collection: uesio/studio.allmetadata
+      conditions:
+        - field: uesio/studio.type
+          value: "collections"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -71,8 +76,14 @@ definition:
                               padding: 40px
                               display: grid
                           components:
-                            - uesio/studio.collectionlist:
-                                uesio.context:
-                                  siteadmin:
-                                    name: $Param{sitename}
-                                    app: $Param{app}
+                            - uesio/io.table:
+                                wire: allcollections
+                                columns:
+                                  - field: uesio/studio.name
+                                  - field: uesio/studio.namespace
+                                rowactions:
+                                  - text: Details
+                                    signals:
+                                      - signal: route/NAVIGATE
+                                        path: "app/$Param{app}/site/$Param{sitename}/data/${uesio/studio.namespace}/${uesio/studio.name}"
+                                pagesize: 10

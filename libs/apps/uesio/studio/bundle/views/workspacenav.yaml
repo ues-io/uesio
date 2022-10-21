@@ -87,6 +87,40 @@ definition:
               uesio.variant: uesio/io.nav
               title: User Interface
           - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: views
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
+              content:
+                - uesio/io.text:
+                    text: Views
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: view_quilt
+          - uesio/io.tile:
+              uesio.variant: uesio/io.nav
+              uesio.classes:
+                selected:
+                  - type: paramValue
+                    param: selected
+                    value: routes
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
+              content:
+                - uesio/io.text:
+                    text: Routes
+              avatar:
+                - uesio/io.text:
+                    uesio.variant: uesio/io.icon
+                    text: map
+          - uesio/io.tile:
               uesio.display:
                 - type: featureFlag
                   name: manage_components
@@ -112,23 +146,6 @@ definition:
                 selected:
                   - type: paramValue
                     param: selected
-                    value: routes
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/routes
-              content:
-                - uesio/io.text:
-                    text: Routes
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: map
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
                     value: themes
               signals:
                 - signal: "route/NAVIGATE"
@@ -140,23 +157,6 @@ definition:
                 - uesio/io.text:
                     uesio.variant: uesio/io.icon
                     text: palette
-          - uesio/io.tile:
-              uesio.variant: uesio/io.nav
-              uesio.classes:
-                selected:
-                  - type: paramValue
-                    param: selected
-                    value: views
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${uesio/studio.app->uesio/core.uniquekey}/workspace/${uesio/studio.name}/views
-              content:
-                - uesio/io.text:
-                    text: Views
-              avatar:
-                - uesio/io.text:
-                    uesio.variant: uesio/io.icon
-                    text: view_quilt
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
               uesio.classes:

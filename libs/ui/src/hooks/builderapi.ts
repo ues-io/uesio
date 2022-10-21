@@ -45,13 +45,9 @@ import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 import { useEffect, useState } from "react"
-import {
-	dispatchRouteDeps,
-	getPackUrls,
-	getPackUrlsForDeps,
-} from "../bands/route/utils"
+import { dispatchRouteDeps, getPackUrlsForDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 
 class BuilderAPI {
@@ -176,8 +172,11 @@ class BuilderAPI {
 		appDispatch()(cloneKeyDefinition({ path, newKey }))
 	}
 
-	setDefinition = (path: string, definition: Definition) =>
-		appDispatch()(setDefinition({ path, definition }))
+	setDefinition = (
+		path: string,
+		definition: Definition,
+		autoSelect?: boolean
+	) => appDispatch()(setDefinition({ path, definition, autoSelect }))
 
 	addDefinition(
 		path: string,
@@ -277,7 +276,10 @@ class BuilderAPI {
 		return this.getDefinition(state, metadataType, metadataItem, localPath)
 	}
 
-	getNamespaceInfo = () => getCurrentState().builder.namespaces || {}
+	getNamespaceInfo = (ns: string) => {
+		const namespaces = getCurrentState().builder.namespaces || {}
+		return namespaces[ns]
+	}
 
 	getDefinition = (
 		state: RootState,
@@ -329,19 +331,15 @@ class BuilderAPI {
 
 	useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
 		const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)
+		const isPreLoaded = isLoaded || !!getCurrentState().builder.namespaces
 		useEffect(() => {
-			if (!buildMode || isLoaded) return
+			if (!buildMode || isLoaded || isPreLoaded) return
 			;(async () => {
 				const response = await platform.getBuilderDeps(context)
 
 				const packsToLoad = getPackUrlsForDeps(response, context, true)
-				const studioPacks = getPackUrls(
-					"uesio/studio.main",
-					new Context(),
-					true
-				)
 
-				await loadScripts([...packsToLoad, ...studioPacks])
+				await loadScripts(packsToLoad)
 				batch(() => {
 					dispatchRouteDeps(response, appDispatch())
 				})
@@ -349,7 +347,7 @@ class BuilderAPI {
 				setIsLoaded(true)
 			})()
 		}, [buildMode])
-		return isLoaded
+		return isLoaded || isPreLoaded
 	}
 }
 

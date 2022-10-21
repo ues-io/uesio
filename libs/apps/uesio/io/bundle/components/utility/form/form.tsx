@@ -41,19 +41,19 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								listName="content"
 								path={`${path}["content"]`}
 								accepts={[]}
-								direction="horizontal"
+								direction="HORIZONTAL"
 								context={recordContext}
 							/>
 						) : (
-							Object.entries(wire.getFields()).map(([key]) => (
+							wire.getFields().map((field) => (
 								<component.Component
-									key={record.getId() + key}
+									key={record.getId() + field.id}
 									componentType="uesio/io.field"
 									definition={{
-										fieldId: key,
+										fieldId: field.id,
 									}}
 									index={i}
-									path={`${path}["${key}"]["${i}"]`}
+									path={`${path}["${field.id}"]["${i}"]`}
 									context={recordContext}
 								/>
 							))

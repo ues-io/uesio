@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
 type SpecialReferences struct {
@@ -50,11 +51,12 @@ func processConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
+	session *sess.Session,
 ) error {
 
 	for i, condition := range op.Conditions {
 
-		if condition.ValueSource == "" {
+		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
 			// make sure the condition value is a string
 			stringValue, ok := condition.Value.(string)
 			if !ok {
@@ -67,6 +69,16 @@ func processConditions(
 						return nil, errors.New("missing param " + key)
 					}
 					return val, nil
+				},
+				"User": func(m map[string]interface{}, key string) (interface{}, error) {
+
+					userID := session.GetUserID()
+
+					if key == "id" {
+						return userID, nil
+					}
+
+					return nil, nil
 				},
 			})
 			if err != nil {
@@ -259,33 +271,32 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	}
 
 	// Loop over the ops and batch per data source
-	for i := range ops {
+	for _, op := range ops {
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
-		for j := range ops[i].Fields {
-			if ops[i].Fields[j].ID == adapt.ID_FIELD {
+		for i := range op.Fields {
+			if op.Fields[i].ID == adapt.ID_FIELD {
 				hasIDField = true
 				break
 			}
-			if ops[i].Fields[j].ID == adapt.UNIQUE_KEY_FIELD {
+			if op.Fields[i].ID == adapt.UNIQUE_KEY_FIELD {
 				hasUniqueKeyField = true
 				break
 			}
 		}
 		if !hasIDField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.ID_FIELD,
 			})
 		}
 
 		if !hasUniqueKeyField {
-			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			op.Fields = append(op.Fields, adapt.LoadRequestField{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			})
 		}
 
-		op := ops[i]
 		err := getMetadataForLoad(op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
@@ -308,7 +319,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Query {
-			batch = append(batch, ops[i])
+			batch = append(batch, op)
 		}
 		collated[dsKey] = batch
 	}
@@ -321,30 +332,40 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	tokens := session.GetTokens()
-
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, tokens, metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
 
 		for _, op := range batch {
 
-			err := processConditions(op, metadataResponse, batch)
+			err := processConditions(op, metadataResponse, batch, session)
 			if err != nil {
 				return nil, err
 			}
 
-			err = connection.Load(op)
+			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 			if err != nil {
 				return nil, err
 			}
-			go RegisterUsageEvent("LOAD", session.GetUserID(), "DATASOURCE", dsKey, connection)
+
+			if collectionMetadata.Type == "DYNAMIC" {
+				err := runDynamicCollectionLoadBots(op, connection, session)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			err = connection.Load(op, session)
+			if err != nil {
+				return nil, err
+			}
+			go usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+			go usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
 		}
-
 	}
 	return metadataResponse, nil
 }

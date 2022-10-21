@@ -3,7 +3,7 @@ import { ButtonProps } from "./buttondefinition"
 import Button from "./button"
 import { styles, component } from "@uesio/ui"
 
-const BuildWrapper = component.getUtility("uesio/studio.buildwrapper")
+const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 	const classes = styles.useStyles(

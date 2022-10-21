@@ -130,7 +130,16 @@ definition:
                                                   uesio.variant: uesio/io.secondary
                                                   text: Package New Version
                                                   signals:
+                                                    - signal: notification/ADD
+                                                      id: newversion
+                                                      text: We are creating your new bundle
+                                                      details: it may take a while, please wait until this notification disappears.
+                                                      severity: info
                                                     - signal: "bot/CALL"
+                                                      onerror:
+                                                        signals:
+                                                          - signal: notification/REMOVE
+                                                            id: newversion
                                                       bot: "uesio/studio.createbundle"
                                                       uesio.context:
                                                         workspace:

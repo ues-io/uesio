@@ -3,15 +3,23 @@ package cache
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/gomodule/redigo/redis"
 )
 
 var redisPool *redis.Pool
+var redisTTL = strconv.Itoa(60 * 60 * 24)
 
 func init() {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPort := os.Getenv("REDIS_PORT")
+	redisTTLValue := os.Getenv("REDIS_TTL")
+
+	if redisTTLValue != "" {
+		redisTTL = redisTTLValue
+	}
+
 	redisAddr := fmt.Sprintf("%s:%s", redisHost, redisPort)
 
 	const maxConnections = 10
@@ -23,6 +31,10 @@ func init() {
 
 func GetRedisConn() redis.Conn {
 	return redisPool.Get()
+}
+
+func GetRedisTTL() string {
+	return redisTTL
 }
 
 func DeleteKeys(keys []string) error {
@@ -41,10 +53,21 @@ func DeleteKeys(keys []string) error {
 func SetHash(key string, data map[string]string) error {
 	conn := GetRedisConn()
 	defer conn.Close()
-	_, err := conn.Do("HSET", redis.Args{}.Add(key).AddFlat(data)...)
+
+	conn.Send("HSET", redis.Args{}.Add(key).AddFlat(data)...)
+	conn.Send("EXPIRE", key, redisTTL)
+	conn.Flush()
+
+	_, err := conn.Receive()
 	if err != nil {
 		return fmt.Errorf("Error Setting cache value: " + err.Error())
 	}
+
+	_, err = conn.Receive()
+	if err != nil {
+		fmt.Println("Error Setting cache value: " + err.Error())
+	}
+
 	return nil
 }
 

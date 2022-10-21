@@ -20,6 +20,8 @@ type BotDialect interface {
 
 type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
 
+type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
+
 type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
 
 var botDialectMap = map[string]BotDialect{}
@@ -100,6 +102,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runFieldBeforeSaveBot
 	case "uesio/studio.view":
 		botFunction = runViewBeforeSaveBot
+	case "uesio/studio.theme":
+		botFunction = runThemeBeforeSaveBot
 	case "uesio/studio.route":
 		botFunction = runRouteBeforeSaveBot
 	case "uesio/studio.collection":
@@ -110,6 +114,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runAppBeforeSaveBot
 	case "uesio/core.usage":
 		botFunction = runUsageBeforeSaveBot
+	case "uesio/core.user":
+		botFunction = runUserBeforeSaveBot
 	}
 
 	if botFunction != nil {
@@ -128,6 +134,24 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		return err
 	}
 
+	return nil
+}
+
+func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	var botFunction LoadBotFunc
+
+	switch op.CollectionName {
+	case "uesio/studio.allmetadata":
+		botFunction = runAllMetadataLoadBot
+	}
+
+	if botFunction != nil {
+		err := botFunction(op, connection, session)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -151,7 +175,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	case "uesio/studio.workspace":
 		botFunction = runWorkspaceAfterSaveBot
 	case "uesio/studio.bundle":
-		botFunction = runBundlenAfterSaveBot
+		botFunction = runBundleAfterSaveBot
 	}
 
 	if botFunction != nil {

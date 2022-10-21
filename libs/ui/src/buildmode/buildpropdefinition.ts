@@ -84,6 +84,7 @@ interface PropListsSection extends BasePropSection {
 	properties: PropDescriptor[]
 	nameTemplate: string
 	nameFallback: string
+	defaultDefinition?: () => Definition
 }
 
 interface StylesSection extends BasePropSection {
@@ -124,8 +125,9 @@ type PropDescriptor =
 	| IconProp
 	| ParamProp
 	| ParamsProp
-	| WireFieldsProp
 	| FieldProp
+	| FieldsProp
+	| PropListsProp
 	| PropListProp
 
 type BasePropDescriptor = {
@@ -238,19 +240,24 @@ interface ComponentTargetProp extends BasePropDescriptor {
 	type: "COMPONENT"
 	scope: string
 }
-
-interface WireFieldsProp extends BasePropDescriptor {
-	type: "WIRE_FIELDS"
-}
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
 	wireField: string
 }
-interface PropListProp extends BasePropDescriptor {
+interface FieldsProp extends BasePropDescriptor {
+	type: "FIELDS"
+	wireField: string
+}
+interface PropListsProp extends BasePropDescriptor {
 	type: "PROPLISTS"
 	properties: PropDescriptor[]
 	nameTemplate: string
 }
+interface PropListProp extends BasePropDescriptor {
+	type: "PROPLIST"
+	properties: PropDescriptor[]
+}
+
 type ActionDescriptor =
 	| AddAction
 	| CustomAction
@@ -377,8 +384,9 @@ export {
 	PropListsSection,
 	ConditionalDisplayProp,
 	OrderSection,
-	WireFieldsProp,
 	PropListProp,
+	PropListsProp,
 	AddCondition,
 	FieldProp,
+	FieldsProp,
 }

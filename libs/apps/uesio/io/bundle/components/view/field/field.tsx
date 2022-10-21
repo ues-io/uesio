@@ -33,7 +33,7 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs, reference, options, placeholder } =
+	const { fieldId, id, displayAs, reference, options, placeholder, user } =
 		definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
@@ -51,7 +51,8 @@ const getFieldContent = (
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
-		variant: definition["uesio.variant"],
+		variant:
+			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 		options,
 		placeholder,
 	}
@@ -111,7 +112,7 @@ const getFieldContent = (
 		case type === "FILE":
 			return <File {...common} />
 		case type === "USER":
-			return <UserField {...common} options={reference} />
+			return <UserField {...common} options={user} />
 		case type === "LIST":
 			return (
 				<ListField
@@ -151,6 +152,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			wire={wire}
 			record={record}
 			fieldId={fieldId}
+			variant={definition.wrapperVariant}
 		>
 			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>

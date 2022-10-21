@@ -18,7 +18,7 @@ import { PlainWire } from "./types"
 import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -31,8 +31,7 @@ class Wire {
 	getId = () => this.source.name
 	getFullId = () => getFullWireId(this.source.view, this.source.name)
 	getCollection = () => this.collection
-	isMarkedForDeletion = (recordId: string) =>
-		!!this.source.deletes?.[recordId]
+	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
 	isViewOnly = () => this.source?.viewOnly || false
 	getBatchId = () => this.source.batchid
 
