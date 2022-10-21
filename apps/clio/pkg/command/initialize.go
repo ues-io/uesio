@@ -85,7 +85,7 @@ func getAnswers(sessid string) (string, string, string, string, error) {
 
 func Initialize() error {
 
-	fmt.Println("Running Initialize Command 5")
+	fmt.Println("Running Initialize Command")
 
 	_, err := auth.Login()
 	if err != nil {
