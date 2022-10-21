@@ -59,7 +59,9 @@ const LayoutTemplateButton: FC<T> = (props) => {
 	)
 }
 
-const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
+const LayoutTemplateProp: builder.PropComponent<builder.CustomProp> = (
+	props
+) => {
 	const valueAPI = props.valueAPI
 	const uesio = hooks.useUesio(props)
 	const { path: dirtyPath, context } = props
@@ -120,7 +122,7 @@ const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
 			const columnDef = columnKey
 				? (columnKey["lab.column"] as definition.DefinitionMap)
 				: (component.registry
-						.getPropertiesDefinition("lab.column")
+						.getPropertiesDefinition("uesio/lab.column")
 						.defaultDefinition() as definition.DefinitionMap)
 			return {
 				["lab.column"]: {

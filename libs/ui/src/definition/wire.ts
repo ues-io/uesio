@@ -1,8 +1,8 @@
 import { WireDefault } from "../bands/wire/defaults/defaults"
 import { FieldType, ReferenceMetadata } from "../bands/field/types"
 import { SignalDefinition } from "./signal"
-import { MetadataKey } from "../metadataexports"
 import { WireConditionState } from "../bands/wire/conditions/conditions"
+import { MetadataKey } from "../bands/builder/types"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }

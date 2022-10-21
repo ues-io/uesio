@@ -1,8 +1,8 @@
 package adapt
 
 import (
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"gopkg.in/yaml.v3"
 )
 
 func unmarshalConditions(node *yaml.Node) ([]LoadRequestCondition, error) {

@@ -4,7 +4,7 @@ import Table from "./table"
 import { styles, component, hooks } from "@uesio/ui"
 import WireHelper from "../../utility/wirehelper/wirehelper"
 
-const BuildWrapper = component.getUtility("uesio/studio.buildwrapper")
+const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const TableBuilder: FunctionComponent<TableProps> = (props) => {
 	const { context, definition } = props

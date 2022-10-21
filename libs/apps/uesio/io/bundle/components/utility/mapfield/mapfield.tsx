@@ -1,5 +1,12 @@
 import { FunctionComponent } from "react"
-import { wire, collection, definition, context, component } from "@uesio/ui"
+import {
+	wire,
+	collection,
+	definition,
+	context,
+	component,
+	metadata,
+} from "@uesio/ui"
 import { ListFieldUtilityProps } from "../listfield/listfield"
 
 const ListField =
@@ -14,8 +21,8 @@ interface MapFieldUtilityProps extends definition.UtilityProps {
 	keys?: string[]
 	autoAdd?: boolean
 	noAdd?: boolean
-	fieldVariant?: string
-	labelVariant?: string
+	fieldVariant?: metadata.MetadataKey
+	labelVariant?: metadata.MetadataKey
 }
 
 const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {

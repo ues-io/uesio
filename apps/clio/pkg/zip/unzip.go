@@ -11,6 +11,21 @@ import (
 	"strings"
 )
 
+func getCombinedPath(filename, dest string) (string, error) {
+	if dest == "" {
+		return filename, nil
+	}
+	path := filepath.Join(dest, filename)
+
+	// Check for ZipSlip (Directory traversal)
+	if !strings.HasPrefix(path, filepath.Clean(dest)+string(os.PathSeparator)) {
+		fmt.Println(filepath.Clean(dest) + string(os.PathSeparator))
+		return "", fmt.Errorf("illegal file path: %s", path)
+	}
+
+	return path, nil
+}
+
 func extract(zf *zip.File, dest string) error {
 	rc, err := zf.Open()
 	if err != nil {
@@ -18,11 +33,9 @@ func extract(zf *zip.File, dest string) error {
 	}
 	defer rc.Close()
 
-	path := filepath.Join(dest, zf.Name)
-
-	// Check for ZipSlip (Directory traversal)
-	if !strings.HasPrefix(path, filepath.Clean(dest)+string(os.PathSeparator)) {
-		return fmt.Errorf("illegal file path: %s", path)
+	path, err := getCombinedPath(zf.Name, dest)
+	if err != nil {
+		return err
 	}
 
 	if zf.FileInfo().IsDir() {

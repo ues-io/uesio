@@ -55,7 +55,6 @@ func loadData(op *adapt.LoadOp, session *sess.Session) error {
 	return loadData(op, session)
 }
 
-// Load function
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 
 	collection := &adapt.Collection{}

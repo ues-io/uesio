@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type FeatureFlag struct {
@@ -25,6 +25,8 @@ type FeatureFlag struct {
 	Value     bool
 	User      string
 }
+
+type FeatureFlagWrapper FeatureFlag
 
 func (ff *FeatureFlag) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(ff)
@@ -123,7 +125,7 @@ func (ff *FeatureFlag) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(ff)
+	return node.Decode((*FeatureFlagWrapper)(ff))
 }
 
 func (ff *FeatureFlag) IsPublic() bool {

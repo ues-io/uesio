@@ -9,12 +9,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// GetCredentials function
 func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, error) {
 	credmap := adapt.Credentials{}
-
-	// Always add the tenant id to credentials
-	credmap.SetTenantID(session)
 
 	if key == "" {
 		return &credmap, nil

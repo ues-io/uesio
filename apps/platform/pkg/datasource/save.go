@@ -10,6 +10,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+type SaveRequestBatch struct {
+	Wires []SaveRequest `json:"wires"`
+}
+
 type SaveRequest struct {
 	Collection string             `json:"collection"`
 	Wire       string             `json:"wire"`
@@ -74,7 +78,6 @@ type SaveOptions struct {
 	Metadata    *adapt.MetadataCache
 }
 
-// Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 	return SaveWithOptions(requests, session, nil)
 }
@@ -145,7 +148,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, session.GetTokens(), metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
@@ -190,19 +193,31 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
-		err = adapt.FetchInsertReferences(connection, op)
+		// Set Unique Keys For Inserts
+		err = op.LoopInserts(func(change *adapt.ChangeItem) error {
+			// It's ok to fail here creating unique keys
+			// We'll try again later after we've run some bots
+			_ = adapt.SetUniqueKey(change, collectionMetadata)
+			return nil
+		})
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
 		}
 
-		err = adapt.HandleUpsertLookup(connection, op)
+		err = adapt.FetchReferences(connection, op, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
 		}
 
-		err = adapt.HandleOldValuesLookup(connection, op)
+		err = adapt.HandleUpsertLookup(connection, op, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
+
+		err = adapt.HandleOldValuesLookup(connection, op, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
@@ -230,14 +245,12 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return adapt.NewGenericSaveError(errors.New("Error with before save bots"))
 		}
 
-		/*
-			// Now do Reference Lookups and Reference Integrity Lookups
-			err = adapt.HandleReferenceLookups(connection, op)
-			if err != nil {
-				op.AddError(adapt.NewGenericSaveError(err))
-				return err
-			}
-		*/
+		// Fetch References again.
+		err = adapt.FetchReferences(connection, op, session)
+		if err != nil {
+			op.AddError(adapt.NewGenericSaveError(err))
+			return err
+		}
 
 		err = Validate(op, collectionMetadata, connection, session)
 		if err != nil {
@@ -251,15 +264,8 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		}
 
 		// Set the unique keys for the last time
-
-		// Set the unique keys for inserts
 		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-			uniqueKey, err := adapt.SetUniqueKey(change, collectionMetadata)
-			if err != nil {
-				return err
-			}
-			change.UniqueKey = uniqueKey
-			return nil
+			return adapt.SetUniqueKey(change, collectionMetadata)
 		})
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
@@ -278,7 +284,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
-		err = connection.Save(op)
+		err = connection.Save(op, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err

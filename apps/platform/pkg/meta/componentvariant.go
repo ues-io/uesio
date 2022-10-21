@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewComponentVariant(key string) (*ComponentVariant, error) {
@@ -45,6 +45,8 @@ type ComponentVariant struct {
 	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
 	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type ComponentVariantWrapper ComponentVariant
 
 func (c *ComponentVariant) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(c)
@@ -156,7 +158,7 @@ func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(cv)
+	return node.Decode((*ComponentVariantWrapper)(cv))
 }
 
 func (cv *ComponentVariant) IsPublic() bool {

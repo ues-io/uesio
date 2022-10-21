@@ -104,7 +104,7 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	}
 	valueString, ok := value.(string)
 	if !ok {
-		return "", errors.New("Could not get value as string")
+		return "", errors.New("Could not get value as string: " + fieldID)
 	}
 	return valueString, nil
 }
@@ -156,6 +156,33 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 type SaveOptions struct {
 	Upsert bool `json:"upsert"`
+}
+
+func GetFieldValueString(value interface{}, key string) (string, error) {
+	value, err := GetFieldValue(value, key)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", fmt.Errorf("Could not get value as string: %T", value)
+	}
+	return valueString, nil
+}
+
+func GetLoadable(value interface{}) (loadable.Item, error) {
+	valueMap, ok := value.(map[string]interface{})
+	if ok {
+		loadableItem := Item(valueMap)
+		return &loadableItem, nil
+	}
+
+	loadableValueItem, ok := value.(loadable.Item)
+	if ok {
+		return loadableValueItem, nil
+	}
+
+	return nil, fmt.Errorf("Invalid Loadable type: %T", value)
 }
 
 func GetFieldValue(value interface{}, key string) (interface{}, error) {

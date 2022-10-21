@@ -1,0 +1,3 @@
+name: modifyallrecords
+type: CHECKBOX
+label: Allow modify all records

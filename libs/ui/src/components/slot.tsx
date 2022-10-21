@@ -12,10 +12,12 @@ interface SlotUtilityProps extends UtilityProps {
 	listName: string
 	definition?: BaseDefinition
 	accepts: string[]
-	direction?: string
+	direction?: "VERTICAL" | "HORIZONTAL"
+	label?: string
+	message?: string
 }
 
-const SlotBuilder = getUtility("uesio/studio.slotbuilder")
+const SlotBuilder = getUtility("uesio/builder.slotbuilder")
 
 const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
 	const { path, context, listName, definition } = props

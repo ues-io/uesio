@@ -3,14 +3,20 @@ components:
   view:
     colorpicker:
     appiconpicker:
+    iconlabel:
+      utilities:
+        - uesio/builder.iconlabel
     metadatafield:
       utilities:
+        - uesio/builder.metadatapicker
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid
     codefield:
       utilities:
         - uesio/io.codefield
+      variants:
+        - uesio/io.codefield:uesio/io.default
     permissionpicker:
       utilities:
         - uesio/io.checkboxfield
@@ -24,7 +30,6 @@ components:
         - uesio/io.dialog
       variants:
         - uesio/io.button:uesio/io.secondary
-        - uesio/io.textfield:uesio/io.default
         - uesio/io.titlebar:uesio/io.default
     datamanager:
       variants:
@@ -35,7 +40,6 @@ components:
       variants:
         - uesio/io.selectfield:uesio/io.default
         - uesio/io.fieldlabel:uesio/io.default
-        - uesio/io.textfield:uesio/io.default
       utilities:
         - uesio/io.tile
         - uesio/io.selectfield
@@ -78,10 +82,6 @@ components:
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid
-    # Define a builder for the uesio runtime and slot
-    runtime:
     # uesio.view:
   utility:
-    buildwrapper:
-    slotbuilder:
 

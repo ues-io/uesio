@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import {
 	definition,
 	context,
@@ -35,37 +35,29 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
 	const componentId = uesio.component.getId(id, "uesio/io.field")
-	const currentValue =
-		uesio.component.useExternalState<FieldState>(componentId)
+	const [state, setState] = uesio.component.useState<FieldState>(
+		componentId,
+		{
+			value: fileContent,
+			originalValue: fileContent,
+			recordId: record.getIdFieldValue() || "",
+			fieldId,
+			collectionId: wire.getCollection().getFullName(),
+			fileName,
+			mimeType,
+		}
+	)
 
-	useEffect(() => {
-		uesio.signal.run(
-			{
-				signal: "component/uesio/io.field/INIT_FILE",
-				target: componentId,
-				value: currentValue?.value || fileContent,
-				recordId: record.getIdFieldValue(),
-				fieldId,
-				collectionId: wire.getCollection().getFullName(),
-				fileName,
-				mimeType,
-			},
-			context
-		)
-	}, [fileContent])
 	return (
 		<CodeField
 			context={context}
-			value={currentValue?.value || ""}
+			value={state?.value || fileContent || ""}
 			setValue={(value: string) => {
-				uesio.signal.run(
-					{
-						signal: "component/uesio/io.field/SET_FILE",
-						target: componentId,
-						value,
-					},
-					context
-				)
+				if (!state) return
+				setState({
+					...state,
+					value,
+				})
 			}}
 		/>
 	)

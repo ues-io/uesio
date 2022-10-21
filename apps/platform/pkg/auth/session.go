@@ -25,10 +25,18 @@ func GetSessionFromRequest(browserSession session.Session, site *meta.Site) (*se
 	return session, nil
 }
 
+func getPublicSession(site *meta.Site) (*sess.Session, error) {
+	user, err := GetPublicUser(site, nil)
+	if err != nil {
+		return nil, err
+	}
+	return sess.New(user, site), nil
+}
+
 func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session, error) {
 
 	if browserSession == nil {
-		return sess.NewPublic(site), nil
+		return getPublicSession(site)
 	}
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
@@ -36,23 +44,15 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 
 	if browserSessionSite != site.GetFullName() {
 		logger.Log("Sites mismatch: "+browserSessionUser, logger.INFO)
-		return sess.NewPublic(site), nil
+		return getPublicSession(site)
 	}
 
-	fakeSession := sess.NewSession(nil, sess.SYSTEM_USER, site)
-	fakeSession.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio/core.user":     true,
-			"uesio/core.userfile": true,
-		},
-	})
-
-	user, err := getUserFromSession(browserSessionUser, fakeSession)
+	user, err := getUserFromSession(browserSessionUser, site)
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
 			logger.Log("Could not find user: "+browserSessionUser, logger.INFO)
-			return sess.NewPublic(site), nil
+			return getPublicSession(site)
 		}
 		return nil, err
 	}
@@ -62,12 +62,17 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 	return session, nil
 }
 
-func getUserFromSession(userid string, session *sess.Session) (*meta.User, error) {
+func getUserFromSession(userid string, site *meta.Site) (*meta.User, error) {
 
 	// Get Cache site info for the host
-	cachedUser, ok := GetUserCache(userid, session.GetSite().GetAppFullName())
+	cachedUser, ok := GetUserCache(userid, site.GetAppFullName())
 	if ok {
 		return cachedUser, nil
+	}
+
+	session, err := GetStudioAnonSession()
+	if err != nil {
+		return nil, err
 	}
 
 	user, err := GetUserByID(userid, session, nil)
@@ -75,7 +80,7 @@ func getUserFromSession(userid string, session *sess.Session) (*meta.User, error
 		return nil, err
 	}
 
-	err = SetUserCache(userid, session.GetSite().GetAppFullName(), user)
+	err = SetUserCache(userid, site.GetAppFullName(), user)
 	if err != nil {
 		return nil, err
 	}
