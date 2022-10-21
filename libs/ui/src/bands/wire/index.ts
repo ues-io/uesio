@@ -56,6 +56,11 @@ type AddConditionPayload = {
 	condition: WireConditionState
 } & EntityPayload
 
+type SetConditionValuePayload = {
+	id: string
+	value: string
+} & EntityPayload
+
 type RemoveOrderPayload = {
 	fields: string[]
 } & EntityPayload
@@ -82,19 +87,48 @@ const wireAdapter = createEntityAdapter<PlainWire>({
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
 
+const getWires = (
+	wires: string[] | string | undefined,
+	context: Context
+): PlainWire[] => {
+	const viewId = context.getViewId()
+	if (!viewId) throw new Error("No ViewId in Context")
+	const wiresArray = Array.isArray(wires) ? wires : [wires]
+	return wiresArray.flatMap((wirename) => {
+		const wire = getWire(viewId, wirename)
+		if (!wire) throw new Error("Bad Wire!")
+		return wire
+	})
+}
+
+const addLookupWires = (wires: PlainWire[], context: Context): PlainWire[] => {
+	const wireNamesToLookup = wires.flatMap(
+		(wire) =>
+			wire.conditions?.flatMap((c) => {
+				const lookupWire = "lookupWire" in c && c.lookupWire
+				if (!lookupWire) return []
+				// Now check to make sure we're not already loading this wire
+				return wires.find((wire) => wire.name === lookupWire)
+					? []
+					: [lookupWire]
+			}) || []
+	)
+
+	// If we don't have any lookup wires, quit
+	if (!wireNamesToLookup.length) return wires
+
+	const lookupWires = getWires(wireNamesToLookup, context)
+
+	// Recursively lookup wires
+	return addLookupWires(lookupWires, context).concat(wires)
+}
+
 const getWiresFromDefinitonOrContext = (
 	wires: string[] | string | undefined,
 	context: Context
 ): PlainWire[] => {
 	if (wires) {
-		const viewId = context.getViewId()
-		if (!viewId) throw new Error("No ViewId in Context")
-		const wiresArray = Array.isArray(wires) ? wires : [wires]
-		return wiresArray.flatMap((wirename) => {
-			const wire = getWire(viewId, wirename)
-			if (!wire) throw new Error("Bad Wire!")
-			return wire
-		})
+		return getWires(wires, context)
 	}
 	const wire = context.getPlainWire()
 	if (!wire) throw new Error("No Wire in Definition or Context")
@@ -216,6 +250,16 @@ const wireSlice = createSlice({
 				})
 			}
 		),
+		setConditionValue: createEntityReducer<
+			SetConditionValuePayload,
+			PlainWire
+		>((state, { value, id }) => {
+			if (!state.conditions) state.conditions = []
+			const condition = state.conditions.find(
+				(existingCondition) => existingCondition.id === id
+			)
+			if (condition && "value" in condition) condition.value = value
+		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
 				if (!state.conditions) return
@@ -367,6 +411,7 @@ export {
 	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
+	addLookupWires,
 }
 
 export const {
@@ -391,5 +436,6 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	setConditionValue,
 } = wireSlice.actions
 export default wireSlice.reducer

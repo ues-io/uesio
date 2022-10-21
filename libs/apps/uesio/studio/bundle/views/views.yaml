@@ -91,6 +91,13 @@ definition:
                                     app: $Param{app}
                                 label: Generate List View
                                 generator: uesio/core.listview
+                            - uesio/studio.generatorbutton:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate Detail View
+                                generator: uesio/core.detailview
                             - uesio/io.button:
                                 text: Create a New View
                                 uesio.variant: uesio/io.secondary
@@ -143,39 +150,20 @@ definition:
                         marginTop: 0px
                     components:
                       - uesio/io.table:
-                          uesio.variant: uesio/io.views
                           id: viewsTable
                           wire: views
                           columns:
-                            # field: uesio/studio.name
-                            - label: View
-                              components:
-                                - uesio/io.button:
-                                    icon: palette
-                                    uesio.styles:
-                                      root:
-                                        paddingLeft: 16px
-                                        display: flex;
-                                        position: absolute
-                                        inset: 0
-                                    text: ${uesio/studio.name}
-                                    signals:
-                                      - signal: "route/NAVIGATE"
-                                        path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
-                                  # Empty element to take up space in the table as the real button is absolute
-                                - uesio/io.button:
-                                    icon: palette
-                                    uesio.styles:
-                                      root:
-                                        opacity: 0
-                                        pointerEvents: 0
-                                        position: relative
-                                        z-index: -99
-                                    text: ${uesio/studio.name}
+                            - field: uesio/studio.name
                             - label: Updated
                               field: uesio/core.updatedat
                             - field: uesio/core.updatedby
                             - field: uesio/core.createdby
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
 
   panels:
     newView:

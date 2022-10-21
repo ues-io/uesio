@@ -1,5 +1,5 @@
 import get from "lodash/get"
-import { ID_FIELD } from "../collection/types"
+import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 
@@ -25,10 +25,16 @@ class WireRecord {
 			fieldNameParts.length === 1 ? fieldName : fieldNameParts
 		)
 	}
+	getReferenceValue = (fieldName: string) => {
+		const plain = this.getFieldValue<PlainWireRecord>(fieldName)
+		if (!plain) return undefined
+		return new WireRecord(plain, "", this.wire)
+	}
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
-	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
+	getIdFieldValue = () => this.getFieldValue<string>(ID_FIELD)
+	getUniqueKey = () => this.getFieldValue<string>(UNIQUE_KEY_FIELD)
 
 	getErrors = (fieldId: string) => {
 		const wire = this.wire

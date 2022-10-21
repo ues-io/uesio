@@ -1,6 +1,10 @@
 package routing
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+)
 
 type LoginResponse struct {
 	User                   *UserMergeData `json:"user"`
@@ -56,7 +60,7 @@ type ComponentsMergeData struct {
 }
 
 type BuilderMergeData struct {
-	Namespaces map[string]MetadataResponse `json:"namespaces,omitempty"`
+	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
 }
 
 type MergeData struct {
@@ -66,6 +70,7 @@ type MergeData struct {
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
 	BuildMode bool                 `json:"-"`
+	DevMode   bool                 `json:"-"`
 	Builder   *BuilderMergeData    `json:"builder"`
 	*PreloadMetadata
 }

@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	// Using text/template here instead of html/template
@@ -26,14 +27,14 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode boo
 		return ""
 	}
 
-	builderSuffix := ""
+	builderSuffix := "runtime.js"
 	if buildMode {
-		builderSuffix = "/builder"
+		builderSuffix = "builder.js"
 	}
 	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
 	}
-	return fmt.Sprintf("/site/componentpacks/%s/%s/%s%s", user, namepart, name, builderSuffix)
+	return fmt.Sprintf("/site/componentpacks/%s/%s/%s/%s", user, namepart, name, builderSuffix)
 
 }
 
@@ -70,7 +71,7 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 }
 
 func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
-	componentID := "$root:uesio/studio.runtime:buildmode"
+	componentID := "$root:uesio/builder.runtime:buildmode"
 	return &routing.ComponentsMergeData{
 		IDs: []string{componentID},
 		Entities: map[string]routing.ComponentMergeData{
@@ -99,6 +100,12 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
+	devMode := false
+	val, _ := os.LookupEnv("UESIO_DEV")
+	if val == "true" {
+		devMode = true
+	}
+
 	mergeData := routing.MergeData{
 		Route: &routing.RouteMergeData{
 			View:      route.ViewRef,
@@ -115,6 +122,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
+		DevMode:         devMode,
 		Builder:         GetBuilderMergeData(preload, buildMode),
 		Component:       GetComponentMergeData(buildMode),
 		BuildMode:       buildMode,

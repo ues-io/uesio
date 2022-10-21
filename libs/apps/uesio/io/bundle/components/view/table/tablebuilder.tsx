@@ -3,7 +3,7 @@ import { TableProps } from "./tabledefinition"
 import Table from "./table"
 import { styles, component } from "@uesio/ui"
 
-const BuildWrapper = component.getUtility("uesio/studio.buildwrapper")
+const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const TableBuilder: FunctionComponent<TableProps> = (props) => {
 	const { context } = props

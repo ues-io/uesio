@@ -17,7 +17,7 @@ func HasExistingConnection(dataSourceKey string, connections map[string]adapt.Co
 	return false
 }
 
-func GetConnection(dataSourceKey string, tokens []string, metadata *adapt.MetadataCache, session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
+func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session *sess.Session, connections map[string]adapt.Connection) (adapt.Connection, error) {
 
 	// If we were provided a default connection for this datasource,
 	// use that instead
@@ -52,6 +52,6 @@ func GetConnection(dataSourceKey string, tokens []string, metadata *adapt.Metada
 		return nil, err
 	}
 
-	return adapter.GetConnection(credentials, metadata, dataSourceKey, tokens)
+	return adapter.GetConnection(credentials, metadata, dataSourceKey)
 
 }

@@ -2,6 +2,7 @@ import { BaseProps, BaseDefinition } from "../../definition/definition"
 import { BuildPropertiesDefinition } from "../../buildmode/buildpropdefinition"
 type ViewDefinition = {
 	view: string
+	id?: string
 	params?: Record<string, string>
 } & BaseDefinition
 

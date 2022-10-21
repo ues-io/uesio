@@ -12,7 +12,7 @@ type ConfigStore struct {
 
 func (cs *ConfigStore) Get(key string) (string, error) {
 	var cv meta.ConfigStoreValue
-	headlessSession, err := auth.GetStudioAdminSession()
+	headlessSession, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
 		return "", err
 	}
@@ -38,7 +38,7 @@ func (cs *ConfigStore) Set(key, value string) error {
 		Key:   key,
 		Value: value,
 	}
-	headlessSession, err := auth.GetStudioAdminSession()
+	headlessSession, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
 		return err
 	}

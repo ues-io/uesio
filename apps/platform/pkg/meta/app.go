@@ -9,6 +9,7 @@ type App struct {
 	Description string    `uesio:"uesio/studio.description"`
 	Color       string    `uesio:"uesio/studio.color"`
 	Icon        string    `uesio:"uesio/studio.icon"`
+	Public      bool      `uesio:"uesio/studio.public"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`

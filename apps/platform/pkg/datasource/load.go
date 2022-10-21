@@ -332,12 +332,10 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
-	tokens := session.GetTokens()
-
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, tokens, metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
@@ -361,7 +359,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				}
 			}
 
-			err = connection.Load(op)
+			err = connection.Load(op, session)
 			if err != nil {
 				return nil, err
 			}

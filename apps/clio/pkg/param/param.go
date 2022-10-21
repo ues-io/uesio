@@ -8,9 +8,9 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -68,7 +68,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		}
 		url := fmt.Sprintf("version/%s/%s/%s/metadata/types/%s/list%s", app, depNamespace, dep.Version, metadataType, groupingURL)
 
-		metadataList := map[string]routing.MetadataResponse{}
+		metadataList := map[string]datasource.MetadataResponse{}
 		err = call.GetJSON(url, sessid, &metadataList)
 		if err != nil {
 			return nil, err
@@ -125,8 +125,16 @@ func AskMany(params *meta.BotParams, app, version, sessid string) (map[string]in
 
 func Ask(param meta.BotParam, app, version, sessid string, answers map[string]interface{}) error {
 
+	if param.Conditions != nil {
+		for _, condition := range param.Conditions {
+			value := answers[condition.Param]
+			if value != condition.Value {
+				return nil
+			}
+		}
+	}
 	switch param.Type {
-	case "TEXT":
+	case "TEXT", "":
 		var answer string
 		defaultValue, err := mergeParam(param.Default, answers)
 		if err != nil {
@@ -135,6 +143,15 @@ func Ask(param meta.BotParam, app, version, sessid string, answers map[string]in
 		err = survey.AskOne(&survey.Input{
 			Message: param.Prompt,
 			Default: defaultValue,
+		}, &answer)
+		if err != nil {
+			return err
+		}
+		answers[param.Name] = answer
+	case "BOOL":
+		var answer bool
+		err := survey.AskOne(&survey.Confirm{
+			Message: param.Prompt,
 		}, &answer)
 		if err != nil {
 			return err

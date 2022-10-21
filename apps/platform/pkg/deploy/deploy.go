@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -20,6 +19,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
 type FileRecord struct {
@@ -128,6 +128,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
+			collectionItem.SetNamespace(namespace)
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {
 				return errors.New("Reading File: " + key + " : " + err.Error())
@@ -206,6 +207,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	deps := meta.BundleDependencyCollection{}
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
+		major, minor, patch, err := meta.ParseVersionString(dep.Version)
+		if err != nil {
+			return err
+		}
 		deps = append(deps, &meta.BundleDependency{
 			Workspace: &meta.Workspace{
 				ID: workspace.ID,
@@ -214,7 +219,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				UniqueKey: key,
 			},
 			Bundle: &meta.Bundle{
-				UniqueKey: key + ":" + dep.Version,
+				UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
 			},
 		})
 	}

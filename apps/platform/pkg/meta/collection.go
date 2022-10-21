@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewCollection(key string) (*Collection, error) {
@@ -43,8 +43,8 @@ type RecordChallengeTokenDefinition struct {
 }
 
 type TokenCondition struct {
-	Field string `yaml:"field" uesio:"field" json:"field"`
-	Value string `yaml:"value" uesio:"value" json:"value"`
+	Field string      `yaml:"field" uesio:"field" json:"field"`
+	Value interface{} `yaml:"value" uesio:"value" json:"value"`
 }
 
 type Collection struct {
@@ -55,9 +55,9 @@ type Collection struct {
 	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
-	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
+	DataSourceRef         string                            `yaml:"dataSource,omitempty" uesio:"uesio/studio.datasource"`
 	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" uesio:"uesio/studio.uniquekey"`
-	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
+	NameField             string                            `yaml:"nameField,omitempty" uesio:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
 	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
@@ -72,6 +72,8 @@ type Collection struct {
 	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
 	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type CollectionWrapper Collection
 
 func (c *Collection) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
@@ -157,7 +159,21 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(c)
+
+	return node.Decode((*CollectionWrapper)(c))
+}
+
+func (c *Collection) MarshalYAML() (interface{}, error) {
+
+	if c.DataSourceRef == "uesio/core.platform" {
+		c.DataSourceRef = ""
+	}
+
+	if c.NameField == "uesio/core.id" {
+		c.NameField = ""
+	}
+
+	return (*CollectionWrapper)(c), nil
 }
 
 func (c *Collection) IsPublic() bool {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewPermissionSet(key string) (*PermissionSet, error) {
@@ -34,6 +34,8 @@ type PermissionSet struct {
 	AllowAllViews       bool            `yaml:"allowallviews" uesio:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
+	ModifyAllRecords    bool            `yaml:"modifyallrecords" uesio:"uesio/studio.modifyallrecords"`
+	ViewAllRecords      bool            `yaml:"viewallrecords" uesio:"uesio/studio.viewallrecords"`
 	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
 	CreatedBy           *User           `yaml:"-" uesio:"uesio/core.createdby"`
 	Owner               *User           `yaml:"-" uesio:"uesio/core.owner"`
@@ -42,6 +44,8 @@ type PermissionSet struct {
 	CreatedAt           int64           `yaml:"-" uesio:"uesio/core.createdat"`
 	Public              bool            `yaml:"public,omitempty" uesio:"uesio/studio.public"`
 }
+
+type PermissionSetWrapper PermissionSet
 
 func (ps *PermissionSet) GetCollectionName() string {
 	return ps.GetBundleGroup().GetName()
@@ -114,7 +118,7 @@ func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(ps)
+	return node.Decode((*PermissionSetWrapper)(ps))
 }
 
 func (ps *PermissionSet) IsPublic() bool {
@@ -186,6 +190,8 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	allowAllRoutes := false
 	allowAllFiles := false
 	allowAllCollections := false
+	modifyAllRecords := false
+	viewAllRecords := false
 
 	for _, permissionSet := range permissionSets {
 		for key, value := range permissionSet.NamedRefs {
@@ -225,6 +231,12 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		if permissionSet.AllowAllCollections {
 			allowAllCollections = true
 		}
+		if permissionSet.ModifyAllRecords {
+			modifyAllRecords = true
+		}
+		if permissionSet.ViewAllRecords {
+			viewAllRecords = true
+		}
 	}
 
 	return &PermissionSet{
@@ -237,5 +249,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,
 		AllowAllCollections: allowAllCollections,
+		ModifyAllRecords:    modifyAllRecords,
+		ViewAllRecords:      viewAllRecords,
 	}
 }
