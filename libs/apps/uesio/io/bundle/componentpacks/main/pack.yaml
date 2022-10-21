@@ -46,7 +46,6 @@ components:
     markdown:
   utility:
     dropdown:
-    namespacelabel:
     alert:
     avatar:
     autocomplete:

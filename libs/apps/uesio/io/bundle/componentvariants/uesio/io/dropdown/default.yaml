@@ -16,7 +16,7 @@ definition:
 
     itemHighlighted:
       outline: "none"
-      backgroundColor: "rgb(233, 233, 233)"
+      backgroundColor: "#eee"
 
     menuAnimation:
       "&-enter":

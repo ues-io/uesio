@@ -93,18 +93,6 @@ const Dropdown: FC<DropdownProps> = (props) => {
 		const [anchorEl, setAnchorEl] = React.useState<HTMLSpanElement | null>(
 			null
 		)
-
-		// React.useEffect(() => {
-		// 	if (!highlightedIndex) return
-		// 	const item = props.options[0]
-		// 	console.log({ highlightedIndex })
-		// 	item && item.onSelect()
-		// }, [highlightedIndex])
-
-		// React.useEffect(() => {
-		// 	props.onToggle && props.onToggle(isOpen)
-		// }, [isOpen])
-
 		return (
 			<div className={classes.root}>
 				<div
