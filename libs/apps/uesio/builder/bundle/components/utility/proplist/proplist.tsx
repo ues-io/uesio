@@ -125,7 +125,6 @@ const PropList: FunctionComponent<Props> = (props) => {
 						: newPath
 
 				const PropHandler = getPropHandler(descriptor.type)
-
 				return (
 					PropHandler && (
 						<PropHandler

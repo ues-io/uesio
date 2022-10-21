@@ -74,19 +74,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "TEXT",
 			label: "Page size",
 		},
-		{
-			type: "PROPLISTS",
-			name: "rowactions",
-			properties: [
-				{
-					type: "TEXT",
-					label: "Text",
-					name: "text",
-				},
-			],
-			nameTemplate: "action",
-			label: "Row Actions",
-		},
 	],
 	sections: [
 		{
@@ -115,6 +102,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "Text",
 					name: "text",
 				},
+				// TODO: Add ability to add signals
 			],
 			nameTemplate: "row action ${field}",
 			nameFallback: "row action",
