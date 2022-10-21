@@ -2,16 +2,16 @@ import { FC } from "react"
 
 import { Props } from "./filternumberdefinition"
 import { component, hooks, wire } from "@uesio/ui"
+import debounce from "lodash/debounce"
 
 const TextField = component.getUtility("uesio/io.textfield")
 
-type Operator = "EQ" | "LT" | "GT"
+type Operator = "EQ" | "NOT_EQ" | "LT" | "GT" | "GTE" | "LTE"
 
 const FilterNumber: FC<Props> = (props) => {
 	const { context, definition, wire, path = "" } = props
 	const uesio = hooks.useUesio(props)
-	const isRange = definition?.type === "range"
-	const firstFieldOperator = isRange ? "GT" : "EQ"
+	const operator = definition?.operator as Operator
 
 	const onChange = (value: number | null, operator: Operator) => {
 		const id = props.path + `["${operator}"]`
@@ -22,7 +22,7 @@ const FilterNumber: FC<Props> = (props) => {
 						wire: definition.wire,
 						condition: {
 							field: definition.field,
-							value: operator === "GT" ? value - 1 : value,
+							value,
 							active: true,
 							id,
 							operator,
@@ -41,51 +41,27 @@ const FilterNumber: FC<Props> = (props) => {
 		uesio.signal.runMany(signals, context)
 	}
 
-	const getDisplayValue = (operator: Operator) => {
+	const getDisplayValue = () => {
 		const value = (
 			wire.getCondition(
 				path + `["${operator}"]`
 			) as wire.ValueConditionState | null
 		)?.value
-		if (!value) return ""
-		const options = {
-			GT: Number(value) + 1,
-			LT: Number(value) - 1,
-			EQ: value,
-		}
-		return String(options[operator])
+		if (typeof value !== "number") return ""
+		return String(value)
 	}
 
-	return (
-		<div>
-			{/* Single point or lower bound */}
-			<TextField
-				value={getDisplayValue(firstFieldOperator)}
-				setValue={(value: number | null): void =>
-					// We need to adjust the value for GT: when 5 is selected, we mean greater than 4
-					onChange(
-						value && firstFieldOperator === "GT"
-							? value - 1
-							: value,
-						firstFieldOperator
-					)
-				}
-				context={context}
-				variant="uesio/io.textfield:uesio/studio.propfield"
-			/>
+	const debouncedRequest = debounce(onChange, 250)
 
-			{/* Upper bound */}
-			{isRange && (
-				<TextField
-					value={getDisplayValue("LT")}
-					setValue={(value: number | null): void =>
-						onChange(value ? Number(value) + 1 : value, "LT")
-					}
-					context={context}
-					variant="uesio/io.textfield:uesio/studio.propfield"
-				/>
-			)}
-		</div>
+	return (
+		<TextField
+			value={getDisplayValue()}
+			setValue={(value: number | null): void =>
+				debouncedRequest(value ? Number(value) : value, operator)
+			}
+			context={context}
+			variant="uesio/io.textfield:uesio/studio.propfield"
+		/>
 	)
 }
 

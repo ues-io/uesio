@@ -16,12 +16,38 @@ const Propdef: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "type",
+			name: "operator",
 			type: "SELECT",
-			label: "Type",
+			label: "Operator",
 			options: [
-				{ label: "Single point", value: "point" },
-				{ label: "Range", value: "range" },
+				{
+					label: "",
+					value: "",
+				},
+				{
+					label: "Equals",
+					value: "EQ",
+				},
+				{
+					label: "Not Equal To",
+					value: "NOT_EQ",
+				},
+				{
+					label: "Greater Than",
+					value: "GT",
+				},
+				{
+					label: "Less Than",
+					value: "LT",
+				},
+				{
+					label: "Greater Than or Equal To",
+					value: "GTE",
+				},
+				{
+					label: "Less Than or Equal To",
+					value: "LTE",
+				},
 			],
 		},
 	],
