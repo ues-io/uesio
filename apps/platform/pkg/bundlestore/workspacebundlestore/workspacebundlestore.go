@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func processItems(items []meta.BundleableItem, session *sess.Session, looper func(loadable.Item, []adapt.ReferenceLocator, string) error) error {
+func processItems(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection, looper func(loadable.Item, []adapt.ReferenceLocator, string) error) error {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
@@ -45,6 +45,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, looper fun
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
+			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field:    adapt.UNIQUE_KEY_FIELD,
@@ -111,7 +112,7 @@ func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, ver
 }
 
 func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
-	return processItems(items, session, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
+	return processItems(items, session, nil, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -280,7 +281,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 
 func (b *WorkspaceBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
-	return processItems(items, session, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
+	return processItems(items, session, connection, func(item loadable.Item, locators []adapt.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}

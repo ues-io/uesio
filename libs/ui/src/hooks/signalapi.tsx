@@ -56,6 +56,7 @@ function defaultSignalProps(): PropDescriptor[] {
 				signalIds.map((signal) => ({
 					value: signal,
 					label: registry[signal].label || signal,
+					title: registry[signal].description || signal,
 				}))
 			),
 		},
