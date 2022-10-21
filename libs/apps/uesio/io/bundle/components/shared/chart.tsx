@@ -47,16 +47,16 @@ export const CHART_COLORS = {
 const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
-	serieses: SeriesDefinition[]
+	series: SeriesDefinition[]
 ) => {
 	const categories: Categories = {}
 	if (labels.source === "DATA") {
-		serieses.forEach((series) => {
-			const wire = wires[series.wire]
+		series.forEach((s) => {
+			const wire = wires[s.wire]
 			if (!wire) return
 			const categoryField = wire
 				?.getCollection()
-				.getField(series.categoryField)
+				.getField(s.categoryField)
 			if (!categoryField) {
 				throw new Error("Invalid Category Field")
 			}
@@ -109,7 +109,8 @@ const getCategoryKey = (
 	categoryField: collection.Field
 ) => {
 	const value = record.getFieldValue<string>(categoryField.getId()) || ""
-	if (categoryField.getType() === "DATE") {
+	const categoryFieldType = categoryField.getType()
+	if (categoryFieldType === "DATE" || categoryFieldType === "TIMESTAMP") {
 		if (labels.source === "DATA" && labels.timeunit === "MONTH") {
 			const dateValue = new Date(value)
 			return dateValue.getFullYear() + "-" + dateValue.getMonth()
@@ -178,7 +179,7 @@ const seriesSection: builder.PropertySection = {
 			label: "Wire",
 		},
 		{
-			name: "CategoryField",
+			name: "categoryField",
 			type: "FIELD",
 			wireField: "./wire",
 			label: "Category field",
@@ -205,90 +206,97 @@ const chartProperties: builder.PropDescriptor[] = [
 		label: "Title",
 	},
 	{
-		name: "source",
-		type: "SELECT",
-		label: "Source",
-		options: [
-			{
-				value: "",
-				label: "Select a source",
-			},
-			{
-				value: "WIRE",
-				label: "Wire",
-			},
-			{
-				value: "VALUE",
-				label: "Value",
-			},
-			{
-				value: "DATA",
-				label: "Data",
-			},
-		],
-	},
-
-	// Optional fields when source is WIRE
-	{
-		name: "wire",
-		type: "WIRE",
-		label: "Wire",
-		display: sourceEquals("WIRE"),
-	},
-	{
-		name: "categoryField",
-		type: "FIELD",
-		label: "Category Field",
-		wireField: "wire",
-		display: sourceEquals("WIRE"),
-	},
-
-	// Optional fields when source is VALUE
-	{
-		name: "values",
-		type: "PROPLISTS",
-		label: "Values",
-		nameTemplate: "${key}: ${value}",
-		// nameFallback: "unset value",
+		name: "labels",
+		type: "PROPLIST",
+		label: "Labels",
 		properties: [
 			{
-				name: "key",
-				type: "TEXT",
-				label: "Key",
+				name: "source",
+				type: "SELECT",
+				label: "Source",
+				options: [
+					{
+						value: "",
+						label: "Select a source",
+					},
+					{
+						value: "WIRE",
+						label: "Wire",
+					},
+					{
+						value: "VALUE",
+						label: "Value",
+					},
+					{
+						value: "DATA",
+						label: "Data",
+					},
+				],
 			},
-			{
-				name: "value",
-				type: "TEXT",
-				label: "Value",
-			},
-		],
-		display: sourceEquals("VALUE"),
-	},
 
-	// Optional fields when source is VALUE
-	{
-		name: "timeunit",
-		type: "SELECT",
-		label: "Time Unit",
-		options: [
+			// Optional fields when source is WIRE
 			{
-				value: "",
-				label: "Select a time interval",
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+				display: sourceEquals("WIRE"),
 			},
 			{
-				value: "DAY",
-				label: "Day",
+				name: "categoryField",
+				type: "FIELD",
+				label: "Category Field",
+				wireField: "wire",
+				display: sourceEquals("WIRE"),
 			},
+
+			// Optional fields when source is VALUE
 			{
-				value: "MONTH",
-				label: "Month",
+				name: "values",
+				type: "PROPLISTS",
+				label: "Values",
+				nameTemplate: "${key}: ${value}",
+				// nameFallback: "unset value",
+				properties: [
+					{
+						name: "key",
+						type: "TEXT",
+						label: "Key",
+					},
+					{
+						name: "value",
+						type: "TEXT",
+						label: "Value",
+					},
+				],
+				display: sourceEquals("VALUE"),
 			},
+
+			// Optional fields when source is VALUE
 			{
-				value: "YEAR",
-				label: "Year",
+				name: "timeunit",
+				type: "SELECT",
+				label: "Time Unit",
+				options: [
+					{
+						value: "",
+						label: "Select a time interval",
+					},
+					{
+						value: "DAY",
+						label: "Day",
+					},
+					{
+						value: "MONTH",
+						label: "Month",
+					},
+					{
+						value: "YEAR",
+						label: "Year",
+					},
+				],
+				display: sourceEquals("DATA"),
 			},
 		],
-		display: sourceEquals("DATA"),
 	},
 ]
 export {

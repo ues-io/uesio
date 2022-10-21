@@ -1,6 +1,10 @@
 import { definition, builder } from "@uesio/ui"
-import { LabelsDefinition, SeriesDefinition } from "../../shared/chart"
-
+import {
+	LabelsDefinition,
+	SeriesDefinition,
+	chartProperties,
+	seriesSection,
+} from "../../shared/chart"
 export type BarChartDefinition = {
 	labels: LabelsDefinition
 	title?: string
@@ -18,14 +22,8 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		text: "New chart",
 	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-	],
-	sections: [],
+	properties: chartProperties,
+	sections: [seriesSection],
 	actions: [],
 	traits: ["uesio.standalone"],
 	classes: ["root"],

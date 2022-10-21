@@ -2,7 +2,7 @@ import { FC } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder, component } from "@uesio/ui"
 
-const PropListsList = component.getUtility("uesio/builder.proplistslist")
+import PropListsList from "../proplistslist"
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
