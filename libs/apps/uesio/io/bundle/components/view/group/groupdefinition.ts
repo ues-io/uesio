@@ -66,6 +66,10 @@ const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "Space evenly",
 					value: "space-evenly",
 				},
+				{
+					label: "End",
+					value: "end",
+				},
 			],
 		},
 	],
