@@ -84,7 +84,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			properties: [
 				{
 					type: "FIELD",
-					wireField: "./../../../wire",
+					wireField: "../../wire",
 					label: "Field",
 					name: "field",
 				},
@@ -104,7 +104,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 				// TODO: Add ability to add signals
 			],
-			nameTemplate: "row action ${field}",
+			nameTemplate: "${text}",
 			nameFallback: "row action",
 		},
 	],
