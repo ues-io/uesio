@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ThemeCollection []*Theme
@@ -21,7 +19,7 @@ func (tc *ThemeCollection) GetFields() []string {
 	return StandardGetFields(&Theme{})
 }
 
-func (tc *ThemeCollection) NewItem() loadable.Item {
+func (tc *ThemeCollection) NewItem() Item {
 	t := &Theme{}
 	*tc = append(*tc, t)
 	return t
@@ -44,11 +42,11 @@ func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditi
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (tc *ThemeCollection) GetItem(index int) loadable.Item {
+func (tc *ThemeCollection) GetItem(index int) Item {
 	return (*tc)[index]
 }
 
-func (tc *ThemeCollection) Loop(iter loadable.GroupIterator) error {
+func (tc *ThemeCollection) Loop(iter GroupIterator) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
+func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
 	value, err := GetFieldValue(item, fieldName)
 	if err != nil {
 		return "", err
@@ -107,7 +107,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}

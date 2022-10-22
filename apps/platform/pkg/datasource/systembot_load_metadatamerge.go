@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -131,7 +130,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	return group.Loop(func(item loadable.Item, index string) error {
+	return group.Loop(func(item meta.Item, index string) error {
 		opItem := op.Collection.NewItem()
 		fakeID, _ := shortid.Generate()
 

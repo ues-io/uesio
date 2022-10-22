@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type LabelCollection []*Label
@@ -21,7 +19,7 @@ func (lc *LabelCollection) GetFields() []string {
 	return StandardGetFields(&Label{})
 }
 
-func (lc *LabelCollection) NewItem() loadable.Item {
+func (lc *LabelCollection) NewItem() Item {
 	l := &Label{}
 	*lc = append(*lc, l)
 	return l
@@ -44,11 +42,11 @@ func (lc *LabelCollection) GetKeyFromPath(path string, namespace string, conditi
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (lc *LabelCollection) GetItem(index int) loadable.Item {
+func (lc *LabelCollection) GetItem(index int) Item {
 	return (*lc)[index]
 }
 
-func (lc *LabelCollection) Loop(iter loadable.GroupIterator) error {
+func (lc *LabelCollection) Loop(iter GroupIterator) error {
 	for index := range *lc {
 		err := iter(lc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

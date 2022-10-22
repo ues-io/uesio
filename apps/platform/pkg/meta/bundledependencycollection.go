@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type BundleDependencyCollection []*BundleDependency
@@ -16,17 +14,17 @@ func (bc *BundleDependencyCollection) GetFields() []string {
 	return StandardGetFields(&BundleDependency{})
 }
 
-func (bc *BundleDependencyCollection) GetItem(index int) loadable.Item {
+func (bc *BundleDependencyCollection) GetItem(index int) Item {
 	return (*bc)[index]
 }
 
-func (bc *BundleDependencyCollection) NewItem() loadable.Item {
+func (bc *BundleDependencyCollection) NewItem() Item {
 	b := &BundleDependency{}
 	*bc = append(*bc, b)
 	return b
 }
 
-func (bc *BundleDependencyCollection) Loop(iter loadable.GroupIterator) error {
+func (bc *BundleDependencyCollection) Loop(iter GroupIterator) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type CredentialCollection []*Credential
@@ -20,7 +18,7 @@ func (cc *CredentialCollection) GetFields() []string {
 	return StandardGetFields(&Credential{})
 }
 
-func (cc *CredentialCollection) NewItem() loadable.Item {
+func (cc *CredentialCollection) NewItem() Item {
 	c := &Credential{}
 	*cc = append(*cc, c)
 	return c
@@ -39,11 +37,11 @@ func (cc *CredentialCollection) GetKeyFromPath(path string, namespace string, co
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (cc *CredentialCollection) GetItem(index int) loadable.Item {
+func (cc *CredentialCollection) GetItem(index int) Item {
 	return (*cc)[index]
 }
 
-func (cc *CredentialCollection) Loop(iter loadable.GroupIterator) error {
+func (cc *CredentialCollection) Loop(iter GroupIterator) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

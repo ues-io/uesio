@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type RouteCollection []*Route
@@ -20,7 +18,7 @@ func (rc *RouteCollection) GetFields() []string {
 	return StandardGetFields(&Route{})
 }
 
-func (rc *RouteCollection) NewItem() loadable.Item {
+func (rc *RouteCollection) NewItem() Item {
 	r := &Route{}
 	*rc = append(*rc, r)
 	return r
@@ -39,11 +37,11 @@ func (rc *RouteCollection) GetKeyFromPath(path string, namespace string, conditi
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (rc *RouteCollection) GetItem(index int) loadable.Item {
+func (rc *RouteCollection) GetItem(index int) Item {
 	return (*rc)[index]
 }
 
-func (rc *RouteCollection) Loop(iter loadable.GroupIterator) error {
+func (rc *RouteCollection) Loop(iter GroupIterator) error {
 	for index := range *rc {
 		err := iter(rc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
