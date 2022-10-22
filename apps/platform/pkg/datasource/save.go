@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -17,8 +17,8 @@ type SaveRequestBatch struct {
 type SaveRequest struct {
 	Collection string             `json:"collection"`
 	Wire       string             `json:"wire"`
-	Changes    loadable.Group     `json:"changes"`
-	Deletes    loadable.Group     `json:"deletes"`
+	Changes    meta.Group         `json:"changes"`
+	Deletes    meta.Group         `json:"deletes"`
 	Errors     []adapt.SaveError  `json:"errors"`
 	Options    *adapt.SaveOptions `json:"options"`
 }

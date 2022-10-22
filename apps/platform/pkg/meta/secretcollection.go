@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type SecretCollection []*Secret
@@ -21,7 +19,7 @@ func (sc *SecretCollection) GetFields() []string {
 	return StandardGetFields(&Secret{})
 }
 
-func (sc *SecretCollection) NewItem() loadable.Item {
+func (sc *SecretCollection) NewItem() Item {
 	s := &Secret{}
 	*sc = append(*sc, s)
 	return s
@@ -44,11 +42,11 @@ func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, condit
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (sc *SecretCollection) GetItem(index int) loadable.Item {
+func (sc *SecretCollection) GetItem(index int) Item {
 	return (*sc)[index]
 }
 
-func (sc *SecretCollection) Loop(iter loadable.GroupIterator) error {
+func (sc *SecretCollection) Loop(iter GroupIterator) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

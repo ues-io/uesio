@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -57,7 +57,7 @@ func HandleUpsertLookup(
 		{
 			ID: UNIQUE_KEY_FIELD,
 		},
-	}, UNIQUE_KEY_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+	}, UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.

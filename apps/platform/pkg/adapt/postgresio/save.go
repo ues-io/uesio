@@ -9,7 +9,7 @@ import (
 	"github.com/francoispqt/gojay"
 	"github.com/jackc/pgx/v4"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -30,7 +30,7 @@ func (dam *DataArrayMarshaler) MarshalJSONArray(enc *gojay.Encoder) {
 			return
 		}
 		if dam.FieldMetadata.SubType == "MAP" {
-			item, ok := val.(loadable.Item)
+			item, ok := val.(meta.Item)
 			if !ok {
 				jsonValue, err := json.Marshal(val)
 				if err != nil {
@@ -68,7 +68,7 @@ func (dam *DataArrayMarshaler) IsNil() bool {
 }
 
 type DataMarshaler struct {
-	Data     loadable.Item
+	Data     meta.Item
 	Metadata *adapt.CollectionMetadata
 }
 
@@ -85,7 +85,7 @@ func (dm *DataMarshaler) MarshalJSONObject(enc *gojay.Encoder) {
 
 		if fieldMetadata.Type == "MAP" {
 
-			item, ok := value.(loadable.Item)
+			item, ok := value.(meta.Item)
 			if !ok || fieldMetadata.SubFields == nil || len(fieldMetadata.SubFields) == 0 {
 				jsonValue, err := json.Marshal(value)
 				if err != nil {
@@ -187,7 +187,6 @@ func (dm *DataMarshaler) IsNil() bool {
 	return dm == nil
 }
 
-// Save function
 func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 
 	db := c.GetClient()

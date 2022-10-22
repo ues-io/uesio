@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type AuthSourceCollection []*AuthSource
@@ -20,7 +18,7 @@ func (asc *AuthSourceCollection) GetFields() []string {
 	return StandardGetFields(&AuthSource{})
 }
 
-func (asc *AuthSourceCollection) NewItem() loadable.Item {
+func (asc *AuthSourceCollection) NewItem() Item {
 	as := &AuthSource{}
 	*asc = append(*asc, as)
 	return as
@@ -39,11 +37,11 @@ func (asc *AuthSourceCollection) GetKeyFromPath(path string, namespace string, c
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (asc *AuthSourceCollection) GetItem(index int) loadable.Item {
+func (asc *AuthSourceCollection) GetItem(index int) Item {
 	return (*asc)[index]
 }
 
-func (asc *AuthSourceCollection) Loop(iter loadable.GroupIterator) error {
+func (asc *AuthSourceCollection) Loop(iter GroupIterator) error {
 	for index := range *asc {
 		err := iter(asc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

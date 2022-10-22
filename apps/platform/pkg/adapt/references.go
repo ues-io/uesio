@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -106,7 +105,7 @@ func LoadLooper(
 	fields []LoadRequestField,
 	matchField string,
 	session *sess.Session,
-	looper func(loadable.Item, []ReferenceLocator, string) error,
+	looper func(meta.Item, []ReferenceLocator, string) error,
 ) error {
 	ids := idMap.GetIDs()
 	if len(ids) == 0 {
@@ -132,7 +131,7 @@ func LoadLooper(
 		return err
 	}
 
-	err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+	err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 		refFK, err := refItem.GetField(matchField)
 		if err != nil {
 			return err
@@ -186,7 +185,7 @@ func HandleReferences(
 			},
 		})
 
-		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+		err := LoadLooper(connection, collectionName, ref.IDMap, ref.Fields, ref.GetMatchField(), session, func(refItem meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 
 			// This is a weird situation.
 			// It means we found a value that we didn't ask for.
@@ -206,7 +205,7 @@ func HandleReferences(
 			// Loop over all matchIndexes and copy the data from the refItem
 			for _, locator := range matchIndexes {
 				referenceValue := &Item{}
-				concreteItem := locator.Item.(loadable.Item)
+				concreteItem := locator.Item.(meta.Item)
 				meta.Copy(referenceValue, refItem)
 				err := concreteItem.SetField(locator.Field.GetFullName(), referenceValue)
 				if err != nil {

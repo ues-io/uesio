@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -39,7 +39,7 @@ func (ol *OpList) getCurrentIndex() int {
 	return ol.CurrentIndex
 }
 
-func (ol *OpList) addInsert(item loadable.Item, recordKey, idValue string) {
+func (ol *OpList) addInsert(item meta.Item, recordKey, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Inserts = append(ol.List[currentIndex].Inserts, &adapt.ChangeItem{
 		IDValue:      idValue,
@@ -49,7 +49,7 @@ func (ol *OpList) addInsert(item loadable.Item, recordKey, idValue string) {
 	})
 }
 
-func (ol *OpList) addUpdate(item loadable.Item, recordKey string, idValue string) {
+func (ol *OpList) addUpdate(item meta.Item, recordKey string, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Updates = append(ol.List[currentIndex].Updates, &adapt.ChangeItem{
 		IDValue:      idValue,
@@ -58,7 +58,7 @@ func (ol *OpList) addUpdate(item loadable.Item, recordKey string, idValue string
 	})
 }
 
-func (ol *OpList) addDelete(item loadable.Item, idValue string) {
+func (ol *OpList) addDelete(item meta.Item, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Deletes = append(ol.List[currentIndex].Deletes, &adapt.ChangeItem{
 		FieldChanges: item,
@@ -81,7 +81,7 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 	opList := NewOpList(request)
 
 	if request.Changes != nil {
-		err := request.Changes.Loop(func(item loadable.Item, recordKey string) error {
+		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				newID := uuid.New().String()
@@ -102,7 +102,7 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 	}
 
 	if request.Deletes != nil {
-		err := request.Deletes.Loop(func(item loadable.Item, _ string) error {
+		err := request.Deletes.Loop(func(item meta.Item, _ string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
