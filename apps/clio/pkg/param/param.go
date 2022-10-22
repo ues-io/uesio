@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -47,7 +46,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 
 	results := []string{}
 
-	err = group.Loop(func(item loadable.Item, index string) error {
+	err = group.Loop(func(item meta.Item, index string) error {
 		bundleableItem := item.(meta.BundleableItem)
 		// Strip off the grouping part of the key
 		key := bundleableItem.GetKey()
