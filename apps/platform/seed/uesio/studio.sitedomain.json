@@ -1,65 +1,65 @@
 [
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "localhost"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "localhost"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "uesio-dev.com"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "uesio-dev.com"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "ues-dev.io"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "ues-dev.io"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "ues-uat.io"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "ues-uat.io"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "uesio.com"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "uesio.com"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "domain",
-		"domain": "ues.io"
+		"uesio/studio.type": "domain",
+		"uesio/studio.domain": "ues.io"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/web:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/web:prod"
 		},
-		"type": "subdomain",
-		"domain": "www"
+		"uesio/studio.type": "subdomain",
+		"uesio/studio.domain": "www"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/studio:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/studio:prod"
 		},
-		"type": "subdomain",
-		"domain": "studio"
+		"uesio/studio.type": "subdomain",
+		"uesio/studio.domain": "studio"
 	},
 	{
-		"site": {
-			"uniquekey": "uesio/docs:prod"
+		"uesio/studio.site": {
+			"uesio/core.uniquekey": "uesio/docs:prod"
 		},
-		"type": "subdomain",
-		"domain": "docs"
+		"uesio/studio.type": "subdomain",
+		"uesio/studio.domain": "docs"
 	}
 ]

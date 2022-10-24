@@ -1,23 +1,25 @@
 package adapt
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"text/template"
 
+	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 type SaveOp struct {
-	CollectionName string
-	WireName       string
-	Inserts        ChangeItems
-	Updates        ChangeItems
-	Deletes        ChangeItems
-	Options        *SaveOptions
-	Errors         *[]SaveError
-	InsertCount    int
+	WireName    string
+	Inserts     ChangeItems
+	Updates     ChangeItems
+	Deletes     ChangeItems
+	Options     *SaveOptions
+	Errors      *[]SaveError
+	InsertCount int
+	Metadata    *CollectionMetadata
 }
 
 func (op *SaveOp) AddError(saveError *SaveError) {
@@ -81,6 +83,51 @@ type ChangeItem struct {
 	ReadWriteTokens []string
 	Autonumber      int
 	IsNew           bool
+	Metadata        *CollectionMetadata
+}
+
+func (ci *ChangeItem) IsNil() bool {
+	return ci == nil
+}
+
+func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
+
+	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+		if value == nil {
+			return nil
+		}
+		fieldMetadata, err := ci.Metadata.GetField(fieldID)
+		if err != nil {
+			return err
+		}
+
+		if IsReference(fieldMetadata.Type) {
+			refValue, err := GetReferenceKey(value)
+			if err != nil {
+				return nil
+			}
+			if refValue == "" {
+				return nil
+			}
+			enc.StringKey(fieldID, refValue)
+			return nil
+		}
+
+		jsonValue, err := json.Marshal(value)
+		if err != nil {
+			return errors.New("Error getting json value: " + fieldMetadata.GetFullName())
+		}
+		ej := gojay.EmbeddedJSON(jsonValue)
+		enc.AddEmbeddedJSONKey(fieldID, &ej)
+		return nil
+
+	})
+	if err != nil {
+		// this should add an error to the encoder and make it bomb
+		fmt.Println(err)
+		badValue := []string{}
+		enc.AddInterface(badValue)
+	}
 }
 
 func (ci *ChangeItem) AddReadToken(token string) {

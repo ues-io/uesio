@@ -11,11 +11,10 @@ func processLocalReferences(
 	change *ChangeItem,
 	uniqueKeyFieldValue string,
 	refValue interface{},
-	collectionMetadata *CollectionMetadata,
 	refCollectionMetadata *CollectionMetadata,
 ) (bool, error) {
 	// Special case for allowing self-references
-	if collectionMetadata.GetFullName() == refCollectionMetadata.GetFullName() {
+	if op.Metadata.GetFullName() == refCollectionMetadata.GetFullName() {
 
 		if change.UniqueKey == uniqueKeyFieldValue {
 			concreteItem, err := GetLoadable(refValue)
@@ -56,17 +55,12 @@ func FetchReferences(
 
 	metadata := connection.GetMetadata()
 
-	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
-	if err != nil {
-		return err
-	}
-
 	referencedIDCollections := ReferenceRegistry{}
 	referencedUniqueKeyCollections := ReferenceRegistry{}
 
 	// Load All Reference Fields for Inserts add add to changes
-	for i := range collectionMetadata.Fields {
-		field := collectionMetadata.Fields[i]
+	for i := range op.Metadata.Fields {
+		field := op.Metadata.Fields[i]
 		if IsReference(field.Type) {
 			refCollectionMetadata, err := metadata.GetCollection(field.ReferenceMetadata.Collection)
 			if err != nil {
@@ -100,7 +94,7 @@ func FetchReferences(
 
 				if idFieldValue != "" {
 
-					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, collectionMetadata, refCollectionMetadata)
+					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, refCollectionMetadata)
 					if err != nil {
 						return err
 					}
@@ -116,7 +110,7 @@ func FetchReferences(
 
 				if uniqueKeyFieldValue != "" {
 
-					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, collectionMetadata, refCollectionMetadata)
+					foundMatch, err := processLocalReferences(op, change, uniqueKeyFieldValue, refValue, refCollectionMetadata)
 					if err != nil {
 						return err
 					}
@@ -139,7 +133,7 @@ func FetchReferences(
 		}
 	}
 
-	err = HandleReferences(connection, referencedIDCollections, session, false)
+	err := HandleReferences(connection, referencedIDCollections, session, false)
 	if err != nil {
 		return err
 	}

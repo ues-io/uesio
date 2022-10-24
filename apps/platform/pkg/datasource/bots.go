@@ -95,7 +95,9 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 
 	var botFunction BotFunc
 
-	switch request.CollectionName {
+	collectionName := request.Metadata.GetFullName()
+
+	switch collectionName {
 	case "uesio/core.userfile":
 		botFunction = runUserFileBeforeSaveBot
 	case "uesio/studio.field":
@@ -127,7 +129,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("BEFORESAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI)
 	}, session)
 	if err != nil {
@@ -163,7 +165,9 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 	var botFunction BotFunc
 
-	switch request.CollectionName {
+	collectionName := request.Metadata.GetFullName()
+
+	switch collectionName {
 	case "uesio/core.user":
 		botFunction = runUserAfterSaveBot
 	case "uesio/studio.site":
@@ -187,7 +191,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("AFTERSAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI)
 	}, session)
 	if err != nil {

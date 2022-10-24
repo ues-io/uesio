@@ -1,26 +1,26 @@
 [
 	{
-		"name": "dev",
-		"app": {
-			"uniquekey": "uesio/crm"
+		"uesio/studio.name": "dev",
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
 		}
 	},
 	{
-		"name": "test",
-		"app": {
-			"uniquekey": "uesio/crm"
+		"uesio/studio.name": "test",
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/crm"
 		}
 	},
 	{
-		"name": "dev",
-		"app": {
-			"uniquekey": "uesio/cms"
+		"uesio/studio.name": "dev",
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
 		}
 	},
 	{
-		"name": "dev",
-		"app": {
-			"uniquekey": "uesio/docs"
+		"uesio/studio.name": "dev",
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
 		}
 	}
 ]

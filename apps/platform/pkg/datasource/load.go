@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -15,19 +14,19 @@ import (
 )
 
 type SpecialReferences struct {
-	ReferenceMetadata *meta.ReferenceMetadata
+	ReferenceMetadata *adapt.ReferenceMetadata
 	Fields            []string
 }
 
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
-		ReferenceMetadata: &meta.ReferenceMetadata{
+		ReferenceMetadata: &adapt.ReferenceMetadata{
 			Collection: "uesio/core.userfile",
 		},
 		Fields: []string{"uesio/core.mimetype", "uesio/core.name", "uesio/core.filename"},
 	},
 	"USER": {
-		ReferenceMetadata: &meta.ReferenceMetadata{
+		ReferenceMetadata: &adapt.ReferenceMetadata{
 			Collection: "uesio/core.user",
 		},
 		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.picture"},
