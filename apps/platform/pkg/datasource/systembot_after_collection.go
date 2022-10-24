@@ -6,7 +6,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -47,7 +46,7 @@ func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, 
 	}
 
 	fieldIds := []string{}
-	cc.Loop(func(item loadable.Item, _ string) error {
+	cc.Loop(func(item meta.Item, _ string) error {
 		uniquekey, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 		if err != nil {
 			return err
@@ -87,7 +86,7 @@ func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, 
 	}
 
 	delIds := adapt.Collection{}
-	fc.Loop(func(item loadable.Item, _ string) error {
+	fc.Loop(func(item meta.Item, _ string) error {
 		fieldId, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err

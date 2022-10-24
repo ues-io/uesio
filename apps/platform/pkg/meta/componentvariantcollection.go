@@ -5,8 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ComponentVariantCollection []*ComponentVariant
@@ -23,7 +21,7 @@ func (cvc *ComponentVariantCollection) GetFields() []string {
 	return StandardGetFields(&ComponentVariant{})
 }
 
-func (cvc *ComponentVariantCollection) NewItem() loadable.Item {
+func (cvc *ComponentVariantCollection) NewItem() Item {
 	cv := &ComponentVariant{}
 	*cvc = append(*cvc, cv)
 	return cv
@@ -66,11 +64,11 @@ func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace str
 	return cv.GetKey(), nil
 }
 
-func (cvc *ComponentVariantCollection) GetItem(index int) loadable.Item {
+func (cvc *ComponentVariantCollection) GetItem(index int) Item {
 	return (*cvc)[index]
 }
 
-func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
+func (cvc *ComponentVariantCollection) Loop(iter GroupIterator) error {
 	for index := range *cvc {
 		err := iter(cvc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

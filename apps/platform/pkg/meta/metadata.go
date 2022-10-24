@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 	"gopkg.in/yaml.v3"
 )
@@ -30,13 +29,13 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 type BundleConditions map[string]string
 
 type CollectionableGroup interface {
-	loadable.Group
+	Group
 	GetName() string
 	GetFields() []string
 }
 
 type CollectionableItem interface {
-	loadable.Item
+	Item
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta

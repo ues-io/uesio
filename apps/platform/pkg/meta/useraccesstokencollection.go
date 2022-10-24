@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type UserAccessTokenCollection []*UserAccessToken
@@ -21,7 +19,7 @@ func (uatc *UserAccessTokenCollection) GetFields() []string {
 	return StandardGetFields(&UserAccessToken{})
 }
 
-func (uatc *UserAccessTokenCollection) NewItem() loadable.Item {
+func (uatc *UserAccessTokenCollection) NewItem() Item {
 	uat := &UserAccessToken{}
 	*uatc = append(*uatc, uat)
 	return uat
@@ -44,11 +42,11 @@ func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, namespace str
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (uatc *UserAccessTokenCollection) GetItem(index int) loadable.Item {
+func (uatc *UserAccessTokenCollection) GetItem(index int) Item {
 	return (*uatc)[index]
 }
 
-func (uatc *UserAccessTokenCollection) Loop(iter loadable.GroupIterator) error {
+func (uatc *UserAccessTokenCollection) Loop(iter GroupIterator) error {
 	for index := range *uatc {
 		err := iter(uatc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -123,7 +122,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, session, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
+		}, adapt.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
