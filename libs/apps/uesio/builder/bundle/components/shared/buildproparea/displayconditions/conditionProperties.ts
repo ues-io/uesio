@@ -42,6 +42,14 @@ export const properties: builder.PropDescriptor[] = [
 				label: "Field Mode",
 				value: "fieldMode",
 			},
+			{
+				label: "Wire has changes",
+				value: "wireHasChanges",
+			},
+			{
+				label: "Wire has no changes",
+				value: "wireHasNoChanges",
+			},
 		],
 	},
 	{
@@ -50,11 +58,13 @@ export const properties: builder.PropDescriptor[] = [
 		label: "wire",
 		display: [
 			{
+				type: "INCLUDES",
 				property: "type",
-				value: "fieldValue",
+				values: ["fieldValue", "wireHasChanges", "wireHasNoChanges"],
 			},
 		],
 	},
+
 	{
 		name: "field",
 		type: "METADATA",

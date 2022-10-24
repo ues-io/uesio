@@ -64,14 +64,18 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
-type WireChanges = {
-	type: "wireChanges"
-	value: boolean
-	wires: string[]
+type WireHasNoChanges = {
+	type: "wireHasNoChanges"
+	wire: string
+}
+type WireHasChanges = {
+	type: "wireHasChanges"
+	wire: string
 }
 
 type DisplayCondition =
-	| WireChanges
+	| WireHasChanges
+	| WireHasNoChanges
 	| HasNoValueCondition
 	| HasValueCondition
 	| FieldValueCondition
@@ -135,14 +139,15 @@ function should(condition: DisplayCondition, context: Context) {
 		return !context.getRecord()?.isNew()
 	}
 
-	if (condition.type === "wireChanges") {
-		const uesio = useUesio({ context })
-		const wires = Object.values(
-			uesio.wire.useWires(condition.wires.map((w) => context.merge(w))) ||
-				[]
-		)
-		const hasChanges = wires.some((w) => w?.getChanges().length)
-		return condition.value === false ? !hasChanges : hasChanges
+	if (
+		condition.type === "wireHasChanges" ||
+		condition.type === "wireHasNoChanges"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const hasChanges = ctx.getWire()?.getChanges().length
+		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
 	}
 
 	const compareToValue =
@@ -163,7 +168,6 @@ function should(condition: DisplayCondition, context: Context) {
 		const ctx = condition.wire
 			? context.addFrame({ wire: condition.wire })
 			: context
-
 		const ctxRecord = ctx.getRecord()
 		// If we have a record in context, use it.
 		if (ctxRecord)
@@ -219,7 +223,7 @@ const getWiresForConditions = (
 	return [
 		...(contextWire ? [contextWire] : []),
 		...conditions.flatMap((condition) =>
-			!condition.type && condition.wire ? [condition.wire] : []
+			"wire" in condition && condition.wire ? [condition.wire] : []
 		),
 	]
 }
