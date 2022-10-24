@@ -3,6 +3,7 @@ public: true
 components:
   utility:
     proplist:
+    proplistprop:
     metadataprop:
     selectprop:
     multiselectprop:
