@@ -1,9 +1,9 @@
 package meta
 
 type FormulaMetadata struct {
-	Expression string    `json:"expression" yaml:"expression,omitempty" uesio:"uesio/studio.expression"`
-	ReturnType string    `json:"returntype" yaml:"returntype,omitempty" uesio:"uesio/studio.returntype"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Expression string    `yaml:"expression,omitempty" json:"uesio/studio.expression"`
+	ReturnType string    `yaml:"returntype,omitempty" json:"uesio/studio.returntype"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *FormulaMetadata) GetCollectionName() string {

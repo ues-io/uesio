@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type PermissionSetCollection []*PermissionSet
@@ -20,7 +18,7 @@ func (pc *PermissionSetCollection) GetFields() []string {
 	return StandardGetFields(&PermissionSet{})
 }
 
-func (pc *PermissionSetCollection) NewItem() loadable.Item {
+func (pc *PermissionSetCollection) NewItem() Item {
 	p := &PermissionSet{}
 	*pc = append(*pc, p)
 	return p
@@ -39,11 +37,11 @@ func (pc *PermissionSetCollection) GetKeyFromPath(path string, namespace string,
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (pc *PermissionSetCollection) GetItem(index int) loadable.Item {
+func (pc *PermissionSetCollection) GetItem(index int) Item {
 	return (*pc)[index]
 }
 
-func (pc *PermissionSetCollection) Loop(iter loadable.GroupIterator) error {
+func (pc *PermissionSetCollection) Loop(iter GroupIterator) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

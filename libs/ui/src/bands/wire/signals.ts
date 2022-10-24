@@ -237,9 +237,15 @@ const signals: Record<string, SignalDescriptor> = {
 		description: "Search wire",
 		properties: (): PropDescriptor[] => [
 			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
 				name: "searchFields",
-				type: "WIRE_FIELDS", // TODO: update to new format
+				type: "FIELDS",
 				label: "Search Fields",
+				wireField: "wire",
 			},
 			{
 				name: "search",

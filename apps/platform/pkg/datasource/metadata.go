@@ -61,13 +61,13 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		Type:                   GetType(f),
 		IsFormula:              f.Type == "FORMULA",
 		Label:                  GetFieldLabel(f, session),
-		ReferenceMetadata:      f.ReferenceMetadata,
-		ReferenceGroupMetadata: f.ReferenceGroupMetadata,
-		FileMetadata:           f.FileMetadata,
-		NumberMetadata:         f.NumberMetadata,
-		ValidationMetadata:     f.ValidationMetadata,
-		AutoNumberMetadata:     f.AutoNumberMetadata,
-		FormulaMetadata:        f.FormulaMetadata,
+		ReferenceMetadata:      GetReferenceMetadata(f),
+		ReferenceGroupMetadata: GetReferenceGroupMetadata(f),
+		FileMetadata:           GetFileMetadata(f),
+		NumberMetadata:         GetNumberMetadata(f),
+		ValidationMetadata:     GetValidationMetadata(f),
+		AutoNumberMetadata:     GetAutoNumberMetadata(f),
+		FormulaMetadata:        GetFormulaMetadata(f),
 		SelectListMetadata:     GetSelectListMetadata(f),
 		Required:               f.Required,
 		AutoPopulate:           f.AutoPopulate,
@@ -111,6 +111,75 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
 		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
+		}
+	}
+	return nil
+}
+
+func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
+	if f.Type == "FILE" && f.FileMetadata != nil {
+		return &adapt.FileMetadata{
+			Accept:         f.FileMetadata.Accept,
+			FileCollection: f.FileMetadata.FileCollection,
+		}
+	}
+	return nil
+}
+
+func GetNumberMetadata(f *meta.Field) *adapt.NumberMetadata {
+	if f.Type == "NUMBER" && f.NumberMetadata != nil {
+		return &adapt.NumberMetadata{
+			Decimals: f.NumberMetadata.Decimals,
+		}
+	}
+	return nil
+}
+
+func GetAutoNumberMetadata(f *meta.Field) *adapt.AutoNumberMetadata {
+	if f.Type == "AUTONUMBER" && f.AutoNumberMetadata != nil {
+		return &adapt.AutoNumberMetadata{
+			Prefix:       f.AutoNumberMetadata.Prefix,
+			LeadingZeros: f.AutoNumberMetadata.LeadingZeros,
+		}
+	}
+	return nil
+}
+
+func GetFormulaMetadata(f *meta.Field) *adapt.FormulaMetadata {
+	if f.Type == "FORMULA" && f.FormulaMetadata != nil {
+		return &adapt.FormulaMetadata{
+			Expression: f.FormulaMetadata.Expression,
+			ReturnType: f.FormulaMetadata.ReturnType,
+		}
+	}
+	return nil
+}
+
+func GetReferenceMetadata(f *meta.Field) *adapt.ReferenceMetadata {
+	if f.Type == "REFERENCE" && f.ReferenceMetadata != nil {
+		return &adapt.ReferenceMetadata{
+			Collection: f.ReferenceMetadata.Collection,
+		}
+	}
+	return nil
+}
+
+func GetReferenceGroupMetadata(f *meta.Field) *adapt.ReferenceGroupMetadata {
+	if f.Type == "REFERENCEGROUP" && f.ReferenceGroupMetadata != nil {
+		return &adapt.ReferenceGroupMetadata{
+			Collection: f.ReferenceGroupMetadata.Collection,
+			Field:      f.ReferenceGroupMetadata.Field,
+			OnDelete:   f.ReferenceGroupMetadata.OnDelete,
+		}
+	}
+	return nil
+}
+
+func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
+	if f.ValidationMetadata != nil {
+		return &adapt.ValidationMetadata{
+			Type:  f.ValidationMetadata.Type,
+			Regex: f.ValidationMetadata.Regex,
 		}
 	}
 	return nil

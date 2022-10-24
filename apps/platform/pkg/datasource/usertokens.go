@@ -4,7 +4,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -127,7 +126,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				return err
 			}
 			tokenStrings := []string{}
-			err = lookupResults.Loop(func(record loadable.Item, _ string) error {
+			err = lookupResults.Loop(func(record meta.Item, _ string) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {
 					return err

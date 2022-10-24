@@ -3,17 +3,17 @@ package meta
 import "fmt"
 
 type BundleDependency struct {
-	ID        string     `uesio:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	App       *App       `yaml:"-" uesio:"uesio/studio.app"`
-	Bundle    *Bundle    `uesio:"uesio/studio.bundle"`
-	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
+	ID        string     `json:"uesio/core.id"`
+	UniqueKey string     `json:"uesio/core.uniquekey"`
+	Workspace *Workspace `json:"uesio/studio.workspace"`
+	App       *App       `json:"uesio/studio.app"`
+	Bundle    *Bundle    `json:"uesio/studio.bundle"`
+	itemMeta  *ItemMeta  `json:"-"`
+	CreatedBy *User      `json:"uesio/core.createdby"`
+	Owner     *User      `json:"uesio/core.owner"`
+	UpdatedBy *User      `json:"uesio/core.updatedby"`
+	UpdatedAt int64      `json:"uesio/core.updatedat"`
+	CreatedAt int64      `json:"uesio/core.createdat"`
 }
 
 func (b *BundleDependency) GetVersionString() string {

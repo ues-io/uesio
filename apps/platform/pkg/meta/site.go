@@ -1,21 +1,21 @@
 package meta
 
 type Site struct {
-	ID          string  `uesio:"uesio/core.id"`
-	UniqueKey   string  `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name        string  `uesio:"uesio/studio.name"`
-	Bundle      *Bundle `uesio:"uesio/studio.bundle"`
-	App         *App    `uesio:"uesio/studio.app"`
-	bundleDef   *BundleDef
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy   *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID          string     `json:"uesio/core.id"`
+	UniqueKey   string     `json:"uesio/core.uniquekey"`
+	Name        string     `json:"uesio/studio.name"`
+	Bundle      *Bundle    `json:"uesio/studio.bundle"`
+	App         *App       `json:"uesio/studio.app"`
+	bundleDef   *BundleDef `json:"-"`
+	itemMeta    *ItemMeta  `json:"-"`
+	CreatedBy   *User      `json:"uesio/core.createdby"`
+	Owner       *User      `json:"uesio/core.owner"`
+	UpdatedBy   *User      `json:"uesio/core.updatedby"`
+	UpdatedAt   int64      `json:"uesio/core.updatedat"`
+	CreatedAt   int64      `json:"uesio/core.createdat"`
 	Domain      string
 	Subdomain   string
-	Permissions *PermissionSet `uesio:"-"`
+	Permissions *PermissionSet `json:"-"`
 }
 
 func (s *Site) GetFullName() string {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -15,16 +15,10 @@ func HandleUpsertLookup(
 ) error {
 
 	op.InsertCount = len(op.Inserts)
-	metadata := connection.GetMetadata()
 	options := op.Options
 	skipUpsertQuery := options == nil || !options.Upsert
 	if skipUpsertQuery {
 		return nil
-	}
-
-	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
-	if err != nil {
-		return err
 	}
 
 	idMap := LocatorMap{}
@@ -32,7 +26,7 @@ func HandleUpsertLookup(
 
 		// It's ok to not handle this error here, because we'll try to
 		// set the unique key again later when we have more data.
-		_ = SetUniqueKey(change, collectionMetadata)
+		_ = SetUniqueKey(change)
 
 		if change.UniqueKey == "" {
 			continue
@@ -50,14 +44,14 @@ func HandleUpsertLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, []LoadRequestField{
+	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, []LoadRequestField{
 		{
 			ID: ID_FIELD,
 		},
 		{
 			ID: UNIQUE_KEY_FIELD,
 		},
-	}, UNIQUE_KEY_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+	}, UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 
 		// This is a weird situation.
 		// It means we found a value that we didn't ask for.

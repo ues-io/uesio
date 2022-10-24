@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type UserCollection []User
@@ -16,16 +14,16 @@ func (uc *UserCollection) GetFields() []string {
 	return StandardGetFields(&User{})
 }
 
-func (uc *UserCollection) GetItem(index int) loadable.Item {
+func (uc *UserCollection) GetItem(index int) Item {
 	return &(*uc)[index]
 }
 
-func (uc *UserCollection) NewItem() loadable.Item {
+func (uc *UserCollection) NewItem() Item {
 	*uc = append(*uc, User{})
 	return &(*uc)[len(*uc)-1]
 }
 
-func (uc *UserCollection) Loop(iter loadable.GroupIterator) error {
+func (uc *UserCollection) Loop(iter GroupIterator) error {
 	for index := range *uc {
 		err := iter(uc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

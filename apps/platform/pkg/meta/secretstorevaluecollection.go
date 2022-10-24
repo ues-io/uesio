@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type SecretStoreValueCollection []*SecretStoreValue
@@ -16,17 +14,17 @@ func (sc *SecretStoreValueCollection) GetFields() []string {
 	return StandardGetFields(&SecretStoreValue{})
 }
 
-func (sc *SecretStoreValueCollection) GetItem(index int) loadable.Item {
+func (sc *SecretStoreValueCollection) GetItem(index int) Item {
 	return (*sc)[index]
 }
 
-func (sc *SecretStoreValueCollection) NewItem() loadable.Item {
+func (sc *SecretStoreValueCollection) NewItem() Item {
 	s := &SecretStoreValue{}
 	*sc = append(*sc, s)
 	return s
 }
 
-func (sc *SecretStoreValueCollection) Loop(iter loadable.GroupIterator) error {
+func (sc *SecretStoreValueCollection) Loop(iter GroupIterator) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

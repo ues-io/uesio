@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -158,7 +158,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		return errors.New("Failed to load columns in PostgreSQL:" + err.Error())
 	}
 
-	var item loadable.Item
+	var item meta.Item
 	index := 0
 	scanners := make([]interface{}, len(cols))
 

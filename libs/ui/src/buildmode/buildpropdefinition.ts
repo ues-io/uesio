@@ -125,8 +125,8 @@ type PropDescriptor =
 	| IconProp
 	| ParamProp
 	| ParamsProp
-	| WireFieldsProp
 	| FieldProp
+	| FieldsProp
 	| PropListsProp
 	| PropListProp
 
@@ -240,12 +240,12 @@ interface ComponentTargetProp extends BasePropDescriptor {
 	type: "COMPONENT"
 	scope: string
 }
-
-interface WireFieldsProp extends BasePropDescriptor {
-	type: "WIRE_FIELDS"
-}
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
+	wireField: string
+}
+interface FieldsProp extends BasePropDescriptor {
+	type: "FIELDS"
 	wireField: string
 }
 interface PropListsProp extends BasePropDescriptor {
@@ -384,9 +384,9 @@ export {
 	PropListsSection,
 	ConditionalDisplayProp,
 	OrderSection,
-	WireFieldsProp,
 	PropListProp,
 	PropListsProp,
 	AddCondition,
 	FieldProp,
+	FieldsProp,
 }

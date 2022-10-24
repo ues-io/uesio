@@ -8,6 +8,7 @@ components:
         - uesio/builder.iconlabel
     metadatafield:
       utilities:
+        - uesio/builder.metadatapicker
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid

@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type DataSourceCollection []*DataSource
@@ -20,7 +18,7 @@ func (dsc *DataSourceCollection) GetFields() []string {
 	return StandardGetFields(&DataSource{})
 }
 
-func (dsc *DataSourceCollection) NewItem() loadable.Item {
+func (dsc *DataSourceCollection) NewItem() Item {
 	ds := &DataSource{}
 	*dsc = append(*dsc, ds)
 	return ds
@@ -39,11 +37,11 @@ func (dsc *DataSourceCollection) GetKeyFromPath(path string, namespace string, c
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (dsc *DataSourceCollection) GetItem(index int) loadable.Item {
+func (dsc *DataSourceCollection) GetItem(index int) Item {
 	return (*dsc)[index]
 }
 
-func (dsc *DataSourceCollection) Loop(iter loadable.GroupIterator) error {
+func (dsc *DataSourceCollection) Loop(iter GroupIterator) error {
 	for index := range *dsc {
 		err := iter(dsc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -7,7 +7,7 @@ import (
 	"unicode"
 
 	"github.com/PaesslerAG/gval"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 var UesioLanguage = gval.NewLanguage(
@@ -19,7 +19,7 @@ var UesioLanguage = gval.NewLanguage(
 				return nil, err
 			}
 			fullId := keys[0]
-			item, ok := v.(loadable.Gettable)
+			item, ok := v.(meta.Gettable)
 			if !ok {
 				return nil, errors.New("Casting error in formula field: " + fullId)
 			}
@@ -60,10 +60,10 @@ var UesioLanguage = gval.NewLanguage(
 	}),
 )
 
-type evalFunc func(item loadable.Item) error
+type evalFunc func(item meta.Item) error
 
 func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
-	return func(item loadable.Item) error {
+	return func(item meta.Item) error {
 
 		value, err := exec(context.Background(), item)
 		if err != nil {
@@ -102,7 +102,7 @@ func GetFormulaFunction(fields map[string]*FieldMetadata) evalFunc {
 		}
 	}
 
-	return func(item loadable.Item) error {
+	return func(item meta.Item) error {
 		for _, population := range populations {
 			err := population(item)
 			if err != nil {

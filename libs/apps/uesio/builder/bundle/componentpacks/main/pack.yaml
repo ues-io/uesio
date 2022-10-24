@@ -3,6 +3,7 @@ public: true
 components:
   utility:
     proplist:
+    proplistprop:
     metadataprop:
     selectprop:
     multiselectprop:
@@ -22,6 +23,7 @@ components:
     paramsprop:
     wireFieldsprop:
     fieldprop:
+    fieldsprop:
     proplistsprop:
     slotbuilder:
     placeholder:
@@ -32,6 +34,7 @@ components:
     propnodetag:
     iconlabel:
     namespacelabel:
+    conditionitem:
   view:
     runtime:
 

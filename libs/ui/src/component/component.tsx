@@ -224,6 +224,7 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 ) => {
 	const returnFunc = forwardRef((props: T, ref) => {
 		const Loader = getUtilityLoader(key)
+		if (!Loader) throw "Could not load component: " + key
 		const styles = getVariantStyleInfo(props, key)
 		return (
 			<Loader ref={ref} {...props} styles={styles} componentType={key} />

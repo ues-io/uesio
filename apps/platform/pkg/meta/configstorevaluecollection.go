@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ConfigStoreValueCollection []*ConfigStoreValue
@@ -16,17 +14,17 @@ func (cc *ConfigStoreValueCollection) GetFields() []string {
 	return StandardGetFields(&ConfigStoreValue{})
 }
 
-func (cc *ConfigStoreValueCollection) GetItem(index int) loadable.Item {
+func (cc *ConfigStoreValueCollection) GetItem(index int) Item {
 	return (*cc)[index]
 }
 
-func (cc *ConfigStoreValueCollection) NewItem() loadable.Item {
+func (cc *ConfigStoreValueCollection) NewItem() Item {
 	c := &ConfigStoreValue{}
 	*cc = append(*cc, c)
 	return c
 }
 
-func (cc *ConfigStoreValueCollection) Loop(iter loadable.GroupIterator) error {
+func (cc *ConfigStoreValueCollection) Loop(iter GroupIterator) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

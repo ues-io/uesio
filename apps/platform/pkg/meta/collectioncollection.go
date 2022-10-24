@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type CollectionCollection []*Collection
@@ -33,17 +31,17 @@ func (cc *CollectionCollection) GetKeyFromPath(path string, namespace string, co
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (cc *CollectionCollection) NewItem() loadable.Item {
+func (cc *CollectionCollection) NewItem() Item {
 	collection := &Collection{}
 	*cc = append(*cc, collection)
 	return collection
 }
 
-func (cc *CollectionCollection) GetItem(index int) loadable.Item {
+func (cc *CollectionCollection) GetItem(index int) Item {
 	return (*cc)[index]
 }
 
-func (cc *CollectionCollection) Loop(iter loadable.GroupIterator) error {
+func (cc *CollectionCollection) Loop(iter GroupIterator) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
