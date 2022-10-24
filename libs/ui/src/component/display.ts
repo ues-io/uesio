@@ -64,7 +64,14 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type WireChanges = {
+	type: "wireChanges"
+	value: boolean
+	wires: string[]
+}
+
 type DisplayCondition =
+	| WireChanges
 	| HasNoValueCondition
 	| HasValueCondition
 	| FieldValueCondition
@@ -126,6 +133,16 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "recordIsNotNew") {
 		return !context.getRecord()?.isNew()
+	}
+
+	if (condition.type === "wireChanges") {
+		const uesio = useUesio({ context })
+		const wires = Object.values(
+			uesio.wire.useWires(condition.wires.map((w) => context.merge(w))) ||
+				[]
+		)
+		const hasChanges = wires.some((w) => w?.getChanges().length)
+		return condition.value === false ? !hasChanges : hasChanges
 	}
 
 	const compareToValue =
