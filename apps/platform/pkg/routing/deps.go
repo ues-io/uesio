@@ -75,9 +75,36 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 
 }
 
-func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Session) error {
+func getDepsForUtilityComponent(key string, deps *PreloadMetadata, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
 
-	packs := map[string]meta.ComponentPackCollection{}
+	namespace, componentName, err := meta.ParseKey(key)
+	if err != nil {
+		return err
+	}
+
+	packsForNamespace, ok := packs[namespace]
+	if !ok {
+		var nspacks meta.ComponentPackCollection
+		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		if err != nil {
+			return err
+		}
+		packsForNamespace = nspacks
+	}
+
+	for _, pack := range packsForNamespace {
+		_, ok := pack.Components.UtilityComponents[componentName]
+		if ok {
+			err := deps.AddItem(pack, false)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
 
 	namespace, componentName, err := meta.ParseKey(key)
 	if err != nil {
@@ -127,23 +154,20 @@ func getDepsForComponent(key string, deps *PreloadMetadata, session *sess.Sessio
 					}
 				}
 
-				// TODO: If we are getting deps for a utility component
-				// We need to run something different.
-				/*
-					for _, key := range componentInfo.Utilities {
-						err = getDepsForComponent(key, deps, session)
-						if err != nil {
-							return err
-						}
+				for _, key := range componentInfo.Utilities {
+					err = getDepsForUtilityComponent(key, deps, packs, session)
+					if err != nil {
+						return err
 					}
-				*/
+				}
+
 			}
 		}
 	}
 	return nil
 }
 
-func processView(key string, deps *PreloadMetadata, params map[string]string, session *sess.Session) error {
+func processView(key string, deps *PreloadMetadata, params map[string]string, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -168,14 +192,14 @@ func processView(key string, deps *PreloadMetadata, params map[string]string, se
 	}
 
 	for key := range depMap.Components {
-		err := getDepsForComponent(key, deps, session)
+		err := getDepsForComponent(key, deps, packs, session)
 		if err != nil {
 			return err
 		}
 	}
 
 	for key := range depMap.Views {
-		err := processView(key, deps, nil, session)
+		err := processView(key, deps, nil, packs, session)
 		if err != nil {
 			return err
 		}
@@ -234,12 +258,8 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	packs := map[string]meta.ComponentPackCollection{}
 	namespaces := session.GetContextNamespaces()
 	for _, namespace := range namespaces {
-		groupAbstract, err := meta.GetBundleableGroupFromType("componentpacks")
-		if err != nil {
-			return nil, err
-		}
-		group := groupAbstract.(*meta.ComponentPackCollection)
-		err = bundle.LoadAll(group, namespace, nil, session)
+		group := &meta.ComponentPackCollection{}
+		err := bundle.LoadAll(group, namespace, nil, session)
 		if err != nil {
 			return nil, err
 		}
@@ -270,12 +290,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to load variants: " + err.Error())
 	}
 
-	// Also load in studio variants
-	err = bundle.LoadAllFromAny(&variants, nil, session.RemoveWorkspaceContext())
-	if err != nil {
-		return errors.New("Failed to load studio variants: " + err.Error())
-	}
-
 	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
 		return errors.New("Failed to get translated labels: " + err.Error())
@@ -288,7 +302,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 				return err
 			}
 			for key := range pack.Components.ViewComponents {
-				err := getDepsForComponent(namespace+"."+key, deps, session)
+				err := getDepsForComponent(namespace+"."+key, deps, packsByNamespace, session)
 				if err != nil {
 					return err
 				}
@@ -368,7 +382,9 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = processView(route.ViewRef, deps, route.Params, session)
+	packs := map[string]meta.ComponentPackCollection{}
+
+	err = processView(route.ViewRef, deps, route.Params, packs, session)
 	if err != nil {
 		return nil, err
 	}

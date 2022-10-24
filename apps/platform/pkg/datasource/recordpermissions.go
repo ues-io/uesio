@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-type tokenFunc func(loadable.Item) (string, bool, error)
+type tokenFunc func(meta.Item) (string, bool, error)
 
 func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache) ([]adapt.LoadRequestField, error) {
 	if collectionMetadata.AccessField == "" {
@@ -150,7 +150,7 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 
 func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, session *sess.Session) error {
 
-	var accessItem loadable.Item
+	var accessItem meta.Item
 
 	accessItem = change.FieldChanges
 
@@ -254,7 +254,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 		if err != nil {
 			return err
 		}
-		tokenFuncs = append(tokenFuncs, func(item loadable.Item) (string, bool, error) {
+		tokenFuncs = append(tokenFuncs, func(item meta.Item) (string, bool, error) {
 
 			// First check to make sure that the token meets the supplied conditions
 			if challengeToken.Conditions != nil {

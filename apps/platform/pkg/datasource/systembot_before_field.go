@@ -7,11 +7,10 @@ import (
 	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFieldsInExpression(expression string) (loadable.Item, map[string]bool) {
+func getFieldsInExpression(expression string) (meta.Item, map[string]bool) {
 	fields := adapt.ChangeItem{FieldChanges: &adapt.Item{}}
 	fieldKeys := map[string]bool{}
 	var UesioTestLanguage = gval.NewLanguage(

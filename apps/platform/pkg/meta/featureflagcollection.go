@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/francoispqt/gojay"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FeatureFlagCollection []*FeatureFlag
@@ -31,7 +30,7 @@ func (ffc *FeatureFlagCollection) GetFields() []string {
 	return StandardGetFields(&FeatureFlag{})
 }
 
-func (ffc *FeatureFlagCollection) NewItem() loadable.Item {
+func (ffc *FeatureFlagCollection) NewItem() Item {
 	ff := &FeatureFlag{}
 	*ffc = append(*ffc, ff)
 	return ff
@@ -50,11 +49,11 @@ func (ffc *FeatureFlagCollection) GetKeyFromPath(path string, namespace string, 
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (ffc *FeatureFlagCollection) GetItem(index int) loadable.Item {
+func (ffc *FeatureFlagCollection) GetItem(index int) Item {
 	return (*ffc)[index]
 }
 
-func (ffc *FeatureFlagCollection) Loop(iter loadable.GroupIterator) error {
+func (ffc *FeatureFlagCollection) Loop(iter GroupIterator) error {
 	for index := range *ffc {
 		err := iter(ffc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

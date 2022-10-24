@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type WorkspaceCollection []*Workspace
@@ -16,17 +14,17 @@ func (wc *WorkspaceCollection) GetFields() []string {
 	return StandardGetFields(&Workspace{})
 }
 
-func (wc *WorkspaceCollection) GetItem(index int) loadable.Item {
+func (wc *WorkspaceCollection) GetItem(index int) Item {
 	return (*wc)[index]
 }
 
-func (wc *WorkspaceCollection) NewItem() loadable.Item {
+func (wc *WorkspaceCollection) NewItem() Item {
 	w := &Workspace{}
 	*wc = append(*wc, w)
 	return w
 }
 
-func (wc *WorkspaceCollection) Loop(iter loadable.GroupIterator) error {
+func (wc *WorkspaceCollection) Loop(iter GroupIterator) error {
 	for index := range *wc {
 		err := iter(wc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

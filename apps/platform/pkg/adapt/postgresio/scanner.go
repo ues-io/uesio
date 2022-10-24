@@ -7,11 +7,11 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type DataScanner struct {
-	Item       *loadable.Item
+	Item       *meta.Item
 	Field      *adapt.FieldMetadata
 	References *adapt.ReferenceRegistry
 }

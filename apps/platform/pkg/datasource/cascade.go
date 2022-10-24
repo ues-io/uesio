@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -136,7 +136,7 @@ func getCascadeDeletes(
 					currentCollectionIds = adapt.Collection{}
 				}
 
-				err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
 					refRK, err := refItem.GetField(adapt.ID_FIELD)
 					if err != nil {

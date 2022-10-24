@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -71,12 +71,12 @@ func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 type ChangeItems []*ChangeItem
 
 type ChangeItem struct {
-	FieldChanges    loadable.Item
+	FieldChanges    meta.Item
 	IDValue         string
 	UniqueKey       string
 	Error           error
 	RecordKey       string
-	OldValues       loadable.Item
+	OldValues       meta.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
 	Autonumber      int
@@ -170,14 +170,14 @@ func GetFieldValueString(value interface{}, key string) (string, error) {
 	return valueString, nil
 }
 
-func GetLoadable(value interface{}) (loadable.Item, error) {
+func GetLoadable(value interface{}) (meta.Item, error) {
 	valueMap, ok := value.(map[string]interface{})
 	if ok {
 		loadableItem := Item(valueMap)
 		return &loadableItem, nil
 	}
 
-	loadableValueItem, ok := value.(loadable.Item)
+	loadableValueItem, ok := value.(meta.Item)
 	if ok {
 		return loadableValueItem, nil
 	}
@@ -200,7 +200,7 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 		return valueItem.GetField(key)
 	}
 
-	loadableValueItem, ok := value.(loadable.Item)
+	loadableValueItem, ok := value.(meta.Item)
 	if ok {
 		return loadableValueItem.GetField(key)
 	}
@@ -228,7 +228,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 
 // NewFieldChanges function returns a template that can merge field changes
 func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
+	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
 		fieldMetadata, err := collectionMetadata.GetField(key)
 		if err != nil {
 			return nil, err
