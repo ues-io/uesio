@@ -279,7 +279,7 @@ const signals: Record<string, SignalDescriptor> = {
 				context,
 				signal.wire,
 				signal.conditionId,
-				signal.value
+				context.merge(signal.value)
 			),
 		properties: (signal): PropDescriptor[] => [
 			...getWireAndConditionsDescriptor(<string>signal.wire),
