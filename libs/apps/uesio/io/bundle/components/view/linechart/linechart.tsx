@@ -22,7 +22,7 @@ const ChartComponent: FC<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	// Get a list of all wires used
-	const wireNames = definition.series.map(({ wire }) => wire || "")
+	const wireNames = definition?.series.map(({ wire }) => wire || "")
 
 	if (!definition || !definition.series || !definition.labels) {
 		console.log("missing definition for chart")
