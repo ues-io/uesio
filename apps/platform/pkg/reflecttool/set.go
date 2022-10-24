@@ -30,10 +30,6 @@ func SetField(obj interface{}, name string, value interface{}) error {
 	return nil
 }
 
-func Set(obj interface{}, value interface{}) error {
-	return setFieldReflect(reflect.ValueOf(obj).Elem(), reflect.ValueOf(value))
-}
-
 func setSlice(to reflect.Value, from reflect.Value) error {
 	sliceType := to.Type()
 	itemType := sliceType.Elem()

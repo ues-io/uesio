@@ -10,13 +10,11 @@ import (
 )
 
 type OpList struct {
-	CollectionName string
-	WireName       string
-	Options        *adapt.SaveOptions
-	List           []*adapt.SaveOp
-	Counter        int
-	CurrentIndex   int
-	Errors         *[]adapt.SaveError
+	Request      *SaveRequest
+	Metadata     *adapt.CollectionMetadata
+	List         []*adapt.SaveOp
+	Counter      int
+	CurrentIndex int
 }
 
 func (ol *OpList) getCurrentIndex() int {
@@ -26,13 +24,13 @@ func (ol *OpList) getCurrentIndex() int {
 	}
 	if ol.Counter == 0 {
 		ol.List = append(ol.List, &adapt.SaveOp{
-			CollectionName: ol.CollectionName,
-			WireName:       ol.WireName,
-			Inserts:        adapt.ChangeItems{},
-			Updates:        adapt.ChangeItems{},
-			Deletes:        adapt.ChangeItems{},
-			Options:        ol.Options,
-			Errors:         ol.Errors,
+			WireName: ol.Request.Wire,
+			Inserts:  adapt.ChangeItems{},
+			Updates:  adapt.ChangeItems{},
+			Deletes:  adapt.ChangeItems{},
+			Options:  ol.Request.Options,
+			Errors:   &ol.Request.Errors,
+			Metadata: ol.Metadata,
 		})
 	}
 	ol.Counter++
@@ -46,6 +44,7 @@ func (ol *OpList) addInsert(item meta.Item, recordKey, idValue string) {
 		FieldChanges: item,
 		RecordKey:    recordKey,
 		IsNew:        true,
+		Metadata:     ol.Metadata,
 	})
 }
 
@@ -55,6 +54,7 @@ func (ol *OpList) addUpdate(item meta.Item, recordKey string, idValue string) {
 		IDValue:      idValue,
 		FieldChanges: item,
 		RecordKey:    recordKey,
+		Metadata:     ol.Metadata,
 	})
 }
 
@@ -63,22 +63,21 @@ func (ol *OpList) addDelete(item meta.Item, idValue string) {
 	ol.List[currentIndex].Deletes = append(ol.List[currentIndex].Deletes, &adapt.ChangeItem{
 		FieldChanges: item,
 		IDValue:      idValue,
+		Metadata:     ol.Metadata,
 	})
 }
 
-func NewOpList(request *SaveRequest) *OpList {
+func NewOpList(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata) *OpList {
 	return &OpList{
-		CollectionName: request.Collection,
-		WireName:       request.Wire,
-		Options:        request.Options,
-		List:           []*adapt.SaveOp{},
-		Errors:         &request.Errors,
+		Request:  request,
+		Metadata: collectionMetadata,
+		List:     []*adapt.SaveOp{},
 	}
 }
 
 func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
-	opList := NewOpList(request)
+	opList := NewOpList(request, collectionMetadata)
 
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {

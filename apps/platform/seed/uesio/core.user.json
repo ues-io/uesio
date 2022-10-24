@@ -1,35 +1,35 @@
 [
 	{
-		"username": "uesio",
-		"profile": "uesio/studio.standard",
-		"type": "ORG"
+		"uesio/core.username": "uesio",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "ORG"
 	},
 	{
-		"username": "ben",
-		"firstname": "Ben",
-		"lastname": "Hubbard",
-		"profile": "uesio/studio.standard",
-		"type": "PERSON"
+		"uesio/core.username": "ben",
+		"uesio/core.firstname": "Ben",
+		"uesio/core.lastname": "Hubbard",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "PERSON"
 	},
 	{
-		"username": "abel",
-		"firstname": "Abel",
-		"lastname": "Jimenez Molla",
-		"profile": "uesio/studio.standard",
-		"type": "PERSON"
+		"uesio/core.username": "abel",
+		"uesio/core.firstname": "Abel",
+		"uesio/core.lastname": "Jimenez Molla",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "PERSON"
 	},
 	{
-		"username": "wessel",
-		"firstname": "Wessel",
-		"lastname": "van der Plas",
-		"profile": "uesio/studio.standard",
-		"type": "PERSON"
+		"uesio/core.username": "wessel",
+		"uesio/core.firstname": "Wessel",
+		"uesio/core.lastname": "van der Plas",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "PERSON"
 	},
 	{
-		"username": "gregg",
-		"firstname": "Gregg",
-		"lastname": "Baxter",
-		"profile": "uesio/studio.standard",
-		"type": "PERSON"
+		"uesio/core.username": "gregg",
+		"uesio/core.firstname": "Gregg",
+		"uesio/core.lastname": "Baxter",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "PERSON"
 	}
 ]

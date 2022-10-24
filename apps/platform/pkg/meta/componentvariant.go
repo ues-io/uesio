@@ -28,22 +28,22 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 }
 
 type ComponentVariant struct {
-	ID         string     `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Namespace  string     `yaml:"-" uesio:"-"`
-	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
-	Component  string     `yaml:"-" uesio:"uesio/studio.component"`
-	Extends    string     `yaml:"extends" uesio:"uesio/studio.extends"`
-	Label      string     `yaml:"label" uesio:"uesio/studio.label"`
-	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
-	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID         string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Namespace  string     `yaml:"-" json:"-"`
+	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	Name       string     `yaml:"name" json:"uesio/studio.name"`
+	Component  string     `yaml:"-" json:"uesio/studio.component"`
+	Extends    string     `yaml:"extends" json:"uesio/studio.extends"`
+	Label      string     `yaml:"label" json:"uesio/studio.label"`
+	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
+	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type ComponentVariantWrapper ComponentVariant

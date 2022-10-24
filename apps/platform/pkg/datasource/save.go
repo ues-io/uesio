@@ -184,20 +184,14 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 }
 
 func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	metadata := connection.GetMetadata()
+
 	for _, op := range batch {
 
-		collectionMetadata, err := metadata.GetCollection(op.CollectionName)
-		if err != nil {
-			op.AddError(adapt.NewGenericSaveError(err))
-			return err
-		}
-
 		// Set Unique Keys For Inserts
-		err = op.LoopInserts(func(change *adapt.ChangeItem) error {
+		err := op.LoopInserts(func(change *adapt.ChangeItem) error {
 			// It's ok to fail here creating unique keys
 			// We'll try again later after we've run some bots
-			_ = adapt.SetUniqueKey(change, collectionMetadata)
+			_ = adapt.SetUniqueKey(change)
 			return nil
 		})
 		if err != nil {
@@ -252,7 +246,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 			return err
 		}
 
-		err = Validate(op, collectionMetadata, connection, session)
+		err = Validate(op, connection, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
@@ -265,14 +259,14 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		// Set the unique keys for the last time
 		err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-			return adapt.SetUniqueKey(change, collectionMetadata)
+			return adapt.SetUniqueKey(change)
 		})
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
 		}
 
-		err = GenerateRecordChallengeTokens(op, collectionMetadata, connection, session)
+		err = GenerateRecordChallengeTokens(op, connection, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
@@ -300,7 +294,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
 		}
-		go usage.RegisterEvent("SAVE", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+		go usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
 		go usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
 	}
 

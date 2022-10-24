@@ -1,9 +1,9 @@
 package meta
 
 type AutoNumberMetadata struct {
-	Prefix       string    `json:"prefix" yaml:"prefix,omitempty" uesio:"uesio/studio.prefix"`
-	LeadingZeros int       `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"uesio/studio.leadingzeros"`
-	itemMeta     *ItemMeta `yaml:"-" uesio:"-"`
+	Prefix       string    `yaml:"prefix,omitempty" json:"uesio/studio.prefix"`
+	LeadingZeros int       `yaml:"leadingZeros,omitempty" json:"uesio/studio.leadingzeros"`
+	itemMeta     *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *AutoNumberMetadata) GetCollectionName() string {

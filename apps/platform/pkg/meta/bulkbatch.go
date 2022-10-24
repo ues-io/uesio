@@ -1,18 +1,18 @@
 package meta
 
 type BulkBatch struct {
-	ID        string            `uesio:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	AutoID    string            `uesio:"uesio/core.autoid"`
-	BulkJobID string            `uesio:"uesio/core.bulkjobid"`
-	Status    string            `uesio:"uesio/core.status"`
-	Result    *UserFileMetadata `yaml:"-" uesio:"uesio/core.result"`
-	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
+	ID        string            `json:"uesio/core.id"`
+	UniqueKey string            `json:"uesio/core.uniquekey"`
+	AutoID    string            `json:"uesio/core.autoid"`
+	BulkJobID string            `json:"uesio/core.bulkjobid"`
+	Status    string            `json:"uesio/core.status"`
+	Result    *UserFileMetadata `json:"uesio/core.result"`
+	itemMeta  *ItemMeta         `json:"-"`
+	CreatedBy *User             `json:"uesio/core.createdby"`
+	Owner     *User             `json:"uesio/core.owner"`
+	UpdatedBy *User             `json:"uesio/core.updatedby"`
+	UpdatedAt int64             `json:"uesio/core.updatedat"`
+	CreatedAt int64             `json:"uesio/core.createdat"`
 }
 
 func (bb *BulkBatch) GetCollectionName() string {

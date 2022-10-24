@@ -56,7 +56,7 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 	}
 	fieldsCount := objType.NumField()
 	allTags := make(map[string]string)
-	key := "uesio"
+	key := "json"
 
 	for i := 0; i < fieldsCount; i++ {
 		structField := objType.Field(i)

@@ -1,8 +1,8 @@
 package meta
 
 type NumberMetadata struct {
-	Decimals int       `json:"decimals" uesio:"uesio/studio.decimals"`
-	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
+	Decimals int       `json:"uesio/studio.decimals"`
+	itemMeta *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *NumberMetadata) GetCollectionName() string {
