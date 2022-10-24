@@ -186,14 +186,14 @@ func (ci *ChangeItem) Len() int {
 func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 	if ci.IsNew {
-		ownerVal, err := ci.GetField("uesio/core.owner->uesio/core.id")
+		ownerVal, err := ci.GetField("uesio/core.owner")
 		if err != nil {
 			return "", err
 		}
 		return GetReferenceKey(ownerVal)
 	}
 
-	ownerVal, err := ci.GetOldField("uesio/core.owner->uesio/core.id")
+	ownerVal, err := ci.GetOldField("uesio/core.owner")
 	if err != nil {
 		return "", err
 	}
