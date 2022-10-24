@@ -9,10 +9,6 @@ Chart.register(...registerables)
 
 const ChartComponent: FC<Props> = (props) => {
 	const { definition } = props
-	if (!definition || !definition.series || !definition.labels) {
-		console.warn("missing definition for chart")
-		return null
-	}
 
 	const classes = styles.useStyles(
 		{
@@ -27,6 +23,11 @@ const ChartComponent: FC<Props> = (props) => {
 
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")
+
+	if (!definition || !definition.series || !definition.labels) {
+		console.log("missing definition for chart")
+		return null
+	}
 
 	const wires = uesio.wire.useWires(wireNames)
 
