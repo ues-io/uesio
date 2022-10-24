@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
 
 interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rows: R[]
@@ -11,16 +11,16 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rowSelectFunc: () => {
 		selected: string[]
 		toggleAll: () => void
-		toggleAllCheckbox: ReactNode
-		rowHelpers: (recordContext: R) => {
+		allAreSelected: boolean
+		getRowItem: (recordContext: R) => {
 			handleClick: () => void
 			isSelected: boolean
-			checkbox: ReactNode
 		}
 	} | null
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
 }
+const CheckboxField = component.getUtility("uesio/io.checkboxfield")
 
 const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 	props
@@ -114,12 +114,21 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 										? "hasSelection"
 										: ""
 								)}
-								onClick={() => rowSelectHelpers?.toggleAll()}
+								onClick={rowSelectHelpers?.toggleAll}
 								key="rownumbers"
 							>
 								{rowSelectHelpers && (
 									<div className="toggleAllCheckBox">
-										{rowSelectHelpers.toggleAllCheckbox}
+										<CheckboxField
+											context={props.context}
+											value={
+												rowSelectHelpers.allAreSelected
+											}
+											variant="uesio/io.field:uesio/io.table"
+											setValue={
+												rowSelectHelpers?.toggleAll
+											}
+										/>
 									</div>
 								)}
 							</th>
@@ -142,7 +151,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 				<tbody>
 					{rows.map((row, index) => {
 						const rowNumber = rowNumberFunc(index)
-						const rowHelpers = rowSelectHelpers?.rowHelpers(row)
+						const rowItem = rowSelectHelpers?.getRowItem(row)
 						return (
 							<tr
 								onClick={
@@ -156,27 +165,37 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 								)}
 								key={index + 1}
 							>
-								{(rowNumber || rowHelpers) && (
+								{(rowNumber || rowItem) && (
 									<td
 										className={styles.cx(
 											classes.cell,
 											classes.rowPrefixCell,
-											rowHelpers ? "allowSelection" : "",
-											rowHelpers?.isSelected
+											rowItem ? "allowSelection" : "",
+											rowItem?.isSelected
 												? "isSelected"
 												: ""
 										)}
-										key="rownumbers"
-										onClick={rowHelpers?.handleClick}
+										key={
+											index +
+											1 * (rowItem?.isSelected ? -1 : 1)
+										}
+										onClick={rowItem?.handleClick}
 									>
 										{rowNumber && (
 											<div className="rowNumber">
 												{rowNumber}
 											</div>
 										)}
-										{rowHelpers && (
+										{rowItem && (
 											<div className="rowCheckbox">
-												{rowHelpers.checkbox}
+												<CheckboxField
+													context={props.context}
+													value={rowItem.isSelected}
+													variant="uesio/io.field:uesio/io.table"
+													setValue={
+														rowItem.handleClick
+													}
+												/>
 											</div>
 										)}
 									</td>

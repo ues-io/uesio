@@ -7,7 +7,6 @@ import { makeComponentId, set as setComponent } from "../bands/component"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
-import { Wire } from "../wireexports"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -24,39 +23,6 @@ class ComponentAPI {
 	}
 
 	makeComponentId = makeComponentId
-
-	useSelectedRecords = (componentId: string, wire: Wire | undefined) => {
-		const allIds = wire?.getRecordIds() || []
-		const [selectedState, setSelected] = this.useStateSlice<string[]>(
-			"selected",
-			componentId,
-			[]
-		)
-		const selected = selectedState || []
-		const [allSelected, setAllSelected] = this.useStateSlice<boolean>(
-			"allSelected",
-			componentId,
-			false
-		)
-		useEffect(() => {
-			// Check if all records are selected
-			setAllSelected(
-				!!selected.length && allIds.every((el) => selected.includes(el))
-			)
-		}, [selected])
-
-		const toggleAll = () => setSelected(allSelected ? [] : allIds)
-		// We also make sure we don't have duplicates
-		const selectRecord = (id: string) => {
-			setSelected(
-				selected.includes(id)
-					? selected.filter((el) => el !== id)
-					: [...selected, id]
-			)
-		}
-
-		return { selected, selectRecord, allSelected, toggleAll }
-	}
 
 	useState = <T extends PlainComponentState>(
 		componentId: string,

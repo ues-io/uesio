@@ -7,9 +7,7 @@ import { ButtonUtilityProps } from "../../utility/button/button"
 import { GroupUtilityProps } from "../../utility/group/group"
 import { PaginatorUtilityProps } from "../../utility/paginator/paginator"
 import { TableUtilityProps } from "../../utility/table/table"
-
 import { ColumnDefinition, TableProps } from "./tabledefinition"
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
@@ -34,8 +32,11 @@ const Table: FC<TableProps> = (props) => {
 		: context
 
 	const componentId = uesio.component.getId(definition.id)
-	const { selected, selectRecord, allSelected, toggleAll } =
-		uesio.component.useSelectedRecords(componentId, wire)
+	const [selected, setSelected] = uesio.component.useStateSlice<string[]>(
+		"selected",
+		componentId,
+		[]
+	)
 	const [mode] = useMode(componentId, definition.mode, props)
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
@@ -165,28 +166,27 @@ const Table: FC<TableProps> = (props) => {
 
 	const selectableRowsFunc = () => {
 		if (!definition.selectableRows || mode === "READ") return null
-
-		const getCheckbox = (handleChange: () => void, isSelected: boolean) => (
-			<CheckboxField
-				context={context}
-				value={isSelected}
-				variant="uesio/io.field:uesio/io.table"
-				setValue={handleChange}
-			/>
+		const allIds = itemContexts.map((el) => el.context.getRecordId() || "")
+		const allAreSelected = !!(
+			selected && allIds.every((el) => selected.includes(el))
 		)
-
 		return {
-			selected,
-			toggleAll,
-			toggleAllCheckbox: getCheckbox(toggleAll, !!allSelected),
-			rowHelpers: (recordContext: RecordContext) => {
+			selected: selected || [],
+			toggleAll: () =>
+				setSelected(allAreSelected || !allIds ? [] : allIds),
+			allAreSelected,
+			getRowItem: (recordContext: RecordContext) => {
 				const id = recordContext.context.getRecord()?.getId()
 				const isSelected = !!id && !!selected?.includes(id)
-				const handleClick = () => id && selectRecord(id)
+				const handleClick = () => {
+					if (!id || !selected) return
+					return isSelected
+						? setSelected(selected.filter((el) => el !== id))
+						: setSelected(Array.from(new Set([...selected, id])))
+				}
 				return {
 					handleClick,
 					isSelected,
-					checkbox: getCheckbox(handleClick, isSelected),
 				}
 			},
 		}
