@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type SiteDomainCollection []*SiteDomain
@@ -16,17 +14,17 @@ func (sdc *SiteDomainCollection) GetFields() []string {
 	return StandardGetFields(&SiteDomain{})
 }
 
-func (sdc *SiteDomainCollection) GetItem(index int) loadable.Item {
+func (sdc *SiteDomainCollection) GetItem(index int) Item {
 	return (*sdc)[index]
 }
 
-func (sdc *SiteDomainCollection) NewItem() loadable.Item {
+func (sdc *SiteDomainCollection) NewItem() Item {
 	sd := &SiteDomain{}
 	*sdc = append(*sdc, sd)
 	return sd
 }
 
-func (sdc *SiteDomainCollection) Loop(iter loadable.GroupIterator) error {
+func (sdc *SiteDomainCollection) Loop(iter GroupIterator) error {
 	for index := range *sdc {
 		err := iter(sdc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -60,7 +59,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	err = collection.Loop(func(item loadable.Item, _ string) error {
+	err = collection.Loop(func(item meta.Item, _ string) error {
 		bundleable := item.(meta.BundleableItem)
 		key := bundleable.GetKey()
 		ns := bundleable.GetNamespace()

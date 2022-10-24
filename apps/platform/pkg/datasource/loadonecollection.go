@@ -2,25 +2,24 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type LoadOneCollection struct {
 	Collection meta.CollectionableGroup
-	Item       loadable.Item
+	Item       meta.Item
 	Length     int
 }
 
-func (c *LoadOneCollection) GetItem(index int) loadable.Item {
+func (c *LoadOneCollection) GetItem(index int) meta.Item {
 	return c.Item
 }
 
-func (c *LoadOneCollection) NewItem() loadable.Item {
+func (c *LoadOneCollection) NewItem() meta.Item {
 	c.Length++
 	return c.Item
 }
 
-func (c *LoadOneCollection) Loop(iter loadable.GroupIterator) error {
+func (c *LoadOneCollection) Loop(iter meta.GroupIterator) error {
 	return iter(c.GetItem(0), "0")
 }
 
