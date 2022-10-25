@@ -79,8 +79,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		type: "METADATA",
 		metadataType: "FIELD",
 		label: "Field",
-		groupingParents: 2,
-		groupingProperty: "collection",
+		groupingPath: "../../collection",
 		display: [
 			{
 				type: "NOT_EQUALS",

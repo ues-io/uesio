@@ -16,6 +16,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const stylesPath = `${path}["uesio.styles"]`
 	const styleData = valueAPI.get(stylesPath) as definition.DefinitionMap
+	const componentType = component.path.getKeyAtPath(path || "")
 
 	const [styleError, setStyleError] = useState<Record<string, StyleValue[]>>()
 
@@ -68,8 +69,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			type: "METADATA",
 			metadataType: "COMPONENTVARIANT",
 			label: "Variant",
-			groupingParents: 1,
-			getGroupingFromKey: true,
+			groupingValue: componentType || "",
 		},
 	]
 

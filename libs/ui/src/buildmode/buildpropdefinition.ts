@@ -198,10 +198,8 @@ interface CustomProp extends BasePropDescriptor {
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
+	groupingPath?: string
 	groupingValue?: string
-	groupingParents?: number
-	groupingProperty?: string
-	getGroupingFromKey?: boolean
 }
 
 interface BotProp extends BasePropDescriptor {

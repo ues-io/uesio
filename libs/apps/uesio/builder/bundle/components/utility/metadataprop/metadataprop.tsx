@@ -1,4 +1,4 @@
-import { definition, component, builder } from "@uesio/ui"
+import { component, builder } from "@uesio/ui"
 
 const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 
@@ -13,38 +13,20 @@ const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 		path: string | undefined,
 		descriptor: builder.MetadataProp
 	): string | undefined => {
-		const {
-			groupingParents = 1,
-			groupingProperty,
-			getGroupingFromKey,
-			groupingValue,
-		} = descriptor
+		const { groupingPath, groupingValue } = descriptor
 
 		if (groupingValue) return groupingValue
 
-		const groupingNodePath = component.path.getAncestorPath(
-			path || "",
-			groupingParents + 1
+		if (!groupingPath) return undefined
+
+		const parsePath = component.path.parseRelativePath(
+			groupingPath,
+			path || ""
 		)
 
-		const groupingNode = valueAPI.get(
-			groupingNodePath
-		) as definition.DefinitionMap
+		const groupingNode = valueAPI.get(parsePath)
 
-		if (!groupingNode) return undefined
-
-		if (getGroupingFromKey)
-			return component.path.getDefinitionKey(groupingNode)
-
-		if (groupingProperty) {
-			const lgroupingValue = groupingNode[groupingProperty] as string
-			if (lgroupingValue) return lgroupingValue
-		}
-
-		return getGrouping(
-			component.path.getGrandParentPath(path || ""),
-			descriptor
-		)
+		return groupingNode as string
 	}
 
 	return (
