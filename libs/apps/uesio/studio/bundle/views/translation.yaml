@@ -79,22 +79,36 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: translations
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "translations"
+                                            - translations
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - "translations"
+                                            - translations
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/translations"
+
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: "Cancel"
+                                      hotkey: "command+shift+."
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: views
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: views
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

@@ -74,28 +74,44 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.preview}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{app}/$Param{workspacename}/app/$Param{app}/${uesio/studio.path}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: "routesDeck"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.save}
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "routes"
+                                          target: routesDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "routes"
+                                          wire: routes
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: routesDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - routes
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: routesDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
@@ -106,6 +122,7 @@ definition:
                                             - "routes"
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/routes"
+
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

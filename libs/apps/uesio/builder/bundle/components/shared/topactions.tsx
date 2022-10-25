@@ -42,20 +42,20 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				>
 					<Button
 						context={context}
+						label="Save Changes"
+						disabled={!hasChanges}
+						variant="uesio/builder.primarytoolbar"
+						onClick={() => {
+							uesio.builder.save()
+						}}
+					/>
+					<Button
+						context={context}
 						label="Cancel"
 						disabled={!hasChanges}
 						variant="uesio/builder.secondarytoolbar"
 						onClick={() => {
 							uesio.builder.cancel()
-						}}
-					/>
-					<Button
-						context={context}
-						label="Save Changes"
-						disabled={!hasChanges}
-						variant="uesio/studio.primarytoolbar"
-						onClick={() => {
-							uesio.builder.save()
 						}}
 					/>
 				</Group>

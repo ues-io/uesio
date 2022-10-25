@@ -70,26 +70,39 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: "labelsDeck"
+                                          target: labelsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: labels
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: labelsDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "labels"
+                                            - labels
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: labelsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: "labels"
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
