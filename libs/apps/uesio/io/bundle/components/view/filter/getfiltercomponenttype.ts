@@ -17,6 +17,8 @@ export default (
 	switch (fieldType) {
 		case "NUMBER":
 			return "uesio/io.filternumber"
+		case "SELECT":
+			return "uesio/io.filterselect"
 		default:
 			return null
 	}
