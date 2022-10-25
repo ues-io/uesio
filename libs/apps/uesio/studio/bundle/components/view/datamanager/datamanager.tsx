@@ -31,7 +31,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	const collection = context.merge(definition.collectionId)
 	const namespace = context.merge(definition.namespace)
 
-	const fieldsMeta = uesio.builder.useMetadataList(
+	const [fieldsMeta] = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
 		namespace,

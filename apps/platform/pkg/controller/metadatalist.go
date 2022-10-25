@@ -17,7 +17,10 @@ import (
 func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]datasource.MetadataResponse, error) {
 	collectionKeyMap := map[string]datasource.MetadataResponse{}
 
-	conditions := meta.GetGroupingConditions(metadatatype, grouping)
+	conditions, err := meta.GetGroupingConditions(metadatatype, grouping)
+	if err != nil {
+		return nil, err
+	}
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)
 	if err != nil {

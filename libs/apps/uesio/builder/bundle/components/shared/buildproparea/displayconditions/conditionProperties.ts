@@ -70,8 +70,7 @@ export const properties: builder.PropDescriptor[] = [
 		type: "METADATA",
 		metadataType: "FIELD",
 		label: "Field",
-		groupingParents: 2,
-		groupingProperty: "collection", // Todo, needs a fix to work in the usecase here
+		groupingPath: "../../collection",
 		display: [
 			{
 				property: "type",

@@ -30,7 +30,10 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		return nil, err
 	}
 
-	conditions := meta.GetGroupingConditions(metadataType, grouping)
+	conditions, err := meta.GetGroupingConditions(metadataType, grouping)
+	if err != nil {
+		return nil, err
+	}
 
 	sbs := &localbundlestore.LocalBundleStore{}
 
