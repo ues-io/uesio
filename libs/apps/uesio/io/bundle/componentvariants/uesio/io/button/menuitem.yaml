@@ -1,0 +1,18 @@
+name: menuitem
+label: Menu Item
+extends: uesio/io.default
+definition:
+  uesio.styles:
+    root:
+      display: block
+      inlineSize: inherit
+      textAlign: left
+      padding: "10px"
+      borderBottom: "1px solid #ccc"
+      width: 100%
+      cursor: "pointer"
+      "&:last-child":
+        borderBottom: 0
+      ".selected &":
+        backgroundColor: "#f0f0f0"
+public: true
