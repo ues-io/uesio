@@ -256,6 +256,15 @@ func (s *Session) GetContextNamespaces() []string {
 	return namespaces
 }
 
+func (s *Session) GetContextInstalledNamespaces() []string {
+	bundleDef := s.GetContextAppBundle()
+	namespaces := []string{}
+	for name := range bundleDef.Dependencies {
+		namespaces = append(namespaces, name)
+	}
+	return namespaces
+}
+
 func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	if s.workspace != nil {
 		return s.workspace.GetAppBundle()

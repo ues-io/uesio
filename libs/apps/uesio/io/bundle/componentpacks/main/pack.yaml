@@ -71,6 +71,7 @@ components:
     icon:
     iconbutton:
     link:
+    menubutton:
     multiselectfield:
     multicheckfield:
     radiobuttonsfield:

@@ -22,7 +22,7 @@ type UpsertOptions struct {
 	Collection string
 }
 
-func createJob(app, workspace, sessid string, spec *meta.JobSpec) (*bulk.JobResponse, error) {
+func createJob(app, workspace, sessid string, spec *meta.JobSpecRequest) (*bulk.JobResponse, error) {
 	url := fmt.Sprintf("workspace/%s/%s/bulk/job", app, workspace)
 	jobResponse := &bulk.JobResponse{}
 
@@ -45,7 +45,7 @@ func getImportPayload(jobType, dataFile string) (io.Reader, error) {
 	return nil, errors.New("Invalid Job Type: " + jobType)
 }
 
-func runBatch(app, workspace, sessid, dataFile, jobID string, spec *meta.JobSpec) (*bulk.BatchResponse, error) {
+func runBatch(app, workspace, sessid, dataFile, jobID string, spec *meta.JobSpecRequest) (*bulk.BatchResponse, error) {
 	payload, err := getImportPayload(spec.JobType, dataFile)
 	if err != nil {
 		return nil, err
@@ -74,8 +74,8 @@ func runBatch(app, workspace, sessid, dataFile, jobID string, spec *meta.JobSpec
 
 }
 
-func getSpec(options *UpsertOptions) (*meta.JobSpec, error) {
-	spec := &meta.JobSpec{}
+func getSpec(options *UpsertOptions) (*meta.JobSpecRequest, error) {
+	spec := &meta.JobSpecRequest{}
 
 	if options.SpecFile != "" {
 		f, err := os.Open(options.SpecFile)

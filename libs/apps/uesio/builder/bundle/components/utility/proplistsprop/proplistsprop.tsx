@@ -1,11 +1,10 @@
 import { builder, component, hooks } from "@uesio/ui"
 
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const PropListsList = component.getUtility("uesio/builder.proplistslist")
-
+import PropListsList from "../../shared/proplistslist"
 import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 import toPath from "lodash/toPath"
 
+const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const TitleBar = component.getUtility("uesio/io.titlebar")

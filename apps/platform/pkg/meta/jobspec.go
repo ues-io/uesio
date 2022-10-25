@@ -1,12 +1,12 @@
 package meta
 
 type JobSpec struct {
-	JobType     string                  `json:"jobtype" uesio:"uesio/core.jobtype"`
-	FileType    string                  `json:"filetype" uesio:"uesio/core.filetype"`
-	Collection  string                  `json:"collection" uesio:"uesio/core.collection"`
-	UploadField string                  `json:"uploadfield" uesio:"uesio/core.uploadfield"`
-	Mappings    map[string]FieldMapping `json:"mappings" uesio:"uesio/core.mappings"`
-	itemMeta    *ItemMeta               `yaml:"-" uesio:"-"`
+	JobType     string                  `json:"uesio/core.jobtype"`
+	FileType    string                  `json:"uesio/core.filetype"`
+	Collection  string                  `json:"uesio/core.collection"`
+	UploadField string                  `json:"uesio/core.uploadfield"`
+	Mappings    map[string]FieldMapping `json:"uesio/core.mappings"`
+	itemMeta    *ItemMeta               `json:"-"`
 }
 
 func (a *JobSpec) GetCollectionName() string {
@@ -39,4 +39,13 @@ func (a *JobSpec) GetItemMeta() *ItemMeta {
 
 func (a *JobSpec) SetItemMeta(itemMeta *ItemMeta) {
 	a.itemMeta = itemMeta
+}
+
+type JobSpecRequest struct {
+	JobType     string                  `json:"jobtype"`
+	FileType    string                  `json:"filetype"`
+	Collection  string                  `json:"collection"`
+	UploadField string                  `json:"uploadfield"`
+	Mappings    map[string]FieldMapping `json:"mappings"`
+	itemMeta    *ItemMeta               `json:"-"`
 }
