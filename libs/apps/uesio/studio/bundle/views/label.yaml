@@ -78,17 +78,6 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: labelsDeck
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: labels
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: labelsDeck
-                                  - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
@@ -98,6 +87,17 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - labels
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: labelsDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: labels
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: labelsDeck
                                   - uesio/io.button:

@@ -79,17 +79,6 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: selectlistsDeck
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: selectlists
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: selectlistsDeck
-                                  - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
@@ -99,6 +88,17 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - selectlists
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: selectlistsDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: selectlists
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: selectlistsDeck
                                   - uesio/io.button:

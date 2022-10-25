@@ -90,6 +90,16 @@ definition:
                                             - translations
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      text: "Cancel"
+                                      hotkey: "command+shift+."
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: translations
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: translations
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
@@ -98,17 +108,6 @@ definition:
                                             - translations
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/translations"
-
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
-                                      hotkey: "command+shift+."
-                                      uesio.display:
-                                        - type: wireHasChanges
-                                          wire: views
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: views
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

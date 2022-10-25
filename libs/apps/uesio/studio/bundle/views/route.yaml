@@ -90,17 +90,6 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: routesDeck
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.cancel}
-                                      uesio.display:
-                                        - type: fieldMode
-                                          mode: EDIT
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: routes
-                                        - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: routesDeck
-                                  - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
                                       uesio.display:
@@ -110,6 +99,17 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - routes
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: routesDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: routes
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: routesDeck
                                   - uesio/io.button:
