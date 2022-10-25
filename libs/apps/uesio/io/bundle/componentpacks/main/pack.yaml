@@ -36,7 +36,6 @@ components:
       variants:
         - uesio/io.table:uesio/io.default
         - uesio/io.button:uesio/io.nav
-        - uesio/io.button:uesio/io.menuitem
         - uesio/io.fieldwrapper:uesio/io.table
         - uesio/io.field:uesio/io.table
     text:
@@ -72,7 +71,6 @@ components:
     icon:
     iconbutton:
     link:
-    menubutton:
     multiselectfield:
     multicheckfield:
     radiobuttonsfield:
