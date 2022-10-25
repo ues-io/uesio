@@ -69,6 +69,9 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: views
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
@@ -76,25 +79,33 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Build"
+                                      uesio.display:
+                                        - type: wireHasNoChanges
+                                          wire: views
                                       hotkey: "command+b"
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: "Save"
                                       hotkey: "command+s"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: views
                                       signals:
                                         - signal: wire/SAVE
-                                          wires:
-                                            - "views"
+                                          wire: views
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
-                                      hotkey: "command+shift+c"
+                                      hotkey: "command+shift+."
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: views
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "views"
+                                          wire: views
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Delete"
@@ -105,6 +116,7 @@ definition:
                                             - "views"
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/views"
+
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:

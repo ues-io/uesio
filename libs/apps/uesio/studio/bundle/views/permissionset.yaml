@@ -124,33 +124,46 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
+                                      text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
-                                          target: "permissionsetsDeck"
+                                          target: permissionsetsDeck
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Save"
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - "permissionsets"
+                                            - permissionsets
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: permissionsetsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Cancel"
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: "permissionsets"
+                                          wire: permissionsets
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: permissionsetsDeck
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Delete"
+                                      text: $Label{uesio/io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - "permissionsets"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{app}/workspace/$Param{workspacename}/permissionsets"
+                                            - permissionsets
+                                        - signal: route/NAVIGATE
+                                          path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:
