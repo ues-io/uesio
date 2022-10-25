@@ -28,11 +28,13 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("Must Provide at least one condition")
 	}
 
-	if op.Conditions[0].Field != "uesio/studio.type" {
+	typeCondition, remainingConditions := op.Conditions[0], op.Conditions[1:]
+
+	if typeCondition.Field != "uesio/studio.type" {
 		return errors.New("The first condition must be on the type field")
 	}
 
-	group, err := meta.GetBundleableGroupFromType(op.Conditions[0].Value.(string))
+	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
 	if err != nil {
 		return errors.New("Invalid Metadata Type provided for type condition")
 	}
@@ -42,8 +44,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
+		Conditions:     remainingConditions,
 		Fields:         getLoadRequestFields(group.GetFields()),
-		Query:          false,
+		Query:          true,
 	}}, session, &LoadOptions{
 		Metadata: connection.GetMetadata(),
 	})
@@ -113,7 +116,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		}
 	}
 
-	err = bundle.LoadAllFromAny(group, nil, inContextSession)
+	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
+
+	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession)
 	if err != nil {
 		return err
 	}
@@ -126,6 +131,21 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	}
 
 	appData, err := GetAppData(appNames, inContextSession)
+	if err != nil {
+		return err
+	}
+
+	err = op.Collection.Loop(func(item meta.Item, index string) error {
+		appInfo, ok := appData[app]
+		if !ok {
+			return errors.New("Invalid Namespace: Could not get app data")
+		}
+
+		item.SetField("uesio/studio.namespace", app)
+		item.SetField("uesio/studio.appicon", appInfo.Icon)
+		item.SetField("uesio/studio.appcolor", appInfo.Color)
+		return nil
+	})
 	if err != nil {
 		return err
 	}

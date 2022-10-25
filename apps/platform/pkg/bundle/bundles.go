@@ -117,8 +117,10 @@ func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 }
 
 func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
-	// Get all avaliable namespaces
-	namespaces := session.GetContextNamespaces()
+	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, conditions, session)
+}
+
+func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
 	for _, namespace := range namespaces {
 		err := LoadAll(group, namespace, conditions, session)
 		if err != nil {
