@@ -34,6 +34,8 @@ components:
     datamanager:
       variants:
         - uesio/io.table:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.table
+        - uesio/io.field:uesio/io.table
       utilities:
         - uesio/io.table
     dataimport:
