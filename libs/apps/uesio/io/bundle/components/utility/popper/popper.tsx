@@ -50,7 +50,6 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		{
 			popper: {
 				zIndex: 1,
-				width: "350px",
 			},
 		},
 		props
