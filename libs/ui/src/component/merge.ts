@@ -42,7 +42,7 @@ function mergeDeep(
 			continue
 		}
 
-		if (src[key] !== null && src[key] !== undefined && src[key] !== "") {
+		if (src[key] !== null && src[key] !== undefined) {
 			// Merge src key base on theme
 			const value = src[key]
 			dest[key] =

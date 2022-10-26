@@ -91,6 +91,7 @@ components:
     uploadarea:
     userfield:
     listfield:
+    listfielddeck:
     mapfield:
     datefield:
     numberfield:
