@@ -166,7 +166,6 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		if !ok {
 			return errors.New("Invalid Namespace: Could not get app data")
 		}
-		opItem.SetField("uesio/studio.id", fakeID)
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
@@ -180,6 +179,8 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
+		opItem.SetField("uesio/core.id", fakeID)
+		opItem.SetField("uesio/core.uniquekey", groupableItem.GetKey())
 		return nil
 	})
 
