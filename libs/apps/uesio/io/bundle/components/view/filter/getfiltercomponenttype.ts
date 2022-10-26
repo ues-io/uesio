@@ -19,6 +19,8 @@ export default (
 			return "uesio/io.filternumber"
 		case "SELECT":
 			return "uesio/io.filterselect"
+		case "MULTISELECT":
+			return "uesio/io.filtermultiselect"
 		default:
 			return null
 	}

@@ -25,28 +25,12 @@ const Propdef: builder.BuildPropertiesDefinition = {
 					value: "",
 				},
 				{
-					label: "Equals",
-					value: "EQ",
+					label: "Has Any",
+					value: "HAS_ANY",
 				},
 				{
-					label: "Not Equal To",
-					value: "NOT_EQ",
-				},
-				{
-					label: "Greater Than",
-					value: "GT",
-				},
-				{
-					label: "Less Than",
-					value: "LT",
-				},
-				{
-					label: "Greater Than or Equal To",
-					value: "GTE",
-				},
-				{
-					label: "Less Than or Equal To",
-					value: "LTE",
+					label: "Has All",
+					value: "HAS_ALL",
 				},
 			],
 		},
