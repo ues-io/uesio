@@ -23,6 +23,11 @@ interface ForgotPasswordSignal extends SignalDefinition {
 	payload: Record<string, string>
 }
 
+interface CreateLoginSignal extends SignalDefinition {
+	signupMethod: string
+	payload: Record<string, string>
+}
+
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/SIGNUP`]: {
@@ -115,6 +120,28 @@ const signals: Record<string, SignalDescriptor> = {
 			{
 				name: "authSource",
 				label: "Auth Source",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
+	},
+	[`${USER_BAND}/CREATE_LOGIN`]: {
+		dispatcher: (signal: CreateLoginSignal, context: Context) =>
+			operations.createLogin(
+				context,
+				signal.signupMethod,
+				signal.payload
+			),
+		label: "Create Login",
+		description: "Create a new login for a signup method",
+		properties: () => [
+			{
+				name: "signupMethod",
+				label: "Signup Method",
 				type: "TEXT",
 			},
 			{

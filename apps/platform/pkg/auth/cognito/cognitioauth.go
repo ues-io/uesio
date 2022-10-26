@@ -237,3 +237,71 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 	return nil
 
 }
+
+func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
+
+	site := session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, username)
+
+	poolID, ok := (*c.credentials)["poolid"]
+	if !ok {
+		return nil, errors.New("no user pool provided in credentials")
+	}
+
+	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	if err != nil {
+		return nil, err
+	}
+
+	client := cognito.NewFromConfig(cfg)
+
+	awsUserExists := &cognito.AdminGetUserInput{
+		Username:   &fqUsername,
+		UserPoolId: aws.String(poolID),
+	}
+
+	adminGetUserOutput, _ := client.AdminGetUser(context.Background(), awsUserExists)
+	if adminGetUserOutput != nil && adminGetUserOutput.Username != nil {
+		return nil, errors.New("User already exists")
+	}
+
+	email, err := auth.GetPayloadValue(payload, "email")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
+	}
+
+	signUpData := &cognito.AdminCreateUserInput{
+		DesiredDeliveryMediums: []types.DeliveryMediumType{"EMAIL"},
+		UserPoolId:             aws.String(poolID),
+		Username:               &fqUsername,
+		UserAttributes: []types.AttributeType{
+			{
+				Name:  aws.String("email"),
+				Value: aws.String(email),
+			},
+		},
+	}
+
+	signUpOutput, err := client.AdminCreateUser(context.Background(), signUpData)
+	if err != nil {
+		return nil, err
+	}
+
+	attributes := signUpOutput.User.Attributes
+	sub := findAttribute("sub", attributes)
+
+	return &auth.AuthenticationClaims{
+		Subject: sub,
+	}, nil
+}
+
+func findAttribute(name string, attributes []types.AttributeType) (result string) {
+	result = ""
+	for _, attribute := range attributes {
+		if *attribute.Name == name {
+			result = *attribute.Value
+			break
+		}
+	}
+	return result
+}

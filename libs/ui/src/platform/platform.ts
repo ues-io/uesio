@@ -465,6 +465,17 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	createLogin: async (
+		signupMethod: string,
+		requestBody: Record<string, string>
+	): Promise<LoginResponse> => {
+		const [namespace, name] = parseKey(signupMethod)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/createlogin`,
+			requestBody
+		)
+		return respondJSON(response)
+	},
 }
 
 type Platform = typeof platform

@@ -116,6 +116,21 @@ const forgotPasswordConfirm =
 		}
 	}
 
+const createLogin =
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload) return context
+		const mergedPayload = context.mergeMap(payload)
+		const mergedSignupMethod = context.merge(signupMethod)
+		const response = await platform.createLogin(
+			mergedSignupMethod,
+			mergedPayload
+		)
+		//TO-DO
+		//dispatch(setUser(response.user))
+		return responseRedirect(response, dispatch, context)
+	}
+
 export default {
 	login,
 	logout,
@@ -123,4 +138,5 @@ export default {
 	checkAvailability,
 	forgotPassword,
 	forgotPasswordConfirm,
+	createLogin,
 }

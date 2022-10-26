@@ -86,6 +86,15 @@ components:
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid
+    configlogins:
+      utilities:
+        - uesio/io.titlebar
+        - uesio/io.button
+        - uesio/io.togglefield
+        - uesio/io.dialog
+      variants:
+        - uesio/io.button:uesio/io.secondary
+        - uesio/io.titlebar:uesio/io.default
     # uesio.view:
   utility:
 

@@ -175,6 +175,8 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
+		//TO-DO Remove this
+		opItem.SetField("uesio/core.uniquekey", groupableItem.GetKey())
 		return nil
 	})
 

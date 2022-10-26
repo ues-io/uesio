@@ -1,0 +1,7 @@
+name: platform2
+authsource: uesio/core.mock
+profile: uesio/studio.standard
+usernameTemplate: ${username}
+usernameRegex: "^[a-z0-9_]+$"
+landingRoute: uesio/studio.login
+public: true
