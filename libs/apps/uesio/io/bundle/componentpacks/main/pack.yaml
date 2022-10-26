@@ -23,6 +23,7 @@ components:
         - uesio/io.titlebar:uesio/io.infotag
         - uesio/io.listfield:uesio/io.default
     filter:
+    filterselect:
     filternumber:
       variants:
         - uesio/io.selectfield:uesio/io.filter
