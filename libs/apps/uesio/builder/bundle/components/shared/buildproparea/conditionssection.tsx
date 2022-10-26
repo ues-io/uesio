@@ -21,12 +21,19 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
+	const wireId = component.path.getKeyAtPath(path || "")
 
 	const conditionsDef = wireDef?.conditions as
 		| definition.Definition[]
 		| undefined
 
 	const conditionsPath = `${path}["conditions"]`
+
+	const newContext = wireId
+		? context.addFrame({
+				wire: wireId,
+		  })
+		: context
 
 	return (
 		<>
@@ -82,7 +89,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					<ConditionItem
 						key={conditionPath}
 						conditionPath={conditionPath}
-						context={context}
+						context={newContext}
 						condition={condition}
 						valueAPI={valueAPI}
 					/>
