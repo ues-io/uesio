@@ -3,7 +3,11 @@ import { FC } from "react"
 import { Props } from "./filtermultiselectdefinition"
 import { component, hooks, collection } from "@uesio/ui"
 
-const SelectField = component.getUtility("uesio/io.selectfield")
+import { SelectFieldProps } from "../../utility/multiselectfield/multiselectfield"
+const MultiSelectField = component.getUtility<SelectFieldProps>(
+	"uesio/io.multiselectfield"
+)
+
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const FilterMultiselect: FC<Props> = (props) => {
@@ -16,42 +20,58 @@ const FilterMultiselect: FC<Props> = (props) => {
 	const fieldMetadata = collection.getField(String(field))
 	if (!fieldMetadata) return null
 
+	const value = wire.getCondition(
+		path + `["${operator}"]`
+	) as wire.ValueConditionState | null
+)?.value
+
 	return (
-		<SelectField
-			context={context}
-			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options || [],
-				"Any " + fieldMetadata.getLabel()
-			)}
-			variant={"uesio/io.filter"}
-			setValue={(value: string) => {
-				uesio.signal.runMany(
-					[
-						value
-							? {
-									signal: "wire/SET_CONDITION",
-									wire: wire.getId(),
-									condition: {
-										id: props.path,
-										field: fieldMetadata.getId(),
-										value,
-										active: true,
-									},
-							  }
-							: {
-									signal: "wire/REMOVE_CONDITION",
-									wire: wire.getId(),
-									conditionId: props.path,
-							  },
-						{
-							signal: "wire/LOAD",
-							wires: [wire.getId()],
-						},
-					],
-					context
-				)
-			}}
-		/>
+		<>
+			{/* <MultiSelectField
+				value={valueAPI.get(path)}
+				setValue={(value: string) => valueAPI.set(path, value)}
+				options={descriptor.options}
+				context={context}
+				variant="uesio/builder.propfield"
+			/> */}
+			<MultiSelectField
+				value={}
+				fieldMetadata={fieldMetadata}
+				context={context}
+				options={addBlankSelectOption(
+					fieldMetadata.getSelectMetadata()?.options || [],
+					"Any " + fieldMetadata.getLabel()
+				)}
+				variant={"uesio/io.filter"}
+				setValue={(value: string) => {
+					uesio.signal.runMany(
+						[
+							value
+								? {
+										signal: "wire/SET_CONDITION",
+										wire: wire.getId(),
+										condition: {
+											id: props.path,
+											field: fieldMetadata.getId(),
+											value,
+											active: true,
+										},
+								  }
+								: {
+										signal: "wire/REMOVE_CONDITION",
+										wire: wire.getId(),
+										conditionId: props.path,
+								  },
+							{
+								signal: "wire/LOAD",
+								wires: [wire.getId()],
+							},
+						],
+						context
+					)
+				}}
+			/>
+		</>
 	)
 }
 

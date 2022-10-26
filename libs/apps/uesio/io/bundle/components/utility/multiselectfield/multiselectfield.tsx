@@ -2,7 +2,7 @@ import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import TextField from "../textfield/textfield"
 
-interface SelectFieldProps extends definition.UtilityProps {
+export interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
 	value: string
 	width?: string
