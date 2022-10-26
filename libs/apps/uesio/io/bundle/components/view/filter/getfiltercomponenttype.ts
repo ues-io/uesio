@@ -11,7 +11,7 @@ export default (
 	const fieldType = collection.getField(fieldId)?.getType()
 
 	if (!fieldType) {
-		console.warn(`Error findding fieldtype filter:`, [wireId, fieldId])
+		console.warn(`Error finding fieldtype filter:`, [wireId, fieldId])
 	}
 
 	switch (fieldType) {
