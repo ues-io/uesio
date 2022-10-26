@@ -133,6 +133,14 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 				label: "Is Not Blank",
 				value: "IS_NOT_BLANK",
 			},
+			{
+				label: "Has Any",
+				value: "HAS_ANY",
+			},
+			{
+				label: "Has All",
+				value: "HAS_ALL",
+			},
 		],
 		display: [
 			{
@@ -172,6 +180,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 			},
 		],
 	},
+	// TO-DO Add support for (multi)select values
 	{
 		name: "value",
 		type: "TEXT",

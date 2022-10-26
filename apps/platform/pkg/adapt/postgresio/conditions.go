@@ -106,13 +106,20 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	}
 
 	fieldName := getFieldName(fieldMetadata)
-
 	switch condition.Operator {
-	case "IN":
-		_, ok := condition.Value.([]string)
-		if !ok {
-			return errors.New("Invalid IN condition value")
+	case "HAS_ANY":
+		if fieldMetadata.Type != "MULTISELECT" {
+			return errors.New("Operator HAS_ANY only works with fieldType MULTI_SELECT")
 		}
+		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
+
+	case "HAS_ALL":
+		if fieldMetadata.Type != "MULTISELECT" {
+			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
+		}
+		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
+
+	case "IN":
 		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
 
 	case "NOT_EQ":
@@ -137,6 +144,9 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		builder.addQueryPart(fmt.Sprintf("%s IS NOT NULL", fieldName))
 
 	default:
+		if fieldMetadata.Type == "MULTISELECT" {
+			builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
+		}
 		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 	}
 	return nil
@@ -211,7 +221,10 @@ func getConditions(
 	builder.addQueryPart(fmt.Sprintf("main.collection = %s", builder.addValue(collectionName)))
 
 	for _, condition := range op.Conditions {
-		processCondition(condition, collectionMetadata, builder)
+		err := processCondition(condition, collectionMetadata, builder)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
