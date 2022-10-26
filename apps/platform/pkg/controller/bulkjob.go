@@ -12,8 +12,8 @@ import (
 
 func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
-	var spec meta.JobSpec
-	err := json.NewDecoder(r.Body).Decode(&spec)
+	var specreq meta.JobSpecRequest
+	err := json.NewDecoder(r.Body).Decode(&specreq)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -23,6 +23,7 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
+	spec := meta.JobSpec(specreq)
 	jobID, err := bulk.NewJob(&spec, session)
 	if err != nil {
 		msg := "Failed Creating New Job: " + err.Error()

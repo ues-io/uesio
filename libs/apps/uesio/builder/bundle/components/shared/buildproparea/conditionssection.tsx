@@ -28,6 +28,13 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const conditionsPath = `${path}["conditions"]`
 
+	const wireId = component.path.getKeyAtPath(path || "")
+	const newContext = wireId
+		? context.addFrame({
+				wire: wireId,
+		  })
+		: context
+
 	return (
 		<>
 			<TitleBar
@@ -82,7 +89,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					<ConditionItem
 						key={conditionPath}
 						conditionPath={conditionPath}
-						context={context}
+						context={newContext}
 						condition={condition}
 						valueAPI={valueAPI}
 					/>

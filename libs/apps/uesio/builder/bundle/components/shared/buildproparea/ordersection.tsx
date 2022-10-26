@@ -21,8 +21,7 @@ const getOrderProperties = (): builder.PropDescriptor[] => [
 		type: "METADATA",
 		metadataType: "FIELD",
 		label: "Field",
-		groupingParents: 2,
-		groupingProperty: "collection",
+		groupingPath: "../../collection",
 	},
 	{
 		name: "desc",

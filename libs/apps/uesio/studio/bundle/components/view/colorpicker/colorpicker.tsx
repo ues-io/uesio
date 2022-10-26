@@ -82,7 +82,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 								const isSelected = colorValue === hex
 								return (
 									<div
-										key={color}
+										key={`${color}-${shade}`}
 										className={styles.cx(classes.color, {
 											[classes.selected]: isSelected,
 										})}

@@ -1,17 +1,17 @@
 package meta
 
 type LoginMethod struct {
-	ID           string    `uesio:"uesio/core.id"`
-	UniqueKey    string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	FederationID string    `uesio:"uesio/core.federation_id"`
-	AuthSource   string    `uesio:"uesio/core.auth_source"`
-	User         *User     `uesio:"uesio/core.user"`
-	itemMeta     *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy    *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner        *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy    *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt    int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt    int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID           string    `json:"uesio/core.id"`
+	UniqueKey    string    `json:"uesio/core.uniquekey"`
+	FederationID string    `json:"uesio/core.federation_id"`
+	AuthSource   string    `json:"uesio/core.auth_source"`
+	User         *User     `json:"uesio/core.user"`
+	itemMeta     *ItemMeta `json:"-"`
+	CreatedBy    *User     `json:"uesio/core.createdby"`
+	Owner        *User     `json:"uesio/core.owner"`
+	UpdatedBy    *User     `json:"uesio/core.updatedby"`
+	UpdatedAt    int64     `json:"uesio/core.updatedat"`
+	CreatedAt    int64     `json:"uesio/core.createdat"`
 }
 
 func (lm *LoginMethod) GetCollectionName() string {

@@ -6,7 +6,6 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,7 +13,7 @@ type LoadOp struct {
 	CollectionName     string                 `json:"collection"`
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
-	Collection         loadable.Group         `json:"data"`
+	Collection         meta.Group             `json:"data"`
 	Conditions         []LoadRequestCondition `json:"-"`
 	Fields             []LoadRequestField     `json:"-"`
 	Query              bool                   `json:"query"`

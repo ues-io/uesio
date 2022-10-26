@@ -35,7 +35,7 @@ func getAnswerInfo(sessid string) (map[string]interface{}, error) {
 		options = append(options, username)
 	}
 
-	return param.AskMany(&meta.BotParams{
+	return param.AskMany(&meta.BotParamsResponse{
 		{
 			Name:    "user",
 			Prompt:  "Select user or org",
@@ -85,7 +85,7 @@ func getAnswers(sessid string) (string, string, string, string, error) {
 
 func Initialize() error {
 
-	fmt.Println("Running Initialize Command 5")
+	fmt.Println("Running Initialize Command")
 
 	_, err := auth.Login()
 	if err != nil {

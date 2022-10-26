@@ -158,7 +158,12 @@ const tests: WireSignalTest[] = [
 		],
 		run: () => (wire) => {
 			expect(wire.conditions).toEqual([
-				{ id: "123", field: "ben/planets.name", valueSource: "VALUE" },
+				{
+					id: "123",
+					field: "ben/planets.name",
+					valueSource: "VALUE",
+					value: "Foobar",
+				},
 			])
 		},
 	},

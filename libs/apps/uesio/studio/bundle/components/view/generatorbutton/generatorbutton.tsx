@@ -68,7 +68,7 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 
 	const [open, setOpen] = useState<boolean>(false)
 
-	const params = uesio.bot.useParams(
+	const [params] = uesio.bot.useParams(
 		context,
 		genNamespace,
 		genName,

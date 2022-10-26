@@ -20,24 +20,24 @@ func NewRoute(key string) (*Route, error) {
 }
 
 type Route struct {
-	ID         string            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name       string            `uesio:"uesio/studio.name"`
-	Namespace  string            `yaml:"-" uesio:"-"`
-	Path       string            `yaml:"path" uesio:"uesio/studio.path"`
-	ViewType   string            `yaml:"viewtype,omitempty" uesio:"uesio/studio.viewtype"`
-	ViewRef    string            `yaml:"view" uesio:"uesio/studio.view"`
-	Collection string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Params     map[string]string `yaml:"-" uesio:"-"`
-	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	ThemeRef   string            `yaml:"theme" uesio:"uesio/studio.theme"`
-	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
-	Public     bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID         string            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" json:"uesio/core.uniquekey"`
+	Name       string            `yaml:"name" json:"uesio/studio.name"`
+	Namespace  string            `yaml:"-" json:"-"`
+	Path       string            `yaml:"path" json:"uesio/studio.path"`
+	ViewType   string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
+	ViewRef    string            `yaml:"view" json:"uesio/studio.view"`
+	Collection string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Params     map[string]string `yaml:"-" json:"-"`
+	Workspace  *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
+	ThemeRef   string            `yaml:"theme" json:"uesio/studio.theme"`
+	itemMeta   *ItemMeta         `yaml:"-" json:"-"`
+	CreatedBy  *User             `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64             `yaml:"-" json:"uesio/core.createdat"`
+	Public     bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type RouteWrapper Route

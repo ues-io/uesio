@@ -5,6 +5,7 @@ import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/button/button"
 import { GroupUtilityProps } from "../../utility/group/group"
+import { MenuButtonUtilityProps } from "../../utility/menubutton/menubutton"
 import { PaginatorUtilityProps } from "../../utility/paginator/paginator"
 import { TableUtilityProps } from "../../utility/table/table"
 
@@ -12,8 +13,15 @@ import { ColumnDefinition, TableProps } from "./tabledefinition"
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
+type MenuItem = {
+	label: string
+}
+
 const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
 const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
+const MenuButton = component.getUtility<MenuButtonUtilityProps<MenuItem>>(
+	"uesio/io.menubutton"
+)
 const IOTable =
 	component.getUtility<TableUtilityProps<RecordContext, ColumnDefinition>>(
 		"uesio/io.table"
@@ -121,6 +129,24 @@ const Table: FC<TableProps> = (props) => {
 	const columnHeaderFunc = (column: ColumnDefinition) =>
 		column.label || collection.getField(column.field)?.getLabel() || ""
 
+	const columnMenuFunc = definition.order
+		? (column: ColumnDefinition) =>
+				column.field ? (
+					<MenuButton
+						icon="expand_more"
+						items={[
+							{ label: "Sort A-Z" },
+							{ label: "Sort Z-A" },
+							{ label: "Sort Remove Sorting" },
+						]}
+						itemRenderer={(item) => item.label}
+						onSelect={(item) => console.log(item.label)}
+						fill={false}
+						context={context}
+					/>
+				) : undefined
+		: undefined
+
 	const cellFunc = (
 		column: ColumnDefinition,
 		recordContext: RecordContext,
@@ -172,6 +198,7 @@ const Table: FC<TableProps> = (props) => {
 				defaultActionFunc={defaultActionsFunc}
 				rowActionsFunc={rowActionsFunc}
 				columnHeaderFunc={columnHeaderFunc}
+				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
 			/>
 			{pageSize > 0 && maxPages > 1 && (

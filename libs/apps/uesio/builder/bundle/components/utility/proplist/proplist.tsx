@@ -21,6 +21,7 @@ const IconProp = component.getUtility("uesio/builder.iconprop")
 const FieldProp = component.getUtility("uesio/builder.fieldprop")
 const FieldsProp = component.getUtility("uesio/builder.fieldsprop")
 const PropListsProp = component.getUtility("uesio/builder.proplistsprop")
+const PropListProp = component.getUtility("uesio/builder.proplistprop")
 
 interface Props extends definition.BaseProps {
 	properties?: builder.PropDescriptor[]
@@ -70,6 +71,8 @@ function getPropHandler(type?: string) {
 			return FieldsProp
 		case "PROPLISTS":
 			return PropListsProp
+		case "PROPLIST":
+			return PropListProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return null
@@ -83,6 +86,7 @@ export const propsToRender = (
 	properties?.filter((descriptor) => {
 		if (!descriptor.display) return true
 		return descriptor.display.some((condition) => {
+			if (!conditionValues) return false
 			const { type, property } = condition
 
 			if (!property) {
@@ -123,6 +127,7 @@ const PropList: FunctionComponent<Props> = (props) => {
 						: newPath
 
 				const PropHandler = getPropHandler(descriptor.type)
+
 				return (
 					PropHandler && (
 						<PropHandler

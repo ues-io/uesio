@@ -44,7 +44,7 @@ func Generate(key string) error {
 
 	paramsURL := fmt.Sprintf("version/%s/%s/%s/bots/params/generator/%s", app, namespace, version, name)
 
-	botParams := &meta.BotParams{}
+	botParams := &meta.BotParamsResponse{}
 	err = call.GetJSON(paramsURL, sessid, botParams)
 	if err != nil {
 		return err

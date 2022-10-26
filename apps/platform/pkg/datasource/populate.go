@@ -70,18 +70,13 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 
 func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	collectionMetadata, err := connection.GetMetadata().GetCollection(op.CollectionName)
-	if err != nil {
-		return err
-	}
-
-	autonumberStart, err := getAutonumber(op.InsertCount, connection, collectionMetadata, session)
+	autonumberStart, err := getAutonumber(op.InsertCount, connection, op.Metadata, session)
 	if err != nil {
 		return err
 	}
 
 	populations := []validationFunc{}
-	for _, field := range collectionMetadata.Fields {
+	for _, field := range op.Metadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().UnixMilli()

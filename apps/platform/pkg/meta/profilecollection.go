@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ProfileCollection []*Profile
@@ -20,7 +18,7 @@ func (pc *ProfileCollection) GetFields() []string {
 	return StandardGetFields(&Profile{})
 }
 
-func (pc *ProfileCollection) NewItem() loadable.Item {
+func (pc *ProfileCollection) NewItem() Item {
 	p := &Profile{}
 	*pc = append(*pc, p)
 	return p
@@ -39,11 +37,11 @@ func (pc *ProfileCollection) GetKeyFromPath(path string, namespace string, condi
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (pc *ProfileCollection) GetItem(index int) loadable.Item {
+func (pc *ProfileCollection) GetItem(index int) Item {
 	return (*pc)[index]
 }
 
-func (pc *ProfileCollection) Loop(iter loadable.GroupIterator) error {
+func (pc *ProfileCollection) Loop(iter GroupIterator) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
