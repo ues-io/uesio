@@ -121,6 +121,7 @@ const getConditionProperties = (
 				},
 			],
 		},
+		// TODO make operators dynamic based on fieldtype
 		{
 			name: "operator",
 			type: "SELECT",
