@@ -119,7 +119,7 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 		if fieldMetadata.Type != "MULTISELECT" {
 			return errors.New("Operator HAS_ALL only works with fieldType MULTI_SELECT")
 		}
-		builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
+		builder.addQueryPart(fmt.Sprintf("%s ?& %s", fieldName, builder.addValue(condition.Value)))
 
 	case "NOT_EQ":
 		builder.addQueryPart(fmt.Sprintf("%s is distinct from %s", fieldName, builder.addValue(condition.Value)))
