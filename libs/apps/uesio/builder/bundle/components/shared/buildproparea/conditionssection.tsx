@@ -21,7 +21,6 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
-	const wireId = component.path.getKeyAtPath(path || "")
 
 	const conditionsDef = wireDef?.conditions as
 		| definition.Definition[]
@@ -29,6 +28,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const conditionsPath = `${path}["conditions"]`
 
+	const wireId = component.path.getKeyAtPath(path || "")
 	const newContext = wireId
 		? context.addFrame({
 				wire: wireId,
