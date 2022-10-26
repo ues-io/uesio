@@ -144,7 +144,8 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 
 	default:
 		if fieldMetadata.Type == "MULTISELECT" {
-			builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
+			// Same as HAS_ANY
+			builder.addQueryPart(fmt.Sprintf("%s ?| %s", fieldName, builder.addValue(condition.Value)))
 		}
 		builder.addQueryPart(fmt.Sprintf("%s = %s", fieldName, builder.addValue(condition.Value)))
 	}
