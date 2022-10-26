@@ -61,7 +61,7 @@ type LookupConditionState = ConditionBase & {
 type ValueConditionState = ConditionBase & {
 	field: string
 	valueSource: typeof VALUE
-	value: string
+	value: string | string[]
 }
 
 export {
