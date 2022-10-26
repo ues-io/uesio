@@ -39,6 +39,30 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("Invalid Metadata Type provided for type condition")
 	}
 
+	//This creates a copy of the session
+	inContextSession := session.RemoveWorkspaceContext()
+
+	if workspace != "" {
+		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
+		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	if site != "" {
+		siteKey := fmt.Sprintf("%s:%s", app, site)
+		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
+		Field: "uesio/studio.workspace",
+		Value: inContextSession.GetWorkspaceID(),
+	})
+
 	metadata, err := Load([]*adapt.LoadOp{{
 		CollectionName: group.GetName(),
 		WireName:       op.WireName,
@@ -96,25 +120,6 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Type:       "TEXT",
 		Label:      "App Color",
 	})
-
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
-
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
 
 	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
 
