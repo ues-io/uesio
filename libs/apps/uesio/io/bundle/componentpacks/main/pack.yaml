@@ -26,6 +26,7 @@ components:
     filternumber:
       variants:
         - uesio/io.selectfield:uesio/io.filter
+    filtermultiselect:
     grid:
     griditem:
     group:
