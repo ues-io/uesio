@@ -24,7 +24,7 @@ const PropListsProp = component.getUtility("uesio/builder.proplistsprop")
 const PropListProp = component.getUtility("uesio/builder.proplistprop")
 
 interface Props extends definition.BaseProps {
-	properties?: builder.PropDescriptor[]
+	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
 	valueAPI: builder.ValueAPI
 }
@@ -80,10 +80,10 @@ function getPropHandler(type?: string) {
 }
 
 export const propsToRender = (
-	properties: builder.PropDescriptor[] | undefined,
+	properties: builder.PropDescriptor[],
 	conditionValues: definition.DefinitionMap
 ) =>
-	properties?.filter((descriptor) => {
+	properties.filter((descriptor) => {
 		if (!descriptor.display) return true
 		return descriptor.display.some((condition) => {
 			if (!conditionValues) return false
@@ -111,11 +111,13 @@ export const propsToRender = (
 
 const PropList: FunctionComponent<Props> = (props) => {
 	const { path, propsDef, context, properties, valueAPI } = props
+
 	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
 	const propertiesToRender = propsToRender(properties, conditionValues)
+
 	return (
 		<>
-			{propertiesToRender?.map((descriptor, index) => {
+			{propertiesToRender.map((descriptor, index) => {
 				const newPath =
 					descriptor.type === "KEY"
 						? path

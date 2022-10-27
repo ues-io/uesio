@@ -34,7 +34,7 @@ type ComponentVariant struct {
 	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
 	Name       string     `yaml:"name" json:"uesio/studio.name"`
 	Component  string     `yaml:"-" json:"uesio/studio.component"`
-	Extends    string     `yaml:"extends" json:"uesio/studio.extends"`
+	Extends    string     `yaml:"extends,omitempty" json:"uesio/studio.extends"`
 	Label      string     `yaml:"label" json:"uesio/studio.label"`
 	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
 	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
