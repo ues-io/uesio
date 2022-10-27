@@ -270,6 +270,10 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 		return nil, errors.New("Cognito login:" + err.Error())
 	}
 
+	if email == "" {
+		return nil, errors.New("Cognito login: Please provide an email")
+	}
+
 	signUpData := &cognito.AdminCreateUserInput{
 		DesiredDeliveryMediums: []types.DeliveryMediumType{"EMAIL"},
 		MessageAction:          types.MessageActionTypeSuppress,

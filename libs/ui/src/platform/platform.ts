@@ -466,12 +466,14 @@ const platform = {
 		return respondJSON(response)
 	},
 	createLogin: async (
+		context: Context,
 		signupMethod: string,
 		requestBody: Record<string, string>
 	): Promise<LoginResponse> => {
+		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/createlogin`,
+			`${prefix}/auth/${namespace}/${name}/createlogin`,
 			requestBody
 		)
 		return respondJSON(response)

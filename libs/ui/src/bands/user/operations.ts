@@ -123,6 +123,7 @@ const createLogin =
 		const mergedPayload = context.mergeMap(payload)
 		const mergedSignupMethod = context.merge(signupMethod)
 		const response = await platform.createLogin(
+			context,
 			mergedSignupMethod,
 			mergedPayload
 		)
