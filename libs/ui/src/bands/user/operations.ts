@@ -39,6 +39,23 @@ const signup =
 		return responseRedirect(response, dispatch, context)
 	}
 
+const signUpConfirm =
+	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!payload)
+			throw new Error(
+				"No credentials were provided for signup confirmation."
+			)
+		const mergedPayload = context.mergeMap(payload)
+		try {
+			await platform.signUpConfirm(authSource, mergedPayload)
+			return context
+		} catch (error) {
+			const message = getErrorString(error)
+			return context.addFrame({ errors: [message] })
+		}
+	}
+
 const login =
 	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
@@ -120,6 +137,7 @@ export default {
 	login,
 	logout,
 	signup,
+	signUpConfirm,
 	checkAvailability,
 	forgotPassword,
 	forgotPasswordConfirm,
