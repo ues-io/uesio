@@ -1,4 +1,4 @@
-import { forwardRef, FunctionComponent } from "react"
+import { PropsWithChildren, forwardRef, FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
@@ -49,7 +49,7 @@ function additionalContext(context: Context, additional: ContextFrame) {
 	return context
 }
 
-const Component: FunctionComponent<BaseProps> = (props) => {
+function Component<T>(props: PropsWithChildren<BaseProps & T>) {
 	const { componentType, path } = props
 	return (
 		<ErrorBoundary {...props}>

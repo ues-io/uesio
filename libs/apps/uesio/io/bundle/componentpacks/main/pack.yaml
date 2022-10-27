@@ -42,6 +42,7 @@ components:
     tile:
       variants:
         - uesio/io.text:uesio/io.icon
+        - uesio/io.text:uesio/io.iconoutline
     titlebar:
     markdown:
   utility:
@@ -91,6 +92,7 @@ components:
     uploadarea:
     userfield:
     listfield:
+    listfielddeck:
     mapfield:
     datefield:
     numberfield:

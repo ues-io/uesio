@@ -88,7 +88,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							/>
 						}
 					>
-						{signal?.signal}
+						<div className="tagroot">{signal?.signal}</div>
 					</PropNodeTag>
 				)
 			})}

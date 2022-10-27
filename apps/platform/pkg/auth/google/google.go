@@ -71,3 +71,6 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 func (c *Connection) CreateLogin(payload map[string]interface{}, username string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 	return nil, nil
 }
+func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+	return errors.New("Google login: unfortunately you cannot change the password")
+}

@@ -48,6 +48,28 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${USER_BAND}/SIGNUP_CONFIRM`]: {
+		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+			operations.signUpConfirm(
+				context,
+				signal.authSource,
+				signal.payload
+			),
+		label: "SignUp Confirmation",
+		description: "SignUp Confirmation",
+		properties: () => [
+			{
+				name: "authSource",
+				label: "Auth Source",
+				type: "TEXT",
+			},
+			{
+				name: "payload",
+				label: "Payload",
+				type: "TEXT", // TODO: Fix this
+			},
+		],
+	},
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
 			operations.login(context, signal.authSource, signal.payload),

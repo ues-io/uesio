@@ -39,6 +39,30 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("Invalid Metadata Type provided for type condition")
 	}
 
+	//This creates a copy of the session
+	inContextSession := session.RemoveWorkspaceContext()
+
+	if workspace != "" {
+		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
+		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	if site != "" {
+		siteKey := fmt.Sprintf("%s:%s", app, site)
+		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
+		Field: "uesio/studio.workspace",
+		Value: inContextSession.GetWorkspaceID(),
+	})
+
 	metadata, err := Load([]*adapt.LoadOp{{
 		CollectionName: group.GetName(),
 		WireName:       op.WireName,
@@ -97,25 +121,6 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Color",
 	})
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
-
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
 	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
 
 	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession)
@@ -161,7 +166,6 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		if !ok {
 			return errors.New("Invalid Namespace: Could not get app data")
 		}
-		opItem.SetField("uesio/studio.id", fakeID)
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
@@ -175,6 +179,8 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
+		opItem.SetField("uesio/core.id", fakeID)
+		opItem.SetField("uesio/core.uniquekey", groupableItem.GetKey())
 		return nil
 	})
 
