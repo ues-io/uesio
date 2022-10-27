@@ -1,0 +1,10 @@
+name: iconoutline
+label: Icon Outline
+definition:
+  uesio.styles:
+    root:
+      fontFamily: Material Icons
+      verticalAlign: middle
+      fontDisplay: block
+      fontVariationSettings: "'FILL' 0"
+public: true
