@@ -104,7 +104,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						context={context}
 					>
-						{getOrderTitle(order)}
+						<div className="tagroot">{getOrderTitle(order)}</div>
 					</PropNodeTag>
 				)
 			})}
