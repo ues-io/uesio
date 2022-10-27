@@ -309,6 +309,10 @@ definition:
                                                         text: Reset Password
                                                         uesio.variant: uesio/io.nav
                                                     - uesio/io.button:
+                                                        uesio.context:
+                                                          siteadmin:
+                                                            name: $Param{sitename}
+                                                            app: $Param{app}
                                                         signals:
                                                           - signal: wire/MARK_FOR_DELETE
                                                           - signal: wire/SAVE
