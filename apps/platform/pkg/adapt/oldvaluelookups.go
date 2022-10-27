@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
+func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
 	value, err := GetFieldValue(item, fieldName)
 	if err != nil {
 		return "", err
@@ -27,7 +27,7 @@ func GetUniqueKeyPart(item loadable.Item, fieldName string) (string, error) {
 	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
-func SetUniqueKey(change *ChangeItem, collectionMetadata *CollectionMetadata) error {
+func SetUniqueKey(change *ChangeItem) error {
 	if change.UniqueKey != "" {
 		return nil
 	}
@@ -37,7 +37,7 @@ func SetUniqueKey(change *ChangeItem, collectionMetadata *CollectionMetadata) er
 		change.UniqueKey = existingKey
 		return nil
 	}
-	keyFields := collectionMetadata.UniqueKey
+	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
 		keyFields = []string{ID_FIELD}
 	}
@@ -45,10 +45,10 @@ func SetUniqueKey(change *ChangeItem, collectionMetadata *CollectionMetadata) er
 	for i, keyField := range keyFields {
 		value, err := GetUniqueKeyPart(change, keyField)
 		if err != nil {
-			return fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, collectionMetadata.GetFullName(), err)
+			return fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, change.Metadata.GetFullName(), err)
 		}
 		if value == "" {
-			return fmt.Errorf("Required Unique Key Value Not Provided: %v : %v", collectionMetadata.GetFullName(), keyField)
+			return fmt.Errorf("Required Unique Key Value Not Provided: %v : %v", change.Metadata.GetFullName(), keyField)
 		}
 		keyValues[i] = value
 	}
@@ -70,15 +70,10 @@ func HandleOldValuesLookup(
 	op *SaveOp,
 	session *sess.Session,
 ) error {
-	metadata := connection.GetMetadata()
-	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
-	if err != nil {
-		return err
-	}
 
 	allFields := []LoadRequestField{}
 
-	for fieldID := range collectionMetadata.Fields {
+	for fieldID := range op.Metadata.Fields {
 		allFields = append(allFields, LoadRequestField{
 			ID: fieldID,
 		})
@@ -107,7 +102,7 @@ func HandleOldValuesLookup(
 		return nil
 	}
 
-	return LoadLooper(connection, op.CollectionName, idMap, allFields, ID_FIELD, session, func(item loadable.Item, matchIndexes []ReferenceLocator, ID string) error {
+	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 		if len(matchIndexes) != 1 {
 			return errors.New("Bad OldValue Lookup Here: " + strconv.Itoa(len(matchIndexes)))
 		}
@@ -116,7 +111,7 @@ func HandleOldValuesLookup(
 		change := match.(*ChangeItem)
 		change.OldValues = item
 
-		return SetUniqueKey(change, collectionMetadata)
+		return SetUniqueKey(change)
 
 	})
 }

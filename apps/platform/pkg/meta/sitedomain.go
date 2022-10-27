@@ -1,17 +1,17 @@
 package meta
 
 type SiteDomain struct {
-	ID        string    `uesio:"uesio/core.id"`
-	UniqueKey string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Site      *Site     `uesio:"uesio/studio.site"`
-	Type      string    `uesio:"uesio/studio.type"`
-	Domain    string    `uesio:"uesio/studio.domain"`
-	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID        string    `json:"uesio/core.id"`
+	UniqueKey string    `json:"uesio/core.uniquekey"`
+	Site      *Site     `json:"uesio/studio.site"`
+	Type      string    `json:"uesio/studio.type"`
+	Domain    string    `json:"uesio/studio.domain"`
+	itemMeta  *ItemMeta `json:"-"`
+	CreatedBy *User     `json:"uesio/core.createdby"`
+	Owner     *User     `json:"uesio/core.owner"`
+	UpdatedBy *User     `json:"uesio/core.updatedby"`
+	UpdatedAt int64     `json:"uesio/core.updatedat"`
+	CreatedAt int64     `json:"uesio/core.createdat"`
 }
 
 func (s *SiteDomain) GetCollectionName() string {

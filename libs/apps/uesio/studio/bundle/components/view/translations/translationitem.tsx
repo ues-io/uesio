@@ -13,7 +13,11 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 	const { context, namespace, value, setValue } = props
 	const uesio = hooks.useUesio(props)
 
-	const metadata = uesio.builder.useMetadataList(context, "LABEL", namespace)
+	const [metadata] = uesio.builder.useMetadataList(
+		context,
+		"LABEL",
+		namespace
+	)
 
 	if (!metadata) return null
 

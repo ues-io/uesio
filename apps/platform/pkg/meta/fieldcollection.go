@@ -6,8 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FieldCollection []*Field
@@ -24,7 +22,7 @@ func (fc *FieldCollection) GetFields() []string {
 	return StandardGetFields(&Field{})
 }
 
-func (fc *FieldCollection) NewItem() loadable.Item {
+func (fc *FieldCollection) NewItem() Item {
 	f := &Field{}
 	*fc = append(*fc, f)
 	return f
@@ -76,11 +74,11 @@ func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditi
 	return field.GetKey(), nil
 }
 
-func (fc *FieldCollection) GetItem(index int) loadable.Item {
+func (fc *FieldCollection) GetItem(index int) Item {
 	return (*fc)[index]
 }
 
-func (fc *FieldCollection) Loop(iter loadable.GroupIterator) error {
+func (fc *FieldCollection) Loop(iter GroupIterator) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

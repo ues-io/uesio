@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type SelectListCollection []*SelectList
@@ -21,7 +19,7 @@ func (slc *SelectListCollection) GetFields() []string {
 	return StandardGetFields(&SelectList{})
 }
 
-func (slc *SelectListCollection) NewItem() loadable.Item {
+func (slc *SelectListCollection) NewItem() Item {
 	sl := &SelectList{}
 	*slc = append(*slc, sl)
 	return sl
@@ -44,11 +42,11 @@ func (slc *SelectListCollection) GetKeyFromPath(path string, namespace string, c
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (slc *SelectListCollection) GetItem(index int) loadable.Item {
+func (slc *SelectListCollection) GetItem(index int) Item {
 	return (*slc)[index]
 }
 
-func (slc *SelectListCollection) Loop(iter loadable.GroupIterator) error {
+func (slc *SelectListCollection) Loop(iter GroupIterator) error {
 	for index := range *slc {
 		err := iter(slc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

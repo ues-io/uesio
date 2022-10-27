@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type SignupMethodCollection []*SignupMethod
@@ -20,7 +18,7 @@ func (smc *SignupMethodCollection) GetFields() []string {
 	return StandardGetFields(&SignupMethod{})
 }
 
-func (smc *SignupMethodCollection) NewItem() loadable.Item {
+func (smc *SignupMethodCollection) NewItem() Item {
 	sm := &SignupMethod{}
 	*smc = append(*smc, sm)
 	return sm
@@ -39,11 +37,11 @@ func (smc *SignupMethodCollection) GetKeyFromPath(path string, namespace string,
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (smc *SignupMethodCollection) GetItem(index int) loadable.Item {
+func (smc *SignupMethodCollection) GetItem(index int) Item {
 	return (*smc)[index]
 }
 
-func (smc *SignupMethodCollection) Loop(iter loadable.GroupIterator) error {
+func (smc *SignupMethodCollection) Loop(iter GroupIterator) error {
 	for index := range *smc {
 		err := iter(smc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

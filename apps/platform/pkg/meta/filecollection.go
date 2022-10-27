@@ -5,8 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FileCollection []*File
@@ -23,7 +21,7 @@ func (fc *FileCollection) GetFields() []string {
 	return StandardGetFields(&File{})
 }
 
-func (fc *FileCollection) NewItem() loadable.Item {
+func (fc *FileCollection) NewItem() Item {
 	f := &File{}
 	*fc = append(*fc, f)
 	return f
@@ -50,11 +48,11 @@ func (fc *FileCollection) GetKeyFromPath(path string, namespace string, conditio
 	return namespace + "." + parts[0], nil
 }
 
-func (fc *FileCollection) GetItem(index int) loadable.Item {
+func (fc *FileCollection) GetItem(index int) Item {
 	return (*fc)[index]
 }
 
-func (fc *FileCollection) Loop(iter loadable.GroupIterator) error {
+func (fc *FileCollection) Loop(iter GroupIterator) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -1,23 +1,25 @@
 package adapt
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/francoispqt/gojay"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 type SaveOp struct {
-	CollectionName string
-	WireName       string
-	Inserts        ChangeItems
-	Updates        ChangeItems
-	Deletes        ChangeItems
-	Options        *SaveOptions
-	Errors         *[]SaveError
-	InsertCount    int
+	WireName    string
+	Inserts     ChangeItems
+	Updates     ChangeItems
+	Deletes     ChangeItems
+	Options     *SaveOptions
+	Errors      *[]SaveError
+	InsertCount int
+	Metadata    *CollectionMetadata
 }
 
 func (op *SaveOp) AddError(saveError *SaveError) {
@@ -71,16 +73,61 @@ func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 type ChangeItems []*ChangeItem
 
 type ChangeItem struct {
-	FieldChanges    loadable.Item
+	FieldChanges    meta.Item
 	IDValue         string
 	UniqueKey       string
 	Error           error
 	RecordKey       string
-	OldValues       loadable.Item
+	OldValues       meta.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
 	Autonumber      int
 	IsNew           bool
+	Metadata        *CollectionMetadata
+}
+
+func (ci *ChangeItem) IsNil() bool {
+	return ci == nil
+}
+
+func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
+
+	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+		if value == nil {
+			return nil
+		}
+		fieldMetadata, err := ci.Metadata.GetField(fieldID)
+		if err != nil {
+			return err
+		}
+
+		if IsReference(fieldMetadata.Type) {
+			refValue, err := GetReferenceKey(value)
+			if err != nil {
+				return nil
+			}
+			if refValue == "" {
+				return nil
+			}
+			enc.StringKey(fieldID, refValue)
+			return nil
+		}
+
+		jsonValue, err := json.Marshal(value)
+		if err != nil {
+			return errors.New("Error getting json value: " + fieldMetadata.GetFullName())
+		}
+		ej := gojay.EmbeddedJSON(jsonValue)
+		enc.AddEmbeddedJSONKey(fieldID, &ej)
+		return nil
+
+	})
+	if err != nil {
+		// this should add an error to the encoder and make it bomb
+		fmt.Println(err)
+		badValue := []string{}
+		enc.AddInterface(badValue)
+	}
 }
 
 func (ci *ChangeItem) AddReadToken(token string) {
@@ -139,14 +186,14 @@ func (ci *ChangeItem) Len() int {
 func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 	if ci.IsNew {
-		ownerVal, err := ci.GetField("uesio/core.owner->uesio/core.id")
+		ownerVal, err := ci.GetField("uesio/core.owner")
 		if err != nil {
 			return "", err
 		}
 		return GetReferenceKey(ownerVal)
 	}
 
-	ownerVal, err := ci.GetOldField("uesio/core.owner->uesio/core.id")
+	ownerVal, err := ci.GetOldField("uesio/core.owner")
 	if err != nil {
 		return "", err
 	}
@@ -170,14 +217,14 @@ func GetFieldValueString(value interface{}, key string) (string, error) {
 	return valueString, nil
 }
 
-func GetLoadable(value interface{}) (loadable.Item, error) {
+func GetLoadable(value interface{}) (meta.Item, error) {
 	valueMap, ok := value.(map[string]interface{})
 	if ok {
 		loadableItem := Item(valueMap)
 		return &loadableItem, nil
 	}
 
-	loadableValueItem, ok := value.(loadable.Item)
+	loadableValueItem, ok := value.(meta.Item)
 	if ok {
 		return loadableValueItem, nil
 	}
@@ -200,7 +247,7 @@ func GetFieldValue(value interface{}, key string) (interface{}, error) {
 		return valueItem.GetField(key)
 	}
 
-	loadableValueItem, ok := value.(loadable.Item)
+	loadableValueItem, ok := value.(meta.Item)
 	if ok {
 		return loadableValueItem.GetField(key)
 	}
@@ -228,7 +275,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 
 // NewFieldChanges function returns a template that can merge field changes
 func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
+	return templating.NewWithFunc(templateString, func(item meta.Item, key string) (interface{}, error) {
 		fieldMetadata, err := collectionMetadata.GetField(key)
 		if err != nil {
 			return nil, err

@@ -36,6 +36,7 @@ type GroupConditionState = ConditionBase & {
 	type: typeof GROUP
 	conjunction: Conjunction
 	conditions: ConditionBase[]
+	valueSource: undefined
 }
 
 type SearchConditionState = ConditionBase & {

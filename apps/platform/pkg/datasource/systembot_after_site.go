@@ -3,7 +3,6 @@ package datasource
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -81,7 +80,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, s
 		return err
 	}
 	domainIds := []string{}
-	err = domains.Loop(func(item loadable.Item, index string) error {
+	err = domains.Loop(func(item meta.Item, index string) error {
 		id, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
 		if err != nil {
 			return err

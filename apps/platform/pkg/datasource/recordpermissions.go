@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-type tokenFunc func(loadable.Item) (string, bool, error)
+type tokenFunc func(meta.Item) (string, bool, error)
 
 func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache) ([]adapt.LoadRequestField, error) {
 	if collectionMetadata.AccessField == "" {
@@ -52,12 +52,12 @@ func getAccessFields(collectionMetadata *adapt.CollectionMetadata, metadata *ada
 
 }
 
-func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func loadInAccessFieldData(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	referencedCollections := adapt.ReferenceRegistry{}
 
 	metadata := connection.GetMetadata()
 
-	fieldMetadata, err := collectionMetadata.GetField(collectionMetadata.AccessField)
+	fieldMetadata, err := op.Metadata.GetField(op.Metadata.AccessField)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		return err
 	}
 
-	fields, err := getAccessFields(collectionMetadata, metadata)
+	fields, err := getAccessFields(op.Metadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 	refReq.AddFields(fields)
 
 	err = op.LoopChanges(func(change *adapt.ChangeItem) error {
-		fk, err := change.GetField(collectionMetadata.AccessField)
+		fk, err := change.GetField(op.Metadata.AccessField)
 		if err != nil {
 			return err
 		}
@@ -98,7 +98,7 @@ func loadInAccessFieldData(op *adapt.SaveOp, collectionMetadata *adapt.Collectio
 	return adapt.HandleReferences(connection, referencedCollections, session, false)
 }
 
-func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, session *sess.Session) error {
 	ownerID, err := change.GetOwnerID()
 	if err != nil {
 		return err
@@ -148,13 +148,13 @@ func handleStandardChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, coll
 
 }
 
-func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, session *sess.Session) error {
+func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, metadata *adapt.MetadataCache, session *sess.Session) error {
 
-	var accessItem loadable.Item
+	var accessItem meta.Item
 
 	accessItem = change.FieldChanges
 
-	challengeMetadata := collectionMetadata
+	challengeMetadata := change.Metadata
 
 	userCanModifyAllRecords := session.GetContextPermissions().ModifyAllRecords
 
@@ -225,15 +225,15 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, c
 	return nil
 }
 
-func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func GenerateRecordChallengeTokens(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	if !collectionMetadata.IsWriteProtected() {
+	if !op.Metadata.IsWriteProtected() {
 		return nil
 	}
 
 	// If we have an access field, we need to load in all data from that field
-	if collectionMetadata.AccessField != "" {
-		err := loadInAccessFieldData(op, collectionMetadata, connection, session)
+	if op.Metadata.AccessField != "" {
+		err := loadInAccessFieldData(op, connection, session)
 		if err != nil {
 			return err
 		}
@@ -241,7 +241,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 	metadata := connection.GetMetadata()
 
-	challengeMetadata, err := adapt.GetChallengeCollection(metadata, collectionMetadata)
+	challengeMetadata, err := adapt.GetChallengeCollection(metadata, op.Metadata)
 	if err != nil {
 		return err
 	}
@@ -254,7 +254,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 		if err != nil {
 			return err
 		}
-		tokenFuncs = append(tokenFuncs, func(item loadable.Item) (string, bool, error) {
+		tokenFuncs = append(tokenFuncs, func(item meta.Item) (string, bool, error) {
 
 			// First check to make sure that the token meets the supplied conditions
 			if challengeToken.Conditions != nil {
@@ -279,10 +279,10 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 	}
 
 	return op.LoopChanges(func(change *adapt.ChangeItem) error {
-		if collectionMetadata.AccessField != "" {
-			return handleAccessFieldChange(change, tokenFuncs, collectionMetadata, metadata, session)
+		if op.Metadata.AccessField != "" {
+			return handleAccessFieldChange(change, tokenFuncs, metadata, session)
 		}
-		return handleStandardChange(change, tokenFuncs, collectionMetadata, session)
+		return handleStandardChange(change, tokenFuncs, session)
 	})
 
 }

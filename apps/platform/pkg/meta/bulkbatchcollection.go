@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type BulkBatchCollection []*BulkBatch
@@ -16,16 +14,16 @@ func (bbc *BulkBatchCollection) GetFields() []string {
 	return StandardGetFields(&BulkBatch{})
 }
 
-func (bbc *BulkBatchCollection) GetItem(index int) loadable.Item {
+func (bbc *BulkBatchCollection) GetItem(index int) Item {
 	return (*bbc)[index]
 }
 
-func (bbc *BulkBatchCollection) NewItem() loadable.Item {
+func (bbc *BulkBatchCollection) NewItem() Item {
 	*bbc = append(*bbc, &BulkBatch{})
 	return (*bbc)[len(*bbc)-1]
 }
 
-func (bbc *BulkBatchCollection) Loop(iter loadable.GroupIterator) error {
+func (bbc *BulkBatchCollection) Loop(iter GroupIterator) error {
 	for index := range *bbc {
 		err := iter(bbc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

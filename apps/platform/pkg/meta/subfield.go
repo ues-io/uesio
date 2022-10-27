@@ -1,11 +1,11 @@
 package meta
 
 type SubField struct {
-	Name       string    `yaml:"name,omitempty" uesio:"uesio/studio.name"`
-	Label      string    `yaml:"label,omitempty" uesio:"uesio/studio.label"`
-	Type       string    `yaml:"type,omitempty" uesio:"uesio/studio.type"`
-	SelectList string    `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Name       string    `yaml:"name,omitempty" json:"uesio/studio.name"`
+	Label      string    `yaml:"label,omitempty" json:"uesio/studio.label"`
+	Type       string    `yaml:"type,omitempty" json:"uesio/studio.type"`
+	SelectList string    `yaml:"selectList,omitempty" json:"uesio/studio.selectlist"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *SubField) GetCollectionName() string {

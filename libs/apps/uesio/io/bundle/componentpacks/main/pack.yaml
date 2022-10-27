@@ -72,6 +72,7 @@ components:
     icon:
     iconbutton:
     link:
+    menubutton:
     multiselectfield:
     multicheckfield:
     radiobuttonsfield:
@@ -91,6 +92,7 @@ components:
     uploadarea:
     userfield:
     listfield:
+    listfielddeck:
     mapfield:
     datefield:
     numberfield:
