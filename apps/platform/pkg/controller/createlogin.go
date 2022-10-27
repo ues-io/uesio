@@ -28,25 +28,12 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	signupMethod, err := auth.CreateLogin(namespace, name, payload, site)
+	_, err = auth.CreateLogin(namespace, name, payload, site)
 	if err != nil {
 		msg := "Create Login failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-
-	//TO-DO
-
-	publicUser, err := auth.GetPublicUser(site, nil)
-	if err != nil {
-		msg := "Create Login failed: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	//Use the Guest user since the user might not be confirmed yet
-	redirectResponse(w, r, signupMethod.LandingRoute, publicUser, site)
 
 }

@@ -272,6 +272,7 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	signUpData := &cognito.AdminCreateUserInput{
 		DesiredDeliveryMediums: []types.DeliveryMediumType{"EMAIL"},
+		MessageAction:          types.MessageActionTypeSuppress,
 		UserPoolId:             aws.String(poolID),
 		Username:               &fqUsername,
 		UserAttributes: []types.AttributeType{
@@ -289,6 +290,45 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 
 	attributes := signUpOutput.User.Attributes
 	sub := findAttribute("sub", attributes)
+
+	//set a random password
+	AdminSetUserPasswordData := &cognito.AdminSetUserPasswordInput{
+		UserPoolId: aws.String(poolID),
+		Username:   &fqUsername,
+		Permanent:  true,
+		Password:   aws.String("Mysecretpassword1234*"),
+	}
+
+	_, err = client.AdminSetUserPassword(context.Background(), AdminSetUserPasswordData)
+	if err != nil {
+		return nil, err
+	}
+
+	//Trust user email
+	trustEmailData := &cognito.AdminUpdateUserAttributesInput{
+		UserAttributes: []types.AttributeType{{
+			Name:  aws.String("email_verified"),
+			Value: aws.String("true"),
+		}},
+		UserPoolId: aws.String(poolID),
+		Username:   &fqUsername,
+	}
+
+	_, err = client.AdminUpdateUserAttributes(context.Background(), trustEmailData)
+	if err != nil {
+		return nil, err
+	}
+
+	//resetPassword
+	resetPasswordData := &cognito.AdminResetUserPasswordInput{
+		UserPoolId: aws.String(poolID),
+		Username:   &fqUsername,
+	}
+
+	_, err = client.AdminResetUserPassword(context.Background(), resetPasswordData)
+	if err != nil {
+		return nil, err
+	}
 
 	return &auth.AuthenticationClaims{
 		Subject: sub,
