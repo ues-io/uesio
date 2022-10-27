@@ -83,7 +83,7 @@ export const propsToRender = (
 	properties: builder.PropDescriptor[],
 	conditionValues: definition.DefinitionMap
 ) =>
-	properties?.filter((descriptor) => {
+	properties.filter((descriptor) => {
 		if (!descriptor.display) return true
 		return descriptor.display.some((condition) => {
 			if (!conditionValues) return false
@@ -111,8 +111,10 @@ export const propsToRender = (
 
 const PropList: FunctionComponent<Props> = (props) => {
 	const { path, propsDef, context, properties, valueAPI } = props
+
 	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
 	const propertiesToRender = propsToRender(properties, conditionValues)
+
 	return (
 		<>
 			{propertiesToRender.map((descriptor, index) => {
