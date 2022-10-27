@@ -48,3 +48,24 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	redirectResponse(w, r, signupMethod.LandingRoute, publicUser, site)
 
 }
+
+func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
+
+	var ConfirmSignupRequest map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&ConfirmSignupRequest)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+
+	s := middleware.GetSession(r)
+	err = auth.ConfirmSignUp(getAuthSourceID(mux.Vars(r)), ConfirmSignupRequest, s)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+}

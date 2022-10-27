@@ -237,3 +237,45 @@ func (c *Connection) ConfirmForgotPassword(payload map[string]interface{}, sessi
 	return nil
 
 }
+
+func (c *Connection) ConfirmSignUp(payload map[string]interface{}, session *sess.Session) error {
+
+	username, err := auth.GetPayloadValue(payload, "username")
+	if err != nil {
+		return errors.New("Cognito Confirm Forgot Password:" + err.Error())
+	}
+
+	verificationCode, err := auth.GetPayloadValue(payload, "verificationcode")
+	if err != nil {
+		return errors.New("Cognito Confirm Forgot Password:" + err.Error())
+	}
+
+	clientID, ok := (*c.credentials)["clientid"]
+	if !ok {
+		return errors.New("no client id provided in credentials")
+	}
+
+	cfg, err := creds.GetAWSConfig(context.Background(), c.credentials)
+	if err != nil {
+		return err
+	}
+
+	site := session.GetSiteTenantID()
+	fqUsername := getFullyQualifiedUsername(site, username)
+
+	authTry := &cognito.ConfirmSignUpInput{
+		Username:         &fqUsername,
+		ClientId:         aws.String(clientID),
+		ConfirmationCode: aws.String(verificationCode),
+	}
+
+	client := cognito.NewFromConfig(cfg)
+
+	_, err = client.ConfirmSignUp(context.Background(), authTry)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
