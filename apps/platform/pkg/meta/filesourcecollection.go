@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FileSourceCollection []*FileSource
@@ -20,7 +18,7 @@ func (fsc *FileSourceCollection) GetFields() []string {
 	return StandardGetFields(&FileSource{})
 }
 
-func (fsc *FileSourceCollection) NewItem() loadable.Item {
+func (fsc *FileSourceCollection) NewItem() Item {
 	fs := &FileSource{}
 	*fsc = append(*fsc, fs)
 	return fs
@@ -39,11 +37,11 @@ func (fsc *FileSourceCollection) GetKeyFromPath(path string, namespace string, c
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (fsc *FileSourceCollection) GetItem(index int) loadable.Item {
+func (fsc *FileSourceCollection) GetItem(index int) Item {
 	return (*fsc)[index]
 }
 
-func (fsc *FileSourceCollection) Loop(iter loadable.GroupIterator) error {
+func (fsc *FileSourceCollection) Loop(iter GroupIterator) error {
 	for index := range *fsc {
 		err := iter(fsc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

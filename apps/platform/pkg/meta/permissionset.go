@@ -20,29 +20,29 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 }
 
 type PermissionSet struct {
-	ID                  string          `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey           string          `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name                string          `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace           string          `yaml:"-" uesio:"-"`
-	NamedRefs           map[string]bool `yaml:"named" uesio:"uesio/studio.namedrefs"`
-	ViewRefs            map[string]bool `yaml:"views" uesio:"uesio/studio.viewrefs"`
-	CollectionRefs      map[string]bool `yaml:"collections" uesio:"uesio/studio.collectionrefs"`
-	RouteRefs           map[string]bool `yaml:"routes" uesio:"uesio/studio.routerefs"`
-	FileRefs            map[string]bool `yaml:"files" uesio:"uesio/studio.filerefs"`
-	Workspace           *Workspace      `yaml:"-" uesio:"uesio/studio.workspace"`
-	AllowAllCollections bool            `yaml:"allowallcollections" uesio:"uesio/studio.allowallcollections"`
-	AllowAllViews       bool            `yaml:"allowallviews" uesio:"uesio/studio.allowallviews"`
-	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"uesio/studio.allowallroutes"`
-	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"uesio/studio.allowallfiles"`
-	ModifyAllRecords    bool            `yaml:"modifyallrecords" uesio:"uesio/studio.modifyallrecords"`
-	ViewAllRecords      bool            `yaml:"viewallrecords" uesio:"uesio/studio.viewallrecords"`
-	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy           *User           `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner               *User           `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy           *User           `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt           int64           `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt           int64           `yaml:"-" uesio:"uesio/core.createdat"`
-	Public              bool            `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID                  string          `yaml:"-" json:"uesio/core.id"`
+	UniqueKey           string          `yaml:"-" json:"uesio/core.uniquekey"`
+	Name                string          `yaml:"name" json:"uesio/studio.name"`
+	Namespace           string          `yaml:"-" json:"-"`
+	NamedRefs           map[string]bool `yaml:"named" json:"uesio/studio.namedrefs"`
+	ViewRefs            map[string]bool `yaml:"views" json:"uesio/studio.viewrefs"`
+	CollectionRefs      map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
+	RouteRefs           map[string]bool `yaml:"routes" json:"uesio/studio.routerefs"`
+	FileRefs            map[string]bool `yaml:"files" json:"uesio/studio.filerefs"`
+	Workspace           *Workspace      `yaml:"-" json:"uesio/studio.workspace"`
+	AllowAllCollections bool            `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
+	AllowAllViews       bool            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
+	AllowAllRoutes      bool            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
+	AllowAllFiles       bool            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
+	ModifyAllRecords    bool            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
+	ViewAllRecords      bool            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
+	itemMeta            *ItemMeta       `yaml:"-" json:"-"`
+	CreatedBy           *User           `yaml:"-" json:"uesio/core.createdby"`
+	Owner               *User           `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy           *User           `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt           int64           `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt           int64           `yaml:"-" json:"uesio/core.createdat"`
+	Public              bool            `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type PermissionSetWrapper PermissionSet

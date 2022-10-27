@@ -1,99 +1,99 @@
 [
 	{
-		"name": "core",
-		"fullname": "uesio/core",
-		"description": "Base uesio functionality",
-		"color": "#a05195",
-		"icon": "hub",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "core",
+		"uesio/studio.fullname": "uesio/core",
+		"uesio/studio.description": "Base uesio functionality",
+		"uesio/studio.color": "#a05195",
+		"uesio/studio.icon": "hub",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "io",
-		"fullname": "uesio/io",
-		"description": "A component library for uesio",
-		"color": "#2f4b7c",
-		"icon": "widgets",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "io",
+		"uesio/studio.fullname": "uesio/io",
+		"uesio/studio.description": "A component library for uesio",
+		"uesio/studio.color": "#2f4b7c",
+		"uesio/studio.icon": "widgets",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "studio",
-		"fullname": "uesio/studio",
-		"description": "The uesio configuration app",
-		"color": "#ff7c43",
-		"icon": "design_services",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "studio",
+		"uesio/studio.fullname": "uesio/studio",
+		"uesio/studio.description": "The uesio configuration app",
+		"uesio/studio.color": "#ff7c43",
+		"uesio/studio.icon": "design_services",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "builder",
-		"fullname": "uesio/builder",
-		"description": "The view builder app",
-		"color": "#2dd4bf",
-		"icon": "build_circle",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "builder",
+		"uesio/studio.fullname": "uesio/builder",
+		"uesio/studio.description": "The view builder app",
+		"uesio/studio.color": "#2dd4bf",
+		"uesio/studio.icon": "build_circle",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "crm",
-		"fullname": "uesio/crm",
-		"description": "A sample CRM app",
-		"color": "#a05195",
-		"icon": "person",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "crm",
+		"uesio/studio.fullname": "uesio/crm",
+		"uesio/studio.description": "A sample CRM app",
+		"uesio/studio.color": "#a05195",
+		"uesio/studio.icon": "person",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "cms",
-		"fullname": "uesio/cms",
-		"description": "Content management tools",
-		"color": "#665191",
-		"icon": "description",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "cms",
+		"uesio/studio.fullname": "uesio/cms",
+		"uesio/studio.description": "Content management tools",
+		"uesio/studio.color": "#665191",
+		"uesio/studio.icon": "description",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "docs",
-		"fullname": "uesio/docs",
-		"description": "Docs for uesio",
-		"color": "#d45087",
-		"icon": "support",
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "docs",
+		"uesio/studio.fullname": "uesio/docs",
+		"uesio/studio.description": "Docs for uesio",
+		"uesio/studio.color": "#d45087",
+		"uesio/studio.icon": "support",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "web",
-		"fullname": "uesio/web",
-		"description": "Uesio website",
-		"color": "#003f5c",
-		"icon": "public",
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "web",
+		"uesio/studio.fullname": "uesio/web",
+		"uesio/studio.description": "Uesio website",
+		"uesio/studio.color": "#003f5c",
+		"uesio/studio.icon": "public",
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	},
 	{
-		"name": "lab",
-		"fullname": "uesio/lab",
-		"description": "Experimental components",
-		"color": "#003f5c",
-		"icon": "science",
-		"public": true,
-		"user": {
-			"uniquekey": "uesio"
+		"uesio/studio.name": "lab",
+		"uesio/studio.fullname": "uesio/lab",
+		"uesio/studio.description": "Experimental components",
+		"uesio/studio.color": "#003f5c",
+		"uesio/studio.icon": "science",
+		"uesio/studio.public": true,
+		"uesio/studio.user": {
+			"uesio/core.uniquekey": "uesio"
 		}
 	}
 ]

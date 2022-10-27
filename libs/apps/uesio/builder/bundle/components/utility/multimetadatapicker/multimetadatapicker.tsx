@@ -77,7 +77,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 		props
 	)
 
-	const metadata = uesio.builder.useMetadataList(
+	const [metadata] = uesio.builder.useMetadataList(
 		context,
 		metadataType,
 		"",

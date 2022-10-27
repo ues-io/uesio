@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type LoginMethodCollection []*LoginMethod
@@ -16,17 +14,17 @@ func (lmc *LoginMethodCollection) GetFields() []string {
 	return StandardGetFields(&LoginMethod{})
 }
 
-func (lmc *LoginMethodCollection) GetItem(index int) loadable.Item {
+func (lmc *LoginMethodCollection) GetItem(index int) Item {
 	return (*lmc)[index]
 }
 
-func (lmc *LoginMethodCollection) NewItem() loadable.Item {
+func (lmc *LoginMethodCollection) NewItem() Item {
 	lm := &LoginMethod{}
 	*lmc = append(*lmc, lm)
 	return lm
 }
 
-func (lmc *LoginMethodCollection) Loop(iter loadable.GroupIterator) error {
+func (lmc *LoginMethodCollection) Loop(iter GroupIterator) error {
 	for index := range *lmc {
 		err := iter(lmc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -5,18 +5,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type OpList struct {
-	CollectionName string
-	WireName       string
-	Options        *adapt.SaveOptions
-	List           []*adapt.SaveOp
-	Counter        int
-	CurrentIndex   int
-	Errors         *[]adapt.SaveError
+	Request      *SaveRequest
+	Metadata     *adapt.CollectionMetadata
+	List         []*adapt.SaveOp
+	Counter      int
+	CurrentIndex int
 }
 
 func (ol *OpList) getCurrentIndex() int {
@@ -26,62 +24,63 @@ func (ol *OpList) getCurrentIndex() int {
 	}
 	if ol.Counter == 0 {
 		ol.List = append(ol.List, &adapt.SaveOp{
-			CollectionName: ol.CollectionName,
-			WireName:       ol.WireName,
-			Inserts:        adapt.ChangeItems{},
-			Updates:        adapt.ChangeItems{},
-			Deletes:        adapt.ChangeItems{},
-			Options:        ol.Options,
-			Errors:         ol.Errors,
+			WireName: ol.Request.Wire,
+			Inserts:  adapt.ChangeItems{},
+			Updates:  adapt.ChangeItems{},
+			Deletes:  adapt.ChangeItems{},
+			Options:  ol.Request.Options,
+			Errors:   &ol.Request.Errors,
+			Metadata: ol.Metadata,
 		})
 	}
 	ol.Counter++
 	return ol.CurrentIndex
 }
 
-func (ol *OpList) addInsert(item loadable.Item, recordKey, idValue string) {
+func (ol *OpList) addInsert(item meta.Item, recordKey, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Inserts = append(ol.List[currentIndex].Inserts, &adapt.ChangeItem{
 		IDValue:      idValue,
 		FieldChanges: item,
 		RecordKey:    recordKey,
 		IsNew:        true,
+		Metadata:     ol.Metadata,
 	})
 }
 
-func (ol *OpList) addUpdate(item loadable.Item, recordKey string, idValue string) {
+func (ol *OpList) addUpdate(item meta.Item, recordKey string, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Updates = append(ol.List[currentIndex].Updates, &adapt.ChangeItem{
 		IDValue:      idValue,
 		FieldChanges: item,
 		RecordKey:    recordKey,
+		Metadata:     ol.Metadata,
 	})
 }
 
-func (ol *OpList) addDelete(item loadable.Item, idValue string) {
+func (ol *OpList) addDelete(item meta.Item, idValue string) {
 	currentIndex := ol.getCurrentIndex()
 	ol.List[currentIndex].Deletes = append(ol.List[currentIndex].Deletes, &adapt.ChangeItem{
 		FieldChanges: item,
 		IDValue:      idValue,
+		Metadata:     ol.Metadata,
 	})
 }
 
-func NewOpList(request *SaveRequest) *OpList {
+func NewOpList(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata) *OpList {
 	return &OpList{
-		CollectionName: request.Collection,
-		WireName:       request.Wire,
-		Options:        request.Options,
-		List:           []*adapt.SaveOp{},
-		Errors:         &request.Errors,
+		Request:  request,
+		Metadata: collectionMetadata,
+		List:     []*adapt.SaveOp{},
 	}
 }
 
 func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
-	opList := NewOpList(request)
+	opList := NewOpList(request, collectionMetadata)
 
 	if request.Changes != nil {
-		err := request.Changes.Loop(func(item loadable.Item, recordKey string) error {
+		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				newID := uuid.New().String()
@@ -102,7 +101,7 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 	}
 
 	if request.Deletes != nil {
-		err := request.Deletes.Loop(func(item loadable.Item, _ string) error {
+		err := request.Deletes.Loop(func(item meta.Item, _ string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")

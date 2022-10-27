@@ -36,36 +36,36 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 }
 
 type Field struct {
-	ID                     string                  `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey              string                  `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name                   string                  `yaml:"name" uesio:"uesio/studio.name"`
-	CollectionRef          string                  `yaml:"-" uesio:"uesio/studio.collection"`
-	Namespace              string                  `yaml:"-" uesio:"-"`
-	Type                   string                  `yaml:"type" uesio:"uesio/studio.type"`
-	Label                  string                  `yaml:"label" uesio:"uesio/studio.label"`
-	ReadOnly               bool                    `yaml:"readOnly,omitempty" uesio:"uesio/studio.readonly"`
-	CreateOnly             bool                    `yaml:"createOnly,omitempty" uesio:"uesio/studio.createonly"`
-	SelectList             string                  `yaml:"selectList,omitempty" uesio:"uesio/studio.selectlist"`
-	Workspace              *Workspace              `yaml:"-" uesio:"uesio/studio.workspace"`
-	Required               bool                    `yaml:"required,omitempty" uesio:"uesio/studio.required"`
-	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" uesio:"uesio/studio.number"`
-	FileMetadata           *FileMetadata           `yaml:"file,omitempty" uesio:"uesio/studio.file"`
-	ReferenceMetadata      *ReferenceMetadata      `yaml:"reference,omitempty" uesio:"uesio/studio.reference"`
-	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"uesio/studio.referencegroup"`
-	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"uesio/studio.validate"`
-	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"uesio/studio.autonumber"`
-	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" uesio:"uesio/studio.formula"`
-	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"uesio/studio.autopopulate"`
-	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
-	CreatedBy              *User                   `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner                  *User                   `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy              *User                   `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt              int64                   `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt              int64                   `yaml:"-" uesio:"uesio/core.createdat"`
-	SubFields              []SubField              `yaml:"subfields,omitempty" uesio:"uesio/studio.subfields"`
-	SubType                string                  `yaml:"subtype,omitempty" uesio:"uesio/studio.subtype"`
-	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"uesio/studio.languagelabel"`
-	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"uesio/studio.columnname"`
+	ID                     string                  `yaml:"-" json:"uesio/core.id"`
+	UniqueKey              string                  `yaml:"-" json:"uesio/core.uniquekey"`
+	Name                   string                  `yaml:"name" json:"uesio/studio.name"`
+	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
+	Namespace              string                  `yaml:"-" json:"-"`
+	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
+	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
+	ReadOnly               bool                    `yaml:"readOnly,omitempty" json:"uesio/studio.readonly"`
+	CreateOnly             bool                    `yaml:"createOnly,omitempty" json:"uesio/studio.createonly"`
+	SelectList             string                  `yaml:"selectList,omitempty" json:"uesio/studio.selectlist"`
+	Workspace              *Workspace              `yaml:"-" json:"uesio/studio.workspace"`
+	Required               bool                    `yaml:"required,omitempty" json:"uesio/studio.required"`
+	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" json:"uesio/studio.number"`
+	FileMetadata           *FileMetadata           `yaml:"file,omitempty" json:"uesio/studio.file"`
+	ReferenceMetadata      *ReferenceMetadata      `yaml:"reference,omitempty" json:"uesio/studio.reference"`
+	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" json:"uesio/studio.referencegroup"`
+	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" json:"uesio/studio.validate"`
+	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
+	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
+	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
+	itemMeta               *ItemMeta               `yaml:"-" json:"-"`
+	CreatedBy              *User                   `yaml:"-" json:"uesio/core.createdby"`
+	Owner                  *User                   `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy              *User                   `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt              int64                   `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt              int64                   `yaml:"-" json:"uesio/core.createdat"`
+	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
+	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
+	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
+	ColumnName             string                  `yaml:"columnname,omitempty" json:"uesio/studio.columnname"`
 }
 
 type FieldWrapper Field

@@ -21,9 +21,10 @@ const IconProp = component.getUtility("uesio/builder.iconprop")
 const FieldProp = component.getUtility("uesio/builder.fieldprop")
 const FieldsProp = component.getUtility("uesio/builder.fieldsprop")
 const PropListsProp = component.getUtility("uesio/builder.proplistsprop")
+const PropListProp = component.getUtility("uesio/builder.proplistprop")
 
 interface Props extends definition.BaseProps {
-	properties?: builder.PropDescriptor[]
+	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
 	valueAPI: builder.ValueAPI
 }
@@ -70,6 +71,8 @@ function getPropHandler(type?: string) {
 			return FieldsProp
 		case "PROPLISTS":
 			return PropListsProp
+		case "PROPLIST":
+			return PropListProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return null
@@ -77,12 +80,13 @@ function getPropHandler(type?: string) {
 }
 
 export const propsToRender = (
-	properties: builder.PropDescriptor[] | undefined,
+	properties: builder.PropDescriptor[],
 	conditionValues: definition.DefinitionMap
 ) =>
-	properties?.filter((descriptor) => {
+	properties.filter((descriptor) => {
 		if (!descriptor.display) return true
 		return descriptor.display.some((condition) => {
+			if (!conditionValues) return false
 			const { type, property } = condition
 
 			if (!property) {
@@ -107,11 +111,13 @@ export const propsToRender = (
 
 const PropList: FunctionComponent<Props> = (props) => {
 	const { path, propsDef, context, properties, valueAPI } = props
+
 	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
 	const propertiesToRender = propsToRender(properties, conditionValues)
+
 	return (
 		<>
-			{propertiesToRender?.map((descriptor, index) => {
+			{propertiesToRender.map((descriptor, index) => {
 				const newPath =
 					descriptor.type === "KEY"
 						? path
@@ -123,6 +129,7 @@ const PropList: FunctionComponent<Props> = (props) => {
 						: newPath
 
 				const PropHandler = getPropHandler(descriptor.type)
+
 				return (
 					PropHandler && (
 						<PropHandler

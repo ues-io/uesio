@@ -64,7 +64,18 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type WireHasNoChanges = {
+	type: "wireHasNoChanges"
+	wire: string
+}
+type WireHasChanges = {
+	type: "wireHasChanges"
+	wire: string
+}
+
 type DisplayCondition =
+	| WireHasChanges
+	| WireHasNoChanges
 	| HasNoValueCondition
 	| HasValueCondition
 	| FieldValueCondition
@@ -128,6 +139,17 @@ function should(condition: DisplayCondition, context: Context) {
 		return !context.getRecord()?.isNew()
 	}
 
+	if (
+		condition.type === "wireHasChanges" ||
+		condition.type === "wireHasNoChanges"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const hasChanges = ctx.getWire()?.getChanges().length
+		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
+	}
+
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.merge(condition.value as string)
@@ -146,7 +168,6 @@ function should(condition: DisplayCondition, context: Context) {
 		const ctx = condition.wire
 			? context.addFrame({ wire: condition.wire })
 			: context
-
 		const ctxRecord = ctx.getRecord()
 		// If we have a record in context, use it.
 		if (ctxRecord)
@@ -202,7 +223,7 @@ const getWiresForConditions = (
 	return [
 		...(contextWire ? [contextWire] : []),
 		...conditions.flatMap((condition) =>
-			!condition.type && condition.wire ? [condition.wire] : []
+			"wire" in condition && condition.wire ? [condition.wire] : []
 		),
 	]
 }

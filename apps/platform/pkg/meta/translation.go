@@ -8,19 +8,19 @@ import (
 )
 
 type Translation struct {
-	ID        string            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Namespace string            `yaml:"-" uesio:"-"`
-	Workspace *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	Labels    map[string]string `yaml:"labels" uesio:"uesio/studio.labels"`
-	Language  string            `yaml:"language" uesio:"uesio/studio.language"`
-	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
-	Public    bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID        string            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" json:"uesio/core.uniquekey"`
+	Namespace string            `yaml:"-" json:"-"`
+	Workspace *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
+	Labels    map[string]string `yaml:"labels" json:"uesio/studio.labels"`
+	Language  string            `yaml:"language" json:"uesio/studio.language"`
+	itemMeta  *ItemMeta         `yaml:"-" json:"-"`
+	CreatedBy *User             `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64             `yaml:"-" json:"uesio/core.createdat"`
+	Public    bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type TranslationWrapper Translation

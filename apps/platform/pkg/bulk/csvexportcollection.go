@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 func NewCSVExportItem(collectionMetadata *adapt.CollectionMetadata) *CSVExportItem {
@@ -88,11 +88,11 @@ type CSVExportCollection struct {
 	collectionMetadata *adapt.CollectionMetadata
 }
 
-func (c *CSVExportCollection) GetItem(index int) loadable.Item {
+func (c *CSVExportCollection) GetItem(index int) meta.Item {
 	return nil
 }
 
-func (c *CSVExportCollection) NewItem() loadable.Item {
+func (c *CSVExportCollection) NewItem() meta.Item {
 	if !c.hasHeader {
 		// write the header row
 		for fieldName := range c.collectionMetadata.Fields {
@@ -117,7 +117,7 @@ func (c *CSVExportCollection) GetItems() interface{} {
 	return nil
 }
 
-func (c *CSVExportCollection) Loop(iter loadable.GroupIterator) error {
+func (c *CSVExportCollection) Loop(iter meta.GroupIterator) error {
 	return nil
 }
 

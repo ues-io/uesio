@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
@@ -40,7 +39,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			return nil, err
 		}
 
-		err = group.Loop(func(item loadable.Item, _ string) error {
+		err = group.Loop(func(item meta.Item, _ string) error {
 
 			path := item.(meta.BundleableItem).GetPath()
 			// Grabs the componentpack javascript files

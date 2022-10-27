@@ -18,21 +18,21 @@ func NewUserAccessToken(key string) (*UserAccessToken, error) {
 }
 
 type UserAccessToken struct {
-	ID         string            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey  string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name       string            `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace  string            `yaml:"-" uesio:"-"`
-	Type       string            `yaml:"type" uesio:"uesio/studio.type"`
-	Collection string            `yaml:"collection" uesio:"uesio/studio.collection"`
-	Conditions []*TokenCondition `yaml:"conditions"  uesio:"uesio/studio.conditions"`
-	Token      string            `yaml:"token"  uesio:"uesio/studio.token"`
-	Workspace  *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"uesio/core.createdat"`
+	ID         string            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string            `yaml:"-" json:"uesio/core.uniquekey"`
+	Name       string            `yaml:"name" json:"uesio/studio.name"`
+	Namespace  string            `yaml:"-" json:"-"`
+	Type       string            `yaml:"type" json:"uesio/studio.type"`
+	Collection string            `yaml:"collection" json:"uesio/studio.collection"`
+	Conditions []*TokenCondition `yaml:"conditions"  json:"uesio/studio.conditions"`
+	Token      string            `yaml:"token"  json:"uesio/studio.token"`
+	Workspace  *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta   *ItemMeta         `yaml:"-" json:"-"`
+	CreatedBy  *User             `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64             `yaml:"-" json:"uesio/core.createdat"`
 }
 
 func (uat *UserAccessToken) GetCollectionName() string {

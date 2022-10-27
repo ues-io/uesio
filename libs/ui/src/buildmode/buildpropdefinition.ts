@@ -14,7 +14,7 @@ type BuildPropertiesDefinition = {
 	description?: string
 	link?: string
 	properties?: PropDescriptor[]
-	sections?: PropertySection[]
+	sections: PropertySection[]
 	actions?: ActionDescriptor[]
 	defaultDefinition: () => DefinitionMap
 	signals?: SignalProperties[]
@@ -198,10 +198,8 @@ interface CustomProp extends BasePropDescriptor {
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
+	groupingPath?: string
 	groupingValue?: string
-	groupingParents?: number
-	groupingProperty?: string
-	getGroupingFromKey?: boolean
 }
 
 interface BotProp extends BasePropDescriptor {

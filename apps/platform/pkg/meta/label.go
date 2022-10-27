@@ -10,19 +10,19 @@ import (
 )
 
 type Label struct {
-	ID        string     `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name      string     `yaml:"name" uesio:"uesio/studio.name"`
-	Value     string     `yaml:"value" uesio:"uesio/studio.value"`
-	Namespace string     `yaml:"-" uesio:"-"`
-	Workspace *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public    bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID        string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Name      string     `yaml:"name" json:"uesio/studio.name"`
+	Value     string     `yaml:"value" json:"uesio/studio.value"`
+	Namespace string     `yaml:"-" json:"-"`
+	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type LabelWrapper Label
