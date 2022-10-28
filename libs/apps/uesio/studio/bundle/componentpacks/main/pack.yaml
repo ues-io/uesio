@@ -34,6 +34,8 @@ components:
     datamanager:
       variants:
         - uesio/io.table:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.table
+        - uesio/io.field:uesio/io.table
       utilities:
         - uesio/io.table
     dataimport:
@@ -66,6 +68,7 @@ components:
         - uesio/io.button:uesio/io.primary
     generatorbutton:
       utilities:
+        - uesio/builder.metadatapicker
         - uesio/io.button
         - uesio/io.form
         - uesio/io.dialog
@@ -79,6 +82,7 @@ components:
         - uesio/io.button
     multimetadatafield:
       utilities:
+        - uesio/builder.metadatapicker
         - uesio/io.textfield
         - uesio/io.selectfield
         - uesio/io.grid

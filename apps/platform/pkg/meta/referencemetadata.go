@@ -1,8 +1,8 @@
 package meta
 
 type ReferenceMetadata struct {
-	Collection string    `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Collection string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *ReferenceMetadata) GetCollectionName() string {

@@ -8,7 +8,7 @@ const BotProp: builder.PropComponent<builder.BotProp> = (props) => {
 	const namespace = descriptor.namespace
 	if (!namespace) return null
 
-	const metadata = uesio.builder.useMetadataList(
+	const [metadata] = uesio.builder.useMetadataList(
 		context,
 		"BOT",
 		namespace,

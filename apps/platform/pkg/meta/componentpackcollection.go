@@ -5,8 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ComponentPackCollection []*ComponentPack
@@ -23,7 +21,7 @@ func (cpc *ComponentPackCollection) GetFields() []string {
 	return StandardGetFields(&ComponentPack{})
 }
 
-func (cpc *ComponentPackCollection) NewItem() loadable.Item {
+func (cpc *ComponentPackCollection) NewItem() Item {
 	cp := &ComponentPack{}
 	*cpc = append(*cpc, cp)
 	return cp
@@ -54,11 +52,11 @@ func (cpc *ComponentPackCollection) GetKeyFromPath(path string, namespace string
 	return namespace + "." + parts[0], nil
 }
 
-func (cpc *ComponentPackCollection) GetItem(index int) loadable.Item {
+func (cpc *ComponentPackCollection) GetItem(index int) Item {
 	return (*cpc)[index]
 }
 
-func (cpc *ComponentPackCollection) Loop(iter loadable.GroupIterator) error {
+func (cpc *ComponentPackCollection) Loop(iter GroupIterator) error {
 	for index := range *cpc {
 		err := iter(cpc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

@@ -2,7 +2,6 @@ package workspacebundlestore
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type WorkspaceLoadCollection struct {
@@ -10,17 +9,17 @@ type WorkspaceLoadCollection struct {
 	Namespace  string
 }
 
-func (c *WorkspaceLoadCollection) GetItem(index int) loadable.Item {
+func (c *WorkspaceLoadCollection) GetItem(index int) meta.Item {
 	return c.Collection.GetItem(index)
 }
 
-func (c *WorkspaceLoadCollection) NewItem() loadable.Item {
+func (c *WorkspaceLoadCollection) NewItem() meta.Item {
 	item := c.Collection.NewItem().(meta.BundleableItem)
 	item.SetNamespace(c.Namespace)
 	return item
 }
 
-func (c *WorkspaceLoadCollection) Loop(iter loadable.GroupIterator) error {
+func (c *WorkspaceLoadCollection) Loop(iter meta.GroupIterator) error {
 	return c.Collection.Loop(iter)
 }
 

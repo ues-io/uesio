@@ -6,6 +6,7 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	columns: C[]
 	isDeletedFunc?: (row: R) => boolean
 	columnHeaderFunc: (column: C) => ReactNode
+	columnMenuFunc?: (column: C) => ReactNode
 	cellFunc: (column: C, row: R, columnIndex: number) => ReactNode
 	rowNumberFunc?: (index: number) => string
 	defaultActionFunc?: (row: R) => void
@@ -22,6 +23,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 		defaultActionFunc,
 		rowActionsFunc,
 		columnHeaderFunc,
+		columnMenuFunc,
 		isDeletedFunc,
 		cellFunc,
 	} = props
@@ -41,6 +43,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 					borderRight: 0,
 				},
 			},
+			headerCellInner: {},
 			rowNumberCell: {
 				width: "1%",
 				whiteSpace: "nowrap",
@@ -84,7 +87,10 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 						)}
 						{columns?.map((column, index) => (
 							<th key={index} className={classes.headerCell}>
-								{columnHeaderFunc(column)}
+								<div className={classes.headerCellInner}>
+									{columnHeaderFunc(column)}
+									{columnMenuFunc && columnMenuFunc(column)}
+								</div>
 							</th>
 						))}
 						{rowActionsFunc && (

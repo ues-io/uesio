@@ -7,7 +7,7 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/teris-io/shortid"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type Collection []*Item
@@ -61,11 +61,11 @@ func (c *Collection) IsNil() bool {
 	return c == nil
 }
 
-func (c *Collection) GetItem(index int) loadable.Item {
+func (c *Collection) GetItem(index int) meta.Item {
 	return (*c)[index]
 }
 
-func (c *Collection) NewItem() loadable.Item {
+func (c *Collection) NewItem() meta.Item {
 	item := &Item{}
 	*c = append(*c, item)
 	return item
@@ -75,7 +75,7 @@ func (c *Collection) GetItems() interface{} {
 	return *c
 }
 
-func (c *Collection) Loop(iter loadable.GroupIterator) error {
+func (c *Collection) Loop(iter meta.GroupIterator) error {
 	for index := range *c {
 		err := iter(c.GetItem(index), strconv.Itoa(index))
 		if err != nil {

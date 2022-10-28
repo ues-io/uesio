@@ -79,8 +79,7 @@ const getConditionProperties = (): builder.PropDescriptor[] => [
 		type: "METADATA",
 		metadataType: "FIELD",
 		label: "Field",
-		groupingParents: 2,
-		groupingProperty: "collection",
+		groupingPath: "../../collection",
 		display: [
 			{
 				type: "NOT_EQUALS",
@@ -315,7 +314,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 				/>
 			}
 		>
-			{getConditionTitle(condition)}
+			<div className="tagroot">{getConditionTitle(condition)}</div>
 			{!!groupConditions && (
 				<Grid
 					styles={{

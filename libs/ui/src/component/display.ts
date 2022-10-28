@@ -64,7 +64,26 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type WireHasNoChanges = {
+	type: "wireHasNoChanges"
+	wire: string
+}
+type WireHasChanges = {
+	type: "wireHasChanges"
+	wire: string
+}
+type WireIsLoading = {
+	type: "wireIsLoading"
+	wire: string
+}
+type WireIsNotLoading = {
+	type: "wireIsNotLoading"
+	wire: string
+}
+
 type DisplayCondition =
+	| WireHasChanges
+	| WireHasNoChanges
 	| HasNoValueCondition
 	| HasValueCondition
 	| FieldValueCondition
@@ -76,6 +95,8 @@ type DisplayCondition =
 	| FieldModeCondition
 	| RecordIsNewCondition
 	| RecordIsNotNewCondition
+	| WireIsLoading
+	| WireIsNotLoading
 
 type ItemContext<T> = {
 	item: T
@@ -128,6 +149,28 @@ function should(condition: DisplayCondition, context: Context) {
 		return !context.getRecord()?.isNew()
 	}
 
+	if (
+		condition.type === "wireHasChanges" ||
+		condition.type === "wireHasNoChanges"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const hasChanges = ctx.getWire()?.getChanges().length
+		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
+	}
+
+	if (
+		condition.type === "wireIsLoading" ||
+		condition.type === "wireIsNotLoading"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const isLoading = ctx.getWire()?.isLoading()
+		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
+	}
+
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.merge(condition.value as string)
@@ -146,7 +189,6 @@ function should(condition: DisplayCondition, context: Context) {
 		const ctx = condition.wire
 			? context.addFrame({ wire: condition.wire })
 			: context
-
 		const ctxRecord = ctx.getRecord()
 		// If we have a record in context, use it.
 		if (ctxRecord)
@@ -202,7 +244,7 @@ const getWiresForConditions = (
 	return [
 		...(contextWire ? [contextWire] : []),
 		...conditions.flatMap((condition) =>
-			!condition.type && condition.wire ? [condition.wire] : []
+			"wire" in condition && condition.wire ? [condition.wire] : []
 		),
 	]
 }

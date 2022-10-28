@@ -1,4 +1,4 @@
-package loadable
+package meta
 
 type GroupIterator func(item Item, index string) error
 

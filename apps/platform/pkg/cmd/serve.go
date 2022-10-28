@@ -165,6 +165,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/signup", controller.Signup).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
@@ -178,23 +179,6 @@ func serve(cmd *cobra.Command, args []string) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
-	}
-
-	// Verify that required environment variables are set.
-	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
-	platformFSType := os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE")
-	platformBSType := os.Getenv("UESIO_PLATFORM_BUNDLESTORE_TYPE")
-
-	if platformDSType == "" {
-		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
-	}
-
-	if platformFSType == "" {
-		logger.Log("No Platform File Source Type Specified", logger.ERROR)
-	}
-
-	if platformBSType == "" {
-		logger.Log("No Platform Bundle Source Type Specified", logger.ERROR)
 	}
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")

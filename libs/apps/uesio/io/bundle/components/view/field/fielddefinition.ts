@@ -13,6 +13,10 @@ type ReferenceFieldOptions = {
 	requirewriteaccess?: boolean
 }
 
+type ListFieldOptions = {
+	components?: definition.DefinitionList
+}
+
 type UserFieldOptions = {
 	subtitle?: string
 }
@@ -24,6 +28,7 @@ type FieldDefinition = {
 	id?: string
 	displayAs?: string
 	reference?: ReferenceFieldOptions
+	list?: ListFieldOptions
 	user?: UserFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
@@ -127,6 +132,7 @@ export {
 	FieldDefinition,
 	FieldState,
 	LabelPosition,
+	ListFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,

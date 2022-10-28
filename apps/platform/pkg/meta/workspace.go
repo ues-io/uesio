@@ -1,22 +1,22 @@
 package meta
 
 type Workspace struct {
-	ID            string         `uesio:"uesio/core.id"`
-	UniqueKey     string         `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name          string         `uesio:"uesio/studio.name"`
-	LoginRoute    string         `uesio:"uesio/studio.loginroute"`
-	HomeRoute     string         `uesio:"uesio/studio.homeroute"`
-	DefaultTheme  string         `uesio:"uesio/studio.defaulttheme"`
-	PublicProfile string         `uesio:"uesio/studio.publicprofile"`
-	App           *App           `uesio:"uesio/studio.app"`
-	Permissions   *PermissionSet `uesio:"-"`
+	ID            string         `json:"uesio/core.id"`
+	UniqueKey     string         `json:"uesio/core.uniquekey"`
+	Name          string         `json:"uesio/studio.name"`
+	LoginRoute    string         `json:"uesio/studio.loginroute"`
+	HomeRoute     string         `json:"uesio/studio.homeroute"`
+	DefaultTheme  string         `json:"uesio/studio.defaulttheme"`
+	PublicProfile string         `json:"uesio/studio.publicprofile"`
+	App           *App           `json:"uesio/studio.app"`
+	Permissions   *PermissionSet `json:"-"`
 	bundleDef     *BundleDef
-	itemMeta      *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy     *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner         *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy     *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt     int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt     int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	itemMeta      *ItemMeta `json:"-"`
+	CreatedBy     *User     `json:"uesio/core.createdby"`
+	Owner         *User     `json:"uesio/core.owner"`
+	UpdatedBy     *User     `json:"uesio/core.updatedby"`
+	UpdatedAt     int64     `json:"uesio/core.updatedat"`
+	CreatedAt     int64     `json:"uesio/core.createdat"`
 }
 
 func (w *Workspace) GetAppFullName() string {

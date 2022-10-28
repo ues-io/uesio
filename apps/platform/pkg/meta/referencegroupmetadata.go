@@ -1,10 +1,10 @@
 package meta
 
 type ReferenceGroupMetadata struct {
-	Collection string    `json:"collection" yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Field      string    `json:"field" yaml:"field,omitempty" uesio:"uesio/studio.field"`
-	OnDelete   string    `json:"onDelete" yaml:"onDelete,omitempty" uesio:"uesio/studio.ondelete"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Collection string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Field      string    `yaml:"field,omitempty" json:"uesio/studio.field"`
+	OnDelete   string    `yaml:"onDelete,omitempty" json:"uesio/studio.ondelete"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *ReferenceGroupMetadata) GetCollectionName() string {

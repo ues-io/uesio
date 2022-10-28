@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type ViewCollection []*View
@@ -21,7 +19,7 @@ func (vc *ViewCollection) GetFields() []string {
 	return StandardGetFields(&View{})
 }
 
-func (vc *ViewCollection) NewItem() loadable.Item {
+func (vc *ViewCollection) NewItem() Item {
 	v := &View{}
 	*vc = append(*vc, v)
 	return v
@@ -44,11 +42,11 @@ func (vc *ViewCollection) GetKeyFromPath(path string, namespace string, conditio
 	return StandardKeyFromPath(path, namespace, conditions)
 }
 
-func (vc *ViewCollection) GetItem(index int) loadable.Item {
+func (vc *ViewCollection) GetItem(index int) Item {
 	return (*vc)[index]
 }
 
-func (vc *ViewCollection) Loop(iter loadable.GroupIterator) error {
+func (vc *ViewCollection) Loop(iter GroupIterator) error {
 	for index := range *vc {
 		err := iter(vc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

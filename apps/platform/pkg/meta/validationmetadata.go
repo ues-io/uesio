@@ -1,9 +1,9 @@
 package meta
 
 type ValidationMetadata struct {
-	Type     string    `json:"type" yaml:"type,omitempty" uesio:"uesio/studio.type"`
-	Regex    string    `json:"regex" yaml:"regex,omitempty" uesio:"uesio/studio.regex"`
-	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
+	Type     string    `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Regex    string    `yaml:"regex,omitempty" json:"uesio/studio.regex"`
+	itemMeta *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *ValidationMetadata) GetCollectionName() string {

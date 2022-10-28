@@ -28,8 +28,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		metadataType,
 		context,
 		grouping,
-		//defaultNamespace,
-		//selectVariant,
 		fieldWrapperVariant,
 	} = props
 	const uesio = hooks.useUesio(props)
@@ -82,12 +80,25 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		props
 	)
 
-	const metadata = uesio.builder.useMetadataList(
+	const [metadata, error] = uesio.builder.useMetadataList(
 		context,
 		metadataType,
 		"",
 		grouping
 	)
+
+	if (error) {
+		return (
+			<FieldWrapper
+				labelPosition={labelPosition}
+				variant={fieldWrapperVariant}
+				label={label}
+				context={context}
+			>
+				{error}
+			</FieldWrapper>
+		)
+	}
 
 	const items: MetadataItem[] = metadata ? Object.keys(metadata) : []
 

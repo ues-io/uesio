@@ -8,7 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -29,22 +28,49 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return errors.New("Must Provide at least one condition")
 	}
 
-	if op.Conditions[0].Field != "uesio/studio.type" {
+	typeCondition, remainingConditions := op.Conditions[0], op.Conditions[1:]
+
+	if typeCondition.Field != "uesio/studio.type" {
 		return errors.New("The first condition must be on the type field")
 	}
 
-	group, err := meta.GetBundleableGroupFromType(op.Conditions[0].Value.(string))
+	group, err := meta.GetBundleableGroupFromType(typeCondition.Value.(string))
 	if err != nil {
 		return errors.New("Invalid Metadata Type provided for type condition")
 	}
+
+	//This creates a copy of the session
+	inContextSession := session.RemoveWorkspaceContext()
+
+	if workspace != "" {
+		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
+		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	if site != "" {
+		siteKey := fmt.Sprintf("%s:%s", app, site)
+		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+		if err != nil {
+			return err
+		}
+	}
+
+	remainingConditions = append(remainingConditions, adapt.LoadRequestCondition{
+		Field: "uesio/studio.workspace",
+		Value: inContextSession.GetWorkspaceID(),
+	})
 
 	metadata, err := Load([]*adapt.LoadOp{{
 		CollectionName: group.GetName(),
 		WireName:       op.WireName,
 		View:           op.View,
 		Collection:     op.Collection,
+		Conditions:     remainingConditions,
 		Fields:         getLoadRequestFields(group.GetFields()),
-		Query:          false,
+		Query:          true,
 	}}, session, &LoadOptions{
 		Metadata: connection.GetMetadata(),
 	})
@@ -95,26 +121,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		Label:      "App Color",
 	})
 
-	//This creates a copy of the session
-	inContextSession := session.RemoveWorkspaceContext()
+	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
 
-	if workspace != "" {
-		workspaceKey := fmt.Sprintf("%s:%s", app, workspace)
-		err = AddWorkspaceContextByKey(workspaceKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	if site != "" {
-		siteKey := fmt.Sprintf("%s:%s", app, site)
-		err = AddSiteAdminContextByKey(siteKey, inContextSession, connection)
-		if err != nil {
-			return err
-		}
-	}
-
-	err = bundle.LoadAllFromAny(group, nil, inContextSession)
+	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession)
 	if err != nil {
 		return err
 	}
@@ -131,7 +140,22 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	return group.Loop(func(item loadable.Item, index string) error {
+	err = op.Collection.Loop(func(item meta.Item, index string) error {
+		appInfo, ok := appData[app]
+		if !ok {
+			return errors.New("Invalid Namespace: Could not get app data")
+		}
+
+		item.SetField("uesio/studio.namespace", app)
+		item.SetField("uesio/studio.appicon", appInfo.Icon)
+		item.SetField("uesio/studio.appcolor", appInfo.Color)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return group.Loop(func(item meta.Item, index string) error {
 		opItem := op.Collection.NewItem()
 		fakeID, _ := shortid.Generate()
 
@@ -142,7 +166,6 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		if !ok {
 			return errors.New("Invalid Namespace: Could not get app data")
 		}
-		opItem.SetField("uesio/studio.id", fakeID)
 		opItem.SetField("uesio/studio.namespace", namespace)
 		opItem.SetField("uesio/studio.appicon", appInfo.Icon)
 		opItem.SetField("uesio/studio.appcolor", appInfo.Color)
@@ -156,6 +179,8 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 				return err
 			}
 		}
+		opItem.SetField("uesio/core.id", fakeID)
+		opItem.SetField("uesio/core.uniquekey", groupableItem.GetKey())
 		return nil
 	})
 

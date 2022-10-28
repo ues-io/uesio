@@ -18,6 +18,11 @@ definition:
       borderBottom: "1px solid #ccc"
       borderRight: "1px solid #ccc"
       whiteSpace: "nowrap"
+    headerCellInner:
+      textAlign: left
+      display: grid
+      gridTemplateColumns: 1fr 0fr
+      alignItems: center
     cell:
       borderBottom: "1px solid #ccc"
       borderRight: "1px solid #ccc"

@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react"
 import { definition, styles, context } from "@uesio/ui"
-import Editor, { EditorProps, loader } from "@monaco-editor/react"
+import Editor, { EditorProps, loader, OnChange } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
 interface CodeFieldUtilityProps extends definition.UtilityProps {
-	setValue: (value: string) => void
+	setValue: OnChange
 	value: string
 	language?: string
 	mode?: context.FieldMode

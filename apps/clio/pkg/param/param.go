@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -31,7 +30,10 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 		return nil, err
 	}
 
-	conditions := meta.GetGroupingConditions(metadataType, grouping)
+	conditions, err := meta.GetGroupingConditions(metadataType, grouping)
+	if err != nil {
+		return nil, err
+	}
 
 	sbs := &localbundlestore.LocalBundleStore{}
 
@@ -47,7 +49,7 @@ func getMetadataList(metadataType, app, version, sessid, grouping string) ([]str
 
 	results := []string{}
 
-	err = group.Loop(func(item loadable.Item, index string) error {
+	err = group.Loop(func(item meta.Item, index string) error {
 		bundleableItem := item.(meta.BundleableItem)
 		// Strip off the grouping part of the key
 		key := bundleableItem.GetKey()
@@ -112,7 +114,7 @@ func mergeParam(templateString string, answers map[string]interface{}) (string, 
 	return mergedValue, nil
 }
 
-func AskMany(params *meta.BotParams, app, version, sessid string) (map[string]interface{}, error) {
+func AskMany(params *meta.BotParamsResponse, app, version, sessid string) (map[string]interface{}, error) {
 	answers := map[string]interface{}{}
 	for _, parameter := range *params {
 		err := Ask(parameter, app, version, sessid, answers)
@@ -123,7 +125,7 @@ func AskMany(params *meta.BotParams, app, version, sessid string) (map[string]in
 	return answers, nil
 }
 
-func Ask(param meta.BotParam, app, version, sessid string, answers map[string]interface{}) error {
+func Ask(param meta.BotParamResponse, app, version, sessid string, answers map[string]interface{}) error {
 
 	if param.Conditions != nil {
 		for _, condition := range param.Conditions {

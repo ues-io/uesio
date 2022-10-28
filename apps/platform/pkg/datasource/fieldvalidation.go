@@ -125,10 +125,10 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func Validate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	validations := []validationFunc{}
-	for _, field := range collectionMetadata.Fields {
+	for _, field := range op.Metadata.Fields {
 		validationMetadata := field.ValidationMetadata
 		if field.Required {
 			validations = append(validations, validateRequired(field))

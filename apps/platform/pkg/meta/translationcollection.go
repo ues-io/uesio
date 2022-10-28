@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	language "golang.org/x/text/language"
 )
 
@@ -24,7 +23,7 @@ func (tc *TranslationCollection) GetFields() []string {
 	return StandardGetFields(&Translation{})
 }
 
-func (tc *TranslationCollection) NewItem() loadable.Item {
+func (tc *TranslationCollection) NewItem() Item {
 	t := &Translation{}
 	*tc = append(*tc, t)
 	return t
@@ -70,11 +69,11 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, c
 	return language, nil
 }
 
-func (tc *TranslationCollection) GetItem(index int) loadable.Item {
+func (tc *TranslationCollection) GetItem(index int) Item {
 	return (*tc)[index]
 }
 
-func (tc *TranslationCollection) Loop(iter loadable.GroupIterator) error {
+func (tc *TranslationCollection) Loop(iter GroupIterator) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

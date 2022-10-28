@@ -21,8 +21,7 @@ const getOrderProperties = (): builder.PropDescriptor[] => [
 		type: "METADATA",
 		metadataType: "FIELD",
 		label: "Field",
-		groupingParents: 2,
-		groupingProperty: "collection",
+		groupingPath: "../../collection",
 	},
 	{
 		name: "desc",
@@ -105,7 +104,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						context={context}
 					>
-						{getOrderTitle(order)}
+						<div className="tagroot">{getOrderTitle(order)}</div>
 					</PropNodeTag>
 				)
 			})}

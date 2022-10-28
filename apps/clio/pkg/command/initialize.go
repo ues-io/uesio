@@ -35,7 +35,7 @@ func getAnswerInfo(sessid string) (map[string]interface{}, error) {
 		options = append(options, username)
 	}
 
-	return param.AskMany(&meta.BotParams{
+	return param.AskMany(&meta.BotParamsResponse{
 		{
 			Name:    "user",
 			Prompt:  "Select user or org",

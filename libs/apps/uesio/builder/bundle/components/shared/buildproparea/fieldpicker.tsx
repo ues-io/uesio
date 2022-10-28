@@ -27,7 +27,7 @@ const useFields = (
 
 	const [collection, setCollection] = React.useState(wireCollection)
 
-	const collectionFields = uesio.builder.useMetadataList(
+	const [collectionFields] = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
 		"",

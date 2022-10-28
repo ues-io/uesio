@@ -34,6 +34,7 @@ type PlainWire = {
 	requirewriteaccess?: boolean
 	viewOnly: boolean
 	fields: LoadRequestField[]
+	isLoading?: boolean
 }
 
 export { PlainWire, OrderState }

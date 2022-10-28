@@ -11,12 +11,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type Exportable interface {
-	loadable.Group
+	meta.Group
 	GetData() (io.Reader, error)
 }
 
