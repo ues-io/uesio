@@ -481,14 +481,14 @@ const platform = {
 		context: Context,
 		signupMethod: string,
 		requestBody: Record<string, string>
-	): Promise<LoginResponse> => {
+	): Promise<void> => {
 		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
 			`${prefix}/auth/${namespace}/${name}/createlogin`,
 			requestBody
 		)
-		return respondJSON(response)
+		return respondVoid(response)
 	},
 }
 

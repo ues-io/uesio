@@ -139,14 +139,8 @@ const createLogin =
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
 		const mergedSignupMethod = context.merge(signupMethod)
-		const response = await platform.createLogin(
-			context,
-			mergedSignupMethod,
-			mergedPayload
-		)
-		//TO-DO
-		//dispatch(setUser(response.user))
-		return responseRedirect(response, dispatch, context)
+		await platform.createLogin(context, mergedSignupMethod, mergedPayload)
+		return context
 	}
 
 export default {

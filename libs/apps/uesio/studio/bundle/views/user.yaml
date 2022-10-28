@@ -251,6 +251,7 @@ definition:
                                           app: $Param{app}
                                       user: $Param{userid}
                                       email: ${uesio/core.email}
+                                      requery: loginmethods
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
