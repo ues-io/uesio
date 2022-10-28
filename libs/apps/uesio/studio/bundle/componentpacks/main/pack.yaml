@@ -90,11 +90,8 @@ components:
       utilities:
         - uesio/io.titlebar
         - uesio/io.button
-        - uesio/io.togglefield
-        - uesio/io.dialog
       variants:
-        - uesio/io.button:uesio/io.secondary
-        - uesio/io.titlebar:uesio/io.default
+        - uesio/io.button:uesio/io.nav
     # uesio.view:
   utility:
 
