@@ -1,11 +1,12 @@
 import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, definition, signal, component } from "@uesio/ui"
-import PropertiesPane from "../propertiespane"
+import SignalProp from "./signalprop"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
+
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
@@ -43,9 +44,13 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						label="New Signal"
 						onClick={() => {
-							valueAPI.add(signalsPath, {
-								signal: "NEW_SIGNAL",
-							})
+							valueAPI.add(
+								signalsPath,
+								{
+									signal: "NEW_SIGNAL",
+								},
+								-1
+							)
 						}}
 					/>
 				}
@@ -66,24 +71,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						context={context}
 						popperChildren={
-							<PropertiesPane
-								path={signalPath}
-								index={0}
+							<SignalProp
 								context={context}
-								propsDef={{
-									title: "Signal",
-									sections: [],
-									defaultDefinition: () => ({}),
-									properties:
-										uesio.builder.getSignalProperties(
-											signal
-										),
-									actions: [
-										{ type: "DELETE" },
-										{ type: "MOVE" },
-										{ type: "CLONE" },
-									],
-								}}
+								path={signalsPath + `["${index}"]`}
 								valueAPI={valueAPI}
 							/>
 						}

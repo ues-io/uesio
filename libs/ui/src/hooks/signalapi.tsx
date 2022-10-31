@@ -22,6 +22,13 @@ class SignalAPI {
 		return async () => this.runMany(signals, context)
 	}
 
+	getSignalsByBand = (band: string) =>
+		Object.fromEntries(
+			Object.entries(registry).filter(([key]) =>
+				key.startsWith(band.toLowerCase())
+			)
+		)
+
 	useRegisterHotKey = (
 		keycode: string | undefined,
 		signals: SignalDefinition[] | undefined
@@ -35,6 +42,8 @@ class SignalAPI {
 		runMany(signals, context)
 
 	run = (signal: SignalDefinition, context: Context) => run(signal, context)
+
+	getSignalDescriptor = (signal: string) => registry[signal]
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal?.signal] || componentSignal
