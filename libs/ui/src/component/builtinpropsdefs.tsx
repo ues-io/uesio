@@ -76,6 +76,23 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			type: "NUMBER",
 			label: "Batch Size",
 		},
+		{
+			name: "init",
+			type: "PROPLIST",
+			label: "Initialization Behavior",
+			properties: [
+				{
+					name: "query",
+					type: "BOOLEAN",
+					label: "Query",
+				},
+				{
+					name: "create",
+					type: "BOOLEAN",
+					label: "Create",
+				},
+			],
+		},
 	],
 	sections: [
 		{
