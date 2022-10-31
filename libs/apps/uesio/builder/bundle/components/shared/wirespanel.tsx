@@ -22,8 +22,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		selectedPath,
 		def,
-		uesio,
-		context
+		uesio
 	)
 
 	const wireDefs = valueAPI.get(localPath) as definition.DefinitionMap

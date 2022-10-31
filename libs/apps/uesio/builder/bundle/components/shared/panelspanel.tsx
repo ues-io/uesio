@@ -21,8 +21,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		selectedPath,
 		viewdef,
-		uesio,
-		context
+		uesio
 	)
 
 	const panelDefs = valueAPI.get(localPath) as definition.DefinitionMap

@@ -1,14 +1,14 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
-import loadViewOp from "../../bands/view/operations/load"
-import { appDispatch } from "../../store/store"
 import { ViewProps } from "./viewdefinition"
 import { ComponentInternal } from "../../component/component"
 import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
 import { useUesio } from "../../hooks/hooks"
+import { useLoadWires } from "../../bands/view/operations/load"
+
 const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
@@ -31,20 +31,16 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const viewDef = useViewDef(viewDefId)
 	const [paramState] = uesio.component.useState<Record<string, string>>(
 		componentId,
-		params
+		context.mergeMap(params)
 	)
-
-	const mergedParams = context.mergeMap(paramState)
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		params: mergedParams,
+		params: paramState,
 	})
 
-	useEffect(() => {
-		appDispatch()(loadViewOp(viewContext))
-	}, [viewDefId, JSON.stringify(mergedParams)])
+	useLoadWires(viewContext, viewDef)
 
 	if (!viewDef) return null
 
