@@ -26,7 +26,7 @@ import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { RegularWireDefinition, WireDefinition } from "../../definition/wire"
+import { RegularWireDefinition } from "../../definition/wire"
 
 import { WireConditionState } from "./conditions/conditions"
 import { MetadataKey } from "../builder/types"
@@ -95,7 +95,7 @@ interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
 interface InitializeWiresSignal extends SignalDefinition {
-	wireDefs: Record<string, WireDefinition> | string[]
+	wireDefs: string[]
 }
 
 interface SaveWiresSignal extends SignalDefinition {
@@ -378,19 +378,13 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/INIT`]: {
 		label: "Init Wire(s)",
 		description: "Init wire(s)",
-		dispatcher: (signal: InitializeWiresSignal, context: Context) => {
-			const wireDefs: Record<string, WireDefinition | undefined> =
-				Array.isArray(signal.wireDefs)
-					? Object.fromEntries(
-							signal.wireDefs.map((wirename) => [
-								wirename,
-								undefined,
-							])
-					  )
-					: signal.wireDefs
-
-			return initWiresOp(context, wireDefs)
-		},
+		dispatcher: (signal: InitializeWiresSignal, context: Context) =>
+			initWiresOp(
+				context,
+				Object.fromEntries(
+					signal.wireDefs.map((wirename) => [wirename, undefined])
+				)
+			),
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

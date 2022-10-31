@@ -3,7 +3,7 @@ import { useCollection, useCollections } from "../bands/collection/selectors"
 import { getFullWireId, useWire, useWires } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
-import initializeWiresOp from "../bands/wire/operations/initialize"
+import initWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { ViewOnlyField, WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
@@ -118,7 +118,7 @@ class WireAPI {
 	}
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
-		return appDispatch()(initializeWiresOp(context, wireDefs))
+		return appDispatch()(initWiresOp(context, wireDefs))
 	}
 
 	getWireFieldsFromParams(params: ParamDefinition[] | undefined) {
