@@ -182,6 +182,9 @@ const Table: FC<TableProps> = (props) => {
 		)
 	}
 
+	const isDeletedFunc = (recordContext: RecordContext) =>
+		recordContext.item.isDeleted()
+
 	return (
 		<>
 			<IOTable
@@ -200,6 +203,7 @@ const Table: FC<TableProps> = (props) => {
 				columnHeaderFunc={columnHeaderFunc}
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
+				isDeletedFunc={isDeletedFunc}
 			/>
 			{pageSize > 0 && maxPages > 1 && (
 				<Paginator
