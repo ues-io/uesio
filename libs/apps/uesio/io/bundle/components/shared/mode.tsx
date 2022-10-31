@@ -1,4 +1,5 @@
 import { hooks, signal, context, definition } from "@uesio/ui"
+import { useEffect } from "react"
 
 type ModeState = {
 	mode?: context.FieldMode
@@ -30,13 +31,23 @@ const useMode = (
 	id: string,
 	initialMode: context.FieldMode | undefined,
 	props: definition.BaseProps
-) => {
+): [context.FieldMode | undefined, (state: context.FieldMode) => void] => {
 	const uesio = hooks.useUesio(props)
-	return uesio.component.useStateSlice<context.FieldMode>(
-		"mode",
-		id,
-		initialMode || "READ"
-	)
+
+	const [currentMode, setMode] =
+		uesio.component.useStateSlice<context.FieldMode>(
+			"mode",
+			id,
+			initialMode || "READ"
+		)
+
+	useEffect(() => {
+		if (initialMode) {
+			setMode(initialMode)
+		}
+	}, [initialMode])
+
+	return [currentMode, setMode]
 }
 
 export { toggleMode, useMode, setEditMode, setReadMode }
