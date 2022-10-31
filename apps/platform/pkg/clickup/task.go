@@ -14,6 +14,7 @@ type TaskResponse struct {
 }
 
 type Task struct {
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -68,6 +69,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		fakeID, _ := shortid.Generate()
 
 		opItem.SetField("uesio/core.id", fakeID)
+		opItem.SetField("tcm/chronos.id", task.ID)
 		opItem.SetField("tcm/chronos.name", task.Name)
 	}
 

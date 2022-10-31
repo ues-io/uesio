@@ -40,7 +40,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 
 	return (
 		<input
-			value={lvalue}
+			value={lvalue || ""}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="number"
 			disabled={readonly}
