@@ -314,7 +314,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 				/>
 			}
 		>
-			{getConditionTitle(condition)}
+			<div className="tagroot">{getConditionTitle(condition)}</div>
 			{!!groupConditions && (
 				<Grid
 					styles={{
