@@ -6,15 +6,13 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
-// Retrieve func
 func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -41,19 +39,20 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			return nil, err
 		}
 
-		err = group.Loop(func(item loadable.Item, _ string) error {
+		err = group.Loop(func(item meta.Item, _ string) error {
 
 			path := item.(meta.BundleableItem).GetPath()
 			// Grabs the componentpack javascript files
 			if metadataType == "componentpacks" {
 				cp := item.(*meta.ComponentPack)
-				builderStream, err := bs.GetComponentPackStream(version, true, cp, session)
+
+				builderStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(true), cp, session)
 				if err != nil {
 					return err
 				}
 				itemStreams.AddFile(cp.GetComponentPackFilePath(true), metadataType, builderStream)
 
-				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
+				runtimeStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(false), cp, session)
 				if err != nil {
 					return err
 				}
@@ -122,7 +121,6 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 }
 
-// Zip function
 func Zip(writer io.Writer, files []bundlestore.ItemStream, session *sess.Session) error {
 
 	// Create a new zip archive.

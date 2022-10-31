@@ -1,31 +1,31 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-type ColumnDef = {
-	label: string
+interface TableUtilityProps<R, C> extends definition.UtilityProps {
+	rows: R[]
+	columns: C[]
+	isDeletedFunc?: (row: R) => boolean
+	columnHeaderFunc: (column: C) => ReactNode
+	columnMenuFunc?: (column: C) => ReactNode
+	cellFunc: (column: C, row: R, columnIndex: number) => ReactNode
+	rowNumberFunc?: (index: number) => string
+	defaultActionFunc?: (row: R) => void
+	rowActionsFunc?: (row: R) => ReactNode
 }
 
-type RowDef = {
-	cells: ReactNode[]
-	rowactions?: ReactNode
-	isDeleted?: boolean
-}
-
-interface TableUtilityProps extends definition.UtilityProps {
-	columns: ColumnDef[]
-	rows: RowDef[]
-	showRowNumbers?: boolean
-	showRowActions?: boolean
-	rowNumberStart?: number
-}
-
-const Table: FunctionComponent<TableUtilityProps> = (props) => {
+const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
+	props
+) => {
 	const {
 		columns,
 		rows,
-		showRowNumbers,
-		showRowActions,
-		rowNumberStart = 0,
+		rowNumberFunc,
+		defaultActionFunc,
+		rowActionsFunc,
+		columnHeaderFunc,
+		columnMenuFunc,
+		isDeletedFunc,
+		cellFunc,
 	} = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -43,6 +43,7 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 					borderRight: 0,
 				},
 			},
+			headerCellInner: {},
 			rowNumberCell: {
 				width: "1%",
 				whiteSpace: "nowrap",
@@ -67,10 +68,15 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<table className={classes.table}>
+			<table
+				className={styles.cx(
+					classes.table,
+					defaultActionFunc && "defaultaction"
+				)}
+			>
 				<thead className={classes.header}>
 					<tr>
-						{showRowNumbers && (
+						{rowNumberFunc && (
 							<th
 								className={styles.cx(
 									classes.headerCell,
@@ -79,15 +85,15 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 								key="rownumbers"
 							/>
 						)}
-						{columns?.map((columnDef, index) => (
-							<th
-								key={columnDef.label + index}
-								className={classes.headerCell}
-							>
-								{columnDef.label}
+						{columns?.map((column, index) => (
+							<th key={index} className={classes.headerCell}>
+								<div className={classes.headerCellInner}>
+									{columnHeaderFunc(column)}
+									{columnMenuFunc && columnMenuFunc(column)}
+								</div>
 							</th>
 						))}
-						{showRowActions && (
+						{rowActionsFunc && (
 							<th
 								className={classes.headerCell}
 								key="rowactions"
@@ -96,15 +102,20 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 					</tr>
 				</thead>
 				<tbody>
-					{rows.map(({ isDeleted, rowactions, cells }, index) => (
+					{rows.map((row, index) => (
 						<tr
+							onClick={
+								defaultActionFunc
+									? () => defaultActionFunc(row)
+									: undefined
+							}
 							className={styles.cx(
 								classes.row,
-								isDeleted && classes.rowDeleted
+								isDeletedFunc?.(row) && classes.rowDeleted
 							)}
-							key={rowNumberStart + index + 1}
+							key={index + 1}
 						>
-							{showRowNumbers && (
+							{rowNumberFunc && (
 								<td
 									className={styles.cx(
 										classes.cell,
@@ -113,21 +124,18 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 									key="rownumbers"
 								>
 									<div className={classes.rowNumber}>
-										{rowNumberStart + index + 1}
+										{rowNumberFunc(index + 1)}
 									</div>
 								</td>
 							)}
-							{cells?.map((columnNode, i) => (
-								<td
-									key={`${cells.length + i}`}
-									className={classes.cell}
-								>
-									{columnNode}
+							{columns.map((column, i) => (
+								<td key={i} className={classes.cell}>
+									{cellFunc(column, row, i)}
 								</td>
 							))}
-							{rowactions && (
+							{rowActionsFunc && (
 								<td key="rowactions" className={classes.cell}>
-									{rowactions}
+									{rowActionsFunc(row)}
 								</td>
 							)}
 						</tr>

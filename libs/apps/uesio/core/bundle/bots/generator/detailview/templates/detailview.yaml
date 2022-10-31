@@ -5,37 +5,57 @@ wires:
     fields: ${fields}
     conditions:
       - field: uesio/core.id
-        value: $Param{id}
+        value: $Param{recordid}
 # Components determine the layout and composition of your view
 components:
-  - uesio/io.titlebar:
-      title: ${collection}
-      uesio.variant: uesio/io.main
-      actions:
-        - uesio/io.group:
-            components:
-              - uesio/io.button:
-                  signals:
-                    - signal: wire/SAVE
-                      wires:
-                        - ${wirename}
-                  text: Save
-                  uesio.variant: uesio/io.secondary
-              - uesio/io.button:
-                  signals:
-                    - signal: wire/CANCEL
-                      wire: ${wirename}
-                  text: Cancel
-                  uesio.variant: uesio/io.secondary
-              - uesio/io.button:
-                  signals:
-                    - signal: component/uesio/io.table/TOGGLE_MODE
-                      target: table1
-                  text: Mode
-                  uesio.variant: uesio/io.secondary
-  - uesio/io.list:
-      wire: ${wirename}
+  - uesio/io.box:
+      uesio.display:
+        - type: paramIsSet
+          param: recordid
       components:
-        - uesio/io.box:
-            uesio.variant: uesio/io.section
-            components: ${formFields}
+        - uesio/io.titlebar:
+            title: ${collection}
+            uesio.variant: uesio/io.main
+            actions:
+              - uesio/io.group:
+                  components:
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - ${wirename}
+                        text: Save
+                        uesio.variant: uesio/io.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: wire/CANCEL
+                            wire: ${wirename}
+                        text: Cancel
+                        uesio.variant: uesio/io.secondary
+                    - uesio/io.button:
+                        signals:
+                          - signal: component/uesio/io.table/TOGGLE_MODE
+                            target: table1
+                        text: Mode
+                        uesio.variant: uesio/io.secondary
+        - uesio/io.list:
+            wire: ${wirename}
+            components:
+              - uesio/io.box:
+                  uesio.variant: uesio/io.section
+                  components: ${formFields}
+  - uesio/io.box:
+      uesio.styles:
+        root:
+          margin: 40px
+      uesio.display:
+        - type: paramIsNotSet
+          param: recordid
+      components:
+        - uesio/io.text:
+            text: Select a record
+params:
+  recordid:
+    type: RECORD
+    required: true
+    collection: ${collection}

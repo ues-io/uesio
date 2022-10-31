@@ -4,12 +4,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-// DeletesAPI type
 type DeletesAPI struct {
 	op *adapt.SaveOp
 }
 
-// Get function
 func (d *DeletesAPI) Get() []string {
 	ids := []string{}
 

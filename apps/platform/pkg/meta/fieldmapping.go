@@ -1,10 +1,10 @@
 package meta
 
 type FieldMapping struct {
-	Type       string    `json:"type" uesio:"type"`
-	ColumnName string    `json:"columnname" uesio:"columnname"`
-	Value      string    `json:"value" uesio:"value"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Type       string    `json:"type"`
+	ColumnName string    `json:"columnname"`
+	Value      string    `json:"value"`
+	itemMeta   *ItemMeta `json:"-"`
 }
 
 func (a *FieldMapping) GetCollectionName() string {

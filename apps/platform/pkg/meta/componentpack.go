@@ -6,26 +6,28 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type ComponentPack struct {
-	ID              string              `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey       string              `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name            string              `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace       string              `yaml:"-" uesio:"-"`
-	Workspace       *Workspace          `yaml:"-" uesio:"uesio/studio.workspace"`
-	Components      *ComponentsRegistry `yaml:"components" uesio:"uesio/studio.components"`
-	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.runtimebundle"`
-	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"uesio/studio.buildtimebundle"`
-	itemMeta        *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy       *User               `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner           *User               `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy       *User               `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt       int64               `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt       int64               `yaml:"-" uesio:"uesio/core.createdat"`
-	Public          bool                `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID              string              `yaml:"-" json:"uesio/core.id"`
+	UniqueKey       string              `yaml:"-" json:"uesio/core.uniquekey"`
+	Name            string              `yaml:"name" json:"uesio/studio.name"`
+	Namespace       string              `yaml:"-" json:"-"`
+	Workspace       *Workspace          `yaml:"-" json:"uesio/studio.workspace"`
+	Components      *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
+	RuntimeBundle   *UserFileMetadata   `yaml:"-" json:"uesio/studio.runtimebundle"`
+	BuildTimeBundle *UserFileMetadata   `yaml:"-" json:"uesio/studio.buildtimebundle"`
+	itemMeta        *ItemMeta           `yaml:"-" json:"-"`
+	CreatedBy       *User               `yaml:"-" json:"uesio/core.createdby"`
+	Owner           *User               `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy       *User               `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt       int64               `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt       int64               `yaml:"-" json:"uesio/core.createdat"`
+	Public          bool                `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type ComponentPackWrapper ComponentPack
 
 func (cp *ComponentPack) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cp)
@@ -153,7 +155,7 @@ func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(cp)
+	return node.Decode((*ComponentPackWrapper)(cp))
 }
 
 func (cp *ComponentPack) IsPublic() bool {

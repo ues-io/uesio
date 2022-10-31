@@ -1,5 +1,5 @@
 import { Uesio } from "./hooks"
-import { useCollection } from "../bands/collection/selectors"
+import { useCollection, useCollections } from "../bands/collection/selectors"
 import { getFullWireId, useWire, useWires } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
@@ -77,11 +77,7 @@ class WireAPI {
 		return new Wire(plainWire).attachCollection(plainCollection)
 	}
 
-	useDynamicWire(
-		wireName: string,
-		wireDef: WireDefinition | null,
-		doLoad?: boolean
-	) {
+	useDynamicWire(wireName: string, wireDef: WireDefinition | null) {
 		const context = this.uesio.getContext()
 		const wire = this.useWire(wireName)
 		useEffect(() => {
@@ -89,7 +85,7 @@ class WireAPI {
 			this.initWires(context, {
 				[wireName]: wireDef,
 			})
-			doLoad && this.loadWires(context, [wireName])
+			this.loadWires(context, [wireName])
 		}, [wireName, JSON.stringify(wireDef)])
 		return wire
 	}
@@ -100,13 +96,17 @@ class WireAPI {
 			getFullWireId(view, wirename)
 		)
 		const plainWires = useWires(fullWireIds)
+		const collectionNames = Object.values(plainWires).map(
+			(plainWire) => plainWire?.collection || ""
+		)
+		const collections = useCollections(collectionNames)
+
 		return Object.fromEntries(
 			Object.entries(plainWires).map(([key, plainWire]) => {
-				const collectionName = plainWire?.collection
-				const plainCollection = useCollection(collectionName)
-				if (!plainCollection) return [key, undefined]
+				const plainCollection = collections[key]
+				if (!plainCollection) return [plainWire?.name, undefined]
 				return [
-					key.slice(view.length + 1),
+					plainWire?.name,
 					new Wire(plainWire).attachCollection(plainCollection),
 				]
 			})

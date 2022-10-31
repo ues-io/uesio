@@ -16,21 +16,12 @@ components:
     dialogplain:
     field:
       variants:
-        - uesio/io.textfield:uesio/io.default
-        - uesio/io.textareafield:uesio/io.default
-        - uesio/io.codefield:uesio/io.default
-        - uesio/io.userfield:uesio/io.default
-        - uesio/io.checkboxfield:uesio/io.default
-        - uesio/io.selectfield:uesio/io.default
-        - uesio/io.autocomplete:uesio/io.default
-        - uesio/io.emailfield:uesio/io.default
+        - uesio/io.field:uesio/io.default
         - uesio/io.fieldlabel:uesio/io.default
         - uesio/io.fieldwrapper:uesio/io.default
         - uesio/io.tile:uesio/io.default
-        - uesio/io.numberfield:uesio/io.default
+        - uesio/io.titlebar:uesio/io.infotag
         - uesio/io.listfield:uesio/io.default
-        - uesio/io.markdownfield:uesio/io.default
-        - uesio/io.filemarkdown:uesio/io.default
     filter:
       variants:
         - uesio/io.selectfield:uesio/io.filter
@@ -43,25 +34,18 @@ components:
     searchbox:
     table:
       variants:
-        - uesio/io.textfield:uesio/io.table
-        - uesio/io.textareafield:uesio/io.table
-        - uesio/io.selectfield:uesio/io.table
-        - uesio/io.checkboxfield:uesio/io.table
-        - uesio/io.autocomplete:uesio/io.table
         - uesio/io.table:uesio/io.default
         - uesio/io.button:uesio/io.nav
-        - uesio/io.fileimage:uesio/io.table
-        - uesio/io.numberfield:uesio/io.table
-        - uesio/io.markdownfield:uesio/io.table
-        - uesio/io.filemarkdown:uesio/io.table
+        - uesio/io.fieldwrapper:uesio/io.table
+        - uesio/io.field:uesio/io.table
     text:
     tile:
       variants:
         - uesio/io.text:uesio/io.icon
+        - uesio/io.text:uesio/io.iconoutline
     titlebar:
     markdown:
   utility:
-    namespacelabel:
     alert:
     avatar:
     autocomplete:
@@ -88,6 +72,7 @@ components:
     icon:
     iconbutton:
     link:
+    menubutton:
     multiselectfield:
     multicheckfield:
     radiobuttonsfield:
@@ -107,6 +92,7 @@ components:
     uploadarea:
     userfield:
     listfield:
+    listfielddeck:
     mapfield:
     datefield:
     numberfield:

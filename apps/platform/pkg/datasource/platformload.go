@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -9,14 +10,12 @@ import (
 )
 
 type PlatformLoadOptions struct {
-	Conditions         []adapt.LoadRequestCondition
-	Fields             []adapt.LoadRequestField
-	Orders             []adapt.LoadRequestOrder
-	SkipRecordSecurity bool
-	Connection         adapt.Connection
+	Conditions []adapt.LoadRequestCondition
+	Fields     []adapt.LoadRequestField
+	Orders     []adapt.LoadRequestOrder
+	Connection adapt.Connection
 }
 
-// RecordNotFoundError struct
 type RecordNotFoundError struct {
 	message string
 }
@@ -49,14 +48,13 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		fields = getLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&adapt.LoadOp{
-		WireName:           group.GetName() + "Wire",
-		CollectionName:     group.GetName(),
-		Collection:         group,
-		Conditions:         options.Conditions,
-		Fields:             fields,
-		Order:              options.Orders,
-		Query:              true,
-		SkipRecordSecurity: options.SkipRecordSecurity,
+		WireName:       group.GetName() + "Wire",
+		CollectionName: group.GetName(),
+		Collection:     group,
+		Conditions:     options.Conditions,
+		Fields:         fields,
+		Order:          options.Orders,
+		Query:          true,
 	}, options.Connection, session)
 }
 
@@ -93,7 +91,7 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 		return NewRecordNotFoundError("Couldn't find item from platform load: " + collection.GetName())
 	}
 	if length > 1 {
-		return errors.New("Duplicate item found from platform load: " + collection.GetName())
+		return fmt.Errorf("Duplicate item found from platform load: %s (%v)", collection.GetName(), length)
 	}
 
 	return nil

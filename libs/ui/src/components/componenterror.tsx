@@ -1,10 +1,14 @@
 import { FC, SyntheticEvent } from "react"
 import { getErrorString } from "../bands/utils"
-import { UtilityPropsPlus } from "../definition/definition"
+import { UtilityProps } from "../definition/definition"
 
 import { useUesio } from "../hooks/hooks"
 
-const slotError: FC<UtilityPropsPlus> = (props) => {
+interface Props extends UtilityProps {
+	error: Error
+}
+
+const slotError: FC<Props> = (props) => {
 	const cname = props.componentType
 	const uesio = useUesio(props)
 	const viewDefId = uesio.getViewDefId() || ""

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type SelectListOption struct {
-	Label string `yaml:"label" uesio:"label" json:"label"`
-	Value string `yaml:"value" uesio:"value" json:"value"`
+	Label string `yaml:"label" json:"label" json:"label"`
+	Value string `yaml:"value" json:"value" json:"value"`
 }
 
 type SelectList struct {
-	ID               string             `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey        string             `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name             string             `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace        string             `yaml:"-" uesio:"-"`
-	Options          []SelectListOption `yaml:"options" uesio:"uesio/studio.options"`
-	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" uesio:"uesio/studio.blank_option_label"`
-	Workspace        *Workspace         `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy        *User              `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner            *User              `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy        *User              `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt        int64              `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt        int64              `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
-	Public           bool               `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID               string             `yaml:"-" json:"uesio/core.id"`
+	UniqueKey        string             `yaml:"-" json:"uesio/core.uniquekey"`
+	Name             string             `yaml:"name" json:"uesio/studio.name"`
+	Namespace        string             `yaml:"-" json:"-"`
+	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
+	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
+	Workspace        *Workspace         `yaml:"-" json:"uesio/studio.workspace"`
+	CreatedBy        *User              `yaml:"-" json:"uesio/core.createdby"`
+	Owner            *User              `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy        *User              `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt        int64              `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt        int64              `yaml:"-" json:"uesio/core.createdat"`
+	itemMeta         *ItemMeta          `yaml:"-" json:"-"`
+	Public           bool               `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type SelectListWrapper SelectList
 
 func NewSelectList(key string) (*SelectList, error) {
 	namespace, name, err := ParseKey(key)
@@ -126,7 +128,7 @@ func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(sl)
+	return node.Decode((*SelectListWrapper)(sl))
 }
 
 func (sl *SelectList) IsPublic() bool {

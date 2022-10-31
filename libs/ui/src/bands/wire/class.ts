@@ -18,7 +18,7 @@ import { PlainWire } from "./types"
 import { Context, newContext } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
-import { nanoid } from "nanoid"
+import { nanoid } from "@reduxjs/toolkit"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -39,6 +39,13 @@ class Wire {
 		this.source?.data
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
+
+	getChanges = () =>
+		this.source?.changes
+			? Object.keys(this.source.changes).map((id) => this.getRecord(id))
+			: []
+
+	isLoading = () => this.source?.isLoading
 
 	getErrors = () => this.source?.errors
 

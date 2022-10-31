@@ -1,24 +1,24 @@
 package meta
 
 type UserFileMetadata struct {
-	ID               string    `uesio:"uesio/core.id" json:"uesio/core.id"`
-	UniqueKey        string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	CollectionID     string    `uesio:"uesio/core.collectionid" json:"-"`
-	MimeType         string    `uesio:"uesio/core.mimetype" json:"uesio/core.mimetype"`
-	FieldID          string    `uesio:"uesio/core.fieldid" json:"-"`
-	FileCollectionID string    `uesio:"uesio/core.filecollectionid" json:"-"`
-	Name             string    `uesio:"uesio/core.name" json:"-"`
-	FileName         string    `uesio:"uesio/core.filename" json:"uesio/core.filename"`
-	Path             string    `uesio:"uesio/core.path" json:"-"`
-	RecordID         string    `uesio:"uesio/core.recordid" json:"-"`
-	Type             string    `uesio:"uesio/core.type" json:"-"`
-	CreatedBy        *User     `yaml:"-" uesio:"uesio/core.createdby" json:"-"`
-	Owner            *User     `yaml:"-" uesio:"uesio/core.owner" json:"-"`
-	UpdatedBy        *User     `yaml:"-" uesio:"uesio/core.updatedby" json:"-"`
-	UpdatedAt        int64     `yaml:"-" uesio:"uesio/core.updatedat" json:"uesio/core.updatedat"`
-	CreatedAt        int64     `yaml:"-" uesio:"uesio/core.createdat" json:"uesio/core.createdat"`
-	itemMeta         *ItemMeta `yaml:"-" uesio:"-" json:"-"`
-	ContentLength    int64     `yaml:"-" uesio:"uesio/core.contentlength" json:"-"`
+	ID               string    `json:"uesio/core.id"`
+	UniqueKey        string    `json:"uesio/core.uniquekey"`
+	CollectionID     string    `json:"uesio/core.collectionid"`
+	MimeType         string    `json:"uesio/core.mimetype"`
+	FieldID          string    `json:"uesio/core.fieldid"`
+	FileCollectionID string    `json:"uesio/core.filecollectionid"`
+	Name             string    `json:"uesio/core.name"`
+	FileName         string    `json:"uesio/core.filename"`
+	Path             string    `json:"uesio/core.path"`
+	RecordID         string    `json:"uesio/core.recordid"`
+	Type             string    `json:"uesio/core.type"`
+	CreatedBy        *User     `json:"uesio/core.createdby"`
+	Owner            *User     `json:"uesio/core.owner"`
+	UpdatedBy        *User     `json:"uesio/core.updatedby"`
+	UpdatedAt        int64     `json:"uesio/core.updatedat"`
+	CreatedAt        int64     `json:"uesio/core.createdat"`
+	itemMeta         *ItemMeta `json:"-"`
+	ContentLength    int64     `json:"uesio/core.contentlength"`
 }
 
 func (ufm *UserFileMetadata) GetCollectionName() string {

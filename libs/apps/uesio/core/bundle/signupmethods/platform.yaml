@@ -3,5 +3,6 @@ authsource: uesio/core.platform
 profile: uesio/studio.standard
 usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
-landingRoute: uesio/studio.login
+# TO-DO this works for now but we want this signup method to be full core.
+landingRoute: uesio/studio.signupconfirm
 public: true

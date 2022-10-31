@@ -1,0 +1,14 @@
+name: buildtitle
+label: Build Title
+definition:
+  uesio.styles:
+    root:
+      color: white
+      padding: 8px
+      fontSize: 9pt
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      textTransform: uppercase
+      "&:focus":
+        outline: none
+        color: $Theme{color.primary}

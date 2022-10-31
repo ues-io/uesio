@@ -1,17 +1,17 @@
 package meta
 
 type BulkJob struct {
-	ID         string    `uesio:"uesio/core.id"`
-	UniqueKey  string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	AutoID     string    `uesio:"uesio/core.autoid"`
-	Spec       *JobSpec  `uesio:"uesio/core.spec"`
-	Collection string    `uesio:"uesio/core.collection"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID         string    `json:"uesio/core.id"`
+	UniqueKey  string    `json:"uesio/core.uniquekey"`
+	AutoID     string    `json:"uesio/core.autoid"`
+	Spec       *JobSpec  `json:"uesio/core.spec"`
+	Collection string    `json:"uesio/core.collection"`
+	itemMeta   *ItemMeta `json:"-"`
+	CreatedBy  *User     `json:"uesio/core.createdby"`
+	Owner      *User     `json:"uesio/core.owner"`
+	UpdatedBy  *User     `json:"uesio/core.updatedby"`
+	UpdatedAt  int64     `json:"uesio/core.updatedat"`
+	CreatedAt  int64     `json:"uesio/core.createdat"`
 }
 
 func (bj *BulkJob) GetCollectionName() string {

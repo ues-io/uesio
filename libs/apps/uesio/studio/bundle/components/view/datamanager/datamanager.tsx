@@ -31,7 +31,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	const collection = context.merge(definition.collectionId)
 	const namespace = context.merge(definition.namespace)
 
-	const fieldsMeta = uesio.builder.useMetadataList(
+	const [fieldsMeta] = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
 		namespace,
@@ -40,7 +40,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 
 	const wireDef = getWireDefinition(collection, fieldsMeta)
 
-	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef, true)
+	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef)
 
 	if (!dataWire || !fieldsMeta) return null
 

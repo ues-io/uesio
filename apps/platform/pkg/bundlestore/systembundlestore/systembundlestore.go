@@ -2,6 +2,7 @@ package systembundlestore
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -77,7 +78,8 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {
-		return bundlestore.NewPermissionError("No Permission to metadata item: " + item.GetCollectionName() + " : " + key)
+		message := fmt.Sprintf("No Permission to metadata item: %s : %s : %s : %s", item.GetCollectionName(), key, session.GetUserInfo().UniqueKey, session.GetProfile())
+		return bundlestore.NewPermissionError(message)
 	}
 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
@@ -173,14 +175,13 @@ func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version strin
 	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
 }
 
-func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", fileName)
+func (b *SystemBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", path)
 	if err != nil {
 		return nil, err
 	}
 	componentPack.SetModified(fileInfo.ModTime())
-	return getFile(componentPack.Namespace, version, "componentpacks", fileName)
+	return getFile(componentPack.Namespace, version, "componentpacks", path)
 }
 
 func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {

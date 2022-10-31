@@ -1,8 +1,6 @@
 package wire
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 
 	"github.com/thecloudmasters/clio/pkg/call"
@@ -10,13 +8,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
+type LoadOptions struct {
+	Conditions         []adapt.LoadRequestCondition `json:"conditions"`
+	Fields             []adapt.LoadRequestField     `json:"fields"`
+	Orders             []adapt.LoadRequestOrder     `json:"order"`
+	RequireWriteAccess bool                         `json:"requirewriteaccess"`
+}
+
 type LoadRequest struct {
-	CollectionName string                       `json:"collection"`
-	Fields         []adapt.LoadRequestField     `json:"fields"`
-	Conditions     []adapt.LoadRequestCondition `json:"conditions"`
-	Query          bool                         `json:"query"`
-	WireName       string                       `json:"name"`
-	View           string                       `json:"view"`
+	CollectionName string `json:"collection"`
+	LoadOptions
+	Query    bool   `json:"query"`
+	WireName string `json:"name"`
+	View     string `json:"view"`
 }
 
 type LoadReqBatch struct {
@@ -31,8 +35,8 @@ type LoadResBatch struct {
 	Wires []LoadResponse `json:"wires"`
 }
 
-func LoadOne(collectionName string, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) (*adapt.Item, error) {
-	result, err := Load(collectionName, fields, conditions)
+func LoadOne(collectionName string, options *LoadOptions) (*adapt.Item, error) {
+	result, err := Load(collectionName, options)
 	if err != nil {
 		return nil, err
 	}
@@ -42,14 +46,13 @@ func LoadOne(collectionName string, fields []adapt.LoadRequestField, conditions 
 	return result[0], nil
 }
 
-func Load(collectionName string, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) (adapt.Collection, error) {
+func Load(collectionName string, options *LoadOptions) (adapt.Collection, error) {
 
-	payload := LoadReqBatch{
+	payload := &LoadReqBatch{
 		Wires: []LoadRequest{
 			{
 				CollectionName: collectionName,
-				Conditions:     conditions,
-				Fields:         fields,
+				LoadOptions:    *options,
 				WireName:       "cliowire",
 				View:           "clioview",
 				Query:          true,
@@ -57,28 +60,14 @@ func Load(collectionName string, fields []adapt.LoadRequestField, conditions []a
 		},
 	}
 
-	payloadBytes := &bytes.Buffer{}
-
-	err := json.NewEncoder(payloadBytes).Encode(&payload)
-	if err != nil {
-		return nil, err
-	}
-
 	sessid, err := config.GetSessionID()
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := call.Request("POST", "site/wires/load", payloadBytes, sessid)
-	if err != nil {
-		return nil, err
-	}
+	loadResponse := &LoadResBatch{}
 
-	defer resp.Body.Close()
-
-	loadResponse := LoadResBatch{}
-
-	err = json.NewDecoder(resp.Body).Decode(&loadResponse)
+	err = call.PostJSON("site/wires/load", sessid, payload, loadResponse)
 	if err != nil {
 		return nil, err
 	}

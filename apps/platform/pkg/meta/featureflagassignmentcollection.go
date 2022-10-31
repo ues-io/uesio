@@ -2,8 +2,6 @@ package meta
 
 import (
 	"strconv"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type FeatureFlagAssignmentCollection []*FeatureFlagAssignment
@@ -16,17 +14,17 @@ func (ffac *FeatureFlagAssignmentCollection) GetFields() []string {
 	return StandardGetFields(&FeatureFlagAssignment{})
 }
 
-func (ffac *FeatureFlagAssignmentCollection) GetItem(index int) loadable.Item {
+func (ffac *FeatureFlagAssignmentCollection) GetItem(index int) Item {
 	return (*ffac)[index]
 }
 
-func (ffac *FeatureFlagAssignmentCollection) NewItem() loadable.Item {
+func (ffac *FeatureFlagAssignmentCollection) NewItem() Item {
 	ffa := &FeatureFlagAssignment{}
 	*ffac = append(*ffac, ffa)
 	return ffa
 }
 
-func (ffac *FeatureFlagAssignmentCollection) Loop(iter loadable.GroupIterator) error {
+func (ffac *FeatureFlagAssignmentCollection) Loop(iter GroupIterator) error {
 	for index := range *ffac {
 		err := iter(ffac.GetItem(index), strconv.Itoa(index))
 		if err != nil {

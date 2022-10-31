@@ -9,7 +9,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 		// Turn the list of wires into a load request
 		const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 		const response = await platform.loadData(context, {
-			wires: getWireRequest(wiresToLoad, false, context),
+			wires: getWireRequest(wiresToLoad, false, context, true),
 		})
 
 		// Add in the local ids

@@ -1,7 +1,9 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 )
 
 func NewBundle(namespace string, major, minor, patch int, description string) (*Bundle, error) {
@@ -17,21 +19,33 @@ func NewBundle(namespace string, major, minor, patch int, description string) (*
 	}, nil
 }
 
+func ParseVersionString(version string) (string, string, string, error) {
+	//Remove the 'v' and split on dots
+	if !strings.HasPrefix(version, "v") {
+		return "", "", "", errors.New("Invalid version string")
+	}
+	parts := strings.Split(strings.Split(version, "v")[1], ".")
+	if len(parts) != 3 {
+		return "", "", "", errors.New("Invalid version string")
+	}
+	return parts[0], parts[1], parts[2], nil
+}
+
 type Bundle struct {
-	ID          string    `uesio:"uesio/core.id"`
-	UniqueKey   string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Major       int       `uesio:"uesio/studio.major"`
-	Minor       int       `uesio:"uesio/studio.minor"`
-	Patch       int       `uesio:"uesio/studio.patch"`
-	App         *App      `uesio:"uesio/studio.app"`
-	Description string    `uesio:"uesio/studio.description"`
-	Version     string    `uesio:"uesio/studio.version"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy   *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID          string    `json:"uesio/core.id"`
+	UniqueKey   string    `json:"uesio/core.uniquekey"`
+	Major       int       `json:"uesio/studio.major"`
+	Minor       int       `json:"uesio/studio.minor"`
+	Patch       int       `json:"uesio/studio.patch"`
+	App         *App      `json:"uesio/studio.app"`
+	Description string    `json:"uesio/studio.description"`
+	Version     string    `json:"uesio/studio.version"`
+	itemMeta    *ItemMeta `json:"-"`
+	CreatedBy   *User     `json:"uesio/core.createdby"`
+	Owner       *User     `json:"uesio/core.owner"`
+	UpdatedBy   *User     `json:"uesio/core.updatedby"`
+	UpdatedAt   int64     `json:"uesio/core.updatedat"`
+	CreatedAt   int64     `json:"uesio/core.createdat"`
 }
 
 func (b *Bundle) GetVersionString() string {

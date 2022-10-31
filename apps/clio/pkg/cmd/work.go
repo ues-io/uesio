@@ -9,13 +9,13 @@ import (
 
 func init() {
 
-	checkCommand := &cobra.Command{
+	workCommand := &cobra.Command{
 		Use:   "work",
 		Short: "clio work",
 		Run:   work,
 	}
 
-	rootCmd.AddCommand(checkCommand)
+	rootCmd.AddCommand(workCommand)
 
 }
 

@@ -47,6 +47,14 @@ type CollectionMetadata struct {
 	Public                bool                                   `json:"public"`
 }
 
+func (cm *CollectionMetadata) IsWriteProtected() bool {
+	return cm.Access == "protected" || cm.Access == "protected_write"
+}
+
+func (cm *CollectionMetadata) IsReadProtected() bool {
+	return cm.Access == "protected"
+}
+
 func (cm *CollectionMetadata) GetBytes() ([]byte, error) {
 	bytes, err := json.Marshal(cm)
 	if err != nil {
@@ -98,29 +106,63 @@ type SelectListMetadata struct {
 	BlankOptionLabel string                  `json:"blank_option_label"`
 }
 
+type FileMetadata struct {
+	Accept         string `json:"accept"`
+	FileCollection string `json:"filecollection"`
+}
+
+type NumberMetadata struct {
+	Decimals int `json:"decimals"`
+}
+
+type AutoNumberMetadata struct {
+	Prefix       string `json:"prefix"`
+	LeadingZeros int    `json:"leadingZeros"`
+}
+
+type ReferenceMetadata struct {
+	Collection string `json:"collection"`
+}
+
+type ReferenceGroupMetadata struct {
+	Collection string `json:"collection"`
+	Field      string `json:"field"`
+	OnDelete   string `json:"onDelete"`
+}
+
+type ValidationMetadata struct {
+	Type  string `json:"type"`
+	Regex string `json:"regex"`
+}
+
+type FormulaMetadata struct {
+	Expression string `json:"expression"`
+	ReturnType string `json:"returntype"`
+}
+
 type FieldMetadata struct {
-	Name                   string                       `json:"name"`
-	Namespace              string                       `json:"namespace"`
-	Createable             bool                         `json:"createable"`
-	Accessible             bool                         `json:"accessible"`
-	Updateable             bool                         `json:"updateable"`
-	Required               bool                         `json:"required"`
-	Length                 int                          `json:"length"`
-	Type                   string                       `json:"type"`
-	Label                  string                       `json:"label"`
-	SelectListMetadata     *SelectListMetadata          `json:"selectlist,omitempty"`
-	NumberMetadata         *meta.NumberMetadata         `json:"number,omitempty"`
-	ReferenceMetadata      *meta.ReferenceMetadata      `json:"reference,omitempty"`
-	ReferenceGroupMetadata *meta.ReferenceGroupMetadata `json:"referencegroup,omitempty"`
-	FileMetadata           *meta.FileMetadata           `json:"file,omitempty"`
-	ValidationMetadata     *meta.ValidationMetadata     `json:"validate,omitempty"`
-	AutoNumberMetadata     *meta.AutoNumberMetadata     `json:"autonumber,omitempty"`
-	FormulaMetadata        *meta.FormulaMetadata        `json:"-"`
-	AutoPopulate           string                       `json:"autopopulate,omitempty"`
-	SubFields              map[string]*FieldMetadata    `json:"subfields,omitempty"`
-	SubType                string                       `json:"subtype,omitempty"`
-	ColumnName             string                       `json:"-"`
-	IsFormula              bool                         `json:"-"`
+	Name                   string                    `json:"name"`
+	Namespace              string                    `json:"namespace"`
+	Createable             bool                      `json:"createable"`
+	Accessible             bool                      `json:"accessible"`
+	Updateable             bool                      `json:"updateable"`
+	Required               bool                      `json:"required"`
+	Length                 int                       `json:"length"`
+	Type                   string                    `json:"type"`
+	Label                  string                    `json:"label"`
+	SelectListMetadata     *SelectListMetadata       `json:"selectlist,omitempty"`
+	NumberMetadata         *NumberMetadata           `json:"number,omitempty"`
+	ReferenceMetadata      *ReferenceMetadata        `json:"reference,omitempty"`
+	ReferenceGroupMetadata *ReferenceGroupMetadata   `json:"referencegroup,omitempty"`
+	FileMetadata           *FileMetadata             `json:"file,omitempty"`
+	ValidationMetadata     *ValidationMetadata       `json:"validate,omitempty"`
+	AutoNumberMetadata     *AutoNumberMetadata       `json:"autonumber,omitempty"`
+	FormulaMetadata        *FormulaMetadata          `json:"-"`
+	AutoPopulate           string                    `json:"autopopulate,omitempty"`
+	SubFields              map[string]*FieldMetadata `json:"subfields,omitempty"`
+	SubType                string                    `json:"subtype,omitempty"`
+	ColumnName             string                    `json:"-"`
+	IsFormula              bool                      `json:"-"`
 }
 
 func (fm *FieldMetadata) GetFullName() string {

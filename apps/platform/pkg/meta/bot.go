@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewBot(key string) (*Bot, error) {
@@ -75,22 +75,40 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParamCondition struct {
-	Param string `yaml:"param" uesio:"uesio/studio.param" json:"param"`
-	Value string `yaml:"value" uesio:"uesio/studio.value" json:"value"`
+	Param string      `yaml:"param" json:"uesio/studio.param"`
+	Value interface{} `yaml:"value" json:"uesio/studio.value"`
+}
+
+type BotParamConditionResponse struct {
+	Param string      `json:"param"`
+	Value interface{} `json:"value"`
 }
 
 type BotParam struct {
-	Name         string              `yaml:"name" uesio:"uesio/studio.name" json:"name"`
-	Prompt       string              `yaml:"prompt" uesio:"uesio/studio.prompt" json:"prompt"`
-	Type         string              `yaml:"type" uesio:"uesio/studio.type" json:"type"`
-	MetadataType string              `yaml:"metadataType" uesio:"uesio/studio.metadatatype" json:"metadataType,omitempty"`
-	Grouping     string              `yaml:"grouping" uesio:"uesio/studio.grouping" json:"grouping"`
-	Default      string              `yaml:"default" uesio:"uesio/studio.default" json:"default"`
-	Choices      []string            `yaml:"choices" uesio:"uesio/studio.choices" json:"choices"`
-	Conditions   []BotParamCondition `yaml:"conditions,omitempty" uesio:"uesio/studio.conditions" json:"conditions"`
+	Name         string              `yaml:"name" json:"uesio/studio.name"`
+	Prompt       string              `yaml:"prompt" json:"uesio/studio.prompt"`
+	Type         string              `yaml:"type" json:"uesio/studio.type"`
+	MetadataType string              `yaml:"metadataType" json:"uesio/studio.metadatatype"`
+	Grouping     string              `yaml:"grouping" json:"uesio/studio.grouping"`
+	Default      string              `yaml:"default" json:"uesio/studio.default"`
+	Choices      []string            `yaml:"choices" json:"uesio/studio.choices"`
+	Conditions   []BotParamCondition `yaml:"conditions,omitempty" json:"uesio/studio.conditions"`
+}
+
+type BotParamResponse struct {
+	Name         string                      `json:"name"`
+	Prompt       string                      `json:"prompt"`
+	Type         string                      `json:"type"`
+	MetadataType string                      `json:"metadataType,omitempty"`
+	Grouping     string                      `json:"grouping"`
+	Default      string                      `json:"default"`
+	Choices      []string                    `json:"choices"`
+	Conditions   []BotParamConditionResponse `json:"conditions"`
 }
 
 type BotParams []BotParam
+
+type BotParamsResponse []BotParamResponse
 
 func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 	if *bp == nil {
@@ -119,25 +137,27 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	ID            string            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey     string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name          string            `yaml:"name" uesio:"uesio/studio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio/studio.collection"`
-	Namespace     string            `yaml:"-" uesio:"-"`
-	Type          string            `yaml:"type" uesio:"uesio/studio.type"`
-	Dialect       string            `yaml:"dialect" uesio:"uesio/studio.dialect"`
-	Params        BotParams         `yaml:"params,omitempty" uesio:"uesio/studio.params"`
-	Content       *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
-	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy     *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner         *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy     *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt     int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt     int64             `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
-	Public        bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID            string            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey     string            `yaml:"-" json:"uesio/core.uniquekey"`
+	Name          string            `yaml:"name" json:"uesio/studio.name"`
+	CollectionRef string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Namespace     string            `yaml:"-" json:"-"`
+	Type          string            `yaml:"type" json:"uesio/studio.type"`
+	Dialect       string            `yaml:"dialect" json:"uesio/studio.dialect"`
+	Params        BotParams         `yaml:"params,omitempty" json:"uesio/studio.params"`
+	Content       *UserFileMetadata `yaml:"-" json:"uesio/studio.content"`
+	FileContents  string            `yaml:"-" json:"-"`
+	Workspace     *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
+	CreatedBy     *User             `yaml:"-" json:"uesio/core.createdby"`
+	Owner         *User             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy     *User             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt     int64             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt     int64             `yaml:"-" json:"uesio/core.createdat"`
+	itemMeta      *ItemMeta         `yaml:"-" json:"-"`
+	Public        bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type BotWrapper Bot
 
 func GetBotTypes() map[string]string {
 	return map[string]string{
@@ -256,7 +276,7 @@ func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(b)
+	return node.Decode((*BotWrapper)(b))
 }
 
 func (b *Bot) IsPublic() bool {

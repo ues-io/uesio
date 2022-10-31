@@ -126,7 +126,6 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 	return loginRoute, nil
 }
 
-// HandleMissingRoute function
 func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error) {
 	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
@@ -177,7 +176,6 @@ func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Sess
 	ExecuteIndexTemplate(w, route, depsCache, false, session)
 }
 
-// ServeRoute serves a route
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]

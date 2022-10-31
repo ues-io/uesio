@@ -29,7 +29,6 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	// dumb comment
 
 	value, err := configstore.GetValue(configValue, session)
 	if err != nil {

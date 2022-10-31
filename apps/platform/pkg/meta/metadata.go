@@ -10,9 +10,8 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
+	"gopkg.in/yaml.v3"
 )
 
 type ItemMeta struct {
@@ -30,13 +29,13 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 type BundleConditions map[string]string
 
 type CollectionableGroup interface {
-	loadable.Group
+	Group
 	GetName() string
 	GetFields() []string
 }
 
 type CollectionableItem interface {
-	loadable.Item
+	Item
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
@@ -195,21 +194,19 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&SignupMethodCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SignupMethodCollection{} },
 }
 
-func GetGroupingConditions(metadataType, grouping string) BundleConditions {
-	if grouping == "" {
-		return nil
-	}
+func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {
 	conditions := BundleConditions{}
-	// Special handling for fields for now
 	if metadataType == "fields" {
+		if grouping == "" {
+			return nil, errors.New("metadata type fields requires grouping value")
+		}
 		conditions["uesio/studio.collection"] = grouping
 	} else if metadataType == "bots" {
 		conditions["uesio/studio.type"] = grouping
 	} else if metadataType == "componentvariants" {
 		conditions["uesio/studio.component"] = grouping
 	}
-	return conditions
-
+	return conditions, nil
 }
 
 func GetBundleableGroupFromType(metadataType string) (BundleableGroup, error) {
@@ -239,7 +236,6 @@ func IsValidMetadataName(name string) bool {
 }
 
 func validateNodeLanguage(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "language")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
@@ -251,7 +247,6 @@ func validateNodeLanguage(node *yaml.Node, expectedName string) error {
 }
 
 func validateNodeName(node *yaml.Node, expectedName string) error {
-	node.SkipCustom = true
 	name := GetNodeValueAsString(node, "name")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
@@ -378,6 +373,7 @@ func setMapNode(node *yaml.Node, key, value string) error {
 		}
 	}
 
+	// If we didn't find the node, then add it
 	newValueNode := &yaml.Node{}
 	newValueNode.SetString(value)
 	addNodeToMap(node, key, newValueNode)

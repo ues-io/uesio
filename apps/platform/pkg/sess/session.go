@@ -8,9 +8,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-var SYSTEM_USER = &meta.User{}
-var GUEST_USER = &meta.User{}
-
 func createBrowserSession(userid, sitename string) *session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
@@ -48,34 +45,12 @@ func New(user *meta.User, site *meta.Site) *Session {
 	return NewSession(browserSession, user, site)
 }
 
-func GetPublicUser(site *meta.Site) *meta.User {
-	// Get the site's default profile
-	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
-
-	if defaultSitePublicProfile == "" {
-		defaultSitePublicProfile = "uesio/core.public"
-	}
-
-	return &meta.User{
-		FirstName: GUEST_USER.FirstName,
-		LastName:  GUEST_USER.LastName,
-		UniqueKey: GUEST_USER.UniqueKey,
-		Username:  GUEST_USER.Username,
-		ID:        GUEST_USER.ID,
-		Profile:   defaultSitePublicProfile,
-	}
-}
-
-func NewPublic(site *meta.Site) *Session {
-	return New(GetPublicUser(site), site)
-}
-
-func Logout(w http.ResponseWriter, s *Session) *Session {
+func Logout(w http.ResponseWriter, publicUser *meta.User, s *Session) *Session {
 	// Remove the logged out session
 	session.Remove(*s.browserSession, w)
 	site := s.GetSite()
 	// Login as the public user
-	return Login(w, GetPublicUser(site), site)
+	return Login(w, publicUser, site)
 }
 
 type VersionInfo struct {
@@ -141,6 +116,10 @@ func (s *Session) GetSite() *meta.Site {
 	return s.site
 }
 
+func (s *Session) SetUser(user *meta.User) {
+	s.user = user
+}
+
 func (s *Session) SetSiteAdmin(site *meta.Site) {
 	s.siteadmin = site
 }
@@ -167,6 +146,15 @@ func MakeSiteTenantID(ID string) string {
 
 func MakeWorkspaceTenantID(ID string) string {
 	return fmt.Sprintf("workspace:%s", ID)
+}
+
+func (s *Session) GetTenantIDForCollection(collectionKey string) string {
+	// If we're loading uesio/core.user from a workspace, always use the site
+	// tenant id, not the workspace tenant id. Since workspaces don't have users.
+	if collectionKey == "uesio/core.user" && s.GetWorkspace() != nil {
+		return s.GetSiteTenantID()
+	}
+	return s.GetTenantID()
 }
 
 func (s *Session) GetTenantID() string {
@@ -223,6 +211,11 @@ func (s *Session) IsPublicProfile() bool {
 
 func (s *Session) GetPublicProfile() string {
 	appBundle := s.site.GetAppBundle()
+
+	if s.siteadmin != nil {
+		appBundle = s.siteadmin.GetAppBundle()
+	}
+
 	if appBundle == nil {
 		return ""
 	}
@@ -257,6 +250,15 @@ func (s *Session) GetContextNamespaces() []string {
 	namespaces := []string{
 		bundleDef.Name,
 	}
+	for name := range bundleDef.Dependencies {
+		namespaces = append(namespaces, name)
+	}
+	return namespaces
+}
+
+func (s *Session) GetContextInstalledNamespaces() []string {
+	bundleDef := s.GetContextAppBundle()
+	namespaces := []string{}
 	for name := range bundleDef.Dependencies {
 		namespaces = append(namespaces, name)
 	}

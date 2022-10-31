@@ -16,6 +16,7 @@ const File = component.getUtility("uesio/io.file")
 const UserField = component.getUtility("uesio/io.userfield")
 const TimestampField = component.getUtility("uesio/io.timestampfield")
 const ListField = component.getUtility("uesio/io.listfield")
+const ListFieldDeck = component.getUtility("uesio/io.listfielddeck")
 const DateField = component.getUtility("uesio/io.datefield")
 const NumberField = component.getUtility("uesio/io.numberfield")
 const EmailField = component.getUtility("uesio/io.emailfield")
@@ -33,8 +34,16 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs, reference, options, placeholder } =
-		definition
+	const {
+		fieldId,
+		id,
+		displayAs,
+		reference,
+		options,
+		placeholder,
+		user,
+		list,
+	} = definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
@@ -51,7 +60,8 @@ const getFieldContent = (
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
-		variant: definition["uesio.variant"],
+		variant:
+			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 		options,
 		placeholder,
 	}
@@ -111,7 +121,9 @@ const getFieldContent = (
 		case type === "FILE":
 			return <File {...common} />
 		case type === "USER":
-			return <UserField {...common} options={reference} />
+			return <UserField {...common} options={user} />
+		case type === "LIST" && displayAs === "DECK":
+			return <ListFieldDeck {...common} options={list} />
 		case type === "LIST":
 			return (
 				<ListField
@@ -151,6 +163,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			wire={wire}
 			record={record}
 			fieldId={fieldId}
+			variant={definition.wrapperVariant}
 		>
 			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>

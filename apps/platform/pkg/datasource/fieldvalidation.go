@@ -1,14 +1,11 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -128,49 +125,10 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) referenceValidationFunc {
-	validations := []referenceValidationFunc{}
-	for i := range collectionMetadata.Fields {
-		field := collectionMetadata.Fields[i]
-		if adapt.IsReference(field.Type) {
-			validations = append(validations, func(change *adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
-				referencedCollection := field.ReferenceMetadata.Collection
-				request := registry.Get(referencedCollection)
-				fieldName := field.GetFullName()
-				foreignKey, err := change.FieldChanges.GetField(fieldName)
-				if err != nil {
-					return
-				}
-				foreignKeyString, err := adapt.GetReferenceKey(foreignKey)
-				if err != nil {
-					return
-				}
-				if foreignKeyString == "" {
-					return
-				}
-
-				// Special exception for the siteadmin context
-				siteadmin := session.GetSiteAdmin()
-				isBuiltinUserField := fieldName == "uesio/core.owner" || fieldName == "uesio/core.createdby" || fieldName == "uesio/core.updatedby"
-				if siteadmin != nil && referencedCollection == "uesio/core.user" && isBuiltinUserField {
-					return
-				}
-				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
-			})
-		}
-	}
-
-	return func(change *adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
-		for _, validation := range validations {
-			validation(change, registry)
-		}
-	}
-}
-
-func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func Validate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	validations := []validationFunc{}
-	for _, field := range collectionMetadata.Fields {
+	for _, field := range op.Metadata.Fields {
 		validationMetadata := field.ValidationMetadata
 		if field.Required {
 			validations = append(validations, validateRequired(field))
@@ -189,70 +147,6 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, co
 		}
 		if field.Type == "NUMBER" {
 			validations = append(validations, validateNumber(field))
-		}
-	}
-
-	referenceValidations := getReferenceValidationsFunction(collectionMetadata, session)
-
-	referenceRegistry := &adapt.ReferenceRegistry{}
-
-	err := op.LoopChanges(func(change *adapt.ChangeItem) error {
-
-		for _, validation := range validations {
-			err := validation(change)
-			if err != nil {
-				op.AddError(err)
-			}
-		}
-
-		referenceValidations(change, referenceRegistry)
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-
-	for collection, request := range *referenceRegistry {
-		ids := request.GetIDs()
-		idCount := len(ids)
-		if idCount == 0 {
-			continue
-		}
-		results := &adapt.Collection{}
-		op := &adapt.LoadOp{
-			CollectionName: collection,
-			WireName:       "referentialIntegrity",
-			Collection:     results,
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field:    adapt.ID_FIELD,
-					Operator: "IN",
-					Value:    ids,
-				},
-			},
-			Fields:             []adapt.LoadRequestField{{ID: adapt.ID_FIELD}},
-			Query:              true,
-			SkipRecordSecurity: true,
-		}
-
-		err := connection.Load(op)
-		if err != nil {
-			return err
-		}
-
-		if idCount != results.Len() {
-			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {
-				value, err := item.GetField(adapt.ID_FIELD)
-				if err != nil {
-					return ""
-				}
-				return value.(string)
-			}, ids)
-			if err != nil {
-				return err
-			}
-
-			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : ") + " for collection " + collectionMetadata.GetFullName())
 		}
 	}
 

@@ -73,12 +73,6 @@ func serve(cmd *cobra.Command, args []string) {
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
 
-	err := setSystemUser(nil, nil)
-	cobra.CheckErr(err)
-
-	err = setGuestUser(nil, nil)
-	cobra.CheckErr(err)
-
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
@@ -108,8 +102,10 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}/{id}", controller.CollectionRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder", controller.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam(), controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js", controller.ServeComponentPack(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js", controller.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js.map", controller.ServeComponentPackMap(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js.map", controller.ServeComponentPackMap(false), "GET")
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
@@ -169,6 +165,9 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/signup", controller.Signup).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword", controller.ForgotPassword).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
 
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
@@ -180,23 +179,6 @@ func serve(cmd *cobra.Command, args []string) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
-	}
-
-	// Verify that required environment variables are set.
-	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
-	platformFSType := os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE")
-	platformBSType := os.Getenv("UESIO_PLATFORM_BUNDLESTORE_TYPE")
-
-	if platformDSType == "" {
-		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
-	}
-
-	if platformFSType == "" {
-		logger.Log("No Platform File Source Type Specified", logger.ERROR)
-	}
-
-	if platformBSType == "" {
-		logger.Log("No Platform Bundle Source Type Specified", logger.ERROR)
 	}
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")

@@ -85,15 +85,20 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
+	if namespace == "uesio/core" {
+		// Everyone has access to uesio/core
+		return "v0.0.1", nil
+	}
+
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
-		return "", fmt.Errorf("%s version %s doesn't exist for %s ", appName, appVersion, namespace)
+		return "", fmt.Errorf("No Bundle info provided for: %s", appName)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
 	if !hasDep {
-		return "", fmt.Errorf("%s version %s doesn't have %s installed", appName, appVersion, namespace)
+		return "", fmt.Errorf("%s doesn't have %s installed", appName, namespace)
 	}
 
 	return depBundle.Version, nil
@@ -112,8 +117,10 @@ func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 }
 
 func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
-	// Get all avaliable namespaces
-	namespaces := session.GetContextNamespaces()
+	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, conditions, session)
+}
+
+func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
 	for _, namespace := range namespaces {
 		err := LoadAll(group, namespace, conditions, session)
 		if err != nil {
@@ -187,12 +194,12 @@ func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error
 	return bs.GetFileStream(version, file, session)
 }
 
-func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
+func GetComponentPackStream(componentPack *meta.ComponentPack, path string, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetComponentPackStream(version, buildMode, componentPack, session)
+	return bs.GetComponentPackStream(version, path, componentPack, session)
 }
 
 func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {

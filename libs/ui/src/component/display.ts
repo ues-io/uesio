@@ -19,6 +19,11 @@ type ParamIsSetCondition = {
 	param: string
 }
 
+type ParamIsNotSetCondition = {
+	type: "paramIsNotSet"
+	param: string
+}
+
 type ParamValueCondition = {
 	type: "paramValue"
 	param: string
@@ -30,6 +35,15 @@ type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
 }
+
+type RecordIsNewCondition = {
+	type: "recordIsNew"
+}
+
+type RecordIsNotNewCondition = {
+	type: "recordIsNotNew"
+}
+
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
@@ -50,15 +64,44 @@ type FieldModeCondition = {
 	mode: "READ" | "EDIT"
 }
 
+type WireHasNoChanges = {
+	type: "wireHasNoChanges"
+	wire: string
+}
+type WireHasChanges = {
+	type: "wireHasChanges"
+	wire: string
+}
+type WireIsLoading = {
+	type: "wireIsLoading"
+	wire: string
+}
+type WireIsNotLoading = {
+	type: "wireIsNotLoading"
+	wire: string
+}
+
 type DisplayCondition =
+	| WireHasChanges
+	| WireHasNoChanges
 	| HasNoValueCondition
 	| HasValueCondition
 	| FieldValueCondition
 	| ParamIsSetCondition
+	| ParamIsNotSetCondition
 	| ParamValueCondition
 	| CollectionContextCondition
 	| FeatureFlagCondition
 	| FieldModeCondition
+	| RecordIsNewCondition
+	| RecordIsNotNewCondition
+	| WireIsLoading
+	| WireIsNotLoading
+
+type ItemContext<T> = {
+	item: T
+	context: Context
+}
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
@@ -86,12 +129,46 @@ function should(condition: DisplayCondition, context: Context) {
 		return !!context.getParam(condition.param)
 	}
 
+	if (condition.type === "paramIsNotSet") {
+		return !context.getParam(condition.param)
+	}
+
 	if (condition.type === "fieldMode") {
 		return condition.mode === context.getFieldMode()
 	}
 
 	if (condition.type === "featureFlag") {
 		return !!context.getFeatureFlag(condition.name)?.value
+	}
+
+	if (condition.type === "recordIsNew") {
+		return !!context.getRecord()?.isNew()
+	}
+
+	if (condition.type === "recordIsNotNew") {
+		return !context.getRecord()?.isNew()
+	}
+
+	if (
+		condition.type === "wireHasChanges" ||
+		condition.type === "wireHasNoChanges"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const hasChanges = ctx.getWire()?.getChanges().length
+		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
+	}
+
+	if (
+		condition.type === "wireIsLoading" ||
+		condition.type === "wireIsNotLoading"
+	) {
+		const ctx = condition.wire
+			? context.addFrame({ wire: condition.wire })
+			: context
+		const isLoading = ctx.getWire()?.isLoading()
+		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
 	const compareToValue =
@@ -112,7 +189,6 @@ function should(condition: DisplayCondition, context: Context) {
 		const ctx = condition.wire
 			? context.addFrame({ wire: condition.wire })
 			: context
-
 		const ctxRecord = ctx.getRecord()
 		// If we have a record in context, use it.
 		if (ctxRecord)
@@ -168,13 +244,13 @@ const getWiresForConditions = (
 	return [
 		...(contextWire ? [contextWire] : []),
 		...conditions.flatMap((condition) =>
-			!condition.type && condition.wire ? [condition.wire] : []
+			"wire" in condition && condition.wire ? [condition.wire] : []
 		),
 	]
 }
 
 const useShouldFilter = <T extends BaseDefinition>(
-	items: T[],
+	items: T[] | undefined = [],
 	context: Context
 ) => {
 	const conditionsList = items.flatMap((item) => {
@@ -185,14 +261,35 @@ const useShouldFilter = <T extends BaseDefinition>(
 	const uesio = useUesio({ context })
 	uesio.wire.useWires(
 		getWiresForConditions(
-			conditionsList.flatMap((c) => c),
+			conditionsList?.flatMap((c) => c),
 			context
 		)
 	)
 
-	return items.filter((item, index) =>
+	return items?.filter((item, index) =>
 		shouldAll(conditionsList[index], context)
 	)
+}
+
+const useContextFilter = <T>(
+	items: T[],
+	conditions: DisplayCondition[] | undefined,
+	contextFunc: (item: T, context: Context) => Context,
+	context: Context
+): ItemContext<T>[] => {
+	const uesio = useUesio({ context })
+	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	return items.flatMap((item) => {
+		const newContext = contextFunc(item, context)
+		return shouldAll(conditions, newContext)
+			? [
+					{
+						item,
+						context: newContext,
+					},
+			  ]
+			: []
+	})
 }
 
 const useShould = (
@@ -218,4 +315,11 @@ function shouldHaveClass(
 	return shouldAll(classLogic, context)
 }
 
-export { useShould, useShouldFilter, shouldHaveClass, DisplayCondition }
+export {
+	useShould,
+	useShouldFilter,
+	useContextFilter,
+	shouldHaveClass,
+	DisplayCondition,
+	ItemContext,
+}

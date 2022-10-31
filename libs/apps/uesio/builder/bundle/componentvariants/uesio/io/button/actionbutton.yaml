@@ -1,0 +1,16 @@
+name: actionbutton
+label: Action Button
+definition:
+  uesio.styles:
+    root:
+      color: "#444"
+      padding: 4px 8px
+      fontSize: 8pt
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      textTransform: uppercase
+      "&:focus":
+        outline: none
+        color: $Theme{color.primary}
+    disabled:
+      opacity: "0.3"

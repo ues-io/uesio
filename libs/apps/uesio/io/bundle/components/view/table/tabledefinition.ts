@@ -1,4 +1,8 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
+import {
+	ReferenceFieldOptions,
+	UserFieldOptions,
+} from "../field/fielddefinition"
 
 type TableDefinition = {
 	id: string
@@ -6,8 +10,10 @@ type TableDefinition = {
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
 	rowactions?: RowAction[]
-	rownumbers: boolean
-	pagesize: string
+	recordDisplay?: component.DisplayCondition[]
+	rownumbers?: boolean
+	pagesize?: string
+	order?: boolean
 } & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {
@@ -17,10 +23,13 @@ interface TableProps extends definition.BaseProps {
 type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
 }
 
 type ColumnDefinition = {
 	field: string
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
 	label: string
 	components: definition.DefinitionList
 }

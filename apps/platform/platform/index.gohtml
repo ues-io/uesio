@@ -7,6 +7,14 @@
         <style>
             {{template "fonts.css"}}
         </style>
+        {{- if .DevMode -}}
+        <script src="/static/vendor/react.development.js"></script>
+        <script src="/static/vendor/react-dom.development.js"></script>
+        {{- else -}}
+        <script src="/static/vendor/react.production.min.js"></script>
+        <script src="/static/vendor/react-dom.production.min.js"></script>
+        {{- end -}}
+        <script src="/static/vendor/emotion-css.umd.min.js"></script>
         <script src="/static/ui/uesio.js" type="module"></script>
     </head>
 <body>
@@ -26,10 +34,6 @@
                 {{- end -}}
             {{- end -}}
             {{- if $buildMode -}}
-                {{- $studioPackURL := getPackURL "uesio/studio.main" nil false -}}
-                <script src="{{$studioPackURL}}" type="module"></script>
-                {{- $studioBuilderPackURL := getPackURL "uesio/studio.main" nil true -}}
-                <script src="{{$studioBuilderPackURL}}" type="module"></script>
                 {{- range .PreloadMetadata.ComponentPack.IDs -}}
                     {{- $packURL := getPackURL . $workspace true -}}
                     {{- if $packURL -}}

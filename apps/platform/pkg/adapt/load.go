@@ -5,16 +5,15 @@ import (
 	"errors"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"gopkg.in/yaml.v3"
 )
 
 type LoadOp struct {
 	CollectionName     string                 `json:"collection"`
 	WireName           string                 `json:"name"`
 	View               string                 `json:"view"`
-	Collection         loadable.Group         `json:"data"`
+	Collection         meta.Group             `json:"data"`
 	Conditions         []LoadRequestCondition `json:"-"`
 	Fields             []LoadRequestField     `json:"-"`
 	Query              bool                   `json:"query"`
@@ -22,9 +21,9 @@ type LoadOp struct {
 	BatchSize          int                    `json:"batchsize"`
 	BatchNumber        int                    `json:"batchnumber"`
 	HasMoreBatches     bool                   `json:"more"`
-	SkipRecordSecurity bool                   `json:"-"`
 	RequireWriteAccess bool                   `json:"-"`
 	Params             map[string]string      `json:"-"`
+	Preloaded          bool                   `json:"preloaded"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {

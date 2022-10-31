@@ -10,13 +10,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 )
 
-// FileAdapter struct
 type FileAdapter struct {
 }
 
 func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
 	bucket, ok := (*credentials)["bucket"]
-	if !ok {
+	if !ok || bucket == "" {
 		return nil, errors.New("No bucket provided in credentials")
 	}
 	client, err := getS3Client(context.Background(), credentials)

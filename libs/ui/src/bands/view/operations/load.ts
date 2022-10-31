@@ -7,8 +7,6 @@ import { selectWire } from "../../wire"
 import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
 import { batch } from "react-redux"
-import createrecord from "../../wire/operations/createrecord"
-import { WireDefinition } from "../../../definition/wire"
 
 export default (context: Context): ThunkFunc =>
 	async (dispatch, getState, platform) => {
@@ -21,7 +19,9 @@ export default (context: Context): ThunkFunc =>
 			if (!viewDef) {
 				const deps = await platform.getBuilderDeps(context)
 				if (!deps) throw new Error("Could not get View Def")
-				dispatchRouteDeps(deps, dispatch)
+				batch(() => {
+					dispatchRouteDeps(deps, dispatch)
+				})
 			}
 		}
 
@@ -33,36 +33,21 @@ export default (context: Context): ThunkFunc =>
 		const definition = viewDef.definition
 		const wires = definition.wires || {}
 		const viewId = context.getViewId()
+		const wireNames = Object.keys(wires)
 
-		const preloadedDefs: Record<string, WireDefinition> = {}
-
-		const wiresToLoad = Object.fromEntries(
-			Object.entries(wires).filter(([wirename, wireDef]) => {
+		const wiresToInit = Object.fromEntries(
+			Object.entries(wires).flatMap(([wirename, wireDef]) => {
 				const foundWire = selectWire(state, viewId, wirename)
-				if (foundWire) preloadedDefs[wirename] = wireDef
-				return !foundWire
+				return foundWire ? [] : [[wirename, wireDef]]
 			})
 		)
 
-		const wiresToLoadNames = wires ? Object.keys(wiresToLoad) : []
-		const preloadedWireNames = Object.keys(preloadedDefs)
+		if (Object.keys(wiresToInit).length) {
+			dispatch(initializeWiresOp(context, wiresToInit))
+		}
 
-		batch(() => {
-			if (wiresToLoadNames.length > 0) {
-				dispatch(initializeWiresOp(context, wiresToLoad))
-			}
-			if (preloadedWireNames.length > 0) {
-				preloadedWireNames.forEach((wirename) => {
-					const wireDef = preloadedDefs[wirename]
-					if (wireDef.init?.create) {
-						dispatch(createrecord(context, wirename))
-					}
-				})
-			}
-		})
-
-		if (wiresToLoadNames?.length) {
-			await dispatch(loadWiresOp(context, wiresToLoadNames))
+		if (wireNames.length) {
+			await dispatch(loadWiresOp(context, wireNames))
 		}
 
 		// Handle Events

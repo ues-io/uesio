@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewFile(key string) (*File, error) {
@@ -21,21 +21,23 @@ func NewFile(key string) (*File, error) {
 }
 
 type File struct {
-	ID        string            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name      string            `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace string            `yaml:"-" uesio:"-"`
-	FileName  string            `yaml:"fileName" uesio:"-"`
-	Workspace *Workspace        `yaml:"-" uesio:"uesio/studio.workspace"`
-	Content   *UserFileMetadata `yaml:"-" uesio:"uesio/studio.content"`
-	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"uesio/core.createdat"`
-	Public    bool              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID        string            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string            `yaml:"-" json:"uesio/core.uniquekey"`
+	Name      string            `yaml:"name" json:"uesio/studio.name"`
+	Namespace string            `yaml:"-" json:"-"`
+	FileName  string            `yaml:"fileName" json:"-"`
+	Workspace *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
+	Content   *UserFileMetadata `yaml:"-" json:"uesio/studio.content"`
+	itemMeta  *ItemMeta         `yaml:"-" json:"-"`
+	CreatedBy *User             `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64             `yaml:"-" json:"uesio/core.createdat"`
+	Public    bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type FileWrapper File
 
 func (f *File) GetCollectionName() string {
 	return f.GetBundleGroup().GetName()
@@ -117,7 +119,7 @@ func (f *File) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(f)
+	return node.Decode((*FileWrapper)(f))
 }
 
 func (f *File) IsPublic() bool {

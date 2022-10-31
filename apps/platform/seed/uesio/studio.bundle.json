@@ -1,65 +1,74 @@
 [
 	{
-		"app": {
-			"uniquekey": "uesio/core"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/core"
 		},
-		"description": "Uesio Base Functionality",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "Uesio base functionality",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/studio"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/studio"
 		},
-		"description": "The Uesio Configuration App",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "The uesio configuration app",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/io"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
 		},
-		"description": "Base Uesio Components",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "The viewbuilder App",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/lab"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
 		},
-		"description": "Experimental Components",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "Base uesio components",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/docs"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/lab"
 		},
-		"description": "Uesio Docs",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "Experimental components",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/web"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/docs"
 		},
-		"description": "Uesio Website",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "Uesio docs",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	},
 	{
-		"app": {
-			"uniquekey": "uesio/cms"
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/web"
 		},
-		"description": "Uesio CMS",
-		"major": 0,
-		"minor": 0,
-		"patch": 1
+		"uesio/studio.description": "Uesio website",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/cms"
+		},
+		"uesio/studio.description": "Uesio CMS",
+		"uesio/studio.major": 0,
+		"uesio/studio.minor": 0,
+		"uesio/studio.patch": 1
 	}
 ]

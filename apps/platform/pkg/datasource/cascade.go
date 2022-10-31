@@ -4,13 +4,14 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getCascadeDeletes(
 	wire *adapt.SaveOp,
 	connection adapt.Connection,
+	session *sess.Session,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
 
@@ -30,7 +31,7 @@ func getCascadeDeletes(
 
 				// Get the ids that we need to delete
 
-				if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
+				if wire.Metadata.GetFullName() != collectionKey || len(wire.Deletes) == 0 {
 					continue
 				}
 				for _, deletion := range wire.Deletes {
@@ -81,7 +82,7 @@ func getCascadeDeletes(
 
 				referencedCollection := referenceGroupMetadata.Collection
 
-				if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
+				if wire.Metadata.GetFullName() != collectionKey || len(wire.Deletes) == 0 {
 					continue
 				}
 
@@ -125,7 +126,7 @@ func getCascadeDeletes(
 					Query: true,
 				}
 
-				err := connection.Load(op)
+				err := connection.Load(op, session)
 				if err != nil {
 					return nil, errors.New("Cascade delete error")
 				}
@@ -135,7 +136,7 @@ func getCascadeDeletes(
 					currentCollectionIds = adapt.Collection{}
 				}
 
-				err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+				err = op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
 					refRK, err := refItem.GetField(adapt.ID_FIELD)
 					if err != nil {
@@ -168,7 +169,7 @@ func getCascadeDeletes(
 }
 
 func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	deletes, err := getCascadeDeletes(op, connection)
+	deletes, err := getCascadeDeletes(op, connection, session)
 	if err != nil {
 		return err
 	}

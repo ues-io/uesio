@@ -10,7 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
@@ -100,9 +99,12 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 				idMap = adapt.LocatorMap{}
 				idMaps[details.CollectionID] = idMap
 			}
-			idMap.AddID(details.RecordUniqueKey, adapt.ReferenceLocator{
+			err := idMap.AddID(details.RecordUniqueKey, adapt.ReferenceLocator{
 				Item: &ufm,
 			})
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		ufms = append(ufms, &ufm)
@@ -120,7 +122,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			{
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
-		}, adapt.UNIQUE_KEY_FIELD, false, func(item loadable.Item, matchIndexes []adapt.ReferenceLocator) error {
+		}, adapt.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item

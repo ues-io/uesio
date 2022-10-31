@@ -1,20 +1,21 @@
 package meta
 
 type App struct {
-	ID          string    `uesio:"uesio/core.id"`
-	UniqueKey   string    `yaml:"-" uesio:"uesio/core.uniquekey"`
-	FullName    string    `yaml:"-" uesio:"uesio/studio.fullname"`
-	Name        string    `uesio:"uesio/studio.name"`
-	User        *User     `yaml:"-" uesio:"uesio/studio.user"`
-	Description string    `uesio:"uesio/studio.description"`
-	Color       string    `uesio:"uesio/studio.color"`
-	Icon        string    `uesio:"uesio/studio.icon"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner       *User     `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy   *User     `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"uesio/core.createdat"`
+	ID          string    `json:"uesio/core.id"`
+	UniqueKey   string    `json:"uesio/core.uniquekey"`
+	FullName    string    `json:"uesio/studio.fullname"`
+	Name        string    `json:"uesio/studio.name"`
+	User        *User     `json:"uesio/studio.user"`
+	Description string    `json:"uesio/studio.description"`
+	Color       string    `json:"uesio/studio.color"`
+	Icon        string    `json:"uesio/studio.icon"`
+	Public      bool      `json:"uesio/studio.public"`
+	itemMeta    *ItemMeta `json:"-"`
+	CreatedBy   *User     `json:"uesio/core.createdby"`
+	Owner       *User     `json:"uesio/core.owner"`
+	UpdatedBy   *User     `json:"uesio/core.updatedby"`
+	UpdatedAt   int64     `json:"uesio/core.updatedat"`
+	CreatedAt   int64     `json:"uesio/core.createdat"`
 }
 
 func (a *App) GetCollectionName() string {

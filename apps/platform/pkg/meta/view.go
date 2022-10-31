@@ -3,28 +3,29 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type View struct {
-	ID         string     `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID         string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Name       string     `yaml:"name" json:"uesio/studio.name"`
+	Namespace  string     `yaml:"-" json:"-"`
+	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type ViewWrapper View
 
 func (v *View) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(v)
@@ -165,130 +166,5 @@ func (v *View) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(v)
-}
-
-func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {
-	if node == nil || node.Kind != yaml.SequenceNode {
-		return
-	}
-
-	for i := range node.Content {
-		comp := node.Content[i]
-		if isComponentLike(comp) {
-			compName := comp.Content[0].Value
-			depMap.Components[compName] = true
-			for i, prop := range comp.Content[1].Content {
-				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
-					if len(comp.Content[1].Content) > i {
-						valueNode := comp.Content[1].Content[i+1]
-						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-							depMap.Variants[compName+":"+valueNode.Value] = true
-						}
-					}
-				}
-				getComponentAreaDeps(prop, depMap)
-			}
-			if compName == "uesio/core.view" {
-				for i, prop := range comp.Content[1].Content {
-					if prop.Kind == yaml.ScalarNode && prop.Value == "view" {
-						if len(comp.Content[1].Content) > i {
-							valueNode := comp.Content[1].Content[i+1]
-							if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-								depMap.Views[valueNode.Value] = true
-							}
-						}
-					}
-					getComponentAreaDeps(prop, depMap)
-				}
-			}
-		}
-	}
-}
-
-func isComponentLike(node *yaml.Node) bool {
-	// It's a mappingNode
-	if node.Kind != yaml.MappingNode {
-		return false
-	}
-	if len(node.Content) != 2 {
-		return false
-	}
-	name := node.Content[0].Value
-	nameParts := strings.Split(name, ".")
-	if len(nameParts) != 2 {
-		return false
-	}
-	if node.Content[1].Kind != yaml.MappingNode && node.Content[1].Tag != "!!null" {
-		return false
-	}
-	return true
-}
-
-type ViewDepMap struct {
-	Components map[string]bool
-	Variants   map[string]bool
-	Views      map[string]bool
-	Wires      []NodePair
-}
-
-func NewViewDefMap() *ViewDepMap {
-	return &ViewDepMap{
-		Components: map[string]bool{},
-		Variants:   map[string]bool{},
-		Views:      map[string]bool{},
-		Wires:      []NodePair{},
-	}
-}
-
-func (v *View) GetDependencies() (*ViewDepMap, error) {
-
-	components, err := GetMapNode(&v.Definition, "components")
-	if err != nil {
-		return nil, err
-	}
-	panels, err := GetMapNode(&v.Definition, "panels")
-	if err != nil {
-		panels = nil
-	}
-
-	wires, err := GetMapNode(&v.Definition, "wires")
-	if err != nil {
-		wires = nil
-	}
-
-	depMap := NewViewDefMap()
-
-	getComponentAreaDeps(components, depMap)
-
-	if panels != nil && panels.Kind == yaml.MappingNode {
-		for i := range panels.Content {
-			if i%2 != 0 {
-				panel := panels.Content[i]
-				panelType, err := GetMapNode(panel, "uesio.type")
-				if err != nil {
-					return nil, err
-				}
-				if panelType.Kind == yaml.ScalarNode {
-					depMap.Components[panelType.Value] = true
-				}
-				for i := range panel.Content {
-					if i%2 != 0 {
-						node := panel.Content[i]
-						getComponentAreaDeps(node, depMap)
-					}
-				}
-			}
-		}
-	}
-
-	if wires != nil && wires.Kind == yaml.MappingNode {
-		wirePairs, err := GetMapNodes(wires)
-		if err != nil {
-			return nil, err
-		}
-		depMap.Wires = wirePairs
-	}
-
-	return depMap, nil
+	return node.Decode((*ViewWrapper)(v))
 }

@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent, useEffect } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -13,12 +13,13 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const {
 		path,
 		context,
-		definition: { params, view: viewDefId },
+		definition: { params, view: viewDefId, id },
 	} = props
 
 	const uesio = useUesio(props)
-	const componentId = path ? uesio.component.getId() : ""
-	const viewId = makeViewId(viewDefId, componentId)
+	uesio._componentType = "uesio/core.view"
+	const componentId = uesio.component.getId(id)
+	const viewId = makeViewId(viewDefId, path ? componentId : "")
 
 	const subViewClass = css({
 		pointerEvents: "none",
@@ -28,22 +29,24 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
+	const [paramState] = uesio.component.useState<Record<string, string>>(
+		componentId,
+		params
+	)
+
+	const mergedParams = context.mergeMap(paramState)
 
 	const viewContext = context.addFrame({
 		view: viewId,
 		viewDef: viewDefId,
-		params: context.mergeMap(params),
+		params: mergedParams,
 	})
 
-	const viewDefHasWires = viewDef?.wires && Object.keys(viewDef?.wires).length
-	const loaded = useRef<boolean>(!viewDefHasWires)
-	// We need to get load the wires here.
 	useEffect(() => {
-		loaded.current = true
 		appDispatch()(loadViewOp(viewContext))
-	}, [viewDefId, JSON.stringify(params)])
+	}, [viewDefId, JSON.stringify(mergedParams)])
 
-	if (!viewDef || !loaded.current) return null
+	if (!viewDef) return null
 
 	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
@@ -60,6 +63,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			context={viewContext.addFrame({
 				buildMode: !!context.getBuildMode() && !isSubView,
 			})}
+			message="Drag and drop any component here to get started."
 		/>
 	)
 
@@ -71,7 +75,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 		return (
 			<ComponentInternal
 				context={viewContext}
-				componentType="uesio/studio.runtime"
+				componentType="uesio/builder.runtime"
 				path=""
 			>
 				{slot}

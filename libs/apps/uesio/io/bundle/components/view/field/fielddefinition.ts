@@ -1,4 +1,4 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, metadata } from "@uesio/ui"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -10,6 +10,15 @@ type ReferenceFieldOptions = {
 	returnFields?: string[]
 	components?: definition.DefinitionList
 	template?: string
+	requirewriteaccess?: boolean
+}
+
+type ListFieldOptions = {
+	components?: definition.DefinitionList
+}
+
+type UserFieldOptions = {
+	subtitle?: string
 }
 
 type FieldDefinition = {
@@ -18,8 +27,11 @@ type FieldDefinition = {
 	label?: string
 	id?: string
 	displayAs?: string
-	reference: ReferenceFieldOptions
+	reference?: ReferenceFieldOptions
+	list?: ListFieldOptions
+	user?: UserFieldOptions
 	placeholder: string
+	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"
@@ -120,8 +132,10 @@ export {
 	FieldDefinition,
 	FieldState,
 	LabelPosition,
+	ListFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
+	UserFieldOptions,
 }
 
 export default FieldPropertyDefinition

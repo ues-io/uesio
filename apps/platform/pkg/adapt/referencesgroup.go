@@ -3,10 +3,10 @@ package adapt
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// ReferenceGroupRequest type
 type ReferenceGroupRequest struct {
 	Fields    []LoadRequestField
 	FieldsMap map[string]bool
@@ -14,10 +14,8 @@ type ReferenceGroupRequest struct {
 	Field     *FieldMetadata
 }
 
-// ReferenceGroupRegistry type
 type ReferenceGroupRegistry map[string]*ReferenceGroupRequest
 
-// AddFields function
 func (rr *ReferenceGroupRequest) AddFields(fields []LoadRequestField) {
 	for _, field := range fields {
 		_, ok := rr.FieldsMap[field.ID]
@@ -28,7 +26,6 @@ func (rr *ReferenceGroupRequest) AddFields(fields []LoadRequestField) {
 	}
 }
 
-// Add function
 func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *FieldMetadata, collectionMetadata *CollectionMetadata) *ReferenceGroupRequest {
 
 	rgr := &ReferenceGroupRequest{
@@ -43,13 +40,13 @@ func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *Field
 	return rgr
 }
 
-func loadData(op *LoadOp, connection Connection, index int) error {
+func loadData(op *LoadOp, connection Connection, session *sess.Session, index int) error {
 
 	if index == MAX_ITER_REF_GROUP {
 		return errors.New("You have reached the maximum limit of Reference Group")
 	}
 
-	err := connection.Load(op)
+	err := connection.Load(op, session)
 	if err != nil {
 		return err
 	}
@@ -58,13 +55,14 @@ func loadData(op *LoadOp, connection Connection, index int) error {
 		return nil
 	}
 
-	return loadData(op, connection, index+1)
+	return loadData(op, connection, session, index+1)
 }
 
 func HandleReferencesGroup(
 	connection Connection,
-	collection loadable.Group,
+	collection meta.Group,
 	referencedGroupCollections ReferenceGroupRegistry,
+	session *sess.Session,
 ) error {
 	ops := []*LoadOp{}
 	for refKey, ref := range referencedGroupCollections {
@@ -76,7 +74,7 @@ func HandleReferencesGroup(
 		ids := make([]string, idCount)
 		fieldIDIndex := 0
 
-		err := collection.Loop(func(item loadable.Item, index string) error {
+		err := collection.Loop(func(item meta.Item, index string) error {
 			idValue, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
@@ -126,7 +124,7 @@ func HandleReferencesGroup(
 	}
 
 	for _, op := range ops {
-		err := loadData(op, connection, 0)
+		err := loadData(op, connection, session, 0)
 		if err != nil {
 			return err
 		}
@@ -136,9 +134,9 @@ func HandleReferencesGroup(
 		op := ops[i]
 
 		referencedCollection := referencedGroupCollections[op.WireName]
-		collatedMap := map[string][]loadable.Item{}
+		collatedMap := map[string][]meta.Item{}
 
-		err := op.Collection.Loop(func(refItem loadable.Item, _ string) error {
+		err := op.Collection.Loop(func(refItem meta.Item, _ string) error {
 
 			refRK, err := refItem.GetField(referencedCollection.Field.ReferenceGroupMetadata.Field)
 			if err != nil {
@@ -152,7 +150,7 @@ func HandleReferencesGroup(
 
 			_, ok := collatedMap[refRKAsString]
 			if !ok {
-				collatedMap[refRKAsString] = []loadable.Item{}
+				collatedMap[refRKAsString] = []meta.Item{}
 			}
 
 			collatedMap[refRKAsString] = append(collatedMap[refRKAsString], refItem)
@@ -164,7 +162,7 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		err = collection.Loop(func(item loadable.Item, index string) error {
+		err = collection.Loop(func(item meta.Item, index string) error {
 
 			id, err := item.GetField(ID_FIELD)
 			if err != nil {

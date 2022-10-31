@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewAuthSource(key string) (*AuthSource, error) {
@@ -20,21 +20,23 @@ func NewAuthSource(key string) (*AuthSource, error) {
 }
 
 type AuthSource struct {
-	ID          string     `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey   string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name        string     `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace   string     `yaml:"-" uesio:"-"`
-	Type        string     `yaml:"type" uesio:"uesio/studio.type"`
-	Credentials string     `yaml:"credentials" uesio:"uesio/studio.credentials"`
-	Workspace   *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy   *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner       *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy   *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt   int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt   int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public      bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID          string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey   string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Name        string     `yaml:"name" json:"uesio/studio.name"`
+	Namespace   string     `yaml:"-" json:"-"`
+	Type        string     `yaml:"type" json:"uesio/studio.type"`
+	Credentials string     `yaml:"credentials" json:"uesio/studio.credentials"`
+	Workspace   *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta    *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy   *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner       *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy   *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt   int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt   int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public      bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type AuthSourceWrapper AuthSource
 
 func (as *AuthSource) GetCollectionName() string {
 	return as.GetBundleGroup().GetName()
@@ -107,7 +109,7 @@ func (as *AuthSource) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(as)
+	return node.Decode((*AuthSourceWrapper)(as))
 }
 
 func (as *AuthSource) IsPublic() bool {

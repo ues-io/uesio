@@ -3,34 +3,29 @@ package adapt
 import (
 	"encoding/json"
 
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-// CollectionMap struct
 type CollectionMap struct {
 	Data map[string]Item
 	IDs  []string
 }
 
-// GetItem function
-func (c *CollectionMap) GetItem(index int) loadable.Item {
+func (c *CollectionMap) GetItem(index int) meta.Item {
 	key := c.IDs[index]
 	item := c.Data[key]
 	return &item
 }
 
-// NewItem function
-func (c *CollectionMap) NewItem() loadable.Item {
+func (c *CollectionMap) NewItem() meta.Item {
 	return nil
 }
 
-// GetItems function
 func (c *CollectionMap) GetItems() interface{} {
 	return nil
 }
 
-// Loop function
-func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
+func (c *CollectionMap) Loop(iter meta.GroupIterator) error {
 	for index, key := range c.IDs {
 		err := iter(c.GetItem(index), key)
 		if err != nil {
@@ -40,7 +35,6 @@ func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
 	return nil
 }
 
-// Len function
 func (c *CollectionMap) Len() int {
 	return len(c.Data)
 }

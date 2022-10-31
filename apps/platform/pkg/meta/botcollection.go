@@ -6,8 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type BotCollection []*Bot
@@ -24,7 +22,7 @@ func (bc *BotCollection) GetFields() []string {
 	return StandardGetFields(&Bot{})
 }
 
-func (bc *BotCollection) NewItem() loadable.Item {
+func (bc *BotCollection) NewItem() Item {
 	bot := &Bot{}
 	*bc = append(*bc, bot)
 	return bot
@@ -97,11 +95,11 @@ func (bc *BotCollection) GetKeyFromPath(path string, namespace string, condition
 	return "", errors.New("Bad bundle conditions for bot: " + path)
 }
 
-func (bc *BotCollection) GetItem(index int) loadable.Item {
+func (bc *BotCollection) GetItem(index int) Item {
 	return (*bc)[index]
 }
 
-func (bc *BotCollection) Loop(iter loadable.GroupIterator) error {
+func (bc *BotCollection) Loop(iter GroupIterator) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index), strconv.Itoa(index))
 		if err != nil {

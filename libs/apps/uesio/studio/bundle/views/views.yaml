@@ -14,23 +14,11 @@ definition:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
-    views:
-      collection: uesio/studio.view
-      fields:
-        uesio/core.id:
-        uesio/core.updatedat:
-        uesio/core.updatedby:
-        uesio/core.createdat:
-        uesio/core.createdby:
-        uesio/studio.name:
-      order:
-        - field: uesio/core.updatedat
-          desc: false
+    allviews:
+      collection: uesio/studio.allmetadata
       conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.type
+          value: "views"
     newview:
       collection: uesio/studio.view
       fields:
@@ -91,6 +79,13 @@ definition:
                                     app: $Param{app}
                                 label: Generate List View
                                 generator: uesio/core.listview
+                            - uesio/studio.generatorbutton:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{app}
+                                label: Generate Detail View
+                                generator: uesio/core.detailview
                             - uesio/io.button:
                                 text: Create a New View
                                 uesio.variant: uesio/io.secondary
@@ -98,84 +93,68 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newView
                 - uesio/io.box:
-                    uesio.styles:
-                      root:
-                        display: flex
-                        alignItems: center
-                        gap: 5px
-                        padding: 10px
-                        margin: 40px 40px 0 40px
-                    components:
-                      - uesio/io.searchbox:
-                          wire: views
-                      - uesio/io.button:
-                          icon: sort
-                          text: A-Z
-                          uesio.variant: uesio/io.secondary
-                          signals:
-                            - signal: wire/SET_ORDER
-                              wire: views
-                              order:
-                                - field: uesio/studio.name
-                                  desc: false
-                            - signal: wire/LOAD
-                              wires:
-                                - workspaces
-                                - views
-                      - uesio/io.button:
-                          icon: sort
-                          text: Updated
-                          uesio.variant: uesio/io.secondary
-                          signals:
-                            - signal: wire/SET_ORDER
-                              wire: views
-                              order:
-                                - field: uesio/core.updatedat
-                                  desc: true
-                            - signal: wire/LOAD
-                              wires:
-                                - workspaces
-                                - views
-                - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.styles:
                       root:
-                        marginTop: 0px
+                        padding: 40px
                     components:
+                      - uesio/io.searchbox:
+                          wire: allviews
                       - uesio/io.table:
-                          uesio.variant: uesio/io.views
                           id: viewsTable
-                          wire: views
+                          wire: allviews
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              value: $Param{app}
                           columns:
-                            # field: uesio/studio.name
                             - label: View
                               components:
-                                - uesio/io.button:
-                                    icon: palette
+                                - uesio/studio.iconlabel:
                                     uesio.styles:
                                       root:
-                                        paddingLeft: 16px
-                                        display: flex;
-                                        position: absolute
-                                        inset: 0
+                                        padding: 16px
                                     text: ${uesio/studio.name}
-                                    signals:
-                                      - signal: "route/NAVIGATE"
-                                        path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
-                                  # Empty element to take up space in the table as the real button is absolute
-                                - uesio/io.button:
-                                    icon: palette
-                                    uesio.styles:
-                                      root:
-                                        opacity: 0
-                                        pointerEvents: 0
-                                        position: relative
-                                        z-index: -99
-                                    text: ${uesio/studio.name}
-                            - label: Updated
-                              field: uesio/core.updatedat
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
                             - field: uesio/core.updatedby
+                              user:
+                                subtitle: $Time{uesio/core.updatedat}
                             - field: uesio/core.createdby
+                              user:
+                                subtitle: $Time{uesio/core.createdat}
+                          rowactions:
+                            - text: Details
+                              type: DEFAULT
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: "app/$Param{app}/workspace/$Param{workspacename}/views/${uesio/studio.name}"
+                          pagesize: 10
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Installed Views
+                      - uesio/io.table:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          wire: allviews
+                          recordDisplay:
+                            - field: uesio/studio.namespace
+                              operator: NOT_EQUALS
+                              value: $Param{app}
+                          columns:
+                            - label: View
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.styles:
+                                      root:
+                                        padding: 16px
+                                    text: ${uesio/studio.name}
+                                    icon: ${uesio/studio.appicon}
+                                    color: ${uesio/studio.appcolor}
+                          pagesize: 10
 
   panels:
     newView:

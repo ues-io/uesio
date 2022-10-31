@@ -6,24 +6,26 @@ import (
 	"time"
 
 	"github.com/francoispqt/gojay"
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 type Theme struct {
-	ID         string     `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Name       string     `yaml:"name" uesio:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" uesio:"-"`
-	Definition yaml.Node  `yaml:"definition" uesio:"uesio/studio.definition"`
-	Workspace  *Workspace `yaml:"-" uesio:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy  *User      `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" uesio:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID         string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Name       string     `yaml:"name" json:"uesio/studio.name"`
+	Namespace  string     `yaml:"-" json:"-"`
+	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
+	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type ThemeWrapper Theme
 
 func (t *Theme) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(t)
@@ -155,7 +157,7 @@ func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(t)
+	return node.Decode((*ThemeWrapper)(t))
 }
 
 func (t *Theme) IsPublic() bool {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/humandad/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 func NewCollection(key string) (*Collection, error) {
@@ -34,44 +34,46 @@ func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 type RecordChallengeTokenDefinition struct {
-	Type            string            `yaml:"type,omitempty" uesio:"type" json:"type"`
-	Collection      string            `yaml:"collection,omitempty" uesio:"collection" json:"collection"`
-	Token           string            `yaml:"token" uesio:"token" json:"token"`
-	UserAccessToken string            `yaml:"userAccessToken" uesio:"userAccessToken" json:"userAccessToken"`
-	Access          string            `yaml:"access" uesio:"access" json:"access"`
-	Conditions      []*TokenCondition `yaml:"conditions,omitempty" uesio:"conditions" json:"conditions"`
+	Type            string            `yaml:"type,omitempty" json:"type"`
+	Collection      string            `yaml:"collection,omitempty" json:"collection"`
+	Token           string            `yaml:"token" json:"token"`
+	UserAccessToken string            `yaml:"userAccessToken" json:"userAccessToken"`
+	Access          string            `yaml:"access" json:"access"`
+	Conditions      []*TokenCondition `yaml:"conditions,omitempty" json:"conditions"`
 }
 
 type TokenCondition struct {
-	Field string `yaml:"field" uesio:"field" json:"field"`
-	Value string `yaml:"value" uesio:"value" json:"value"`
+	Field string      `yaml:"field" json:"field"`
+	Value interface{} `yaml:"value" json:"value"`
 }
 
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"uesio/core.id"`
-	UniqueKey             string                            `yaml:"-" uesio:"uesio/core.uniquekey"`
-	Type                  string                            `yaml:"type,omitempty" uesio:"uesio/studio.type"`
-	Name                  string                            `yaml:"name" uesio:"uesio/studio.name"`
-	Label                 string                            `yaml:"label" uesio:"uesio/studio.label"`
-	PluralLabel           string                            `yaml:"pluralLabel" uesio:"uesio/studio.plurallabel"`
-	Namespace             string                            `yaml:"-" uesio:"-"`
-	DataSourceRef         string                            `yaml:"dataSource" uesio:"uesio/studio.datasource"`
-	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" uesio:"uesio/studio.uniquekey"`
-	NameField             string                            `yaml:"nameField" uesio:"uesio/studio.namefield"`
-	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace             *Workspace                        `yaml:"-" uesio:"uesio/studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" uesio:"uesio/core.createdby"`
-	Owner                 *User                             `yaml:"-" uesio:"uesio/core.owner"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"uesio/core.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"uesio/core.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"uesio/core.createdat"`
-	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
-	Access                string                            `yaml:"access,omitempty" uesio:"uesio/studio.access"`
-	AccessField           string                            `yaml:"accessField,omitempty" uesio:"-"`
-	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"uesio/studio.recordchallengetokens"`
-	TableName             string                            `yaml:"tablename,omitempty" uesio:"uesio/studio.tablename"`
-	Public                bool                              `yaml:"public,omitempty" uesio:"uesio/studio.public"`
+	ID                    string                            `yaml:"-" json:"uesio/core.id"`
+	UniqueKey             string                            `yaml:"-" json:"uesio/core.uniquekey"`
+	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
+	Name                  string                            `yaml:"name" json:"uesio/studio.name"`
+	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
+	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
+	Namespace             string                            `yaml:"-" json:"-"`
+	DataSourceRef         string                            `yaml:"dataSource,omitempty" json:"uesio/studio.datasource"`
+	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
+	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
+	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
+	Workspace             *Workspace                        `yaml:"-" json:"uesio/studio.workspace"`
+	CreatedBy             *User                             `yaml:"-" json:"uesio/core.createdby"`
+	Owner                 *User                             `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy             *User                             `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt             int64                             `yaml:"-" json:"uesio/core.createdat"`
+	itemMeta              *ItemMeta                         `yaml:"-" json:"-"`
+	Access                string                            `yaml:"access,omitempty" json:"uesio/studio.access"`
+	AccessField           string                            `yaml:"accessField,omitempty" json:"-"`
+	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
+	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
+	Public                bool                              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
+
+type CollectionWrapper Collection
 
 func (c *Collection) GetCollectionName() string {
 	return c.GetBundleGroup().GetName()
@@ -157,7 +159,21 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
-	return node.Decode(c)
+
+	return node.Decode((*CollectionWrapper)(c))
+}
+
+func (c *Collection) MarshalYAML() (interface{}, error) {
+
+	if c.DataSourceRef == "uesio/core.platform" {
+		c.DataSourceRef = ""
+	}
+
+	if c.NameField == "uesio/core.id" {
+		c.NameField = ""
+	}
+
+	return (*CollectionWrapper)(c), nil
 }
 
 func (c *Collection) IsPublic() bool {

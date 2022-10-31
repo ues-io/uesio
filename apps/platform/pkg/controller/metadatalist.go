@@ -10,16 +10,17 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]routing.MetadataResponse, error) {
-	collectionKeyMap := map[string]routing.MetadataResponse{}
+func getMetadataList(metadatatype, namespace, grouping string, session *sess.Session) (map[string]datasource.MetadataResponse, error) {
+	collectionKeyMap := map[string]datasource.MetadataResponse{}
 
-	conditions := meta.GetGroupingConditions(metadatatype, grouping)
+	conditions, err := meta.GetGroupingConditions(metadatatype, grouping)
+	if err != nil {
+		return nil, err
+	}
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)
 	if err != nil {
@@ -46,7 +47,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	appData, err := routing.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames, session)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	err = collection.Loop(func(item loadable.Item, _ string) error {
+	err = collection.Loop(func(item meta.Item, _ string) error {
 		bundleable := item.(meta.BundleableItem)
 		key := bundleable.GetKey()
 		ns := bundleable.GetNamespace()

@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -95,7 +96,9 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 
 	var botFunction BotFunc
 
-	switch request.CollectionName {
+	collectionName := request.Metadata.GetFullName()
+
+	switch collectionName {
 	case "uesio/core.userfile":
 		botFunction = runUserFileBeforeSaveBot
 	case "uesio/studio.field":
@@ -114,6 +117,8 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		botFunction = runAppBeforeSaveBot
 	case "uesio/core.usage":
 		botFunction = runUsageBeforeSaveBot
+	case "uesio/core.user":
+		botFunction = runUserBeforeSaveBot
 	}
 
 	if botFunction != nil {
@@ -125,7 +130,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 
 	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("BEFORESAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI)
 	}, session)
 	if err != nil {
@@ -142,6 +147,10 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 	switch op.CollectionName {
 	case "uesio/studio.allmetadata":
 		botFunction = runAllMetadataLoadBot
+	case "tcm/chronos.project":
+		botFunction = clickup.ProjectLoadBot
+	case "tcm/chronos.task":
+		botFunction = clickup.TaskLoadBot
 	}
 
 	if botFunction != nil {
@@ -161,7 +170,9 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 	var botFunction BotFunc
 
-	switch request.CollectionName {
+	collectionName := request.Metadata.GetFullName()
+
+	switch collectionName {
 	case "uesio/core.user":
 		botFunction = runUserAfterSaveBot
 	case "uesio/studio.site":
@@ -185,7 +196,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 
 	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("AFTERSAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI)
 	}, session)
 	if err != nil {
