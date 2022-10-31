@@ -2,59 +2,98 @@ import { Context } from "../../../context/context"
 import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
-import { ThunkFunc } from "../../../store/store"
+import { appDispatch, getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
-import { selectors as viewSelectors } from "../../viewdef"
 import { dispatchRouteDeps } from "../../route/utils"
 import { batch } from "react-redux"
+import { useEffect, useRef } from "react"
+import { ViewDefinition } from "../../../definition/viewdef"
+import { platform } from "../../../platform/platform"
 
-export default (context: Context): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		// First check to see if we have the viewDef
-		const viewDefId = context.getViewDefId()
-		if (!viewDefId) throw new Error("No View Def Context Provided")
+const usePrevious = <T>(value: T): T | undefined => {
+	const ref = useRef<T>()
+	useEffect(() => {
+		ref.current = value
+	})
+	return ref.current
+}
 
-		if (context.getBuildMode()) {
-			const viewDef = viewSelectors.selectById(getState(), viewDefId)
-			if (!viewDef) {
-				const deps = await platform.getBuilderDeps(context)
-				if (!deps) throw new Error("Could not get View Def")
-				batch(() => {
-					dispatchRouteDeps(deps, dispatch)
-				})
+const useLoadWires = (
+	context: Context,
+	viewDef: ViewDefinition | undefined
+) => {
+	const viewDefId = context.getViewDefId()
+	if (!viewDefId) throw new Error("No View Def Context Provided")
+
+	useEffect(() => {
+		;(async () => {
+			if (context.getBuildMode()) {
+				if (!viewDef) {
+					const deps = await platform.getBuilderDeps(context)
+					if (!deps) throw new Error("Could not get View Def")
+					batch(() => {
+						dispatchRouteDeps(deps, appDispatch())
+					})
+				}
 			}
-		}
+		})()
+	}, [viewDefId])
 
-		const state = getState()
-		const viewDef = viewSelectors.selectById(state, viewDefId)
+	if (!viewDef) throw new Error("Could not get View Def")
 
-		if (!viewDef) throw new Error("Could not get View Def")
+	const params = context.getParams()
 
-		const definition = viewDef.definition
-		const wires = definition.wires || {}
-		const viewId = context.getViewId()
-		const wireNames = Object.keys(wires)
+	const oldParams = usePrevious(params)
+	const oldWires = usePrevious(viewDef.wires)
 
-		const wiresToInit = Object.fromEntries(
-			Object.entries(wires).flatMap(([wirename, wireDef]) => {
-				const foundWire = selectWire(state, viewId, wirename)
-				return foundWire ? [] : [[wirename, wireDef]]
-			})
-		)
+	useEffect(() => {
+		;(async () => {
+			const wires = viewDef.wires || {}
+			const wireNames = Object.keys(wires)
+			if (!wireNames.length) return
+			const state = getCurrentState()
 
-		if (Object.keys(wiresToInit).length) {
-			dispatch(initializeWiresOp(context, wiresToInit))
-		}
+			const paramsChanged = oldParams !== params
 
-		if (wireNames.length) {
-			await dispatch(loadWiresOp(context, wireNames))
-		}
+			const viewId = context.getViewId()
 
-		// Handle Events
-		const onloadEvents = definition.events?.onload
-		if (onloadEvents) {
-			await runMany(onloadEvents, context)
-		}
+			const wiresToInit = Object.fromEntries(
+				Object.entries(wires).flatMap(([wirename, wireDef]) => {
+					const foundWire = selectWire(state, viewId, wirename)
+					const isPreloaded = foundWire?.preloaded
+					const isUnchanged =
+						!paramsChanged && wireDef === oldWires?.[wirename]
+					return isPreloaded || isUnchanged
+						? []
+						: [[wirename, wireDef]]
+				})
+			)
 
-		return context
-	}
+			if (Object.keys(wiresToInit).length) {
+				appDispatch()(initializeWiresOp(context, wiresToInit))
+			}
+
+			const wiresToLoad = Object.fromEntries(
+				Object.entries(wires).flatMap(([wirename, wireDef]) => {
+					const isUnchanged =
+						!paramsChanged && wireDef === oldWires?.[wirename]
+					return isUnchanged ? [] : [[wirename, wireDef]]
+				})
+			)
+
+			if (Object.keys(wiresToLoad).length) {
+				await appDispatch()(
+					loadWiresOp(context, Object.keys(wiresToLoad))
+				)
+			}
+
+			// Handle Events
+			const onloadEvents = viewDef.events?.onload
+			if (onloadEvents) {
+				await runMany(onloadEvents, context)
+			}
+		})()
+	}, [viewDefId, JSON.stringify(params), viewDef.wires])
+}
+
+export { useLoadWires }
