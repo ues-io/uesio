@@ -7,7 +7,14 @@ type T = {
 	path: string
 	context: context.Context
 }
-type SignalBand = "WIRE" | "ROUTE" | "USER" | "BOT" | "PANEL" | "NOTIFICATION"
+type SignalBand =
+	| "WIRE"
+	| "ROUTE"
+	| "USER"
+	| "BOT"
+	| "PANEL"
+	| "NOTIFICATION"
+	| "COMPONENT"
 const bands: SignalBand[] = [
 	"WIRE",
 	"ROUTE",
@@ -15,6 +22,7 @@ const bands: SignalBand[] = [
 	"BOT",
 	"PANEL",
 	"NOTIFICATION",
+	"COMPONENT",
 ]
 const addBlankSelectOption = collection.addBlankSelectOption
 
