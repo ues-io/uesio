@@ -40,14 +40,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	if (!componentKey) throw new Error("Bad component key")
 
-	const valueAPI = getValueAPI(
-		"viewdef",
-		viewDefId,
-		path,
-		viewDef,
-		uesio,
-		context
-	)
+	const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef, uesio)
 
 	const [componentNamespace] = component.path.parseKey(componentKey)
 
