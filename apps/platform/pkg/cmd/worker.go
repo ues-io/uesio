@@ -74,50 +74,73 @@ func UsageJob() error {
 		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 	}
 
-	changes := adapt.Collection{}
+	changesByTenant := map[string]adapt.Collection{}
+
 	for i, key := range keys {
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
 			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 		}
 
+		tenantType := keyParts[1]
+		if tenantType != "site" {
+			continue
+		}
+
+		tenantID := fmt.Sprintf("%s:%s", keyParts[2], keyParts[3])
+
+		_, ok := changesByTenant[tenantID]
+		if !ok {
+			changesByTenant[tenantID] = adapt.Collection{}
+		}
+
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/core.user", &meta.User{
 			ID: keyParts[4],
 		})
-		usageItem.SetField("uesio/core.tenanttype", keyParts[1])
-		usageItem.SetField("uesio/core.tenantid", keyParts[2]+":"+keyParts[3])
 		usageItem.SetField("uesio/core.day", keyParts[5])
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/core.metadataname", keyParts[8])
 		total, _ := strconv.ParseFloat(values[i], 64)
 		usageItem.SetField("uesio/core.total", total)
-		changes = append(changes, &usageItem)
+		changesByTenant[tenantID] = append(changesByTenant[tenantID], &usageItem)
 	}
 
-	if len(changes) > 0 {
-		requests := []datasource.SaveRequest{
-			{
-				Collection: "uesio/core.usage",
-				Wire:       "CoolWireName",
-				Changes:    &changes,
-				Options:    &adapt.SaveOptions{Upsert: true},
-			},
-		}
+	session, err := auth.GetStudioSystemSession(nil)
+	if err != nil {
+		return err
+	}
 
-		session, err := auth.GetStudioSystemSession(nil)
-		if err != nil {
-			return err
-		}
-		connection, err := datasource.GetPlatformConnection(session)
-		if err != nil {
-			return err
-		}
+	connection, err := datasource.GetPlatformConnection(session)
+	if err != nil {
+		return err
+	}
 
-		err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
-		if err != nil {
-			return errors.New("Failed to update usage events: " + err.Error())
+	for siteKey, changes := range changesByTenant {
+		if len(changes) > 0 {
+
+			//This creates a copy of the session
+			inContextSession := session.RemoveWorkspaceContext()
+
+			err = datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+			if err != nil {
+				return err
+			}
+
+			requests := []datasource.SaveRequest{
+				{
+					Collection: "uesio/core.usage",
+					Wire:       "CoolWireName",
+					Changes:    &changes,
+					Options:    &adapt.SaveOptions{Upsert: true},
+				},
+			}
+
+			err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+			if err != nil {
+				return errors.New("Failed to update usage events: " + err.Error())
+			}
 		}
 	}
 
