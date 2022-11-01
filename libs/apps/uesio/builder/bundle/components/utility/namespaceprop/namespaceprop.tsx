@@ -1,5 +1,6 @@
-import { hooks, builder } from "@uesio/ui"
+import { hooks, builder, collection } from "@uesio/ui"
 import SelectProp from "../selectprop/selectprop"
+const addBlankSelectOption = collection.addBlankSelectOption
 
 const NamespaceProp: builder.PropComponent<builder.NamespaceProp> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -16,7 +17,7 @@ const NamespaceProp: builder.PropComponent<builder.NamespaceProp> = (props) => {
 			descriptor={{
 				...props.descriptor,
 				type: "SELECT",
-				options,
+				options: addBlankSelectOption(options, "Select a namespace"),
 			}}
 		/>
 	)
