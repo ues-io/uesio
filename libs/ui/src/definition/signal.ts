@@ -21,13 +21,13 @@ type ComponentSignalDispatcher<T> = (
 type SignalDescriptor = {
 	label: string
 	description: string
-	properties: (signal: SignalDefinition) => PropDescriptor[]
+	properties: PropDescriptor[]
 	dispatcher: SignalDispatcher
 }
 
 type ComponentSignalDescriptor<T = PlainComponentState> = {
 	label?: string
-	properties?: (signal: SignalDefinition) => PropDescriptor[]
+	properties?: PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher<T>
 	target?: string
 }

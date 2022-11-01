@@ -9,21 +9,21 @@ const toggleMode: signal.ComponentSignalDescriptor<ModeState> = {
 		state.mode = state.mode === "READ" || !state.mode ? "EDIT" : "READ"
 	},
 	label: "Toggle Mode",
-	properties: () => [],
+	properties: [],
 }
 const setReadMode: signal.ComponentSignalDescriptor<ModeState> = {
 	dispatcher: (state) => {
 		state.mode = "READ"
 	},
 	label: "Read Mode",
-	properties: () => [],
+	properties: [],
 }
 const setEditMode: signal.ComponentSignalDescriptor<ModeState> = {
 	dispatcher: (state) => {
 		state.mode = "EDIT"
 	},
 	label: "Edit Mode",
-	properties: () => [],
+	properties: [],
 }
 
 const useMode = (

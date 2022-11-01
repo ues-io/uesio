@@ -23,7 +23,7 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			state[signal.param] = value
 		},
 		label: "Set Param",
-		properties: () => [],
+		properties: [],
 	},
 	SET_PARAMS: {
 		dispatcher: (
@@ -37,7 +37,7 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			})
 		},
 		label: "Set Params",
-		properties: () => [],
+		properties: [],
 	},
 }
 

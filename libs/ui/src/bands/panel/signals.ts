@@ -16,7 +16,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.toggle(context, signal.panel),
 		label: "Toggle",
 		description: "Toggle panel status",
-		properties: () => [
+		properties: [
 			{
 				type: "TEXT",
 				name: "panel",
@@ -29,7 +29,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.open(context, signal.panel),
 		label: "Open",
 		description: "Open panel",
-		properties: () => [
+		properties: [
 			{
 				type: "TEXT",
 				name: "panel",
@@ -42,7 +42,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.close(context, signal.panel),
 		label: "Close",
 		description: "Close panel",
-		properties: () => [
+		properties: [
 			{
 				type: "TEXT",
 				name: "panel",

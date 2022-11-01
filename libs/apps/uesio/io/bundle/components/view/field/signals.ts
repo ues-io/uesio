@@ -18,14 +18,14 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 			)
 		},
 		label: "Save File",
-		properties: () => [],
+		properties: [],
 	},
 	CANCEL_FILE: {
 		dispatcher: (state) => {
 			state.value = state.originalValue
 		},
 		label: "Cancel File",
-		properties: () => [],
+		properties: [],
 	},
 }
 

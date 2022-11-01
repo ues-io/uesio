@@ -30,7 +30,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.signup(context, signal.signupMethod, signal.payload),
 		label: "Signup",
 		description: "Signup",
-		properties: () => [
+		properties: [
 			{
 				name: "signupMethod",
 				label: "Signup Method",
@@ -52,7 +52,7 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 		label: "SignUp Confirmation",
 		description: "SignUp Confirmation",
-		properties: () => [
+		properties: [
 			{
 				name: "authSource",
 				label: "Auth Source",
@@ -70,7 +70,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.login(context, signal.authSource, signal.payload),
 		label: "Login",
 		description: "Login",
-		properties: () => [
+		properties: [
 			{
 				name: "authSource",
 				label: "Auth Source",
@@ -88,7 +88,7 @@ const signals: Record<string, SignalDescriptor> = {
 			operations.logout(context),
 		label: "Logout",
 		description: "Logout",
-		properties: () => [],
+		properties: [],
 	},
 	[`${USER_BAND}/CHECK_AVAILABILITY`]: {
 		dispatcher: (signal: UsernameTestSignal, context: Context) =>
@@ -100,7 +100,7 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 		label: "Check availability",
 		description: "Check username availability",
-		properties: () => [],
+		properties: [],
 	},
 	[`${USER_BAND}/FORGOT_PASSWORD`]: {
 		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
@@ -111,7 +111,7 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 		label: "Forgot Password",
 		description: "Forgot Password",
-		properties: () => [
+		properties: [
 			{
 				name: "authSource",
 				label: "Auth Source",
@@ -133,7 +133,7 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 		label: "Forgot Password Confirmation",
 		description: "Forgot Password Confirmation",
-		properties: () => [
+		properties: [
 			{
 				name: "authSource",
 				label: "Auth Source",

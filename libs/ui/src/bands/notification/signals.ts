@@ -37,7 +37,7 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		label: "Add Notification",
 		description: "Add Notification",
-		properties: () => [
+		properties: [
 			{
 				type: "TEXT",
 				name: "severity",
@@ -64,7 +64,7 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		label: "Remove Notification",
 		description: "Removes Notification",
-		properties: () => [
+		properties: [
 			{
 				type: "TEXT",
 				name: "id",

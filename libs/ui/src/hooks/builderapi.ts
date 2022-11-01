@@ -9,7 +9,6 @@ import {
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
-import { SignalDefinition } from "../definition/signal"
 import {
 	setActiveNode,
 	setDragNode,
@@ -326,8 +325,8 @@ class BuilderAPI {
 			[metadataType]
 		)
 
-	getSignalProperties = (signal: SignalDefinition) =>
-		this.uesio.signal.getProperties(signal)
+	// getSignalProperties = (signal: SignalDefinition) =>
+	// 	this.uesio.signal.getProperties(signal)
 
 	useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
 		const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)

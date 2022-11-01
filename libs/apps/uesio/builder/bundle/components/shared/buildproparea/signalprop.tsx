@@ -33,9 +33,7 @@ const SignalProp: FC<T> = (props) => {
 	}))
 
 	const selectedSignalProperties =
-		uesio.signal
-			.getSignalDescriptor(signalName)
-			?.properties({ signal: signalName }) || []
+		uesio.signal.getSignalDescriptor(signalName)?.properties || []
 
 	// When changing signal, don't throw away values we can re-use.
 	const getExistingValues = () => {

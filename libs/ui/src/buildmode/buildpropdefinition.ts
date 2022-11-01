@@ -157,7 +157,7 @@ interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 
 interface ConditionProp extends DefinitionBasedPropDescriptor {
 	type: "CONDITION"
-	wire?: string
+	wireField: string
 }
 
 interface NamespaceProp extends BasePropDescriptor {
@@ -205,7 +205,7 @@ interface MetadataProp extends BasePropDescriptor {
 interface BotProp extends BasePropDescriptor {
 	type: "BOT"
 	botType: "LISTENER"
-	namespace?: string
+	namespacePath?: string
 }
 interface SelectProp extends BasePropDescriptor {
 	type: "SELECT"
