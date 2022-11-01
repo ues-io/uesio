@@ -42,12 +42,11 @@ const SignalProp: FC<T> = (props) => {
 			string,
 			definition.Definition
 		>
+		if (!currentDef) return {}
 		return selectedSignalProperties.reduce(
-			(prev, property) => ({
+			(prev, { name }) => ({
 				...prev,
-				...(currentDef && currentDef
-					? { [property.name]: currentDef[property.name] }
-					: {}),
+				[name]: currentDef[name],
 			}),
 			{}
 		)
