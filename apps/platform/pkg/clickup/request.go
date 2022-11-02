@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/localcache"
 )
 
 // GET teams
@@ -25,7 +27,10 @@ func makeRequest(data interface{}, url string) error {
 
 	fullURL := fmt.Sprintf("%s/%s", BASE_URL, url)
 
-	fmt.Println(fullURL)
+	cachedResponse, gotCache := localcache.GetCacheEntry("web-request", fullURL)
+	if gotCache {
+		return json.Unmarshal(cachedResponse.([]byte), data)
+	}
 
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
@@ -41,11 +46,24 @@ func makeRequest(data interface{}, url string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		data, err := ioutil.ReadAll(resp.Body)
+		responseData, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}
-		return errors.New(string(data))
+		return errors.New(string(responseData))
+	}
+
+	if !gotCache {
+		err := json.NewDecoder(resp.Body).Decode(data)
+		if err != nil {
+			return err
+		}
+		dataToCache, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		localcache.SetCacheEntry("web-request", fullURL, dataToCache)
+		return nil
 	}
 
 	return json.NewDecoder(resp.Body).Decode(data)
