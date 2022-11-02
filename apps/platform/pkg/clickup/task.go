@@ -22,7 +22,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 	metadata := connection.GetMetadata()
 
-	collectionMetadata, err := metadata.GetCollection("tcm/chronos.task")
+	collectionMetadata, err := metadata.GetCollection("tcm/timetracker.task")
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 	listIDCondition := op.Conditions[0]
 
-	if listIDCondition.Field != "tcm/chronos.list" {
+	if listIDCondition.Field != "tcm/timetracker.list" {
 		return errors.New("The first condition must be on the type field")
 	}
 
@@ -42,7 +42,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "name",
-		Namespace:  "tcm/chronos",
+		Namespace:  "tcm/timetracker",
 		Createable: false,
 		Accessible: true,
 		Updateable: false,
@@ -69,8 +69,8 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		fakeID, _ := shortid.Generate()
 
 		opItem.SetField("uesio/core.id", fakeID)
-		opItem.SetField("tcm/chronos.id", task.ID)
-		opItem.SetField("tcm/chronos.name", task.Name)
+		opItem.SetField("tcm/timetracker.id", task.ID)
+		opItem.SetField("tcm/timetracker.name", task.Name)
 	}
 
 	return nil

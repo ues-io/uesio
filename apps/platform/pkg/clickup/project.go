@@ -27,7 +27,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	metadata := connection.GetMetadata()
 
-	collectionMetadata, err := metadata.GetCollection("tcm/chronos.project")
+	collectionMetadata, err := metadata.GetCollection("tcm/timetracker.project")
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "name",
-		Namespace:  "tcm/chronos",
+		Namespace:  "tcm/timetracker",
 		Createable: false,
 		Accessible: true,
 		Updateable: false,
@@ -55,7 +55,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "lists",
-		Namespace:  "tcm/chronos",
+		Namespace:  "tcm/timetracker",
 		Createable: false,
 		Accessible: true,
 		Updateable: false,
@@ -79,8 +79,8 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		fakeID, _ := shortid.Generate()
 
 		opItem.SetField("uesio/core.id", fakeID)
-		opItem.SetField("tcm/chronos.name", project.Name)
-		opItem.SetField("tcm/chronos.lists", project.Lists)
+		opItem.SetField("tcm/timetracker.name", project.Name)
+		opItem.SetField("tcm/timetracker.lists", project.Lists)
 	}
 
 	return nil
