@@ -158,16 +158,24 @@ const SignalProp: FC<T> = (props) => {
 					return valueAPI.get(path)
 				},
 				set: (setPath, value) => {
-					// The first part of the signal name. e.g. wire/...
+					// The first part of the signal name: [component/uesio/io.list/]...
 					if (
 						setPath?.endsWith(`["band"]`) ||
 						setPath?.endsWith(`["component"]`)
-					)
+					) {
 						return valueAPI.set(path + `["signal"]`, value)
-
+					}
+					// .../[TOGGLE_MODE]
 					if (setPath?.endsWith(`["signal"]`)) {
 						return valueAPI.set(path, {
-							signal: value,
+							signal:
+								value ||
+								// keep beginning of signalstring when no signal is given, we dont want to reset the other selectfields
+								`${band.toLowerCase()}${
+									selectedComponent
+										? `/${selectedComponent}`
+										: ``
+								}`,
 							...getExistingValues(),
 						})
 					}
