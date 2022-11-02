@@ -77,6 +77,20 @@ func GetStudioSite() (*meta.Site, error) {
 	return site, nil
 }
 
+func GetSystemSessionByKey(siteKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
+	site, err := datasource.QuerySiteByKey(siteKey, session, connection)
+	if err != nil {
+		return nil, err
+	}
+	bundleDef, err := bundle.GetSiteAppBundle(site)
+	if err != nil {
+		return nil, err
+	}
+
+	site.SetAppBundle(bundleDef)
+	return GetSystemSession(site, connection)
+}
+
 func GetAnonSession(site *meta.Site) *sess.Session {
 
 	session := sess.NewSession(nil, &meta.User{

@@ -12,7 +12,7 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 
 	user := session.GetUserInfo()
 
-	if user.Username == "uesio" || user.Username == "boot" {
+	if user.Username == "boot" || user.Username == "system" {
 		return nil
 	}
 
