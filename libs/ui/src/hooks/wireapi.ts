@@ -90,7 +90,7 @@ class WireAPI {
 		return wire
 	}
 
-	useWires(wireNames: string[]) {
+	useWires(wireNames: string[]): { [k: string]: Wire | undefined } {
 		const view = this.uesio.getViewId() || ""
 		const fullWireIds = wireNames.map((wirename) =>
 			getFullWireId(view, wirename)
@@ -102,8 +102,11 @@ class WireAPI {
 		const collections = useCollections(collectionNames)
 
 		return Object.fromEntries(
-			Object.entries(plainWires).map(([key, plainWire]) => {
-				const plainCollection = collections[key]
+			Object.entries(plainWires).map(([, plainWire]) => {
+				if (!plainWire || !plainWire.collection)
+					return [plainWire?.name, undefined]
+
+				const plainCollection = collections[plainWire.collection]
 				if (!plainCollection) return [plainWire?.name, undefined]
 				return [
 					plainWire?.name,
