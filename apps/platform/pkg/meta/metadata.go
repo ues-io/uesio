@@ -151,6 +151,7 @@ var METADATA_NAME_MAP = map[string]string{
 	"VIEW":             "views",
 	"DATASOURCE":       "datasources",
 	"AUTHSOURCE":       "authsources",
+	"SIGNUPMETHOD":     "signupmethods",
 	"SECRET":           "secrets",
 	"THEME":            "themes",
 	"SELECTLIST":       "selectlists",

@@ -58,6 +58,7 @@ definition:
         uesio/core.lastname:
         uesio/core.profile:
         uesio/core.type:
+        uesio/core.email:
       init:
         query: false
         create: true
@@ -156,6 +157,8 @@ definition:
                   fieldId: uesio/core.firstname
               - uesio/io.field:
                   fieldId: uesio/core.lastname
+              - uesio/io.field:
+                  fieldId: uesio/core.email
               - uesio/studio.metadatafield:
                   uesio.context:
                     siteadmin:

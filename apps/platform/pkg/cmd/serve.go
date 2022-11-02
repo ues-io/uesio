@@ -160,6 +160,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/userfiles/download", controller.DownloadUserFile).Methods("GET")
 	siteAdminAPI(sar, "/userfiles/upload", controller.UploadUserFile).Methods("POST")
 	siteAdminAPI(sar, "/userfiles/delete/{fileid:.*}", controller.DeleteUserFile).Methods("POST")
+	siteAdminAPI(sar, "/auth/"+getItemParam()+"/createlogin", controller.CreateLogin).Methods("POST")
 	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
