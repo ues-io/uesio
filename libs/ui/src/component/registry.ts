@@ -55,6 +55,7 @@ const registerSignals = (
 ) => {
 	addToRegistry(componentSignalsRegistry, key, signals)
 }
+const getSignals = () => componentSignalsRegistry
 
 const registerUtilityComponent = (
 	key: MetadataKey,
@@ -260,6 +261,7 @@ const getBuilderComponents = () => getComponents("uesio.standalone")
 
 export {
 	register,
+	getSignals,
 	registerUtilityComponent,
 	registerBuilder,
 	registerSignals,

@@ -29,23 +29,58 @@ const addBlankSelectOption = collection.addBlankSelectOption
 const SignalProp: FC<T> = (props) => {
 	const { context, path, valueAPI } = props
 	const uesio = hooks.useUesio(props)
-	const signalName = valueAPI.get(path + `["signal"]`) as string
-	const band = signalName?.split("/")[0]?.toUpperCase()
+	const signalFullName = valueAPI.get(path + `["signal"]`) as string
+	const selectedComponent = signalFullName.split("/").slice(1, 3).join("/")
+	const band = signalFullName?.split("/")[0]?.toUpperCase() as SignalBand
+	const componentSignalRegistry = uesio.component.getSignals()
+	const isComponent = band === "COMPONENT"
+
+	const getComponentSignals = () =>
+		Object.fromEntries(
+			Object.entries(componentSignalRegistry).flatMap(
+				([componentName, signals]) =>
+					Object.entries(signals).map(([signalId, signal]) => [
+						`component/${componentName}/${signalId}`,
+						{
+							...signal,
+							properties: (): builder.PropDescriptor[] => [
+								...(componentName !== "uesio/core.view"
+									? ([
+											{
+												name: "target",
+												type: "TEXT",
+												label: "Component ID",
+											},
+									  ] as builder.PropDescriptor[])
+									: []),
+								...(signal.properties
+									? signal.properties({ signal: signalId })
+									: []),
+							],
+						},
+					])
+			)
+		)
 
 	// Signals that belong to a band
-	const signalOptions = Object.entries(
-		uesio.signal.getSignalsByBand(band)
-	).map(([key, description]) => ({
-		label: description.label,
+	const signals = isComponent
+		? Object.entries(getComponentSignals()).filter(([key]) =>
+				key.startsWith(signalFullName)
+		  )
+		: Object.entries(uesio.signal.getSignalsByBand(band))
+
+	const signalOptions = signals.map(([key, description]) => ({
+		label: description.label || "",
 		value: key,
 	}))
 
-	const selectedSignalProperties =
-		uesio.signal
-			.getSignalDescriptor(signalName)
-			?.properties({ signal: signalName }) || []
+	const selectedSignalProperties = isComponent
+		? getComponentSignals()[signalFullName]?.properties() || []
+		: uesio.signal
+				.getSignalDescriptor(signalFullName)
+				?.properties({ signal: signalFullName }) || []
 
-	// When changing signal, don't throw away values we can re-use.
+	// When changing signal, don't throw away propvalues we can re-use.
 	const getExistingValues = () => {
 		if (!selectedSignalProperties) return {}
 		const currentDef = valueAPI.get(path) as Record<
@@ -84,6 +119,24 @@ const SignalProp: FC<T> = (props) => {
 							"Select a type"
 						),
 					},
+					...(isComponent
+						? [
+								{
+									label: "Component",
+									name: "component",
+									type: "SELECT",
+									options: addBlankSelectOption(
+										Object.keys(
+											componentSignalRegistry
+										).map((el) => ({
+											label: el,
+											value: `component/${el}`,
+										})),
+										"Select a component"
+									),
+								} as builder.PropDescriptor,
+						  ]
+						: []),
 					{
 						label: "Signal",
 						name: "signal",
@@ -99,16 +152,19 @@ const SignalProp: FC<T> = (props) => {
 			valueAPI={{
 				...valueAPI,
 				get: (path: string) => {
-					if (path?.endsWith(`["band"]`)) {
-						return band
-					}
+					if (path?.endsWith(`["band"]`)) return band
+					if (path?.endsWith(`["component"]`))
+						return `component/${selectedComponent}`
 					return valueAPI.get(path)
 				},
 				set: (setPath, value) => {
 					// The first part of the signal name. e.g. wire/...
-					if (setPath?.endsWith(`["band"]`)) {
-						return valueAPI.set(path + `["signal"]`, value + "/")
-					}
+					if (
+						setPath?.endsWith(`["band"]`) ||
+						setPath?.endsWith(`["component"]`)
+					)
+						return valueAPI.set(path + `["signal"]`, value)
+
 					if (setPath?.endsWith(`["signal"]`)) {
 						return valueAPI.set(path, {
 							signal: value,

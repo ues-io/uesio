@@ -7,6 +7,7 @@ import { makeComponentId, set as setComponent } from "../bands/component"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
+import { getSignals } from "../component/registry"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -14,7 +15,7 @@ class ComponentAPI {
 	}
 
 	uesio: Uesio
-
+	getSignals = () => getSignals()
 	getId = (namedId?: string, componentType?: string) => {
 		const context = this.uesio.getContext()
 		const cType = componentType || this.uesio.getComponentType()
