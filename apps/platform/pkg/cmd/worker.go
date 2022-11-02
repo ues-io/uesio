@@ -107,12 +107,7 @@ func UsageJob() error {
 		changesByTenant[tenantID] = append(changesByTenant[tenantID], &usageItem)
 	}
 
-	session, err := auth.GetStudioSystemSession(nil)
-	if err != nil {
-		return err
-	}
-
-	connection, err := datasource.GetPlatformConnection(session)
+	session, err := auth.GetStudioAnonSession()
 	if err != nil {
 		return err
 	}
@@ -120,10 +115,7 @@ func UsageJob() error {
 	for siteKey, changes := range changesByTenant {
 		if len(changes) > 0 {
 
-			//This creates a copy of the session
-			inContextSession := session.RemoveWorkspaceContext()
-
-			err = datasource.AddSiteAdminContextByKey(siteKey, inContextSession, connection)
+			inContextSession, err := auth.GetSystemSessionByKey(siteKey, session, nil)
 			if err != nil {
 				return err
 			}
@@ -137,7 +129,7 @@ func UsageJob() error {
 				},
 			}
 
-			err = datasource.SaveWithOptions(requests, session, datasource.GetConnectionSaveOptions(connection))
+			err = datasource.SaveWithOptions(requests, inContextSession, nil)
 			if err != nil {
 				return errors.New("Failed to update usage events: " + err.Error())
 			}

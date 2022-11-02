@@ -70,10 +70,7 @@ func getUserFromSession(userid string, site *meta.Site) (*meta.User, error) {
 		return cachedUser, nil
 	}
 
-	session, err := GetStudioAnonSession()
-	if err != nil {
-		return nil, err
-	}
+	session := GetAnonSession(site)
 
 	user, err := GetUserByID(userid, session, nil)
 	if err != nil {
