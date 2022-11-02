@@ -147,9 +147,9 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 	switch op.CollectionName {
 	case "uesio/studio.allmetadata":
 		botFunction = runAllMetadataLoadBot
-	case "tcm/chronos.project":
+	case "tcm/timetracker.project":
 		botFunction = clickup.ProjectLoadBot
-	case "tcm/chronos.task":
+	case "tcm/timetracker.task":
 		botFunction = clickup.TaskLoadBot
 	}
 
