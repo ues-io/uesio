@@ -120,7 +120,7 @@ type PropDescriptor =
 	| WiresProp
 	| ConditionProp
 	| NamespaceProp
-	| ComponentTargetProp
+	| ComponentProp
 	| ConditionalDisplayProp
 	| IconProp
 	| ParamProp
@@ -234,9 +234,8 @@ interface WiresProp extends BasePropDescriptor {
 	type: "WIRES"
 }
 
-interface ComponentTargetProp extends BasePropDescriptor {
+interface ComponentProp extends BasePropDescriptor {
 	type: "COMPONENT"
-	scope: string
 }
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
@@ -373,7 +372,7 @@ export {
 	KeyProp,
 	WireProp,
 	WiresProp,
-	ComponentTargetProp,
+	ComponentProp,
 	FieldsSection,
 	StylesSection,
 	ConditionsSection,

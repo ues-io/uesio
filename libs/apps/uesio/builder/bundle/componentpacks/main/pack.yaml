@@ -35,6 +35,7 @@ components:
     iconlabel:
     namespacelabel:
     conditionitem:
+    componentprop:
   view:
     runtime:
 

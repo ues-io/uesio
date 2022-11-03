@@ -3,7 +3,11 @@ import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
 import { selectId, useComponentVariants } from "../bands/componentvariant"
-import { makeComponentId, set as setComponent } from "../bands/component"
+import {
+	makeComponentId,
+	set as setComponent,
+	useAllComponents,
+} from "../bands/component"
 import { Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -85,6 +89,7 @@ class ComponentAPI {
 	getVariantId = selectId as (variant: ComponentVariant) => string
 
 	useAllVariants = () => useComponentVariants()
+	useAllComponents = () => useAllComponents()
 }
 
 export { ComponentAPI }

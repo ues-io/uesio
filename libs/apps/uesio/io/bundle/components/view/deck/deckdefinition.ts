@@ -18,9 +18,9 @@ const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
+			type: "COMPONENT",
+			label: "Id",
 			name: "id",
-			type: "TEXT",
-			label: "id",
 		},
 		{
 			name: "wire",
