@@ -236,6 +236,7 @@ interface WiresProp extends BasePropDescriptor {
 
 interface ComponentProp extends BasePropDescriptor {
 	type: "COMPONENT"
+	name: "id"
 }
 interface FieldProp extends BasePropDescriptor {
 	type: "FIELD"
