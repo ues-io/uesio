@@ -147,8 +147,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	const wire = context.getWire()
 	if (!wire || !record) return null
 
+	const errors = record?.getErrors(fieldId)
 	const collection = wire.getCollection()
-
 	const fieldMetadata = collection.getField(fieldId)
 
 	if (!fieldMetadata) return null
@@ -164,6 +164,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			record={record}
 			fieldId={fieldId}
 			variant={definition.wrapperVariant}
+			errors={errors}
 		>
 			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>

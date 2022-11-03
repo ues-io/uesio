@@ -15,13 +15,14 @@ import {
 	ValueConditionState,
 	WireConditionState,
 } from "./bands/wire/conditions/conditions"
-import { SaveResponse, SaveResponseBatch } from "./load/saveresponse"
+import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
 import { LoadRequestField } from "./load/loadrequest"
 import { PlainWire } from "./bands/wire/types"
 
 export {
 	SaveResponse,
+	SaveError,
 	SaveResponseBatch,
 	LoadResponseBatch,
 	LoadRequestField,
