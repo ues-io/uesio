@@ -22,7 +22,7 @@ const FieldProp = component.getUtility("uesio/builder.fieldprop")
 const FieldsProp = component.getUtility("uesio/builder.fieldsprop")
 const PropListsProp = component.getUtility("uesio/builder.proplistsprop")
 const PropListProp = component.getUtility("uesio/builder.proplistprop")
-const ComponentProp = component.getUtility("uesio/builder.componentprop")
+const ComponentIdProp = component.getUtility("uesio/builder.componentidprop")
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -74,8 +74,8 @@ function getPropHandler(type?: string) {
 			return PropListsProp
 		case "PROPLIST":
 			return PropListProp
-		case "COMPONENT":
-			return ComponentProp
+		case "COMPONENT_ID":
+			return ComponentIdProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return null

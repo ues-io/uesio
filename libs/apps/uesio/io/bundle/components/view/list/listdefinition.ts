@@ -18,7 +18,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
 	properties: [
 		{
-			type: "COMPONENT",
+			type: "COMPONENT_ID",
 			label: "Id",
 			name: "id",
 		},

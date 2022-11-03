@@ -5,7 +5,9 @@ const TextField = component.getUtility("uesio/io.textfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 const Button = component.getUtility("uesio/io.button")
 
-const ComponentProp: builder.PropComponent<builder.ComponentProp> = (props) => {
+const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
+	props
+) => {
 	const { descriptor, valueAPI, context, path } = props
 
 	if (!path) return null
@@ -67,4 +69,4 @@ const ComponentProp: builder.PropComponent<builder.ComponentProp> = (props) => {
 	)
 }
 
-export default ComponentProp
+export default ComponentIdProp

@@ -120,7 +120,7 @@ type PropDescriptor =
 	| WiresProp
 	| ConditionProp
 	| NamespaceProp
-	| ComponentProp
+	| ComponentIdProp
 	| ConditionalDisplayProp
 	| IconProp
 	| ParamProp
@@ -234,8 +234,8 @@ interface WiresProp extends BasePropDescriptor {
 	type: "WIRES"
 }
 
-interface ComponentProp extends BasePropDescriptor {
-	type: "COMPONENT"
+interface ComponentIdProp extends BasePropDescriptor {
+	type: "COMPONENT_ID"
 	name: "id"
 }
 interface FieldProp extends BasePropDescriptor {
@@ -373,7 +373,7 @@ export {
 	KeyProp,
 	WireProp,
 	WiresProp,
-	ComponentProp,
+	ComponentIdProp,
 	FieldsSection,
 	StylesSection,
 	ConditionsSection,
