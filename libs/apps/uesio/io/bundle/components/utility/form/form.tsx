@@ -1,6 +1,6 @@
 import { hooks, wire, definition, component } from "@uesio/ui"
 
-import { FunctionComponent } from "react"
+import { Fragment, FunctionComponent } from "react"
 
 interface FormProps extends definition.UtilityProps {
 	wire?: string
@@ -32,7 +32,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 				})
 				// Loop over all the fields in the wire
 				return (
-					<>
+					<Fragment key={record.getId()}>
 						{content ? (
 							<component.Slot
 								definition={{
@@ -80,7 +80,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								}
 							/>
 						</Group>
-					</>
+					</Fragment>
 				)
 			})}
 		</>

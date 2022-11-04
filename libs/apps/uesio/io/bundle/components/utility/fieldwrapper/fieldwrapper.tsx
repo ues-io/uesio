@@ -44,20 +44,17 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 			{children}
 
 			{errors?.map((error) => (
-				<>
-					<div />
-					<div
-						className={classes.errorwrapper}
-						key={error.recordid + ":" + error.fieldid}
-					>
-						<Icon
-							icon="error_outline"
-							context={props.context}
-							className={classes.erroricon}
-						/>
-						<div className={classes.error}>{error.message}</div>
-					</div>
-				</>
+				<div
+					className={classes.errorwrapper}
+					key={error.recordid + ":" + error.fieldid}
+				>
+					<Icon
+						icon="error_outline"
+						context={props.context}
+						className={classes.erroricon}
+					/>
+					<div className={classes.error}>{error.message}</div>
+				</div>
 			))}
 		</div>
 	)
