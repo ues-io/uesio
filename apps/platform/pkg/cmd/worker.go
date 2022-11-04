@@ -107,15 +107,10 @@ func UsageJob() error {
 		changesByTenant[tenantID] = append(changesByTenant[tenantID], &usageItem)
 	}
 
-	session, err := auth.GetStudioAnonSession()
-	if err != nil {
-		return err
-	}
-
 	for siteKey, changes := range changesByTenant {
 		if len(changes) > 0 {
 
-			inContextSession, err := auth.GetSystemSessionByKey(siteKey, session, nil)
+			inContextSession, err := auth.GetSystemSessionByKey(siteKey, nil)
 			if err != nil {
 				return err
 			}
