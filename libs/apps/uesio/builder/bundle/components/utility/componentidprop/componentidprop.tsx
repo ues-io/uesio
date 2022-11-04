@@ -19,6 +19,7 @@ const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 	const allComponents = uesio.component.useAllComponents()
 
 	const [id, setId] = useState(valueAPI.get(path))
+	const [exists, setExists] = useState(false)
 
 	const checkId = (value: string) => {
 		const componentId = uesio.component.makeComponentId(
@@ -31,20 +32,9 @@ const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 			(component) => component.id === componentId
 		)
 
-		if (!exists) {
-			setId(value)
-		} else {
-			uesio.signal.run(
-				{
-					signal: "notification/ADD",
-					text: "Component ID already exists in this view",
-					details: "Please chose another one",
-					severity: "error",
-				},
+		setExists(exists)
 
-				context
-			)
-		}
+		if (!exists) setId(value)
 	}
 
 	return (
@@ -53,6 +43,11 @@ const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 			label={descriptor.label}
 			context={context}
 			variant="uesio/builder.propfield"
+			errors={
+				exists
+					? [{ message: "Component ID already exists in this view" }]
+					: []
+			}
 		>
 			<TextField
 				variant="uesio/io.field:uesio/builder.propfield"
