@@ -16,8 +16,11 @@ const usePlatformFunc = <T>(
 					const response = await platFunc()
 					loading.current = false
 					setValue(response)
+					setError(undefined)
 				} catch (error) {
 					const message = getErrorString(error)
+					loading.current = false
+					setValue(undefined)
 					setError(message)
 				}
 			})()
