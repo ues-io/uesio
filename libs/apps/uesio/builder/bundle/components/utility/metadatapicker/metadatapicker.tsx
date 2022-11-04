@@ -188,7 +188,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			variant={fieldWrapperVariant}
 			label={label}
 			context={context}
-			errors={[{ message: error }]}
+			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
 				items={items}
