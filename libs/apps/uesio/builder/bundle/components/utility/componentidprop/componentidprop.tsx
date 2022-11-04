@@ -1,9 +1,9 @@
-import { component, builder, hooks } from "@uesio/ui"
+import { component, builder, hooks, styles } from "@uesio/ui"
 import { useState } from "react"
 
 const TextField = component.getUtility("uesio/io.textfield")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-const Button = component.getUtility("uesio/io.button")
+const IconButton = component.getUtility("uesio/io.iconbutton")
 
 const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 	props
@@ -33,9 +33,20 @@ const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 		)
 
 		setExists(exists)
-
-		if (!exists) setId(value)
+		setId(value)
 	}
+
+	const classes = styles.useUtilityStyles(
+		{
+			wrapper: {
+				display: "grid",
+				gridTemplateColumns: "1fr min-content",
+				alignItems: "center",
+				columnGap: "8px",
+			},
+		},
+		null
+	)
 
 	return (
 		<FieldWrapper
@@ -49,17 +60,21 @@ const ComponentIdProp: builder.PropComponent<builder.ComponentIdProp> = (
 					: []
 			}
 		>
-			<TextField
-				variant="uesio/io.field:uesio/builder.propfield"
-				value={id}
-				setValue={(value: string) => checkId(value)}
-				context={context}
-			/>
-			<Button
-				context={context}
-				label="Set Id"
-				onClick={() => valueAPI.set(path, id)}
-			/>
+			<div className={classes.wrapper}>
+				<TextField
+					variant="uesio/io.field:uesio/builder.propfield"
+					value={id}
+					setValue={(value: string) => checkId(value)}
+					context={context}
+				/>
+				<IconButton
+					context={context}
+					label="Change ID"
+					icon={"done"}
+					disabled={exists}
+					onClick={() => valueAPI.set(path, id)}
+				/>
+			</div>
 		</FieldWrapper>
 	)
 }
