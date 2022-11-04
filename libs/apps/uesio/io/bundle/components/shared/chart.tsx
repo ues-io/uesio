@@ -44,6 +44,9 @@ export const CHART_COLORS = {
 	grey: "rgb(201, 203, 207)",
 }
 
+const getMonthYearDateKey = (year: number, month: number) =>
+	year + "-" + (month + "").padStart(2, "0")
+
 const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
@@ -89,7 +92,7 @@ const getLabels = (
 				const d = new Date(parseInt(year, 10), parseInt(month, 10))
 				sortedCategories[currentKey] = getLabel(d)
 				d.setMonth(d.getMonth() + 1)
-				currentKey = d.getFullYear() + "-" + d.getMonth()
+				currentKey = getMonthYearDateKey(d.getFullYear(), d.getMonth())
 			}
 			// Now add in the last key
 			if (currentKey === lastKey) {
@@ -112,7 +115,10 @@ const getCategoryKey = (
 	if (categoryField.getType() === "DATE") {
 		if (labels.source === "DATA" && labels.timeunit === "MONTH") {
 			const dateValue = new Date(value)
-			return dateValue.getFullYear() + "-" + dateValue.getMonth()
+			return getMonthYearDateKey(
+				dateValue.getFullYear(),
+				dateValue.getMonth()
+			)
 		}
 	}
 	throw new Error("Invalid Category Field Type")
