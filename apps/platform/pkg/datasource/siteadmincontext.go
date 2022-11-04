@@ -57,7 +57,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 }
 
 func AddSiteAdminContextByID(siteID string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByID(siteID, session, connection)
+	siteadmin, err := QuerySiteByID(siteID, connection)
 	if err != nil {
 		return err
 	}
@@ -65,24 +65,28 @@ func AddSiteAdminContextByID(siteID string, session *sess.Session, connection ad
 }
 
 func AddSiteAdminContextByKey(siteKey string, session *sess.Session, connection adapt.Connection) error {
-	siteadmin, err := QuerySiteByKey(siteKey, session, connection)
+	siteadmin, err := QuerySiteByKey(siteKey, connection)
 	if err != nil {
 		return err
 	}
 	return addSiteAdminContext(siteadmin, session, connection)
 }
 
-func QuerySiteByID(siteid string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(siteid, adapt.ID_FIELD, session, connection)
+func QuerySiteByID(siteid string, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(siteid, adapt.ID_FIELD, connection)
 }
 
-func QuerySiteByKey(sitekey string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
-	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, session, connection)
+func QuerySiteByKey(sitekey string, connection adapt.Connection) (*meta.Site, error) {
+	return querySite(sitekey, adapt.UNIQUE_KEY_FIELD, connection)
 }
 
-func querySite(value, field string, session *sess.Session, connection adapt.Connection) (*meta.Site, error) {
+func querySite(value, field string, connection adapt.Connection) (*meta.Site, error) {
+	session, err := sess.GetStudioAnonSession()
+	if err != nil {
+		return nil, err
+	}
 	var s meta.Site
-	err := PlatformLoadOne(
+	err = PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
 			Connection: connection,

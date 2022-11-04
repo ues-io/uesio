@@ -10,9 +10,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
+func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
+	session, err := sess.GetStudioAnonSession()
+	if err != nil {
+		return nil, err
+	}
 	var sd meta.SiteDomain
-	err := datasource.PlatformLoadOne(
+	err = datasource.PlatformLoadOne(
 		&sd,
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
@@ -40,45 +44,18 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 }
 
 func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
-	session, err := GetStudioAnonSession()
-	if err != nil {
-		return nil, err
-	}
-	siteDomain, err := getDomain(domainType, domain, session)
+	siteDomain, err := getDomain(domainType, domain)
 	if err != nil {
 		return nil, err
 	}
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return datasource.QuerySiteByID(siteDomain.Site.ID, session, nil)
+	return datasource.QuerySiteByID(siteDomain.Site.ID, nil)
 }
 
-func GetStudioSite() (*meta.Site, error) {
-	app := &meta.App{
-		UniqueKey: "uesio/studio",
-	}
-	site := &meta.Site{
-		UniqueKey: "uesio/studio:prod",
-		Name:      "prod",
-		Bundle: &meta.Bundle{
-			App:   app,
-			Major: 0,
-			Minor: 0,
-			Patch: 1,
-		},
-		App: app,
-	}
-	bundleDef, err := bundle.GetSiteAppBundle(site)
-	if err != nil {
-		return nil, err
-	}
-	site.SetAppBundle(bundleDef)
-	return site, nil
-}
-
-func GetSystemSessionByKey(siteKey string, session *sess.Session, connection adapt.Connection) (*sess.Session, error) {
-	site, err := datasource.QuerySiteByKey(siteKey, session, connection)
+func GetSystemSessionByKey(siteKey string, connection adapt.Connection) (*sess.Session, error) {
+	site, err := datasource.QuerySiteByKey(siteKey, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -91,44 +68,12 @@ func GetSystemSessionByKey(siteKey string, session *sess.Session, connection ada
 	return GetSystemSession(site, connection)
 }
 
-func GetAnonSession(site *meta.Site) *sess.Session {
-
-	session := sess.NewSession(nil, &meta.User{
-		Username:  "boot",
-		FirstName: "Boot",
-		LastName:  "User",
-	}, site)
-
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllCollections: true,
-		ViewAllRecords:      true,
-	})
-
-	return session
-}
-
-func GetStudioAnonSession() (*sess.Session, error) {
-	site, err := GetStudioSite()
-	if err != nil {
-		return nil, err
-	}
-	return GetAnonSession(site), nil
-}
-
 func GetPublicUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
-	return GetUserByKey("guest", GetAnonSession(site), connection)
+	return GetUserByKey("guest", sess.GetAnonSession(site), connection)
 }
 
 func GetSystemUser(site *meta.Site, connection adapt.Connection) (*meta.User, error) {
-	return GetUserByKey("system", GetAnonSession(site), connection)
-}
-
-func GetStudioSystemUser(connection adapt.Connection) (*meta.User, error) {
-	site, err := GetStudioSite()
-	if err != nil {
-		return nil, err
-	}
-	return GetSystemUser(site, connection)
+	return GetUserByKey("system", sess.GetAnonSession(site), connection)
 }
 
 func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Session, error) {
@@ -141,15 +86,12 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 		AllowAllCollections: true,
 		ViewAllRecords:      true,
 		ModifyAllRecords:    true,
-		NamedRefs: map[string]bool{
-			"uesio/studio.workspace_admin": true,
-		},
 	})
 	return session, nil
 }
 
 func GetStudioSystemSession(connection adapt.Connection) (*sess.Session, error) {
-	site, err := GetStudioSite()
+	site, err := sess.GetStudioSite()
 	if err != nil {
 		return nil, err
 	}
