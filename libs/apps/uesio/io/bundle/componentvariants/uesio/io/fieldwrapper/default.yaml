@@ -14,6 +14,8 @@ definition:
       display: flex
       color: "#ff6565"
       marginTop: 8px
+      ".${labelLeft} &":
+        gridColumn: "1 / 3"
     error:
       flex: 1
       fontSize: 0.75em
