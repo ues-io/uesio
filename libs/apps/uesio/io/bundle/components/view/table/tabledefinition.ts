@@ -38,7 +38,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
 	description: "View and edit tabular data.",
 	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	defaultDefinition: () => ({ mode: "READ" }),
 	properties: [
 		{
 			type: "COMPONENT_ID",

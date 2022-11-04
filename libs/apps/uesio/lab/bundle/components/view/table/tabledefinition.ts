@@ -44,7 +44,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Table",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
-		id: "NewId",
 		mode: "READ",
 		columns: [{ "lab.tablecolumn": { name: "" } }],
 	}),

@@ -15,7 +15,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	description:
 		"Iterate over records in a wire and render content in the context of each record.",
 	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	defaultDefinition: () => ({ mode: "READ" }),
 	properties: [
 		{
 			type: "COMPONENT_ID",
