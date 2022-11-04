@@ -14,8 +14,25 @@ type TaskResponse struct {
 }
 
 type Task struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID           string        `json:"id"`
+	Name         string        `json:"name"`
+	CustomFields []CustomField `json:"custom_fields"`
+}
+
+type CustomField struct {
+	ID         string      `json:"id"`
+	Name       string      `json:"name"`
+	Value      interface{} `json:"value"`
+	TypeConfig TypeConfig  `json:"type_config"`
+}
+
+type TypeConfig struct {
+	Options []TypeConfigOptions `json:"options"`
+}
+
+type TypeConfigOptions struct {
+	Name       string      `json:"name"`
+	OrderIndex interface{} `json:"orderindex"`
 }
 
 func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -71,6 +88,18 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		opItem.SetField("uesio/core.id", fakeID)
 		opItem.SetField("tcm/timetracker.id", task.ID)
 		opItem.SetField("tcm/timetracker.name", task.Name)
+
+		for _, field := range task.CustomFields {
+			if field.Name == "Customer Team" {
+				for _, option := range field.TypeConfig.Options {
+
+					if option.OrderIndex == field.Value {
+						opItem.SetField("tcm/timetracker.customerteam", option.Name)
+					}
+				}
+			}
+		}
+
 	}
 
 	return nil
