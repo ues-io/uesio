@@ -61,6 +61,8 @@ definition:
           value: LOAD
         - field: uesio/core.metadatatype
           value: DATASOURCE
+      init:
+        query: false
     usage_save:
       collection: uesio/core.usage
       fields:
@@ -76,6 +78,8 @@ definition:
           value: SAVE
         - field: uesio/core.metadatatype
           value: DATASOURCE
+      init:
+        query: false
     usage_download:
       collection: uesio/core.usage
       fields:
@@ -89,6 +93,8 @@ definition:
       conditions:
         - field: uesio/core.actiontype
           value: DOWNLOAD
+      init:
+        query: false
     usage_upload:
       collection: uesio/core.usage
       fields:
@@ -102,6 +108,8 @@ definition:
       conditions:
         - field: uesio/core.actiontype
           value: UPLOAD
+      init:
+        query: false
     usage_download_bytes:
       collection: uesio/core.usage
       fields:
@@ -115,6 +123,8 @@ definition:
       conditions:
         - field: uesio/core.actiontype
           value: DOWNLOAD_BYTES
+      init:
+        query: false
     usage_upload_bytes:
       collection: uesio/core.usage
       fields:
@@ -128,6 +138,8 @@ definition:
       conditions:
         - field: uesio/core.actiontype
           value: UPLOAD_BYTES
+      init:
+        query: false
     users:
       collection: uesio/core.user
       fields:
@@ -149,6 +161,12 @@ definition:
         wires:
           - users
           - usage
+          - usage_load
+          - usage_save
+          - usage_download
+          - usage_upload
+          - usage_download_bytes
+          - usage_upload_bytes
 
   # Components are how we describe the layout of our view
   components:
