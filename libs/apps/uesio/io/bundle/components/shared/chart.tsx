@@ -44,6 +44,24 @@ export const CHART_COLORS = {
 	grey: "rgb(201, 203, 207)",
 }
 
+const getLabel = (d: Date) =>
+	d.toLocaleDateString(undefined, {
+		month: "short",
+		year: "numeric",
+	})
+
+const getCategories = (sortedKeys: string[]): Categories => {
+	const sortedCategories: Categories = {}
+
+	for (const currentKey of sortedKeys) {
+		const [year, month] = currentKey.split("-")
+		const d = new Date(parseInt(year, 10), parseInt(month, 10))
+		sortedCategories[currentKey] = getLabel(d)
+	}
+
+	return sortedCategories
+}
+
 const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
@@ -68,36 +86,13 @@ const getLabels = (
 			})
 		})
 
-		const categoryKeys = Object.keys(categories)
-		const sortedCategories: Categories = {}
-		if (!categoryKeys.length) return sortedCategories
-
-		// Now sort our buckets
-		const sortedKeys = categoryKeys.sort()
-		const firstKey = sortedKeys[0]
-		const lastKey = sortedKeys[sortedKeys.length - 1]
-
-		let currentKey = firstKey
+		const sortedKeys = Object.keys(categories).sort()
+		let sortedCategories: Categories = {}
+		if (!sortedKeys.length) return sortedCategories
 		if (labels.timeunit === "MONTH") {
-			const getLabel = (d: Date) =>
-				d.toLocaleDateString(undefined, {
-					month: "short",
-					year: "numeric",
-				})
-			while (currentKey !== lastKey) {
-				const [year, month] = currentKey.split("-")
-				const d = new Date(parseInt(year, 10), parseInt(month, 10))
-				sortedCategories[currentKey] = getLabel(d)
-				d.setMonth(d.getMonth() + 1)
-				currentKey = d.getFullYear() + "-" + d.getMonth()
-			}
-			// Now add in the last key
-			if (currentKey === lastKey) {
-				const [year, month] = currentKey.split("-")
-				const d = new Date(parseInt(year, 10), parseInt(month, 10))
-				sortedCategories[currentKey] = getLabel(d)
-			}
+			sortedCategories = getCategories(sortedKeys)
 		}
+
 		return sortedCategories
 	}
 	throw new Error("Invalid Label Source")
