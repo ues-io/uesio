@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import {
 	definition,
-	context,
+	context as ctx,
 	collection,
 	wire,
 	component,
@@ -12,7 +12,7 @@ import { UserFieldOptions } from "../../view/field/fielddefinition"
 interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	fieldId: string
-	mode: context.FieldMode
+	mode: ctx.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
 	options?: UserFieldOptions
@@ -52,7 +52,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 		firstName && lastName ? `${firstName} ${lastName}` : uniquekey
 
 	const fileURL = uesio.file.getUserFileURL(
-		context,
+		context.getWorkspace() ? new ctx.Context() : context,
 		picture?.getIdFieldValue()
 	)
 
