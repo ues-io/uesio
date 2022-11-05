@@ -136,8 +136,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
-	anonSession, err := sess.GetStudioAnonSession()
-	cobra.CheckErr(err)
+	anonSession := sess.GetStudioAnonSession()
 
 	connection, err := datasource.GetPlatformConnection(anonSession)
 	cobra.CheckErr(err)

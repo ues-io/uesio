@@ -11,12 +11,8 @@ import (
 )
 
 func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
-	session, err := sess.GetStudioAnonSession()
-	if err != nil {
-		return nil, err
-	}
 	var sd meta.SiteDomain
-	err = datasource.PlatformLoadOne(
+	err := datasource.PlatformLoadOne(
 		&sd,
 		&datasource.PlatformLoadOptions{
 			Fields: []adapt.LoadRequestField{
@@ -35,7 +31,7 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 				},
 			},
 		},
-		session,
+		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err
@@ -91,9 +87,5 @@ func GetSystemSession(site *meta.Site, connection adapt.Connection) (*sess.Sessi
 }
 
 func GetStudioSystemSession(connection adapt.Connection) (*sess.Session, error) {
-	site, err := sess.GetStudioSite()
-	if err != nil {
-		return nil, err
-	}
-	return GetSystemSession(site, connection)
+	return GetSystemSession(sess.GetStudioSite(), connection)
 }

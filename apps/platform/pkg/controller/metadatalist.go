@@ -47,7 +47,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		}
 	}
 
-	appData, err := datasource.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	if (namespace == "uesio/core" || namespace == "") && metadatatype == "fields" {
 		appInfo, ok := appData["uesio/core"]
 		if !ok {
-			return nil, errors.New("Could not find app info")
+			return nil, errors.New("Could not find app info for uesio/core")
 		}
 		for _, field := range datasource.BUILTIN_FIELDS {
 			collectionKeyMap[field.GetFullName()] = appInfo
@@ -73,7 +73,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 
 		appInfo, ok := appData[ns]
 		if !ok {
-			return errors.New("Could not find app info")
+			return errors.New("Could not find app info for " + ns)
 		}
 		collectionKeyMap[key] = appInfo
 		return nil

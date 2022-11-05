@@ -353,7 +353,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		appNames = append(appNames, ns)
 	}
 
-	appData, err := datasource.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames)
 	if err != nil {
 		return err
 	}
