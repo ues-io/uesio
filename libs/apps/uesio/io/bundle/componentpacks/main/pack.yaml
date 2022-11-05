@@ -34,6 +34,8 @@ components:
     searchbox:
     table:
       variants:
+        - uesio/io.tile:uesio/io.default
+        - uesio/io.titlebar:uesio/io.infotag
         - uesio/io.table:uesio/io.default
         - uesio/io.button:uesio/io.nav
         - uesio/io.fieldwrapper:uesio/io.table
