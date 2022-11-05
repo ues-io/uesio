@@ -11,7 +11,7 @@ type MetadataResponse struct {
 	Icon  string `json:"icon"`
 }
 
-func GetAppData(namespaces []string, session *sess.Session) (map[string]MetadataResponse, error) {
+func GetAppData(namespaces []string) (map[string]MetadataResponse, error) {
 	apps := meta.AppCollection{}
 
 	// Load in App Settings
@@ -31,7 +31,7 @@ func GetAppData(namespaces []string, session *sess.Session) (map[string]Metadata
 				ID: "uesio/studio.icon",
 			},
 		},
-	}, session.RemoveWorkspaceContext())
+	}, sess.GetStudioAnonSession())
 	if err != nil {
 		return nil, err
 	}

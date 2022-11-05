@@ -135,7 +135,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		appNames = append(appNames, ns)
 	}
 
-	appData, err := GetAppData(appNames, inContextSession)
+	appData, err := GetAppData(appNames)
 	if err != nil {
 		return err
 	}

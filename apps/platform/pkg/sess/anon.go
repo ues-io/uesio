@@ -18,15 +18,11 @@ func GetAnonSession(site *meta.Site) *Session {
 	return session
 }
 
-func GetStudioAnonSession() (*Session, error) {
-	site, err := GetStudioSite()
-	if err != nil {
-		return nil, err
-	}
-	return GetAnonSession(site), nil
+func GetStudioAnonSession() *Session {
+	return GetAnonSession(GetStudioSite())
 }
 
-func GetStudioSite() (*meta.Site, error) {
+func GetStudioSite() *meta.Site {
 	app := &meta.App{
 		UniqueKey: "uesio/studio",
 	}
@@ -55,5 +51,5 @@ func GetStudioSite() (*meta.Site, error) {
 			},
 		},
 	})
-	return site, nil
+	return site
 }

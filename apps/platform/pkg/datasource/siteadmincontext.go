@@ -81,12 +81,9 @@ func QuerySiteByKey(sitekey string, connection adapt.Connection) (*meta.Site, er
 }
 
 func querySite(value, field string, connection adapt.Connection) (*meta.Site, error) {
-	session, err := sess.GetStudioAnonSession()
-	if err != nil {
-		return nil, err
-	}
+
 	var s meta.Site
-	err = PlatformLoadOne(
+	err := PlatformLoadOne(
 		&s,
 		&PlatformLoadOptions{
 			Connection: connection,
@@ -144,7 +141,7 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 				},
 			},
 		},
-		session,
+		sess.GetStudioAnonSession(),
 	)
 	if err != nil {
 		return nil, err
