@@ -201,7 +201,7 @@ func processView(key string, deps *PreloadMetadata, params map[string]string, pa
 	for viewKey := range depMap.Views {
 
 		if key == viewKey {
-			return errors.New("View: " + viewKey + " contains a self-reference.")
+			continue
 		}
 
 		err := processView(viewKey, deps, nil, packs, session)
