@@ -42,6 +42,7 @@ definition:
         uesio/core.firstname:
         uesio/core.lastname:
         uesio/core.username:
+        uesio/core.email:
         uesio/core.initials:
         uesio/core.profile:
         uesio/core.picture:
@@ -192,6 +193,8 @@ definition:
                                             fieldId: uesio/core.initials
                                         - uesio/io.field:
                                             fieldId: uesio/core.username
+                                        - uesio/io.field:
+                                            fieldId: uesio/core.email
                                         - uesio/studio.metadatafield:
                                             uesio.context:
                                               siteadmin:
@@ -226,16 +229,26 @@ definition:
                           components:
                             - uesio/io.titlebar:
                                 uesio.variant: uesio/io.section
+                                title: Signup Methods
+                            - uesio/io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - uesio/studio.configlogins:
+                                      uesio.context:
+                                        siteadmin:
+                                          name: $Param{sitename}
+                                          app: $Param{app}
+                                      user: $Param{userid}
+                                      email: ${uesio/core.email}
+                                      requery: loginmethods
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
                                 title: Login Methods
-                                actions:
-                                  - uesio/io.group:
-                                      components:
-                                        - uesio/io.button:
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: newLoginMethod
-                                            text: Add Method
-                                            uesio.variant: uesio/io.secondary
                             - uesio/io.deck:
                                 id: loginmethodlist
                                 wire: loginmethods
@@ -279,6 +292,10 @@ definition:
                                                         text: Reset Password
                                                         uesio.variant: uesio/io.nav
                                                     - uesio/io.button:
+                                                        uesio.context:
+                                                          siteadmin:
+                                                            name: $Param{sitename}
+                                                            app: $Param{app}
                                                         signals:
                                                           - signal: wire/MARK_FOR_DELETE
                                                           - signal: wire/SAVE
@@ -312,50 +329,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: deleteUser
-    newLoginMethod:
-      uesio.type: uesio/io.dialog
-      title: Create a New Login Method
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.list:
-            id: newloginmethodlist
-            wire: newloginmethod
-            mode: EDIT
-            components:
-              - uesio/studio.metadatafield:
-                  uesio.context:
-                    siteadmin:
-                      name: $Param{sitename}
-                      app: $Param{app}
-                  fieldId: uesio/core.auth_source
-                  metadataType: "AUTHSOURCE"
-                  label: "Auth Source"
-              - uesio/io.field:
-                  fieldId: uesio/core.federation_id
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: Save
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - newloginmethod
-                uesio.context:
-                  siteadmin:
-                    name: $Param{sitename}
-                    app: $Param{app}
-              - signal: wire/RESET
-                wire: newloginmethod
-              - signal: wire/LOAD
-                wires:
-                  - users
-                  - loginmethods
-              - signal: panel/TOGGLE
-                panel: newLoginMethod
-        - uesio/io.button:
-            uesio.variant: uesio/io.secondary
-            text: Cancel
-            signals:
-              - signal: panel/TOGGLE
-                panel: newLoginMethod

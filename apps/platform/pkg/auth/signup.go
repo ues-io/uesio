@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -79,4 +80,13 @@ func Signup(namespace, name string, payload map[string]interface{}, site *meta.S
 	}
 
 	return signupMethod, nil
+}
+
+func ConfirmSignUp(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
+	conn, err := GetAuthConnection(authSourceID, session)
+	if err != nil {
+		return err
+	}
+
+	return conn.ConfirmSignUp(payload, session)
 }

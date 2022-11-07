@@ -150,5 +150,14 @@ func Validate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
-	return nil
+	return op.LoopChanges(func(change *adapt.ChangeItem) error {
+		for _, validation := range validations {
+			err := validation(change)
+			if err != nil {
+				op.AddError(err)
+			}
+		}
+		return nil
+	})
+
 }

@@ -6,6 +6,7 @@ import {
 	load,
 	getFullWireId,
 	addLookupWires,
+	setIsLoading,
 } from ".."
 import { ThunkFunc } from "../../../store/store"
 import createrecord from "./createrecord"
@@ -58,6 +59,9 @@ export default (
 			forceQuery
 		)
 
+		// Set the loading state for all wires
+		dispatch(setIsLoading(toLoadWithLookups))
+
 		const response = loadRequests.length
 			? await platform.loadData(context, {
 					wires: loadRequests,
@@ -68,11 +72,13 @@ export default (
 			...toLoadWithLookups[index],
 			...wire,
 			original: { ...wire.data },
+			isLoading: false,
 		}))
 
 		const preloadedResults = preloaded.map((wire) => ({
 			...wire,
 			preloaded: false,
+			isLoading: false,
 		}))
 
 		const allResults = loadedResults.concat(preloadedResults)

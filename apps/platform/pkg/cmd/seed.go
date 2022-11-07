@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func init() {
@@ -135,8 +136,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
-	anonSession, err := auth.GetStudioAnonSession()
-	cobra.CheckErr(err)
+	anonSession := sess.GetStudioAnonSession()
 
 	connection, err := datasource.GetPlatformConnection(anonSession)
 	cobra.CheckErr(err)

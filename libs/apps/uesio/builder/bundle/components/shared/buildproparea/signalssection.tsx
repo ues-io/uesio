@@ -2,11 +2,13 @@ import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
+import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
@@ -88,7 +90,22 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							/>
 						}
 					>
-						{signal?.signal}
+						<div className="tagroot">{signal?.signal}</div>
+						<IOExpandPanel context={context} expanded={selected}>
+							<BuildActionsArea
+								context={context}
+								path={signalPath}
+								valueAPI={valueAPI}
+								actions={[
+									{
+										type: "MOVE",
+									},
+									{
+										type: "DELETE",
+									},
+								]}
+							/>
+						</IOExpandPanel>
 					</PropNodeTag>
 				)
 			})}

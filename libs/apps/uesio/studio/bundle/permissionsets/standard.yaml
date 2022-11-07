@@ -129,6 +129,8 @@ routes:
   uesio/studio.userusage: true
   uesio/studio.userprofile: true
   uesio/studio.changepassword: true
+  uesio/studio.signupconfirm: true
+  uesio/studio.requestpassword: true
 files:
 collections:
   uesio/studio.allmetadata: true

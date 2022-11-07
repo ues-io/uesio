@@ -39,16 +39,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: LOAD
         - field: uesio/core.user
@@ -62,16 +58,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: SAVE
         - field: uesio/core.user
@@ -85,16 +77,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: DOWNLOAD
         - field: uesio/core.user
@@ -108,16 +96,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: UPLOAD
         - field: uesio/core.user
@@ -131,16 +115,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: DOWNLOAD_BYTES
         - field: uesio/core.user
@@ -154,16 +134,12 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: UPLOAD_BYTES
         - field: uesio/core.user

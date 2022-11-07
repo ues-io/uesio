@@ -375,6 +375,18 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	signUpConfirm: async (
+		authSource: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const [namespace, name] = parseKey(authSource)
+		const response = await postJSON(
+			`/site/auth/${namespace}/${name}/signup/confirm`,
+			requestBody
+		)
+
+		return respondVoid(response)
+	},
 	checkAvailability: async (
 		signupMethod: string,
 		username: string
@@ -464,6 +476,19 @@ const platform = {
 			`${prefix}/metadata/builder/${namespace}/${name}`
 		)
 		return respondJSON(response)
+	},
+	createLogin: async (
+		context: Context,
+		signupMethod: string,
+		requestBody: Record<string, string>
+	): Promise<void> => {
+		const prefix = getPrefix(context)
+		const [namespace, name] = parseKey(signupMethod)
+		const response = await postJSON(
+			`${prefix}/auth/${namespace}/${name}/createlogin`,
+			requestBody
+		)
+		return respondVoid(response)
 	},
 }
 

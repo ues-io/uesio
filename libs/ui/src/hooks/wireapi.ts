@@ -3,7 +3,7 @@ import { useCollection, useCollections } from "../bands/collection/selectors"
 import { getFullWireId, useWire, useWires } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
-import initializeWiresOp from "../bands/wire/operations/initialize"
+import initWiresOp from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { ViewOnlyField, WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
@@ -90,7 +90,7 @@ class WireAPI {
 		return wire
 	}
 
-	useWires(wireNames: string[]) {
+	useWires(wireNames: string[]): { [k: string]: Wire | undefined } {
 		const view = this.uesio.getViewId() || ""
 		const fullWireIds = wireNames.map((wirename) =>
 			getFullWireId(view, wirename)
@@ -102,8 +102,11 @@ class WireAPI {
 		const collections = useCollections(collectionNames)
 
 		return Object.fromEntries(
-			Object.entries(plainWires).map(([key, plainWire]) => {
-				const plainCollection = collections[key]
+			Object.entries(plainWires).map(([, plainWire]) => {
+				if (!plainWire || !plainWire.collection)
+					return [plainWire?.name, undefined]
+
+				const plainCollection = collections[plainWire.collection]
 				if (!plainCollection) return [plainWire?.name, undefined]
 				return [
 					plainWire?.name,
@@ -118,7 +121,7 @@ class WireAPI {
 	}
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
-		return appDispatch()(initializeWiresOp(context, wireDefs))
+		return appDispatch()(initWiresOp(context, wireDefs))
 	}
 
 	getWireFieldsFromParams(params: ParamDefinition[] | undefined) {

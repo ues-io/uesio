@@ -77,7 +77,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 		props
 	)
 
-	const [metadata] = uesio.builder.useMetadataList(
+	const [metadata, error] = uesio.builder.useMetadataList(
 		context,
 		metadataType,
 		"",
@@ -151,6 +151,7 @@ const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 			variant={fieldWrapperVariant as metadata.MetadataKey}
 			label={label}
 			context={context}
+			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
 				items={items}

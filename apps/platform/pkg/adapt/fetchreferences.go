@@ -1,7 +1,7 @@
 package adapt
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -124,7 +124,8 @@ func FetchReferences(
 					})
 				}
 
-				return errors.New("There was a problem here!!! Missing id or unique key")
+				return fmt.Errorf("There was a problem getting reference info on field: %s in collection: %s", field.GetFullName(), op.Metadata.GetFullName())
+
 			})
 			if err != nil {
 				return err

@@ -81,6 +81,8 @@ type WireLoadAction = PayloadAction<
 	[PlainWire[], Record<string, PlainCollection>]
 >
 
+type SetIsLoadingAction = PayloadAction<PlainWire[]>
+
 const wireAdapter = createEntityAdapter<PlainWire>({
 	selectId: (wire) => getFullWireId(wire.view, wire.name),
 })
@@ -371,6 +373,19 @@ const wireSlice = createSlice({
 		load: (state, { payload: [wires] }: WireLoadAction) => {
 			wireAdapter.upsertMany(state, wires)
 		},
+		setIsLoading: (state, { payload: wires }: SetIsLoadingAction) => {
+			wireAdapter.upsertMany(
+				state,
+				wires.map(
+					(wire) =>
+						({
+							name: wire.name,
+							view: wire.view,
+							isLoading: true,
+						} as PlainWire)
+				)
+			)
+		},
 	},
 })
 
@@ -378,13 +393,42 @@ const wireSlice = createSlice({
 const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 	useSelector((state: RootState) => selectWire(state, viewId, wireName))
 
+// This is just a copy from the redux "is" function
+function is(x: unknown, y: unknown) {
+	if (x === y) {
+		return x !== 0 || y !== 0 || 1 / x === 1 / y
+	} else {
+		return x !== x && y !== y
+	}
+}
+
+// This is very similar to redux "shallowEqual", but instead of
+// checking all keys, it only checks certain ones.
+const getFilteredShallowEqualFunc =
+	<T extends Record<string, unknown>>(ids: string[]) =>
+	(objA: T, objB: T) => {
+		const keysA = Object.keys(objA)
+		const keysB = Object.keys(objB)
+
+		if (keysA.length !== keysB.length) return false
+		for (let i = 0; i < ids.length; i++) {
+			if (!is(objA[ids[i]], objB[ids[i]])) {
+				return false
+			}
+		}
+		return true
+	}
+
 const useWires = (
 	fullWireIds: string[]
 ): Record<string, PlainWire | undefined> =>
 	Object.fromEntries(
-		Object.entries(useSelector(selectors.selectEntities)).filter(([key]) =>
-			fullWireIds.includes(key)
-		)
+		Object.entries(
+			useSelector(
+				selectors.selectEntities,
+				getFilteredShallowEqualFunc(fullWireIds)
+			) as Record<string, PlainWire | undefined>
+		).filter(([key]) => fullWireIds.includes(key))
 	)
 
 const selectWire = (
@@ -439,5 +483,6 @@ export const {
 	initAll,
 	upsertMany,
 	setConditionValue,
+	setIsLoading,
 } = wireSlice.actions
 export default wireSlice.reducer

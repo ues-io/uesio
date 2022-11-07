@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -146,6 +147,10 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 	switch op.CollectionName {
 	case "uesio/studio.allmetadata":
 		botFunction = runAllMetadataLoadBot
+	case "tcm/timetracker.project":
+		botFunction = clickup.ProjectLoadBot
+	case "tcm/timetracker.task":
+		botFunction = clickup.TaskLoadBot
 	}
 
 	if botFunction != nil {

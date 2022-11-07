@@ -5,14 +5,13 @@ import { LabelPosition } from "../../view/field/fielddefinition"
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	label?: string
 	labelPosition?: LabelPosition
-	record: wire.WireRecord
-	fieldId: string
+	errors?: wire.SaveError[]
 }
 const Icon = component.getUtility("uesio/io.icon")
 const FieldLabel = component.getUtility("uesio/io.fieldlabel")
 
 const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
-	const { label, labelPosition, children, context, record, fieldId } = props
+	const { label, labelPosition, children, context, errors } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
@@ -25,7 +24,6 @@ const Text: FunctionComponent<FieldWrapperUtilityProps> = (props) => {
 		},
 		props
 	)
-	const errors = record?.getErrors(fieldId)
 
 	return (
 		<div

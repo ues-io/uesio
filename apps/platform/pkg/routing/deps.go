@@ -353,7 +353,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		appNames = append(appNames, ns)
 	}
 
-	appData, err := datasource.GetAppData(appNames, session)
+	appData, err := datasource.GetAppData(appNames)
 	if err != nil {
 		return err
 	}
@@ -456,6 +456,18 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {
 								if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
 									getComponentAreaDeps(columnNode.Content[k+1], depMap)
 								}
+							}
+						}
+					}
+				}
+				// A special case that should be removed at some point in
+				// favor of defining where slots are in the component definition
+				if compName == "uesio/io.field" && prop.Value == "list" {
+					if len(comp.Content[1].Content) > i {
+						listNode := comp.Content[1].Content[i+1]
+						for k, prop := range listNode.Content {
+							if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
+								getComponentAreaDeps(listNode.Content[k+1], depMap)
 							}
 						}
 					}

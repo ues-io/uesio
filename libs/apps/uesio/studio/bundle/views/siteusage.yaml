@@ -39,122 +39,107 @@ definition:
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
-      conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
+      init:
+        query: false
     usage_load:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: LOAD
         - field: uesio/core.metadatatype
           value: DATASOURCE
+      init:
+        query: false
     usage_save:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: SAVE
         - field: uesio/core.metadatatype
           value: DATASOURCE
+      init:
+        query: false
     usage_download:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: DOWNLOAD
+      init:
+        query: false
     usage_upload:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: UPLOAD
+      init:
+        query: false
     usage_download_bytes:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: DOWNLOAD_BYTES
+      init:
+        query: false
     usage_upload_bytes:
       collection: uesio/core.usage
       fields:
         uesio/core.id:
         uesio/core.total:
-        uesio/core.tenanttype:
-        uesio/core.tenantid:
         uesio/core.user:
         uesio/core.day:
         uesio/core.actiontype:
         uesio/core.metadatatype:
         uesio/core.metadataname:
       conditions:
-        - field: uesio/core.tenantid
-          value: $Param{app}:$Param{sitename}
         - field: uesio/core.actiontype
           value: UPLOAD_BYTES
+      init:
+        query: false
     users:
       collection: uesio/core.user
       fields:
@@ -175,6 +160,13 @@ definition:
             app: $Param{app}
         wires:
           - users
+          - usage
+          - usage_load
+          - usage_save
+          - usage_download
+          - usage_upload
+          - usage_download_bytes
+          - usage_upload_bytes
 
   # Components are how we describe the layout of our view
   components:
@@ -345,19 +337,17 @@ definition:
                                   - uesio/io.avatar:
                                       image: $UserFile{uesio/core.picture}
                                       text: ${uesio/core.initials}
-                # - uesio/io.box:
-                #     uesio.variant: uesio/io.section
-                #     components:
-                #       - uesio/io.table:
-                #           id: usagetable
-                #           wire: usage
-                #           mode: READ
-                #           columns:
-                #             - field: uesio/core.user
-                #             - field: uesio/core.tenanttype
-                #             - field: uesio/core.tenantid
-                #             - field: uesio/core.day
-                #             - field: uesio/core.actiontype
-                #             - field: uesio/core.metadatatype
-                #             - field: uesio/core.metadataname
-                #             - field: uesio/core.total
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.table:
+                          id: usagetable
+                          wire: usage
+                          mode: READ
+                          columns:
+                            - field: uesio/core.user
+                            - field: uesio/core.day
+                            - field: uesio/core.actiontype
+                            - field: uesio/core.metadatatype
+                            - field: uesio/core.metadataname
+                            - field: uesio/core.total

@@ -87,19 +87,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
-	if (error) {
-		return (
-			<FieldWrapper
-				labelPosition={labelPosition}
-				variant={fieldWrapperVariant}
-				label={label}
-				context={context}
-			>
-				{error}
-			</FieldWrapper>
-		)
-	}
-
 	const items: MetadataItem[] = metadata ? Object.keys(metadata) : []
 
 	const tag = (
@@ -201,6 +188,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			variant={fieldWrapperVariant}
 			label={label}
 			context={context}
+			errors={error ? [{ message: error }] : []}
 		>
 			<CustomSelect
 				items={items}

@@ -6,6 +6,7 @@ const METADATA = {
 	VIEW: "views",
 	DATASOURCE: "datasources",
 	AUTHSOURCE: "authsources",
+	SIGNUPMETHOD: "signupmethods",
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
