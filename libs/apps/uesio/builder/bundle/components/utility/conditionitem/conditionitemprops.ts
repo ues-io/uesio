@@ -1,0 +1,241 @@
+import { builder, collection } from "@uesio/ui"
+
+const valueSourceProps = [
+	{
+		//TO-DO This should be a dynamic metadatapicker
+		name: "lookupWire",
+		type: "TEXT",
+		label: "Lookup Wire",
+		display: [
+			{
+				property: "valueSource",
+				value: "LOOKUP",
+			},
+		],
+	},
+	{
+		//TO-DO This should be a dynamic metadatapicker
+		name: "lookupField",
+		type: "TEXT",
+		label: "Lookup Field",
+		display: [
+			{
+				property: "valueSource",
+				value: "LOOKUP",
+			},
+		],
+	},
+	{
+		name: "param",
+		type: "TEXT",
+		label: "Param",
+		display: [
+			{
+				property: "valueSource",
+				value: "PARAM",
+			},
+		],
+	},
+	{
+		name: "type",
+		type: "SELECT",
+		label: "Type",
+		options: [
+			{
+				label: "Group",
+				value: "GROUP",
+			},
+		],
+		display: [
+			{
+				property: "type",
+				value: "GROUP",
+			},
+		],
+	},
+	{
+		name: "conjunction",
+		type: "SELECT",
+		label: "Conjunction",
+		options: [
+			{
+				label: "AND",
+				value: "AND",
+			},
+			{
+				label: "OR",
+				value: "OR",
+			},
+		],
+		display: [
+			{
+				property: "type",
+				value: "GROUP",
+			},
+		],
+	},
+] as builder.PropDescriptor[]
+
+function getBaseProps(collectionName: string): builder.PropDescriptor[] {
+	return [
+		{
+			name: "id",
+			type: "TEXT",
+			label: "Id",
+		},
+		{
+			name: "field",
+			type: "METADATA",
+			metadataType: "FIELD",
+			label: "Field",
+			groupingValue: collectionName,
+			display: [
+				{
+					type: "NOT_EQUALS",
+					property: "type",
+					value: "GROUP",
+				},
+			],
+		},
+		{
+			name: "valueSource",
+			type: "SELECT",
+			label: "Value Source",
+			options: [
+				{
+					label: "",
+					value: "",
+				},
+				{
+					label: "Value",
+					value: "VALUE",
+				},
+				{
+					label: "Lookup",
+					value: "LOOKUP",
+				},
+				{
+					label: "Param",
+					value: "PARAM",
+				},
+			],
+			display: [
+				{
+					type: "NOT_EQUALS",
+					property: "type",
+					value: "GROUP",
+				},
+			],
+		},
+	]
+}
+
+function getValueProp(
+	field: collection.Field | undefined
+): builder.PropDescriptor {
+	const selectOptions = field?.getSelectOptions()
+	const valueProperty: builder.PropDescriptor = selectOptions?.length
+		? {
+				name: "value",
+				type: "MULTISELECT",
+				label: "Values",
+				options: selectOptions,
+				display: [
+					{
+						property: "valueSource",
+						value: "VALUE",
+					},
+				],
+		  }
+		: {
+				name: "value",
+				type: "TEXT",
+				label: "Value",
+				display: [
+					{
+						property: "valueSource",
+						value: "VALUE",
+					},
+				],
+		  }
+
+	return valueProperty
+}
+
+function getOperatorProp(
+	field: collection.Field | undefined
+): builder.PropDescriptor {
+	console.log(field)
+	const fieldType = field?.getType()
+	let baseOptions = [
+		{
+			label: "",
+			value: "",
+		},
+		{
+			label: "Equals",
+			value: "EQ",
+		},
+		{
+			label: "Not Equal To",
+			value: "NOT_EQ",
+		},
+		{
+			label: "Greater Than",
+			value: "GT",
+		},
+		{
+			label: "Less Than",
+			value: "LT",
+		},
+		{
+			label: "Greater Than or Equal To",
+			value: "GTE",
+		},
+		{
+			label: "Less Than or Equal To",
+			value: "LTE",
+		},
+		{
+			label: "In",
+			value: "IN",
+		},
+		{
+			label: "Is Blank",
+			value: "IS_BLANK",
+		},
+		{
+			label: "Is Not Blank",
+			value: "IS_NOT_BLANK",
+		},
+	]
+
+	if (fieldType === "MULTISELECT") {
+		baseOptions = [
+			...baseOptions,
+			{
+				label: "Has Any",
+				value: "HAS_ANY",
+			},
+			{
+				label: "Has All",
+				value: "HAS_ALL",
+			},
+		]
+	}
+
+	return {
+		name: "operator",
+		type: "SELECT",
+		label: "Operator",
+		options: baseOptions,
+		display: [
+			{
+				type: "NOT_BLANK",
+				property: "valueSource",
+			},
+		],
+	}
+}
+
+export { getBaseProps, valueSourceProps, getValueProp, getOperatorProp }
