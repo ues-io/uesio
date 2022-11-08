@@ -132,8 +132,13 @@ function getBaseProps(collectionName: string): builder.PropDescriptor[] {
 
 function getValueProp(
 	field: collection.Field | undefined
+	//conditionState: wire.WireConditionState
 ): builder.PropDescriptor {
 	const selectOptions = field?.getSelectOptions()
+
+	//This has to return a multiselect where the user defines the values on the fly
+	//const isIn = conditionState && conditionState?.operator === "IN"
+
 	const valueProperty: builder.PropDescriptor = selectOptions?.length
 		? {
 				name: "value",
@@ -196,10 +201,11 @@ function getOperatorProp(
 			label: "Less Than or Equal To",
 			value: "LTE",
 		},
-		{
-			label: "In",
-			value: "IN",
-		},
+		//TO-DO we need more propertyes for this one
+		// {
+		// 	label: "In",
+		// 	value: "IN",
+		// },
 		{
 			label: "Is Blank",
 			value: "IS_BLANK",
