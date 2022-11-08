@@ -30,7 +30,7 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 		return nil, err
 	}
 
-	value, err := configstore.GetValue(configValue, session)
+	value, err := configstore.GetValueFromKey(key, session)
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +53,9 @@ func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 	response := []ConfigValueResponse{}
 
 	for _, cv := range configValues {
+		if cv.ManagedBy == "app" || cv.Store == "environment" {
+			continue
+		}
 		value, err := configstore.GetValue(cv, session)
 		if err != nil {
 			return nil, err
@@ -104,7 +107,8 @@ type ConfigValueSetRequest struct {
 func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
-	key := vars["key"]
+	namespace := vars["namespace"]
+	name := vars["name"]
 	var setRequest ConfigValueSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
@@ -113,7 +117,7 @@ func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	err = configstore.SetValueFromKey(key, setRequest.Value, session)
+	err = configstore.SetValueFromKey(namespace+"."+name, setRequest.Value, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
