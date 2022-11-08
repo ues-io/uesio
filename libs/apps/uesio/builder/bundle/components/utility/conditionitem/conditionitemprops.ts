@@ -2,9 +2,8 @@ import { builder, collection } from "@uesio/ui"
 
 const valueSourceProps = [
 	{
-		//TO-DO This should be a dynamic metadatapicker
 		name: "lookupWire",
-		type: "TEXT",
+		type: "WIRE",
 		label: "Lookup Wire",
 		display: [
 			{
@@ -14,10 +13,10 @@ const valueSourceProps = [
 		],
 	},
 	{
-		//TO-DO This should be a dynamic metadatapicker
 		name: "lookupField",
-		type: "TEXT",
+		type: "FIELD",
 		label: "Lookup Field",
+		wireField: "lookupWire",
 		display: [
 			{
 				property: "valueSource",
