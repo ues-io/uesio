@@ -356,6 +356,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				if err != nil {
 					return nil, err
 				}
+				continue
 			}
 
 			err = connection.Load(op, session)
