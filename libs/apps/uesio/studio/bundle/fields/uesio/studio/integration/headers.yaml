@@ -1,0 +1,6 @@
+name: headers
+type: MAP
+label: Headers
+subtype: TEXT
+subfields:
+  - name: header

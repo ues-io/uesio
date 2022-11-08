@@ -20,3 +20,13 @@ func (c *Credentials) GetHash() string {
 	sum := md5.Sum(data)
 	return string(sum[:])
 }
+
+func (c *Credentials) GetInterfaceMap() map[string]interface{} {
+	result := make(map[string]interface{}, len(*c))
+	i := 0
+	for k, v := range *c {
+		result[k] = v
+		i++
+	}
+	return result
+}

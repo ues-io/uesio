@@ -14,7 +14,7 @@ type Secret struct {
 	Name      string     `yaml:"name" json:"uesio/studio.name"`
 	Namespace string     `yaml:"-" json:"-"`
 	Store     string     `yaml:"store,omitempty" json:"uesio/studio.store"`
-	ManagedBy string     `yaml:"managedBy" json:"uesio/studio.managedby"`
+	ManagedBy string     `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
 	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
 	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`

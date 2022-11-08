@@ -7,8 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type FeatureFlagStore struct {
-}
+type FeatureFlagStore struct{}
 
 func (ffs *FeatureFlagStore) Get(user string, assignments *meta.FeatureFlagAssignmentCollection, session *sess.Session) error {
 	return datasource.PlatformLoad(

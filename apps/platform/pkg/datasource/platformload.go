@@ -3,6 +3,7 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -14,6 +15,14 @@ type PlatformLoadOptions struct {
 	Fields     []adapt.LoadRequestField
 	Orders     []adapt.LoadRequestOrder
 	Connection adapt.Connection
+}
+
+func (plo *PlatformLoadOptions) GetConditionsDebug() string {
+	conditionStrings := []string{}
+	for _, c := range plo.Conditions {
+		conditionStrings = append(conditionStrings, fmt.Sprintf("%s :: %s", c.Field, c.Value))
+	}
+	return strings.Join(conditionStrings, " ")
 }
 
 type RecordNotFoundError struct {
@@ -88,10 +97,10 @@ func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions,
 	length := collection.Len()
 
 	if length == 0 {
-		return NewRecordNotFoundError("Couldn't find item from platform load: " + collection.GetName())
+		return NewRecordNotFoundError("Couldn't find item from platform load: " + collection.GetName() + " : " + options.GetConditionsDebug())
 	}
 	if length > 1 {
-		return fmt.Errorf("Duplicate item found from platform load: %s (%v)", collection.GetName(), length)
+		return fmt.Errorf("Duplicate item found from platform load: %s (%v)", collection.GetName()+" : "+options.GetConditionsDebug(), length)
 	}
 
 	return nil

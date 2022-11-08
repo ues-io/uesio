@@ -6,6 +6,7 @@ import (
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -73,9 +74,12 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 	url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false&include_closed=true", listID)
 
-	data := TaskResponse{}
+	data := &TaskResponse{}
 
-	err = makeRequest(&data, url, session)
+	err = integ.ExecByKey(&integ.IntegrationOptions{
+		URL:   url,
+		Cache: true,
+	}, nil, data, "tcm/timetracker.clickup", session)
 	if err != nil {
 		return err
 	}
