@@ -1,0 +1,4 @@
+name: baseurl
+type: TEXT
+label: Base URL
+required: true

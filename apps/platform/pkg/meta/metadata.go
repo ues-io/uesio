@@ -166,6 +166,7 @@ var METADATA_NAME_MAP = map[string]string{
 	"COMPONENT":        "components",
 	"FILE":             "files",
 	"LABEL":            "labels",
+	"INTEGRATION":      "integrations",
 }
 
 var bundleableGroupMap = map[string]BundleableFactory{
@@ -193,6 +194,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&AuthSourceCollection{}).GetBundleFolderName():         func() BundleableGroup { return &AuthSourceCollection{} },
 	(&UserAccessTokenCollection{}).GetBundleFolderName():    func() BundleableGroup { return &UserAccessTokenCollection{} },
 	(&SignupMethodCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SignupMethodCollection{} },
+	(&IntegrationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &IntegrationCollection{} },
 }
 
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {

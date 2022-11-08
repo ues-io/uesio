@@ -45,6 +45,8 @@ var ORDERED_ITEMS = [...]string{
 	"useraccesstokens",
 	"signupmethods",
 	"secrets",
+	"credentials",
+	"integrations",
 }
 
 func Deploy(body io.ReadCloser, session *sess.Session) error {

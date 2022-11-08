@@ -26,6 +26,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
+	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
@@ -70,6 +72,9 @@ func init() {
 
 	// Bot Dialects
 	datasource.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
+
+	// Integration Types
+	integ.RegisterConfigStore("web", &web.WebIntegration{})
 }
 
 func main() {

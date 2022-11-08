@@ -5,8 +5,20 @@ import (
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+// GET teams
+// https://api.clickup.com/api/v2/team
+// TEAM ID: 2569646 --- The Cloud Masters
+
+// GET spaces
+// https://api.clickup.com/api/v2/team/{team_id}/space?archived=false
+// SPACE ID: 8863869 --- AMAZON Management
+
+// GET folders
+// https://api.clickup.com/api/v2/space/{space_id}/folder?archived=false
 
 type ProjectResponse struct {
 	Projects []Project `json:"folders"`
@@ -36,9 +48,12 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	url := fmt.Sprintf("space/%s/folder?archived=false", spaceID)
 
-	data := ProjectResponse{}
+	data := &ProjectResponse{}
 
-	err = makeRequest(&data, url, session)
+	err = integ.ExecByKey(&integ.IntegrationOptions{
+		URL:   url,
+		Cache: true,
+	}, nil, data, "tcm/timetracker.clickup", session)
 	if err != nil {
 		return err
 	}

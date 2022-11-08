@@ -47,7 +47,6 @@ func GetValueFromKey(key string, session *sess.Session) (string, error) {
 }
 
 func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
-	// Only use the environment configstore for now
 	store, err := GetConfigStore(cv.Store)
 	if err != nil {
 		return "", err
@@ -68,7 +67,6 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 }
 
 func SetValue(cv *meta.ConfigValue, value string, session *sess.Session) error {
-	// Only use the environment configstore for now
 	store, err := GetConfigStore(cv.Store)
 	if err != nil {
 		return err

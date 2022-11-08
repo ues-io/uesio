@@ -1,0 +1,7 @@
+name: integration
+uniqueKey:
+  - uesio/studio.workspace
+  - uesio/studio.name
+nameField: uesio/studio.name
+label: Integration
+pluralLabel: Integrations
