@@ -4,7 +4,7 @@ import TextField from "../textfield/textfield"
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
-	value: string
+	value: string[]
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
@@ -14,7 +14,9 @@ interface SelectFieldProps extends definition.UtilityProps {
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { setValue, value, mode, options } = props
 	if (mode === "READ") {
-		const optionMatch = options?.find((option) => option.value === value)
+		const optionMatch = options?.find((option) =>
+			value.includes(option.value)
+		)
 		const valueLabel = optionMatch?.label || ""
 		return <TextField {...props} value={valueLabel} />
 	}

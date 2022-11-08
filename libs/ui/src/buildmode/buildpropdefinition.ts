@@ -355,6 +355,7 @@ export {
 	PropertySelectOption,
 	ActionDescriptor,
 	AddAction,
+	ToggleConditionAction,
 	CustomAction,
 	CloneAction,
 	RunSignalsAction,

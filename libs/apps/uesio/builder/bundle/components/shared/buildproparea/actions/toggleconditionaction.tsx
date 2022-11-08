@@ -4,7 +4,7 @@ import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
 const ToggleConditionAction: FunctionComponent<
-	ActionProps<builder.AddAction>
+	ActionProps<builder.ToggleConditionAction>
 > = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path = "", valueAPI } = props
