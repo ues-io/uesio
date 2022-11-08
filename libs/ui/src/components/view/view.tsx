@@ -46,7 +46,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	if (isSubView && context.getViewStack()?.includes(viewDefId)) {
 		throw new Error(
-			`View {viewDefId} cannot be selected in this context, please try another one.`
+			`View ${viewDefId} cannot be selected in this context, please try another one.`
 		)
 	}
 

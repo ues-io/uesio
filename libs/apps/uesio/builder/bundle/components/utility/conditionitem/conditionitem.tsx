@@ -1,8 +1,9 @@
 import { FunctionComponent } from "react"
 import { component, context, builder, wire, hooks } from "@uesio/ui"
-
+import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 import PropertiesPane from "../../shared/propertiespane"
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type Props = {
 	conditionPath: string
@@ -307,10 +308,11 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 	}
 
 	const [, , selectedNode] = uesio.builder.useSelectedNode()
+	const selected = selectedNode === conditionPath
 
 	return (
 		<PropNodeTag
-			selected={selectedNode === conditionPath}
+			selected={selected}
 			onClick={onClick}
 			context={context}
 			popperChildren={
@@ -382,6 +384,22 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					)}
 				</Grid>
 			)}
+
+			<IOExpandPanel context={context} expanded={selected}>
+				<BuildActionsArea
+					context={context}
+					path={conditionPath}
+					valueAPI={valueAPI}
+					actions={[
+						{
+							type: "MOVE",
+						},
+						{
+							type: "DELETE",
+						},
+					]}
+				/>
+			</IOExpandPanel>
 		</PropNodeTag>
 	)
 }
