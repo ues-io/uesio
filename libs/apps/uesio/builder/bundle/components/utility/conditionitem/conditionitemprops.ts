@@ -27,7 +27,7 @@ const valueSourceProps = [
 	},
 	{
 		name: "param",
-		type: "TEXT",
+		type: "PARAM",
 		label: "Param",
 		display: [
 			{
