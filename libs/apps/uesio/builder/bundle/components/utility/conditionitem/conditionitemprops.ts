@@ -169,7 +169,6 @@ function getValueProp(
 function getOperatorProp(
 	field: collection.Field | undefined
 ): builder.PropDescriptor {
-	console.log(field)
 	const fieldType = field?.getType()
 	let baseOptions = [
 		{

@@ -33,11 +33,11 @@ const defaultConditionGroupDef = {
 const conditionItemActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
 	{ type: "MOVE" },
-	{ type: "CLONE" },
-	{
-		label: "Toggle Condition",
-		type: "TOGGLE_CONDITION",
-	},
+	// TO-DO
+	// {
+	// 	label: "Toggle Condition",
+	// 	type: "TOGGLE_CONDITION",
+	// },
 ]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
@@ -132,25 +132,6 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 								selectedNode
 							) as wire.WireConditionState
 						),
-						actions: isGroup
-							? [
-									...conditionItemActions,
-									{
-										label: "Add Condition",
-										type: "ADD_CONDITION",
-										path: conditionPath,
-										definition: defaultConditionDef,
-										logo: "add",
-									},
-									{
-										label: "Add Group",
-										type: "ADD_CONDITION",
-										path: conditionPath,
-										definition: defaultConditionGroupDef,
-										logo: "library_add",
-									},
-							  ]
-							: [...conditionItemActions],
 					}}
 					valueAPI={valueAPI}
 				/>
@@ -192,14 +173,27 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 					context={context}
 					path={conditionPath}
 					valueAPI={valueAPI}
-					actions={[
-						{
-							type: "MOVE",
-						},
-						{
-							type: "DELETE",
-						},
-					]}
+					actions={
+						isGroup
+							? [
+									...conditionItemActions,
+									{
+										label: "Add Condition",
+										type: "ADD_CONDITION",
+										path: conditionPath,
+										definition: defaultConditionDef,
+										logo: "add",
+									},
+									{
+										label: "Add Group",
+										type: "ADD_CONDITION",
+										path: conditionPath,
+										definition: defaultConditionGroupDef,
+										logo: "library_add",
+									},
+							  ]
+							: [...conditionItemActions]
+					}
 				/>
 			</IOExpandPanel>
 		</PropNodeTag>
