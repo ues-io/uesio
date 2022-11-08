@@ -75,7 +75,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 	data := TaskResponse{}
 
-	err = makeRequest(&data, url)
+	err = makeRequest(&data, url, session)
 	if err != nil {
 		return err
 	}

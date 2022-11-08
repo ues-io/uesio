@@ -2,47 +2,39 @@ package environment
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type ConfigStore struct {
 }
 
-func (cs *ConfigStore) Get(key string) (string, error) {
+func (cs *ConfigStore) Get(key string, session *sess.Session) (string, error) {
 	var cv meta.ConfigStoreValue
-	headlessSession, err := auth.GetStudioSystemSession(nil)
-	if err != nil {
-		return "", err
-	}
-	err = datasource.PlatformLoadOne(
+	err := datasource.PlatformLoadOne(
 		&cv,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
-					Field: adapt.ID_FIELD,
+					Field: adapt.UNIQUE_KEY_FIELD,
 					Value: key,
 				},
 			},
 		},
-		headlessSession)
+		session)
 	if err != nil {
 		return "", nil
 	}
 	return cv.Value, nil
 }
 
-func (cs *ConfigStore) Set(key, value string) error {
+func (cs *ConfigStore) Set(key, value string, session *sess.Session) error {
 	cv := meta.ConfigStoreValue{
 		Key:   key,
 		Value: value,
 	}
-	headlessSession, err := auth.GetStudioSystemSession(nil)
-	if err != nil {
-		return err
-	}
 	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
 		Upsert: true,
-	}, nil, headlessSession)
+	}, nil, session)
 }

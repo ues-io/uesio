@@ -29,6 +29,9 @@ func getSecrets(session *sess.Session) ([]SecretResponse, error) {
 	response := []SecretResponse{}
 
 	for _, s := range secrets {
+		if s.ManagedBy == "app" || s.Store == "environment" {
+			continue
+		}
 		response = append(response, SecretResponse{
 			Name:      s.Name,
 			Namespace: s.Namespace,
@@ -59,7 +62,8 @@ type SecretSetRequest struct {
 func SetSecret(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
-	key := vars["key"]
+	namespace := vars["namespace"]
+	name := vars["name"]
 	var setRequest SecretSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
@@ -68,7 +72,7 @@ func SetSecret(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	err = secretstore.SetSecretFromKey(key, setRequest.Value, session)
+	err = secretstore.SetSecretFromKey(namespace+"."+name, setRequest.Value, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

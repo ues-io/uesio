@@ -70,11 +70,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 								}
 								variant="uesio/io.secondary"
 								context={context}
-								label={`Set${
-									response.managedby === "app"
-										? " for App"
-										: ""
-								}`}
+								label="Set"
 							/>
 						}
 					/>

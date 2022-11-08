@@ -321,9 +321,13 @@ const platform = {
 		value: string
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/configvalues/${key}`, {
-			value,
-		})
+		const [namespace, name] = parseKey(key)
+		const response = await postJSON(
+			`${prefix}/configvalues/${namespace}/${name}`,
+			{
+				value,
+			}
+		)
 		return respondJSON(response)
 	},
 	getSecrets: async (context: Context): Promise<SecretResponse[]> => {
@@ -337,9 +341,13 @@ const platform = {
 		value: string
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/secrets/${key}`, {
-			value,
-		})
+		const [namespace, name] = parseKey(key)
+		const response = await postJSON(
+			`${prefix}/secrets/${namespace}/${name}`,
+			{
+				value,
+			}
+		)
 		return respondJSON(response)
 	},
 	getFeatureFlags: async (
@@ -358,10 +366,14 @@ const platform = {
 		user?: string
 	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
-		const response = await postJSON(`${prefix}/featureflags/${key}`, {
-			value,
-			user,
-		})
+		const [namespace, name] = parseKey(key)
+		const response = await postJSON(
+			`${prefix}/featureflags/${namespace}/${name}`,
+			{
+				value,
+				user,
+			}
+		)
 		return respondJSON(response)
 	},
 	signup: async (

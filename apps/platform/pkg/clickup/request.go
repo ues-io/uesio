@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
+	"github.com/thecloudmasters/uesio/pkg/secretstore"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GET teams
@@ -23,7 +25,7 @@ import (
 
 var BASE_URL = "https://api.clickup.com/api/v2"
 
-func makeRequest(data interface{}, url string) error {
+func makeRequest(data interface{}, url string, session *sess.Session) error {
 
 	fullURL := fmt.Sprintf("%s/%s", BASE_URL, url)
 
@@ -37,7 +39,12 @@ func makeRequest(data interface{}, url string) error {
 		return err
 	}
 
-	req.Header.Set("Authorization", "pk_4678167_P5EKGGXNY3DXIB08U5CWL98HD14VST19")
+	authKey, err := secretstore.GetSecretFromKey("tcm/timetracker.clickup_key", session)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", authKey)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

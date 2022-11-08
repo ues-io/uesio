@@ -42,7 +42,8 @@ type FeatureFlagSetRequest struct {
 func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
-	key := vars["key"]
+	namespace := vars["namespace"]
+	name := vars["name"]
 	var setRequest FeatureFlagSetRequest
 	err := json.NewDecoder(r.Body).Decode(&setRequest)
 	if err != nil {
@@ -51,7 +52,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	err = featureflagstore.SetValueFromKey(key, setRequest.Value, setRequest.User, session)
+	err = featureflagstore.SetValueFromKey(namespace+"."+name, setRequest.Value, setRequest.User, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

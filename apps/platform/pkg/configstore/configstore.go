@@ -2,7 +2,6 @@ package configstore
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -11,28 +10,11 @@ import (
 )
 
 type ConfigStore interface {
-	Get(key string) (string, error)
-	Set(key, value string) error
+	Get(key string, session *sess.Session) (string, error)
+	Set(key, value string, session *sess.Session) error
 }
 
 var configStoreMap = map[string]ConfigStore{}
-
-func getConfigKeyParts(cv *meta.ConfigValue, session *sess.Session) []string {
-	parts := []string{cv.Namespace, cv.Name}
-	if cv.ManagedBy == "app" {
-		return parts
-	}
-	workspace := session.GetWorkspace()
-	if workspace != nil {
-		return append(parts, "workspace", workspace.GetAppFullName(), workspace.Name)
-	}
-	site := session.GetSite()
-	return append(parts, "site", site.GetFullName())
-}
-
-func getConfigKey(cv *meta.ConfigValue, session *sess.Session) string {
-	return strings.Join(getConfigKeyParts(cv, session), ":")
-}
 
 // GetConfigStore gets an adapter of a certain type
 func GetConfigStore(configStoreType string) (ConfigStore, error) {
@@ -70,8 +52,7 @@ func GetValue(cv *meta.ConfigValue, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fullKey := getConfigKey(cv, session)
-	return store.Get(fullKey)
+	return store.Get(cv.GetKey(), session)
 }
 
 func SetValueFromKey(key, value string, session *sess.Session) error {
@@ -92,8 +73,7 @@ func SetValue(cv *meta.ConfigValue, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	fullKey := getConfigKey(cv, session)
-	return store.Set(fullKey, value)
+	return store.Set(cv.GetKey(), value, session)
 }
 
 func Merge(template string, session *sess.Session) (string, error) {
