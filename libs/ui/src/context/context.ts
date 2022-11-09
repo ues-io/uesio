@@ -47,6 +47,7 @@ type ContextFrame = {
 	route?: RouteState
 	workspace?: TenantState
 	siteadmin?: TenantState
+	appadmin?: TenantState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
@@ -306,6 +307,8 @@ class Context {
 	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
 
 	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
+
+	getAppAdmin = () => this.stack.find((frame) => frame?.appadmin)?.appadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()

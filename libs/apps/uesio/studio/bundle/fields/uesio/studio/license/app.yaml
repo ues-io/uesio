@@ -1,0 +1,5 @@
+name: app
+type: REFERENCE
+label: Using App
+reference:
+  collection: uesio/studio.app

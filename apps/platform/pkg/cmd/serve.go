@@ -95,6 +95,8 @@ func serve(cmd *cobra.Command, args []string) {
 	vr := r.PathPrefix("/version/" + getNSParam("app") + "/" + getNSParam("namespace") + "/{version}").Subrouter()
 	// The site admin router
 	sar := r.PathPrefix("/siteadmin/" + getNSParam("app") + "/{site}").Subrouter()
+	// The app admin router
+	aar := r.PathPrefix("/appadmin/" + getNSParam("app")).Subrouter()
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
 
@@ -171,8 +173,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/auth/"+getItemParam()+"/createlogin", controller.CreateLogin).Methods("POST")
 	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
-	appAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
-	appAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
+	appAdminAPI(aar, "/wires/load", controller.Load).Methods("POST")
+	appAdminAPI(aar, "/wires/save", controller.Save).Methods("POST")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")

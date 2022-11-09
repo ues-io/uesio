@@ -85,6 +85,10 @@ const getPrefix = (context: Context) => {
 	if (siteadmin) {
 		return `/siteadmin/${siteadmin.app}/${siteadmin.name}`
 	}
+	const appadmin = context.getAppAdmin()
+	if (appadmin) {
+		return `/appadmin/${appadmin.app}`
+	}
 	return "/site"
 }
 

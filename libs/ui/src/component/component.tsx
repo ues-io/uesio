@@ -24,6 +24,8 @@ function additionalContext(context: Context, additional: ContextFrame) {
 		const workspace = additional.workspace
 		const siteadmin = additional.siteadmin
 		const fieldMode = additional.fieldMode
+		const appadmin = additional.appadmin
+
 		if (workspace) {
 			frame.workspace = {
 				name: context.merge(workspace.name),
@@ -40,6 +42,14 @@ function additionalContext(context: Context, additional: ContextFrame) {
 				app: context.merge(siteadmin.app),
 			}
 		}
+
+		if (appadmin) {
+			frame.appadmin = {
+				name: "", //TO-DO this can be optional?
+				app: context.merge(appadmin.app),
+			}
+		}
+
 		const wire = additional.wire
 		if (wire) {
 			frame.wire = wire

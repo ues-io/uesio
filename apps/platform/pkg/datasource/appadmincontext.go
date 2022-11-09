@@ -91,45 +91,6 @@ func queryApp(value, field string, connection adapt.Connection) (*meta.App, erro
 				{
 					ID: adapt.UNIQUE_KEY_FIELD,
 				},
-				{
-					ID: "uesio/studio.name",
-				},
-				// {
-				// 	ID: "uesio/studio.app",
-				// 	Fields: []adapt.LoadRequestField{
-				// 		{
-				// 			ID: adapt.ID_FIELD,
-				// 		},
-				// 		{
-				// 			ID: adapt.UNIQUE_KEY_FIELD,
-				// 		},
-				// 	},
-				// },
-				// {
-				// 	ID: "uesio/studio.bundle",
-				// 	Fields: []adapt.LoadRequestField{
-				// 		{
-				// 			ID: "uesio/studio.app",
-				// 			Fields: []adapt.LoadRequestField{
-				// 				{
-				// 					ID: adapt.ID_FIELD,
-				// 				},
-				// 				{
-				// 					ID: adapt.UNIQUE_KEY_FIELD,
-				// 				},
-				// 			},
-				// 		},
-				// 		{
-				// 			ID: "uesio/studio.major",
-				// 		},
-				// 		{
-				// 			ID: "uesio/studio.minor",
-				// 		},
-				// 		{
-				// 			ID: "uesio/studio.patch",
-				// 		},
-				// 	},
-				// },
 			},
 			Conditions: []adapt.LoadRequestCondition{
 				{

@@ -178,7 +178,7 @@ func (s *Session) GetTenantID() string {
 		return MakeSiteTenantID(s.siteadmin.UniqueKey)
 	}
 	if s.appadmin != nil {
-		return MakeAppTenantID(s.siteadmin.UniqueKey)
+		return MakeAppTenantID(s.appadmin.UniqueKey)
 	}
 	return MakeSiteTenantID(s.site.UniqueKey)
 }
