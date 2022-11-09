@@ -88,3 +88,18 @@ func AuthenticateVersion(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func AuthenticateAppAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		appName := vars["app"]
+		//siteName := vars["site"]
+		err := datasource.AddAppAdminContextByKey(appName, GetSession(r), nil)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed querying app admin: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
