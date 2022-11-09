@@ -307,13 +307,9 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 		return nil, errors.New("User already exists")
 	}
 
-	email, err := auth.GetPayloadValue(payload, "email")
+	email, err := auth.GetRequiredPayloadValue(payload, "email")
 	if err != nil {
 		return nil, errors.New("Cognito login:" + err.Error())
-	}
-
-	if email == "" {
-		return nil, errors.New("Cognito login: Please provide an email")
 	}
 
 	signUpData := &cognito.AdminCreateUserInput{
@@ -365,10 +361,24 @@ func (c *Connection) CreateLogin(payload map[string]interface{}, username string
 		return nil, err
 	}
 
+	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
+	}
+
+	message, err := auth.GetRequiredPayloadValue(payload, "message")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
+	}
+
 	//resetPassword
 	resetPasswordData := &cognito.AdminResetUserPasswordInput{
 		UserPoolId: aws.String(poolID),
 		Username:   &fqUsername,
+		ClientMetadata: map[string]string{
+			"subject": subject,
+			"message": message,
+		},
 	}
 
 	_, err = client.AdminResetUserPassword(context.Background(), resetPasswordData)

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -104,6 +105,13 @@ func parseHost(host string) (domainType, domainValue, domain, subdomain string) 
 	//
 	hostParts := strings.Split(host, ":")
 	return "domain", hostParts[0], host, ""
+}
+
+func getHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
+	if domain.Type == "subdomain" {
+		return fmt.Sprintf("https://%s.%s", domain.Domain, site.Domain)
+	}
+	return fmt.Sprintf("https://%s", domain.Domain)
 }
 
 func GetSiteFromHost(host string) (*meta.Site, error) {
@@ -291,4 +299,15 @@ func GetPayloadValue(payload map[string]interface{}, key string) (string, error)
 
 	return stringValue, nil
 
+}
+
+func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string, error) {
+	value, err := GetPayloadValue(payload, key)
+	if err != nil {
+		return "", err
+	}
+	if value == "" {
+		return "", errors.New("Missing required payload value: " + key)
+	}
+	return value, nil
 }

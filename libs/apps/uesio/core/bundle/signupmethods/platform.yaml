@@ -5,4 +5,12 @@ usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
 # TO-DO this works for now but we want this signup method to be full core.
 landingRoute: uesio/studio.signupconfirm
+adminCreate:
+  emailSubject: "User Created in ${site} ${app}"
+  emailBody: |
+    A user account has been created for you in ${site} ${app}.
+
+    You can set your password and log in using the link below:
+    ${link}
+  redirect: "site/app/uesio/core/changepassword"
 public: true
