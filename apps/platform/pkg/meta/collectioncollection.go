@@ -19,12 +19,7 @@ func (cc *CollectionCollection) GetFields() []string {
 }
 
 func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	collection, err := NewCollection(key)
-	if err != nil {
-		return nil, err
-	}
-	*cc = append(*cc, collection)
-	return collection, nil
+	return NewCollection(key)
 }
 
 func (cc *CollectionCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
@@ -32,9 +27,11 @@ func (cc *CollectionCollection) GetKeyFromPath(path string, namespace string, co
 }
 
 func (cc *CollectionCollection) NewItem() Item {
-	collection := &Collection{}
-	*cc = append(*cc, collection)
-	return collection
+	return &Collection{}
+}
+
+func (cc *CollectionCollection) AddItem(item Item) {
+	*cc = append(*cc, item.(*Collection))
 }
 
 func (cc *CollectionCollection) GetItem(index int) Item {

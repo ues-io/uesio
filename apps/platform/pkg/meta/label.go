@@ -71,8 +71,7 @@ func (l *Label) GetCollectionName() string {
 }
 
 func (l *Label) GetCollection() CollectionableGroup {
-	var lc LabelCollection
-	return &lc
+	return &LabelCollection{}
 }
 
 func (l *Label) GetDBID(workspace string) string {
@@ -80,8 +79,7 @@ func (l *Label) GetDBID(workspace string) string {
 }
 
 func (l *Label) GetBundleGroup() BundleableGroup {
-	var lc LabelCollection
-	return &lc
+	return &LabelCollection{}
 }
 
 func (l *Label) GetKey() string {

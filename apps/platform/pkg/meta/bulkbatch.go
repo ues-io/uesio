@@ -20,8 +20,7 @@ func (bb *BulkBatch) GetCollectionName() string {
 }
 
 func (bb *BulkBatch) GetCollection() CollectionableGroup {
-	var bbc BulkBatchCollection
-	return &bbc
+	return &BulkBatchCollection{}
 }
 
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {

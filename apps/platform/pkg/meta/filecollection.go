@@ -22,18 +22,15 @@ func (fc *FileCollection) GetFields() []string {
 }
 
 func (fc *FileCollection) NewItem() Item {
-	f := &File{}
-	*fc = append(*fc, f)
-	return f
+	return &File{}
+}
+
+func (fc *FileCollection) AddItem(item Item) {
+	*fc = append(*fc, item.(*File))
 }
 
 func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	f, err := NewFile(key)
-	if err != nil {
-		return nil, err
-	}
-	*fc = append(*fc, f)
-	return f, nil
+	return NewFile(key)
 }
 
 func (fc *FileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

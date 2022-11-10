@@ -19,18 +19,15 @@ func (asc *AuthSourceCollection) GetFields() []string {
 }
 
 func (asc *AuthSourceCollection) NewItem() Item {
-	as := &AuthSource{}
-	*asc = append(*asc, as)
-	return as
+	return &AuthSource{}
+}
+
+func (asc *AuthSourceCollection) AddItem(item Item) {
+	*asc = append(*asc, item.(*AuthSource))
 }
 
 func (asc *AuthSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	as, err := NewAuthSource(key)
-	if err != nil {
-		return nil, err
-	}
-	*asc = append(*asc, as)
-	return as, nil
+	return NewAuthSource(key)
 }
 
 func (asc *AuthSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

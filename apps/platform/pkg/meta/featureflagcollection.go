@@ -31,18 +31,15 @@ func (ffc *FeatureFlagCollection) GetFields() []string {
 }
 
 func (ffc *FeatureFlagCollection) NewItem() Item {
-	ff := &FeatureFlag{}
-	*ffc = append(*ffc, ff)
-	return ff
+	return &FeatureFlag{}
+}
+
+func (ffc *FeatureFlagCollection) AddItem(item Item) {
+	*ffc = append(*ffc, item.(*FeatureFlag))
 }
 
 func (ffc *FeatureFlagCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	ff, err := NewFeatureFlag(key)
-	if err != nil {
-		return nil, err
-	}
-	*ffc = append(*ffc, ff)
-	return ff, nil
+	return NewFeatureFlag(key)
 }
 
 func (ffc *FeatureFlagCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

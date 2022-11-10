@@ -26,8 +26,7 @@ type Translation struct {
 type TranslationWrapper Translation
 
 func (t *Translation) GetBundleGroup() BundleableGroup {
-	var tc TranslationCollection
-	return &tc
+	return &TranslationCollection{}
 }
 
 func (t *Translation) GetPermChecker() *PermissionSet {
@@ -63,8 +62,7 @@ func (t *Translation) GetCollectionName() string {
 }
 
 func (t *Translation) GetCollection() CollectionableGroup {
-	var tc TranslationCollection
-	return &tc
+	return &TranslationCollection{}
 }
 
 func (t *Translation) SetField(fieldName string, value interface{}) error {

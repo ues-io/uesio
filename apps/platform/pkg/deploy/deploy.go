@@ -131,6 +131,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
+			collection.AddItem(collectionItem)
 			collectionItem.SetNamespace(namespace)
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {

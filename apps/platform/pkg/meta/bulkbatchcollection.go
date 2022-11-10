@@ -19,8 +19,11 @@ func (bbc *BulkBatchCollection) GetItem(index int) Item {
 }
 
 func (bbc *BulkBatchCollection) NewItem() Item {
-	*bbc = append(*bbc, &BulkBatch{})
-	return (*bbc)[len(*bbc)-1]
+	return &BulkBatch{}
+}
+
+func (bbc *BulkBatchCollection) AddItem(item Item) {
+	*bbc = append(*bbc, item.(*BulkBatch))
 }
 
 func (bbc *BulkBatchCollection) Loop(iter GroupIterator) error {

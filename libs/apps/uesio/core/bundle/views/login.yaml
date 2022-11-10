@@ -48,10 +48,6 @@ definition:
                           signals:
                             - signal: "route/REDIRECT"
                               path: "https://$Site{domain}"
-                      - uesio/core.logingoogle:
-                          text: Sign in with Google
-                          clientId: uesio/core.google_client_id
-                          align: center
                       - uesio/core.loginmock:
                           text: Sign in with Mock
                           align: center

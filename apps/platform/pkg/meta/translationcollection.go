@@ -24,22 +24,21 @@ func (tc *TranslationCollection) GetFields() []string {
 }
 
 func (tc *TranslationCollection) NewItem() Item {
-	t := &Translation{}
-	*tc = append(*tc, t)
-	return t
+	return &Translation{}
+}
+
+func (tc *TranslationCollection) AddItem(item Item) {
+	*tc = append(*tc, item.(*Translation))
 }
 
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-
 	_, err := language.ParseBase(key)
 	if err != nil {
 		return nil, errors.New("Invalid ISO 639 Key: " + key)
 	}
-	t := &Translation{
+	return &Translation{
 		Language: key,
-	}
-	*tc = append(*tc, t)
-	return t, nil
+	}, nil
 }
 
 func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

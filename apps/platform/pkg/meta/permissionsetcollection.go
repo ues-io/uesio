@@ -19,18 +19,15 @@ func (pc *PermissionSetCollection) GetFields() []string {
 }
 
 func (pc *PermissionSetCollection) NewItem() Item {
-	p := &PermissionSet{}
-	*pc = append(*pc, p)
-	return p
+	return &PermissionSet{}
+}
+
+func (pc *PermissionSetCollection) AddItem(item Item) {
+	*pc = append(*pc, item.(*PermissionSet))
 }
 
 func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	p, err := NewPermissionSet(key)
-	if err != nil {
-		return nil, err
-	}
-	*pc = append(*pc, p)
-	return p, nil
+	return NewPermissionSet(key)
 }
 
 func (pc *PermissionSetCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

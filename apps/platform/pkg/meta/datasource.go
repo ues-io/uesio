@@ -43,8 +43,7 @@ func (ds *DataSource) GetCollectionName() string {
 }
 
 func (ds *DataSource) GetCollection() CollectionableGroup {
-	var dsc DataSourceCollection
-	return &dsc
+	return &DataSourceCollection{}
 }
 
 func (ds *DataSource) GetDBID(workspace string) string {
@@ -52,8 +51,7 @@ func (ds *DataSource) GetDBID(workspace string) string {
 }
 
 func (ds *DataSource) GetBundleGroup() BundleableGroup {
-	var dsc DataSourceCollection
-	return &dsc
+	return &DataSourceCollection{}
 }
 
 func (ds *DataSource) GetKey() string {

@@ -26,8 +26,7 @@ func (ufm *UserFileMetadata) GetCollectionName() string {
 }
 
 func (ufm *UserFileMetadata) GetCollection() CollectionableGroup {
-	var ufmc UserFileMetadataCollection
-	return &ufmc
+	return &UserFileMetadataCollection{}
 }
 
 func (ufm *UserFileMetadata) SetField(fieldName string, value interface{}) error {

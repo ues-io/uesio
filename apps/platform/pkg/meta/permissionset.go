@@ -52,8 +52,7 @@ func (ps *PermissionSet) GetCollectionName() string {
 }
 
 func (ps *PermissionSet) GetCollection() CollectionableGroup {
-	var psc PermissionSetCollection
-	return &psc
+	return &PermissionSetCollection{}
 }
 
 func (ps *PermissionSet) GetDBID(workspace string) string {
@@ -61,8 +60,7 @@ func (ps *PermissionSet) GetDBID(workspace string) string {
 }
 
 func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
-	var psc PermissionSetCollection
-	return &psc
+	return &PermissionSetCollection{}
 }
 
 func (ps *PermissionSet) GetKey() string {

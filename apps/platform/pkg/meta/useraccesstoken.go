@@ -40,8 +40,7 @@ func (uat *UserAccessToken) GetCollectionName() string {
 }
 
 func (uat *UserAccessToken) GetCollection() CollectionableGroup {
-	var uatc UserAccessTokenCollection
-	return &uatc
+	return &UserAccessTokenCollection{}
 }
 
 func (uat *UserAccessToken) GetDBID(workspace string) string {
@@ -49,8 +48,7 @@ func (uat *UserAccessToken) GetDBID(workspace string) string {
 }
 
 func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
-	var uatc UserAccessTokenCollection
-	return &uatc
+	return &UserAccessTokenCollection{}
 }
 
 func (uat *UserAccessToken) GetKey() string {

@@ -62,8 +62,7 @@ func (ufc *UserFileCollection) GetCollectionName() string {
 }
 
 func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
-	var ufcc UserFileCollectionCollection
-	return &ufcc
+	return &UserFileCollectionCollection{}
 }
 
 func (ufc *UserFileCollection) GetDBID(workspace string) string {
@@ -71,8 +70,7 @@ func (ufc *UserFileCollection) GetDBID(workspace string) string {
 }
 
 func (ufc *UserFileCollection) GetBundleGroup() BundleableGroup {
-	var ufcc UserFileCollectionCollection
-	return &ufcc
+	return &UserFileCollectionCollection{}
 }
 
 func (ufc *UserFileCollection) SetField(fieldName string, value interface{}) error {

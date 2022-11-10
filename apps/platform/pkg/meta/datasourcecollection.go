@@ -19,18 +19,15 @@ func (dsc *DataSourceCollection) GetFields() []string {
 }
 
 func (dsc *DataSourceCollection) NewItem() Item {
-	ds := &DataSource{}
-	*dsc = append(*dsc, ds)
-	return ds
+	return &DataSource{}
+}
+
+func (dsc *DataSourceCollection) AddItem(item Item) {
+	*dsc = append(*dsc, item.(*DataSource))
 }
 
 func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	ds, err := NewDataSource(key)
-	if err != nil {
-		return nil, err
-	}
-	*dsc = append(*dsc, ds)
-	return ds, nil
+	return NewDataSource(key)
 }
 
 func (dsc *DataSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

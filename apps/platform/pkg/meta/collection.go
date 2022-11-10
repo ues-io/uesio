@@ -80,8 +80,7 @@ func (c *Collection) GetCollectionName() string {
 }
 
 func (c *Collection) GetCollection() CollectionableGroup {
-	var cc CollectionCollection
-	return &cc
+	return &CollectionCollection{}
 }
 
 func (c *Collection) GetDBID(workspace string) string {
@@ -89,8 +88,7 @@ func (c *Collection) GetDBID(workspace string) string {
 }
 
 func (c *Collection) GetBundleGroup() BundleableGroup {
-	var cc CollectionCollection
-	return &cc
+	return &CollectionCollection{}
 }
 
 func (c *Collection) GetKey() string {

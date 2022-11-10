@@ -19,18 +19,15 @@ func (cvc *ConfigValueCollection) GetFields() []string {
 }
 
 func (cvc *ConfigValueCollection) NewItem() Item {
-	cv := &ConfigValue{}
-	*cvc = append(*cvc, cv)
-	return cv
+	return &ConfigValue{}
+}
+
+func (cvc *ConfigValueCollection) AddItem(item Item) {
+	*cvc = append(*cvc, item.(*ConfigValue))
 }
 
 func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	cv, err := NewConfigValue(key)
-	if err != nil {
-		return nil, err
-	}
-	*cvc = append(*cvc, cv)
-	return cv, nil
+	return NewConfigValue(key)
 }
 
 func (cvc *ConfigValueCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

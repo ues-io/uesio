@@ -47,8 +47,7 @@ func (c *Credential) GetCollectionName() string {
 }
 
 func (c *Credential) GetCollection() CollectionableGroup {
-	var cc CredentialCollection
-	return &cc
+	return &CredentialCollection{}
 }
 
 func (c *Credential) GetDBID(workspace string) string {
@@ -56,8 +55,7 @@ func (c *Credential) GetDBID(workspace string) string {
 }
 
 func (c *Credential) GetBundleGroup() BundleableGroup {
-	var cc CredentialCollection
-	return &cc
+	return &CredentialCollection{}
 }
 
 func (c *Credential) GetKey() string {

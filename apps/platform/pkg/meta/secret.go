@@ -30,7 +30,7 @@ type SecretWrapper Secret
 func NewSecret(key string) (*Secret, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for ConfigValue: " + key)
+		return nil, errors.New("Bad Key for Secret: " + key)
 	}
 	return &Secret{
 		Name:      name,
@@ -43,8 +43,7 @@ func (s *Secret) GetCollectionName() string {
 }
 
 func (s *Secret) GetCollection() CollectionableGroup {
-	var sc SecretCollection
-	return &sc
+	return &SecretCollection{}
 }
 
 func (s *Secret) GetDBID(workspace string) string {
@@ -52,8 +51,7 @@ func (s *Secret) GetDBID(workspace string) string {
 }
 
 func (s *Secret) GetBundleGroup() BundleableGroup {
-	var sc SecretCollection
-	return &sc
+	return &SecretCollection{}
 }
 
 func (s *Secret) GetKey() string {

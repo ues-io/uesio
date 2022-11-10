@@ -15,9 +15,11 @@ func (ufmc *UserFileMetadataCollection) GetFields() []string {
 }
 
 func (ufmc *UserFileMetadataCollection) NewItem() Item {
-	ufm := &UserFileMetadata{}
-	*ufmc = append(*ufmc, ufm)
-	return ufm
+	return &UserFileMetadata{}
+}
+
+func (ufmc *UserFileMetadataCollection) AddItem(item Item) {
+	*ufmc = append(*ufmc, item.(*UserFileMetadata))
 }
 
 func (ufmc *UserFileMetadataCollection) GetItem(index int) Item {
