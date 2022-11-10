@@ -15,6 +15,7 @@ type PlatformLoadOptions struct {
 	Fields     []adapt.LoadRequestField
 	Orders     []adapt.LoadRequestOrder
 	Connection adapt.Connection
+	BatchSize  int
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -64,6 +65,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		Fields:         fields,
 		Order:          options.Orders,
 		Query:          true,
+		BatchSize:      options.BatchSize,
 	}, options.Connection, session)
 }
 

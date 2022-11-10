@@ -13,7 +13,6 @@ import (
 func CreateLogin(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-	siteAdmin := session.GetSiteAdmin()
 
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
@@ -28,7 +27,7 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = auth.CreateLogin(namespace, name, payload, siteAdmin)
+	_, err = auth.CreateLogin(namespace, name, payload, session)
 	if err != nil {
 		msg := "Create Login failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
