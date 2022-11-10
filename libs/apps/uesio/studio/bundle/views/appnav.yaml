@@ -7,6 +7,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.fullname:
         uesio/studio.description:
         uesio/studio.color:
         uesio/studio.user:
@@ -150,6 +151,12 @@ definition:
               uesio.styles:
                 root:
                   color: "#21242D"
+              text: " ${apps:uesio/studio.fullname}"
+              element: span
+          - uesio/io.text:
+              uesio.styles:
+                root:
+                  color: "#21242D"
               text: " uses"
               element: span
         avatar:
@@ -173,6 +180,12 @@ definition:
               uesio.variant: uesio/io.icon
               color: ${apps:uesio/studio.color}
               text: ${apps:uesio/studio.icon}
+              element: span
+          - uesio/io.text:
+              uesio.styles:
+                root:
+                  color: "#21242D"
+              text: " ${apps:uesio/studio.fullname}"
               element: span
         avatar:
           - uesio/io.text:
