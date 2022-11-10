@@ -62,8 +62,7 @@ func (sl *SelectList) GetCollectionName() string {
 }
 
 func (sl *SelectList) GetCollection() CollectionableGroup {
-	var slc SelectListCollection
-	return &slc
+	return &SelectListCollection{}
 }
 
 func (sl *SelectList) GetDBID(workspace string) string {
@@ -71,8 +70,7 @@ func (sl *SelectList) GetDBID(workspace string) string {
 }
 
 func (sl *SelectList) GetBundleGroup() BundleableGroup {
-	var slc SelectListCollection
-	return &slc
+	return &SelectListCollection{}
 }
 
 func (sl *SelectList) GetKey() string {

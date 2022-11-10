@@ -32,8 +32,7 @@ func (u *User) GetCollectionName() string {
 }
 
 func (u *User) GetCollection() CollectionableGroup {
-	var uc UserCollection
-	return &uc
+	return &UserCollection{}
 }
 
 func (u *User) SetField(fieldName string, value interface{}) error {

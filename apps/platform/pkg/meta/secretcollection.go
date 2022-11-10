@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (sc *SecretCollection) GetFields() []string {
 }
 
 func (sc *SecretCollection) NewItem() Item {
-	s := &Secret{}
-	*sc = append(*sc, s)
-	return s
+	return &Secret{}
+}
+
+func (sc *SecretCollection) AddItem(item Item) {
+	*sc = append(*sc, item.(*Secret))
 }
 
 func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid Secret Key: " + key)
-	}
-	s := &Secret{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*sc = append(*sc, s)
-	return s, nil
+	return NewSecret(key)
 }
 
 func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

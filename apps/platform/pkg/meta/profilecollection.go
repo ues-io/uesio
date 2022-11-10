@@ -19,18 +19,15 @@ func (pc *ProfileCollection) GetFields() []string {
 }
 
 func (pc *ProfileCollection) NewItem() Item {
-	p := &Profile{}
-	*pc = append(*pc, p)
-	return p
+	return &Profile{}
+}
+
+func (pc *ProfileCollection) AddItem(item Item) {
+	*pc = append(*pc, item.(*Profile))
 }
 
 func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	p, err := NewProfile(key)
-	if err != nil {
-		return nil, err
-	}
-	*pc = append(*pc, p)
-	return p, nil
+	return NewProfile(key)
 }
 
 func (pc *ProfileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

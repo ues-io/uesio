@@ -18,8 +18,7 @@ func (c *ConfigStoreValue) GetCollectionName() string {
 }
 
 func (c *ConfigStoreValue) GetCollection() CollectionableGroup {
-	var sc ConfigStoreValueCollection
-	return &sc
+	return &ConfigStoreValueCollection{}
 }
 
 func (c *ConfigStoreValue) SetField(fieldName string, value interface{}) error {

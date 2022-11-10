@@ -19,9 +19,11 @@ func (wc *WorkspaceCollection) GetItem(index int) Item {
 }
 
 func (wc *WorkspaceCollection) NewItem() Item {
-	w := &Workspace{}
-	*wc = append(*wc, w)
-	return w
+	return &Workspace{}
+}
+
+func (wc *WorkspaceCollection) AddItem(item Item) {
+	*wc = append(*wc, item.(*Workspace))
 }
 
 func (wc *WorkspaceCollection) Loop(iter GroupIterator) error {

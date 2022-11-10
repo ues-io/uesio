@@ -71,8 +71,7 @@ func (t *Theme) GetCollectionName() string {
 }
 
 func (t *Theme) GetCollection() CollectionableGroup {
-	var tc ThemeCollection
-	return &tc
+	return &ThemeCollection{}
 }
 
 func (t *Theme) GetDBID(workspace string) string {
@@ -80,8 +79,7 @@ func (t *Theme) GetDBID(workspace string) string {
 }
 
 func (t *Theme) GetBundleGroup() BundleableGroup {
-	var tc ThemeCollection
-	return &tc
+	return &ThemeCollection{}
 }
 
 func (t *Theme) GetKey() string {

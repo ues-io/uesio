@@ -71,8 +71,7 @@ func (v *View) GetCollectionName() string {
 }
 
 func (v *View) GetCollection() CollectionableGroup {
-	var vc ViewCollection
-	return &vc
+	return &ViewCollection{}
 }
 
 func (v *View) GetDBID(workspace string) string {
@@ -80,8 +79,7 @@ func (v *View) GetDBID(workspace string) string {
 }
 
 func (v *View) GetBundleGroup() BundleableGroup {
-	var vc ViewCollection
-	return &vc
+	return &ViewCollection{}
 }
 
 func (v *View) GetKey() string {

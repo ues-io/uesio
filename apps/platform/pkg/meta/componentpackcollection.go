@@ -22,9 +22,11 @@ func (cpc *ComponentPackCollection) GetFields() []string {
 }
 
 func (cpc *ComponentPackCollection) NewItem() Item {
-	cp := &ComponentPack{}
-	*cpc = append(*cpc, cp)
-	return cp
+	return &ComponentPack{}
+}
+
+func (cpc *ComponentPackCollection) AddItem(item Item) {
+	*cpc = append(*cpc, item.(*ComponentPack))
 }
 
 func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
@@ -32,12 +34,10 @@ func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (Bundle
 	if err != nil {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
 	}
-	cp := &ComponentPack{
+	return &ComponentPack{
 		Namespace: namespace,
 		Name:      name,
-	}
-	*cpc = append(*cpc, cp)
-	return cp, nil
+	}, nil
 }
 
 func (cpc *ComponentPackCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

@@ -91,6 +91,7 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	for _, project := range data.Projects {
 		opItem := op.Collection.NewItem()
+		op.Collection.AddItem(opItem)
 		fakeID, _ := shortid.Generate()
 
 		opItem.SetField("uesio/core.id", fakeID)

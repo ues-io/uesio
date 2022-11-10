@@ -43,8 +43,7 @@ func (p *Profile) GetCollectionName() string {
 }
 
 func (p *Profile) GetCollection() CollectionableGroup {
-	var pc ProfileCollection
-	return &pc
+	return &ProfileCollection{}
 }
 
 func (p *Profile) GetDBID(workspace string) string {
@@ -52,8 +51,7 @@ func (p *Profile) GetDBID(workspace string) string {
 }
 
 func (p *Profile) GetBundleGroup() BundleableGroup {
-	var pc ProfileCollection
-	return &pc
+	return &ProfileCollection{}
 }
 
 func (p *Profile) GetKey() string {

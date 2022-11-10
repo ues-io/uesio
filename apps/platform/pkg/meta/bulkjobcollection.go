@@ -19,9 +19,11 @@ func (bjc *BulkJobCollection) GetItem(index int) Item {
 }
 
 func (bjc *BulkJobCollection) NewItem() Item {
-	bj := &BulkJob{}
-	*bjc = append(*bjc, bj)
-	return bj
+	return &BulkJob{}
+}
+
+func (bjc *BulkJobCollection) AddItem(item Item) {
+	*bjc = append(*bjc, item.(*BulkJob))
 }
 
 func (bjc *BulkJobCollection) Loop(iter GroupIterator) error {

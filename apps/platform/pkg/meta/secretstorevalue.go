@@ -18,8 +18,7 @@ func (s *SecretStoreValue) GetCollectionName() string {
 }
 
 func (s *SecretStoreValue) GetCollection() CollectionableGroup {
-	var sc SecretStoreValueCollection
-	return &sc
+	return &SecretStoreValueCollection{}
 }
 
 func (s *SecretStoreValue) SetField(fieldName string, value interface{}) error {

@@ -43,8 +43,7 @@ func (fs *FileSource) GetCollectionName() string {
 }
 
 func (fs *FileSource) GetCollection() CollectionableGroup {
-	var fsc FileSourceCollection
-	return &fsc
+	return &FileSourceCollection{}
 }
 
 func (fs *FileSource) GetDBID(workspace string) string {
@@ -52,8 +51,7 @@ func (fs *FileSource) GetDBID(workspace string) string {
 }
 
 func (fs *FileSource) GetBundleGroup() BundleableGroup {
-	var fsc FileSourceCollection
-	return &fsc
+	return &FileSourceCollection{}
 }
 
 func (fs *FileSource) GetKey() string {

@@ -22,18 +22,15 @@ func (cvc *ComponentVariantCollection) GetFields() []string {
 }
 
 func (cvc *ComponentVariantCollection) NewItem() Item {
-	cv := &ComponentVariant{}
-	*cvc = append(*cvc, cv)
-	return cv
+	return &ComponentVariant{}
+}
+
+func (cvc *ComponentVariantCollection) AddItem(item Item) {
+	*cvc = append(*cvc, item.(*ComponentVariant))
 }
 
 func (cvc *ComponentVariantCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	cv, err := NewComponentVariant(key)
-	if err != nil {
-		return nil, err
-	}
-	*cvc = append(*cvc, cv)
-	return cv, nil
+	return NewComponentVariant(key)
 }
 
 func (cvc *ComponentVariantCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

@@ -43,8 +43,7 @@ func (as *AuthSource) GetCollectionName() string {
 }
 
 func (as *AuthSource) GetCollection() CollectionableGroup {
-	var asc AuthSourceCollection
-	return &asc
+	return &AuthSourceCollection{}
 }
 
 func (as *AuthSource) GetDBID(workspace string) string {
@@ -52,8 +51,7 @@ func (as *AuthSource) GetDBID(workspace string) string {
 }
 
 func (as *AuthSource) GetBundleGroup() BundleableGroup {
-	var asc AuthSourceCollection
-	return &asc
+	return &AuthSourceCollection{}
 }
 
 func (as *AuthSource) GetKey() string {

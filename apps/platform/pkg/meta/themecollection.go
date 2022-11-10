@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (tc *ThemeCollection) GetFields() []string {
 }
 
 func (tc *ThemeCollection) NewItem() Item {
-	t := &Theme{}
-	*tc = append(*tc, t)
-	return t
+	return &Theme{}
+}
+
+func (tc *ThemeCollection) AddItem(item Item) {
+	*tc = append(*tc, item.(*Theme))
 }
 
 func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid Theme Key: " + key)
-	}
-	t := &Theme{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*tc = append(*tc, t)
-	return t, nil
+	return NewTheme(key)
 }
 
 func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

@@ -97,8 +97,7 @@ func (f *Field) GetCollectionName() string {
 }
 
 func (f *Field) GetCollection() CollectionableGroup {
-	var fc FieldCollection
-	return &fc
+	return &FieldCollection{}
 }
 
 func (f *Field) GetDBID(workspace string) string {
@@ -106,8 +105,7 @@ func (f *Field) GetDBID(workspace string) string {
 }
 
 func (f *Field) GetBundleGroup() BundleableGroup {
-	var fc FieldCollection
-	return &fc
+	return &FieldCollection{}
 }
 
 func (f *Field) GetKey() string {

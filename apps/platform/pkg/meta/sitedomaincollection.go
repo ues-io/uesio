@@ -19,9 +19,11 @@ func (sdc *SiteDomainCollection) GetItem(index int) Item {
 }
 
 func (sdc *SiteDomainCollection) NewItem() Item {
-	sd := &SiteDomain{}
-	*sdc = append(*sdc, sd)
-	return sd
+	return &SiteDomain{}
+}
+
+func (sdc *SiteDomainCollection) AddItem(item Item) {
+	*sdc = append(*sdc, item.(*SiteDomain))
 }
 
 func (sdc *SiteDomainCollection) Loop(iter GroupIterator) error {

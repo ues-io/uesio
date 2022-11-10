@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-type UserCollection []User
+type UserCollection []*User
 
 func (uc *UserCollection) GetName() string {
 	return "uesio/core.user"
@@ -15,12 +15,15 @@ func (uc *UserCollection) GetFields() []string {
 }
 
 func (uc *UserCollection) GetItem(index int) Item {
-	return &(*uc)[index]
+	return (*uc)[index]
 }
 
 func (uc *UserCollection) NewItem() Item {
-	*uc = append(*uc, User{})
-	return &(*uc)[len(*uc)-1]
+	return &User{}
+}
+
+func (uc *UserCollection) AddItem(item Item) {
+	*uc = append(*uc, item.(*User))
 }
 
 func (uc *UserCollection) Loop(iter GroupIterator) error {

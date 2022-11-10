@@ -44,8 +44,7 @@ func (f *File) GetCollectionName() string {
 }
 
 func (f *File) GetCollection() CollectionableGroup {
-	var fc FileCollection
-	return &fc
+	return &FileCollection{}
 }
 
 func (f *File) GetDBID(workspace string) string {
@@ -53,8 +52,7 @@ func (f *File) GetDBID(workspace string) string {
 }
 
 func (f *File) GetBundleGroup() BundleableGroup {
-	var fc FileCollection
-	return &fc
+	return &FileCollection{}
 }
 
 func (f *File) GetKey() string {

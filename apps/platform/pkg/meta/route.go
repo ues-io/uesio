@@ -47,8 +47,7 @@ func (r *Route) GetCollectionName() string {
 }
 
 func (r *Route) GetCollection() CollectionableGroup {
-	var rc RouteCollection
-	return &rc
+	return &RouteCollection{}
 }
 
 func (r *Route) GetDBID(workspace string) string {
@@ -56,8 +55,7 @@ func (r *Route) GetDBID(workspace string) string {
 }
 
 func (r *Route) GetBundleGroup() BundleableGroup {
-	var rc RouteCollection
-	return &rc
+	return &RouteCollection{}
 }
 
 func (r *Route) GetKey() string {

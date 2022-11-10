@@ -19,9 +19,11 @@ func (ffac *FeatureFlagAssignmentCollection) GetItem(index int) Item {
 }
 
 func (ffac *FeatureFlagAssignmentCollection) NewItem() Item {
-	ffa := &FeatureFlagAssignment{}
-	*ffac = append(*ffac, ffa)
-	return ffa
+	return &FeatureFlagAssignment{}
+}
+
+func (ffsc *FeatureFlagAssignmentCollection) AddItem(item Item) {
+	*ffsc = append(*ffsc, item.(*FeatureFlagAssignment))
 }
 
 func (ffac *FeatureFlagAssignmentCollection) Loop(iter GroupIterator) error {

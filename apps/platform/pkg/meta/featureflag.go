@@ -59,8 +59,7 @@ func (ff *FeatureFlag) GetCollectionName() string {
 }
 
 func (ff *FeatureFlag) GetCollection() CollectionableGroup {
-	var ffc FeatureFlagCollection
-	return &ffc
+	return &FeatureFlagCollection{}
 }
 
 func (ff *FeatureFlag) GetDBID(workspace string) string {
@@ -68,8 +67,7 @@ func (ff *FeatureFlag) GetDBID(workspace string) string {
 }
 
 func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
-	var ffc FeatureFlagCollection
-	return &ffc
+	return &FeatureFlagCollection{}
 }
 
 func (ff *FeatureFlag) GetKey() string {

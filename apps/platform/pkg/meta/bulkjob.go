@@ -19,8 +19,7 @@ func (bj *BulkJob) GetCollectionName() string {
 }
 
 func (bj *BulkJob) GetCollection() CollectionableGroup {
-	var bjc BulkJobCollection
-	return &bjc
+	return &BulkJobCollection{}
 }
 
 func (bj *BulkJob) SetField(fieldName string, value interface{}) error {

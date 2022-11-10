@@ -19,9 +19,11 @@ func (sc *SiteCollection) GetItem(index int) Item {
 }
 
 func (sc *SiteCollection) NewItem() Item {
-	s := &Site{}
-	*sc = append(*sc, s)
-	return s
+	return &Site{}
+}
+
+func (sc *SiteCollection) AddItem(item Item) {
+	*sc = append(*sc, item.(*Site))
 }
 
 func (sc *SiteCollection) Loop(iter GroupIterator) error {

@@ -19,18 +19,15 @@ func (rc *RouteCollection) GetFields() []string {
 }
 
 func (rc *RouteCollection) NewItem() Item {
-	r := &Route{}
-	*rc = append(*rc, r)
-	return r
+	return &Route{}
+}
+
+func (rc *RouteCollection) AddItem(item Item) {
+	*rc = append(*rc, item.(*Route))
 }
 
 func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	r, err := NewRoute(key)
-	if err != nil {
-		return nil, err
-	}
-	*rc = append(*rc, r)
-	return r, nil
+	return NewRoute(key)
 }
 
 func (rc *RouteCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
