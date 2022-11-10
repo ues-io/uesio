@@ -141,18 +141,6 @@ func (s *Session) GetPermissions() *meta.PermissionSet {
 	return s.permissions
 }
 
-func (s *Session) SetAppAdmin(app *meta.App) {
-	s.appadmin = app
-}
-
-func (s *Session) GetAppAdmin() *meta.App {
-	return s.appadmin
-}
-
-func MakeAppTenantID(ID string) string {
-	return fmt.Sprintf("app:%s", ID)
-}
-
 func MakeSiteTenantID(ID string) string {
 	return fmt.Sprintf("site:%s", ID)
 }
@@ -176,9 +164,6 @@ func (s *Session) GetTenantID() string {
 	}
 	if s.siteadmin != nil {
 		return MakeSiteTenantID(s.siteadmin.UniqueKey)
-	}
-	if s.appadmin != nil {
-		return MakeAppTenantID(s.appadmin.UniqueKey)
 	}
 	return MakeSiteTenantID(s.site.UniqueKey)
 }

@@ -60,14 +60,6 @@ func siteAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	return router.Path("").HandlerFunc(f)
 }
 
-func appAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
-	router := r.PathPrefix(path).Subrouter()
-	router.Use(middleware.Authenticate)
-	router.Use(middleware.LogRequestHandler)
-	router.Use(middleware.AuthenticateAppAdmin)
-	return router.Path("").HandlerFunc(f)
-}
-
 func getNSParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w*\\/\\w*}", paramName)
 }
@@ -95,8 +87,6 @@ func serve(cmd *cobra.Command, args []string) {
 	vr := r.PathPrefix("/version/" + getNSParam("app") + "/" + getNSParam("namespace") + "/{version}").Subrouter()
 	// The site admin router
 	sar := r.PathPrefix("/siteadmin/" + getNSParam("app") + "/{site}").Subrouter()
-	// The app admin router
-	aar := r.PathPrefix("/appadmin/" + getNSParam("app")).Subrouter()
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
 
@@ -172,9 +162,6 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/userfiles/delete/{fileid:.*}", controller.DeleteUserFile).Methods("POST")
 	siteAdminAPI(sar, "/auth/"+getItemParam()+"/createlogin", controller.CreateLogin).Methods("POST")
 	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
-
-	appAdminAPI(aar, "/wires/load", controller.Load).Methods("POST")
-	appAdminAPI(aar, "/wires/save", controller.Save).Methods("POST")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
