@@ -66,8 +66,7 @@ func (c *ComponentVariant) IsNil() bool {
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
-	var cvc ComponentVariantCollection
-	return &cvc
+	return &ComponentVariantCollection{}
 }
 
 func (c *ComponentVariant) GetPermChecker() *PermissionSet {
@@ -105,8 +104,7 @@ func (c *ComponentVariant) GetCollectionName() string {
 }
 
 func (c *ComponentVariant) GetCollection() CollectionableGroup {
-	var sc ComponentVariantCollection
-	return &sc
+	return &ComponentVariantCollection{}
 }
 
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {

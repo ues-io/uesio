@@ -39,8 +39,7 @@ func (w *Workspace) GetCollectionName() string {
 }
 
 func (w *Workspace) GetCollection() CollectionableGroup {
-	var wc WorkspaceCollection
-	return &wc
+	return &WorkspaceCollection{}
 }
 
 func (w *Workspace) SetField(fieldName string, value interface{}) error {

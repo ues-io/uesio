@@ -93,6 +93,10 @@ func (c *CSVExportCollection) GetItem(index int) meta.Item {
 }
 
 func (c *CSVExportCollection) NewItem() meta.Item {
+	return c.current
+}
+
+func (c *CSVExportCollection) AddItem(item meta.Item) {
 	if !c.hasHeader {
 		// write the header row
 		for fieldName := range c.collectionMetadata.Fields {
@@ -110,7 +114,6 @@ func (c *CSVExportCollection) NewItem() meta.Item {
 		// Probably shoudln't be ignoring errors here...
 	}
 	c.current.Reset()
-	return c.current
 }
 
 func (c *CSVExportCollection) GetItems() interface{} {

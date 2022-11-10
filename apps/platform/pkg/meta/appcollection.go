@@ -19,9 +19,11 @@ func (ac *AppCollection) GetItem(index int) Item {
 }
 
 func (ac *AppCollection) NewItem() Item {
-	app := &App{}
-	*ac = append(*ac, app)
-	return app
+	return &App{}
+}
+
+func (ac *AppCollection) AddItem(item Item) {
+	*ac = append(*ac, item.(*App))
 }
 
 func (ac *AppCollection) Loop(iter GroupIterator) error {

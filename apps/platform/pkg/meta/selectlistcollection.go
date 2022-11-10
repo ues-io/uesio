@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (slc *SelectListCollection) GetFields() []string {
 }
 
 func (slc *SelectListCollection) NewItem() Item {
-	sl := &SelectList{}
-	*slc = append(*slc, sl)
-	return sl
+	return &SelectList{}
+}
+
+func (slc *SelectListCollection) AddItem(item Item) {
+	*slc = append(*slc, item.(*SelectList))
 }
 
 func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid SelectList Key: " + key)
-	}
-	sl := &SelectList{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*slc = append(*slc, sl)
-	return sl, nil
+	return NewSelectList(key)
 }
 
 func (slc *SelectListCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

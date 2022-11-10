@@ -157,6 +157,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 
 	return group.Loop(func(item meta.Item, index string) error {
 		opItem := op.Collection.NewItem()
+		op.Collection.AddItem(opItem)
 		fakeID, _ := shortid.Generate()
 
 		groupableItem := item.(meta.BundleableItem)

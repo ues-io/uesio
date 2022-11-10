@@ -19,18 +19,15 @@ func (ic *IntegrationCollection) GetFields() []string {
 }
 
 func (ic *IntegrationCollection) NewItem() Item {
-	i := &Integration{}
-	*ic = append(*ic, i)
-	return i
+	return &Integration{}
+}
+
+func (ic *IntegrationCollection) AddItem(item Item) {
+	*ic = append(*ic, item.(*Integration))
 }
 
 func (ic *IntegrationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	i, err := NewIntegration(key)
-	if err != nil {
-		return nil, err
-	}
-	*ic = append(*ic, i)
-	return i, nil
+	return NewIntegration(key)
 }
 
 func (ic *IntegrationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

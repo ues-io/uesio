@@ -19,9 +19,11 @@ func (sc *SecretStoreValueCollection) GetItem(index int) Item {
 }
 
 func (sc *SecretStoreValueCollection) NewItem() Item {
-	s := &SecretStoreValue{}
-	*sc = append(*sc, s)
-	return s
+	return &SecretStoreValue{}
+}
+
+func (sc *SecretStoreValueCollection) AddItem(item Item) {
+	*sc = append(*sc, item.(*SecretStoreValue))
 }
 
 func (sc *SecretStoreValueCollection) Loop(iter GroupIterator) error {

@@ -23,8 +23,7 @@ func (a *App) GetCollectionName() string {
 }
 
 func (a *App) GetCollection() CollectionableGroup {
-	var ac AppCollection
-	return &ac
+	return &AppCollection{}
 }
 
 func (a *App) SetField(fieldName string, value interface{}) error {

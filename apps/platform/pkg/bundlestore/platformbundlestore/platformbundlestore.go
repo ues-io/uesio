@@ -137,6 +137,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 			}
 			return err
 		}
+		group.AddItem(retrievedItem)
 	}
 
 	return nil

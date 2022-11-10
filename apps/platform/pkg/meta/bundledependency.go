@@ -43,8 +43,7 @@ func (b *BundleDependency) GetCollectionName() string {
 }
 
 func (b *BundleDependency) GetCollection() CollectionableGroup {
-	var bc BundleDependencyCollection
-	return &bc
+	return &BundleDependencyCollection{}
 }
 
 func (b *BundleDependency) SetField(fieldName string, value interface{}) error {

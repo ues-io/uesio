@@ -19,8 +19,7 @@ func (s *SiteDomain) GetCollectionName() string {
 }
 
 func (s *SiteDomain) GetCollection() CollectionableGroup {
-	var sdc SiteDomainCollection
-	return &sdc
+	return &SiteDomainCollection{}
 }
 
 func (s *SiteDomain) SetField(fieldName string, value interface{}) error {

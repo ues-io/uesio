@@ -45,8 +45,7 @@ func (i *Integration) GetCollectionName() string {
 }
 
 func (i *Integration) GetCollection() CollectionableGroup {
-	var ic IntegrationCollection
-	return &ic
+	return &IntegrationCollection{}
 }
 
 func (i *Integration) GetDBID(workspace string) string {
@@ -54,8 +53,7 @@ func (i *Integration) GetDBID(workspace string) string {
 }
 
 func (i *Integration) GetBundleGroup() BundleableGroup {
-	var dsc IntegrationCollection
-	return &dsc
+	return &IntegrationCollection{}
 }
 
 func (i *Integration) GetKey() string {

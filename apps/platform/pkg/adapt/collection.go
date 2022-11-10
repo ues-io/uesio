@@ -66,9 +66,11 @@ func (c *Collection) GetItem(index int) meta.Item {
 }
 
 func (c *Collection) NewItem() meta.Item {
-	item := &Item{}
-	*c = append(*c, item)
-	return item
+	return &Item{}
+}
+
+func (c *Collection) AddItem(item meta.Item) {
+	*c = append(*c, item.(*Item))
 }
 
 func (c *Collection) GetItems() interface{} {

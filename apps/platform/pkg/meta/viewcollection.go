@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (vc *ViewCollection) GetFields() []string {
 }
 
 func (vc *ViewCollection) NewItem() Item {
-	v := &View{}
-	*vc = append(*vc, v)
-	return v
+	return &View{}
+}
+
+func (vc *ViewCollection) AddItem(item Item) {
+	*vc = append(*vc, item.(*View))
 }
 
 func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid View Key: " + key)
-	}
-	v := &View{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*vc = append(*vc, v)
-	return v, nil
+	return NewView(key)
 }
 
 func (vc *ViewCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

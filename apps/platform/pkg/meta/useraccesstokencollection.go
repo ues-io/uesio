@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (uatc *UserAccessTokenCollection) GetFields() []string {
 }
 
 func (uatc *UserAccessTokenCollection) NewItem() Item {
-	uat := &UserAccessToken{}
-	*uatc = append(*uatc, uat)
-	return uat
+	return &UserAccessToken{}
+}
+
+func (uatc *UserAccessTokenCollection) AddItem(item Item) {
+	*uatc = append(*uatc, item.(*UserAccessToken))
 }
 
 func (uatc *UserAccessTokenCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid User Access Token Key: " + key)
-	}
-	uat := &UserAccessToken{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*uatc = append(*uatc, uat)
-	return uat, nil
+	return NewUserAccessToken(key)
 }
 
 func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

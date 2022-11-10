@@ -196,8 +196,7 @@ func (b *Bot) GetCollectionName() string {
 }
 
 func (b *Bot) GetCollection() CollectionableGroup {
-	var bc BotCollection
-	return &bc
+	return &BotCollection{}
 }
 
 func (b *Bot) GetDBID(workspace string) string {
@@ -205,8 +204,7 @@ func (b *Bot) GetDBID(workspace string) string {
 }
 
 func (b *Bot) GetBundleGroup() BundleableGroup {
-	var bc BotCollection
-	return &bc
+	return &BotCollection{}
 }
 
 func (b *Bot) GetKey() string {

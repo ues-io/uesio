@@ -42,8 +42,7 @@ func (s *Site) GetCollectionName() string {
 }
 
 func (s *Site) GetCollection() CollectionableGroup {
-	var sc SiteCollection
-	return &sc
+	return &SiteCollection{}
 }
 
 func (s *Site) SetField(fieldName string, value interface{}) error {

@@ -19,6 +19,10 @@ func (c *WorkspaceLoadCollection) NewItem() meta.Item {
 	return item
 }
 
+func (c *WorkspaceLoadCollection) AddItem(item meta.Item) {
+	c.Collection.AddItem(item)
+}
+
 func (c *WorkspaceLoadCollection) Loop(iter meta.GroupIterator) error {
 	return c.Collection.Loop(iter)
 }

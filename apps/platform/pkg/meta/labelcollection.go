@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"strconv"
 )
 
@@ -20,22 +19,15 @@ func (lc *LabelCollection) GetFields() []string {
 }
 
 func (lc *LabelCollection) NewItem() Item {
-	l := &Label{}
-	*lc = append(*lc, l)
-	return l
+	return &Label{}
+}
+
+func (lc *LabelCollection) AddItem(item Item) {
+	*lc = append(*lc, item.(*Label))
 }
 
 func (lc *LabelCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid Label Key: " + key)
-	}
-	l := &Label{
-		Namespace: namespace,
-		Name:      name,
-	}
-	*lc = append(*lc, l)
-	return l, nil
+	return NewLabel(key)
 }
 
 func (lc *LabelCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

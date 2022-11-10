@@ -58,8 +58,7 @@ func (cp *ComponentPack) GetCollectionName() string {
 }
 
 func (cp *ComponentPack) GetCollection() CollectionableGroup {
-	var cpc ComponentPackCollection
-	return &cpc
+	return &ComponentPackCollection{}
 }
 
 func (cp *ComponentPack) GetDBID(workspace string) string {
@@ -67,8 +66,7 @@ func (cp *ComponentPack) GetDBID(workspace string) string {
 }
 
 func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
-	var cpc ComponentPackCollection
-	return &cpc
+	return &ComponentPackCollection{}
 }
 
 func (cp *ComponentPack) GetKey() string {

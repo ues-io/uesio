@@ -19,9 +19,11 @@ func (bc *BundleCollection) GetItem(index int) Item {
 }
 
 func (bc *BundleCollection) NewItem() Item {
-	b := &Bundle{}
-	*bc = append(*bc, b)
-	return b
+	return &Bundle{}
+}
+
+func (bc *BundleCollection) AddItem(item Item) {
+	*bc = append(*bc, item.(*Bundle))
 }
 
 func (bc *BundleCollection) Loop(iter GroupIterator) error {

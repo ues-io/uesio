@@ -19,8 +19,7 @@ func (ffa *FeatureFlagAssignment) GetCollectionName() string {
 }
 
 func (ffa *FeatureFlagAssignment) GetCollection() CollectionableGroup {
-	var ffac FeatureFlagAssignmentCollection
-	return &ffac
+	return &FeatureFlagAssignmentCollection{}
 }
 
 func (ffa *FeatureFlagAssignment) SetField(fieldName string, value interface{}) error {

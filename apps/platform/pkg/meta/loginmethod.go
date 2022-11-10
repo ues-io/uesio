@@ -19,8 +19,7 @@ func (lm *LoginMethod) GetCollectionName() string {
 }
 
 func (lm *LoginMethod) GetCollection() CollectionableGroup {
-	var lmc LoginMethodCollection
-	return &lmc
+	return &LoginMethodCollection{}
 }
 
 func (lm *LoginMethod) SetField(fieldName string, value interface{}) error {

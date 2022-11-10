@@ -181,6 +181,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		}
 
 		item = op.Collection.NewItem()
+		op.Collection.AddItem(item)
 		err := rows.Scan(scanners...)
 		if err != nil {
 			return err

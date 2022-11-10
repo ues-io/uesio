@@ -23,18 +23,15 @@ func (bc *BotCollection) GetFields() []string {
 }
 
 func (bc *BotCollection) NewItem() Item {
-	bot := &Bot{}
-	*bc = append(*bc, bot)
-	return bot
+	return &Bot{}
+}
+
+func (bc *BotCollection) AddItem(item Item) {
+	*bc = append(*bc, item.(*Bot))
 }
 
 func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	bot, err := NewBot(key)
-	if err != nil {
-		return nil, err
-	}
-	*bc = append(*bc, bot)
-	return bot, nil
+	return NewBot(key)
 }
 
 func (bc *BotCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

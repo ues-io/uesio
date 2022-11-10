@@ -19,18 +19,15 @@ func (smc *SignupMethodCollection) GetFields() []string {
 }
 
 func (smc *SignupMethodCollection) NewItem() Item {
-	sm := &SignupMethod{}
-	*smc = append(*smc, sm)
-	return sm
+	return &SignupMethod{}
+}
+
+func (smc *SignupMethodCollection) AddItem(item Item) {
+	*smc = append(*smc, item.(*SignupMethod))
 }
 
 func (smc *SignupMethodCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	sm, err := NewSignupMethod(key)
-	if err != nil {
-		return nil, err
-	}
-	*smc = append(*smc, sm)
-	return sm, nil
+	return NewSignupMethod(key)
 }
 
 func (smc *SignupMethodCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

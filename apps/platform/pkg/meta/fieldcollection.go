@@ -23,9 +23,11 @@ func (fc *FieldCollection) GetFields() []string {
 }
 
 func (fc *FieldCollection) NewItem() Item {
-	f := &Field{}
-	*fc = append(*fc, f)
-	return f
+	return &Field{}
+}
+
+func (fc *FieldCollection) AddItem(item Item) {
+	*fc = append(*fc, item.(*Field))
 }
 
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
@@ -33,17 +35,7 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
-	namespace, name, err := ParseKey(keyArray[1])
-	if err != nil {
-		return nil, errors.New("Invalid Field Key: " + key)
-	}
-	f := &Field{
-		CollectionRef: keyArray[0],
-		Namespace:     namespace,
-		Name:          name,
-	}
-	*fc = append(*fc, f)
-	return f, nil
+	return NewField(keyArray[0], keyArray[1])
 }
 
 func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

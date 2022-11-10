@@ -59,8 +59,7 @@ func (cv *ConfigValue) GetCollectionName() string {
 }
 
 func (cv *ConfigValue) GetCollection() CollectionableGroup {
-	var cvc ConfigValueCollection
-	return &cvc
+	return &ConfigValueCollection{}
 }
 
 func (cv *ConfigValue) GetDBID(workspace string) string {
@@ -68,8 +67,7 @@ func (cv *ConfigValue) GetDBID(workspace string) string {
 }
 
 func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
-	var cvc ConfigValueCollection
-	return &cvc
+	return &ConfigValueCollection{}
 }
 
 func (cv *ConfigValue) GetKey() string {

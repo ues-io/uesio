@@ -19,18 +19,15 @@ func (cc *CredentialCollection) GetFields() []string {
 }
 
 func (cc *CredentialCollection) NewItem() Item {
-	c := &Credential{}
-	*cc = append(*cc, c)
-	return c
+	return &Credential{}
+}
+
+func (cc *CredentialCollection) AddItem(item Item) {
+	*cc = append(*cc, item.(*Credential))
 }
 
 func (cc *CredentialCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	c, err := NewCredential(key)
-	if err != nil {
-		return nil, err
-	}
-	*cc = append(*cc, c)
-	return c, nil
+	return NewCredential(key)
 }
 
 func (cc *CredentialCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

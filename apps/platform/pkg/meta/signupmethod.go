@@ -53,8 +53,7 @@ func (sm *SignupMethod) GetCollectionName() string {
 }
 
 func (sm *SignupMethod) GetCollection() CollectionableGroup {
-	var smc SignupMethodCollection
-	return &smc
+	return &SignupMethodCollection{}
 }
 
 func (sm *SignupMethod) GetDBID(workspace string) string {
@@ -62,8 +61,7 @@ func (sm *SignupMethod) GetDBID(workspace string) string {
 }
 
 func (sm *SignupMethod) GetBundleGroup() BundleableGroup {
-	var smc SignupMethodCollection
-	return &smc
+	return &SignupMethodCollection{}
 }
 
 func (sm *SignupMethod) GetKey() string {

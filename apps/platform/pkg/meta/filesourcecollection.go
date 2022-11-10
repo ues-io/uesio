@@ -19,18 +19,15 @@ func (fsc *FileSourceCollection) GetFields() []string {
 }
 
 func (fsc *FileSourceCollection) NewItem() Item {
-	fs := &FileSource{}
-	*fsc = append(*fsc, fs)
-	return fs
+	return &FileSource{}
+}
+
+func (fsc *FileSourceCollection) AddItem(item Item) {
+	*fsc = append(*fsc, item.(*FileSource))
 }
 
 func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	fs, err := NewFileSource(key)
-	if err != nil {
-		return nil, err
-	}
-	*fsc = append(*fsc, fs)
-	return fs, nil
+	return NewFileSource(key)
 }
 
 func (fsc *FileSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {

@@ -15,8 +15,11 @@ func (c *LoadOneCollection) GetItem(index int) meta.Item {
 }
 
 func (c *LoadOneCollection) NewItem() meta.Item {
-	c.Length++
 	return c.Item
+}
+
+func (c *LoadOneCollection) AddItem(item meta.Item) {
+	c.Length++
 }
 
 func (c *LoadOneCollection) Loop(iter meta.GroupIterator) error {

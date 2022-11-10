@@ -21,6 +21,10 @@ func (c *CollectionMap) NewItem() meta.Item {
 	return nil
 }
 
+func (c *CollectionMap) AddItem(item meta.Item) {
+
+}
+
 func (c *CollectionMap) GetItems() interface{} {
 	return nil
 }
