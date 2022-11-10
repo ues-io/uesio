@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
 	"gopkg.in/yaml.v3"
 )
@@ -167,7 +168,7 @@ func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]met
 	return nil
 }
 
-func processView(key string, deps *PreloadMetadata, params map[string]string, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
+func processView(key string, viewInstanceID string, deps *PreloadMetadata, params map[string]string, packs map[string]meta.ComponentPackCollection, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
 	if err != nil {
@@ -198,13 +199,73 @@ func processView(key string, deps *PreloadMetadata, params map[string]string, pa
 		}
 	}
 
-	for viewKey := range depMap.Views {
+	mergeFuncs := map[string]interface{}{
+		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
+			val, ok := params[key]
+			if !ok {
+				return nil, errors.New("missing param " + key)
+			}
+			return val, nil
+		},
+		"User": func(m map[string]interface{}, key string) (interface{}, error) {
+
+			userID := session.GetUserID()
+
+			if key == "id" {
+				return userID, nil
+			}
+
+			return nil, nil
+		},
+	}
+
+	for viewKey, viewCompDef := range depMap.Views {
 
 		if key == viewKey {
 			continue
 		}
 
-		err := processView(viewKey, deps, nil, packs, session)
+		subParams := map[string]string{}
+
+		viewID := meta.GetNodeValueAsString(viewCompDef, "id")
+		if viewID == "" {
+			fmt.Println("Failed Merging Server Side Params: No Id")
+			subParams = nil
+		} else {
+
+			// Process the params
+			for i, prop := range viewCompDef.Content {
+
+				if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
+
+					if len(viewCompDef.Content) > i {
+						valueNode := viewCompDef.Content[i+1]
+						paramsNodes, err := meta.GetMapNodes(valueNode)
+						if err != nil {
+							return err
+						}
+						for _, param := range paramsNodes {
+							template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, mergeFuncs)
+							if err != nil {
+								return err
+							}
+
+							mergedValue, err := templating.Execute(template, nil)
+							if err != nil {
+								// If we fail here just bail on making params.
+								// We'll process the view client side.
+								fmt.Println("Failed Merging Server Side Params: Invalid Merges")
+								subParams = nil
+								break
+							}
+							subParams[param.Key] = mergedValue
+						}
+					}
+				}
+			}
+		}
+
+		err = processView(viewKey, viewID, deps, subParams, packs, session)
 		if err != nil {
 			return err
 		}
@@ -222,7 +283,7 @@ func processView(key string, deps *PreloadMetadata, params map[string]string, pa
 
 			loadOp := &adapt.LoadOp{
 				WireName:  pair.Key,
-				View:      view.GetKey() + "()",
+				View:      view.GetKey() + "(" + viewInstanceID + ")",
 				Query:     true,
 				Params:    params,
 				Preloaded: true,
@@ -389,7 +450,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	packs := map[string]meta.ComponentPackCollection{}
 
-	err = processView(route.ViewRef, deps, route.Params, packs, session)
+	err = processView(route.ViewRef, "", deps, route.Params, packs, session)
 	if err != nil {
 		return nil, err
 	}
@@ -485,7 +546,7 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {
 						if len(comp.Content[1].Content) > i {
 							valueNode := comp.Content[1].Content[i+1]
 							if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
-								depMap.Views[valueNode.Value] = true
+								depMap.Views[valueNode.Value] = comp.Content[1]
 							}
 						}
 					}
@@ -518,7 +579,7 @@ func isComponentLike(node *yaml.Node) bool {
 type ViewDepMap struct {
 	Components map[string]bool
 	Variants   map[string]bool
-	Views      map[string]bool
+	Views      map[string]*yaml.Node
 	Wires      []meta.NodePair
 }
 
@@ -526,7 +587,7 @@ func NewViewDefMap() *ViewDepMap {
 	return &ViewDepMap{
 		Components: map[string]bool{},
 		Variants:   map[string]bool{},
-		Views:      map[string]bool{},
+		Views:      map[string]*yaml.Node{},
 		Wires:      []meta.NodePair{},
 	}
 }
