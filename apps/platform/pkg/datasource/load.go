@@ -53,6 +53,26 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
+	mergeFuncs := map[string]interface{}{
+		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
+			val, ok := op.Params[key]
+			if !ok {
+				return nil, errors.New("missing param " + key)
+			}
+			return val, nil
+		},
+		"User": func(m map[string]interface{}, key string) (interface{}, error) {
+
+			userID := session.GetUserID()
+
+			if key == "id" {
+				return userID, nil
+			}
+
+			return nil, nil
+		},
+	}
+
 	for i, condition := range op.Conditions {
 
 		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
@@ -61,25 +81,7 @@ func processConditions(
 			if !ok {
 				continue
 			}
-			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, map[string]interface{}{
-				"Param": func(m map[string]interface{}, key string) (interface{}, error) {
-					val, ok := op.Params[key]
-					if !ok {
-						return nil, errors.New("missing param " + key)
-					}
-					return val, nil
-				},
-				"User": func(m map[string]interface{}, key string) (interface{}, error) {
-
-					userID := session.GetUserID()
-
-					if key == "id" {
-						return userID, nil
-					}
-
-					return nil, nil
-				},
-			})
+			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, mergeFuncs)
 			if err != nil {
 				return err
 			}

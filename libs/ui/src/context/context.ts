@@ -101,9 +101,17 @@ const handleMergeError = ({
 const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
 
 const handlers: Record<MergeType, MergeHandler> = {
-	Record: (expression, context, ancestors) => {
+	Record: (fullExpression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
-		const value = context.getRecord()?.getFieldValue(expression)
+		const expressionParts = fullExpression.split(":")
+		if (expressionParts.length === 1) {
+			const value = context.getRecord()?.getFieldValue(fullExpression)
+			return value !== undefined && value !== null ? `${value}` : ""
+		}
+		const wirename = expressionParts[0]
+		const expression = expressionParts[1]
+		const wire = context.getWireByName(wirename)
+		const value = wire?.getFirstRecord()?.getFieldValue(expression)
 		return value !== undefined && value !== null ? `${value}` : ""
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
@@ -357,11 +365,30 @@ class Context {
 		return wire
 	}
 
+	getWireByName = (wirename: string) => {
+		const state = getCurrentState()
+		const plainWire = this.getPlainWireByName(wirename)
+		const wire = new Wire(plainWire)
+		const plainCollection = collectionSelectors.selectById(
+			state,
+			plainWire?.collection || ""
+		)
+		if (!plainCollection) return undefined
+		const collection = new Collection(plainCollection)
+		wire.attachCollection(collection.source)
+		return wire
+	}
+
 	getPlainWire = () => {
 		const wireFrame = this.findWireFrame()
 		const wireId = wireFrame?.getWireId()
 		if (!wireId) return undefined
 		return getWire(wireFrame?.getViewId(), wireId)
+	}
+
+	getPlainWireByName = (wirename: string) => {
+		if (!wirename) return undefined
+		return getWire(this.getViewId(), wirename)
 	}
 
 	getFieldMode = () =>

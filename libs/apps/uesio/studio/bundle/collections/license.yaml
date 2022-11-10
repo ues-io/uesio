@@ -1,0 +1,7 @@
+name: license
+uniqueKey:
+  - uesio/studio.app
+  - uesio/studio.applicensed
+nameField: uesio/studio.app
+label: license
+pluralLabel: licenses

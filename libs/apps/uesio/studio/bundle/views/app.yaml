@@ -16,16 +16,6 @@ definition:
         - field: uesio/core.uniquekey
           valueSource: PARAM
           param: app
-    workspaces:
-      collection: uesio/studio.workspace
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      conditions:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio/core.id
     bundles:
       collection: uesio/studio.bundle
       fields:
@@ -46,16 +36,6 @@ definition:
           desc: true
         - field: uesio/studio.patch
           desc: true
-    sites:
-      collection: uesio/studio.site
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      conditions:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio/core.id
     teams:
       collection: uesio/studio.team
       fields:
@@ -66,36 +46,6 @@ definition:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
-          lookupField: uesio/core.id
-    newworkspace:
-      collection: uesio/studio.workspace
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.app:
-      init:
-        create: true
-      defaults:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio/core.id
-    newsite:
-      collection: uesio/studio.site
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.bundle:
-      init:
-        create: true
-      defaults:
-        - field: uesio/studio.app
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio/core.id
-        - field: uesio/studio.bundle
-          valueSource: LOOKUP
-          lookupWire: bundles
           lookupField: uesio/core.id
     newteam:
       collection: uesio/studio.team
@@ -126,64 +76,13 @@ definition:
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: Workspaces
-                    actions:
-                      - uesio/io.button:
-                          icon: add
-                          signals:
-                            - signal: panel/TOGGLE
-                              panel: newWorkspace
-                - uesio/io.list:
-                    id: workspaceslist
-                    wire: workspaces
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{app}/workspace/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#ccc"
-                                text: handyman
-                - uesio/io.titlebar:
-                    uesio.variant: uesio/io.nav
-                    title: Sites
-                    actions:
-                      - uesio/io.button:
-                          icon: add
-                          signals:
-                            - signal: panel/TOGGLE
-                              panel: newSite
-                - uesio/io.list:
-                    id: siteslist
-                    wire: sites
-                    components:
-                      - uesio/io.tile:
-                          uesio.variant: uesio/io.nav
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{app}/site/${uesio/studio.name}"
-                          content:
-                            - uesio/io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
-                                text: ${uesio/studio.name}
-                          avatar:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.icon
-                                color: "#ccc"
-                                text: public
+                - uesio/core.view:
+                    id: appnavview
+                    view: uesio/studio.appnav
+                    uesio.context:
+                      wire: apps
+                    params:
+                      app: $Param{app}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.content
               components:
@@ -320,68 +219,6 @@ definition:
               - signal: wire/CANCEL
               - signal: "panel/TOGGLE"
                 panel: "editApp"
-    newWorkspace:
-      uesio.type: uesio/io.dialog
-      title: Create a New Workspace
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.list:
-            id: newworkspacelist
-            wire: newworkspace
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-      actions:
-        - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            uesio.context:
-              wire: newworkspace
-            text: "Save"
-            signals:
-              - signal: "wire/SAVE"
-                wires:
-                  - newworkspace
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/workspace/${uesio/studio.name}"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: "panel/TOGGLE"
-                panel: "newWorkspace"
-    newSite:
-      uesio.type: uesio/io.dialog
-      title: Create a New Site
-      width: 400px
-      height: 500px
-      components:
-        - uesio/io.list:
-            id: newsitelist
-            wire: newsite
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.bundle
-      actions:
-        - uesio/io.button:
-            uesio.variant: "uesio/io.primary"
-            text: "Save"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - "newsite"
-              - signal: "route/NAVIGATE"
-                path: "app/$Param{app}/site/${uesio/studio.name}"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: "panel/TOGGLE"
-                panel: "newSite"
     newTeam:
       uesio.type: uesio/io.dialog
       title: Create a New Team

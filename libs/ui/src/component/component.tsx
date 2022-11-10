@@ -24,6 +24,7 @@ function additionalContext(context: Context, additional: ContextFrame) {
 		const workspace = additional.workspace
 		const siteadmin = additional.siteadmin
 		const fieldMode = additional.fieldMode
+
 		if (workspace) {
 			frame.workspace = {
 				name: context.merge(workspace.name),
