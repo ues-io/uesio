@@ -185,6 +185,8 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runWorkspaceAfterSaveBot
 	case "uesio/studio.bundle":
 		botFunction = runBundleAfterSaveBot
+	case "uesio/studio.bundledependency":
+		botFunction = runBundleDependencyAfterSaveBot
 	}
 
 	if botFunction != nil {

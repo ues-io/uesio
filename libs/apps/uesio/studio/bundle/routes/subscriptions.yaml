@@ -1,0 +1,4 @@
+name: subscriptions
+path: app/{app:\w*\/\w*}/subscriptions
+view: uesio/studio.subscriptions
+theme: uesio/studio.default

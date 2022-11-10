@@ -1,0 +1,4 @@
+name: licenses
+path: app/{app:\w*\/\w*}/licenses
+view: uesio/studio.licenses
+theme: uesio/studio.default

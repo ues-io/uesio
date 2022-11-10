@@ -1,5 +1,0 @@
-name: price
-type: NUMBER
-label: Monthly Price
-number:
-  decimals: 0

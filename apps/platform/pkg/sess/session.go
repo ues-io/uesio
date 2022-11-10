@@ -64,7 +64,6 @@ type Session struct {
 	site           *meta.Site
 	workspace      *meta.Workspace
 	siteadmin      *meta.Site
-	appadmin       *meta.App
 	version        *VersionInfo
 	permissions    *meta.PermissionSet
 	user           *meta.User

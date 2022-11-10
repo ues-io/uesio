@@ -1,0 +1,220 @@
+name: licenses
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: app
+    workspaces:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    sites:
+      collection: uesio/studio.site
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    newworkspace:
+      collection: uesio/studio.workspace
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.app:
+      init:
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    newsite:
+      collection: uesio/studio.site
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.bundle:
+      init:
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.bundle
+          valueSource: LOOKUP
+          lookupWire: bundles
+          lookupField: uesio/core.id
+    licenses:
+      collection: uesio/studio.license
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.applicensed:
+        uesio/studio.active:
+      conditions:
+        - field: uesio/studio.applicensed
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: apps
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: Workspaces
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newWorkspace
+                - uesio/io.list:
+                    id: workspaceslist
+                    wire: workspaces
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{app}/workspace/${uesio/studio.name}"
+                          content:
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                text: ${uesio/studio.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#ccc"
+                                text: handyman
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: Sites
+                    actions:
+                      - uesio/io.button:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newSite
+                - uesio/io.list:
+                    id: siteslist
+                    wire: sites
+                    components:
+                      - uesio/io.tile:
+                          uesio.variant: uesio/io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{app}/site/${uesio/studio.name}"
+                          content:
+                            - uesio/io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                text: ${uesio/studio.name}
+                          avatar:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.icon
+                                color: "#ccc"
+                                text: public
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: Licenses
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    content:
+                      - uesio/io.text:
+                          uesio.styles:
+                            root:
+                              color: "#21242D"
+                          text: licenses
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          color: "#ccc"
+                          text: shopping_cart
+                - uesio/io.tile:
+                    uesio.variant: uesio/io.nav
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "app/$Param{app}/subscriptions"
+                    content:
+                      - uesio/io.text:
+                          uesio.styles:
+                            root:
+                              color: "#21242D"
+                          text: subscriptions
+                    avatar:
+                      - uesio/io.text:
+                          uesio.variant: uesio/io.icon
+                          color: "#ccc"
+                          text: subscriptions
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.list:
+                    wire: apps
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: ${uesio/studio.name}
+                          subtitle: Licenses
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.section
+                          components:
+                            - uesio/io.titlebar:
+                                uesio.variant: uesio/io.section
+                                title: Licenses
+                                subtitle: List of apps licensed to use yours.
+                            - uesio/io.deck:
+                                id: licenseslist
+                                wire: licenses
+                                uesio.variant: uesio/io.section
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/io.item
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{app}/teams/${uesio/studio.name}"
+                                      content:
+                                        - uesio/io.text:
+                                            text: License to use ${uesio/studio.app->uesio/core.uniquekey} status ${uesio/studio.active}
+                                      avatar:
+                                        - uesio/io.text:
+                                            uesio.variant: uesio/io.icon
+                                            color: "#ccc"
+                                            text: groups
