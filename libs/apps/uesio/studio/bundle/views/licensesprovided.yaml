@@ -48,6 +48,38 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    newlicensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    licensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -86,6 +118,36 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newLicense
+                            - uesio/io.button:
+                                text: add Template
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newLicenseTemplate
+                - uesio/io.list:
+                    wire: licensetemplate
+                    components:
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.box:
+                                uesio.variant: uesio/io.section
+                                components:
+                                  - uesio/io.grid:
+                                      uesio.styles:
+                                        root:
+                                          padding: 40px
+                                      templateColumns:
+                                        xs: 1fr
+                                        md: 1fr 1fr
+                                        lg: 1fr 1fr 1fr 1fr
+                                      columnGap: 10px
+                                      items:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.app
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.autocreate
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.monthlyprice
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.styles:
@@ -172,3 +234,37 @@ definition:
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newLicense"
+    newLicenseTemplate:
+      uesio.type: uesio/io.dialog
+      title: Add a New License Template
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newlicenseTemplatelist
+            wire: newlicensetemplate
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.autocreate
+              - uesio/io.field:
+                  fieldId: uesio/studio.monthlyprice
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlicensetemplate
+              - signal: wire/LOAD
+                wires:
+                  - licensetemplate
+              - signal: "panel/TOGGLE"
+                panel: "newLicenseTemplate"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newLicenseTemplate"

@@ -1,0 +1,5 @@
+name: monthlyprice
+label: monthly price
+type: NUMBER
+number:
+  decimals: 0

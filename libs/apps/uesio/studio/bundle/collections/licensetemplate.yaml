@@ -1,0 +1,6 @@
+name: licensetemplate
+uniqueKey:
+  - uesio/studio.app
+nameField: uesio/studio.app
+label: license template
+pluralLabel: license template
