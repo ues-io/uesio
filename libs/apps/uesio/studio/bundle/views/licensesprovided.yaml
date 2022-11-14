@@ -98,20 +98,13 @@ definition:
                           columns:
                             - label: LICENSED APP
                               components:
-                                - uesio/io.text:
+                                - uesio/studio.iconlabel:
                                     uesio.styles:
                                       root:
                                         padding: 16px
-                                    uesio.variant: uesio/io.icon
+                                    text: ${uesio/studio.applicensed->uesio/studio.fullname}
+                                    icon: ${uesio/studio.applicensed->uesio/studio.icon}
                                     color: ${uesio/studio.applicensed->uesio/studio.color}
-                                    text: ${uesio/studio.applicensed->uesio/studio.icon}
-                                    element: span
-                                - uesio/io.text:
-                                    uesio.styles:
-                                      root:
-                                        color: "#21242D"
-                                    text: " ${uesio/studio.applicensed->uesio/studio.fullname}"
-                                    element: span
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
