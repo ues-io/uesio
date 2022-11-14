@@ -12,6 +12,7 @@ type BundleDef struct {
 	DefaultTheme  string                 `yaml:"defaultTheme,omitempty"`
 	PublicProfile string                 `yaml:"publicProfile,omitempty"`
 	Dependencies  BundleDefDependencyMap `yaml:"dependencies,omitempty"`
+	Licenses      map[string]*License    `yaml:"-"`
 }
 
 type BundleDefDependencyMap map[string]BundleDefDep

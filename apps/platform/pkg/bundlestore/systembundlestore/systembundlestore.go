@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/licensing"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -202,6 +203,12 @@ func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *ses
 		return nil, err
 	}
 	defer file.Close()
+
+	licenseMap, err := licensing.GetLicenses(namespace)
+	if err != nil {
+		return nil, err
+	}
+	by.Licenses = licenseMap
 
 	err = bundlestore.DecodeYAML(&by, file)
 	if err != nil {

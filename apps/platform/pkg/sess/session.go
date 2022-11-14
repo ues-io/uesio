@@ -83,6 +83,10 @@ func (s *Session) GetLabel(labelKey string) string {
 	return s.labels[labelKey]
 }
 
+func (s *Session) GetLabels() map[string]string {
+	return s.labels
+}
+
 func (s *Session) AddToken(name string, value []string) {
 	if s.tokens == nil {
 		s.tokens = map[string][]string{}

@@ -12,17 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
-	for _, av := range meta.DefaultAppLicenses {
-		if av.AppID == app && av.LicensedAppID == appToCheck {
-			return av, nil
-		}
-	}
-	// TODO: Fix this
-	// For now, everyone is licensed
-	return &meta.AppLicense{}, nil
-}
-
 func GetAppBundle(session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -75,21 +64,6 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return appVersion, nil
 	}
 
-	// Check to see if we have a license to use this namespace
-	license, err := getAppLicense(appName, namespace)
-	if err != nil {
-		return "", err
-	}
-
-	if license == nil {
-		return "", errors.New("You aren't licensed to use that app: " + namespace)
-	}
-
-	if namespace == "uesio/core" {
-		// Everyone has access to uesio/core
-		return "v0.0.1", nil
-	}
-
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
@@ -99,6 +73,19 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	depBundle, hasDep := bundle.Dependencies[namespace]
 	if !hasDep {
 		return "", fmt.Errorf("%s doesn't have %s installed", appName, namespace)
+	}
+
+	if bundle.Licenses == nil {
+		return "", fmt.Errorf("No License info provided for: %s", appName)
+	}
+
+	license, hasLicense := bundle.Licenses[namespace]
+	if !hasLicense {
+		return "", fmt.Errorf("%s doesn't have a license to use %s", appName, namespace)
+	}
+
+	if !license.Active {
+		return "", fmt.Errorf("%s has a inactive license to use %s ", appName, namespace)
 	}
 
 	return depBundle.Version, nil
