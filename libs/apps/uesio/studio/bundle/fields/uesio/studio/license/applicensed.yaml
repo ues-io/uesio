@@ -1,5 +1,5 @@
 name: applicensed
 type: REFERENCE
-label: Licensed App
+label: Licensed app
 reference:
   collection: uesio/studio.app

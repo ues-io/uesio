@@ -24,6 +24,7 @@ definition:
         uesio/studio.active:
         uesio/studio.app:
         uesio/studio.applicensed:
+        uesio/studio.monthlyprice:
       init:
         query: false
         create: true
@@ -38,6 +39,7 @@ definition:
         uesio/core.id:
         uesio/studio.app:
         uesio/studio.applicensed:
+        uesio/studio.monthlyprice:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
@@ -167,6 +169,7 @@ definition:
                                     text: ${uesio/studio.applicensed->uesio/studio.fullname}
                                     icon: ${uesio/studio.applicensed->uesio/studio.icon}
                                     color: ${uesio/studio.applicensed->uesio/studio.color}
+                            - field: uesio/studio.monthlyprice
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
@@ -206,6 +209,8 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.applicensed
+              - uesio/io.field:
+                  fieldId: uesio/studio.monthlyprice
               - uesio/io.field:
                   fieldId: uesio/studio.active
       actions:
