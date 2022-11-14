@@ -179,5 +179,6 @@ collections:
   uesio/core.featureflagassignment: true
   uesio/studio.useraccesstoken: true
   uesio/studio.license: true
+  uesio/studio.licensetemplate: true
 modifyallrecords: false
 viewallrecords: false

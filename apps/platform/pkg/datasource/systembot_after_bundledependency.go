@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -20,7 +21,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 
 	newDeps := adapt.Collection{}
 	visited := map[string]bool{}
-	request.LoopInserts(func(change *adapt.ChangeItem) error {
+	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
 		applicensed, app, err := parseKey(change.UniqueKey)
 		if err != nil {
@@ -35,21 +36,47 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 
 		visited[pairKey] = true
 
-		newDeps = append(newDeps, &adapt.Item{
-			"uesio/studio.app": map[string]interface{}{
-				adapt.UNIQUE_KEY_FIELD: app,
+		var lt meta.LicenseTemplate
+		err = PlatformLoadOne(
+			&lt,
+			&PlatformLoadOptions{
+				Connection: connection,
+				Conditions: []adapt.LoadRequestCondition{
+					{
+						Field: adapt.UNIQUE_KEY_FIELD,
+						Value: app,
+					},
+				},
 			},
-			"uesio/studio.applicensed": map[string]interface{}{
-				adapt.UNIQUE_KEY_FIELD: applicensed,
-			},
-			"uesio/studio.active": true,
-		})
+			session,
+		)
+
+		if err != nil {
+			return errors.New("App: " + app + " missing the license template")
+		}
+
+		if lt.AutoCreate {
+			newDeps = append(newDeps, &adapt.Item{
+				"uesio/studio.app": map[string]interface{}{
+					adapt.UNIQUE_KEY_FIELD: app,
+				},
+				"uesio/studio.applicensed": map[string]interface{}{
+					adapt.UNIQUE_KEY_FIELD: applicensed,
+				},
+				"uesio/studio.active":       true,
+				"uesio/studio.monthlyprice": lt.MonthlyPrice,
+			})
+		}
 
 		return nil
 
 	})
 
-	err := SaveWithOptions([]SaveRequest{
+	if err != nil {
+		return err
+	}
+
+	err = SaveWithOptions([]SaveRequest{
 		{
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",

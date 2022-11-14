@@ -1,0 +1,5 @@
+name: monthlyprice
+label: monthly price per site
+type: NUMBER
+number:
+  decimals: 0

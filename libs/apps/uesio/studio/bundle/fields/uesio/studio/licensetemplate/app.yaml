@@ -1,5 +1,5 @@
 name: app
 type: REFERENCE
-label: Source app
+label: App
 reference:
   collection: uesio/studio.app
