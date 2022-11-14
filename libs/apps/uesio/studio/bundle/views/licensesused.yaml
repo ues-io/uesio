@@ -74,20 +74,13 @@ definition:
                           columns:
                             - label: SOURCE APP
                               components:
-                                - uesio/io.text:
+                                - uesio/studio.iconlabel:
                                     uesio.styles:
                                       root:
                                         padding: 16px
-                                    uesio.variant: uesio/io.icon
+                                    text: ${uesio/studio.app->uesio/studio.fullname}
+                                    icon: ${uesio/studio.app->uesio/studio.icon}
                                     color: ${uesio/studio.app->uesio/studio.color}
-                                    text: ${uesio/studio.app->uesio/studio.icon}
-                                    element: span
-                                - uesio/io.text:
-                                    uesio.styles:
-                                      root:
-                                        color: "#21242D"
-                                    text: " ${uesio/studio.app->uesio/studio.fullname}"
-                                    element: span
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
