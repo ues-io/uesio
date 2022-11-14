@@ -10,8 +10,6 @@ components:
       variants:
         - uesio/io.button:uesio/io.secondary
     logingoogle:
-      configvalues:
-        - uesio/core.google_client_id
       utilities:
         - uesio/io.button
       variants:

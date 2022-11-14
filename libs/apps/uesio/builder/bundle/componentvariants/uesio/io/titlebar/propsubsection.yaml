@@ -9,3 +9,4 @@ definition:
       fontWeight: bold
       fontSize: 8pt
       textTransform: uppercase
+public: true

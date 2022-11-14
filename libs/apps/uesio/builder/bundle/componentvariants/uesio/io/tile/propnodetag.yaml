@@ -34,3 +34,4 @@ definition:
         alignItems: "center"
     selected:
       border: "1px solid $Theme{color.primary}"
+public: true

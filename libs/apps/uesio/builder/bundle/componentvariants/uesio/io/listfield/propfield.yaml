@@ -8,3 +8,4 @@ definition:
       columnGap: "8px"
       alignItems: "center"
       margin: 8px 0
+public: true

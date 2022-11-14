@@ -4,3 +4,4 @@ definition:
   uesio.styles:
     root:
       fontSize: 9pt
+public: true

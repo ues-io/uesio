@@ -29,3 +29,4 @@ definition:
       margin: "8px"
       border: "1px solid #ddd"
       borderRadius: "8px"
+public: true

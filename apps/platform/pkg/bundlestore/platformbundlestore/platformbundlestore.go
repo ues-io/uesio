@@ -22,7 +22,7 @@ type PlatformBundleStore struct {
 }
 
 func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", session)
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession())
 }
 
 func getBasePath(namespace, version string) string {

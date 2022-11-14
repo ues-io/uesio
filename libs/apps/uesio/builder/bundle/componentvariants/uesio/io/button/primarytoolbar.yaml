@@ -8,3 +8,4 @@ definition:
       fontWeight: 500
       backgroundColor: rgb(255,94,47)
       border: 1px solid rgb(255,94,47)
+public: true
