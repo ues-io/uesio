@@ -17,3 +17,4 @@ definition:
       padding: 2px 6px 3px 6px
     selected:
       border: "1px solid $Theme{color.primary}"
+public: true

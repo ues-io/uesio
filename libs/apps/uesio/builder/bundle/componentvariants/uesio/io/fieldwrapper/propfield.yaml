@@ -10,3 +10,4 @@ definition:
       color: "#444"
       fontSize: 9pt
       padding: 0
+public: true

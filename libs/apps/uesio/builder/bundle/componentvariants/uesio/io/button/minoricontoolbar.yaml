@@ -8,3 +8,4 @@ definition:
       fontSize: 10pt
       whiteSpace: nowrap
       textTransform: uppercase
+public: true

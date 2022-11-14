@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/licensing"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -21,7 +22,7 @@ type PlatformBundleStore struct {
 }
 
 func getPlatformFileConnection(session *sess.Session) (fileadapt.FileConnection, error) {
-	return fileadapt.GetFileConnection("uesio/core.bundlestore", session)
+	return fileadapt.GetFileConnection("uesio/core.bundlestore", sess.GetStudioAnonSession())
 }
 
 func getBasePath(namespace, version string) string {
@@ -210,6 +211,12 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 		return nil, err
 	}
 	defer stream.Close()
+
+	licenseMap, err := licensing.GetLicenses(namespace)
+	if err != nil {
+		return nil, err
+	}
+	by.Licenses = licenseMap
 
 	err = bundlestore.DecodeYAML(&by, stream)
 	if err != nil {

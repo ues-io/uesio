@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
+	"github.com/thecloudmasters/uesio/pkg/licensing"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -274,6 +275,12 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.HomeRoute = workspace.HomeRoute
 	by.LoginRoute = workspace.LoginRoute
 	by.DefaultTheme = workspace.DefaultTheme
+
+	licenseMap, err := licensing.GetLicenses(namespace)
+	if err != nil {
+		return nil, err
+	}
+	by.Licenses = licenseMap
 
 	return &by, nil
 }

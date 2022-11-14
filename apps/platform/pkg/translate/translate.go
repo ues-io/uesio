@@ -10,6 +10,9 @@ import (
 
 func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 
+	if session.HasLabels() {
+		return session.GetLabels(), nil
+	}
 	userLanguage := session.GetUserInfo().Language
 
 	var labels meta.LabelCollection
@@ -49,6 +52,8 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 			translatedLabels[labelKey] = labels[i].Value
 		}
 	}
+
+	session.SetLabels(translatedLabels)
 
 	return translatedLabels, nil
 

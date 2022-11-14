@@ -104,10 +104,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 	}
 
-	by, err := bs.GetBundleDef(namespace, version, session, nil)
-	if err != nil {
-		return nil, err
-	}
+	by := session.GetWorkspace().GetAppBundle()
 
 	r := bundlestore.GetFileReader(func(data io.Writer) error {
 		encoder := yaml.NewEncoder(data)

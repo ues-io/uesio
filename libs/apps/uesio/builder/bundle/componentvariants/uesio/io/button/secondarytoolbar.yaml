@@ -12,3 +12,4 @@ definition:
       whiteSpace: nowrap
       textTransform: uppercase
       backgroundColor: white
+public: true

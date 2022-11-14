@@ -6,3 +6,4 @@ definition:
     root:
       color: "#000"
       padding: 2px
+public: true

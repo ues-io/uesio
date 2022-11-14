@@ -229,7 +229,6 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 		viewID := meta.GetNodeValueAsString(viewCompDef, "id")
 		if viewID == "" {
-			fmt.Println("Failed Merging Server Side Params: No Id")
 			subParams = nil
 		} else {
 
@@ -254,7 +253,6 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 							if err != nil {
 								// If we fail here just bail on making params.
 								// We'll process the view client side.
-								fmt.Println("Failed Merging Server Side Params: Invalid Merges")
 								subParams = nil
 								break
 							}

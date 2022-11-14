@@ -14,3 +14,4 @@ definition:
         color: $Theme{color.primary}
     disabled:
       opacity: "0.3"
+public: true

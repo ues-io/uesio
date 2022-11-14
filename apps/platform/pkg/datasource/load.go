@@ -263,12 +263,10 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		metadataResponse = options.Metadata
 	}
 
-	if !session.HasLabels() {
-		labels, err := translate.GetTranslatedLabels(session)
-		if err != nil {
-			return nil, err
-		}
-		session.SetLabels(labels)
+	// We do this so that we're sure that the labels are attached to the session
+	_, err := translate.GetTranslatedLabels(session)
+	if err != nil {
+		return nil, err
 	}
 
 	// Loop over the ops and batch per data source
@@ -325,7 +323,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		collated[dsKey] = batch
 	}
 
-	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
 		Metadata:    metadataResponse,
 		Connections: options.Connections,
 	}, session)

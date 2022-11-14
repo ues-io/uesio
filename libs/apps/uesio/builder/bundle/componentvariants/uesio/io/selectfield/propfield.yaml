@@ -14,3 +14,4 @@ definition:
       borderRadius: 4px
       border: "1px solid #00000022"
       color: "#444"
+public: true

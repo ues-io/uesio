@@ -12,3 +12,4 @@ definition:
       "&:focus":
         outline: none
         color: $Theme{color.primary}
+public: true

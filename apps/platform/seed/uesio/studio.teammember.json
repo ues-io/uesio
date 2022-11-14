@@ -229,5 +229,49 @@
 		"uesio/studio.member": {
 			"uesio/core.uniquekey": "gregg"
 		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/io:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/core"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/core:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "ben"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/io:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/core"
+		},
+		"uesio/studio.team": {
+			"uesio/core.uniquekey": "uesio/core:maintainers"
+		},
+		"uesio/studio.member": {
+			"uesio/core.uniquekey": "abel"
+		}
 	}
 ]

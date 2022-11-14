@@ -16,3 +16,4 @@ definition:
     tabSelected:
       color: "#444"
       backgroundColor: white
+public: true

@@ -40,14 +40,25 @@ func GetStudioSite() *meta.Site {
 	site.SetAppBundle(&meta.BundleDef{
 		Name: "uesio/studio",
 		Dependencies: meta.BundleDefDependencyMap{
-			"uesio/core": meta.BundleDefDep{
+			"uesio/core": {
 				Version: "v0.0.1",
 			},
-			"uesio/builder": meta.BundleDefDep{
+			"uesio/builder": {
 				Version: "v0.0.1",
 			},
-			"uesio/io": meta.BundleDefDep{
+			"uesio/io": {
 				Version: "v0.0.1",
+			},
+		},
+		Licenses: map[string]*meta.License{
+			"uesio/core": {
+				Active: true,
+			},
+			"uesio/io": {
+				Active: true,
+			},
+			"uesio/builder": {
+				Active: true,
 			},
 		},
 	})
