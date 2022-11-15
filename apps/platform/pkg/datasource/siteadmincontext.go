@@ -46,7 +46,7 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 
 	session.SetSiteAdmin(siteadmin)
 
-	bundleDef, err := bundle.GetAppBundle(session, nil)
+	bundleDef, err := bundle.GetAppBundle(session, connection)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,23 @@
+[
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/core"
+		},
+		"uesio/studio.autocreate": true,
+		"uesio/studio.monthlyprice": 20
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/io"
+		},
+		"uesio/studio.autocreate": true,
+		"uesio/studio.monthlyprice": 20
+	},
+	{
+		"uesio/studio.app": {
+			"uesio/core.uniquekey": "uesio/builder"
+		},
+		"uesio/studio.autocreate": true,
+		"uesio/studio.monthlyprice": 20
+	}
+]
