@@ -276,7 +276,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.LoginRoute = workspace.LoginRoute
 	by.DefaultTheme = workspace.DefaultTheme
 
-	licenseMap, err := licensing.GetLicenses(namespace)
+	licenseMap, err := licensing.GetLicenses(namespace, connection)
 	if err != nil {
 		return nil, err
 	}

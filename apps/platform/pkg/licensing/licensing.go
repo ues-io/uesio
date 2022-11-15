@@ -9,13 +9,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetLicenses(namespace string) (map[string]*meta.License, error) {
+func GetLicenses(namespace string, connection adapt.Connection) (map[string]*meta.License, error) {
 	// Get Licenses now
 	fmt.Println("Getting License for: " + namespace)
 	anonSession := sess.GetStudioAnonSession()
 	app := meta.App{}
 	err := datasource.PlatformLoadOne(&app, &datasource.PlatformLoadOptions{
-		Fields: []adapt.LoadRequestField{},
+		Connection: connection,
+		Fields:     []adapt.LoadRequestField{},
 		Conditions: []adapt.LoadRequestCondition{
 			{
 				Field:    adapt.UNIQUE_KEY_FIELD,
