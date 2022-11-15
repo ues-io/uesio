@@ -212,7 +212,7 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 	}
 	defer stream.Close()
 
-	licenseMap, err := licensing.GetLicenses(namespace)
+	licenseMap, err := licensing.GetLicenses(namespace, connection)
 	if err != nil {
 		return nil, err
 	}
