@@ -204,7 +204,7 @@ func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *ses
 	}
 	defer file.Close()
 
-	licenseMap, err := licensing.GetLicenses(namespace)
+	licenseMap, err := licensing.GetLicenses(namespace, connection)
 	if err != nil {
 		return nil, err
 	}
