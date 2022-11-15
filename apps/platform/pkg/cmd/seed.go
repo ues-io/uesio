@@ -86,6 +86,7 @@ func runSeeds(connection adapt.Connection) error {
 	}
 
 	var apps meta.AppCollection
+	var licenses meta.LicenseCollection
 	var bundles meta.BundleCollection
 	var licensetemplate meta.LicenseTemplateCollection
 	var workspaces meta.WorkspaceCollection
@@ -93,18 +94,17 @@ func runSeeds(connection adapt.Connection) error {
 	var sitedomains meta.SiteDomainCollection
 	var users meta.UserCollection
 	var loginmethods meta.LoginMethodCollection
-	var licenses meta.LicenseCollection
 
 	err = populateSeedData(
 		&users,
 		&apps,
+		&licenses,
 		&bundles,
 		&licensetemplate,
 		&workspaces,
 		&sites,
 		&sitedomains,
 		&loginmethods,
-		&licenses,
 	)
 	if err != nil {
 		return err
@@ -132,12 +132,12 @@ func runSeeds(connection adapt.Connection) error {
 		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&loginmethods),
 		getPlatformSeedSR(&apps),
+		getPlatformSeedSR(&licenses),
 		getPlatformSeedSR(&bundles),
 		getPlatformSeedSR(&licensetemplate),
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
-		getPlatformSeedSR(&licenses),
 		getSeedSR("uesio/studio.team", &teams),
 		getSeedSR("uesio/studio.teammember", &teammembers),
 		getSeedSR("uesio/studio.bundlelisting", &bundlelistings),
