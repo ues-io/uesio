@@ -32,6 +32,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 	err = datasource.PlatformLoad(
 		&licenses,
 		&datasource.PlatformLoadOptions{
+			Connection: connection,
 			Fields: []adapt.LoadRequestField{
 				{
 					ID: "uesio/studio.active",
