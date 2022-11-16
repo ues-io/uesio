@@ -116,11 +116,11 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: newLicense
-                                      uesio.display:
-                                        - type: wireHasRecords
-                                          wire: licensetemplate
-                                        - type: wireHasNoRecords
-                                          wire: licenses
+                                      # uesio.display:
+                                      #   - type: wireHasRecords
+                                      #     wire: licensetemplate
+                                      #   - type: wireHasNoRecords
+                                      #     wire: licenses
                       - uesio/io.table:
                           id: licensesTable
                           wire: licenses

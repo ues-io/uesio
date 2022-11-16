@@ -65,8 +65,8 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
-    licensepricingtemplate:
-      collection: uesio/studio.licensepricingtemplate
+    licensepricingitem:
+      collection: uesio/studio.licensepricingitem
       fields:
         uesio/core.id:
         uesio/studio.app:
@@ -75,6 +75,23 @@ definition:
         uesio/studio.price:
         uesio/studio.metadataname:
       conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    newlicensepricingitem:
+      collection: uesio/studio.licensepricingitem
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.metadatatype:
+        uesio/studio.actiontype:
+        uesio/studio.price:
+        uesio/studio.metadataname:
+      init:
+        query: false
+        create: true
+      defaults:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
@@ -106,7 +123,7 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Licenses Pricing Items $Param{applicensed} *********
+                    title: Licenses Pricing Items $Param{applicensed}
                     subtitle: Set the price of $Param{app} for the app $Param{applicensed}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
@@ -153,29 +170,69 @@ definition:
                                                   fieldId: uesio/studio.monthlyprice
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.active
-                # - uesio/io.box:
-                #     uesio.variant: uesio/io.section
-                #     components:
-                #       - uesio/io.titlebar:
-                #           uesio.variant: uesio/io.section
-                #           title: Pricing Template Items
-                #           subtitle: set the monthly price of your application elements
-                #           actions:
-                #             - uesio/io.button:
-                #                 text: add Item
-                #                 uesio.variant: uesio/io.secondary
-                #                 signals:
-                #                   - signal: panel/TOGGLE
-                #                     panel: newLicensePricingTemplate
-                #       - uesio/io.table:
-                #           id: licensepricingtemplateTable
-                #           wire: licensepricingtemplate
-                #           uesio.styles:
-                #             root:
-                #               padding: 40px
-                #           columns:
-                #             - field: uesio/studio.actiontype
-                #             - field: uesio/studio.metadatatype
-                #             - field: uesio/studio.metadataname
-                #             - field: uesio/studio.price
-                #           pagesize: 10
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Pricing Items
+                          subtitle: set the monthly price of your application elements
+                          actions:
+                            - uesio/io.button:
+                                text: add Item
+                                uesio.variant: uesio/io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newLicensePricingItem
+                      - uesio/io.table:
+                          id: licensepricingTable
+                          wire: licensepricingitem
+                          mode: EDIT
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          columns:
+                            - field: uesio/studio.actiontype
+                            - field: uesio/studio.metadatatype
+                            - field: uesio/studio.metadataname
+                            - field: uesio/studio.price
+                          pagesize: 10
+  panels:
+    newLicensePricingItem:
+      uesio.type: uesio/io.dialog
+      title: Add a New License Pricing Item
+      width: 400px
+      height: 500px
+      components:
+        - uesio/io.list:
+            id: newlicensePricingItemlist
+            wire: newlicensepricingitem
+            mode: EDIT
+            components:
+              - uesio/io.field:
+                  fieldId: uesio/studio.actiontype
+              - uesio/io.field:
+                  fieldId: uesio/studio.metadatatype
+              - uesio/io.field:
+                  fieldId: uesio/studio.metadataname
+              - uesio/io.field:
+                  fieldId: uesio/studio.price
+      actions:
+        - uesio/io.button:
+            uesio.variant: "uesio/io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newlicensepricingitem
+              - signal: wire/LOAD
+                wires:
+                  - licensepricingitem
+              - signal: "panel/TOGGLE"
+                panel: "newLicensePricingItem"
+        - uesio/io.button:
+            uesio.variant: "uesio/io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newLicensePricingItem"

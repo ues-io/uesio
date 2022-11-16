@@ -185,5 +185,6 @@ collections:
   uesio/studio.license: true
   uesio/studio.licensetemplate: true
   uesio/studio.licensepricingtemplate: true
+  uesio/studio.licensepricingitem: true
 modifyallrecords: false
 viewallrecords: false

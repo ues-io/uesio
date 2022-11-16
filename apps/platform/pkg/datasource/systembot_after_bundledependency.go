@@ -19,7 +19,8 @@ func parseKey(key string) (string, string, error) {
 
 func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	newDeps := adapt.Collection{}
+	LicenseTemplateDeps := adapt.Collection{}
+	LicensePricingItemDeps := adapt.Collection{}
 	visited := map[string]bool{}
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
@@ -37,7 +38,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		visited[pairKey] = true
 
 		var lt meta.LicenseTemplate
-		err = PlatformLoadOne(
+		PlatformLoadOne(
 			&lt,
 			&PlatformLoadOptions{
 				Connection: connection,
@@ -51,12 +52,8 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			session,
 		)
 
-		if err != nil {
-			return errors.New("App: " + app + " missing the license template")
-		}
-
 		if lt.AutoCreate {
-			newDeps = append(newDeps, &adapt.Item{
+			LicenseTemplateDeps = append(LicenseTemplateDeps, &adapt.Item{
 				"uesio/studio.app": map[string]interface{}{
 					adapt.UNIQUE_KEY_FIELD: app,
 				},
@@ -67,6 +64,41 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 				"uesio/studio.monthlyprice": lt.MonthlyPrice,
 			})
 		}
+
+		var lptc meta.LicensePricingTemplateCollection
+		PlatformLoad(
+			&lptc,
+			&PlatformLoadOptions{
+				Connection: connection,
+				Conditions: []adapt.LoadRequestCondition{
+					{
+						Field: "uesio/studio.app",
+						Value: lt.App.ID, //TO-DO this is a shotcut if we don't have template then this don't work
+					},
+				},
+			},
+			session,
+		)
+
+		lptc.Loop(func(item meta.Item, _ string) error {
+
+			metadatatype, _ := item.GetField("uesio/studio.metadatatype")
+			actiontype, _ := item.GetField("uesio/studio.actiontype")
+			metadataname, _ := item.GetField("uesio/studio.metadataname")
+			price, _ := item.GetField("uesio/studio.price")
+
+			LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
+				"uesio/studio.app": map[string]interface{}{
+					adapt.UNIQUE_KEY_FIELD: app,
+				},
+				"uesio/studio.metadatatype": metadatatype,
+				"uesio/studio.actiontype":   actiontype,
+				"uesio/studio.metadataname": metadataname,
+				"uesio/studio.price":        price,
+			})
+
+			return nil
+		})
 
 		return nil
 
@@ -80,7 +112,15 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		{
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",
-			Changes:    &newDeps,
+			Changes:    &LicenseTemplateDeps,
+			Options: &adapt.SaveOptions{
+				Upsert: true,
+			},
+		},
+		{
+			Collection: "uesio/studio.licensepricingitem",
+			Wire:       "LicensePricingTemplatedWire",
+			Changes:    &LicensePricingItemDeps,
 			Options: &adapt.SaveOptions{
 				Upsert: true,
 			},
