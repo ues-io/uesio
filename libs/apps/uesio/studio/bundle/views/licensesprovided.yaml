@@ -38,8 +38,8 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.app:
-        uesio/studio.applicensed:
         uesio/studio.monthlyprice:
+        uesio/studio.applicensed:
           fields:
             uesio/studio.color:
             uesio/studio.icon:
@@ -116,6 +116,11 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: newLicense
+                                      uesio.display:
+                                        - type: wireHasRecords
+                                          wire: licensetemplate
+                                        - type: wireHasNoRecords
+                                          wire: licenses
                       - uesio/io.table:
                           id: licensesTable
                           wire: licenses
@@ -157,6 +162,14 @@ definition:
                                       - field: uesio/studio.active
                                         value: false
                                         operator: EQUALS
+                          rowactions:
+                            - text: View
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/licensespricing/applicensed/${uesio/studio.applicensed->uesio/studio.fullname}
+                            - text: Delete
+                              signals:
+                                - signal: wire/TOGGLE_DELETE_STATUS
                           pagesize: 10
   panels:
     newLicense:

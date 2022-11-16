@@ -1,0 +1,4 @@
+name: usagemetadataname
+options:
+  - label: "uesio/core.platform"
+    value: "uesio/core.platform"

@@ -90,6 +90,7 @@ definition:
         uesio/studio.metadatatype:
         uesio/studio.actiontype:
         uesio/studio.price:
+        uesio/studio.metadataname:
       init:
         query: false
         create: true
@@ -106,6 +107,7 @@ definition:
         uesio/studio.metadatatype:
         uesio/studio.actiontype:
         uesio/studio.price:
+        uesio/studio.metadataname:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -140,21 +142,6 @@ definition:
                     uesio.variant: uesio/io.main
                     title: Licenses Pricing Configuration
                     subtitle: List of applications licensed to use your application $Param{app}
-                    # actions:
-                    #   - uesio/io.group:
-                    #       components:
-                    #         - uesio/io.button:
-                    #             text: add License
-                    #             uesio.variant: uesio/io.secondary
-                    #             signals:
-                    #               - signal: panel/TOGGLE
-                    #                 panel: newLicense
-                    #         - uesio/io.button:
-                    #             text: add Template
-                    #             uesio.variant: uesio/io.secondary
-                    #             signals:
-                    #               - signal: panel/TOGGLE
-                    #                 panel: newLicenseTemplate
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -171,8 +158,24 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: newLicenseTemplate
+                                      uesio.display:
+                                        - type: wireHasNoRecords
+                                          wire: licensetemplate
+                                  - uesio/io.button:
+                                      uesio.context:
+                                        wire: licensetemplate
+                                      uesio.variant: uesio/io.primary
+                                      text: "Save"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: licensetemplate
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wire: licensetemplate
                       - uesio/io.list:
+                          id: licensetemplateList
                           wire: licensetemplate
+                          mode: EDIT
                           components:
                             - uesio/io.griditem:
                                 components:
@@ -190,9 +193,9 @@ definition:
                                             columnGap: 10px
                                             items:
                                               - uesio/io.field:
-                                                  fieldId: uesio/studio.autocreate
-                                              - uesio/io.field:
                                                   fieldId: uesio/studio.monthlyprice
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.autocreate
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -207,6 +210,9 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newLicensePricingTemplate
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: licensetemplate
                       - uesio/io.table:
                           id: licensepricingtemplateTable
                           wire: licensepricingtemplate
@@ -214,42 +220,10 @@ definition:
                             root:
                               padding: 40px
                           columns:
-                            # - label: LICENSED APP
-                            #   components:
-                            #     - uesio/studio.iconlabel:
-                            #         uesio.styles:
-                            #           root:
-                            #             padding: 16px
-                            #         text: ${uesio/studio.applicensed->uesio/studio.fullname}
-                            #         icon: ${uesio/studio.applicensed->uesio/studio.icon}
-                            #         color: ${uesio/studio.applicensed->uesio/studio.color}
                             - field: uesio/studio.actiontype
                             - field: uesio/studio.metadatatype
+                            - field: uesio/studio.metadataname
                             - field: uesio/studio.price
-                            # - label: status
-                            #   components:
-                            #     - uesio/studio.iconlabel:
-                            #         uesio.styles:
-                            #           root:
-                            #             padding: 16px
-                            #         text: Active
-                            #         icon: verified
-                            #         color: rgb(29,173,113)
-                            #         uesio.display:
-                            #           - field: uesio/studio.active
-                            #             value: true
-                            #             operator: EQUALS
-                            #     - uesio/studio.iconlabel:
-                            #         uesio.styles:
-                            #           root:
-                            #             padding: 16px
-                            #         text: Inactive
-                            #         icon: cancel
-                            #         color: rgb(255,0,0)
-                            #         uesio.display:
-                            #           - field: uesio/studio.active
-                            #             value: false
-                            #             operator: EQUALS
                           pagesize: 10
   panels:
     newLicenseTemplate:
@@ -301,6 +275,8 @@ definition:
                   fieldId: uesio/studio.actiontype
               - uesio/io.field:
                   fieldId: uesio/studio.metadatatype
+              - uesio/io.field:
+                  fieldId: uesio/studio.metadataname
               - uesio/io.field:
                   fieldId: uesio/studio.price
       actions:

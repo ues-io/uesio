@@ -70,6 +70,7 @@ views:
   uesio/studio.licensesprovided: true
   uesio/studio.appnav: true
   uesio/studio.licensespricing: true
+  uesio/studio.licensespricingvalues: true
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -138,6 +139,7 @@ routes:
   uesio/studio.licensesused: true
   uesio/studio.licensesprovided: true
   uesio/studio.licensespricing: true
+  uesio/studio.licensespricingvalues: true
 files:
 collections:
   uesio/studio.allmetadata: true

@@ -1,0 +1,181 @@
+name: licensespricingvalues
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.fullname:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: app
+    applicensed:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.fullname:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: applicensed
+    licenses:
+      collection: uesio/studio.license
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.monthlyprice:
+        uesio/studio.active:
+        uesio/studio.applicensed:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+            uesio/studio.fullname:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.applicensed
+          valueSource: LOOKUP
+          lookupWire: applicensed
+          lookupField: uesio/core.id
+    licensetemplate:
+      collection: uesio/studio.licensetemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.autocreate:
+        uesio/studio.monthlyprice:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    licensepricingtemplate:
+      collection: uesio/studio.licensepricingtemplate
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.metadatatype:
+        uesio/studio.actiontype:
+        uesio/studio.price:
+        uesio/studio.metadataname:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: apps
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    id: appnavview
+                    view: uesio/studio.appnav
+                    uesio.context:
+                      wire: apps
+                    params:
+                      app: $Param{app}
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Licenses Pricing Items $Param{applicensed} *********
+                    subtitle: Set the price of $Param{app} for the app $Param{applicensed}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Pricing for $Param{applicensed}
+                          subtitle: Set the monthly price of this application
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.context:
+                                        wire: licenses
+                                      uesio.variant: uesio/io.primary
+                                      text: "Save"
+                                      uesio.display:
+                                        - type: wireHasChanges
+                                          wire: licenses
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wire: licenses
+                      - uesio/io.list:
+                          id: licensetemplateList
+                          wire: licenses
+                          mode: EDIT
+                          components:
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          paddingBottom: 20px
+                                      uesio.variant: uesio/io.section
+                                      components:
+                                        - uesio/io.grid:
+                                            templateColumns:
+                                              xs: 1fr
+                                              md: 1fr 1fr
+                                              lg: 1fr 1fr 1fr 1fr
+                                            columnGap: 10px
+                                            items:
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.monthlyprice
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.active
+                # - uesio/io.box:
+                #     uesio.variant: uesio/io.section
+                #     components:
+                #       - uesio/io.titlebar:
+                #           uesio.variant: uesio/io.section
+                #           title: Pricing Template Items
+                #           subtitle: set the monthly price of your application elements
+                #           actions:
+                #             - uesio/io.button:
+                #                 text: add Item
+                #                 uesio.variant: uesio/io.secondary
+                #                 signals:
+                #                   - signal: panel/TOGGLE
+                #                     panel: newLicensePricingTemplate
+                #       - uesio/io.table:
+                #           id: licensepricingtemplateTable
+                #           wire: licensepricingtemplate
+                #           uesio.styles:
+                #             root:
+                #               padding: 40px
+                #           columns:
+                #             - field: uesio/studio.actiontype
+                #             - field: uesio/studio.metadatatype
+                #             - field: uesio/studio.metadataname
+                #             - field: uesio/studio.price
+                #           pagesize: 10
