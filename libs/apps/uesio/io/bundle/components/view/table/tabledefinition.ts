@@ -14,6 +14,7 @@ type TableDefinition = {
 	rownumbers?: boolean
 	pagesize?: string
 	order?: boolean
+	selectable?: boolean
 } & definition.BaseDefinition
 
 interface TableProps extends definition.BaseProps {

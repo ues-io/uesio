@@ -17,6 +17,11 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 
 const Icon = component.getUtility("uesio/io.icon")
 
+const getIcon = (value: boolean | undefined) => {
+	if (value === undefined) return "indeterminate_check_box"
+	return value ? "check_box" : "check_box_outline_blank"
+}
+
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	const { setValue, value, mode, context } = props
 	const readonly = mode === "READ"
@@ -45,12 +50,9 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				checked={checked}
 				type="checkbox"
 				disabled={readonly}
-				onChange={(event) => setValue(event.target.checked)}
+				onChange={(event) => setValue?.(event.target.checked)}
 			/>
-			<Icon
-				context={context}
-				icon={checked ? "check_box" : "check_box_outline_blank"}
-			/>
+			<Icon context={context} icon={getIcon(value as boolean)} />
 		</div>
 	)
 }

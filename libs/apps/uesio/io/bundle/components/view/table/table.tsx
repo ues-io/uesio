@@ -1,4 +1,5 @@
 import { hooks, styles, component, wire } from "@uesio/ui"
+import omit from "lodash/omit"
 import partition from "lodash/partition"
 import { FC } from "react"
 import { useMode } from "../../shared/mode"
@@ -68,6 +69,10 @@ const Table: FC<TableProps> = (props) => {
 			}),
 		newContext
 	)
+
+	const [selected, setSelected] = uesio.component.useStateSlice<
+		Record<string, boolean>
+	>("selected", componentId, {})
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
@@ -182,6 +187,57 @@ const Table: FC<TableProps> = (props) => {
 		)
 	}
 
+	const isAllSelectedFunc = definition.selectable
+		? () => {
+				if (!selected || Object.keys(selected).length === 0) {
+					return false
+				}
+				if (Object.keys(selected).length === itemContexts.length) {
+					return true
+				}
+				return undefined
+		  }
+		: undefined
+
+	const onAllSelectChange = definition.selectable
+		? (isSelected: boolean) => {
+				setSelected(
+					isSelected
+						? Object.fromEntries(
+								itemContexts.map((itemContext) => [
+									itemContext.item.getId(),
+									true,
+								])
+						  )
+						: {}
+				)
+		  }
+		: undefined
+
+	const isSelectedFunc = definition.selectable
+		? (recordContext: RecordContext) =>
+				!!selected?.[recordContext.item.getId()]
+		: undefined
+
+	const onSelectChange = definition.selectable
+		? (
+				recordContext: RecordContext,
+				index: number,
+				isSelected: boolean
+		  ) => {
+				setSelected(
+					isSelected
+						? {
+								...selected,
+								...{
+									[recordContext.item.getId()]: true,
+								},
+						  }
+						: omit(selected, recordContext.item.getId())
+				)
+		  }
+		: undefined
+
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
 
@@ -204,6 +260,10 @@ const Table: FC<TableProps> = (props) => {
 				columnMenuFunc={columnMenuFunc}
 				cellFunc={cellFunc}
 				isDeletedFunc={isDeletedFunc}
+				isSelectedFunc={isSelectedFunc}
+				onSelectChange={onSelectChange}
+				onAllSelectChange={onAllSelectChange}
+				isAllSelectedFunc={isAllSelectedFunc}
 			/>
 			{pageSize > 0 && maxPages > 1 && (
 				<Paginator
