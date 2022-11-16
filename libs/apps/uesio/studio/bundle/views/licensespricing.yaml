@@ -210,9 +210,6 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newLicensePricingTemplate
-                                # uesio.display:
-                                #   - type: wireHasRecords
-                                #     wire: licensetemplate
                       - uesio/io.table:
                           id: licensepricingtemplateTable
                           wire: licensepricingtemplate
@@ -290,6 +287,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - licensepricingtemplate
+              - signal: wire/RESET
+                wire: newlicensepricingtemplate
               - signal: "panel/TOGGLE"
                 panel: "newLicensePricingTemplate"
         - uesio/io.button:

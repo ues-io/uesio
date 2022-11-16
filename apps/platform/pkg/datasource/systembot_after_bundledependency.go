@@ -63,42 +63,42 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 				"uesio/studio.active":       true,
 				"uesio/studio.monthlyprice": lt.MonthlyPrice,
 			})
-		}
 
-		var lptc meta.LicensePricingTemplateCollection
-		PlatformLoad(
-			&lptc,
-			&PlatformLoadOptions{
-				Connection: connection,
-				Conditions: []adapt.LoadRequestCondition{
-					{
-						Field: "uesio/studio.app",
-						Value: lt.App.ID, //TO-DO this is a shotcut if we don't have template then this don't work
+			var lptc meta.LicensePricingTemplateCollection
+			PlatformLoad(
+				&lptc,
+				&PlatformLoadOptions{
+					Connection: connection,
+					Conditions: []adapt.LoadRequestCondition{
+						{
+							Field: "uesio/studio.app",
+							Value: lt.App.ID,
+						},
 					},
 				},
-			},
-			session,
-		)
+				session,
+			)
 
-		lptc.Loop(func(item meta.Item, _ string) error {
+			lptc.Loop(func(item meta.Item, _ string) error {
 
-			metadatatype, _ := item.GetField("uesio/studio.metadatatype")
-			actiontype, _ := item.GetField("uesio/studio.actiontype")
-			metadataname, _ := item.GetField("uesio/studio.metadataname")
-			price, _ := item.GetField("uesio/studio.price")
+				metadatatype, _ := item.GetField("uesio/studio.metadatatype")
+				actiontype, _ := item.GetField("uesio/studio.actiontype")
+				metadataname, _ := item.GetField("uesio/studio.metadataname")
+				price, _ := item.GetField("uesio/studio.price")
 
-			LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
-				"uesio/studio.app": map[string]interface{}{
-					adapt.UNIQUE_KEY_FIELD: app,
-				},
-				"uesio/studio.metadatatype": metadatatype,
-				"uesio/studio.actiontype":   actiontype,
-				"uesio/studio.metadataname": metadataname,
-				"uesio/studio.price":        price,
+				LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
+					"uesio/studio.app": map[string]interface{}{
+						adapt.UNIQUE_KEY_FIELD: app,
+					},
+					"uesio/studio.metadatatype": metadatatype,
+					"uesio/studio.actiontype":   actiontype,
+					"uesio/studio.metadataname": metadataname,
+					"uesio/studio.price":        price,
+				})
+
+				return nil
 			})
-
-			return nil
-		})
+		}
 
 		return nil
 

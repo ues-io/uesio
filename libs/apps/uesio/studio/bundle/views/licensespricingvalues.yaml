@@ -179,6 +179,17 @@ definition:
                           subtitle: set the monthly price of your application elements
                           actions:
                             - uesio/io.button:
+                                uesio.context:
+                                  wire: licensepricingitem
+                                uesio.variant: uesio/io.primary
+                                text: "Save"
+                                uesio.display:
+                                  - type: wireHasChanges
+                                    wire: licensepricingitem
+                                signals:
+                                  - signal: wire/SAVE
+                                    wire: licensepricingitem
+                            - uesio/io.button:
                                 text: add Item
                                 uesio.variant: uesio/io.secondary
                                 signals:
@@ -228,6 +239,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - licensepricingitem
+              - signal: wire/RESET
+                wire: newlicensepricingitem
               - signal: "panel/TOGGLE"
                 panel: "newLicensePricingItem"
         - uesio/io.button:
