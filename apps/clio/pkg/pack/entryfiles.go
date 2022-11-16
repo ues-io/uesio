@@ -1,6 +1,7 @@
 package pack
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -41,6 +42,10 @@ func CreateEntryFiles() ([]string, error) {
 		builderImports := []string{"import { component } from \"@uesio/ui\";"}
 		builderDefImports := []string{}
 		builderRegistrations := []string{}
+
+		if pack.Components == nil {
+			return nil, errors.New("no components listed to pack in bundle.yaml")
+		}
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
 			hasDefinition := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]s.tsx", key))
