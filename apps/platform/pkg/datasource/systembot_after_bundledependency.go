@@ -20,7 +20,6 @@ func parseKey(key string) (string, string, error) {
 func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	LicenseTemplateDeps := adapt.Collection{}
-	LicensePricingItemDeps := adapt.Collection{}
 	visited := map[string]bool{}
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
@@ -31,10 +30,10 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 
 		pairKey := app + ":" + applicensed
 
+		//This is for the seed to avoid duplicates
 		if visited[pairKey] {
 			return nil
 		}
-
 		visited[pairKey] = true
 
 		var existingLicense meta.License
@@ -82,41 +81,6 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 				"uesio/studio.active":       true,
 				"uesio/studio.monthlyprice": lt.MonthlyPrice,
 			})
-
-			var lptc meta.LicensePricingTemplateCollection
-			PlatformLoad(
-				&lptc,
-				&PlatformLoadOptions{
-					Connection: connection,
-					Conditions: []adapt.LoadRequestCondition{
-						{
-							Field: "uesio/studio.app",
-							Value: lt.App.ID,
-						},
-					},
-				},
-				session,
-			)
-
-			lptc.Loop(func(item meta.Item, _ string) error {
-
-				metadatatype, _ := item.GetField("uesio/studio.metadatatype")
-				actiontype, _ := item.GetField("uesio/studio.actiontype")
-				metadataname, _ := item.GetField("uesio/studio.metadataname")
-				price, _ := item.GetField("uesio/studio.price")
-
-				LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
-					"uesio/studio.app": map[string]interface{}{
-						adapt.UNIQUE_KEY_FIELD: app,
-					},
-					"uesio/studio.metadatatype": metadatatype,
-					"uesio/studio.actiontype":   actiontype,
-					"uesio/studio.metadataname": metadataname,
-					"uesio/studio.price":        price,
-				})
-
-				return nil
-			})
 		}
 
 		return nil
@@ -132,14 +96,6 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",
 			Changes:    &LicenseTemplateDeps,
-			Options: &adapt.SaveOptions{
-				Upsert: true,
-			},
-		},
-		{
-			Collection: "uesio/studio.licensepricingitem",
-			Wire:       "LicensePricingTemplatedWire",
-			Changes:    &LicensePricingItemDeps,
 			Options: &adapt.SaveOptions{
 				Upsert: true,
 			},

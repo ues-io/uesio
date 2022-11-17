@@ -6,7 +6,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/studio"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -15,7 +16,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/studio"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -24,7 +26,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/studio"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -33,7 +36,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/crm"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -42,7 +46,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/crm"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -51,7 +56,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/crm"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -60,7 +66,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/cms"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -69,7 +76,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/cms"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -78,7 +86,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/cms"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -87,7 +96,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -96,7 +106,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -105,7 +116,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -114,7 +126,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -123,7 +136,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/web"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -132,7 +146,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/web"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -141,7 +156,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/web"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -150,7 +166,8 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/web"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	},
 	{
 		"uesio/studio.app": {
@@ -159,6 +176,7 @@
 		"uesio/studio.applicensed": {
 			"uesio/core.uniquekey": "uesio/web"
 		},
-		"uesio/studio.active": true
+		"uesio/studio.active": true,
+		"uesio/studio.monthlyprice": 10
 	}
 ]
