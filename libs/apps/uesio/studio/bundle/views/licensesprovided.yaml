@@ -165,9 +165,9 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/$Param{app}/licensespricing/applicensed/${uesio/studio.applicensed->uesio/studio.fullname}
-                            - text: Delete
-                              signals:
-                                - signal: wire/TOGGLE_DELETE_STATUS
+                            # - text: Delete
+                            #   signals:
+                            #     - signal: wire/TOGGLE_DELETE_STATUS
                           pagesize: 10
   panels:
     newLicense:
