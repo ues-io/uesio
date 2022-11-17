@@ -29,13 +29,32 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			return err
 		}
 
-		pairKey := applicensed + ":" + app
+		pairKey := app + ":" + applicensed
 
 		if visited[pairKey] {
 			return nil
 		}
 
 		visited[pairKey] = true
+
+		var existingLicense meta.License
+		PlatformLoadOne(
+			&existingLicense,
+			&PlatformLoadOptions{
+				Connection: connection,
+				Conditions: []adapt.LoadRequestCondition{
+					{
+						Field: adapt.UNIQUE_KEY_FIELD,
+						Value: pairKey,
+					},
+				},
+			},
+			session,
+		)
+
+		if existingLicense.UniqueKey != "" {
+			return nil
+		}
 
 		var lt meta.LicenseTemplate
 		PlatformLoadOne(

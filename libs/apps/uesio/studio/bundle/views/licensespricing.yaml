@@ -86,6 +86,7 @@ definition:
       collection: uesio/studio.licensepricingtemplate
       fields:
         uesio/core.id:
+        uesio/studio.licensetemplate:
         uesio/studio.app:
         uesio/studio.metadatatype:
         uesio/studio.actiontype:
@@ -98,6 +99,10 @@ definition:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.licensetemplate
+          valueSource: LOOKUP
+          lookupWire: licensetemplate
           lookupField: uesio/core.id
     licensepricingtemplate:
       collection: uesio/studio.licensepricingtemplate
@@ -210,6 +215,9 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newLicensePricingTemplate
+                                uesio.display:
+                                  - type: wireHasRecords
+                                    wire: licensetemplate
                       - uesio/io.table:
                           id: licensepricingtemplateTable
                           wire: licensepricingtemplate
