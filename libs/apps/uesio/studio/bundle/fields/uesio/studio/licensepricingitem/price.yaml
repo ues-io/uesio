@@ -2,4 +2,4 @@ name: price
 label: Price per unit
 type: NUMBER
 number:
-  decimals: 0
+  decimals: 6
