@@ -74,10 +74,11 @@ definition:
         uesio/studio.actiontype:
         uesio/studio.price:
         uesio/studio.metadataname:
+        uesio/studio.license:
       conditions:
-        - field: uesio/studio.app
+        - field: uesio/studio.license
           valueSource: LOOKUP
-          lookupWire: apps
+          lookupWire: licenses
           lookupField: uesio/core.id
     newlicensepricingitem:
       collection: uesio/studio.licensepricingitem
@@ -88,6 +89,7 @@ definition:
         uesio/studio.actiontype:
         uesio/studio.price:
         uesio/studio.metadataname:
+        uesio/studio.license:
       init:
         query: false
         create: true
@@ -95,6 +97,10 @@ definition:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: apps
+          lookupField: uesio/core.id
+        - field: uesio/studio.license
+          valueSource: LOOKUP
+          lookupWire: licenses
           lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:

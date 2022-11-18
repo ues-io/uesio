@@ -1,5 +1,6 @@
 name: licensepricingitem
 uniqueKey:
+  - uesio/studio.license
   - uesio/studio.app
   - uesio/studio.metadatatype
   - uesio/studio.actiontype

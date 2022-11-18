@@ -12,6 +12,11 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 	visited := map[string]bool{}
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
+		licenseID, err := change.GetFieldAsString(adapt.ID_FIELD)
+		if err != nil {
+			return err
+		}
+
 		appID, err := change.GetFieldAsString("uesio/studio.app->uesio/core.id")
 		if err != nil {
 			return err
@@ -48,6 +53,9 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 			LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
 				"uesio/studio.app": map[string]interface{}{
 					adapt.ID_FIELD: appID,
+				},
+				"uesio/studio.license": map[string]interface{}{
+					adapt.ID_FIELD: licenseID,
 				},
 				"uesio/studio.metadatatype": metadatatype,
 				"uesio/studio.actiontype":   actiontype,
