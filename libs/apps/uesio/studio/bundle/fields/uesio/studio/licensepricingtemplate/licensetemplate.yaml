@@ -1,0 +1,6 @@
+name: licensetemplate
+type: REFERENCE
+label: Parent license template
+reference:
+  collection: uesio/studio.licensetemplate
+required: true

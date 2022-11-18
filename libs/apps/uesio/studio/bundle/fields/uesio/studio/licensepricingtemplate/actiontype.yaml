@@ -1,0 +1,5 @@
+name: actiontype
+type: SELECT
+label: Usage action type
+selectList: uesio/studio.usageactiontype
+required: true

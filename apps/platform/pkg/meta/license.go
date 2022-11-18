@@ -1,17 +1,18 @@
 package meta
 
 type License struct {
-	ID          string    `json:"uesio/core.id"`
-	UniqueKey   string    `json:"uesio/core.uniquekey"`
-	Active      bool      `json:"uesio/studio.active"`
-	App         *App      `json:"uesio/studio.app"`
-	AppLicensed *App      `json:"uesio/studio.applicensed"`
-	itemMeta    *ItemMeta `json:"-"`
-	CreatedBy   *User     `json:"uesio/core.createdby"`
-	Owner       *User     `json:"uesio/core.owner"`
-	UpdatedBy   *User     `json:"uesio/core.updatedby"`
-	UpdatedAt   int64     `json:"uesio/core.updatedat"`
-	CreatedAt   int64     `json:"uesio/core.createdat"`
+	ID           string    `json:"uesio/core.id"`
+	UniqueKey    string    `json:"uesio/core.uniquekey"`
+	Active       bool      `json:"uesio/studio.active"`
+	App          *App      `json:"uesio/studio.app"`
+	AppLicensed  *App      `json:"uesio/studio.applicensed"`
+	MonthlyPrice float64   `json:"uesio/studio.monthlyprice"`
+	itemMeta     *ItemMeta `json:"-"`
+	CreatedBy    *User     `json:"uesio/core.createdby"`
+	Owner        *User     `json:"uesio/core.owner"`
+	UpdatedBy    *User     `json:"uesio/core.updatedby"`
+	UpdatedAt    int64     `json:"uesio/core.updatedat"`
+	CreatedAt    int64     `json:"uesio/core.createdat"`
 }
 
 func (l *License) GetCollectionName() string {

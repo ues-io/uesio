@@ -1,0 +1,5 @@
+name: metadatatype
+type: SELECT
+label: Usage metadata type
+selectList: uesio/studio.usagemetadatatype
+required: true

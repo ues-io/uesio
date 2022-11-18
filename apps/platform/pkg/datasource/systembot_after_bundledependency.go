@@ -19,7 +19,7 @@ func parseKey(key string) (string, string, error) {
 
 func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	newDeps := adapt.Collection{}
+	LicenseTemplateDeps := adapt.Collection{}
 	visited := map[string]bool{}
 	err := request.LoopInserts(func(change *adapt.ChangeItem) error {
 
@@ -28,16 +28,35 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			return err
 		}
 
-		pairKey := applicensed + ":" + app
+		pairKey := app + ":" + applicensed
 
+		//This is for the seed to avoid duplicates
 		if visited[pairKey] {
 			return nil
 		}
-
 		visited[pairKey] = true
 
+		var existingLicense meta.License
+		PlatformLoadOne(
+			&existingLicense,
+			&PlatformLoadOptions{
+				Connection: connection,
+				Conditions: []adapt.LoadRequestCondition{
+					{
+						Field: adapt.UNIQUE_KEY_FIELD,
+						Value: pairKey,
+					},
+				},
+			},
+			session,
+		)
+
+		if existingLicense.UniqueKey != "" {
+			return nil
+		}
+
 		var lt meta.LicenseTemplate
-		err = PlatformLoadOne(
+		PlatformLoadOne(
 			&lt,
 			&PlatformLoadOptions{
 				Connection: connection,
@@ -51,12 +70,8 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 			session,
 		)
 
-		if err != nil {
-			return errors.New("App: " + app + " missing the license template")
-		}
-
 		if lt.AutoCreate {
-			newDeps = append(newDeps, &adapt.Item{
+			LicenseTemplateDeps = append(LicenseTemplateDeps, &adapt.Item{
 				"uesio/studio.app": map[string]interface{}{
 					adapt.UNIQUE_KEY_FIELD: app,
 				},
@@ -80,7 +95,7 @@ func runBundleDependencyAfterSaveBot(request *adapt.SaveOp, connection adapt.Con
 		{
 			Collection: "uesio/studio.license",
 			Wire:       "LicensedWire",
-			Changes:    &newDeps,
+			Changes:    &LicenseTemplateDeps,
 			Options: &adapt.SaveOptions{
 				Upsert: true,
 			},

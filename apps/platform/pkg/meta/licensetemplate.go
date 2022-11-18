@@ -4,7 +4,7 @@ type LicenseTemplate struct {
 	ID           string    `json:"uesio/core.id"`
 	UniqueKey    string    `json:"uesio/core.uniquekey"`
 	App          *App      `json:"uesio/studio.app"`
-	MonthlyPrice int64     `json:"uesio/studio.monthlyprice"`
+	MonthlyPrice float64   `json:"uesio/studio.monthlyprice"`
 	AutoCreate   bool      `json:"uesio/studio.autocreate"`
 	itemMeta     *ItemMeta `json:"-"`
 	CreatedBy    *User     `json:"uesio/core.createdby"`

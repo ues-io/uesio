@@ -1,0 +1,8 @@
+name: usagemetadatatype
+options:
+  # - label: "COLLECTION"
+  #   value: "COLLECTION"
+  - label: "DATASOURCE"
+    value: "DATASOURCE"
+  - label: "FILESOURCE"
+    value: "FILESOURCE"

@@ -89,6 +89,7 @@ func runSeeds(connection adapt.Connection) error {
 	var licenses meta.LicenseCollection
 	var bundles meta.BundleCollection
 	var licensetemplate meta.LicenseTemplateCollection
+	var licensepricingtemplate meta.LicensePricingTemplateCollection
 	var workspaces meta.WorkspaceCollection
 	var sites meta.SiteCollection
 	var sitedomains meta.SiteDomainCollection
@@ -101,6 +102,7 @@ func runSeeds(connection adapt.Connection) error {
 		&licenses,
 		&bundles,
 		&licensetemplate,
+		&licensepricingtemplate,
 		&workspaces,
 		&sites,
 		&sitedomains,
@@ -132,9 +134,10 @@ func runSeeds(connection adapt.Connection) error {
 		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&loginmethods),
 		getPlatformSeedSR(&apps),
+		getPlatformSeedSR(&licensetemplate),
+		getPlatformSeedSR(&licensepricingtemplate),
 		getPlatformSeedSR(&licenses),
 		getPlatformSeedSR(&bundles),
-		getPlatformSeedSR(&licensetemplate),
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),

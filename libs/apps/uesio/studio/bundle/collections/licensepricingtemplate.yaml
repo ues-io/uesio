@@ -1,0 +1,9 @@
+name: licensepricingtemplate
+uniqueKey:
+  - uesio/studio.licensetemplate
+  - uesio/studio.app
+  - uesio/studio.metadatatype
+  - uesio/studio.actiontype
+nameField: uesio/studio.app
+label: license pricing template
+pluralLabel: license pricing templates
