@@ -35,120 +35,112 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
     usage:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
+      conditions:
+        - field: uesio/studio.metadatatype
+          value: DATASOURCE
       init:
         query: false
     usage_load:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: LOAD
-        - field: uesio/core.metadatatype
+        - field: uesio/studio.metadatatype
           value: DATASOURCE
       init:
         query: false
     usage_save:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: SAVE
-        - field: uesio/core.metadatatype
+        - field: uesio/studio.metadatatype
           value: DATASOURCE
       init:
         query: false
     usage_download:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: DOWNLOAD
       init:
         query: false
     usage_upload:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: UPLOAD
       init:
         query: false
     usage_download_bytes:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: DOWNLOAD_BYTES
       init:
         query: false
     usage_upload_bytes:
-      collection: uesio/core.usage
+      collection: uesio/studio.usage
       fields:
         uesio/core.id:
-        uesio/core.total:
-        uesio/core.user:
-        uesio/core.day:
-        uesio/core.actiontype:
-        uesio/core.metadatatype:
-        uesio/core.metadataname:
+        uesio/studio.total:
+        uesio/studio.user:
+        uesio/studio.day:
+        uesio/studio.actiontype:
+        uesio/studio.metadatatype:
+        uesio/studio.metadataname:
       conditions:
-        - field: uesio/core.actiontype
+        - field: uesio/studio.actiontype
           value: UPLOAD_BYTES
-      init:
-        query: false
-    users:
-      collection: uesio/core.user
-      fields:
-        uesio/core.id:
-        uesio/core.firstname:
-        uesio/core.lastname:
-        uesio/core.username:
-        uesio/core.initials:
-        uesio/core.picture:
       init:
         query: false
   events:
@@ -159,7 +151,6 @@ definition:
             name: $Param{sitename}
             app: $Param{app}
         wires:
-          - users
           - usage
           - usage_load
           - usage_save
@@ -216,56 +207,27 @@ definition:
                                 series:
                                   - name: load
                                     label: Load
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_load
                                   - name: save
                                     label: Save
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_save
                                   - name: upload
                                     label: Upload
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_upload
                                   - name: download
                                     label: Download
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_download
                                 labels:
                                   source: DATA
                                   timeunit: MONTH
-                            # - uesio/io.barchart:
-                            #     uesio.styles:
-                            #       chart:
-                            #         height: 300px
-                            #         width: 400px
-                            #     series:
-                            #       - name: load
-                            #         label: Load
-                            #         valueField: uesio/core.total
-                            #         categoryField: uesio/core.day
-                            #         wire: usage_load
-                            #       - name: save
-                            #         label: Save
-                            #         valueField: uesio/core.total
-                            #         categoryField: uesio/core.day
-                            #         wire: usage_save
-                            #       - name: upload
-                            #         label: Upload
-                            #         valueField: uesio/core.total
-                            #         categoryField: uesio/core.day
-                            #         wire: usage_upload
-                            #       - name: download
-                            #         label: Download
-                            #         valueField: uesio/core.total
-                            #         categoryField: uesio/core.day
-                            #         wire: usage_download
-                            #     labels:
-                            #       source: DATA
-                            #       timeunit: MONTH
                             - uesio/io.barchart:
                                 uesio.styles:
                                   chart:
@@ -274,69 +236,17 @@ definition:
                                 series:
                                   - name: upload
                                     label: Upload Bytes
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_upload_bytes
                                   - name: download
                                     label: Download Bytes
-                                    valueField: uesio/core.total
-                                    categoryField: uesio/core.day
+                                    valueField: uesio/studio.total
+                                    categoryField: uesio/studio.day
                                     wire: usage_download_bytes
                                 labels:
                                   source: DATA
                                   timeunit: MONTH
-                            # - uesio/io.box:
-                            #     uesio.variant: uesio/io.section
-                            #     components:
-                            #       - uesio/io.text:
-                            #           text: "Current month costs: 400$"
-                            #           element: div
-                            #       - uesio/io.text:
-                            #           text: "Forecasted month end costs: 3000$"
-                            #           element: div
-                            #       - uesio/io.text:
-                            #           text: "Last month costs: 4000$"
-                            #           element: div
-                      - uesio/io.box:
-                          uesio.styles:
-                            root:
-                              #     display: flex
-                              #     alignItems: center
-                              #     gap: 5px
-                              paddingTop: 5px
-                              margin: 40px 40px 0 40px
-                          components:
-                            - uesio/io.titlebar:
-                                uesio.variant: uesio/io.main
-                                title: Usage by User
-                                subtitle: the report provides details related to your user.
-                            - uesio/io.searchbox:
-                                wire: users
-                      - uesio/io.deck:
-                          id: userslist
-                          wire: users
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.tile:
-                                uesio.variant: uesio/io.item
-                                content:
-                                  - uesio/io.text:
-                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                      element: div
-                                  - uesio/io.text:
-                                      text: ${uesio/core.username}
-                                      uesio.styles:
-                                        root:
-                                          fontSize: 9pt
-                                          color: "#666"
-                                      element: div
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/site/$Param{sitename}/usage/users/${uesio/core.username}"
-                                avatar:
-                                  - uesio/io.avatar:
-                                      image: $UserFile{uesio/core.picture}
-                                      text: ${uesio/core.initials}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -344,10 +254,11 @@ definition:
                           id: usagetable
                           wire: usage
                           mode: READ
+                          pagesize: 10
                           columns:
-                            - field: uesio/core.user
-                            - field: uesio/core.day
-                            - field: uesio/core.actiontype
-                            - field: uesio/core.metadatatype
-                            - field: uesio/core.metadataname
-                            - field: uesio/core.total
+                            - field: uesio/studio.user
+                            - field: uesio/studio.day
+                            - field: uesio/studio.actiontype
+                            - field: uesio/studio.metadatatype
+                            - field: uesio/studio.metadataname
+                            - field: uesio/studio.total

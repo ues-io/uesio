@@ -1,0 +1,10 @@
+name: usage
+uniqueKey:
+  - uesio/studio.user
+  - uesio/studio.day
+  - uesio/studio.actiontype
+  - uesio/studio.metadatatype
+  - uesio/studio.metadataname
+public: true
+label: usage
+pluralLabel: usages

@@ -95,15 +95,15 @@ func UsageJob() error {
 		}
 
 		usageItem := adapt.Item{}
-		usageItem.SetField("uesio/core.user", &meta.User{
+		usageItem.SetField("uesio/studio.user", &meta.User{
 			ID: keyParts[4],
 		})
-		usageItem.SetField("uesio/core.day", keyParts[5])
-		usageItem.SetField("uesio/core.actiontype", keyParts[6])
-		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
-		usageItem.SetField("uesio/core.metadataname", keyParts[8])
+		usageItem.SetField("uesio/studio.day", keyParts[5])
+		usageItem.SetField("uesio/studio.actiontype", keyParts[6])
+		usageItem.SetField("uesio/studio.metadatatype", keyParts[7])
+		usageItem.SetField("uesio/studio.metadataname", keyParts[8])
 		total, _ := strconv.ParseFloat(values[i], 64)
-		usageItem.SetField("uesio/core.total", total)
+		usageItem.SetField("uesio/studio.total", total)
 		changesByTenant[tenantID] = append(changesByTenant[tenantID], &usageItem)
 	}
 
@@ -117,7 +117,7 @@ func UsageJob() error {
 
 			requests := []datasource.SaveRequest{
 				{
-					Collection: "uesio/core.usage",
+					Collection: "uesio/studio.usage",
 					Wire:       "CoolWireName",
 					Changes:    &changes,
 					Options:    &adapt.SaveOptions{Upsert: true},
