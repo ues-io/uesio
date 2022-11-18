@@ -1,7 +1,6 @@
 package pack
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -44,7 +43,8 @@ func CreateEntryFiles() ([]string, error) {
 		builderRegistrations := []string{}
 
 		if pack.Components == nil {
-			return nil, errors.New("no components listed to pack in bundle.yaml")
+			fmt.Println("no components listed to pack in bundle.yaml")
+			continue
 		}
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
