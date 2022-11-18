@@ -18,6 +18,14 @@ type Task struct {
 	ID           string        `json:"id"`
 	Name         string        `json:"name"`
 	CustomFields []CustomField `json:"custom_fields"`
+	StartDate    string        `json:"start_date"`
+	DueDate      string        `json:"due_date"`
+	Status       *Status       `json:"status"`
+}
+
+type Status struct {
+	Status string `json:"status"`
+	Color  string `json:"color"`
 }
 
 type CustomField struct {
@@ -72,7 +80,7 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		return nil
 	}
 
-	url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false&include_closed=true", listID)
+	url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", listID)
 
 	data := &TaskResponse{}
 
@@ -93,6 +101,12 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		opItem.SetField("uesio/core.id", fakeID)
 		opItem.SetField("tcm/timetracker.id", task.ID)
 		opItem.SetField("tcm/timetracker.name", task.Name)
+		opItem.SetField("tcm/timetracker.startdate", task.StartDate)
+		opItem.SetField("tcm/timetracker.duedate", task.DueDate)
+		if task.Status != nil {
+			opItem.SetField("tcm/timetracker.status", task.Status.Status)
+			opItem.SetField("tcm/timetracker.statuscolor", task.Status.Color)
+		}
 
 		for _, field := range task.CustomFields {
 			if field.Name == "Customer Team" {

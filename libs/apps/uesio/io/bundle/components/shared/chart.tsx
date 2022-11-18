@@ -30,6 +30,7 @@ type ValueLabel = {
 type DataLabels = {
 	source: "DATA"
 	timeunit?: "YEAR" | "MONTH" | "DAY"
+	timeunitfill?: "MONTH"
 }
 
 type LabelsDefinition = WireLabels | ValueLabels | DataLabels
@@ -45,7 +46,10 @@ export const CHART_COLORS = {
 }
 
 const getMonthYearDateKey = (year: number, month: number) =>
-	year + "-" + (month + "").padStart(2, "0")
+	`${year}-${(month + "").padStart(2, "0")}`
+
+const getDayMonthYearDateKey = (year: number, month: number, day: number) =>
+	`${year}-${(month + "").padStart(2, "0")}-${(day + "").padStart(2, "0")}`
 
 const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
@@ -78,7 +82,7 @@ const getLabels = (
 		// Now sort our buckets
 		const sortedKeys = categoryKeys.sort()
 		const firstKey = sortedKeys[0]
-		const lastKey = sortedKeys[sortedKeys.length - 1]
+		let lastKey = sortedKeys[sortedKeys.length - 1]
 
 		let currentKey = firstKey
 		if (labels.timeunit === "MONTH") {
@@ -101,6 +105,70 @@ const getLabels = (
 				sortedCategories[currentKey] = getLabel(d)
 			}
 		}
+
+		if (labels.timeunit === "DAY") {
+			const getLabel = (d: Date) =>
+				d.toLocaleDateString(undefined, {
+					month: "short",
+					day: "2-digit",
+				})
+
+			if (labels.timeunitfill === "MONTH") {
+				const [startyear, startmonth, startday] = currentKey.split("-")
+				const start = new Date(
+					parseInt(startyear, 10),
+					parseInt(startmonth, 10),
+					parseInt(startday, 10)
+				)
+				start.setDate(1)
+				currentKey = getDayMonthYearDateKey(
+					start.getFullYear(),
+					start.getMonth(),
+					start.getDate()
+				)
+
+				const [endyear, endmonth, endday] = currentKey.split("-")
+				const end = new Date(
+					parseInt(endyear, 10),
+					parseInt(endmonth, 10),
+					parseInt(endday, 10)
+				)
+				end.setDate(1)
+				end.setMonth(end.getMonth() + 1)
+				end.setDate(end.getDate() - 1)
+				lastKey = getDayMonthYearDateKey(
+					end.getFullYear(),
+					end.getMonth(),
+					end.getDate()
+				)
+			}
+
+			while (currentKey !== lastKey) {
+				const [year, month, day] = currentKey.split("-")
+				const d = new Date(
+					parseInt(year, 10),
+					parseInt(month, 10),
+					parseInt(day, 10)
+				)
+				sortedCategories[currentKey] = getLabel(d)
+				d.setDate(d.getDate() + 1)
+				currentKey = getDayMonthYearDateKey(
+					d.getFullYear(),
+					d.getMonth(),
+					d.getDate()
+				)
+			}
+			// Now add in the last key
+			if (currentKey === lastKey) {
+				const [year, month, day] = currentKey.split("-")
+				const d = new Date(
+					parseInt(year, 10),
+					parseInt(month, 10),
+					parseInt(day, 10)
+				)
+				sortedCategories[currentKey] = getLabel(d)
+			}
+		}
 		return sortedCategories
 	}
 	throw new Error("Invalid Label Source")
@@ -118,6 +186,14 @@ const getCategoryKey = (
 			return getMonthYearDateKey(
 				dateValue.getFullYear(),
 				dateValue.getMonth()
+			)
+		}
+		if (labels.source === "DATA" && labels.timeunit === "DAY") {
+			const dateValue = new Date(value)
+			return getDayMonthYearDateKey(
+				dateValue.getFullYear(),
+				dateValue.getMonth(),
+				dateValue.getDate()
 			)
 		}
 	}
