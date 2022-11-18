@@ -25,14 +25,16 @@ type ProjectResponse struct {
 }
 
 type Project struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Lists []List `json:"lists"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	TaskCount string `json:"task_count"`
+	Lists     []List `json:"lists"`
 }
 
 type List struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	TaskCount int    `json:"task_count"`
 }
 
 func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -90,12 +92,16 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 	})
 
 	for _, project := range data.Projects {
+		if project.TaskCount == "0" {
+			continue
+		}
 		opItem := op.Collection.NewItem()
 		op.Collection.AddItem(opItem)
 		fakeID, _ := shortid.Generate()
 
 		opItem.SetField("uesio/core.id", fakeID)
 		opItem.SetField("tcm/timetracker.name", project.Name)
+		opItem.SetField("tcm/timetracker.taskcount", project.TaskCount)
 		opItem.SetField("tcm/timetracker.lists", project.Lists)
 	}
 
