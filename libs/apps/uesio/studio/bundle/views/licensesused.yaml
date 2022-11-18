@@ -21,6 +21,7 @@ definition:
       collection: uesio/studio.license
       fields:
         uesio/core.id:
+        uesio/core.uniquekey:
         uesio/studio.app:
           fields:
             uesio/studio.color:
@@ -28,11 +29,27 @@ definition:
             uesio/studio.fullname:
         uesio/studio.applicensed:
         uesio/studio.active:
+        uesio/studio.monthlyprice:
       conditions:
         - field: uesio/studio.applicensed
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    licensepricingitem:
+      collection: uesio/studio.licensepricingitem
+      fields:
+        uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.metadatatype:
+        uesio/studio.actiontype:
+        uesio/studio.price:
+        uesio/studio.metadataname:
+        uesio/studio.license:
+      # conditions:
+      #   - field: uesio/studio.license
+      #     valueSource: LOOKUP
+      #     lookupWire: licenses
+      #     lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -62,6 +79,23 @@ definition:
                     uesio.variant: uesio/io.main
                     title: Licenses
                     subtitle: List of applications licensed for use by $Param{app}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Invoice
+                                signals:
+                                  - signal: "bot/CALL"
+                                    onerror:
+                                      signals:
+                                        - signal: notification/REMOVE
+                                          id: newversion
+                                    bot: "uesio/studio.createinvoice"
+                                    # uesio.context:
+                                    #   workspace:
+                                    #     name: $Param{workspacename}
+                                    #     app: $Param{app}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.styles:
@@ -71,7 +105,9 @@ definition:
                       - uesio/io.table:
                           id: licensesTable
                           wire: licenses
+                          pagesize: 10
                           columns:
+                            - field: uesio/core.uniquekey
                             - label: SOURCE APP
                               components:
                                 - uesio/studio.iconlabel:
@@ -81,6 +117,7 @@ definition:
                                     text: ${uesio/studio.app->uesio/studio.fullname}
                                     icon: ${uesio/studio.app->uesio/studio.icon}
                                     color: ${uesio/studio.app->uesio/studio.color}
+                            - field: uesio/studio.monthlyprice
                             - label: status
                               components:
                                 - uesio/studio.iconlabel:
@@ -105,4 +142,21 @@ definition:
                                       - field: uesio/studio.active
                                         value: false
                                         operator: EQUALS
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    components:
+                      - uesio/io.table:
+                          id: licensepricingitemTable
+                          wire: licensepricingitem
                           pagesize: 10
+                          columns:
+                            - field: uesio/studio.app
+                            - field: uesio/studio.metadatatype
+                            - field: uesio/studio.actiontype
+                            - field: uesio/studio.price
+                            - field: uesio/studio.metadataname
+                            - field: uesio/studio.license->uesio/core.uniquekey
+                            - field: uesio/studio.price

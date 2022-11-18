@@ -10,7 +10,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -74,8 +73,7 @@ func UsageJob() error {
 		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 	}
 
-	changesByTenant := map[string]adapt.Collection{}
-
+	changes := adapt.Collection{}
 	for i, key := range keys {
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
@@ -89,11 +87,6 @@ func UsageJob() error {
 
 		tenantID := fmt.Sprintf("%s:%s", keyParts[2], keyParts[3])
 
-		_, ok := changesByTenant[tenantID]
-		if !ok {
-			changesByTenant[tenantID] = adapt.Collection{}
-		}
-
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/core.user", &meta.User{
 			ID: keyParts[4],
@@ -102,32 +95,32 @@ func UsageJob() error {
 		usageItem.SetField("uesio/core.actiontype", keyParts[6])
 		usageItem.SetField("uesio/core.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/core.metadataname", keyParts[8])
+		usageItem.SetField("uesio/core.tenantid", tenantID)
+		//TO-DO
+		appkey := fmt.Sprintf("%s:%s:%s:%s", "appName", keyParts[6], keyParts[7], keyParts[8])
+		usageItem.SetField("uesio/core.appkey", appkey)
+
 		total, _ := strconv.ParseFloat(values[i], 64)
 		usageItem.SetField("uesio/core.total", total)
-		changesByTenant[tenantID] = append(changesByTenant[tenantID], &usageItem)
+
+		changes = append(changes, &usageItem)
+
 	}
 
-	for siteKey, changes := range changesByTenant {
-		if len(changes) > 0 {
+	if len(changes) > 0 {
 
-			inContextSession, err := auth.GetSystemSessionByKey(siteKey, nil)
-			if err != nil {
-				return err
-			}
+		requests := []datasource.SaveRequest{
+			{
+				Collection: "uesio/core.usage",
+				Wire:       "CoolWireName",
+				Changes:    &changes,
+				Options:    &adapt.SaveOptions{Upsert: true},
+			},
+		}
 
-			requests := []datasource.SaveRequest{
-				{
-					Collection: "uesio/core.usage",
-					Wire:       "CoolWireName",
-					Changes:    &changes,
-					Options:    &adapt.SaveOptions{Upsert: true},
-				},
-			}
-
-			err = datasource.SaveWithOptions(requests, inContextSession, nil)
-			if err != nil {
-				return errors.New("Failed to update usage events: " + err.Error())
-			}
+		err = datasource.SaveWithOptions(requests, LOOOK_FOR_ME, nil)
+		if err != nil {
+			return errors.New("Failed to update usage events: " + err.Error())
 		}
 	}
 

@@ -1,0 +1,4 @@
+name: tenantid
+type: "TEXT"
+label: "Tenant id"
+required: true

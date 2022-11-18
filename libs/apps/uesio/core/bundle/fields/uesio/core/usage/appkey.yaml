@@ -1,0 +1,4 @@
+name: appkey
+type: "TEXT"
+label: "App KEY"
+required: true

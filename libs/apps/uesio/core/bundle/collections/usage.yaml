@@ -1,5 +1,6 @@
 name: usage
 uniqueKey:
+  - uesio/core.tenantid
   - uesio/core.user
   - uesio/core.day
   - uesio/core.actiontype
