@@ -140,25 +140,7 @@ definition:
               uesio.styles:
                 root:
                   color: "#21242D"
-              text: "Apps "
-              element: span
-          - uesio/io.text:
-              uesio.variant: uesio/io.icon
-              color: ${apps:uesio/studio.color}
-              text: ${apps:uesio/studio.icon}
-              element: span
-          - uesio/io.text:
-              uesio.styles:
-                root:
-                  color: "#21242D"
-              text: " ${apps:uesio/studio.fullname}"
-              element: span
-          - uesio/io.text:
-              uesio.styles:
-                root:
-                  color: "#21242D"
-              text: " uses"
-              element: span
+              text: "Billing & Costs"
         avatar:
           - uesio/io.text:
               uesio.variant: uesio/io.icon
@@ -174,24 +156,12 @@ definition:
               uesio.styles:
                 root:
                   color: "#21242D"
-              text: "Apps using "
-              element: span
-          - uesio/io.text:
-              uesio.variant: uesio/io.icon
-              color: ${apps:uesio/studio.color}
-              text: ${apps:uesio/studio.icon}
-              element: span
-          - uesio/io.text:
-              uesio.styles:
-                root:
-                  color: "#21242D"
-              text: " ${apps:uesio/studio.fullname}"
-              element: span
+              text: "Pricing & Income"
         avatar:
           - uesio/io.text:
               uesio.variant: uesio/io.icon
               color: "#ccc"
-              text: receipt_long
+              text: payments
   panels:
     newWorkspace:
       uesio.type: uesio/io.dialog
