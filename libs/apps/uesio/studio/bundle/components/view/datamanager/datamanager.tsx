@@ -52,6 +52,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 				wire: WIRE_NAME,
 				mode: "EDIT",
 				rownumbers: true,
+				selectable: true,
 				pagesize: 10,
 				rowactions: [
 					{

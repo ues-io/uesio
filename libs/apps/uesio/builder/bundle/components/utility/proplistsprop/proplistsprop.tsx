@@ -12,7 +12,6 @@ const TitleBar = component.getUtility("uesio/io.titlebar")
 const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
-
 	const items = (valueAPI.get(path) as unknown[]) || []
 	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem, selectedPath] =
@@ -61,36 +60,14 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 							valueAPI={valueAPI}
 							actions={[
 								{
-									type: "MOVE",
-								},
-								{
 									type: "CUSTOM",
 									label: "Add item",
 									handler: (e) => {
 										e.stopPropagation()
-										// When items is 0 we still show 1 empty item in the ui.
-										// Adding in this scenario would mean we need to add 2 to get 2 real items
-										if (items.length === 0)
-											valueAPI.add(path, {})
 										valueAPI.add(path, {}, -1)
 									},
 									icon: "add",
 								},
-								...(selectedItem
-									? [
-											{
-												type: "CUSTOM",
-												label: "Remove",
-												disabled:
-													!selected || !selectedItem,
-												handler: () =>
-													valueAPI.remove(
-														selectedPath
-													),
-												icon: "delete",
-											} as builder.ActionDescriptor,
-									  ]
-									: []),
 							]}
 							propsDef={{ ...propsDef, type: "" }}
 						/>
@@ -102,7 +79,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 						style={{ maxHeight: "400px", overflow: "scroll" }}
 					>
 						<PropListsList
-							items={items.length ? items : [{}]}
+							items={items}
 							context={context}
 							path={path}
 							propsDef={propsDef}
