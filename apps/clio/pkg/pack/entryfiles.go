@@ -48,19 +48,19 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		baseURL := fmt.Sprintf("bundle/componentpacks/%s", pack.Name)
-		viewCompURL := fmt.Sprintf("%s/src/view", baseURL)
-		utilityCompURL := fmt.Sprintf("%s/src/utility", baseURL)
+		componentURL := fmt.Sprintf("%s/src/components", baseURL)
+		utilityURL := fmt.Sprintf("%s/src/utility", baseURL)
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, viewCompURL))
-			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, viewCompURL))
-			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, viewCompURL))
-			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, viewCompURL))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, componentURL))
+			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, componentURL))
+			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, componentURL))
+			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, componentURL))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/view/%[1]s/%[1]s\";", key))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/components/%[1]s/%[1]s\";", key))
 
 				if hasSignals {
-					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"./src/view/%[1]s/signals\";", key))
+					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"./src/components/%[1]s/signals\";", key))
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s,%[1]ssignals);", key, namespace))
 				} else {
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", key, namespace))
@@ -69,10 +69,10 @@ func CreateEntryFiles() ([]string, error) {
 			builderName := fmt.Sprintf("%[1]sbuilder", key)
 			definitionName := fmt.Sprintf("%[1]sdefinition", key)
 			if hasBuilder {
-				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"./src/view/%[1]s/%[2]s\";", key, builderName))
+				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"./src/components/%[1]s/%[2]s\";", key, builderName))
 			}
 			if hasBuilderDef {
-				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"./src/view/%[1]s/%[2]s\";", key, definitionName))
+				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"./src/components/%[1]s/%[2]s\";", key, definitionName))
 			}
 			if hasBuilder || hasBuilderDef {
 				builderValue := "undefined"
@@ -88,7 +88,7 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		for key := range pack.Components.UtilityComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilityCompURL))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilityURL))
 			if hasDefinition {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"./src/utility/%[1]s/%[1]s\";", key))
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", key, namespace))

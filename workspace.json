@@ -41,7 +41,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-core": {
 			"root": "libs/apps/uesio/core",
@@ -86,7 +86,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-crm": {
 			"root": "libs/apps/uesio/crm",
@@ -128,7 +128,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-docs": {
 			"root": "libs/apps/uesio/docs",
@@ -156,7 +156,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-io": {
 			"root": "libs/apps/uesio/io",
@@ -194,7 +194,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-builder": {
 			"root": "libs/apps/uesio/builder",
@@ -232,7 +232,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"apps-uesio-studio": {
 			"root": "libs/apps/uesio/studio",
@@ -278,7 +278,7 @@
 				}
 			},
 			"tags": [],
-			"implicitDependencies": ["clio"]
+			"implicitDependencies": ["clio","ui"]
 		},
 		"clio": {
 			"projectType": "application",
