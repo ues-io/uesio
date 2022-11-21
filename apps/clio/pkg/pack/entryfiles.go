@@ -46,17 +46,21 @@ func CreateEntryFiles() ([]string, error) {
 			fmt.Println("no components listed to pack in bundle.yaml")
 			continue
 		}
+
+		baseURL := fmt.Sprintf("bundle/componentpacks/%s", pack.Name)
+		viewCompURL := fmt.Sprintf("%s/src/view", baseURL)
+		utilityCompURL := fmt.Sprintf("%s/src/utility", baseURL)
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
-			hasDefinition := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]s.tsx", key))
-			hasBuilder := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sbuilder.tsx", key))
-			hasBuilderDef := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/%[1]sdefinition.ts", key))
-			hasSignals := fileExists(fmt.Sprintf("bundle/components/view/%[1]s/signals.ts", key))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, viewCompURL))
+			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, viewCompURL))
+			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, viewCompURL))
+			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, viewCompURL))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"../../components/view/%[1]s/%[1]s\";", key))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/view/%[1]s/%[1]s\";", key))
 
 				if hasSignals {
-					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"../../components/view/%[1]s/signals\";", key))
+					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"./src/view/%[1]s/signals\";", key))
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s,%[1]ssignals);", key, namespace))
 				} else {
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", key, namespace))
@@ -65,10 +69,10 @@ func CreateEntryFiles() ([]string, error) {
 			builderName := fmt.Sprintf("%[1]sbuilder", key)
 			definitionName := fmt.Sprintf("%[1]sdefinition", key)
 			if hasBuilder {
-				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, builderName))
+				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"./src/view/%[1]s/%[2]s\";", key, builderName))
 			}
 			if hasBuilderDef {
-				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"../../components/view/%[1]s/%[2]s\";", key, definitionName))
+				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"./src/view/%[1]s/%[2]s\";", key, definitionName))
 			}
 			if hasBuilder || hasBuilderDef {
 				builderValue := "undefined"
@@ -84,9 +88,9 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		for key := range pack.Components.UtilityComponents {
-			hasDefinition := fileExists(fmt.Sprintf("bundle/components/utility/%[1]s/%[1]s.tsx", key))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilityCompURL))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"../../components/utility/%[1]s/%[1]s\";", key))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"./src/utility/%[1]s/%[1]s\";", key))
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", key, namespace))
 			}
 		}
@@ -101,8 +105,8 @@ func CreateEntryFiles() ([]string, error) {
 			builderEntry = strings.Join(append(builderImports, append(builderDefImports, builderRegistrations...)...), "\n")
 		}
 
-		runtimeFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/runtime.ts", pack.Name)
-		builderFileName := fmt.Sprintf("bundle/componentpacks/%[1]s/builder.ts", pack.Name)
+		runtimeFileName := fmt.Sprintf("%[1]s/runtime.ts", baseURL)
+		builderFileName := fmt.Sprintf("%[1]s/builder.ts", baseURL)
 		err := os.WriteFile(runtimeFileName, []byte(runtimeEntry), 0777)
 		if err != nil {
 			return nil, err

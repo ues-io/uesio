@@ -84,16 +84,5 @@
 		"uesio/studio.user": {
 			"uesio/core.uniquekey": "uesio"
 		}
-	},
-	{
-		"uesio/studio.name": "lab",
-		"uesio/studio.fullname": "uesio/lab",
-		"uesio/studio.description": "Experimental components",
-		"uesio/studio.color": "#003f5c",
-		"uesio/studio.icon": "science",
-		"uesio/studio.public": true,
-		"uesio/studio.user": {
-			"uesio/core.uniquekey": "uesio"
-		}
 	}
 ]

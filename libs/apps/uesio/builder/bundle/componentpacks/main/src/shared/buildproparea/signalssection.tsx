@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
-import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
+import BuildActionsArea from "./buildactionsarea"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 const Button = component.getUtility("uesio/io.button")

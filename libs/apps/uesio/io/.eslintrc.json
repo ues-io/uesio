@@ -1,6 +1,6 @@
 {
 	"extends": "../../../../.eslintrc.json",
-	"ignorePatterns": ["!**/*", "bundle/bots/*", "bundle/componentpacks/*"],
+	"ignorePatterns": ["!**/*", "bundle/bots/*", "bundle/componentpacks/*.js*"],
 	"rules": {},
 	"overrides": [
 		{

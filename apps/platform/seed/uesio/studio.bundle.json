@@ -37,15 +37,6 @@
 	},
 	{
 		"uesio/studio.app": {
-			"uesio/core.uniquekey": "uesio/lab"
-		},
-		"uesio/studio.description": "Experimental components",
-		"uesio/studio.major": 0,
-		"uesio/studio.minor": 0,
-		"uesio/studio.patch": 1
-	},
-	{
-		"uesio/studio.app": {
 			"uesio/core.uniquekey": "uesio/docs"
 		},
 		"uesio/studio.description": "Uesio docs",

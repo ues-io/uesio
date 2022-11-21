@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import { builder, context, hooks, component, styles } from "@uesio/ui"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
-import useListScroll from "../shared/hooks/uselistscroll"
+import useListScroll from "./hooks/uselistscroll"
 const PropList = component.getUtility("uesio/builder.proplist")
 const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
