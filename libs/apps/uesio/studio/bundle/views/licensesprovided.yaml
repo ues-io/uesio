@@ -50,6 +50,8 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+      init:
+        query: false
     licensetemplate:
       collection: uesio/studio.licensetemplate
       fields:
@@ -62,6 +64,15 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+  events:
+    onload:
+      - signal: "wire/LOAD"
+        uesio.context:
+          siteadmin:
+            name: prod
+            app: uesio/studio
+        wires:
+          - licenses
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
