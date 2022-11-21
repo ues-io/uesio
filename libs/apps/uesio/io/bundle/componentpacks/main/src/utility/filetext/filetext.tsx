@@ -7,7 +7,7 @@ import {
 	hooks,
 	wire,
 } from "@uesio/ui"
-import { FieldState, LabelPosition } from "../../view/field/fielddefinition"
+import { FieldState, LabelPosition } from "../../components/field/fielddefinition"
 import { CodeFieldUtilityProps } from "../codefield/codefield"
 
 interface FileTextProps extends definition.UtilityProps {

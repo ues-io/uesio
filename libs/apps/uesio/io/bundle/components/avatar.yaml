@@ -1,0 +1,3 @@
+name: avatar
+pack: main
+entrypoint: view/avatar/avatar.tsx

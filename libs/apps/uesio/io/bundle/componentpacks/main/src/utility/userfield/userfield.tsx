@@ -7,7 +7,7 @@ import {
 	component,
 	hooks,
 } from "@uesio/ui"
-import { UserFieldOptions } from "../../view/field/fielddefinition"
+import { UserFieldOptions } from "../../components/field/fielddefinition"
 
 interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
