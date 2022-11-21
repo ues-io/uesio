@@ -38,15 +38,14 @@ definition:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
         uesio/studio.actiontype:
         uesio/studio.metadatatype:
         uesio/studio.metadataname:
-      conditions:
-        - field: uesio/studio.metadatatype
-          value: DATASOURCE
       init:
         query: false
     usage_load:
@@ -256,6 +255,8 @@ definition:
                           mode: READ
                           pagesize: 10
                           columns:
+                            - field: uesio/studio.app
+                            - field: uesio/studio.site
                             - field: uesio/studio.user
                             - field: uesio/studio.day
                             - field: uesio/studio.actiontype
