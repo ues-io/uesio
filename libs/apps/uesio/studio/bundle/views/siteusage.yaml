@@ -46,12 +46,19 @@ definition:
         uesio/studio.actiontype:
         uesio/studio.metadatatype:
         uesio/studio.metadataname:
+      conditions:
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_load:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -63,12 +70,18 @@ definition:
           value: LOAD
         - field: uesio/studio.metadatatype
           value: DATASOURCE
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_save:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -80,12 +93,18 @@ definition:
           value: SAVE
         - field: uesio/studio.metadatatype
           value: DATASOURCE
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_download:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -95,12 +114,18 @@ definition:
       conditions:
         - field: uesio/studio.actiontype
           value: DOWNLOAD
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_upload:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -110,12 +135,18 @@ definition:
       conditions:
         - field: uesio/studio.actiontype
           value: UPLOAD
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_download_bytes:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -125,12 +156,18 @@ definition:
       conditions:
         - field: uesio/studio.actiontype
           value: DOWNLOAD_BYTES
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
     usage_upload_bytes:
       collection: uesio/studio.usage
       fields:
         uesio/core.id:
+        uesio/studio.app:
+        uesio/studio.site:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
@@ -140,6 +177,10 @@ definition:
       conditions:
         - field: uesio/studio.actiontype
           value: UPLOAD_BYTES
+        - field: uesio/studio.site
+          valueSource: LOOKUP
+          lookupWire: sites
+          lookupField: uesio/core.id
       init:
         query: false
   events:
