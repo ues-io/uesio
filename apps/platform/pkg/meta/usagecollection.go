@@ -7,7 +7,7 @@ import (
 type UsageCollection []*Usage
 
 func (lpic *UsageCollection) GetName() string {
-	return "uesio/core.usage"
+	return "uesio/studio.usage"
 }
 
 func (lpic *UsageCollection) GetFields() []string {

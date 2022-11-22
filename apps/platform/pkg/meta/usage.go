@@ -3,12 +3,14 @@ package meta
 type Usage struct {
 	ID           string    `json:"uesio/core.id"`
 	UniqueKey    string    `json:"uesio/core.uniquekey"`
-	Total        int64     `json:"uesio/core.total"`
-	MetadataType string    `json:"uesio/core.metadatatype"`
-	ActionType   string    `json:"uesio/core.actiontype"`
-	MetadataName string    `json:"uesio/core.metadataname"`
-	Day          string    `json:"uesio/core.day"`
-	User         *User     `json:"uesio/core.user"`
+	Total        int64     `json:"uesio/studio.total"`
+	MetadataType string    `json:"uesio/studio.metadatatype"`
+	ActionType   string    `json:"uesio/studio.actiontype"`
+	MetadataName string    `json:"uesio/studio.metadataname"`
+	Day          string    `json:"uesio/studio.day"`
+	User         string    `json:"uesio/studio.user"`
+	App          *App      `json:"uesio/studio.app"`
+	Site         *Site     `json:"uesio/studio.site"`
 	itemMeta     *ItemMeta `json:"-"`
 	CreatedBy    *User     `json:"uesio/core.createdby"`
 	Owner        *User     `json:"uesio/core.owner"`

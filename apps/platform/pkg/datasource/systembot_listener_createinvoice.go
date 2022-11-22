@@ -109,15 +109,14 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	err = PlatformLoad(
 		&usage,
 		&PlatformLoadOptions{
-			// Conditions: []adapt.LoadRequestCondition{
-			// 	{
-			// 		Field:    "uesio/core.appkey",
-			// 		Operator: "IN",
-			// 		Value:    licensesIds,
-			// 	},
-			// },
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.app",
+					Value: app.ID,
+				},
+			},
 		},
-		session.RemoveWorkspaceContext(),
+		session,
 		//TO-DO we need siteAdminSession in here
 	)
 	if err != nil {

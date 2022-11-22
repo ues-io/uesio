@@ -62,6 +62,19 @@ definition:
                     uesio.variant: uesio/io.main
                     title: Licenses
                     subtitle: List of applications licensed for use by $Param{app}
+                    actions:
+                      - uesio/io.group:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/io.secondary
+                                text: Invoice
+                                signals:
+                                  - signal: "bot/CALL"
+                                    onerror:
+                                      signals:
+                                        - signal: notification/REMOVE
+                                          id: newversion
+                                    bot: "uesio/studio.createinvoice"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     uesio.styles:
