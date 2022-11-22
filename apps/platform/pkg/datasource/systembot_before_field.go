@@ -10,8 +10,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFieldsInExpression(expression string) (meta.Item, map[string]bool) {
-	fields := adapt.ChangeItem{FieldChanges: &adapt.Item{}}
+func getFieldsInExpression(expression string, metadata *adapt.CollectionMetadata) (meta.Item, map[string]bool) {
+	fields := adapt.ChangeItem{FieldChanges: &adapt.Item{}, Metadata: metadata}
 	fieldKeys := map[string]bool{}
 	var UesioTestLanguage = gval.NewLanguage(
 		adapt.UesioLanguage,
@@ -47,8 +47,50 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 	depMap := MetadataDependencyMap{}
 	var workspaceID string
+	metadataResponse := &adapt.MetadataCache{}
+	collections := MetadataRequest{
+		Options: &MetadataRequestOptions{
+			LoadAllFields: true,
+		},
+	}
+
+	//PRE-LOOP to get collection and WS
 
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+		err := checkWorkspaceID(&workspaceID, change)
+		if err != nil {
+			return err
+		}
+
+		collectionID, err := change.GetFieldAsString("uesio/studio.collection")
+		if err != nil {
+			return err
+		}
+
+		err = collections.AddCollection(collectionID)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	//LOL
+	wsSession := session.RemoveWorkspaceContext()
+
+	err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
+	if err != nil {
+		return err
+	}
+
+	err = collections.Load(metadataResponse, wsSession)
+	if err != nil {
+		return err
+	}
+
+	//
+
+	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 		err := checkWorkspaceID(&workspaceID, change)
 		if err != nil {
 			return err
@@ -117,7 +159,17 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 				return err
 			}
 
-			fields, fieldKeys := getFieldsInExpression(expression)
+			collectionID, err := change.GetFieldAsString("uesio/studio.collection")
+			if err != nil {
+				return err
+			}
+
+			collectionMetadata, err := metadataResponse.GetCollection(collectionID)
+			if err != nil {
+				return err
+			}
+
+			fields, fieldKeys := getFieldsInExpression(expression, collectionMetadata)
 			_, err = adapt.UesioLanguage.Evaluate(expression, fields)
 			if err != nil {
 				return errors.New("Field: invalid expression:" + err.Error())
