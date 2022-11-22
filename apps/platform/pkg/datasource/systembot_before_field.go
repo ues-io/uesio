@@ -72,21 +72,29 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		},
 	}
 
-	//Pre-Loop
+	//Pre-Loop for formula fields
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
+
 		err := checkWorkspaceID(&workspaceID, change)
 		if err != nil {
 			return err
 		}
 
-		collectionID, err := change.GetFieldAsString("uesio/studio.collection")
+		ftype, err := change.GetFieldAsString("uesio/studio.type")
 		if err != nil {
 			return err
 		}
 
-		err = collections.AddCollection(collectionID)
-		if err != nil {
-			return err
+		if ftype == "FORMULA" {
+			collectionID, err := change.GetFieldAsString("uesio/studio.collection")
+			if err != nil {
+				return err
+			}
+
+			err = collections.AddCollection(collectionID)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -94,14 +102,16 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 	wsSession := session.RemoveWorkspaceContext()
 
-	err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
-	if err != nil {
-		return err
-	}
+	if workspaceID != "" {
+		err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
+		if err != nil {
+			return err
+		}
 
-	err = collections.Load(metadataResponse, wsSession)
-	if err != nil {
-		return err
+		err = collections.Load(metadataResponse, wsSession)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
