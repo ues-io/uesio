@@ -122,6 +122,9 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 	})
 
 	installedNamespaces := inContextSession.GetContextInstalledNamespaces()
+	if workspace == "" {
+		installedNamespaces = append(installedNamespaces, app)
+	}
 
 	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession)
 	if err != nil {
