@@ -1,0 +1,3 @@
+name: proplist
+pack: main
+entrypoint: utilities/proplist/proplist.tsx

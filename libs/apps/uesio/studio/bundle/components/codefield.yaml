@@ -1,0 +1,3 @@
+name: codefield
+pack: main
+entrypoint: components/codefield/codefield.tsx

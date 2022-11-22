@@ -1,0 +1,3 @@
+name: fileuploadarea
+pack: main
+entrypoint: utilities/fileuploadarea/fileuploadarea.tsx

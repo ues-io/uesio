@@ -1,0 +1,3 @@
+name: configlogins
+pack: main
+entrypoint: components/configlogins/configlogins.tsx

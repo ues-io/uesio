@@ -1,0 +1,3 @@
+name: fieldprop
+pack: main
+entrypoint: utilities/fieldprop/fieldprop.tsx

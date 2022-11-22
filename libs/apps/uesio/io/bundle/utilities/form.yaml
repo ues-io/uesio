@@ -1,0 +1,3 @@
+name: form
+pack: main
+entrypoint: utilities/form/form.tsx

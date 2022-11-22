@@ -1,2 +1,3 @@
 name: list
 pack: main
+entrypoint: components/list/list.tsx

@@ -1,2 +1,3 @@
 name: button
 pack: main
+entrypoint: components/button/button.tsx

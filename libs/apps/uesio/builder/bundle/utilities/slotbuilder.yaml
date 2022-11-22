@@ -1,0 +1,3 @@
+name: slotbuilder
+pack: main
+entrypoint: utilities/slotbuilder/slotbuilder.tsx

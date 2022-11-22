@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { CodeProps } from "./codedefinition"
-import { CodeFieldUtilityProps } from "../../utility/codefield/codefield"
+import { CodeFieldUtilityProps } from "../../utilities/codefield/codefield"
 
 const IOCodeField =
 	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")

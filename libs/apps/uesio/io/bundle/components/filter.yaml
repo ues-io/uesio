@@ -1,2 +1,3 @@
 name: filter
 pack: main
+entrypoint: components/filter/filter.tsx

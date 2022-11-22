@@ -1,2 +1,3 @@
 name: tile
 pack: main
+entrypoint: components/tile/tile.tsx
