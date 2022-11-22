@@ -1,0 +1,3 @@
+name: code
+pack: main
+entrypoint: components/code/code.tsx

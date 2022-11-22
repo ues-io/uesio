@@ -1,0 +1,3 @@
+name: barchart
+pack: chart
+entrypoint: components/barchart/barchart.tsx

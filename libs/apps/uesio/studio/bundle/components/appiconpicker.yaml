@@ -1,0 +1,3 @@
+name: appiconpicker
+pack: main
+entrypoint: components/appiconpicker/appiconpicker.tsx

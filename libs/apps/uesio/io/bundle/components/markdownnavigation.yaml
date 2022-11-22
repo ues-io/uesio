@@ -1,0 +1,3 @@
+name: markdownnavigation
+pack: main
+entrypoint: components/markdownnavigation/markdownnavigation.tsx

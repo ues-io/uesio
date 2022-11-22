@@ -1,8 +1,0 @@
-name: main
-components:
-  view:
-    layout:
-    tablecolumn:
-    table:
-  utility:
-    actionsbar:

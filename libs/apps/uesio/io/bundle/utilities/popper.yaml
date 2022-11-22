@@ -1,0 +1,3 @@
+name: popper
+pack: main
+entrypoint: utilities/popper/popper.tsx

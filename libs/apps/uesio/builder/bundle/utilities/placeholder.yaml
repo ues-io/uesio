@@ -1,0 +1,3 @@
+name: placeholder
+pack: main
+entrypoint: utilities/placeholder/placeholder.tsx

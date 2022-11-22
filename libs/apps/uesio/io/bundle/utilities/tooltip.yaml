@@ -1,0 +1,3 @@
+name: tooltip
+pack: main
+entrypoint: utilities/tooltip/tooltip.tsx

@@ -1,0 +1,3 @@
+name: uploadarea
+pack: main
+entrypoint: utilities/uploadarea/uploadarea.tsx

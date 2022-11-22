@@ -1,0 +1,3 @@
+name: griditem
+pack: main
+entrypoint: components/griditem/griditem.tsx

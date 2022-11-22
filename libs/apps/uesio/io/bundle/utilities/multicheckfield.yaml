@@ -1,0 +1,3 @@
+name: multicheckfield
+pack: main
+entrypoint: utilities/multicheckfield/multicheckfield.tsx

@@ -16,7 +16,6 @@ var systemBundles = map[string]bool{
 	"uesio/core":    true,
 	"uesio/studio":  true,
 	"uesio/io":      true,
-	"uesio/lab":     true,
 	"uesio/docs":    true,
 	"uesio/web":     true,
 	"uesio/cms":     true,

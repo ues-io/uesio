@@ -1,0 +1,3 @@
+name: selectprop
+pack: main
+entrypoint: utilities/selectprop/selectprop.tsx

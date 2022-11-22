@@ -63,7 +63,6 @@ views:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.siteusage: true
-  uesio/studio.userusage: true
   uesio/studio.userprofile: true
   uesio/studio.userprofilenav: true
   uesio/studio.licensesused: true
@@ -131,7 +130,6 @@ routes:
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
   uesio/studio.siteusage: true
-  uesio/studio.userusage: true
   uesio/studio.userprofile: true
   uesio/studio.changepassword: true
   uesio/studio.signupconfirm: true
@@ -179,7 +177,7 @@ collections:
   uesio/core.userfile: true
   uesio/core.user: true
   uesio/core.loginmethod: true
-  uesio/core.usage: true
+  uesio/studio.usage: true
   uesio/core.featureflagassignment: true
   uesio/studio.useraccesstoken: true
   uesio/studio.license: true

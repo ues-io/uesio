@@ -1,4 +1,0 @@
-name: user
-type: USER
-label: "User"
-createOnly: true

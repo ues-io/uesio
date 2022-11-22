@@ -1,0 +1,3 @@
+name: fieldproptag
+pack: main
+entrypoint: utilities/fieldproptag/fieldproptag.tsx

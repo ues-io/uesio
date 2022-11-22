@@ -1,0 +1,3 @@
+name: text
+pack: main
+entrypoint: components/text/text.tsx

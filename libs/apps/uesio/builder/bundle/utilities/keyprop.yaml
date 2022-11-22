@@ -1,0 +1,3 @@
+name: keyprop
+pack: main
+entrypoint: utilities/keyprop/keyprop.tsx

@@ -1,0 +1,3 @@
+name: fileimage
+pack: main
+entrypoint: utilities/fileimage/fileimage.tsx
