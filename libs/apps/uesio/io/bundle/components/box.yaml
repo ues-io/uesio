@@ -1,2 +1,3 @@
 name: box
 pack: main
+entrypoint: components/box/box.tsx

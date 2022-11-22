@@ -1,0 +1,3 @@
+name: autocomplete
+pack: main
+entrypoint: utilities/autocomplete/autocomplete.tsx

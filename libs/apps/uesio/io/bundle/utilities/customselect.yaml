@@ -1,0 +1,3 @@
+name: customselect
+pack: main
+entrypoint: utilities/customselect/customselect.tsx

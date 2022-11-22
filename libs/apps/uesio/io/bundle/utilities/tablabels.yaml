@@ -1,0 +1,3 @@
+name: tablabels
+pack: main
+entrypoint: utilities/tablabels/tablabels.tsx

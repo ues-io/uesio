@@ -1,0 +1,3 @@
+name: togglefield
+pack: main
+entrypoint: utilities/togglefield/togglefield.tsx

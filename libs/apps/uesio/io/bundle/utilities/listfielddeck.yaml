@@ -1,0 +1,3 @@
+name: listfielddeck
+pack: main
+entrypoint: utilities/listfielddeck/listfielddeck.tsx

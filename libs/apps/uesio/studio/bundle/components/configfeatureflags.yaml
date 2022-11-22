@@ -1,0 +1,3 @@
+name: configfeatureflags
+pack: main
+entrypoint: components/configfeatureflags/configfeatureflags.tsx

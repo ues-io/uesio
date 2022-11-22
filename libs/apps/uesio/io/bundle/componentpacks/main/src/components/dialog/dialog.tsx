@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import { DialogUtilityProps } from "../../utility/dialog/dialog"
+import { DialogUtilityProps } from "../../utilities/dialog/dialog"
 
 const IODialog = component.getUtility<DialogUtilityProps>("uesio/io.dialog")
 

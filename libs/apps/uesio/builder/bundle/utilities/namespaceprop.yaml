@@ -1,0 +1,3 @@
+name: namespaceprop
+pack: main
+entrypoint: utilities/namespaceprop/namespaceprop.tsx

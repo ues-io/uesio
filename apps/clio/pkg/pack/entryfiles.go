@@ -48,14 +48,14 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		baseURL := fmt.Sprintf("bundle/componentpacks/%s", pack.Name)
-		componentURL := fmt.Sprintf("%s/src/components", baseURL)
-		utilityURL := fmt.Sprintf("%s/src/utility", baseURL)
+		componentsURL := fmt.Sprintf("%s/src/components", baseURL)
+		utilitiesURL := fmt.Sprintf("%s/src/utilities", baseURL)
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, componentURL))
-			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, componentURL))
-			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, componentURL))
-			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, componentURL))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, componentsURL))
+			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, componentsURL))
+			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, componentsURL))
+			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, componentsURL))
 			if hasDefinition {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/components/%[1]s/%[1]s\";", key))
 
@@ -88,9 +88,9 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		for key := range pack.Components.UtilityComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilityURL))
+			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilitiesURL))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"./src/utility/%[1]s/%[1]s\";", key))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"./src/utilities/%[1]s/%[1]s\";", key))
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", key, namespace))
 			}
 		}

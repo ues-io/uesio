@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
-import { TileUtilityProps } from "../../utility/tile/tile"
+import { TileUtilityProps } from "../../utilities/tile/tile"
 
 const IOTile = component.getUtility<TileUtilityProps>("uesio/io.tile")
 

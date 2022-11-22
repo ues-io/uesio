@@ -1,0 +1,3 @@
+name: scrollpanel
+pack: main
+entrypoint: utilities/scrollpanel/scrollpanel.tsx

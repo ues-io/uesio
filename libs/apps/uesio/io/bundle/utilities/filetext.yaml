@@ -1,0 +1,3 @@
+name: filetext
+pack: main
+entrypoint: utilities/filetext/filetext.tsx

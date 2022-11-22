@@ -1,0 +1,3 @@
+name: checkboxfield
+pack: main
+entrypoint: utilities/checkboxfield/checkboxfield.tsx

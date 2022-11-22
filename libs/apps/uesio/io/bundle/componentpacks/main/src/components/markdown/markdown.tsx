@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 
 import { MarkDownProps } from "./markdowndefinition"
 import { component, styles } from "@uesio/ui"
-import { MarkDownFieldProps } from "../../utility/markdownfield/markdownfield"
+import { MarkDownFieldProps } from "../../utilities/markdownfield/markdownfield"
 
 const MarkDownField = component.getUtility<MarkDownFieldProps>(
 	"uesio/io.markdownfield"

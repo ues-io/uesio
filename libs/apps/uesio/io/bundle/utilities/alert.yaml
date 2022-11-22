@@ -1,0 +1,3 @@
+name: alert
+pack: main
+entrypoint: utilities/alert/alert.tsx

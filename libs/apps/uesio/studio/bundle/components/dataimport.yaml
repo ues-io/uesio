@@ -1,0 +1,3 @@
+name: dataimport
+pack: main
+entrypoint: components/dataimport/dataimport.tsx

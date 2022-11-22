@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { hooks, styles, component } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
-import { IconUtilityProps } from "../../utility/icon/icon"
-import { ButtonUtilityProps } from "../../utility/button/button"
+import { IconUtilityProps } from "../../utilities/icon/icon"
+import { ButtonUtilityProps } from "../../utilities/button/button"
 
 const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")

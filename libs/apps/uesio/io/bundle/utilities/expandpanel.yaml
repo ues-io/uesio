@@ -1,0 +1,3 @@
+name: expandpanel
+pack: main
+entrypoint: utilities/expandpanel/expandpanel.tsx
