@@ -27,7 +27,25 @@ func getFieldsInExpression(expression string, metadata *adapt.CollectionMetadata
 				fullId := keys[0]
 
 				if fullId != "" {
-					fields.FieldChanges.SetField(fullId, "Dummy Data") //we need the collection metadata here
+
+					field, err := fields.Metadata.GetField(fullId)
+					if err != nil {
+						return nil, err
+					}
+
+					switch field.Type {
+					case "NUMBER":
+						fields.FieldChanges.SetField(fullId, 1234)
+					case "TEXT":
+						fields.FieldChanges.SetField(fullId, "Dummy Data")
+					case "LONGTEXT":
+						fields.FieldChanges.SetField(fullId, "Dummy Data")
+					case "CHECKBOX":
+						fields.FieldChanges.SetField(fullId, true)
+					default:
+						fields.FieldChanges.SetField(fullId, "Dummy Data")
+					}
+
 					fieldKeys[fullId] = true
 					return fullId, nil
 				}
@@ -54,8 +72,7 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		},
 	}
 
-	//PRE-LOOP to get collection and WS
-
+	//Pre-Loop
 	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 		err := checkWorkspaceID(&workspaceID, change)
 		if err != nil {
@@ -75,7 +92,6 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		return nil
 	})
 
-	//LOL
 	wsSession := session.RemoveWorkspaceContext()
 
 	err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
@@ -87,8 +103,6 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 	if err != nil {
 		return err
 	}
-
-	//
 
 	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
 		err := checkWorkspaceID(&workspaceID, change)

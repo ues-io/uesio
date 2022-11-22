@@ -23,16 +23,12 @@ var UesioLanguage = gval.NewLanguage(
 			if !ok {
 				return nil, errors.New("Casting error in formula field: " + fullId)
 			}
-			id, err := item.GetField(fullId)
+			value, err := item.GetField(fullId)
 			if err != nil {
-				return "", nil
+				return nil, err
 			}
 
-			if id == nil {
-				return "", nil
-			}
-
-			return id, nil
+			return value, nil
 
 		}
 	}),
@@ -65,12 +61,10 @@ type evalFunc func(item meta.Item) error
 func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
-		value, err := exec(context.Background(), item)
-		if err != nil {
-			return err
-		}
+		//IGNORE ERRORS
+		value, _ := exec(context.Background(), item)
 
-		err = item.SetField(field.GetFullName(), value)
+		err := item.SetField(field.GetFullName(), value)
 		if err != nil {
 			return err
 		}
