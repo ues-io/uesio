@@ -105,6 +105,7 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	}
 
 	//get usage for this app in a date range?
+	metadatatypes := []string{"FILESOURCE", "DATASOURCE"}
 	var usage meta.UsageCollection
 	err = PlatformLoad(
 		&usage,
@@ -114,14 +115,46 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 					Field: "uesio/studio.app",
 					Value: app.ID,
 				},
+				{
+					Field:    "uesio/studio.metadatatype",
+					Operator: "IN",
+					Value:    metadatatypes,
+				},
 			},
 		},
-		session,
-		//TO-DO we need siteAdminSession in here
+		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
 		return err
 	}
+
+	type record struct {
+		total int
+		price int
+	}
+
+	var mymap map[string]record
+
+	//merge lpic and usage
+	lpic.Loop(func(item meta.Item, _ string) error {
+		actiontype, err := item.GetField("uesio/studio.actiontype")
+		if err != nil {
+			return err
+		}
+
+		actiontypeAsString, ok := actiontype.(string)
+		if !ok {
+			return errors.New("actiontype must be a string")
+		}
+
+		mymap[actiontypeAsString] = record{total: 2, price: 2}
+
+		//UPLOAD_BYTES
+
+		//licensesIds = append(licensesIds, uniquekeyAsString)
+
+		return nil
+	})
 
 	//query all the sites of the app
 
