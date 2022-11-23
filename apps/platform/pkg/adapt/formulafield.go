@@ -61,10 +61,12 @@ type evalFunc func(item meta.Item) error
 func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
-		//IGNORE ERRORS
-		value, _ := exec(context.Background(), item)
+		value, err := exec(context.Background(), item)
+		if err != nil {
+			return err
+		}
 
-		err := item.SetField(field.GetFullName(), value)
+		err = item.SetField(field.GetFullName(), value)
 		if err != nil {
 			return err
 		}
