@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -13,6 +14,9 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	//INPUTS???
 	//DATE range
 	//commit yes/no
+	//we can start a transaction
+
+	invoiceLinesDeps := adapt.Collection{}
 
 	appID := session.GetContextAppName()
 
@@ -40,6 +44,18 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		},
 		session.RemoveWorkspaceContext(),
 	)
+	if err != nil {
+		return err
+	}
+
+	//SAVE the invoce (we need the ID)
+
+	invoice := meta.Invoice{
+		App:  &app,
+		Date: time.Now().Format("2006-01-02"),
+	}
+
+	err = PlatformSaveOne(&invoice, nil, connection, session)
 	if err != nil {
 		return err
 	}
@@ -81,6 +97,27 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		}
 
 		licensesIds = append(licensesIds, uniquekeyAsString)
+
+		//one line per license where monthlyprice > 0
+		monthlyprice, err := item.GetField("uesio/studio.monthlyprice")
+		if err != nil {
+			return err
+		}
+
+		monthlypricefloat, ok := monthlyprice.(float64)
+		if !ok {
+			return errors.New("monthlyprice must be a number")
+		}
+
+		invoiceLinesDeps = append(invoiceLinesDeps, &adapt.Item{
+			"uesio/studio.invoice": map[string]interface{}{
+				adapt.ID_FIELD: invoice.ID,
+			},
+			"uesio/studio.amount": monthlypricefloat,
+		})
+
+		//this is just to avoid looping at the end
+		invoice.Total = invoice.Total + monthlypricefloat
 
 		return nil
 	})
@@ -196,9 +233,41 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		return nil
 	})
 
-	//println(accumulate) + licenses montly price
+	//calculate total & save
+	for _, record := range accumulate {
+		lineTotal := record.price * float64(record.total)
+		invoice.Total = invoice.Total + lineTotal
 
-	// return CreateBundle(appID, workspace.Name, bundle, wsbs, session)
+		invoiceLinesDeps = append(invoiceLinesDeps, &adapt.Item{
+			"uesio/studio.invoice": map[string]interface{}{
+				adapt.ID_FIELD: invoice.ID,
+			},
+			"uesio/studio.amount": lineTotal,
+		})
+
+	}
+
+	//SAve the lines & the invoice
+	err = SaveWithOptions([]SaveRequest{
+		{
+			Collection: "uesio/studio.invoiceline",
+			Wire:       "invoicelineWire",
+			Changes:    &invoiceLinesDeps,
+			Options: &adapt.SaveOptions{
+				Upsert: true,
+			},
+		},
+	}, session, GetConnectionSaveOptions(connection))
+	if err != nil {
+		return err
+	}
+
+	err = PlatformSaveOne(&invoice, nil, connection, session)
+	if err != nil {
+		return err
+	}
+
+	//
 
 	return nil
 }

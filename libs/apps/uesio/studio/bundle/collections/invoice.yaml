@@ -1,0 +1,4 @@
+name: invoice
+nameField: uesio/studio.app
+label: invoice
+pluralLabel: invoices

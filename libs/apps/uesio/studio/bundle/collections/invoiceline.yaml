@@ -1,0 +1,4 @@
+name: invoiceline
+nameField: uesio/studio.invoice
+label: invoice line
+pluralLabel: invoice lines
