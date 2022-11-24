@@ -157,6 +157,15 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	//get usage for this app in a date range?
 	metadatatypes := []string{"FILESOURCE", "DATASOURCE"}
 	var usage meta.UsageCollection
+
+	//month range calculation
+	now := time.Now()
+	currentYear, currentMonth, _ := now.Date()
+	currentLocation := now.Location()
+
+	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
+	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
+
 	err = PlatformLoad(
 		&usage,
 		&PlatformLoadOptions{
@@ -169,6 +178,16 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 					Field:    "uesio/studio.metadatatype",
 					Operator: "IN",
 					Value:    metadatatypes,
+				},
+				{
+					Field:    "uesio/studio.timestamp",
+					Operator: "GTE",
+					Value:    firstOfMonth.UnixMilli(),
+				},
+				{
+					Field:    "uesio/studio.timestamp",
+					Operator: "LTE",
+					Value:    lastOfMonth.UnixMilli(),
 				},
 			},
 		},
@@ -283,8 +302,6 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	if err != nil {
 		return err
 	}
-
-	//
 
 	return nil
 }

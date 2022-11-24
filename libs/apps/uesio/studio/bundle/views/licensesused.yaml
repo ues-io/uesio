@@ -46,6 +46,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.date
+          desc: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

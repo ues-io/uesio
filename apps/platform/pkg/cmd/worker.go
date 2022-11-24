@@ -89,9 +89,13 @@ func UsageJob() error {
 		//tenantID eq Site UniqueKey
 		tenantID := fmt.Sprintf("%s:%s", keyParts[2], keyParts[3])
 
+		day := keyParts[5]
+		dayInISOformat, _ := time.Parse("2006-01-02", day)
+
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/studio.user", keyParts[4])
-		usageItem.SetField("uesio/studio.day", keyParts[5])
+		usageItem.SetField("uesio/studio.day", day)
+		usageItem.SetField("uesio/studio.timestamp", dayInISOformat.UnixMilli())
 		usageItem.SetField("uesio/studio.actiontype", keyParts[6])
 		usageItem.SetField("uesio/studio.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/studio.metadataname", keyParts[8])
