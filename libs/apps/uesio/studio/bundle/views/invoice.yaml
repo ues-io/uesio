@@ -1,0 +1,127 @@
+name: invoice
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio/studio.app
+      fields:
+        uesio/core.id:
+        uesio/studio.name:
+        uesio/studio.fullname:
+        uesio/studio.description:
+        uesio/studio.color:
+        uesio/studio.user:
+        uesio/studio.public:
+        uesio/studio.icon:
+      conditions:
+        - field: uesio/core.uniquekey
+          valueSource: PARAM
+          param: app
+    invoice:
+      collection: uesio/studio.invoice
+      fields:
+        uesio/core.id:
+        uesio/studio.autoid:
+        uesio/studio.app:
+        uesio/studio.total:
+        uesio/studio.date:
+      conditions:
+        - field: uesio/studio.autoid
+          valueSource: PARAM
+          param: invoiceid
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
+    invoicelines:
+      collection: uesio/studio.invoiceline
+      fields:
+        uesio/core.id:
+        uesio/studio.invoice:
+        uesio/studio.amount:
+        uesio/studio.description:
+        uesio/studio.price:
+        uesio/studio.quantity:
+      conditions:
+        - field: uesio/studio.invoice
+          valueSource: LOOKUP
+          lookupWire: invoice
+          lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+                    uesio.context:
+                      wire: apps
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    id: appnavview
+                    view: uesio/studio.appnav
+                    uesio.context:
+                      wire: apps
+                    params:
+                      app: $Param{app}
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Invoice
+                    subtitle: $Param{invoiceid}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Header
+                      - uesio/io.list:
+                          id: invoiceList
+                          wire: invoice
+                          components:
+                            - uesio/io.griditem:
+                                components:
+                                  - uesio/io.box:
+                                      uesio.styles:
+                                        root:
+                                          paddingBottom: 20px
+                                      uesio.variant: uesio/io.section
+                                      components:
+                                        - uesio/io.grid:
+                                            templateColumns:
+                                              xs: 1fr
+                                              md: 1fr 1fr
+                                              lg: 1fr 1fr 1fr 1fr
+                                            columnGap: 10px
+                                            items:
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.autoid
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.date
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.total
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Items
+                      - uesio/io.table:
+                          id: invoicelinesTable
+                          wire: invoicelines
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          columns:
+                            - field: uesio/studio.description
+                            - field: uesio/studio.quantity
+                            - field: uesio/studio.price
+                            - field: uesio/studio.amount
+                          pagesize: 10

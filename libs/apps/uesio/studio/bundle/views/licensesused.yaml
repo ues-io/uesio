@@ -33,6 +33,19 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio/core.id
+    invoices:
+      collection: uesio/studio.invoice
+      fields:
+        uesio/core.id:
+        uesio/studio.autoid:
+        uesio/studio.app:
+        uesio/studio.total:
+        uesio/studio.date:
+      conditions:
+        - field: uesio/studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio/core.id
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -60,8 +73,8 @@ definition:
               components:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
-                    title: Licenses
-                    subtitle: List of applications licensed for use by $Param{app}
+                    title: Billing & Costs
+                    subtitle: Billing & Costs for $Param{app}
                     actions:
                       - uesio/io.group:
                           components:
@@ -77,13 +90,41 @@ definition:
                                     bot: "uesio/studio.createinvoice"
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Invoices
+                          subtitle: a list of goods sent or services provided, with a statement of the sum due for these.
+                      - uesio/io.table:
+                          id: invoiceTable
+                          wire: invoices
+                          pagesize: 10
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          columns:
+                            - field: uesio/studio.autoid
+                            - field: uesio/studio.total
+                            - field: uesio/studio.date
+                          rowactions:
+                            - text: Details
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{app}/invoice/${uesio/studio.autoid}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Licenses
+                          subtitle: List of applications licensed for use by $Param{app}
                       - uesio/io.table:
                           id: licensesTable
                           wire: licenses
+                          pagesize: 10
+                          uesio.styles:
+                            root:
+                              padding: 40px
                           columns:
                             - label: SOURCE APP
                               components:
@@ -118,4 +159,3 @@ definition:
                                       - field: uesio/studio.active
                                         value: false
                                         operator: EQUALS
-                          pagesize: 10

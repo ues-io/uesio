@@ -86,17 +86,27 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	//get all licensesIds as string
 	licensesIds := []string{}
 	licenses.Loop(func(item meta.Item, _ string) error {
-		uniquekey, err := item.GetField(adapt.ID_FIELD)
+		id, err := item.GetField(adapt.ID_FIELD)
 		if err != nil {
 			return err
 		}
 
-		uniquekeyAsString, ok := uniquekey.(string)
+		idAsString, ok := id.(string)
 		if !ok {
 			return errors.New("id must be a string")
 		}
 
-		licensesIds = append(licensesIds, uniquekeyAsString)
+		uniqueKey, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
+		if err != nil {
+			return err
+		}
+
+		uniqueKeyAsString, ok := uniqueKey.(string)
+		if !ok {
+			return errors.New("unique key must be a string")
+		}
+
+		licensesIds = append(licensesIds, idAsString)
 
 		//one line per license where monthlyprice > 0
 		monthlyprice, err := item.GetField("uesio/studio.monthlyprice")
@@ -113,7 +123,10 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 			"uesio/studio.invoice": map[string]interface{}{
 				adapt.ID_FIELD: invoice.ID,
 			},
-			"uesio/studio.amount": monthlypricefloat,
+			// "uesio/studio.amount":      monthlypricefloat,
+			"uesio/studio.description": uniqueKeyAsString,
+			"uesio/studio.quantity":    1,
+			"uesio/studio.price":       monthlypricefloat,
 		})
 
 		//this is just to avoid looping at the end
@@ -166,8 +179,9 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	}
 
 	type record struct {
-		total int64
-		price float64
+		total       int64
+		price       float64
+		description string
 	}
 
 	accumulate := make(map[string]record, lpic.Len())
@@ -196,7 +210,7 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 				return errors.New("price must be a number")
 			}
 
-			accumulate[pricingActiontypeStr] = record{price: pricefloat64, total: 0}
+			accumulate[pricingActiontypeStr] = record{description: pricingActiontypeStr, price: pricefloat64, total: 0}
 		}
 
 		return nil
@@ -242,7 +256,10 @@ func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 			"uesio/studio.invoice": map[string]interface{}{
 				adapt.ID_FIELD: invoice.ID,
 			},
-			"uesio/studio.amount": lineTotal,
+			//"uesio/studio.amount":      lineTotal,
+			"uesio/studio.description": record.description,
+			"uesio/studio.quantity":    record.total,
+			"uesio/studio.price":       record.price,
 		})
 
 	}

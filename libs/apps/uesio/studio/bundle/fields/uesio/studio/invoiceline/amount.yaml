@@ -1,5 +1,6 @@
 name: amount
 label: amount
-type: NUMBER
-number:
-  decimals: 2
+type: FORMULA
+formula:
+  expression: uesio/studio.quantity * uesio/studio.price
+  returntype: NUMBER
