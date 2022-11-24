@@ -174,9 +174,23 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 	site := session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
+	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	message, err := auth.GetRequiredPayloadValue(payload, "message")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
 	authTry := &cognito.ForgotPasswordInput{
 		Username: &fqUsername,
 		ClientId: aws.String(clientID),
+		ClientMetadata: map[string]string{
+			"subject": subject,
+			"message": message,
+		},
 	}
 
 	client := cognito.NewFromConfig(cfg)

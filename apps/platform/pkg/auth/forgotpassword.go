@@ -10,6 +10,9 @@ func ForgotPassword(authSourceID string, payload map[string]interface{}, session
 		return err
 	}
 
+	payload["subject"] = "LOL"
+	payload["message"] = "LOL"
+
 	return conn.ForgotPassword(payload, session)
 }
 
