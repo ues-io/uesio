@@ -9,16 +9,18 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runCreateInvoiceListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
-
-	//INPUTS???
-	//DATE range
-	//commit yes/no
-	//we can start a transaction
+func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 
 	invoiceLinesDeps := adapt.Collection{}
 
-	appID := session.GetContextAppName()
+	if _, ok := params["appID"]; !ok {
+		return errors.New("Error creating a new invoice, missing appID in params")
+	}
+
+	appID, ok := params["appID"].(string)
+	if !ok {
+		return errors.New("Error creating a new invoice, appID is not string")
+	}
 
 	if appID == "" {
 		return errors.New("Error creating a new invoice, missing app")

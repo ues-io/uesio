@@ -31,13 +31,18 @@ func worker(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running uesio worker", logger.INFO)
 
-	for {
-		err := UsageJob()
-		if err != nil {
-			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-		}
-		time.Sleep(5 * time.Second)
+	err := InvoicingJob()
+	if err != nil {
+		logger.Log("Invoicing Job failed reason: "+err.Error(), logger.ERROR)
 	}
+
+	// for {
+	// 	err := UsageJob()
+	// 	if err != nil {
+	// 		logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
+	// 	}
+	// 	time.Sleep(5 * time.Second)
+	// }
 
 }
 
@@ -134,5 +139,47 @@ func UsageJob() error {
 	}
 
 	logger.Log("Job completed without any issues", logger.INFO)
+	return nil
+}
+
+func InvoicingJob() error {
+
+	logger.Log("Invoicing Job Running", logger.INFO)
+
+	session, err := auth.GetStudioSystemSession(nil)
+	if err != nil {
+		return err
+	}
+
+	var apps meta.AppCollection
+	err = datasource.PlatformLoad(&apps, nil, session)
+	if err != nil {
+		return err
+	}
+
+	apps.Loop(func(item meta.Item, _ string) error {
+		uniqueKey, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
+		if err != nil {
+			return err
+		}
+
+		uniqueKeyAsString, ok := uniqueKey.(string)
+		if !ok {
+			return errors.New("uniqueKey must be a string")
+		}
+
+		logger.Log("Creating invoice for: "+uniqueKeyAsString, logger.INFO)
+
+		params := map[string]interface{}{"appID": uniqueKeyAsString}
+		err = datasource.RunCreateInvoiceListenerBot(params, nil, session)
+
+		if err != nil {
+			logger.Log("Error creating invoice for: "+uniqueKeyAsString, logger.ERROR)
+			return err
+		}
+
+		return nil
+	})
+
 	return nil
 }
