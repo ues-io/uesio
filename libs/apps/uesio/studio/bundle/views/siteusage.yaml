@@ -43,7 +43,6 @@ definition:
         uesio/studio.total:
         uesio/studio.user:
         uesio/studio.day:
-        uesio/studio.timestamp:
         uesio/studio.actiontype:
         uesio/studio.metadatatype:
         uesio/studio.metadataname:
@@ -301,7 +300,6 @@ definition:
                             - field: uesio/studio.site
                             - field: uesio/studio.user
                             - field: uesio/studio.day
-                            - field: uesio/studio.timestamp
                             - field: uesio/studio.actiontype
                             - field: uesio/studio.metadatatype
                             - field: uesio/studio.metadataname

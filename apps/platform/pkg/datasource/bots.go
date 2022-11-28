@@ -251,8 +251,6 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	switch namespace + "." + name {
 	case "uesio/studio.createbundle":
 		botFunction = runCreateBundleListenerBot
-	case "uesio/studio.createinvoice":
-		botFunction = RunCreateInvoiceListenerBot
 	}
 
 	if botFunction != nil {

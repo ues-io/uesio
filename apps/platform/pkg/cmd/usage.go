@@ -18,37 +18,23 @@ import (
 )
 
 func init() {
-
-	validArgs := []string{"invoicing"}
-
 	rootCmd.AddCommand(&cobra.Command{
-		Use:       "work",
-		Short:     "uesio work",
-		Run:       worker,
-		ValidArgs: validArgs,
-		Args:      cobra.OnlyValidArgs,
+		Use:   "usage",
+		Short: "uesio usage",
+		Run:   usage,
 	})
-
 }
 
-func worker(cmd *cobra.Command, args []string) {
+func usage(cmd *cobra.Command, args []string) {
 
-	logger.Log("Running uesio worker", logger.INFO)
-
-	if len(args) > 0 && args[0] == "invoicing" {
-		err := InvoicingJob()
+	for {
+		err := UsageJob()
 		if err != nil {
-			logger.Log("Invoicing Job failed reason: "+err.Error(), logger.ERROR)
+			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
 		}
-	} else {
-		for {
-			err := UsageJob()
-			if err != nil {
-				logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-			}
-			time.Sleep(5 * time.Second)
-		}
+		time.Sleep(5 * time.Second)
 	}
+
 }
 
 func UsageJob() error {
@@ -100,13 +86,9 @@ func UsageJob() error {
 		//tenantID eq Site UniqueKey
 		tenantID := fmt.Sprintf("%s:%s", keyParts[2], keyParts[3])
 
-		day := keyParts[5]
-		dayInISOformat, _ := time.Parse("2006-01-02", day)
-
 		usageItem := adapt.Item{}
 		usageItem.SetField("uesio/studio.user", keyParts[4])
-		usageItem.SetField("uesio/studio.day", day)
-		usageItem.SetField("uesio/studio.timestamp", dayInISOformat.UnixMilli())
+		usageItem.SetField("uesio/studio.day", keyParts[5])
 		usageItem.SetField("uesio/studio.actiontype", keyParts[6])
 		usageItem.SetField("uesio/studio.metadatatype", keyParts[7])
 		usageItem.SetField("uesio/studio.metadataname", keyParts[8])
@@ -145,47 +127,5 @@ func UsageJob() error {
 	}
 
 	logger.Log("Job completed, no issues found", logger.INFO)
-	return nil
-}
-
-func InvoicingJob() error {
-
-	logger.Log("Invoicing Job Running", logger.INFO)
-
-	session, err := auth.GetStudioSystemSession(nil)
-	if err != nil {
-		return err
-	}
-
-	var apps meta.AppCollection
-	err = datasource.PlatformLoad(&apps, nil, session)
-	if err != nil {
-		return err
-	}
-
-	apps.Loop(func(item meta.Item, _ string) error {
-		uniqueKey, err := item.GetField(adapt.UNIQUE_KEY_FIELD)
-		if err != nil {
-			return err
-		}
-
-		uniqueKeyAsString, ok := uniqueKey.(string)
-		if !ok {
-			return errors.New("uniqueKey must be a string")
-		}
-
-		logger.Log("Creating invoice for: "+uniqueKeyAsString, logger.INFO)
-
-		params := map[string]interface{}{"appID": uniqueKeyAsString}
-		err = datasource.RunCreateInvoiceListenerBot(params, nil, session)
-
-		if err != nil {
-			logger.Log("Error creating invoice for: "+uniqueKeyAsString, logger.ERROR)
-			return err
-		}
-
-		return nil
-	})
-
 	return nil
 }

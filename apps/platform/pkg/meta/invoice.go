@@ -5,7 +5,6 @@ type Invoice struct {
 	UniqueKey string    `json:"uesio/core.uniquekey"`
 	AutoID    string    `json:"uesio/studio.autoid"`
 	App       *App      `json:"uesio/studio.app"`
-	BillTo    *User     `json:"uesio/studio.billto"`
 	Date      string    `json:"uesio/studio.date"`
 	Total     float64   `json:"uesio/studio.total"`
 	itemMeta  *ItemMeta `json:"-"`
