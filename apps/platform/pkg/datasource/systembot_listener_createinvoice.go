@@ -9,6 +9,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+type record struct {
+	total       int64
+	price       float64
+	description string
+}
+
 func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 
 	invoiceLinesDeps := adapt.Collection{}
@@ -46,7 +52,6 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	}
 
 	//SAVE the invoce (we need the ID)
-
 	invoice := meta.Invoice{
 		App:    &app,
 		Date:   time.Now().Format("2006-01-02"),
@@ -81,7 +86,7 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		return err
 	}
 
-	//get all licensesIds as string
+	//get all licensesIds as string & prepare invoice lines
 	licensesIds := []string{}
 	licenses.Loop(func(item meta.Item, _ string) error {
 		id, err := item.GetField(adapt.ID_FIELD)
@@ -121,7 +126,6 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 			"uesio/studio.invoice": map[string]interface{}{
 				adapt.ID_FIELD: invoice.ID,
 			},
-			// "uesio/studio.amount":      monthlypricefloat,
 			"uesio/studio.description": uniqueKeyAsString,
 			"uesio/studio.quantity":    1,
 			"uesio/studio.price":       monthlypricefloat,
@@ -152,14 +156,14 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		return err
 	}
 
-	//get usage for this app in a date range?
+	//Usage
 	metadatatypes := []string{"FILESOURCE", "DATASOURCE"}
 	var usage meta.UsageCollection
 
-	//month range calculation
-	now := time.Now()
-	currentYear, currentMonth, _ := now.Date()
-	currentLocation := now.Location()
+	//last month range
+	lastMonth := time.Now().AddDate(0, -1, 0)
+	currentYear, currentMonth, _ := lastMonth.Date()
+	currentLocation := lastMonth.Location()
 
 	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
 	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
@@ -193,12 +197,6 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	)
 	if err != nil {
 		return err
-	}
-
-	type record struct {
-		total       int64
-		price       float64
-		description string
 	}
 
 	accumulate := make(map[string]record, lpic.Len())
@@ -281,7 +279,7 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 
 	}
 
-	//SAve the lines & the invoice
+	//Save the lines & the invoice
 	err = SaveWithOptions([]SaveRequest{
 		{
 			Collection: "uesio/studio.invoiceline",
