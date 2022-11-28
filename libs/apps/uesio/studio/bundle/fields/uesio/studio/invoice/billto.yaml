@@ -1,0 +1,6 @@
+name: billto
+type: REFERENCE
+label: Bill to
+required: true
+reference:
+  collection: uesio/core.user

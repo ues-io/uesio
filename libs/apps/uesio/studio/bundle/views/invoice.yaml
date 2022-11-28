@@ -22,6 +22,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.autoid:
+        uesio/studio.billto:
         uesio/studio.app:
         uesio/studio.total:
         uesio/studio.date:
@@ -103,6 +104,8 @@ definition:
                                             items:
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.autoid
+                                              - uesio/io.field:
+                                                  fieldId: uesio/studio.billto
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.date
                                               - uesio/io.field:

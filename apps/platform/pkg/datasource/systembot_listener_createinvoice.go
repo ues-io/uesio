@@ -26,17 +26,12 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 		return errors.New("Error creating a new invoice, missing app")
 	}
 
-	//LOAD the APP we need
+	//LOAD the APP
 	var app meta.App
 	err := PlatformLoadOne(
 		&app,
 		&PlatformLoadOptions{
 			Connection: connection,
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: adapt.ID_FIELD,
-				},
-			},
 			Conditions: []adapt.LoadRequestCondition{
 				{
 					Field: adapt.UNIQUE_KEY_FIELD,
@@ -53,8 +48,9 @@ func RunCreateInvoiceListenerBot(params map[string]interface{}, connection adapt
 	//SAVE the invoce (we need the ID)
 
 	invoice := meta.Invoice{
-		App:  &app,
-		Date: time.Now().Format("2006-01-02"),
+		App:    &app,
+		Date:   time.Now().Format("2006-01-02"),
+		BillTo: app.Owner,
 	}
 
 	err = PlatformSaveOne(&invoice, nil, connection, session)
