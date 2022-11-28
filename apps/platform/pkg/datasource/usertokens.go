@@ -21,6 +21,16 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 	}
 	session.AddToken("uesio.installed", depTokens)
 
+	// A special user access token type for licensed deps
+	depTokens2 := []string{}
+	for _, value := range session.GetContextAppBundle().Licenses {
+		appLicensed := value.AppLicensed
+		if appLicensed != nil {
+			depTokens2 = append(depTokens2, appLicensed.UniqueKey)
+		}
+	}
+	session.AddToken("uesio.licensed", depTokens2)
+
 	// A special user access token type for named permissions
 	namedPermTokens := []string{}
 	for key := range session.GetContextPermissions().NamedRefs {
