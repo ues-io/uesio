@@ -46,3 +46,26 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 	err := SaveWithOptions(requests, as.session, GetConnectionSaveOptions(as.connection))
 	return HandleSaveRequestErrors(requests, err)
 }
+
+func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+
+	collection := &adapt.Collection{}
+
+	op := &adapt.LoadOp{
+		CollectionName: request.Collection,
+		Collection:     collection,
+		WireName:       "apibeforesave",
+		Fields:         request.Fields,
+		Conditions:     request.Conditions,
+		Order:          request.Order,
+		Query:          true,
+	}
+
+	err := loadData(op, bs.session)
+	if err != nil {
+		return nil, err
+	}
+
+	return collection, nil
+
+}
