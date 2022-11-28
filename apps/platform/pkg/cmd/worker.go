@@ -19,10 +19,14 @@ import (
 
 func init() {
 
+	validArgs := []string{"invoicing"}
+
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "work",
-		Short: "uesio work",
-		Run:   worker,
+		Use:       "work",
+		Short:     "uesio work",
+		Run:       worker,
+		ValidArgs: validArgs,
+		Args:      cobra.OnlyValidArgs,
 	})
 
 }
@@ -31,19 +35,20 @@ func worker(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running uesio worker", logger.INFO)
 
-	err := InvoicingJob()
-	if err != nil {
-		logger.Log("Invoicing Job failed reason: "+err.Error(), logger.ERROR)
+	if len(args) > 0 && args[0] == "invoicing" {
+		err := InvoicingJob()
+		if err != nil {
+			logger.Log("Invoicing Job failed reason: "+err.Error(), logger.ERROR)
+		}
+	} else {
+		for {
+			err := UsageJob()
+			if err != nil {
+				logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
+			}
+			time.Sleep(5 * time.Second)
+		}
 	}
-
-	// for {
-	// 	err := UsageJob()
-	// 	if err != nil {
-	// 		logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-	// 	}
-	// 	time.Sleep(5 * time.Second)
-	// }
-
 }
 
 func UsageJob() error {
@@ -59,6 +64,7 @@ func UsageJob() error {
 	}
 
 	if len(keys) == 0 {
+		logger.Log("Job completed, nothing to process", logger.INFO)
 		return nil
 	}
 
@@ -138,7 +144,7 @@ func UsageJob() error {
 		}
 	}
 
-	logger.Log("Job completed without any issues", logger.INFO)
+	logger.Log("Job completed, no issues found", logger.INFO)
 	return nil
 }
 
