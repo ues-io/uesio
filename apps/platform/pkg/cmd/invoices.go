@@ -108,6 +108,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 			Description: license.UniqueKey,
 			Quantity:    1,
 			Price:       license.MonthlyPrice,
+			Total:       license.MonthlyPrice,
 		})
 
 		//this is just to avoid looping at the end

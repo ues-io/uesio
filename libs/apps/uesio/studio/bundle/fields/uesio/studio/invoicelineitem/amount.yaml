@@ -1,6 +1,0 @@
-name: amount
-label: amount
-type: FORMULA
-formula:
-  expression: uesio/studio.quantity * uesio/studio.price
-  returntype: NUMBER

@@ -38,7 +38,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.invoice:
-        uesio/studio.amount:
+        uesio/studio.total:
         uesio/studio.description:
         uesio/studio.price:
         uesio/studio.quantity:
@@ -123,5 +123,5 @@ definition:
                             - field: uesio/studio.description
                             - field: uesio/studio.quantity
                             - field: uesio/studio.price
-                            - field: uesio/studio.amount
+                            - field: uesio/studio.total
                           pagesize: 10
