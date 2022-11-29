@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
@@ -18,25 +17,20 @@ import (
 )
 
 func init() {
-
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "work",
-		Short: "uesio work",
-		Run:   worker,
+		Use:   "usage",
+		Short: "uesio usage",
+		Run:   usage,
 	})
-
 }
 
-func worker(cmd *cobra.Command, args []string) {
+func usage(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running uesio worker", logger.INFO)
 
-	for {
-		err := UsageJob()
-		if err != nil {
-			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-		}
-		time.Sleep(5 * time.Second)
+	err := UsageJob()
+	if err != nil {
+		logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
 	}
 
 }
@@ -54,6 +48,7 @@ func UsageJob() error {
 	}
 
 	if len(keys) == 0 {
+		logger.Log("Job completed, nothing to process", logger.INFO)
 		return nil
 	}
 
@@ -101,7 +96,7 @@ func UsageJob() error {
 		usageItem.SetField("uesio/studio.site", &meta.Site{
 			UniqueKey: tenantID,
 		})
-		total, _ := strconv.ParseFloat(values[i], 64)
+		total, _ := strconv.ParseInt(values[i], 10, 64)
 		usageItem.SetField("uesio/studio.total", total)
 		changes = append(changes, &usageItem)
 
@@ -129,6 +124,6 @@ func UsageJob() error {
 		}
 	}
 
-	logger.Log("Job completed without any issues", logger.INFO)
+	logger.Log("Job completed, no issues found", logger.INFO)
 	return nil
 }

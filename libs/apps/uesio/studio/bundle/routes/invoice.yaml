@@ -1,0 +1,4 @@
+name: invoice
+path: app/{app:\w*\/\w*}/invoice/{invoiceid}
+view: uesio/studio.invoice
+theme: uesio/studio.default

@@ -1,0 +1,6 @@
+name: invoice
+nameField: uesio/studio.autoid
+label: invoice
+pluralLabel: invoices
+uniqueKey:
+  - uesio/studio.autoid

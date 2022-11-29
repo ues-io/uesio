@@ -1,0 +1,4 @@
+name: invoicelineitem
+nameField: uesio/studio.invoice
+label: invoice line item
+pluralLabel: invoice line items

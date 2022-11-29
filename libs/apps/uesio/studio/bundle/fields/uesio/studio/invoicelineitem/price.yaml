@@ -1,0 +1,5 @@
+name: price
+label: price
+type: NUMBER
+number:
+  decimals: 2

@@ -1,0 +1,5 @@
+name: quantity
+label: quantity
+type: NUMBER
+number:
+  decimals: 0
