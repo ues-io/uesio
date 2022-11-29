@@ -359,9 +359,9 @@ definition:
                       value: "AUTONUMBER"
                   components:
                     - uesio/io.field:
-                        fieldId: uesio/studio.autonumber->studio.prefix
+                        fieldId: uesio/studio.autonumber->uesio/studio.prefix
                     - uesio/io.field:
-                        fieldId: uesio/studio.autonumber->studio.leadingzeros
+                        fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
