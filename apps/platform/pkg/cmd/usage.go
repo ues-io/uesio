@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
@@ -27,12 +26,11 @@ func init() {
 
 func usage(cmd *cobra.Command, args []string) {
 
-	for {
-		err := UsageJob()
-		if err != nil {
-			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-		}
-		time.Sleep(5 * time.Second)
+	logger.Log("Running uesio worker", logger.INFO)
+
+	err := UsageJob()
+	if err != nil {
+		logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
 	}
 
 }
