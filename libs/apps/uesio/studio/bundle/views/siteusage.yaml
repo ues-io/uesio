@@ -51,8 +51,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_load:
       collection: uesio/studio.usage
       fields:
@@ -74,8 +72,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_save:
       collection: uesio/studio.usage
       fields:
@@ -97,8 +93,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_download:
       collection: uesio/studio.usage
       fields:
@@ -118,8 +112,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_upload:
       collection: uesio/studio.usage
       fields:
@@ -139,8 +131,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_download_bytes:
       collection: uesio/studio.usage
       fields:
@@ -160,8 +150,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
     usage_upload_bytes:
       collection: uesio/studio.usage
       fields:
@@ -181,23 +169,21 @@ definition:
           valueSource: LOOKUP
           lookupWire: sites
           lookupField: uesio/core.id
-      init:
-        query: false
-  events:
-    onload:
-      - signal: "wire/LOAD"
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
-        wires:
-          - usage
-          - usage_load
-          - usage_save
-          - usage_download
-          - usage_upload
-          - usage_download_bytes
-          - usage_upload_bytes
+  # events:
+  #   onload:
+  #     - signal: "wire/LOAD"
+  #       uesio.context:
+  #         siteadmin:
+  #           name: $Param{sitename}
+  #           app: $Param{app}
+  #       wires:
+  #         - usage
+  #         - usage_load
+  #         - usage_save
+  #         - usage_download
+  #         - usage_upload
+  #         - usage_download_bytes
+  #         - usage_upload_bytes
 
   # Components are how we describe the layout of our view
   components:
