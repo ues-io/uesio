@@ -49,7 +49,7 @@ func InvoicingJob() error {
 	}
 
 	for _, app := range apps {
-		err := RunCreateInvoiceListenerBot(app, nil, session)
+		err := CreateInvoice(app, nil, session)
 		if err != nil {
 			return err
 		}
@@ -59,7 +59,7 @@ func InvoicingJob() error {
 
 }
 
-func RunCreateInvoiceListenerBot(app *meta.App, connection adapt.Connection, session *sess.Session) error {
+func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Session) error {
 
 	invoiceLineItems := meta.InvoiceLineItemCollection{}
 
