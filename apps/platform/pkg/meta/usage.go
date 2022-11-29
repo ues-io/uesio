@@ -8,7 +8,6 @@ type Usage struct {
 	ActionType   string    `json:"uesio/studio.actiontype"`
 	MetadataName string    `json:"uesio/studio.metadataname"`
 	Day          string    `json:"uesio/studio.day"`
-	Timestamp    int64     `json:"uesio/studio.timestamp"`
 	User         string    `json:"uesio/studio.user"`
 	App          *App      `json:"uesio/studio.app"`
 	Site         *Site     `json:"uesio/studio.site"`

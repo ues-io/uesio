@@ -2,4 +2,4 @@ name: quantity
 label: quantity
 type: NUMBER
 number:
-  decimals: 2
+  decimals: 0

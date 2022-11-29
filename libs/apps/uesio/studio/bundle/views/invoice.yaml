@@ -22,7 +22,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.autoid:
-        uesio/studio.billto:
         uesio/studio.app:
         uesio/studio.total:
         uesio/studio.date:
@@ -35,7 +34,7 @@ definition:
           lookupWire: apps
           lookupField: uesio/core.id
     invoicelines:
-      collection: uesio/studio.invoiceline
+      collection: uesio/studio.invoicelineitem
       fields:
         uesio/core.id:
         uesio/studio.invoice:
@@ -104,8 +103,6 @@ definition:
                                             items:
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.autoid
-                                              - uesio/io.field:
-                                                  fieldId: uesio/studio.billto
                                               - uesio/io.field:
                                                   fieldId: uesio/studio.date
                                               - uesio/io.field:
