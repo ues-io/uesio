@@ -47,6 +47,7 @@ definition:
         uesio/studio.number:
         uesio/studio.subfields:
         uesio/studio.formula:
+        uesio/studio.autonumber:
       conditions:
         - field: uesio/studio.collection
           value: $Param{app}.$Param{collectionname}
@@ -209,6 +210,20 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/studio.number->uesio/studio.decimals
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: "AUTONUMBER"
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.autonumber->uesio/studio.prefix
+                                  - uesio/io.box:
+                                      uesio.display:
+                                        - field: uesio/studio.type
+                                          value: "AUTONUMBER"
+                                      components:
+                                        - uesio/io.field:
+                                            fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
