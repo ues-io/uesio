@@ -198,7 +198,6 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 		invoiceLineItem.Quantity = invoiceLineItem.Quantity + usageitem.Total
 
-		return nil
 	}
 
 	//calculate total & save

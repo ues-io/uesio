@@ -98,7 +98,7 @@ func UsageJob() error {
 		usageItem.SetField("uesio/studio.site", &meta.Site{
 			UniqueKey: tenantID,
 		})
-		total, _ := strconv.ParseFloat(values[i], 64)
+		total, _ := strconv.ParseInt(values[i], 10, 64)
 		usageItem.SetField("uesio/studio.total", total)
 		changes = append(changes, &usageItem)
 

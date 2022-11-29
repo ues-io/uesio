@@ -5,14 +5,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getTotal(change *adapt.ChangeItem) (float64, error) {
-	var oldTotal, newTotal float64
+func getTotal(change *adapt.ChangeItem) (int64, error) {
+	var oldTotal, newTotal int64
 	oldVal, err := change.GetOldField("uesio/core.total")
 	if err != nil {
 		return 0, err
 	}
 
-	oldInt, ok := oldVal.(float64)
+	oldInt, ok := oldVal.(int64)
 	if ok {
 		oldTotal = oldInt
 	}
@@ -22,7 +22,7 @@ func getTotal(change *adapt.ChangeItem) (float64, error) {
 		return 0, err
 	}
 
-	newInt, ok := newVal.(float64)
+	newInt, ok := newVal.(int64)
 	if ok {
 		newTotal = newInt
 	}
