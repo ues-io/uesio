@@ -178,8 +178,8 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			return nil, err
 		}
 
-		go usage.RegisterEvent("UPLOAD", "FILESOURCE", fs.GetKey(), 0, session)
-		go usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
+		usage.RegisterEvent("UPLOAD", "FILESOURCE", fs.GetKey(), 0, session)
+		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{

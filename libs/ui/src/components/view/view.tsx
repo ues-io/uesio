@@ -19,7 +19,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const uesio = useUesio(props)
 	uesio._componentType = "uesio/core.view"
 	const componentId = uesio.component.getId(id)
-	const viewId = makeViewId(viewDefId, path ? id || path : "")
+	const viewId = makeViewId(viewDefId, path ? id || path : "$root")
 
 	const subViewClass = css({
 		pointerEvents: "none",

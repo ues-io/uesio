@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -50,38 +51,38 @@ func DeleteKeys(keys []string) error {
 	return nil
 }
 
-func SetHash(key string, data map[string]string) error {
+func Set(key string, data interface{}) error {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return SetString(key, string(bytes))
+}
+
+func SetString(key string, data string) error {
 	conn := GetRedisConn()
 	defer conn.Close()
-
-	conn.Send("HSET", redis.Args{}.Add(key).AddFlat(data)...)
-	conn.Send("EXPIRE", key, redisTTL)
-	conn.Flush()
-
-	_, err := conn.Receive()
+	_, err := conn.Do("SET", key, data, "EX", redisTTL)
 	if err != nil {
-		return fmt.Errorf("Error Setting cache value: " + err.Error())
+		return err
 	}
-
-	_, err = conn.Receive()
-	if err != nil {
-		fmt.Println("Error Setting cache value: " + err.Error())
-	}
-
 	return nil
 }
 
-func GetHash(key string) (map[string]string, error) {
+func GetString(key string) (string, error) {
 	conn := GetRedisConn()
 	defer conn.Close()
-	result, err := redis.StringMap(conn.Do("HGETALL", key))
+	return redis.String(conn.Do("GET", key))
+}
+
+func Get(key string, data interface{}) error {
+	//start := time.Now()
+	dataString, err := GetString(key)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if len(result) == 0 {
-		return nil, nil
-	}
-	return result, nil
+	//fmt.Printf("REDIS GET %v %v\n", key, time.Since(start))
+	return json.Unmarshal([]byte(dataString), data)
 }
 
 func GetUserKey(userid, siteid string) string {
@@ -90,4 +91,8 @@ func GetUserKey(userid, siteid string) string {
 
 func GetHostKey(domainType, domainValue string) string {
 	return fmt.Sprintf("host:%s:%s", domainType, domainValue)
+}
+
+func GetLicenseKey(namespace string) string {
+	return fmt.Sprintf("license:%s", namespace)
 }

@@ -62,6 +62,18 @@ func (op *SaveOp) LoopUpdates(changeFunc func(change *ChangeItem) error) error {
 	return nil
 }
 
+func (op *SaveOp) LoopDeletes(changeFunc func(change *ChangeItem) error) error {
+	if op.Deletes != nil {
+		for i := range op.Deletes {
+			err := changeFunc(op.Deletes[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (op *SaveOp) LoopChanges(changeFunc func(change *ChangeItem) error) error {
 	err := op.LoopInserts(changeFunc)
 	if err != nil {

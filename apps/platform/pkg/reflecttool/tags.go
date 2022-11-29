@@ -11,12 +11,11 @@ func getFieldName(objType reflect.Type, uesioName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	for name, tag := range tags {
-		if uesioName == tag {
-			return name, nil
-		}
+	name, ok := tags[uesioName]
+	if !ok {
+		return "", errors.New("Could not find field: " + uesioName + " : " + objType.String())
 	}
-	return "", errors.New("Could not find field: " + uesioName + " : " + objType.String())
+	return name, nil
 }
 
 func GetFieldNames(obj interface{}) ([]string, error) {
@@ -36,7 +35,7 @@ func getFieldNamesReflect(objType reflect.Type) ([]string, error) {
 	}
 	names := make([]string, len(tags))
 	i := 0
-	for _, tag := range tags {
+	for tag := range tags {
 		names[i] = tag
 		i++
 	}
@@ -51,7 +50,6 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 	cached, ok := tagCache[objType]
 	lock.RUnlock()
 	if ok {
-
 		return cached, nil
 	}
 	fieldsCount := objType.NumField()
@@ -66,7 +64,7 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 			if tag == "-" || tag == "" {
 				continue
 			}
-			allTags[structField.Name] = tag
+			allTags[tag] = structField.Name
 		}
 	}
 
