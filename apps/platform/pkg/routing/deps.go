@@ -228,36 +228,32 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		subParams := map[string]string{}
 
 		viewID := meta.GetNodeValueAsString(viewCompDef, "id")
-		if viewID == "" {
-			subParams = nil
-		} else {
 
-			// Process the params
-			for i, prop := range viewCompDef.Content {
+		// Process the params
+		for i, prop := range viewCompDef.Content {
 
-				if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
+			if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
 
-					if len(viewCompDef.Content) > i {
-						valueNode := viewCompDef.Content[i+1]
-						paramsNodes, err := meta.GetMapNodes(valueNode)
+				if len(viewCompDef.Content) > i {
+					valueNode := viewCompDef.Content[i+1]
+					paramsNodes, err := meta.GetMapNodes(valueNode)
+					if err != nil {
+						return err
+					}
+					for _, param := range paramsNodes {
+						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, mergeFuncs)
 						if err != nil {
 							return err
 						}
-						for _, param := range paramsNodes {
-							template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, mergeFuncs)
-							if err != nil {
-								return err
-							}
 
-							mergedValue, err := templating.Execute(template, nil)
-							if err != nil {
-								// If we fail here just bail on making params.
-								// We'll process the view client side.
-								subParams = nil
-								break
-							}
-							subParams[param.Key] = mergedValue
+						mergedValue, err := templating.Execute(template, nil)
+						if err != nil {
+							// If we fail here just bail on making params.
+							// We'll process the view client side.
+							subParams = nil
+							break
 						}
+						subParams[param.Key] = mergedValue
 					}
 				}
 			}
@@ -269,7 +265,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 	}
 
-	if params != nil {
+	if viewInstanceID != "" {
 		ops := []*adapt.LoadOp{}
 
 		for _, pair := range depMap.Wires {
@@ -448,7 +444,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	packs := map[string]meta.ComponentPackCollection{}
 
-	err = processView(route.ViewRef, "", deps, route.Params, packs, session)
+	err = processView(route.ViewRef, "$root", deps, route.Params, packs, session)
 	if err != nil {
 		return nil, err
 	}

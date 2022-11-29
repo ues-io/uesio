@@ -8,23 +8,9 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
-
-	user := session.GetUserInfo()
-
-	if user.Username == "boot" || user.Username == "system" {
-		return nil
-	}
-
-	if user.ID == "" {
-		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
-	}
-
+func registerInternal(key string, size int64) error {
 	conn := cache.GetRedisConn()
 	defer conn.Close()
-
-	currentTime := time.Now()
-	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
 
 	conn.Send("SADD", "USAGE_KEYS", key)
 
@@ -45,4 +31,25 @@ func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, se
 	}
 
 	return nil
+}
+
+func RegisterEvent(actiontype, metadatatype, metadataname string, size int64, session *sess.Session) error {
+
+	user := session.GetUserInfo()
+
+	if user.Username == "boot" || user.Username == "system" {
+		return nil
+	}
+
+	if user.ID == "" {
+		return fmt.Errorf("Error Registering Usage Event: Empty User ID ")
+	}
+
+	currentTime := time.Now()
+	key := fmt.Sprintf("event:%s:%s:%s:%s:%s:%s", session.GetSiteTenantID(), user.ID, currentTime.Format("2006-01-02"), actiontype, metadatatype, metadataname)
+
+	go registerInternal(key, size)
+
+	return nil
+
 }

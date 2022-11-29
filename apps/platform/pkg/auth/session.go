@@ -65,7 +65,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 func getUserFromSession(userid string, site *meta.Site) (*meta.User, error) {
 
 	// Get Cache site info for the host
-	cachedUser, ok := GetUserCache(userid, site.GetAppFullName())
+	cachedUser, ok := getUserCache(userid, site.GetAppFullName())
 	if ok {
 		return cachedUser, nil
 	}
@@ -77,7 +77,7 @@ func getUserFromSession(userid string, site *meta.Site) (*meta.User, error) {
 		return nil, err
 	}
 
-	err = SetUserCache(userid, site.GetAppFullName(), user)
+	err = setUserCache(userid, site.GetAppFullName(), user)
 	if err != nil {
 		return nil, err
 	}

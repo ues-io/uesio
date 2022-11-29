@@ -45,8 +45,8 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	go usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
-	go usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
+	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
 
 	return content, &userFile, nil
 

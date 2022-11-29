@@ -294,8 +294,8 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		if op.HasErrors() {
 			return adapt.NewGenericSaveError(errors.New("Error with after save bots"))
 		}
-		go usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
-		go usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
+		usage.RegisterEvent("SAVE", "COLLECTION", op.Metadata.GetFullName(), 0, session)
+		usage.RegisterEvent("SAVE", "DATASOURCE", dsKey, 0, session)
 	}
 
 	return nil

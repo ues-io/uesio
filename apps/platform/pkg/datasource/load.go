@@ -363,8 +363,8 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			if err != nil {
 				return nil, err
 			}
-			go usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
-			go usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
+			usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
+			usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
 		}
 	}
 	return metadataResponse, nil

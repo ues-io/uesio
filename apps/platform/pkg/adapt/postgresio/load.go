@@ -147,6 +147,8 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
+	//start := time.Now()
+
 	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
@@ -198,6 +200,8 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
+
+	//fmt.Printf("PG LOAD %v %v\n", op.CollectionName, time.Since(start))
 
 	op.BatchNumber++
 
