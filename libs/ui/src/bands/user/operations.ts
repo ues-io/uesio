@@ -34,7 +34,11 @@ const signup =
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		const response = await platform.signup(signupMethod, mergedPayload)
+		const mergedSignupMethod = context.merge(signupMethod)
+		const response = await platform.signup(
+			mergedSignupMethod,
+			mergedPayload
+		)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
@@ -47,8 +51,9 @@ const signUpConfirm =
 				"No credentials were provided for signup confirmation."
 			)
 		const mergedPayload = context.mergeMap(payload)
+		const mergedSignupMethod = context.merge(signupMethod)
 		try {
-			await platform.signUpConfirm(signupMethod, mergedPayload)
+			await platform.signUpConfirm(mergedSignupMethod, mergedPayload)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
@@ -89,8 +94,12 @@ const checkAvailability =
 	async (dispatch, getState, platform) => {
 		const mergedUsername = context.merge(username)
 		if (mergedUsername) {
+			const mergedSignupMethod = context.merge(signupMethod)
 			try {
-				await platform.checkAvailability(signupMethod, mergedUsername)
+				await platform.checkAvailability(
+					mergedSignupMethod,
+					mergedUsername
+				)
 				return dispatch(wireRemoveError(context, usernameFieldId))
 			} catch (error) {
 				const message = getErrorString(error)
@@ -124,8 +133,12 @@ const forgotPasswordConfirm =
 				"No credentials were provided for forgot password confirmation."
 			)
 		const mergedPayload = context.mergeMap(payload)
+		const mergedSignupMethod = context.merge(signupMethod)
 		try {
-			await platform.forgotPasswordConfirm(signupMethod, mergedPayload)
+			await platform.forgotPasswordConfirm(
+				mergedSignupMethod,
+				mergedPayload
+			)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)

@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func init() {
@@ -324,4 +325,45 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 		return "", errors.New("Missing required payload value: " + key)
 	}
 	return value, nil
+}
+
+func boostPayloadWithTemplate(payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
+
+	domain, err := queryDomainFromSite(site.ID)
+	if err != nil {
+		return err
+	}
+
+	host := getHostFromDomain(domain, site)
+
+	link := fmt.Sprintf("%s/%s?code={####}", host, options.Redirect)
+
+	templateMergeValues := map[string]interface{}{
+		"app":  site.GetAppFullName(),
+		"site": site.Name,
+		"link": link,
+	}
+
+	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)
+	if err != nil {
+		return err
+	}
+	mergedSubject, err := templating.Execute(subjectTemplate, templateMergeValues)
+	if err != nil {
+		return err
+	}
+
+	bodyTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailBody)
+	if err != nil {
+		return err
+	}
+	mergedBody, err := templating.Execute(bodyTemplate, templateMergeValues)
+	if err != nil {
+		return err
+	}
+
+	payload["subject"] = mergedSubject
+	payload["message"] = mergedBody
+
+	return nil
 }

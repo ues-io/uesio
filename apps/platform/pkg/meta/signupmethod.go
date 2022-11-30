@@ -19,31 +19,31 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 	}, nil
 }
 
-type AdminCreateOptions struct {
+type EmailTemplateOptions struct {
 	EmailSubject string `yaml:"emailSubject" json:"uesio/studio.emailsubject"`
 	EmailBody    string `yaml:"emailBody" json:"uesio/studio.emailbody"`
 	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
-
 type SignupMethod struct {
-	ID               string             `yaml:"-" json:"uesio/core.id"`
-	UniqueKey        string             `yaml:"-" json:"uesio/core.uniquekey"`
-	Name             string             `yaml:"name" json:"uesio/studio.name"`
-	Namespace        string             `yaml:"-" json:"-"`
-	AuthSource       string             `yaml:"authsource" json:"uesio/studio.authsource"`
-	Profile          string             `yaml:"profile" json:"uesio/studio.profile"`
-	UsernameTemplate string             `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
-	LandingRoute     string             `yaml:"landingRoute" json:"uesio/studio.landingroute"`
-	UsernameRegex    string             `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
-	AdminCreate      AdminCreateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
-	Workspace        *Workspace         `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta         *ItemMeta          `yaml:"-" json:"-"`
-	CreatedBy        *User              `yaml:"-" json:"uesio/core.createdby"`
-	Owner            *User              `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy        *User              `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt        int64              `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt        int64              `yaml:"-" json:"uesio/core.createdat"`
-	Public           bool               `yaml:"public,omitempty" json:"uesio/studio.public"`
+	ID               string               `yaml:"-" json:"uesio/core.id"`
+	UniqueKey        string               `yaml:"-" json:"uesio/core.uniquekey"`
+	Name             string               `yaml:"name" json:"uesio/studio.name"`
+	Namespace        string               `yaml:"-" json:"-"`
+	AuthSource       string               `yaml:"authsource" json:"uesio/studio.authsource"`
+	Profile          string               `yaml:"profile" json:"uesio/studio.profile"`
+	UsernameTemplate string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
+	LandingRoute     string               `yaml:"landingRoute" json:"uesio/studio.landingroute"`
+	UsernameRegex    string               `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
+	AdminCreate      EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
+	Signup           EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
+	Workspace        *Workspace           `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta         *ItemMeta            `yaml:"-" json:"-"`
+	CreatedBy        *User                `yaml:"-" json:"uesio/core.createdby"`
+	Owner            *User                `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy        *User                `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt        int64                `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt        int64                `yaml:"-" json:"uesio/core.createdat"`
+	Public           bool                 `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type SignupMethodWrapper SignupMethod

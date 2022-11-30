@@ -50,6 +50,11 @@ func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Si
 		return nil, errors.New("Signup failed: Regex validation failed")
 	}
 
+	err = boostPayloadWithTemplate(payload, site, &signupMethod.Signup)
+	if err != nil {
+		return nil, err
+	}
+
 	claims, err := authconn.Signup(payload, username, session)
 	if err != nil {
 		return nil, err
