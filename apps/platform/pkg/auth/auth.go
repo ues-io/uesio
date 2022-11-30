@@ -246,6 +246,20 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	return authSource, nil
 }
 
+func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
+	signupMethod, err := meta.NewSignupMethod(key)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(signupMethod, session)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return signupMethod, nil
+}
+
 func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod

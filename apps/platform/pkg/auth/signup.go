@@ -4,9 +4,7 @@ import (
 	"errors"
 	"regexp"
 
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -26,19 +24,14 @@ func matchesRegex(usarname string, regex string) bool {
 	return validMetaRegex.MatchString(usarname)
 }
 
-func Signup(namespace, name string, payload map[string]interface{}, site *meta.Site) (*meta.SignupMethod, error) {
-
-	signupMethod := &meta.SignupMethod{
-		Name:      name,
-		Namespace: namespace,
-	}
+func Signup(signupMethodID string, payload map[string]interface{}, site *meta.Site) (*meta.SignupMethod, error) {
 
 	session, err := GetSystemSession(site, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundle.Load(signupMethod, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +75,22 @@ func Signup(namespace, name string, payload map[string]interface{}, site *meta.S
 	return signupMethod, nil
 }
 
-func ConfirmSignUp(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
-	conn, err := GetAuthConnection(authSourceID, session)
+func ConfirmSignUp(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+
+	session, err := GetSystemSession(site, nil)
 	if err != nil {
 		return err
 	}
 
-	return conn.ConfirmSignUp(payload, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
+	if err != nil {
+		return err
+	}
+
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	if err != nil {
+		return err
+	}
+
+	return authconn.ConfirmSignUp(payload, session)
 }

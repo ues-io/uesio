@@ -164,7 +164,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
 
 	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
-	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
+	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST") // AuthSource (leave for now)
 	siteAPI(sr, "/auth/"+getItemParam()+"/signup", controller.Signup).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
 	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword", controller.ForgotPassword).Methods("POST")

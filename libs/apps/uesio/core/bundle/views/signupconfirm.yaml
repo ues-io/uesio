@@ -80,7 +80,7 @@ definition:
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS
-                                          authSource: uesio/core.platform
+                                          signupMethod: uesio/core.platform
                                           payload:
                                             username: ${uesio/viewonly.username}
                                             verificationcode: ${uesio/viewonly.verificationcode}

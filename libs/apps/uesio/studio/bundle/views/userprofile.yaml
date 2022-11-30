@@ -136,7 +136,7 @@ definition:
                                                 onerror:
                                                   signals:
                                                     - signal: notification/ADD_ERRORS
-                                                authSource: uesio/core.platform
+                                                signupMethod: uesio/core.platform
                                                 payload:
                                                   username: ${uesio/core.username}
                                               - signal: notification/ADD

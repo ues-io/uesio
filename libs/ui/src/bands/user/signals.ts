@@ -13,16 +13,23 @@ interface SignupSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
 }
+interface SignupConfirmSignal extends SignalDefinition {
+	signupMethod: string
+	payload: Record<string, string>
+}
 interface UsernameTestSignal extends SignalDefinition {
 	username: string
 	signupMethod: string
 	fieldId: string
 }
 interface ForgotPasswordSignal extends SignalDefinition {
-	authSource: string
+	signupMethod: string
 	payload: Record<string, string>
 }
-
+interface ForgotPasswordConfirmSignal extends SignalDefinition {
+	signupMethod: string
+	payload: Record<string, string>
+}
 interface CreateLoginSignal extends SignalDefinition {
 	signupMethod: string
 	payload: Record<string, string>
@@ -49,18 +56,18 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${USER_BAND}/SIGNUP_CONFIRM`]: {
-		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+		dispatcher: (signal: SignupConfirmSignal, context: Context) =>
 			operations.signUpConfirm(
 				context,
-				signal.authSource,
+				signal.signupMethod,
 				signal.payload
 			),
 		label: "SignUp Confirmation",
 		description: "SignUp Confirmation",
 		properties: () => [
 			{
-				name: "authSource",
-				label: "Auth Source",
+				name: "signupMethod",
+				label: "Signup Method",
 				type: "TEXT",
 			},
 			{
@@ -111,15 +118,15 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
 			operations.forgotPassword(
 				context,
-				signal.authSource,
+				signal.signupMethod,
 				signal.payload
 			),
 		label: "Forgot Password",
 		description: "Forgot Password",
 		properties: () => [
 			{
-				name: "authSource",
-				label: "Auth Source",
+				name: "signupMethod",
+				label: "Signup Method",
 				type: "TEXT",
 			},
 			{
@@ -130,18 +137,18 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${USER_BAND}/FORGOT_PASSWORD_CONFIRM`]: {
-		dispatcher: (signal: ForgotPasswordSignal, context: Context) =>
+		dispatcher: (signal: ForgotPasswordConfirmSignal, context: Context) =>
 			operations.forgotPasswordConfirm(
 				context,
-				signal.authSource,
+				signal.signupMethod,
 				signal.payload
 			),
 		label: "Forgot Password Confirmation",
 		description: "Forgot Password Confirmation",
 		properties: () => [
 			{
-				name: "authSource",
-				label: "Auth Source",
+				name: "signupMethod",
+				label: "Signup Method",
 				type: "TEXT",
 			},
 			{
