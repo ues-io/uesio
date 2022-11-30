@@ -4,18 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func CreateLogin(namespace, name string, payload map[string]interface{}, siteAdminSession *sess.Session) (*meta.SignupMethod, error) {
-
-	signupMethod := &meta.SignupMethod{
-		Name:      name,
-		Namespace: namespace,
-	}
+func CreateLogin(signupMethodID string, payload map[string]interface{}, siteAdminSession *sess.Session) (*meta.SignupMethod, error) {
 
 	siteAdmin := siteAdminSession.GetSiteAdmin()
 
@@ -24,7 +18,7 @@ func CreateLogin(namespace, name string, payload map[string]interface{}, siteAdm
 		return nil, err
 	}
 
-	err = bundle.Load(signupMethod, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
 	if err != nil {
 		return nil, err
 	}

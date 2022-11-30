@@ -14,11 +14,9 @@ func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 	site := session.GetSite()
 
 	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
 	testUsername := vars["username"]
 
-	user, err := auth.CheckAvailability(namespace, name, testUsername, site)
+	user, err := auth.CheckAvailability(getSignupMethodID(mux.Vars(r)), testUsername, site)
 	if user != nil && err == nil {
 		msg := "Username not available, try something more creative"
 		http.Error(w, msg, http.StatusBadRequest)

@@ -1,24 +1,18 @@
 package auth
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func CheckAvailability(namespace, name, testUsername string, site *meta.Site) (*meta.User, error) {
+func CheckAvailability(signupMethodID string, testUsername string, site *meta.Site) (*meta.User, error) {
 	payload := map[string]interface{}{"username": testUsername}
-
-	signupMethod := &meta.SignupMethod{
-		Name:      name,
-		Namespace: namespace,
-	}
 
 	session, err := GetSystemSession(site, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	err = bundle.Load(signupMethod, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
 	if err != nil {
 		return nil, err
 	}
