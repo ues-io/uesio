@@ -13,26 +13,34 @@ import (
 )
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
-	fieldName := getFieldName(fieldMetadata)
+	fieldName := getFieldName(fieldMetadata, "main")
 	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
 }
 
-func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
+func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
+	fieldsField := getAliasedName("fields", tableAlias)
 	switch fieldMetadata.Type {
 	case "CHECKBOX":
-		return "(main.fields->>'" + fieldName + "')::boolean"
+		return fmt.Sprintf("(%s->>'%s')::boolean", fieldsField, fieldName)
 	case "TIMESTAMP":
-		return "(main.fields->>'" + fieldName + "')::bigint"
+		return fmt.Sprintf("(%s->>'%s')::bigint", fieldsField, fieldName)
 	case "NUMBER":
-		return "main.fields->'" + fieldName + "'"
+		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
 	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
-		return "main.fields->'" + fieldName + "'"
+		return fmt.Sprintf("%s->'%s'", fieldsField, fieldName)
 	default:
 		// Cast to string
-		return "main.fields->>'" + fieldName + "'"
+		return fmt.Sprintf("%s->>'%s'", fieldsField, fieldName)
 	}
+}
+
+func getAliasedName(name, alias string) string {
+	if alias == "" {
+		return name
+	}
+	return fmt.Sprintf("%s.%s", alias, name)
 }
 
 func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
@@ -60,7 +68,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 	builder := NewQueryBuilder()
 
-	err = getConditions(op, metadata, collectionMetadata, session, builder)
+	err = processConditionList(op.Conditions, collectionMetadata, metadata, builder, "main", session)
 	if err != nil {
 		return err
 	}
@@ -97,18 +105,22 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 
 			newTable := currentTable + "sub"
 
-			joins = append(joins, "LEFT OUTER JOIN data as \""+newTable+"\" ON "+currentTable+".fields->>'"+accessField+"' = "+newTable+".fields->>'uesio/core.id' AND "+newTable+".collection = '"+refCollectionName+"'")
+			currentTableFields := getAliasedName("fields", currentTable)
+			newTableFields := getAliasedName("fields", newTable)
+			newTableCollection := getAliasedName("collection", newTable)
 
-			accessFieldID = newTable + ".id"
+			joins = append(joins, fmt.Sprintf("LEFT OUTER JOIN data as \"%s\" ON %s->>'%s' = %s->>'%s' AND %s = '%s'", newTable, currentTableFields, accessField, newTableFields, adapt.ID_FIELD, newTableCollection, refCollectionName))
+
+			accessFieldID = getAliasedName("id", newTable)
 
 			currentTable = newTable
 
 		}
 
 		if op.RequireWriteAccess {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM tokens WHERE token = ANY(%s) AND readonly != true)", accessFieldID, builder.addValue(userTokens)))
 		} else if collectionMetadata.IsReadProtected() {
-			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM public.tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
+			builder.addQueryPart(fmt.Sprintf("%s IN (SELECT fullid FROM tokens WHERE token = ANY(%s))", accessFieldID, builder.addValue(userTokens)))
 		}
 	}
 
@@ -125,7 +137,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		fieldName := getFieldName(fieldMetadata)
+		fieldName := getFieldName(fieldMetadata, "main")
 		if err != nil {
 			return err
 		}
@@ -148,6 +160,8 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	}
 
 	//start := time.Now()
+	//fmt.Println(loadQuery)
+	//fmt.Println(builder.Values)
 
 	rows, err := db.Query(context.Background(), loadQuery, builder.Values...)
 	if err != nil {
