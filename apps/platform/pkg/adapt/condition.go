@@ -31,5 +31,7 @@ type LoadRequestCondition struct {
 	LookupField   string                 `json:"lookupField" yaml:"lookupField"`
 	SearchFields  []string               `json:"fields" yaml:"fields"`
 	SubConditions []LoadRequestCondition `json:"conditions" yaml:"conditions"`
+	SubCollection string                 `json:"subcollection" yaml:"subcollection"`
+	SubField      string                 `json:"subfield" yaml:"subfield"`
 	Conjunction   string                 `json:"conjunction" yaml:"conjunction"`
 }
