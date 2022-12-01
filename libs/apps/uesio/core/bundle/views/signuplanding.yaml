@@ -36,13 +36,21 @@ definition:
                         padding: 40px
                     element: div
                 - uesio/io.text:
-                    text: Discover the fascinating world of Uesio.
+                    text: Account has been created successfully!
                     uesio.styles:
                       root:
                         fontSize: 14pt
                         fontWeight: bold
                         lineHeight: 20px
                         textShadow: 1px 1px rgba(250,250,250,.3)
-                        float: left
-                        padding: 20px 30px
+                        padding: 10px
+                    element: div
+                - uesio/io.text:
+                    text: Please check your email and confirm your identity.
+                    uesio.styles:
+                      root:
+                        fontSize: 10pt
+                        fontWeight: bold
+                        lineHeight: 20px
+                        textShadow: 1px 1px rgba(250,250,250,.3)
                     element: div
