@@ -1,0 +1,3 @@
+name: filevideo
+pack: main
+entrypoint: utilities/filevideo/filevideo.tsx

@@ -11,6 +11,7 @@ const MultiCheckField = component.getUtility("uesio/io.multicheckfield")
 const ReferenceField = component.getUtility("uesio/io.referencefield")
 const FileText = component.getUtility("uesio/io.filetext")
 const FileImage = component.getUtility("uesio/io.fileimage")
+const FileVideo = component.getUtility("uesio/io.filevideo")
 const FilePreview = component.getUtility("uesio/io.filepreview")
 const File = component.getUtility("uesio/io.file")
 const UserField = component.getUtility("uesio/io.userfield")
@@ -114,6 +115,8 @@ const getFieldContent = (
 			return <FileText {...common} />
 		case type === "FILE" && displayAs === "IMAGE":
 			return <FileImage {...common} />
+		case type === "FILE" && displayAs === "VIDEO":
+				return <FileVideo {...common} />
 		case type === "FILE" && displayAs === "PREVIEW":
 			return <FilePreview {...common} />
 		case type === "FILE" && displayAs === "MARKDOWN":

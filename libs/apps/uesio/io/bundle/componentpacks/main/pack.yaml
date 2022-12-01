@@ -66,6 +66,7 @@ components:
     filepreview:
     filetext:
     fileimage:
+    filevideo:
     file:
     fileuploadarea:
     form:
