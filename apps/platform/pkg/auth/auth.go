@@ -327,7 +327,7 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 	return value, nil
 }
 
-func boostPayloadWithTemplate(payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
+func boostPayloadWithTemplate(username string, payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
 
 	domain, err := queryDomainFromSite(site.ID)
 	if err != nil {
@@ -339,9 +339,10 @@ func boostPayloadWithTemplate(payload map[string]interface{}, site *meta.Site, o
 	link := fmt.Sprintf("%s/%s?code={####}", host, options.Redirect)
 
 	templateMergeValues := map[string]interface{}{
-		"app":  site.GetAppFullName(),
-		"site": site.Name,
-		"link": link,
+		"app":      site.GetAppFullName(),
+		"site":     site.Name,
+		"link":     link,
+		"username": username,
 	}
 
 	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)

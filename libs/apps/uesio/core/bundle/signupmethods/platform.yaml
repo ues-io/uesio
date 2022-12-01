@@ -9,6 +9,7 @@ adminCreate:
   emailSubject: "User Created in ${site} ${app}"
   emailBody: |
     A user account has been created for you in ${site} ${app}.
+    Your username is: ${username} .
 
     You can set your password and log in using the link below:
     ${link}

@@ -63,7 +63,7 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 				{
 					signal: "notification/ADD",
 					text: "An email has been sent to the user!",
-					details: "He can now set a password",
+					details: "new password can be inserted",
 					severity: "success",
 				},
 			],

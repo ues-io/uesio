@@ -35,7 +35,7 @@ func CreateLogin(signupMethodID string, payload map[string]interface{}, siteAdmi
 		return nil, errors.New("Create Login failed: Regex validation failed")
 	}
 
-	err = boostPayloadWithTemplate(payload, siteAdmin, &signupMethod.AdminCreate)
+	err = boostPayloadWithTemplate(username, payload, siteAdmin, &signupMethod.AdminCreate)
 	if err != nil {
 		return nil, err
 	}
