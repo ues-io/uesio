@@ -24,49 +24,19 @@ func init() {
 
 }
 
-func siteAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
-	router := r.PathPrefix(path).Subrouter()
-	router.Use(middleware.Authenticate)
-	router.Use(middleware.LogRequestHandler)
-	return router.Path("").HandlerFunc(f)
-}
-
-func siteAndWorkspaceAPI(wr *mux.Router, sr *mux.Router, path string, f http.HandlerFunc, method string) {
-	siteAPI(sr, path, f).Methods(method)
-	workspaceAPI(wr, path, f).Methods(method)
-}
-
-func workspaceAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
-	router := r.PathPrefix(path).Subrouter()
-	router.Use(middleware.Authenticate)
-	router.Use(middleware.LogRequestHandler)
-	router.Use(middleware.AuthenticateWorkspace)
-	return router.Path("").HandlerFunc(f)
-}
-
-func versionAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
-	router := r.PathPrefix(path).Subrouter()
-	router.Use(middleware.Authenticate)
-	router.Use(middleware.LogRequestHandler)
-	router.Use(middleware.AuthenticateVersion)
-	return router.Path("").HandlerFunc(f)
-}
-
-func siteAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
-	router := r.PathPrefix(path).Subrouter()
-	router.Use(middleware.Authenticate)
-	router.Use(middleware.LogRequestHandler)
-	router.Use(middleware.AuthenticateSiteAdmin)
-	return router.Path("").HandlerFunc(f)
-}
-
 func getNSParam(paramName string) string {
-	return fmt.Sprintf("{%s:\\w*\\/\\w*}", paramName)
+	return fmt.Sprintf("{%s:\\w+\\/\\w+}", paramName)
 }
 
-func getItemParam() string {
-	return fmt.Sprintf("%s/{name}", getNSParam("namespace"))
+func getFullItemParam(paramName string) string {
+	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
+
+var appParam = getNSParam("app")
+var nsParam = getNSParam("namespace")
+var itemParam = fmt.Sprintf("%s/{name}", nsParam)
+var groupingParam = getFullItemParam("grouping")
+var collectionParam = getFullItemParam("collectionname")
 
 func serve(cmd *cobra.Command, args []string) {
 
@@ -76,106 +46,208 @@ func serve(cmd *cobra.Command, args []string) {
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods("GET")
-	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods("GET")
-	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods("GET")
-	r.HandleFunc("/health", controller.Health).Methods("GET")
+	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods(http.MethodGet)
+	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods(http.MethodGet)
+	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
+	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
-	wr := r.PathPrefix("/workspace/" + getNSParam("app") + "/{workspace}").Subrouter()
+	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
+	wr := r.PathPrefix(workspacePath).Subrouter()
+	wr.Use(middleware.Authenticate)
+	wr.Use(middleware.LogRequestHandler)
+	wr.Use(middleware.AuthenticateWorkspace)
+
 	// The version router
-	vr := r.PathPrefix("/version/" + getNSParam("app") + "/" + getNSParam("namespace") + "/{version}").Subrouter()
+	versionPath := fmt.Sprintf("/version/%s/%s/{version}", appParam, nsParam)
+	vr := r.PathPrefix(versionPath).Subrouter()
+	vr.Use(middleware.Authenticate)
+	vr.Use(middleware.LogRequestHandler)
+	vr.Use(middleware.AuthenticateVersion)
+
 	// The site admin router
-	sar := r.PathPrefix("/siteadmin/" + getNSParam("app") + "/{site}").Subrouter()
+	siteAdminPath := fmt.Sprintf("/siteadmin/%s/{site}", appParam)
+	sa := r.PathPrefix(siteAdminPath).Subrouter()
+	sa.Use(middleware.Authenticate, middleware.LogRequestHandler)
+	sa.Use(middleware.LogRequestHandler)
+	sa.Use(middleware.AuthenticateSiteAdmin)
+
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
+	sr.Use(middleware.Authenticate)
+	sr.Use(middleware.LogRequestHandler)
 
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controller.UploadUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/delete/{fileid:.*}", controller.DeleteUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/call/"+getItemParam(), controller.CallListenerBot, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/"+getItemParam(), controller.GetBotParams, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/files/"+getItemParam(), controller.ServeFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/app/"+getNSParam("namespace")+"/{route:.*}", controller.ServeRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}", controller.CollectionRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/collection/"+getItemParam()+"/{viewtype}/{id}", controller.CollectionRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/path/"+getNSParam("namespace")+"/{route:.*}", controller.Route, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js", controller.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js", controller.ServeComponentPack(false), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/builder.js.map", controller.ServeComponentPackMap(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/"+getItemParam()+"/runtime.js.map", controller.ServeComponentPackMap(false), "GET")
+	// The local router
+	lr := r.NewRoute().Subrouter()
+	lr.Use(middleware.Authenticate, middleware.LogRequestHandler)
 
-	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
-	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/generate/"+getItemParam(), controller.GenerateToWorkspace).Methods("POST")
-	workspaceAPI(wr, "/metadata/builder/"+getItemParam(), controller.BuilderMetadata).Methods("GET")
+	// Userfile routes for site and workspace context
+	userfileUploadPath := "/userfiles/upload"
+	sr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
 
-	workspaceAPI(wr, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
-	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
+	userfileDeletePath := "/userfiles/delete/{fileid:.*}"
+	sr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
 
-	workspaceAPI(wr, "/bulk/job", controller.BulkJob).Methods("POST")
-	workspaceAPI(wr, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
+	userfileDownloadPath := "/userfiles/download"
+	sr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
+	wr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
+	sa.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
 
-	workspaceAPI(wr, "/views/"+getItemParam()+"/preview", controller.ViewPreview(false)).Methods("GET")
-	workspaceAPI(wr, "/views/"+getItemParam()+"/edit", controller.ViewPreview(true)).Methods("GET")
+	// Wire load and save routes for site and workspace context
+	wireLoadPath := "/wires/load"
+	sr.HandleFunc(wireLoadPath, controller.Load).Methods(http.MethodPost)
+	wr.HandleFunc(wireLoadPath, controller.Load).Methods(http.MethodPost)
+	sa.HandleFunc(wireLoadPath, controller.Load).Methods(http.MethodPost)
 
-	workspaceAPI(wr, "/configvalues", controller.ConfigValues).Methods("GET")
-	workspaceAPI(wr, "/configvalues/"+getItemParam(), controller.SetConfigValue).Methods("POST")
-	workspaceAPI(wr, "/secrets", controller.Secrets).Methods("GET")
-	workspaceAPI(wr, "/secrets/"+getItemParam(), controller.SetSecret).Methods("POST")
-	workspaceAPI(wr, "/featureflags", controller.FeatureFlag).Methods("GET")
-	workspaceAPI(wr, "/featureflags/"+getItemParam(), controller.SetFeatureFlag).Methods("POST")
-	workspaceAPI(wr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
+	wireSavePath := "/wires/save"
+	sr.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
+	wr.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
+	sa.HandleFunc(wireSavePath, controller.Save).Methods(http.MethodPost)
 
-	versionAPI(vr, "/metadata/generate/{name}", controller.Generate).Methods("POST")
-	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
-	versionAPI(vr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
-	versionAPI(vr, "/metadata/types/{type}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
-	versionAPI(vr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
+	// Bot routes for site and workspace context
+	callBotPath := fmt.Sprintf("/bots/call/%s", itemParam)
+	sr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
+	wr.HandleFunc(callBotPath, controller.CallListenerBot).Methods(http.MethodPost)
 
-	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
-	siteAdminAPI(sar, "/configvalues/"+getItemParam(), controller.SetConfigValue).Methods("POST")
-	siteAdminAPI(sar, "/secrets", controller.Secrets).Methods("GET")
-	siteAdminAPI(sar, "/secrets/"+getItemParam(), controller.SetSecret).Methods("POST")
-	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
-	siteAdminAPI(sar, "/featureflags/"+getItemParam(), controller.SetFeatureFlag).Methods("POST")
-	siteAdminAPI(sar, "/metadata/namespaces/{type}", controller.NamespaceList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
-	siteAdminAPI(sar, "/collections/meta/{collectionname:\\w+\\/\\w+\\.\\w+}", controller.GetCollectionMetadata).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/namespace/"+getNSParam("namespace")+"/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/metadata/types/{type}/list/{grouping:\\w+\\/\\w+\\.\\w+}", controller.MetadataList).Methods("GET")
-	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
-	siteAdminAPI(sar, "/wires/save", controller.Save).Methods("POST")
-	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
-	siteAdminAPI(sar, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
-	siteAdminAPI(sar, "/userfiles/download", controller.DownloadUserFile).Methods("GET")
-	siteAdminAPI(sar, "/userfiles/upload", controller.UploadUserFile).Methods("POST")
-	siteAdminAPI(sar, "/userfiles/delete/{fileid:.*}", controller.DeleteUserFile).Methods("POST")
-	siteAdminAPI(sar, "/auth/"+getItemParam()+"/createlogin", controller.CreateLogin).Methods("POST")
-	siteAdminAPI(sar, "/{invalidroute:.*}", http.NotFound).Methods("GET")
+	botParamPath := fmt.Sprintf("/bots/params/{type}/%s", itemParam)
+	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
+	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
-	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
-	siteAPI(sr, "/auth/"+getItemParam()+"/login", controller.Login).Methods("POST")
-	siteAPI(sr, "/auth/"+getItemParam()+"/signup", controller.Signup).Methods("POST")
-	siteAPI(sr, "/auth/"+getItemParam()+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
-	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword", controller.ForgotPassword).Methods("POST")
-	siteAPI(sr, "/auth/"+getItemParam()+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
-	siteAPI(sr, "/auth/"+getItemParam()+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
+	// File (actual metadata, not userfiles) routes for site and workspace context
+	filesPath := fmt.Sprintf("/files/%s", itemParam)
+	sr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
 
-	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
-	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
-	siteAPI(sr, "/rest/"+getItemParam(), controller.Rest).Methods("GET")
-	siteAPI(sr, "/{invalidroute:.*}", http.NotFound).Methods("GET")
-	siteAPI(r, "/{route:.*}", controller.ServeLocalRoute).Methods("GET")
+	// Explicit namespaced route page load access for site and workspace context
+	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
+	sr.HandleFunc(serveRoutePath, controller.ServeRoute)
+	wr.HandleFunc(serveRoutePath, controller.ServeRoute)
+
+	// Route navigation apis for site and workspace context
+	collectionRoutePath := fmt.Sprintf("/routes/collection/%s/{viewtype}", itemParam)
+	sr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath, controller.CollectionRoute).Methods(http.MethodGet)
+	sr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
+	wr.HandleFunc(collectionRoutePath+"/{id}", controller.CollectionRoute).Methods(http.MethodGet)
+
+	pathRoutePath := fmt.Sprintf("/routes/path/%s/{route:.*}", nsParam)
+	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
+	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
+
+	// Component pack routes for site and workspace context
+	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
+	sr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
+
+	// Workspace context specific routes
+	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)
+	wr.HandleFunc("/metadata/retrieve", controller.Retrieve).Methods(http.MethodGet, http.MethodPost)
+	wr.HandleFunc("/metadata/generate/"+itemParam, controller.GenerateToWorkspace).Methods(http.MethodPost)
+	wr.HandleFunc("/metadata/builder/"+itemParam, controller.BuilderMetadata).Methods(http.MethodGet)
+
+	// Get Collection Metadata (We may be able to get rid of this someday...)
+	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
+	wr.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodPost)
+	sa.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodPost)
+
+	// List All Available Namespaces
+	namespaceListPath := "/metadata/namespaces"
+	wr.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
+	sa.HandleFunc(namespaceListPath, controller.NamespaceList).Methods(http.MethodGet)
+	wr.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
+	sa.HandleFunc(namespaceListPath+"/{type}", controller.NamespaceList).Methods(http.MethodGet)
+
+	// List All Namespace Items
+	itemListPath := "/metadata/types/{type}/list"
+	wr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
+	sa.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(itemListPath, controller.MetadataList).Methods(http.MethodGet)
+
+	itemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/list/%s", groupingParam)
+	wr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+	sa.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+	vr.HandleFunc(itemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+
+	nsItemListPath := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list", nsParam)
+	wr.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
+	sa.HandleFunc(nsItemListPath, controller.MetadataList).Methods(http.MethodGet)
+
+	nsItemListPathWithGrouping := fmt.Sprintf("/metadata/types/{type}/namespace/%s/list/%s", nsParam, groupingParam)
+	wr.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+	sa.HandleFunc(nsItemListPathWithGrouping, controller.MetadataList).Methods(http.MethodGet)
+
+	// Bulk Job Routes
+	bulkJobPath := "/bulk/job"
+	wr.HandleFunc(bulkJobPath, controller.BulkJob).Methods(http.MethodPost)
+	sa.HandleFunc(bulkJobPath, controller.BulkJob).Methods(http.MethodPost)
+
+	bulkBatchPath := "/bulk/job/{job}/batch"
+	wr.HandleFunc(bulkBatchPath, controller.BulkBatch).Methods(http.MethodPost)
+	sa.HandleFunc(bulkBatchPath, controller.BulkBatch).Methods(http.MethodPost)
+
+	// View Preview Routes
+	viewPath := fmt.Sprintf("/views/%s", itemParam)
+	wr.HandleFunc(viewPath+"/preview", controller.ViewPreview(false)).Methods(http.MethodGet)
+	wr.HandleFunc(viewPath+"/edit", controller.ViewPreview(true)).Methods(http.MethodGet)
+
+	// Config Value Routes
+	wr.HandleFunc("/configvalues", controller.ConfigValues).Methods("GET")
+	sa.HandleFunc("/configvalues", controller.ConfigValues).Methods("GET")
+	wr.HandleFunc("/configvalues/"+itemParam, controller.SetConfigValue).Methods("POST")
+	sa.HandleFunc("/configvalues/"+itemParam, controller.SetConfigValue).Methods("POST")
+
+	sr.HandleFunc("/configvalues/{key}", controller.ConfigValue).Methods("GET")
+
+	// Secrets Routes
+	wr.HandleFunc("/secrets", controller.Secrets).Methods("GET")
+	sa.HandleFunc("/secrets", controller.Secrets).Methods("GET")
+	wr.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
+	sa.HandleFunc("/secrets/"+itemParam, controller.SetSecret).Methods("POST")
+
+	// Feature Flag Routes
+	wr.HandleFunc("/featureflags", controller.FeatureFlag).Methods("GET")
+	sa.HandleFunc("/featureflags/{user}", controller.FeatureFlag).Methods("GET")
+	wr.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
+	sa.HandleFunc("/featureflags/"+itemParam, controller.SetFeatureFlag).Methods("POST")
+
+	// Version context specific routes
+	vr.HandleFunc("/metadata/generate/{name}", controller.Generate).Methods("POST")
+	vr.HandleFunc("/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
+
+	// Auth Routes
+	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")
+
+	sr.HandleFunc("/auth/logout", controller.Logout).Methods("POST")
+	sr.HandleFunc("/auth/check", controller.AuthCheck).Methods("GET")
+
+	// Experimental REST api route
+	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
+
+	// Add Invalid Routes to all subrouters to give 404s
+	invalidPath := "/{invalidroute:.*}"
+	sr.HandleFunc(invalidPath, http.NotFound).Methods(http.MethodGet, http.MethodPost)
+	wr.HandleFunc(invalidPath, http.NotFound).Methods(http.MethodGet, http.MethodPost)
+	sa.HandleFunc(invalidPath, http.NotFound).Methods(http.MethodGet, http.MethodPost)
+	vr.HandleFunc(invalidPath, http.NotFound).Methods(http.MethodGet, http.MethodPost)
+
+	// Special handling for local routes
+	lr.HandleFunc("/{route:.*}", controller.ServeLocalRoute)
 
 	port := os.Getenv("PORT")
 	if port == "" {
