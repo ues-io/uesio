@@ -22,4 +22,16 @@ signup:
     You can confirm your account using the link below:
     ${link}
   redirect: "site/app/uesio/core/signupconfirm"
+forgotPassword:
+  emailSubject: "password change request in ${site} ${app}"
+  emailBody: |
+    Hi ${username},
+
+    There was a request to change your password!
+
+    If you did not make this request then please ignore this email.
+
+    Otherwise, please click this link to change your password: ${link}
+
+  redirect: "site/app/uesio/core/changepassword"
 public: true

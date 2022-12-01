@@ -36,6 +36,7 @@ type SignupMethod struct {
 	UsernameRegex    string               `yaml:"usernameRegex" json:"uesio/studio.usernameregex"`
 	AdminCreate      EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup           EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
+	ForgotPassword   EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
 	Workspace        *Workspace           `yaml:"-" json:"uesio/studio.workspace"`
 	itemMeta         *ItemMeta            `yaml:"-" json:"-"`
 	CreatedBy        *User                `yaml:"-" json:"uesio/core.createdby"`
