@@ -93,5 +93,7 @@ definition:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
                             - uesio/io.field:
+                                uesio.context:
+                                  fieldMode: EDIT
                                 displayAs: PREVIEW
                                 fieldId: uesio/studio.content

@@ -25,7 +25,7 @@ const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, fieldId, record, context, wire } = props
+	const { fieldMetadata, fieldId, record, context, wire, mode } = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
@@ -94,7 +94,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 			deleteLabelId={deleteLabelId}
 		>
 			{
-				<>
+				mode === "EDIT" && <>
 					<label
 						className={styles.cx(classes.editicon, "hovershow")}
 						htmlFor={uploadLabelId}
