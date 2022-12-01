@@ -54,32 +54,43 @@ func serve(cmd *cobra.Command, args []string) {
 	// The workspace router
 	workspacePath := fmt.Sprintf("/workspace/%s/{workspace}", appParam)
 	wr := r.PathPrefix(workspacePath).Subrouter()
-	wr.Use(middleware.Authenticate)
-	wr.Use(middleware.LogRequestHandler)
-	wr.Use(middleware.AuthenticateWorkspace)
+	wr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+		middleware.AuthenticateWorkspace,
+	)
 
 	// The version router
 	versionPath := fmt.Sprintf("/version/%s/%s/{version}", appParam, nsParam)
 	vr := r.PathPrefix(versionPath).Subrouter()
-	vr.Use(middleware.Authenticate)
-	vr.Use(middleware.LogRequestHandler)
-	vr.Use(middleware.AuthenticateVersion)
+	vr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+		middleware.AuthenticateVersion,
+	)
 
 	// The site admin router
 	siteAdminPath := fmt.Sprintf("/siteadmin/%s/{site}", appParam)
 	sa := r.PathPrefix(siteAdminPath).Subrouter()
-	sa.Use(middleware.Authenticate, middleware.LogRequestHandler)
-	sa.Use(middleware.LogRequestHandler)
-	sa.Use(middleware.AuthenticateSiteAdmin)
+	sa.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+		middleware.AuthenticateSiteAdmin,
+	)
 
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
-	sr.Use(middleware.Authenticate)
-	sr.Use(middleware.LogRequestHandler)
+	sr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+	)
 
 	// The local router
 	lr := r.NewRoute().Subrouter()
-	lr.Use(middleware.Authenticate, middleware.LogRequestHandler)
+	lr.Use(
+		middleware.Authenticate,
+		middleware.LogRequestHandler,
+	)
 
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
