@@ -30,7 +30,7 @@ const Video: FC<VideoProps> = (props) => {
 				uesio.signal.getHandler(definition.signals)
 			}
 		>
-					<video height={definition.height} width={definition.width} autoPlay={definition.autoplay || false} muted={definition.muted || false}>
+					<video loop={definition.loop || false} height={definition.height} width={definition.width} autoPlay={definition.autoplay || false} muted={definition.muted || false}>
 					<source src={definition.file
 						? uesio.file.getURLFromFullName(
 								context,

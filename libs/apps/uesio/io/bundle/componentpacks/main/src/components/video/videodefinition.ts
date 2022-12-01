@@ -5,8 +5,9 @@ type VideoDefinition = {
 	src?: string
 	height?: string
 	width?: string
-	muted: boolean
-	autoplay: boolean
+	muted?: boolean
+	autoplay?: boolean
+	loop?: boolean
 	signals?: signal.SignalDefinition[]
 }
 
@@ -45,6 +46,11 @@ const VideoPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "muted",
 			type: "BOOLEAN",
 			label: "Muted",
+		},
+		{
+			name: "loop",
+			type: "BOOLEAN",
+			label: "Loop",
 		},
 		{
 			name: "autoplay",
