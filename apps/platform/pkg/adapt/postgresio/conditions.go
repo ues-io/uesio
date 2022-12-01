@@ -62,14 +62,14 @@ func (qb *QueryBuilder) String() string {
 	return strings.Join(qb.Parts, conjunctionWithSpace)
 }
 
-func processSearchCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+func processSearchCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
 	nameFieldMetadata, err := collectionMetadata.GetNameField()
 	if err != nil {
 		return err
 	}
 
-	nameFieldDB := getFieldName(nameFieldMetadata)
+	nameFieldDB := getFieldName(nameFieldMetadata, tableAlias)
 
 	searchToken := condition.Value.(string)
 	if searchToken == "" {
@@ -83,7 +83,7 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 		if err != nil {
 			return err
 		}
-		searchFields[getFieldName(fieldMetadata)] = true
+		searchFields[getFieldName(fieldMetadata, tableAlias)] = true
 	}
 	// Split the search token on spaces to tokenize the search
 	tokens := strings.Fields(searchToken)
@@ -99,13 +99,13 @@ func processSearchCondition(condition adapt.LoadRequestCondition, collectionMeta
 	return nil
 }
 
-func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+func processValueCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
 	if err != nil {
 		return err
 	}
 
-	fieldName := getFieldName(fieldMetadata)
+	fieldName := getFieldName(fieldMetadata, tableAlias)
 	switch condition.Operator {
 	case "IN":
 		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
@@ -152,59 +152,53 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	return nil
 }
 
-func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+func processGroupCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	subbuilder := builder.getSubBuilder(condition.Conjunction)
-	for _, subcondition := range condition.SubConditions {
-		err := processCondition(subcondition, collectionMetadata, subbuilder)
-		if err != nil {
-			return err
-		}
+	err := processConditionList(condition.SubConditions, collectionMetadata, metadata, subbuilder, tableAlias, session)
+	if err != nil {
+		return err
 	}
 	builder.addQueryPart(subbuilder.String())
 	return nil
 }
 
-func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, builder *QueryBuilder) error {
+func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 
-	if condition.Type == "SEARCH" {
-		return processSearchCondition(condition, collectionMetadata, builder)
+	fieldMetadata, err := collectionMetadata.GetField(condition.Field)
+	if err != nil {
+		return err
 	}
 
-	if condition.Type == "GROUP" {
-		return processGroupCondition(condition, collectionMetadata, builder)
+	subTableAlias := "subquery"
+
+	fieldName := getFieldName(fieldMetadata, tableAlias)
+
+	subFieldMetadata, err := collectionMetadata.GetField(condition.SubField)
+	if err != nil {
+		return err
 	}
 
-	return processValueCondition(condition, collectionMetadata, builder)
+	subFieldName := getFieldName(subFieldMetadata, subTableAlias)
+
+	subCollectionMetadata, err := metadata.GetCollection(condition.SubCollection)
+	if err != nil {
+		return err
+	}
+
+	subConditionsBuilder := builder.getSubBuilder("")
+	err = processConditionList(condition.SubConditions, subCollectionMetadata, metadata, subConditionsBuilder, subTableAlias, session)
+	if err != nil {
+		return err
+	}
+
+	subQueryBuilder := builder.getSubBuilder("")
+	subQueryBuilder.addQueryPart(fmt.Sprintf("SELECT %s FROM data as \"%s\" WHERE %s", subFieldName, subTableAlias, subConditionsBuilder.String()))
+	builder.addQueryPart(fmt.Sprintf("%s IN %s", fieldName, subQueryBuilder.String()))
+
+	return nil
 }
 
-func idConditionOptimization(condition *adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder) {
-	if condition.Operator != "IN" {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, condition.Value))))
-		return
-	}
-
-	values := condition.Value.([]string)
-	if len(values) == 1 {
-		builder.addQueryPart(fmt.Sprintf("main.id = %s", builder.addValue(makeDBId(collectionName, values[0]))))
-		return
-	}
-
-	appendedValues := make([]string, len(values))
-	for i, v := range values {
-		appendedValues[i] = makeDBId(collectionName, v)
-	}
-	builder.addQueryPart(fmt.Sprintf("main.id = ANY(%s)", builder.addValue(appendedValues)))
-	return
-}
-
-func getConditions(
-	op *adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	collectionMetadata *adapt.CollectionMetadata,
-	session *sess.Session,
-	builder *QueryBuilder,
-) error {
-
+func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
@@ -212,20 +206,63 @@ func getConditions(
 		return err
 	}
 
-	// Shortcut optimization
-	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD && (op.Conditions[0].Operator == "IN" || op.Conditions[0].Operator == "EQ") {
-		idConditionOptimization(&op.Conditions[0], collectionName, builder)
-		return nil
+	// Shortcut optimization for id field and unique key
+	if len(conditions) == 1 {
+		canOptimizeOperator := conditions[0].Operator == "IN" || conditions[0].Operator == "EQ" || conditions[0].Operator == ""
+		if canOptimizeOperator && conditions[0].Field == adapt.ID_FIELD {
+			conditionOptimization(conditions[0], collectionName, builder, "id", tableAlias)
+			return nil
+		}
+		if canOptimizeOperator && conditions[0].Field == adapt.UNIQUE_KEY_FIELD {
+			conditionOptimization(conditions[0], collectionName, builder, "uniquekey", tableAlias)
+			return nil
+		}
 	}
 
-	builder.addQueryPart(fmt.Sprintf("main.collection = %s", builder.addValue(collectionName)))
-
-	for _, condition := range op.Conditions {
-		err := processCondition(condition, collectionMetadata, builder)
+	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	for _, condition := range conditions {
+		err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
+}
+
+func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
+
+	if condition.Type == "SEARCH" {
+		return processSearchCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+	}
+
+	if condition.Type == "GROUP" {
+		return processGroupCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+	}
+
+	if condition.Type == "SUBQUERY" {
+		return processSubQueryCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+	}
+
+	return processValueCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
+}
+
+func conditionOptimization(condition adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder, fieldName, tableAlias string) {
+	optimizeField := getAliasedName(fieldName, tableAlias)
+	if condition.Operator != "IN" {
+		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, condition.Value))))
+		return
+	}
+
+	values := condition.Value.([]string)
+	if len(values) == 1 {
+		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, values[0]))))
+		return
+	}
+
+	appendedValues := make([]string, len(values))
+	for i, v := range values {
+		appendedValues[i] = makeDBId(collectionName, v)
+	}
+	builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", optimizeField, builder.addValue(appendedValues)))
+	return
 }

@@ -47,7 +47,8 @@ func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
 }
 
 func processConditions(
-	op *adapt.LoadOp,
+	conditions []adapt.LoadRequestCondition,
+	params map[string]string,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
 	session *sess.Session,
@@ -55,7 +56,7 @@ func processConditions(
 
 	mergeFuncs := map[string]interface{}{
 		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
-			val, ok := op.Params[key]
+			val, ok := params[key]
 			if !ok {
 				return nil, errors.New("missing param " + key)
 			}
@@ -73,7 +74,17 @@ func processConditions(
 		},
 	}
 
-	for i, condition := range op.Conditions {
+	for i, condition := range conditions {
+
+		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
+			if condition.SubConditions != nil {
+				err := processConditions(condition.SubConditions, params, metadata, ops, session)
+				if err != nil {
+					return err
+				}
+			}
+			continue
+		}
 
 		if condition.ValueSource == "" || condition.ValueSource == "VALUE" {
 			// make sure the condition value is a string
@@ -91,16 +102,16 @@ func processConditions(
 				return err
 			}
 
-			op.Conditions[i].Value = mergedValue
+			conditions[i].Value = mergedValue
 		}
 
 		if condition.ValueSource == "PARAM" && condition.Param != "" {
-			value, ok := op.Params[condition.Param]
+			value, ok := params[condition.Param]
 			if !ok {
 				return errors.New("Invalid Condition: " + condition.Param)
 			}
-			op.Conditions[i].Value = value
-			op.Conditions[i].ValueSource = ""
+			conditions[i].Value = value
+			conditions[i].ValueSource = ""
 		}
 
 		if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
@@ -122,8 +133,8 @@ func processConditions(
 			if err != nil {
 				return err
 			}
-			op.Conditions[i].Value = value
-			op.Conditions[i].ValueSource = ""
+			conditions[i].Value = value
+			conditions[i].ValueSource = ""
 		}
 	}
 
@@ -341,7 +352,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 		for _, op := range batch {
 
-			err := processConditions(op, metadataResponse, batch, session)
+			err := processConditions(op.Conditions, op.Params, metadataResponse, batch, session)
 			if err != nil {
 				return nil, err
 			}
