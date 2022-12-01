@@ -283,24 +283,6 @@ definition:
                                               - uesio/io.box:
                                                   components:
                                                     - uesio/io.button:
-                                                        uesio.styles:
-                                                          root:
-                                                            marginRight: 2em
-                                                        signals:
-                                                          - signal: user/FORGOT_PASSWORD
-                                                            onerror:
-                                                              signals:
-                                                                - signal: notification/ADD_ERRORS
-                                                            authSource: ${uesio/core.auth_source}
-                                                            payload:
-                                                              username: $Param{userid}
-                                                          - signal: notification/ADD
-                                                            text: An email has been sent to the user!
-                                                            details: Now the password can be changed.
-                                                            severity: success
-                                                        text: Reset Password
-                                                        uesio.variant: uesio/io.nav
-                                                    - uesio/io.button:
                                                         uesio.context:
                                                           siteadmin:
                                                             name: $Param{sitename}
