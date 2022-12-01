@@ -29,6 +29,7 @@ components:
     griditem:
     group:
     image:
+    video:
     list:
     tabs:
     searchbox:
