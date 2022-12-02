@@ -4,13 +4,34 @@ profile: uesio/studio.standard
 usernameTemplate: ${username}
 usernameRegex: "^[a-z0-9_]+$"
 # TO-DO this works for now but we want this signup method to be full core.
-landingRoute: uesio/studio.signupconfirm
+landingRoute: uesio/studio.signuplanding
 adminCreate:
   emailSubject: "User Created in ${site} ${app}"
   emailBody: |
     A user account has been created for you in ${site} ${app}.
+    Your username is: ${username} .
 
     You can set your password and log in using the link below:
     ${link}
+  redirect: "site/app/uesio/core/changepassword"
+signup:
+  emailSubject: "User Created in ${site} ${app}"
+  emailBody: |
+    A user account has been created for you in ${site} ${app}.
+
+    You can confirm your account using the link below:
+    ${link}
+  redirect: "site/app/uesio/core/signupconfirm"
+forgotPassword:
+  emailSubject: "password change request in ${site} ${app}"
+  emailBody: |
+    Hi ${username},
+
+    There was a request to change your password!
+
+    If you did not make this request then please ignore this email.
+
+    Otherwise, please click this link to change your password: ${link}
+
   redirect: "site/app/uesio/core/changepassword"
 public: true

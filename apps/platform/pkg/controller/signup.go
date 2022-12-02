@@ -15,10 +15,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetSite()
 
-	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -28,7 +24,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	signupMethod, err := auth.Signup(namespace, name, payload, site)
+	signupMethod, err := auth.Signup(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		msg := "Signup failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -51,8 +47,11 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 
-	var ConfirmSignupRequest map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&ConfirmSignupRequest)
+	session := middleware.GetSession(r)
+	site := session.GetSite()
+
+	var payload map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -60,8 +59,7 @@ func ConfirmSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middleware.GetSession(r)
-	err = auth.ConfirmSignUp(getAuthSourceID(mux.Vars(r)), ConfirmSignupRequest, s)
+	err = auth.ConfirmSignUp(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

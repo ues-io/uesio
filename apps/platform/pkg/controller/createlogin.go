@@ -14,10 +14,6 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -27,7 +23,7 @@ func CreateLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = auth.CreateLogin(namespace, name, payload, session)
+	_, err = auth.CreateLogin(getSignupMethodID(mux.Vars(r)), payload, session)
 	if err != nil {
 		msg := "Create Login failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

@@ -15,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func init() {
@@ -246,6 +247,20 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	return authSource, nil
 }
 
+func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, error) {
+	signupMethod, err := meta.NewSignupMethod(key)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(signupMethod, session)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return signupMethod, nil
+}
+
 func GetLoginMethod(claims *AuthenticationClaims, authSourceID string, session *sess.Session) (*meta.LoginMethod, error) {
 
 	var loginmethod meta.LoginMethod
@@ -310,4 +325,46 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 		return "", errors.New("Missing required payload value: " + key)
 	}
 	return value, nil
+}
+
+func boostPayloadWithTemplate(username string, payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
+
+	domain, err := queryDomainFromSite(site.ID)
+	if err != nil {
+		return err
+	}
+
+	host := getHostFromDomain(domain, site)
+
+	link := fmt.Sprintf("%s/%s?code={####}", host, options.Redirect)
+
+	templateMergeValues := map[string]interface{}{
+		"app":      site.GetAppFullName(),
+		"site":     site.Name,
+		"link":     link,
+		"username": username,
+	}
+
+	subjectTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailSubject)
+	if err != nil {
+		return err
+	}
+	mergedSubject, err := templating.Execute(subjectTemplate, templateMergeValues)
+	if err != nil {
+		return err
+	}
+
+	bodyTemplate, err := templating.NewTemplateWithValidKeysOnly(options.EmailBody)
+	if err != nil {
+		return err
+	}
+	mergedBody, err := templating.Execute(bodyTemplate, templateMergeValues)
+	if err != nil {
+		return err
+	}
+
+	payload["subject"] = mergedSubject
+	payload["message"] = mergedBody
+
+	return nil
 }

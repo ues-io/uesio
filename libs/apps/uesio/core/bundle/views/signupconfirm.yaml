@@ -14,7 +14,10 @@ definition:
           type: TEXT
       init:
         create: true
-
+      defaults:
+        - field: uesio/viewonly.verificationcode
+          valueSource: VALUE
+          value: $Param{code}
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -58,9 +61,6 @@ definition:
                                 fieldId: uesio/viewonly.username
                             - uesio/io.field:
                                 fieldId: uesio/viewonly.verificationcode
-                            - uesio/io.field:
-                                fieldId: uesio/viewonly.newpassword
-                                displayAs: PASSWORD
                             - uesio/io.group:
                                 uesio.styles:
                                   root:
@@ -80,9 +80,13 @@ definition:
                                           onerror:
                                             signals:
                                               - signal: notification/ADD_ERRORS
-                                          authSource: uesio/core.platform
+                                          signupMethod: uesio/core.platform
                                           payload:
                                             username: ${uesio/viewonly.username}
                                             verificationcode: ${uesio/viewonly.verificationcode}
                                         - signal: route/REDIRECT
                                           path: login
+  params:
+    code:
+      type: TEXT
+      required: true

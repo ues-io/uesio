@@ -63,13 +63,44 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 				{
 					signal: "notification/ADD",
 					text: "An email has been sent to the user!",
-					details: "He can now set a password",
+					details: "new password can be inserted",
 					severity: "success",
 				},
 			],
 			context
 		)
 	}
+
+	const resetPassword = async (key: string) => {
+		uesio.signal.runMany(
+			[
+				{
+					signal: "user/FORGOT_PASSWORD",
+					signupMethod: key,
+					payload: {
+						username: user,
+					},
+					onerror: {
+						continue: false,
+						notify: true,
+						signals: [
+							{
+								signal: "notification/ADD_ERRORS",
+							},
+						],
+					},
+				},
+				{
+					signal: "notification/ADD",
+					text: "An email has been sent to the user!",
+					details: "Now the password can be changed",
+					severity: "success",
+				},
+			],
+			context
+		)
+	}
+
 
 	const signupmethodsKeys = Object.keys(signupmethods || {})
 
@@ -86,14 +117,23 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 						},
 					}}
 					actions={
-						<Button
+						<>
+							<Button
+								context={context}
+								variant="uesio/io.nav"
+								label="Create Method"
+								onClick={() => {
+									createLogin(key)
+								}}
+							/>
+							<Button
 							context={context}
 							variant="uesio/io.nav"
-							label="Send Email"
+							label="Reset Password"
 							onClick={() => {
-								createLogin(key)
-							}}
-						/>
+								resetPassword(key)
+							}}/>
+						</>
 					}
 				/>
 			))}

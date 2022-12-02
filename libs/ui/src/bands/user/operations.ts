@@ -34,21 +34,26 @@ const signup =
 	async (dispatch, getState, platform) => {
 		if (!payload) return context
 		const mergedPayload = context.mergeMap(payload)
-		const response = await platform.signup(signupMethod, mergedPayload)
+		const mergedSignupMethod = context.merge(signupMethod)
+		const response = await platform.signup(
+			mergedSignupMethod,
+			mergedPayload
+		)
 		dispatch(setUser(response.user))
 		return responseRedirect(response, dispatch, context)
 	}
 
 const signUpConfirm =
-	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload)
 			throw new Error(
 				"No credentials were provided for signup confirmation."
 			)
 		const mergedPayload = context.mergeMap(payload)
+		const mergedSignupMethod = context.merge(signupMethod)
 		try {
-			await platform.signUpConfirm(authSource, mergedPayload)
+			await platform.signUpConfirm(mergedSignupMethod, mergedPayload)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
@@ -89,8 +94,12 @@ const checkAvailability =
 	async (dispatch, getState, platform) => {
 		const mergedUsername = context.merge(username)
 		if (mergedUsername) {
+			const mergedSignupMethod = context.merge(signupMethod)
 			try {
-				await platform.checkAvailability(signupMethod, mergedUsername)
+				await platform.checkAvailability(
+					mergedSignupMethod,
+					mergedUsername
+				)
 				return dispatch(wireRemoveError(context, usernameFieldId))
 			} catch (error) {
 				const message = getErrorString(error)
@@ -101,14 +110,14 @@ const checkAvailability =
 	}
 
 const forgotPassword =
-	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload)
 			throw new Error("No credentials were provided for forgot password.")
 		const mergedPayload = context.mergeMap(payload)
-		const mergedAuthSource = context.merge(authSource)
+		const mergedSignupMethod = context.merge(signupMethod)
 		try {
-			await platform.forgotPassword(mergedAuthSource, mergedPayload)
+			await platform.forgotPassword(mergedSignupMethod, mergedPayload)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
@@ -117,15 +126,19 @@ const forgotPassword =
 	}
 
 const forgotPasswordConfirm =
-	(context: Context, authSource: string, payload: Payload): ThunkFunc =>
+	(context: Context, signupMethod: string, payload: Payload): ThunkFunc =>
 	async (dispatch, getState, platform) => {
 		if (!payload)
 			throw new Error(
 				"No credentials were provided for forgot password confirmation."
 			)
 		const mergedPayload = context.mergeMap(payload)
+		const mergedSignupMethod = context.merge(signupMethod)
 		try {
-			await platform.forgotPasswordConfirm(authSource, mergedPayload)
+			await platform.forgotPasswordConfirm(
+				mergedSignupMethod,
+				mergedPayload
+			)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)

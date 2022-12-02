@@ -388,10 +388,10 @@ const platform = {
 		return respondJSON(response)
 	},
 	signUpConfirm: async (
-		authSource: string,
+		signupMethod: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
-		const [namespace, name] = parseKey(authSource)
+		const [namespace, name] = parseKey(signupMethod)
 		const response = await postJSON(
 			`/site/auth/${namespace}/${name}/signup/confirm`,
 			requestBody

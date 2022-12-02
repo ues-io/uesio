@@ -95,7 +95,3 @@ definition:
                                             username: ${uesio/viewonly.username}
                                             password: ${uesio/viewonly.password}
                                             email: ${uesio/viewonly.email}
-                                        - signal: notification/ADD
-                                          text: Account has been created successfully!
-                                          details: Please check your email and confirm your identity.
-                                          severity: success

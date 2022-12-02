@@ -132,6 +132,16 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 		return nil, errors.New("Cognito login:" + err.Error())
 	}
 
+	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
+	}
+
+	message, err := auth.GetRequiredPayloadValue(payload, "message")
+	if err != nil {
+		return nil, errors.New("Cognito login:" + err.Error())
+	}
+
 	signUpData := &cognito.SignUpInput{
 		ClientId: aws.String(clientID),
 		Username: &fqUsername,
@@ -141,6 +151,10 @@ func (c *Connection) Signup(payload map[string]interface{}, username string, ses
 				Name:  aws.String("email"),
 				Value: aws.String(email),
 			},
+		},
+		ClientMetadata: map[string]string{
+			"subject": subject,
+			"message": message,
 		},
 	}
 
@@ -174,9 +188,23 @@ func (c *Connection) ForgotPassword(payload map[string]interface{}, session *ses
 	site := session.GetSiteTenantID()
 	fqUsername := getFullyQualifiedUsername(site, username)
 
+	subject, err := auth.GetRequiredPayloadValue(payload, "subject")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
+	message, err := auth.GetRequiredPayloadValue(payload, "message")
+	if err != nil {
+		return errors.New("Cognito login:" + err.Error())
+	}
+
 	authTry := &cognito.ForgotPasswordInput{
 		Username: &fqUsername,
 		ClientId: aws.String(clientID),
+		ClientMetadata: map[string]string{
+			"subject": subject,
+			"message": message,
+		},
 	}
 
 	client := cognito.NewFromConfig(cfg)

@@ -10,10 +10,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
+func getSignupMethodID(vars map[string]string) string {
+	signupMethodNamespace := vars["namespace"]
+	signupMethodName := vars["name"]
+	return signupMethodNamespace + "." + signupMethodName
+}
+
 func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
-	var ForgotPasswordRequest map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&ForgotPasswordRequest)
+	session := middleware.GetSession(r)
+	site := session.GetSite()
+
+	var payload map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -21,8 +30,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middleware.GetSession(r)
-	err = auth.ForgotPassword(getAuthSourceID(mux.Vars(r)), ForgotPasswordRequest, s)
+	err = auth.ForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -33,8 +41,11 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 
-	var ConfirmForgotPasswordRequest map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&ConfirmForgotPasswordRequest)
+	session := middleware.GetSession(r)
+	site := session.GetSite()
+
+	var payload map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -42,8 +53,7 @@ func ConfirmForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middleware.GetSession(r)
-	err = auth.ConfirmForgotPassword(getAuthSourceID(mux.Vars(r)), ConfirmForgotPasswordRequest, s)
+	err = auth.ConfirmForgotPassword(getSignupMethodID(mux.Vars(r)), payload, site)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

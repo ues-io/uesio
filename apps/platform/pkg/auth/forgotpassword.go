@@ -1,23 +1,55 @@
 package auth
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func ForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
-	conn, err := GetAuthConnection(authSourceID, session)
+func ForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+	session, err := GetSystemSession(site, nil)
 	if err != nil {
 		return err
 	}
 
-	return conn.ForgotPassword(payload, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
+	if err != nil {
+		return err
+	}
+
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	if err != nil {
+		return err
+	}
+
+	username, err := GetPayloadValue(payload, "username")
+	if err != nil {
+		return errors.New("Cognito Forgot Password:" + err.Error())
+	}
+
+	err = boostPayloadWithTemplate(username, payload, site, &signupMethod.ForgotPassword)
+	if err != nil {
+		return err
+	}
+
+	return authconn.ForgotPassword(payload, session)
 }
 
-func ConfirmForgotPassword(authSourceID string, payload map[string]interface{}, session *sess.Session) error {
-	conn, err := GetAuthConnection(authSourceID, session)
+func ConfirmForgotPassword(signupMethodID string, payload map[string]interface{}, site *meta.Site) error {
+
+	session, err := GetSystemSession(site, nil)
 	if err != nil {
 		return err
 	}
 
-	return conn.ConfirmForgotPassword(payload, session)
+	signupMethod, err := getSignupMethod(signupMethodID, session)
+	if err != nil {
+		return err
+	}
+
+	authconn, err := GetAuthConnection(signupMethod.AuthSource, session)
+	if err != nil {
+		return err
+	}
+	return authconn.ConfirmForgotPassword(payload, session)
 }

@@ -1,0 +1,56 @@
+name: signuplanding
+public: true
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+            justifyItems: center
+            height: 100vh
+            backgroundColor: "#F2F2F2"
+        items:
+          - uesio/io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: center
+              components:
+                - uesio/io.text:
+                    text: "👋🏼"
+                    uesio.styles:
+                      root:
+                        fontSize: 60pt
+                        padding: 20px
+                    element: div
+                - uesio/io.text:
+                    text: "Welcome!"
+                    uesio.styles:
+                      root:
+                        fontSize: 40pt
+                        fontWeight: bold
+                        lineHeight: 20px
+                        textShadow: 1px 1px rgba(250,250,250,.3)
+                        padding: 40px
+                    element: div
+                - uesio/io.text:
+                    text: Account has been created successfully!
+                    uesio.styles:
+                      root:
+                        fontSize: 14pt
+                        fontWeight: bold
+                        lineHeight: 20px
+                        textShadow: 1px 1px rgba(250,250,250,.3)
+                        padding: 10px
+                    element: div
+                - uesio/io.text:
+                    text: Please check your email and confirm your identity.
+                    uesio.styles:
+                      root:
+                        fontSize: 10pt
+                        fontWeight: bold
+                        lineHeight: 20px
+                        textShadow: 1px 1px rgba(250,250,250,.3)
+                    element: div
