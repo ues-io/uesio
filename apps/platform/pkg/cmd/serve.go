@@ -168,8 +168,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Get Collection Metadata (We may be able to get rid of this someday...)
 	collectionMetadataPath := fmt.Sprintf("/collections/meta/%s", collectionParam)
-	wr.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodPost)
-	sa.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodPost)
+	wr.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodGet)
+	sa.HandleFunc(collectionMetadataPath, controller.GetCollectionMetadata).Methods(http.MethodGet)
 
 	// List All Available Namespaces
 	namespaceListPath := "/metadata/namespaces"
