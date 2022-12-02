@@ -29,6 +29,7 @@ components:
     griditem:
     group:
     image:
+    video:
     list:
     tabs:
     searchbox:
@@ -66,6 +67,7 @@ components:
     filepreview:
     filetext:
     fileimage:
+    filevideo:
     file:
     fileuploadarea:
     form:

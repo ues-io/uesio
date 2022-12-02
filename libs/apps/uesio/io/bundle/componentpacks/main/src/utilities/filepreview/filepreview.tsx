@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { definition, collection, component, wire } from "@uesio/ui"
 
+const FileVideo = component.getUtility("uesio/io.filevideo")
 const FileImage = component.getUtility("uesio/io.fileimage")
 const FileText = component.getUtility("uesio/io.filetext")
 const File = component.getUtility("uesio/io.file")
@@ -36,6 +37,8 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 			return <File {...props} />
 		case "image":
 			return <FileImage {...props} />
+		case "video": 
+			return <FileVideo {...props} />
 		default:
 			return <File {...props} />
 	}

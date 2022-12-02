@@ -110,6 +110,10 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 					value: "IMAGE",
 				},
 				{
+					label: "VIDEO",
+					value: "VIDEO",
+				},
+				{
 					label: "PREVIEW",
 					value: "PREVIEW",
 				},
