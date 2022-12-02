@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
@@ -33,6 +34,7 @@ func usage(cmd *cobra.Command, args []string) {
 		if err != nil {
 			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
 		}
+		time.Sleep(1 * time.Second)
 	}
 
 }
