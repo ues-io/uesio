@@ -210,12 +210,10 @@ func processConditionList(conditions []adapt.LoadRequestCondition, collectionMet
 	if len(conditions) == 1 {
 		canOptimizeOperator := conditions[0].Operator == "IN" || conditions[0].Operator == "EQ" || conditions[0].Operator == ""
 		if canOptimizeOperator && conditions[0].Field == adapt.ID_FIELD {
-			conditionOptimization(conditions[0], collectionName, builder, "id", tableAlias)
-			return nil
+			return conditionOptimization(conditions[0], collectionName, builder, "id", tableAlias)
 		}
 		if canOptimizeOperator && conditions[0].Field == adapt.UNIQUE_KEY_FIELD {
-			conditionOptimization(conditions[0], collectionName, builder, "uniquekey", tableAlias)
-			return nil
+			return conditionOptimization(conditions[0], collectionName, builder, "uniquekey", tableAlias)
 		}
 	}
 
@@ -246,17 +244,22 @@ func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *
 	return processValueCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 }
 
-func conditionOptimization(condition adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder, fieldName, tableAlias string) {
+func conditionOptimization(condition adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder, fieldName, tableAlias string) error {
 	optimizeField := getAliasedName(fieldName, tableAlias)
 	if condition.Operator != "IN" {
 		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, condition.Value))))
-		return
+		return nil
 	}
 
-	values := condition.Value.([]string)
+	// This allows the values to be either a string or a slice of strings
+	values, err := adapt.GetStringSlice(condition.Value)
+	if err != nil {
+		return err
+	}
+
 	if len(values) == 1 {
 		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, values[0]))))
-		return
+		return nil
 	}
 
 	appendedValues := make([]string, len(values))
@@ -264,5 +267,5 @@ func conditionOptimization(condition adapt.LoadRequestCondition, collectionName 
 		appendedValues[i] = makeDBId(collectionName, v)
 	}
 	builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", optimizeField, builder.addValue(appendedValues)))
-	return
+	return nil
 }

@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"io/ioutil"
 	"regexp"
@@ -23,31 +22,6 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 		return err
 	}
 	return template.Execute(file, params)
-}
-
-func getRepeaterSlice(input interface{}) ([]string, error) {
-	sliceString, ok := input.([]string)
-	if ok {
-		return sliceString, nil
-	}
-	sliceInterface, ok := input.([]interface{})
-	if ok {
-		sliceString := []string{}
-		for _, value := range sliceInterface {
-			stringValue, ok := value.(string)
-			if !ok {
-				return nil, errors.New("Invalid Parameter Value")
-			}
-			sliceString = append(sliceString, stringValue)
-		}
-		return sliceString, nil
-	}
-
-	repeaterString, ok := input.(string)
-	if !ok {
-		return nil, errors.New("Invalid Parameter Value")
-	}
-	return strings.Split(repeaterString, ","), nil
 }
 
 type GeneratorBotAPI struct {
@@ -144,7 +118,7 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {
 	// This allows the repeater input to be either a string or a slice of strings
-	repeater, err := getRepeaterSlice(repeaterInput)
+	repeater, err := adapt.GetStringSlice(repeaterInput)
 	if err != nil {
 		return "", err
 	}
