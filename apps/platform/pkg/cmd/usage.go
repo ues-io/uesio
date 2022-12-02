@@ -28,9 +28,11 @@ func usage(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running uesio worker", logger.INFO)
 
-	err := UsageJob()
-	if err != nil {
-		logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
+	for {
+		err := UsageJob()
+		if err != nil {
+			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
+		}
 	}
 
 }
