@@ -7,7 +7,7 @@ import (
 
 func getTotal(change *adapt.ChangeItem) (int64, error) {
 	var oldTotal, newTotal int64
-	oldVal, err := change.GetOldField("uesio/core.total")
+	oldVal, err := change.GetOldField("uesio/studio.total")
 	if err != nil {
 		return 0, err
 	}
@@ -17,7 +17,7 @@ func getTotal(change *adapt.ChangeItem) (int64, error) {
 		oldTotal = oldInt
 	}
 
-	newVal, err := change.GetField("uesio/core.total")
+	newVal, err := change.GetField("uesio/studio.total")
 	if err != nil {
 		return 0, err
 	}
@@ -36,6 +36,6 @@ func runUsageBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		if err != nil {
 			return err
 		}
-		return change.SetField("uesio/core.total", total)
+		return change.SetField("uesio/studio.total", total)
 	})
 }
