@@ -1,6 +1,9 @@
 package adapt
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
 )
@@ -25,13 +28,38 @@ type LoadRequestCondition struct {
 	Value         interface{}            `json:"value" bot:"value" yaml:"value"`
 	Param         string                 `json:"param" yaml:"param"`
 	ValueSource   string                 `json:"valueSource" yaml:"valueSource"`
-	Type          string                 `json:"type" yaml:"type"`
-	Operator      string                 `json:"operator" yaml:"operator"`
+	Type          string                 `json:"type" bot:"type" yaml:"type"`
+	Operator      string                 `json:"operator" bot:"operator" yaml:"operator"`
 	LookupWire    string                 `json:"lookupWire" yaml:"lookupWire"`
 	LookupField   string                 `json:"lookupField" yaml:"lookupField"`
-	SearchFields  []string               `json:"fields" yaml:"fields"`
-	SubConditions []LoadRequestCondition `json:"conditions" yaml:"conditions"`
-	SubCollection string                 `json:"subcollection" yaml:"subcollection"`
-	SubField      string                 `json:"subfield" yaml:"subfield"`
-	Conjunction   string                 `json:"conjunction" yaml:"conjunction"`
+	SearchFields  []string               `json:"fields" bot:"fields" yaml:"fields"`
+	SubConditions []LoadRequestCondition `json:"conditions" bot:"conditions" yaml:"conditions"`
+	SubCollection string                 `json:"subcollection" bot:"subcollection" yaml:"subcollection"`
+	SubField      string                 `json:"subfield" bot:"subfield" yaml:"subfield"`
+	Conjunction   string                 `json:"conjunction" bot:"conjunction" yaml:"conjunction"`
+}
+
+func GetStringSlice(input interface{}) ([]string, error) {
+	sliceString, ok := input.([]string)
+	if ok {
+		return sliceString, nil
+	}
+	sliceInterface, ok := input.([]interface{})
+	if ok {
+		sliceString := []string{}
+		for _, value := range sliceInterface {
+			stringValue, ok := value.(string)
+			if !ok {
+				return nil, errors.New("Invalid Parameter Value")
+			}
+			sliceString = append(sliceString, stringValue)
+		}
+		return sliceString, nil
+	}
+
+	repeaterString, ok := input.(string)
+	if !ok {
+		return nil, errors.New("Invalid Parameter Value")
+	}
+	return strings.Split(repeaterString, ","), nil
 }
