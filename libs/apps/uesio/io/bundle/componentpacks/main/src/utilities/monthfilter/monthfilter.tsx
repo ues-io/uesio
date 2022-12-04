@@ -1,17 +1,13 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, wire, collection } from "@uesio/ui"
+import { definition, hooks, wire, collection, styles } from "@uesio/ui"
 
-const SelectField = component.getUtility("uesio/io.selectfield")
-
-const addBlankSelectOption = collection.addBlankSelectOption
-
-interface SelectFilterProps extends definition.UtilityProps {
+interface MonthFilterProps extends definition.UtilityProps {
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	conditionId: string | undefined
 }
 
-const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
+const MonthFilter: FunctionComponent<MonthFilterProps> = (props) => {
 	const { wire, fieldMetadata, context } = props
 
 	const uesio = hooks.useUesio(props)
@@ -21,18 +17,24 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 	const condition = (wire.getCondition(conditionId) || {
 		id: conditionId,
 		field: fieldMetadata.getId(),
+		operator: "IN",
 	}) as wire.ValueConditionState
 
+	const classes = styles.useUtilityStyles(
+		{
+			input: {},
+			readonly: {},
+		},
+		props
+	)
+
 	return (
-		<SelectField
-			context={context}
-			options={addBlankSelectOption(
-				fieldMetadata.getSelectMetadata()?.options || [],
-				"Any " + fieldMetadata.getLabel()
-			)}
-			variant={"uesio/io.filter"}
-			value={condition.value || ""}
-			setValue={(value: string) => {
+		<input
+			className={classes.input}
+			type="month"
+			onChange={(event) => {
+				const value = event.target.value
+				console.log(value)
 				uesio.signal.runMany(
 					[
 						{
@@ -56,4 +58,4 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 	)
 }
 
-export default SelectFilter
+export default MonthFilter

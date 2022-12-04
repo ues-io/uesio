@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles, context } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
@@ -22,19 +22,16 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		props
 	)
 
-	const commonProps = {
-		value: value || "",
-		placeholder,
-		className: styles.cx(classes.input, readonly && classes.readonly),
-		disabled: readonly,
-		onChange: (
-			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-		) => setValue(event.target.value),
-	}
-
-	const inputType = password ? "password" : "text"
-
-	return <input type={inputType} {...commonProps} />
+	return (
+		<input
+			type={password ? "password" : "text"}
+			value={value || ""}
+			placeholder={placeholder}
+			className={styles.cx(classes.input, readonly && classes.readonly)}
+			disabled={readonly}
+			onChange={(event) => setValue(event.target.value)}
+		/>
+	)
 }
 
 export default TextField

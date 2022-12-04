@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FC } from "react"
 import { definition, styles, context, collection, component } from "@uesio/ui"
 
 interface DateFieldProps extends definition.UtilityProps {
@@ -10,7 +10,7 @@ interface DateFieldProps extends definition.UtilityProps {
 
 const TextField = component.getUtility("uesio/io.textfield")
 
-const DateField: FunctionComponent<DateFieldProps> = (props) => {
+const DateField: FC<DateFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 
 	const readonly = mode === "READ"
@@ -39,9 +39,7 @@ const DateField: FunctionComponent<DateFieldProps> = (props) => {
 			value={value}
 			type="date"
 			disabled={readonly}
-			onChange={(event: ChangeEvent<HTMLInputElement>): void =>
-				setValue(event.target.value)
-			}
+			onChange={(event) => setValue(event.target.value)}
 		/>
 	)
 }

@@ -7,6 +7,7 @@ type FilterDefinition = {
 	labelPosition?: string
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
+	conditionId?: string
 } & definition.BaseDefinition
 
 interface FilterProps extends definition.BaseProps {
