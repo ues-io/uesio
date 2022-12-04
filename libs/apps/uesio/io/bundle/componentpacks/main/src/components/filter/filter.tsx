@@ -1,11 +1,27 @@
 import { FunctionComponent } from "react"
 
 import { FilterProps } from "./filterdefinition"
-import { component, collection, hooks } from "@uesio/ui"
+import { component, hooks, collection, wire, definition } from "@uesio/ui"
 
-const SelectField = component.getUtility("uesio/io.selectfield")
+const SelectFilter = component.getUtility("uesio/io.selectfilter")
+const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const addBlankSelectOption = collection.addBlankSelectOption
+type CommonProps = {
+	fieldMetadata: collection.Field
+	wire: wire.Wire
+} & definition.UtilityProps
+
+const getFilterContent = (common: CommonProps) => {
+	const fieldMetadata = common.fieldMetadata
+	const type = fieldMetadata.getType()
+
+	switch (type) {
+		case "SELECT":
+			return <SelectFilter {...common} />
+		default:
+			return null
+	}
+}
 
 const Filter: FunctionComponent<FilterProps> = (props) => {
 	const { context, definition } = props
@@ -20,50 +36,26 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 
 	if (!fieldMetadata) return null
 
-	const type = fieldMetadata.getType()
+	const label = definition.label || fieldMetadata.getLabel()
 
-	switch (true) {
-		case type === "SELECT":
-			return (
-				<SelectField
-					context={context}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						"Any " + fieldMetadata.getLabel()
-					)}
-					variant={"uesio/io.filter"}
-					setValue={(value: string) => {
-						uesio.signal.runMany(
-							[
-								value
-									? {
-											signal: "wire/SET_CONDITION",
-											wire: wire.getId(),
-											condition: {
-												id: props.path,
-												field: fieldMetadata.getId(),
-												value,
-												active: true,
-											},
-									  }
-									: {
-											signal: "wire/REMOVE_CONDITION",
-											wire: wire.getId(),
-											condition: props.path,
-									  },
-								{
-									signal: "wire/LOAD",
-									wires: [wire.getId()],
-								},
-							],
-							context
-						)
-					}}
-				/>
-			)
-		default:
-			return null
+	const common = {
+		context,
+		fieldMetadata,
+		wire,
+		variant:
+			definition["uesio.variant"] || "uesio/io.filter:uesio/io.default",
 	}
+
+	return (
+		<FieldWrapper
+			label={label}
+			labelPosition={definition.labelPosition}
+			context={context}
+			variant={definition.wrapperVariant}
+		>
+			{getFilterContent(common)}
+		</FieldWrapper>
+	)
 }
 
 export default Filter

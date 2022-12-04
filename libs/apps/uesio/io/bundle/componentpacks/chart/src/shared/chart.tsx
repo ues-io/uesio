@@ -127,7 +127,7 @@ const getLabels = (
 					start.getDate()
 				)
 
-				const [endyear, endmonth, endday] = currentKey.split("-")
+				const [endyear, endmonth, endday] = lastKey.split("-")
 				const end = new Date(
 					parseInt(endyear, 10),
 					parseInt(endmonth, 10),

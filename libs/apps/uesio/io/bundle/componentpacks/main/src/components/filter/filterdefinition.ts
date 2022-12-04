@@ -1,8 +1,12 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, metadata } from "@uesio/ui"
 
 type FilterDefinition = {
 	fieldId: string
 	wire: string
+	label?: string
+	labelPosition?: string
+	displayAs?: string
+	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
 
 interface FilterProps extends definition.BaseProps {

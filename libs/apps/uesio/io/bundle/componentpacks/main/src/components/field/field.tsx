@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 
 import { FieldDefinition, FieldProps } from "./fielddefinition"
-import { component, collection, wire, context } from "@uesio/ui"
+import { component, collection, wire, context, definition } from "@uesio/ui"
 const TextField = component.getUtility("uesio/io.textfield")
 const SelectField = component.getUtility("uesio/io.selectfield")
 const RadioButtonsField = component.getUtility("uesio/io.radiobuttonsfield")
@@ -28,106 +28,72 @@ const TextAreaField = component.getUtility("uesio/io.textareafield")
 
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
-const getFieldContent = (
-	wire: wire.Wire,
-	record: wire.WireRecord,
-	definition: FieldDefinition,
-	fieldMetadata: collection.Field,
-	context: context.Context
-) => {
-	const {
-		fieldId,
-		id,
-		displayAs,
-		reference,
-		options,
-		placeholder,
-		user,
-		list,
-	} = definition
-	const canEdit = record.isNew()
-		? fieldMetadata.getCreateable()
-		: fieldMetadata.getUpdateable()
+type CommonProps = {
+	mode: context.FieldMode
+	fieldMetadata: collection.Field
+	fieldId: string
+	id?: string
+	value: wire.FieldValue
+	record: wire.WireRecord
+	wire: wire.Wire
+	setValue: (value: wire.FieldValue) => void
+	placeholder?: string
+} & definition.UtilityProps
 
-	const mode = (canEdit && context.getFieldMode()) || "READ"
+const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
+	const { displayAs, reference, list, user } = definition
+
+	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
-	const common = {
-		context,
-		mode,
-		fieldMetadata,
-		fieldId,
-		id,
-		value: record.getFieldValue(fieldId),
-		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
-		record,
-		wire,
-		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
-		options,
-		placeholder,
-	}
 
-	switch (true) {
-		case type === "DATE":
+	switch (type) {
+		case "DATE":
 			return <DateField {...common} />
-		case type === "LONGTEXT" && displayAs === "MARKDOWN":
-			return <MarkDownField {...common} />
-		case type === "LONGTEXT":
+		case "LONGTEXT": {
+			if (displayAs === "MARKDOWN") return <MarkDownField {...common} />
 			return <TextAreaField {...common} />
-		case type === "TEXT" && displayAs === "PASSWORD":
-			return <TextField {...common} password={true} />
-		case type === "TEXT" || type === "AUTONUMBER":
+		}
+		case "TEXT":
+			if (displayAs === "PASSWORD")
+				return <TextField {...common} password={true} />
 			return <TextField {...common} />
-		case type === "NUMBER":
+		case "AUTONUMBER":
+			return <TextField {...common} />
+		case "NUMBER":
 			return <NumberField {...common} />
-		case type === "EMAIL":
+		case "EMAIL":
 			return <EmailField {...common} />
-		case type === "SELECT" && displayAs === "RADIO":
-			return (
-				<RadioButtonsField
-					{...common}
-					options={fieldMetadata.getSelectOptions()}
-				/>
-			)
-		case type === "SELECT":
-			return (
-				<SelectField
-					{...common}
-					options={fieldMetadata.getSelectOptions()}
-				/>
-			)
-		case type === "MULTISELECT":
-			return (
-				<MultiCheckField
-					{...common}
-					options={fieldMetadata.getSelectOptions()}
-				/>
-			)
-		case type === "CHECKBOX" && displayAs === "TOGGLE":
-			return <ToggleField {...common} />
-		case type === "CHECKBOX":
+		case "SELECT": {
+			const selectOptions = fieldMetadata.getSelectOptions()
+			if (displayAs === "RADIO")
+				return <RadioButtonsField {...common} options={selectOptions} />
+			return <SelectField {...common} options={selectOptions} />
+		}
+		case "MULTISELECT": {
+			const selectOptions = fieldMetadata.getSelectOptions()
+			return <MultiCheckField {...common} options={selectOptions} />
+		}
+		case "CHECKBOX": {
+			if (displayAs === "TOGGLE") return <ToggleField {...common} />
 			return <CheckboxField {...common} />
-		case type === "REFERENCE":
+		}
+		case "REFERENCE":
 			return <ReferenceField {...common} options={reference} />
-		case type === "TIMESTAMP":
+		case "TIMESTAMP":
 			return <TimestampField {...common} />
-		case type === "FILE" && displayAs === "TEXT":
-			return <FileText {...common} />
-		case type === "FILE" && displayAs === "IMAGE":
-			return <FileImage {...common} />
-		case type === "FILE" && displayAs === "VIDEO":
-				return <FileVideo {...common} />
-		case type === "FILE" && displayAs === "PREVIEW":
-			return <FilePreview {...common} />
-		case type === "FILE" && displayAs === "MARKDOWN":
-			return <FileMarkDown {...common} />
-		case type === "FILE":
+		case "FILE": {
+			if (displayAs === "TEXT") return <FileText {...common} />
+			if (displayAs === "IMAGE") return <FileImage {...common} />
+			if (displayAs === "VIDEO") return <FileVideo {...common} />
+			if (displayAs === "PREVIEW") return <FilePreview {...common} />
+			if (displayAs === "MARKDOWN") return <FileMarkDown {...common} />
 			return <File {...common} />
-		case type === "USER":
+		}
+		case "USER":
 			return <UserField {...common} options={user} />
-		case type === "LIST" && displayAs === "DECK":
-			return <ListFieldDeck {...common} options={list} />
-		case type === "LIST":
+		case "LIST": {
+			if (displayAs === "DECK")
+				return <ListFieldDeck {...common} options={list} />
 			return (
 				<ListField
 					{...common}
@@ -135,7 +101,8 @@ const getFieldContent = (
 					subType={fieldMetadata.source.subtype}
 				/>
 			)
-		case type === "REFERENCEGROUP":
+		}
+		case "REFERENCEGROUP":
 			return <ReferenceGroupField {...common} options={reference} />
 		default:
 			return null
@@ -144,7 +111,7 @@ const getFieldContent = (
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId } = definition
+	const { fieldId, id, placeholder } = definition
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -158,18 +125,36 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 
 	const label = definition.label || fieldMetadata.getLabel()
 
+	const canEdit = record.isNew()
+		? fieldMetadata.getCreateable()
+		: fieldMetadata.getUpdateable()
+
+	const mode = (canEdit && context.getFieldMode()) || "READ"
+
+	const common = {
+		context,
+		mode,
+		fieldMetadata,
+		fieldId,
+		id,
+		value: record.getFieldValue(fieldId),
+		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
+		record,
+		wire,
+		variant:
+			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+		placeholder,
+	}
+
 	return (
 		<FieldWrapper
 			label={label}
 			labelPosition={definition.labelPosition}
 			context={context}
-			wire={wire}
-			record={record}
-			fieldId={fieldId}
 			variant={definition.wrapperVariant}
 			errors={errors}
 		>
-			{getFieldContent(wire, record, definition, fieldMetadata, context)}
+			{getFieldContent(common, definition)}
 		</FieldWrapper>
 	)
 }
