@@ -37,7 +37,7 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 			return <File {...props} />
 		case "image":
 			return <FileImage {...props} />
-		case "video": 
+		case "video":
 			return <FileVideo {...props} />
 		default:
 			return <File {...props} />

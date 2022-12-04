@@ -93,8 +93,8 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 			uploadLabelId={uploadLabelId}
 			deleteLabelId={deleteLabelId}
 		>
-			{
-				mode === "EDIT" && <>
+			{mode === "EDIT" && (
+				<>
 					<label
 						className={styles.cx(classes.editicon, "hovershow")}
 						htmlFor={uploadLabelId}
@@ -113,7 +113,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 						</label>
 					)}
 				</>
-			}
+			)}
 			{userFileId ? (
 				<img className={classes.image} src={fileUrl} />
 			) : (

@@ -30,16 +30,25 @@ const Video: FC<VideoProps> = (props) => {
 				uesio.signal.getHandler(definition.signals)
 			}
 		>
-					<video loop={definition.loop || false} height={definition.height} width={definition.width} autoPlay={definition.autoplay || false} muted={definition.muted || false}>
-					<source src={definition.file
-						? uesio.file.getURLFromFullName(
-								context,
-								definition.file
-						  )
-						: context.merge(definition.src)}
-					/>
-					Your browser does not support the video tag.
-					</video>
+			<video
+				loop={definition.loop || false}
+				height={definition.height}
+				width={definition.width}
+				autoPlay={definition.autoplay || false}
+				muted={definition.muted || false}
+			>
+				<source
+					src={
+						definition.file
+							? uesio.file.getURLFromFullName(
+									context,
+									definition.file
+							  )
+							: context.merge(definition.src)
+					}
+				/>
+				Your browser does not support the video tag.
+			</video>
 		</div>
 	)
 }
