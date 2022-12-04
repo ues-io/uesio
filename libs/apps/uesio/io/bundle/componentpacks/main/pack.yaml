@@ -25,6 +25,8 @@ components:
     filter:
       variants:
         - uesio/io.selectfield:uesio/io.filter
+        - uesio/io.fieldlabel:uesio/io.default
+        - uesio/io.fieldwrapper:uesio/io.default
     grid:
     griditem:
     group:
@@ -85,6 +87,7 @@ components:
     referencefield:
     scrollpanel:
     selectfield:
+    selectfilter:
     table:
     tablabels:
     text:

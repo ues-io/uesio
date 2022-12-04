@@ -101,7 +101,6 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 		)
 	}
 
-
 	const signupmethodsKeys = Object.keys(signupmethods || {})
 
 	return (
@@ -127,12 +126,13 @@ const ConfigLogins: FunctionComponent<Props> = (props) => {
 								}}
 							/>
 							<Button
-							context={context}
-							variant="uesio/io.nav"
-							label="Reset Password"
-							onClick={() => {
-								resetPassword(key)
-							}}/>
+								context={context}
+								variant="uesio/io.nav"
+								label="Reset Password"
+								onClick={() => {
+									resetPassword(key)
+								}}
+							/>
 						</>
 					}
 				/>
