@@ -1,23 +1,34 @@
 import { FunctionComponent } from "react"
 
-import { FilterProps } from "./filterdefinition"
+import { FilterDefinition, FilterProps } from "./filterdefinition"
 import { component, hooks, collection, wire, definition } from "@uesio/ui"
 
 const SelectFilter = component.getUtility("uesio/io.selectfilter")
+const MonthFilter = component.getUtility("uesio/io.monthfilter")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 type CommonProps = {
 	fieldMetadata: collection.Field
 	wire: wire.Wire
+	conditionId: string | undefined
 } & definition.UtilityProps
 
-const getFilterContent = (common: CommonProps) => {
+const getFilterContent = (
+	common: CommonProps,
+	definition: FilterDefinition
+) => {
+	const { displayAs } = definition
+
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 
 	switch (type) {
 		case "SELECT":
 			return <SelectFilter {...common} />
+		case "DATE": {
+			if (displayAs === "MONTH") return <MonthFilter {...common} />
+			return null
+		}
 		default:
 			return null
 	}
@@ -25,7 +36,7 @@ const getFilterContent = (common: CommonProps) => {
 
 const Filter: FunctionComponent<FilterProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId } = definition
+	const { fieldId, conditionId } = definition
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
 	if (!wire) return null
@@ -42,8 +53,9 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 		context,
 		fieldMetadata,
 		wire,
+		conditionId,
 		variant:
-			definition["uesio.variant"] || "uesio/io.filter:uesio/io.default",
+			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 	}
 
 	return (
@@ -53,7 +65,7 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 			context={context}
 			variant={definition.wrapperVariant}
 		>
-			{getFilterContent(common)}
+			{getFilterContent(common, definition)}
 		</FieldWrapper>
 	)
 }

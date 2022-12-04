@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -108,6 +109,24 @@ func processValueCondition(condition adapt.LoadRequestCondition, collectionMetad
 	fieldName := getFieldName(fieldMetadata, tableAlias)
 	switch condition.Operator {
 	case "IN":
+		if fieldMetadata.Type == "DATE" {
+			value, ok := condition.Value.(string)
+			if !ok {
+				return errors.New("Invalid date range value")
+			}
+			// Split the condition value on "-"
+			dateParts := strings.Split(value, "-")
+			if len(dateParts) == 2 {
+				start, err := time.Parse("2006-01", value)
+				if err != nil {
+					return err
+				}
+				end := start.AddDate(0, 1, 0)
+				builder.addQueryPart(fmt.Sprintf("%s >= %s", fieldName, builder.addValue(start.Format("2006-01-02"))))
+				builder.addQueryPart(fmt.Sprintf("%s < %s", fieldName, builder.addValue(end.Format("2006-01-02"))))
+			}
+			return nil
+		}
 		builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", fieldName, builder.addValue(condition.Value)))
 	case "HAS_ANY":
 		if fieldMetadata.Type != "MULTISELECT" {

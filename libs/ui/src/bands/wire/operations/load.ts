@@ -31,6 +31,9 @@ const getWireRequest = (
 ): LoadRequest[] =>
 	wires.map((wire) => ({
 		...wire,
+		conditions: wire.conditions?.filter(
+			(condition) => condition.active !== false
+		),
 		batchnumber: resetBatchNumber ? 0 : wire.batchnumber,
 		params: context.getParams(),
 		...(forceQuery && { query: true }),
