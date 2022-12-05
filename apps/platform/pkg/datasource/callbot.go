@@ -22,3 +22,26 @@ func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
 	err := Save(requests, cba.session)
 	return HandleSaveRequestErrors(requests, err)
 }
+
+func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
+
+	collection := &adapt.Collection{}
+
+	op := &adapt.LoadOp{
+		CollectionName: request.Collection,
+		Collection:     collection,
+		WireName:       "apibeforesave",
+		Fields:         request.Fields,
+		Conditions:     request.Conditions,
+		Order:          request.Order,
+		Query:          true,
+	}
+
+	err := loadData(op, bs.session)
+	if err != nil {
+		return nil, err
+	}
+
+	return collection, nil
+
+}
