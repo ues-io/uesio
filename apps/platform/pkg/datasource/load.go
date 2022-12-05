@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -125,16 +126,24 @@ func processConditions(
 				}
 			}
 
-			if lookupOp.Collection.Len() != 1 {
-				return errors.New("Must lookup on wires with only one record: " + strconv.Itoa(lookupOp.Collection.Len()))
-			}
+			values := make([]interface{}, lookupOp.Collection.Len())
+			lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 
-			value, err := lookupOp.Collection.GetItem(0).GetField(condition.LookupField)
-			if err != nil {
-				return err
-			}
-			conditions[i].Value = value
+				value, err := item.GetField(condition.LookupField)
+				if err != nil {
+					return err
+				}
+				intIndex, _ := strconv.Atoi(index)
+				values[intIndex] = value
+
+				return nil
+
+			})
+
+			conditions[i].Value = values
 			conditions[i].ValueSource = ""
+			//allways IN
+			conditions[i].Operator = "IN"
 		}
 	}
 
