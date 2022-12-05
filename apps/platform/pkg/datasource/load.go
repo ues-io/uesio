@@ -3,7 +3,6 @@ package datasource
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -126,23 +125,28 @@ func processConditions(
 				}
 			}
 
+			if lookupOp == nil {
+				return errors.New("Could not find lookup wire: " + condition.LookupWire)
+			}
+
 			values := make([]interface{}, lookupOp.Collection.Len())
-			lookupOp.Collection.Loop(func(item meta.Item, index string) error {
+			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 
 				value, err := item.GetField(condition.LookupField)
 				if err != nil {
 					return err
 				}
-				intIndex, _ := strconv.Atoi(index)
-				values[intIndex] = value
-
+				values = append(values, value)
 				return nil
 
 			})
+			if err != nil {
+				return err
+			}
 
 			conditions[i].Value = values
 			conditions[i].ValueSource = ""
-			//allways IN
+			//always IN
 			conditions[i].Operator = "IN"
 		}
 	}
