@@ -33,6 +33,9 @@ definition:
                   - type: paramValue
                     param: selected
                     value: payments
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: mypayments
               content:
                 - uesio/io.text:
                     text: Payments

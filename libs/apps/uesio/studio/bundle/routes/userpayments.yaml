@@ -1,0 +1,4 @@
+name: userpayments
+path: mypayments
+view: uesio/studio.userpayments
+theme: uesio/studio.default
