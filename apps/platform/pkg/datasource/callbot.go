@@ -37,7 +37,7 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Query:          true,
 	}
 
-	err := loadData(op, bs.session)
+	err := loadData(op, bs.session, nil)
 	if err != nil {
 		return nil, err
 	}
