@@ -186,10 +186,6 @@ func (ci *ChangeItem) GetFieldAsInt(fieldID string) (int64, error) {
 		return 0, err
 	}
 
-	if value == nil {
-		return 0, nil
-	}
-
 	switch value.(type) {
 	case nil:
 		return 0, nil
