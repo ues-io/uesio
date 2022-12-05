@@ -3,10 +3,10 @@ package datasource
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -125,16 +125,29 @@ func processConditions(
 				}
 			}
 
-			if lookupOp.Collection.Len() != 1 {
-				return errors.New("Must lookup on wires with only one record: " + strconv.Itoa(lookupOp.Collection.Len()))
+			if lookupOp == nil {
+				return errors.New("Could not find lookup wire: " + condition.LookupWire)
 			}
 
-			value, err := lookupOp.Collection.GetItem(0).GetField(condition.LookupField)
+			values := make([]interface{}, lookupOp.Collection.Len())
+			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
+
+				value, err := item.GetField(condition.LookupField)
+				if err != nil {
+					return err
+				}
+				values = append(values, value)
+				return nil
+
+			})
 			if err != nil {
 				return err
 			}
-			conditions[i].Value = value
+
+			conditions[i].Value = values
 			conditions[i].ValueSource = ""
+			//always IN
+			conditions[i].Operator = "IN"
 		}
 	}
 

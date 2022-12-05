@@ -99,6 +99,9 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 
 	wsSession := session.RemoveWorkspaceContext()
 
