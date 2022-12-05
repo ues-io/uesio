@@ -1,0 +1,4 @@
+name: status
+type: SELECT
+selectList: uesio/studio.invoicestatuses
+label: Status

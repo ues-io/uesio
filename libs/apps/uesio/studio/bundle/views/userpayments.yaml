@@ -40,14 +40,18 @@ definition:
         uesio/core.id:
         uesio/studio.autoid:
         uesio/studio.app:
+          fields:
+            uesio/studio.color:
+            uesio/studio.icon:
+            uesio/studio.fullname:
         uesio/studio.total:
         uesio/studio.date:
+        uesio/studio.status:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
           lookupWire: myapps
           lookupField: uesio/core.id
-          operator: "IN"
       order:
         - field: uesio/studio.date
           desc: true
@@ -91,10 +95,20 @@ definition:
                               padding: 40px
                           columns:
                             - field: uesio/studio.autoid
+                            - label: APP
+                              components:
+                                - uesio/studio.iconlabel:
+                                    uesio.styles:
+                                      root:
+                                        padding: 16px
+                                    text: ${uesio/studio.app->uesio/studio.fullname}
+                                    icon: ${uesio/studio.app->uesio/studio.icon}
+                                    color: ${uesio/studio.app->uesio/studio.color}
                             - field: uesio/studio.total
                             - field: uesio/studio.date
+                            - field: uesio/studio.status
                           rowactions:
                             - text: Details
                               signals:
                                 - signal: route/NAVIGATE
-                                  path: app/$Param{app}/invoice/${uesio/studio.autoid}
+                                  path: app/${uesio/studio.app->uesio/core.uniquekey}/invoice/${uesio/studio.autoid}
