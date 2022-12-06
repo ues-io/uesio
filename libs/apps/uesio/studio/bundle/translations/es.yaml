@@ -1,0 +1,4 @@
+language: es
+labels:
+  uesio/studio.licensedescription: La licencia de la aplicación ${app} por un mes
+  uesio/studio.licensepricingitemdescription: La aplicación ${app} por utilizar ${metadatatype} y realizar la acción ${actiontype}
