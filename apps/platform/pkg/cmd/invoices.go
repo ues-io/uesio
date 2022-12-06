@@ -138,7 +138,10 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 	//This creates a copy of the session
 	userSession := session.RemoveWorkspaceContext()
 	userSession.SetUser(app.Owner)
-	labels, _ := translate.GetTranslatedLabels(userSession)
+	labels, err := translate.GetTranslatedLabels(userSession)
+	if err != nil {
+		return err
+	}
 
 	invoiceLineItems := meta.InvoiceLineItemCollection{}
 
@@ -149,7 +152,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 		Status: "NOTPAID",
 	}
 
-	err := datasource.PlatformSaveOne(invoice, nil, connection, session)
+	err = datasource.PlatformSaveOne(invoice, nil, connection, session)
 	if err != nil {
 		return err
 	}
