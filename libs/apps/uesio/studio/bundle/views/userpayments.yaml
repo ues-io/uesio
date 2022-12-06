@@ -85,6 +85,22 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
+                          title: Overview
+                      - uesio/io.grid:
+                          templateColumns: 1fr 1fr
+                          columnGap: 10px
+                          items:
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.section
+                                text: Balance 12345
+                            - uesio/io.text:
+                                uesio.variant: uesio/io.section
+                                text: "ERROR"
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
                           title: Invoices
                       - uesio/io.table:
                           id: invoiceTable
