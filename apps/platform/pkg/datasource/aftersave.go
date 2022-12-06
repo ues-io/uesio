@@ -61,7 +61,7 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Query:          true,
 	}
 
-	err := loadData(op, bs.session)
+	err := loadData(op, bs.session, bs.connection)
 	if err != nil {
 		return nil, err
 	}

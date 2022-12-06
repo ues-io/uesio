@@ -7,6 +7,15 @@ interface MonthFilterProps extends definition.UtilityProps {
 	conditionId: string | undefined
 }
 
+const parseDateConditionValue = (value: string | string[]) => {
+	// Get the condition value
+	if (value === "THIS_MONTH") {
+		const current = new Date()
+		return `${current.getFullYear()}-${current.getMonth() + 1}`
+	}
+	return value
+}
+
 const MonthFilter: FunctionComponent<MonthFilterProps> = (props) => {
 	const { wire, fieldMetadata, context } = props
 
@@ -30,11 +39,11 @@ const MonthFilter: FunctionComponent<MonthFilterProps> = (props) => {
 
 	return (
 		<input
+			value={parseDateConditionValue(condition.value)}
 			className={classes.input}
 			type="month"
 			onChange={(event) => {
 				const value = event.target.value
-				console.log(value)
 				uesio.signal.runMany(
 					[
 						{

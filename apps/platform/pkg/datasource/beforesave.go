@@ -32,8 +32,9 @@ func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *se
 		Deletes: &DeletesAPI{
 			op: op,
 		},
-		session: session,
-		op:      op,
+		session:    session,
+		op:         op,
+		connection: connection,
 	}
 }
 
@@ -41,9 +42,12 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 	bs.op.AddError(adapt.NewSaveError("", "", message))
 }
 
-func loadData(op *adapt.LoadOp, session *sess.Session) error {
+func loadData(op *adapt.LoadOp, session *sess.Session, connection adapt.Connection) error {
 
-	_, err := Load([]*adapt.LoadOp{op}, session, nil)
+	_, err := Load([]*adapt.LoadOp{op}, session, &LoadOptions{
+		Connections: GetConnectionMap(connection),
+		Metadata:    GetConnectionMetadata(connection),
+	})
 	if err != nil {
 		return err
 	}
@@ -52,7 +56,7 @@ func loadData(op *adapt.LoadOp, session *sess.Session) error {
 		return nil
 	}
 
-	return loadData(op, session)
+	return loadData(op, session, connection)
 }
 
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
@@ -69,7 +73,7 @@ func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Query:          true,
 	}
 
-	err := loadData(op, bs.session)
+	err := loadData(op, bs.session, bs.connection)
 	if err != nil {
 		return nil, err
 	}
