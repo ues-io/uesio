@@ -6,25 +6,15 @@ import (
 )
 
 func getTotal(change *adapt.ChangeItem) (int64, error) {
-	var oldTotal, newTotal int64
-	oldVal, err := change.GetOldField("uesio/studio.total")
+
+	oldTotal, err := change.GetOldFieldAsInt("uesio/studio.total")
 	if err != nil {
 		return 0, err
 	}
 
-	oldInt, ok := oldVal.(int64)
-	if ok {
-		oldTotal = oldInt
-	}
-
-	newVal, err := change.GetField("uesio/studio.total")
+	newTotal, err := change.GetFieldAsInt("uesio/studio.total")
 	if err != nil {
 		return 0, err
-	}
-
-	newInt, ok := newVal.(int64)
-	if ok {
-		newTotal = newInt
 	}
 
 	return oldTotal + newTotal, nil
