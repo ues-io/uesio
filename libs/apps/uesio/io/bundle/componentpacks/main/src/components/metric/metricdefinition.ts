@@ -1,11 +1,10 @@
-import { definition, builder } from "@uesio/ui"
-import { SeriesDefinition } from "../../shared/aggregate"
-import { LabelsDefinition } from "../../shared/labels"
+import { definition, builder, signal } from "@uesio/ui"
 
 export type MetricDefinition = {
-	labels: LabelsDefinition
 	title?: string
-	series: SeriesDefinition[]
+	unit?: string
+	value: string
+	signals?: signal.SignalDefinition[]
 } & definition.BaseDefinition
 
 export interface Props extends definition.BaseProps {
