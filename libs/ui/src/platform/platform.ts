@@ -16,6 +16,7 @@ type BotParams = {
 }
 
 type BotResponse = {
+	params: BotParams
 	success: boolean
 	error: string
 }

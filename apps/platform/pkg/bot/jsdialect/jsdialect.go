@@ -52,7 +52,6 @@ func runBot(botName string, contents string, api interface{}, errorFunc func(str
 			// Not a Javascript error
 			return err
 		}
-
 	}
 
 	return nil

@@ -23,7 +23,7 @@ type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *s
 
 type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 
-type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
+type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
 
 var botDialectMap = map[string]BotDialect{}
 
@@ -244,7 +244,10 @@ func CallGeneratorBot(namespace, name string, params map[string]interface{}, con
 	return botAPI.itemStreams, nil
 }
 
-func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
+
+	//Note: for now just golang bots return params
+	//we need to look how to get the params out of goja
 
 	var botFunction CallBotFunc
 
@@ -262,7 +265,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 	err := bundle.Load(robot, session)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	botAPI := &CallBotAPI{
@@ -275,13 +278,13 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 	err = hydrateBot(robot, session)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return dialect.CallBot(robot, botAPI)
+	return nil, dialect.CallBot(robot, botAPI)
 }
