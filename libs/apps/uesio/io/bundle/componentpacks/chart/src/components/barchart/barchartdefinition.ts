@@ -1,5 +1,6 @@
 import { definition, builder } from "@uesio/ui"
-import { LabelsDefinition, SeriesDefinition } from "../../shared/chart"
+import { SeriesDefinition } from "../../shared/aggregate"
+import { LabelsDefinition } from "../../shared/labels"
 
 export type BarChartDefinition = {
 	labels: LabelsDefinition
