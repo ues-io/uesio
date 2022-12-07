@@ -29,7 +29,7 @@ var specialRefs = map[string]SpecialReferences{
 		ReferenceMetadata: &adapt.ReferenceMetadata{
 			Collection: "uesio/core.user",
 		},
-		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.picture"},
+		Fields: []string{"uesio/core.firstname", "uesio/core.lastname", "uesio/core.language", "uesio/core.picture"},
 	},
 }
 

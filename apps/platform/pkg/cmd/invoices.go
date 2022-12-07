@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -10,6 +12,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
+	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
 func init() {
@@ -59,7 +63,85 @@ func InvoicingJob() error {
 
 }
 
+func parseLicenseKey(key string) (string, string, error) {
+	keyArray := strings.Split(key, ":")
+	if len(keyArray) != 2 {
+		return "", "", errors.New("Invalid Key: " + key)
+	}
+	return keyArray[0], keyArray[1], nil
+}
+
+func parseLipsKey(key string) (string, string, string, error) {
+	keyArray := strings.Split(key, ":")
+	if len(keyArray) != 5 {
+		return "", "", "", errors.New("Invalid Key: " + key)
+	}
+	return keyArray[2], keyArray[3], keyArray[4], nil
+}
+
+func getLicenseDescr(uniquekey string, labels map[string]string) (string, error) {
+
+	label := labels["uesio/studio.licensedescription"]
+	app, _, err := parseLicenseKey(uniquekey)
+
+	if err != nil {
+		return "", err
+	}
+
+	templateMergeValues := map[string]interface{}{
+		"app": app,
+	}
+
+	template, err := templating.NewTemplateWithValidKeysOnly(label)
+	if err != nil {
+		return "", err
+	}
+
+	result, err := templating.Execute(template, templateMergeValues)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+func getLipsDescr(uniquekey string, labels map[string]string) (string, error) {
+
+	label := labels["uesio/studio.licensepricingitemdescription"]
+	app, metadatatype, actiontype, err := parseLipsKey(uniquekey)
+
+	if err != nil {
+		return "", err
+	}
+
+	templateMergeValues := map[string]interface{}{
+		"app":          app,
+		"metadatatype": metadatatype,
+		"actiontype":   actiontype,
+	}
+
+	template, err := templating.NewTemplateWithValidKeysOnly(label)
+	if err != nil {
+		return "", err
+	}
+
+	result, err := templating.Execute(template, templateMergeValues)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
 func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Session) error {
+
+	//This creates a copy of the session
+	userSession := session.RemoveWorkspaceContext()
+	userSession.SetUser(app.Owner)
+	labels, err := translate.GetTranslatedLabels(userSession)
+	if err != nil {
+		return err
+	}
 
 	invoiceLineItems := meta.InvoiceLineItemCollection{}
 
@@ -69,7 +151,7 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 		Date: time.Now().Format("2006-01-02"),
 	}
 
-	err := datasource.PlatformSaveOne(invoice, nil, connection, session)
+	err = datasource.PlatformSaveOne(invoice, nil, connection, session)
 	if err != nil {
 		return err
 	}
@@ -103,16 +185,24 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 		licenseIDs = append(licenseIDs, license.ID)
 
-		invoiceLineItems = append(invoiceLineItems, &meta.InvoiceLineItem{
-			Invoice:     invoice,
-			Description: license.UniqueKey,
-			Quantity:    1,
-			Price:       license.MonthlyPrice,
-			Total:       license.MonthlyPrice,
-		})
+		if license.MonthlyPrice > 0 {
 
-		//this is just to avoid looping at the end
-		invoice.Total = invoice.Total + license.MonthlyPrice
+			descr, err := getLicenseDescr(license.UniqueKey, labels)
+			if err != nil {
+				return err
+			}
+
+			invoiceLineItems = append(invoiceLineItems, &meta.InvoiceLineItem{
+				Invoice:     invoice,
+				Description: descr,
+				Quantity:    1,
+				Price:       license.MonthlyPrice,
+				Total:       license.MonthlyPrice,
+			})
+
+			//this is just to avoid looping at the end
+			invoice.Total = invoice.Total + license.MonthlyPrice
+		}
 
 	}
 
@@ -180,9 +270,15 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 	invoiceLineItemMap := make(map[string]*meta.InvoiceLineItem, lpic.Len())
 	for _, lpi := range lpic {
+
+		descr, err := getLipsDescr(lpi.UniqueKey, labels)
+		if err != nil {
+			return err
+		}
+
 		invoiceLineItemMap[lpi.ActionType] = &meta.InvoiceLineItem{
 			Invoice:     invoice,
-			Description: lpi.UniqueKey,
+			Description: descr,
 			Quantity:    0,
 			Price:       lpi.Price,
 			Total:       0,
@@ -203,9 +299,12 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 	//calculate total & save
 	for _, item := range invoiceLineItemMap {
-		item.Total = item.Price * float64(item.Quantity)
-		invoice.Total = invoice.Total + item.Total
-		invoiceLineItems = append(invoiceLineItems, item)
+		linePrice := item.Price * float64(item.Quantity)
+		if linePrice > 0 {
+			item.Total = linePrice
+			invoice.Total = invoice.Total + item.Total
+			invoiceLineItems = append(invoiceLineItems, item)
+		}
 	}
 
 	err = datasource.PlatformSave(datasource.PlatformSaveRequest{

@@ -1,0 +1,3 @@
+name: licensepricingitemdescription
+value: ${app} for using ${metadatatype} and performing the ${actiontype} action
+public: false
