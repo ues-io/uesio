@@ -35,6 +35,7 @@ type MergeType =
 	| "Site"
 	| "Label"
 	| "SelectList"
+	| "Sum"
 
 type ContextFrame = {
 	wire?: string
@@ -105,15 +106,37 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
 		const expressionParts = fullExpression.split(":")
+		let record: WireRecord | undefined
+		let expression = fullExpression
 		if (expressionParts.length === 1) {
-			const value = context.getRecord()?.getFieldValue(fullExpression)
-			return value !== undefined && value !== null ? `${value}` : ""
+			record = context.getRecord()
+		} else {
+			const wirename = expressionParts[0]
+			const wire = context.getWireByName(wirename)
+			record = wire?.getFirstRecord()
+			expression = expressionParts[1]
 		}
-		const wirename = expressionParts[0]
-		const expression = expressionParts[1]
-		const wire = context.getWireByName(wirename)
-		const value = wire?.getFirstRecord()?.getFieldValue(expression)
+		const value = record?.getFieldValue(expression)
 		return value !== undefined && value !== null ? `${value}` : ""
+	},
+	Sum: (fullExpression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
+		const expressionParts = fullExpression.split(":")
+		let wire: Wire | undefined
+		let expression = fullExpression
+		if (expressionParts.length === 1) {
+			wire = context.getWire()
+		} else {
+			const wirename = expressionParts[0]
+			wire = context.getWireByName(wirename)
+			expression = expressionParts[1]
+		}
+
+		let total = 0
+		wire?.getData().forEach((record) => {
+			total += (record.getFieldValue(expression) as number) || 0
+		})
+		return "" + total
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
 	User: (expression, context) => {
