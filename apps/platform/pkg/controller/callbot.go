@@ -11,8 +11,9 @@ import (
 )
 
 type BotResponse struct {
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
+	Params  map[string]interface{} `json:"params"`
+	Success bool                   `json:"success"`
+	Error   string                 `json:"error"`
 }
 
 func CallListenerBot(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +32,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	err = datasource.CallListenerBot(namespace, name, params, nil, session)
+	returnParams, err := datasource.CallListenerBot(namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -39,6 +40,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, r, &BotResponse{
+		Params:  returnParams,
 		Success: true,
 	})
 }

@@ -22,12 +22,14 @@ const signals: Record<string, SignalDescriptor> = {
 				const mergedParams = context.mergeMap(signal.params)
 
 				try {
-					await platform.callBot(
+					const response = await platform.callBot(
 						context,
 						namespace,
 						name,
 						mergedParams || {}
 					)
+
+					return context.addFrame({ params: response.params })
 				} catch (error) {
 					const message = getErrorString(error)
 					return context.addFrame({ errors: [message] })

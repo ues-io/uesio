@@ -9,18 +9,18 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
+func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
 	appID := session.GetContextAppName()
 
 	if appID == "" {
-		return errors.New("Error creating a new bundle, missing app")
+		return nil, errors.New("Error creating a new bundle, missing app")
 	}
 
 	workspace := session.GetWorkspace()
 
 	if workspace == nil {
-		return errors.New("Error creating a new bundle, missing workspace")
+		return nil, errors.New("Error creating a new bundle, missing workspace")
 	}
 
 	var app meta.App
@@ -43,7 +43,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var bundles meta.BundleCollection
@@ -74,7 +74,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	major := 0
@@ -88,14 +88,14 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 
 	bundle, err := meta.NewBundle(appID, major, minor, patch, "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	wsbs, err := bundlestore.GetBundleStoreByType("workspace")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return CreateBundle(appID, workspace.Name, bundle, wsbs, session)
+	return nil, CreateBundle(appID, workspace.Name, bundle, wsbs, session)
 
 }
