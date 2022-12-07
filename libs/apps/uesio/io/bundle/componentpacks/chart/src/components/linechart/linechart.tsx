@@ -4,7 +4,7 @@ import { Props } from "./linechartdefinition"
 
 import { Line } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
-import { getDataSets, getLabels } from "../../shared/chart"
+import { aggregate } from "../../shared/aggregate"
 Chart.register(...registerables)
 
 const ChartComponent: FC<Props> = (props) => {
@@ -30,11 +30,8 @@ const ChartComponent: FC<Props> = (props) => {
 
 	const wires = uesio.wire.useWires(wireNames)
 
-	const categories = getLabels(wires, definition.labels, definition.series)
-
-	const datasets = getDataSets(
+	const [datasets, categories] = aggregate(
 		wires,
-		categories,
 		definition.labels,
 		definition.series
 	)
