@@ -168,6 +168,63 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	return valueString, nil
 }
 
+func (ci *ChangeItem) GetOldFieldAsString(fieldID string) (string, error) {
+	value, err := ci.GetOldField(fieldID)
+	if err != nil {
+		return "", err
+	}
+	valueString, ok := value.(string)
+	if !ok {
+		return "", errors.New("Could not get value as string: " + fieldID)
+	}
+	return valueString, nil
+}
+
+func (ci *ChangeItem) GetFieldAsInt(fieldID string) (int64, error) {
+	value, err := ci.GetField(fieldID)
+	if err != nil {
+		return 0, err
+	}
+
+	switch value.(type) {
+	case nil:
+		return 0, nil
+	case int64:
+		return value.(int64), nil
+	case float64:
+		valueFloat, ok := value.(float64)
+		if !ok {
+			return 0, errors.New("Could not get value as int: " + fieldID)
+		}
+		return int64(valueFloat), nil
+	}
+
+	return 0, errors.New("Could not get value as int, invalid cast type: " + fieldID)
+
+}
+
+func (ci *ChangeItem) GetOldFieldAsInt(fieldID string) (int64, error) {
+	value, err := ci.GetOldField(fieldID)
+	if err != nil {
+		return 0, err
+	}
+
+	switch value.(type) {
+	case nil:
+		return 0, nil
+	case int64:
+		return value.(int64), nil
+	case float64:
+		valueFloat, ok := value.(float64)
+		if !ok {
+			return 0, errors.New("Could not get value as int, invalid cast type: " + fieldID)
+		}
+		return int64(valueFloat), nil
+	}
+
+	return 0, errors.New("Could not get value as int: " + fieldID)
+}
+
 func (ci *ChangeItem) GetOldField(fieldID string) (interface{}, error) {
 	if ci.OldValues != nil {
 		return ci.OldValues.GetField(fieldID)

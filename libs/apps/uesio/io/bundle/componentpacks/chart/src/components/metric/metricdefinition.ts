@@ -2,22 +2,22 @@ import { definition, builder } from "@uesio/ui"
 import { SeriesDefinition } from "../../shared/aggregate"
 import { LabelsDefinition } from "../../shared/labels"
 
-export type LineChartDefinition = {
+export type MetricDefinition = {
 	labels: LabelsDefinition
 	title?: string
 	series: SeriesDefinition[]
 } & definition.BaseDefinition
 
 export interface Props extends definition.BaseProps {
-	definition: LineChartDefinition
+	definition: MetricDefinition
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Line Chart",
-	description: "Visualized data with lines.",
+	title: "Metric",
+	description: "A metric box",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
-		text: "New chart",
+		text: "New metric",
 	}),
 	properties: [
 		{
