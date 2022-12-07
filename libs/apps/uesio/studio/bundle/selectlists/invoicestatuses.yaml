@@ -1,6 +1,0 @@
-name: invoicestatuses
-options:
-  - label: "Paid"
-    value: "PAID"
-  - label: "Not Paid"
-    value: "NOTPAID"

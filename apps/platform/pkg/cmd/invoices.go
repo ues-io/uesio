@@ -147,9 +147,8 @@ func CreateInvoice(app *meta.App, connection adapt.Connection, session *sess.Ses
 
 	//SAVE the invoce (we need the ID)
 	invoice := &meta.Invoice{
-		App:    app,
-		Date:   time.Now().Format("2006-01-02"),
-		Status: "NOTPAID",
+		App:  app,
+		Date: time.Now().Format("2006-01-02"),
 	}
 
 	err = datasource.PlatformSaveOne(invoice, nil, connection, session)

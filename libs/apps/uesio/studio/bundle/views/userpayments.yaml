@@ -46,7 +46,6 @@ definition:
             uesio/studio.fullname:
         uesio/studio.total:
         uesio/studio.date:
-        uesio/studio.status:
       conditions:
         - field: uesio/studio.app
           valueSource: LOOKUP
@@ -80,22 +79,22 @@ definition:
                 - uesio/io.titlebar:
                     uesio.variant: uesio/io.main
                     title: Payments
-                - uesio/io.box:
-                    uesio.variant: uesio/io.section
-                    components:
-                      - uesio/io.titlebar:
-                          uesio.variant: uesio/io.section
-                          title: Overview
-                      - uesio/io.grid:
-                          templateColumns: 1fr 1fr
-                          columnGap: 10px
-                          items:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.section
-                                text: Balance 12345
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.section
-                                text: "ERROR"
+                # - uesio/io.box:
+                #     uesio.variant: uesio/io.section
+                #     components:
+                #       - uesio/io.titlebar:
+                #           uesio.variant: uesio/io.section
+                #           title: Overview
+                #       - uesio/io.grid:
+                #           templateColumns: 1fr 1fr
+                #           columnGap: 10px
+                #           items:
+                #             - uesio/io.text:
+                #                 uesio.variant: uesio/io.section
+                #                 text: Balance
+                #             - uesio/io.text:
+                #                 uesio.variant: uesio/io.section
+                #                 text: Coming soon
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -122,7 +121,6 @@ definition:
                                     color: ${uesio/studio.app->uesio/studio.color}
                             - field: uesio/studio.total
                             - field: uesio/studio.date
-                            - field: uesio/studio.status
                           rowactions:
                             - text: Details
                               signals:
