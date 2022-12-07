@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -78,7 +79,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	route.Params = routematch.Vars
 	route.Path = path
 
-	return route, nil
+	return datasource.RunRouteBots(route, session)
 }
 
 func GetRouteFromCollection(r *http.Request, namespace, collection string, viewtype string, recordID string, session *sess.Session) (*meta.Route, error) {
@@ -116,5 +117,5 @@ func GetRouteFromCollection(r *http.Request, namespace, collection string, viewt
 		route.Params = map[string]string{}
 	}
 
-	return route, nil
+	return datasource.RunRouteBots(route, session)
 }

@@ -25,6 +25,8 @@ type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, sessio
 
 type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
 
+type RouteBotFunc func(*meta.Route, *sess.Session) error
+
 var botDialectMap = map[string]BotDialect{}
 
 func RegisterBotDialect(name string, dialect BotDialect) {
@@ -86,6 +88,27 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 
 	return nil
 
+}
+
+func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
+
+	var botFunction RouteBotFunc
+
+	routeKey := route.GetKey()
+
+	switch routeKey {
+	case "uesio/studio.paymentsuccess":
+		botFunction = runPaymentSuccessRouteBot
+	}
+
+	if botFunction != nil {
+		err := botFunction(route, session)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return route, nil
 }
 
 func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -274,6 +297,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 			params: params,
 		},
 		connection: connection,
+		results:    map[string]interface{}{},
 	}
 
 	err = hydrateBot(robot, session)
@@ -286,5 +310,10 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
-	return nil, dialect.CallBot(robot, botAPI)
+	err = dialect.CallBot(robot, botAPI)
+	if err != nil {
+		return nil, err
+	}
+
+	return botAPI.results, nil
 }
