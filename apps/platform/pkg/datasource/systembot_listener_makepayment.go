@@ -2,16 +2,53 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
-	"github.com/stripe/stripe-go/v74/price"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func queryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
+	var sd meta.SiteDomain
+	err := PlatformLoadOne(
+		&sd,
+		&PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio/studio.domain",
+				},
+				{
+					ID: "uesio/studio.type",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/studio.site",
+					Value: siteID,
+				},
+			},
+			BatchSize: 1,
+		},
+		sess.GetStudioAnonSession(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &sd, nil
+}
+
+func getHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
+	if domain.Type == "subdomain" {
+		return fmt.Sprintf("https://%s.%s", domain.Domain, site.Domain)
+	}
+	return fmt.Sprintf("https://%s", domain.Domain)
+}
 
 func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.Connection, uesioSession *sess.Session) (map[string]interface{}, error) {
 
@@ -19,6 +56,18 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 	//productID := "prod_MwHe3fVLMi0pcj"
 
 	//BOT Start
+
+	userID := uesioSession.GetUserID()
+	site := uesioSession.GetSite()
+
+	domain, err := queryDomainFromSite(site.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	host := getHostFromDomain(domain, site)
+	cancelURL := fmt.Sprintf("%s/%s", host, "mypayments")
+	successURL := fmt.Sprintf("%s/%s/{CHECKOUT_SESSION_ID}", host, "paymentsuccess")
 
 	anonSession := sess.GetStudioAnonSession()
 	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
@@ -38,32 +87,27 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 		return nil, errors.New("Can't get price")
 	}
 
-	newPriceParams := &stripe.PriceParams{
+	priceData := &stripe.CheckoutSessionLineItemPriceDataParams{
 		Product:    stripe.String(productID),
-		UnitAmount: stripe.Int64(amount),
+		UnitAmount: stripe.Int64(amount * 100),
 		Currency:   stripe.String("usd"),
 	}
 
-	price, err := price.New(newPriceParams)
-	if err != nil {
-		return nil, err
-	}
-
 	oneTimePayment := &stripe.CheckoutSessionParams{
-		ClientReferenceID: stripe.String("CLIENT_ID"),
+		ClientReferenceID: stripe.String(userID),
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
-				Price:    stripe.String(price.ID),
-				Quantity: stripe.Int64(1),
+				Quantity:  stripe.Int64(1),
+				PriceData: priceData, // To create an inline price use case, pass in price_data instead of a price.id
 			},
 		},
 		Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
 		//SuccessURL: stripe.String("https://example.com/success?session_id={CHECKOUT_SESSION_ID}"),
-		SuccessURL: stripe.String("https://studio.uesio-dev.com:3000/myprofile"),
-		CancelURL:  stripe.String("https://example.com/cancel"),
+		SuccessURL: stripe.String(successURL),
+		CancelURL:  stripe.String(cancelURL),
 	}
 
 	checkoutSession, err := session.New(oneTimePayment)
@@ -71,7 +115,7 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 		return nil, err
 	}
 
-	returnParams := map[string]interface{}{"url": checkoutSession.URL, "checkoutSessionID": checkoutSession.ID}
+	returnParams := map[string]interface{}{"redirectUrl": checkoutSession.URL, "checkoutSessionID": checkoutSession.ID}
 
 	return returnParams, nil
 

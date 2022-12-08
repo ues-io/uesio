@@ -85,23 +85,38 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.section
                           title: Overview
+                          actions:
+                            - uesio/io.group:
+                                components:
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: Settle Up
+                                      signals:
+                                        - signal: "bot/CALL"
+                                          bot: "uesio/studio.makepayment"
+                                          params:
+                                            price: "$Sum{invoices:uesio/studio.total}"
+                                        - signal: "route/REDIRECT"
+                                          path: $Param{redirectUrl}
                       - uesio/io.grid:
-                          templateColumns: 1fr 1fr
+                          templateColumns: 1fr 1fr 1fr
                           columnGap: 10px
+                          uesio.styles:
+                            root:
+                              padding: 50px
                           items:
-                            - uesio/io.text:
-                                uesio.variant: uesio/io.section
-                                text: Balance
-                            - uesio/io.button:
-                                uesio.variant: uesio/io.secondary
-                                text: Make payment
-                                signals:
-                                  - signal: "bot/CALL"
-                                    bot: "uesio/studio.makepayment"
-                                    params:
-                                      price: "22"
-                                  - signal: "route/REDIRECT"
-                                    path: $Param{url}
+                            - uesio/io.metric:
+                                title: Incoming Payments
+                                unit: USD
+                                value: $Sum{invoices:uesio/studio.total}
+                            - uesio/io.metric:
+                                title: Pending Payments
+                                unit: USD
+                                value: $Sum{invoices:uesio/studio.total}
+                            - uesio/io.metric:
+                                title: Balance
+                                unit: USD
+                                value: $Sum{invoices:uesio/studio.total}
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:

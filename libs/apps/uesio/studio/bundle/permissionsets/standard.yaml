@@ -72,6 +72,7 @@ views:
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
+  uesio/studio.paymentsuccess: true
 routes:
   uesio/studio.authsources: true
   uesio/studio.authsource: true
@@ -142,6 +143,7 @@ routes:
   uesio/studio.licensespricingvalues: true
   uesio/studio.invoice: true
   uesio/studio.userpayments: true
+  uesio/studio.paymentsuccess: true
 files:
 collections:
   uesio/studio.allmetadata: true
