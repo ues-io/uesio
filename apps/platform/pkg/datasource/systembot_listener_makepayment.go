@@ -52,10 +52,14 @@ func getHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
 
 func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.Connection, uesioSession *sess.Session) (map[string]interface{}, error) {
 
-	//stripe.Key = "sk_test_51MC1MmJKdGn0ZDEEKE3oc9O0YUz9bJMYNaABNf4perGEycxtHmRuqXpnUyA4vbuXwcN9hwJMSEt6E2mJCNGeuzBN00eic9IQ1m"
-	//productID := "prod_MwHe3fVLMi0pcj"
+	amount, err := strconv.ParseInt(params["price"].(string), 10, 64)
+	if err != nil {
+		return nil, errors.New("Can't get price")
+	}
 
-	//BOT Start
+	if amount <= 0 {
+		return nil, errors.New("The amount is negative, you don't have to pay anything.")
+	}
 
 	userID := uesioSession.GetUserID()
 	site := uesioSession.GetSite()
@@ -80,11 +84,6 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 	productID, err := configstore.GetValueFromKey("uesio/studio.stripe_product_id", anonSession)
 	if err != nil {
 		return nil, err
-	}
-
-	amount, err := strconv.ParseInt(params["price"].(string), 10, 64)
-	if err != nil {
-		return nil, errors.New("Can't get price")
 	}
 
 	priceData := &stripe.CheckoutSessionLineItemPriceDataParams{

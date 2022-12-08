@@ -1,0 +1,6 @@
+name: payment
+nameField: uesio/studio.autoid
+label: payment
+pluralLabel: payments
+uniqueKey:
+  - uesio/studio.checkoutsession

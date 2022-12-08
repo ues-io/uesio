@@ -192,5 +192,6 @@ collections:
   uesio/studio.licensepricingitem: true
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
+  uesio/studio.payment: true
 modifyallrecords: false
 viewallrecords: false

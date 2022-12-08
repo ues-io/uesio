@@ -1,0 +1,5 @@
+name: total
+label: Payment total
+type: NUMBER
+number:
+  decimals: 2

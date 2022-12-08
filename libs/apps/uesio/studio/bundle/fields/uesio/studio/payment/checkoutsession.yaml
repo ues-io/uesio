@@ -1,0 +1,4 @@
+name: checkoutsession
+type: TEXT
+label: Checkout Session ID
+required: true

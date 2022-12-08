@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"time"
+
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -16,7 +18,6 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 		return err
 	}
 	stripe.Key = stripeKey
-
 	checkoutSessionID := route.Params["session_id"]
 
 	checkoutSession, err := session.Get(checkoutSessionID, nil)
@@ -24,7 +25,17 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 		return err
 	}
 
-	println(checkoutSession.ClientReferenceID)
+	payment := &meta.Payment{
+		User:            &meta.User{ID: checkoutSession.ClientReferenceID},
+		Date:            time.Now().Format("2006-01-02"),
+		Total:           float64(checkoutSession.AmountTotal) / 100,
+		CheckoutSession: checkoutSessionID,
+	}
+
+	err = PlatformSaveOne(payment, nil, nil, uesioSession)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

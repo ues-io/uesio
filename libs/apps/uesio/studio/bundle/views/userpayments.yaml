@@ -54,6 +54,23 @@ definition:
       order:
         - field: uesio/studio.date
           desc: true
+    payments:
+      collection: uesio/studio.payment
+      fields:
+        uesio/core.id:
+        uesio/studio.autoid:
+        uesio/studio.user:
+        uesio/studio.total:
+        uesio/studio.date:
+        uesio/studio.checkoutsession:
+      conditions:
+        - field: uesio/studio.user
+          valueSource: LOOKUP
+          lookupWire: users
+          lookupField: uesio/core.id
+      order:
+        - field: uesio/studio.date
+          desc: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -95,7 +112,9 @@ definition:
                                         - signal: "bot/CALL"
                                           bot: "uesio/studio.makepayment"
                                           params:
-                                            price: "$Sum{invoices:uesio/studio.total}"
+                                            price: "0"
+                                            #This should be an int and also the balance
+                                            # "$Sum{invoices:uesio/studio.total}"
                                         - signal: "route/REDIRECT"
                                           path: $Param{redirectUrl}
                       - uesio/io.grid:
@@ -106,17 +125,17 @@ definition:
                               padding: 50px
                           items:
                             - uesio/io.metric:
-                                title: Incoming Payments
-                                unit: USD
-                                value: $Sum{invoices:uesio/studio.total}
+                                title: Payments
+                                unit: United States Dollar
+                                value: $Sum{payments:uesio/studio.total} $
                             - uesio/io.metric:
-                                title: Pending Payments
-                                unit: USD
-                                value: $Sum{invoices:uesio/studio.total}
+                                title: Invoices
+                                unit: United States Dollar
+                                value: $Sum{invoices:uesio/studio.total} $
                             - uesio/io.metric:
                                 title: Balance
-                                unit: USD
-                                value: $Sum{invoices:uesio/studio.total}
+                                unit: United States Dollar
+                                value: 0 $
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -148,3 +167,22 @@ definition:
                               signals:
                                 - signal: route/NAVIGATE
                                   path: app/${uesio/studio.app->uesio/core.uniquekey}/invoice/${uesio/studio.autoid}
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Payments
+                      - uesio/io.table:
+                          id: paymentsTable
+                          wire: payments
+                          pagesize: 10
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          columns:
+                            - field: uesio/studio.autoid
+                            - field: uesio/studio.user
+                            - field: uesio/studio.total
+                            - field: uesio/studio.date
+                            - field: uesio/studio.checkoutsession

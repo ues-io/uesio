@@ -19,37 +19,41 @@ definition:
                   textAlign: center
               components:
                 - uesio/io.text:
-                    text: "🤯"
+                    text: "✅"
                     uesio.styles:
                       root:
                         fontSize: 60pt
                         padding: 20px
                     element: div
                 - uesio/io.text:
-                    text: "ERROR"
+                    text: Your payment was successful
                     uesio.styles:
                       root:
                         fontSize: 40pt
                         fontWeight: bold
-                        color: "#cc0033"
+                        color: "#00c410"
                         lineHeight: 20px
                         textShadow: 1px 1px rgba(250,250,250,.3)
                         padding: 40px
                     element: div
                 - uesio/io.text:
-                    text: $Param{error}
+                    text: Thank you for your payment!
                     uesio.styles:
                       root:
                         fontSize: 14pt
                         fontWeight: bold
-                        color: "#cc0033"
+                        color: "#00c410"
                         lineHeight: 20px
                         textShadow: 1px 1px rgba(250,250,250,.3)
-                        backgroundColor: "#fce4e4"
                         border: 1px solid "#fcc2c3"
-                        float: left
-                        padding: 20px 30px
+                        paddingBottom: 20px
                     element: div
+                - uesio/io.button:
+                    uesio.variant: uesio/io.secondary
+                    text: Go Back
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: mypayments
   params:
     error:
       type: TEXT
