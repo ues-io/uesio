@@ -1,0 +1,6 @@
+name: autoid
+type: AUTONUMBER
+label: Id
+autonumber:
+  prefix: Payment
+  leadingZeros: 4
