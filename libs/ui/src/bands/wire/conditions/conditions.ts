@@ -1,3 +1,5 @@
+import { FieldValue } from "../../wirerecord/types"
+
 const PARAM = "PARAM"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -61,7 +63,7 @@ type LookupConditionState = ConditionBase & {
 type ValueConditionState = ConditionBase & {
 	field: string
 	valueSource: typeof VALUE
-	value: string | string[]
+	value: FieldValue
 }
 
 export {

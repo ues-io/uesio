@@ -34,7 +34,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		{
 			root: {
 				...(color && {
-					color: props.context.merge(color),
+					color: props.context.mergeString(color),
 				}),
 				textAlign: align,
 				verticalAlign: "inherit",
@@ -43,7 +43,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		props
 	)
 	const Tag = (element ? element : "span") as AcceptedElements
-	const mergedText = props.context.merge(text)
+	const mergedText = props.context.mergeString(text)
 	return <Tag className={classes.root}>{mergedText}</Tag>
 }
 

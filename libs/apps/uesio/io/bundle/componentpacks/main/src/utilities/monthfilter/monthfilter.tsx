@@ -10,7 +10,7 @@ interface MonthFilterProps extends definition.UtilityProps {
 const getMonthYearDateKey = (year: number, month: number) =>
 	`${year}-${(month + "").padStart(2, "0")}`
 
-const parseDateConditionValue = (value: string | string[]) => {
+const parseDateConditionValue = (value: wire.FieldValue) => {
 	// Get the condition value
 	if (value === "THIS_MONTH") {
 		const current = new Date()
@@ -18,6 +18,9 @@ const parseDateConditionValue = (value: string | string[]) => {
 			current.getFullYear(),
 			current.getMonth() + 1
 		)
+	}
+	if (typeof value !== "string") {
+		return ""
 	}
 	return value
 }

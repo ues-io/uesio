@@ -16,7 +16,7 @@ const Button = component.getUtility("uesio/io.button")
 const DataExport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const collectionId = context.merge(definition?.collectionId)
+	const collectionId = context.mergeString(definition?.collectionId)
 
 	const wireName = definition?.wireName
 

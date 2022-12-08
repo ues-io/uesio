@@ -27,8 +27,8 @@ function additionalContext(context: Context, additional: ContextFrame) {
 
 		if (workspace) {
 			frame.workspace = {
-				name: context.merge(workspace.name),
-				app: context.merge(workspace.app),
+				name: context.mergeString(workspace.name),
+				app: context.mergeString(workspace.app),
 			}
 		}
 		if (fieldMode) {
@@ -37,8 +37,8 @@ function additionalContext(context: Context, additional: ContextFrame) {
 
 		if (siteadmin) {
 			frame.siteadmin = {
-				name: context.merge(siteadmin.name),
-				app: context.merge(siteadmin.app),
+				name: context.mergeString(siteadmin.name),
+				app: context.mergeString(siteadmin.app),
 			}
 		}
 		const wire = additional.wire

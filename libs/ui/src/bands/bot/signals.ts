@@ -19,7 +19,7 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: CallSignal, context: Context) =>
 			async (dispatch, getState, platform) => {
 				const [namespace, name] = parseKey(signal.bot)
-				const mergedParams = context.mergeMap(signal.params)
+				const mergedParams = context.mergeStringMap(signal.params)
 
 				try {
 					const response = await platform.callBot(

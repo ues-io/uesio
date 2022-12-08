@@ -58,7 +58,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 			const itemContext = context.addFrame({
 				recordData: item,
 			})
-			return itemContext.merge(template)
+			return itemContext.mergeString(template)
 		}
 		return (
 			item[nameField] ||

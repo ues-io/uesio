@@ -194,7 +194,7 @@ function should(condition: DisplayCondition, context: Context) {
 
 	const compareToValue =
 		typeof condition.value === "string"
-			? context.merge(condition.value as string)
+			? context.mergeString(condition.value as string)
 			: condition.value || ""
 
 	if (condition.type === "hasNoValue") return !compareToValue

@@ -58,7 +58,7 @@ type AddConditionPayload = {
 
 type SetConditionValuePayload = {
 	id: string
-	value: string
+	value: FieldValue
 } & EntityPayload
 
 type RemoveOrderPayload = {

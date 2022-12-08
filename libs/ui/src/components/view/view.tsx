@@ -31,7 +31,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	const viewDef = useViewDef(viewDefId)
 	const [paramState] = uesio.component.useState<Record<string, string>>(
 		componentId,
-		context.mergeMap(params)
+		context.mergeStringMap(params)
 	)
 
 	const viewContext = context.addFrame({

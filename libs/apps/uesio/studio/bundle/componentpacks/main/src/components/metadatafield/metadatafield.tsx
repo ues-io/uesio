@@ -23,8 +23,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 
-	const grouping = context.merge(props.definition.grouping)
-	const namespace = context.merge(props.definition.namespace)
+	const grouping = context.mergeString(props.definition.grouping)
+	const namespace = context.mergeString(props.definition.namespace)
 
 	if (!wire || !record) {
 		return null

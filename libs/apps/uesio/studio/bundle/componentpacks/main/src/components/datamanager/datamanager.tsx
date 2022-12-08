@@ -28,8 +28,8 @@ const getWireDefinition = (
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const collection = context.merge(definition.collectionId)
-	const namespace = context.merge(definition.namespace)
+	const collection = context.mergeString(definition.collectionId)
+	const namespace = context.mergeString(definition.namespace)
 
 	const [fieldsMeta] = uesio.builder.useMetadataList(
 		context,

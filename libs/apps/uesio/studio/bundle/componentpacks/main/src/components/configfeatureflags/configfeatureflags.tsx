@@ -12,7 +12,7 @@ interface Props extends definition.BaseProps {
 const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const user = definition?.user ? context.merge(definition?.user) : ""
+	const user = definition?.user ? context.mergeString(definition?.user) : ""
 
 	const [values] = uesio.featureflag.useFeatureFlags(context, user)
 

@@ -105,7 +105,7 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 		const viewDefId = context.getViewDefId() || ""
 		const [viewDefNamespace] = parseKey(viewDefId)
 		const namespace = request.namespace || viewDefNamespace || ""
-		return `${prefix}/routes/path/${namespace}/${context.merge(
+		return `${prefix}/routes/path/${namespace}/${context.mergeString(
 			request.path
 		)}`
 	}
@@ -114,7 +114,9 @@ const getRouteUrl = (context: Context, request: NavigateRequest) => {
 		const viewtype = request.viewtype || "list"
 		return (
 			`${prefix}/routes/collection/${namespace}/${name}/${viewtype}` +
-			(request.recordid ? `/${context.merge(request.recordid)}` : "")
+			(request.recordid
+				? `/${context.mergeString(request.recordid)}`
+				: "")
 		)
 	}
 	throw new Error("Not a valid Route Request")

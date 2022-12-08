@@ -74,7 +74,7 @@ interface SetConditionSignal extends SignalDefinition {
 }
 interface SetConditionValueSignal extends SignalDefinition {
 	wire: string
-	value: string
+	value: string | number | boolean
 	conditionId: string
 }
 interface SetOrderSignal extends SignalDefinition {

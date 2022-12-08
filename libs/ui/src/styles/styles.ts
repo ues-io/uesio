@@ -139,9 +139,9 @@ const getColor = (
 	if (!definition) return undefined
 	let result = ""
 	if (typeof definition === "string") {
-		result = context.merge(definition)
+		result = context.mergeString(definition)
 	} else if (definition.value) {
-		result = context.merge(definition.value)
+		result = context.mergeString(definition.value)
 	} else if (definition.intention) {
 		result = context.getTheme().definition.palette[definition.intention]
 	}
