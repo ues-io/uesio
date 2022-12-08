@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"errors"
 	"time"
 
 	"github.com/stripe/stripe-go/v74"
@@ -11,23 +10,35 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func mutateRoute(route *meta.Route) {
+	route.ViewRef = "uesio/studio.userpayments"
+	route.Namespace = "uesio/studio"
+	route.Path = "mypayments"
+	route.ThemeRef = "uesio/studio.default"
+	route.Params = nil
+	route.Name = "userpayments"
+}
+
 func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) error {
 
 	anonSession := sess.GetStudioAnonSession()
 	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
 	if err != nil {
-		return err
+		mutateRoute(route)
+		return nil
 	}
 	stripe.Key = stripeKey
 	checkoutSessionID := route.Params["session_id"]
 
 	checkoutSession, err := session.Get(checkoutSessionID, nil)
 	if err != nil {
-		return err
+		mutateRoute(route)
+		return nil
 	}
 
 	if checkoutSession.PaymentStatus != "paid" {
-		return errors.New("Something is not paid")
+		mutateRoute(route)
+		return nil
 	}
 
 	payment := &meta.Payment{
@@ -39,7 +50,8 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 
 	err = PlatformSaveOne(payment, nil, nil, uesioSession)
 	if err != nil {
-		return err
+		mutateRoute(route)
+		return nil
 	}
 
 	return nil
