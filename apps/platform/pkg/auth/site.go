@@ -39,35 +39,6 @@ func getDomain(domainType, domain string) (*meta.SiteDomain, error) {
 	return &sd, nil
 }
 
-func queryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
-	var sd meta.SiteDomain
-	err := datasource.PlatformLoadOne(
-		&sd,
-		&datasource.PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: "uesio/studio.domain",
-				},
-				{
-					ID: "uesio/studio.type",
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: "uesio/studio.site",
-					Value: siteID,
-				},
-			},
-			BatchSize: 1,
-		},
-		sess.GetStudioAnonSession(),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &sd, nil
-}
-
 func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	siteDomain, err := getDomain(domainType, domain)
 	if err != nil {

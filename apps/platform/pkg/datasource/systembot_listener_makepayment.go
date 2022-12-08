@@ -9,46 +9,9 @@ import (
 	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-func queryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
-	var sd meta.SiteDomain
-	err := PlatformLoadOne(
-		&sd,
-		&PlatformLoadOptions{
-			Fields: []adapt.LoadRequestField{
-				{
-					ID: "uesio/studio.domain",
-				},
-				{
-					ID: "uesio/studio.type",
-				},
-			},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: "uesio/studio.site",
-					Value: siteID,
-				},
-			},
-			BatchSize: 1,
-		},
-		sess.GetStudioAnonSession(),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &sd, nil
-}
-
-func getHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
-	if domain.Type == "subdomain" {
-		return fmt.Sprintf("https://%s.%s", domain.Domain, site.Domain)
-	}
-	return fmt.Sprintf("https://%s", domain.Domain)
-}
 
 func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.Connection, uesioSession *sess.Session) (map[string]interface{}, error) {
 
@@ -64,14 +27,14 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 	userID := uesioSession.GetUserID()
 	site := uesioSession.GetSite()
 
-	domain, err := queryDomainFromSite(site.ID)
+	domain, err := QueryDomainFromSite(site.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	host := getHostFromDomain(domain, site)
-	cancelURL := fmt.Sprintf("%s/%s", host, "mypayments")
-	successURL := fmt.Sprintf("%s/%s/{CHECKOUT_SESSION_ID}", host, "paymentsuccess")
+	host := GetHostFromDomain(domain, site)
+	cancelURL := fmt.Sprintf("%s/mypayments", host)
+	successURL := fmt.Sprintf("%s/paymentsuccess/{CHECKOUT_SESSION_ID}", host)
 
 	anonSession := sess.GetStudioAnonSession()
 	stripeKey, err := secretstore.GetSecretFromKey("uesio/studio.stripe_key", anonSession)
@@ -103,8 +66,7 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 				PriceData: priceData, // To create an inline price use case, pass in price_data instead of a price.id
 			},
 		},
-		Mode: stripe.String(string(stripe.CheckoutSessionModePayment)),
-		//SuccessURL: stripe.String("https://example.com/success?session_id={CHECKOUT_SESSION_ID}"),
+		Mode:       stripe.String(string(stripe.CheckoutSessionModePayment)),
 		SuccessURL: stripe.String(successURL),
 		CancelURL:  stripe.String(cancelURL),
 	}
@@ -114,8 +76,9 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 		return nil, err
 	}
 
-	returnParams := map[string]interface{}{"redirectUrl": checkoutSession.URL, "checkoutSessionID": checkoutSession.ID}
-
-	return returnParams, nil
+	return map[string]interface{}{
+		"redirectUrl":       checkoutSession.URL,
+		"checkoutSessionID": checkoutSession.ID,
+	}, nil
 
 }

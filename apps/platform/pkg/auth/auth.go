@@ -108,13 +108,6 @@ func parseHost(host string) (domainType, domainValue, domain, subdomain string) 
 	return "domain", hostParts[0], host, ""
 }
 
-func getHostFromDomain(domain *meta.SiteDomain, site *meta.Site) string {
-	if domain.Type == "subdomain" {
-		return fmt.Sprintf("https://%s.%s", domain.Domain, site.Domain)
-	}
-	return fmt.Sprintf("https://%s", domain.Domain)
-}
-
 func GetSiteFromHost(host string) (*meta.Site, error) {
 	domainType, domainValue, domain, subdomain := parseHost(host)
 	site, err := getSiteFromDomain(domainType, domainValue)
@@ -329,12 +322,12 @@ func GetRequiredPayloadValue(payload map[string]interface{}, key string) (string
 
 func boostPayloadWithTemplate(username string, payload map[string]interface{}, site *meta.Site, options *meta.EmailTemplateOptions) error {
 
-	domain, err := queryDomainFromSite(site.ID)
+	domain, err := datasource.QueryDomainFromSite(site.ID)
 	if err != nil {
 		return err
 	}
 
-	host := getHostFromDomain(domain, site)
+	host := datasource.GetHostFromDomain(domain, site)
 
 	link := fmt.Sprintf("%s/%s?code={####}", host, options.Redirect)
 
