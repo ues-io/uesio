@@ -2,7 +2,6 @@ package adapt
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"unicode"
 
@@ -12,26 +11,6 @@ import (
 
 var UesioLanguage = gval.NewLanguage(
 	gval.Full(),
-	gval.VariableSelector(func(path gval.Evaluables) gval.Evaluable {
-		return func(c context.Context, v interface{}) (interface{}, error) {
-			keys, err := path.EvalStrings(c, v)
-			if err != nil {
-				return nil, err
-			}
-			fullId := keys[0]
-			item, ok := v.(meta.Gettable)
-			if !ok {
-				return nil, errors.New("Casting error in formula field: " + fullId)
-			}
-			value, err := item.GetField(fullId)
-			if err != nil {
-				return nil, err
-			}
-
-			return value, nil
-
-		}
-	}),
 	gval.Function("STR_LEN", func(args ...interface{}) (interface{}, error) {
 		length := len(args[0].(string))
 		return (float64)(length), nil
@@ -58,10 +37,20 @@ var UesioLanguage = gval.NewLanguage(
 
 type evalFunc func(item meta.Item) error
 
+type RuntimeEvaluator struct {
+	item meta.Item
+}
+
+func (re *RuntimeEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
+	return re.item.GetField(k)
+}
+
 func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 	return func(item meta.Item) error {
 
-		value, err := exec(context.Background(), item)
+		evaluator := &RuntimeEvaluator{item: item}
+
+		value, err := exec(context.Background(), evaluator)
 		if err != nil {
 			return err
 		}
