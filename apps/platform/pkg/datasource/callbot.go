@@ -9,6 +9,11 @@ type CallBotAPI struct {
 	session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
 	connection adapt.Connection
+	results    map[string]interface{}
+}
+
+func (cba *CallBotAPI) AddResult(key string, value interface{}) {
+	cba.results[key] = value
 }
 
 func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {

@@ -50,6 +50,9 @@ components:
         - uesio/io.text:uesio/io.iconoutline
     titlebar:
     markdown:
+    metric:
+      variants:
+        - uesio/io.metric:uesio/io.default
   utility:
     alert:
     avatar:

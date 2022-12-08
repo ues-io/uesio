@@ -1,0 +1,23 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+    title:
+      color: "#666"
+      fontSize: 8pt
+      textTransform: uppercase
+      padding: 8px 0
+    valuewrapper:
+      padding: 20px 32px
+      backgroundColor: "#333"
+      borderRadius: 10pt
+      textAlign: center
+    value:
+      fontSize: 24pt
+      color: white
+    unit:
+      color: "#ccc"
+      fontSize: 8pt
+      textTransform: uppercase
+public: true
