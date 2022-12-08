@@ -62,7 +62,7 @@ definition:
         uesio/studio.user:
         uesio/studio.total:
         uesio/studio.date:
-        uesio/studio.checkoutsession:
+        uesio/studio.payment:
       conditions:
         - field: uesio/studio.user
           valueSource: LOOKUP
@@ -112,7 +112,7 @@ definition:
                                         - signal: "bot/CALL"
                                           bot: "uesio/studio.makepayment"
                                           params:
-                                            price: "0"
+                                            price: "99"
                                             #This should be an int and also the balance
                                             # "$Sum{invoices:uesio/studio.total}"
                                         - signal: "route/REDIRECT"
@@ -185,4 +185,4 @@ definition:
                             - field: uesio/studio.user
                             - field: uesio/studio.total
                             - field: uesio/studio.date
-                            - field: uesio/studio.checkoutsession
+                            - field: uesio/studio.payment

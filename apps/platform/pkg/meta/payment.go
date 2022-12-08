@@ -1,19 +1,19 @@
 package meta
 
 type Payment struct {
-	ID              string    `json:"uesio/core.id"`
-	UniqueKey       string    `json:"uesio/core.uniquekey"`
-	AutoID          string    `json:"uesio/studio.autoid"`
-	User            *User     `json:"uesio/studio.user"`
-	Date            string    `json:"uesio/studio.date"`
-	Total           float64   `json:"uesio/studio.total"`
-	CheckoutSession string    `json:"uesio/studio.checkoutsession"`
-	itemMeta        *ItemMeta `json:"-"`
-	CreatedBy       *User     `json:"uesio/core.createdby"`
-	Owner           *User     `json:"uesio/core.owner"`
-	UpdatedBy       *User     `json:"uesio/core.updatedby"`
-	UpdatedAt       int64     `json:"uesio/core.updatedat"`
-	CreatedAt       int64     `json:"uesio/core.createdat"`
+	ID        string    `json:"uesio/core.id"`
+	UniqueKey string    `json:"uesio/core.uniquekey"`
+	AutoID    string    `json:"uesio/studio.autoid"`
+	User      *User     `json:"uesio/studio.user"`
+	Date      string    `json:"uesio/studio.date"`
+	Total     float64   `json:"uesio/studio.total"`
+	Payment   string    `json:"uesio/studio.payment"`
+	itemMeta  *ItemMeta `json:"-"`
+	CreatedBy *User     `json:"uesio/core.createdby"`
+	Owner     *User     `json:"uesio/core.owner"`
+	UpdatedBy *User     `json:"uesio/core.updatedby"`
+	UpdatedAt int64     `json:"uesio/core.updatedat"`
+	CreatedAt int64     `json:"uesio/core.createdat"`
 }
 
 func (l *Payment) GetCollectionName() string {

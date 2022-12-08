@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"errors"
 	"time"
 
 	"github.com/stripe/stripe-go/v74"
@@ -25,11 +26,15 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 		return err
 	}
 
+	if checkoutSession.PaymentStatus != "paid" {
+		return errors.New("Something is not paid")
+	}
+
 	payment := &meta.Payment{
-		User:            &meta.User{ID: checkoutSession.ClientReferenceID},
-		Date:            time.Now().Format("2006-01-02"),
-		Total:           float64(checkoutSession.AmountTotal) / 100,
-		CheckoutSession: checkoutSessionID,
+		User:    &meta.User{ID: checkoutSession.ClientReferenceID},
+		Date:    time.Now().Format("2006-01-02"),
+		Total:   float64(checkoutSession.AmountTotal) / 100,
+		Payment: checkoutSession.PaymentIntent.ID,
 	}
 
 	err = PlatformSaveOne(payment, nil, nil, uesioSession)

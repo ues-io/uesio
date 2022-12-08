@@ -1,0 +1,4 @@
+name: payment
+type: TEXT
+label: Payment ID
+required: true
