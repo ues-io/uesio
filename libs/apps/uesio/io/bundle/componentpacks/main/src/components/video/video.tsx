@@ -44,7 +44,7 @@ const Video: FC<VideoProps> = (props) => {
 									context,
 									definition.file
 							  )
-							: context.merge(definition.src)
+							: context.mergeString(definition.src)
 					}
 				/>
 				Your browser does not support the video tag.

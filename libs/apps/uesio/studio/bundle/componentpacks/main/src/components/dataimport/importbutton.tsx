@@ -47,14 +47,16 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 		{
 			div: {
 				padding: "100px",
-				outline: "dashed 1px " + context.merge("$Theme{color.primary}"),
+				outline:
+					"dashed 1px " +
+					context.mergeString("$Theme{color.primary}"),
 				textAlign: "center",
 				color: "rgb(196, 195, 196)",
 			},
 			icon: {
 				fontSize: "80px",
 				padding: "32px",
-				color: context.merge("$Theme{color.primary}"),
+				color: context.mergeString("$Theme{color.primary}"),
 			},
 		},
 		props

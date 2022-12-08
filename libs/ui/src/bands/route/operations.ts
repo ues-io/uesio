@@ -7,7 +7,7 @@ import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
 
 const redirect = (context: Context, path: string, newTab?: boolean) => () => {
-	const mergedPath = context.merge(path)
+	const mergedPath = context.mergeString(path)
 	if (newTab) {
 		window.open(mergedPath, "_blank")
 		return context

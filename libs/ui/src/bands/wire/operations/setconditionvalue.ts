@@ -6,7 +6,7 @@ export default (
 		context: Context,
 		wirename: string,
 		conditionId: string,
-		value: string
+		value: string | number | boolean | undefined
 	): ThunkFunc =>
 	(dispatch) => {
 		const viewId = context.getViewId()

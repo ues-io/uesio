@@ -41,7 +41,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 							root: classes.icon,
 						}}
 						context={context}
-						icon={context.merge(definition.icon)}
+						icon={context.mergeString(definition.icon)}
 					/>
 				) : undefined
 			}

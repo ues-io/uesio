@@ -16,8 +16,10 @@ const Button = component.getUtility("uesio/io.button")
 const ConfigLogins: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const user = definition?.user ? context.merge(definition?.user) : ""
-	const email = definition?.email ? context.merge(definition?.email) : ""
+	const user = definition?.user ? context.mergeString(definition?.user) : ""
+	const email = definition?.email
+		? context.mergeString(definition?.email)
+		: ""
 	const requeryWire = definition.requery
 
 	const siteadmin = context.getSiteAdmin()

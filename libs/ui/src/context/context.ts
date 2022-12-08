@@ -16,11 +16,12 @@ import { getAncestorPath } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
-import { getErrorString } from "../bands/utils"
 import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../bands/builder/types"
 
 type FieldMode = "READ" | "EDIT"
+
+type Mergeable = string | number | boolean | undefined
 
 type MergeType =
 	| "Record"
@@ -61,44 +62,6 @@ type MergeHandler = (
 	context: Context,
 	ancestors: number
 ) => string
-
-const handleMergeError = ({
-	mergeType,
-	expression,
-	errorMessage,
-	viewDefId,
-}: {
-	mergeType: MergeType
-	expression: string
-	errorMessage: string
-	viewDefId: string
-}) => {
-	const title = "Error in Template merge"
-	const getErrorFeedback = () => {
-		const missingMergeType = {
-			msg: "mergeType is undefined",
-		}
-		const invalidMergeType = {
-			msg: `${mergeType} is not a valid mergeType.`,
-			validMergeTypes: Object.keys(handlers),
-		}
-		const noValue = {
-			msg: "No value found",
-			mergeType,
-		}
-		if (!mergeType) return missingMergeType
-		if (!(mergeType in handlers)) return invalidMergeType
-		if (errorMessage === "noValue") return noValue
-
-		return {
-			mergeType,
-			expression,
-			viewDefId,
-		}
-	}
-
-	return console.log(title, { ...getErrorFeedback(), viewDefId, expression })
-}
 
 const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
 
@@ -223,33 +186,6 @@ const handlers: Record<MergeType, MergeHandler> = {
 }
 
 const ANCESTOR_INDICATOR = "Parent."
-
-const inject = (template: string, context: Context): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, expression) => {
-		const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
-		const mergeTypeName = mergeSplit.pop() as MergeType
-		const mergeAncestors = mergeSplit.length
-
-		try {
-			const value = handlers[mergeTypeName || "Record"](
-				expression,
-				context,
-				mergeAncestors
-			)
-			if (!value) throw new Error("noValue")
-			return value
-		} catch (error) {
-			const errorMessage = getErrorString(error)
-
-			handleMergeError({
-				mergeType,
-				expression,
-				errorMessage,
-				viewDefId: context.getViewDefId() || "",
-			})
-			return ""
-		}
-	})
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
@@ -450,17 +386,46 @@ class Context {
 
 	addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
 
-	merge = (template: string | undefined) => {
+	merge = (template: Mergeable) => {
 		// If we are in a no-merge context, just return the template
 		if (this.getNoMerge()) {
 			return template || ""
 		}
-		return template ? inject(template, this) : ""
+
+		if (typeof template !== "string") {
+			return template
+		}
+
+		return template.replace(
+			/\$([.\w]*){(.*?)}/g,
+			(x, mergeType, expression) => {
+				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
+				const mergeTypeName = mergeSplit.pop() as MergeType
+				const mergeAncestors = mergeSplit.length
+
+				return handlers[mergeTypeName || "Record"](
+					expression,
+					this,
+					mergeAncestors
+				)
+			}
+		)
+	}
+
+	mergeString = (template: Mergeable) => {
+		const result = this.merge(template)
+		if (!result) return ""
+		if (typeof result !== "string") {
+			throw new Error(
+				`Merge failed: result is not a string it's a ${typeof result} instead: ${result}`
+			)
+		}
+		return result
 	}
 
 	mergeMap = (
-		map: Record<string, string> | undefined
-	): Record<string, string> =>
+		map: Record<string, Mergeable> | undefined
+	): Record<string, Mergeable> =>
 		map
 			? Object.fromEntries(
 					Object.entries(map).map((entries) => [
@@ -469,6 +434,9 @@ class Context {
 					])
 			  )
 			: {}
+
+	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
+		this.mergeMap(map) as Record<string, string>
 
 	getCurrentErrors = () => this.stack[0].errors || []
 

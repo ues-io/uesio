@@ -44,7 +44,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 			const itemContext = context.addFrame({
 				recordData: item,
 			})
-			return itemContext.merge(template)
+			return itemContext.mergeString(template)
 		}
 		return item[nameField] || ""
 	}

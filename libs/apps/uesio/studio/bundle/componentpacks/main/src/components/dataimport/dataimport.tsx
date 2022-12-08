@@ -21,7 +21,7 @@ const Button = component.getUtility("uesio/io.button")
 const DataImport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const collectionId = context.merge(definition.collectionId)
+	const collectionId = context.mergeString(definition.collectionId)
 
 	const [uploaded, setUploaded] = useState<State>({
 		success: false,

@@ -19,7 +19,7 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			signal: SetParamSignal,
 			context
 		) => {
-			const value = context.merge(signal.value)
+			const value = context.mergeString(signal.value)
 			state[signal.param] = value
 		},
 		label: "Set Param",
@@ -31,7 +31,7 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			signal: SetParamsSignal,
 			context
 		) => {
-			const params = context.mergeMap(signal.params)
+			const params = context.mergeStringMap(signal.params)
 			Object.keys(params).forEach((key) => {
 				state[key] = params[key]
 			})
