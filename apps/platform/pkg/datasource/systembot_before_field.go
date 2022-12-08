@@ -3,62 +3,46 @@ package datasource
 import (
 	"context"
 	"errors"
+	"fmt"
 
-	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFieldsInExpression(expression string, metadata *adapt.CollectionMetadata) (meta.Item, map[string]bool) {
-	fields := adapt.ChangeItem{FieldChanges: &adapt.Item{}, Metadata: metadata}
-	fieldKeys := map[string]bool{}
-	var UesioTestLanguage = gval.NewLanguage(
-		adapt.UesioLanguage,
-		gval.VariableSelector(func(path gval.Evaluables) gval.Evaluable {
-			return func(c context.Context, v interface{}) (interface{}, error) {
+type TestEvaluator struct {
+	metadata  *adapt.CollectionMetadata
+	fieldKeys map[string]bool
+}
 
-				keys, err := path.EvalStrings(c, v)
+func getDummyData(fieldType string, field *adapt.FieldMetadata) interface{} {
+	switch fieldType {
+	case "NUMBER":
+		return 1234
+	case "TEXT", "LONGTEXT":
+		return "Dummy Data"
+	case "CHECKBOX":
+		return true
+	case "FORMULA":
+		return getDummyData(field.FormulaMetadata.ReturnType, nil)
+	default:
+		return "Dummy Data"
+	}
+}
 
-				if err != nil {
-					return nil, err
-				}
+func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
 
-				fullId := keys[0]
+	fmt.Println("Evaluating")
+	fmt.Println(k)
+	field, err := te.metadata.GetField(k)
+	if err != nil {
+		return nil, err
+	}
 
-				if fullId != "" {
+	te.fieldKeys[k] = true
 
-					field, err := fields.Metadata.GetField(fullId)
-					if err != nil {
-						return nil, err
-					}
+	return getDummyData(field.Type, field), nil
 
-					switch field.Type {
-					case "NUMBER":
-						fields.FieldChanges.SetField(fullId, 1234)
-					case "TEXT":
-						fields.FieldChanges.SetField(fullId, "Dummy Data")
-					case "LONGTEXT":
-						fields.FieldChanges.SetField(fullId, "Dummy Data")
-					case "CHECKBOX":
-						fields.FieldChanges.SetField(fullId, true)
-					default:
-						fields.FieldChanges.SetField(fullId, "Dummy Data")
-					}
-
-					fieldKeys[fullId] = true
-					return fullId, nil
-				}
-
-				return nil, nil
-
-			}
-		}),
-	)
-
-	UesioTestLanguage.Evaluate(expression, fields)
-
-	return fields.FieldChanges, fieldKeys
 }
 
 func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -196,14 +180,18 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 				return err
 			}
 
-			fields, fieldKeys := getFieldsInExpression(expression, collectionMetadata)
-			_, err = adapt.UesioLanguage.Evaluate(expression, fields)
+			testEval := &TestEvaluator{
+				metadata:  collectionMetadata,
+				fieldKeys: map[string]bool{},
+			}
+
+			_, err = adapt.UesioLanguage.Evaluate(expression, testEval)
 			if err != nil {
 				return errors.New("Field: invalid expression:" + err.Error())
 			}
 
 			//make sure that the field in the expression are valid
-			err = depMap.AddMap(fieldKeys, "field")
+			err = depMap.AddMap(testEval.fieldKeys, "field")
 			if err != nil {
 				return err
 			}
