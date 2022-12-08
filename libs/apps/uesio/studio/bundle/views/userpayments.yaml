@@ -112,7 +112,7 @@ definition:
                                         - signal: "bot/CALL"
                                           bot: "uesio/studio.makepayment"
                                           params:
-                                            price: "99"
+                                            price: "0"
                                             #This should be an int and also the balance
                                             # "$Sum{invoices:uesio/studio.total}"
                                         - signal: "route/REDIRECT"
