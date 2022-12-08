@@ -3,7 +3,6 @@ package datasource
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -32,8 +31,6 @@ func getDummyData(fieldType string, field *adapt.FieldMetadata) interface{} {
 
 func (te *TestEvaluator) SelectGVal(ctx context.Context, k string) (interface{}, error) {
 
-	fmt.Println("Evaluating")
-	fmt.Println(k)
 	field, err := te.metadata.GetField(k)
 	if err != nil {
 		return nil, err
