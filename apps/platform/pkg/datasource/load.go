@@ -54,25 +54,7 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
-	mergeFuncs := map[string]interface{}{
-		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
-			val, ok := params[key]
-			if !ok {
-				return nil, errors.New("missing param " + key)
-			}
-			return val, nil
-		},
-		"User": func(m map[string]interface{}, key string) (interface{}, error) {
-
-			userID := session.GetUserID()
-
-			if key == "id" {
-				return userID, nil
-			}
-
-			return nil, nil
-		},
-	}
+	mergeFuncs := GetMergeFuncs(session, params)
 
 	for i, condition := range conditions {
 

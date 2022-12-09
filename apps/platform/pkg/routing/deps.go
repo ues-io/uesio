@@ -199,25 +199,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 	}
 
-	mergeFuncs := map[string]interface{}{
-		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
-			val, ok := params[key]
-			if !ok {
-				return nil, errors.New("missing param " + key)
-			}
-			return val, nil
-		},
-		"User": func(m map[string]interface{}, key string) (interface{}, error) {
-
-			userID := session.GetUserID()
-
-			if key == "id" {
-				return userID, nil
-			}
-
-			return nil, nil
-		},
-	}
+	mergeFuncs := datasource.GetMergeFuncs(session, params)
 
 	for viewKey, viewCompDef := range depMap.Views {
 

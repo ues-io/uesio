@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 func getHomeRoute(session *sess.Session) (*meta.Route, error) {
@@ -75,8 +76,37 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return nil, errors.New("No Route Found in Cache")
 	}
 
-	// Cast the item to a route and add params
-	route.Params = routematch.Vars
+	// Process merge syntax for default route params
+	mergeFuncs := datasource.GetMergeFuncs(session, nil)
+
+	for paramName, paramValue := range route.Params {
+		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, mergeFuncs)
+		if err != nil {
+			return nil, err
+		}
+
+		mergedValue, err := templating.Execute(template, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		route.Params[paramName] = mergedValue
+	}
+
+	if route.Params == nil {
+		route.Params = map[string]string{}
+	}
+
+	// Now add in querystring parameters
+	for k, v := range r.URL.Query() {
+		route.Params[k] = v[0]
+	}
+
+	// Add the routematch params
+	for k, v := range routematch.Vars {
+		route.Params[k] = v
+	}
+
 	route.Path = path
 
 	return datasource.RunRouteBots(route, session)

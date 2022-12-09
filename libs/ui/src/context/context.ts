@@ -57,17 +57,12 @@ type ContextFrame = {
 	params?: Record<string, string>
 }
 
-type MergeHandler = (
-	expression: string,
-	context: Context,
-	ancestors: number
-) => string
+type MergeHandler = (expression: string, context: Context) => string
 
 const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
 
 const handlers: Record<MergeType, MergeHandler> = {
-	Record: (fullExpression, context, ancestors) => {
-		context = context.removeRecordFrame(ancestors)
+	Record: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")
 		let record: WireRecord | undefined
 		let expression = fullExpression
@@ -82,8 +77,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = record?.getFieldValue(expression)
 		return value !== undefined && value !== null ? `${value}` : ""
 	},
-	Sum: (fullExpression, context, ancestors) => {
-		context = context.removeRecordFrame(ancestors)
+	Sum: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")
 		let wire: Wire | undefined
 		let expression = fullExpression
@@ -141,10 +135,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const dateWithoutTime = new Date(date.toDateString())
 		return `${dateWithoutTime.toLocaleDateString()}`
 	},
-	RecordId: (expression, context, ancestors) => {
-		context = context.removeRecordFrame(ancestors)
-		return context.getRecordId() || ""
-	},
+	RecordId: (expression, context) => context.getRecordId() || "",
 	Theme: (expression, context) => {
 		const [scope, value] = expression.split(".")
 		const theme = context.getTheme()
@@ -401,12 +392,12 @@ class Context {
 			(x, mergeType, expression) => {
 				const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
 				const mergeTypeName = mergeSplit.pop() as MergeType
-				const mergeAncestors = mergeSplit.length
 
 				return handlers[mergeTypeName || "Record"](
 					expression,
-					this,
-					mergeAncestors
+					mergeSplit.length
+						? this.removeRecordFrame(mergeSplit.length)
+						: this
 				)
 			}
 		)

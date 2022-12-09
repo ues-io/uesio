@@ -16,7 +16,9 @@ const ChartComponent: FC<Props> = (props) => {
 
 	const classes = styles.useStyles(
 		{
-			root: {},
+			root: {
+				minWidth: 0,
+			},
 			title: {},
 			chart: {},
 		},
@@ -51,6 +53,7 @@ const ChartComponent: FC<Props> = (props) => {
 					}}
 					options={{
 						maintainAspectRatio: false,
+						responsive: true,
 					}}
 				/>
 			</div>

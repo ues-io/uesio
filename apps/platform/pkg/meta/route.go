@@ -28,7 +28,7 @@ type Route struct {
 	ViewType   string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
 	ViewRef    string            `yaml:"view" json:"uesio/studio.view"`
 	Collection string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Params     map[string]string `yaml:"-" json:"-"`
+	Params     map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	Workspace  *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
 	ThemeRef   string            `yaml:"theme" json:"uesio/studio.theme"`
 	itemMeta   *ItemMeta         `yaml:"-" json:"-"`
