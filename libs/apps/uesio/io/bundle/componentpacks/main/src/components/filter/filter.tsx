@@ -5,6 +5,7 @@ import { component, hooks, collection, wire, definition } from "@uesio/ui"
 
 const SelectFilter = component.getUtility("uesio/io.selectfilter")
 const MonthFilter = component.getUtility("uesio/io.monthfilter")
+const WeekFilter = component.getUtility("uesio/io.weekfilter")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 
 type CommonProps = {
@@ -27,6 +28,7 @@ const getFilterContent = (
 			return <SelectFilter {...common} />
 		case "DATE": {
 			if (displayAs === "MONTH") return <MonthFilter {...common} />
+			if (displayAs === "WEEK") return <WeekFilter {...common} />
 			return null
 		}
 		default:
