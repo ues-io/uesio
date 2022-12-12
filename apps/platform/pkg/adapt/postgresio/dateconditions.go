@@ -3,6 +3,7 @@ package postgresio
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,6 +16,15 @@ func addDateRangeCondition(start, end time.Time, fieldName string, builder *Quer
 	return nil
 }
 
+func getWeekRange(week, year int) (startDate, endDate time.Time) {
+	timeBenchmark := time.Date(year, 7, 1, 0, 0, 0, 0, time.UTC)
+	weekStartBenchmark := timeBenchmark.AddDate(0, 0, -(int(timeBenchmark.Weekday()))%7)
+	_, weekBenchmark := weekStartBenchmark.ISOWeek()
+	startDate = weekStartBenchmark.AddDate(0, 0, (week-(weekBenchmark+1))*7)
+	endDate = startDate.AddDate(0, 0, 6)
+	return startDate, endDate
+}
+
 func processDateRangeCondition(condition adapt.LoadRequestCondition, fieldName string, builder *QueryBuilder) error {
 
 	value, ok := condition.Value.(string)
@@ -22,11 +32,30 @@ func processDateRangeCondition(condition adapt.LoadRequestCondition, fieldName s
 		return errors.New("Invalid date range value")
 	}
 
+	if value == "THIS_WEEK" {
+		year, month := time.Now().ISOWeek()
+		value = fmt.Sprintf("%v-W%v", year, month)
+	}
+
 	if value == "THIS_MONTH" {
 		value = time.Now().Format("2006-01")
 	}
 	// Split the condition value on "-"
 	dateParts := strings.Split(value, "-")
+
+	// Handle Week Ranges
+	if len(dateParts) == 2 && dateParts[1][0] == 'W' {
+		year, err := strconv.Atoi(dateParts[0])
+		if err != nil {
+			return err
+		}
+		week, err := strconv.Atoi(dateParts[1][1:])
+		if err != nil {
+			return err
+		}
+		start, end := getWeekRange(week, year)
+		return addDateRangeCondition(start, end, fieldName, builder)
+	}
 
 	// Handle Month Ranges
 	if len(dateParts) == 2 {

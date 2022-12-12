@@ -514,6 +514,21 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap) {
 						}
 					}
 				}
+				// A special case that should be removed at some point in
+				// favor of defining where slots are in the component definition
+				if compName == "uesio/io.tabs" && prop.Value == "tabs" {
+					if len(comp.Content[1].Content) > i {
+						tabsNode := comp.Content[1].Content[i+1]
+						for _, tab := range tabsNode.Content {
+							for l, prop := range tab.Content {
+								if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
+									getComponentAreaDeps(tab.Content[l+1], depMap)
+								}
+							}
+
+						}
+					}
+				}
 				getComponentAreaDeps(prop, depMap)
 			}
 			if compName == "uesio/core.view" {

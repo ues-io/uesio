@@ -16,13 +16,19 @@ const DateField: FC<DateFieldProps> = (props) => {
 	const readonly = mode === "READ"
 
 	if (mode === "READ") {
-		if (props.value) {
-			const timestamp = props.value
-			const date = new Date(timestamp)
-			const value = `${date.toLocaleDateString()}`
-			return <TextField {...props} value={value} mode="READ" />
-		}
-		return <TextField {...props} mode="READ" />
+		return (
+			<TextField
+				{...props}
+				value={
+					value
+						? new Date(value).toLocaleDateString(undefined, {
+								timeZone: "UTC",
+						  })
+						: ""
+				}
+				mode="READ"
+			/>
+		)
 	}
 
 	const classes = styles.useUtilityStyles(

@@ -22,17 +22,17 @@ type ValueLabel = {
 type DataLabels = {
 	source: "DATA"
 	timeunit?: "YEAR" | "MONTH" | "DAY"
-	timeunitfill?: "MONTH"
+	timeunitfill?: "MONTH" | "WEEK"
 }
 
 type LabelsDefinition = WireLabels | ValueLabels | DataLabels
 
 const getMonthYearDateKey = (date: Date) =>
-	`${date.getFullYear()}-${(date.getMonth() + "").padStart(2, "0")}`
+	`${date.getUTCFullYear()}-${(date.getUTCMonth() + "").padStart(2, "0")}`
 
 const getDayMonthYearDateKey = (date: Date) =>
-	`${date.getFullYear()}-${(date.getMonth() + "").padStart(2, "0")}-${(
-		date.getDate() + ""
+	`${date.getUTCFullYear()}-${(date.getUTCMonth() + "").padStart(2, "0")}-${(
+		date.getUTCDate() + ""
 	).padStart(2, "0")}`
 
 const getDateFromMonthYearKey = (key: string) => {
@@ -129,6 +129,18 @@ const getDayDataLabels = (
 		end.setDate(1)
 		end.setMonth(end.getMonth() + 1)
 		end.setDate(end.getDate() - 1)
+		lastKey = getDayMonthYearDateKey(end)
+	}
+
+	if (labels.timeunitfill === "WEEK") {
+		const start = getDateFromDayMonthYearKey(currentKey)
+		const startWeekDay = start.getDay()
+		start.setDate(start.getDate() - startWeekDay)
+		currentKey = getDayMonthYearDateKey(start)
+
+		const end = getDateFromDayMonthYearKey(lastKey)
+		const endWeekDay = end.getDay()
+		end.setDate(end.getDate() + (6 - endWeekDay))
 		lastKey = getDayMonthYearDateKey(end)
 	}
 

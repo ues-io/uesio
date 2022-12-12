@@ -112,3 +112,4 @@ components:
     markdownfield:
     filemarkdown:
     textareafield:
+    weekfilter:
