@@ -122,19 +122,38 @@ definition:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
                                 content:
-                                  - uesio/io.text:
-                                      text: ${uesio/core.firstname} ${uesio/core.lastname}
-                                      element: div
-                                  - uesio/io.text:
-                                      text: ${uesio/core.id}
+                                  - uesio/io.grid:
+                                      templateColumns: 1fr auto
                                       uesio.styles:
                                         root:
-                                          fontSize: 9pt
-                                          color: "#666"
-                                      element: div
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
+                                          alignItems: center
+                                      items:
+                                        - uesio/io.box:
+                                            components:
+                                              - uesio/io.text:
+                                                  text: ${uesio/core.firstname} ${uesio/core.lastname}
+                                                  element: div
+                                              - uesio/io.text:
+                                                  text: ${uesio/core.id}
+                                                  uesio.styles:
+                                                    root:
+                                                      fontSize: 9pt
+                                                      color: "#666"
+                                                  element: div
+                                        - uesio/io.box:
+                                            components:
+                                              - uesio/io.button:
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{app}/site/$Param{sitename}/users/${uesio/core.username}"
+                                                  text: Details
+                                                  uesio.variant: uesio/io.nav
+                                              - uesio/io.button:
+                                                  signals:
+                                                    - signal: panel/TOGGLE
+                                                      panel: deleteUser
+                                                  icon: delete
+                                                  uesio.variant: uesio/io.nav
                                 avatar:
                                   - uesio/io.avatar:
                                       image: $UserFile{uesio/core.picture}
@@ -196,3 +215,35 @@ definition:
                 panel: "newUser"
               - signal: wire/CANCEL
                 wire: newuser
+    deleteUser:
+      uesio.type: uesio/io.dialog
+      title: Delete User
+      width: 400px
+      height: 300px
+      components:
+        - uesio/io.text:
+            text: Are you sure you want to delete this user?
+      actions:
+        - uesio/io.button:
+            text: Delete
+            uesio.variant: uesio/io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                uesio.context:
+                  siteadmin:
+                    name: $Param{sitename}
+                    app: $Param{app}
+                wires:
+                  - users
+              - signal: "wire/LOAD"
+                wires:
+                  - users
+              - signal: panel/TOGGLE
+                panel: deleteUser
+        - uesio/io.button:
+            text: Cancel
+            uesio.variant: uesio/io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteUser
