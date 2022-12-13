@@ -1,12 +1,7 @@
 package meta
 
 import (
-	"errors"
-	"os"
 	"strconv"
-	"strings"
-
-	language "golang.org/x/text/language"
 )
 
 type TranslationCollection []*Translation
@@ -32,40 +27,11 @@ func (tc *TranslationCollection) AddItem(item Item) {
 }
 
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	_, err := language.ParseBase(key)
-	if err != nil {
-		return nil, errors.New("Invalid ISO 639 Key: " + key)
-	}
-	return &Translation{
-		Language: key,
-	}, nil
+	return NewTranslation(key)
 }
 
 func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-
-	if conditions == nil {
-		return StandardKeyFromPath(path, namespace, conditions)
-	}
-
-	if len(conditions) != 1 {
-		return "", errors.New("Must specify language")
-	}
-
-	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
-		// Ignore this file
-		return "", nil
-	}
-
-	requestedLanguage := conditions["uesio/studio.language"]
-	language := strings.TrimSuffix(path, ".yaml")
-
-	if requestedLanguage != language {
-		// Ignore this file
-		return "", nil
-	}
-
-	return language, nil
+	return StandardKeyFromPath(path, namespace, conditions)
 }
 
 func (tc *TranslationCollection) GetItem(index int) Item {
