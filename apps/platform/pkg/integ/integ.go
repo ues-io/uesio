@@ -45,7 +45,7 @@ func ExecByKey(options *IntegrationOptions, requestData, responseData interface{
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(integration, session)
+	err = bundle.Load(integration, nil, session) //TO-DO
 	if err != nil {
 		return err
 	}

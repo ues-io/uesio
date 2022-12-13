@@ -58,7 +58,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 		if err != nil {
 			return err
 		}
-		err = bundle.Load(uat, session)
+		err = bundle.Load(uat, nil, session) //TO-DO
 		if err != nil {
 			return err
 		}

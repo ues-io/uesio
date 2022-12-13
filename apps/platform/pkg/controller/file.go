@@ -23,7 +23,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		Namespace: namespace,
 	}
 
-	err := bundle.Load(&file, session)
+	err := bundle.Load(&file, nil, session) //TO-DO
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Not Found", http.StatusNotFound)

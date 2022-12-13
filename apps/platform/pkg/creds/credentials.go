@@ -26,7 +26,7 @@ func GetCredentials(key string, session *sess.Session) (*adapt.Credentials, erro
 		return nil, err
 	}
 
-	err = bundle.Load(credential, session)
+	err = bundle.Load(credential, nil, session) //TO-DO
 	if err != nil {
 		return nil, err
 	}

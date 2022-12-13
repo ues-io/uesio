@@ -36,7 +36,7 @@ func GetSecretFromKey(key string, session *sess.Session) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = bundle.Load(secret, session)
+	err = bundle.Load(secret, nil, session) //TO-DO
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +57,7 @@ func SetSecretFromKey(key, value string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(secret, session)
+	err = bundle.Load(secret, nil, session) //TO-DO
 	if err != nil {
 		return err
 	}

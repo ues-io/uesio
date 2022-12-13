@@ -215,7 +215,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 }
 
-func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, connection adapt.Connection, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
 		Options: &MetadataRequestOptions{
@@ -224,7 +224,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 	}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
-		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session)
+		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, connection, session)
 		if err != nil {
 			return err
 		}
@@ -285,7 +285,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(metadataResponse, session)
+		return additionalRequests.Load(metadataResponse, connection, session)
 	}
 	return nil
 }

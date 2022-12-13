@@ -24,7 +24,7 @@ func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 		return nil, err
 	}
 
-	err = bundle.Load(subViewDep, session)
+	err = bundle.Load(subViewDep, nil, session) //TO-DO
 	if err != nil {
 		return nil, errors.New("Failed to load SubView: " + key + " : " + err.Error())
 	}
@@ -38,7 +38,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 		return nil, err
 	}
 
-	err = bundle.Load(variantDep, session)
+	err = bundle.Load(variantDep, nil, session) //TO-DO
 	if err != nil {
 		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
 	}
@@ -378,7 +378,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = bundle.Load(theme, session.RemoveWorkspaceContext())
+	err = bundle.Load(theme, nil, session.RemoveWorkspaceContext()) //TO-DO
 	if err != nil {
 		return err
 	}
@@ -414,7 +414,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = bundle.Load(theme, session)
+	err = bundle.Load(theme, nil, session) //TO-DO
 	if err != nil {
 		return nil, err
 	}

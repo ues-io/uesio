@@ -185,7 +185,7 @@ func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	return nil
 }
 
-func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
+func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, connection adapt.Connection, session *sess.Session) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {
@@ -197,7 +197,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return nil, err
 	}
 
-	err = bundle.Load(collection, session)
+	err = bundle.Load(collection, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	return collectionMetadata, nil
 }
 
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
@@ -270,7 +270,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = bundle.Load(&selectList, session)
+		err = bundle.Load(&selectList, nil, session) //TO-DO
 		if err != nil {
 			return err
 		}

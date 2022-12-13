@@ -23,7 +23,7 @@ func getHomeRoute(session *sess.Session) (*meta.Route, error) {
 		Name:      name,
 		Namespace: namespace,
 	}
-	err = bundle.Load(route, session)
+	err = bundle.Load(route, nil, session) //TO-DO
 	if err != nil {
 		return nil, err
 	}
