@@ -4,4 +4,5 @@ components:
   view:
     linechart:
     barchart:
+    metricgroup:
   utility:

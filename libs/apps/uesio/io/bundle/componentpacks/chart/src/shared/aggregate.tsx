@@ -1,5 +1,5 @@
 import { wire } from "@uesio/ui"
-import { getCategoryKey, getLabels, LabelsDefinition } from "./labels"
+import { getCategoryFunc, getLabels, LabelsDefinition } from "./labels"
 
 type Buckets = Record<string, number>
 
@@ -39,8 +39,10 @@ const aggregate = (
 			Object.entries(categories).map(([key]) => [key, 0])
 		)
 
+		const categoryFunc = getCategoryFunc(labels, bucketField)
+
 		wire?.getData().forEach((record) => {
-			const category = getCategoryKey(record, labels, bucketField)
+			const category = categoryFunc(record)
 			const aggValue =
 				record.getFieldValue<number>(series.valueField) || 0
 			const currentValue = buckets[category]
