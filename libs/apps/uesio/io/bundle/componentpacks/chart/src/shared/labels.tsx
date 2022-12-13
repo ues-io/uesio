@@ -49,57 +49,38 @@ const getDateFromDayMonthYearKey = (key: string) => {
 	)
 }
 
-const getCategoryKey = (
-	record: wire.WireRecord,
+const getCategoryFunc = (
 	labels: LabelsDefinition,
 	categoryField: collection.Field
 ) => {
-	const value = record.getFieldValue<string>(categoryField.getId()) || ""
-	if (categoryField.getType() === "DATE") {
-		const dateValue = new Date(value)
-		if (labels.source === "DATA" && labels.timeunit === "MONTH") {
-			return getMonthYearDateKey(dateValue)
-		}
-		if (labels.source === "DATA" && labels.timeunit === "DAY") {
-			return getDayMonthYearDateKey(dateValue)
-		}
-	}
-	throw new Error("Invalid Category Field Type")
-}
-
-const getDataCategories = (
-	wires: { [k: string]: wire.Wire | undefined },
-	labels: LabelsDefinition,
-	serieses: SeriesDefinition[]
-) => {
-	const categories: Categories = {}
-
-	serieses.forEach((series) => {
-		const wire = wires[series.wire]
-		if (!wire) return
-		const categoryField = wire
-			?.getCollection()
-			.getField(series.categoryField)
-		if (!categoryField) {
-			throw new Error("Invalid Category Field")
-		}
-		wire?.getData().forEach((record) => {
-			const category = getCategoryKey(record, labels, categoryField)
-			if (!categories[category]) {
-				categories[category] = ""
+	const fieldType = categoryField.getType()
+	const fieldId = categoryField.getId()
+	switch (fieldType) {
+		case "DATE":
+			return (record: wire.WireRecord) => {
+				const value = record.getFieldValue<string>(fieldId)
+				if (!value) return ""
+				const dateValue = new Date(value)
+				if (labels.source === "DATA" && labels.timeunit === "MONTH") {
+					return getMonthYearDateKey(dateValue)
+				}
+				if (labels.source === "DATA" && labels.timeunit === "DAY") {
+					return getDayMonthYearDateKey(dateValue)
+				}
+				throw new Error("Invalid time unit")
 			}
-		})
-	})
-
-	return categories
+		case "REFERENCE":
+		case "USER":
+			return (record: wire.WireRecord) => {
+				const value = record.getReferenceValue(fieldId)
+				return (value && value.getIdFieldValue()) || ""
+			}
+		default:
+			throw new Error("Invalid field type: " + fieldType)
+	}
 }
 
-const getDayDataLabels = (
-	wires: { [k: string]: wire.Wire | undefined },
-	labels: DataLabels,
-	serieses: SeriesDefinition[]
-) => {
-	const categories = getDataCategories(wires, labels, serieses)
+const getDayDataLabels = (labels: DataLabels, categories: Categories) => {
 	// Loop through all our data to get a full list of categories based
 	// on our category field
 
@@ -159,11 +140,9 @@ const getDayDataLabels = (
 }
 
 const getMonthDataLabels = (
-	wires: { [k: string]: wire.Wire | undefined },
-	labels: DataLabels,
-	serieses: SeriesDefinition[]
+	labels: LabelsDefinition,
+	categories: Categories
 ) => {
-	const categories = getDataCategories(wires, labels, serieses)
 	// Loop through all our data to get a full list of categories based
 	// on our category field
 
@@ -197,18 +176,69 @@ const getMonthDataLabels = (
 	return sortedCategories
 }
 
+const getReferenceDataLabels = (
+	wire: wire.Wire,
+	labels: DataLabels,
+	categoryField: collection.Field
+) => {
+	const categories: Categories = {}
+	const categoryFunc = getCategoryFunc(labels, categoryField)
+	wire?.getData().forEach((record) => {
+		const category = categoryFunc(record)
+		const value = record.getReferenceValue(categoryField.getId())
+		if (category && !(category in categories)) {
+			categories[category] = value?.getUniqueKey() || ""
+		}
+	})
+	return categories
+}
+
+const getDateDataLabels = (
+	wire: wire.Wire,
+	labels: DataLabels,
+	categoryField: collection.Field
+) => {
+	const categories: Categories = {}
+	const categoryFunc = getCategoryFunc(labels, categoryField)
+	wire?.getData().forEach((record) => {
+		const category = categoryFunc(record)
+		if (category && !(category in categories)) {
+			categories[category] = ""
+		}
+	})
+
+	switch (labels.timeunit) {
+		case "MONTH":
+			return getMonthDataLabels(labels, categories)
+		case "DAY":
+			return getDayDataLabels(labels, categories)
+		default:
+			throw new Error("Invalid Timeunit")
+	}
+}
+
 const getDataLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: DataLabels,
-	serieses: SeriesDefinition[]
+	series: SeriesDefinition
 ) => {
-	switch (labels.timeunit) {
-		case "MONTH":
-			return getMonthDataLabels(wires, labels, serieses)
-		case "DAY":
-			return getDayDataLabels(wires, labels, serieses)
+	const wire = wires[series.wire]
+	if (!wire) throw new Error("Wire not found: " + series.wire)
+	const categoryField = wire?.getCollection().getField(series.categoryField)
+	if (!categoryField) {
+		throw new Error("Invalid Category Field")
+	}
+
+	const fieldType = categoryField.getType()
+
+	switch (fieldType) {
+		case "DATE":
+			return getDateDataLabels(wire, labels, categoryField)
+		case "REFERENCE":
+		case "USER":
+			return getReferenceDataLabels(wire, labels, categoryField)
 		default:
-			throw new Error("Invalid Timeunit")
+			throw new Error("Invalid Field Type: " + fieldType)
 	}
 }
 
@@ -216,13 +246,26 @@ const getLabels = (
 	wires: { [k: string]: wire.Wire | undefined },
 	labels: LabelsDefinition,
 	serieses: SeriesDefinition[]
+) =>
+	serieses.reduce(
+		(categories, series) => ({
+			...categories,
+			...getLabelsForSeries(wires, labels, series),
+		}),
+		{} as Categories
+	)
+
+const getLabelsForSeries = (
+	wires: { [k: string]: wire.Wire | undefined },
+	labels: LabelsDefinition,
+	series: SeriesDefinition
 ) => {
 	switch (labels.source) {
 		case "DATA":
-			return getDataLabels(wires, labels, serieses)
+			return getDataLabels(wires, labels, series)
 		default:
 			throw new Error("Invalid Label Source")
 	}
 }
 
-export { getCategoryKey, getLabels, LabelsDefinition }
+export { getCategoryFunc, getLabels, LabelsDefinition }

@@ -2,7 +2,7 @@ import { FC } from "react"
 import { styles, component, hooks } from "@uesio/ui"
 import { Props } from "./metricdefinition"
 
-const Tile = component.getUtility("uesio/io.tile")
+const MetricUtility = component.getUtility("uesio/io.metric")
 
 const MetricComponent: FC<Props> = (props) => {
 	const { definition, context } = props
@@ -23,17 +23,14 @@ const MetricComponent: FC<Props> = (props) => {
 	const value = context.merge(definition.value)
 
 	return (
-		<Tile
+		<MetricUtility
 			onClick={handler}
-			classes={{ root: classes.root }}
+			classes={classes}
 			context={context}
-		>
-			<div className={classes.title}>{definition.title}</div>
-			<div className={classes.valuewrapper}>
-				<div className={classes.value}>{value}</div>
-				<div className={classes.unit}>{definition.unit}</div>
-			</div>
-		</Tile>
+			title={definition.title}
+			value={value}
+			unit={definition.unit}
+		/>
 	)
 }
 
