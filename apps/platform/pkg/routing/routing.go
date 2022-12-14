@@ -23,7 +23,7 @@ func getHomeRoute(session *sess.Session) (*meta.Route, error) {
 		Name:      name,
 		Namespace: namespace,
 	}
-	err = bundle.Load(route, session)
+	err = bundle.Load(route, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return getHomeRoute(session)
 	}
 
-	err := bundle.LoadAll(&routes, namespace, nil, session)
+	err := bundle.LoadAll(&routes, namespace, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func GetRouteFromCollection(r *http.Request, namespace, collection string, viewt
 
 	var route *meta.Route
 	var routes meta.RouteCollection
-	err := bundle.LoadAllFromAny(&routes, nil, session)
+	err := bundle.LoadAllFromAny(&routes, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

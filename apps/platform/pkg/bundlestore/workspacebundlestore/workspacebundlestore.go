@@ -84,7 +84,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 type WorkspaceBundleStore struct {
 }
 
-func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {
@@ -100,19 +100,20 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 				Value: item.GetDBID(workspace.UniqueKey),
 			},
 		},
+		Connection: connection,
 	}, session.RemoveWorkspaceContext())
 }
 
-func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetAllItems(group, namespace, version, conditions, session)
+func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
+	err := b.GetAllItems(group, namespace, version, conditions, session, connection)
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
-	return processItems(items, session, nil, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
+func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
+	return processItems(items, session, connection, func(item meta.Item, locators []adapt.ReferenceLocator, id string) error {
 		if locators == nil {
 			return errors.New("Found an item we weren't expecting")
 		}
@@ -126,7 +127,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 	})
 }
 
-func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 
 	if session.GetWorkspace() == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
@@ -152,6 +153,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		Namespace:  namespace,
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
+		Connection: connection,
 	}, session.RemoveWorkspaceContext())
 
 }

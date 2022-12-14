@@ -61,7 +61,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 
 	uploadOps := []filesource.FileUploadOp{}
 
-	connection, err := datasource.GetPlatformConnection(session)
+	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
 		return nil, err
 	}

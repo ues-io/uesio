@@ -41,7 +41,7 @@ func getStream(namespace string, version string, objectname string, filename str
 
 }
 
-func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
+func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	collectionName := item.GetBundleGroup().GetBundleFolderName()
@@ -79,17 +79,17 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	return nil
 }
 
-func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetAllItems(group, namespace, version, conditions, session)
+func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
+	err := b.GetAllItems(group, namespace, version, conditions, session, connection)
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	for _, item := range items {
-		err := b.GetItem(item, version, session)
+		err := b.GetItem(item, version, session, connection)
 		if err != nil {
 			return err
 		}
@@ -97,7 +97,7 @@ func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version 
 	return nil
 }
 
-func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}
@@ -131,7 +131,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 			return err
 		}
 		retrievedItem.SetNamespace(namespace)
-		err = b.GetItem(retrievedItem, version, session)
+		err = b.GetItem(retrievedItem, version, session, connection)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
@@ -227,7 +227,7 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 
 func (b *PlatformBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	for _, item := range items {
-		err := b.GetItem(item, version, session)
+		err := b.GetItem(item, version, session, connection)
 		if err != nil {
 			return err
 		}

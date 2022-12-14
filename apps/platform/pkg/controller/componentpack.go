@@ -24,7 +24,7 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			Namespace: namespace,
 		}
 
-		err := bundle.Load(&componentPack, session)
+		err := bundle.Load(&componentPack, session, nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Not Found", http.StatusNotFound)
@@ -55,7 +55,7 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 			Namespace: namespace,
 		}
 
-		err := bundle.Load(&componentPack, session)
+		err := bundle.Load(&componentPack, session, nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Not Found", http.StatusNotFound)

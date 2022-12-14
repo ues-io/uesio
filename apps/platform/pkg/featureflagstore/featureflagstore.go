@@ -18,7 +18,7 @@ var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
 func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
-	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
+	err := bundle.LoadAllFromAny(&featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func SetValueFromKey(key string, value bool, userID string, session *sess.Sessio
 	if err != nil {
 		return err
 	}
-	err = bundle.Load(FeatureFlag, session)
+	err = bundle.Load(FeatureFlag, session, nil)
 	if err != nil {
 		return err
 	}

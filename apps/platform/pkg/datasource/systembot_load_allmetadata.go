@@ -126,7 +126,7 @@ func runAllMetadataLoadBot(op *adapt.LoadOp, connection adapt.Connection, sessio
 		installedNamespaces = append(installedNamespaces, app)
 	}
 
-	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession)
+	err = bundle.LoadAllFromNamespaces(installedNamespaces, group, nil, inContextSession, nil)
 	if err != nil {
 		return err
 	}

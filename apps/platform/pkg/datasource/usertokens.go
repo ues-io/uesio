@@ -58,7 +58,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 		if err != nil {
 			return err
 		}
-		err = bundle.Load(uat, session)
+		err = bundle.Load(uat, session, nil)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,12 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				Query:          true,
 			}
 
-			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session)
+			platformConnection, err := GetPlatformConnection(session, loadOptions.Connections)
+			if err != nil {
+				return err
+			}
+
+			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session, platformConnection)
 			if err != nil {
 				return err
 			}

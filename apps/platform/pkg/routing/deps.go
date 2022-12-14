@@ -24,7 +24,7 @@ func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 		return nil, err
 	}
 
-	err = bundle.Load(subViewDep, session)
+	err = bundle.Load(subViewDep, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load SubView: " + key + " : " + err.Error())
 	}
@@ -38,7 +38,7 @@ func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, err
 		return nil, err
 	}
 
-	err = bundle.Load(variantDep, session)
+	err = bundle.Load(variantDep, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load variant: " + key + " : " + err.Error())
 	}
@@ -86,7 +86,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, packs map[str
 	packsForNamespace, ok := packs[namespace]
 	if !ok {
 		var nspacks meta.ComponentPackCollection
-		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		err = bundle.LoadAll(&nspacks, namespace, nil, session, nil)
 		if err != nil {
 			return err
 		}
@@ -115,7 +115,7 @@ func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]met
 	packsForNamespace, ok := packs[namespace]
 	if !ok {
 		var nspacks meta.ComponentPackCollection
-		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		err = bundle.LoadAll(&nspacks, namespace, nil, session, nil)
 		if err != nil {
 			return err
 		}
@@ -301,7 +301,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	namespaces := session.GetContextNamespaces()
 	for _, namespace := range namespaces {
 		group := &meta.ComponentPackCollection{}
-		err := bundle.LoadAll(group, namespace, nil, session)
+		err := bundle.LoadAll(group, namespace, nil, session, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -327,7 +327,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to load packs: " + err.Error())
 	}
 	var variants meta.ComponentVariantCollection
-	err = bundle.LoadAllFromAny(&variants, nil, session)
+	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
 	if err != nil {
 		return errors.New("Failed to load variants: " + err.Error())
 	}
@@ -378,7 +378,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = bundle.Load(theme, session.RemoveWorkspaceContext())
+	err = bundle.Load(theme, session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}
@@ -414,7 +414,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = bundle.Load(theme, session)
+	err = bundle.Load(theme, session, nil)
 	if err != nil {
 		return nil, err
 	}

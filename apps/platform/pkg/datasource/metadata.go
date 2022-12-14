@@ -185,7 +185,7 @@ func GetValidationMetadata(f *meta.Field) *adapt.ValidationMetadata {
 	return nil
 }
 
-func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
+func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err == nil {
@@ -197,7 +197,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return nil, err
 	}
 
-	err = bundle.Load(collection, session)
+	err = bundle.Load(collection, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -208,18 +208,14 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	return collectionMetadata, nil
 }
 
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
 		"uesio/studio.collection": collectionKey,
-	}, session)
+	}, session, connection)
 	if err != nil {
 		return err
-	}
-
-	if len(fields) == 0 {
-		return errors.New("No fields found for collection")
 	}
 
 	for _, field := range fields {
@@ -228,7 +224,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	return nil
 }
 
-func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session, connection adapt.Connection) error {
 
 	fields := []meta.BundleableItem{}
 	for _, key := range keys {
@@ -244,7 +240,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	if len(fields) == 0 {
 		return nil
 	}
-	err := bundle.LoadMany(fields, session)
+	err := bundle.LoadMany(fields, session, connection)
 	if err != nil {
 		return fmt.Errorf("collection: %s : %v", collectionKey, err)
 	}
@@ -255,7 +251,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	return nil
 }
 
-func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) error {
+func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
 
@@ -270,7 +266,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = bundle.Load(&selectList, session)
+		err = bundle.Load(&selectList, session, connection)
 		if err != nil {
 			return err
 		}

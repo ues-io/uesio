@@ -64,7 +64,7 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio/studio.collection": collectionName,
 		"uesio/studio.type":       botType,
-	}, session)
+	}, session, nil)
 	if err != nil {
 		return err
 	}
@@ -204,6 +204,8 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		botFunction = runDomainAfterSaveSiteBot
 	case "uesio/studio.collection":
 		botFunction = runCollectionAfterSaveBot
+	case "uesio/studio.field":
+		botFunction = runFieldAfterSaveBot
 	case "uesio/studio.workspace":
 		botFunction = runWorkspaceAfterSaveBot
 	case "uesio/studio.bundle":
@@ -236,7 +238,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 func CallGeneratorBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) ([]bundlestore.ItemStream, error) {
 	robot := meta.NewGeneratorBot(namespace, name)
 
-	err := bundle.Load(robot, session)
+	err := bundle.Load(robot, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +290,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 	robot := meta.NewListenerBot(namespace, name)
 
-	err := bundle.Load(robot, session)
+	err := bundle.Load(robot, session, connection)
 	if err != nil {
 		return nil, err
 	}

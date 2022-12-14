@@ -103,13 +103,13 @@ func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 	return version, bs, nil
 }
 
-func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
-	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, conditions, session)
+func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
+	return LoadAllFromNamespaces(session.GetContextNamespaces(), group, conditions, session, connection)
 }
 
-func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
+func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	for _, namespace := range namespaces {
-		err := LoadAll(group, namespace, conditions, session)
+		err := LoadAll(group, namespace, conditions, session, connection)
 		if err != nil {
 			return err
 		}
@@ -117,24 +117,24 @@ func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, cond
 	return nil
 }
 
-func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return false, err
 	}
-	return bs.HasAny(group, namespace, version, conditions, session)
+	return bs.HasAny(group, namespace, version, conditions, session, connection)
 }
 
-func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
+func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		fmt.Println("Failed Load All: " + group.GetName())
 		return err
 	}
-	return bs.GetAllItems(group, namespace, version, conditions, session)
+	return bs.GetAllItems(group, namespace, version, conditions, session, connection)
 }
 
-func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
+func LoadMany(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
 	// Coalate items into same namespace
 	coalated := map[string][]meta.BundleableItem{}
 	for _, item := range items {
@@ -155,7 +155,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 			return err
 		}
 
-		err = bs.GetManyItems(items, version, session)
+		err = bs.GetManyItems(items, version, session, connection)
 		if err != nil {
 			return err
 		}
@@ -164,13 +164,13 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 	return nil
 }
 
-func Load(item meta.BundleableItem, session *sess.Session) error {
+func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
 		fmt.Println("Failed load one: " + item.GetKey() + " : " + err.Error())
 		return err
 	}
-	return bs.GetItem(item, version, session)
+	return bs.GetItem(item, version, session, connection)
 }
 
 func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error) {

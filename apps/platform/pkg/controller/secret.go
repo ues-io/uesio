@@ -21,7 +21,7 @@ type SecretResponse struct {
 
 func getSecrets(session *sess.Session) ([]SecretResponse, error) {
 	var secrets meta.SecretCollection
-	err := bundle.LoadAllFromAny(&secrets, nil, session)
+	err := bundle.LoadAllFromAny(&secrets, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -274,7 +274,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 	}
 
-	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
+	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext(), nil)
 	if err != nil {
 		return err
 	}

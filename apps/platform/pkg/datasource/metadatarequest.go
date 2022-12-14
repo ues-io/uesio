@@ -215,7 +215,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 }
 
-func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session, connection adapt.Connection) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{
 		Options: &MetadataRequestOptions{
@@ -224,7 +224,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 	}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
-		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session)
+		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session, connection)
 		if err != nil {
 			return err
 		}
@@ -236,7 +236,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 
 		if mr.Options != nil && mr.Options.LoadAllFields {
 			addAllBuiltinFields(metadata)
-			err = LoadAllFieldsMetadata(collectionKey, metadata, session)
+			err = LoadAllFieldsMetadata(collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
 			}
@@ -250,7 +250,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			if metadata.AccessField != "" {
 				fieldsToLoad = append(fieldsToLoad, metadata.AccessField)
 			}
-			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session)
+			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session, connection)
 			if err != nil {
 				return err
 			}
@@ -277,7 +277,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 	}
 
 	for selectListKey := range mr.SelectLists {
-		err := LoadSelectListMetadata(selectListKey, metadataResponse, session)
+		err := LoadSelectListMetadata(selectListKey, metadataResponse, session, connection)
 		if err != nil {
 			return err
 		}
@@ -285,7 +285,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(metadataResponse, session)
+		return additionalRequests.Load(metadataResponse, session, connection)
 	}
 	return nil
 }

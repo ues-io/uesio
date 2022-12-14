@@ -33,7 +33,7 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 		return nil, err
 	}
 
-	err = bundle.Load(datasource, session)
+	err = bundle.Load(datasource, session, nil)
 	if err != nil {
 		return nil, err
 	}

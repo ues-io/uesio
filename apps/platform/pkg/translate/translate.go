@@ -16,7 +16,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	userLanguage := session.GetUserInfo().Language
 
 	var labels meta.LabelCollection
-	err := bundle.LoadAllFromAny(&labels, nil, session)
+	err := bundle.LoadAllFromAny(&labels, nil, session, nil)
 	if err != nil {
 		return nil, errors.New("Failed to load labels: " + err.Error())
 	}
@@ -25,7 +25,7 @@ func GetTranslatedLabels(session *sess.Session) (map[string]string, error) {
 	if userLanguage != "" {
 		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
 			"uesio/studio.language": userLanguage,
-		}, session)
+		}, session, nil)
 
 		if err != nil {
 			return nil, errors.New("Failed to load translations: " + err.Error())
