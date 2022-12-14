@@ -111,7 +111,7 @@ func processConditions(
 				return errors.New("Could not find lookup wire: " + condition.LookupWire)
 			}
 
-			values := make([]interface{}, lookupOp.Collection.Len())
+			values := make([]interface{}, 0, lookupOp.Collection.Len())
 			err := lookupOp.Collection.Loop(func(item meta.Item, index string) error {
 
 				value, err := item.GetField(condition.LookupField)
