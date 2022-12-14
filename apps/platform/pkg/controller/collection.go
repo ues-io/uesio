@@ -26,7 +26,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 	}
 
 	metadataResponse := adapt.MetadataCache{}
-	err = collections.Load(&metadataResponse, nil, session) //TO-DO
+	err = collections.Load(&metadataResponse, nil, session)
 	if err != nil {
 		println(err)
 	}

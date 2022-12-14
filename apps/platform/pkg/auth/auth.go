@@ -231,7 +231,7 @@ func getAuthSource(key string, session *sess.Session) (*meta.AuthSource, error) 
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(authSource, nil, session) //TO-DO
+	err = bundle.Load(authSource, session, nil)
 
 	if err != nil {
 		return nil, err
@@ -245,7 +245,7 @@ func getSignupMethod(key string, session *sess.Session) (*meta.SignupMethod, err
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(signupMethod, nil, session) //TO-DO
+	err = bundle.Load(signupMethod, session, nil)
 
 	if err != nil {
 		return nil, err

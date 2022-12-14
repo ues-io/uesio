@@ -48,7 +48,7 @@ func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) 
 	if err != nil {
 		return nil, nil, errors.New("Failed to create file collection: " + err.Error())
 	}
-	err = bundle.Load(ufc, nil, session) //TO-DO
+	err = bundle.Load(ufc, session, nil)
 	if err != nil {
 		return nil, nil, fmt.Errorf("No file collection found: %s, %s", fileCollectionID, err.Error())
 	}
@@ -64,7 +64,7 @@ func GetFileSource(fileSourceID string, session *sess.Session) (*meta.FileSource
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(fs, nil, session) //TO-DO
+	err = bundle.Load(fs, session, nil)
 	if err != nil {
 		return nil, errors.New("No file source found: " + fileSourceID + ", " + err.Error())
 	}
@@ -86,7 +86,7 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 	if err != nil {
 		return nil, err
 	}
-	err = bundle.Load(fs, nil, session) //TO-DO
+	err = bundle.Load(fs, session, nil)
 	if err != nil {
 		return nil, err
 	}

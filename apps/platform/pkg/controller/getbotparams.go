@@ -56,7 +56,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 
 	robot := meta.NewGeneratorBot(namespace, name)
 
-	err := bundle.Load(robot, nil, session) //TO-DO
+	err := bundle.Load(robot, session, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

@@ -47,9 +47,9 @@ func NewPermissionError(message string) *PermissionError {
 }
 
 type BundleStore interface {
-	GetItem(item meta.BundleableItem, version string, connection adapt.Connection, session *sess.Session) error
-	GetManyItems(items []meta.BundleableItem, version string, connection adapt.Connection, session *sess.Session) error
-	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, connection adapt.Connection, session *sess.Session) error
+	GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
+	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error
+	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error
 	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error)
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)

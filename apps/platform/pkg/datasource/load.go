@@ -197,7 +197,7 @@ func getMetadataForLoad(
 
 	}
 
-	err = collections.Load(metadataResponse, nil, session) //TO-DO
+	err = collections.Load(metadataResponse, nil, session)
 	if err != nil {
 		return err
 	}

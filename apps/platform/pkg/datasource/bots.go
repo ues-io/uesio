@@ -236,7 +236,7 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 func CallGeneratorBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) ([]bundlestore.ItemStream, error) {
 	robot := meta.NewGeneratorBot(namespace, name)
 
-	err := bundle.Load(robot, connection, session)
+	err := bundle.Load(robot, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +288,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 
 	robot := meta.NewListenerBot(namespace, name)
 
-	err := bundle.Load(robot, connection, session)
+	err := bundle.Load(robot, session, connection)
 	if err != nil {
 		return nil, err
 	}

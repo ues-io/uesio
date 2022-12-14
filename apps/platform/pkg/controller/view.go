@@ -32,7 +32,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		}
 
 		// Make sure this is a legit view that we have access to
-		err := bundle.Load(&view, nil, session) //TO-DO
+		err := bundle.Load(&view, session, nil)
 		if err != nil {
 			HandleMissingRoute(w, r, session, "", err)
 			return

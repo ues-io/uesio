@@ -197,7 +197,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, conn
 		return nil, err
 	}
 
-	err = bundle.Load(collection, connection, session)
+	err = bundle.Load(collection, session, connection)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, conn
 	return collectionMetadata, nil
 }
 
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
@@ -270,7 +270,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = bundle.Load(&selectList, nil, session) //TO-DO
+		err = bundle.Load(&selectList, session, nil)
 		if err != nil {
 			return err
 		}

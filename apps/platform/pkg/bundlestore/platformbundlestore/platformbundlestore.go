@@ -41,7 +41,7 @@ func getStream(namespace string, version string, objectname string, filename str
 
 }
 
-func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, connection adapt.Connection, session *sess.Session) error {
+func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	collectionName := item.GetBundleGroup().GetBundleFolderName()
@@ -89,7 +89,7 @@ func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, vers
 
 func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
 	for _, item := range items {
-		err := b.GetItem(item, version, nil, session) //TO-DO
+		err := b.GetItem(item, version, session, nil)
 		if err != nil {
 			return err
 		}
@@ -131,7 +131,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 			return err
 		}
 		retrievedItem.SetNamespace(namespace)
-		err = b.GetItem(retrievedItem, version, nil, session) //TO-DO
+		err = b.GetItem(retrievedItem, version, session, nil)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue
@@ -227,7 +227,7 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 
 func (b *PlatformBundleStore) HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	for _, item := range items {
-		err := b.GetItem(item, version, connection, session) //TO-DO
+		err := b.GetItem(item, version, session, connection)
 		if err != nil {
 			return err
 		}

@@ -84,7 +84,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 type WorkspaceBundleStore struct {
 }
 
-func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, connection adapt.Connection, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 
 	workspace := session.GetWorkspace()
 	if workspace == nil {

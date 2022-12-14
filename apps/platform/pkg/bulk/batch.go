@@ -60,7 +60,7 @@ func getBatchMetadata(collectionName string, session *sess.Session) (*adapt.Meta
 		return nil, err
 	}
 
-	err = collections.Load(&metadataResponse, nil, session) //TO-DO
+	err = collections.Load(&metadataResponse, nil, session)
 	if err != nil {
 		return nil, err
 	}

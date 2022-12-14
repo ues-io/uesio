@@ -111,7 +111,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
-		err = collections.Load(metadataResponse, nil, session) //TO-DO
+		err = collections.Load(metadataResponse, nil, session)
 		if err != nil {
 			return err
 		}
