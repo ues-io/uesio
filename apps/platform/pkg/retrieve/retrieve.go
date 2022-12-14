@@ -34,7 +34,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 		if err != nil {
 			return nil, err
 		}
-		err = bs.GetAllItems(group, namespace, version, nil, session)
+		err = bs.GetAllItems(group, namespace, version, nil, session, nil)
 		if err != nil {
 			return nil, err
 		}

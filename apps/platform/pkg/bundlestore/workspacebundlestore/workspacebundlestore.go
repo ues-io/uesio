@@ -105,7 +105,7 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 }
 
 func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetAllItems(group, namespace, version, conditions, session)
+	err := b.GetAllItems(group, namespace, version, conditions, session, nil)
 	if err != nil {
 		return false, err
 	}
@@ -127,7 +127,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 	})
 }
 
-func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 
 	if session.GetWorkspace() == nil {
 		return errors.New("Workspace bundle store, needs a workspace in context")
@@ -153,6 +153,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		Namespace:  namespace,
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
+		Connection: connection,
 	}, session.RemoveWorkspaceContext())
 
 }

@@ -30,13 +30,13 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 	var appNames []string
 
 	if namespace != "" {
-		err = bundle.LoadAll(collection, namespace, conditions, session)
+		err = bundle.LoadAll(collection, namespace, conditions, session, nil)
 		if err != nil {
 			return nil, err
 		}
 		appNames = []string{namespace}
 	} else {
-		err := bundle.LoadAllFromAny(collection, conditions, session)
+		err := bundle.LoadAllFromAny(collection, conditions, session, nil)
 		if err != nil {
 			return nil, err
 		}

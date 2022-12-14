@@ -80,7 +80,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 }
 
 func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetAllItems(group, namespace, version, conditions, session)
+	err := b.GetAllItems(group, namespace, version, conditions, session, nil)
 	if err != nil {
 		return false, err
 	}
@@ -97,7 +97,7 @@ func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version 
 	return nil
 }
 
-func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 	keys := []string{}

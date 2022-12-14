@@ -45,7 +45,7 @@ func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
 
 func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 	var configValues meta.ConfigValueCollection
-	err := bundle.LoadAllFromAny(&configValues, nil, session)
+	err := bundle.LoadAllFromAny(&configValues, nil, session, nil)
 	if err != nil {
 		return nil, err
 	}

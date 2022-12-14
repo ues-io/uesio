@@ -208,12 +208,12 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, conn
 	return collectionMetadata, nil
 }
 
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
 		"uesio/studio.collection": collectionKey,
-	}, session)
+	}, session, connection)
 	if err != nil {
 		return err
 	}

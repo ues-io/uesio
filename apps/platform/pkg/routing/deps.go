@@ -86,7 +86,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, packs map[str
 	packsForNamespace, ok := packs[namespace]
 	if !ok {
 		var nspacks meta.ComponentPackCollection
-		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		err = bundle.LoadAll(&nspacks, namespace, nil, session, nil)
 		if err != nil {
 			return err
 		}
@@ -115,7 +115,7 @@ func getDepsForComponent(key string, deps *PreloadMetadata, packs map[string]met
 	packsForNamespace, ok := packs[namespace]
 	if !ok {
 		var nspacks meta.ComponentPackCollection
-		err = bundle.LoadAll(&nspacks, namespace, nil, session)
+		err = bundle.LoadAll(&nspacks, namespace, nil, session, nil)
 		if err != nil {
 			return err
 		}
@@ -301,7 +301,7 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	namespaces := session.GetContextNamespaces()
 	for _, namespace := range namespaces {
 		group := &meta.ComponentPackCollection{}
-		err := bundle.LoadAll(group, namespace, nil, session)
+		err := bundle.LoadAll(group, namespace, nil, session, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -327,7 +327,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to load packs: " + err.Error())
 	}
 	var variants meta.ComponentVariantCollection
-	err = bundle.LoadAllFromAny(&variants, nil, session)
+	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
 	if err != nil {
 		return errors.New("Failed to load variants: " + err.Error())
 	}

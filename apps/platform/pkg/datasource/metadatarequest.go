@@ -236,7 +236,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, connectio
 
 		if mr.Options != nil && mr.Options.LoadAllFields {
 			addAllBuiltinFields(metadata)
-			err = LoadAllFieldsMetadata(collectionKey, metadata, session)
+			err = LoadAllFieldsMetadata(collectionKey, metadata, connection, session)
 			if err != nil {
 				return err
 			}
