@@ -101,7 +101,12 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				Query:          true,
 			}
 
-			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session)
+			platformConnection, err := GetPlatformConnection(session, loadOptions.Connections)
+			if err != nil {
+				return err
+			}
+
+			err = getMetadataForLoad(loadOp, loadOptions.Metadata, []*adapt.LoadOp{loadOp}, session, platformConnection)
 			if err != nil {
 				return err
 			}

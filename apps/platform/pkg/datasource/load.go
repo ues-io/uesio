@@ -141,6 +141,7 @@ func getMetadataForLoad(
 	metadataResponse *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
 	session *sess.Session,
+	connection adapt.Connection,
 ) error {
 	collectionKey := op.CollectionName
 
@@ -197,7 +198,7 @@ func getMetadataForLoad(
 
 	}
 
-	err = collections.Load(metadataResponse, nil, session)
+	err = collections.Load(metadataResponse, session, connection)
 	if err != nil {
 		return err
 	}
@@ -302,7 +303,12 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		err := getMetadataForLoad(op, metadataResponse, ops, session)
+		platformConnection, err := GetPlatformConnection(session, options.Connections)
+		if err != nil {
+			return nil, err
+		}
+
+		err = getMetadataForLoad(op, metadataResponse, ops, session, platformConnection)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}

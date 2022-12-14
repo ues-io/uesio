@@ -25,7 +25,7 @@ func getNamespaces(metadataType string, session *sess.Session) ([]string, error)
 		if err != nil {
 			return nil, err
 		}
-		hasSome, err := bundle.HasAny(collection, namespace, nil, session)
+		hasSome, err := bundle.HasAny(collection, namespace, nil, session, nil)
 		if err != nil {
 			return nil, err
 		}

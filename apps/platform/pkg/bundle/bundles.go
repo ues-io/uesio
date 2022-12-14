@@ -117,12 +117,12 @@ func LoadAllFromNamespaces(namespaces []string, group meta.BundleableGroup, cond
 	return nil
 }
 
-func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error) {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return false, err
 	}
-	return bs.HasAny(group, namespace, version, conditions, session)
+	return bs.HasAny(group, namespace, version, conditions, session, connection)
 }
 
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
@@ -134,7 +134,7 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 	return bs.GetAllItems(group, namespace, version, conditions, session, connection)
 }
 
-func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
+func LoadMany(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {
 	// Coalate items into same namespace
 	coalated := map[string][]meta.BundleableItem{}
 	for _, item := range items {
@@ -155,7 +155,7 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 			return err
 		}
 
-		err = bs.GetManyItems(items, version, session)
+		err = bs.GetManyItems(items, version, session, connection)
 		if err != nil {
 			return err
 		}

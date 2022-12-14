@@ -46,7 +46,6 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 	depMap := MetadataDependencyMap{}
 	var workspaceID string
-	var doLoad = false
 	metadataResponse := &adapt.MetadataCache{}
 	collections := MetadataRequest{
 		Options: &MetadataRequestOptions{
@@ -77,7 +76,6 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 			if err != nil {
 				return err
 			}
-			doLoad = true
 		}
 
 		return nil
@@ -86,18 +84,16 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 		return err
 	}
 
-	if doLoad {
-		wsSession := session.RemoveWorkspaceContext()
-		if workspaceID != "" {
-			err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
-			if err != nil {
-				return err
-			}
+	wsSession := session.RemoveWorkspaceContext()
+	if workspaceID != "" {
+		err = AddWorkspaceContextByID(workspaceID, wsSession, connection)
+		if err != nil {
+			return err
+		}
 
-			err = collections.Load(metadataResponse, connection, wsSession)
-			if err != nil {
-				return err
-			}
+		err = collections.Load(metadataResponse, wsSession, connection)
+		if err != nil {
+			return err
 		}
 	}
 

@@ -43,7 +43,7 @@ func getUploadMetadataResponse(metadataResponse *adapt.MetadataCache, collection
 		}
 	}
 
-	return collections.Load(metadataResponse, nil, session)
+	return collections.Load(metadataResponse, session, nil)
 
 }
 
