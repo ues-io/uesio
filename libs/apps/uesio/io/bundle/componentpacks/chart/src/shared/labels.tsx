@@ -75,6 +75,9 @@ const getCategoryFunc = (
 				const value = record.getReferenceValue(fieldId)
 				return (value && value.getIdFieldValue()) || ""
 			}
+		case "TEXT":
+			return (record: wire.WireRecord) =>
+				record.getFieldValue<string>(fieldId) || ""
 		default:
 			throw new Error("Invalid field type: " + fieldType)
 	}
@@ -193,6 +196,23 @@ const getReferenceDataLabels = (
 	return categories
 }
 
+const getTextDataLabels = (
+	wire: wire.Wire,
+	labels: DataLabels,
+	categoryField: collection.Field
+) => {
+	const categories: Categories = {}
+	const categoryFunc = getCategoryFunc(labels, categoryField)
+	wire?.getData().forEach((record) => {
+		const category = categoryFunc(record)
+		const value = record.getFieldValue<string>(categoryField.getId())
+		if (category && !(category in categories)) {
+			categories[category] = value || ""
+		}
+	})
+	return categories
+}
+
 const getDateDataLabels = (
 	wire: wire.Wire,
 	labels: DataLabels,
@@ -237,6 +257,8 @@ const getDataLabels = (
 		case "REFERENCE":
 		case "USER":
 			return getReferenceDataLabels(wire, labels, categoryField)
+		case "TEXT":
+			return getTextDataLabels(wire, labels, categoryField)
 		default:
 			throw new Error("Invalid Field Type: " + fieldType)
 	}
