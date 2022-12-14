@@ -276,6 +276,11 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 		return nil, err
 	}
 
+	platformConnection, err := GetPlatformConnection(session, options.Connections)
+	if err != nil {
+		return nil, err
+	}
+
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		// Verify that the id field is present
@@ -303,12 +308,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 			})
 		}
 
-		platformConnection, err := GetPlatformConnection(session, options.Connections)
-		if err != nil {
-			return nil, err
-		}
-
-		err = getMetadataForLoad(op, metadataResponse, ops, session, platformConnection)
+		err := getMetadataForLoad(op, metadataResponse, ops, session, platformConnection)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}

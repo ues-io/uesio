@@ -154,7 +154,7 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 			return err
 		}
 		retrievedItem.SetNamespace(namespace)
-		err = b.GetItem(retrievedItem, version, session, nil)
+		err = b.GetItem(retrievedItem, version, session, connection)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
 				continue

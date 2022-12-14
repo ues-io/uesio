@@ -218,10 +218,6 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
-	if len(fields) == 0 {
-		return errors.New("No fields found for collection")
-	}
-
 	for _, field := range fields {
 		collectionMetadata.SetField(GetFieldMetadata(field, session))
 	}
