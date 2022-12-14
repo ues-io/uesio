@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 type LoginResponse struct {
@@ -85,6 +86,7 @@ func (md MergeData) String() string {
 	json, err := json.MarshalIndent(md, "        ", "  ")
 	//json, err := json.Marshal(md)
 	if err != nil {
+		logger.LogError(err)
 		return ""
 	}
 	return string(json)
