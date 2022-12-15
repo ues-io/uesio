@@ -44,6 +44,7 @@ func getStream(namespace string, version string, objectname string, filename str
 func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
+	fullCollectionName := item.GetCollectionName()
 	collectionName := item.GetBundleGroup().GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
@@ -54,7 +55,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 		return bundlestore.NewPermissionError(message)
 	}
 
-	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
+	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
 
 	if ok {
 		if app != namespace && !cachedItem.IsPublic() {
