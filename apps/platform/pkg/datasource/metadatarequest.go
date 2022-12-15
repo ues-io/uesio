@@ -144,9 +144,13 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 
 			for fieldKey, subsubFields := range collection[fieldKey] {
+				// Optimization for if we already have the field metadata
+				// NOTE: We can't do this optimization if we have subsubFields
+				// There could be subsubFields that we haven't loaded yet.
 				if refCollection != nil {
 					_, err := refCollection.GetField(fieldKey)
-					if err == nil {
+					hasSubSubFields := subsubFields != nil || len(subsubFields) == 0
+					if err == nil && !hasSubSubFields {
 						continue
 					}
 				}
