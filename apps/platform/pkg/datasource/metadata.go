@@ -127,7 +127,7 @@ func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
 }
 
 func GetNumberMetadata(f *meta.Field) *adapt.NumberMetadata {
-	if f.Type == "NUMBER" && f.NumberMetadata != nil {
+	if (f.Type == "NUMBER" || (f.Type == "FORMULA" && f.FormulaMetadata.ReturnType == "NUMBER")) && f.NumberMetadata != nil {
 		return &adapt.NumberMetadata{
 			Decimals: f.NumberMetadata.Decimals,
 		}
