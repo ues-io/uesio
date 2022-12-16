@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"os"
 	"strconv"
 	"strings"
@@ -29,20 +28,17 @@ func (fc *FileCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*File))
 }
 
-func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewFile(key)
-}
-
-func (fc *FileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	if len(conditions) > 0 {
-		return "", errors.New("Conditions not allowed for files")
-	}
+func (fc *FileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 2 || parts[1] != "file.yaml" {
 		// Ignore this file
-		return "", nil
+		return nil, false
 	}
-	return namespace + "." + parts[0], nil
+	return &File{Name: parts[0]}, true
+}
+
+func (fc *FileCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return true
 }
 
 func (fc *FileCollection) GetItem(index int) Item {

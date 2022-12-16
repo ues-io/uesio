@@ -26,12 +26,12 @@ func (uatc *UserAccessTokenCollection) AddItem(item Item) {
 	*uatc = append(*uatc, item.(*UserAccessToken))
 }
 
-func (uatc *UserAccessTokenCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewUserAccessToken(key)
+func (uatc *UserAccessTokenCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &UserAccessToken{Name: StandardNameFromPath(path)}, true
 }
 
-func (uatc *UserAccessTokenCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (uatc *UserAccessTokenCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (uatc *UserAccessTokenCollection) GetItem(index int) Item {

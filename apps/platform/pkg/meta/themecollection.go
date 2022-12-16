@@ -26,12 +26,12 @@ func (tc *ThemeCollection) AddItem(item Item) {
 	*tc = append(*tc, item.(*Theme))
 }
 
-func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewTheme(key)
+func (tc *ThemeCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Theme{Name: StandardNameFromPath(path)}, true
 }
 
-func (tc *ThemeCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (tc *ThemeCollection) GetItem(index int) Item {

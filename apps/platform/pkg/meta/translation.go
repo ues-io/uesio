@@ -1,11 +1,9 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
-	language "golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )
 
@@ -26,23 +24,6 @@ type Translation struct {
 }
 
 type TranslationWrapper Translation
-
-func NewTranslation(key string) (*Translation, error) {
-	namespace, languageISO, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Bad Key for Translation: " + key)
-	}
-
-	_, err = language.ParseBase(languageISO)
-	if err != nil {
-		return nil, errors.New("Invalid ISO 639 Key: " + key)
-	}
-
-	return &Translation{
-		Namespace: namespace,
-		Language:  languageISO,
-	}, nil
-}
 
 func (t *Translation) GetBundleGroup() BundleableGroup {
 	return &TranslationCollection{}

@@ -26,12 +26,12 @@ func (slc *SelectListCollection) AddItem(item Item) {
 	*slc = append(*slc, item.(*SelectList))
 }
 
-func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewSelectList(key)
+func (slc *SelectListCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &SelectList{Name: StandardNameFromPath(path)}, true
 }
 
-func (slc *SelectListCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (slc *SelectListCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (slc *SelectListCollection) GetItem(index int) Item {

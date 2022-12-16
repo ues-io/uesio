@@ -26,12 +26,12 @@ func (ic *IntegrationCollection) AddItem(item Item) {
 	*ic = append(*ic, item.(*Integration))
 }
 
-func (ic *IntegrationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewIntegration(key)
+func (ic *IntegrationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Integration{Name: StandardNameFromPath(path)}, true
 }
 
-func (ic *IntegrationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (ic *IntegrationCollection) GetItem(index int) Item {

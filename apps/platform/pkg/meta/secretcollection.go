@@ -26,12 +26,12 @@ func (sc *SecretCollection) AddItem(item Item) {
 	*sc = append(*sc, item.(*Secret))
 }
 
-func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewSecret(key)
+func (sc *SecretCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Secret{Name: StandardNameFromPath(path)}, true
 }
 
-func (sc *SecretCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (sc *SecretCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (sc *SecretCollection) GetItem(index int) Item {

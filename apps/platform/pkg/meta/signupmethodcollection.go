@@ -26,12 +26,12 @@ func (smc *SignupMethodCollection) AddItem(item Item) {
 	*smc = append(*smc, item.(*SignupMethod))
 }
 
-func (smc *SignupMethodCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewSignupMethod(key)
+func (smc *SignupMethodCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &SignupMethod{Name: StandardNameFromPath(path)}, true
 }
 
-func (smc *SignupMethodCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (smc *SignupMethodCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (smc *SignupMethodCollection) GetItem(index int) Item {

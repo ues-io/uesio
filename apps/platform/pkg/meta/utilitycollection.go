@@ -26,12 +26,12 @@ func (uc *UtilityCollection) AddItem(item Item) {
 	*uc = append(*uc, item.(*Utility))
 }
 
-func (uc *UtilityCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewUtility(key)
+func (uc *UtilityCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Utility{Name: StandardNameFromPath(path)}, true
 }
 
-func (uc *UtilityCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (uc *UtilityCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (uc *UtilityCollection) GetItem(index int) Item {

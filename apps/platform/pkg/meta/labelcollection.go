@@ -26,12 +26,12 @@ func (lc *LabelCollection) AddItem(item Item) {
 	*lc = append(*lc, item.(*Label))
 }
 
-func (lc *LabelCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewLabel(key)
+func (lc *LabelCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Label{Name: StandardNameFromPath(path)}, true
 }
 
-func (lc *LabelCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (lc *LabelCollection) GetItem(index int) Item {

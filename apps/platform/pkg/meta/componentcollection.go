@@ -26,12 +26,12 @@ func (cc *ComponentCollection) AddItem(item Item) {
 	*cc = append(*cc, item.(*Component))
 }
 
-func (cc *ComponentCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewComponent(key)
+func (cc *ComponentCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Component{Name: StandardNameFromPath(path)}, true
 }
 
-func (cc *ComponentCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (cc *ComponentCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (cc *ComponentCollection) GetItem(index int) Item {

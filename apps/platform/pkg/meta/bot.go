@@ -4,48 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"gopkg.in/yaml.v3"
 )
-
-func NewBot(key string) (*Bot, error) {
-	keyArray := strings.Split(key, ":")
-	keySize := len(keyArray)
-	if keySize != 3 && keySize != 2 {
-		return nil, errors.New("Invalid Bot Key: " + key)
-	}
-	botType, err := getBotTypeTypeKeyPart(keyArray[0])
-	if err != nil {
-		return nil, err
-	}
-	if keySize == 3 && botType == "AFTERSAVE" || botType == "BEFORESAVE" {
-		namespace, name, err := ParseKey(keyArray[2])
-		if err != nil {
-			return nil, err
-		}
-		return NewTriggerBot(botType, keyArray[1], namespace, name), nil
-	}
-
-	if keySize == 2 && botType == "LISTENER" {
-		namespace, name, err := ParseKey(keyArray[1])
-		if err != nil {
-			return nil, err
-		}
-		return NewListenerBot(namespace, name), nil
-	}
-
-	if keySize == 2 && botType == "GENERATOR" {
-		namespace, name, err := ParseKey(keyArray[1])
-		if err != nil {
-			return nil, err
-		}
-		return NewGeneratorBot(namespace, name), nil
-	}
-
-	return nil, errors.New("Invalid Bot Key: " + key)
-}
 
 func NewListenerBot(namespace, name string) *Bot {
 	return &Bot{

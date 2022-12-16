@@ -5,11 +5,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -28,36 +28,6 @@ func getFile(namespace string, version string, objectname string, filename strin
 func getFileInfo(namespace string, version string, objectname string, filename string) (os.FileInfo, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 	return os.Stat(filePath)
-}
-
-func getFileKeys(basePath string, namespace string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
-
-	keys := []string{}
-
-	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			// Ignore walking errors
-			return nil
-		}
-		if path == basePath {
-			return nil
-		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
-		if err != nil {
-			logger.LogError(err)
-			return nil
-		}
-		if key == "" {
-			return nil
-		}
-		keys = append(keys, key)
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return keys, err
 }
 
 func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
@@ -109,15 +79,16 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
 
-	keys, err := getFileKeys(basePath, namespace, group, conditions)
+	conn := localfiles.Connection{}
+	paths, err := systembundlestore.GetFilePaths(basePath, group, conditions, &conn)
 	if err != nil {
 		return err
 	}
 
-	for _, key := range keys {
-		retrievedItem, err := group.NewBundleableItemWithKey(key)
-		if err != nil {
-			return err
+	for _, path := range paths {
+		retrievedItem, isDefinition := group.GetItemFromPath(path)
+		if retrievedItem == nil || !isDefinition {
+			continue
 		}
 		retrievedItem.SetNamespace(namespace)
 		err = b.GetItem(retrievedItem, version, session)

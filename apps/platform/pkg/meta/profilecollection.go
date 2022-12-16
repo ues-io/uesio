@@ -26,12 +26,12 @@ func (pc *ProfileCollection) AddItem(item Item) {
 	*pc = append(*pc, item.(*Profile))
 }
 
-func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewProfile(key)
+func (pc *ProfileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Profile{Name: StandardNameFromPath(path)}, true
 }
 
-func (pc *ProfileCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (pc *ProfileCollection) GetItem(index int) Item {

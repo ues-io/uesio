@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -30,40 +29,35 @@ func (fc *FieldCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*Field))
 }
 
-func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ":")
-	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid Field Key: " + key)
-	}
-	return NewField(keyArray[0], keyArray[1])
+func (fc *FieldCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	parts := strings.Split(path, string(os.PathSeparator))
+	return &Field{
+		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
+		Name:          strings.TrimSuffix(parts[3], ".yaml"),
+	}, true
 }
 
-func (fc *FieldCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {
 		// Ignore this file
-		return "", nil
+		return false
 	}
 	if hasCollection {
 		collectionNS, collectionName, err := ParseKey(collectionKey)
 		if err != nil {
-			return "", err
+			return false
 		}
 		nsUser, nsApp, err := ParseNamespace(collectionNS)
 		if err != nil {
-			return "", err
+			return false
 		}
 		if parts[0] != nsUser || parts[1] != nsApp || parts[2] != collectionName {
-			return "", nil
+			return false
 		}
 	}
-	field := Field{
-		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
-		Namespace:     namespace,
-		Name:          strings.TrimSuffix(parts[3], ".yaml"),
-	}
-	return field.GetKey(), nil
+	return true
 }
 
 func (fc *FieldCollection) GetItem(index int) Item {

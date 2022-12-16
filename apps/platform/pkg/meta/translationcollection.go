@@ -1,10 +1,10 @@
 package meta
 
 import (
-	"errors"
-	"os"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/language"
 )
 
 type TranslationCollection []*Translation
@@ -29,23 +29,26 @@ func (tc *TranslationCollection) AddItem(item Item) {
 	*tc = append(*tc, item.(*Translation))
 }
 
-func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewTranslation(key)
+func (tc *TranslationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+
+	lang := strings.TrimSuffix(path, ".yaml")
+
+	_, err := language.ParseBase(lang)
+	if err != nil {
+		return nil, false
+	}
+
+	return &Translation{
+		Language: lang,
+	}, true
 }
 
-func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
+func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions) bool {
 	if conditions == nil {
-		return StandardKeyFromPath(path, namespace, conditions)
+		return StandardPathFilter(path)
 	}
-
 	if len(conditions) != 1 {
-		return "", errors.New("Must specify language")
-	}
-
-	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
-		// Ignore this file
-		return "", nil
+		return false
 	}
 
 	requestedLanguage := conditions["uesio/studio.language"]
@@ -53,10 +56,9 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, namespace string, c
 
 	if requestedLanguage != language {
 		// Ignore this file
-		return "", nil
+		return false
 	}
-
-	return language, nil
+	return true
 }
 
 func (tc *TranslationCollection) GetItem(index int) Item {

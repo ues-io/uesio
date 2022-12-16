@@ -26,12 +26,12 @@ func (rc *RouteCollection) AddItem(item Item) {
 	*rc = append(*rc, item.(*Route))
 }
 
-func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewRoute(key)
+func (rc *RouteCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Route{Name: StandardNameFromPath(path)}, true
 }
 
-func (rc *RouteCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (rc *RouteCollection) GetItem(index int) Item {

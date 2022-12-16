@@ -1,23 +1,11 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	"gopkg.in/yaml.v3"
 )
-
-func NewUtility(key string) (*Utility, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Bad Key for Utility: " + key)
-	}
-	return &Utility{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
-}
 
 type Utility struct {
 	ID        string     `yaml:"-" json:"uesio/core.id"`

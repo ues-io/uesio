@@ -1,7 +1,6 @@
 package meta
 
 import (
-	"errors"
 	"os"
 	"strconv"
 	"strings"
@@ -29,27 +28,17 @@ func (cpc *ComponentPackCollection) AddItem(item Item) {
 	*cpc = append(*cpc, item.(*ComponentPack))
 }
 
-func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Invalid ComponentPack Key: " + key)
-	}
-	return &ComponentPack{
-		Namespace: namespace,
-		Name:      name,
-	}, nil
-}
-
-func (cpc *ComponentPackCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	if len(conditions) > 0 {
-		return "", errors.New("Conditions not allowed for component packs")
-	}
+func (cpc *ComponentPackCollection) GetItemFromPath(path string) (BundleableItem, bool) {
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 2 || parts[1] != "pack.yaml" {
 		// Ignore this file
-		return "", nil
+		return nil, false
 	}
-	return namespace + "." + parts[0], nil
+	return &ComponentPack{Name: parts[0]}, true
+}
+
+func (cpc *ComponentPackCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return true
 }
 
 func (cpc *ComponentPackCollection) GetItem(index int) Item {

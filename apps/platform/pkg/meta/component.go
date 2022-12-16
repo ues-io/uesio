@@ -1,23 +1,11 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
 	"gopkg.in/yaml.v3"
 )
-
-func NewComponent(key string) (*Component, error) {
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return nil, errors.New("Bad Key for Component: " + key)
-	}
-	return &Component{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
-}
 
 type Component struct {
 	ID        string     `yaml:"-" json:"uesio/core.id"`

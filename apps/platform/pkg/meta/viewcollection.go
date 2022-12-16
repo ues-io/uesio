@@ -26,12 +26,12 @@ func (vc *ViewCollection) AddItem(item Item) {
 	*vc = append(*vc, item.(*View))
 }
 
-func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewView(key)
+func (vc *ViewCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &View{Name: StandardNameFromPath(path)}, true
 }
 
-func (vc *ViewCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (vc *ViewCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (vc *ViewCollection) GetItem(index int) Item {
