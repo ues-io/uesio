@@ -26,12 +26,12 @@ func (fsc *FileSourceCollection) AddItem(item Item) {
 	*fsc = append(*fsc, item.(*FileSource))
 }
 
-func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewFileSource(key)
+func (fsc *FileSourceCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &FileSource{Name: StandardNameFromPath(path)}, true
 }
 
-func (fsc *FileSourceCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (fsc *FileSourceCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (fsc *FileSourceCollection) GetItem(index int) Item {

@@ -18,12 +18,12 @@ func (cc *CollectionCollection) GetFields() []string {
 	return StandardGetFields(&Collection{})
 }
 
-func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewCollection(key)
+func (cc *CollectionCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &Collection{Name: StandardNameFromPath(path)}, true
 }
 
-func (cc *CollectionCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (cc *CollectionCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (cc *CollectionCollection) NewItem() Item {

@@ -26,12 +26,12 @@ func (cvc *ConfigValueCollection) AddItem(item Item) {
 	*cvc = append(*cvc, item.(*ConfigValue))
 }
 
-func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewConfigValue(key)
+func (cvc *ConfigValueCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &ConfigValue{Name: StandardNameFromPath(path)}, true
 }
 
-func (cvc *ConfigValueCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (cvc *ConfigValueCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (cvc *ConfigValueCollection) GetItem(index int) Item {

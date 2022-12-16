@@ -26,12 +26,12 @@ func (ufcc *UserFileCollectionCollection) AddItem(item Item) {
 	*ufcc = append(*ufcc, item.(*UserFileCollection))
 }
 
-func (ufcc *UserFileCollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewUserFileCollection(key)
+func (ufcc *UserFileCollectionCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+	return &UserFileCollection{Name: StandardNameFromPath(path)}, true
 }
 
-func (ufcc *UserFileCollectionCollection) GetKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, namespace, conditions)
+func (ufcc *UserFileCollectionCollection) FilterPath(path string, conditions BundleConditions) bool {
+	return StandardPathFilter(path)
 }
 
 func (ufcc *UserFileCollectionCollection) GetItem(index int) Item {

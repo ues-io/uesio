@@ -6,14 +6,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/licensing"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -101,35 +100,21 @@ func (b *PlatformBundleStore) GetManyItems(items []meta.BundleableItem, version 
 func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error {
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetBundleFolderName()) + string(os.PathSeparator)
-	keys := []string{}
 
 	conn, err := getPlatformFileConnection(session)
 	if err != nil {
 		return err
 	}
-
-	paths, err := conn.List(basePath)
+	paths, err := systembundlestore.GetFilePaths(basePath, group, conditions, conn)
 	if err != nil {
 		return err
 	}
 
 	for _, path := range paths {
 
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), namespace, conditions)
-		if err != nil {
-			logger.LogError(err)
+		retrievedItem, isDefinition := group.GetItemFromPath(path)
+		if retrievedItem == nil || !isDefinition {
 			continue
-		}
-		if key == "" {
-			continue
-		}
-		keys = append(keys, key)
-	}
-
-	for _, key := range keys {
-		retrievedItem, err := group.NewBundleableItemWithKey(key)
-		if err != nil {
-			return err
 		}
 		retrievedItem.SetNamespace(namespace)
 		err = b.GetItem(retrievedItem, version, session, connection)

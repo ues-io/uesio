@@ -1,0 +1,7 @@
+name: utility
+uniqueKey:
+  - uesio/studio.workspace
+  - uesio/studio.name
+nameField: uesio/studio.name
+label: Utility
+pluralLabel: Utilities

@@ -40,6 +40,8 @@ var ORDERED_ITEMS = [...]string{
 	"profiles",
 	"componentvariants",
 	"componentpacks",
+	"components",
+	"utilities",
 	"labels",
 	"translations",
 	"useraccesstokens",
@@ -103,6 +105,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			continue
 		}
 
+		// Any files outher than bundle.yaml without a metadata type should be ignored
+		if metadataType == "" {
+			continue
+		}
+
 		collection, ok := dep[metadataType]
 		if !ok {
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
@@ -120,22 +127,21 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
 
-		key, err := collection.GetKeyFromPath(path, namespace, nil)
+		if !collection.FilterPath(path, nil) {
+			continue
+		}
+
+		collectionItem, isDefinition := collection.GetItemFromPath(path)
 		if err != nil {
 			return err
 		}
 
-		if key != "" {
-			// If key is not blank, then it's a regular metadata item
-			collectionItem, err := collection.NewBundleableItemWithKey(key)
-			if err != nil {
-				return err
-			}
+		if isDefinition {
 			collection.AddItem(collectionItem)
 			collectionItem.SetNamespace(namespace)
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {
-				return errors.New("Reading File: " + key + " : " + err.Error())
+				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
 			// Special handling for files

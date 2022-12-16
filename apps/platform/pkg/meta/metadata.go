@@ -45,8 +45,8 @@ type CollectionableItem interface {
 type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string
-	GetKeyFromPath(string, string, BundleConditions) (string, error)
-	NewBundleableItemWithKey(key string) (BundleableItem, error)
+	FilterPath(string, BundleConditions) bool
+	GetItemFromPath(string) (BundleableItem, bool)
 }
 
 type BundleableItem interface {
@@ -89,16 +89,17 @@ func ParseNamespace(namespace string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
-func StandardKeyFromPath(path string, namespace string, conditions BundleConditions) (string, error) {
-	if len(conditions) > 0 {
-		return "", errors.New("Conditions not allowed for this type")
-	}
+func StandardPathFilter(path string) bool {
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
 		// Ignore this file
-		return "", nil
+		return false
 	}
-	return namespace + "." + strings.TrimSuffix(path, ".yaml"), nil
+	return true
+}
+
+func StandardNameFromPath(path string) string {
+	return strings.TrimSuffix(path, ".yaml")
 }
 
 func StandardGetFields(item CollectionableItem) []string {
@@ -195,6 +196,8 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&UserAccessTokenCollection{}).GetBundleFolderName():    func() BundleableGroup { return &UserAccessTokenCollection{} },
 	(&SignupMethodCollection{}).GetBundleFolderName():       func() BundleableGroup { return &SignupMethodCollection{} },
 	(&IntegrationCollection{}).GetBundleFolderName():        func() BundleableGroup { return &IntegrationCollection{} },
+	(&ComponentCollection{}).GetBundleFolderName():          func() BundleableGroup { return &ComponentCollection{} },
+	(&UtilityCollection{}).GetBundleFolderName():            func() BundleableGroup { return &UtilityCollection{} },
 }
 
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {
