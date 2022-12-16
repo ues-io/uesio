@@ -155,6 +155,7 @@ collections:
   uesio/studio.bundle: true
   uesio/studio.bundlelisting: true
   uesio/studio.collection: true
+  uesio/studio.component: true
   uesio/studio.componentpack: true
   uesio/studio.componentvariant: true
   uesio/studio.configvalue: true
@@ -178,6 +179,7 @@ collections:
   uesio/studio.team: true
   uesio/studio.theme: true
   uesio/studio.translation: true
+  uesio/studio.utility: true
   uesio/studio.view: true
   uesio/studio.workspace: true
   uesio/core.userfile: true

@@ -105,6 +105,11 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			continue
 		}
 
+		// Any files outher than bundle.yaml without a metadata type should be ignored
+		if metadataType == "" {
+			continue
+		}
+
 		collection, ok := dep[metadataType]
 		if !ok {
 			collection, err = meta.GetBundleableGroupFromType(metadataType)
@@ -121,6 +126,10 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		}
 
 		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
+
+		if !collection.FilterPath(path, nil) {
+			continue
+		}
 
 		collectionItem, isDefinition := collection.GetItemFromPath(path)
 		if err != nil {

@@ -71,20 +71,15 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions) bo
 		return false
 	}
 
+	if hasType && botType != botTypeKey {
+		return false
+	}
+
 	if botType == "listener" || botType == "generator" {
-		if partLength != 3 || parts[2] != "bot.yaml" {
-			return false
-		}
-		if hasType && botType != botTypeKey {
-			return false
-		}
-		return true
+		return partLength == 3
 	}
 	if botType == "beforesave" || botType == "aftersave" {
-		if partLength != 6 || parts[5] != "bot.yaml" {
-			return false
-		}
-		if hasType && botType != botTypeKey {
+		if partLength != 6 {
 			return false
 		}
 		if hasCollection {

@@ -12,7 +12,6 @@ type Component struct {
 	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
 	Name      string     `yaml:"name" json:"uesio/studio.name"`
 	Namespace string     `yaml:"-" json:"-"`
-	Type      string     `yaml:"type" json:"uesio/studio.type"`
 	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
 	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
