@@ -96,3 +96,7 @@ func GetHostKey(domainType, domainValue string) string {
 func GetLicenseKey(namespace string) string {
 	return fmt.Sprintf("license:%s", namespace)
 }
+
+func GetLicensedKey(namespace string) string {
+	return fmt.Sprintf("licensed:%s", namespace)
+}

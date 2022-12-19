@@ -28,6 +28,17 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 	}
 	session.AddToken("uesio.namedpermission", namedPermTokens)
 
+	//need to know who is using me!
+	// licenseTokens := []string{}
+	// for _, app := range session.GetContextAppBundle().Licensed {
+	// 	licenseTokens = append(licenseTokens, app.UniqueKey)
+	// }
+
+	// licenseTokens = append(licenseTokens, "wessel/new")
+	// licenseTokens = append(licenseTokens, "wessel/wewe")
+
+	// session.AddToken("uesio.licensed", licenseTokens)
+
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
 
