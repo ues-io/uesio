@@ -8,7 +8,6 @@ import (
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/checkout/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -44,15 +43,14 @@ func runMakePaymentListenerBot(params map[string]interface{}, connection adapt.C
 
 	stripe.Key = stripeKey
 
-	productID, err := configstore.GetValueFromKey("uesio/studio.stripe_product_id", anonSession)
-	if err != nil {
-		return nil, err
+	productData := &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+		Name: stripe.String("Uesio One Time Payment"),
 	}
 
 	priceData := &stripe.CheckoutSessionLineItemPriceDataParams{
-		Product:    stripe.String(productID),
-		UnitAmount: stripe.Int64(amount * 100),
-		Currency:   stripe.String("usd"),
+		UnitAmount:  stripe.Int64(amount * 100),
+		Currency:    stripe.String("usd"),
+		ProductData: productData,
 	}
 
 	oneTimePayment := &stripe.CheckoutSessionParams{
