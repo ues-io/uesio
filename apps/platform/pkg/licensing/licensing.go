@@ -90,7 +90,7 @@ func GetLicenses(namespace string, connection adapt.Connection) (map[string]*met
 	return licenseMap, nil
 }
 
-func setLicensedCache(namespace string, licensed map[string]*meta.App) error {
+func SetLicensedCache(namespace string, licensed map[string]*meta.App) error {
 	return cache.Set(cache.GetLicensedKey(namespace), &licensed)
 }
 
@@ -162,7 +162,7 @@ func GetLicensed(namespace string, connection adapt.Connection) (map[string]*met
 		licensedMap[license.App.UniqueKey] = license.AppLicensed
 	}
 
-	err = setLicensedCache(namespace, licensedMap)
+	err = SetLicensedCache(namespace, licensedMap)
 	if err != nil {
 		return nil, err
 	}

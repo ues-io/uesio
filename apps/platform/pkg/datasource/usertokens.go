@@ -37,7 +37,8 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 	// licenseTokens = append(licenseTokens, "wessel/new")
 	// licenseTokens = append(licenseTokens, "wessel/wewe")
 
-	// session.AddToken("uesio.licensed", licenseTokens)
+	appname := []string{session.GetContextAppName()}
+	session.AddToken("uesio.myapp", appname)
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {

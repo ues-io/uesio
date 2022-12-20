@@ -13,7 +13,6 @@ type BundleDef struct {
 	PublicProfile string                 `yaml:"publicProfile,omitempty"`
 	Dependencies  BundleDefDependencyMap `yaml:"dependencies,omitempty"`
 	Licenses      map[string]*License    `yaml:"-"`
-	Licensed      map[string]*App        `yaml:"-"`
 }
 
 type BundleDefDependencyMap map[string]BundleDefDep

@@ -7,6 +7,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func setLicensedCache(namespace string, licensed map[string]*meta.App) error {
+	return cache.Set(cache.GetLicensedKey(namespace), &licensed)
+}
+
 func setLicenced(licensed map[string]bool, change *adapt.ChangeItem) error {
 	licensedAppID, err := change.GetFieldAsString("uesio/studio.applicensed->uesio/core.id")
 	if err != nil {
@@ -14,6 +18,7 @@ func setLicenced(licensed map[string]bool, change *adapt.ChangeItem) error {
 	}
 	if !licensed[licensedAppID] {
 		licensed[licensedAppID] = true
+		//TEST
 	}
 	return nil
 }
