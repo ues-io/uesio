@@ -33,10 +33,3 @@ type ItemStream struct {
 	FileName string
 	File     io.Reader
 }
-
-type ReadItemStream struct {
-	Type     string
-	FileName string
-	Path     string
-	Data     io.ReadCloser
-}

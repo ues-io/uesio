@@ -29,15 +29,15 @@ func (cvc *ComponentVariantCollection) AddItem(item Item) {
 	*cvc = append(*cvc, item.(*ComponentVariant))
 }
 
-func (cvc *ComponentVariantCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (cvc *ComponentVariantCollection) GetItemFromPath(path string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
 	return &ComponentVariant{
 		Component: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
 		Name:      strings.TrimSuffix(parts[3], ".yaml"),
-	}, true
+	}
 }
 
-func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (cvc *ComponentVariantCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	componentKey, hasComponent := conditions["uesio/studio.component"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {

@@ -119,8 +119,8 @@ func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
 func GetFileMetadata(f *meta.Field) *adapt.FileMetadata {
 	if f.Type == "FILE" && f.FileMetadata != nil {
 		return &adapt.FileMetadata{
-			Accept:         f.FileMetadata.Accept,
-			FileCollection: f.FileMetadata.FileCollection,
+			Accept:     f.FileMetadata.Accept,
+			FileSource: f.FileMetadata.FileSource,
 		}
 	}
 	return nil

@@ -26,11 +26,11 @@ func (lc *LabelCollection) AddItem(item Item) {
 	*lc = append(*lc, item.(*Label))
 }
 
-func (lc *LabelCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Label{Name: StandardNameFromPath(path)}, true
+func (lc *LabelCollection) GetItemFromPath(path string) BundleableItem {
+	return &Label{Name: StandardNameFromPath(path)}
 }
 
-func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (lc *LabelCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

@@ -11,11 +11,37 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+
+	userFile := &meta.UserFileMetadata{}
+	err := datasource.PlatformLoadOne(
+		userFile,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/core.recordid",
+					Value: recordID,
+				},
+				{
+					Field: "uesio/core.path",
+					Value: path,
+				},
+			},
+		},
+		session,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return download(userFile, session)
+}
+
 func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
 
-	userFile := meta.UserFileMetadata{}
+	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
-		&userFile,
+		userFile,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
@@ -30,7 +56,11 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.FileCollectionID, session)
+	return download(userFile, session)
+}
+
+func download(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+	fs, err := fileadapt.GetFileSource(userFile.FileSourceID, session)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -40,7 +70,9 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	content, err := conn.Download(userFile.Path)
+	fullPath := userFile.GetFullPath(session.GetTenantID())
+
+	content, err := conn.Download(fullPath)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -48,6 +80,5 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
 	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
 
-	return content, &userFile, nil
-
+	return content, userFile, nil
 }

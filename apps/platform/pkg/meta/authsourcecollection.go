@@ -26,11 +26,11 @@ func (asc *AuthSourceCollection) AddItem(item Item) {
 	*asc = append(*asc, item.(*AuthSource))
 }
 
-func (asc *AuthSourceCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &AuthSource{Name: StandardNameFromPath(path)}, true
+func (asc *AuthSourceCollection) GetItemFromPath(path string) BundleableItem {
+	return &AuthSource{Name: StandardNameFromPath(path)}
 }
 
-func (asc *AuthSourceCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (asc *AuthSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

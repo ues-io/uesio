@@ -26,11 +26,11 @@ func (fsc *FileSourceCollection) AddItem(item Item) {
 	*fsc = append(*fsc, item.(*FileSource))
 }
 
-func (fsc *FileSourceCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &FileSource{Name: StandardNameFromPath(path)}, true
+func (fsc *FileSourceCollection) GetItemFromPath(path string) BundleableItem {
+	return &FileSource{Name: StandardNameFromPath(path)}
 }
 
-func (fsc *FileSourceCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (fsc *FileSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

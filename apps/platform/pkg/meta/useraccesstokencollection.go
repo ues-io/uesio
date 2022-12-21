@@ -26,11 +26,11 @@ func (uatc *UserAccessTokenCollection) AddItem(item Item) {
 	*uatc = append(*uatc, item.(*UserAccessToken))
 }
 
-func (uatc *UserAccessTokenCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &UserAccessToken{Name: StandardNameFromPath(path)}, true
+func (uatc *UserAccessTokenCollection) GetItemFromPath(path string) BundleableItem {
+	return &UserAccessToken{Name: StandardNameFromPath(path)}
 }
 
-func (uatc *UserAccessTokenCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (uatc *UserAccessTokenCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

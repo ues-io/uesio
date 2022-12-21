@@ -40,7 +40,7 @@ func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session 
 	for i := range ufmc {
 		ufm := ufmc[i]
 
-		_, fs, err := fileadapt.GetFileSourceAndCollection(ufm.FileCollectionID, session)
+		fs, err := fileadapt.GetFileSource(ufm.FileSourceID, session)
 		if err != nil {
 			return err
 		}

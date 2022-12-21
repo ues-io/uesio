@@ -28,16 +28,20 @@ func (cpc *ComponentPackCollection) AddItem(item Item) {
 	*cpc = append(*cpc, item.(*ComponentPack))
 }
 
-func (cpc *ComponentPackCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || parts[1] != "pack.yaml" {
-		// Ignore this file
-		return nil, false
-	}
-	return &ComponentPack{Name: parts[0]}, true
+func (cpc *ComponentPackCollection) GetItemFromPath(path string) BundleableItem {
+	name, _, _ := strings.Cut(path, string(os.PathSeparator))
+	return &ComponentPack{Name: name}
 }
 
-func (cpc *ComponentPackCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (cpc *ComponentPackCollection) IsDefinitionPath(path string) bool {
+	parts := strings.Split(path, string(os.PathSeparator))
+	return len(parts) == 2 && parts[1] == "pack.yaml"
+}
+
+func (cpc *ComponentPackCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
+	if definitionOnly {
+		return cpc.IsDefinitionPath(path)
+	}
 	return true
 }
 

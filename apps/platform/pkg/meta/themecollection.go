@@ -26,11 +26,11 @@ func (tc *ThemeCollection) AddItem(item Item) {
 	*tc = append(*tc, item.(*Theme))
 }
 
-func (tc *ThemeCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Theme{Name: StandardNameFromPath(path)}, true
+func (tc *ThemeCollection) GetItemFromPath(path string) BundleableItem {
+	return &Theme{Name: StandardNameFromPath(path)}
 }
 
-func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (tc *ThemeCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

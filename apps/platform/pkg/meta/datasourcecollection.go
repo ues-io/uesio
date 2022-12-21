@@ -26,11 +26,11 @@ func (dsc *DataSourceCollection) AddItem(item Item) {
 	*dsc = append(*dsc, item.(*DataSource))
 }
 
-func (dsc *DataSourceCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &DataSource{Name: StandardNameFromPath(path)}, true
+func (dsc *DataSourceCollection) GetItemFromPath(path string) BundleableItem {
+	return &DataSource{Name: StandardNameFromPath(path)}
 }
 
-func (dsc *DataSourceCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (dsc *DataSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

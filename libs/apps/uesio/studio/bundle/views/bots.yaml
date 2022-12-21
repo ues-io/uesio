@@ -33,7 +33,6 @@ definition:
         uesio/studio.collection:
         uesio/studio.dialect:
         uesio/studio.type:
-        uesio/studio.content:
       init:
         query: false
         create: true

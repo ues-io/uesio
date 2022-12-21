@@ -29,21 +29,21 @@ func (tc *TranslationCollection) AddItem(item Item) {
 	*tc = append(*tc, item.(*Translation))
 }
 
-func (tc *TranslationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (tc *TranslationCollection) GetItemFromPath(path string) BundleableItem {
 
 	lang := strings.TrimSuffix(path, ".yaml")
 
 	_, err := language.ParseBase(lang)
 	if err != nil {
-		return nil, false
+		return nil
 	}
 
 	return &Translation{
 		Language: lang,
-	}, true
+	}
 }
 
-func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	if conditions == nil {
 		return StandardPathFilter(path)
 	}

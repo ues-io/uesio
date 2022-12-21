@@ -10,7 +10,6 @@ const METADATA = {
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
-	FILECOLLECTION: "filecollections",
 	BOT: "bots",
 	CREDENTIALS: "credentials",
 	ROUTE: "routes",

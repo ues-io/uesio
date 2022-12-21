@@ -31,7 +31,7 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			return
 		}
 		path := componentPack.GetComponentPackFilePath(buildMode)
-		stream, err := bundle.GetComponentPackStream(&componentPack, path, session)
+		stream, err := bundle.GetItemAttachment(&componentPack, path, session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
@@ -63,7 +63,7 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 		}
 
 		path := componentPack.GetComponentPackFilePath(buildMode)
-		stream, err := bundle.GetComponentPackStream(&componentPack, path+".map", session)
+		stream, err := bundle.GetItemAttachment(&componentPack, path+".map", session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)

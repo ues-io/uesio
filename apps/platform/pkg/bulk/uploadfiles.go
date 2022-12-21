@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -41,7 +40,7 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		return nil, err
 	}
 
-	fileStreams := []bundlestore.ReadItemStream{}
+	uploadOps := []filesource.FileUploadOp{}
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
 		fileName := zipFile.Name
@@ -49,17 +48,22 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		if err != nil {
 			return nil, err
 		}
-		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
-			FileName: fileName,
-			// For this to work, the filename (without the extension) must
-			// be the uniquekey of the record to attach to
-			Path: strings.TrimSuffix(fileName, filepath.Ext(fileName)),
+
+		// For this to work, the filename (without the extension) must
+		// be the uniquekey of the record to attach to
+		path := fileName
+		uniqueRecordKey := strings.TrimSuffix(path, filepath.Ext(path))
+		uploadOps = append(uploadOps, filesource.FileUploadOp{
 			Data: f,
+			Details: &fileadapt.FileDetails{
+				Path:            path,
+				CollectionID:    spec.Collection,
+				RecordUniqueKey: uniqueRecordKey,
+				FieldID:         spec.UploadField,
+			},
 		})
 		defer f.Close()
 	}
-
-	uploadOps := []filesource.FileUploadOp{}
 
 	connection, err := datasource.GetPlatformConnection(session, nil)
 	if err != nil {
@@ -67,18 +71,6 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 	}
 
 	connection.SetMetadata(metadata)
-
-	for i := range fileStreams {
-		uploadOps = append(uploadOps, filesource.FileUploadOp{
-			Data: fileStreams[i].Data,
-			Details: &fileadapt.FileDetails{
-				Name:            fileStreams[i].FileName,
-				CollectionID:    spec.Collection,
-				RecordUniqueKey: fileStreams[i].Path,
-				FieldID:         spec.UploadField,
-			},
-		})
-	}
 
 	_, err = filesource.Upload(uploadOps, connection, session)
 	if err != nil {

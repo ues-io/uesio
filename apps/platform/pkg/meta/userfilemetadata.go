@@ -1,24 +1,27 @@
 package meta
 
+import (
+	"fmt"
+	"strings"
+)
+
 type UserFileMetadata struct {
-	ID               string    `json:"uesio/core.id"`
-	UniqueKey        string    `json:"uesio/core.uniquekey"`
-	CollectionID     string    `json:"uesio/core.collectionid"`
-	MimeType         string    `json:"uesio/core.mimetype"`
-	FieldID          string    `json:"uesio/core.fieldid"`
-	FileCollectionID string    `json:"uesio/core.filecollectionid"`
-	Name             string    `json:"uesio/core.name"`
-	FileName         string    `json:"uesio/core.filename"`
-	Path             string    `json:"uesio/core.path"`
-	RecordID         string    `json:"uesio/core.recordid"`
-	Type             string    `json:"uesio/core.type"`
-	CreatedBy        *User     `json:"uesio/core.createdby"`
-	Owner            *User     `json:"uesio/core.owner"`
-	UpdatedBy        *User     `json:"uesio/core.updatedby"`
-	UpdatedAt        int64     `json:"uesio/core.updatedat"`
-	CreatedAt        int64     `json:"uesio/core.createdat"`
-	itemMeta         *ItemMeta `json:"-"`
-	ContentLength    int64     `json:"uesio/core.contentlength"`
+	ID            string    `json:"uesio/core.id"`
+	UniqueKey     string    `json:"uesio/core.uniquekey"`
+	CollectionID  string    `json:"uesio/core.collectionid"`
+	MimeType      string    `json:"uesio/core.mimetype"`
+	FieldID       string    `json:"uesio/core.fieldid"`
+	FileSourceID  string    `json:"uesio/core.filesourceid"`
+	Path          string    `json:"uesio/core.path"`
+	RecordID      string    `json:"uesio/core.recordid"`
+	Type          string    `json:"uesio/core.type"`
+	CreatedBy     *User     `json:"uesio/core.createdby"`
+	Owner         *User     `json:"uesio/core.owner"`
+	UpdatedBy     *User     `json:"uesio/core.updatedby"`
+	UpdatedAt     int64     `json:"uesio/core.updatedat"`
+	CreatedAt     int64     `json:"uesio/core.createdat"`
+	itemMeta      *ItemMeta `json:"-"`
+	ContentLength int64     `json:"uesio/core.contentlength"`
 }
 
 func (ufm *UserFileMetadata) GetCollectionName() string {
@@ -51,4 +54,14 @@ func (ufm *UserFileMetadata) GetItemMeta() *ItemMeta {
 
 func (ufm *UserFileMetadata) SetItemMeta(itemMeta *ItemMeta) {
 	ufm.itemMeta = itemMeta
+}
+
+func (ufm *UserFileMetadata) GetFullPath(tenantID string) string {
+	tenantPath := strings.ReplaceAll(tenantID, ":", "/")
+	collectionPath := strings.ReplaceAll(ufm.CollectionID, ".", "/")
+	fieldPath := strings.ReplaceAll(ufm.FieldID, ".", "/")
+	if ufm.FieldID != "" {
+		return fmt.Sprintf("files/%s/%s/%s/field/%s/%s", tenantPath, collectionPath, ufm.RecordID, fieldPath, ufm.Path)
+	}
+	return fmt.Sprintf("files/%s/%s/%s/attachment/%s", tenantPath, collectionPath, ufm.RecordID, ufm.Path)
 }

@@ -1,0 +1,5 @@
+name: path
+type: TEXT
+label: Path
+required: true
+createOnly: true

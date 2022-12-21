@@ -1,9 +1,9 @@
 package meta
 
 type FileMetadata struct {
-	Accept         string    `yaml:"accept,omitempty" json:"uesio/studio.accept"`
-	FileCollection string    `yaml:"filecollection,omitempty" json:"uesio/studio.filecollection"`
-	itemMeta       *ItemMeta `yaml:"-" json:"-"`
+	Accept     string    `yaml:"accept,omitempty" json:"uesio/studio.accept"`
+	FileSource string    `yaml:"filesource,omitempty" json:"uesio/studio.filesource"`
+	itemMeta   *ItemMeta `yaml:"-" json:"-"`
 }
 
 func (a *FileMetadata) GetCollectionName() string {

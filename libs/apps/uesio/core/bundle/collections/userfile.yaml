@@ -3,8 +3,8 @@ uniqueKey:
   - uesio/core.collectionid
   - uesio/core.recordid
   - uesio/core.type
-  - uesio/core.name
-nameField: uesio/core.name
+  - uesio/core.path
+nameField: uesio/core.path
 public: true
 label: user file
 pluralLabel: user files

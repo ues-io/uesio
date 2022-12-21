@@ -26,11 +26,11 @@ func (pc *ProfileCollection) AddItem(item Item) {
 	*pc = append(*pc, item.(*Profile))
 }
 
-func (pc *ProfileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Profile{Name: StandardNameFromPath(path)}, true
+func (pc *ProfileCollection) GetItemFromPath(path string) BundleableItem {
+	return &Profile{Name: StandardNameFromPath(path)}
 }
 
-func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (pc *ProfileCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

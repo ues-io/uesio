@@ -38,11 +38,11 @@ func (ffc *FeatureFlagCollection) AddItem(item Item) {
 	*ffc = append(*ffc, item.(*FeatureFlag))
 }
 
-func (ffc *FeatureFlagCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &FeatureFlag{Name: StandardNameFromPath(path)}, true
+func (ffc *FeatureFlagCollection) GetItemFromPath(path string) BundleableItem {
+	return &FeatureFlag{Name: StandardNameFromPath(path)}
 }
 
-func (ffc *FeatureFlagCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (ffc *FeatureFlagCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

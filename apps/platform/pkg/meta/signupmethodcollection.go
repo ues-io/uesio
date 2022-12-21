@@ -26,11 +26,11 @@ func (smc *SignupMethodCollection) AddItem(item Item) {
 	*smc = append(*smc, item.(*SignupMethod))
 }
 
-func (smc *SignupMethodCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &SignupMethod{Name: StandardNameFromPath(path)}, true
+func (smc *SignupMethodCollection) GetItemFromPath(path string) BundleableItem {
+	return &SignupMethod{Name: StandardNameFromPath(path)}
 }
 
-func (smc *SignupMethodCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (smc *SignupMethodCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

@@ -10,21 +10,19 @@ import (
 )
 
 type ComponentPack struct {
-	ID              string              `yaml:"-" json:"uesio/core.id"`
-	UniqueKey       string              `yaml:"-" json:"uesio/core.uniquekey"`
-	Name            string              `yaml:"name" json:"uesio/studio.name"`
-	Namespace       string              `yaml:"-" json:"-"`
-	Workspace       *Workspace          `yaml:"-" json:"uesio/studio.workspace"`
-	Components      *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
-	RuntimeBundle   *UserFileMetadata   `yaml:"-" json:"uesio/studio.runtimebundle"`
-	BuildTimeBundle *UserFileMetadata   `yaml:"-" json:"uesio/studio.buildtimebundle"`
-	itemMeta        *ItemMeta           `yaml:"-" json:"-"`
-	CreatedBy       *User               `yaml:"-" json:"uesio/core.createdby"`
-	Owner           *User               `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy       *User               `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt       int64               `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt       int64               `yaml:"-" json:"uesio/core.createdat"`
-	Public          bool                `yaml:"public,omitempty" json:"uesio/studio.public"`
+	ID         string              `yaml:"-" json:"uesio/core.id"`
+	UniqueKey  string              `yaml:"-" json:"uesio/core.uniquekey"`
+	Name       string              `yaml:"name" json:"uesio/studio.name"`
+	Namespace  string              `yaml:"-" json:"-"`
+	Workspace  *Workspace          `yaml:"-" json:"uesio/studio.workspace"`
+	Components *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
+	itemMeta   *ItemMeta           `yaml:"-" json:"-"`
+	CreatedBy  *User               `yaml:"-" json:"uesio/core.createdby"`
+	Owner      *User               `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy  *User               `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt  int64               `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt  int64               `yaml:"-" json:"uesio/core.createdat"`
+	Public     bool                `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type ComponentPackWrapper ComponentPack
@@ -78,7 +76,11 @@ func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
 	if buildMode {
 		fileName = "builder.js"
 	}
-	return filepath.Join(cp.Name, fileName)
+	return fileName
+}
+
+func (cp *ComponentPack) GetBasePath() string {
+	return cp.Name
 }
 
 func (cp *ComponentPack) GetPath() string {

@@ -26,11 +26,11 @@ func (uc *UtilityCollection) AddItem(item Item) {
 	*uc = append(*uc, item.(*Utility))
 }
 
-func (uc *UtilityCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Utility{Name: StandardNameFromPath(path)}, true
+func (uc *UtilityCollection) GetItemFromPath(path string) BundleableItem {
+	return &Utility{Name: StandardNameFromPath(path)}
 }
 
-func (uc *UtilityCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (uc *UtilityCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

@@ -2,8 +2,8 @@ name: file
 type: MAP
 label: File Metadata
 subfields:
-  - name: uesio/studio.filecollection
-    label: File Collection
+  - name: uesio/studio.filesource
+    label: File Source
     type: TEXT
   - name: uesio/studio.accept
     label: Accept

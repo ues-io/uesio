@@ -186,9 +186,9 @@ definition:
                                           value: "FILE"
                                       components:
                                         - uesio/studio.metadatafield:
-                                            fieldId: uesio/studio.file->uesio/studio.filecollection
-                                            metadataType: "FILECOLLECTION"
-                                            label: "File Collection"
+                                            fieldId: uesio/studio.file->uesio/studio.filesource
+                                            metadataType: "FILESOURCE"
+                                            label: "File Source"
                                   - uesio/io.box:
                                       uesio.display:
                                         - field: uesio/studio.type
