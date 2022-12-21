@@ -3,7 +3,6 @@ package retrieve
 import (
 	"archive/zip"
 	"errors"
-	"fmt"
 	"io"
 	"path/filepath"
 
@@ -67,8 +66,20 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 				if err != nil {
 					return err
 				}
-				fmt.Println("PATHS")
-				fmt.Println(paths)
+				for _, path := range paths {
+					attachment, err := bs.GetItemAttachment(attachableItem, version, path, session)
+					if err != nil {
+						return err
+					}
+					f, err := create(filepath.Join(metadataType, attachableItem.GetBasePath(), path))
+					if err != nil {
+						return err
+					}
+					_, err = io.Copy(f, attachment)
+					if err != nil {
+						return err
+					}
+				}
 			}
 
 			return nil
