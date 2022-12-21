@@ -131,9 +131,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 			typeof value === "string"
 				? new Date(parseInt(value, 10))
 				: new Date(value as number)
-		// Now throw away all time info
-		const dateWithoutTime = new Date(date.toDateString())
-		return `${dateWithoutTime.toLocaleDateString()}`
+
+		return date.toLocaleDateString(undefined, { timeZone: "UTC" })
 	},
 	RecordId: (expression, context) => context.getRecordId() || "",
 	Theme: (expression, context) => {
