@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"net/http"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
 func Generate(w http.ResponseWriter, r *http.Request) {
@@ -28,14 +28,16 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	files, err := datasource.CallGeneratorBot(namespace, name, params, nil, session)
+	zipwriter := zip.NewWriter(w)
+
+	err = datasource.CallGeneratorBot(zipwriter.Create, namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = retrieve.Zip(w, files, session)
+	err = zipwriter.Close()
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

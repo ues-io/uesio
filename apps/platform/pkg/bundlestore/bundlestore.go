@@ -52,7 +52,7 @@ type BundleStore interface {
 	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error
 	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error)
 	GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error)
-	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
+	StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 	DeleteBundle(namespace, version string, session *sess.Session) error

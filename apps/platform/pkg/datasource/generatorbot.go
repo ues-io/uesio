@@ -9,8 +9,8 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"gopkg.in/yaml.v3"
@@ -25,21 +25,11 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 }
 
 type GeneratorBotAPI struct {
-	session     *sess.Session
-	Params      *ParamsAPI `bot:"params"`
-	itemStreams bundlestore.ItemStreams
-	bot         *meta.Bot
-	connection  adapt.Connection
-}
-
-func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
-	// Go get that bot
-	streams, err := CallGeneratorBot(namespace, name, params, gba.connection, gba.session)
-	if err != nil {
-		return err
-	}
-	gba.itemStreams = append(gba.itemStreams, streams...)
-	return nil
+	session    *sess.Session
+	Params     *ParamsAPI `bot:"params"`
+	create     retrieve.WriterCreator
+	bot        *meta.Bot
+	connection adapt.Connection
 }
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
@@ -96,13 +86,25 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 	}
 	// Don't do the merge if we don't have params
 	if params == nil || len(params) == 0 {
-		gba.itemStreams.AddFile(filename, "", strings.NewReader(templateString))
+		gba.AddFile(filename, strings.NewReader(templateString))
 		return nil
 	}
-	r := bundlestore.GetFileReader(func(data io.Writer) error {
-		return mergeTemplate(data, params, templateString)
-	})
-	gba.itemStreams.AddFile(filename, "", r)
+	f, err := gba.create(filename)
+	if err != nil {
+		return err
+	}
+	return mergeTemplate(f, params, templateString)
+}
+
+func (gba *GeneratorBotAPI) AddFile(filename string, r io.Reader) error {
+	f, err := gba.create(filename)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(f, r)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -111,9 +113,7 @@ func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]
 	if err != nil {
 		return err
 	}
-
-	gba.itemStreams.AddFile(filename, "", strings.NewReader(merged))
-	return nil
+	return gba.AddFile(filename, strings.NewReader(merged))
 }
 
 func (gba *GeneratorBotAPI) RepeatString(repeaterInput interface{}, templateString string) (string, error) {

@@ -108,7 +108,7 @@ func (b *LocalBundleStore) GetItemAttachment(item meta.AttachableItem, version s
 	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *LocalBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 

@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/licensing"
@@ -174,11 +173,11 @@ func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, versi
 	return stream, nil
 }
 
-func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *WorkspaceBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
-func (b *WorkspaceBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *WorkspaceBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 	return errors.New("Tried to delete bundle in the workspace bundle store")
 }
 

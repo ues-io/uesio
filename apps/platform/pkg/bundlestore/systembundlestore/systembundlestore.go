@@ -162,11 +162,11 @@ func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version 
 	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
-func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *SystemBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-func (b *SystemBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *SystemBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 	return errors.New("Tried to delete bundle in System Bundle Store")
 }
 
