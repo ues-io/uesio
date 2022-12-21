@@ -135,6 +135,10 @@ func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, versio
 	return getStream(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
 }
 
+func (b *PlatformBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
+}
+
 func (b *PlatformBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 
 	fullFilePath := filepath.Join(getBasePath(namespace, version), path)

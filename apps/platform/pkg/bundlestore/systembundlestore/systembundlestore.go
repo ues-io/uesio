@@ -162,6 +162,10 @@ func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version 
 	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
+func (b *SystemBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
+}
+
 func (b *SystemBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }

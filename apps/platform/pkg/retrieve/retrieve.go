@@ -3,6 +3,7 @@ package retrieve
 import (
 	"archive/zip"
 	"errors"
+	"fmt"
 	"io"
 	"path/filepath"
 
@@ -58,6 +59,17 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 			encoder := yaml.NewEncoder(f)
 			encoder.SetIndent(2)
 			encoder.Encode(item)
+
+			attachableItem, isAttachable := item.(meta.AttachableItem)
+
+			if isAttachable {
+				paths, err := bs.GetAttachmentPaths(attachableItem, version, session)
+				if err != nil {
+					return err
+				}
+				fmt.Println("PATHS")
+				fmt.Println(paths)
+			}
 
 			return nil
 		})

@@ -173,6 +173,38 @@ func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, versi
 	return stream, nil
 }
 
+func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	err := b.GetItem(item, version, session, nil)
+	if err != nil {
+		return nil, err
+	}
+	recordID, err := item.GetField(adapt.ID_FIELD)
+	if err != nil {
+		return nil, err
+	}
+	userFiles := &meta.UserFileMetadataCollection{}
+	err = datasource.PlatformLoad(
+		userFiles,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/core.recordid",
+					Value: recordID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	paths := []string{}
+	for _, ufm := range *userFiles {
+		paths = append(paths, ufm.Path)
+	}
+	return paths, nil
+}
+
 func (b *WorkspaceBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
