@@ -209,7 +209,7 @@ func validateFileField(node *yaml.Node, fieldKey string) error {
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	return setDefaultValue(fileNode, "filecollection", "uesio/core.platform")
+	return setDefaultValue(fileNode, "filesource", "uesio/core.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {

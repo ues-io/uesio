@@ -26,11 +26,11 @@ func (sc *SecretCollection) AddItem(item Item) {
 	*sc = append(*sc, item.(*Secret))
 }
 
-func (sc *SecretCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Secret{Name: StandardNameFromPath(path)}, true
+func (sc *SecretCollection) GetItemFromPath(path string) BundleableItem {
+	return &Secret{Name: StandardNameFromPath(path)}
 }
 
-func (sc *SecretCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (sc *SecretCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

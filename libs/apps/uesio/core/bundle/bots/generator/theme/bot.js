@@ -18,6 +18,6 @@ function theme(bot) {
 			info: info,
 			success: success,
 		},
-		"theme.yaml"
+		"templates/theme.yaml"
 	)
 }

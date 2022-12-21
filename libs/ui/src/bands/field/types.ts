@@ -41,7 +41,7 @@ type SelectListMetadata = {
 
 type FileMetadata = {
 	accept: AcceptTypes
-	filecollection: string
+	filesource: string
 }
 
 type ReferenceMetadata = {

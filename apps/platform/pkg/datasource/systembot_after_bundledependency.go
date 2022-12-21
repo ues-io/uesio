@@ -12,7 +12,7 @@ import (
 func parseKey(key string) (string, string, error) {
 	keyArray := strings.Split(key, ":")
 	if len(keyArray) != 3 {
-		return "", "", errors.New("Invalid Key: " + key)
+		return "", "", errors.New("Invalid Bundle Dep Key: " + key)
 	}
 	return keyArray[0], keyArray[2], nil
 }

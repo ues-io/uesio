@@ -163,7 +163,6 @@ collections:
   uesio/studio.datasource: true
   uesio/studio.featureflag: true
   uesio/studio.field: true
-  uesio/studio.filecollection: true
   uesio/studio.file: true
   uesio/studio.filesource: true
   uesio/studio.integration: true

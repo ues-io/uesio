@@ -26,11 +26,11 @@ func (rc *RouteCollection) AddItem(item Item) {
 	*rc = append(*rc, item.(*Route))
 }
 
-func (rc *RouteCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Route{Name: StandardNameFromPath(path)}, true
+func (rc *RouteCollection) GetItemFromPath(path string) BundleableItem {
+	return &Route{Name: StandardNameFromPath(path)}
 }
 
-func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

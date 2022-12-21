@@ -25,7 +25,7 @@ function view(bot) {
 			detailviewname: detailviewname,
 			headercontents: headercontents,
 		},
-		"queueview.yaml"
+		"templates/queueview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

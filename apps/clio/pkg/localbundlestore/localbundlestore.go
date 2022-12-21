@@ -86,8 +86,8 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	}
 
 	for _, path := range paths {
-		retrievedItem, isDefinition := group.GetItemFromPath(path)
-		if retrievedItem == nil || !isDefinition {
+		retrievedItem := group.GetItemFromPath(path)
+		if retrievedItem == nil {
 			continue
 		}
 		retrievedItem.SetNamespace(namespace)
@@ -104,24 +104,15 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	return nil
 }
 
-func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(file.Namespace, version, "files", file.GetFilePath())
+func (b *LocalBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
+	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
-func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetBotFilePath())
+func (b *LocalBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
 }
 
-func (b *LocalBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
-}
-
-func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileName := componentPack.GetComponentPackFilePath(buildMode)
-	return getFile(componentPack.Namespace, version, "componentpacks", fileName)
-}
-
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *LocalBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 

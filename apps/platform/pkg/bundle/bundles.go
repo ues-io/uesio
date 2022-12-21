@@ -173,36 +173,12 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item, version, session, connection)
 }
 
-func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := GetBundleStoreWithVersion(file.Namespace, session)
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (io.ReadCloser, error) {
+	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
 		return nil, err
 	}
-	return bs.GetFileStream(version, file, session)
-}
-
-func GetComponentPackStream(componentPack *meta.ComponentPack, path string, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
-	if err != nil {
-		return nil, err
-	}
-	return bs.GetComponentPackStream(version, path, componentPack, session)
-}
-
-func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
-	if err != nil {
-		return nil, err
-	}
-	return bs.GetBotStream(version, bot, session)
-}
-
-func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
-	if err != nil {
-		return nil, err
-	}
-	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
+	return bs.GetItemAttachment(item, version, path, session)
 }
 
 func IsValid(items []meta.BundleableItem, session *sess.Session, connection adapt.Connection) error {

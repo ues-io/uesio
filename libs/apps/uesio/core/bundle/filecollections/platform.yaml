@@ -1,4 +1,0 @@
-name: platform
-pathFormat: "files/${collectionid}/${recordid}/${type}/${name}"
-filesource: uesio/core.platform
-public: true

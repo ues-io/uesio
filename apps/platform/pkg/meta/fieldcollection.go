@@ -29,15 +29,15 @@ func (fc *FieldCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*Field))
 }
 
-func (fc *FieldCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (fc *FieldCollection) GetItemFromPath(path string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
 	return &Field{
 		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
 		Name:          strings.TrimSuffix(parts[3], ".yaml"),
-	}, true
+	}
 }
 
-func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	collectionKey, hasCollection := conditions["uesio/studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 4 || !strings.HasSuffix(parts[3], ".yaml") {

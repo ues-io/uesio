@@ -14,18 +14,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func GetFileMetadataType(details *fileadapt.FileDetails) string {
+func GetFileType(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
 	}
-	return "field"
-}
-
-func GetFileUniqueName(details *fileadapt.FileDetails) string {
-	if details.FieldID == "" {
-		return details.Name
-	}
-	return details.FieldID
+	return "field:" + details.FieldID
 }
 
 func getUploadMetadataResponse(metadataResponse *adapt.MetadataCache, collectionID, fieldID string, session *sess.Session) error {
@@ -81,11 +74,10 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 
 		ufm := meta.UserFileMetadata{
 			CollectionID:  details.CollectionID,
-			MimeType:      mime.TypeByExtension(filepath.Ext(details.Name)),
+			MimeType:      mime.TypeByExtension(filepath.Ext(details.Path)),
 			FieldID:       details.FieldID,
-			Type:          GetFileMetadataType(details),
-			FileName:      details.Name,
-			Name:          GetFileUniqueName(details), // Different for file fields and attachments
+			Path:          details.Path,
+			Type:          GetFileType(details),
 			RecordID:      details.RecordID,
 			ContentLength: details.ContentLength,
 		}
@@ -140,40 +132,30 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 		}
 	}
 
+	tenantID := session.GetTenantID()
+
 	for index, ufm := range ufms {
 		err := getUploadMetadataResponse(metadataResponse, ufm.CollectionID, ufm.FieldID, session)
 		if err != nil {
 			return nil, err
 		}
 
-		collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, ufm.CollectionID, ufm.FieldID)
+		fileSourceKey := "uesio/core.platform"
+
+		fs, err := fileadapt.GetFileSource(fileSourceKey, session)
 		if err != nil {
 			return nil, err
 		}
 
-		fileCollectionID, err := fileadapt.GetFileCollectionID(collectionMetadata, fieldMetadata)
-		if err != nil {
-			return nil, err
-		}
+		fullPath := ufm.GetFullPath(tenantID)
 
-		ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
-		if err != nil {
-			return nil, err
-		}
-
-		path, err := ufc.GetFilePath(ufm)
-		if err != nil {
-			return nil, errors.New("error generating path for userfile: " + err.Error())
-		}
-
-		ufm.Path = path
-		ufm.FileCollectionID = fileCollectionID
+		ufm.FileSourceID = fileSourceKey
 
 		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
 		if err != nil {
 			return nil, err
 		}
-		err = conn.Upload(ops[index].Data, path)
+		err = conn.Upload(ops[index].Data, fullPath)
 		if err != nil {
 			return nil, err
 		}

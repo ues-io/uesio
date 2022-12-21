@@ -49,7 +49,7 @@ func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.B
 	filteredPaths := []string{}
 
 	for _, path := range paths {
-		if group.FilterPath(path, conditions) {
+		if group.FilterPath(path, conditions, true) {
 			filteredPaths = append(filteredPaths, path)
 		}
 	}
@@ -140,8 +140,8 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 
 	for _, path := range paths {
 
-		retrievedItem, isDefinition := group.GetItemFromPath(path)
-		if retrievedItem == nil || !isDefinition {
+		retrievedItem := group.GetItemFromPath(path)
+		if retrievedItem == nil {
 			continue
 		}
 		retrievedItem.SetNamespace(namespace)
@@ -158,32 +158,19 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 	return nil
 }
 
-func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(file.Namespace, version, "files", file.GetFilePath())
+func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
+	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
-func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetBotFilePath())
+func (b *SystemBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
 }
 
-func (b *SystemBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
-}
-
-func (b *SystemBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileInfo, err := getFileInfo(componentPack.Namespace, version, "componentpacks", path)
-	if err != nil {
-		return nil, err
-	}
-	componentPack.SetModified(fileInfo.ModTime())
-	return getFile(componentPack.Namespace, version, "componentpacks", path)
-}
-
-func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *SystemBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
-func (b *SystemBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *SystemBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 	return errors.New("Tried to delete bundle in System Bundle Store")
 }
 

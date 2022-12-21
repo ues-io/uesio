@@ -26,11 +26,11 @@ func (cc *CredentialCollection) AddItem(item Item) {
 	*cc = append(*cc, item.(*Credential))
 }
 
-func (cc *CredentialCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Credential{Name: StandardNameFromPath(path)}, true
+func (cc *CredentialCollection) GetItemFromPath(path string) BundleableItem {
+	return &Credential{Name: StandardNameFromPath(path)}
 }
 
-func (cc *CredentialCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (cc *CredentialCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

@@ -17,7 +17,7 @@ function view(bot) {
 			formFields: formFieldsYaml,
 			wirename: wirename,
 		},
-		"detailview.yaml"
+		"templates/detailview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

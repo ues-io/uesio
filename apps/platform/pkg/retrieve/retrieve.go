@@ -13,129 +13,94 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
+type WriterCreator func(fileName string) (io.Writer, error)
+
+func Retrieve(writer io.Writer, session *sess.Session) error {
 	workspace := session.GetWorkspace()
 	if workspace == nil {
-		return nil, errors.New("No Workspace provided for retrieve")
+		return errors.New("No Workspace provided for retrieve")
 	}
 	namespace := workspace.GetAppFullName()
 	version, bs, err := bundle.GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return RetrieveBundle(namespace, version, bs, session)
+	// Create a new zip archive.
+	zipwriter := zip.NewWriter(writer)
+	err = RetrieveBundle(zipwriter.Create, namespace, version, bs, session)
+	if err != nil {
+		return err
+	}
+	return zipwriter.Close()
 }
 
-func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, session *sess.Session) ([]bundlestore.ItemStream, error) {
-	itemStreams := bundlestore.ItemStreams{}
+func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlestore.BundleStore, session *sess.Session) error {
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		err = bs.GetAllItems(group, namespace, version, nil, session, nil)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		err = group.Loop(func(item meta.Item, _ string) error {
 
 			path := item.(meta.BundleableItem).GetPath()
-			// Grabs the componentpack javascript files
-			if metadataType == "componentpacks" {
-				cp := item.(*meta.ComponentPack)
 
-				builderStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(true), cp, session)
-				if err != nil {
-					return err
-				}
-				itemStreams.AddFile(cp.GetComponentPackFilePath(true), metadataType, builderStream)
-
-				runtimeStream, err := bs.GetComponentPackStream(version, cp.GetComponentPackFilePath(false), cp, session)
-				if err != nil {
-					return err
-				}
-				itemStreams.AddFile(cp.GetComponentPackFilePath(false), metadataType, runtimeStream)
-
-			}
-			// Special handling for bots
-			if metadataType == "bots" {
-				bot := item.(*meta.Bot)
-
-				stream, err := bs.GetBotStream(version, bot, session)
-				if err != nil {
-					return err
-				}
-
-				itemStreams.AddFile(bot.GetBotFilePath(), metadataType, stream)
-
+			f, err := create(filepath.Join(metadataType, path))
+			if err != nil {
+				return err
 			}
 
-			// Special handling for files
-			if metadataType == "files" {
-				file := item.(*meta.File)
+			encoder := yaml.NewEncoder(f)
+			encoder.SetIndent(2)
+			encoder.Encode(item)
 
-				if file.Content != nil {
-					stream, err := bs.GetFileStream(version, file, session)
+			attachableItem, isAttachable := item.(meta.AttachableItem)
+
+			if isAttachable {
+				paths, err := bs.GetAttachmentPaths(attachableItem, version, session)
+				if err != nil {
+					return err
+				}
+				for _, path := range paths {
+					attachment, err := bs.GetItemAttachment(attachableItem, version, path, session)
 					if err != nil {
 						return err
 					}
-
-					itemStreams.AddFile(file.GetFilePath(), metadataType, stream)
-
+					f, err := create(filepath.Join(metadataType, attachableItem.GetBasePath(), path))
+					if err != nil {
+						return err
+					}
+					_, err = io.Copy(f, attachment)
+					if err != nil {
+						return err
+					}
 				}
-
 			}
-
-			r := bundlestore.GetFileReader(func(data io.Writer) error {
-				encoder := yaml.NewEncoder(data)
-				encoder.SetIndent(2)
-				return encoder.Encode(item)
-			})
-
-			itemStreams.AddFile(path, metadataType, r)
 
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 	}
 
 	by := session.GetWorkspace().GetAppBundle()
 
-	r := bundlestore.GetFileReader(func(data io.Writer) error {
-		encoder := yaml.NewEncoder(data)
-		encoder.SetIndent(2)
-		return encoder.Encode(by)
-	})
-
-	itemStreams.AddFile("bundle.yaml", "", r)
-
-	return itemStreams, nil
-
-}
-
-func Zip(writer io.Writer, files []bundlestore.ItemStream, session *sess.Session) error {
-
-	// Create a new zip archive.
-	zipWriter := zip.NewWriter(writer)
-
-	for _, itemStream := range files {
-		f, err := zipWriter.Create(filepath.Join(itemStream.Type, itemStream.FileName))
-		if err != nil {
-			return err
-		}
-
-		_, err = io.Copy(f, itemStream.File)
-		if err != nil {
-			return err
-		}
+	f, err := create("bundle.yaml")
+	if err != nil {
+		return err
 	}
 
-	// Make sure to check the error on Close.
-	return zipWriter.Close()
+	encoder := yaml.NewEncoder(f)
+	encoder.SetIndent(2)
+	encoder.Encode(by)
+
+	return nil
 
 }

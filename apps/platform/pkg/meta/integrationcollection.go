@@ -26,11 +26,11 @@ func (ic *IntegrationCollection) AddItem(item Item) {
 	*ic = append(*ic, item.(*Integration))
 }
 
-func (ic *IntegrationCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &Integration{Name: StandardNameFromPath(path)}, true
+func (ic *IntegrationCollection) GetItemFromPath(path string) BundleableItem {
+	return &Integration{Name: StandardNameFromPath(path)}
 }
 
-func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (ic *IntegrationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

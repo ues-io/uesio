@@ -52,10 +52,6 @@ func runFieldBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, s
 
 		switch ftype {
 		case "FILE":
-			err = depMap.AddRequired(change, "field", "uesio/studio.file->uesio/studio.filecollection")
-			if err != nil {
-				return err
-			}
 			_, err := requireValue(change, "uesio/studio.file->uesio/studio.accept")
 			if err != nil {
 				return err

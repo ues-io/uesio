@@ -51,11 +51,9 @@ type BundleStore interface {
 	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error
 	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error)
-	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
-	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
-	GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
-	GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
-	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
+	GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error)
+	GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error)
+	StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
 	HasAllItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 	DeleteBundle(namespace, version string, session *sess.Session) error

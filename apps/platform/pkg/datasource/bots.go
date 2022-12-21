@@ -6,9 +6,9 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -46,7 +46,7 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 }
 
 func hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	stream, err := bundle.GetBotStream(bot, session)
+	stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
 	if err != nil {
 		return err
 	}
@@ -235,12 +235,12 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	return nil
 }
 
-func CallGeneratorBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) ([]bundlestore.ItemStream, error) {
+func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	robot := meta.NewGeneratorBot(namespace, name)
 
 	err := bundle.Load(robot, session, connection)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	botAPI := &GeneratorBotAPI{
@@ -248,25 +248,22 @@ func CallGeneratorBot(namespace, name string, params map[string]interface{}, con
 		Params: &ParamsAPI{
 			params: params,
 		},
-		itemStreams: bundlestore.ItemStreams{},
-		bot:         robot,
+		create: create,
+		bot:    robot,
 	}
 
 	err = hydrateBot(robot, session)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = dialect.CallGeneratorBot(robot, botAPI)
-	if err != nil {
-		return nil, err
-	}
-	return botAPI.itemStreams, nil
+	return dialect.CallGeneratorBot(robot, botAPI)
+
 }
 
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {

@@ -7,6 +7,6 @@ function collection(bot) {
 		{
 			viewcomponents: viewComponentsYaml,
 		},
-		"pack.yaml"
+		"templates/pack.yaml"
 	)
 }

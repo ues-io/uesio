@@ -2,7 +2,6 @@ package fileadapt
 
 import (
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -43,22 +42,6 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) (*meta.UserFileCollection, *meta.FileSource, error) {
-	ufc, err := meta.NewUserFileCollection(fileCollectionID)
-	if err != nil {
-		return nil, nil, errors.New("Failed to create file collection: " + err.Error())
-	}
-	err = bundle.Load(ufc, session, nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("No file collection found: %s, %s", fileCollectionID, err.Error())
-	}
-	fs, err := GetFileSource(ufc.FileSource, session)
-	if err != nil {
-		return nil, nil, errors.New("Failed to create file source")
-	}
-	return ufc, fs, nil
-}
-
 func GetFileSource(fileSourceID string, session *sess.Session) (*meta.FileSource, error) {
 	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
@@ -69,16 +52,6 @@ func GetFileSource(fileSourceID string, session *sess.Session) (*meta.FileSource
 		return nil, errors.New("No file source found: " + fileSourceID + ", " + err.Error())
 	}
 	return fs, nil
-}
-
-func GetFileCollectionID(collectionMetadata *adapt.CollectionMetadata, fieldMetadata *adapt.FieldMetadata) (string, error) {
-	if fieldMetadata == nil {
-		return "", errors.New("No metadata setup for attachments yet: TODO!")
-	}
-	if fieldMetadata.FileMetadata.FileCollection == "" {
-		return "", errors.New("No FileCollection specified for this field: " + collectionMetadata.GetFullName() + " : " + fieldMetadata.GetFullName())
-	}
-	return fieldMetadata.FileMetadata.FileCollection, nil
 }
 
 func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnection, error) {

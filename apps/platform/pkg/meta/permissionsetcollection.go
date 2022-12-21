@@ -26,11 +26,11 @@ func (pc *PermissionSetCollection) AddItem(item Item) {
 	*pc = append(*pc, item.(*PermissionSet))
 }
 
-func (pc *PermissionSetCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &PermissionSet{Name: StandardNameFromPath(path)}, true
+func (pc *PermissionSetCollection) GetItemFromPath(path string) BundleableItem {
+	return &PermissionSet{Name: StandardNameFromPath(path)}
 }
 
-func (pc *PermissionSetCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (pc *PermissionSetCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

@@ -21,20 +21,19 @@ func NewFile(key string) (*File, error) {
 }
 
 type File struct {
-	ID        string            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" json:"uesio/core.uniquekey"`
-	Name      string            `yaml:"name" json:"uesio/studio.name"`
-	Namespace string            `yaml:"-" json:"-"`
-	FileName  string            `yaml:"fileName" json:"-"`
-	Workspace *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
-	Content   *UserFileMetadata `yaml:"-" json:"uesio/studio.content"`
-	itemMeta  *ItemMeta         `yaml:"-" json:"-"`
-	CreatedBy *User             `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	ID        string     `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
+	Name      string     `yaml:"name" json:"uesio/studio.name"`
+	Namespace string     `yaml:"-" json:"-"`
+	Path      string     `yaml:"path" json:"uesio/studio.path"`
+	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
+	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
+	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
+	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type FileWrapper File
@@ -59,12 +58,12 @@ func (f *File) GetKey() string {
 	return fmt.Sprintf("%s.%s", f.Namespace, f.Name)
 }
 
-func (f *File) GetPath() string {
-	return filepath.Join(f.Name, "file.yaml")
+func (f *File) GetBasePath() string {
+	return f.Name
 }
 
-func (f *File) GetFilePath() string {
-	return filepath.Join(f.Name, "file", f.FileName)
+func (f *File) GetPath() string {
+	return filepath.Join(f.Name, "file.yaml")
 }
 
 func (f *File) GetPermChecker() *PermissionSet {

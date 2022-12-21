@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/licensing"
@@ -158,47 +157,59 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 
 }
 
-func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	if file.Content == nil {
-		return nil, nil
-	}
-	stream, userFile, err := filesource.Download(file.Content.ID, session.RemoveWorkspaceContext())
+func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
+	err := b.GetItem(item, version, session, nil)
 	if err != nil {
 		return nil, err
 	}
-	file.FileName = userFile.FileName
-	return stream, nil
-}
-
-func (b *WorkspaceBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	fileID := componentPack.RuntimeBundle.ID
-	if path == "builder.js" {
-		fileID = componentPack.BuildTimeBundle.ID
+	recordID, err := item.GetField(adapt.ID_FIELD)
+	if err != nil {
+		return nil, err
 	}
-	stream, _, err := filesource.Download(fileID, session.RemoveWorkspaceContext())
+	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
 	return stream, nil
 }
 
-func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, _, err := filesource.Download(bot.Content.ID, session.RemoveWorkspaceContext())
+func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	err := b.GetItem(item, version, session, nil)
 	if err != nil {
 		return nil, err
 	}
-	return stream, nil
+	recordID, err := item.GetField(adapt.ID_FIELD)
+	if err != nil {
+		return nil, err
+	}
+	userFiles := &meta.UserFileMetadataCollection{}
+	err = datasource.PlatformLoad(
+		userFiles,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio/core.recordid",
+					Value: recordID,
+				},
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	paths := []string{}
+	for _, ufm := range *userFiles {
+		paths = append(paths, ufm.Path)
+	}
+	return paths, nil
 }
 
-func (b *WorkspaceBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return nil, errors.New("Cant use generate bot templates here yet. :(")
-}
-
-func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
+func (b *WorkspaceBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
-func (b *WorkspaceBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *WorkspaceBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 	return errors.New("Tried to delete bundle in the workspace bundle store")
 }
 

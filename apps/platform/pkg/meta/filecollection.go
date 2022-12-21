@@ -28,16 +28,20 @@ func (fc *FileCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*File))
 }
 
-func (fc *FileCollection) GetItemFromPath(path string) (BundleableItem, bool) {
+func (fc *FileCollection) GetItemFromPath(path string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || parts[1] != "file.yaml" {
-		// Ignore this file
-		return nil, false
-	}
-	return &File{Name: parts[0]}, true
+	return &File{Name: parts[0]}
 }
 
-func (fc *FileCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (fc *FileCollection) IsDefinitionPath(path string) bool {
+	parts := strings.Split(path, string(os.PathSeparator))
+	return len(parts) == 2 && parts[1] == "file.yaml"
+}
+
+func (fc *FileCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
+	if definitionOnly {
+		return fc.IsDefinitionPath(path)
+	}
 	return true
 }
 

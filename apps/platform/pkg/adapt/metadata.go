@@ -107,8 +107,8 @@ type SelectListMetadata struct {
 }
 
 type FileMetadata struct {
-	Accept         string `json:"accept"`
-	FileCollection string `json:"filecollection"`
+	Accept     string `json:"accept"`
+	FileSource string `json:"filesource"`
 }
 
 type NumberMetadata struct {

@@ -22,11 +22,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type FileRecord struct {
-	RecordUniqueKey string
-	FieldName       string
-}
-
 var ORDERED_ITEMS = [...]string{
 	"collections",
 	"selectlists",
@@ -73,11 +68,9 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 	dep := map[string]meta.BundleableGroup{}
 
-	fileStreams := []bundlestore.ReadItemStream{}
-	// Maps a filename to a recordID
-	fileNameMap := map[string]FileRecord{}
-
 	by := meta.BundleDef{}
+
+	uploadOps := []filesource.FileUploadOp{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -127,13 +120,25 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 		path := filepath.Join(filepath.Join(dirParts[1:]...), fileName)
 
-		if !collection.FilterPath(path, nil) {
+		if !collection.FilterPath(path, nil, false) {
 			continue
 		}
 
-		collectionItem, isDefinition := collection.GetItemFromPath(path)
+		attachableGroup, isAttachable := collection.(meta.AttachableGroup)
+
+		collectionItem := collection.GetItemFromPath(path)
 		if err != nil {
 			return err
+		}
+
+		if collectionItem == nil {
+			continue
+		}
+
+		isDefinition := true
+
+		if isAttachable {
+			isDefinition = attachableGroup.IsDefinitionPath(path)
 		}
 
 		if isDefinition {
@@ -144,37 +149,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			// Special handling for files
-			if metadataType == "files" {
-				file := collectionItem.(*meta.File)
-				fileNameMap[collection.GetName()+":"+file.GetFilePath()] = FileRecord{
-					RecordUniqueKey: file.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.content",
-				}
-			}
-
-			// Special handling for bots
-			if metadataType == "bots" {
-				bot := collectionItem.(*meta.Bot)
-				fileNameMap[collection.GetName()+":"+bot.GetBotFilePath()] = FileRecord{
-					RecordUniqueKey: bot.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.content",
-				}
-			}
-
-			// Special handling for componentpacks
-			if metadataType == "componentpacks" {
-				cpack := collectionItem.(*meta.ComponentPack)
-				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(false)] = FileRecord{
-					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.runtimebundle",
-				}
-				fileNameMap[collection.GetName()+":"+cpack.GetComponentPackFilePath(true)] = FileRecord{
-					RecordUniqueKey: cpack.GetDBID(workspace.UniqueKey),
-					FieldName:       "uesio/studio.buildtimebundle",
-				}
-			}
-
 			collectionItem.SetField("uesio/studio.workspace", &meta.Workspace{
 				ID: workspace.ID,
 			})
@@ -182,36 +156,30 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			continue
 		}
 
-		// Special handling for files and bots that have file data
-		f, err := zipFile.Open()
-		if err != nil {
-			return err
-		}
-		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
-			Type:     collection.GetName(),
-			FileName: fileName,
-			Path:     path,
-			Data:     f,
-		})
-		defer f.Close()
-	}
+		if isAttachable {
 
-	uploadOps := []filesource.FileUploadOp{}
+			attachableItem, isAttachableItem := collectionItem.(meta.AttachableItem)
+			if !isAttachableItem {
+				continue
+			}
 
-	for _, fileStream := range fileStreams {
-		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
-		if !ok {
-			continue
+			// If the collection item has a way to get a base path we can use it.
+			// Special handling for files and bots that have file data
+			f, err := zipFile.Open()
+			if err != nil {
+				return err
+			}
+
+			uploadOps = append(uploadOps, filesource.FileUploadOp{
+				Data: f,
+				Details: &fileadapt.FileDetails{
+					Path:            strings.TrimPrefix(path, attachableItem.GetBasePath()+"/"),
+					CollectionID:    collection.GetName(),
+					RecordUniqueKey: collectionItem.GetDBID(workspace.UniqueKey),
+				},
+			})
+			defer f.Close()
 		}
-		uploadOps = append(uploadOps, filesource.FileUploadOp{
-			Data: fileStream.Data,
-			Details: &fileadapt.FileDetails{
-				Name:            fileStream.FileName,
-				CollectionID:    fileStream.Type,
-				RecordUniqueKey: fileRecord.RecordUniqueKey,
-				FieldID:         fileRecord.FieldName,
-			},
-		})
 	}
 
 	deps := meta.BundleDependencyCollection{}

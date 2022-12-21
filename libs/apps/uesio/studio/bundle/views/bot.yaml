@@ -22,7 +22,6 @@ definition:
         uesio/studio.type:
         uesio/studio.dialect:
         uesio/studio.collection:
-        uesio/studio.content:
         uesio/core.updatedat:
         uesio/core.updatedby:
         uesio/core.createdat:
@@ -137,10 +136,6 @@ definition:
                                       fieldId: uesio/core.updatedby
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedat
-                            - uesio/io.field:
-                                fieldId: uesio/studio.content
-                                id: botcontent
-                                displayAs: TEXT
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog

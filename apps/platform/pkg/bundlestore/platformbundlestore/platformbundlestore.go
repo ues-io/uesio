@@ -112,8 +112,8 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 	for _, path := range paths {
 
-		retrievedItem, isDefinition := group.GetItemFromPath(path)
-		if retrievedItem == nil || !isDefinition {
+		retrievedItem := group.GetItemFromPath(path)
+		if retrievedItem == nil {
 			continue
 		}
 		retrievedItem.SetNamespace(namespace)
@@ -131,33 +131,32 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 }
 
-func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
+func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
 }
 
-func (b *PlatformBundleStore) GetComponentPackStream(version string, path string, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(componentPack.Namespace, version, "componentpacks", path, session)
+func (b *PlatformBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
+	return nil, nil
 }
 
-func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath(), session)
-}
+func (b *PlatformBundleStore) StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error {
 
-func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
-}
+	fullFilePath := filepath.Join(getBasePath(namespace, version), path)
 
-func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
-	for _, itemStream := range itemStreams {
-		err := storeItem(namespace, version, itemStream, session)
-		if err != nil {
-			return err
-		}
+	conn, err := getPlatformFileConnection(session)
+	if err != nil {
+		return err
 	}
+
+	err = conn.Upload(reader, fullFilePath)
+	if err != nil {
+		return errors.New("Error Writing File: " + err.Error())
+	}
+
 	return nil
 }
 
-func (b *PlatformBundleStore) DeleteBundle(namespace string, version string, session *sess.Session) error {
+func (b *PlatformBundleStore) DeleteBundle(namespace, version string, session *sess.Session) error {
 
 	fullFilePath := filepath.Join(namespace, version)
 
@@ -169,22 +168,6 @@ func (b *PlatformBundleStore) DeleteBundle(namespace string, version string, ses
 	err = conn.EmptyDir(fullFilePath)
 	if err != nil {
 		return errors.New("Error Deleting Bundle: " + err.Error())
-	}
-
-	return nil
-}
-
-func storeItem(namespace string, version string, itemStream bundlestore.ItemStream, session *sess.Session) error {
-	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
-
-	conn, err := getPlatformFileConnection(session)
-	if err != nil {
-		return err
-	}
-
-	err = conn.Upload(itemStream.File, fullFilePath)
-	if err != nil {
-		return errors.New("Error Writing File: " + err.Error())
 	}
 
 	return nil

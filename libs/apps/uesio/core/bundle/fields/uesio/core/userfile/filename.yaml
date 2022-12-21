@@ -1,4 +1,0 @@
-name: filename
-type: "TEXT"
-label: "File Name"
-readOnly: true

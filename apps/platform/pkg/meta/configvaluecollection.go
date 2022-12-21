@@ -26,11 +26,11 @@ func (cvc *ConfigValueCollection) AddItem(item Item) {
 	*cvc = append(*cvc, item.(*ConfigValue))
 }
 
-func (cvc *ConfigValueCollection) GetItemFromPath(path string) (BundleableItem, bool) {
-	return &ConfigValue{Name: StandardNameFromPath(path)}, true
+func (cvc *ConfigValueCollection) GetItemFromPath(path string) BundleableItem {
+	return &ConfigValue{Name: StandardNameFromPath(path)}
 }
 
-func (cvc *ConfigValueCollection) FilterPath(path string, conditions BundleConditions) bool {
+func (cvc *ConfigValueCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 

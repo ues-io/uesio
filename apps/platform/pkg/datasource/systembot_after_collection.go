@@ -13,7 +13,7 @@ func parseUniquekeyToCollectionKey(uniquekey string) (string, error) {
 	//ben/greenlink:dev:companymember to ben/greenlink.companymember
 	keyArray := strings.Split(uniquekey, ":")
 	if len(keyArray) != 3 {
-		return "", errors.New("Invalid Key: " + uniquekey)
+		return "", errors.New("Invalid Collection Key: " + uniquekey)
 	}
 
 	return keyArray[0] + "." + keyArray[2], nil

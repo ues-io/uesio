@@ -7,7 +7,7 @@ import (
 
 type FileDetails struct {
 	ContentLength   int64
-	Name            string
+	Path            string
 	CollectionID    string
 	RecordID        string
 	RecordUniqueKey string
@@ -35,7 +35,7 @@ func NewFileDetails(query url.Values) (*FileDetails, error) {
 	fieldID := query.Get("fieldid")
 
 	return &FileDetails{
-		Name:         name,
+		Path:         name,
 		CollectionID: collectionID,
 		RecordID:     recordID,
 		FieldID:      fieldID,
