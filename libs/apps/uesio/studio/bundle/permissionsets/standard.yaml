@@ -146,6 +146,7 @@ routes:
   uesio/studio.paymentsuccess: true
 files:
 collections:
+  uesio/studio.redis: true
   uesio/studio.allmetadata: true
   uesio/studio.authsource: true
   uesio/studio.signupmethod: true

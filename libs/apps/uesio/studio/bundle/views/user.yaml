@@ -85,6 +85,20 @@ definition:
           valueSource: LOOKUP
           lookupWire: users
           lookupField: uesio/core.id
+    usersessions:
+      collection: uesio/studio.redis
+      conditions:
+        # - field: uesio/core.user
+        #   valueSource: LOOKUP
+        #   lookupWire: users
+        #   lookupField: uesio/core.id
+        # - field: uesio/studio.type
+        #   value: "collections"
+        # - field: uesio/core.username
+        #   valueSource: VALUE
+        #   value: $Param{userid}
+        # - field: uesio/core.type
+        #   value: PERSON
   events:
     onload:
       - signal: wire/LOAD
@@ -294,6 +308,13 @@ definition:
                                                               - loginmethods
                                                         icon: delete
                                                         uesio.variant: uesio/io.nav
+                            - uesio/io.deck:
+                                id: sessionslist
+                                wire: usersessions
+                                uesio.variant: uesio/io.section
+                                components:
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/io.item
   panels:
     deleteUser:
       uesio.type: uesio/io.dialog

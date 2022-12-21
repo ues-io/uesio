@@ -1,0 +1,8 @@
+name: redis
+type: DYNAMIC
+uniqueKey:
+  - uesio/studio.namespace
+  - uesio/studio.name
+nameField: uesio/studio.name
+label: Redis
+pluralLabel: Redis
