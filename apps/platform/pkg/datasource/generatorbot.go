@@ -32,6 +32,10 @@ type GeneratorBotAPI struct {
 	connection adapt.Connection
 }
 
+func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
+	return CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+}
+
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the bot.
 	stream, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session)

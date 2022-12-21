@@ -14,7 +14,7 @@ function view(bot) {
 			tableColumns: tableColumnsYaml,
 			wirename: wirename,
 		},
-		"listview.yaml"
+		"templates/listview.yaml"
 	)
 
 	bot.runGenerator("uesio/core", "view", {

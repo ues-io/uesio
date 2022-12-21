@@ -12,6 +12,6 @@ function route(bot) {
 			view: view,
 			theme: theme,
 		},
-		"route.yaml"
+		"templates/route.yaml"
 	)
 }
