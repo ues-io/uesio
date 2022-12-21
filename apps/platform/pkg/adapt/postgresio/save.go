@@ -13,8 +13,8 @@ import (
 const INSERT_QUERY = "INSERT INTO public.data (id,uniquekey,collection,tenant,autonumber,fields) VALUES ($1,$2,$3,$4,$5,$6)"
 const UPDATE_QUERY = "UPDATE public.data SET uniquekey = $2, fields = fields || $4 WHERE id = $1 and collection = $3"
 const DELETE_QUERY = "DELETE FROM public.data WHERE id = ANY($1) and collection = $2"
-const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE fullid = ANY($1)"
-const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (fullid,recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5,$6)"
+const TOKEN_DELETE_QUERY = "DELETE FROM public.tokens WHERE recordid = ANY($1)"
+const TOKEN_INSERT_QUERY = "INSERT INTO public.tokens (recordid,token,collection,tenant,readonly) VALUES ($1,$2,$3,$4,$5)"
 
 func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 
@@ -26,21 +26,18 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 	readTokens := map[string][]string{}
 	resetTokenIDs := []string{}
 
-	collectionName, err := getDBCollectionName(request.Metadata, tenantID)
-	if err != nil {
-		return err
-	}
+	collectionName := request.Metadata.GetFullName()
 
 	batch := &pgx.Batch{}
 
-	err = request.LoopChanges(func(change *adapt.ChangeItem) error {
+	err := request.LoopChanges(func(change *adapt.ChangeItem) error {
 
 		fieldJSON, err := gojay.MarshalJSONObject(change)
 		if err != nil {
 			return err
 		}
-		fullRecordID := makeDBId(collectionName, change.IDValue)
-		uniqueID := makeDBId(collectionName, change.UniqueKey)
+		fullRecordID := change.IDValue
+		uniqueID := change.UniqueKey
 
 		if change.IsNew {
 			batch.Queue(INSERT_QUERY, fullRecordID, uniqueID, collectionName, tenantID, change.Autonumber, fieldJSON)
@@ -65,12 +62,10 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 	if deleteCount > 0 {
 		deleteIDs := make([]string, deleteCount)
 		for i, delete := range request.Deletes {
-			deleteIDs[i] = makeDBId(collectionName, delete.IDValue)
+			deleteIDs[i] = delete.IDValue
 		}
 		batch.Queue(DELETE_QUERY, deleteIDs, collectionName)
 	}
-
-	collectionNameLength := len(collectionName) + 1
 
 	if len(resetTokenIDs) > 0 {
 		batch.Queue(TOKEN_DELETE_QUERY, resetTokenIDs)
@@ -82,7 +77,6 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,
 					key,
-					key[collectionNameLength:],
 					token,
 					collectionName,
 					tenantID,
@@ -98,7 +92,6 @@ func (c *Connection) Save(request *adapt.SaveOp, session *sess.Session) error {
 				batch.Queue(
 					TOKEN_INSERT_QUERY,
 					key,
-					key[collectionNameLength:],
 					token,
 					collectionName,
 					tenantID,

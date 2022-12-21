@@ -204,23 +204,21 @@ func processSubQueryCondition(condition adapt.LoadRequestCondition, collectionMe
 func processConditionList(conditions []adapt.LoadRequestCondition, collectionMetadata *adapt.CollectionMetadata, metadata *adapt.MetadataCache, builder *QueryBuilder, tableAlias string, session *sess.Session) error {
 	tenantID := session.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
-	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
-	if err != nil {
-		return err
-	}
+	collectionName := collectionMetadata.GetFullName()
 
 	// Shortcut optimization for id field and unique key
 	if len(conditions) == 1 {
 		canOptimizeOperator := conditions[0].Operator == "IN" || conditions[0].Operator == "EQ" || conditions[0].Operator == ""
 		if canOptimizeOperator && conditions[0].Field == adapt.ID_FIELD {
-			return conditionOptimization(conditions[0], collectionName, builder, "id", tableAlias)
+			return conditionOptimization(conditions[0], collectionName, tenantID, builder, "id", tableAlias)
 		}
 		if canOptimizeOperator && conditions[0].Field == adapt.UNIQUE_KEY_FIELD {
-			return conditionOptimization(conditions[0], collectionName, builder, "uniquekey", tableAlias)
+			return conditionOptimization(conditions[0], collectionName, tenantID, builder, "uniquekey", tableAlias)
 		}
 	}
 
 	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("collection", tableAlias), builder.addValue(collectionName)))
+	builder.addQueryPart(fmt.Sprintf("%s = %s", getAliasedName("tenant", tableAlias), builder.addValue(tenantID)))
 	for _, condition := range conditions {
 		err := processCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 		if err != nil {
@@ -247,10 +245,16 @@ func processCondition(condition adapt.LoadRequestCondition, collectionMetadata *
 	return processValueCondition(condition, collectionMetadata, metadata, builder, tableAlias, session)
 }
 
-func conditionOptimization(condition adapt.LoadRequestCondition, collectionName string, builder *QueryBuilder, fieldName, tableAlias string) error {
+func conditionOptimization(condition adapt.LoadRequestCondition, collectionName, tenantID string, builder *QueryBuilder, fieldName, tableAlias string) error {
+
+	collectionField := getAliasedName("collection", tableAlias)
+	tenantField := getAliasedName("tenant", tableAlias)
+	builder.addQueryPart(fmt.Sprintf("%s = %s", collectionField, builder.addValue(collectionName)))
+	builder.addQueryPart(fmt.Sprintf("%s = %s", tenantField, builder.addValue(tenantID)))
+
 	optimizeField := getAliasedName(fieldName, tableAlias)
 	if condition.Operator != "IN" {
-		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, condition.Value))))
+		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(condition.Value)))
 		return nil
 	}
 
@@ -261,13 +265,13 @@ func conditionOptimization(condition adapt.LoadRequestCondition, collectionName 
 	}
 
 	if len(values) == 1 {
-		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(makeDBId(collectionName, values[0]))))
+		builder.addQueryPart(fmt.Sprintf("%s = %s", optimizeField, builder.addValue(values[0])))
 		return nil
 	}
 
 	appendedValues := make([]string, len(values))
 	for i, v := range values {
-		appendedValues[i] = makeDBId(collectionName, v)
+		appendedValues[i] = v
 	}
 	builder.addQueryPart(fmt.Sprintf("%s = ANY(%s)", optimizeField, builder.addValue(appendedValues)))
 	return nil

@@ -105,6 +105,10 @@ func (ci *ChangeItem) IsNil() bool {
 func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 
 	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+		// Skip marshalling builtin fields
+		if fieldID == ID_FIELD || fieldID == UNIQUE_KEY_FIELD {
+			return nil
+		}
 		if value == nil {
 			return nil
 		}
