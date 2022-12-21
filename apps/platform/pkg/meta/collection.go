@@ -45,6 +45,7 @@ type RecordChallengeTokenDefinition struct {
 type TokenCondition struct {
 	Field string      `yaml:"field" json:"field"`
 	Value interface{} `yaml:"value" json:"value"`
+	Type  string      `yaml:"type" json:"type"`
 }
 
 type Collection struct {

@@ -84,11 +84,23 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOp
 				fields = append(fields, adapt.LoadRequestField{
 					ID: condition.Field,
 				})
-				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
-					Field:    condition.Field,
-					Value:    session.GetUserID(),
-					Operator: "=",
-				})
+
+				if condition.Type == "" {
+					loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+						Field:    condition.Field,
+						Value:    session.GetUserID(),
+						Operator: "=",
+					})
+				}
+
+				if condition.Type == "APP" {
+					loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+						Field:    condition.Field,
+						Value:    session.GetContextAppId(),
+						Operator: "=",
+					})
+				}
+
 			}
 
 			lookupResults := &adapt.Collection{}

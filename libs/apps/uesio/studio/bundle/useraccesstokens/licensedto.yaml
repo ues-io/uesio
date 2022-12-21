@@ -1,0 +1,7 @@
+name: licensedto
+type: "lookup"
+collection: uesio/studio.license
+conditions:
+  - field: "uesio/studio.applicensed"
+    type: APP
+token: "${uesio/studio.app}"

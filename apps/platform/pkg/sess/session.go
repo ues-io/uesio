@@ -300,6 +300,19 @@ func (s *Session) GetContextAppName() string {
 	return s.site.GetAppFullName()
 }
 
+func (s *Session) GetContextAppId() string {
+	if s.workspace != nil {
+		return s.workspace.App.ID
+	}
+	if s.siteadmin != nil {
+		return s.siteadmin.App.ID
+	}
+	if s.version != nil {
+		return s.version.App
+	}
+	return s.site.App.ID
+}
+
 func (s *Session) GetContextVersionName() string {
 	if s.workspace != nil {
 		return s.workspace.Name
