@@ -1,0 +1,66 @@
+name: usertokens
+definition:
+  # Wires are how we pull in data
+  wires:
+    users:
+      collection: uesio/core.user
+      fields:
+        uesio/core.id:
+        uesio/core.firstname:
+        uesio/core.lastname:
+        uesio/core.username:
+        uesio/core.initials:
+        uesio/core.profile:
+        uesio/core.picture:
+        uesio/core.language:
+      conditions:
+        - field: uesio/core.id
+          valueSource: VALUE
+          value: $User{id}
+    tokens:
+      collection: uesio/studio.usertokenvalue
+      # conditions:
+      #   - field: uesio/studio.user
+      #     valueSource: LOOKUP
+      #     lookupWire: users
+      #     lookupField: uesio/core.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.topbar
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/core.view:
+                    view: uesio/studio.userprofilenav
+                    uesio.context:
+                      wire: users
+                    params:
+                      selected: tokens
+          - uesio/io.griditem:
+              uesio.variant: uesio/studio.content
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.main
+                    title: Tokens
+                - uesio/io.box:
+                    uesio.variant: uesio/io.section
+                    components:
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.section
+                          title: Tokens
+                      - uesio/io.table:
+                          id: tokensTable
+                          wire: tokens
+                          pagesize: 10
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          columns:
+                            - field: uesio/studio.name

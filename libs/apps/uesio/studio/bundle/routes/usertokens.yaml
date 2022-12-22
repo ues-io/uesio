@@ -1,0 +1,4 @@
+name: usertokens
+path: mytokens
+view: uesio/studio.usertokens
+theme: uesio/studio.default

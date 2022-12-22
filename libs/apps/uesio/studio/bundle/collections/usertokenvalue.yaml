@@ -1,0 +1,8 @@
+name: usertokenvalue
+type: DYNAMIC
+# uniqueKey:
+#   - uesio/studio.namespace
+#   - uesio/studio.name
+# nameField: uesio/studio.name
+label: User Token value
+pluralLabel: User Token values
