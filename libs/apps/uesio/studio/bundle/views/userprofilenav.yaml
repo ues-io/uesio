@@ -44,6 +44,9 @@ definition:
                     uesio.variant: uesio/io.icon
                     text: credit_card
           - uesio/io.tile:
+              uesio.display:
+                - type: featureFlag
+                  name: manage_usertokens
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:
