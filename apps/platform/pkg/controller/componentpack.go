@@ -20,8 +20,10 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 		session := middleware.GetSession(r)
 
 		componentPack := meta.ComponentPack{
-			Name:      name,
-			Namespace: namespace,
+			Name: name,
+			BundleableBase: meta.BundleableBase{
+				Namespace: namespace,
+			},
 		}
 
 		err := bundle.Load(&componentPack, session, nil)
@@ -38,7 +40,7 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			return
 		}
 
-		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
+		respondFile(w, r, "pack.js", time.Unix(componentPack.UpdatedAt, 0), stream)
 	}
 }
 
@@ -51,8 +53,10 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 		session := middleware.GetSession(r)
 
 		componentPack := meta.ComponentPack{
-			Name:      name,
-			Namespace: namespace,
+			Name: name,
+			BundleableBase: meta.BundleableBase{
+				Namespace: namespace,
+			},
 		}
 
 		err := bundle.Load(&componentPack, session, nil)
@@ -70,6 +74,6 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 			return
 		}
 
-		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
+		respondFile(w, r, "pack.js", time.Unix(componentPack.UpdatedAt, 0), stream)
 	}
 }

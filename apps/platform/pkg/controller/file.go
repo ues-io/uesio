@@ -19,8 +19,10 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	file := meta.File{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: meta.BundleableBase{
+			Namespace: namespace,
+		},
 	}
 
 	err := bundle.Load(&file, session, nil)
@@ -37,6 +39,6 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondFile(w, r, file.Path, time.UnixMilli(file.UpdatedAt), stream)
+	respondFile(w, r, file.Path, time.Unix(file.UpdatedAt, 0), stream)
 
 }

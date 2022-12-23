@@ -1,8 +1,6 @@
 package meta
 
 type Workspace struct {
-	ID            string         `json:"uesio/core.id"`
-	UniqueKey     string         `json:"uesio/core.uniquekey"`
 	Name          string         `json:"uesio/studio.name"`
 	LoginRoute    string         `json:"uesio/studio.loginroute"`
 	HomeRoute     string         `json:"uesio/studio.homeroute"`
@@ -11,12 +9,7 @@ type Workspace struct {
 	App           *App           `json:"uesio/studio.app"`
 	Permissions   *PermissionSet `json:"-"`
 	bundleDef     *BundleDef
-	itemMeta      *ItemMeta `json:"-"`
-	CreatedBy     *User     `json:"uesio/core.createdby"`
-	Owner         *User     `json:"uesio/core.owner"`
-	UpdatedBy     *User     `json:"uesio/core.updatedby"`
-	UpdatedAt     int64     `json:"uesio/core.updatedat"`
-	CreatedAt     int64     `json:"uesio/core.createdat"`
+	BuiltIn
 }
 
 func (w *Workspace) GetAppFullName() string {
@@ -56,12 +49,4 @@ func (w *Workspace) Loop(iter func(string, interface{}) error) error {
 
 func (w *Workspace) Len() int {
 	return StandardItemLen(w)
-}
-
-func (w *Workspace) GetItemMeta() *ItemMeta {
-	return w.itemMeta
-}
-
-func (w *Workspace) SetItemMeta(itemMeta *ItemMeta) {
-	w.itemMeta = itemMeta
 }

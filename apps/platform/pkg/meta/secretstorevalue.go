@@ -1,16 +1,9 @@
 package meta
 
 type SecretStoreValue struct {
-	ID        string    `json:"uesio/core.id"`
-	UniqueKey string    `json:"uesio/core.uniquekey"`
-	Key       string    `json:"uesio/core.key"`
-	Value     string    `json:"uesio/core.value"`
-	itemMeta  *ItemMeta `json:"-"`
-	CreatedBy *User     `json:"uesio/core.createdby"`
-	Owner     *User     `json:"uesio/core.owner"`
-	UpdatedBy *User     `json:"uesio/core.updatedby"`
-	UpdatedAt int64     `json:"uesio/core.updatedat"`
-	CreatedAt int64     `json:"uesio/core.createdat"`
+	Key   string `json:"uesio/core.key"`
+	Value string `json:"uesio/core.value"`
+	BuiltIn
 }
 
 func (s *SecretStoreValue) GetCollectionName() string {
@@ -35,12 +28,4 @@ func (s *SecretStoreValue) Loop(iter func(string, interface{}) error) error {
 
 func (s *SecretStoreValue) Len() int {
 	return StandardItemLen(s)
-}
-
-func (s *SecretStoreValue) GetItemMeta() *ItemMeta {
-	return s.itemMeta
-}
-
-func (s *SecretStoreValue) SetItemMeta(itemMeta *ItemMeta) {
-	s.itemMeta = itemMeta
 }

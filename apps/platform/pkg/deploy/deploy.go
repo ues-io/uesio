@@ -149,9 +149,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())
 			}
 
-			collectionItem.SetField("uesio/studio.workspace", &meta.Workspace{
-				ID: workspace.ID,
-			})
+			collectionItem.SetField("uesio/studio.workspace", workspace)
 
 			continue
 		}
@@ -190,23 +188,29 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			return err
 		}
 		deps = append(deps, &meta.BundleDependency{
-			Workspace: &meta.Workspace{
-				ID: workspace.ID,
-			},
+			Workspace: workspace,
 			App: &meta.App{
-				UniqueKey: key,
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: key,
+				},
 			},
 			Bundle: &meta.Bundle{
-				UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: strings.Join([]string{key, major, minor, patch}, ":"),
+				},
 			},
 		})
 	}
 
 	// Upload workspace properties like homeRoute and loginRoute
 	workspaceItem := (&meta.Workspace{
-		ID: workspace.ID,
+		BuiltIn: meta.BuiltIn{
+			ID: workspace.ID,
+		},
 		App: &meta.App{
-			UniqueKey: namespace,
+			BuiltIn: meta.BuiltIn{
+				UniqueKey: namespace,
+			},
 		},
 		LoginRoute:    by.LoginRoute,
 		HomeRoute:     by.HomeRoute,

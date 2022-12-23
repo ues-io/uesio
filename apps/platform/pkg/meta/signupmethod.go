@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,8 +13,10 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 		return nil, errors.New("Bad Key for SignupMethod: " + key)
 	}
 	return &SignupMethod{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
@@ -25,10 +26,7 @@ type EmailTemplateOptions struct {
 	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
 type SignupMethod struct {
-	ID               string               `yaml:"-" json:"uesio/core.id"`
-	UniqueKey        string               `yaml:"-" json:"uesio/core.uniquekey"`
 	Name             string               `yaml:"name" json:"uesio/studio.name"`
-	Namespace        string               `yaml:"-" json:"-"`
 	AuthSource       string               `yaml:"authsource" json:"uesio/studio.authsource"`
 	Profile          string               `yaml:"profile" json:"uesio/studio.profile"`
 	UsernameTemplate string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
@@ -37,14 +35,8 @@ type SignupMethod struct {
 	AdminCreate      EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup           EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
 	ForgotPassword   EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
-	Workspace        *Workspace           `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta         *ItemMeta            `yaml:"-" json:"-"`
-	CreatedBy        *User                `yaml:"-" json:"uesio/core.createdby"`
-	Owner            *User                `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy        *User                `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt        int64                `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt        int64                `yaml:"-" json:"uesio/core.createdat"`
-	Public           bool                 `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type SignupMethodWrapper SignupMethod
@@ -85,18 +77,6 @@ func (sm *SignupMethod) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(sm, fieldName)
 }
 
-func (sm *SignupMethod) GetNamespace() string {
-	return sm.Namespace
-}
-
-func (sm *SignupMethod) SetNamespace(namespace string) {
-	sm.Namespace = namespace
-}
-
-func (sm *SignupMethod) SetModified(mod time.Time) {
-	sm.UpdatedAt = mod.UnixMilli()
-}
-
 func (sm *SignupMethod) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sm, iter)
 }
@@ -105,22 +85,10 @@ func (sm *SignupMethod) Len() int {
 	return StandardItemLen(sm)
 }
 
-func (sm *SignupMethod) GetItemMeta() *ItemMeta {
-	return sm.itemMeta
-}
-
-func (sm *SignupMethod) SetItemMeta(itemMeta *ItemMeta) {
-	sm.itemMeta = itemMeta
-}
-
 func (sm *SignupMethod) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, sm.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*SignupMethodWrapper)(sm))
-}
-
-func (sm *SignupMethod) IsPublic() bool {
-	return sm.Public
 }

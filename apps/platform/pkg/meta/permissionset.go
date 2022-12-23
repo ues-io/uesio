@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,35 +13,28 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 		return nil, errors.New("Bad Key for PermissionSet")
 	}
 	return &PermissionSet{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
 type PermissionSet struct {
-	ID                  string          `yaml:"-" json:"uesio/core.id"`
-	UniqueKey           string          `yaml:"-" json:"uesio/core.uniquekey"`
 	Name                string          `yaml:"name" json:"uesio/studio.name"`
-	Namespace           string          `yaml:"-" json:"-"`
 	NamedRefs           map[string]bool `yaml:"named" json:"uesio/studio.namedrefs"`
 	ViewRefs            map[string]bool `yaml:"views" json:"uesio/studio.viewrefs"`
 	CollectionRefs      map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
 	RouteRefs           map[string]bool `yaml:"routes" json:"uesio/studio.routerefs"`
 	FileRefs            map[string]bool `yaml:"files" json:"uesio/studio.filerefs"`
-	Workspace           *Workspace      `yaml:"-" json:"uesio/studio.workspace"`
 	AllowAllCollections bool            `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
 	AllowAllViews       bool            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
 	ModifyAllRecords    bool            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
 	ViewAllRecords      bool            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	itemMeta            *ItemMeta       `yaml:"-" json:"-"`
-	CreatedBy           *User           `yaml:"-" json:"uesio/core.createdby"`
-	Owner               *User           `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy           *User           `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt           int64           `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt           int64           `yaml:"-" json:"uesio/core.createdat"`
-	Public              bool            `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type PermissionSetWrapper PermissionSet
@@ -83,18 +75,6 @@ func (ps *PermissionSet) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(ps, fieldName)
 }
 
-func (ps *PermissionSet) GetNamespace() string {
-	return ps.Namespace
-}
-
-func (ps *PermissionSet) SetNamespace(namespace string) {
-	ps.Namespace = namespace
-}
-
-func (ps *PermissionSet) SetModified(mod time.Time) {
-	ps.UpdatedAt = mod.UnixMilli()
-}
-
 func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ps, iter)
 }
@@ -103,24 +83,12 @@ func (ps *PermissionSet) Len() int {
 	return StandardItemLen(ps)
 }
 
-func (ps *PermissionSet) GetItemMeta() *ItemMeta {
-	return ps.itemMeta
-}
-
-func (ps *PermissionSet) SetItemMeta(itemMeta *ItemMeta) {
-	ps.itemMeta = itemMeta
-}
-
 func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, ps.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*PermissionSetWrapper)(ps))
-}
-
-func (ps *PermissionSet) IsPublic() bool {
-	return ps.Public
 }
 
 func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {

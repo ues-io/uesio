@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,26 +13,19 @@ func NewFileSource(key string) (*FileSource, error) {
 		return nil, errors.New("Bad Key for FileSource")
 	}
 	return &FileSource{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
 type FileSource struct {
-	ID          string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey   string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name        string     `yaml:"-" json:"uesio/studio.name"`
-	Namespace   string     `yaml:"-" json:"-"`
-	Type        string     `yaml:"type,omitempty" json:"-"`
-	Credentials string     `yaml:"credentials" json:"uesio/studio.credentials"`
-	Workspace   *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta    *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy   *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner       *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy   *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt   int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt   int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public      bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Name        string `yaml:"-" json:"uesio/studio.name"`
+	Type        string `yaml:"type,omitempty" json:"-"`
+	Credentials string `yaml:"credentials" json:"uesio/studio.credentials"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type FileSourceWrapper FileSource
@@ -74,18 +66,6 @@ func (fs *FileSource) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(fs, fieldName)
 }
 
-func (fs *FileSource) GetNamespace() string {
-	return fs.Namespace
-}
-
-func (fs *FileSource) SetNamespace(namespace string) {
-	fs.Namespace = namespace
-}
-
-func (fs *FileSource) SetModified(mod time.Time) {
-	fs.UpdatedAt = mod.UnixMilli()
-}
-
 func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(fs, iter)
 }
@@ -94,22 +74,10 @@ func (fs *FileSource) Len() int {
 	return StandardItemLen(fs)
 }
 
-func (fs *FileSource) GetItemMeta() *ItemMeta {
-	return fs.itemMeta
-}
-
-func (fs *FileSource) SetItemMeta(itemMeta *ItemMeta) {
-	fs.itemMeta = itemMeta
-}
-
 func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, fs.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*FileSourceWrapper)(fs))
-}
-
-func (fs *FileSource) IsPublic() bool {
-	return fs.Public
 }

@@ -20,7 +20,7 @@ func setLicenced(licensed map[string]bool, change *adapt.ChangeItem) error {
 
 func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	LicensePricingItemDeps := adapt.Collection{}
+	licensePricingItemDeps := adapt.Collection{}
 	visited := map[string]bool{}
 	licensed := map[string]bool{}
 
@@ -59,7 +59,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		visited[appID] = true
 
 		var lptc meta.LicensePricingTemplateCollection
-		PlatformLoad(
+		err = PlatformLoad(
 			&lptc,
 			&PlatformLoadOptions{
 				Connection: connection,
@@ -72,29 +72,24 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 			},
 			session,
 		)
+		if err != nil {
+			return err
+		}
 
-		lptc.Loop(func(item meta.Item, _ string) error {
-
-			metadatatype, _ := item.GetField("uesio/studio.metadatatype")
-			actiontype, _ := item.GetField("uesio/studio.actiontype")
-			metadataname, _ := item.GetField("uesio/studio.metadataname")
-			price, _ := item.GetField("uesio/studio.price")
-
-			LicensePricingItemDeps = append(LicensePricingItemDeps, &adapt.Item{
+		for _, ptc := range lptc {
+			licensePricingItemDeps = append(licensePricingItemDeps, &adapt.Item{
 				"uesio/studio.app": map[string]interface{}{
 					adapt.ID_FIELD: appID,
 				},
 				"uesio/studio.license": map[string]interface{}{
 					adapt.ID_FIELD: licenseID,
 				},
-				"uesio/studio.metadatatype": metadatatype,
-				"uesio/studio.actiontype":   actiontype,
-				"uesio/studio.metadataname": metadataname,
-				"uesio/studio.price":        price,
+				"uesio/studio.metadatatype": ptc.MetadataType,
+				"uesio/studio.actiontype":   ptc.ActionType,
+				"uesio/studio.metadataname": ptc.MetadataName,
+				"uesio/studio.price":        ptc.Price,
 			})
-
-			return nil
-		})
+		}
 
 		return nil
 
@@ -113,7 +108,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 	// Bust the cache for all our visited namespaces
 	// But first find the namespaces
 	var apps meta.AppCollection
-	PlatformLoad(
+	err = PlatformLoad(
 		&apps,
 		&PlatformLoadOptions{
 			Connection: connection,
@@ -127,6 +122,9 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		},
 		session,
 	)
+	if err != nil {
+		return err
+	}
 
 	keysToBust := []string{}
 	for _, app := range apps {
@@ -138,7 +136,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		return err
 	}
 
-	if LicensePricingItemDeps.Len() == 0 {
+	if licensePricingItemDeps.Len() == 0 {
 		return nil
 	}
 
@@ -146,7 +144,7 @@ func runLicenseAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, 
 		{
 			Collection: "uesio/studio.licensepricingitem",
 			Wire:       "LicensePricingTemplatedWire",
-			Changes:    &LicensePricingItemDeps,
+			Changes:    &licensePricingItemDeps,
 			Options: &adapt.SaveOptions{
 				Upsert: true,
 			},

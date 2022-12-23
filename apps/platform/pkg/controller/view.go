@@ -27,8 +27,10 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		session := middleware.GetSession(r)
 
 		view := meta.View{
-			Name:      viewName,
-			Namespace: viewNamespace,
+			Name: viewName,
+			BundleableBase: meta.BundleableBase{
+				Namespace: viewNamespace,
+			},
 		}
 
 		// Make sure this is a legit view that we have access to

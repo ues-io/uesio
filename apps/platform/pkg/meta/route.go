@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,30 +13,23 @@ func NewRoute(key string) (*Route, error) {
 		return nil, errors.New("Invalid Route Key: " + key)
 	}
 	return &Route{
-		Namespace: namespace,
-		Name:      name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
+		Name: name,
 	}, nil
 }
 
 type Route struct {
-	ID         string            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string            `yaml:"-" json:"uesio/core.uniquekey"`
 	Name       string            `yaml:"name" json:"uesio/studio.name"`
-	Namespace  string            `yaml:"-" json:"-"`
 	Path       string            `yaml:"path" json:"uesio/studio.path"`
 	ViewType   string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
 	ViewRef    string            `yaml:"view" json:"uesio/studio.view"`
 	Collection string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	Params     map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
-	Workspace  *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
 	ThemeRef   string            `yaml:"theme" json:"uesio/studio.theme"`
-	itemMeta   *ItemMeta         `yaml:"-" json:"-"`
-	CreatedBy  *User             `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64             `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type RouteWrapper Route
@@ -83,32 +75,12 @@ func (r *Route) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(r, fieldName)
 }
 
-func (r *Route) GetNamespace() string {
-	return r.Namespace
-}
-
-func (r *Route) SetNamespace(namespace string) {
-	r.Namespace = namespace
-}
-
-func (r *Route) SetModified(mod time.Time) {
-	r.UpdatedAt = mod.UnixMilli()
-}
-
 func (r *Route) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(r, iter)
 }
 
 func (r *Route) Len() int {
 	return StandardItemLen(r)
-}
-
-func (r *Route) GetItemMeta() *ItemMeta {
-	return r.itemMeta
-}
-
-func (r *Route) SetItemMeta(itemMeta *ItemMeta) {
-	r.itemMeta = itemMeta
 }
 
 func (r *Route) UnmarshalYAML(node *yaml.Node) error {
@@ -129,8 +101,4 @@ func (r *Route) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*RouteWrapper)(r))
-}
-
-func (r *Route) IsPublic() bool {
-	return r.Public
 }

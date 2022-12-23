@@ -258,15 +258,12 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	selectListMetadata, ok := metadataCache.SelectLists[selectListKey]
 
 	if !ok {
-		namespace, name, err := meta.ParseKey(selectListKey)
+
+		selectList, err := meta.NewSelectList(selectListKey)
 		if err != nil {
-			return errors.New("Field Key: " + selectListKey + ":" + err.Error())
+			return err
 		}
-		selectList := meta.SelectList{
-			Name:      name,
-			Namespace: namespace,
-		}
-		err = bundle.Load(&selectList, session, connection)
+		err = bundle.Load(selectList, session, connection)
 		if err != nil {
 			return err
 		}

@@ -52,25 +52,31 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 	if ok {
 		return cached, nil
 	}
-	fieldsCount := objType.NumField()
-	allTags := make(map[string]string)
-	key := "json"
 
-	for i := 0; i < fieldsCount; i++ {
-		structField := objType.Field(i)
-		// PkgPath is empty for exported fields.
-		if structField.PkgPath == "" {
-			tag := structField.Tag.Get(key)
-			if tag == "-" || tag == "" {
-				continue
-			}
-			allTags[tag] = structField.Name
-		}
-	}
+	allTags := map[string]string{}
+	addTags(allTags, objType)
 
 	lock.Lock()
 	tagCache[objType] = allTags
 	lock.Unlock()
 
 	return allTags, nil
+}
+
+func addTags(tagMap map[string]string, objType reflect.Type) {
+	fieldsCount := objType.NumField()
+	for i := 0; i < fieldsCount; i++ {
+		structField := objType.Field(i)
+		// PkgPath is empty for exported fields.
+		if structField.PkgPath == "" {
+			if structField.Anonymous {
+				addTags(tagMap, structField.Type)
+			}
+			tag := structField.Tag.Get("json")
+			if tag == "-" || tag == "" {
+				continue
+			}
+			tagMap[tag] = structField.Name
+		}
+	}
 }

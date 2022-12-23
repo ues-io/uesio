@@ -2,25 +2,15 @@ package meta
 
 import (
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
 type Translation struct {
-	ID        string            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string            `yaml:"-" json:"uesio/core.uniquekey"`
-	Namespace string            `yaml:"-" json:"-"`
-	Workspace *Workspace        `yaml:"-" json:"uesio/studio.workspace"`
-	Labels    map[string]string `yaml:"labels" json:"uesio/studio.labels"`
-	Language  string            `yaml:"language" json:"uesio/studio.language"`
-	itemMeta  *ItemMeta         `yaml:"-" json:"-"`
-	CreatedBy *User             `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64             `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Labels   map[string]string `yaml:"labels" json:"uesio/studio.labels"`
+	Language string            `yaml:"language" json:"uesio/studio.language"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type TranslationWrapper Translation
@@ -43,18 +33,6 @@ func (t *Translation) GetPath() string {
 
 func (t *Translation) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, t.Language)
-}
-
-func (t *Translation) SetNamespace(namespace string) {
-	t.Namespace = namespace
-}
-
-func (t *Translation) GetNamespace() string {
-	return t.Namespace
-}
-
-func (t *Translation) SetModified(mod time.Time) {
-	t.UpdatedAt = mod.UnixMilli()
 }
 
 func (t *Translation) GetCollectionName() string {
@@ -81,22 +59,10 @@ func (t *Translation) Len() int {
 	return StandardItemLen(t)
 }
 
-func (t *Translation) GetItemMeta() *ItemMeta {
-	return t.itemMeta
-}
-
-func (t *Translation) SetItemMeta(itemMeta *ItemMeta) {
-	t.itemMeta = itemMeta
-}
-
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeLanguage(node, t.Language)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*TranslationWrapper)(t))
-}
-
-func (t *Translation) IsPublic() bool {
-	return t.Public
 }

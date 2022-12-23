@@ -18,8 +18,8 @@ require (
 	github.com/felixge/httpsnoop v1.0.3
 	github.com/francoispqt/gojay v1.2.13
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
+	github.com/gofrs/uuid v4.3.1+incompatible
 	github.com/gomodule/redigo v1.8.9
-	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/icza/session v1.2.0
 	github.com/jackc/pgconn v1.13.0
@@ -30,6 +30,8 @@ require (
 	google.golang.org/api v0.97.0
 	gopkg.in/yaml.v3 v3.0.1
 )
+
+require github.com/google/uuid v1.3.0 // indirect
 
 require (
 	cloud.google.com/go v0.104.0 // indirect

@@ -25,6 +25,13 @@ class WireRecord {
 			fieldNameParts.length === 1 ? fieldName : fieldNameParts
 		)
 	}
+	getDateValue = (fieldName: string) => {
+		const value = this.getFieldValue(fieldName)
+		if (!value) return undefined
+		if (typeof value === "string") return new Date(value)
+		if (typeof value === "number") return new Date(value * 1000)
+		return undefined
+	}
 	getReferenceValue = (fieldName: string) => {
 		const plain = this.getFieldValue<PlainWireRecord>(fieldName)
 		if (!plain) return undefined

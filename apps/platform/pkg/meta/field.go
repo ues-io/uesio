@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -15,8 +14,10 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 		return nil, errors.New("Bad Key for Field: " + collectionKey + " : " + fieldKey)
 	}
 	return &Field{
-		Name:          name,
-		Namespace:     namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 		CollectionRef: collectionKey,
 	}, nil
 }
@@ -36,17 +37,13 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 }
 
 type Field struct {
-	ID                     string                  `yaml:"-" json:"uesio/core.id"`
-	UniqueKey              string                  `yaml:"-" json:"uesio/core.uniquekey"`
 	Name                   string                  `yaml:"name" json:"uesio/studio.name"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
-	Namespace              string                  `yaml:"-" json:"-"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
 	ReadOnly               bool                    `yaml:"readOnly,omitempty" json:"uesio/studio.readonly"`
 	CreateOnly             bool                    `yaml:"createOnly,omitempty" json:"uesio/studio.createonly"`
 	SelectList             string                  `yaml:"selectList,omitempty" json:"uesio/studio.selectlist"`
-	Workspace              *Workspace              `yaml:"-" json:"uesio/studio.workspace"`
 	Required               bool                    `yaml:"required,omitempty" json:"uesio/studio.required"`
 	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" json:"uesio/studio.number"`
 	FileMetadata           *FileMetadata           `yaml:"file,omitempty" json:"uesio/studio.file"`
@@ -56,16 +53,12 @@ type Field struct {
 	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" json:"uesio/studio.autonumber"`
 	FormulaMetadata        *FormulaMetadata        `yaml:"formula,omitempty" json:"uesio/studio.formula"`
 	AutoPopulate           string                  `yaml:"autopopulate,omitempty" json:"uesio/studio.autopopulate"`
-	itemMeta               *ItemMeta               `yaml:"-" json:"-"`
-	CreatedBy              *User                   `yaml:"-" json:"uesio/core.createdby"`
-	Owner                  *User                   `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy              *User                   `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt              int64                   `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt              int64                   `yaml:"-" json:"uesio/core.createdat"`
 	SubFields              []SubField              `yaml:"subfields,omitempty" json:"uesio/studio.subfields"`
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
 	ColumnName             string                  `yaml:"columnname,omitempty" json:"uesio/studio.columnname"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type FieldWrapper Field
@@ -130,32 +123,12 @@ func (f *Field) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *Field) GetNamespace() string {
-	return f.Namespace
-}
-
-func (f *Field) SetNamespace(namespace string) {
-	f.Namespace = namespace
-}
-
-func (f *Field) SetModified(mod time.Time) {
-	f.UpdatedAt = mod.UnixMilli()
-}
-
 func (f *Field) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
 }
 
 func (f *Field) Len() int {
 	return StandardItemLen(f)
-}
-
-func (f *Field) GetItemMeta() *ItemMeta {
-	return f.itemMeta
-}
-
-func (f *Field) SetItemMeta(itemMeta *ItemMeta) {
-	f.itemMeta = itemMeta
 }
 
 func (f *Field) UnmarshalYAML(node *yaml.Node) error {

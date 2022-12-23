@@ -4,35 +4,26 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
 func NewListenerBot(namespace, name string) *Bot {
-	return &Bot{
-		CollectionRef: "_",
-		Type:          "LISTENER",
-		Namespace:     namespace,
-		Name:          name,
-	}
+	return NewBaseBot("LISTENER", "_", namespace, name)
 }
 
 func NewGeneratorBot(namespace, name string) *Bot {
-	return &Bot{
-		CollectionRef: "_",
-		Type:          "GENERATOR",
-		Namespace:     namespace,
-		Name:          name,
-	}
+	return NewBaseBot("GENERATOR", "_", namespace, name)
 }
 
-func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
+func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef: collectionKey,
 		Type:          botType,
-		Namespace:     namespace,
-		Name:          name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
+		Name: name,
 	}
 }
 
@@ -99,23 +90,14 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	ID            string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey     string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name          string     `yaml:"name" json:"uesio/studio.name"`
-	CollectionRef string     `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Namespace     string     `yaml:"-" json:"-"`
-	Type          string     `yaml:"type" json:"uesio/studio.type"`
-	Dialect       string     `yaml:"dialect" json:"uesio/studio.dialect"`
-	Params        BotParams  `yaml:"params,omitempty" json:"uesio/studio.params"`
-	FileContents  string     `yaml:"-" json:"-"`
-	Workspace     *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy     *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner         *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy     *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt     int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt     int64      `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta      *ItemMeta  `yaml:"-" json:"-"`
-	Public        bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Name          string    `yaml:"name" json:"uesio/studio.name"`
+	CollectionRef string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Type          string    `yaml:"type" json:"uesio/studio.type"`
+	Dialect       string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Params        BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	FileContents  string    `yaml:"-" json:"-"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type BotWrapper Bot
@@ -202,18 +184,6 @@ func (b *Bot) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
 
-func (b *Bot) GetNamespace() string {
-	return b.Namespace
-}
-
-func (b *Bot) SetNamespace(namespace string) {
-	b.Namespace = namespace
-}
-
-func (b *Bot) SetModified(mod time.Time) {
-	b.UpdatedAt = mod.UnixMilli()
-}
-
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
 }
@@ -222,22 +192,10 @@ func (b *Bot) Len() int {
 	return StandardItemLen(b)
 }
 
-func (b *Bot) GetItemMeta() *ItemMeta {
-	return b.itemMeta
-}
-
-func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
-	b.itemMeta = itemMeta
-}
-
 func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, b.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*BotWrapper)(b))
-}
-
-func (b *Bot) IsPublic() bool {
-	return b.Public
 }
