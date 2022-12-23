@@ -106,7 +106,7 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 
 	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
 		// Skip marshalling builtin fields
-		if fieldID == ID_FIELD || fieldID == UNIQUE_KEY_FIELD {
+		if fieldID == ID_FIELD || fieldID == UNIQUE_KEY_FIELD || fieldID == OWNER_FIELD {
 			return nil
 		}
 		if value == nil {
@@ -259,14 +259,14 @@ func (ci *ChangeItem) Len() int {
 func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 	if ci.IsNew {
-		ownerVal, err := ci.GetField("uesio/core.owner")
+		ownerVal, err := ci.GetField(OWNER_FIELD)
 		if err != nil {
 			return "", err
 		}
 		return GetReferenceKey(ownerVal)
 	}
 
-	ownerVal, err := ci.GetOldField("uesio/core.owner")
+	ownerVal, err := ci.GetOldField(OWNER_FIELD)
 	if err != nil {
 		return "", err
 	}

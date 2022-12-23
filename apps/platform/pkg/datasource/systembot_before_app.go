@@ -14,7 +14,7 @@ func runAppBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, ses
 
 		if user == nil {
 			// Use the owner if no user was provided
-			user, err = change.GetField("uesio/core.owner")
+			user, err = change.GetField(adapt.OWNER_FIELD)
 			if err != nil {
 				return err
 			}

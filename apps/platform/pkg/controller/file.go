@@ -19,8 +19,10 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	file := meta.File{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: meta.BundleableBase{
+			Namespace: namespace,
+		},
 	}
 
 	err := bundle.Load(&file, session, nil)

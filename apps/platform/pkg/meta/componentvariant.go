@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -23,27 +22,20 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 	return &ComponentVariant{
 		Component: keyArray[0],
 		Name:      name,
-		Namespace: namespace,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
 type ComponentVariant struct {
-	ID         string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Namespace  string     `yaml:"-" json:"-"`
-	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	Name       string     `yaml:"name" json:"uesio/studio.name"`
-	Component  string     `yaml:"-" json:"uesio/studio.component"`
-	Extends    string     `yaml:"extends,omitempty" json:"uesio/studio.extends"`
-	Label      string     `yaml:"label" json:"uesio/studio.label"`
-	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
-	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Name       string    `yaml:"name" json:"uesio/studio.name"`
+	Component  string    `yaml:"-" json:"uesio/studio.component"`
+	Extends    string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
+	Label      string    `yaml:"label" json:"uesio/studio.label"`
+	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ComponentVariantWrapper ComponentVariant
@@ -85,18 +77,6 @@ func (c *ComponentVariant) GetPath() string {
 
 func (c *ComponentVariant) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s", workspace, c.Component, c.Name)
-}
-
-func (c *ComponentVariant) SetNamespace(namespace string) {
-	c.Namespace = namespace
-}
-
-func (c *ComponentVariant) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *ComponentVariant) SetModified(mod time.Time) {
-	c.UpdatedAt = mod.UnixMilli()
 }
 
 func (c *ComponentVariant) GetCollectionName() string {
@@ -143,22 +123,10 @@ func (c *ComponentVariant) Len() int {
 	return StandardItemLen(c)
 }
 
-func (c *ComponentVariant) GetItemMeta() *ItemMeta {
-	return c.itemMeta
-}
-
-func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
-	c.itemMeta = itemMeta
-}
-
 func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, cv.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*ComponentVariantWrapper)(cv))
-}
-
-func (cv *ComponentVariant) IsPublic() bool {
-	return cv.Public
 }

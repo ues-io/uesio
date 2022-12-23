@@ -23,12 +23,16 @@ func getIDFieldName(tableAlias string) string {
 
 func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string {
 	fieldName := fieldMetadata.GetFullName()
-	if fieldName == adapt.ID_FIELD {
+
+	switch fieldName {
+	case adapt.ID_FIELD:
 		return getIDFieldName(tableAlias)
-	}
-	if fieldName == adapt.UNIQUE_KEY_FIELD {
+	case adapt.UNIQUE_KEY_FIELD:
 		return getAliasedName("uniquekey", tableAlias)
+	case adapt.OWNER_FIELD:
+		return getAliasedName("owner", tableAlias)
 	}
+
 	fieldsField := getAliasedName("fields", tableAlias)
 	switch fieldMetadata.Type {
 	case "CHECKBOX":

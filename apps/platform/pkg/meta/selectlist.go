@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,20 +13,11 @@ type SelectListOption struct {
 }
 
 type SelectList struct {
-	ID               string             `yaml:"-" json:"uesio/core.id"`
-	UniqueKey        string             `yaml:"-" json:"uesio/core.uniquekey"`
 	Name             string             `yaml:"name" json:"uesio/studio.name"`
-	Namespace        string             `yaml:"-" json:"-"`
 	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
 	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
-	Workspace        *Workspace         `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy        *User              `yaml:"-" json:"uesio/core.createdby"`
-	Owner            *User              `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy        *User              `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt        int64              `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt        int64              `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta         *ItemMeta          `yaml:"-" json:"-"`
-	Public           bool               `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type SelectListWrapper SelectList
@@ -38,8 +28,10 @@ func NewSelectList(key string) (*SelectList, error) {
 		return nil, errors.New("Bad Key for SelectList: " + key)
 	}
 	return &SelectList{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
@@ -93,18 +85,6 @@ func (sl *SelectList) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(sl, fieldName)
 }
 
-func (sl *SelectList) GetNamespace() string {
-	return sl.Namespace
-}
-
-func (sl *SelectList) SetNamespace(namespace string) {
-	sl.Namespace = namespace
-}
-
-func (sl *SelectList) SetModified(mod time.Time) {
-	sl.UpdatedAt = mod.UnixMilli()
-}
-
 func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sl, iter)
 }
@@ -113,22 +93,10 @@ func (sl *SelectList) Len() int {
 	return StandardItemLen(sl)
 }
 
-func (sl *SelectList) GetItemMeta() *ItemMeta {
-	return sl.itemMeta
-}
-
-func (sl *SelectList) SetItemMeta(itemMeta *ItemMeta) {
-	sl.itemMeta = itemMeta
-}
-
 func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, sl.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*SelectListWrapper)(sl))
-}
-
-func (sl *SelectList) IsPublic() bool {
-	return sl.Public
 }

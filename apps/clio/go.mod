@@ -30,9 +30,9 @@ require (
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gomodule/redigo v1.8.9 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/icza/session v1.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect

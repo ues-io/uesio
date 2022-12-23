@@ -17,24 +17,28 @@ func (c *Connection) Migrate() error {
 	_, err := db.Exec(context.Background(), `
 		create table if not exists public.data
 		(
-			id         uuid not null primary key,
-			uniquekey  varchar(255) not null,
-			fields     jsonb not null,
+			id         uuid         not null,
 			collection varchar(255) not null,
 			tenant     varchar(255) not null,
-			autonumber integer not null
+			uniquekey  varchar(255) not null,
+			owner      uuid         not null,
+			fields     jsonb        not null,
+			autonumber integer      not null,
+
+			primary key(tenant,collection,id)
 		);
 
 		create table if not exists public.tokens
 		(
-			recordid   uuid not null,
-			token      varchar(255) not null,
+			recordid   uuid         not null,
 			collection varchar(255) not null,
 			tenant     varchar(255) not null,
-			readonly   boolean not null
+			token      varchar(255) not null,
+			readonly   boolean      not null,
+
+			primary key(tenant,collection,recordid,token)
 		);
 
-		create index if not exists id_idx on data (tenant,collection,id);
 		create unique index if not exists unique_idx on data (tenant,collection,uniquekey);
 		create unique index if not exists autonumber_idx on data (tenant,collection,autonumber);
 
@@ -65,7 +69,6 @@ func (c *Connection) Migrate() error {
 		// We couldn't find a system user let's insert one.
 		data := map[string]interface{}{
 			"uesio/core.type":      "PERSON",
-			"uesio/core.owner":     systemUserID,
 			"uesio/core.profile":   "uesio/studio.standard",
 			"uesio/core.firstname": "Super",
 			"uesio/core.lastname":  "Admin",
@@ -81,7 +84,7 @@ func (c *Connection) Migrate() error {
 			return err
 		}
 
-		_, err = db.Exec(context.Background(), INSERT_QUERY, fullRecordID, uniqueID, collectionName, tenantID, 0, fieldJSON)
+		_, err = db.Exec(context.Background(), INSERT_QUERY, fullRecordID, uniqueID, systemUserID, collectionName, tenantID, 0, fieldJSON)
 		if err != nil {
 			return err
 		}

@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,8 +13,10 @@ func NewCollection(key string) (*Collection, error) {
 		return nil, errors.New("Bad Key for Collection: " + key)
 	}
 	return &Collection{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
@@ -48,29 +49,20 @@ type TokenCondition struct {
 }
 
 type Collection struct {
-	ID                    string                            `yaml:"-" json:"uesio/core.id"`
-	UniqueKey             string                            `yaml:"-" json:"uesio/core.uniquekey"`
 	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Name                  string                            `yaml:"name" json:"uesio/studio.name"`
 	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
-	Namespace             string                            `yaml:"-" json:"-"`
 	DataSourceRef         string                            `yaml:"dataSource,omitempty" json:"uesio/studio.datasource"`
 	UniqueKeyFields       []string                          `yaml:"uniqueKey,omitempty" json:"uesio/studio.uniquekey"`
 	NameField             string                            `yaml:"nameField,omitempty" json:"uesio/studio.namefield"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" json:"-"`
-	Workspace             *Workspace                        `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" json:"uesio/core.createdby"`
-	Owner                 *User                             `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy             *User                             `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt             int64                             `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta              *ItemMeta                         `yaml:"-" json:"-"`
 	Access                string                            `yaml:"access,omitempty" json:"uesio/studio.access"`
 	AccessField           string                            `yaml:"accessField,omitempty" json:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
-	Public                bool                              `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type CollectionWrapper Collection
@@ -116,32 +108,12 @@ func (c *Collection) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Collection) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *Collection) SetNamespace(namespace string) {
-	c.Namespace = namespace
-}
-
-func (c *Collection) SetModified(mod time.Time) {
-	c.UpdatedAt = mod.UnixMilli()
-}
-
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
 func (c *Collection) Len() int {
 	return StandardItemLen(c)
-}
-
-func (c *Collection) GetItemMeta() *ItemMeta {
-	return c.itemMeta
-}
-
-func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
-	c.itemMeta = itemMeta
 }
 
 func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
@@ -172,8 +144,4 @@ func (c *Collection) MarshalYAML() (interface{}, error) {
 	}
 
 	return (*CollectionWrapper)(c), nil
-}
-
-func (c *Collection) IsPublic() bool {
-	return c.Public
 }

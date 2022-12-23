@@ -3,26 +3,16 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type Theme struct {
-	ID         string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name       string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" json:"-"`
-	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
-	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Name       string    `yaml:"name" json:"uesio/studio.name"`
+	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ThemeWrapper Theme
@@ -47,8 +37,10 @@ func NewTheme(key string) (*Theme, error) {
 		return nil, errors.New("Bad Key for Theme: " + key)
 	}
 	return &Theme{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
@@ -122,18 +114,6 @@ func (t *Theme) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(t, fieldName)
 }
 
-func (t *Theme) GetNamespace() string {
-	return t.Namespace
-}
-
-func (t *Theme) SetNamespace(namespace string) {
-	t.Namespace = namespace
-}
-
-func (t *Theme) SetModified(mod time.Time) {
-	t.UpdatedAt = mod.UnixMilli()
-}
-
 func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
 }
@@ -142,22 +122,10 @@ func (t *Theme) Len() int {
 	return StandardItemLen(t)
 }
 
-func (t *Theme) GetItemMeta() *ItemMeta {
-	return t.itemMeta
-}
-
-func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
-	t.itemMeta = itemMeta
-}
-
 func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, t.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*ThemeWrapper)(t))
-}
-
-func (t *Theme) IsPublic() bool {
-	return t.Public
 }

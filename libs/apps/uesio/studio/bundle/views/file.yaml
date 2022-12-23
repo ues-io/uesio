@@ -19,7 +19,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -92,8 +91,3 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
-                            - uesio/io.field:
-                                uesio.context:
-                                  fieldMode: EDIT
-                                displayAs: PREVIEW
-                                fieldId: uesio/studio.content

@@ -1,20 +1,13 @@
 package meta
 
 type LicensePricingTemplate struct {
-	ID              string           `json:"uesio/core.id"`
-	UniqueKey       string           `json:"uesio/core.uniquekey"`
 	App             *App             `json:"uesio/studio.app"`
 	LicenseTemplate *LicenseTemplate `json:"uesio/studio.licensetemplate"`
 	Price           float64          `json:"uesio/studio.price"`
 	MetadataType    string           `json:"uesio/studio.metadatatype"`
 	ActionType      string           `json:"uesio/studio.actiontype"`
 	MetadataName    string           `json:"uesio/studio.metadataname"`
-	itemMeta        *ItemMeta        `json:"-"`
-	CreatedBy       *User            `json:"uesio/core.createdby"`
-	Owner           *User            `json:"uesio/core.owner"`
-	UpdatedBy       *User            `json:"uesio/core.updatedby"`
-	UpdatedAt       int64            `json:"uesio/core.updatedat"`
-	CreatedAt       int64            `json:"uesio/core.createdat"`
+	BuiltIn
 }
 
 func (lt *LicensePricingTemplate) GetCollectionName() string {
@@ -39,12 +32,4 @@ func (lt *LicensePricingTemplate) Loop(iter func(string, interface{}) error) err
 
 func (lt *LicensePricingTemplate) Len() int {
 	return StandardItemLen(lt)
-}
-
-func (lt *LicensePricingTemplate) GetItemMeta() *ItemMeta {
-	return lt.itemMeta
-}
-
-func (lt *LicensePricingTemplate) SetItemMeta(itemMeta *ItemMeta) {
-	lt.itemMeta = itemMeta
 }

@@ -19,7 +19,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
         uesio/studio.workspace:
           fields:
             uesio/studio.app:
@@ -36,7 +35,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP

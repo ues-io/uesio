@@ -42,7 +42,11 @@ func runPaymentSuccessRouteBot(route *meta.Route, uesioSession *sess.Session) er
 	}
 
 	payment := &meta.Payment{
-		User:    &meta.User{ID: checkoutSession.ClientReferenceID},
+		User: &meta.User{
+			BuiltIn: meta.BuiltIn{
+				ID: checkoutSession.ClientReferenceID,
+			},
+		},
 		Date:    time.Now().Format("2006-01-02"),
 		Total:   float64(checkoutSession.AmountTotal) / 100,
 		Payment: checkoutSession.PaymentIntent.ID,

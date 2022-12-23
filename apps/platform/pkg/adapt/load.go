@@ -136,6 +136,7 @@ func (fm *FieldsMap) GetKeys() []string {
 
 var ID_FIELD = "uesio/core.id"
 var UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
+var OWNER_FIELD = "uesio/core.owner"
 
 func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {

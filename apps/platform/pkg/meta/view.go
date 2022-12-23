@@ -3,26 +3,16 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type View struct {
-	ID         string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name       string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace  string     `yaml:"-" json:"-"`
-	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
-	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Name       string    `yaml:"name" json:"uesio/studio.name"`
+	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ViewWrapper View
@@ -47,8 +37,10 @@ func NewView(key string) (*View, error) {
 		return nil, errors.New("Bad Key for View: " + key)
 	}
 	return &View{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
@@ -127,36 +119,12 @@ func (v *View) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(v, fieldName)
 }
 
-func (v *View) GetNamespace() string {
-	return v.Namespace
-}
-
-func (v *View) SetNamespace(namespace string) {
-	v.Namespace = namespace
-}
-
-func (v *View) SetModified(mod time.Time) {
-	v.UpdatedAt = mod.UnixMilli()
-}
-
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
 }
 
 func (v *View) Len() int {
 	return StandardItemLen(v)
-}
-
-func (v *View) GetItemMeta() *ItemMeta {
-	return v.itemMeta
-}
-
-func (v *View) SetItemMeta(itemMeta *ItemMeta) {
-	v.itemMeta = itemMeta
-}
-
-func (v *View) IsPublic() bool {
-	return v.Public
 }
 
 func (v *View) UnmarshalYAML(node *yaml.Node) error {

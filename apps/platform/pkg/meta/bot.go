@@ -99,8 +99,6 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	ID            string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey     string     `yaml:"-" json:"uesio/core.uniquekey"`
 	Name          string     `yaml:"name" json:"uesio/studio.name"`
 	CollectionRef string     `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	Namespace     string     `yaml:"-" json:"-"`
@@ -109,13 +107,8 @@ type Bot struct {
 	Params        BotParams  `yaml:"params,omitempty" json:"uesio/studio.params"`
 	FileContents  string     `yaml:"-" json:"-"`
 	Workspace     *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	CreatedBy     *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner         *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy     *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt     int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt     int64      `yaml:"-" json:"uesio/core.createdat"`
-	itemMeta      *ItemMeta  `yaml:"-" json:"-"`
 	Public        bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
 }
 
 type BotWrapper Bot

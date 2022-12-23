@@ -3,26 +3,16 @@ package meta
 import (
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type ComponentPack struct {
-	ID         string              `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string              `yaml:"-" json:"uesio/core.uniquekey"`
 	Name       string              `yaml:"name" json:"uesio/studio.name"`
-	Namespace  string              `yaml:"-" json:"-"`
-	Workspace  *Workspace          `yaml:"-" json:"uesio/studio.workspace"`
 	Components *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
-	itemMeta   *ItemMeta           `yaml:"-" json:"-"`
-	CreatedBy  *User               `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User               `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User               `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64               `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64               `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool                `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ComponentPackWrapper ComponentPack
@@ -122,18 +112,6 @@ func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(cp, fieldName)
 }
 
-func (cp *ComponentPack) GetNamespace() string {
-	return cp.Namespace
-}
-
-func (cp *ComponentPack) SetNamespace(namespace string) {
-	cp.Namespace = namespace
-}
-
-func (cp *ComponentPack) SetModified(mod time.Time) {
-	cp.UpdatedAt = mod.UnixMilli()
-}
-
 func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cp, iter)
 }
@@ -142,22 +120,10 @@ func (cp *ComponentPack) Len() int {
 	return StandardItemLen(cp)
 }
 
-func (cp *ComponentPack) GetItemMeta() *ItemMeta {
-	return cp.itemMeta
-}
-
-func (cp *ComponentPack) SetItemMeta(itemMeta *ItemMeta) {
-	cp.itemMeta = itemMeta
-}
-
 func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, cp.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*ComponentPackWrapper)(cp))
-}
-
-func (cp *ComponentPack) IsPublic() bool {
-	return cp.Public
 }

@@ -52,7 +52,9 @@ func addSiteAdminContext(siteadmin *meta.Site, session *sess.Session, connection
 	}
 
 	session.SetUser(&meta.User{
-		UniqueKey: "system",
+		BuiltIn: meta.BuiltIn{
+			UniqueKey: "system",
+		},
 	})
 
 	session.GetSiteAdmin().SetAppBundle(bundleDef)

@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,26 +13,19 @@ func NewProfile(key string) (*Profile, error) {
 		return nil, errors.New("Bad Key for Profile")
 	}
 	return &Profile{
-		Name:      name,
-		Namespace: namespace,
+		Name: name,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
 	}, nil
 }
 
 type Profile struct {
-	ID                string          `yaml:"-" json:"uesio/core.id"`
-	UniqueKey         string          `yaml:"-" json:"uesio/core.uniquekey"`
 	Name              string          `yaml:"name" json:"uesio/studio.name"`
-	Namespace         string          `yaml:"-" json:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" json:"uesio/studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" json:"-"`
-	Workspace         *Workspace      `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta          *ItemMeta       `yaml:"-" json:"-"`
-	CreatedBy         *User           `yaml:"-" json:"uesio/core.createdby"`
-	Owner             *User           `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy         *User           `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt         int64           `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt         int64           `yaml:"-" json:"uesio/core.createdat"`
-	Public            bool            `yaml:"public,omitempty" json:"uesio/studio.public"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ProfileWrapper Profile
@@ -74,32 +66,12 @@ func (p *Profile) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(p, fieldName)
 }
 
-func (p *Profile) GetNamespace() string {
-	return p.Namespace
-}
-
-func (p *Profile) SetNamespace(namespace string) {
-	p.Namespace = namespace
-}
-
-func (p *Profile) SetModified(mod time.Time) {
-	p.UpdatedAt = mod.UnixMilli()
-}
-
 func (p *Profile) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(p, iter)
 }
 
 func (p *Profile) Len() int {
 	return StandardItemLen(p)
-}
-
-func (p *Profile) GetItemMeta() *ItemMeta {
-	return p.itemMeta
-}
-
-func (p *Profile) SetItemMeta(itemMeta *ItemMeta) {
-	p.itemMeta = itemMeta
 }
 
 func (p *Profile) HasPermission(check *PermissionSet) bool {
@@ -118,8 +90,4 @@ func (p *Profile) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*ProfileWrapper)(p))
-}
-
-func (p *Profile) IsPublic() bool {
-	return p.Public
 }

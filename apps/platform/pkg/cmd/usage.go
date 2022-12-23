@@ -73,7 +73,7 @@ func UsageJob() error {
 		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
 	}
 
-	changes := adapt.Collection{}
+	changes := meta.UsageCollection{}
 	for i, key := range keys {
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
@@ -88,21 +88,27 @@ func UsageJob() error {
 		//tenantID eq Site UniqueKey
 		tenantID := fmt.Sprintf("%s:%s", keyParts[2], keyParts[3])
 
-		usageItem := adapt.Item{}
-		usageItem.SetField("uesio/studio.user", keyParts[4])
-		usageItem.SetField("uesio/studio.day", keyParts[5])
-		usageItem.SetField("uesio/studio.actiontype", keyParts[6])
-		usageItem.SetField("uesio/studio.metadatatype", keyParts[7])
-		usageItem.SetField("uesio/studio.metadataname", keyParts[8])
-		usageItem.SetField("uesio/studio.app", &meta.App{
-			UniqueKey: keyParts[2],
-		})
-		usageItem.SetField("uesio/studio.site", &meta.Site{
-			UniqueKey: tenantID,
-		})
+		usageItem := &meta.Usage{
+			User:         keyParts[4],
+			Day:          keyParts[5],
+			ActionType:   keyParts[6],
+			MetadataType: keyParts[7],
+			MetadataName: keyParts[8],
+			App: &meta.App{
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: keyParts[2],
+				},
+			},
+			Site: &meta.Site{
+				BuiltIn: meta.BuiltIn{
+					UniqueKey: tenantID,
+				},
+			},
+		}
+
 		total, _ := strconv.ParseInt(values[i], 10, 64)
 		usageItem.SetField("uesio/studio.total", total)
-		changes = append(changes, &usageItem)
+		changes = append(changes, usageItem)
 
 	}
 

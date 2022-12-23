@@ -1,21 +1,14 @@
 package meta
 
 type App struct {
-	ID          string    `json:"uesio/core.id"`
-	UniqueKey   string    `json:"uesio/core.uniquekey"`
-	FullName    string    `json:"uesio/studio.fullname"`
-	Name        string    `json:"uesio/studio.name"`
-	User        *User     `json:"uesio/studio.user"`
-	Description string    `json:"uesio/studio.description"`
-	Color       string    `json:"uesio/studio.color"`
-	Icon        string    `json:"uesio/studio.icon"`
-	Public      bool      `json:"uesio/studio.public"`
-	itemMeta    *ItemMeta `json:"-"`
-	CreatedBy   *User     `json:"uesio/core.createdby"`
-	Owner       *User     `json:"uesio/core.owner"`
-	UpdatedBy   *User     `json:"uesio/core.updatedby"`
-	UpdatedAt   int64     `json:"uesio/core.updatedat"`
-	CreatedAt   int64     `json:"uesio/core.createdat"`
+	FullName    string `json:"uesio/studio.fullname"`
+	Name        string `json:"uesio/studio.name"`
+	User        *User  `json:"uesio/studio.user"`
+	Description string `json:"uesio/studio.description"`
+	Color       string `json:"uesio/studio.color"`
+	Icon        string `json:"uesio/studio.icon"`
+	Public      bool   `json:"uesio/studio.public"`
+	BuiltIn
 }
 
 func (a *App) GetCollectionName() string {

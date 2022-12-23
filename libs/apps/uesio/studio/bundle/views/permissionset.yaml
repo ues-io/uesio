@@ -77,7 +77,6 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.content:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
