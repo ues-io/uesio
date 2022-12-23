@@ -39,6 +39,6 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondFile(w, r, file.Path, time.UnixMilli(file.UpdatedAt), stream)
+	respondFile(w, r, file.Path, time.Unix(file.UpdatedAt, 0), stream)
 
 }

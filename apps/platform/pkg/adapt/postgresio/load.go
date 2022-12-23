@@ -31,6 +31,14 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata, tableAlias string) string 
 		return getAliasedName("uniquekey", tableAlias)
 	case adapt.OWNER_FIELD:
 		return getAliasedName("owner", tableAlias)
+	case adapt.CREATED_BY_FIELD:
+		return getAliasedName("createdby", tableAlias)
+	case adapt.CREATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("createdat", tableAlias))
+	case adapt.UPDATED_BY_FIELD:
+		return getAliasedName("updatedby", tableAlias)
+	case adapt.UPDATED_AT_FIELD:
+		return fmt.Sprintf("date_part('epoch',%s)", getAliasedName("updatedat", tableAlias))
 	}
 
 	fieldsField := getAliasedName("fields", tableAlias)

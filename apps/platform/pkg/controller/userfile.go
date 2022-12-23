@@ -86,5 +86,5 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondFile(w, r, userFile.Path, time.UnixMilli(userFile.UpdatedAt), fileStream)
+	respondFile(w, r, userFile.Path, time.Unix(userFile.UpdatedAt, 0), fileStream)
 }

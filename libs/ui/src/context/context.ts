@@ -116,23 +116,14 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return ""
 	},
 	Time: (expression, context) => {
-		const value = context.getRecord()?.getFieldValue(expression)
+		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
-		const date =
-			typeof value === "string"
-				? new Date(parseInt(value, 10))
-				: new Date(value as number)
-		return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+		return `${value.toLocaleDateString()} ${value.toLocaleTimeString()}`
 	},
 	Date: (expression, context) => {
-		const value = context.getRecord()?.getFieldValue(expression)
+		const value = context.getRecord()?.getDateValue(expression)
 		if (!value) return ""
-		const date =
-			typeof value === "string"
-				? new Date(parseInt(value, 10))
-				: new Date(value as number)
-
-		return date.toLocaleDateString(undefined, { timeZone: "UTC" })
+		return value.toLocaleDateString(undefined, { timeZone: "UTC" })
 	},
 	RecordId: (expression, context) => context.getRecordId() || "",
 	Theme: (expression, context) => {

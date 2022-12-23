@@ -56,7 +56,7 @@ type BuiltIn struct {
 }
 
 func (bi *BuiltIn) SetModified(mod time.Time) {
-	bi.UpdatedAt = mod.UnixMilli()
+	bi.UpdatedAt = mod.Unix()
 }
 
 func (bi *BuiltIn) GetItemMeta() *ItemMeta {

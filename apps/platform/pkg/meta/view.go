@@ -36,12 +36,16 @@ func NewView(key string) (*View, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for View: " + key)
 	}
+	return NewBaseView(namespace, name), nil
+}
+
+func NewBaseView(namespace, name string) *View {
 	return &View{
 		Name: name,
 		BundleableBase: BundleableBase{
 			Namespace: namespace,
 		},
-	}, nil
+	}
 }
 
 func NewViews(keys map[string]bool) ([]BundleableItem, error) {

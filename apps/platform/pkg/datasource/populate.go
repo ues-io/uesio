@@ -79,7 +79,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 	for _, field := range op.Metadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
-				timestamp := time.Now().UnixMilli()
+				timestamp := time.Now().Unix()
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {

@@ -40,7 +40,7 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 			return
 		}
 
-		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
+		respondFile(w, r, "pack.js", time.Unix(componentPack.UpdatedAt, 0), stream)
 	}
 }
 
@@ -74,6 +74,6 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 			return
 		}
 
-		respondFile(w, r, "pack.js", time.UnixMilli(componentPack.UpdatedAt), stream)
+		respondFile(w, r, "pack.js", time.Unix(componentPack.UpdatedAt, 0), stream)
 	}
 }

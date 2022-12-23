@@ -14,7 +14,7 @@ const TextField = component.getUtility("uesio/io.textfield")
 const TimestampField: FunctionComponent<TimestampFieldProps> = (props) => {
 	if (props.value) {
 		const timestamp = props.value
-		const date = new Date(timestamp)
+		const date = new Date(timestamp * 1000)
 		const value = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 		return <TextField {...props} value={value} mode="READ" />
 	}
