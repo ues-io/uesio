@@ -44,7 +44,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	fullCollectionName := item.GetCollectionName()
-	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	collectionName := item.GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -132,7 +132,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 }
 
 func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
+	return getStream(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
 }
 
 func (b *PlatformBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {

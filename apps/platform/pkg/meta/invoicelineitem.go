@@ -11,11 +11,7 @@ type InvoiceLineItem struct {
 }
 
 func (l *InvoiceLineItem) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *InvoiceLineItem) GetCollection() CollectionableGroup {
-	return &InvoiceCollection{}
+	return INVOICELINEITEM_COLLECTION_NAME
 }
 
 func (l *InvoiceLineItem) SetField(fieldName string, value interface{}) error {

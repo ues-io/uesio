@@ -29,19 +29,15 @@ type DataSource struct {
 type DataSourceWrapper DataSource
 
 func (ds *DataSource) GetCollectionName() string {
-	return ds.GetBundleGroup().GetName()
+	return DATASOURCE_COLLECTION_NAME
 }
 
-func (ds *DataSource) GetCollection() CollectionableGroup {
-	return &DataSourceCollection{}
+func (ds *DataSource) GetBundleFolderName() string {
+	return DATASOURCE_FOLDER_NAME
 }
 
 func (ds *DataSource) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, ds.Name)
-}
-
-func (ds *DataSource) GetBundleGroup() BundleableGroup {
-	return &DataSourceCollection{}
 }
 
 func (ds *DataSource) GetKey() string {

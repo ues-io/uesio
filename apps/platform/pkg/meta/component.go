@@ -15,19 +15,15 @@ type Component struct {
 type ComponentWrapper Component
 
 func (c *Component) GetCollectionName() string {
-	return c.GetBundleGroup().GetName()
+	return COMPONENT_COLLECTION_NAME
 }
 
-func (c *Component) GetCollection() CollectionableGroup {
-	return &ComponentCollection{}
+func (c *Component) GetBundleFolderName() string {
+	return COMPONENT_FOLDER_NAME
 }
 
 func (c *Component) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Component) GetBundleGroup() BundleableGroup {
-	return &ComponentCollection{}
 }
 
 func (c *Component) GetKey() string {

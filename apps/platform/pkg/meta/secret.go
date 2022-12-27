@@ -31,19 +31,15 @@ func NewSecret(key string) (*Secret, error) {
 }
 
 func (s *Secret) GetCollectionName() string {
-	return s.GetBundleGroup().GetName()
+	return SECRET_COLLECTION_NAME
 }
 
-func (s *Secret) GetCollection() CollectionableGroup {
-	return &SecretCollection{}
+func (s *Secret) GetBundleFolderName() string {
+	return SECRET_FOLDER_NAME
 }
 
 func (s *Secret) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, s.Name)
-}
-
-func (s *Secret) GetBundleGroup() BundleableGroup {
-	return &SecretCollection{}
 }
 
 func (s *Secret) GetKey() string {

@@ -10,11 +10,7 @@ type Payment struct {
 }
 
 func (l *Payment) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *Payment) GetCollection() CollectionableGroup {
-	return &PaymentCollection{}
+	return PAYMENT_COLLECTION_NAME
 }
 
 func (l *Payment) SetField(fieldName string, value interface{}) error {

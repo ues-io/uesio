@@ -9,11 +9,7 @@ type Invoice struct {
 }
 
 func (l *Invoice) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *Invoice) GetCollection() CollectionableGroup {
-	return &InvoiceCollection{}
+	return INVOICE_COLLECTION_NAME
 }
 
 func (l *Invoice) SetField(fieldName string, value interface{}) error {

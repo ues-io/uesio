@@ -87,8 +87,7 @@ func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 func PlatformLoadOne(item meta.CollectionableItem, options *PlatformLoadOptions, session *sess.Session) error {
 	collection := &LoadOneCollection{
-		Collection: item.GetCollection(),
-		Item:       item,
+		Item: item,
 	}
 
 	err := PlatformLoad(collection, options, session)

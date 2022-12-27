@@ -6,8 +6,10 @@ import (
 
 type UserFileMetadataCollection []*UserFileMetadata
 
+var USERFILEMETADATA_COLLECTION_NAME = "uesio/core.userfile"
+
 func (ufmc *UserFileMetadataCollection) GetName() string {
-	return "uesio/core.userfile"
+	return USERFILEMETADATA_COLLECTION_NAME
 }
 
 func (ufmc *UserFileMetadataCollection) GetFields() []string {

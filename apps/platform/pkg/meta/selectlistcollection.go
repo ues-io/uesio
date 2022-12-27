@@ -6,12 +6,15 @@ import (
 
 type SelectListCollection []*SelectList
 
+var SELECTLIST_COLLECTION_NAME = "uesio/studio.selectlist"
+var SELECTLIST_FOLDER_NAME = "selectlists"
+
 func (slc *SelectListCollection) GetName() string {
-	return "uesio/studio.selectlist"
+	return SELECTLIST_COLLECTION_NAME
 }
 
 func (slc *SelectListCollection) GetBundleFolderName() string {
-	return "selectlists"
+	return SELECTLIST_FOLDER_NAME
 }
 
 func (slc *SelectListCollection) GetFields() []string {

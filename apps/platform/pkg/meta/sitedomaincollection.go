@@ -6,8 +6,10 @@ import (
 
 type SiteDomainCollection []*SiteDomain
 
+var SITEDOMAIN_COLLECTION_NAME = "uesio/studio.sitedomain"
+
 func (sdc *SiteDomainCollection) GetName() string {
-	return "uesio/studio.sitedomain"
+	return SITEDOMAIN_COLLECTION_NAME
 }
 
 func (sdc *SiteDomainCollection) GetFields() []string {

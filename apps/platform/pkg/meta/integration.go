@@ -33,19 +33,15 @@ type Integration struct {
 type IntegrationWrapper Integration
 
 func (i *Integration) GetCollectionName() string {
-	return i.GetBundleGroup().GetName()
+	return INTEGRATION_COLLECTION_NAME
 }
 
-func (i *Integration) GetCollection() CollectionableGroup {
-	return &IntegrationCollection{}
+func (i *Integration) GetBundleFolderName() string {
+	return INTEGRATION_FOLDER_NAME
 }
 
 func (i *Integration) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, i.Name)
-}
-
-func (i *Integration) GetBundleGroup() BundleableGroup {
-	return &IntegrationCollection{}
 }
 
 func (i *Integration) GetKey() string {

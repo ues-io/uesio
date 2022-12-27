@@ -6,12 +6,15 @@ import (
 
 type AuthSourceCollection []*AuthSource
 
+var AUTHSOURCE_COLLECTION_NAME = "uesio/studio.authsource"
+var AUTHSOURCE_FOLDER_NAME = "authsources"
+
 func (asc *AuthSourceCollection) GetName() string {
-	return "uesio/studio.authsource"
+	return AUTHSOURCE_COLLECTION_NAME
 }
 
 func (asc *AuthSourceCollection) GetBundleFolderName() string {
-	return "authsources"
+	return AUTHSOURCE_FOLDER_NAME
 }
 
 func (asc *AuthSourceCollection) GetFields() []string {

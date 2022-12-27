@@ -135,19 +135,15 @@ func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
 }
 
 func (b *Bot) GetCollectionName() string {
-	return b.GetBundleGroup().GetName()
+	return BOT_COLLECTION_NAME
 }
 
-func (b *Bot) GetCollection() CollectionableGroup {
-	return &BotCollection{}
+func (b *Bot) GetBundleFolderName() string {
+	return BOT_FOLDER_NAME
 }
 
 func (b *Bot) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s:%s", workspace, b.CollectionRef, b.Type, b.Name)
-}
-
-func (b *Bot) GetBundleGroup() BundleableGroup {
-	return &BotCollection{}
 }
 
 func (b *Bot) GetKey() string {

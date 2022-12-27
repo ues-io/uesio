@@ -6,8 +6,10 @@ import (
 
 type ConfigStoreValueCollection []*ConfigStoreValue
 
+var CONFIGSTOREVALUE_COLLECTION_NAME = "uesio/core.configstorevalue"
+
 func (cc *ConfigStoreValueCollection) GetName() string {
-	return "uesio/core.configstorevalue"
+	return CONFIGSTOREVALUE_COLLECTION_NAME
 }
 
 func (cc *ConfigStoreValueCollection) GetFields() []string {

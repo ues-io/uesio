@@ -35,19 +35,15 @@ type Credential struct {
 type CredentialWrapper Credential
 
 func (c *Credential) GetCollectionName() string {
-	return c.GetBundleGroup().GetName()
+	return CREDENTIAL_COLLECTION_NAME
 }
 
-func (c *Credential) GetCollection() CollectionableGroup {
-	return &CredentialCollection{}
+func (c *Credential) GetBundleFolderName() string {
+	return CREDENTIAL_FOLDER_NAME
 }
 
 func (c *Credential) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Credential) GetBundleGroup() BundleableGroup {
-	return &CredentialCollection{}
 }
 
 func (c *Credential) GetKey() string {

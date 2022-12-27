@@ -31,19 +31,15 @@ type AuthSource struct {
 type AuthSourceWrapper AuthSource
 
 func (as *AuthSource) GetCollectionName() string {
-	return as.GetBundleGroup().GetName()
+	return AUTHSOURCE_COLLECTION_NAME
 }
 
-func (as *AuthSource) GetCollection() CollectionableGroup {
-	return &AuthSourceCollection{}
+func (as *AuthSource) GetBundleFolderName() string {
+	return AUTHSOURCE_FOLDER_NAME
 }
 
 func (as *AuthSource) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, as.Name)
-}
-
-func (as *AuthSource) GetBundleGroup() BundleableGroup {
-	return &AuthSourceCollection{}
 }
 
 func (as *AuthSource) GetKey() string {

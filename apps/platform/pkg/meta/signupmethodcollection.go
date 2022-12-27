@@ -6,12 +6,15 @@ import (
 
 type SignupMethodCollection []*SignupMethod
 
+var SIGNUPMETHOD_COLLECTION_NAME = "uesio/studio.signupmethod"
+var SIGNUPMETHOD_FOLDER_NAME = "signupmethods"
+
 func (smc *SignupMethodCollection) GetName() string {
-	return "uesio/studio.signupmethod"
+	return SIGNUPMETHOD_COLLECTION_NAME
 }
 
 func (smc *SignupMethodCollection) GetBundleFolderName() string {
-	return "signupmethods"
+	return SIGNUPMETHOD_FOLDER_NAME
 }
 
 func (smc *SignupMethodCollection) GetFields() []string {

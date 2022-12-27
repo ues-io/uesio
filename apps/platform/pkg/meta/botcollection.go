@@ -9,12 +9,15 @@ import (
 
 type BotCollection []*Bot
 
+var BOT_COLLECTION_NAME = "uesio/studio.bot"
+var BOT_FOLDER_NAME = "bots"
+
 func (bc *BotCollection) GetName() string {
-	return "uesio/studio.bot"
+	return BOT_COLLECTION_NAME
 }
 
 func (bc *BotCollection) GetBundleFolderName() string {
-	return "bots"
+	return BOT_FOLDER_NAME
 }
 
 func (bc *BotCollection) GetFields() []string {

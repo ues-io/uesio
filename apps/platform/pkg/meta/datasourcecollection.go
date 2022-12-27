@@ -6,12 +6,15 @@ import (
 
 type DataSourceCollection []*DataSource
 
+var DATASOURCE_COLLECTION_NAME = "uesio/studio.datasource"
+var DATASOURCE_FOLDER_NAME = "datasources"
+
 func (dsc *DataSourceCollection) GetName() string {
-	return "uesio/studio.datasource"
+	return DATASOURCE_COLLECTION_NAME
 }
 
 func (dsc *DataSourceCollection) GetBundleFolderName() string {
-	return "datasources"
+	return DATASOURCE_FOLDER_NAME
 }
 
 func (dsc *DataSourceCollection) GetFields() []string {

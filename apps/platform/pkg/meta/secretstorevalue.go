@@ -7,11 +7,7 @@ type SecretStoreValue struct {
 }
 
 func (s *SecretStoreValue) GetCollectionName() string {
-	return s.GetCollection().GetName()
-}
-
-func (s *SecretStoreValue) GetCollection() CollectionableGroup {
-	return &SecretStoreValueCollection{}
+	return SECRETSTOREVALUE_COLLECTION_NAME
 }
 
 func (s *SecretStoreValue) SetField(fieldName string, value interface{}) error {

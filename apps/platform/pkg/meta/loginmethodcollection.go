@@ -6,8 +6,10 @@ import (
 
 type LoginMethodCollection []*LoginMethod
 
+var LOGINMETHOD_COLLECTION_NAME = "uesio/core.loginmethod"
+
 func (lmc *LoginMethodCollection) GetName() string {
-	return "uesio/core.loginmethod"
+	return LOGINMETHOD_COLLECTION_NAME
 }
 
 func (lmc *LoginMethodCollection) GetFields() []string {

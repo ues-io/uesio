@@ -6,12 +6,15 @@ import (
 
 type CollectionCollection []*Collection
 
+var COLLECTION_COLLECTION_NAME = "uesio/studio.collection"
+var COLLECTION_FOLDER_NAME = "collections"
+
 func (cc *CollectionCollection) GetName() string {
-	return "uesio/studio.collection"
+	return COLLECTION_COLLECTION_NAME
 }
 
 func (cc *CollectionCollection) GetBundleFolderName() string {
-	return "collections"
+	return COLLECTION_FOLDER_NAME
 }
 
 func (cc *CollectionCollection) GetFields() []string {

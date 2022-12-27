@@ -6,8 +6,10 @@ import (
 
 type SiteCollection []*Site
 
+var SITE_COLLECTION_NAME = "uesio/studio.site"
+
 func (sc *SiteCollection) GetName() string {
-	return "uesio/studio.site"
+	return SITE_COLLECTION_NAME
 }
 
 func (sc *SiteCollection) GetFields() []string {

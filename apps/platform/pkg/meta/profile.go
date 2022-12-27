@@ -31,19 +31,15 @@ type Profile struct {
 type ProfileWrapper Profile
 
 func (p *Profile) GetCollectionName() string {
-	return p.GetBundleGroup().GetName()
+	return PROFILE_COLLECTION_NAME
 }
 
-func (p *Profile) GetCollection() CollectionableGroup {
-	return &ProfileCollection{}
+func (p *Profile) GetBundleFolderName() string {
+	return PROFILE_FOLDER_NAME
 }
 
 func (p *Profile) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, p.Name)
-}
-
-func (p *Profile) GetBundleGroup() BundleableGroup {
-	return &ProfileCollection{}
 }
 
 func (p *Profile) GetKey() string {

@@ -35,19 +35,15 @@ type Route struct {
 type RouteWrapper Route
 
 func (r *Route) GetCollectionName() string {
-	return r.GetBundleGroup().GetName()
+	return ROUTE_COLLECTION_NAME
 }
 
-func (r *Route) GetCollection() CollectionableGroup {
-	return &RouteCollection{}
+func (r *Route) GetBundleFolderName() string {
+	return ROUTE_FOLDER_NAME
 }
 
 func (r *Route) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, r.Name)
-}
-
-func (r *Route) GetBundleGroup() BundleableGroup {
-	return &RouteCollection{}
 }
 
 func (r *Route) GetKey() string {

@@ -6,12 +6,15 @@ import (
 
 type ComponentCollection []*Component
 
+var COMPONENT_COLLECTION_NAME = "uesio/studio.component"
+var COMPONENT_FOLDER_NAME = "components"
+
 func (cc *ComponentCollection) GetName() string {
-	return "uesio/studio.component"
+	return COMPONENT_COLLECTION_NAME
 }
 
 func (cc *ComponentCollection) GetBundleFolderName() string {
-	return "components"
+	return COMPONENT_FOLDER_NAME
 }
 
 func (cc *ComponentCollection) GetFields() []string {

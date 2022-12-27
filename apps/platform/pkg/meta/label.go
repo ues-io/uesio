@@ -59,19 +59,15 @@ func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (l *Label) GetCollectionName() string {
-	return l.GetBundleGroup().GetName()
+	return LABEL_COLLECTION_NAME
 }
 
-func (l *Label) GetCollection() CollectionableGroup {
-	return &LabelCollection{}
+func (l *Label) GetBundleFolderName() string {
+	return LABEL_FOLDER_NAME
 }
 
 func (l *Label) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, l.Name)
-}
-
-func (l *Label) GetBundleGroup() BundleableGroup {
-	return &LabelCollection{}
 }
 
 func (l *Label) GetKey() string {

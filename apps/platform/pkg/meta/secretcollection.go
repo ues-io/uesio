@@ -6,12 +6,15 @@ import (
 
 type SecretCollection []*Secret
 
+var SECRET_COLLECTION_NAME = "uesio/studio.secret"
+var SECRET_FOLDER_NAME = "secrets"
+
 func (sc *SecretCollection) GetName() string {
-	return "uesio/studio.secret"
+	return SECRET_COLLECTION_NAME
 }
 
 func (sc *SecretCollection) GetBundleFolderName() string {
-	return "secrets"
+	return SECRET_FOLDER_NAME
 }
 
 func (sc *SecretCollection) GetFields() []string {

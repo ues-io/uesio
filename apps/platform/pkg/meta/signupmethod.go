@@ -42,19 +42,15 @@ type SignupMethod struct {
 type SignupMethodWrapper SignupMethod
 
 func (sm *SignupMethod) GetCollectionName() string {
-	return sm.GetBundleGroup().GetName()
+	return SIGNUPMETHOD_COLLECTION_NAME
 }
 
-func (sm *SignupMethod) GetCollection() CollectionableGroup {
-	return &SignupMethodCollection{}
+func (sm *SignupMethod) GetBundleFolderName() string {
+	return SIGNUPMETHOD_FOLDER_NAME
 }
 
 func (sm *SignupMethod) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, sm.Name)
-}
-
-func (sm *SignupMethod) GetBundleGroup() BundleableGroup {
-	return &SignupMethodCollection{}
 }
 
 func (sm *SignupMethod) GetKey() string {

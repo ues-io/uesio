@@ -32,7 +32,7 @@ func getFileInfo(namespace string, version string, objectname string, filename s
 
 func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	namespace := item.GetNamespace()
-	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	collectionName := item.GetBundleFolderName()
 
 	fileInfo, err := getFileInfo(namespace, version, collectionName, item.GetPath())
 	if err != nil {
@@ -105,7 +105,7 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 }
 
 func (b *LocalBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+	return getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
 func (b *LocalBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {

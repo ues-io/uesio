@@ -9,12 +9,15 @@ import (
 
 type ComponentVariantCollection []*ComponentVariant
 
+var COMPONENTVARIANT_COLLECTION_NAME = "uesio/studio.componentvariant"
+var COMPONENTVARIANT_FOLDER_NAME = "componentvariants"
+
 func (cvc *ComponentVariantCollection) GetName() string {
-	return "uesio/studio.componentvariant"
+	return COMPONENTVARIANT_COLLECTION_NAME
 }
 
 func (cvc *ComponentVariantCollection) GetBundleFolderName() string {
-	return "componentvariants"
+	return COMPONENTVARIANT_FOLDER_NAME
 }
 
 func (cvc *ComponentVariantCollection) GetFields() []string {

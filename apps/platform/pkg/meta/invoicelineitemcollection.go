@@ -6,8 +6,10 @@ import (
 
 type InvoiceLineItemCollection []*InvoiceLineItem
 
+var INVOICELINEITEM_COLLECTION_NAME = "uesio/studio.invoicelineitem"
+
 func (lc *InvoiceLineItemCollection) GetName() string {
-	return "uesio/studio.invoicelineitem"
+	return INVOICELINEITEM_COLLECTION_NAME
 }
 
 func (lc *InvoiceLineItemCollection) GetFields() []string {

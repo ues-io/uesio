@@ -8,11 +8,7 @@ type SiteDomain struct {
 }
 
 func (s *SiteDomain) GetCollectionName() string {
-	return s.GetCollection().GetName()
-}
-
-func (s *SiteDomain) GetCollection() CollectionableGroup {
-	return &SiteDomainCollection{}
+	return SITEDOMAIN_COLLECTION_NAME
 }
 
 func (s *SiteDomain) SetField(fieldName string, value interface{}) error {

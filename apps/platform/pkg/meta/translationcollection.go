@@ -9,12 +9,15 @@ import (
 
 type TranslationCollection []*Translation
 
+var TRANSLATION_COLLECTION_NAME = "uesio/studio.translation"
+var TRANSLATION_FOLDER_NAME = "translations"
+
 func (tc *TranslationCollection) GetName() string {
-	return "uesio/studio.translation"
+	return TRANSLATION_COLLECTION_NAME
 }
 
 func (tc *TranslationCollection) GetBundleFolderName() string {
-	return "translations"
+	return TRANSLATION_FOLDER_NAME
 }
 
 func (tc *TranslationCollection) GetFields() []string {

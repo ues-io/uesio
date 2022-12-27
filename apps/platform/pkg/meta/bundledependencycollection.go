@@ -6,8 +6,10 @@ import (
 
 type BundleDependencyCollection []*BundleDependency
 
+var BUNDLEDEPENDENCY_COLLECTION_NAME = "uesio/studio.bundledependency"
+
 func (bc *BundleDependencyCollection) GetName() string {
-	return "uesio/studio.bundledependency"
+	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }
 
 func (bc *BundleDependencyCollection) GetFields() []string {

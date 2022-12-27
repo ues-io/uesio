@@ -11,11 +11,7 @@ type LicensePricingTemplate struct {
 }
 
 func (lt *LicensePricingTemplate) GetCollectionName() string {
-	return lt.GetCollection().GetName()
-}
-
-func (lt *LicensePricingTemplate) GetCollection() CollectionableGroup {
-	return &LicensePricingTemplateCollection{}
+	return LICENSEPRICINGTEMPLATE_COLLECTION_NAME
 }
 
 func (lt *LicensePricingTemplate) SetField(fieldName string, value interface{}) error {

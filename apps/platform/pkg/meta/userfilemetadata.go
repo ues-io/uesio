@@ -18,11 +18,7 @@ type UserFileMetadata struct {
 }
 
 func (ufm *UserFileMetadata) GetCollectionName() string {
-	return ufm.GetCollection().GetName()
-}
-
-func (ufm *UserFileMetadata) GetCollection() CollectionableGroup {
-	return &UserFileMetadataCollection{}
+	return USERFILEMETADATA_COLLECTION_NAME
 }
 
 func (ufm *UserFileMetadata) SetField(fieldName string, value interface{}) error {

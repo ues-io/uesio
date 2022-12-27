@@ -5,9 +5,8 @@ import (
 )
 
 type LoadOneCollection struct {
-	Collection meta.CollectionableGroup
-	Item       meta.Item
-	Length     int
+	Item   meta.CollectionableItem
+	Length int
 }
 
 func (c *LoadOneCollection) GetItem(index int) meta.Item {
@@ -31,11 +30,11 @@ func (c *LoadOneCollection) Len() int {
 }
 
 func (c *LoadOneCollection) GetFields() []string {
-	return c.Collection.GetFields()
+	return meta.StandardGetFields(c.Item)
 }
 
 func (c *LoadOneCollection) GetName() string {
-	return c.Collection.GetName()
+	return c.Item.GetCollectionName()
 }
 
 func (c *LoadOneCollection) GetItems() interface{} {

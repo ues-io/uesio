@@ -9,12 +9,15 @@ import (
 
 type FieldCollection []*Field
 
+var FIELD_COLLECTION_NAME = "uesio/studio.field"
+var FIELD_FOLDER_NAME = "fields"
+
 func (fc *FieldCollection) GetName() string {
-	return "uesio/studio.field"
+	return FIELD_COLLECTION_NAME
 }
 
 func (fc *FieldCollection) GetBundleFolderName() string {
-	return "fields"
+	return FIELD_FOLDER_NAME
 }
 
 func (fc *FieldCollection) GetFields() []string {

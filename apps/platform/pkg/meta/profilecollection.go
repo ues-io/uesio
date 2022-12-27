@@ -6,12 +6,15 @@ import (
 
 type ProfileCollection []*Profile
 
+var PROFILE_COLLECTION_NAME = "uesio/studio.profile"
+var PROFILE_FOLDER_NAME = "profiles"
+
 func (pc *ProfileCollection) GetName() string {
-	return "uesio/studio.profile"
+	return PROFILE_COLLECTION_NAME
 }
 
 func (pc *ProfileCollection) GetBundleFolderName() string {
-	return "profiles"
+	return PROFILE_FOLDER_NAME
 }
 
 func (pc *ProfileCollection) GetFields() []string {

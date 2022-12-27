@@ -8,11 +8,7 @@ type LicenseTemplate struct {
 }
 
 func (lt *LicenseTemplate) GetCollectionName() string {
-	return lt.GetCollection().GetName()
-}
-
-func (lt *LicenseTemplate) GetCollection() CollectionableGroup {
-	return &LicenseTemplateCollection{}
+	return LICENSETEMPLATE_COLLECTION_NAME
 }
 
 func (lt *LicenseTemplate) SetField(fieldName string, value interface{}) error {
