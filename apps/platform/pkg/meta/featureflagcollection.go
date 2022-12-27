@@ -8,6 +8,9 @@ import (
 
 type FeatureFlagCollection []*FeatureFlag
 
+var FEATUREFLAG_COLLECTION_NAME = "uesio/studio.featureflag"
+var FEATUREFLAG_FOLDER_NAME = "featureflags"
+
 func (ffc *FeatureFlagCollection) MarshalJSONArray(enc *gojay.Encoder) {
 	for _, ff := range *ffc {
 		enc.AddObject(ff)
@@ -19,11 +22,11 @@ func (ffc *FeatureFlagCollection) IsNil() bool {
 }
 
 func (ffc *FeatureFlagCollection) GetName() string {
-	return "uesio/studio.featureflag"
+	return FEATUREFLAG_COLLECTION_NAME
 }
 
 func (ffc *FeatureFlagCollection) GetBundleFolderName() string {
-	return "featureflags"
+	return FEATUREFLAG_FOLDER_NAME
 }
 
 func (ffc *FeatureFlagCollection) GetFields() []string {

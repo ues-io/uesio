@@ -9,11 +9,7 @@ type License struct {
 }
 
 func (l *License) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *License) GetCollection() CollectionableGroup {
-	return &LicenseCollection{}
+	return LICENSE_COLLECTION_NAME
 }
 
 func (l *License) SetField(fieldName string, value interface{}) error {

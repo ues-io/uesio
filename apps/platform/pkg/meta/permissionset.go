@@ -40,19 +40,15 @@ type PermissionSet struct {
 type PermissionSetWrapper PermissionSet
 
 func (ps *PermissionSet) GetCollectionName() string {
-	return ps.GetBundleGroup().GetName()
+	return PERMISSIONSET_COLLECTION_NAME
 }
 
-func (ps *PermissionSet) GetCollection() CollectionableGroup {
-	return &PermissionSetCollection{}
+func (ps *PermissionSet) GetBundleFolderName() string {
+	return PERMISSIONSET_FOLDER_NAME
 }
 
 func (ps *PermissionSet) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, ps.Name)
-}
-
-func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
-	return &PermissionSetCollection{}
 }
 
 func (ps *PermissionSet) GetKey() string {

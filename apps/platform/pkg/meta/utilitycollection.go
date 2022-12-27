@@ -6,12 +6,15 @@ import (
 
 type UtilityCollection []*Utility
 
+var UTILITY_COLLECTION_NAME = "uesio/studio.utility"
+var UTILITY_FOLDER_NAME = "utilities"
+
 func (uc *UtilityCollection) GetName() string {
-	return "uesio/studio.utility"
+	return UTILITY_COLLECTION_NAME
 }
 
 func (uc *UtilityCollection) GetBundleFolderName() string {
-	return "utilities"
+	return UTILITY_FOLDER_NAME
 }
 
 func (uc *UtilityCollection) GetFields() []string {

@@ -6,8 +6,10 @@ import (
 
 type LicensePricingItemCollection []*LicensePricingItem
 
+var LICENSEPRICINGITEM_COLLECTION_NAME = "uesio/studio.licensepricingitem"
+
 func (lpic *LicensePricingItemCollection) GetName() string {
-	return "uesio/studio.licensepricingitem"
+	return LICENSEPRICINGITEM_COLLECTION_NAME
 }
 
 func (lpic *LicensePricingItemCollection) GetFields() []string {

@@ -8,11 +8,7 @@ type BulkJob struct {
 }
 
 func (bj *BulkJob) GetCollectionName() string {
-	return bj.GetCollection().GetName()
-}
-
-func (bj *BulkJob) GetCollection() CollectionableGroup {
-	return &BulkJobCollection{}
+	return BULKJOB_COLLECTION_NAME
 }
 
 func (bj *BulkJob) SetField(fieldName string, value interface{}) error {

@@ -6,12 +6,15 @@ import (
 
 type LabelCollection []*Label
 
+var LABEL_COLLECTION_NAME = "uesio/studio.label"
+var LABEL_FOLDER_NAME = "labels"
+
 func (lc *LabelCollection) GetName() string {
-	return "uesio/studio.label"
+	return LABEL_COLLECTION_NAME
 }
 
 func (lc *LabelCollection) GetBundleFolderName() string {
-	return "labels"
+	return LABEL_FOLDER_NAME
 }
 
 func (lc *LabelCollection) GetFields() []string {

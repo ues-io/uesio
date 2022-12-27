@@ -6,12 +6,15 @@ import (
 
 type UserAccessTokenCollection []*UserAccessToken
 
+var USERACCESSTOKEN_COLLECTION_NAME = "uesio/studio.useraccesstoken"
+var USERACCESSTOKEN_FOLDER_NAME = "useraccesstokens"
+
 func (uatc *UserAccessTokenCollection) GetName() string {
-	return "uesio/studio.useraccesstoken"
+	return USERACCESSTOKEN_COLLECTION_NAME
 }
 
 func (uatc *UserAccessTokenCollection) GetBundleFolderName() string {
-	return "useraccesstokens"
+	return USERACCESSTOKEN_FOLDER_NAME
 }
 
 func (uatc *UserAccessTokenCollection) GetFields() []string {

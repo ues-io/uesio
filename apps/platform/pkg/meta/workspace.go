@@ -28,11 +28,7 @@ func (w *Workspace) GetAppBundle() *BundleDef {
 }
 
 func (w *Workspace) GetCollectionName() string {
-	return w.GetCollection().GetName()
-}
-
-func (w *Workspace) GetCollection() CollectionableGroup {
-	return &WorkspaceCollection{}
+	return WORKSPACE_COLLECTION_NAME
 }
 
 func (w *Workspace) SetField(fieldName string, value interface{}) error {

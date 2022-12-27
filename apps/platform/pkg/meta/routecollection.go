@@ -6,12 +6,15 @@ import (
 
 type RouteCollection []*Route
 
+var ROUTE_COLLECTION_NAME = "uesio/studio.route"
+var ROUTE_FOLDER_NAME = "routes"
+
 func (rc *RouteCollection) GetName() string {
-	return "uesio/studio.route"
+	return ROUTE_COLLECTION_NAME
 }
 
 func (rc *RouteCollection) GetBundleFolderName() string {
-	return "routes"
+	return ROUTE_FOLDER_NAME
 }
 
 func (rc *RouteCollection) GetFields() []string {

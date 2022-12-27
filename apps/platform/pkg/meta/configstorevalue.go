@@ -7,11 +7,7 @@ type ConfigStoreValue struct {
 }
 
 func (c *ConfigStoreValue) GetCollectionName() string {
-	return c.GetCollection().GetName()
-}
-
-func (c *ConfigStoreValue) GetCollection() CollectionableGroup {
-	return &ConfigStoreValueCollection{}
+	return CONFIGSTOREVALUE_COLLECTION_NAME
 }
 
 func (c *ConfigStoreValue) SetField(fieldName string, value interface{}) error {

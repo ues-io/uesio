@@ -13,11 +13,7 @@ type Usage struct {
 }
 
 func (u *Usage) GetCollectionName() string {
-	return u.GetCollection().GetName()
-}
-
-func (u *Usage) GetCollection() CollectionableGroup {
-	return &UsageCollection{}
+	return USAGE_COLLECTION_NAME
 }
 
 func (u *Usage) SetField(fieldName string, value interface{}) error {

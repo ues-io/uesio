@@ -8,12 +8,15 @@ import (
 
 type FileCollection []*File
 
+var FILE_COLLECTION_NAME = "uesio/studio.file"
+var FILE_FOLDER_NAME = "files"
+
 func (fc *FileCollection) GetName() string {
-	return "uesio/studio.file"
+	return FILE_COLLECTION_NAME
 }
 
 func (fc *FileCollection) GetBundleFolderName() string {
-	return "files"
+	return FILE_FOLDER_NAME
 }
 
 func (fc *FileCollection) GetFields() []string {

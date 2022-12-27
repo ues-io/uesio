@@ -59,19 +59,15 @@ func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (t *Theme) GetCollectionName() string {
-	return t.GetBundleGroup().GetName()
+	return THEME_COLLECTION_NAME
 }
 
-func (t *Theme) GetCollection() CollectionableGroup {
-	return &ThemeCollection{}
+func (t *Theme) GetBundleFolderName() string {
+	return THEME_FOLDER_NAME
 }
 
 func (t *Theme) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, t.Name)
-}
-
-func (t *Theme) GetBundleGroup() BundleableGroup {
-	return &ThemeCollection{}
 }
 
 func (t *Theme) GetKey() string {

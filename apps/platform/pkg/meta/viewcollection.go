@@ -6,12 +6,15 @@ import (
 
 type ViewCollection []*View
 
+var VIEW_COLLECTION_NAME = "uesio/studio.view"
+var VIEW_FOLDER_NAME = "views"
+
 func (vc *ViewCollection) GetName() string {
-	return "uesio/studio.view"
+	return VIEW_COLLECTION_NAME
 }
 
 func (vc *ViewCollection) GetBundleFolderName() string {
-	return "views"
+	return VIEW_FOLDER_NAME
 }
 
 func (vc *ViewCollection) GetFields() []string {

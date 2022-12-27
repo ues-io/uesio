@@ -57,8 +57,8 @@ func (c *ComponentVariant) IsNil() bool {
 	return c == nil
 }
 
-func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
-	return &ComponentVariantCollection{}
+func (c *ComponentVariant) GetBundleFolderName() string {
+	return COMPONENTVARIANT_FOLDER_NAME
 }
 
 func (c *ComponentVariant) GetPermChecker() *PermissionSet {
@@ -80,11 +80,7 @@ func (c *ComponentVariant) GetDBID(workspace string) string {
 }
 
 func (c *ComponentVariant) GetCollectionName() string {
-	return c.GetCollection().GetName()
-}
-
-func (c *ComponentVariant) GetCollection() CollectionableGroup {
-	return &ComponentVariantCollection{}
+	return COMPONENTVARIANT_COLLECTION_NAME
 }
 
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {

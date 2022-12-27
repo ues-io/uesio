@@ -15,10 +15,6 @@ type Translation struct {
 
 type TranslationWrapper Translation
 
-func (t *Translation) GetBundleGroup() BundleableGroup {
-	return &TranslationCollection{}
-}
-
 func (t *Translation) GetPermChecker() *PermissionSet {
 	return nil
 }
@@ -36,11 +32,11 @@ func (t *Translation) GetDBID(workspace string) string {
 }
 
 func (t *Translation) GetCollectionName() string {
-	return t.GetCollection().GetName()
+	return TRANSLATION_COLLECTION_NAME
 }
 
-func (t *Translation) GetCollection() CollectionableGroup {
-	return &TranslationCollection{}
+func (t *Translation) GetBundleFolderName() string {
+	return TRANSLATION_FOLDER_NAME
 }
 
 func (t *Translation) SetField(fieldName string, value interface{}) error {

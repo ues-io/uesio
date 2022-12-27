@@ -31,19 +31,15 @@ type FileSource struct {
 type FileSourceWrapper FileSource
 
 func (fs *FileSource) GetCollectionName() string {
-	return fs.GetBundleGroup().GetName()
+	return FILESOURCE_COLLECTION_NAME
 }
 
-func (fs *FileSource) GetCollection() CollectionableGroup {
-	return &FileSourceCollection{}
+func (fs *FileSource) GetBundleFolderName() string {
+	return FILESOURCE_FOLDER_NAME
 }
 
 func (fs *FileSource) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, fs.Name)
-}
-
-func (fs *FileSource) GetBundleGroup() BundleableGroup {
-	return &FileSourceCollection{}
 }
 
 func (fs *FileSource) GetKey() string {

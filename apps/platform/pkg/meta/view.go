@@ -63,19 +63,15 @@ func NewViews(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (v *View) GetCollectionName() string {
-	return v.GetBundleGroup().GetName()
+	return VIEW_COLLECTION_NAME
 }
 
-func (v *View) GetCollection() CollectionableGroup {
-	return &ViewCollection{}
+func (v *View) GetBundleFolderName() string {
+	return VIEW_FOLDER_NAME
 }
 
 func (v *View) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, v.Name)
-}
-
-func (v *View) GetBundleGroup() BundleableGroup {
-	return &ViewCollection{}
 }
 
 func (v *View) GetKey() string {

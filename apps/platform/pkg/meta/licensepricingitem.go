@@ -11,11 +11,7 @@ type LicensePricingItem struct {
 }
 
 func (lpi *LicensePricingItem) GetCollectionName() string {
-	return lpi.GetCollection().GetName()
-}
-
-func (lpi *LicensePricingItem) GetCollection() CollectionableGroup {
-	return &LicensePricingItemCollection{}
+	return LICENSEPRICINGITEM_COLLECTION_NAME
 }
 
 func (lpi *LicensePricingItem) SetField(fieldName string, value interface{}) error {

@@ -6,8 +6,10 @@ import (
 
 type InvoiceCollection []*Invoice
 
+var INVOICE_COLLECTION_NAME = "uesio/studio.invoice"
+
 func (lc *InvoiceCollection) GetName() string {
-	return "uesio/studio.invoice"
+	return INVOICE_COLLECTION_NAME
 }
 
 func (lc *InvoiceCollection) GetFields() []string {

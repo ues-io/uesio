@@ -47,19 +47,15 @@ func NewFeatureFlag(key string) (*FeatureFlag, error) {
 }
 
 func (ff *FeatureFlag) GetCollectionName() string {
-	return ff.GetBundleGroup().GetName()
+	return FEATUREFLAG_COLLECTION_NAME
 }
 
-func (ff *FeatureFlag) GetCollection() CollectionableGroup {
-	return &FeatureFlagCollection{}
+func (ff *FeatureFlag) GetBundleFolderName() string {
+	return FEATUREFLAG_FOLDER_NAME
 }
 
 func (ff *FeatureFlag) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, ff.Name)
-}
-
-func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
-	return &FeatureFlagCollection{}
 }
 
 func (ff *FeatureFlag) GetKey() string {

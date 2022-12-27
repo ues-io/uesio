@@ -6,12 +6,15 @@ import (
 
 type FileSourceCollection []*FileSource
 
+var FILESOURCE_COLLECTION_NAME = "uesio/studio.filesource"
+var FILESOURCE_FOLDER_NAME = "filesources"
+
 func (fsc *FileSourceCollection) GetName() string {
-	return "uesio/studio.filesource"
+	return FILESOURCE_COLLECTION_NAME
 }
 
 func (fsc *FileSourceCollection) GetBundleFolderName() string {
-	return "filesources"
+	return FILESOURCE_FOLDER_NAME
 }
 
 func (fsc *FileSourceCollection) GetFields() []string {

@@ -50,19 +50,15 @@ func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (sl *SelectList) GetCollectionName() string {
-	return sl.GetBundleGroup().GetName()
+	return SELECTLIST_COLLECTION_NAME
 }
 
-func (sl *SelectList) GetCollection() CollectionableGroup {
-	return &SelectListCollection{}
+func (sl *SelectList) GetBundleFolderName() string {
+	return SELECTLIST_FOLDER_NAME
 }
 
 func (sl *SelectList) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, sl.Name)
-}
-
-func (sl *SelectList) GetBundleGroup() BundleableGroup {
-	return &SelectListCollection{}
 }
 
 func (sl *SelectList) GetKey() string {

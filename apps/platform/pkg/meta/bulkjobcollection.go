@@ -6,8 +6,10 @@ import (
 
 type BulkJobCollection []*BulkJob
 
+var BULKJOB_COLLECTION_NAME = "uesio/core.bulkjob"
+
 func (bjc *BulkJobCollection) GetName() string {
-	return "uesio/core.bulkjob"
+	return BULKJOB_COLLECTION_NAME
 }
 
 func (bjc *BulkJobCollection) GetFields() []string {

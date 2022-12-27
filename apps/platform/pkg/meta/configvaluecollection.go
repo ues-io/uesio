@@ -6,12 +6,15 @@ import (
 
 type ConfigValueCollection []*ConfigValue
 
+var CONFIGVALUE_COLLECTION_NAME = "uesio/studio.configvalue"
+var CONFIGVALUE_FOLDER_NAME = "configvalues"
+
 func (cvc *ConfigValueCollection) GetName() string {
-	return "uesio/studio.configvalue"
+	return CONFIGVALUE_COLLECTION_NAME
 }
 
 func (cvc *ConfigValueCollection) GetBundleFolderName() string {
-	return "configvalues"
+	return CONFIGVALUE_FOLDER_NAME
 }
 
 func (cvc *ConfigValueCollection) GetFields() []string {

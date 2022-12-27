@@ -6,8 +6,10 @@ import (
 
 type BulkBatchCollection []*BulkBatch
 
+var BULKBATCH_COLLECTION_NAME = "uesio/core.bulkbatch"
+
 func (bbc *BulkBatchCollection) GetName() string {
-	return "uesio/core.bulkbatch"
+	return BULKBATCH_COLLECTION_NAME
 }
 
 func (bbc *BulkBatchCollection) GetFields() []string {

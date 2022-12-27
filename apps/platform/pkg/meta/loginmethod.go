@@ -8,11 +8,7 @@ type LoginMethod struct {
 }
 
 func (lm *LoginMethod) GetCollectionName() string {
-	return lm.GetCollection().GetName()
-}
-
-func (lm *LoginMethod) GetCollection() CollectionableGroup {
-	return &LoginMethodCollection{}
+	return LOGINMETHOD_COLLECTION_NAME
 }
 
 func (lm *LoginMethod) SetField(fieldName string, value interface{}) error {

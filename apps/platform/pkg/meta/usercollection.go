@@ -6,8 +6,10 @@ import (
 
 type UserCollection []*User
 
+var USER_COLLECTION_NAME = "uesio/core.user"
+
 func (uc *UserCollection) GetName() string {
-	return "uesio/core.user"
+	return USER_COLLECTION_NAME
 }
 
 func (uc *UserCollection) GetFields() []string {

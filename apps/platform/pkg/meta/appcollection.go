@@ -6,8 +6,10 @@ import (
 
 type AppCollection []*App
 
+var APP_COLLECTION_NAME = "uesio/studio.app"
+
 func (ac *AppCollection) GetName() string {
-	return "uesio/studio.app"
+	return APP_COLLECTION_NAME
 }
 
 func (ac *AppCollection) GetFields() []string {

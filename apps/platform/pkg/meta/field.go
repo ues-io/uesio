@@ -86,19 +86,15 @@ func GetFieldTypes() map[string]bool {
 }
 
 func (f *Field) GetCollectionName() string {
-	return f.GetBundleGroup().GetName()
+	return FIELD_COLLECTION_NAME
 }
 
-func (f *Field) GetCollection() CollectionableGroup {
-	return &FieldCollection{}
+func (f *Field) GetBundleFolderName() string {
+	return FIELD_FOLDER_NAME
 }
 
 func (f *Field) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s", workspace, f.CollectionRef, f.Name)
-}
-
-func (f *Field) GetBundleGroup() BundleableGroup {
-	return &FieldCollection{}
 }
 
 func (f *Field) GetKey() string {

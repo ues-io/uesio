@@ -8,11 +8,7 @@ type FeatureFlagAssignment struct {
 }
 
 func (ffa *FeatureFlagAssignment) GetCollectionName() string {
-	return ffa.GetCollection().GetName()
-}
-
-func (ffa *FeatureFlagAssignment) GetCollection() CollectionableGroup {
-	return &FeatureFlagAssignmentCollection{}
+	return FEATUREFLAGASSIGNMENT_COLLECTION_NAME
 }
 
 func (ffa *FeatureFlagAssignment) SetField(fieldName string, value interface{}) error {

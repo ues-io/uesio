@@ -15,19 +15,15 @@ type Utility struct {
 type UtilityWrapper Utility
 
 func (u *Utility) GetCollectionName() string {
-	return u.GetBundleGroup().GetName()
+	return UTILITY_COLLECTION_NAME
 }
 
-func (u *Utility) GetCollection() CollectionableGroup {
-	return &UtilityCollection{}
+func (u *Utility) GetBundleFolderName() string {
+	return UTILITY_FOLDER_NAME
 }
 
 func (u *Utility) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, u.Name)
-}
-
-func (u *Utility) GetBundleGroup() BundleableGroup {
-	return &UtilityCollection{}
 }
 
 func (u *Utility) GetKey() string {

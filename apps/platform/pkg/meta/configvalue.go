@@ -47,19 +47,15 @@ func NewConfigValue(key string) (*ConfigValue, error) {
 }
 
 func (cv *ConfigValue) GetCollectionName() string {
-	return cv.GetBundleGroup().GetName()
+	return CONFIGVALUE_COLLECTION_NAME
 }
 
-func (cv *ConfigValue) GetCollection() CollectionableGroup {
-	return &ConfigValueCollection{}
+func (cv *ConfigValue) GetBundleFolderName() string {
+	return CONFIGVALUE_FOLDER_NAME
 }
 
 func (cv *ConfigValue) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, cv.Name)
-}
-
-func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
-	return &ConfigValueCollection{}
 }
 
 func (cv *ConfigValue) GetKey() string {

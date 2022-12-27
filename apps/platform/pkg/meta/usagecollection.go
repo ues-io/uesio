@@ -6,8 +6,10 @@ import (
 
 type UsageCollection []*Usage
 
+var USAGE_COLLECTION_NAME = "uesio/studio.usage"
+
 func (lpic *UsageCollection) GetName() string {
-	return "uesio/studio.usage"
+	return USAGE_COLLECTION_NAME
 }
 
 func (lpic *UsageCollection) GetFields() []string {

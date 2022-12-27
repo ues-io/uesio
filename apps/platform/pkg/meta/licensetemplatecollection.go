@@ -6,8 +6,10 @@ import (
 
 type LicenseTemplateCollection []*LicenseTemplate
 
+var LICENSETEMPLATE_COLLECTION_NAME = "uesio/studio.licensetemplate"
+
 func (ltc *LicenseTemplateCollection) GetName() string {
-	return "uesio/studio.licensetemplate"
+	return LICENSETEMPLATE_COLLECTION_NAME
 }
 
 func (ltc *LicenseTemplateCollection) GetFields() []string {

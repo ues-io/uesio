@@ -6,12 +6,15 @@ import (
 
 type ThemeCollection []*Theme
 
+var THEME_COLLECTION_NAME = "uesio/studio.theme"
+var THEME_FOLDER_NAME = "themes"
+
 func (tc *ThemeCollection) GetName() string {
-	return "uesio/studio.theme"
+	return THEME_COLLECTION_NAME
 }
 
 func (tc *ThemeCollection) GetBundleFolderName() string {
-	return "themes"
+	return THEME_FOLDER_NAME
 }
 
 func (tc *ThemeCollection) GetFields() []string {

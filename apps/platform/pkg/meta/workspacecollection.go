@@ -6,8 +6,10 @@ import (
 
 type WorkspaceCollection []*Workspace
 
+var WORKSPACE_COLLECTION_NAME = "uesio/studio.workspace"
+
 func (wc *WorkspaceCollection) GetName() string {
-	return "uesio/studio.workspace"
+	return WORKSPACE_COLLECTION_NAME
 }
 
 func (wc *WorkspaceCollection) GetFields() []string {

@@ -42,19 +42,15 @@ type ComponentDependencies struct {
 }
 
 func (cp *ComponentPack) GetCollectionName() string {
-	return cp.GetBundleGroup().GetName()
+	return COMPONENTPACK_COLLECTION_NAME
 }
 
-func (cp *ComponentPack) GetCollection() CollectionableGroup {
-	return &ComponentPackCollection{}
+func (cp *ComponentPack) GetBundleFolderName() string {
+	return COMPONENTPACK_FOLDER_NAME
 }
 
 func (cp *ComponentPack) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, cp.Name)
-}
-
-func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
-	return &ComponentPackCollection{}
 }
 
 func (cp *ComponentPack) GetKey() string {

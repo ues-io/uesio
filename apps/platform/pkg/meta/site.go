@@ -31,11 +31,7 @@ func (s *Site) GetAppBundle() *BundleDef {
 }
 
 func (s *Site) GetCollectionName() string {
-	return s.GetCollection().GetName()
-}
-
-func (s *Site) GetCollection() CollectionableGroup {
-	return &SiteCollection{}
+	return SITE_COLLECTION_NAME
 }
 
 func (s *Site) SetField(fieldName string, value interface{}) error {

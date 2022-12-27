@@ -12,11 +12,7 @@ type App struct {
 }
 
 func (a *App) GetCollectionName() string {
-	return a.GetCollection().GetName()
-}
-
-func (a *App) GetCollection() CollectionableGroup {
-	return &AppCollection{}
+	return APP_COLLECTION_NAME
 }
 
 func (a *App) SetField(fieldName string, value interface{}) error {
@@ -33,12 +29,4 @@ func (a *App) Loop(iter func(string, interface{}) error) error {
 
 func (a *App) Len() int {
 	return StandardItemLen(a)
-}
-
-func (a *App) GetItemMeta() *ItemMeta {
-	return a.itemMeta
-}
-
-func (a *App) SetItemMeta(itemMeta *ItemMeta) {
-	a.itemMeta = itemMeta
 }

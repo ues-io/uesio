@@ -6,8 +6,10 @@ import (
 
 type FeatureFlagAssignmentCollection []*FeatureFlagAssignment
 
+var FEATUREFLAGASSIGNMENT_COLLECTION_NAME = "uesio/core.featureflagassignment"
+
 func (ffac *FeatureFlagAssignmentCollection) GetName() string {
-	return "uesio/core.featureflagassignment"
+	return FEATUREFLAGASSIGNMENT_COLLECTION_NAME
 }
 
 func (ffac *FeatureFlagAssignmentCollection) GetFields() []string {

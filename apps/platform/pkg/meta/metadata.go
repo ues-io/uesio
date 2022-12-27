@@ -78,7 +78,6 @@ type CollectionableGroup interface {
 type CollectionableItem interface {
 	Item
 	GetCollectionName() string
-	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }
@@ -102,7 +101,7 @@ type AttachableItem interface {
 
 type BundleableItem interface {
 	CollectionableItem
-	GetBundleGroup() BundleableGroup
+	GetBundleFolderName() string
 	GetPermChecker() *PermissionSet
 	GetKey() string
 	GetPath() string

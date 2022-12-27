@@ -48,11 +48,7 @@ func (b *Bundle) GetVersionString() string {
 }
 
 func (b *Bundle) GetCollectionName() string {
-	return b.GetCollection().GetName()
-}
-
-func (b *Bundle) GetCollection() CollectionableGroup {
-	return &BundleCollection{}
+	return BUNDLE_COLLECTION_NAME
 }
 
 func (b *Bundle) SetField(fieldName string, value interface{}) error {

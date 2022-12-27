@@ -68,19 +68,15 @@ type Collection struct {
 type CollectionWrapper Collection
 
 func (c *Collection) GetCollectionName() string {
-	return c.GetBundleGroup().GetName()
+	return COLLECTION_COLLECTION_NAME
 }
 
-func (c *Collection) GetCollection() CollectionableGroup {
-	return &CollectionCollection{}
+func (c *Collection) GetBundleFolderName() string {
+	return COLLECTION_FOLDER_NAME
 }
 
 func (c *Collection) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Collection) GetBundleGroup() BundleableGroup {
-	return &CollectionCollection{}
 }
 
 func (c *Collection) GetKey() string {

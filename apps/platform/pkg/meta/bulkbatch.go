@@ -9,11 +9,7 @@ type BulkBatch struct {
 }
 
 func (bb *BulkBatch) GetCollectionName() string {
-	return bb.GetCollection().GetName()
-}
-
-func (bb *BulkBatch) GetCollection() CollectionableGroup {
-	return &BulkBatchCollection{}
+	return BULKBATCH_COLLECTION_NAME
 }
 
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {

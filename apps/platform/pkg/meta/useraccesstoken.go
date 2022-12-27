@@ -29,19 +29,15 @@ type UserAccessToken struct {
 }
 
 func (uat *UserAccessToken) GetCollectionName() string {
-	return uat.GetBundleGroup().GetName()
+	return USERACCESSTOKEN_COLLECTION_NAME
 }
 
-func (uat *UserAccessToken) GetCollection() CollectionableGroup {
-	return &UserAccessTokenCollection{}
+func (uat *UserAccessToken) GetBundleFolderName() string {
+	return USERACCESSTOKEN_FOLDER_NAME
 }
 
 func (uat *UserAccessToken) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s", workspace, uat.Name)
-}
-
-func (uat *UserAccessToken) GetBundleGroup() BundleableGroup {
-	return &UserAccessTokenCollection{}
 }
 
 func (uat *UserAccessToken) GetKey() string {

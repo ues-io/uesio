@@ -6,12 +6,15 @@ import (
 
 type PermissionSetCollection []*PermissionSet
 
+var PERMISSIONSET_COLLECTION_NAME = "uesio/studio.permissionset"
+var PERMISSIONSET_FOLDER_NAME = "permissionsets"
+
 func (pc *PermissionSetCollection) GetName() string {
-	return "uesio/studio.permissionset"
+	return PERMISSIONSET_COLLECTION_NAME
 }
 
 func (pc *PermissionSetCollection) GetBundleFolderName() string {
-	return "permissionsets"
+	return PERMISSIONSET_FOLDER_NAME
 }
 
 func (pc *PermissionSetCollection) GetFields() []string {

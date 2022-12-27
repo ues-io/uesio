@@ -8,12 +8,15 @@ import (
 
 type ComponentPackCollection []*ComponentPack
 
+var COMPONENTPACK_COLLECTION_NAME = "uesio/studio.componentpack"
+var COMPONENTPACK_FOLDER_NAME = "componentpacks"
+
 func (cpc *ComponentPackCollection) GetName() string {
-	return "uesio/studio.componentpack"
+	return COMPONENTPACK_COLLECTION_NAME
 }
 
 func (cpc *ComponentPackCollection) GetBundleFolderName() string {
-	return "componentpacks"
+	return COMPONENTPACK_FOLDER_NAME
 }
 
 func (cpc *ComponentPackCollection) GetFields() []string {

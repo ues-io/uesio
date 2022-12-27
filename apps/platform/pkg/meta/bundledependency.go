@@ -32,11 +32,7 @@ func (b *BundleDependency) GetAppName() string {
 }
 
 func (b *BundleDependency) GetCollectionName() string {
-	return b.GetCollection().GetName()
-}
-
-func (b *BundleDependency) GetCollection() CollectionableGroup {
-	return &BundleDependencyCollection{}
+	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }
 
 func (b *BundleDependency) SetField(fieldName string, value interface{}) error {

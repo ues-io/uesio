@@ -6,12 +6,15 @@ import (
 
 type CredentialCollection []*Credential
 
+var CREDENTIAL_COLLECTION_NAME = "uesio/studio.credential"
+var CREDENTIAL_FOLDER_NAME = "credentials"
+
 func (cc *CredentialCollection) GetName() string {
-	return "uesio/studio.credential"
+	return CREDENTIAL_COLLECTION_NAME
 }
 
 func (cc *CredentialCollection) GetBundleFolderName() string {
-	return "credentials"
+	return CREDENTIAL_FOLDER_NAME
 }
 
 func (cc *CredentialCollection) GetFields() []string {

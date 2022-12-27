@@ -6,8 +6,10 @@ import (
 
 type PaymentCollection []*Payment
 
+var PAYMENT_COLLECTION_NAME = "uesio/studio.payment"
+
 func (lc *PaymentCollection) GetName() string {
-	return "uesio/studio.payment"
+	return PAYMENT_COLLECTION_NAME
 }
 
 func (lc *PaymentCollection) GetFields() []string {

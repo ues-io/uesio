@@ -21,11 +21,7 @@ func (u *User) GetPictureID() string {
 }
 
 func (u *User) GetCollectionName() string {
-	return u.GetCollection().GetName()
-}
-
-func (u *User) GetCollection() CollectionableGroup {
-	return &UserCollection{}
+	return USER_COLLECTION_NAME
 }
 
 func (u *User) SetField(fieldName string, value interface{}) error {

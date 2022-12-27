@@ -6,12 +6,15 @@ import (
 
 type IntegrationCollection []*Integration
 
+var INTEGRATION_COLLECTION_NAME = "uesio/studio.integration"
+var INTEGRATION_FOLDER_NAME = "integrations"
+
 func (ic *IntegrationCollection) GetName() string {
-	return "uesio/studio.integration"
+	return INTEGRATION_COLLECTION_NAME
 }
 
 func (ic *IntegrationCollection) GetBundleFolderName() string {
-	return "integrations"
+	return INTEGRATION_FOLDER_NAME
 }
 
 func (ic *IntegrationCollection) GetFields() []string {

@@ -6,8 +6,10 @@ import (
 
 type SecretStoreValueCollection []*SecretStoreValue
 
+var SECRETSTOREVALUE_COLLECTION_NAME = "uesio/core.secretstorevalue"
+
 func (sc *SecretStoreValueCollection) GetName() string {
-	return "uesio/core.secretstorevalue"
+	return SECRETSTOREVALUE_COLLECTION_NAME
 }
 
 func (sc *SecretStoreValueCollection) GetFields() []string {
