@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,16 @@ func NewProfile(key string) (*Profile, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Profile")
 	}
+	return NewBaseProfile(namespace, name), nil
+}
+
+func NewBaseProfile(namespace, name string) *Profile {
 	return &Profile{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+		BundleableBase: NewBase(namespace, name),
+	}
 }
 
 type Profile struct {
-	Name              string          `yaml:"name" json:"uesio/studio.name"`
 	PermissionSetRefs []string        `yaml:"permissionSets" json:"uesio/studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" json:"-"`
 	BuiltIn
@@ -36,22 +35,6 @@ func (p *Profile) GetCollectionName() string {
 
 func (p *Profile) GetBundleFolderName() string {
 	return PROFILE_FOLDER_NAME
-}
-
-func (p *Profile) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, p.Name)
-}
-
-func (p *Profile) GetKey() string {
-	return fmt.Sprintf("%s.%s", p.Namespace, p.Name)
-}
-
-func (p *Profile) GetPath() string {
-	return p.Name + ".yaml"
-}
-
-func (p *Profile) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (p *Profile) SetField(fieldName string, value interface{}) error {

@@ -82,7 +82,7 @@ func runCreateBundleListenerBot(params map[string]interface{}, connection adapt.
 	patch := 1
 
 	if len(bundles) != 0 {
-		lastBundle := bundles.GetItem(0).(*meta.Bundle)
+		lastBundle := bundles[0]
 		patch = lastBundle.Patch + 1
 	}
 

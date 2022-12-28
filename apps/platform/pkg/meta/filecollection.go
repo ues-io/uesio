@@ -10,6 +10,7 @@ type FileCollection []*File
 
 var FILE_COLLECTION_NAME = "uesio/studio.file"
 var FILE_FOLDER_NAME = "files"
+var FILE_FIELDS = StandardGetFields(&File{})
 
 func (fc *FileCollection) GetName() string {
 	return FILE_COLLECTION_NAME
@@ -20,7 +21,7 @@ func (fc *FileCollection) GetBundleFolderName() string {
 }
 
 func (fc *FileCollection) GetFields() []string {
-	return StandardGetFields(&File{})
+	return FILE_FIELDS
 }
 
 func (fc *FileCollection) NewItem() Item {
@@ -31,9 +32,9 @@ func (fc *FileCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*File))
 }
 
-func (fc *FileCollection) GetItemFromPath(path string) BundleableItem {
+func (fc *FileCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
-	return &File{Name: parts[0]}
+	return NewBaseFile(namespace, parts[0])
 }
 
 func (fc *FileCollection) IsDefinitionPath(path string) bool {
@@ -48,13 +49,9 @@ func (fc *FileCollection) FilterPath(path string, conditions BundleConditions, d
 	return true
 }
 
-func (fc *FileCollection) GetItem(index int) Item {
-	return (*fc)[index]
-}
-
 func (fc *FileCollection) Loop(iter GroupIterator) error {
-	for index := range *fc {
-		err := iter(fc.GetItem(index), strconv.Itoa(index))
+	for index, f := range *fc {
+		err := iter(f, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -64,8 +61,4 @@ func (fc *FileCollection) Loop(iter GroupIterator) error {
 
 func (fc *FileCollection) Len() int {
 	return len(*fc)
-}
-
-func (fc *FileCollection) GetItems() interface{} {
-	return *fc
 }

@@ -6,6 +6,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func NewBaseTranslation(namespace, language string) *Translation {
+	return &Translation{
+		Language: language,
+		BundleableBase: BundleableBase{
+			Namespace: namespace,
+		},
+	}
+}
+
 type Translation struct {
 	Labels   map[string]string `yaml:"labels" json:"uesio/studio.labels"`
 	Language string            `yaml:"language" json:"uesio/studio.language"`
@@ -14,10 +23,6 @@ type Translation struct {
 }
 
 type TranslationWrapper Translation
-
-func (t *Translation) GetPermChecker() *PermissionSet {
-	return nil
-}
 
 func (t *Translation) GetKey() string {
 	return t.Language

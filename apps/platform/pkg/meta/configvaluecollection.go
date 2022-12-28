@@ -8,6 +8,7 @@ type ConfigValueCollection []*ConfigValue
 
 var CONFIGVALUE_COLLECTION_NAME = "uesio/studio.configvalue"
 var CONFIGVALUE_FOLDER_NAME = "configvalues"
+var CONFIGVALUE_FIELDS = StandardGetFields(&ConfigValue{})
 
 func (cvc *ConfigValueCollection) GetName() string {
 	return CONFIGVALUE_COLLECTION_NAME
@@ -18,7 +19,7 @@ func (cvc *ConfigValueCollection) GetBundleFolderName() string {
 }
 
 func (cvc *ConfigValueCollection) GetFields() []string {
-	return StandardGetFields(&ConfigValue{})
+	return CONFIGVALUE_FIELDS
 }
 
 func (cvc *ConfigValueCollection) NewItem() Item {
@@ -29,8 +30,8 @@ func (cvc *ConfigValueCollection) AddItem(item Item) {
 	*cvc = append(*cvc, item.(*ConfigValue))
 }
 
-func (cvc *ConfigValueCollection) GetItemFromPath(path string) BundleableItem {
-	return &ConfigValue{Name: StandardNameFromPath(path)}
+func (cvc *ConfigValueCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseConfigValue(namespace, StandardNameFromPath(path))
 }
 
 func (cvc *ConfigValueCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
@@ -42,8 +43,8 @@ func (cvc *ConfigValueCollection) GetItem(index int) Item {
 }
 
 func (cvc *ConfigValueCollection) Loop(iter GroupIterator) error {
-	for index := range *cvc {
-		err := iter(cvc.GetItem(index), strconv.Itoa(index))
+	for index, cv := range *cvc {
+		err := iter(cv, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -53,8 +54,4 @@ func (cvc *ConfigValueCollection) Loop(iter GroupIterator) error {
 
 func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
-}
-
-func (cvc *ConfigValueCollection) GetItems() interface{} {
-	return *cvc
 }

@@ -2,14 +2,12 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type Label struct {
-	Name  string `yaml:"name" json:"uesio/studio.name"`
 	Value string `yaml:"value" json:"uesio/studio.value"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -36,12 +34,11 @@ func NewLabel(key string) (*Label, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Label: " + key)
 	}
-	return &Label{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseLabel(namespace, name), nil
+}
+
+func NewBaseLabel(namespace, name string) *Label {
+	return &Label{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
@@ -64,22 +61,6 @@ func (l *Label) GetCollectionName() string {
 
 func (l *Label) GetBundleFolderName() string {
 	return LABEL_FOLDER_NAME
-}
-
-func (l *Label) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, l.Name)
-}
-
-func (l *Label) GetKey() string {
-	return fmt.Sprintf("%s.%s", l.Namespace, l.Name)
-}
-
-func (l *Label) GetPath() string {
-	return l.Name + ".yaml"
-}
-
-func (l *Label) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (l *Label) SetField(fieldName string, value interface{}) error {

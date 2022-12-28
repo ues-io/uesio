@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,14 @@ func NewAuthSource(key string) (*AuthSource, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for AuthSource: " + key)
 	}
-	return &AuthSource{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseAuthSource(namespace, name), nil
+}
+
+func NewBaseAuthSource(namespace, name string) *AuthSource {
+	return &AuthSource{BundleableBase: NewBase(namespace, name)}
 }
 
 type AuthSource struct {
-	Name        string `yaml:"name" json:"uesio/studio.name"`
 	Type        string `yaml:"type" json:"uesio/studio.type"`
 	Credentials string `yaml:"credentials" json:"uesio/studio.credentials"`
 	BuiltIn
@@ -36,22 +33,6 @@ func (as *AuthSource) GetCollectionName() string {
 
 func (as *AuthSource) GetBundleFolderName() string {
 	return AUTHSOURCE_FOLDER_NAME
-}
-
-func (as *AuthSource) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, as.Name)
-}
-
-func (as *AuthSource) GetKey() string {
-	return fmt.Sprintf("%s.%s", as.Namespace, as.Name)
-}
-
-func (as *AuthSource) GetPath() string {
-	return as.Name + ".yaml"
-}
-
-func (as *AuthSource) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (as *AuthSource) SetField(fieldName string, value interface{}) error {

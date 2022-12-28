@@ -7,17 +7,14 @@ import (
 type LicenseCollection []*License
 
 var LICENSE_COLLECTION_NAME = "uesio/studio.license"
+var LICENSE_FIELDS = StandardGetFields(&License{})
 
 func (lc *LicenseCollection) GetName() string {
 	return LICENSE_COLLECTION_NAME
 }
 
 func (lc *LicenseCollection) GetFields() []string {
-	return StandardGetFields(&License{})
-}
-
-func (lc *LicenseCollection) GetItem(index int) Item {
-	return (*lc)[index]
+	return LICENSE_FIELDS
 }
 
 func (lc *LicenseCollection) NewItem() Item {
@@ -29,8 +26,8 @@ func (lc *LicenseCollection) AddItem(item Item) {
 }
 
 func (lc *LicenseCollection) Loop(iter GroupIterator) error {
-	for index := range *lc {
-		err := iter(lc.GetItem(index), strconv.Itoa(index))
+	for index, l := range *lc {
+		err := iter(l, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -40,8 +37,4 @@ func (lc *LicenseCollection) Loop(iter GroupIterator) error {
 
 func (lc *LicenseCollection) Len() int {
 	return len(*lc)
-}
-
-func (lc *LicenseCollection) GetItems() interface{} {
-	return *lc
 }

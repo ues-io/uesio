@@ -116,10 +116,6 @@ func (c *CSVExportCollection) AddItem(item meta.Item) {
 	c.current.Reset()
 }
 
-func (c *CSVExportCollection) GetItems() interface{} {
-	return nil
-}
-
 func (c *CSVExportCollection) Loop(iter meta.GroupIterator) error {
 	return nil
 }

@@ -7,13 +7,14 @@ import (
 type ConfigStoreValueCollection []*ConfigStoreValue
 
 var CONFIGSTOREVALUE_COLLECTION_NAME = "uesio/core.configstorevalue"
+var CONFIGSTOREVALUE_FIELDS = StandardGetFields(&ConfigStoreValue{})
 
 func (cc *ConfigStoreValueCollection) GetName() string {
 	return CONFIGSTOREVALUE_COLLECTION_NAME
 }
 
 func (cc *ConfigStoreValueCollection) GetFields() []string {
-	return StandardGetFields(&ConfigStoreValue{})
+	return CONFIGSTOREVALUE_FIELDS
 }
 
 func (cc *ConfigStoreValueCollection) GetItem(index int) Item {
@@ -29,8 +30,8 @@ func (cc *ConfigStoreValueCollection) AddItem(item Item) {
 }
 
 func (cc *ConfigStoreValueCollection) Loop(iter GroupIterator) error {
-	for index := range *cc {
-		err := iter(cc.GetItem(index), strconv.Itoa(index))
+	for index, c := range *cc {
+		err := iter(c, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -40,8 +41,4 @@ func (cc *ConfigStoreValueCollection) Loop(iter GroupIterator) error {
 
 func (cc *ConfigStoreValueCollection) Len() int {
 	return len(*cc)
-}
-
-func (cc *ConfigStoreValueCollection) GetItems() interface{} {
-	return *cc
 }

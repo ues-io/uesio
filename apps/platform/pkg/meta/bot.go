@@ -18,12 +18,9 @@ func NewGeneratorBot(namespace, name string) *Bot {
 
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
-		CollectionRef: collectionKey,
-		Type:          botType,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-		Name: name,
+		CollectionRef:  collectionKey,
+		Type:           botType,
+		BundleableBase: NewBase(namespace, name),
 	}
 }
 
@@ -90,7 +87,6 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	Name          string    `yaml:"name" json:"uesio/studio.name"`
 	CollectionRef string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	Type          string    `yaml:"type" json:"uesio/studio.type"`
 	Dialect       string    `yaml:"dialect" json:"uesio/studio.dialect"`
@@ -166,10 +162,6 @@ func (b *Bot) GetBasePath() string {
 
 func (b *Bot) GetPath() string {
 	return filepath.Join(b.GetBasePath(), "bot.yaml")
-}
-
-func (b *Bot) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (b *Bot) SetField(fieldName string, value interface{}) error {

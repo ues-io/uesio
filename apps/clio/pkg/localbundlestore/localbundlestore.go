@@ -86,11 +86,11 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	}
 
 	for _, path := range paths {
-		retrievedItem := group.GetItemFromPath(path)
+		retrievedItem := group.GetItemFromPath(path, namespace)
 		if retrievedItem == nil {
 			continue
 		}
-		retrievedItem.SetNamespace(namespace)
+
 		err = b.GetItem(retrievedItem, version, session)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {

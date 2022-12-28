@@ -7,17 +7,14 @@ import (
 type LoginMethodCollection []*LoginMethod
 
 var LOGINMETHOD_COLLECTION_NAME = "uesio/core.loginmethod"
+var LOGINMETHOD_FIELDS = StandardGetFields(&LoginMethod{})
 
 func (lmc *LoginMethodCollection) GetName() string {
 	return LOGINMETHOD_COLLECTION_NAME
 }
 
 func (lmc *LoginMethodCollection) GetFields() []string {
-	return StandardGetFields(&LoginMethod{})
-}
-
-func (lmc *LoginMethodCollection) GetItem(index int) Item {
-	return (*lmc)[index]
+	return LOGINMETHOD_FIELDS
 }
 
 func (lmc *LoginMethodCollection) NewItem() Item {
@@ -29,8 +26,8 @@ func (lmc *LoginMethodCollection) AddItem(item Item) {
 }
 
 func (lmc *LoginMethodCollection) Loop(iter GroupIterator) error {
-	for index := range *lmc {
-		err := iter(lmc.GetItem(index), strconv.Itoa(index))
+	for index, lm := range *lmc {
+		err := iter(lm, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -40,8 +37,4 @@ func (lmc *LoginMethodCollection) Loop(iter GroupIterator) error {
 
 func (lmc *LoginMethodCollection) Len() int {
 	return len(*lmc)
-}
-
-func (lmc *LoginMethodCollection) GetItems() interface{} {
-	return *lmc
 }

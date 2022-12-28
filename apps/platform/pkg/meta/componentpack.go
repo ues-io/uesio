@@ -1,15 +1,26 @@
 package meta
 
 import (
-	"fmt"
+	"errors"
 	"path/filepath"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
+func NewComponentPack(key string) (*ComponentPack, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Component Pack: " + key)
+	}
+	return NewBaseComponentPack(namespace, name), nil
+}
+
+func NewBaseComponentPack(namespace, name string) *ComponentPack {
+	return &ComponentPack{BundleableBase: NewBase(namespace, name)}
+}
+
 type ComponentPack struct {
-	Name       string              `yaml:"name" json:"uesio/studio.name"`
 	Components *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -49,14 +60,6 @@ func (cp *ComponentPack) GetBundleFolderName() string {
 	return COMPONENTPACK_FOLDER_NAME
 }
 
-func (cp *ComponentPack) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, cp.Name)
-}
-
-func (cp *ComponentPack) GetKey() string {
-	return fmt.Sprintf("%s.%s", cp.Namespace, cp.Name)
-}
-
 func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
 	fileName := "runtime.js"
 	if buildMode {
@@ -71,10 +74,6 @@ func (cp *ComponentPack) GetBasePath() string {
 
 func (cp *ComponentPack) GetPath() string {
 	return filepath.Join(cp.Name, "pack.yaml")
-}
-
-func (cp *ComponentPack) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {

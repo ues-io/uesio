@@ -26,15 +26,10 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 
 		session := middleware.GetSession(r)
 
-		view := meta.View{
-			Name: viewName,
-			BundleableBase: meta.BundleableBase{
-				Namespace: viewNamespace,
-			},
-		}
+		view := meta.NewBaseView(viewNamespace, viewName)
 
 		// Make sure this is a legit view that we have access to
-		err := bundle.Load(&view, session, nil)
+		err := bundle.Load(view, session, nil)
 		if err != nil {
 			HandleMissingRoute(w, r, session, "", err)
 			return

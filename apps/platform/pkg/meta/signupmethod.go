@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +11,11 @@ func NewSignupMethod(key string) (*SignupMethod, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for SignupMethod: " + key)
 	}
-	return &SignupMethod{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseSignupMethod(namespace, name), nil
+}
+
+func NewBaseSignupMethod(namespace, name string) *SignupMethod {
+	return &SignupMethod{BundleableBase: NewBase(namespace, name)}
 }
 
 type EmailTemplateOptions struct {
@@ -26,7 +24,6 @@ type EmailTemplateOptions struct {
 	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
 type SignupMethod struct {
-	Name             string               `yaml:"name" json:"uesio/studio.name"`
 	AuthSource       string               `yaml:"authsource" json:"uesio/studio.authsource"`
 	Profile          string               `yaml:"profile" json:"uesio/studio.profile"`
 	UsernameTemplate string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
@@ -47,22 +44,6 @@ func (sm *SignupMethod) GetCollectionName() string {
 
 func (sm *SignupMethod) GetBundleFolderName() string {
 	return SIGNUPMETHOD_FOLDER_NAME
-}
-
-func (sm *SignupMethod) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, sm.Name)
-}
-
-func (sm *SignupMethod) GetKey() string {
-	return fmt.Sprintf("%s.%s", sm.Namespace, sm.Name)
-}
-
-func (sm *SignupMethod) GetPath() string {
-	return sm.Name + ".yaml"
-}
-
-func (sm *SignupMethod) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (sm *SignupMethod) SetField(fieldName string, value interface{}) error {

@@ -2,14 +2,12 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type Theme struct {
-	Name       string    `yaml:"name" json:"uesio/studio.name"`
 	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -36,12 +34,11 @@ func NewTheme(key string) (*Theme, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Theme: " + key)
 	}
-	return &Theme{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseTheme(namespace, name), nil
+}
+
+func NewBaseTheme(namespace, name string) *Theme {
+	return &Theme{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewThemes(keys map[string]bool) ([]BundleableItem, error) {
@@ -64,22 +61,6 @@ func (t *Theme) GetCollectionName() string {
 
 func (t *Theme) GetBundleFolderName() string {
 	return THEME_FOLDER_NAME
-}
-
-func (t *Theme) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, t.Name)
-}
-
-func (t *Theme) GetKey() string {
-	return fmt.Sprintf("%s.%s", t.Namespace, t.Name)
-}
-
-func (t *Theme) GetPath() string {
-	return t.Name + ".yaml"
-}
-
-func (t *Theme) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (t *Theme) SetField(fieldName string, value interface{}) error {

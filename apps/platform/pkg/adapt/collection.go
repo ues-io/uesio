@@ -61,10 +61,6 @@ func (c *Collection) IsNil() bool {
 	return c == nil
 }
 
-func (c *Collection) GetItem(index int) meta.Item {
-	return (*c)[index]
-}
-
 func (c *Collection) NewItem() meta.Item {
 	return &Item{}
 }
@@ -73,13 +69,9 @@ func (c *Collection) AddItem(item meta.Item) {
 	*c = append(*c, item.(*Item))
 }
 
-func (c *Collection) GetItems() interface{} {
-	return *c
-}
-
 func (c *Collection) Loop(iter meta.GroupIterator) error {
 	for index := range *c {
-		err := iter(c.GetItem(index), strconv.Itoa(index))
+		err := iter((*c)[index], strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

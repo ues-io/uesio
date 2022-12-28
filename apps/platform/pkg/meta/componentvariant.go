@@ -19,17 +19,17 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 	if err != nil {
 		return nil, errors.New("Invalid Variant Key: " + key)
 	}
+	return NewBaseComponentVariant(keyArray[0], namespace, name), nil
+}
+
+func NewBaseComponentVariant(component, namespace, name string) *ComponentVariant {
 	return &ComponentVariant{
-		Component: keyArray[0],
-		Name:      name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+		Component:      component,
+		BundleableBase: NewBase(namespace, name),
+	}
 }
 
 type ComponentVariant struct {
-	Name       string    `yaml:"name" json:"uesio/studio.name"`
 	Component  string    `yaml:"-" json:"uesio/studio.component"`
 	Extends    string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
 	Label      string    `yaml:"label" json:"uesio/studio.label"`
@@ -59,10 +59,6 @@ func (c *ComponentVariant) IsNil() bool {
 
 func (c *ComponentVariant) GetBundleFolderName() string {
 	return COMPONENTVARIANT_FOLDER_NAME
-}
-
-func (c *ComponentVariant) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (c *ComponentVariant) GetKey() string {

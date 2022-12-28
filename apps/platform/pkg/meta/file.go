@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
@@ -13,16 +12,14 @@ func NewFile(key string) (*File, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for File: " + key)
 	}
-	return &File{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseFile(namespace, name), nil
+}
+
+func NewBaseFile(namespace, name string) *File {
+	return &File{BundleableBase: NewBase(namespace, name)}
 }
 
 type File struct {
-	Name string `yaml:"name" json:"uesio/studio.name"`
 	Path string `yaml:"path" json:"uesio/studio.path"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -36,14 +33,6 @@ func (f *File) GetCollectionName() string {
 
 func (f *File) GetBundleFolderName() string {
 	return FILE_FOLDER_NAME
-}
-
-func (f *File) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, f.Name)
-}
-
-func (f *File) GetKey() string {
-	return fmt.Sprintf("%s.%s", f.Namespace, f.Name)
 }
 
 func (f *File) GetBasePath() string {

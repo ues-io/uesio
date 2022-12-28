@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,14 @@ func NewIntegration(key string) (*Integration, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Integration: " + key)
 	}
-	return &Integration{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseIntegration(namespace, name), nil
+}
+
+func NewBaseIntegration(namespace, name string) *Integration {
+	return &Integration{BundleableBase: NewBase(namespace, name)}
 }
 
 type Integration struct {
-	Name        string            `yaml:"name" json:"uesio/studio.name"`
 	Type        string            `yaml:"type" json:"uesio/studio.type"`
 	Credentials string            `yaml:"credentials" json:"uesio/studio.credentials"`
 	Headers     map[string]string `yaml:"headers" json:"uesio/studio.headers"`
@@ -38,22 +35,6 @@ func (i *Integration) GetCollectionName() string {
 
 func (i *Integration) GetBundleFolderName() string {
 	return INTEGRATION_FOLDER_NAME
-}
-
-func (i *Integration) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, i.Name)
-}
-
-func (i *Integration) GetKey() string {
-	return fmt.Sprintf("%s.%s", i.Namespace, i.Name)
-}
-
-func (i *Integration) GetPath() string {
-	return i.Name + ".yaml"
-}
-
-func (i *Integration) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (i *Integration) SetField(fieldName string, value interface{}) error {
