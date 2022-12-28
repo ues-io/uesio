@@ -126,7 +126,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 		attachableGroup, isAttachable := collection.(meta.AttachableGroup)
 
-		collectionItem := collection.GetItemFromPath(path)
+		collectionItem := collection.GetItemFromPath(path, namespace)
 		if err != nil {
 			return err
 		}
@@ -143,7 +143,6 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 
 		if isDefinition {
 			collection.AddItem(collectionItem)
-			collectionItem.SetNamespace(namespace)
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {
 				return errors.New("Reading File: " + collectionItem.GetKey() + " : " + err.Error())

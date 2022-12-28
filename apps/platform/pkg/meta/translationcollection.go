@@ -11,6 +11,7 @@ type TranslationCollection []*Translation
 
 var TRANSLATION_COLLECTION_NAME = "uesio/studio.translation"
 var TRANSLATION_FOLDER_NAME = "translations"
+var TRANSLATION_FIELDS = []string{"labels", "language"}
 
 func (tc *TranslationCollection) GetName() string {
 	return TRANSLATION_COLLECTION_NAME
@@ -21,7 +22,7 @@ func (tc *TranslationCollection) GetBundleFolderName() string {
 }
 
 func (tc *TranslationCollection) GetFields() []string {
-	return StandardGetFields(&Translation{})
+	return TRANSLATION_FIELDS
 }
 
 func (tc *TranslationCollection) NewItem() Item {
@@ -32,7 +33,7 @@ func (tc *TranslationCollection) AddItem(item Item) {
 	*tc = append(*tc, item.(*Translation))
 }
 
-func (tc *TranslationCollection) GetItemFromPath(path string) BundleableItem {
+func (tc *TranslationCollection) GetItemFromPath(path, namespace string) BundleableItem {
 
 	lang := strings.TrimSuffix(path, ".yaml")
 
@@ -41,9 +42,8 @@ func (tc *TranslationCollection) GetItemFromPath(path string) BundleableItem {
 		return nil
 	}
 
-	return &Translation{
-		Language: lang,
-	}
+	return NewBaseTranslation(namespace, lang)
+
 }
 
 func (tc *TranslationCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
@@ -64,13 +64,9 @@ func (tc *TranslationCollection) FilterPath(path string, conditions BundleCondit
 	return true
 }
 
-func (tc *TranslationCollection) GetItem(index int) Item {
-	return (*tc)[index]
-}
-
 func (tc *TranslationCollection) Loop(iter GroupIterator) error {
-	for index := range *tc {
-		err := iter(tc.GetItem(index), strconv.Itoa(index))
+	for index, t := range *tc {
+		err := iter(t, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -80,8 +76,4 @@ func (tc *TranslationCollection) Loop(iter GroupIterator) error {
 
 func (tc *TranslationCollection) Len() int {
 	return len(*tc)
-}
-
-func (tc *TranslationCollection) GetItems() interface{} {
-	return *tc
 }

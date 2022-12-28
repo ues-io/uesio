@@ -9,7 +9,6 @@ import (
 )
 
 type ConfigValue struct {
-	Name      string `yaml:"name" json:"uesio/studio.name"`
 	Store     string `yaml:"store,omitempty" json:"uesio/studio.store"`
 	ManagedBy string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
 	Value     string
@@ -38,12 +37,11 @@ func NewConfigValue(key string) (*ConfigValue, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for ConfigValue: " + key)
 	}
-	return &ConfigValue{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseConfigValue(namespace, name), nil
+}
+
+func NewBaseConfigValue(namespace, name string) *ConfigValue {
+	return &ConfigValue{BundleableBase: NewBase(namespace, name)}
 }
 
 func (cv *ConfigValue) GetCollectionName() string {
@@ -64,10 +62,6 @@ func (cv *ConfigValue) GetKey() string {
 
 func (cv *ConfigValue) GetPath() string {
 	return cv.Name + ".yaml"
-}
-
-func (cv *ConfigValue) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (cv *ConfigValue) SetField(fieldName string, value interface{}) error {

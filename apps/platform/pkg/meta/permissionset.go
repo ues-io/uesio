@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,14 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for PermissionSet")
 	}
-	return &PermissionSet{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBasePermissionSet(namespace, name), nil
+}
+
+func NewBasePermissionSet(namespace, name string) *PermissionSet {
+	return &PermissionSet{BundleableBase: NewBase(namespace, name)}
 }
 
 type PermissionSet struct {
-	Name                string          `yaml:"name" json:"uesio/studio.name"`
 	NamedRefs           map[string]bool `yaml:"named" json:"uesio/studio.namedrefs"`
 	ViewRefs            map[string]bool `yaml:"views" json:"uesio/studio.viewrefs"`
 	CollectionRefs      map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
@@ -45,22 +42,6 @@ func (ps *PermissionSet) GetCollectionName() string {
 
 func (ps *PermissionSet) GetBundleFolderName() string {
 	return PERMISSIONSET_FOLDER_NAME
-}
-
-func (ps *PermissionSet) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, ps.Name)
-}
-
-func (ps *PermissionSet) GetKey() string {
-	return fmt.Sprintf("%s.%s", ps.Namespace, ps.Name)
-}
-
-func (ps *PermissionSet) GetPath() string {
-	return ps.Name + ".yaml"
-}
-
-func (ps *PermissionSet) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (ps *PermissionSet) SetField(fieldName string, value interface{}) error {

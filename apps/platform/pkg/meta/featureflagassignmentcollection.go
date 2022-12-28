@@ -7,17 +7,14 @@ import (
 type FeatureFlagAssignmentCollection []*FeatureFlagAssignment
 
 var FEATUREFLAGASSIGNMENT_COLLECTION_NAME = "uesio/core.featureflagassignment"
+var FEATUREFLAGASSIGNMENT_FIELDS = StandardGetFields(&FeatureFlagAssignment{})
 
 func (ffac *FeatureFlagAssignmentCollection) GetName() string {
 	return FEATUREFLAGASSIGNMENT_COLLECTION_NAME
 }
 
 func (ffac *FeatureFlagAssignmentCollection) GetFields() []string {
-	return StandardGetFields(&FeatureFlagAssignment{})
-}
-
-func (ffac *FeatureFlagAssignmentCollection) GetItem(index int) Item {
-	return (*ffac)[index]
+	return FEATUREFLAGASSIGNMENT_FIELDS
 }
 
 func (ffac *FeatureFlagAssignmentCollection) NewItem() Item {
@@ -29,8 +26,8 @@ func (ffsc *FeatureFlagAssignmentCollection) AddItem(item Item) {
 }
 
 func (ffac *FeatureFlagAssignmentCollection) Loop(iter GroupIterator) error {
-	for index := range *ffac {
-		err := iter(ffac.GetItem(index), strconv.Itoa(index))
+	for index, ffa := range *ffac {
+		err := iter(ffa, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -40,8 +37,4 @@ func (ffac *FeatureFlagAssignmentCollection) Loop(iter GroupIterator) error {
 
 func (ffac *FeatureFlagAssignmentCollection) Len() int {
 	return len(*ffac)
-}
-
-func (ffac *FeatureFlagAssignmentCollection) GetItems() interface{} {
-	return *ffac
 }

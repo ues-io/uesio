@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,7 +12,6 @@ type SelectListOption struct {
 }
 
 type SelectList struct {
-	Name             string             `yaml:"name" json:"uesio/studio.name"`
 	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
 	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
 	BuiltIn
@@ -27,12 +25,11 @@ func NewSelectList(key string) (*SelectList, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for SelectList: " + key)
 	}
-	return &SelectList{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseSelectList(namespace, name), nil
+}
+
+func NewBaseSelectList(namespace, name string) *SelectList {
+	return &SelectList{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewSelectLists(keys map[string]bool) ([]BundleableItem, error) {
@@ -55,22 +52,6 @@ func (sl *SelectList) GetCollectionName() string {
 
 func (sl *SelectList) GetBundleFolderName() string {
 	return SELECTLIST_FOLDER_NAME
-}
-
-func (sl *SelectList) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, sl.Name)
-}
-
-func (sl *SelectList) GetKey() string {
-	return fmt.Sprintf("%s.%s", sl.Namespace, sl.Name)
-}
-
-func (sl *SelectList) GetPath() string {
-	return sl.Name + ".yaml"
-}
-
-func (sl *SelectList) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (sl *SelectList) SetField(fieldName string, value interface{}) error {

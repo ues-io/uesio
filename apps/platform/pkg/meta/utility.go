@@ -1,13 +1,14 @@
 package meta
 
 import (
-	"fmt"
-
 	"gopkg.in/yaml.v3"
 )
 
+func NewBaseUtility(namespace, name string) *Utility {
+	return &Utility{BundleableBase: NewBase(namespace, name)}
+}
+
 type Utility struct {
-	Name string `yaml:"name" json:"uesio/studio.name"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
 }
@@ -20,22 +21,6 @@ func (u *Utility) GetCollectionName() string {
 
 func (u *Utility) GetBundleFolderName() string {
 	return UTILITY_FOLDER_NAME
-}
-
-func (u *Utility) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, u.Name)
-}
-
-func (u *Utility) GetKey() string {
-	return fmt.Sprintf("%s.%s", u.Namespace, u.Name)
-}
-
-func (u *Utility) GetPath() string {
-	return u.Name + ".yaml"
-}
-
-func (u *Utility) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (u *Utility) SetField(fieldName string, value interface{}) error {

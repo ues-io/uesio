@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +11,11 @@ func NewCollection(key string) (*Collection, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Collection: " + key)
 	}
-	return &Collection{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseCollection(namespace, name), nil
+}
+
+func NewBaseCollection(namespace, name string) *Collection {
+	return &Collection{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewCollections(keys map[string]bool) ([]BundleableItem, error) {
@@ -50,7 +48,6 @@ type TokenCondition struct {
 
 type Collection struct {
 	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
-	Name                  string                            `yaml:"name" json:"uesio/studio.name"`
 	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
 	DataSourceRef         string                            `yaml:"dataSource,omitempty" json:"uesio/studio.datasource"`
@@ -73,18 +70,6 @@ func (c *Collection) GetCollectionName() string {
 
 func (c *Collection) GetBundleFolderName() string {
 	return COLLECTION_FOLDER_NAME
-}
-
-func (c *Collection) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Collection) GetKey() string {
-	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
-}
-
-func (c *Collection) GetPath() string {
-	return c.Name + ".yaml"
 }
 
 func (c *Collection) GetPermChecker() *PermissionSet {

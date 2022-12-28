@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,14 @@ func NewRoute(key string) (*Route, error) {
 	if err != nil {
 		return nil, errors.New("Invalid Route Key: " + key)
 	}
-	return &Route{
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-		Name: name,
-	}, nil
+	return NewBaseRoute(namespace, name), nil
+}
+
+func NewBaseRoute(namespace, name string) *Route {
+	return &Route{BundleableBase: NewBase(namespace, name)}
 }
 
 type Route struct {
-	Name       string            `yaml:"name" json:"uesio/studio.name"`
 	Path       string            `yaml:"path" json:"uesio/studio.path"`
 	ViewType   string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
 	ViewRef    string            `yaml:"view" json:"uesio/studio.view"`
@@ -40,18 +37,6 @@ func (r *Route) GetCollectionName() string {
 
 func (r *Route) GetBundleFolderName() string {
 	return ROUTE_FOLDER_NAME
-}
-
-func (r *Route) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, r.Name)
-}
-
-func (r *Route) GetKey() string {
-	return fmt.Sprintf("%s.%s", r.Namespace, r.Name)
-}
-
-func (r *Route) GetPath() string {
-	return r.Name + ".yaml"
 }
 
 func (r *Route) GetPermChecker() *PermissionSet {

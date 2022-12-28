@@ -2,13 +2,11 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
 
 type Secret struct {
-	Name      string `yaml:"name" json:"uesio/studio.name"`
 	Store     string `yaml:"store,omitempty" json:"uesio/studio.store"`
 	ManagedBy string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
 	BuiltIn
@@ -22,12 +20,11 @@ func NewSecret(key string) (*Secret, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Secret: " + key)
 	}
-	return &Secret{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseSecret(namespace, name), nil
+}
+
+func NewBaseSecret(namespace, name string) *Secret {
+	return &Secret{BundleableBase: NewBase(namespace, name)}
 }
 
 func (s *Secret) GetCollectionName() string {
@@ -36,22 +33,6 @@ func (s *Secret) GetCollectionName() string {
 
 func (s *Secret) GetBundleFolderName() string {
 	return SECRET_FOLDER_NAME
-}
-
-func (s *Secret) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, s.Name)
-}
-
-func (s *Secret) GetKey() string {
-	return fmt.Sprintf("%s.%s", s.Namespace, s.Name)
-}
-
-func (s *Secret) GetPath() string {
-	return s.Name + ".yaml"
-}
-
-func (s *Secret) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (s *Secret) SetField(fieldName string, value interface{}) error {

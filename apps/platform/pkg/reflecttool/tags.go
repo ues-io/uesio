@@ -25,11 +25,7 @@ func GetFieldNames(obj interface{}) ([]string, error) {
 	if structKind != reflect.Struct {
 		return nil, errors.New("Cannot use GetFieldNames on a non-struct interface")
 	}
-	return getFieldNamesReflect(structType)
-}
-
-func getFieldNamesReflect(objType reflect.Type) ([]string, error) {
-	tags, err := getTags(objType)
+	tags, err := getTags(structType)
 	if err != nil {
 		return nil, err
 	}

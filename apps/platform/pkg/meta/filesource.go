@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,16 +11,14 @@ func NewFileSource(key string) (*FileSource, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for FileSource")
 	}
-	return &FileSource{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseFileSource(namespace, name), nil
+}
+
+func NewBaseFileSource(namespace, name string) *FileSource {
+	return &FileSource{BundleableBase: NewBase(namespace, name)}
 }
 
 type FileSource struct {
-	Name        string `yaml:"-" json:"uesio/studio.name"`
 	Type        string `yaml:"type,omitempty" json:"-"`
 	Credentials string `yaml:"credentials" json:"uesio/studio.credentials"`
 	BuiltIn
@@ -36,22 +33,6 @@ func (fs *FileSource) GetCollectionName() string {
 
 func (fs *FileSource) GetBundleFolderName() string {
 	return FILESOURCE_FOLDER_NAME
-}
-
-func (fs *FileSource) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, fs.Name)
-}
-
-func (fs *FileSource) GetKey() string {
-	return fmt.Sprintf("%s.%s", fs.Namespace, fs.Name)
-}
-
-func (fs *FileSource) GetPath() string {
-	return fs.Name + ".yaml"
-}
-
-func (fs *FileSource) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (fs *FileSource) SetField(fieldName string, value interface{}) error {

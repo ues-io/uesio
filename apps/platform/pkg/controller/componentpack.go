@@ -19,21 +19,16 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 
 		session := middleware.GetSession(r)
 
-		componentPack := meta.ComponentPack{
-			Name: name,
-			BundleableBase: meta.BundleableBase{
-				Namespace: namespace,
-			},
-		}
+		componentPack := meta.NewBaseComponentPack(namespace, name)
 
-		err := bundle.Load(&componentPack, session, nil)
+		err := bundle.Load(componentPack, session, nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
 		path := componentPack.GetComponentPackFilePath(buildMode)
-		stream, err := bundle.GetItemAttachment(&componentPack, path, session)
+		stream, err := bundle.GetItemAttachment(componentPack, path, session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
@@ -52,14 +47,9 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 
 		session := middleware.GetSession(r)
 
-		componentPack := meta.ComponentPack{
-			Name: name,
-			BundleableBase: meta.BundleableBase{
-				Namespace: namespace,
-			},
-		}
+		componentPack := meta.NewBaseComponentPack(namespace, name)
 
-		err := bundle.Load(&componentPack, session, nil)
+		err := bundle.Load(componentPack, session, nil)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Not Found", http.StatusNotFound)
@@ -67,7 +57,7 @@ func ServeComponentPackMap(buildMode bool) http.HandlerFunc {
 		}
 
 		path := componentPack.GetComponentPackFilePath(buildMode)
-		stream, err := bundle.GetItemAttachment(&componentPack, path+".map", session)
+		stream, err := bundle.GetItemAttachment(componentPack, path+".map", session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)

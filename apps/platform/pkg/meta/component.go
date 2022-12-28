@@ -1,13 +1,24 @@
 package meta
 
 import (
-	"fmt"
+	"errors"
 
 	"gopkg.in/yaml.v3"
 )
 
+func NewComponent(key string) (*Component, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Component: " + key)
+	}
+	return NewBaseComponent(namespace, name), nil
+}
+
+func NewBaseComponent(namespace, name string) *Component {
+	return &Component{BundleableBase: NewBase(namespace, name)}
+}
+
 type Component struct {
-	Name string `yaml:"name" json:"uesio/studio.name"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
 }
@@ -20,22 +31,6 @@ func (c *Component) GetCollectionName() string {
 
 func (c *Component) GetBundleFolderName() string {
 	return COMPONENT_FOLDER_NAME
-}
-
-func (c *Component) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Component) GetKey() string {
-	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
-}
-
-func (c *Component) GetPath() string {
-	return c.Name + ".yaml"
-}
-
-func (c *Component) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (c *Component) SetField(fieldName string, value interface{}) error {

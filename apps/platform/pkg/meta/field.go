@@ -13,13 +13,14 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Field: " + collectionKey + " : " + fieldKey)
 	}
+	return NewBaseField(collectionKey, namespace, name), nil
+}
+
+func NewBaseField(collectionKey, namespace, name string) *Field {
 	return &Field{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-		CollectionRef: collectionKey,
-	}, nil
+		BundleableBase: NewBase(namespace, name),
+		CollectionRef:  collectionKey,
+	}
 }
 
 func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, error) {
@@ -37,7 +38,6 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 }
 
 type Field struct {
-	Name                   string                  `yaml:"name" json:"uesio/studio.name"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
@@ -105,10 +105,6 @@ func (f *Field) GetPath() string {
 	collectionNamespace, collectionName, _ := ParseKey(f.CollectionRef)
 	nsUser, appName, _ := ParseNamespace(collectionNamespace)
 	return filepath.Join(nsUser, appName, collectionName, f.Name) + ".yaml"
-}
-
-func (f *Field) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (f *Field) SetField(fieldName string, value interface{}) error {

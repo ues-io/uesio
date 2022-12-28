@@ -26,24 +26,6 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 	return true
 }
 
-type BundleableBase struct {
-	Namespace string     `yaml:"-" json:"-"`
-	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
-}
-
-func (bb *BundleableBase) GetNamespace() string {
-	return bb.Namespace
-}
-
-func (bb *BundleableBase) SetNamespace(namespace string) {
-	bb.Namespace = namespace
-}
-
-func (bb *BundleableBase) IsPublic() bool {
-	return bb.Public
-}
-
 type BuiltIn struct {
 	ID        string    `yaml:"-" json:"uesio/core.id"`
 	UniqueKey string    `yaml:"-" json:"uesio/core.uniquekey"`
@@ -86,7 +68,7 @@ type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string
 	FilterPath(string, BundleConditions, bool) bool
-	GetItemFromPath(string) BundleableItem
+	GetItemFromPath(string, string) BundleableItem
 }
 
 type AttachableGroup interface {

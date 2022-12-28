@@ -2,14 +2,12 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type FeatureFlag struct {
-	Name  string `yaml:"name" json:"uesio/studio.name"`
 	Value bool
 	User  string
 	BuiltIn
@@ -38,12 +36,11 @@ func NewFeatureFlag(key string) (*FeatureFlag, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for FeatureFlag: " + key)
 	}
-	return &FeatureFlag{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseFeatureFlag(namespace, name), nil
+}
+
+func NewBaseFeatureFlag(namespace, name string) *FeatureFlag {
+	return &FeatureFlag{BundleableBase: NewBase(namespace, name)}
 }
 
 func (ff *FeatureFlag) GetCollectionName() string {
@@ -52,22 +49,6 @@ func (ff *FeatureFlag) GetCollectionName() string {
 
 func (ff *FeatureFlag) GetBundleFolderName() string {
 	return FEATUREFLAG_FOLDER_NAME
-}
-
-func (ff *FeatureFlag) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, ff.Name)
-}
-
-func (ff *FeatureFlag) GetKey() string {
-	return fmt.Sprintf("%s.%s", ff.Namespace, ff.Name)
-}
-
-func (ff *FeatureFlag) GetPath() string {
-	return ff.Name + ".yaml"
-}
-
-func (ff *FeatureFlag) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (ff *FeatureFlag) SetField(fieldName string, value interface{}) error {

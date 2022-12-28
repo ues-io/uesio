@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,13 +12,15 @@ func NewDataSource(key string) (*DataSource, error) {
 		return nil, errors.New("Bad Key for Datasource: " + key)
 	}
 	return &DataSource{
-		Name:           name,
-		BundleableBase: BundleableBase{Namespace: namespace},
+		BundleableBase: NewBase(namespace, name),
 	}, nil
 }
 
+func NewBaseDataSource(namespace, name string) *DataSource {
+	return &DataSource{BundleableBase: NewBase(namespace, name)}
+}
+
 type DataSource struct {
-	Name        string `yaml:"name" json:"uesio/studio.name"`
 	Type        string `yaml:"type" json:"uesio/studio.type"`
 	Credentials string `yaml:"credentials" json:"uesio/studio.credentials"`
 	BuiltIn
@@ -34,22 +35,6 @@ func (ds *DataSource) GetCollectionName() string {
 
 func (ds *DataSource) GetBundleFolderName() string {
 	return DATASOURCE_FOLDER_NAME
-}
-
-func (ds *DataSource) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, ds.Name)
-}
-
-func (ds *DataSource) GetKey() string {
-	return fmt.Sprintf("%s.%s", ds.Namespace, ds.Name)
-}
-
-func (ds *DataSource) GetPath() string {
-	return ds.Name + ".yaml"
-}
-
-func (ds *DataSource) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (ds *DataSource) SetField(fieldName string, value interface{}) error {

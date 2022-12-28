@@ -9,10 +9,6 @@ type WorkspaceLoadCollection struct {
 	Namespace  string
 }
 
-func (c *WorkspaceLoadCollection) GetItem(index int) meta.Item {
-	return c.Collection.GetItem(index)
-}
-
 func (c *WorkspaceLoadCollection) NewItem() meta.Item {
 	item := c.Collection.NewItem().(meta.BundleableItem)
 	item.SetNamespace(c.Namespace)
@@ -37,8 +33,4 @@ func (c *WorkspaceLoadCollection) GetFields() []string {
 
 func (c *WorkspaceLoadCollection) GetName() string {
 	return c.Collection.GetName()
-}
-
-func (c *WorkspaceLoadCollection) GetItems() interface{} {
-	return c.Collection.GetItems()
 }

@@ -2,14 +2,12 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type View struct {
-	Name       string    `yaml:"name" json:"uesio/studio.name"`
 	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -40,12 +38,7 @@ func NewView(key string) (*View, error) {
 }
 
 func NewBaseView(namespace, name string) *View {
-	return &View{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}
+	return &View{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewViews(keys map[string]bool) ([]BundleableItem, error) {
@@ -68,18 +61,6 @@ func (v *View) GetCollectionName() string {
 
 func (v *View) GetBundleFolderName() string {
 	return VIEW_FOLDER_NAME
-}
-
-func (v *View) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, v.Name)
-}
-
-func (v *View) GetKey() string {
-	return fmt.Sprintf("%s.%s", v.Namespace, v.Name)
-}
-
-func (v *View) GetPath() string {
-	return v.Name + ".yaml"
 }
 
 func (v *View) GetPermChecker() *PermissionSet {

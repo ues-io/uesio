@@ -2,7 +2,6 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,12 +11,11 @@ func NewCredential(key string) (*Credential, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Credential: " + key)
 	}
-	return &Credential{
-		Name: name,
-		BundleableBase: BundleableBase{
-			Namespace: namespace,
-		},
-	}, nil
+	return NewBaseCredential(namespace, name), nil
+}
+
+func NewBaseCredential(namespace, name string) *Credential {
+	return &Credential{BundleableBase: NewBase(namespace, name)}
 }
 
 type CredentialEntry struct {
@@ -26,7 +24,6 @@ type CredentialEntry struct {
 }
 
 type Credential struct {
-	Name    string                     `yaml:"name" json:"uesio/studio.name"`
 	Entries map[string]CredentialEntry `yaml:"entries" json:"uesio/studio.entries"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
@@ -40,22 +37,6 @@ func (c *Credential) GetCollectionName() string {
 
 func (c *Credential) GetBundleFolderName() string {
 	return CREDENTIAL_FOLDER_NAME
-}
-
-func (c *Credential) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Credential) GetKey() string {
-	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
-}
-
-func (c *Credential) GetPath() string {
-	return c.Name + ".yaml"
-}
-
-func (c *Credential) GetPermChecker() *PermissionSet {
-	return nil
 }
 
 func (c *Credential) SetField(fieldName string, value interface{}) error {
