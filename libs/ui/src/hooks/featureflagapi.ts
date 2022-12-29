@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Context } from "../context/context"
 import { FeatureFlagResponse, platform } from "../platform/platform"
-import { appDispatch } from "../store/store"
 import { Uesio } from "./hooks"
 
 class FeatureFlagAPI {
@@ -19,9 +18,8 @@ class FeatureFlagAPI {
 		useEffect(() => {
 			if (!featureflags && !loading.current) {
 				loading.current = true
-				appDispatch()((dispatch, getState, platform) =>
-					platform.getFeatureFlags(context, user)
-				)
+				platform
+					.getFeatureFlags(context, user)
 					.then(setFeatureFlags)
 					.finally(() => (loading.current = false))
 			}

@@ -1,10 +1,7 @@
-import { AnyAction } from "redux"
-import { ThunkAction } from "redux-thunk"
 import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
-import { Context } from "../context/context"
 
 import collection from "../bands/collection"
 import route from "../bands/route"
@@ -35,13 +32,6 @@ import { MetadataState } from "../bands/metadata/types"
 import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
-
-type ThunkFunc = ThunkAction<
-	Promise<Context> | Context,
-	RootState,
-	Platform,
-	AnyAction
->
 
 type SiteState = {
 	name: string
@@ -96,12 +86,6 @@ const create = (plat: Platform, initialState: InitialState) => {
 		},
 		devTools: true,
 		preloadedState: initialState,
-		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware({
-				thunk: {
-					extraArgument: plat,
-				},
-			}),
 	})
 	store = newStore
 	return newStore
@@ -111,19 +95,17 @@ type RootState = ReturnType<typeof store.getState>
 
 type Dispatcher = typeof store.dispatch
 
-const appDispatch = () => store.dispatch
+const dispatch = (action: Parameters<Dispatcher>[0]) => store.dispatch(action)
 const getPlatform = () => platform
 const getCurrentState = () => store.getState()
 
 export {
 	create,
 	Provider,
-	Dispatcher,
-	ThunkFunc,
 	RootState,
 	InitialState,
 	SiteState,
-	appDispatch,
+	dispatch,
 	getPlatform,
 	getCurrentState,
 }

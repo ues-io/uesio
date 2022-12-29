@@ -1,7 +1,4 @@
-import { AnyAction } from "redux"
-import { ThunkDispatch } from "redux-thunk"
-import { platform, Platform } from "../../platform/platform"
-import { RootState } from "../../store/store"
+import { platform } from "../../platform/platform"
 import { Dependencies } from "./types"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
@@ -26,6 +23,7 @@ import { initExistingWire } from "../wire/operations/initialize"
 import { RegularWireDefinition } from "../../definition/wire"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainWire } from "../wire/types"
+import { dispatch } from "../../store/store"
 
 type Dep<T> = Record<string, T> | undefined
 
@@ -53,10 +51,7 @@ const attachDefToWires = (
 	})
 }
 
-const dispatchRouteDeps = (
-	deps: Dependencies | undefined,
-	dispatch: ThunkDispatch<RootState, Platform, AnyAction>
-) => {
+const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
 	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>

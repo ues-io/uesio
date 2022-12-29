@@ -32,17 +32,14 @@ export const testWireSignal = async ({
 	})
 	const test = run()
 
-	dispatchRouteDeps(
-		{
-			collection: {
-				ids: [`ben/planets.${testEnv.collectionId}`],
-				entities: {
-					[`ben/planets.${testEnv.collectionId}`]: getCollection(),
-				},
+	dispatchRouteDeps({
+		collection: {
+			ids: [`ben/planets.${testEnv.collectionId}`],
+			entities: {
+				[`ben/planets.${testEnv.collectionId}`]: getCollection(),
 			},
 		},
-		store.dispatch
-	)
+	})
 
 	uesio.collection.uesio.wire.initWires(context, {
 		[wireId]: wireDef,

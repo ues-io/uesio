@@ -1,19 +1,18 @@
 import { Context } from "../../../context/context"
 import { unmarkForDelete } from ".."
-import { ThunkFunc } from "../../..//store/store"
+import { dispatch } from "../../../store/store"
 
-export default (context: Context): ThunkFunc =>
-	(dispatch) => {
-		const recordId = context.getRecord()?.getId()
-		const wire = context.getWire()
+export default (context: Context) => {
+	const recordId = context.getRecord()?.getId()
+	const wire = context.getWire()
 
-		if (!recordId || !wire) return context
+	if (!recordId || !wire) return context
 
-		dispatch(
-			unmarkForDelete({
-				entity: wire.getFullId(),
-				recordId,
-			})
-		)
-		return context
-	}
+	dispatch(
+		unmarkForDelete({
+			entity: wire.getFullId(),
+			recordId,
+		})
+	)
+	return context
+}

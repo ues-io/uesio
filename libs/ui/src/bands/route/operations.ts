@@ -1,12 +1,12 @@
 import { Context } from "../../context/context"
-import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
-import { NavigateRequest } from "../../platform/platform"
+import { NavigateRequest, platform } from "../../platform/platform"
 import { batch } from "react-redux"
 import { loadScripts } from "../../hooks/usescripts"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "./utils"
+import { dispatch } from "../../store/store"
 
-const redirect = (context: Context, path: string, newTab?: boolean) => () => {
+const redirect = (context: Context, path: string, newTab?: boolean) => {
 	const mergedPath = context.mergeString(path)
 	if (newTab) {
 		window.open(mergedPath, "_blank")
@@ -28,52 +28,50 @@ const getRouteUrlPrefix = (context: Context, namespace: string) => {
 	return "/"
 }
 
-const navigate =
-	(
-		context: Context,
-		request: NavigateRequest,
-		noPushState?: boolean
-	): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		dispatch(setLoading())
+const navigate = async (
+	context: Context,
+	request: NavigateRequest,
+	noPushState?: boolean
+) => {
+	dispatch(setLoading())
 
-		const workspace = context.getWorkspace()
+	const workspace = context.getWorkspace()
 
-		const routeResponse = await platform.getRoute(context, request)
+	const routeResponse = await platform.getRoute(context, request)
 
-		if (!routeResponse) return context
+	if (!routeResponse) return context
 
-		const deps = routeResponse.dependencies
+	const deps = routeResponse.dependencies
 
-		if (!noPushState) {
-			const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
-			window.history.pushState(
-				{
-					namespace: routeResponse.namespace,
-					path: routeResponse.path,
-					workspace,
-				},
-				"",
-				prefix + routeResponse.path
-			)
-		}
-
-		const newPacks = getPackUrlsForDeps(deps, context)
-
-		if (newPacks && newPacks.length) {
-			await loadScripts(newPacks)
-		}
-
-		// We don't need to store the dependencies in redux
-		delete routeResponse.dependencies
-
-		batch(() => {
-			dispatchRouteDeps(deps, dispatch)
-			dispatch(setRoute(routeResponse))
-		})
-
-		return context
+	if (!noPushState) {
+		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+		window.history.pushState(
+			{
+				namespace: routeResponse.namespace,
+				path: routeResponse.path,
+				workspace,
+			},
+			"",
+			prefix + routeResponse.path
+		)
 	}
+
+	const newPacks = getPackUrlsForDeps(deps, context)
+
+	if (newPacks && newPacks.length) {
+		await loadScripts(newPacks)
+	}
+
+	// We don't need to store the dependencies in redux
+	delete routeResponse.dependencies
+
+	batch(() => {
+		dispatchRouteDeps(deps)
+		dispatch(setRoute(routeResponse))
+	})
+
+	return context
+}
 
 export default {
 	redirect,

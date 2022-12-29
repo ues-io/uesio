@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Context } from "../context/context"
-import { SecretResponse } from "../platform/platform"
-import { appDispatch } from "../store/store"
+import { platform, SecretResponse } from "../platform/platform"
 import { Uesio } from "./hooks"
 
 class SecretAPI {
@@ -17,9 +16,8 @@ class SecretAPI {
 		useEffect(() => {
 			if (!secrets && !loading.current) {
 				loading.current = true
-				appDispatch()((dispatch, getState, platform) =>
-					platform.getSecrets(context)
-				)
+				platform
+					.getSecrets(context)
 					.then(setSecrets)
 					.finally(() => (loading.current = false))
 			}
@@ -29,9 +27,7 @@ class SecretAPI {
 	}
 
 	set(context: Context, key: string, value: string) {
-		return appDispatch()((dispatch, getState, platform) =>
-			platform.setSecret(context, key, value)
-		)
+		return platform.setSecret(context, key, value)
 	}
 }
 

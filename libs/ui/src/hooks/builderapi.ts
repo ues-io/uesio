@@ -25,7 +25,7 @@ import {
 	cloneKeyDefinition,
 } from "../bands/builder"
 import { save as saveOp, cancel as cancelOp } from "../bands/builder/operations"
-import { appDispatch, RootState, getCurrentState } from "../store/store"
+import { dispatch, RootState, getCurrentState } from "../store/store"
 
 import { MetadataType } from "../bands/builder/types"
 import {
@@ -99,13 +99,11 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		appDispatch()(
-			setActiveNode(makeFullPath(metadataType, metadataItem, path))
-		)
+		dispatch(setActiveNode(makeFullPath(metadataType, metadataItem, path)))
 	}
 
 	clearActiveNode = () => {
-		appDispatch()(setActiveNode(""))
+		dispatch(setActiveNode(""))
 	}
 
 	setSelectedNode = (
@@ -113,22 +111,20 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		appDispatch()(
+		dispatch(
 			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
 	unSelectNode = () => {
-		appDispatch()((dispatch, getState) => {
-			const selectedNode = getState().builder.selectedNode
-			if (!selectedNode) return
-			const newPath = getParentPath(selectedNode)
-			dispatch(setSelectedNode(newPath))
-		})
+		const selectedNode = getCurrentState().builder.selectedNode
+		if (!selectedNode) return
+		const newPath = getParentPath(selectedNode)
+		dispatch(setSelectedNode(newPath))
 	}
 
 	clearSelectedNode = () => {
-		appDispatch()(setSelectedNode(""))
+		dispatch(setSelectedNode(""))
 	}
 
 	setDragNode = (
@@ -136,13 +132,11 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		appDispatch()(
-			setDragNode(makeFullPath(metadataType, metadataItem, path))
-		)
+		dispatch(setDragNode(makeFullPath(metadataType, metadataItem, path)))
 	}
 
 	clearDragNode = () => {
-		appDispatch()(setDragNode(""))
+		dispatch(setDragNode(""))
 	}
 
 	setDropNode = (
@@ -150,33 +144,30 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
-		appDispatch()(
-			setDropNode(makeFullPath(metadataType, metadataItem, path))
-		)
+		dispatch(setDropNode(makeFullPath(metadataType, metadataItem, path)))
 	}
 
 	clearDropNode = () => {
-		appDispatch()(setDropNode(""))
+		dispatch(setDropNode(""))
 	}
 
-	save = () => appDispatch()(saveOp(this.uesio.getContext() || new Context()))
+	save = () => saveOp(this.uesio.getContext() || new Context())
 
-	cancel = () =>
-		appDispatch()(cancelOp(this.uesio.getContext() || new Context()))
+	cancel = () => cancelOp(this.uesio.getContext() || new Context())
 
-	cloneDefinition = (path: string) => appDispatch()(cloneDefinition({ path }))
+	cloneDefinition = (path: string) => dispatch(cloneDefinition({ path }))
 
 	cloneKeyDefinition = (path: string) => {
 		const newKey =
 			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
-		appDispatch()(cloneKeyDefinition({ path, newKey }))
+		dispatch(cloneKeyDefinition({ path, newKey }))
 	}
 
 	setDefinition = (
 		path: string,
 		definition: Definition,
 		autoSelect?: boolean
-	) => appDispatch()(setDefinition({ path, definition, autoSelect }))
+	) => dispatch(setDefinition({ path, definition, autoSelect }))
 
 	addDefinition(
 		path: string,
@@ -184,7 +175,7 @@ class BuilderAPI {
 		index?: number,
 		type?: string
 	) {
-		appDispatch()(
+		dispatch(
 			addDefinition({
 				path,
 				definition,
@@ -195,7 +186,7 @@ class BuilderAPI {
 	}
 
 	removeDefinition(path: string) {
-		appDispatch()(
+		dispatch(
 			removeDefinition({
 				path,
 			})
@@ -211,7 +202,7 @@ class BuilderAPI {
 		)
 
 		if (definition) {
-			appDispatch()(
+			dispatch(
 				add({
 					id: nanoid(),
 					severity: "error",
@@ -220,7 +211,7 @@ class BuilderAPI {
 			)
 			return
 		}
-		appDispatch()(
+		dispatch(
 			changeDefinitionKey({
 				path,
 				key,
@@ -229,7 +220,7 @@ class BuilderAPI {
 	}
 
 	moveDefinition(fromPath: string, toPath: string, selectKey?: string) {
-		appDispatch()(
+		dispatch(
 			moveDefinition({
 				fromPath,
 				toPath,
@@ -243,7 +234,7 @@ class BuilderAPI {
 		metadataItem: string,
 		content: string
 	) {
-		appDispatch()(
+		dispatch(
 			setDefinitionContent({
 				metadataType,
 				metadataItem,
@@ -341,7 +332,7 @@ class BuilderAPI {
 
 				await loadScripts(packsToLoad)
 				batch(() => {
-					dispatchRouteDeps(response, appDispatch())
+					dispatchRouteDeps(response)
 				})
 
 				setIsLoaded(true)

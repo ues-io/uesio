@@ -1,4 +1,4 @@
-import { appDispatch, getCurrentState } from "../store/store"
+import { dispatch, getCurrentState } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { selectState, useComponentState } from "../bands/component/selectors"
@@ -30,7 +30,7 @@ class ComponentAPI {
 	): [T | undefined, (state: T) => void] => {
 		const state = useComponentState<T>(componentId)
 		const setState = (state: T | undefined) => {
-			appDispatch()(
+			dispatch(
 				setComponent({
 					id: componentId,
 					state,
@@ -55,7 +55,7 @@ class ComponentAPI {
 		const state = fullState?.[slice] ?? undefined
 
 		const setState = (state: T) => {
-			appDispatch()(
+			dispatch(
 				setComponent({
 					id: componentId,
 					state: {
