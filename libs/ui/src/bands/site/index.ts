@@ -1,5 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { SiteState } from "../../store/store"
+import { useSelector } from "react-redux"
+import { RootState } from "../../store/store"
+
+type SiteState = {
+	name: string
+	app: string
+	domain: string
+	subdomain: string
+}
 
 const siteSlice = createSlice({
 	name: "site",
@@ -7,4 +15,8 @@ const siteSlice = createSlice({
 	reducers: {},
 })
 
+const useSite = () => useSelector((state: RootState) => state.site)
+
 export default siteSlice.reducer
+
+export { useSite, SiteState }

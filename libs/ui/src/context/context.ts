@@ -1,4 +1,4 @@
-import { getCurrentState, SiteState } from "../store/store"
+import { getCurrentState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, TenantState } from "../bands/route/types"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
@@ -18,6 +18,7 @@ import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../collectionexports"
 import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../bands/builder/types"
+import { SiteState } from "../bands/site"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -432,7 +433,6 @@ export {
 	ContextFrame,
 	FieldMode,
 	RouteState,
-	SiteState,
 	TenantState,
 	getWire,
 	newContext,

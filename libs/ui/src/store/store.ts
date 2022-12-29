@@ -1,4 +1,3 @@
-import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
 
 import collection from "../bands/collection"
@@ -7,7 +6,7 @@ import user from "../bands/user"
 import builder from "../bands/builder"
 import component from "../bands/component"
 import wire from "../bands/wire"
-import site from "../bands/site"
+import site, { SiteState } from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
 import label from "../bands/label"
@@ -30,13 +29,6 @@ import { MetadataState } from "../bands/metadata/types"
 import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
-
-type SiteState = {
-	name: string
-	app: string
-	domain: string
-	subdomain: string
-}
 
 type InitialState = {
 	builder?: BuilderState
@@ -88,18 +80,9 @@ const create = (initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-type Dispatcher = typeof store.dispatch
-
-const dispatch = (action: Parameters<Dispatcher>[0]) => store.dispatch(action)
+const dispatch = (action: Parameters<typeof store.dispatch>[0]) =>
+	store.dispatch(action)
 
 const getCurrentState = () => store.getState()
 
-export {
-	create,
-	Provider,
-	RootState,
-	InitialState,
-	SiteState,
-	dispatch,
-	getCurrentState,
-}
+export { create, RootState, InitialState, dispatch, getCurrentState }
