@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Context } from "../context/context"
-import { ConfigValueResponse } from "../platform/platform"
-import { appDispatch } from "../store/store"
+import { ConfigValueResponse, platform } from "../platform/platform"
 import { Uesio } from "./hooks"
 
 class ConfigValueAPI {
@@ -17,9 +16,8 @@ class ConfigValueAPI {
 		useEffect(() => {
 			if (!values && !loading.current) {
 				loading.current = true
-				appDispatch()((dispatch, getState, platform) =>
-					platform.getConfigValues(context)
-				)
+				platform
+					.getConfigValues(context)
 					.then(setValues)
 					.finally(() => (loading.current = false))
 			}
@@ -29,9 +27,7 @@ class ConfigValueAPI {
 	}
 
 	set(context: Context, key: string, value: string) {
-		return appDispatch()((dispatch, getState, platform) =>
-			platform.setConfigValue(context, key, value)
-		)
+		return platform.setConfigValue(context, key, value)
 	}
 }
 

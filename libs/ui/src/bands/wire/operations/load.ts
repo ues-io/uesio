@@ -8,10 +8,11 @@ import {
 	addLookupWires,
 	setIsLoading,
 } from ".."
-import { ThunkFunc } from "../../../store/store"
+import { dispatch } from "../../../store/store"
 import createrecord from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
+import { platform } from "../../../platform/platform"
 
 // TODO: We can probably get rid of this when we
 function getWiresMap(wires: PlainWire[]) {
@@ -39,63 +40,62 @@ const getWireRequest = (
 		...(forceQuery && { query: true }),
 	}))
 
-export default (
-		context: Context,
-		wireNames?: string[],
-		forceQuery?: boolean
-	): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		// Turn the list of wires into a load request
-		const wires = getWiresFromDefinitonOrContext(wireNames, context)
+export default async (
+	context: Context,
+	wireNames?: string[],
+	forceQuery?: boolean
+) => {
+	// Turn the list of wires into a load request
+	const wires = getWiresFromDefinitonOrContext(wireNames, context)
 
-		const [preloaded, toLoad] = partition(
-			wires,
-			(wire) => wire.preloaded || wire.viewOnly
-		)
+	const [preloaded, toLoad] = partition(
+		wires,
+		(wire) => wire.preloaded || wire.viewOnly
+	)
 
-		const toLoadWithLookups = addLookupWires(toLoad, context)
+	const toLoadWithLookups = addLookupWires(toLoad, context)
 
-		const loadRequests = getWireRequest(
-			toLoadWithLookups,
-			true,
-			context,
-			forceQuery
-		)
+	const loadRequests = getWireRequest(
+		toLoadWithLookups,
+		true,
+		context,
+		forceQuery
+	)
 
-		// Set the loading state for all wires
-		dispatch(setIsLoading(toLoadWithLookups))
+	// Set the loading state for all wires
+	dispatch(setIsLoading(toLoadWithLookups))
 
-		const response = loadRequests.length
-			? await platform.loadData(context, {
-					wires: loadRequests,
-			  })
-			: { wires: [], collections: {} }
+	const response = loadRequests.length
+		? await platform.loadData(context, {
+				wires: loadRequests,
+		  })
+		: { wires: [], collections: {} }
 
-		const loadedResults = response.wires.map((wire, index) => ({
-			...toLoadWithLookups[index],
-			...wire,
-			original: { ...wire.data },
-			isLoading: false,
-		}))
+	const loadedResults = response.wires.map((wire, index) => ({
+		...toLoadWithLookups[index],
+		...wire,
+		original: { ...wire.data },
+		isLoading: false,
+	}))
 
-		const preloadedResults = preloaded.map((wire) => ({
-			...wire,
-			preloaded: false,
-			isLoading: false,
-		}))
+	const preloadedResults = preloaded.map((wire) => ({
+		...wire,
+		preloaded: false,
+		isLoading: false,
+	}))
 
-		const allResults = loadedResults.concat(preloadedResults)
+	const allResults = loadedResults.concat(preloadedResults)
 
-		batch(() => {
-			dispatch(load([allResults, response.collections]))
-			allResults.forEach((wire) => {
-				if (wire?.create) {
-					dispatch(createrecord(context, wire.name))
-				}
-			})
+	batch(() => {
+		dispatch(load([allResults, response.collections]))
+		allResults.forEach((wire) => {
+			if (wire?.create) {
+				createrecord(context, wire.name)
+			}
 		})
+	})
 
-		return context
-	}
+	return context
+}
 
 export { getWireRequest, getWiresMap }

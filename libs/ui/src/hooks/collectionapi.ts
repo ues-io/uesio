@@ -1,7 +1,7 @@
 import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
 import { Context } from "../context/context"
-import { appDispatch, getPlatform } from "../store/store"
+import { getPlatform } from "../store/store"
 import { useEffect } from "react"
 import getMetadata from "../bands/collection/operations/get"
 import { Collection } from "../collectionexports"
@@ -18,7 +18,7 @@ class CollectionAPI {
 
 		useEffect(() => {
 			if (!plainCollection) {
-				appDispatch()(getMetadata(collectionName, context))
+				getMetadata(collectionName, context)
 			}
 		}, [])
 

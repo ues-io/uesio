@@ -10,7 +10,6 @@ import { useEffect } from "react"
 import { ParamDefinition } from "../definition/param"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../bands/collection/types"
-import { appDispatch } from "../store/store"
 
 const getWireFieldFromParamDef = (def: ParamDefinition): ViewOnlyField => {
 	switch (def.type) {
@@ -117,11 +116,11 @@ class WireAPI {
 	}
 
 	loadWires(context: Context, wireNames: string[]) {
-		return appDispatch()(loadWiresOp(context, wireNames))
+		return loadWiresOp(context, wireNames)
 	}
 
 	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
-		return appDispatch()(initWiresOp(context, wireDefs))
+		return initWiresOp(context, wireDefs)
 	}
 
 	getWireFieldsFromParams(params: ParamDefinition[] | undefined) {

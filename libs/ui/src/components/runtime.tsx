@@ -7,7 +7,6 @@ import Route from "./route"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
 import { Context } from "../context/context"
-import { appDispatch } from "../store/store"
 import routeOps from "../bands/route/operations"
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
@@ -34,24 +33,20 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
-				appDispatch()(
-					routeOps.redirect(new Context(), document.location.pathname)
-				)
+				routeOps.redirect(new Context(), document.location.pathname)
 				return
 			}
-			appDispatch()(
-				routeOps.navigate(
-					new Context([
-						{
-							workspace: event.state.workspace,
-						},
-					]),
+			routeOps.navigate(
+				new Context([
 					{
-						path: event.state.path,
-						namespace: event.state.namespace,
+						workspace: event.state.workspace,
 					},
-					true
-				)
+				]),
+				{
+					path: event.state.path,
+					namespace: event.state.namespace,
+				},
+				true
 			)
 		}
 	}, [])

@@ -1,6 +1,6 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
-import { appDispatch } from "../../store/store"
+import { dispatch } from "../../store/store"
 import {
 	setRecord,
 	createRecord,
@@ -74,11 +74,11 @@ class Wire {
 			record: recordId,
 			view: this.getViewId(),
 		})
-		appDispatch()(updateRecordOp(context, path, record))
+		updateRecordOp(context, path, record)
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		appDispatch()(
+		dispatch(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
@@ -90,7 +90,7 @@ class Wire {
 
 	createRecord = (record: PlainWireRecord, prepend?: boolean) => {
 		const recordId = nanoid()
-		appDispatch()(
+		dispatch(
 			createRecord({
 				entity: this.getFullId(),
 				record,
@@ -102,7 +102,7 @@ class Wire {
 	}
 
 	markRecordForDeletion = (recordId: string) => {
-		appDispatch()(
+		dispatch(
 			markForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -111,7 +111,7 @@ class Wire {
 	}
 
 	unmarkRecordForDeletion = (recordId: string) => {
-		appDispatch()(
+		dispatch(
 			unmarkForDelete({
 				entity: this.getFullId(),
 				recordId,
@@ -120,7 +120,7 @@ class Wire {
 	}
 
 	cancel = () => {
-		appDispatch()(
+		dispatch(
 			cancel({
 				entity: this.getFullId(),
 			})
@@ -128,7 +128,7 @@ class Wire {
 	}
 
 	empty = () => {
-		appDispatch()(
+		dispatch(
 			empty({
 				entity: this.getFullId(),
 			})
@@ -136,7 +136,7 @@ class Wire {
 	}
 
 	toggleCondition = (conditionId: string) => {
-		appDispatch()(
+		dispatch(
 			toggleCondition({
 				entity: this.getFullId(),
 				id: conditionId,
@@ -149,11 +149,9 @@ class Wire {
 		return this
 	}
 
-	save = (context: Context) =>
-		appDispatch()(saveWiresOp(context, [this.getId()]))
+	save = (context: Context) => saveWiresOp(context, [this.getId()])
 
-	load = (context: Context) =>
-		appDispatch()(loadWireOp(context, [this.getId()]))
+	load = (context: Context) => loadWireOp(context, [this.getId()])
 }
 
 export default Wire
