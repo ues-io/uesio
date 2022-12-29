@@ -177,7 +177,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			viewDefId,
 			component.path.getParentPath(dropPath)
 		)
-		handleDrop(fullDragPath, fullDropPath, index, viewDef, uesio)
+		handleDrop(fullDragPath, fullDropPath, index, viewDef)
 	}
 
 	return (

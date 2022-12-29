@@ -22,7 +22,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 
-	const wire = uesio.wire.useWire(wireName || "")
+	const wire = uesio.wire.useWire(wireName || "", context)
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No workspace context provided")

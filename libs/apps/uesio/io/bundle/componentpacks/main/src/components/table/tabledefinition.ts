@@ -1,4 +1,11 @@
-import { definition, builder, signal, component, context } from "@uesio/ui"
+import {
+	definition,
+	builder,
+	signal,
+	component,
+	context,
+	hooks,
+} from "@uesio/ui"
 import {
 	ReferenceFieldOptions,
 	UserFieldOptions,
@@ -76,9 +83,11 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
-	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
+
+		const uesio = hooks.useUesio()
 		if (metadataType === "field") {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)

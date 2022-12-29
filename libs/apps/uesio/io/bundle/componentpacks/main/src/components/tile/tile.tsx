@@ -18,7 +18,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
-	const handler = uesio.signal.getHandler(definition.signals)
+	const handler = uesio.signal.getHandler(definition.signals, context)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",

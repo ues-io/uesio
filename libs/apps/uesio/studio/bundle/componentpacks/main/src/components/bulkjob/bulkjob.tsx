@@ -1,5 +1,5 @@
 import { FunctionComponent, ChangeEvent } from "react"
-import { definition, hooks, styles, component } from "@uesio/ui"
+import { definition, styles, component, context as ctx } from "@uesio/ui"
 
 const Button = component.getUtility("uesio/io.button")
 
@@ -14,7 +14,7 @@ interface Props extends definition.BaseProps {
 
 const handleChange = (
 	selectorFiles: FileList | null,
-	uesio: hooks.Uesio,
+	context: ctx.Context,
 	jobId: string
 ): void | never => {
 	if (selectorFiles) {
@@ -23,7 +23,7 @@ const handleChange = (
 		}
 
 		const file = selectorFiles[0]
-		const context = uesio.getContext()
+
 		const workspace = context.getWorkspace()
 
 		if (file.type === "text/csv") {
@@ -56,7 +56,6 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -72,7 +71,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 					id={id}
 					name={id}
 					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						handleChange(e.target.files, uesio, jobId)
+						handleChange(e.target.files, context, jobId)
 					}
 				/>
 				<Button

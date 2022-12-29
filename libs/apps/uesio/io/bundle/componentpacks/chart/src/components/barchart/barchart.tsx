@@ -8,7 +8,7 @@ import { aggregate } from "../../shared/aggregate"
 Chart.register(...registerables)
 
 const ChartComponent: FC<Props> = (props) => {
-	const { definition } = props
+	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for chart")
 		return null
@@ -34,7 +34,7 @@ const ChartComponent: FC<Props> = (props) => {
 		wireNames.push(series.wire)
 	})
 
-	const wires = uesio.wire.useWires(wireNames)
+	const wires = uesio.wire.useWires(wireNames, context)
 
 	const [datasets, categories] = aggregate(
 		wires,

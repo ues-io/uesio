@@ -40,7 +40,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 
 	const wireDef = getWireDefinition(collection, fieldsMeta)
 
-	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef)
+	const dataWire = uesio.wire.useDynamicWire(WIRE_NAME, wireDef, context)
 
 	if (!dataWire || !fieldsMeta) return null
 

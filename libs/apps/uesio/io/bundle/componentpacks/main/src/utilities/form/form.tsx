@@ -16,7 +16,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel, content } = props
 	const uesio = hooks.useUesio(props)
 	const wireName = props.wire
-	const wire = uesio.wire.useWire(wireName)
+	const wire = uesio.wire.useWire(wireName, context)
 
 	if (!wire) return null
 

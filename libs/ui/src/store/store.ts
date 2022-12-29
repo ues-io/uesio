@@ -1,8 +1,6 @@
 import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
 
-import { Platform } from "../platform/platform"
-
 import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
@@ -56,12 +54,9 @@ type InitialState = {
 	collection?: EntityState<PlainCollection>
 }
 
-let platform: Platform
 let store: ReturnType<typeof create>
 
-const create = (plat: Platform, initialState: InitialState) => {
-	platform = plat
-
+const create = (initialState: InitialState) => {
 	attachDefToWires(initialState.wire, initialState.viewdef)
 
 	const newStore = configureStore({
@@ -96,7 +91,7 @@ type RootState = ReturnType<typeof store.getState>
 type Dispatcher = typeof store.dispatch
 
 const dispatch = (action: Parameters<Dispatcher>[0]) => store.dispatch(action)
-const getPlatform = () => platform
+
 const getCurrentState = () => store.getState()
 
 export {
@@ -106,6 +101,5 @@ export {
 	InitialState,
 	SiteState,
 	dispatch,
-	getPlatform,
 	getCurrentState,
 }

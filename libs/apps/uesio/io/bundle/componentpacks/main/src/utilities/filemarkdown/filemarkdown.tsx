@@ -46,7 +46,12 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const mimeType = "text/markdown; charset=utf-8"
 
 	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = uesio.component.getId(id, "uesio/io.field")
+	const componentId = uesio.component.getComponentId(
+		id,
+		"uesio/io.field",
+		props.path,
+		context
+	)
 	const [state, setState] = uesio.component.useState<FieldState>(
 		componentId,
 		{

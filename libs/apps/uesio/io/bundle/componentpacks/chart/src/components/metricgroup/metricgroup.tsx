@@ -25,7 +25,7 @@ const MetricGroupComponent: FC<Props> = (props) => {
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")
 
-	const wires = uesio.wire.useWires(wireNames)
+	const wires = uesio.wire.useWires(wireNames, context)
 
 	const [datasets, categories] = aggregate(
 		wires,

@@ -34,8 +34,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				metadataType,
 				metadataItem,
 				selectedPath,
-				definition,
-				uesio
+				definition
 			)}
 		/>
 	)

@@ -1,4 +1,3 @@
-import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
 import { FieldMetadataMap } from "../../src/bands/field/types"
 import { PlainCollection } from "../../src/bands/collection/types"
@@ -15,7 +14,7 @@ export const testEnv = {
 	wireId,
 }
 
-export const getStore = () => create(platform, {})
+export const getStore = () => create({})
 
 export const getFields = (): FieldMetadataMap => ({
 	"ben/planets.name": {
