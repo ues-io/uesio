@@ -2,12 +2,13 @@ import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import { useHotKeyCallback, useUesio } from "../hooks/hooks"
+import { useUesio } from "../hooks/hooks"
 import Route from "./route"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
 import { Context } from "../context/context"
 import routeOps from "../bands/route/operations"
+import { useHotKeyCallback } from "../hooks/hotkeys"
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
@@ -15,14 +16,19 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
 
 	portalsDomNode = useRef<HTMLDivElement>(null)
-	// Hardcode the component type since this component is called
-	// in an unusual way by the loader
-	uesio._componentType = "uesio/builder.runtime"
 
-	uesio.addContextFrame({
+	const viewContext = props.context.addFrame({
 		view: "$root",
 	})
-	const componentId = uesio.component.getId("buildmode")
+
+	const componentId = uesio.component.getComponentId(
+		"buildmode",
+		// Hardcode the component type since this component is called
+		// in an unusual way by the loader
+		"uesio/builder.runtime",
+		props.path,
+		viewContext
+	)
 	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
 		componentId,
 		false
@@ -55,7 +61,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		setBuildMode(!buildMode)
 	})
 
-	const context = uesio.getContext().addFrame({
+	const buildContext = viewContext.addFrame({
 		buildMode,
 	})
 
@@ -63,7 +69,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 
 	return (
 		<>
-			<Route path={props.path} context={context} />
+			<Route path={props.path} context={buildContext} />
 			<div
 				className={css({
 					position: "fixed",

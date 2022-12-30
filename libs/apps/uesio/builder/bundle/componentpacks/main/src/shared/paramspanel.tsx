@@ -9,7 +9,7 @@ const ParamsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [selectedMetadataType, selectedMetadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 	const metadataType = "viewdef"
-	const metadataItem = uesio.getViewDefId() || ""
+	const metadataItem = context.getViewDefId() || ""
 	const localPath = `["params"]`
 	const def = uesio.builder.useDefinition(
 		metadataType,

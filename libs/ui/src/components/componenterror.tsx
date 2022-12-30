@@ -11,7 +11,7 @@ interface Props extends UtilityProps {
 const slotError: FC<Props> = (props) => {
 	const cname = props.componentType
 	const uesio = useUesio(props)
-	const viewDefId = uesio.getViewDefId() || ""
+	const viewDefId = props.context.getViewDefId() || ""
 	const message = getErrorString(props.error)
 
 	return (

@@ -4,13 +4,14 @@ const handleDrop = (
 	dragNode: string,
 	dropNode: string,
 	dropIndex: number,
-	definition: definition.DefinitionMap,
-	uesio: hooks.Uesio
+	definition: definition.DefinitionMap
 ): void => {
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
 		dragNode,
 		definition
 	)
+
+	const uesio = hooks.useUesio()
 
 	uesio.builder.clearDragNode()
 	uesio.builder.clearDropNode()
@@ -32,7 +33,7 @@ const handleDrop = (
 				)
 			const handler = dropPropDef?.handleFieldDrop
 			if (handler) {
-				handler(dragNode, dropNode, dropIndex, propDef, uesio)
+				handler(dragNode, dropNode, dropIndex, propDef)
 			}
 			break
 		}

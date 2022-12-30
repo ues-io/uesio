@@ -39,7 +39,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| undefined
 	const uesio = hooks.useUesio(props)
 	const [, , selectedNode] = uesio.builder.useSelectedNode()
-	const viewDefId = uesio.getViewDefId()
+	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
 	const orderDef = wireDef?.order as definition.Definition[] | undefined

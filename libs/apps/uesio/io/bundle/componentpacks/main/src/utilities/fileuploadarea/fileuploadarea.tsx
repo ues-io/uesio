@@ -27,7 +27,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 			const recordId = record.getIdFieldValue() || ""
 			const file = files[0]
 			const fileResponse = await uesio.file.uploadFile(
-				uesio.getContext(),
+				context,
 				file,
 				collectionFullName,
 				recordId,
@@ -39,7 +39,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	}
 
 	const deleteFile = async () => {
-		await uesio.file.deleteFile(uesio.getContext(), userFileId)
+		await uesio.file.deleteFile(context, userFileId)
 		record.set(fieldId, "")
 	}
 

@@ -32,20 +32,26 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const toggleCode = uesio.signal.getHandler([
-		{
-			signal: "component/uesio/builder.runtime/TOGGLE_CODE/codepanel",
-		},
-	])
+	const toggleCode = uesio.signal.getHandler(
+		[
+			{
+				signal: "component/uesio/builder.runtime/TOGGLE_CODE/codepanel",
+			},
+		],
+		context
+	)
 
 	const setDimensions = (height: number, width: number) =>
-		uesio.signal.getHandler([
-			{
-				signal: "component/uesio/builder.runtime/SET_DIMENSIONS/dimensions",
-				height,
-				width,
-			},
-		])
+		uesio.signal.getHandler(
+			[
+				{
+					signal: "component/uesio/builder.runtime/SET_DIMENSIONS/dimensions",
+					height,
+					width,
+				},
+			],
+			context
+		)
 
 	hooks.useHotKeyCallback("command+y", () => {
 		toggleCode?.()

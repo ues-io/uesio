@@ -1,11 +1,12 @@
 import { FunctionComponent, useEffect } from "react"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
-import { useSite } from "../bands/site/selectors"
-import { useHotKeyCallback, useUesio } from "../hooks/hooks"
+import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
 import View from "./view/view"
+import { useHotKeyCallback } from "../hooks/hotkeys"
+import { useSite } from "../bands/site"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)

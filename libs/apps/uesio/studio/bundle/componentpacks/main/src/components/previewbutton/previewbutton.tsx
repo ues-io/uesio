@@ -42,13 +42,17 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const [open, setOpen] = useState<boolean>(false)
 
-	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
-		viewOnly: true,
-		fields: uesio.wire.getWireFieldsFromParams(params),
-		init: {
-			create: true,
+	uesio.wire.useDynamicWire(
+		open ? WIRE_NAME : "",
+		{
+			viewOnly: true,
+			fields: uesio.wire.getWireFieldsFromParams(params),
+			init: {
+				create: true,
+			},
 		},
-	})
+		context
+	)
 
 	const togglePreview = () => (hasParams ? setOpen(true) : previewHandler())
 

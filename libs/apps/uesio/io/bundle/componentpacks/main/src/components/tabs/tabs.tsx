@@ -20,7 +20,10 @@ const Tabs: FunctionComponent<Props> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 
-	const componentId = uesio.component.getId(definition.id)
+	const componentId = uesio.component.getComponentIdFromProps(
+		definition.id,
+		props
+	)
 
 	const [selectedTabId, setSelectedTab] = uesio.component.useState<string>(
 		"tabs",

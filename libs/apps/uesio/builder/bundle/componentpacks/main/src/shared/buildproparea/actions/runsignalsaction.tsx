@@ -22,7 +22,7 @@ const RunSignalsAction: FunctionComponent<
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={uesio.signal.getHandler(signals)}
+			onClick={uesio.signal.getHandler(signals, context)}
 			icon="router"
 			context={context}
 		/>

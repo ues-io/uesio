@@ -4,7 +4,6 @@ import {
 	setMany as viewSetMany,
 } from "../../src/bands/viewdef"
 import { AnyAction } from "redux"
-import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
 import { makeFullPath, parseKey } from "../../src/component/path"
 import { parse } from "../../src/yamlutils/yamlutils"
@@ -15,7 +14,7 @@ const TEST_TYPE = "viewdef"
 const getTestPath = (path: string) => makeFullPath(TEST_TYPE, TEST_VIEW, path)
 
 const testTextAction = (data: string, expected: string, action: AnyAction) => {
-	const store = create(platform, {})
+	const store = create({})
 	const initialItem = {
 		content: data,
 		key: TEST_VIEW,

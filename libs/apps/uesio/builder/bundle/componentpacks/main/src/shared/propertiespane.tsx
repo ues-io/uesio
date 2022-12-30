@@ -61,9 +61,11 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		</div>
 	)
 
-	const componentId = uesio.component.getId(
+	const componentId = uesio.component.getComponentId(
 		"propertiespanel" + path,
-		"uesio/builder.runtime"
+		"uesio/builder.runtime",
+		path,
+		context
 	)
 
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(

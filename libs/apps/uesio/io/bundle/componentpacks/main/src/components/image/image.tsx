@@ -28,7 +28,7 @@ const Image: FC<ImageProps> = (props) => {
 			className={classes.root}
 			onClick={
 				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
+				uesio.signal.getHandler(definition.signals, context)
 			}
 		>
 			<img

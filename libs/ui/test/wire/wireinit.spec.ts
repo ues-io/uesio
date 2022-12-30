@@ -1,4 +1,3 @@
-import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
 import initializeWiresOp from "../../src/bands/wire/operations/initialize"
 import { newContext } from "../../src/context/context"
@@ -8,7 +7,7 @@ import { selectWire } from "../../src/bands/wire"
 // initialized correctly. It mostly tests our ability to create a
 // new store and dispatch actions against it
 test("wire init", () => {
-	const store = create(platform, {})
+	const store = create({})
 	const viewId = "myview"
 	const wireId = "mywire"
 	const context = newContext({ view: viewId })

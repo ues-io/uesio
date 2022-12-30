@@ -1,6 +1,9 @@
-import { Uesio } from "./hooks"
 import { useCollection, useCollections } from "../bands/collection/selectors"
-import { getFullWireId, useWire, useWires } from "../bands/wire"
+import {
+	getFullWireId,
+	useWire as uWire,
+	useWires as uWires,
+} from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import initWiresOp from "../bands/wire/operations/initialize"
@@ -55,87 +58,93 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 
 // This is the wire api exposed on the uesio object returned
 // to components using the useUesio hook.
-class WireAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
-	}
 
-	uesio: Uesio
-
-	// Wraps our store's useWire result (POJO) in a nice Wire class
-	// with convenience methods to make the api easier to consume for end users.
-	useWire(wireName?: string) {
-		const view = wireName
-			? this.uesio.getViewId()
-			: this.uesio.getContext().findWireFrame()?.getViewId()
-		const name = wireName || this.uesio.getContext().getWireId()
-		const plainWire = useWire(view, name)
-		const collectionName = plainWire?.collection
-		const plainCollection = useCollection(collectionName)
-		if (!plainCollection) return undefined
-		return new Wire(plainWire).attachCollection(plainCollection)
-	}
-
-	useDynamicWire(wireName: string, wireDef: WireDefinition | null) {
-		const context = this.uesio.getContext()
-		const wire = this.useWire(wireName)
-		useEffect(() => {
-			if (wire || !wireDef || !wireName) return
-			this.initWires(context, {
-				[wireName]: wireDef,
-			})
-			this.loadWires(context, [wireName])
-		}, [wireName, JSON.stringify(wireDef)])
-		return wire
-	}
-
-	useWires(wireNames: string[]): { [k: string]: Wire | undefined } {
-		const view = this.uesio.getViewId() || ""
-		const fullWireIds = wireNames.map((wirename) =>
-			getFullWireId(view, wirename)
-		)
-		const plainWires = useWires(fullWireIds)
-		const collectionNames = Object.values(plainWires).map(
-			(plainWire) => plainWire?.collection || ""
-		)
-		const collections = useCollections(collectionNames)
-
-		return Object.fromEntries(
-			Object.entries(plainWires).map(([, plainWire]) => {
-				if (!plainWire || !plainWire.collection)
-					return [plainWire?.name, undefined]
-
-				const plainCollection = collections[plainWire.collection]
-				if (!plainCollection) return [plainWire?.name, undefined]
-				return [
-					plainWire?.name,
-					new Wire(plainWire).attachCollection(plainCollection),
-				]
-			})
-		)
-	}
-
-	loadWires(context: Context, wireNames: string[]) {
-		return loadWiresOp(context, wireNames)
-	}
-
-	initWires(context: Context, wireDefs: Record<string, WireDefinition>) {
-		return initWiresOp(context, wireDefs)
-	}
-
-	getWireFieldsFromParams(params: ParamDefinition[] | undefined) {
-		if (!params) return {}
-		return Object.fromEntries(
-			params.map((def) => [def.name, getWireFieldFromParamDef(def)])
-		)
-	}
-
-	getParamValues(params: ParamDefinition[] | undefined, record: WireRecord) {
-		if (!params) return {}
-		return Object.fromEntries(
-			params.map((def) => [def.name, getValueForParam(def, record)])
-		)
-	}
+// Wraps our store's useWire result (POJO) in a nice Wire class
+// with convenience methods to make the api easier to consume for end users.
+const useWire = (wireName: string | undefined, context: Context) => {
+	const view = wireName
+		? context.getViewId()
+		: context.findWireFrame()?.getViewId()
+	const name = wireName || context.getWireId()
+	const plainWire = uWire(view, name)
+	const collectionName = plainWire?.collection
+	const plainCollection = useCollection(collectionName)
+	if (!plainCollection) return undefined
+	return new Wire(plainWire).attachCollection(plainCollection)
 }
 
-export { WireAPI }
+const useDynamicWire = (
+	wireName: string,
+	wireDef: WireDefinition | null,
+	context: Context
+) => {
+	const wire = useWire(wireName, context)
+	useEffect(() => {
+		if (wire || !wireDef || !wireName) return
+		initWires(context, {
+			[wireName]: wireDef,
+		})
+		loadWires(context, [wireName])
+	}, [wireName, JSON.stringify(wireDef)])
+	return wire
+}
+
+const useWires = (
+	wireNames: string[],
+	context: Context
+): { [k: string]: Wire | undefined } => {
+	const view = context.getViewId() || ""
+	const fullWireIds = wireNames.map((wirename) =>
+		getFullWireId(view, wirename)
+	)
+	const plainWires = uWires(fullWireIds)
+	const collectionNames = Object.values(plainWires).map(
+		(plainWire) => plainWire?.collection || ""
+	)
+	const collections = useCollections(collectionNames)
+
+	return Object.fromEntries(
+		Object.entries(plainWires).map(([, plainWire]) => {
+			if (!plainWire || !plainWire.collection)
+				return [plainWire?.name, undefined]
+
+			const plainCollection = collections[plainWire.collection]
+			if (!plainCollection) return [plainWire?.name, undefined]
+			return [
+				plainWire?.name,
+				new Wire(plainWire).attachCollection(plainCollection),
+			]
+		})
+	)
+}
+
+const loadWires = loadWiresOp
+
+const initWires = initWiresOp
+
+const getWireFieldsFromParams = (params: ParamDefinition[] | undefined) => {
+	if (!params) return {}
+	return Object.fromEntries(
+		params.map((def) => [def.name, getWireFieldFromParamDef(def)])
+	)
+}
+
+const getParamValues = (
+	params: ParamDefinition[] | undefined,
+	record: WireRecord
+) => {
+	if (!params) return {}
+	return Object.fromEntries(
+		params.map((def) => [def.name, getValueForParam(def, record)])
+	)
+}
+
+export {
+	useWire,
+	useDynamicWire,
+	useWires,
+	loadWires,
+	initWires,
+	getWireFieldsFromParams,
+	getParamValues,
+}

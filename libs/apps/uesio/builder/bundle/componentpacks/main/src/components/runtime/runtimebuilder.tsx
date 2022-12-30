@@ -27,7 +27,10 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
 
-	const componentId = uesio.component.getId("codepanel")
+	const componentId = uesio.component.getComponentIdFromProps(
+		"codepanel",
+		props
+	)
 	const [showCode] = uesio.component.useState<boolean>(componentId)
 	const { context } = props
 

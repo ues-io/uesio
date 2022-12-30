@@ -1,32 +1,24 @@
-import { Uesio } from "./hooks"
-import { useCollection } from "../bands/collection/selectors"
+import { useCollection as useColl } from "../bands/collection/selectors"
 import { Context } from "../context/context"
-import { getPlatform } from "../store/store"
+
 import { useEffect } from "react"
 import getMetadata from "../bands/collection/operations/get"
-import { Collection } from "../collectionexports"
+import { platform } from "../platform/platform"
+import Collection from "../bands/collection/class"
 
-class CollectionAPI {
-	constructor(uesio: Uesio) {
-		this.uesio = uesio
-	}
+const useCollection = (context: Context, collectionName: string) => {
+	const plainCollection = useColl(collectionName)
 
-	uesio: Uesio
+	useEffect(() => {
+		if (!plainCollection) {
+			getMetadata(collectionName, context)
+		}
+	}, [])
 
-	useCollection(context: Context, collectionName: string) {
-		const plainCollection = useCollection(collectionName)
-
-		useEffect(() => {
-			if (!plainCollection) {
-				getMetadata(collectionName, context)
-			}
-		}, [])
-
-		return plainCollection && new Collection(plainCollection)
-	}
-
-	createJob = getPlatform().createJob
-	importData = getPlatform().importData
+	return plainCollection && new Collection(plainCollection)
 }
 
-export { CollectionAPI }
+const createJob = platform.createJob
+const importData = platform.importData
+
+export { useCollection, createJob, importData }

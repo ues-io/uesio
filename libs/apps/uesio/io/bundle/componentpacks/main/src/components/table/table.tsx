@@ -33,7 +33,7 @@ const Paginator =
 const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = uesio.wire.useWire(definition.wire, context)
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
@@ -42,7 +42,10 @@ const Table: FC<TableProps> = (props) => {
 		  })
 		: context
 
-	const componentId = uesio.component.getId(definition.id)
+	const componentId = uesio.component.getComponentIdFromProps(
+		definition.id,
+		props
+	)
 	const [mode] = useMode(componentId, definition.mode, props)
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,

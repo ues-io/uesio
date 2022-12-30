@@ -5,7 +5,6 @@ import {
 	DefinitionValue,
 } from "../definition/definition"
 import React, { FC } from "react"
-import { Uesio } from "../hooks/hooks"
 import { MetadataType } from "../bands/builder/types"
 import ValueAPI from "./valueapi"
 
@@ -24,8 +23,7 @@ type BuildPropertiesDefinition = {
 		dragNode: string,
 		dropNode: string,
 		dropIndex: number,
-		propDef: BuildPropertiesDefinition,
-		uesio: Uesio
+		propDef: BuildPropertiesDefinition
 	) => void
 	name?: string // auto-populated
 	namespace?: string // auto-populated

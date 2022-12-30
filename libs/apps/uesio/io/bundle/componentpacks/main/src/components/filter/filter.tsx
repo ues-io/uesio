@@ -40,7 +40,7 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId, conditionId } = definition
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = uesio.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
 	const collection = wire.getCollection()

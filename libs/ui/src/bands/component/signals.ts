@@ -4,9 +4,10 @@ import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { getCurrentState, dispatch } from "../../store/store"
 import { selectTarget } from "./selectors"
-import { makeComponentId, set as setComponent } from "../component"
+import { set as setComponent } from "../component"
 import { batch } from "react-redux"
 import { platform } from "../../platform/platform"
+import { makeComponentId } from "../../hooks/componentapi"
 
 interface ComponentSignal extends SignalDefinition {
 	target?: string

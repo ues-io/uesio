@@ -17,8 +17,13 @@ const View: FunctionComponent<ViewProps> = (props) => {
 	} = props
 
 	const uesio = useUesio(props)
-	uesio._componentType = "uesio/core.view"
-	const componentId = uesio.component.getId(id)
+
+	const componentId = uesio.component.getComponentId(
+		id,
+		"uesio/core.view",
+		path,
+		context
+	)
 	const viewId = makeViewId(viewDefId, path ? id || path : "$root")
 
 	const subViewClass = css({

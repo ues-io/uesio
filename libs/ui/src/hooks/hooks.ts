@@ -1,95 +1,36 @@
-import { SignalAPI } from "./signalapi"
-import { WireAPI } from "./wireapi"
-import { BuilderAPI } from "./builderapi"
-import { ViewAPI } from "./viewapi"
-import { FileAPI } from "./fileapi"
-import { ComponentAPI } from "./componentapi"
-import { PlatformAPI } from "./platformapi"
-import { CollectionAPI } from "./collectionapi"
+import * as signal from "./signalapi"
+import * as wire from "./wireapi"
+import * as builder from "./builderapi"
+import * as view from "./viewapi"
+import * as file from "./fileapi"
+import * as component from "./componentapi"
+import * as platform from "./platformapi"
+import * as collection from "./collectionapi"
 import { BaseProps } from "../definition/definition"
-import { Context, ContextFrame } from "../context/context"
-import { ConfigValueAPI } from "./configvalueapi"
-import { SecretAPI } from "./secretapi"
-import { NotificationAPI } from "./notificationapi"
-import { FeatureFlagAPI } from "./featureflagapi"
-import { BotAPI } from "./botapi"
-import { useHotkeys } from "react-hotkeys-hook"
+import * as configvalue from "./configvalueapi"
+import * as secret from "./secretapi"
+import * as notification from "./notificationapi"
+import * as featureflag from "./featureflagapi"
+import * as bot from "./botapi"
+import { useHotKeyCallback } from "./hotkeys"
 
-// Create a new Uesio API instance for use inside of a component
-class Uesio {
-	constructor(props: BaseProps) {
-		this._path = props.path || ""
-		this._context = props.context || new Context()
-		this._componentType = props.componentType || ""
-
-		this.signal = new SignalAPI(this)
-		this.wire = new WireAPI(this)
-		this.builder = new BuilderAPI(this)
-		this.view = new ViewAPI(this)
-		this.file = new FileAPI(this)
-		this.component = new ComponentAPI(this)
-		this.platform = new PlatformAPI(this)
-		this.collection = new CollectionAPI(this)
-		this.configvalue = new ConfigValueAPI(this)
-		this.secret = new SecretAPI(this)
-		this.featureflag = new FeatureFlagAPI(this)
-		this.notification = new NotificationAPI(this)
-		this.bot = new BotAPI(this)
-	}
-
-	// Public Apis
-	signal: SignalAPI
-	wire: WireAPI
-	builder: BuilderAPI
-	view: ViewAPI
-	file: FileAPI
-	component: ComponentAPI
-	platform: PlatformAPI
-	collection: CollectionAPI
-	configvalue: ConfigValueAPI
-	secret: SecretAPI
-	featureflag: FeatureFlagAPI
-	notification: NotificationAPI
-	bot: BotAPI
-
-	_path: string
-	_context: Context
-	_componentType: string
-
-	getPath = () => this._path
-	getComponentType = () => this._componentType
-	getContext = () => this._context
-	getTheme = () => this.getContext().getTheme()
-	getViewId = () => this.getContext().getViewId()
-	getViewDef = () => this.getContext().getViewDef()
-	getViewDefId = () => this.getContext().getViewDefId()
-	addContextFrame = (frame: ContextFrame) =>
-		(this._context = this._context.addFrame(frame))
-	setContext = (context: Context) => (this._context = context)
+const api = {
+	signal,
+	wire,
+	builder,
+	view,
+	file,
+	component,
+	platform,
+	collection,
+	configvalue,
+	secret,
+	featureflag,
+	notification,
+	bot,
 }
 
-const useUesio = (props: BaseProps) => new Uesio(props)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const useUesio = (props?: BaseProps) => api
 
-const useHotKeyCallback = (
-	keycode: string | undefined,
-	callback: Parameters<typeof useHotkeys>[1] | undefined,
-	enabled?: boolean
-) => {
-	// This may not be the best function to determine this, but it works for now.
-	const isTypeable = keycode?.length === 1
-	return useHotkeys(
-		keycode || "",
-		(event, handler) => {
-			event.preventDefault()
-			callback?.(event, handler)
-		},
-		{
-			enabled: enabled !== false && !!keycode,
-			enableOnTags: !isTypeable
-				? ["INPUT", "TEXTAREA", "SELECT"]
-				: undefined,
-		}
-	)
-}
-
-export { useUesio, Uesio, useHotKeyCallback }
+export { useUesio, useHotKeyCallback }

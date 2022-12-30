@@ -11,7 +11,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const [, , selectedPath] = uesio.builder.useSelectedNode()
 	const metadataType = "viewdef"
-	const metadataItem = uesio.getViewDefId() || ""
+	const metadataItem = context.getViewDefId() || ""
 	const localPath = `["panels"]`
 
 	const viewdef = uesio.builder.useDefinition(metadataType, metadataItem, "")
@@ -20,8 +20,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataType,
 		metadataItem,
 		selectedPath,
-		viewdef,
-		uesio
+		viewdef
 	)
 
 	const panelDefs = valueAPI.get(localPath) as definition.DefinitionMap
