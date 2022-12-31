@@ -1,6 +1,10 @@
 import { getCurrentState } from "../store/store"
 import Collection from "../bands/collection/class"
-import { RouteState, TenantState } from "../bands/route/types"
+import {
+	RouteState,
+	SiteAdminState,
+	WorkspaceState,
+} from "../bands/route/types"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
@@ -33,8 +37,8 @@ type ContextFrame = {
 	fieldMode?: FieldMode
 	noMerge?: boolean
 	route?: RouteState
-	workspace?: TenantState
-	siteadmin?: TenantState
+	workspace?: WorkspaceState
+	siteadmin?: SiteAdminState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
@@ -305,12 +309,4 @@ class Context {
 			.filter((def) => def)
 }
 
-export {
-	Context,
-	ContextFrame,
-	FieldMode,
-	RouteState,
-	TenantState,
-	getWire,
-	newContext,
-}
+export { Context, ContextFrame, FieldMode, RouteState, getWire, newContext }

@@ -257,8 +257,8 @@ const getDefinitionFromFullPath = (state: RootState, fullPath: string) => {
 	return getDefinition(state, metadataType, metadataItem, localPath)
 }
 
-const getNamespaceInfo = (ns: string) => {
-	const namespaces = getCurrentState().builder.namespaces || {}
+const getNamespaceInfo = (ns: string, context: Context) => {
+	const namespaces = context.getWorkspace()?.namespaces || {}
 	return namespaces[ns]
 }
 
@@ -319,7 +319,7 @@ const getSignalProperties = (signal: SignalDefinition) => {
 }
 
 const getBuilderDeps = async (context: Context) => {
-	const isLoaded = !!getCurrentState().builder.namespaces
+	const isLoaded = !!context.getWorkspace()?.namespaces
 
 	if (isLoaded) return
 

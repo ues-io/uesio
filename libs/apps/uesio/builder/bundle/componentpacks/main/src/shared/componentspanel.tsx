@@ -86,7 +86,8 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	// Filter out variants that aren't in one of our namespaces
 	// (this is for filtering out variants from the studio namespace)
 	const validVariants = variants?.filter(
-		(variant) => !!uesio.builder.getNamespaceInfo(variant.namespace)
+		(variant) =>
+			!!uesio.builder.getNamespaceInfo(variant.namespace, context)
 	)
 
 	const selected =
