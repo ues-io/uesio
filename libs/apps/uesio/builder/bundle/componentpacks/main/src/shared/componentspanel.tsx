@@ -261,7 +261,7 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 	// sort the variants by category
 	const componentsByCategory = groupBy(
 		builderComponents,
-		(propDef) => propDef.category || "UNCATEGORIZED"
+		() => "UNCATEGORIZED"
 	)
 
 	const variants = uesio.component.useAllVariants()

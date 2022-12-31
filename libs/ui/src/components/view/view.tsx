@@ -61,18 +61,18 @@ const View: FunctionComponent<ViewProps> = (props) => {
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}
-			context={viewContext.addFrame({
-				buildMode: !!context.getBuildMode() && !isSubView,
-			})}
+			context={viewContext}
 			message="Drag and drop any component here to get started."
 		/>
 	)
 
-	if (isSubView && context.getBuildMode()) {
+	const inWorkspaceMode = !!context.getWorkspace()
+
+	if (isSubView && inWorkspaceMode) {
 		return <div className={subViewClass}>{slot}</div>
 	}
 
-	if (!isSubView && context.getBuildMode()) {
+	if (!isSubView && inWorkspaceMode) {
 		return (
 			<ComponentInternal
 				context={viewContext}

@@ -48,7 +48,6 @@ import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
 import { add } from "../bands/notification"
 import { nanoid } from "@reduxjs/toolkit"
-import { useEffect, useState } from "react"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 import { registry } from "../signals/signals"
@@ -319,25 +318,21 @@ const getSignalProperties = (signal: SignalDefinition) => {
 	]
 }
 
-const useBuilderDeps = (buildMode: boolean | undefined, context: Context) => {
-	const [isLoaded, setIsLoaded] = useState<boolean | undefined>(undefined)
-	const isPreLoaded = isLoaded || !!getCurrentState().builder.namespaces
-	useEffect(() => {
-		if (!buildMode || isLoaded || isPreLoaded) return
-		;(async () => {
-			const response = await platform.getBuilderDeps(context)
+const getBuilderDeps = async (context: Context) => {
+	const isLoaded = !!getCurrentState().builder.namespaces
 
-			const packsToLoad = getPackUrlsForDeps(response, context, true)
+	if (isLoaded) return
 
-			await loadScripts(packsToLoad)
-			batch(() => {
-				dispatchRouteDeps(response)
-			})
+	const response = await platform.getBuilderDeps(context)
 
-			setIsLoaded(true)
-		})()
-	}, [buildMode])
-	return isLoaded || isPreLoaded
+	const packsToLoad = getPackUrlsForDeps(response, context)
+
+	await loadScripts(packsToLoad)
+	batch(() => {
+		dispatchRouteDeps(response)
+	})
+
+	return
 }
 
 const defaultSignalProps = (): PropDescriptor[] => {
@@ -392,5 +387,5 @@ export {
 	getNamespaceInfo,
 	useAvailableNamespaces,
 	getSignalProperties,
-	useBuilderDeps,
+	getBuilderDeps,
 }

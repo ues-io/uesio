@@ -17,7 +17,11 @@ import (
 
 var indexTemplate *template.Template
 
-func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode bool) string {
+var DEFAULT_BUILDER_COMPONENT = "uesio/builder.runtime"
+var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
+var DEFAULT_BUILDER_PACK_NAME = "main"
+
+func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -28,9 +32,7 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode boo
 	}
 
 	builderSuffix := "runtime.js"
-	if buildMode {
-		builderSuffix = "builder.js"
-	}
+
 	if workspace != nil {
 		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
 	}
@@ -70,17 +72,22 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 	}
 }
 
-func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
-	componentID := "$root:uesio/builder.runtime:buildmode"
-	return &routing.ComponentsMergeData{
-		IDs: []string{componentID},
-		Entities: map[string]routing.ComponentMergeData{
-			componentID: {
-				ID:    componentID,
-				State: buildMode,
-			},
-		},
+func GetComponentMergeData(stateMap map[string]interface{}) *routing.ComponentsMergeData {
+	stateData := &routing.ComponentsMergeData{
+		IDs:      []string{},
+		Entities: map[string]routing.ComponentMergeData{},
 	}
+	if stateMap == nil {
+		return stateData
+	}
+	for componentID, state := range stateMap {
+		stateData.IDs = append(stateData.IDs, componentID)
+		stateData.Entities[componentID] = routing.ComponentMergeData{
+			ID:    componentID,
+			State: state,
+		}
+	}
+	return stateData
 }
 
 func GetBuilderMergeData(preload *routing.PreloadMetadata, buildMode bool) *routing.BuilderMergeData {
@@ -89,7 +96,8 @@ func GetBuilderMergeData(preload *routing.PreloadMetadata, buildMode bool) *rout
 	}
 
 	return &routing.BuilderMergeData{
-		Namespaces: preload.Namespaces,
+		Namespaces:       preload.Namespaces,
+		BuilderComponent: DEFAULT_BUILDER_COMPONENT,
 	}
 
 }
@@ -104,6 +112,15 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	val, _ := os.LookupEnv("UESIO_DEV")
 	if val == "true" {
 		devMode = true
+	}
+
+	componentState := map[string]interface{}{}
+
+	// If we're in workspace mode, make sure we have the builder pack so we can include the
+	// buildwrapper
+	if workspace != nil {
+		componentState[fmt.Sprintf("%s($root):%s:buildmode", route.ViewRef, DEFAULT_BUILDER_COMPONENT)] = buildMode
+		preload.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
 	}
 
 	mergeData := routing.MergeData{
@@ -124,8 +141,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		},
 		DevMode:         devMode,
 		Builder:         GetBuilderMergeData(preload, buildMode),
-		Component:       GetComponentMergeData(buildMode),
-		BuildMode:       buildMode,
+		Component:       GetComponentMergeData(componentState),
 		PreloadMetadata: preload,
 	}
 

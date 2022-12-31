@@ -5,11 +5,7 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import {
-	getBuildtimeLoader,
-	getRuntimeLoader,
-	getUtilityLoader,
-} from "./registry"
+import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -126,12 +122,7 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		return null
 	if (!componentType) return <NotFound {...props} />
 	const isBuildMode = !!context.getBuildMode()
-	const RuntimeLoader = getRuntimeLoader(componentType) || NotFound
-	const BuildTimeLoader = isBuildMode
-		? getBuildtimeLoader(componentType)
-		: undefined
-	const Loader =
-		isBuildMode && BuildTimeLoader ? BuildTimeLoader : RuntimeLoader
+	const Loader = getRuntimeLoader(componentType) || NotFound
 
 	const mergedDefinition = mergeContextVariants(
 		definition,
@@ -139,10 +130,10 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		context
 	)
 
-	if (isBuildMode && !BuildTimeLoader) {
+	if (isBuildMode) {
 		return (
 			<BuildWrapper {...props}>
-				<RuntimeLoader
+				<Loader
 					{...props}
 					definition={mergedDefinition}
 					context={additionalContext(

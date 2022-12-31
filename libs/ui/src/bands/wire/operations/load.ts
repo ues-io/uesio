@@ -4,7 +4,6 @@ import { PlainWire } from "../types"
 import {
 	getWiresFromDefinitonOrContext,
 	load,
-	getFullWireId,
 	addLookupWires,
 	setIsLoading,
 } from ".."
@@ -13,16 +12,6 @@ import createrecord from "./createrecord"
 import partition from "lodash/partition"
 import { batch } from "react-redux"
 import { platform } from "../../../platform/platform"
-
-// TODO: We can probably get rid of this when we
-function getWiresMap(wires: PlainWire[]) {
-	const wiresMap: Record<string, PlainWire> = {}
-	wires.forEach((wire) => {
-		const fullWireId = getFullWireId(wire.view, wire.name)
-		wiresMap[fullWireId] = wire
-	})
-	return wiresMap
-}
 
 const getWireRequest = (
 	wires: PlainWire[],
@@ -62,8 +51,10 @@ export default async (
 		forceQuery
 	)
 
-	// Set the loading state for all wires
-	dispatch(setIsLoading(toLoadWithLookups))
+	if (toLoadWithLookups.length) {
+		// Set the loading state for all wires
+		dispatch(setIsLoading(toLoadWithLookups))
+	}
 
 	const response = loadRequests.length
 		? await platform.loadData(context, {
@@ -98,4 +89,4 @@ export default async (
 	return context
 }
 
-export { getWireRequest, getWiresMap }
+export { getWireRequest }

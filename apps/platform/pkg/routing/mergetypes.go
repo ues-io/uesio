@@ -61,7 +61,8 @@ type ComponentsMergeData struct {
 }
 
 type BuilderMergeData struct {
-	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	Namespaces       map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	BuilderComponent string                                 `json:"builder,omitempty"`
 }
 
 type MergeData struct {
@@ -70,7 +71,6 @@ type MergeData struct {
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	BuildMode bool                 `json:"-"`
 	DevMode   bool                 `json:"-"`
 	Builder   *BuilderMergeData    `json:"builder"`
 	*PreloadMetadata

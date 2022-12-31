@@ -1,9 +1,23 @@
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
-import { getWireParts, getWiresFromDefinitonOrContext, load } from ".."
-import { getWireRequest, getWiresMap } from "./load"
+import {
+	getFullWireId,
+	getWireParts,
+	getWiresFromDefinitonOrContext,
+	load,
+} from ".."
+import { getWireRequest } from "./load"
 import { dispatch } from "../../../store/store"
 import { platform } from "../../../platform/platform"
+
+function getWiresMap(wires: PlainWire[]) {
+	const wiresMap: Record<string, PlainWire> = {}
+	wires.forEach((wire) => {
+		const fullWireId = getFullWireId(wire.view, wire.name)
+		wiresMap[fullWireId] = wire
+	})
+	return wiresMap
+}
 
 export default async (context: Context, wires?: string[]) => {
 	// Turn the list of wires into a load request
