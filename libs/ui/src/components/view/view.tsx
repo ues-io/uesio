@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import Slot from "../slot"
 import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
@@ -8,8 +7,51 @@ import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
 import { useUesio } from "../../hooks/hooks"
 import { useLoadWires } from "../../bands/view/operations/load"
+import {
+	ComponentSignalDescriptor,
+	SignalDefinition,
+} from "../../definition/signal"
+import { UesioComponent } from "../../definition/definition"
 
-const View: FunctionComponent<ViewProps> = (props) => {
+interface SetParamSignal extends SignalDefinition {
+	param: string
+	value: string
+}
+
+interface SetParamsSignal extends SignalDefinition {
+	params: Record<string, string>
+}
+
+const signals: Record<string, ComponentSignalDescriptor> = {
+	SET_PARAM: {
+		dispatcher: (
+			state: Record<string, string>,
+			signal: SetParamSignal,
+			context
+		) => {
+			const value = context.mergeString(signal.value)
+			state[signal.param] = value
+		},
+		label: "Set Param",
+		properties: () => [],
+	},
+	SET_PARAMS: {
+		dispatcher: (
+			state: Record<string, string>,
+			signal: SetParamsSignal,
+			context
+		) => {
+			const params = context.mergeStringMap(signal.params)
+			Object.keys(params).forEach((key) => {
+				state[key] = params[key]
+			})
+		},
+		label: "Set Params",
+		properties: () => [],
+	},
+}
+
+const View: UesioComponent<ViewProps> = (props) => {
 	const {
 		path,
 		context,
@@ -106,5 +148,7 @@ const View: FunctionComponent<ViewProps> = (props) => {
 
 	return slot
 }
+
+View.signals = signals
 
 export default View

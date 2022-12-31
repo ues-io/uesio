@@ -9,6 +9,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
+type PackData struct {
+	Components *meta.ComponentCollection
+	Utilities  *meta.UtilityCollection
+}
+
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
@@ -25,49 +30,76 @@ func CreateEntryFiles() ([]string, error) {
 	// Create a fake session
 	namespace := def.Name
 
-	packs := &meta.ComponentPackCollection{}
+	components := &meta.ComponentCollection{}
+	err = sbs.GetAllItems(components, "", "", nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	err = sbs.GetAllItems(packs, "", "", nil, nil)
+	utilities := &meta.UtilityCollection{}
+	err = sbs.GetAllItems(utilities, "", "", nil, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	entryPoints := []string{}
 
+	packMap := map[string]PackData{}
+
+	// Coalate components by pack
+	for _, component := range *components {
+		pack := component.Pack
+		packData, ok := packMap[pack]
+		if !ok {
+			packMap[pack] = PackData{
+				Components: &meta.ComponentCollection{},
+				Utilities:  &meta.UtilityCollection{},
+			}
+			packData = packMap[pack]
+		}
+		*packData.Components = append(*packData.Components, component)
+	}
+
+	// Coalate utilities by pack
+	for _, utility := range *utilities {
+		pack := utility.Pack
+		packData, ok := packMap[pack]
+		if !ok {
+			packMap[pack] = PackData{
+				Components: &meta.ComponentCollection{},
+				Utilities:  &meta.UtilityCollection{},
+			}
+			packData = packMap[pack]
+		}
+		*packData.Utilities = append(*packData.Utilities, utility)
+	}
+
 	// Create the entry files
-	for _, pack := range *packs {
+	for packName, packData := range packMap {
 		runtimeImports := []string{"import { component } from \"@uesio/ui\";"}
 		runtimeRegistrations := []string{}
 
-		if pack.Components == nil {
-			fmt.Println("no components listed to pack in bundle.yaml")
+		if len(*packData.Components) == 0 && len(*packData.Utilities) == 0 {
+			fmt.Println("no components or utilities listed to pack in bundle.yaml")
 			continue
 		}
 
-		baseURL := fmt.Sprintf("bundle/componentpacks/%s", pack.Name)
-		componentsURL := fmt.Sprintf("%s/src/components", baseURL)
-		utilitiesURL := fmt.Sprintf("%s/src/utilities", baseURL)
+		baseURL := fmt.Sprintf("bundle/componentpacks/%s/", packName)
+		srcURL := fmt.Sprintf("%s/src/", baseURL)
 		// Loop over the components
-		for key := range pack.Components.ViewComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, componentsURL))
-			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, componentsURL))
+		for _, comp := range *packData.Components {
+			hasDefinition := fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, comp.EntryPoint))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/components/%[1]s/%[1]s\";", key))
-
-				if hasSignals {
-					runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]ssignals from \"./src/components/%[1]s/signals\";", key))
-					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s,%[1]ssignals);", key, namespace))
-				} else {
-					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", key, namespace))
-				}
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s from \"./src/%s\";", comp.Name, comp.EntryPoint))
+				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", comp.Name, namespace))
 			}
 		}
 
-		for key := range pack.Components.UtilityComponents {
-			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, utilitiesURL))
+		for _, util := range *packData.Utilities {
+			hasDefinition := fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, util.EntryPoint))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s_utility from \"./src/utilities/%[1]s/%[1]s\";", key))
-				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", key, namespace))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s_utility from \"./src/%s\";", util.Name, util.EntryPoint))
+				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", util.Name, namespace))
 			}
 		}
 

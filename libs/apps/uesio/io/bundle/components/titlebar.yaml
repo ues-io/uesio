@@ -1,3 +1,3 @@
 name: titlebar
 pack: main
-entrypoint: components/titlebar/titlebar.tsx
+entrypoint: components/titlebar/titlebar

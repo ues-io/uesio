@@ -1,3 +1,3 @@
 name: image
 pack: main
-entrypoint: components/image/image.tsx
+entrypoint: components/image/image

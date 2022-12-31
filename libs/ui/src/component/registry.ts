@@ -2,6 +2,7 @@ import { FC } from "react"
 import {
 	BaseProps,
 	DefinitionMap,
+	UesioComponent,
 	UtilityProps,
 } from "../definition/definition"
 import {
@@ -38,13 +39,9 @@ const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
 	registry[key] = item
 }
 
-const register = (
-	key: MetadataKey,
-	componentType: FC<BaseProps>,
-	signals?: Registry<ComponentSignalDescriptor>
-) => {
+const register = (key: MetadataKey, componentType: UesioComponent) => {
 	addToRegistry<FC<BaseProps>>(registry, key, componentType)
-	signals && registerSignals(key, signals)
+	componentType.signals && registerSignals(key, componentType.signals)
 }
 
 const registerSignals = (

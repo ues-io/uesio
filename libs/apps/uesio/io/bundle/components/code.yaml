@@ -1,3 +1,5 @@
 name: code
 pack: main
-entrypoint: components/code/code.tsx
+entrypoint: components/code/code
+variants:
+  - uesio/io.fieldlabel:uesio/io.default

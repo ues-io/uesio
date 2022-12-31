@@ -19,6 +19,11 @@ func NewBaseComponent(namespace, name string) *Component {
 }
 
 type Component struct {
+	Pack         string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint   string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	ConfigValues []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants     []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities    []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
 }
@@ -55,4 +60,8 @@ func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 		return err
 	}
 	return node.Decode((*ComponentWrapper)(c))
+}
+
+func (c *Component) IsPublic() bool {
+	return true
 }

@@ -1,3 +1,9 @@
 name: loginmock
 pack: app
-entrypoint: components/loginmock/loginmock.tsx
+entrypoint: components/loginmock/loginmock
+configvalues:
+  - uesio/core.mock_auth
+utilities:
+  - uesio/io.button
+variants:
+  - uesio/io.button:uesio/io.secondary

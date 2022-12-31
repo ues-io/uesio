@@ -1,0 +1,5 @@
+name: metric
+pack: main
+entrypoint: components/metric/metric
+variants:
+  - uesio/io.metric:uesio/io.default

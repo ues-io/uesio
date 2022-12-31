@@ -1,3 +1,3 @@
 name: fieldwrapper
 pack: main
-entrypoint: utilities/fieldwrapper/fieldwrapper.tsx
+entrypoint: utilities/fieldwrapper/fieldwrapper

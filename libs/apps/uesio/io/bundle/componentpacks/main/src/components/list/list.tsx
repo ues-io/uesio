@@ -1,10 +1,21 @@
-import { hooks, component } from "@uesio/ui"
-import { FunctionComponent } from "react"
-import { useMode } from "../../shared/mode"
+import { hooks, component, signal, definition } from "@uesio/ui"
+
+import {
+	setEditMode,
+	setReadMode,
+	toggleMode,
+	useMode,
+} from "../../shared/mode"
 
 import { ListProps } from "./listdefinition"
 
-const List: FunctionComponent<ListProps> = (props) => {
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	TOGGLE_MODE: toggleMode,
+	SET_READ_MODE: setReadMode,
+	SET_EDIT_MODE: setEditMode,
+}
+
+const List: definition.UesioComponent<ListProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire, context)
@@ -43,4 +54,5 @@ const List: FunctionComponent<ListProps> = (props) => {
 	)
 }
 
+List.signals = signals
 export default List

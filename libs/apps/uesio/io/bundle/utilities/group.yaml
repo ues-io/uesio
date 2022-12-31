@@ -1,3 +1,3 @@
 name: group
 pack: main
-entrypoint: utilities/group/group.tsx
+entrypoint: utilities/group/group
