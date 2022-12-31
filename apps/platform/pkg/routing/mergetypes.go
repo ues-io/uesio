@@ -44,8 +44,10 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Name string `json:"name"`
-	App  string `json:"app"`
+	Name       string                                 `json:"name"`
+	App        string                                 `json:"app"`
+	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	Wrapper    string                                 `json:"wrapper,omitempty"`
 }
 
 type ComponentMergeData struct {
@@ -60,19 +62,13 @@ type ComponentsMergeData struct {
 	Entities map[string]ComponentMergeData `json:"entities"`
 }
 
-type BuilderMergeData struct {
-	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
-}
-
 type MergeData struct {
 	Route     *RouteMergeData      `json:"route"`
 	User      *UserMergeData       `json:"user"`
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	BuildMode bool                 `json:"-"`
 	DevMode   bool                 `json:"-"`
-	Builder   *BuilderMergeData    `json:"builder"`
 	*PreloadMetadata
 }
 

@@ -151,14 +151,10 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Component pack routes for site and workspace context
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
-	sr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack(false)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/builder.js", controller.ServeComponentPack(true)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap(false)).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/builder.js.map", controller.ServeComponentPackMap(true)).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)

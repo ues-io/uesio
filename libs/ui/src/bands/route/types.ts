@@ -7,11 +7,19 @@ import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { PlainViewDef } from "../../definition/viewdef"
 import { MetadataInfo } from "../../platform/platform"
+import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
 import { MetadataState } from "../metadata/types"
 import { PlainWire } from "../wire/types"
 
-type TenantState = {
+type WorkspaceState = {
+	name: string
+	app: string
+	wrapper?: MetadataKey
+	namespaces?: Record<string, MetadataInfo>
+}
+
+type SiteAdminState = {
 	name: string
 	app: string
 }
@@ -35,10 +43,10 @@ type RouteState = {
 	params?: Record<string, string>
 	namespace: string
 	path: string
-	workspace?: TenantState
+	workspace?: WorkspaceState
 	theme: string
 	isLoading?: boolean
 	dependencies?: Dependencies
 } | null
 
-export { RouteState, TenantState, Dependencies }
+export { RouteState, WorkspaceState, SiteAdminState, Dependencies }

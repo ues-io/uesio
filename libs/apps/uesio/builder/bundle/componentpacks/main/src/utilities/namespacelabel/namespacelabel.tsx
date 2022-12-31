@@ -12,7 +12,7 @@ const NamespaceLabel: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { metadatakey = "", title, context, classes } = props
 	const [ns, name] = metadatakey.split(".")
-	const nsInfo = uesio.builder.getNamespaceInfo(ns)
+	const nsInfo = uesio.builder.getNamespaceInfo(ns, context)
 
 	if (!nsInfo) return null
 

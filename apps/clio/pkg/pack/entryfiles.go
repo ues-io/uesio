@@ -38,9 +38,6 @@ func CreateEntryFiles() ([]string, error) {
 	for _, pack := range *packs {
 		runtimeImports := []string{"import { component } from \"@uesio/ui\";"}
 		runtimeRegistrations := []string{}
-		builderImports := []string{"import { component } from \"@uesio/ui\";"}
-		builderDefImports := []string{}
-		builderRegistrations := []string{}
 
 		if pack.Components == nil {
 			fmt.Println("no components listed to pack in bundle.yaml")
@@ -53,8 +50,6 @@ func CreateEntryFiles() ([]string, error) {
 		// Loop over the components
 		for key := range pack.Components.ViewComponents {
 			hasDefinition := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]s.tsx", key, componentsURL))
-			hasBuilder := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sbuilder.tsx", key, componentsURL))
-			hasBuilderDef := fileExists(fmt.Sprintf("%[2]s/%[1]s/%[1]sdefinition.ts", key, componentsURL))
 			hasSignals := fileExists(fmt.Sprintf("%[2]s/%[1]s/signals.ts", key, componentsURL))
 			if hasDefinition {
 				runtimeImports = append(runtimeImports, fmt.Sprintf("import %[1]s from \"./src/components/%[1]s/%[1]s\";", key))
@@ -65,25 +60,6 @@ func CreateEntryFiles() ([]string, error) {
 				} else {
 					runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", key, namespace))
 				}
-			}
-			builderName := fmt.Sprintf("%[1]sbuilder", key)
-			definitionName := fmt.Sprintf("%[1]sdefinition", key)
-			if hasBuilder {
-				builderImports = append(builderImports, fmt.Sprintf("import %[2]s from \"./src/components/%[1]s/%[2]s\";", key, builderName))
-			}
-			if hasBuilderDef {
-				builderDefImports = append(builderDefImports, fmt.Sprintf("import %[2]s from \"./src/components/%[1]s/%[2]s\";", key, definitionName))
-			}
-			if hasBuilder || hasBuilderDef {
-				builderValue := "undefined"
-				if hasBuilder {
-					builderValue = builderName
-				}
-				defValue := "undefined"
-				if hasBuilderDef {
-					defValue = definitionName
-				}
-				builderRegistrations = append(builderRegistrations, fmt.Sprintf("component.registry.registerBuilder(\"%[2]s.%[1]s\",%[3]s,%[4]s);", key, namespace, builderValue, defValue))
 			}
 		}
 
@@ -100,24 +76,14 @@ func CreateEntryFiles() ([]string, error) {
 			runtimeEntry = strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
 		}
 
-		builderEntry := ""
-		if len(builderRegistrations) > 0 {
-			builderEntry = strings.Join(append(builderImports, append(builderDefImports, builderRegistrations...)...), "\n")
-		}
-
 		runtimeFileName := fmt.Sprintf("%[1]s/runtime.ts", baseURL)
-		builderFileName := fmt.Sprintf("%[1]s/builder.ts", baseURL)
+
 		err := os.WriteFile(runtimeFileName, []byte(runtimeEntry), 0777)
 		if err != nil {
 			return nil, err
 		}
 
-		err = os.WriteFile(builderFileName, []byte(builderEntry), 0777)
-		if err != nil {
-			return nil, err
-		}
-
-		entryPoints = append(entryPoints, runtimeFileName, builderFileName)
+		entryPoints = append(entryPoints, runtimeFileName)
 
 	}
 

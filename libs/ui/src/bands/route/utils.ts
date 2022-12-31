@@ -9,7 +9,7 @@ import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { setNamespaceInfo } from "../builder"
+import { setNamespaceInfo } from "../route"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -88,31 +88,10 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (collections) dispatch(initCollection(collections))
 }
 
-const getPackUrlsForDeps = (
-	deps: Dependencies | undefined,
-	context: Context,
-	includeBuilder?: boolean
-) =>
-	deps?.componentpack?.ids.flatMap((key) =>
-		getPackUrls(key as string, context, includeBuilder)
-	) || []
+const getPackUrlsForDeps = (deps: Dependencies | undefined, context: Context) =>
+	deps?.componentpack?.ids.map((key) => {
+		const [namespace, name] = parseKey(key as string)
+		return platform.getComponentPackURL(context, namespace, name)
+	}) || []
 
-const getPackUrls = (
-	key: string,
-	context: Context,
-	includeBuilder?: boolean
-) => {
-	const [namespace, name] = parseKey(key as string)
-	const runtime = platform.getComponentPackURL(context, namespace, name)
-	if (!includeBuilder) return [runtime]
-
-	const buildtime = platform.getComponentPackURL(
-		context,
-		namespace,
-		name,
-		true
-	)
-	return [runtime, buildtime]
-}
-
-export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls, attachDefToWires }
+export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

@@ -49,7 +49,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 			? definition?.view || componentKey
 			: propDef.title || "unknown"
 
-	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace)
+	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace, context)
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath

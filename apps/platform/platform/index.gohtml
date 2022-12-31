@@ -24,21 +24,12 @@
         window.uesio = uesio
     </script>
     {{$workspace := .Route.Workspace -}}
-    {{$buildMode := .BuildMode -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
             {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                {{- $packURL := getPackURL . $workspace false -}}
+                {{- $packURL := getPackURL . $workspace -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
-                {{- end -}}
-            {{- end -}}
-            {{- if $buildMode -}}
-                {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                    {{- $packURL := getPackURL . $workspace true -}}
-                    {{- if $packURL -}}
-                    <script src="{{$packURL}}" type="module"></script>
-                    {{- end -}}
                 {{- end -}}
             {{- end -}}
         {{- end -}}

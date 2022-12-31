@@ -1,41 +1,44 @@
-import { FunctionComponent, useEffect } from "react"
+import { FC, useEffect, RefObject, useRef } from "react"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
-import { useUesio } from "../hooks/hooks"
-import { injectGlobal } from "@emotion/css"
+import { injectGlobal, css } from "@emotion/css"
 import Progress from "./progress"
 import View from "./view/view"
-import { useHotKeyCallback } from "../hooks/hotkeys"
 import { useSite } from "../bands/site"
+import { Context } from "../context/context"
+import routeOps from "../bands/route/operations"
+import NotificationArea from "./notificationarea"
 
-const Route: FunctionComponent<BaseProps> = (props) => {
-	const uesio = useUesio(props)
+// This applies the global styles
+injectGlobal({
+	body: {
+		margin: 0,
+		fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+		fontWeight: 400,
+	},
+	/* apply a natural box layout model to all elements, but allowing components to change */
+	html: {
+		boxSizing: "border-box",
+	},
+	"*": {
+		boxSizing: "inherit",
+	},
+})
+
+let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
+
+const Route: FC<BaseProps> = (props) => {
+	portalsDomNode = useRef<HTMLDivElement>(null)
+
 	const site = useSite()
 	const route = useRoute()
-	const buildMode = props.context.getBuildMode() && !!route?.workspace
+
 	const routeContext = props.context.addFrame({
 		site,
 		route,
 		workspace: route?.workspace,
-		buildMode,
 		viewDef: route?.view,
 		theme: route?.theme,
-	})
-
-	// This applies the global styles
-	injectGlobal({
-		body: {
-			margin: 0,
-			fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-			fontWeight: 400,
-		},
-		/* apply a natural box layout model to all elements, but allowing components to change */
-		html: {
-			boxSizing: "border-box",
-		},
-		"*": {
-			boxSizing: "inherit",
-		},
 	})
 
 	useEffect(() => {
@@ -51,18 +54,28 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		)
 	})
 
-	useHotKeyCallback(
-		"command+p",
-		() => {
-			uesio.signal.run(
-				{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
-				routeContext
+	useEffect(() => {
+		window.onpopstate = (event: PopStateEvent) => {
+			if (!event.state.path || !event.state.namespace) {
+				// In some cases, our path and namespace aren't available in the history state.
+				// If that is the case, then just punt and do a plain redirect.
+				routeOps.redirect(new Context(), document.location.pathname)
+				return
+			}
+			routeOps.navigate(
+				new Context([
+					{
+						workspace: event.state.workspace,
+					},
+				]),
+				{
+					path: event.state.path,
+					namespace: event.state.namespace,
+				},
+				true
 			)
-		},
-		!!(route && route.workspace)
-	)
-
-	const isLoaded = uesio.builder.useBuilderDeps(buildMode, routeContext)
+		}
+	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
 	if (!route) return null
@@ -70,22 +83,31 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	return (
 		<>
 			<View
-				context={
-					// Prevent build mode if the deps haven't been loaded yet.
-					buildMode && !isLoaded
-						? routeContext.addFrame({
-								buildMode: false,
-						  })
-						: routeContext
-				}
+				context={routeContext}
 				definition={{
 					view: route.view,
 					params: route.params,
 				}}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
+			<div
+				className={css({
+					position: "fixed",
+					right: "2em",
+					bottom: "2em",
+					display: "grid",
+					rowGap: "10px",
+					marginLeft: "2em",
+					width: "350px",
+				})}
+			>
+				<NotificationArea context={props.context} />
+			</div>
+			<div ref={portalsDomNode} />
 		</>
 	)
 }
+
+export { portalsDomNode }
 
 export default Route

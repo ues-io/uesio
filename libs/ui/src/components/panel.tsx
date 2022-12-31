@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { BaseProps } from "../definition/definition"
 import { createPortal } from "react-dom"
-import { portalsDomNode } from "./runtime"
+import { portalsDomNode } from "./route"
 
 const Panel: FC<BaseProps> = (props) =>
 	createPortal(

@@ -27,11 +27,13 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
 
-	const componentId = uesio.component.getComponentIdFromProps(
-		"codepanel",
-		props
+	const [showCode] = uesio.component.useState<boolean>(
+		uesio.component.getComponentIdFromProps("codepanel", props)
 	)
-	const [showCode] = uesio.component.useState<boolean>(componentId)
+
+	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
+		uesio.component.getComponentIdFromProps("buildmode", props)
+	)
 	const { context } = props
 
 	const builderContext = context.addFrame({
@@ -40,6 +42,20 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const canvasContext = context.addFrame({
 		mediaOffset: LEFT_PANEL_WIDTH + (showCode ? codePanelWidth : 0),
 	})
+
+	hooks.useHotKeyCallback("command+u", () => {
+		uesio.builder.getBuilderDeps(context).then(() => {
+			setBuildMode(!buildMode)
+		})
+	})
+
+	hooks.useHotKeyCallback("command+p", () => {
+		uesio.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
+	})
+
+	if (!buildMode) {
+		return <>{props.children}</>
+	}
 
 	return (
 		<Grid

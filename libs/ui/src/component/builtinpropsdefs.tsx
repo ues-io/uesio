@@ -31,7 +31,7 @@ const getComponentTypePropsDef = (
 })
 
 const getPanelPropsDef = (): BuildPropertiesDefinition => {
-	const componentList = getComponents("uesio.panel")
+	const componentList = getComponents(/*"uesio.panel"*/)
 	return {
 		title: "Panel",
 		defaultDefinition: () => ({}),
@@ -45,9 +45,9 @@ const getPanelPropsDef = (): BuildPropertiesDefinition => {
 				type: "SELECT",
 				name: "uesio.type",
 				label: "Panel Component",
-				options: componentList.map((comp) => ({
-					value: `${comp.namespace}.${comp.name}`,
-					label: `${comp.title}`,
+				options: componentList.map(() => ({
+					value: "",
+					label: "",
 				})),
 			},
 		],

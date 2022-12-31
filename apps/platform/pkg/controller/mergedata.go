@@ -10,6 +10,7 @@ import (
 	// because we trust both the template and the merge data
 	"text/template"
 
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -17,7 +18,11 @@ import (
 
 var indexTemplate *template.Template
 
-func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode bool) string {
+var DEFAULT_BUILDER_COMPONENT = "uesio/builder.runtime"
+var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
+var DEFAULT_BUILDER_PACK_NAME = "main"
+
+func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -28,9 +33,7 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData, buildMode boo
 	}
 
 	builderSuffix := "runtime.js"
-	if buildMode {
-		builderSuffix = "builder.js"
-	}
+
 	if workspace != nil {
 		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
 	}
@@ -60,38 +63,35 @@ func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	}
 }
 
-func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {
+func GetWorkspaceMergeData(workspace *meta.Workspace, namespaces map[string]datasource.MetadataResponse) *routing.WorkspaceMergeData {
 	if workspace == nil {
 		return nil
 	}
+
 	return &routing.WorkspaceMergeData{
-		Name: workspace.Name,
-		App:  workspace.GetAppFullName(),
+		Name:       workspace.Name,
+		App:        workspace.GetAppFullName(),
+		Namespaces: namespaces,
+		Wrapper:    DEFAULT_BUILDER_COMPONENT,
 	}
 }
 
-func GetComponentMergeData(buildMode bool) *routing.ComponentsMergeData {
-	componentID := "$root:uesio/builder.runtime:buildmode"
-	return &routing.ComponentsMergeData{
-		IDs: []string{componentID},
-		Entities: map[string]routing.ComponentMergeData{
-			componentID: {
-				ID:    componentID,
-				State: buildMode,
-			},
-		},
+func GetComponentMergeData(stateMap map[string]interface{}) *routing.ComponentsMergeData {
+	stateData := &routing.ComponentsMergeData{
+		IDs:      []string{},
+		Entities: map[string]routing.ComponentMergeData{},
 	}
-}
-
-func GetBuilderMergeData(preload *routing.PreloadMetadata, buildMode bool) *routing.BuilderMergeData {
-	if !buildMode {
-		return &routing.BuilderMergeData{}
+	if stateMap == nil {
+		return stateData
 	}
-
-	return &routing.BuilderMergeData{
-		Namespaces: preload.Namespaces,
+	for componentID, state := range stateMap {
+		stateData.IDs = append(stateData.IDs, componentID)
+		stateData.Entities[componentID] = routing.ComponentMergeData{
+			ID:    componentID,
+			State: state,
+		}
 	}
-
+	return stateData
 }
 
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
@@ -106,13 +106,22 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		devMode = true
 	}
 
+	componentState := map[string]interface{}{}
+
+	// If we're in workspace mode, make sure we have the builder pack so we can include the
+	// buildwrapper
+	if workspace != nil {
+		componentState[fmt.Sprintf("%s($root):%s:buildmode", route.ViewRef, DEFAULT_BUILDER_COMPONENT)] = buildMode
+		preload.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
+	}
+
 	mergeData := routing.MergeData{
 		Route: &routing.RouteMergeData{
 			View:      route.ViewRef,
 			Params:    route.Params,
 			Namespace: route.Namespace,
 			Path:      route.Path,
-			Workspace: GetWorkspaceMergeData(workspace),
+			Workspace: GetWorkspaceMergeData(workspace, preload.Namespaces),
 			Theme:     route.ThemeRef,
 		},
 		User: GetUserMergeData(session),
@@ -123,9 +132,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Domain:    site.Domain,
 		},
 		DevMode:         devMode,
-		Builder:         GetBuilderMergeData(preload, buildMode),
-		Component:       GetComponentMergeData(buildMode),
-		BuildMode:       buildMode,
+		Component:       GetComponentMergeData(componentState),
 		PreloadMetadata: preload,
 	}
 

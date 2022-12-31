@@ -18,7 +18,6 @@ import notification from "../bands/notification"
 import metadatatext from "../bands/metadatatext"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
-import { BuilderState } from "../bands/builder/types"
 import { PlainViewDef } from "../definition/viewdef"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -31,7 +30,6 @@ import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
 
 type InitialState = {
-	builder?: BuilderState
 	route?: RouteState
 	user?: UserState
 	site?: SiteState

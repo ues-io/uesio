@@ -60,14 +60,6 @@ func (cp *ComponentPack) GetBundleFolderName() string {
 	return COMPONENTPACK_FOLDER_NAME
 }
 
-func (cp *ComponentPack) GetComponentPackFilePath(buildMode bool) string {
-	fileName := "runtime.js"
-	if buildMode {
-		fileName = "builder.js"
-	}
-	return fileName
-}
-
 func (cp *ComponentPack) GetBasePath() string {
 	return cp.Name
 }
