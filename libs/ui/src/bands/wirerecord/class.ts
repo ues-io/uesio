@@ -28,7 +28,9 @@ class WireRecord {
 	getDateValue = (fieldName: string) => {
 		const value = this.getFieldValue(fieldName)
 		if (!value) return undefined
+		// Dates are stored as strings
 		if (typeof value === "string") return new Date(value)
+		// Datetimes are store as numbers (seconds from epoch)
 		if (typeof value === "number") return new Date(value * 1000)
 		return undefined
 	}

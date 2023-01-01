@@ -1,9 +1,6 @@
 import Slot from "../slot"
-import { css } from "@emotion/css"
 import { useViewDef } from "../../bands/viewdef"
 import { ViewProps } from "./viewdefinition"
-import { ComponentInternal } from "../../component/component"
-import PanelArea from "./../panelarea"
 import { makeViewId } from "../../bands/view"
 import { useUesio } from "../../hooks/hooks"
 import { useLoadWires } from "../../bands/view/operations/load"
@@ -60,24 +57,14 @@ const View: UesioComponent<ViewProps> = (props) => {
 
 	const uesio = useUesio(props)
 
-	const componentId = uesio.component.getComponentId(
-		id,
-		"uesio/core.view",
-		path,
-		context
-	)
 	const viewId = makeViewId(viewDefId, path ? id || path : "$root")
-
-	const subViewClass = css({
-		pointerEvents: "none",
-		display: "grid",
-	})
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
+
 	const [paramState] = uesio.component.useState<Record<string, string>>(
-		componentId,
+		uesio.component.getComponentId(id, "uesio/core.view", path, context),
 		context.mergeStringMap(params)
 	)
 
@@ -97,7 +84,7 @@ const View: UesioComponent<ViewProps> = (props) => {
 		)
 	}
 
-	const slot = (
+	return (
 		<Slot
 			definition={viewDef}
 			listName="components"
@@ -107,46 +94,6 @@ const View: UesioComponent<ViewProps> = (props) => {
 			message="Drag and drop any component here to get started."
 		/>
 	)
-
-	const workspace = context.getWorkspace()
-
-	if (isSubView && workspace) {
-		return <div className={subViewClass}>{slot}</div>
-	}
-
-	if (!isSubView && workspace) {
-		return (
-			<ComponentInternal
-				context={viewContext}
-				componentType={workspace.wrapper}
-				path=""
-			>
-				{slot}
-			</ComponentInternal>
-		)
-	}
-
-	if (!isSubView) {
-		return (
-			<>
-				{slot}
-				<div
-					style={{
-						position: "fixed",
-						width: "100%",
-						height: "100%",
-						top: 0,
-						left: 0,
-						pointerEvents: "none",
-					}}
-				>
-					<PanelArea context={props.context} />
-				</div>
-			</>
-		)
-	}
-
-	return slot
 }
 
 View.signals = signals
