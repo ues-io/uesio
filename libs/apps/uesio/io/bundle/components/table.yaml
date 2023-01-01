@@ -1,3 +1,10 @@
 name: table
 pack: main
-entrypoint: components/table/table.tsx
+entrypoint: components/table/table
+variants:
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.table:uesio/io.default
+  - uesio/io.button:uesio/io.nav
+  - uesio/io.fieldwrapper:uesio/io.table
+  - uesio/io.field:uesio/io.table

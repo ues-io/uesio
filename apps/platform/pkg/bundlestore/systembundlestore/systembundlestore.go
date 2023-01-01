@@ -101,8 +101,6 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return err
 	}
 	if app != namespace && !item.IsPublic() {
-		fmt.Println("BAAAAAA")
-		fmt.Println(item)
 		message := fmt.Sprintf("Metadata item: %s is not public", key)
 		return bundlestore.NewPermissionError(message)
 	}

@@ -1,3 +1,3 @@
 name: codefield
 pack: main
-entrypoint: utilities/codefield/codefield.tsx
+entrypoint: utilities/codefield/codefield

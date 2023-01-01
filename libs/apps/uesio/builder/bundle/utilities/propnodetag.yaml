@@ -1,3 +1,3 @@
 name: propnodetag
 pack: main
-entrypoint: utilities/propnodetag/propnodetag.tsx
+entrypoint: utilities/propnodetag/propnodetag

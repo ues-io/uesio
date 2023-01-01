@@ -1,7 +1,13 @@
-import { FunctionComponent } from "react"
+import { FieldDefinition, FieldProps, FieldState } from "./fielddefinition"
+import {
+	component,
+	collection,
+	wire,
+	context,
+	definition,
+	signal,
+} from "@uesio/ui"
 
-import { FieldDefinition, FieldProps } from "./fielddefinition"
-import { component, collection, wire, context, definition } from "@uesio/ui"
 const TextField = component.getUtility("uesio/io.textfield")
 const SelectField = component.getUtility("uesio/io.selectfield")
 const RadioButtonsField = component.getUtility("uesio/io.radiobuttonsfield")
@@ -13,7 +19,7 @@ const FileText = component.getUtility("uesio/io.filetext")
 const FileImage = component.getUtility("uesio/io.fileimage")
 const FileVideo = component.getUtility("uesio/io.filevideo")
 const FilePreview = component.getUtility("uesio/io.filepreview")
-const File = component.getUtility("uesio/io.file")
+const FileCmp = component.getUtility("uesio/io.file")
 const UserField = component.getUtility("uesio/io.userfield")
 const TimestampField = component.getUtility("uesio/io.timestampfield")
 const ListField = component.getUtility("uesio/io.listfield")
@@ -27,6 +33,34 @@ const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
 const TextAreaField = component.getUtility("uesio/io.textareafield")
 
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+
+const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
+	SAVE_FILE: {
+		dispatcher: (state, signal, context, platform) => {
+			const blob = new Blob([state.value], { type: state.mimeType })
+			const fileName = state.fileName
+			const file = new File([blob], fileName, {
+				type: state.mimeType,
+			})
+			platform.uploadFile(
+				context,
+				file,
+				state.collectionId,
+				state.recordId,
+				state.fieldId
+			)
+		},
+		label: "Save File",
+		properties: () => [],
+	},
+	CANCEL_FILE: {
+		dispatcher: (state) => {
+			state.value = state.originalValue
+		},
+		label: "Cancel File",
+		properties: () => [],
+	},
+}
 
 type CommonProps = {
 	mode: context.FieldMode
@@ -87,7 +121,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 			if (displayAs === "VIDEO") return <FileVideo {...common} />
 			if (displayAs === "PREVIEW") return <FilePreview {...common} />
 			if (displayAs === "MARKDOWN") return <FileMarkDown {...common} />
-			return <File {...common} />
+			return <FileCmp {...common} />
 		}
 		case "USER":
 			return <UserField {...common} options={user} />
@@ -109,7 +143,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 	}
 }
 
-const Field: FunctionComponent<FieldProps> = (props) => {
+const Field: definition.UesioComponent<FieldProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId, id, placeholder } = definition
 
@@ -158,5 +192,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		</FieldWrapper>
 	)
 }
+
+Field.signals = signals
 
 export default Field

@@ -1,9 +1,10 @@
 import { CSSInterpolation } from "@emotion/css"
-import { ReactNode } from "react"
+import { FC, ReactNode } from "react"
 import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
+import { ComponentSignalDescriptor } from "./signal"
 
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
@@ -47,6 +48,10 @@ export type BaseProps = {
 	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
+}
+
+export type UesioComponent<T extends BaseProps = BaseProps> = FC<T> & {
+	signals?: Record<string, ComponentSignalDescriptor>
 }
 
 export interface UtilityProps {

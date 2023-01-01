@@ -8,6 +8,8 @@ import { useSite } from "../bands/site"
 import { Context } from "../context/context"
 import routeOps from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
+import { ComponentInternal } from "../component/component"
+import PanelArea from "./panelarea"
 
 // This applies the global styles
 injectGlobal({
@@ -33,10 +35,12 @@ const Route: FC<BaseProps> = (props) => {
 	const site = useSite()
 	const route = useRoute()
 
+	const workspace = route?.workspace
+
 	const routeContext = props.context.addFrame({
 		site,
 		route,
-		workspace: route?.workspace,
+		workspace,
 		viewDef: route?.view,
 		theme: route?.theme,
 	})
@@ -48,7 +52,7 @@ const Route: FC<BaseProps> = (props) => {
 			{
 				namespace: route.namespace,
 				path: route.path,
-				workspace: route.workspace,
+				workspace,
 			},
 			""
 		)
@@ -80,15 +84,45 @@ const Route: FC<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!route) return null
 
+	const view = (
+		<View
+			context={routeContext}
+			definition={{
+				view: route.view,
+				params: route.params,
+			}}
+		/>
+	)
+
+	const wrappedView = workspace ? (
+		<ComponentInternal
+			context={routeContext}
+			componentType={workspace.wrapper}
+			path=""
+		>
+			{view}
+		</ComponentInternal>
+	) : (
+		<>
+			{view}
+			<div
+				style={{
+					position: "fixed",
+					width: "100%",
+					height: "100%",
+					top: 0,
+					left: 0,
+					pointerEvents: "none",
+				}}
+			>
+				<PanelArea context={props.context} />
+			</div>
+		</>
+	)
+
 	return (
 		<>
-			<View
-				context={routeContext}
-				definition={{
-					view: route.view,
-					params: route.params,
-				}}
-			/>
+			{wrappedView}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div
 				className={css({

@@ -20,9 +20,9 @@ import * as panel from "./panelexports"
 import * as param from "./paramexports"
 import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
-import viewsignals from "./components/view/signals"
+
 // Register with the component registry so that it's not an explicit dependency
-register("uesio/core.view", View, viewsignals)
+register("uesio/core.view", View)
 
 export {
 	builder,

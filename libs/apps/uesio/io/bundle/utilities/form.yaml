@@ -1,3 +1,3 @@
 name: form
 pack: main
-entrypoint: utilities/form/form.tsx
+entrypoint: utilities/form/form

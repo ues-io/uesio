@@ -1,3 +1,8 @@
 name: metadatafield
 pack: main
-entrypoint: components/metadatafield/metadatafield.tsx
+entrypoint: components/metadatafield/metadatafield
+utilities:
+  - uesio/builder.metadatapicker
+  - uesio/io.textfield
+  - uesio/io.selectfield
+  - uesio/io.grid

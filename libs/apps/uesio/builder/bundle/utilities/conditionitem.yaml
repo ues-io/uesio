@@ -1,3 +1,3 @@
 name: conditionitem
 pack: main
-entrypoint: utilities/conditionitem/conditionitem.tsx
+entrypoint: utilities/conditionitem/conditionitem

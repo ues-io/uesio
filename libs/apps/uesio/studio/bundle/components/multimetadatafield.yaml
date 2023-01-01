@@ -1,3 +1,8 @@
 name: multimetadatafield
 pack: main
-entrypoint: components/multimetadatafield/multimetadatafield.tsx
+entrypoint: components/multimetadatafield/multimetadatafield
+utilities:
+  - uesio/builder.metadatapicker
+  - uesio/io.textfield
+  - uesio/io.selectfield
+  - uesio/io.grid

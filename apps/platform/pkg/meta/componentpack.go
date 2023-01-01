@@ -21,7 +21,6 @@ func NewBaseComponentPack(namespace, name string) *ComponentPack {
 }
 
 type ComponentPack struct {
-	Components *ComponentsRegistry `yaml:"components" json:"uesio/studio.components"`
 	BuiltIn
 	BundleableBase `yaml:",inline"`
 }
@@ -41,17 +40,6 @@ func (cp *ComponentPack) IsNil() bool {
 	return cp == nil
 }
 
-type ComponentsRegistry struct {
-	ViewComponents    map[string]*ComponentDependencies `yaml:"view"`
-	UtilityComponents map[string]*ComponentDependencies `yaml:"utility"`
-}
-
-type ComponentDependencies struct {
-	ConfigValues []string `yaml:"configvalues"`
-	Variants     []string `yaml:"variants"`
-	Utilities    []string `yaml:"utilities"`
-}
-
 func (cp *ComponentPack) GetCollectionName() string {
 	return COMPONENTPACK_COLLECTION_NAME
 }
@@ -69,33 +57,10 @@ func (cp *ComponentPack) GetPath() string {
 }
 
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio/studio.components" {
-		if value == nil {
-			cp.Components = &ComponentsRegistry{}
-			return nil
-		}
-		var components ComponentsRegistry
-		err := yaml.Unmarshal([]byte(value.(string)), &components)
-		if err != nil {
-			return err
-		}
-		cp.Components = &components
-
-		return nil
-	}
 	return StandardFieldSet(cp, fieldName, value)
 }
 
 func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "uesio/studio.components" {
-
-		bytes, err := yaml.Marshal(&cp.Components)
-		if err != nil {
-			return nil, err
-		}
-		return string(bytes), nil
-
-	}
 	return StandardFieldGet(cp, fieldName)
 }
 
