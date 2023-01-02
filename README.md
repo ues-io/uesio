@@ -26,16 +26,12 @@ As regards the **package naming** in Go, we do follow this [guideline](https://b
 
 -   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
 -   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
--   [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
--   [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
 -   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
 
 ## Frontend
 
 -   [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
 -   [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
--   [webpack](https://webpack.js.org/). Merge code source into one single static file.
--   [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 -   [React](https://reactjs.org/). Library for making UI elements.
 -   [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 -   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
@@ -54,12 +50,6 @@ The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
 The `workspace.json` is the entry point for the **build**, **watcher**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
-
-For scaffolding a new lib, you can run the following script.
-
-```
-nx g @nrwl/workspace:library NEW_LIB
-```
 
 # Set up dev environment
 
@@ -125,24 +115,12 @@ nx g @nrwl/workspace:library NEW_LIB
 }
 ```
 
-# CLI .uesio file Setup
-
-Uesio has a CLI that requires a .uesio file in your home directory. It is formatted like so:
-
-```
-{"sessionId":"Xhv-LoI9VaEtxUnfuedUWKtX","workspaceId":"dev","appId":"crm"}
-```
-
-If you are starting on a fresh machine, you can supply the workspaceId and appId that you care about, and the CLI will run you through a login process and grab the sessionId and save it during the first command you attempt to execute.
-
 # Build
-
-The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
 
 -   Download and install the npm module dependencies :
 
 ```
-  npm install
+npm install
 ```
 
 ## Build all applications and libs
@@ -168,7 +146,7 @@ nx build apps-uesio-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/apps/uesio/core && uesio pack --develop
+cd ./libs/apps/uesio/core && clio pack --develop
 ```
 
 # Watch mode
