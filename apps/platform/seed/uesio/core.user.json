@@ -31,5 +31,12 @@
 		"uesio/core.lastname": "Baxter",
 		"uesio/core.profile": "uesio/studio.standard",
 		"uesio/core.type": "PERSON"
+	},
+	{
+		"uesio/core.username": "zach",
+		"uesio/core.firstname": "Zach",
+		"uesio/core.lastname": "McElrath",
+		"uesio/core.profile": "uesio/studio.standard",
+		"uesio/core.type": "PERSON"
 	}
 ]

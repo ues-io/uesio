@@ -13,6 +13,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
+var MockUserNames = []string{"ben", "abel", "wessel", "gregg", "zach"}
+
 type LoginHandler func() (map[string]string, error)
 
 type LoginMethodHandler struct {
@@ -28,7 +30,7 @@ var mockHandler = &LoginMethodHandler{
 		var username string
 		err := survey.AskOne(&survey.Select{
 			Message: "Select a user.",
-			Options: []string{"ben", "abel", "wessel", "gregg"},
+			Options: MockUserNames,
 		}, &username)
 		if err != nil {
 			return nil, err
