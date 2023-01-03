@@ -15,7 +15,7 @@ const useHotKeyCallback = (
 		},
 		{
 			enabled: enabled !== false && !!keycode,
-			enableOnTags: !isTypeable
+			enableOnFormTags: !isTypeable
 				? ["INPUT", "TEXTAREA", "SELECT"]
 				: undefined,
 		}
