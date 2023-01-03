@@ -44,7 +44,7 @@ See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
-Sandalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
+Standalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
@@ -78,9 +78,9 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
     ```
 
 -   Use Git clone and store this repository in your local machine
--   Do follow the instructions for setting up SSL [here](#set-up-ssl).
--   Do follow the instructions for environment variables [here](#environment-variables).
--   Do follow the instructions for setting up DNS [here](#set-up-local-dns).
+-   Follow the instructions for setting up SSL [here](#set-up-ssl).
+-   Follow the instructions for environment variables [here](#environment-variables).
+-   Follow the instructions for setting up DNS [here](#set-up-local-dns).
 -   Create an alias in your terminal, this will help to execute Uesio commands.
 
     ```
@@ -143,7 +143,7 @@ nx build apps-uesio-crm
 
 ## Build a dedicated app (with watcher and source map)
 
-On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
+On the frontend, the `source map` is enabled in webpack in `dev` mode. While developing you might want to rebuild on saving with the source map in the browser :
 
 ```
 cd ./libs/apps/uesio/core && clio pack --develop
@@ -151,7 +151,7 @@ cd ./libs/apps/uesio/core && clio pack --develop
 
 # Watch mode
 
-While developping you may want the entire monorepo to rebuild upon file saving.
+While developing you may want the entire monorepo to rebuild upon file saving.
 
 ```
 npm run watch-all
@@ -259,53 +259,6 @@ In a browser visit
 
 ```
 https://uesio-dev.com:3000
-```
-
-# Local Development with a database in Docker
-
-0. Install [Docker Desktop](https://docs.docker.com/desktop/)
-1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
-
-```
-  docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
-```
-
-2. Check if your container is up and running. You have information about the container **id** and **name**.
-
-```
-  docker ps
-```
-
-3. Get in the container and create a database.
-
-```
-  docker exec -it CONTAINER_NAME /bin/bash
-```
-
-```
-  ./usr/bin/mysql --user=root --password=tcm
-```
-
-```
-  CREATE DATABASE `test-cf94a`;
-```
-
-4. _Optional_. Stop the container (which is as a normal process) when no need to have it running.
-
-```
-  docker stop CONTAINER_NAME
-```
-
-5. _Optional_. Start an existing container
-
-```
-  docker start CONTAINER_NAME
-```
-
-6. _Optional_. Remove the docker container when no longer needed.
-
-```
-  docker rm -f CONTAINER_NAME
 ```
 
 # npm dependencies
