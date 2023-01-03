@@ -56,9 +56,6 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
 -   Install [homebrew](https://brew.sh/) (for macOS user)
 -   Install git
 -   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
--   ```
-    brew install wget
-    ```
 -   Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
 -   Install the latest version of Node.js _via_ `nvm` :
 
@@ -222,8 +219,33 @@ The installation process will output several commands that you can use to start 
 ```
 sudo brew services start dnsmasq
 ```
+                                                    |
 
-# <a id="environment-variables"></a> Environment Variables
+# Local dependencies
+
+Launch all local dependencies (e.g. Postgres) with Docker Compose:
+
+```
+docker compose up -d
+```
+
+# Seed Local Database with Test Data
+
+This creates test data & the basic data Uesio needs to start in your local database:
+
+```
+npm run nx -- seed platform
+```
+
+# Run the application locally
+
+```
+npm run nx -- serve platform
+open https://uesio-dev.com:3000
+```
+
+
+# <a id="environment-variables"></a> (Optional) Environment Variables
 
 Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
 
@@ -239,33 +261,13 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             | true                                                                                    |
 | COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |                                                                                         |
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
-| GOOGLE_CLIENT_ID             | Client ID for Google Sign In                                                               |
-
-# Seed Local Database with Test Data
-
-This creates test data & the basic data Uesio needs to start in you database.
-
-```
-npm run nx -- seed platform
-```
-
-# Run the application Locally
-
-```
-npm run nx -- serve platform
-```
-
-In a browser visit
-
-```
-https://uesio-dev.com:3000
-```
+| GOOGLE_CLIENT_ID             | Client ID for Google Sign In           
 
 # npm dependencies
 
 As mentioned in the [monorepo](#monorepo-structure) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
-All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+All npm modules we used are installed as `development` dependency since uesio is not intended to be released as standalone npm module.
 
 Most of commmands you might run related to npm modules.
 
@@ -319,14 +321,3 @@ Most of commmands you might run related to npm modules.
 
 3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
-# Running postgres locally
-
-```
-docker run --name some-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=postgresio -d -p 5432:5432 -v "/$(pwd)/pgdata:/var/lib/postgresql/data" postgres
-```
-
-# Running redis locally
-
-```
-docker run --name some-redis -d -p 6379:6379 redis
-```
