@@ -33,5 +33,5 @@
 		},
 		"uesio/core.federation_id": "zach",
 		"uesio/core.auth_source": "uesio/core.mock"
-	},
+	}
 ]
