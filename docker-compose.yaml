@@ -16,7 +16,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgresio
     volumes:
-     - pgdata:/var/lib/postgresql/data
- 
+      - pgdata:/var/lib/postgresql/data
+
 volumes:
   pgdata:
