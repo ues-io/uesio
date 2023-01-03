@@ -49,9 +49,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	routematch := &mux.RouteMatch{}
 
-	matched := router.Match(r, routematch)
-
-	if !matched {
+	if matched := router.Match(r, routematch); !matched {
 		return nil, errors.New("No Route Match Found: " + path)
 	}
 

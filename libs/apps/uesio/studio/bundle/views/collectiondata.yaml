@@ -112,6 +112,7 @@ definition:
                                               - signal: "wire/CREATE_RECORD"
                                                 wire: "collectionData"
                                                 prepend: true
+                                            hotkey: "meta+n"
                             - uesio/io.box:
                                 uesio.styles:
                                   root:

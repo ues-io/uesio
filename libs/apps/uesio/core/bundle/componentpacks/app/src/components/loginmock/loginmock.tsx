@@ -12,6 +12,7 @@ interface LoginProps extends definition.BaseProps {
 
 const Button = component.getUtility("uesio/io.button")
 const Grid = component.getUtility("uesio/io.grid")
+const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach"]
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -35,7 +36,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				}}
 				context={context}
 			>
-				{["ben", "abel", "wessel", "gregg"].map((user) => (
+				{MockUsernames.map((user) => (
 					<Button
 						key={user}
 						context={context}
