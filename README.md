@@ -75,9 +75,10 @@ The `workspace.json` is the entry point for the **build**, **watcher**, **test**
     ```
 
 -   Use Git clone and store this repository in your local machine
--   Follow the instructions for setting up SSL [here](#set-up-ssl).
--   Follow the instructions for environment variables [here](#environment-variables).
--   Follow the instructions for setting up DNS [here](#set-up-local-dns).
+-   Set up SSL [here](#set-up-ssl).
+-   Set up local DNS [here](#set-up-local-dns).
+-   Start dependencies [here](#dependencies).
+-   Build and run [here](#run).
 -   Create an alias in your terminal, this will help to execute Uesio commands.
 
     ```
@@ -222,23 +223,21 @@ sudo brew services start dnsmasq
 
                                                     |
 
-# Local dependencies
+# <a id="dependencies"></a>Start dependencies
 
-Launch all local dependencies (e.g. Postgres) with Docker Compose:
+1. Launch all local dependencies (e.g. Postgres) with Docker Compose:
 
 ```
 docker compose up -d
 ```
 
-# Seed Local Database with Test Data
-
-This creates test data & the basic data Uesio needs to start in your local database:
+2. Seed your local Postgres database with everything Uesio needs for local development
 
 ```
 npm run nx -- seed platform
 ```
 
-# Run the application locally
+# <a id="dependencies"></a>Run the application locally
 
 ```
 npm run nx -- serve platform
