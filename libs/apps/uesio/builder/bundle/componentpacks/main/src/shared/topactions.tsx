@@ -24,11 +24,11 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	hooks.useHotKeyCallback("command+s", () => {
+	hooks.useHotKeyCallback("meta+s", () => {
 		uesio.builder.save(context)
 	})
 
-	hooks.useHotKeyCallback("command+shift+c", () => {
+	hooks.useHotKeyCallback("meta+shift+c", () => {
 		uesio.builder.cancel(context)
 	})
 

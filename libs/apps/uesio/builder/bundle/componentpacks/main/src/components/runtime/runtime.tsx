@@ -43,13 +43,13 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		mediaOffset: LEFT_PANEL_WIDTH + (showCode ? codePanelWidth : 0),
 	})
 
-	hooks.useHotKeyCallback("command+u", () => {
+	hooks.useHotKeyCallback("meta+u", () => {
 		uesio.builder.getBuilderDeps(context).then(() => {
 			setBuildMode(!buildMode)
 		})
 	})
 
-	hooks.useHotKeyCallback("command+p", () => {
+	hooks.useHotKeyCallback("meta+p", () => {
 		uesio.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
 	})
 

@@ -53,7 +53,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 			context
 		)
 
-	hooks.useHotKeyCallback("command+y", () => {
+	hooks.useHotKeyCallback("meta+y", () => {
 		toggleCode?.()
 	})
 

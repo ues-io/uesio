@@ -56,7 +56,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const togglePreview = () => (hasParams ? setOpen(true) : previewHandler())
 
-	hooks.useHotKeyCallback("command+p", () => {
+	hooks.useHotKeyCallback("meta+p", () => {
 		togglePreview()
 	})
 
