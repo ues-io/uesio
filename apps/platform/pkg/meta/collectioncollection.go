@@ -6,20 +6,24 @@ import (
 
 type CollectionCollection []*Collection
 
+var COLLECTION_COLLECTION_NAME = "uesio/studio.collection"
+var COLLECTION_FOLDER_NAME = "collections"
+var COLLECTION_FIELDS = StandardGetFields(&Collection{})
+
 func (cc *CollectionCollection) GetName() string {
-	return "uesio/studio.collection"
+	return COLLECTION_COLLECTION_NAME
 }
 
 func (cc *CollectionCollection) GetBundleFolderName() string {
-	return "collections"
+	return COLLECTION_FOLDER_NAME
 }
 
 func (cc *CollectionCollection) GetFields() []string {
-	return StandardGetFields(&Collection{})
+	return COLLECTION_FIELDS
 }
 
-func (cc *CollectionCollection) GetItemFromPath(path string) BundleableItem {
-	return &Collection{Name: StandardNameFromPath(path)}
+func (cc *CollectionCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseCollection(namespace, StandardNameFromPath(path))
 }
 
 func (cc *CollectionCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
@@ -34,13 +38,9 @@ func (cc *CollectionCollection) AddItem(item Item) {
 	*cc = append(*cc, item.(*Collection))
 }
 
-func (cc *CollectionCollection) GetItem(index int) Item {
-	return (*cc)[index]
-}
-
 func (cc *CollectionCollection) Loop(iter GroupIterator) error {
-	for index := range *cc {
-		err := iter(cc.GetItem(index), strconv.Itoa(index))
+	for index, c := range *cc {
+		err := iter(c, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +50,4 @@ func (cc *CollectionCollection) Loop(iter GroupIterator) error {
 
 func (cc *CollectionCollection) Len() int {
 	return len(*cc)
-}
-
-func (cc *CollectionCollection) GetItems() interface{} {
-	return *cc
 }

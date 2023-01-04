@@ -21,8 +21,10 @@ func runUserBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 		if err != nil {
 			return err
 		}
-		return change.SetField("uesio/core.owner", &meta.User{
-			UniqueKey: username,
+		return change.SetField(adapt.OWNER_FIELD, &meta.User{
+			BuiltIn: meta.BuiltIn{
+				UniqueKey: username,
+			},
 		})
 	})
 

@@ -8,6 +8,10 @@ import (
 
 type FeatureFlagCollection []*FeatureFlag
 
+var FEATUREFLAG_COLLECTION_NAME = "uesio/studio.featureflag"
+var FEATUREFLAG_FOLDER_NAME = "featureflags"
+var FEATUREFLAG_FIELDS = StandardGetFields(&FeatureFlag{})
+
 func (ffc *FeatureFlagCollection) MarshalJSONArray(enc *gojay.Encoder) {
 	for _, ff := range *ffc {
 		enc.AddObject(ff)
@@ -19,15 +23,15 @@ func (ffc *FeatureFlagCollection) IsNil() bool {
 }
 
 func (ffc *FeatureFlagCollection) GetName() string {
-	return "uesio/studio.featureflag"
+	return FEATUREFLAG_COLLECTION_NAME
 }
 
 func (ffc *FeatureFlagCollection) GetBundleFolderName() string {
-	return "featureflags"
+	return FEATUREFLAG_FOLDER_NAME
 }
 
 func (ffc *FeatureFlagCollection) GetFields() []string {
-	return StandardGetFields(&FeatureFlag{})
+	return FEATUREFLAG_FIELDS
 }
 
 func (ffc *FeatureFlagCollection) NewItem() Item {
@@ -38,21 +42,17 @@ func (ffc *FeatureFlagCollection) AddItem(item Item) {
 	*ffc = append(*ffc, item.(*FeatureFlag))
 }
 
-func (ffc *FeatureFlagCollection) GetItemFromPath(path string) BundleableItem {
-	return &FeatureFlag{Name: StandardNameFromPath(path)}
+func (ffc *FeatureFlagCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseFeatureFlag(namespace, StandardNameFromPath(path))
 }
 
 func (ffc *FeatureFlagCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (ffc *FeatureFlagCollection) GetItem(index int) Item {
-	return (*ffc)[index]
-}
-
 func (ffc *FeatureFlagCollection) Loop(iter GroupIterator) error {
-	for index := range *ffc {
-		err := iter(ffc.GetItem(index), strconv.Itoa(index))
+	for index, ff := range *ffc {
+		err := iter(ff, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -62,8 +62,4 @@ func (ffc *FeatureFlagCollection) Loop(iter GroupIterator) error {
 
 func (ffc *FeatureFlagCollection) Len() int {
 	return len(*ffc)
-}
-
-func (ffc *FeatureFlagCollection) GetItems() interface{} {
-	return *ffc
 }

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { useNotifications } from "../bands/notification/selectors"
 import { BaseProps } from "../definition/definition"
-import { appDispatch } from "../store/store"
+import { dispatch } from "../store/store"
 import { remove as removeNotification } from "../bands/notification"
 import { getUtility } from "../component/component"
 
@@ -28,7 +28,7 @@ const NotificationArea: FunctionComponent<BaseProps> = (props) => {
 						severity={notification.severity}
 						context={props.context}
 						onClick={() => {
-							appDispatch()(removeNotification(notification.id))
+							dispatch(removeNotification(notification.id))
 						}}
 					/>
 				))}

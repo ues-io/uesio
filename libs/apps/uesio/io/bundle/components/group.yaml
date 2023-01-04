@@ -1,3 +1,3 @@
 name: group
 pack: main
-entrypoint: components/group/group.tsx
+entrypoint: components/group/group

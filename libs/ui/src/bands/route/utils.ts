@@ -1,7 +1,4 @@
-import { AnyAction } from "redux"
-import { ThunkDispatch } from "redux-thunk"
-import { platform, Platform } from "../../platform/platform"
-import { RootState } from "../../store/store"
+import { platform } from "../../platform/platform"
 import { Dependencies } from "./types"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
@@ -12,7 +9,7 @@ import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { setNamespaceInfo } from "../builder"
+import { setNamespaceInfo } from "../route"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -26,6 +23,7 @@ import { initExistingWire } from "../wire/operations/initialize"
 import { RegularWireDefinition } from "../../definition/wire"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainWire } from "../wire/types"
+import { dispatch } from "../../store/store"
 
 type Dep<T> = Record<string, T> | undefined
 
@@ -53,10 +51,7 @@ const attachDefToWires = (
 	})
 }
 
-const dispatchRouteDeps = (
-	deps: Dependencies | undefined,
-	dispatch: ThunkDispatch<RootState, Platform, AnyAction>
-) => {
+const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	if (!deps) return
 
 	const viewdefs = deps.viewdef?.entities as Dep<PlainViewDef>
@@ -93,31 +88,10 @@ const dispatchRouteDeps = (
 	if (collections) dispatch(initCollection(collections))
 }
 
-const getPackUrlsForDeps = (
-	deps: Dependencies | undefined,
-	context: Context,
-	includeBuilder?: boolean
-) =>
-	deps?.componentpack?.ids.flatMap((key) =>
-		getPackUrls(key as string, context, includeBuilder)
-	) || []
+const getPackUrlsForDeps = (deps: Dependencies | undefined, context: Context) =>
+	deps?.componentpack?.ids.map((key) => {
+		const [namespace, name] = parseKey(key as string)
+		return platform.getComponentPackURL(context, namespace, name)
+	}) || []
 
-const getPackUrls = (
-	key: string,
-	context: Context,
-	includeBuilder?: boolean
-) => {
-	const [namespace, name] = parseKey(key as string)
-	const runtime = platform.getComponentPackURL(context, namespace, name)
-	if (!includeBuilder) return [runtime]
-
-	const buildtime = platform.getComponentPackURL(
-		context,
-		namespace,
-		name,
-		true
-	)
-	return [runtime, buildtime]
-}
-
-export { dispatchRouteDeps, getPackUrlsForDeps, getPackUrls, attachDefToWires }
+export { dispatchRouteDeps, getPackUrlsForDeps, attachDefToWires }

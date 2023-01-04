@@ -9,16 +9,20 @@ import (
 
 type FieldCollection []*Field
 
+var FIELD_COLLECTION_NAME = "uesio/studio.field"
+var FIELD_FOLDER_NAME = "fields"
+var FIELD_FIELDS = StandardGetFields(&Field{})
+
 func (fc *FieldCollection) GetName() string {
-	return "uesio/studio.field"
+	return FIELD_COLLECTION_NAME
 }
 
 func (fc *FieldCollection) GetBundleFolderName() string {
-	return "fields"
+	return FIELD_FOLDER_NAME
 }
 
 func (fc *FieldCollection) GetFields() []string {
-	return StandardGetFields(&Field{})
+	return FIELD_FIELDS
 }
 
 func (fc *FieldCollection) NewItem() Item {
@@ -29,12 +33,11 @@ func (fc *FieldCollection) AddItem(item Item) {
 	*fc = append(*fc, item.(*Field))
 }
 
-func (fc *FieldCollection) GetItemFromPath(path string) BundleableItem {
+func (fc *FieldCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	parts := strings.Split(path, string(os.PathSeparator))
-	return &Field{
-		CollectionRef: fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2]),
-		Name:          strings.TrimSuffix(parts[3], ".yaml"),
-	}
+	collectionKey := fmt.Sprintf("%s/%s.%s", parts[0], parts[1], parts[2])
+	name := strings.TrimSuffix(parts[3], ".yaml")
+	return NewBaseField(collectionKey, namespace, name)
 }
 
 func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
@@ -60,13 +63,9 @@ func (fc *FieldCollection) FilterPath(path string, conditions BundleConditions, 
 	return true
 }
 
-func (fc *FieldCollection) GetItem(index int) Item {
-	return (*fc)[index]
-}
-
 func (fc *FieldCollection) Loop(iter GroupIterator) error {
-	for index := range *fc {
-		err := iter(fc.GetItem(index), strconv.Itoa(index))
+	for index, f := range *fc {
+		err := iter(f, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -76,8 +75,4 @@ func (fc *FieldCollection) Loop(iter GroupIterator) error {
 
 func (fc *FieldCollection) Len() int {
 	return len(*fc)
-}
-
-func (fc *FieldCollection) GetItems() interface{} {
-	return *fc
 }

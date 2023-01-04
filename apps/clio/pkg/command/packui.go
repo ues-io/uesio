@@ -20,6 +20,14 @@ func PackUI(options *PackOptions) error {
 	globalsMap := map[string]string{
 		"react":     "React",
 		"react-dom": "ReactDOM",
+
+		// We're adding "react/jsx-runtime" here as a global
+		// because we were running into issues with the
+		// react-hotkeys-hook library adding a module import for
+		// "react/jsx-runtime". I'm not sure exactly what the global
+		// value for "react/jsx-runtime" should be, but setting it
+		// to React seems to fix the issue.
+		"react/jsx-runtime": "React",
 		//"redux":       "Redux",
 		//"react-redux": "ReactRedux",
 		//"yaml":         "yaml",

@@ -14,7 +14,7 @@ const ToggleConditionAction: FunctionComponent<
 	if (!pathArray) return null
 
 	const wireName = component.path.getKeyAtPath(pathArray[1])
-	const wire = uesio.wire.useWire(wireName || "")
+	const wire = uesio.wire.useWire(wireName || "", props.context)
 
 	const conditionId = def.id as string
 
@@ -37,7 +37,9 @@ const ToggleConditionAction: FunctionComponent<
 	]
 
 	const clickHandler =
-		signals && signals.length && uesio.signal.getHandler(signals)
+		signals &&
+		signals.length &&
+		uesio.signal.getHandler(signals, props.context)
 
 	const action = props.action
 	if (!action || !clickHandler || !condition) {

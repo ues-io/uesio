@@ -24,8 +24,7 @@ func PlatformDelete(request meta.CollectionableGroup, connection adapt.Connectio
 
 func PlatformDeleteOne(item meta.CollectionableItem, connection adapt.Connection, session *sess.Session) error {
 	collection := &LoadOneCollection{
-		Collection: item.GetCollection(),
-		Item:       item,
+		Item: item,
 	}
 	return PlatformDelete(collection, connection, session)
 }
@@ -109,8 +108,7 @@ func PlatformSaveOne(item meta.CollectionableItem, options *adapt.SaveOptions, c
 func GetPlatformSaveOneRequest(item meta.CollectionableItem, options *adapt.SaveOptions) *PlatformSaveRequest {
 	return &PlatformSaveRequest{
 		Collection: &LoadOneCollection{
-			Collection: item.GetCollection(),
-			Item:       item,
+			Item: item,
 		},
 		Options: options,
 	}

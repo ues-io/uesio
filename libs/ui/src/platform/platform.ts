@@ -267,12 +267,10 @@ const platform = {
 	getComponentPackURL: (
 		context: Context,
 		namespace: string,
-		name: string,
-		buildMode?: boolean
+		name: string
 	) => {
 		const prefix = getPrefix(context)
-		const buildModeSuffix = buildMode ? "builder.js" : "runtime.js"
-		return `${prefix}/componentpacks/${namespace}/${name}/${buildModeSuffix}`
+		return `${prefix}/componentpacks/${namespace}/${name}/runtime.js`
 	},
 	getMetadataList: async (
 		context: Context,

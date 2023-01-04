@@ -24,8 +24,12 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		"selected",
 		definition
 	)
-	const handler = uesio.signal.getHandler(definition.signals)
-	uesio.signal.useRegisterHotKey(definition.hotkey, definition.signals)
+	const handler = uesio.signal.getHandler(definition.signals, context)
+	uesio.signal.useRegisterHotKey(
+		definition.hotkey,
+		definition.signals,
+		context
+	)
 	return (
 		<IOButton
 			variant={definition["uesio.variant"]}

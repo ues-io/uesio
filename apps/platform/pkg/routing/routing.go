@@ -15,13 +15,10 @@ import (
 
 func getHomeRoute(session *sess.Session) (*meta.Route, error) {
 	homeRoute := session.GetSite().GetAppBundle().HomeRoute
-	namespace, name, err := meta.ParseKey(homeRoute)
+
+	route, err := meta.NewRoute(homeRoute)
 	if err != nil {
 		return nil, err
-	}
-	route := &meta.Route{
-		Name:      name,
-		Namespace: namespace,
 	}
 	err = bundle.Load(route, session, nil)
 	if err != nil {
@@ -52,9 +49,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	routematch := &mux.RouteMatch{}
 
-	matched := router.Match(r, routematch)
-
-	if !matched {
+	if matched := router.Match(r, routematch); !matched {
 		return nil, errors.New("No Route Match Found: " + path)
 	}
 

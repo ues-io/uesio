@@ -1,5 +1,3 @@
-import { MetadataInfo } from "../../platform/platform"
-
 const METADATA = {
 	COLLECTION: "collections",
 	FIELD: "fields",
@@ -31,7 +29,6 @@ type BuilderState = {
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	namespaces?: Record<string, MetadataInfo>
 }
 
 type MetadataListResponse = {

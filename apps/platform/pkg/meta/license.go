@@ -1,26 +1,15 @@
 package meta
 
 type License struct {
-	ID           string    `json:"uesio/core.id"`
-	UniqueKey    string    `json:"uesio/core.uniquekey"`
-	Active       bool      `json:"uesio/studio.active"`
-	App          *App      `json:"uesio/studio.app"`
-	AppLicensed  *App      `json:"uesio/studio.applicensed"`
-	MonthlyPrice float64   `json:"uesio/studio.monthlyprice"`
-	itemMeta     *ItemMeta `json:"-"`
-	CreatedBy    *User     `json:"uesio/core.createdby"`
-	Owner        *User     `json:"uesio/core.owner"`
-	UpdatedBy    *User     `json:"uesio/core.updatedby"`
-	UpdatedAt    int64     `json:"uesio/core.updatedat"`
-	CreatedAt    int64     `json:"uesio/core.createdat"`
+	Active       bool    `json:"uesio/studio.active"`
+	App          *App    `json:"uesio/studio.app"`
+	AppLicensed  *App    `json:"uesio/studio.applicensed"`
+	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
+	BuiltIn
 }
 
 func (l *License) GetCollectionName() string {
-	return l.GetCollection().GetName()
-}
-
-func (l *License) GetCollection() CollectionableGroup {
-	return &LicenseCollection{}
+	return LICENSE_COLLECTION_NAME
 }
 
 func (l *License) SetField(fieldName string, value interface{}) error {
@@ -37,12 +26,4 @@ func (l *License) Loop(iter func(string, interface{}) error) error {
 
 func (l *License) Len() int {
 	return StandardItemLen(l)
-}
-
-func (l *License) GetItemMeta() *ItemMeta {
-	return l.itemMeta
-}
-
-func (l *License) SetItemMeta(itemMeta *ItemMeta) {
-	l.itemMeta = itemMeta
 }

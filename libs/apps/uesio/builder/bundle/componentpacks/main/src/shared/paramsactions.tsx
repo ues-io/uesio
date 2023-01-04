@@ -8,7 +8,7 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
 	const uesio = hooks.useUesio(props)
 	const metadataType = "viewdef"
-	const metadataItem = uesio.getViewDefId() || ""
+	const metadataItem = context.getViewDefId() || ""
 	const localPath = '["params"]'
 	const path = component.path.makeFullPath(
 		metadataType,

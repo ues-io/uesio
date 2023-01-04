@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -20,30 +19,23 @@ func NewComponentVariant(key string) (*ComponentVariant, error) {
 	if err != nil {
 		return nil, errors.New("Invalid Variant Key: " + key)
 	}
+	return NewBaseComponentVariant(keyArray[0], namespace, name), nil
+}
+
+func NewBaseComponentVariant(component, namespace, name string) *ComponentVariant {
 	return &ComponentVariant{
-		Component: keyArray[0],
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+		Component:      component,
+		BundleableBase: NewBase(namespace, name),
+	}
 }
 
 type ComponentVariant struct {
-	ID         string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey  string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Namespace  string     `yaml:"-" json:"-"`
-	Workspace  *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	Name       string     `yaml:"name" json:"uesio/studio.name"`
-	Component  string     `yaml:"-" json:"uesio/studio.component"`
-	Extends    string     `yaml:"extends,omitempty" json:"uesio/studio.extends"`
-	Label      string     `yaml:"label" json:"uesio/studio.label"`
-	Definition yaml.Node  `yaml:"definition" json:"uesio/studio.definition"`
-	itemMeta   *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy  *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner      *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy  *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt  int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt  int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public     bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Component  string    `yaml:"-" json:"uesio/studio.component"`
+	Extends    string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
+	Label      string    `yaml:"label" json:"uesio/studio.label"`
+	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ComponentVariantWrapper ComponentVariant
@@ -65,12 +57,8 @@ func (c *ComponentVariant) IsNil() bool {
 	return c == nil
 }
 
-func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
-	return &ComponentVariantCollection{}
-}
-
-func (c *ComponentVariant) GetPermChecker() *PermissionSet {
-	return nil
+func (c *ComponentVariant) GetBundleFolderName() string {
+	return COMPONENTVARIANT_FOLDER_NAME
 }
 
 func (c *ComponentVariant) GetKey() string {
@@ -87,24 +75,8 @@ func (c *ComponentVariant) GetDBID(workspace string) string {
 	return fmt.Sprintf("%s:%s:%s", workspace, c.Component, c.Name)
 }
 
-func (c *ComponentVariant) SetNamespace(namespace string) {
-	c.Namespace = namespace
-}
-
-func (c *ComponentVariant) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *ComponentVariant) SetModified(mod time.Time) {
-	c.UpdatedAt = mod.UnixMilli()
-}
-
 func (c *ComponentVariant) GetCollectionName() string {
-	return c.GetCollection().GetName()
-}
-
-func (c *ComponentVariant) GetCollection() CollectionableGroup {
-	return &ComponentVariantCollection{}
+	return COMPONENTVARIANT_COLLECTION_NAME
 }
 
 func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
@@ -143,22 +115,10 @@ func (c *ComponentVariant) Len() int {
 	return StandardItemLen(c)
 }
 
-func (c *ComponentVariant) GetItemMeta() *ItemMeta {
-	return c.itemMeta
-}
-
-func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
-	c.itemMeta = itemMeta
-}
-
 func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, cv.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*ComponentVariantWrapper)(cv))
-}
-
-func (cv *ComponentVariant) IsPublic() bool {
-	return cv.Public
 }

@@ -18,7 +18,6 @@ type T = {
 }
 type Frame = { fieldId?: string; collection: string; path: string }
 const useFields = (
-	uesio: hooks.Uesio,
 	wireDef: wire.WireDefinition | undefined,
 	context: context.Context
 ): [string[], string, React.Dispatch<React.SetStateAction<string>>] => {
@@ -26,6 +25,8 @@ const useFields = (
 		wireDef && "collection" in wireDef ? wireDef?.collection : ""
 
 	const [collection, setCollection] = React.useState(wireCollection)
+
+	const uesio = hooks.useUesio()
 
 	const [collectionFields] = uesio.builder.useMetadataList(
 		context,
@@ -164,7 +165,6 @@ const FieldPicker: FC<T> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 	const [fieldKeys, collectionKey, setCollection] = useFields(
-		uesio,
 		wireDef,
 		context
 	)

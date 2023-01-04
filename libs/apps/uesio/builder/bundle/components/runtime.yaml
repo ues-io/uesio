@@ -1,0 +1,3 @@
+name: runtime
+pack: main
+entrypoint: components/runtime/runtime

@@ -1,55 +1,41 @@
 package meta
 
 import (
-	"fmt"
-	"time"
+	"errors"
 
 	"gopkg.in/yaml.v3"
 )
 
+func NewComponent(key string) (*Component, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for Component: " + key)
+	}
+	return NewBaseComponent(namespace, name), nil
+}
+
+func NewBaseComponent(namespace, name string) *Component {
+	return &Component{BundleableBase: NewBase(namespace, name)}
+}
+
 type Component struct {
-	ID        string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name      string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace string     `yaml:"-" json:"-"`
-	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Pack         string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint   string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	ConfigValues []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants     []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities    []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type ComponentWrapper Component
 
 func (c *Component) GetCollectionName() string {
-	return c.GetBundleGroup().GetName()
+	return COMPONENT_COLLECTION_NAME
 }
 
-func (c *Component) GetCollection() CollectionableGroup {
-	return &ComponentCollection{}
-}
-
-func (c *Component) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, c.Name)
-}
-
-func (c *Component) GetBundleGroup() BundleableGroup {
-	return &ComponentCollection{}
-}
-
-func (c *Component) GetKey() string {
-	return fmt.Sprintf("%s.%s", c.Namespace, c.Name)
-}
-
-func (c *Component) GetPath() string {
-	return c.Name + ".yaml"
-}
-
-func (c *Component) GetPermChecker() *PermissionSet {
-	return nil
+func (c *Component) GetBundleFolderName() string {
+	return COMPONENT_FOLDER_NAME
 }
 
 func (c *Component) SetField(fieldName string, value interface{}) error {
@@ -60,32 +46,12 @@ func (c *Component) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(c, fieldName)
 }
 
-func (c *Component) GetNamespace() string {
-	return c.Namespace
-}
-
-func (c *Component) SetNamespace(namespace string) {
-	c.Namespace = namespace
-}
-
-func (c *Component) SetModified(mod time.Time) {
-	c.UpdatedAt = mod.UnixMilli()
-}
-
 func (c *Component) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
 func (c *Component) Len() int {
 	return StandardItemLen(c)
-}
-
-func (c *Component) GetItemMeta() *ItemMeta {
-	return c.itemMeta
-}
-
-func (c *Component) SetItemMeta(itemMeta *ItemMeta) {
-	c.itemMeta = itemMeta
 }
 
 func (c *Component) UnmarshalYAML(node *yaml.Node) error {
@@ -97,5 +63,5 @@ func (c *Component) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func (c *Component) IsPublic() bool {
-	return c.Public
+	return true
 }

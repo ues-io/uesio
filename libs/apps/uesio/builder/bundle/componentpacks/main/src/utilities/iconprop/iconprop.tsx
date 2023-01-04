@@ -63,7 +63,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 		null
 	)
 
-	const viewDefId = uesio.getViewDefId()
+	const viewDefId = context.getViewDefId()
 	if (!viewDefId || !path) return null
 
 	return (

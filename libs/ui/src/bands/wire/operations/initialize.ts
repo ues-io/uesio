@@ -1,4 +1,4 @@
-import { ThunkFunc } from "../../../store/store"
+import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { init } from ".."
 import {
@@ -148,22 +148,21 @@ const initWire = (
 export { initExistingWire }
 
 export default (
-		context: Context,
-		wireDefs: Record<string, WireDefinition | undefined>
-	): ThunkFunc =>
-	(dispatch) => {
-		const collections: PlainCollectionMap = {}
-		const viewId = context.getViewId()
+	context: Context,
+	wireDefs: Record<string, WireDefinition | undefined>
+) => {
+	const collections: PlainCollectionMap = {}
+	const viewId = context.getViewId()
 
-		if (!viewId) throw new Error("Could not get View Def Id")
-		const initializedWires = Object.keys(wireDefs).map((wirename) => {
-			const wireDef =
-				wireDefs[wirename] || context.getViewDef()?.wires?.[wirename]
-			if (!wireDef) throw new Error("Could not get wire def")
-			return initWire(viewId, wirename, wireDef, collections)
-		})
+	if (!viewId) throw new Error("Could not get View Def Id")
+	const initializedWires = Object.keys(wireDefs).map((wirename) => {
+		const wireDef =
+			wireDefs[wirename] || context.getViewDef()?.wires?.[wirename]
+		if (!wireDef) throw new Error("Could not get wire def")
+		return initWire(viewId, wirename, wireDef, collections)
+	})
 
-		dispatch(init([initializedWires, collections]))
+	dispatch(init([initializedWires, collections]))
 
-		return context
-	}
+	return context
+}

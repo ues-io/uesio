@@ -1,4 +1,4 @@
-import { definition, builder, styles, component } from "@uesio/ui"
+import { definition, builder, styles, component, hooks } from "@uesio/ui"
 
 type GridDefinition = {
 	templateColumns?: styles.ResponsiveDefinition
@@ -45,9 +45,11 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	classes: ["root"],
 	traits: ["uesio.standalone"],
-	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
+
+		const uesio = hooks.useUesio()
 		if (metadataType === "field") {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)

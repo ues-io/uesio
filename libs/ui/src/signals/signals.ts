@@ -1,6 +1,5 @@
 import { Context, ContextFrame } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
-import { appDispatch } from "../store/store"
 import componentSignal from "../bands/component/signals"
 
 import botSignals from "../bands/bot/signals"
@@ -23,14 +22,9 @@ const registry: Record<string, SignalDescriptor> = {
 
 const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || componentSignal
-	return appDispatch()(
-		descriptor.dispatcher(
-			signal,
-			additionalContext(
-				context,
-				signal?.["uesio.context"] as ContextFrame
-			)
-		)
+	return descriptor.dispatcher(
+		signal,
+		additionalContext(context, signal?.["uesio.context"] as ContextFrame)
 	)
 }
 

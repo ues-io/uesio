@@ -12,18 +12,12 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const [, , selectedPath] = uesio.builder.useSelectedNode()
 	const metadataType = "viewdef"
-	const metadataItem = uesio.getViewDefId() || ""
+	const metadataItem = context.getViewDefId() || ""
 	const localPath = '["wires"]'
 
 	const def = uesio.builder.useDefinition(metadataType, metadataItem, "")
 
-	const valueAPI = getValueAPI(
-		metadataType,
-		metadataItem,
-		selectedPath,
-		def,
-		uesio
-	)
+	const valueAPI = getValueAPI(metadataType, metadataItem, selectedPath, def)
 
 	const wireDefs = valueAPI.get(localPath) as definition.DefinitionMap
 

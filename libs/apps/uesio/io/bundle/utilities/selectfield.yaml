@@ -1,3 +1,3 @@
 name: selectfield
 pack: main
-entrypoint: utilities/selectfield/selectfield.tsx
+entrypoint: utilities/selectfield/selectfield

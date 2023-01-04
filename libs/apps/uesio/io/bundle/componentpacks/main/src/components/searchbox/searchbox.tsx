@@ -7,7 +7,7 @@ import debounce from "lodash/debounce"
 const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 	const { definition, context } = props
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = uesio.wire.useWire(definition.wire, context)
 	const classes = styles.useStyles(
 		{
 			root: {

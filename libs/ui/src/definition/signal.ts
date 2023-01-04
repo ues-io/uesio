@@ -1,6 +1,5 @@
 import { Context } from "../context/context"
 import { Definition } from "./definition"
-import { ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
 import { Draft } from "@reduxjs/toolkit"
@@ -9,7 +8,7 @@ import { Platform } from "../platform/platform"
 type SignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context
-) => ThunkFunc
+) => Promise<Context> | Context
 
 type ComponentSignalDispatcher<T> = (
 	state: Draft<T>,

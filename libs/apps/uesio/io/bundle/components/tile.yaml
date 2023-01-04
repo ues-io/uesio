@@ -1,3 +1,6 @@
 name: tile
 pack: main
-entrypoint: components/tile/tile.tsx
+entrypoint: components/tile/tile
+variants:
+  - uesio/io.text:uesio/io.icon
+  - uesio/io.text:uesio/io.iconoutline

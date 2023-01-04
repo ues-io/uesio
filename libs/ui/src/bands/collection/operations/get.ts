@@ -1,16 +1,15 @@
-import { ThunkFunc } from "../../../store/store"
+import { dispatch } from "../../../store/store"
 import { Context } from "../../../context/context"
 import { set } from "../index"
+import { platform } from "../../../platform/platform"
 
-const getMetadata =
-	(collectionName: string, context: Context): ThunkFunc =>
-	async (dispatcher, getState, api) => {
-		const response = await api.getCollectionMetadata(
-			context,
-			collectionName
-		)
-		dispatcher(set(response.collections))
-		return context
-	}
+const getMetadata = async (collectionName: string, context: Context) => {
+	const response = await platform.getCollectionMetadata(
+		context,
+		collectionName
+	)
+	dispatch(set(response.collections))
+	return context
+}
 
 export default getMetadata

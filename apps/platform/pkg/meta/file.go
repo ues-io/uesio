@@ -2,9 +2,7 @@ package meta
 
 import (
 	"errors"
-	"fmt"
 	"path/filepath"
-	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,48 +12,27 @@ func NewFile(key string) (*File, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for File: " + key)
 	}
-	return &File{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+	return NewBaseFile(namespace, name), nil
+}
+
+func NewBaseFile(namespace, name string) *File {
+	return &File{BundleableBase: NewBase(namespace, name)}
 }
 
 type File struct {
-	ID        string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name      string     `yaml:"name" json:"uesio/studio.name"`
-	Namespace string     `yaml:"-" json:"-"`
-	Path      string     `yaml:"path" json:"uesio/studio.path"`
-	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Path string `yaml:"path" json:"uesio/studio.path"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type FileWrapper File
 
 func (f *File) GetCollectionName() string {
-	return f.GetBundleGroup().GetName()
+	return FILE_COLLECTION_NAME
 }
 
-func (f *File) GetCollection() CollectionableGroup {
-	return &FileCollection{}
-}
-
-func (f *File) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, f.Name)
-}
-
-func (f *File) GetBundleGroup() BundleableGroup {
-	return &FileCollection{}
-}
-
-func (f *File) GetKey() string {
-	return fmt.Sprintf("%s.%s", f.Namespace, f.Name)
+func (f *File) GetBundleFolderName() string {
+	return FILE_FOLDER_NAME
 }
 
 func (f *File) GetBasePath() string {
@@ -83,18 +60,6 @@ func (f *File) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(f, fieldName)
 }
 
-func (f *File) GetNamespace() string {
-	return f.Namespace
-}
-
-func (f *File) SetNamespace(namespace string) {
-	f.Namespace = namespace
-}
-
-func (f *File) SetModified(mod time.Time) {
-	f.UpdatedAt = mod.UnixMilli()
-}
-
 func (f *File) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
 }
@@ -103,22 +68,10 @@ func (f *File) Len() int {
 	return StandardItemLen(f)
 }
 
-func (f *File) GetItemMeta() *ItemMeta {
-	return f.itemMeta
-}
-
-func (f *File) SetItemMeta(itemMeta *ItemMeta) {
-	f.itemMeta = itemMeta
-}
-
 func (f *File) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, f.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*FileWrapper)(f))
-}
-
-func (f *File) IsPublic() bool {
-	return f.Public
 }

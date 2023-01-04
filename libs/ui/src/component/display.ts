@@ -284,7 +284,8 @@ const useShouldFilter = <T extends BaseDefinition>(
 		getWiresForConditions(
 			conditionsList?.flatMap((c) => c),
 			context
-		)
+		),
+		context
 	)
 
 	return items?.filter((item, index) =>
@@ -299,7 +300,7 @@ const useContextFilter = <T>(
 	context: Context
 ): ItemContext<T>[] => {
 	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	uesio.wire.useWires(getWiresForConditions(conditions, context), context)
 	return items.flatMap((item) => {
 		const newContext = contextFunc(item, context)
 		return shouldAll(conditions, newContext)
@@ -318,7 +319,7 @@ const useShould = (
 	context: Context
 ) => {
 	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context))
+	uesio.wire.useWires(getWiresForConditions(conditions, context), context)
 	return shouldAll(conditions, context)
 }
 

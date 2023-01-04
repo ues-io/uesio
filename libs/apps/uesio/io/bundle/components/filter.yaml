@@ -1,3 +1,7 @@
 name: filter
 pack: main
-entrypoint: components/filter/filter.tsx
+entrypoint: components/filter/filter
+variants:
+  - uesio/io.selectfield:uesio/io.filter
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default

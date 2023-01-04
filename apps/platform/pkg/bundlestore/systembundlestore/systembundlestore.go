@@ -62,7 +62,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	fullCollectionName := item.GetCollectionName()
-	collectionName := item.GetBundleGroup().GetBundleFolderName()
+	collectionName := item.GetBundleFolderName()
 	app := session.GetContextAppName()
 	permSet := session.GetContextPermissions()
 
@@ -140,11 +140,11 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 
 	for _, path := range paths {
 
-		retrievedItem := group.GetItemFromPath(path)
+		retrievedItem := group.GetItemFromPath(path, namespace)
 		if retrievedItem == nil {
 			continue
 		}
-		retrievedItem.SetNamespace(namespace)
+
 		err = b.GetItem(retrievedItem, version, session, connection)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {
@@ -159,7 +159,7 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 }
 
 func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(item.GetNamespace(), version, item.GetBundleGroup().GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+	return getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 }
 
 func (b *SystemBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {

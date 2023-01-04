@@ -26,6 +26,29 @@ func (im *ItemMeta) IsValidField(fieldName string) bool {
 	return true
 }
 
+type BuiltIn struct {
+	ID        string    `yaml:"-" json:"uesio/core.id"`
+	UniqueKey string    `yaml:"-" json:"uesio/core.uniquekey"`
+	itemMeta  *ItemMeta `yaml:"-" json:"-"`
+	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
+}
+
+func (bi *BuiltIn) SetModified(mod time.Time) {
+	bi.UpdatedAt = mod.Unix()
+}
+
+func (bi *BuiltIn) GetItemMeta() *ItemMeta {
+	return bi.itemMeta
+}
+
+func (bi *BuiltIn) SetItemMeta(itemMeta *ItemMeta) {
+	bi.itemMeta = itemMeta
+}
+
 type BundleConditions map[string]string
 
 type CollectionableGroup interface {
@@ -37,7 +60,6 @@ type CollectionableGroup interface {
 type CollectionableItem interface {
 	Item
 	GetCollectionName() string
-	GetCollection() CollectionableGroup
 	GetItemMeta() *ItemMeta
 	SetItemMeta(*ItemMeta)
 }
@@ -46,7 +68,7 @@ type BundleableGroup interface {
 	CollectionableGroup
 	GetBundleFolderName() string
 	FilterPath(string, BundleConditions, bool) bool
-	GetItemFromPath(string) BundleableItem
+	GetItemFromPath(string, string) BundleableItem
 }
 
 type AttachableGroup interface {
@@ -61,7 +83,7 @@ type AttachableItem interface {
 
 type BundleableItem interface {
 	CollectionableItem
-	GetBundleGroup() BundleableGroup
+	GetBundleFolderName() string
 	GetPermChecker() *PermissionSet
 	GetKey() string
 	GetPath() string

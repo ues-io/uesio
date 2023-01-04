@@ -6,16 +6,15 @@ import (
 
 type BulkBatchCollection []*BulkBatch
 
+var BULKBATCH_COLLECTION_NAME = "uesio/core.bulkbatch"
+var BULKBATCH_FIELDS = StandardGetFields(&BulkBatch{})
+
 func (bbc *BulkBatchCollection) GetName() string {
-	return "uesio/core.bulkbatch"
+	return BULKBATCH_COLLECTION_NAME
 }
 
 func (bbc *BulkBatchCollection) GetFields() []string {
-	return StandardGetFields(&BulkBatch{})
-}
-
-func (bbc *BulkBatchCollection) GetItem(index int) Item {
-	return (*bbc)[index]
+	return BULKBATCH_FIELDS
 }
 
 func (bbc *BulkBatchCollection) NewItem() Item {
@@ -27,8 +26,8 @@ func (bbc *BulkBatchCollection) AddItem(item Item) {
 }
 
 func (bbc *BulkBatchCollection) Loop(iter GroupIterator) error {
-	for index := range *bbc {
-		err := iter(bbc.GetItem(index), strconv.Itoa(index))
+	for index, bb := range *bbc {
+		err := iter(bb, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +37,4 @@ func (bbc *BulkBatchCollection) Loop(iter GroupIterator) error {
 
 func (bbc *BulkBatchCollection) Len() int {
 	return len(*bbc)
-}
-
-func (bbc *BulkBatchCollection) GetItems() interface{} {
-	return *bbc
 }

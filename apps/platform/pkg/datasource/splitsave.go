@@ -3,7 +3,7 @@ package datasource
 import (
 	"errors"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -83,13 +83,17 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
-				newID := uuid.New().String()
-				err := item.SetField(adapt.ID_FIELD, newID)
+				newID, err := uuid.NewV7()
+				if err != nil {
+					return err
+				}
+				newIDString := newID.String()
+				err = item.SetField(adapt.ID_FIELD, newIDString)
 				if err != nil {
 					return err
 				}
 
-				opList.addInsert(item, recordKey, newID)
+				opList.addInsert(item, recordKey, newIDString)
 			} else {
 				opList.addUpdate(item, recordKey, idValue.(string))
 			}

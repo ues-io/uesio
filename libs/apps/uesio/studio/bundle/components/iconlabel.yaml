@@ -1,3 +1,5 @@
 name: iconlabel
 pack: main
-entrypoint: components/iconlabel/iconlabel.tsx
+entrypoint: components/iconlabel/iconlabel
+utilities:
+  - uesio/builder.iconlabel

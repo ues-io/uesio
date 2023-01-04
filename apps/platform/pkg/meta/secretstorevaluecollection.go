@@ -6,16 +6,15 @@ import (
 
 type SecretStoreValueCollection []*SecretStoreValue
 
+var SECRETSTOREVALUE_COLLECTION_NAME = "uesio/core.secretstorevalue"
+var SECRETSTOREVALUE_FIELDS = StandardGetFields(&SecretStoreValue{})
+
 func (sc *SecretStoreValueCollection) GetName() string {
-	return "uesio/core.secretstorevalue"
+	return SECRETSTOREVALUE_COLLECTION_NAME
 }
 
 func (sc *SecretStoreValueCollection) GetFields() []string {
-	return StandardGetFields(&SecretStoreValue{})
-}
-
-func (sc *SecretStoreValueCollection) GetItem(index int) Item {
-	return (*sc)[index]
+	return SECRETSTOREVALUE_FIELDS
 }
 
 func (sc *SecretStoreValueCollection) NewItem() Item {
@@ -27,8 +26,8 @@ func (sc *SecretStoreValueCollection) AddItem(item Item) {
 }
 
 func (sc *SecretStoreValueCollection) Loop(iter GroupIterator) error {
-	for index := range *sc {
-		err := iter(sc.GetItem(index), strconv.Itoa(index))
+	for index, s := range *sc {
+		err := iter(s, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +37,4 @@ func (sc *SecretStoreValueCollection) Loop(iter GroupIterator) error {
 
 func (sc *SecretStoreValueCollection) Len() int {
 	return len(*sc)
-}
-
-func (sc *SecretStoreValueCollection) GetItems() interface{} {
-	return *sc
 }

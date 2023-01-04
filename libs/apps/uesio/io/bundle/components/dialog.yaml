@@ -1,3 +1,5 @@
 name: dialog
 pack: main
-entrypoint: components/dialog/dialog.tsx
+entrypoint: components/dialog/dialog
+variants:
+  - uesio/io.titlebar:uesio/io.dialog

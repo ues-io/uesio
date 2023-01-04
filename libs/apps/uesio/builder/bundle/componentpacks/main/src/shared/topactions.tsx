@@ -24,12 +24,12 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	hooks.useHotKeyCallback("command+s", () => {
-		uesio.builder.save()
+	hooks.useHotKeyCallback("meta+s", () => {
+		uesio.builder.save(context)
 	})
 
-	hooks.useHotKeyCallback("command+shift+c", () => {
-		uesio.builder.cancel()
+	hooks.useHotKeyCallback("meta+shift+c", () => {
+		uesio.builder.cancel(context)
 	})
 
 	return (
@@ -46,7 +46,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						disabled={!hasChanges}
 						variant="uesio/builder.primarytoolbar"
 						onClick={() => {
-							uesio.builder.save()
+							uesio.builder.save(context)
 						}}
 					/>
 					<Button
@@ -55,7 +55,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						disabled={!hasChanges}
 						variant="uesio/builder.secondarytoolbar"
 						onClick={() => {
-							uesio.builder.cancel()
+							uesio.builder.cancel(context)
 						}}
 					/>
 				</Group>

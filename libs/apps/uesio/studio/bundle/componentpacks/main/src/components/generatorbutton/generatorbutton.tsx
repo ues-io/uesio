@@ -75,13 +75,17 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 		"generator"
 	)
 
-	uesio.wire.useDynamicWire(open ? WIRE_NAME : "", {
-		viewOnly: true,
-		fields: uesio.wire.getWireFieldsFromParams(params),
-		init: {
-			create: true,
+	uesio.wire.useDynamicWire(
+		open ? WIRE_NAME : "",
+		{
+			viewOnly: true,
+			fields: uesio.wire.getWireFieldsFromParams(params),
+			init: {
+				create: true,
+			},
 		},
-	})
+		context
+	)
 
 	return (
 		<>

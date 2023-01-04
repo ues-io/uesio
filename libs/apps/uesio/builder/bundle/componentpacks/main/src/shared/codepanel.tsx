@@ -217,11 +217,14 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 							variant="uesio/builder.buildtitle"
 							icon="close"
-							onClick={uesio.signal.getHandler([
-								{
-									signal: "component/uesio/builder.runtime/TOGGLE_CODE",
-								},
-							])}
+							onClick={uesio.signal.getHandler(
+								[
+									{
+										signal: "component/uesio/builder.runtime/TOGGLE_CODE",
+									},
+								],
+								context
+							)}
 						/>
 					}
 					context={context}

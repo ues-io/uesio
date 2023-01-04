@@ -2,6 +2,7 @@ import { FC } from "react"
 import {
 	BaseProps,
 	DefinitionMap,
+	UesioComponent,
 	UtilityProps,
 } from "../definition/definition"
 import {
@@ -31,8 +32,6 @@ import get from "lodash/get"
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
 const utilityRegistry: Registry<FC<UtilityProps>> = {}
-const builderRegistry: Registry<FC<BaseProps>> = {}
-const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
 	{}
 
@@ -40,13 +39,9 @@ const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
 	registry[key] = item
 }
 
-const register = (
-	key: MetadataKey,
-	componentType: FC<BaseProps>,
-	signals?: Registry<ComponentSignalDescriptor>
-) => {
+const register = (key: MetadataKey, componentType: UesioComponent) => {
 	addToRegistry<FC<BaseProps>>(registry, key, componentType)
-	signals && registerSignals(key, signals)
+	componentType.signals && registerSignals(key, componentType.signals)
 }
 
 const registerSignals = (
@@ -63,17 +58,6 @@ const registerUtilityComponent = (
 	addToRegistry(utilityRegistry, key, componentType)
 }
 
-const registerBuilder = (
-	key: MetadataKey,
-	componentType?: FC<BaseProps>,
-	definition?: BuildPropertiesDefinition
-) => {
-	componentType && addToRegistry(builderRegistry, key, componentType)
-	definition && addToRegistry(definitionRegistry, key, definition)
-}
-
-const getBuildtimeLoader = (key: MetadataKey) => builderRegistry[key]
-
 const getRuntimeLoader = (key: MetadataKey) => registry[key]
 
 const getUtilityLoader = (key: MetadataKey) => utilityRegistry[key]
@@ -84,10 +68,11 @@ const getSignal = (key: string, signal: string) =>
 const getPropertiesDefinition = (
 	key: MetadataKey
 ): BuildPropertiesDefinition => {
-	const propDef = definitionRegistry[key]
 	const [namespace, name] = parseKey(key)
 	return {
-		...propDef,
+		title: "blah",
+		sections: [],
+		defaultDefinition: () => ({}),
 		name,
 		namespace,
 	}
@@ -250,21 +235,15 @@ const getPropertiesDefinitionFromPath = (
 		localPath,
 	]
 }
-const getComponents = (trait: string) =>
-	Object.keys(definitionRegistry).flatMap((fullName) => {
-		const definition = getPropertiesDefinition(fullName as MetadataKey)
-		return definition?.traits?.includes(trait) ? [definition] : []
-	})
+const getComponents = () => []
 
-const getBuilderComponents = () => getComponents("uesio.standalone")
+const getBuilderComponents = () => getComponents(/*"uesio.standalone"*/)
 
 export {
 	register,
 	registerUtilityComponent,
-	registerBuilder,
 	registerSignals,
 	getComponents,
-	getBuildtimeLoader,
 	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,

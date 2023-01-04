@@ -6,16 +6,15 @@ import (
 
 type InvoiceLineItemCollection []*InvoiceLineItem
 
+var INVOICELINEITEM_COLLECTION_NAME = "uesio/studio.invoicelineitem"
+var INVOICELINEITEM_FIELDS = StandardGetFields(&Invoice{})
+
 func (lc *InvoiceLineItemCollection) GetName() string {
-	return "uesio/studio.invoicelineitem"
+	return INVOICELINEITEM_COLLECTION_NAME
 }
 
 func (lc *InvoiceLineItemCollection) GetFields() []string {
-	return StandardGetFields(&Invoice{})
-}
-
-func (lc *InvoiceLineItemCollection) GetItem(index int) Item {
-	return (*lc)[index]
+	return INVOICELINEITEM_FIELDS
 }
 
 func (lc *InvoiceLineItemCollection) NewItem() Item {
@@ -27,8 +26,8 @@ func (lc *InvoiceLineItemCollection) AddItem(item Item) {
 }
 
 func (lc *InvoiceLineItemCollection) Loop(iter GroupIterator) error {
-	for index := range *lc {
-		err := iter(lc.GetItem(index), strconv.Itoa(index))
+	for index, l := range *lc {
+		err := iter(l, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +37,4 @@ func (lc *InvoiceLineItemCollection) Loop(iter GroupIterator) error {
 
 func (lc *InvoiceLineItemCollection) Len() int {
 	return len(*lc)
-}
-
-func (lc *InvoiceLineItemCollection) GetItems() interface{} {
-	return *lc
 }

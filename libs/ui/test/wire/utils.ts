@@ -1,7 +1,6 @@
 import { useUesio } from "../../src/hooks/hooks"
 import { newContext, Context } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
-import { platform } from "../../src/platform/platform"
 import { create } from "../../src/store/store"
 import { getCollection, testEnv } from "../utils/defaults"
 import { dispatchRouteDeps } from "../../src/bands/route/utils"
@@ -24,7 +23,7 @@ export const testWireSignal = async ({
 	view,
 	run,
 }: WireSignalTest) => {
-	const store = create(platform, {})
+	const store = create({})
 
 	const context = newContext({ view })
 	const uesio = useUesio({
@@ -32,19 +31,16 @@ export const testWireSignal = async ({
 	})
 	const test = run()
 
-	dispatchRouteDeps(
-		{
-			collection: {
-				ids: [`ben/planets.${testEnv.collectionId}`],
-				entities: {
-					[`ben/planets.${testEnv.collectionId}`]: getCollection(),
-				},
+	dispatchRouteDeps({
+		collection: {
+			ids: [`ben/planets.${testEnv.collectionId}`],
+			entities: {
+				[`ben/planets.${testEnv.collectionId}`]: getCollection(),
 			},
 		},
-		store.dispatch
-	)
+	})
 
-	uesio.collection.uesio.wire.initWires(context, {
+	uesio.wire.initWires(context, {
 		[wireId]: wireDef,
 	})
 	const handler = uesio.signal.getHandler(signals, context)

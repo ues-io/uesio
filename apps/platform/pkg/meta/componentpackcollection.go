@@ -8,16 +8,20 @@ import (
 
 type ComponentPackCollection []*ComponentPack
 
+var COMPONENTPACK_COLLECTION_NAME = "uesio/studio.componentpack"
+var COMPONENTPACK_FOLDER_NAME = "componentpacks"
+var COMPONENTPACK_FIELDS = StandardGetFields(&ComponentPack{})
+
 func (cpc *ComponentPackCollection) GetName() string {
-	return "uesio/studio.componentpack"
+	return COMPONENTPACK_COLLECTION_NAME
 }
 
 func (cpc *ComponentPackCollection) GetBundleFolderName() string {
-	return "componentpacks"
+	return COMPONENTPACK_FOLDER_NAME
 }
 
 func (cpc *ComponentPackCollection) GetFields() []string {
-	return StandardGetFields(&ComponentPack{})
+	return COMPONENTPACK_FIELDS
 }
 
 func (cpc *ComponentPackCollection) NewItem() Item {
@@ -28,9 +32,9 @@ func (cpc *ComponentPackCollection) AddItem(item Item) {
 	*cpc = append(*cpc, item.(*ComponentPack))
 }
 
-func (cpc *ComponentPackCollection) GetItemFromPath(path string) BundleableItem {
+func (cpc *ComponentPackCollection) GetItemFromPath(path, namespace string) BundleableItem {
 	name, _, _ := strings.Cut(path, string(os.PathSeparator))
-	return &ComponentPack{Name: name}
+	return NewBaseComponentPack(namespace, name)
 }
 
 func (cpc *ComponentPackCollection) IsDefinitionPath(path string) bool {
@@ -45,13 +49,9 @@ func (cpc *ComponentPackCollection) FilterPath(path string, conditions BundleCon
 	return true
 }
 
-func (cpc *ComponentPackCollection) GetItem(index int) Item {
-	return (*cpc)[index]
-}
-
 func (cpc *ComponentPackCollection) Loop(iter GroupIterator) error {
-	for index := range *cpc {
-		err := iter(cpc.GetItem(index), strconv.Itoa(index))
+	for index, cp := range *cpc {
+		err := iter(cp, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -61,8 +61,4 @@ func (cpc *ComponentPackCollection) Loop(iter GroupIterator) error {
 
 func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
-}
-
-func (cpc *ComponentPackCollection) GetItems() interface{} {
-	return *cpc
 }

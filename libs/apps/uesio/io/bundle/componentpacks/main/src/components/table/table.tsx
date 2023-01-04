@@ -1,9 +1,13 @@
-import { hooks, styles, component, wire } from "@uesio/ui"
+import { hooks, styles, component, wire, signal, definition } from "@uesio/ui"
 import omit from "lodash/omit"
 import partition from "lodash/partition"
-import { FC } from "react"
-import { useMode } from "../../shared/mode"
-import { paginate, usePagination } from "../../shared/pagination"
+import { toggleMode, useMode } from "../../shared/mode"
+import {
+	nextPage,
+	paginate,
+	prevPage,
+	usePagination,
+} from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utilities/button/button"
 import { GroupUtilityProps } from "../../utilities/group/group"
 import { MenuButtonUtilityProps } from "../../utilities/menubutton/menubutton"
@@ -18,6 +22,12 @@ type MenuItem = {
 	label: string
 }
 
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	TOGGLE_MODE: toggleMode,
+	NEXT_PAGE: nextPage,
+	PREV_PAGE: prevPage,
+}
+
 const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
 const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 const MenuButton = component.getUtility<MenuButtonUtilityProps<MenuItem>>(
@@ -30,10 +40,10 @@ const IOTable =
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
-const Table: FC<TableProps> = (props) => {
+const Table: definition.UesioComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const wire = uesio.wire.useWire(definition.wire, context)
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
@@ -42,7 +52,10 @@ const Table: FC<TableProps> = (props) => {
 		  })
 		: context
 
-	const componentId = uesio.component.getId(definition.id)
+	const componentId = uesio.component.getComponentIdFromProps(
+		definition.id,
+		props
+	)
 	const [mode] = useMode(componentId, definition.mode, props)
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
@@ -289,5 +302,7 @@ const Table: FC<TableProps> = (props) => {
 		</>
 	)
 }
+
+Table.signals = signals
 
 export default Table

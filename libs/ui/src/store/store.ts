@@ -1,10 +1,4 @@
-import { AnyAction } from "redux"
-import { ThunkAction } from "redux-thunk"
-import { Provider } from "react-redux"
 import { configureStore, EntityState } from "@reduxjs/toolkit"
-
-import { Platform } from "../platform/platform"
-import { Context } from "../context/context"
 
 import collection from "../bands/collection"
 import route from "../bands/route"
@@ -12,7 +6,7 @@ import user from "../bands/user"
 import builder from "../bands/builder"
 import component from "../bands/component"
 import wire from "../bands/wire"
-import site from "../bands/site"
+import site, { SiteState } from "../bands/site"
 import panel from "../bands/panel"
 import viewdef from "../bands/viewdef"
 import label from "../bands/label"
@@ -24,7 +18,6 @@ import notification from "../bands/notification"
 import metadatatext from "../bands/metadatatext"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
-import { BuilderState } from "../bands/builder/types"
 import { PlainViewDef } from "../definition/viewdef"
 import { ThemeState } from "../definition/theme"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -36,22 +29,7 @@ import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
 
-type ThunkFunc = ThunkAction<
-	Promise<Context> | Context,
-	RootState,
-	Platform,
-	AnyAction
->
-
-type SiteState = {
-	name: string
-	app: string
-	domain: string
-	subdomain: string
-}
-
 type InitialState = {
-	builder?: BuilderState
 	route?: RouteState
 	user?: UserState
 	site?: SiteState
@@ -66,12 +44,9 @@ type InitialState = {
 	collection?: EntityState<PlainCollection>
 }
 
-let platform: Platform
 let store: ReturnType<typeof create>
 
-const create = (plat: Platform, initialState: InitialState) => {
-	platform = plat
-
+const create = (initialState: InitialState) => {
 	attachDefToWires(initialState.wire, initialState.viewdef)
 
 	const newStore = configureStore({
@@ -96,12 +71,6 @@ const create = (plat: Platform, initialState: InitialState) => {
 		},
 		devTools: true,
 		preloadedState: initialState,
-		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware({
-				thunk: {
-					extraArgument: plat,
-				},
-			}),
 	})
 	store = newStore
 	return newStore
@@ -109,21 +78,9 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-type Dispatcher = typeof store.dispatch
+const dispatch = (action: Parameters<typeof store.dispatch>[0]) =>
+	store.dispatch(action)
 
-const appDispatch = () => store.dispatch
-const getPlatform = () => platform
 const getCurrentState = () => store.getState()
 
-export {
-	create,
-	Provider,
-	Dispatcher,
-	ThunkFunc,
-	RootState,
-	InitialState,
-	SiteState,
-	appDispatch,
-	getPlatform,
-	getCurrentState,
-}
+export { create, RootState, InitialState, dispatch, getCurrentState }

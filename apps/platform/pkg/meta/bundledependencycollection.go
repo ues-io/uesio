@@ -6,16 +6,15 @@ import (
 
 type BundleDependencyCollection []*BundleDependency
 
+var BUNDLEDEPENDENCY_COLLECTION_NAME = "uesio/studio.bundledependency"
+var BUNDLEDEPENDENCY_FIELDS = StandardGetFields(&BundleDependency{})
+
 func (bc *BundleDependencyCollection) GetName() string {
-	return "uesio/studio.bundledependency"
+	return BUNDLEDEPENDENCY_COLLECTION_NAME
 }
 
 func (bc *BundleDependencyCollection) GetFields() []string {
-	return StandardGetFields(&BundleDependency{})
-}
-
-func (bc *BundleDependencyCollection) GetItem(index int) Item {
-	return (*bc)[index]
+	return BUNDLEDEPENDENCY_FIELDS
 }
 
 func (bc *BundleDependencyCollection) NewItem() Item {
@@ -27,8 +26,8 @@ func (bc *BundleDependencyCollection) AddItem(item Item) {
 }
 
 func (bc *BundleDependencyCollection) Loop(iter GroupIterator) error {
-	for index := range *bc {
-		err := iter(bc.GetItem(index), strconv.Itoa(index))
+	for index, b := range *bc {
+		err := iter(b, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +37,4 @@ func (bc *BundleDependencyCollection) Loop(iter GroupIterator) error {
 
 func (bc *BundleDependencyCollection) Len() int {
 	return len(*bc)
-}
-
-func (bc *BundleDependencyCollection) GetItems() interface{} {
-	return *bc
 }

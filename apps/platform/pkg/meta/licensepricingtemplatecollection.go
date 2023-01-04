@@ -6,16 +6,15 @@ import (
 
 type LicensePricingTemplateCollection []*LicensePricingTemplate
 
+var LICENSEPRICINGTEMPLATE_COLLECTION_NAME = "uesio/studio.licensepricingtemplate"
+var LICENSEPRICINGTEMPLATE_FIELDS = StandardGetFields(&LicensePricingTemplate{})
+
 func (ltc *LicensePricingTemplateCollection) GetName() string {
-	return "uesio/studio.licensepricingtemplate"
+	return LICENSEPRICINGTEMPLATE_COLLECTION_NAME
 }
 
 func (ltc *LicensePricingTemplateCollection) GetFields() []string {
-	return StandardGetFields(&LicensePricingTemplate{})
-}
-
-func (ltc *LicensePricingTemplateCollection) GetItem(index int) Item {
-	return (*ltc)[index]
+	return LICENSEPRICINGTEMPLATE_FIELDS
 }
 
 func (ltc *LicensePricingTemplateCollection) NewItem() Item {
@@ -27,8 +26,8 @@ func (ltc *LicensePricingTemplateCollection) AddItem(item Item) {
 }
 
 func (ltc *LicensePricingTemplateCollection) Loop(iter GroupIterator) error {
-	for index := range *ltc {
-		err := iter(ltc.GetItem(index), strconv.Itoa(index))
+	for index, lt := range *ltc {
+		err := iter(lt, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -38,8 +37,4 @@ func (ltc *LicensePricingTemplateCollection) Loop(iter GroupIterator) error {
 
 func (ltc *LicensePricingTemplateCollection) Len() int {
 	return len(*ltc)
-}
-
-func (ltc *LicensePricingTemplateCollection) GetItems() interface{} {
-	return *ltc
 }

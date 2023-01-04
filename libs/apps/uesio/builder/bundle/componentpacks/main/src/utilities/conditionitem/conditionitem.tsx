@@ -104,7 +104,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		e.stopPropagation()
-		const viewDefId = uesio.getViewDefId()
+		const viewDefId = context.getViewDefId()
 		viewDefId &&
 			uesio.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
 	}

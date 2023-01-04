@@ -1,3 +1,0 @@
-name: runtimebuilder
-pack: main
-entrypoint: components/runtimebuilder/runtimebuilder.tsx

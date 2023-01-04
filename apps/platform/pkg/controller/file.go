@@ -18,25 +18,22 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	file := meta.File{
-		Name:      name,
-		Namespace: namespace,
-	}
+	file := meta.NewBaseFile(namespace, name)
 
-	err := bundle.Load(&file, session, nil)
+	err := bundle.Load(file, session, nil)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
 
-	stream, err := bundle.GetItemAttachment(&file, file.Path, session)
+	stream, err := bundle.GetItemAttachment(file, file.Path, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
 		return
 	}
 
-	respondFile(w, r, file.Path, time.UnixMilli(file.UpdatedAt), stream)
+	respondFile(w, r, file.Path, time.Unix(file.UpdatedAt, 0), stream)
 
 }

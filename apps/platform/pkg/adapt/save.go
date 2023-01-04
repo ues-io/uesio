@@ -105,6 +105,18 @@ func (ci *ChangeItem) IsNil() bool {
 func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 
 	err := ci.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+		// Skip marshalling builtin fields
+		switch fieldID {
+		case
+			ID_FIELD,
+			UNIQUE_KEY_FIELD,
+			OWNER_FIELD,
+			CREATED_BY_FIELD,
+			CREATED_AT_FIELD,
+			UPDATED_BY_FIELD,
+			UPDATED_AT_FIELD:
+			return nil
+		}
 		if value == nil {
 			return nil
 		}
@@ -161,11 +173,7 @@ func (ci *ChangeItem) GetFieldAsString(fieldID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	valueString, ok := value.(string)
-	if !ok {
-		return "", errors.New("Could not get value as string: " + fieldID)
-	}
-	return valueString, nil
+	return GetValueString(value)
 }
 
 func (ci *ChangeItem) GetOldFieldAsString(fieldID string) (string, error) {
@@ -173,11 +181,7 @@ func (ci *ChangeItem) GetOldFieldAsString(fieldID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	valueString, ok := value.(string)
-	if !ok {
-		return "", errors.New("Could not get value as string: " + fieldID)
-	}
-	return valueString, nil
+	return GetValueString(value)
 }
 
 func (ci *ChangeItem) GetFieldAsInt(fieldID string) (int64, error) {
@@ -185,22 +189,7 @@ func (ci *ChangeItem) GetFieldAsInt(fieldID string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-
-	switch value.(type) {
-	case nil:
-		return 0, nil
-	case int64:
-		return value.(int64), nil
-	case float64:
-		valueFloat, ok := value.(float64)
-		if !ok {
-			return 0, errors.New("Could not get value as int: " + fieldID)
-		}
-		return int64(valueFloat), nil
-	}
-
-	return 0, errors.New("Could not get value as int, invalid cast type: " + fieldID)
-
+	return GetValueInt(value)
 }
 
 func (ci *ChangeItem) GetOldFieldAsInt(fieldID string) (int64, error) {
@@ -208,21 +197,7 @@ func (ci *ChangeItem) GetOldFieldAsInt(fieldID string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-
-	switch value.(type) {
-	case nil:
-		return 0, nil
-	case int64:
-		return value.(int64), nil
-	case float64:
-		valueFloat, ok := value.(float64)
-		if !ok {
-			return 0, errors.New("Could not get value as int, invalid cast type: " + fieldID)
-		}
-		return int64(valueFloat), nil
-	}
-
-	return 0, errors.New("Could not get value as int: " + fieldID)
+	return GetValueInt(value)
 }
 
 func (ci *ChangeItem) GetOldField(fieldID string) (interface{}, error) {
@@ -252,17 +227,16 @@ func (ci *ChangeItem) Len() int {
 	return ci.FieldChanges.Len()
 }
 
+// This assures that you get the real current owner id.
+// If someone was changing the owner id, we don't want that here,
+// because we haven't verified it yet.
 func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 	if ci.IsNew {
-		ownerVal, err := ci.GetField("uesio/core.owner")
-		if err != nil {
-			return "", err
-		}
-		return GetReferenceKey(ownerVal)
+		return ci.GetProposedOwnerID()
 	}
 
-	ownerVal, err := ci.GetOldField("uesio/core.owner")
+	ownerVal, err := ci.GetOldField(OWNER_FIELD)
 	if err != nil {
 		return "", err
 	}
@@ -270,8 +244,58 @@ func (ci *ChangeItem) GetOwnerID() (string, error) {
 
 }
 
+// This get the owner id that may be changing
+func (ci *ChangeItem) GetProposedOwnerID() (string, error) {
+	ownerVal, err := ci.GetField(OWNER_FIELD)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(ownerVal)
+}
+
+func (ci *ChangeItem) GetCreatedByID() (string, error) {
+	ownerVal, err := ci.GetField(CREATED_BY_FIELD)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(ownerVal)
+}
+
+func (ci *ChangeItem) GetUpdatedByID() (string, error) {
+	ownerVal, err := ci.GetField(UPDATED_BY_FIELD)
+	if err != nil {
+		return "", err
+	}
+	return GetReferenceKey(ownerVal)
+}
+
 type SaveOptions struct {
 	Upsert bool `json:"upsert"`
+}
+
+func GetValueInt(value interface{}) (int64, error) {
+	switch value.(type) {
+	case nil:
+		return 0, nil
+	case int64:
+		return value.(int64), nil
+	case float64:
+		valueFloat, ok := value.(float64)
+		if !ok {
+			return 0, fmt.Errorf("Could not get value as int, invalid cast type: %T", value)
+		}
+		return int64(valueFloat), nil
+	}
+
+	return 0, fmt.Errorf("Could not get value as int: %T", value)
+}
+
+func GetValueString(value interface{}) (string, error) {
+	valueString, ok := value.(string)
+	if !ok {
+		return "", fmt.Errorf("Could not get value as string: %T", value)
+	}
+	return valueString, nil
 }
 
 func GetFieldValueString(value interface{}, key string) (string, error) {
@@ -279,11 +303,7 @@ func GetFieldValueString(value interface{}, key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	valueString, ok := value.(string)
-	if !ok {
-		return "", fmt.Errorf("Could not get value as string: %T", value)
-	}
-	return valueString, nil
+	return GetValueString(value)
 }
 
 func GetLoadable(value interface{}) (meta.Item, error) {

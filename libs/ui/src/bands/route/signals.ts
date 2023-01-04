@@ -5,6 +5,7 @@ import {
 	CollectionNavigateRequest,
 	PathNavigateRequest,
 } from "../../platform/platform"
+import { getCurrentState } from "../../store/store"
 import operations from "./operations"
 
 // The key for the entire band
@@ -54,18 +55,14 @@ const signals: Record<string, SignalDescriptor> = {
 		properties: () => [],
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
-		dispatcher:
-			(signal: SignalDefinition, context: Context) =>
-			async (dispatch, getState) => {
-				const routeState = getState().route
-				if (!routeState) return context
-				return dispatch(
-					operations.navigate(context, {
-						namespace: routeState.namespace,
-						path: routeState.path,
-					})
-				)
-			},
+		dispatcher: (signal: SignalDefinition, context: Context) => {
+			const routeState = getCurrentState().route
+			if (!routeState) return context
+			return operations.navigate(context, {
+				namespace: routeState.namespace,
+				path: routeState.path,
+			})
+		},
 		label: "Reload",
 		description: "Reload route",
 		properties: () => [],

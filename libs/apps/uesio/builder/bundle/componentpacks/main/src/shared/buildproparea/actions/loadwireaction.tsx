@@ -20,16 +20,19 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 		<ActionButton
 			disabled={!Object.keys(viewDef?.wires || {}).length}
 			title="Refresh Wire"
-			onClick={uesio.signal.getHandler([
-				{
-					signal: "wire/INIT",
-					wireDefs: [wireName],
-				},
-				{
-					signal: "wire/LOAD",
-					wires: [wireName],
-				},
-			])}
+			onClick={uesio.signal.getHandler(
+				[
+					{
+						signal: "wire/INIT",
+						wireDefs: [wireName],
+					},
+					{
+						signal: "wire/LOAD",
+						wires: [wireName],
+					},
+				],
+				context
+			)}
 			icon="refresh"
 			context={context}
 		/>

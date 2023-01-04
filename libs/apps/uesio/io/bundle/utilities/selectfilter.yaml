@@ -1,0 +1,3 @@
+name: selectfilter
+pack: main
+entrypoint: utilities/selectfilter/selectfilter

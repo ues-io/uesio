@@ -44,7 +44,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		Namespace:    route.Namespace,
 		Theme:        route.ThemeRef,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
+		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
 		Dependencies: depsCache,
 	})
 
@@ -88,7 +88,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		Namespace:    route.Namespace,
 		Theme:        route.ThemeRef,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
+		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
 		Dependencies: depsCache,
 	})
 
@@ -96,21 +96,25 @@ func Route(w http.ResponseWriter, r *http.Request) {
 
 func getNotFoundRoute(path string) *meta.Route {
 	return &meta.Route{
-		ViewRef:   "uesio/core.notfound",
-		Namespace: "uesio/core",
-		Path:      path,
-		ThemeRef:  "uesio/core.default",
+		ViewRef: "uesio/core.notfound",
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/core",
+		},
+		Path:     path,
+		ThemeRef: "uesio/core.default",
 	}
 }
 
 func getErrorRoute(path string, err string) *meta.Route {
 	params := map[string]string{"error": err}
 	return &meta.Route{
-		ViewRef:   "uesio/core.error",
-		Namespace: "uesio/core",
-		Path:      path,
-		ThemeRef:  "uesio/core.default",
-		Params:    params,
+		ViewRef: "uesio/core.error",
+		BundleableBase: meta.BundleableBase{
+			Namespace: "uesio/core",
+		},
+		Path:     path,
+		ThemeRef: "uesio/core.default",
+		Params:   params,
 	}
 }
 

@@ -22,7 +22,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 	namespace := workspace.GetAppFullName()
 
 	for _, item := range items {
-		collectionName := item.GetBundleGroup().GetBundleFolderName()
+		collectionName := item.GetBundleFolderName()
 		dbID := item.GetDBID(workspace.UniqueKey)
 		_, ok := collectionLocatorMap[collectionName]
 		if !ok {

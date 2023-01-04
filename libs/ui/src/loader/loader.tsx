@@ -1,19 +1,17 @@
 import { StrictMode } from "react"
 import ReactDOM from "react-dom"
-import Runtime from "../components/runtime"
-import { platform } from "../platform/platform"
+import { Provider } from "react-redux"
+import Route from "../components/route"
 import { Context } from "../context/context"
-import { Provider, create, InitialState } from "../store/store"
+import { create, InitialState } from "../store/store"
 
-const loader = (element: HTMLElement | null, initialState: InitialState) => {
+export default (element: HTMLElement | null, initialState: InitialState) => {
 	ReactDOM.render(
 		<StrictMode>
-			<Provider store={create(platform, initialState)}>
-				<Runtime path="" context={new Context()} />
+			<Provider store={create(initialState)}>
+				<Route path="" context={new Context()} />
 			</Provider>
 		</StrictMode>,
 		element
 	)
 }
-
-export { loader }

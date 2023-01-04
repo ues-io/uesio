@@ -1,0 +1,3 @@
+name: monthfilter
+pack: main
+entrypoint: utilities/monthfilter/monthfilter

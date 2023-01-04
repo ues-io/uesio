@@ -1,26 +1,15 @@
 package meta
 
 type BulkBatch struct {
-	ID        string            `json:"uesio/core.id"`
-	UniqueKey string            `json:"uesio/core.uniquekey"`
 	AutoID    string            `json:"uesio/core.autoid"`
 	BulkJobID string            `json:"uesio/core.bulkjobid"`
 	Status    string            `json:"uesio/core.status"`
 	Result    *UserFileMetadata `json:"uesio/core.result"`
-	itemMeta  *ItemMeta         `json:"-"`
-	CreatedBy *User             `json:"uesio/core.createdby"`
-	Owner     *User             `json:"uesio/core.owner"`
-	UpdatedBy *User             `json:"uesio/core.updatedby"`
-	UpdatedAt int64             `json:"uesio/core.updatedat"`
-	CreatedAt int64             `json:"uesio/core.createdat"`
+	BuiltIn
 }
 
 func (bb *BulkBatch) GetCollectionName() string {
-	return bb.GetCollection().GetName()
-}
-
-func (bb *BulkBatch) GetCollection() CollectionableGroup {
-	return &BulkBatchCollection{}
+	return BULKBATCH_COLLECTION_NAME
 }
 
 func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
@@ -37,12 +26,4 @@ func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
 
 func (bb *BulkBatch) Len() int {
 	return StandardItemLen(bb)
-}
-
-func (bb *BulkBatch) GetItemMeta() *ItemMeta {
-	return bb.itemMeta
-}
-
-func (bb *BulkBatch) SetItemMeta(itemMeta *ItemMeta) {
-	bb.itemMeta = itemMeta
 }

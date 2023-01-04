@@ -14,8 +14,8 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const { children, path = "", index = 0, definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const viewDefId = uesio.getViewDefId()
-	const viewDef = uesio.getViewDef()
+	const viewDefId = context.getViewDefId()
+	const viewDef = context.getViewDef()
 
 	if (!viewDefId || !viewDef) return null
 
@@ -40,7 +40,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	if (!componentKey) throw new Error("Bad component key")
 
-	const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef, uesio)
+	const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef)
 
 	const [componentNamespace] = component.path.parseKey(componentKey)
 
@@ -49,7 +49,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 			? definition?.view || componentKey
 			: propDef.title || "unknown"
 
-	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace)
+	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace, context)
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath

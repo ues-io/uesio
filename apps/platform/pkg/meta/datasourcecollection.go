@@ -6,16 +6,20 @@ import (
 
 type DataSourceCollection []*DataSource
 
+var DATASOURCE_COLLECTION_NAME = "uesio/studio.datasource"
+var DATASOURCE_FOLDER_NAME = "datasources"
+var DATASOURCE_FIELDS = StandardGetFields(&DataSource{})
+
 func (dsc *DataSourceCollection) GetName() string {
-	return "uesio/studio.datasource"
+	return DATASOURCE_COLLECTION_NAME
 }
 
 func (dsc *DataSourceCollection) GetBundleFolderName() string {
-	return "datasources"
+	return DATASOURCE_FOLDER_NAME
 }
 
 func (dsc *DataSourceCollection) GetFields() []string {
-	return StandardGetFields(&DataSource{})
+	return DATASOURCE_FIELDS
 }
 
 func (dsc *DataSourceCollection) NewItem() Item {
@@ -26,21 +30,17 @@ func (dsc *DataSourceCollection) AddItem(item Item) {
 	*dsc = append(*dsc, item.(*DataSource))
 }
 
-func (dsc *DataSourceCollection) GetItemFromPath(path string) BundleableItem {
-	return &DataSource{Name: StandardNameFromPath(path)}
+func (dsc *DataSourceCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseDataSource(namespace, StandardNameFromPath(path))
 }
 
 func (dsc *DataSourceCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (dsc *DataSourceCollection) GetItem(index int) Item {
-	return (*dsc)[index]
-}
-
 func (dsc *DataSourceCollection) Loop(iter GroupIterator) error {
-	for index := range *dsc {
-		err := iter(dsc.GetItem(index), strconv.Itoa(index))
+	for index, ds := range *dsc {
+		err := iter(ds, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +50,4 @@ func (dsc *DataSourceCollection) Loop(iter GroupIterator) error {
 
 func (dsc *DataSourceCollection) Len() int {
 	return len(*dsc)
-}
-
-func (dsc *DataSourceCollection) GetItems() interface{} {
-	return *dsc
 }

@@ -3,6 +3,7 @@ import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { NotificationSeverity } from "./types"
 import { add as addNotification, remove as removeNotification } from "."
 import { nanoid } from "@reduxjs/toolkit"
+import { dispatch } from "../../store/store"
 
 // The key for the entire band
 const NOTIFICATION_BAND = "notification"
@@ -22,19 +23,18 @@ interface RemoveNotificationSignal extends SignalDefinition {
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${NOTIFICATION_BAND}/ADD`]: {
-		dispatcher:
-			(signal: AddNotificationSignal, context: Context) => (dispatch) => {
-				dispatch(
-					addNotification({
-						id: signal.id ? signal.id : nanoid(),
-						severity: signal.severity,
-						text: context.mergeString(signal.text),
-						details: context.mergeString(signal.details),
-						path: signal.path,
-					})
-				)
-				return context
-			},
+		dispatcher: (signal: AddNotificationSignal, context: Context) => {
+			dispatch(
+				addNotification({
+					id: signal.id ? signal.id : nanoid(),
+					severity: signal.severity,
+					text: context.mergeString(signal.text),
+					details: context.mergeString(signal.details),
+					path: signal.path,
+				})
+			)
+			return context
+		},
 		label: "Add Notification",
 		description: "Add Notification",
 		properties: () => [
@@ -56,12 +56,10 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${NOTIFICATION_BAND}/REMOVE`]: {
-		dispatcher:
-			(signal: RemoveNotificationSignal, context: Context) =>
-			(dispatch) => {
-				dispatch(removeNotification(signal.id))
-				return context
-			},
+		dispatcher: (signal: RemoveNotificationSignal, context: Context) => {
+			dispatch(removeNotification(signal.id))
+			return context
+		},
 		label: "Remove Notification",
 		description: "Removes Notification",
 		properties: () => [

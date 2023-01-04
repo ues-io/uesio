@@ -8,12 +8,15 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
-	const onClose = uesio.signal.getHandler([
-		{
-			signal: "panel/TOGGLE",
-			panel: panelId,
-		},
-	])
+	const onClose = uesio.signal.getHandler(
+		[
+			{
+				signal: "panel/TOGGLE",
+				panel: panelId,
+			},
+		],
+		context
+	)
 	if (!definition) return null
 	return (
 		<IODialog

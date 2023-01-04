@@ -19,7 +19,7 @@ const MetricComponent: FC<Props> = (props) => {
 	)
 
 	const uesio = hooks.useUesio(props)
-	const handler = uesio.signal.getHandler(definition.signals)
+	const handler = uesio.signal.getHandler(definition.signals, context)
 	const value = context.merge(definition.value)
 
 	return (

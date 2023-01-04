@@ -6,16 +6,20 @@ import (
 
 type RouteCollection []*Route
 
+var ROUTE_COLLECTION_NAME = "uesio/studio.route"
+var ROUTE_FOLDER_NAME = "routes"
+var ROUTE_FIELDS = StandardGetFields(&Route{})
+
 func (rc *RouteCollection) GetName() string {
-	return "uesio/studio.route"
+	return ROUTE_COLLECTION_NAME
 }
 
 func (rc *RouteCollection) GetBundleFolderName() string {
-	return "routes"
+	return ROUTE_FOLDER_NAME
 }
 
 func (rc *RouteCollection) GetFields() []string {
-	return StandardGetFields(&Route{})
+	return ROUTE_FIELDS
 }
 
 func (rc *RouteCollection) NewItem() Item {
@@ -26,21 +30,17 @@ func (rc *RouteCollection) AddItem(item Item) {
 	*rc = append(*rc, item.(*Route))
 }
 
-func (rc *RouteCollection) GetItemFromPath(path string) BundleableItem {
-	return &Route{Name: StandardNameFromPath(path)}
+func (rc *RouteCollection) GetItemFromPath(path, namespace string) BundleableItem {
+	return NewBaseRoute(namespace, StandardNameFromPath(path))
 }
 
 func (rc *RouteCollection) FilterPath(path string, conditions BundleConditions, definitionOnly bool) bool {
 	return StandardPathFilter(path)
 }
 
-func (rc *RouteCollection) GetItem(index int) Item {
-	return (*rc)[index]
-}
-
 func (rc *RouteCollection) Loop(iter GroupIterator) error {
-	for index := range *rc {
-		err := iter(rc.GetItem(index), strconv.Itoa(index))
+	for index, r := range *rc {
+		err := iter(r, strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
@@ -50,8 +50,4 @@ func (rc *RouteCollection) Loop(iter GroupIterator) error {
 
 func (rc *RouteCollection) Len() int {
 	return len(*rc)
-}
-
-func (rc *RouteCollection) GetItems() interface{} {
-	return *rc
 }

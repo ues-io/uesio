@@ -2,7 +2,7 @@ import { Context } from "../../../context/context"
 import loadWiresOp from "../../wire/operations/load"
 import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
-import { appDispatch, getCurrentState } from "../../../store/store"
+import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { dispatchRouteDeps } from "../../route/utils"
 import { batch } from "react-redux"
@@ -32,7 +32,7 @@ const useLoadWires = (
 					const deps = await platform.getBuilderDeps(context)
 					if (!deps) throw new Error("Could not get View Def")
 					batch(() => {
-						dispatchRouteDeps(deps, appDispatch())
+						dispatchRouteDeps(deps)
 					})
 				}
 			}
@@ -70,7 +70,7 @@ const useLoadWires = (
 			)
 
 			if (Object.keys(wiresToInit).length) {
-				appDispatch()(initializeWiresOp(context, wiresToInit))
+				initializeWiresOp(context, wiresToInit)
 			}
 
 			const wiresToLoad = Object.fromEntries(
@@ -82,9 +82,7 @@ const useLoadWires = (
 			)
 
 			if (Object.keys(wiresToLoad).length) {
-				await appDispatch()(
-					loadWiresOp(context, Object.keys(wiresToLoad))
-				)
+				await loadWiresOp(context, Object.keys(wiresToLoad))
 			}
 
 			// Handle Events

@@ -2,27 +2,15 @@ package meta
 
 import (
 	"errors"
-	"fmt"
-	"time"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
 type Label struct {
-	ID        string     `yaml:"-" json:"uesio/core.id"`
-	UniqueKey string     `yaml:"-" json:"uesio/core.uniquekey"`
-	Name      string     `yaml:"name" json:"uesio/studio.name"`
-	Value     string     `yaml:"value" json:"uesio/studio.value"`
-	Namespace string     `yaml:"-" json:"-"`
-	Workspace *Workspace `yaml:"-" json:"uesio/studio.workspace"`
-	itemMeta  *ItemMeta  `yaml:"-" json:"-"`
-	CreatedBy *User      `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User      `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User      `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64      `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64      `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool       `yaml:"public,omitempty" json:"uesio/studio.public"`
+	Value string `yaml:"value" json:"uesio/studio.value"`
+	BuiltIn
+	BundleableBase `yaml:",inline"`
 }
 
 type LabelWrapper Label
@@ -46,10 +34,11 @@ func NewLabel(key string) (*Label, error) {
 	if err != nil {
 		return nil, errors.New("Bad Key for Label: " + key)
 	}
-	return &Label{
-		Name:      name,
-		Namespace: namespace,
-	}, nil
+	return NewBaseLabel(namespace, name), nil
+}
+
+func NewBaseLabel(namespace, name string) *Label {
+	return &Label{BundleableBase: NewBase(namespace, name)}
 }
 
 func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
@@ -67,31 +56,11 @@ func NewLabels(keys map[string]bool) ([]BundleableItem, error) {
 }
 
 func (l *Label) GetCollectionName() string {
-	return l.GetBundleGroup().GetName()
+	return LABEL_COLLECTION_NAME
 }
 
-func (l *Label) GetCollection() CollectionableGroup {
-	return &LabelCollection{}
-}
-
-func (l *Label) GetDBID(workspace string) string {
-	return fmt.Sprintf("%s:%s", workspace, l.Name)
-}
-
-func (l *Label) GetBundleGroup() BundleableGroup {
-	return &LabelCollection{}
-}
-
-func (l *Label) GetKey() string {
-	return fmt.Sprintf("%s.%s", l.Namespace, l.Name)
-}
-
-func (l *Label) GetPath() string {
-	return l.Name + ".yaml"
-}
-
-func (l *Label) GetPermChecker() *PermissionSet {
-	return nil
+func (l *Label) GetBundleFolderName() string {
+	return LABEL_FOLDER_NAME
 }
 
 func (l *Label) SetField(fieldName string, value interface{}) error {
@@ -102,18 +71,6 @@ func (l *Label) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(l, fieldName)
 }
 
-func (l *Label) GetNamespace() string {
-	return l.Namespace
-}
-
-func (l *Label) SetNamespace(namespace string) {
-	l.Namespace = namespace
-}
-
-func (l *Label) SetModified(mod time.Time) {
-	l.UpdatedAt = mod.UnixMilli()
-}
-
 func (l *Label) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(l, iter)
 }
@@ -122,22 +79,10 @@ func (l *Label) Len() int {
 	return StandardItemLen(l)
 }
 
-func (l *Label) GetItemMeta() *ItemMeta {
-	return l.itemMeta
-}
-
-func (l *Label) SetItemMeta(itemMeta *ItemMeta) {
-	l.itemMeta = itemMeta
-}
-
 func (l *Label) UnmarshalYAML(node *yaml.Node) error {
 	err := validateNodeName(node, l.Name)
 	if err != nil {
 		return err
 	}
 	return node.Decode((*LabelWrapper)(l))
-}
-
-func (l *Label) IsPublic() bool {
-	return l.Public
 }

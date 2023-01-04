@@ -1,3 +1,10 @@
 name: field
 pack: main
-entrypoint: components/field/field.tsx
+entrypoint: components/field/field
+variants:
+  - uesio/io.field:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.listfield:uesio/io.default

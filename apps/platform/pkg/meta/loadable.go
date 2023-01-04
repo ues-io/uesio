@@ -3,12 +3,10 @@ package meta
 type GroupIterator func(item Item, index string) error
 
 type Group interface {
-	GetItem(index int) Item
 	Loop(iter GroupIterator) error
 	Len() int
 	NewItem() Item
 	AddItem(Item)
-	GetItems() interface{}
 }
 
 type Gettable interface {

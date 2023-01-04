@@ -179,7 +179,7 @@ func handleAccessFieldChange(change *adapt.ChangeItem, tokenFuncs []tokenFunc, m
 		}
 	}
 
-	ownerObj, err := accessItem.GetField("uesio/core.owner")
+	ownerObj, err := accessItem.GetField(adapt.OWNER_FIELD)
 	if err != nil {
 		return err
 	}

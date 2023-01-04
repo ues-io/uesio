@@ -18,7 +18,7 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 		if !ok {
 			return "", errors.New("Bad timestamp value")
 		}
-		tm := time.UnixMilli(timestamp)
+		tm := time.Unix(timestamp, 0)
 		return tm.String(), nil
 	}
 	if fieldMetadata.Type == "NUMBER" {

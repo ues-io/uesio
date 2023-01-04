@@ -18,8 +18,8 @@ type Task struct {
 	ID           string        `json:"id"`
 	Name         string        `json:"name"`
 	CustomFields []CustomField `json:"custom_fields"`
-	StartDate    string        `json:"start_date"`
-	DueDate      string        `json:"due_date"`
+	StartDate    int64         `json:"start_date,string"`
+	DueDate      int64         `json:"due_date,string"`
 	Status       *Status       `json:"status"`
 }
 
@@ -101,8 +101,8 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		opItem.SetField("uesio/core.id", fakeID)
 		opItem.SetField("tcm/timetracker.id", task.ID)
 		opItem.SetField("tcm/timetracker.name", task.Name)
-		opItem.SetField("tcm/timetracker.startdate", task.StartDate)
-		opItem.SetField("tcm/timetracker.duedate", task.DueDate)
+		opItem.SetField("tcm/timetracker.startdate", task.StartDate/1000)
+		opItem.SetField("tcm/timetracker.duedate", task.DueDate/1000)
 		if task.Status != nil {
 			opItem.SetField("tcm/timetracker.status", task.Status.Status)
 			opItem.SetField("tcm/timetracker.statuscolor", task.Status.Color)

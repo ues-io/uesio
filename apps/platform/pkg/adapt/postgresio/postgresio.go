@@ -29,10 +29,6 @@ func connect(credentials *adapt.Credentials) (*pgxpool.Pool, error) {
 	return getConnection(credentials, hash)
 }
 
-func makeDBId(suffix, prefix interface{}) string {
-	return fmt.Sprintf("%s>%s", suffix, prefix)
-}
-
 func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, error) {
 	host, ok := (*credentials)["host"]
 	if !ok {
@@ -77,11 +73,4 @@ func getConnection(credentials *adapt.Credentials, hash string) (*pgxpool.Pool, 
 	clientPool[hash] = db
 
 	return db, nil
-}
-
-func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata, tenantID string) (string, error) {
-	if collectionMetadata.Name == "" {
-		return "", errors.New("Could not get DB Collection Name: Missing important collection metadata: " + collectionMetadata.Name)
-	}
-	return makeDBId(tenantID, collectionMetadata.GetFullName()), nil
 }
