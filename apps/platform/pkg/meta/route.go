@@ -19,13 +19,13 @@ func NewBaseRoute(namespace, name string) *Route {
 }
 
 type Route struct {
-	Path       string            `yaml:"path" json:"uesio/studio.path"`
-	ViewType   string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
-	ViewRef    string            `yaml:"view" json:"uesio/studio.view"`
-	Collection string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Params     map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
-	ThemeRef   string            `yaml:"theme" json:"uesio/studio.theme"`
-	BuiltIn
+	Path           string            `yaml:"path" json:"uesio/studio.path"`
+	ViewType       string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
+	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
+	Collection     string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
+	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

@@ -9,10 +9,10 @@ import (
 )
 
 type ConfigValue struct {
-	Store     string `yaml:"store,omitempty" json:"uesio/studio.store"`
-	ManagedBy string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
-	Value     string
-	BuiltIn
+	Store          string `yaml:"store,omitempty" json:"uesio/studio.store"`
+	ManagedBy      string `yaml:"managedBy,omitempty" json:"uesio/studio.managedby"`
+	Value          string
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

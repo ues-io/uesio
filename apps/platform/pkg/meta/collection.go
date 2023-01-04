@@ -58,8 +58,8 @@ type Collection struct {
 	AccessField           string                            `yaml:"accessField,omitempty" json:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
-	BuiltIn
-	BundleableBase `yaml:",inline"`
+	BuiltIn               `yaml:",inline"`
+	BundleableBase        `yaml:",inline"`
 }
 
 type CollectionWrapper Collection

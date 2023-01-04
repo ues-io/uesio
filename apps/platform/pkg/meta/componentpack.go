@@ -21,7 +21,7 @@ func NewBaseComponentPack(namespace, name string) *ComponentPack {
 }
 
 type ComponentPack struct {
-	BuiltIn
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

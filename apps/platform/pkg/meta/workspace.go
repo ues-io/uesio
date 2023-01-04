@@ -9,7 +9,7 @@ type Workspace struct {
 	App           *App           `json:"uesio/studio.app"`
 	Permissions   *PermissionSet `json:"-"`
 	bundleDef     *BundleDef
-	BuiltIn
+	BuiltIn       `yaml:",inline"`
 }
 
 func (w *Workspace) GetAppFullName() string {

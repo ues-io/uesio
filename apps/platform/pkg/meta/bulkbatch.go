@@ -5,7 +5,7 @@ type BulkBatch struct {
 	BulkJobID string            `json:"uesio/core.bulkjobid"`
 	Status    string            `json:"uesio/core.status"`
 	Result    *UserFileMetadata `json:"uesio/core.result"`
-	BuiltIn
+	BuiltIn   `yaml:",inline"`
 }
 
 func (bb *BulkBatch) GetCollectionName() string {

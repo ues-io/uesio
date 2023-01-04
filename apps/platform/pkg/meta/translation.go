@@ -16,9 +16,9 @@ func NewBaseTranslation(namespace, language string) *Translation {
 }
 
 type Translation struct {
-	Labels   map[string]string `yaml:"labels" json:"uesio/studio.labels"`
-	Language string            `yaml:"language" json:"uesio/studio.language"`
-	BuiltIn
+	Labels         map[string]string `yaml:"labels" json:"uesio/studio.labels"`
+	Language       string            `yaml:"language" json:"uesio/studio.language"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

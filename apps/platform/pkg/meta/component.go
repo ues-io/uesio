@@ -19,12 +19,12 @@ func NewBaseComponent(namespace, name string) *Component {
 }
 
 type Component struct {
-	Pack         string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
-	EntryPoint   string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
-	ConfigValues []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
-	Variants     []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
-	Utilities    []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
-	BuiltIn
+	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
+	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
+	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

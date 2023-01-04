@@ -8,7 +8,7 @@ type App struct {
 	Color       string `json:"uesio/studio.color"`
 	Icon        string `json:"uesio/studio.icon"`
 	Public      bool   `json:"uesio/studio.public"`
-	BuiltIn
+	BuiltIn     `yaml:",inline"`
 }
 
 func (a *App) GetCollectionName() string {

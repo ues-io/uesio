@@ -87,12 +87,12 @@ func (bp *BotParams) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type Bot struct {
-	CollectionRef string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
-	Type          string    `yaml:"type" json:"uesio/studio.type"`
-	Dialect       string    `yaml:"dialect" json:"uesio/studio.dialect"`
-	Params        BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
-	FileContents  string    `yaml:"-" json:"-"`
-	BuiltIn
+	CollectionRef  string    `yaml:"collection,omitempty" json:"uesio/studio.collection"`
+	Type           string    `yaml:"type" json:"uesio/studio.type"`
+	Dialect        string    `yaml:"dialect" json:"uesio/studio.dialect"`
+	Params         BotParams `yaml:"params,omitempty" json:"uesio/studio.params"`
+	FileContents   string    `yaml:"-" json:"-"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

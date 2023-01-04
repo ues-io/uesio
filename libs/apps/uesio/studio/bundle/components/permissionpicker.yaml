@@ -3,5 +3,5 @@ pack: main
 entrypoint: components/permissionpicker/permissionpicker
 utilities:
   - uesio/io.checkboxfield
-  - uesio/io.toggleswitch
+  - uesio/io.togglefield
   - uesio/io.titlebar

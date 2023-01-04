@@ -19,9 +19,9 @@ func NewBaseAuthSource(namespace, name string) *AuthSource {
 }
 
 type AuthSource struct {
-	Type        string `yaml:"type" json:"uesio/studio.type"`
-	Credentials string `yaml:"credentials" json:"uesio/studio.credentials"`
-	BuiltIn
+	Type           string `yaml:"type" json:"uesio/studio.type"`
+	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

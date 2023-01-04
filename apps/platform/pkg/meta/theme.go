@@ -8,8 +8,8 @@ import (
 )
 
 type Theme struct {
-	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
-	BuiltIn
+	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

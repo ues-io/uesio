@@ -57,8 +57,8 @@ type Field struct {
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
 	ColumnName             string                  `yaml:"columnname,omitempty" json:"uesio/studio.columnname"`
-	BuiltIn
-	BundleableBase `yaml:",inline"`
+	BuiltIn                `yaml:",inline"`
+	BundleableBase         `yaml:",inline"`
 }
 
 type FieldWrapper Field

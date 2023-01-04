@@ -6,7 +6,7 @@ type BundleDependency struct {
 	Workspace *Workspace `json:"uesio/studio.workspace"`
 	App       *App       `json:"uesio/studio.app"`
 	Bundle    *Bundle    `json:"uesio/studio.bundle"`
-	BuiltIn
+	BuiltIn   `yaml:",inline"`
 }
 
 func (b *BundleDependency) GetVersionString() string {
