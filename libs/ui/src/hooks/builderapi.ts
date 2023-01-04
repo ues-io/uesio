@@ -319,7 +319,7 @@ const getSignalProperties = (signal: SignalDefinition) => {
 }
 
 const getBuilderDeps = async (context: Context) => {
-	const isLoaded = !!context.getWorkspace()?.namespaces
+	const isLoaded = !!getCurrentState()?.route?.workspace?.namespaces
 
 	if (isLoaded) return
 

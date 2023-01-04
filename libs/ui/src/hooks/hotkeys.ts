@@ -3,7 +3,8 @@ import { useHotkeys } from "react-hotkeys-hook"
 const useHotKeyCallback = (
 	keycode: string | undefined,
 	callback: Parameters<typeof useHotkeys>[1] | undefined,
-	enabled?: boolean
+	enabled?: boolean,
+	dependencies?: unknown[]
 ) => {
 	// This may not be the best function to determine this, but it works for now.
 	const isTypeable = keycode?.length === 1
@@ -18,7 +19,8 @@ const useHotKeyCallback = (
 			enableOnFormTags: !isTypeable
 				? ["INPUT", "TEXTAREA", "SELECT"]
 				: undefined,
-		}
+		},
+		dependencies
 	)
 }
 
