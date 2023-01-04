@@ -251,6 +251,7 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | Environment Variable         | Description                                                                                | Examples, Values & Help                                                                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | UESIO_USE_HTTPS              | Use ssl or not                                                                             | true or false                                                                           |
+| HOST                         | Host to use for HTTP server. Set to "localhost" for local development                      | Defaults to ""                                                                          |
 | GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    | test-cf94a                                                                              |
 | GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)      |
 | UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                | filesystem or "" (Can be either empty, or "filesystem" if you want sessions to persist) |
@@ -261,6 +262,8 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |                                                                                         |
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
 | GOOGLE_CLIENT_ID             | Client ID for Google Sign In                                                               |
+
+                                                             |
 
 # npm dependencies
 
