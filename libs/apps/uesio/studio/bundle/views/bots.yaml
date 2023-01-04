@@ -41,6 +41,12 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
+        - field: uesio/studio.dialect
+          valueSource: VALUE
+          value: "JAVASCRIPT"
+        - field: uesio/studio.type
+          valueSource: VALUE
+          value: "LISTENER"
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -78,7 +84,10 @@ definition:
                             - uesio/io.button:
                                 text: Create a New Bot
                                 uesio.variant: uesio/io.secondary
+                                hotkey: "meta+n"
                                 signals:
+                                  - signal: wire/RESET
+                                    wire: newbot
                                   - signal: panel/TOGGLE
                                     panel: newBot
                 - uesio/io.box:
@@ -124,7 +133,8 @@ definition:
                   uesio.display:
                     - field: uesio/studio.type
                       value: "LISTENER"
-                      type: "fieldNotEquals"
+                      type: "fieldValue"
+                      operator: "NOT_EQUALS"
                   components:
                     - uesio/studio.metadatafield:
                         uesio.context:
@@ -138,6 +148,7 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: "Save"
+            hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:

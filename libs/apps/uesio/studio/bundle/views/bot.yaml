@@ -183,7 +183,8 @@ definition:
                   uesio.display:
                     - field: uesio/studio.type
                       value: "LISTENER"
-                      type: "fieldNotEquals"
+                      type: "fieldValue"
+                      operator: "NOT_EQUALS"
                   components:
                     - uesio/studio.metadatafield:
                         uesio.context:
@@ -197,6 +198,7 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: "Save"
+            hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
