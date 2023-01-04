@@ -6,17 +6,9 @@ import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
 import { dispatchRouteDeps } from "../../route/utils"
 import { batch } from "react-redux"
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { ViewDefinition } from "../../../definition/viewdef"
 import { platform } from "../../../platform/platform"
-
-const usePrevious = <T>(value: T): T | undefined => {
-	const ref = useRef<T>()
-	useEffect(() => {
-		ref.current = value
-	})
-	return ref.current
-}
 
 const useLoadWires = (
 	context: Context,
@@ -43,9 +35,6 @@ const useLoadWires = (
 
 	const params = context.getParams()
 
-	const oldParams = usePrevious(params)
-	const oldWires = usePrevious(viewDef.wires)
-
 	useEffect(() => {
 		;(async () => {
 			const wires = viewDef.wires || {}
@@ -53,19 +42,12 @@ const useLoadWires = (
 			if (!wireNames.length) return
 			const state = getCurrentState()
 
-			const paramsChanged = oldParams !== params
-
 			const viewId = context.getViewId()
 
 			const wiresToInit = Object.fromEntries(
 				Object.entries(wires).flatMap(([wirename, wireDef]) => {
 					const foundWire = selectWire(state, viewId, wirename)
-					const isPreloaded = foundWire?.preloaded
-					const isUnchanged =
-						!paramsChanged && wireDef === oldWires?.[wirename]
-					return isPreloaded || isUnchanged
-						? []
-						: [[wirename, wireDef]]
+					return foundWire ? [] : [[wirename, wireDef]]
 				})
 			)
 
@@ -74,11 +56,9 @@ const useLoadWires = (
 			}
 
 			const wiresToLoad = Object.fromEntries(
-				Object.entries(wires).flatMap(([wirename, wireDef]) => {
-					const isUnchanged =
-						!paramsChanged && wireDef === oldWires?.[wirename]
-					return isUnchanged ? [] : [[wirename, wireDef]]
-				})
+				Object.entries(wires).flatMap(([wirename, wireDef]) => [
+					[wirename, wireDef],
+				])
 			)
 
 			if (Object.keys(wiresToLoad).length) {
@@ -91,7 +71,7 @@ const useLoadWires = (
 				await runMany(onloadEvents, context)
 			}
 		})()
-	}, [viewDefId, JSON.stringify(params), viewDef.wires])
+	}, [viewDefId, JSON.stringify(params)])
 }
 
 export { useLoadWires }

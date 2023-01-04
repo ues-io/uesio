@@ -10,6 +10,7 @@ import routeOps from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
 import { ComponentInternal } from "../component/component"
 import PanelArea from "./panelarea"
+import { makeViewId } from "../bands/view"
 
 // This applies the global styles
 injectGlobal({
@@ -35,16 +36,6 @@ const Route: FC<BaseProps> = (props) => {
 	const site = useSite()
 	const route = useRoute()
 
-	const workspace = route?.workspace
-
-	const routeContext = props.context.addFrame({
-		site,
-		route,
-		workspace,
-		viewDef: route?.view,
-		theme: route?.theme,
-	})
-
 	useEffect(() => {
 		if (!route) return
 		// This makes sure that the namespace and path of the route is specified in the history.
@@ -52,7 +43,7 @@ const Route: FC<BaseProps> = (props) => {
 			{
 				namespace: route.namespace,
 				path: route.path,
-				workspace,
+				workspace: route.workspace,
 			},
 			""
 		)
@@ -83,6 +74,17 @@ const Route: FC<BaseProps> = (props) => {
 
 	// Quit rendering early if we don't have our theme yet.
 	if (!route) return null
+
+	const workspace = route.workspace
+
+	const routeContext = props.context.addFrame({
+		site,
+		route,
+		workspace,
+		viewDef: route.view,
+		theme: route.theme,
+		view: makeViewId(route.view, "$root"),
+	})
 
 	const view = (
 		<View
