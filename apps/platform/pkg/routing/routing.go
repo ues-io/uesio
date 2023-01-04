@@ -74,6 +74,8 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	// Process merge syntax for default route params
 	mergeFuncs := datasource.GetMergeFuncs(session, nil)
 
+	processedParams := map[string]string{}
+
 	for paramName, paramValue := range route.Params {
 		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, mergeFuncs)
 		if err != nil {
@@ -85,24 +87,21 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 			return nil, err
 		}
 
-		route.Params[paramName] = mergedValue
-	}
-
-	if route.Params == nil {
-		route.Params = map[string]string{}
+		processedParams[paramName] = mergedValue
 	}
 
 	// Now add in querystring parameters
 	for k, v := range r.URL.Query() {
-		route.Params[k] = v[0]
+		processedParams[k] = v[0]
 	}
 
 	// Add the routematch params
 	for k, v := range routematch.Vars {
-		route.Params[k] = v
+		processedParams[k] = v
 	}
 
 	route.Path = path
+	route.Params = processedParams
 
 	return datasource.RunRouteBots(route, session)
 }
