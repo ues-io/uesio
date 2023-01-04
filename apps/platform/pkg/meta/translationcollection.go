@@ -11,7 +11,11 @@ type TranslationCollection []*Translation
 
 var TRANSLATION_COLLECTION_NAME = "uesio/studio.translation"
 var TRANSLATION_FOLDER_NAME = "translations"
-var TRANSLATION_FIELDS = []string{"labels", "language"}
+
+// We have to hardcode these fields because translations don't have a uesio/studio.name
+// field that we want to query. If we used the StandardGetFields (like the other metadata items)
+// it would try to query for a name field that does not exist.
+var TRANSLATION_FIELDS = []string{"uesio/studio.labels", "uesio/studio.language"}
 
 func (tc *TranslationCollection) GetName() string {
 	return TRANSLATION_COLLECTION_NAME
