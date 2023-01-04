@@ -260,17 +260,20 @@ func serve(cmd *cobra.Command, args []string) {
 	if port == "" {
 		port = "3000"
 	}
+	// Host can be blank by default, but in local development it should be set to "localhost"
+	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
+	host := os.Getenv("HOST")
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		err := http.ListenAndServeTLS(":"+port, "ssl/certificate.crt", "ssl/private.key", r)
+		err := http.ListenAndServeTLS(host+":"+port, "ssl/certificate.crt", "ssl/private.key", r)
 		if err != nil {
 			logger.LogError(err)
 		}
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		err := http.ListenAndServe(":"+port, r)
+		err := http.ListenAndServe(host+":"+port, r)
 		if err != nil {
 			logger.LogError(err)
 		}
