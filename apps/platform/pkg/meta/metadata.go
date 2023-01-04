@@ -231,7 +231,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 }
 
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {
-	conditions := BundleCondition{}
+	conditions := BundleConditions{}
 	if metadataType == "fields" {
 		if grouping == "" {
 			return nil, errors.New("metadata type fields requires grouping value")
