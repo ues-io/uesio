@@ -11,7 +11,7 @@ type TranslationCollection []*Translation
 
 var TRANSLATION_COLLECTION_NAME = "uesio/studio.translation"
 var TRANSLATION_FOLDER_NAME = "translations"
-var TRANSLATION_FIELDS = []string{"labels", "language"}
+var TRANSLATION_FIELDS = []string{"uesio/studio.labels", "uesio/studio.language"}
 
 func (tc *TranslationCollection) GetName() string {
 	return TRANSLATION_COLLECTION_NAME
