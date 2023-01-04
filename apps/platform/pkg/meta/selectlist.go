@@ -14,8 +14,8 @@ type SelectListOption struct {
 type SelectList struct {
 	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
 	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
-	BuiltIn
-	BundleableBase `yaml:",inline"`
+	BuiltIn          `yaml:",inline"`
+	BundleableBase   `yaml:",inline"`
 }
 
 type SelectListWrapper SelectList

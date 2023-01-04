@@ -1,9 +1,9 @@
 package meta
 
 type SecretStoreValue struct {
-	Key   string `json:"uesio/core.key"`
-	Value string `json:"uesio/core.value"`
-	BuiltIn
+	Key     string `json:"uesio/core.key"`
+	Value   string `json:"uesio/core.value"`
+	BuiltIn `yaml:",inline"`
 }
 
 func (s *SecretStoreValue) GetCollectionName() string {

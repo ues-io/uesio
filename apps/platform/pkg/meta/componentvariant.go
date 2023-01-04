@@ -30,11 +30,11 @@ func NewBaseComponentVariant(component, namespace, name string) *ComponentVarian
 }
 
 type ComponentVariant struct {
-	Component  string    `yaml:"-" json:"uesio/studio.component"`
-	Extends    string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
-	Label      string    `yaml:"label" json:"uesio/studio.label"`
-	Definition yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
-	BuiltIn
+	Component      string    `yaml:"-" json:"uesio/studio.component"`
+	Extends        string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
+	Label          string    `yaml:"label" json:"uesio/studio.label"`
+	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

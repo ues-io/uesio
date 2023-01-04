@@ -5,7 +5,7 @@ type License struct {
 	App          *App    `json:"uesio/studio.app"`
 	AppLicensed  *App    `json:"uesio/studio.applicensed"`
 	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
-	BuiltIn
+	BuiltIn      `yaml:",inline"`
 }
 
 func (l *License) GetCollectionName() string {

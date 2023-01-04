@@ -1,11 +1,11 @@
 package meta
 
 type Invoice struct {
-	AutoID string  `json:"uesio/studio.autoid"`
-	App    *App    `json:"uesio/studio.app"`
-	Date   string  `json:"uesio/studio.date"`
-	Total  float64 `json:"uesio/studio.total"`
-	BuiltIn
+	AutoID  string  `json:"uesio/studio.autoid"`
+	App     *App    `json:"uesio/studio.app"`
+	Date    string  `json:"uesio/studio.date"`
+	Total   float64 `json:"uesio/studio.total"`
+	BuiltIn `yaml:",inline"`
 }
 
 func (l *Invoice) GetCollectionName() string {

@@ -4,7 +4,7 @@ type LicenseTemplate struct {
 	App          *App    `json:"uesio/studio.app"`
 	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
 	AutoCreate   bool    `json:"uesio/studio.autocreate"`
-	BuiltIn
+	BuiltIn      `yaml:",inline"`
 }
 
 func (lt *LicenseTemplate) GetCollectionName() string {

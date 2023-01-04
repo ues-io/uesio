@@ -9,7 +9,7 @@ type Usage struct {
 	User         string `json:"uesio/studio.user"`
 	App          *App   `json:"uesio/studio.app"`
 	Site         *Site  `json:"uesio/studio.site"`
-	BuiltIn
+	BuiltIn      `yaml:",inline"`
 }
 
 func (u *Usage) GetCollectionName() string {

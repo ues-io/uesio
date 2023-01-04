@@ -40,7 +40,7 @@ type Bundle struct {
 	App         *App   `json:"uesio/studio.app"`
 	Description string `json:"uesio/studio.description"`
 	Version     string `json:"uesio/studio.version"`
-	BuiltIn
+	BuiltIn     `yaml:",inline"`
 }
 
 func (b *Bundle) GetVersionString() string {

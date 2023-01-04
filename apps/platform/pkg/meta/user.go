@@ -10,7 +10,7 @@ type User struct {
 	Type      string            `json:"uesio/core.type"`
 	Picture   *UserFileMetadata `json:"uesio/core.picture"`
 	Language  string            `json:"uesio/core.language"`
-	BuiltIn
+	BuiltIn   `yaml:",inline"`
 }
 
 func (u *User) GetPictureID() string {

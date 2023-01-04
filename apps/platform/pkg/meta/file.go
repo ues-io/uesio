@@ -20,8 +20,8 @@ func NewBaseFile(namespace, name string) *File {
 }
 
 type File struct {
-	Path string `yaml:"path" json:"uesio/studio.path"`
-	BuiltIn
+	Path           string `yaml:"path" json:"uesio/studio.path"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 

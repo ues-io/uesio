@@ -6,7 +6,7 @@ type Payment struct {
 	Date    string  `json:"uesio/studio.date"`
 	Total   float64 `json:"uesio/studio.total"`
 	Payment string  `json:"uesio/studio.payment"`
-	BuiltIn
+	BuiltIn `yaml:",inline"`
 }
 
 func (l *Payment) GetCollectionName() string {

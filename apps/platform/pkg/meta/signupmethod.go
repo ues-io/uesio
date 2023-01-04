@@ -32,8 +32,8 @@ type SignupMethod struct {
 	AdminCreate      EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup           EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
 	ForgotPassword   EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
-	BuiltIn
-	BundleableBase `yaml:",inline"`
+	BuiltIn          `yaml:",inline"`
+	BundleableBase   `yaml:",inline"`
 }
 
 type SignupMethodWrapper SignupMethod

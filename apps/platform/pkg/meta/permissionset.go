@@ -30,8 +30,8 @@ type PermissionSet struct {
 	AllowAllFiles       bool            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
 	ModifyAllRecords    bool            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
 	ViewAllRecords      bool            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	BuiltIn
-	BundleableBase `yaml:",inline"`
+	BuiltIn             `yaml:",inline"`
+	BundleableBase      `yaml:",inline"`
 }
 
 type PermissionSetWrapper PermissionSet

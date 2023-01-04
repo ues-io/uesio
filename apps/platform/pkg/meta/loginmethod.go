@@ -4,7 +4,7 @@ type LoginMethod struct {
 	FederationID string `json:"uesio/core.federation_id"`
 	AuthSource   string `json:"uesio/core.auth_source"`
 	User         *User  `json:"uesio/core.user"`
-	BuiltIn
+	BuiltIn      `yaml:",inline"`
 }
 
 func (lm *LoginMethod) GetCollectionName() string {

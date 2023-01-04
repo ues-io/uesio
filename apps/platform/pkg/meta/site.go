@@ -8,7 +8,7 @@ type Site struct {
 	Domain      string
 	Subdomain   string
 	Permissions *PermissionSet `json:"-"`
-	BuiltIn
+	BuiltIn     `yaml:",inline"`
 }
 
 func (s *Site) GetFullName() string {

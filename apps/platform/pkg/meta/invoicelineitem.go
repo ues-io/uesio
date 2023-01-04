@@ -1,12 +1,12 @@
 package meta
 
 type InvoiceLineItem struct {
-	Invoice     *Invoice `json:"uesio/studio.invoice"`
-	Description string   `json:"uesio/studio.description"`
-	Quantity    int64    `json:"uesio/studio.quantity"`
-	Price       float64  `json:"uesio/studio.price"`
-	Total       float64  `json:"uesio/studio.total"`
-	BuiltIn
+	Invoice        *Invoice `json:"uesio/studio.invoice"`
+	Description    string   `json:"uesio/studio.description"`
+	Quantity       int64    `json:"uesio/studio.quantity"`
+	Price          float64  `json:"uesio/studio.price"`
+	Total          float64  `json:"uesio/studio.total"`
+	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }
 
