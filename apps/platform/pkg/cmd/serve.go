@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"path/filepath"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
-	"net/http/pprof"
 )
 
 func init() {
@@ -44,7 +44,13 @@ func serve(cmd *cobra.Command, args []string) {
 	// Main router
 	r := mux.NewRouter()
 
-	debugMode := os.Getenv("DEBUG") == "true"
+	// Profiler routes
+	r.HandleFunc("/debug/pprof/", pprof.Index)
+	r.HandleFunc("/debug/pprof/heap", pprof.Index)
+	r.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	r.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	r.HandleFunc("/debug/pprof/trace", pprof.Trace)
 
 	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods(http.MethodGet)
 	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods(http.MethodGet)
@@ -263,29 +269,6 @@ func serve(cmd *cobra.Command, args []string) {
 	// Host can be blank by default, but in local development it should be set to "localhost"
 	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
 	host := os.Getenv("HOST")
-
-	logger.Log(fmt.Sprintf("debug mode: %b", debugMode), logger.INFO)
-
-	// Launch separate server for pprof in debug mode
-	if debugMode {
-		// Setup distinct pprof router so that no uesio middleware is active
-		debugRouter := mux.NewRouter()
-		debugRouter.Handle("/debug/pprof/", http.HandlerFunc(pprof.Index))
-		debugRouter.Handle("/debug/pprof/cmdline", http.HandlerFunc(pprof.Cmdline))
-		debugRouter.Handle("/debug/pprof/profile", http.HandlerFunc(pprof.Profile))
-		debugRouter.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
-		debugRouter.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
-		debugRouter.Handle("/debug/pprof/{cmd}", http.HandlerFunc(pprof.Index)) // special handling for Gorilla mux
-
-		go func() {
-
-			logger.Log("Starting pprof server on port 3001", logger.INFO)
-
-			if err := http.ListenAndServe(":3001", debugRouter); err != nil {
-				logger.LogError(err)
-			}
-		}()
-	}
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	if useSSL == "true" {
