@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
@@ -263,20 +264,22 @@ func serve(cmd *cobra.Command, args []string) {
 	// Host can be blank by default, but in local development it should be set to "localhost"
 	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
 	host := os.Getenv("HOST")
+	serveAddr := host + ":" + port
+
+	// Universal middlewares
+	r.Use(gziphandler.GzipHandler)
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
+	var serveErr error
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		err := http.ListenAndServeTLS(host+":"+port, "ssl/certificate.crt", "ssl/private.key", middleware.GZipHandler(r))
-		if err != nil {
-			logger.LogError(err)
-		}
+		serveErr = http.ListenAndServeTLS(serveAddr, "ssl/certificate.crt", "ssl/private.key", r)
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		err := http.ListenAndServe(host+":"+port, middleware.GZipHandler(r))
-		if err != nil {
-			logger.LogError(err)
-		}
+		serveErr = http.ListenAndServe(serveAddr, r)
+	}
+	if serveErr != nil {
+		logger.LogError(serveErr)
 	}
 
 	// CORS Stuff we don't need right now
