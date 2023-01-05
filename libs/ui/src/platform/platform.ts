@@ -429,12 +429,14 @@ const platform = {
 		return respondJSON(response)
 	},
 	forgotPassword: async (
+		context: Context,
 		authSource: string,
 		requestBody: Record<string, string>
 	): Promise<void> => {
+		const prefix = getPrefix(context)
 		const [namespace, name] = parseKey(authSource)
 		const response = await postJSON(
-			`/site/auth/${namespace}/${name}/forgotpassword`,
+			`${prefix}/auth/${namespace}/${name}/forgotpassword`,
 			requestBody
 		)
 
