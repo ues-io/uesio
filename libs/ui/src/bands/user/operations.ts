@@ -117,7 +117,11 @@ const forgotPassword =
 		const mergedPayload = context.mergeStringMap(payload)
 		const mergedSignupMethod = context.mergeString(signupMethod)
 		try {
-			await platform.forgotPassword(mergedSignupMethod, mergedPayload)
+			await platform.forgotPassword(
+				context,
+				mergedSignupMethod,
+				mergedPayload
+			)
 			return context
 		} catch (error) {
 			const message = getErrorString(error)
