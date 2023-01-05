@@ -267,13 +267,13 @@ func serve(cmd *cobra.Command, args []string) {
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)
-		err := http.ListenAndServeTLS(host+":"+port, "ssl/certificate.crt", "ssl/private.key", r)
+		err := http.ListenAndServeTLS(host+":"+port, "ssl/certificate.crt", "ssl/private.key", middleware.GZipHandler(r))
 		if err != nil {
 			logger.LogError(err)
 		}
 	} else {
 		logger.Log("Service Started on Port: "+port, logger.INFO)
-		err := http.ListenAndServe(host+":"+port, r)
+		err := http.ListenAndServe(host+":"+port, middleware.GZipHandler(r))
 		if err != nil {
 			logger.LogError(err)
 		}
