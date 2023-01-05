@@ -39,16 +39,27 @@ var itemParam = fmt.Sprintf("%s/{name}", nsParam)
 var groupingParam = getFullItemParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
+const (
+	fontsPrefix  = "/fonts"
+	staticPrefix = "/static"
+)
+
 func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		logger.LogError(err)
+		panic("Failed to obtain working directory")
+	}
+
 	// Profiler Info
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
-	r.Handle("/fonts/{filename}", controller.Fonts()).Methods(http.MethodGet)
-	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods(http.MethodGet)
+	r.Handle(fontsPrefix+"/*", controller.Fonts(cwd, fontsPrefix)).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", controller.Vendor(cwd, staticPrefix)).Methods(http.MethodGet)
 	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
