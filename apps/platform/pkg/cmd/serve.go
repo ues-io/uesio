@@ -237,6 +237,7 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
+	sa.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword", controller.ForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/forgotpassword/confirm", controller.ConfirmForgotPassword).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/checkavailability/{username}", controller.CheckAvailability).Methods("POST")

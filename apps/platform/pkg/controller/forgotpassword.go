@@ -19,7 +19,7 @@ func getSignupMethodID(vars map[string]string) string {
 func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-	site := session.GetSite()
+	site := session.GetContextSite()
 
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
