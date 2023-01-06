@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
@@ -16,7 +17,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-var indexTemplate *template.Template
+var indexTemplate, cssTemplate *template.Template
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
@@ -42,8 +43,14 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 }
 
 func init() {
-	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
-	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
+	baseDir := ""
+	wd, _ := os.Getwd()
+	// Handle path resolution issues when running tests
+	if strings.Contains(wd, "pkg/") {
+		baseDir = filepath.Join(wd, "..", "..")
+	}
+	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
+	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getPackURL": getPackUrl,
 	}).ParseFiles(indexPath, cssPath))
@@ -123,6 +130,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Path:      route.Path,
 			Workspace: GetWorkspaceMergeData(workspace, preload.Namespaces),
 			Theme:     route.ThemeRef,
+			// TODO: route.Title
+			Title: "My view - Uesio",
 		},
 		User: GetUserMergeData(session),
 		Site: &routing.SiteMergeData{
@@ -131,9 +140,10 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		DevMode:         devMode,
-		Component:       GetComponentMergeData(componentState),
-		PreloadMetadata: preload,
+		DevMode:          devMode,
+		Component:        GetComponentMergeData(componentState),
+		PreloadMetadata:  preload,
+		StaticAssetsPath: GetAssetsPath(),
 	}
 
 	err := indexTemplate.Execute(w, mergeData)

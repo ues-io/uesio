@@ -5,7 +5,11 @@ import (
 	"path/filepath"
 )
 
-func Vendor(currentWorkingDirectory, routePrefix string) http.Handler {
+func Vendor(currentWorkingDirectory, routePrefix string, cache bool) http.Handler {
 	fontServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "..", "..", "dist")))
-	return http.StripPrefix(routePrefix, fontServer)
+	handler := http.StripPrefix(routePrefix, fontServer)
+	if cache {
+		handler = With1YearCache(handler)
+	}
+	return handler
 }

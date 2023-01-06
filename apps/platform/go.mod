@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/storage v1.27.0
+	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PaesslerAG/gval v1.2.1
 	github.com/aws/aws-sdk-go-v2 v1.16.16
 	github.com/aws/aws-sdk-go-v2/config v1.17.7
@@ -32,7 +33,7 @@ require (
 )
 
 require (
-	github.com/NYTimes/gziphandler v1.1.1 // indirect
+	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e // indirect
 	github.com/google/uuid v1.3.0 // indirect
 )
 
