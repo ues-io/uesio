@@ -22,10 +22,6 @@ const CodeArea: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {
-				gridRow: "1 / 3",
-				gridColumn: 3,
-				position: "relative",
-				display: "grid",
 				width: codePanelWidth + "px",
 			},
 			separator: {
@@ -65,7 +61,10 @@ const CodeArea: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	return (
-		<div ref={slideRef} className={classes.root}>
+		<div
+			ref={slideRef}
+			className={styles.cx(props.className, classes.root)}
+		>
 			{/* Whole box, from top to down that is slidable */}
 			<div
 				role="seperator"

@@ -39,6 +39,12 @@ const MainWrapper: definition.UesioComponent = (props) => {
 				gridRow: "1 / 3",
 				gridColumn: "2",
 			},
+			codearea: {
+				gridRow: "1 / 3",
+				gridColumn: 3,
+				position: "relative",
+				display: "grid",
+			},
 		},
 		props
 	)
@@ -77,7 +83,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 				context={context}
 				children={props.children}
 			/>
-			<CodeArea context={builderContext} />
+			<CodeArea className={classes.codearea} context={builderContext} />
 		</Grid>
 	)
 }
