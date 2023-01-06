@@ -6,14 +6,8 @@ import CodeArea from "./codearea"
 
 const Grid = component.getUtility("uesio/io.grid")
 
-const LEFT_PANEL_WIDTH = 300
-
 const MainWrapper: definition.UesioComponent = (props) => {
 	const uesio = hooks.useUesio(props)
-
-	const [showCode] = uesio.component.useState<boolean>(
-		uesio.component.getComponentIdFromProps("codepanel", props)
-	)
 
 	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
 		uesio.component.getComponentIdFromProps("buildmode", props)
@@ -28,7 +22,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 		{
 			root: {
 				height: "100vh",
-				gridTemplateColumns: `${LEFT_PANEL_WIDTH}px 1fr auto`,
+				gridTemplateColumns: `auto 1fr auto`,
 				gridTemplateRows: "1fr 1fr",
 				...styles.getBackgroundStyles(
 					{
@@ -43,7 +37,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 			viewinfopanel: { gridRow: 2, gridColumn: 1 },
 			canvas: {
 				gridRow: "1 / 3",
-				gridColumn: showCode ? "2" : "2 / 4",
+				gridColumn: "2",
 			},
 		},
 		props
@@ -83,7 +77,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 				context={builderContext}
 				children={props.children}
 			/>
-			{showCode && <CodeArea context={builderContext} />}
+			<CodeArea context={builderContext} />
 		</Grid>
 	)
 }

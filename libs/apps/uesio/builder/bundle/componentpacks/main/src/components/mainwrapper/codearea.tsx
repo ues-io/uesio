@@ -1,12 +1,23 @@
 import { FunctionComponent, useRef } from "react"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, hooks } from "@uesio/ui"
 
 import CodePanel from "../../shared/codepanel"
 import usePanels from "./usePanels"
 
 const CodeArea: FunctionComponent<definition.UtilityProps> = (props) => {
+	const uesio = hooks.useUesio()
 	const slideRef = useRef<HTMLDivElement>(null)
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
+
+	const [showCode] = uesio.component.useState<boolean>(
+		uesio.component.makeComponentId(
+			props.context,
+			"uesio/builder.mainwrapper",
+			"codepanel"
+		)
+	)
+
+	if (!showCode) return null
 
 	const classes = styles.useStyles(
 		{
