@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
 const ONE_YEAR_IN_HOURS = time.Hour * 24 * 365
@@ -39,7 +37,6 @@ func Cached(handler http.Handler, opts ...optionFunc) *CacheControl {
 // wrapped http.Handler
 func (c *CacheControl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", c.options.String())
-	logger.Log("SETTING CACHE CONTROL for "+r.RequestURI, logger.INFO)
 	c.handler.ServeHTTP(w, r)
 }
 

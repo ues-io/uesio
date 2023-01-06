@@ -253,8 +253,6 @@ npm run in-docker
 open http://uesio-dev.com:3000
 ```
 
-To run the a
-
 # <a id="environment-variables"></a> (Optional) Environment Variables
 
 Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
