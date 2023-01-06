@@ -32,7 +32,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require github.com/google/uuid v1.3.0 // indirect
+require (
+	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e // indirect
+	github.com/google/uuid v1.3.0 // indirect
+)
 
 require (
 	cloud.google.com/go v0.104.0 // indirect
