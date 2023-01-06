@@ -16,7 +16,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-var indexTemplate *template.Template
+var indexTemplate, cssTemplate *template.Template
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
@@ -123,6 +123,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Path:      route.Path,
 			Workspace: GetWorkspaceMergeData(workspace, preload.Namespaces),
 			Theme:     route.ThemeRef,
+			// TODO: route.Title
+			Title: "My view - Uesio",
 		},
 		User: GetUserMergeData(session),
 		Site: &routing.SiteMergeData{
@@ -131,9 +133,10 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		DevMode:         devMode,
-		Component:       GetComponentMergeData(componentState),
-		PreloadMetadata: preload,
+		DevMode:          devMode,
+		Component:        GetComponentMergeData(componentState),
+		PreloadMetadata:  preload,
+		StaticAssetsPath: GetAssetsPath(),
 	}
 
 	err := indexTemplate.Execute(w, mergeData)
