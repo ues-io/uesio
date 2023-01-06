@@ -25,6 +25,7 @@ type Route struct {
 	Collection     string            `yaml:"collection,omitempty" json:"uesio/studio.collection"`
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
+	Title          string            `yaml:"title" json:"uesio/studio.title"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
 }

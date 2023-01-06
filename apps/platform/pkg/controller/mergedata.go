@@ -122,6 +122,11 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		preload.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
 	}
 
+	routeTitle := route.Title
+	if routeTitle == "" {
+		routeTitle = "Uesio"
+	}
+
 	mergeData := routing.MergeData{
 		Route: &routing.RouteMergeData{
 			View:      route.ViewRef,
@@ -130,8 +135,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Path:      route.Path,
 			Workspace: GetWorkspaceMergeData(workspace, preload.Namespaces),
 			Theme:     route.ThemeRef,
-			// TODO: route.Title
-			Title: "My view - Uesio",
+			Title:     routeTitle,
 		},
 		User: GetUserMergeData(session),
 		Site: &routing.SiteMergeData{

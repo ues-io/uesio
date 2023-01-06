@@ -49,11 +49,13 @@ const navigate = async (
 			{
 				namespace: routeResponse.namespace,
 				path: routeResponse.path,
+				title: routeResponse.title,
 				workspace,
 			},
 			"",
 			prefix + routeResponse.path
 		)
+		document.title = routeResponse.title || "Uesio"
 	}
 
 	const newPacks = getPackUrlsForDeps(deps, context)
