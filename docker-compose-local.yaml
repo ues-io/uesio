@@ -7,11 +7,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GITSHA: latest
+      GITSHA: latest1
       REDIS_HOST: host.docker.internal
       REDIS_PORT: 6379
       UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
-      UESIO_CACHE_SITE_BUNDLES: true
+      UESIO_CACHE_SITE_BUNDLES: 'true'
       UESIO_DB_DATABASE: postgresio
       UESIO_DB_HOST: host.docker.internal
       UESIO_DB_USER: postgres
@@ -27,8 +27,11 @@ services:
       UESIO_PLATFORM_FILESOURCE_TYPE: uesio.local
       UESIO_SESSION_STORE: redis
       UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
-      UESIO_MOCK_AUTH: true
+      UESIO_MOCK_AUTH: 'true'
+      UESIO_USE_HTTPS: 'true'
       PORT: 3000
+    volumes:
+      - ./apps/platform/ssl:/ssl
 
 
 
