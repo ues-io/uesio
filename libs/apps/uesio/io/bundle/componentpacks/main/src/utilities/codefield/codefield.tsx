@@ -14,7 +14,9 @@ interface CodeFieldUtilityProps extends definition.UtilityProps {
 
 const staticAssetPath = hooks.useUesio().platform.getStaticAssetsPath()
 
-loader.config({ paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" } })
+loader.config({
+	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
+})
 
 const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 	const { setValue, value, language, options, onMount } = props
