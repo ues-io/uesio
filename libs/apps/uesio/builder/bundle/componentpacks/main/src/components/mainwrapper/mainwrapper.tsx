@@ -1,5 +1,5 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
-import Canvas from "../../shared/canvas"
+import Canvas from "./canvas"
 import PropertiesPanel from "../../shared/propertiespanel"
 import ViewInfoPanel from "../../shared/viewinfopanel"
 import CodeArea from "./codearea"

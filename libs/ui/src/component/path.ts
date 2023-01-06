@@ -1,6 +1,5 @@
 import toPath from "lodash/toPath"
 import { MetadataKey } from "../bands/builder/types"
-import { DefinitionMap } from "../definition/definition"
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
@@ -28,18 +27,6 @@ const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	const [collectionNamespace, collectionName] = parseKey(collection)
 	const [fieldNamespace, fieldName] = parseKey(field)
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
-}
-
-// Unwraps a definition from its key
-const getDefinitionKey = (definition: DefinitionMap) =>
-	Object.keys(definition)[0]
-
-// Unwraps a definition and returns the componentType and definition
-const unWrapDefinition = (
-	definition: DefinitionMap
-): [string, DefinitionMap] => {
-	const componentType = getDefinitionKey(definition)
-	return [componentType, definition[componentType] as DefinitionMap]
 }
 
 // Return the string representation of a path array.
@@ -130,7 +117,6 @@ export {
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
-	unWrapDefinition,
 	fromPath,
 	toPath,
 	getParentPath,
@@ -140,7 +126,6 @@ export {
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
-	getDefinitionKey,
 	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,

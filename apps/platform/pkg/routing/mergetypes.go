@@ -44,10 +44,11 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Name       string                                 `json:"name"`
-	App        string                                 `json:"app"`
-	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
-	Wrapper    string                                 `json:"wrapper,omitempty"`
+	Name        string                                 `json:"name"`
+	App         string                                 `json:"app"`
+	Namespaces  map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	Wrapper     string                                 `json:"wrapper,omitempty"`
+	SlotWrapper string                                 `json:"slotwrapper,omitempty"`
 }
 
 type ComponentMergeData struct {

@@ -16,6 +16,7 @@ type WorkspaceState = {
 	name: string
 	app: string
 	wrapper?: MetadataKey
+	slotwrapper?: MetadataKey
 	namespaces?: Record<string, MetadataInfo>
 }
 

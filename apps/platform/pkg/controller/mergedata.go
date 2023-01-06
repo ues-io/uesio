@@ -19,6 +19,7 @@ import (
 var indexTemplate *template.Template
 
 var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
+var DEFAULT_BUILDER_SLOT = "uesio/builder.slotbuilder"
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
 var DEFAULT_BUILDER_PACK_NAME = "main"
 
@@ -69,10 +70,11 @@ func GetWorkspaceMergeData(workspace *meta.Workspace, namespaces map[string]data
 	}
 
 	return &routing.WorkspaceMergeData{
-		Name:       workspace.Name,
-		App:        workspace.GetAppFullName(),
-		Namespaces: namespaces,
-		Wrapper:    DEFAULT_BUILDER_COMPONENT,
+		Name:        workspace.Name,
+		App:         workspace.GetAppFullName(),
+		Namespaces:  namespaces,
+		Wrapper:     DEFAULT_BUILDER_COMPONENT,
+		SlotWrapper: DEFAULT_BUILDER_SLOT,
 	}
 }
 

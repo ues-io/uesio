@@ -55,7 +55,11 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					direction={direction}
 				/>
 			)}
-			{props.children}
+			<>
+				{component.getSlotProps(props).map((props, index) => (
+					<component.Component key={index} index={index} {...props} />
+				))}
+			</>
 		</>
 	)
 }
