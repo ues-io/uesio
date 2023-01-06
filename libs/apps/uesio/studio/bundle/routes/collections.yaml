@@ -2,3 +2,4 @@ name: collections
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/collections
 view: uesio/studio.collections
 theme: uesio/studio.default
+title: Collections

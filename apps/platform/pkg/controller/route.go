@@ -28,6 +28,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		respondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
+			Title: "Not Found",
 		})
 		return
 	}
@@ -46,6 +47,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		Path:         route.Path,
 		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
 		Dependencies: depsCache,
+		Title:        route.Title,
 	})
 
 }
@@ -90,6 +92,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		Path:         route.Path,
 		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
 		Dependencies: depsCache,
+		Title:        route.Title,
 	})
 
 }
@@ -102,6 +105,7 @@ func getNotFoundRoute(path string) *meta.Route {
 		},
 		Path:     path,
 		ThemeRef: "uesio/core.default",
+		Title:    "Not Found",
 	}
 }
 
@@ -115,6 +119,7 @@ func getErrorRoute(path string, err string) *meta.Route {
 		Path:     path,
 		ThemeRef: "uesio/core.default",
 		Params:   params,
+		Title:    "Error",
 	}
 }
 
