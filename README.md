@@ -239,10 +239,21 @@ npm run nx -- seed platform
 
 # <a id="dependencies"></a>Run the application locally
 
+To run the app locally:
+
 ```
 npm run nx -- serve platform
 open https://uesio-dev.com:3000
 ```
+
+To run the app in Docker locally (without HTTPS):
+
+```
+npm run in-docker
+open http://uesio-dev.com:3000
+```
+
+To run the a
 
 # <a id="environment-variables"></a> (Optional) Environment Variables
 
