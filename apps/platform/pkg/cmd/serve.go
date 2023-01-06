@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
@@ -290,7 +289,7 @@ func serve(cmd *cobra.Command, args []string) {
 	serveAddr := host + ":" + port
 
 	// Universal middlewares
-	r.Use(gziphandler.GzipHandler)
+	r.Use(middleware.GZip())
 
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	var serveErr error
