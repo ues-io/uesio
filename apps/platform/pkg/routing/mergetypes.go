@@ -21,6 +21,7 @@ type RouteMergeData struct {
 	Path         string              `json:"path"`
 	Workspace    *WorkspaceMergeData `json:"workspace"`
 	Theme        string              `json:"theme"`
+	Title        string              `json:"title"`
 	Dependencies *PreloadMetadata    `json:"dependencies"`
 }
 
@@ -64,12 +65,13 @@ type ComponentsMergeData struct {
 }
 
 type MergeData struct {
-	Route     *RouteMergeData      `json:"route"`
-	User      *UserMergeData       `json:"user"`
-	Site      *SiteMergeData       `json:"site"`
-	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component *ComponentsMergeData `json:"component,omitempty"`
-	DevMode   bool                 `json:"-"`
+	Route            *RouteMergeData      `json:"route"`
+	User             *UserMergeData       `json:"user"`
+	Site             *SiteMergeData       `json:"site"`
+	Workspace        *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component        *ComponentsMergeData `json:"component,omitempty"`
+	DevMode          bool                 `json:"-"`
+	StaticAssetsPath string               `json:"staticAssetsPath"`
 	*PreloadMetadata
 }
 

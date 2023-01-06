@@ -1,2 +1,6 @@
 apps/platform/sessions
 apps/platform/userfiles
+.git
+docs
+node_modules
+redis-data
