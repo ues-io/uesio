@@ -370,7 +370,7 @@
 				"build-image": {
 					"builder": "@nrwl/workspace:run-commands",
 					"options": {
-						"command": "export GITSHA=$(git rev-parse --short HEAD) && docker build --tag uesio:$GITSHA -f ./apps/platform/Dockerfile .",
+						"command": "export GITSHA=$(git rev-parse --short HEAD) && docker build --tag uesio:$GITSHA --tag uesio:latest -f ./apps/platform/Dockerfile .",
 						"cwd": "."
 					}
 				},
