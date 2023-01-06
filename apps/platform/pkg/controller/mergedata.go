@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	// Using text/template here instead of html/template
 	// because we trust both the template and the merge data
@@ -42,8 +43,14 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 }
 
 func init() {
-	indexPath := filepath.Join(filepath.Join("platform", "index.gohtml"))
-	cssPath := filepath.Join(filepath.Join("fonts", "fonts.css"))
+	baseDir := ""
+	wd, _ := os.Getwd()
+	// Handle path resolution issues when running tests
+	if strings.Contains(wd, "pkg/") {
+		baseDir = filepath.Join(wd, "..", "..")
+	}
+	indexPath := filepath.Join(baseDir, "platform", "index.gohtml")
+	cssPath := filepath.Join(baseDir, "fonts", "fonts.css")
 	indexTemplate = template.Must(template.New("index.gohtml").Funcs(template.FuncMap{
 		"getPackURL": getPackUrl,
 	}).ParseFiles(indexPath, cssPath))
