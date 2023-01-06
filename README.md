@@ -250,7 +250,13 @@ To run the app in Docker locally (without HTTPS):
 
 ```
 npm run in-docker
-open http://uesio-dev.com:3000
+open https://uesio-dev.com:3000
+```
+
+**NOTE**: Docker Compose aggressively caches, so to force the app to rebuild the image (e.g. to rebuild JS / Go source), use this instead:
+
+```
+npm run in-docker-force-build
 ```
 
 # <a id="environment-variables"></a> (Optional) Environment Variables
