@@ -9,19 +9,16 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 	const { definition, context } = props
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
-		definition.templateColumns,
-		context
+		definition.templateColumns
 	)
 	const gridRows = styles.getResponsiveStyles(
 		"gridTemplateRows",
-		definition.templateRows,
-		context
+		definition.templateRows
 	)
 
 	const gridAreas = styles.getResponsiveStyles(
 		"gridTemplateAreas",
-		definition.templateAreas,
-		context
+		definition.templateAreas
 	)
 
 	const columnGap = definition.columnGap && {

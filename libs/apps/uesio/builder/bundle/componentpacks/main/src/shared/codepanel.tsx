@@ -220,7 +220,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							onClick={uesio.signal.getHandler(
 								[
 									{
-										signal: "component/uesio/builder.runtime/TOGGLE_CODE",
+										signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE",
 									},
 								],
 								context
