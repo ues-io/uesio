@@ -44,28 +44,6 @@ type TypeConfigOptions struct {
 	OrderIndex interface{} `json:"orderindex"`
 }
 
-func getUrl(condition adapt.LoadRequestCondition) (string, error) {
-
-	value := condition.Value
-	if value == "" || value == nil {
-		return "", nil
-	}
-
-	if condition.Field == "tcm/timetracker.id" {
-		url := fmt.Sprintf("task/%v?include_subtasks=false", value)
-		return url, nil
-
-	}
-
-	if condition.Field == "tcm/timetracker.list" {
-		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", value)
-		return url, nil
-	}
-
-	return "", errors.New("The first condition must be on the list or id")
-
-}
-
 func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
 	metadata := connection.GetMetadata()
