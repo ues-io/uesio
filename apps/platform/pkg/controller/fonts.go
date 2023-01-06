@@ -3,10 +3,9 @@ package controller
 import (
 	"net/http"
 	"path/filepath"
-
-	"github.com/gorilla/mux"
 )
 
-func Fonts(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, filepath.Join("fonts", mux.Vars(r)["filename"]))
+func Fonts(currentWorkingDirectory, routePrefix string) http.Handler {
+	fontServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "fonts")))
+	return http.StripPrefix(routePrefix, fontServer)
 }
