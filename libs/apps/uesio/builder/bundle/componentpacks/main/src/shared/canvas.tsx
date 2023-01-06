@@ -39,7 +39,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [dimensions] = uesio.component.useState<[number, number]>(
 		uesio.component.makeComponentId(
 			context,
-			"uesio/builder.runtime",
+			"uesio/builder.mainwrapper",
 			"dimensions"
 		)
 	)

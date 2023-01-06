@@ -18,7 +18,7 @@ import (
 
 var indexTemplate *template.Template
 
-var DEFAULT_BUILDER_COMPONENT = "uesio/builder.runtime"
+var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
 var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
 var DEFAULT_BUILDER_PACK_NAME = "main"
 

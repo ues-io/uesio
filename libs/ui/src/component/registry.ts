@@ -242,7 +242,6 @@ const getBuilderComponents = () => getComponents(/*"uesio.standalone"*/)
 export {
 	register,
 	registerUtilityComponent,
-	registerSignals,
 	getComponents,
 	getRuntimeLoader,
 	getUtilityLoader,

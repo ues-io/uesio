@@ -35,7 +35,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const toggleCode = uesio.signal.getHandler(
 		[
 			{
-				signal: "component/uesio/builder.runtime/TOGGLE_CODE/codepanel",
+				signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE/codepanel",
 			},
 		],
 		context
@@ -45,7 +45,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.signal.getHandler(
 			[
 				{
-					signal: "component/uesio/builder.runtime/SET_DIMENSIONS/dimensions",
+					signal: "component/uesio/builder.mainwrapper/SET_DIMENSIONS/dimensions",
 					height,
 					width,
 				},

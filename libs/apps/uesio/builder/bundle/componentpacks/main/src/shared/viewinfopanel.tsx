@@ -18,7 +18,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const componentId = uesio.component.getComponentId(
 		"viewinfopanel",
-		"uesio/builder.runtime",
+		"uesio/builder.mainwrapper",
 		props.path,
 		context
 	)

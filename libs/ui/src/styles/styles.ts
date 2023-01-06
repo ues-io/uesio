@@ -25,8 +25,7 @@ type ResponsiveDefinition =
 type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl"
 const getResponsiveStyles = (
 	styleType: string,
-	definition: ResponsiveDefinition,
-	context: Context
+	definition: ResponsiveDefinition
 ): CSSProperties | undefined => {
 	if (!definition) return undefined
 	if (typeof definition === "string") {
@@ -35,14 +34,12 @@ const getResponsiveStyles = (
 		}
 	}
 
-	const offset = context.getMediaOffset() || 0
-
 	const breakpoints: Record<Breakpoint, number> = {
-		xs: 0 + offset,
-		sm: 600 + offset,
-		md: 960 + offset,
-		lg: 1280 + offset,
-		xl: 1920 + offset,
+		xs: 0,
+		sm: 600,
+		md: 960,
+		lg: 1280,
+		xl: 1920,
 	}
 
 	return Object.keys(breakpoints).reduce(

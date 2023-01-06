@@ -41,7 +41,6 @@ type ContextFrame = {
 	siteadmin?: SiteAdminState
 	site?: SiteState
 	theme?: string
-	mediaOffset?: number
 	errors?: string[]
 	params?: Record<string, string>
 }
@@ -168,9 +167,6 @@ class Context {
 	getSite = () => this.stack.find((frame) => frame?.site)?.site
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
-
-	getMediaOffset = () =>
-		this.stack.find((frame) => frame?.mediaOffset)?.mediaOffset
 
 	findWireFrame = () => {
 		const index = this.stack.findIndex((frame) => frame?.wire)
