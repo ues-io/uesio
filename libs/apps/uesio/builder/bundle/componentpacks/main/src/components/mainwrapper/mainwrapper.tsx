@@ -74,7 +74,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 			/>
 			<Canvas
 				className={classes.canvas}
-				context={builderContext}
+				context={context}
 				children={props.children}
 			/>
 			<CodeArea context={builderContext} />
