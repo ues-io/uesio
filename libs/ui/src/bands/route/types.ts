@@ -45,6 +45,7 @@ type RouteState = {
 	path: string
 	workspace?: WorkspaceState
 	theme: string
+	title: string
 	isLoading?: boolean
 	dependencies?: Dependencies
 } | null

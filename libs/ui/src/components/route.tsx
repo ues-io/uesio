@@ -66,6 +66,7 @@ const Route: FC<BaseProps> = (props) => {
 				{
 					path: event.state.path,
 					namespace: event.state.namespace,
+					title: event.state.title,
 				},
 				true
 			)

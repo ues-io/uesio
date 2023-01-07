@@ -3,13 +3,15 @@ package controller
 import (
 	"net/http"
 	"path/filepath"
+
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 func Fonts(currentWorkingDirectory, routePrefix string, cache bool) http.Handler {
 	fontServer := http.FileServer(http.Dir(filepath.Join(currentWorkingDirectory, "fonts")))
 	handler := http.StripPrefix(routePrefix, fontServer)
 	if cache {
-		handler = With1YearCache(handler)
+		handler = middleware.With1YearCache(handler)
 	}
 	return handler
 }

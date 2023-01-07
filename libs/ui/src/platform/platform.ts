@@ -49,6 +49,7 @@ type JobResponse = {
 type PathNavigateRequest = {
 	namespace: string
 	path: string
+	title?: string
 }
 
 type CollectionNavigateRequest = {
