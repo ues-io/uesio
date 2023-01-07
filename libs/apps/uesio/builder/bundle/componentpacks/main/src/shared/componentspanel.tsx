@@ -9,6 +9,7 @@ import {
 } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
+import { getBuilderNamespaces } from "../components/mainwrapper/mainwrapper"
 
 const Text = component.getUtility("uesio/io.text")
 const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
@@ -83,11 +84,12 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}`
 
+	const allNSInfo = getBuilderNamespaces(context)
+
 	// Filter out variants that aren't in one of our namespaces
 	// (this is for filtering out variants from the studio namespace)
 	const validVariants = variants?.filter(
-		(variant) =>
-			!!uesio.builder.getNamespaceInfo(variant.namespace, context)
+		(variant) => !!allNSInfo[variant.namespace]
 	)
 
 	const selected =

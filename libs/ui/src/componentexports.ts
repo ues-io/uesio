@@ -1,4 +1,4 @@
-import Slot, { SlotUtilityProps } from "./components/slot"
+import Slot, { SlotUtilityProps, getSlotProps } from "./components/slot"
 import View from "./components/view/view"
 import Panel from "./components/panel"
 import NotificationArea from "./components/notificationarea"
@@ -19,6 +19,7 @@ import PanelArea from "./components/panelarea"
 export {
 	Slot,
 	SlotUtilityProps,
+	getSlotProps,
 	View,
 	path,
 	registry,

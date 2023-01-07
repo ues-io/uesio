@@ -11,17 +11,12 @@ import (
 	// because we trust both the template and the merge data
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var indexTemplate, cssTemplate *template.Template
-
-var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
-var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
-var DEFAULT_BUILDER_PACK_NAME = "main"
 
 func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
@@ -70,35 +65,17 @@ func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	}
 }
 
-func GetWorkspaceMergeData(workspace *meta.Workspace, namespaces map[string]datasource.MetadataResponse) *routing.WorkspaceMergeData {
+func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {
 	if workspace == nil {
 		return nil
 	}
 
 	return &routing.WorkspaceMergeData{
-		Name:       workspace.Name,
-		App:        workspace.GetAppFullName(),
-		Namespaces: namespaces,
-		Wrapper:    DEFAULT_BUILDER_COMPONENT,
+		Name:        workspace.Name,
+		App:         workspace.GetAppFullName(),
+		Wrapper:     routing.DEFAULT_BUILDER_COMPONENT,
+		SlotWrapper: routing.DEFAULT_BUILDER_SLOT,
 	}
-}
-
-func GetComponentMergeData(stateMap map[string]interface{}) *routing.ComponentsMergeData {
-	stateData := &routing.ComponentsMergeData{
-		IDs:      []string{},
-		Entities: map[string]routing.ComponentMergeData{},
-	}
-	if stateMap == nil {
-		return stateData
-	}
-	for componentID, state := range stateMap {
-		stateData.IDs = append(stateData.IDs, componentID)
-		stateData.Entities[componentID] = routing.ComponentMergeData{
-			ID:    componentID,
-			State: state,
-		}
-	}
-	return stateData
 }
 
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
@@ -113,15 +90,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		devMode = true
 	}
 
-	componentState := map[string]interface{}{}
-
-	// If we're in workspace mode, make sure we have the builder pack so we can include the
-	// buildwrapper
-	if workspace != nil {
-		componentState[fmt.Sprintf("%s($root):%s:buildmode", route.ViewRef, DEFAULT_BUILDER_COMPONENT)] = buildMode
-		preload.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
-	}
-
 	routeTitle := route.Title
 	if routeTitle == "" {
 		routeTitle = "Uesio"
@@ -133,7 +101,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Params:    route.Params,
 			Namespace: route.Namespace,
 			Path:      route.Path,
-			Workspace: GetWorkspaceMergeData(workspace, preload.Namespaces),
+			Workspace: GetWorkspaceMergeData(workspace),
 			Theme:     route.ThemeRef,
 			Title:     routeTitle,
 		},
@@ -145,7 +113,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Domain:    site.Domain,
 		},
 		DevMode:          devMode,
-		Component:        GetComponentMergeData(componentState),
 		PreloadMetadata:  preload,
 		StaticAssetsPath: GetAssetsPath(),
 	}

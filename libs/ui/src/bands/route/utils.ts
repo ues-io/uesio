@@ -7,9 +7,9 @@ import { setMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
 import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
+import { setMany as setComponent } from "../component"
 import { initAll as initWire } from "../wire"
 import { init as initCollection } from "../collection"
-import { setNamespaceInfo } from "../route"
 import { PlainViewDef } from "../../definition/viewdef"
 import { ComponentVariant } from "../../definition/componentvariant"
 import { ConfigValueState } from "../../definition/configvalue"
@@ -24,6 +24,7 @@ import { RegularWireDefinition } from "../../definition/wire"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainWire } from "../wire/types"
 import { dispatch } from "../../store/store"
+import { ComponentState } from "../component/types"
 
 type Dep<T> = Record<string, T> | undefined
 
@@ -72,11 +73,11 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 	const themes = deps.theme?.entities as Dep<ThemeState>
 	if (themes) dispatch(setTheme(themes))
 
+	const components = deps.component?.entities as Dep<ComponentState>
+	if (components) dispatch(setComponent(components))
+
 	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
 	if (metadatatext) dispatch(setMetadataText(metadatatext))
-
-	const namespaceinfo = deps.namespaces
-	if (namespaceinfo) dispatch(setNamespaceInfo(namespaceinfo))
 
 	const wires = deps.wire
 	if (wires && viewdefs) {

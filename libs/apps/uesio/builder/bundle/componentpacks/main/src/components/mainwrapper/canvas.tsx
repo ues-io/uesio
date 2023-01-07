@@ -1,9 +1,9 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
-import { handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
-import PanelPortal from "./panelportal"
-import TopActions from "./topactions"
-import BottomActions from "./bottomactions"
+import { handleDrop, isDropAllowed, isNextSlot } from "../../shared/dragdrop"
+import PanelPortal from "../../shared/panelportal"
+import TopActions from "../../shared/topactions"
+import BottomActions from "../../shared/bottomactions"
 
 const getIndex = (
 	target: Element | null,

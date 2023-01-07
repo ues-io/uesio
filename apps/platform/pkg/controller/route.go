@@ -45,7 +45,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		Namespace:    route.Namespace,
 		Theme:        route.ThemeRef,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
+		Workspace:    GetWorkspaceMergeData(workspace),
 		Dependencies: depsCache,
 		Title:        route.Title,
 	})
@@ -90,7 +90,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		Namespace:    route.Namespace,
 		Theme:        route.ThemeRef,
 		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace, depsCache.Namespaces),
+		Workspace:    GetWorkspaceMergeData(workspace),
 		Dependencies: depsCache,
 		Title:        route.Title,
 	})

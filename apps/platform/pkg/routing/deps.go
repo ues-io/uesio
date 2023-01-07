@@ -17,6 +17,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var DEFAULT_BUILDER_PACK_NAMESPACE = "uesio/builder"
+var DEFAULT_BUILDER_PACK_NAME = "main"
+
+var DEFAULT_BUILDER_COMPONENT = "uesio/builder.mainwrapper"
+var DEFAULT_BUILDER_SLOT = "uesio/builder.slotbuilder"
+
+func getBuilderComponentID(view string) string {
+	return fmt.Sprintf("%s($root):%s", view, DEFAULT_BUILDER_COMPONENT)
+}
+
 func loadViewDef(key string, session *sess.Session) (*meta.View, error) {
 
 	subViewDep, err := meta.NewView(key)
@@ -360,7 +370,9 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	deps.Namespaces = appData
+	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
+	deps.Component.AddItem(fmt.Sprintf("%s:namespaces", builderComponentID), appData)
+	deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), true)
 
 	return nil
 }
@@ -416,6 +428,16 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	workspace := session.GetWorkspace()
+
+	// If we're in workspace mode, make sure we have the builder pack so we can include the
+	// buildwrapper
+	if workspace != nil {
+		builderComponentID := getBuilderComponentID(route.ViewRef)
+		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
+		deps.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
 	}
 
 	return deps, nil

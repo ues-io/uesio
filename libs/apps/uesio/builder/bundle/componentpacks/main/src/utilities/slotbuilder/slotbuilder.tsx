@@ -1,7 +1,10 @@
 import { definition, component, hooks } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
+import { getBuildMode } from "../../components/mainwrapper/mainwrapper"
 import { isDropAllowed } from "../../shared/dragdrop"
 import PlaceHolder from "../placeholder/placeholder"
+
+const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const {
@@ -15,8 +18,12 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		context,
 	} = props
 
-	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
+
+	const buildMode = getBuildMode(context)
+
+	const ref = useRef<HTMLDivElement>(null)
+
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
@@ -42,6 +49,16 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		}
 	}, [path, size, accepts, direction])
 
+	if (!buildMode) {
+		return (
+			<>
+				{component.getSlotProps(props).map((props, index) => (
+					<component.Component key={index} index={index} {...props} />
+				))}
+			</>
+		)
+	}
+
 	return (
 		<>
 			<div ref={ref} style={{ display: "contents" }} />
@@ -55,7 +72,13 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 					direction={direction}
 				/>
 			)}
-			{props.children}
+			<>
+				{component.getSlotProps(props).map((props, index) => (
+					<BuildWrapper key={index} {...props}>
+						<component.Component index={index} {...props} />
+					</BuildWrapper>
+				))}
+			</>
 		</>
 	)
 }

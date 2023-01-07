@@ -4,6 +4,7 @@ import styling from "./styling"
 import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
 import getValueAPI from "../../shared/valueapi"
 import PlaceHolder from "../placeholder/placeholder"
+import { getBuilderNamespaces } from "../../components/mainwrapper/mainwrapper"
 
 const Text = component.getUtility("uesio/io.text")
 
@@ -35,8 +36,8 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const isDragging =
 		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
 
-	const wrapperPath = component.path.getGrandParentPath(path)
-	const componentKey = component.path.getKeyAtPath(path)
+	const wrapperPath = component.path.getParentPath(path)
+	const componentKey = props.componentType
 
 	if (!componentKey) throw new Error("Bad component key")
 
@@ -49,7 +50,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 			? definition?.view || componentKey
 			: propDef.title || "unknown"
 
-	const nsInfo = uesio.builder.getNamespaceInfo(componentNamespace, context)
+	const nsInfo = getBuilderNamespaces(props.context)[componentNamespace]
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath

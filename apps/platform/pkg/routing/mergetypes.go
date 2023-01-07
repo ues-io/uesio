@@ -3,7 +3,6 @@ package routing
 import (
 	"encoding/json"
 
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 )
 
@@ -45,32 +44,19 @@ type SiteMergeData struct {
 }
 
 type WorkspaceMergeData struct {
-	Name       string                                 `json:"name"`
-	App        string                                 `json:"app"`
-	Namespaces map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
-	Wrapper    string                                 `json:"wrapper,omitempty"`
-}
-
-type ComponentMergeData struct {
-	ID            string      `json:"id"`
-	ComponentType string      `json:"componentType"`
-	View          string      `json:"view"`
-	State         interface{} `json:"state"`
-}
-
-type ComponentsMergeData struct {
-	IDs      []string                      `json:"ids"`
-	Entities map[string]ComponentMergeData `json:"entities"`
+	Name        string `json:"name"`
+	App         string `json:"app"`
+	Wrapper     string `json:"wrapper,omitempty"`
+	SlotWrapper string `json:"slotwrapper,omitempty"`
 }
 
 type MergeData struct {
-	Route            *RouteMergeData      `json:"route"`
-	User             *UserMergeData       `json:"user"`
-	Site             *SiteMergeData       `json:"site"`
-	Workspace        *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component        *ComponentsMergeData `json:"component,omitempty"`
-	DevMode          bool                 `json:"-"`
-	StaticAssetsPath string               `json:"staticAssetsPath"`
+	Route            *RouteMergeData     `json:"route"`
+	User             *UserMergeData      `json:"user"`
+	Site             *SiteMergeData      `json:"site"`
+	Workspace        *WorkspaceMergeData `json:"workspace,omitempty"`
+	DevMode          bool                `json:"-"`
+	StaticAssetsPath string              `json:"staticAssetsPath"`
 	*PreloadMetadata
 }
 

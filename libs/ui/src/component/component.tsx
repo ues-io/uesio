@@ -121,7 +121,6 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
 	if (!componentType) return <NotFound {...props} />
-	const isBuildMode = !!context.getBuildMode()
 	const Loader = getRuntimeLoader(componentType) || NotFound
 
 	const mergedDefinition = mergeContextVariants(
@@ -129,21 +128,6 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 		componentType,
 		context
 	)
-
-	if (isBuildMode) {
-		return (
-			<BuildWrapper {...props}>
-				<Loader
-					{...props}
-					definition={mergedDefinition}
-					context={additionalContext(
-						context,
-						mergedDefinition?.["uesio.context"] as ContextFrame
-					)}
-				/>
-			</BuildWrapper>
-		)
-	}
 
 	return (
 		<Loader
@@ -225,7 +209,6 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	returnFunc.displayName = key
 	return returnFunc
 }
-const BuildWrapper = getUtility("uesio/builder.buildwrapper")
 
 export {
 	ComponentInternal,
