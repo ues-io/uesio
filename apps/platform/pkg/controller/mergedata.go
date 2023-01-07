@@ -90,15 +90,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		devMode = true
 	}
 
-	componentState := map[string]interface{}{}
-
-	// If we're in workspace mode, make sure we have the builder pack so we can include the
-	// buildwrapper
-	if workspace != nil {
-		componentState[fmt.Sprintf("%s($root):%s:buildmode", route.ViewRef, DEFAULT_BUILDER_COMPONENT)] = buildMode
-		preload.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME), false)
-	}
-
 	routeTitle := route.Title
 	if routeTitle == "" {
 		routeTitle = "Uesio"
