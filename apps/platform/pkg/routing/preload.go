@@ -6,10 +6,29 @@ import (
 
 	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"gopkg.in/yaml.v3"
 )
+
+type ComponentMergeData struct {
+	ID            string      `json:"id"`
+	ComponentType string      `json:"componentType"`
+	View          string      `json:"view"`
+	State         interface{} `json:"state"`
+}
+
+type ComponentsMergeData struct {
+	IDs      []string                      `json:"ids"`
+	Entities map[string]ComponentMergeData `json:"entities"`
+}
+
+func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
+	cmd.IDs = append(cmd.IDs, componentID)
+	cmd.Entities[componentID] = ComponentMergeData{
+		ID:    componentID,
+		State: state,
+	}
+}
 
 type MetadataMergeData struct {
 	IDs      []string                   `json:"ids"`
@@ -33,21 +52,26 @@ func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
-	return &PreloadMetadata{}
+	return &PreloadMetadata{
+		Component: &ComponentsMergeData{
+			IDs:      []string{},
+			Entities: map[string]ComponentMergeData{},
+		},
+	}
 }
 
 type PreloadMetadata struct {
-	Theme            *MetadataMergeData                     `json:"theme,omitempty"`
-	ViewDef          *MetadataMergeData                     `json:"viewdef,omitempty"`
-	ComponentPack    *MetadataMergeData                     `json:"componentpack,omitempty"`
-	ComponentVariant *MetadataMergeData                     `json:"componentvariant,omitempty"`
-	ConfigValue      *MetadataMergeData                     `json:"configvalue,omitempty"`
-	Label            *MetadataMergeData                     `json:"label,omitempty"`
-	FeatureFlag      *MetadataMergeData                     `json:"featureflag,omitempty"`
-	MetadataText     *MetadataMergeData                     `json:"metadatatext,omitempty"`
-	Wire             *MetadataMergeData                     `json:"wire,omitempty"`
-	Collection       *MetadataMergeData                     `json:"collection,omitempty"`
-	Namespaces       map[string]datasource.MetadataResponse `json:"namespaces,omitempty"`
+	Theme            *MetadataMergeData   `json:"theme,omitempty"`
+	ViewDef          *MetadataMergeData   `json:"viewdef,omitempty"`
+	ComponentPack    *MetadataMergeData   `json:"componentpack,omitempty"`
+	ComponentVariant *MetadataMergeData   `json:"componentvariant,omitempty"`
+	ConfigValue      *MetadataMergeData   `json:"configvalue,omitempty"`
+	Label            *MetadataMergeData   `json:"label,omitempty"`
+	FeatureFlag      *MetadataMergeData   `json:"featureflag,omitempty"`
+	MetadataText     *MetadataMergeData   `json:"metadatatext,omitempty"`
+	Wire             *MetadataMergeData   `json:"wire,omitempty"`
+	Collection       *MetadataMergeData   `json:"collection,omitempty"`
+	Component        *ComponentsMergeData `json:"component,omitempty"`
 }
 
 type MetadataTextItem struct {

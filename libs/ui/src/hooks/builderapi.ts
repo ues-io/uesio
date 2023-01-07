@@ -53,6 +53,8 @@ import { loadScripts } from "./usescripts"
 import { registry } from "../signals/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { addBlankSelectOption } from "../bands/field/utils"
+import { makeComponentId } from "./componentapi"
+import { useUesio } from "./hooks"
 
 const useSelectedNode = (): [string, string, string] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(useSN())
@@ -257,11 +259,6 @@ const getDefinitionFromFullPath = (state: RootState, fullPath: string) => {
 	return getDefinition(state, metadataType, metadataItem, localPath)
 }
 
-const getNamespaceInfo = (ns: string, context: Context) => {
-	const namespaces = context.getWorkspace()?.namespaces || {}
-	return namespaces[ns]
-}
-
 const getDefinition = (
 	state: RootState,
 	metadataType: string,
@@ -319,7 +316,15 @@ const getSignalProperties = (signal: SignalDefinition) => {
 }
 
 const getBuilderDeps = async (context: Context) => {
-	const isLoaded = !!getCurrentState()?.route?.workspace?.namespaces
+	const uesio = useUesio()
+	const workspace = context.getWorkspace()
+	if (!workspace || !workspace.wrapper) return
+
+	const namespaces = uesio.component.getExternalState(
+		makeComponentId(context, workspace?.wrapper, "namespaces")
+	)
+
+	const isLoaded = !!namespaces
 
 	if (isLoaded) return
 
@@ -384,7 +389,6 @@ export {
 	useDefinitionContent,
 	useDefinition,
 	useMetadataList,
-	getNamespaceInfo,
 	useAvailableNamespaces,
 	getSignalProperties,
 	getBuilderDeps,

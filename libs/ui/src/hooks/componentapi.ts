@@ -91,6 +91,10 @@ const useStateSlice = <T extends Definition>(
 	return [state ?? initialState, setState]
 }
 
+const getExternalState = <T extends PlainComponentState>(
+	componentId: string
+): T | undefined => selectState<T>(getCurrentState(), componentId)
+
 const useExternalState = <T extends PlainComponentState>(
 	componentId: string
 ): T | undefined => useComponentState<T>(componentId)
@@ -106,6 +110,7 @@ export {
 	useState,
 	useStateSlice,
 	useExternalState,
+	getExternalState,
 	getVariantId,
 	useAllVariants,
 }

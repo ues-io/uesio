@@ -12,6 +12,7 @@ const componentSlice = createSlice({
 	initialState: componentAdapter.getInitialState(),
 	reducers: {
 		set: componentAdapter.upsertOne,
+		setMany: componentAdapter.upsertMany,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(setRoute, componentAdapter.removeAll)
@@ -21,6 +22,6 @@ const componentSlice = createSlice({
 const selectors = componentAdapter.getSelectors(
 	(state: RootState) => state.component
 )
-export const { set } = componentSlice.actions
+export const { set, setMany } = componentSlice.actions
 export { selectors }
 export default componentSlice.reducer

@@ -1,5 +1,6 @@
 import { FC } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
+import { getBuilderNamespaces } from "../../components/mainwrapper/mainwrapper"
 
 const IconLabel = component.getUtility("uesio/builder.iconlabel")
 
@@ -9,10 +10,10 @@ interface T extends definition.UtilityProps {
 }
 
 const NamespaceLabel: FC<T> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { metadatakey = "", title, context, classes } = props
 	const [ns, name] = metadatakey.split(".")
-	const nsInfo = uesio.builder.getNamespaceInfo(ns, context)
+
+	const nsInfo = getBuilderNamespaces(context)[ns]
 
 	if (!nsInfo) return null
 

@@ -6,9 +6,9 @@ import { FeatureFlagState } from "../../definition/featureflag"
 import { LabelState } from "../../definition/label"
 import { ThemeState } from "../../definition/theme"
 import { PlainViewDef } from "../../definition/viewdef"
-import { MetadataInfo } from "../../platform/platform"
 import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
+import { ComponentState } from "../component/types"
 import { MetadataState } from "../metadata/types"
 import { PlainWire } from "../wire/types"
 
@@ -17,7 +17,6 @@ type WorkspaceState = {
 	app: string
 	wrapper?: MetadataKey
 	slotwrapper?: MetadataKey
-	namespaces?: Record<string, MetadataInfo>
 }
 
 type SiteAdminState = {
@@ -29,12 +28,12 @@ type Dependencies = {
 	theme?: EntityState<ThemeState>
 	viewdef?: EntityState<PlainViewDef>
 	componentvariant?: EntityState<ComponentVariant>
+	component?: EntityState<ComponentState>
 	componentpack?: EntityState<ComponentPackState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	label?: EntityState<LabelState>
 	metadatatext?: EntityState<MetadataState>
-	namespaces?: Record<string, MetadataInfo>
 	wire?: EntityState<PlainWire>
 	collection?: EntityState<PlainCollection>
 }
