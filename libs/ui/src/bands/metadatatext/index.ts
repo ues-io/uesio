@@ -38,7 +38,7 @@ const adapter = createEntityAdapter<MetadataState>({
 })
 
 const toStringOptions = {
-	indent: 4,
+	indent: 2,
 }
 
 const selectors = adapter.getSelectors((state: RootState) => state.metadatatext)
