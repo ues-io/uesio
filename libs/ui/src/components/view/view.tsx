@@ -2,7 +2,7 @@ import Slot from "../slot"
 import { useViewDef } from "../../bands/viewdef"
 import { ViewProps } from "./viewdefinition"
 import { makeViewId } from "../../bands/view"
-import { useUesio } from "../../hooks/hooks"
+import { component as componentApi } from "../../api/api"
 import { useLoadWires } from "../../bands/view/operations/load"
 import {
 	ComponentSignalDescriptor,
@@ -55,16 +55,14 @@ const View: UesioComponent<ViewProps> = (props) => {
 		definition: { params, view: viewDefId, id },
 	} = props
 
-	const uesio = useUesio(props)
-
 	const viewId = makeViewId(viewDefId, path ? id || path : "$root")
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
 
-	const [paramState] = uesio.component.useState<Record<string, string>>(
-		uesio.component.getComponentId(id, "uesio/core.view", path, context),
+	const [paramState] = componentApi.useState<Record<string, string>>(
+		componentApi.getComponentId(id, "uesio/core.view", path, context),
 		context.mergeStringMap(params)
 	)
 

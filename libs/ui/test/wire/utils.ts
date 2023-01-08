@@ -1,11 +1,12 @@
-import { useUesio } from "../../src/hooks/hooks"
 import { newContext, Context } from "../../src/context/context"
 import { selectWire } from "../../src/bands/wire"
 import { create } from "../../src/store/store"
 import { getCollection, testEnv } from "../utils/defaults"
 import { dispatchRouteDeps } from "../../src/bands/route/utils"
 import { SignalDefinition } from "../../src/signalexports"
-import { WireDefinition, PlainWire } from "../../src/wireexports"
+import * as api from "../../src/api/api"
+import { WireDefinition } from "../../src/definition/wire"
+import { PlainWire } from "../../src/bands/wire/types"
 
 export type WireSignalTest = {
 	name: string
@@ -26,9 +27,7 @@ export const testWireSignal = async ({
 	const store = create({})
 
 	const context = newContext({ view })
-	const uesio = useUesio({
-		context,
-	})
+
 	const test = run()
 
 	dispatchRouteDeps({
@@ -40,10 +39,10 @@ export const testWireSignal = async ({
 		},
 	})
 
-	uesio.wire.initWires(context, {
+	api.wire.initWires(context, {
 		[wireId]: wireDef,
 	})
-	const handler = uesio.signal.getHandler(signals, context)
+	const handler = api.signal.getHandler(signals, context)
 	if (signals && !handler) throw new Error("No signal handler")
 	if (handler) await handler()
 

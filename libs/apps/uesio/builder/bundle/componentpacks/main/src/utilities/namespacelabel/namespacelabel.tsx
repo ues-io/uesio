@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { definition, component } from "@uesio/ui"
-import { getBuilderNamespaces } from "../../components/mainwrapper/mainwrapper"
+import { getBuilderNamespaces } from "../../api/stateapi"
 
 const IconLabel = component.getUtility("uesio/builder.iconlabel")
 

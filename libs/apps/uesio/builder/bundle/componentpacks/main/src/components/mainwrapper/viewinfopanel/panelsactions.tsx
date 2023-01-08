@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component, hooks } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
+import { set } from "../../../api/defapi"
 
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
 const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
-	const uesio = hooks.useUesio(props)
 	const metadataType = "viewdef"
 	const metadataItem = context.getViewDefId() || ""
 	const localPath = '["panels"]'
@@ -41,7 +41,7 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 				}
 				label="New Panel"
 				onClick={() =>
-					uesio.builder.setDefinition(
+					set(
 						path +
 							`[${
 								"newpanel" +

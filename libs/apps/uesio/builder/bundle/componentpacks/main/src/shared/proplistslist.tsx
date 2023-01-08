@@ -7,7 +7,7 @@ const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-import BuildActionsArea from "./buildproparea/buildactionsarea"
+import BuildActionsArea from "../helpers/buildactionsarea"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 type T = {
@@ -209,16 +209,16 @@ const PropListsList: FC<T> = (props) => {
 										>
 											<BuildActionsArea
 												context={context}
-												path={path + `[${i}]`}
-												valueAPI={valueAPI}
-												actions={[
-													{
-														type: "MOVE",
-													},
-													{
-														type: "DELETE",
-													},
-												]}
+												// path={path + `[${i}]`}
+												// valueAPI={valueAPI}
+												// actions={[
+												// 	{
+												// 		type: "MOVE",
+												// 	},
+												// 	{
+												// 		type: "DELETE",
+												// 	},
+												// ]}
 											/>
 										</IOExpandPanel>
 									</PropNodeTag>

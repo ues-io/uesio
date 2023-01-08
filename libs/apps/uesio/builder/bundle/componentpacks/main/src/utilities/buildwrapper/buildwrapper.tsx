@@ -1,10 +1,9 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import styling from "./styling"
-import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
-import getValueAPI from "../../shared/valueapi"
+import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
-import { getBuilderNamespaces } from "../../components/mainwrapper/mainwrapper"
+import { getBuilderNamespaces } from "../../api/stateapi"
 
 const Text = component.getUtility("uesio/io.text")
 
@@ -12,7 +11,7 @@ const Popper = component.getUtility("uesio/io.popper")
 
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { children, path = "", index = 0, definition, context } = props
+	const { children, path = "", definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const viewDefId = context.getViewDefId()
@@ -24,8 +23,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
-		component.path.makeFullPath("viewdef", viewDefId, path),
-		viewDef
+		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
 
 	if (!propDef) throw new Error("No Prop Def Provided")
@@ -37,11 +35,12 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
 
 	const wrapperPath = component.path.getParentPath(path)
+	const index = component.path.getIndexFromPath(path) || 0
 	const componentKey = props.componentType
 
 	if (!componentKey) throw new Error("Bad component key")
 
-	const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef)
+	//const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef)
 
 	const [componentNamespace] = component.path.parseKey(componentKey)
 
@@ -126,10 +125,10 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 							classes={{
 								wrapper: classes.popperInner,
 							}}
-							path={path}
-							valueAPI={valueAPI}
-							propsDef={propDef}
-							actions={propDef.actions}
+							// path={path}
+							// valueAPI={valueAPI}
+							// propsDef={propDef}
+							// actions={propDef.actions}
 						/>
 					</Popper>
 				)}

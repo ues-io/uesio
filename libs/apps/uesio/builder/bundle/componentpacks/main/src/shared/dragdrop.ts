@@ -1,20 +1,15 @@
-import { hooks, component, definition } from "@uesio/ui"
+import { api, component } from "@uesio/ui"
 
 const handleDrop = (
 	dragNode: string,
 	dropNode: string,
-	dropIndex: number,
-	definition: definition.DefinitionMap
+	dropIndex: number
 ): void => {
-	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
-		dragNode,
-		definition
-	)
+	const [propDef] =
+		component.registry.getPropertiesDefinitionFromPath(dragNode)
 
-	const uesio = hooks.useUesio()
-
-	uesio.builder.clearDragNode()
-	uesio.builder.clearDropNode()
+	api.builder.clearDragNode()
+	api.builder.clearDropNode()
 
 	if (!propDef) {
 		console.log("No prop def found")
@@ -27,10 +22,7 @@ const handleDrop = (
 	switch (metadataType) {
 		case "field": {
 			const [dropPropDef] =
-				component.registry.getPropertiesDefinitionFromPath(
-					dropNode,
-					definition
-				)
+				component.registry.getPropertiesDefinitionFromPath(dropNode)
 			const handler = dropPropDef?.handleFieldDrop
 			if (handler) {
 				handler(dragNode, dropNode, dropIndex, propDef)
@@ -38,7 +30,7 @@ const handleDrop = (
 			break
 		}
 		case "component": {
-			uesio.builder.addDefinition(
+			api.builder.addDefinition(
 				dropNode,
 				{
 					[`${propDef.namespace}.${propDef.name}`]:
@@ -52,7 +44,7 @@ const handleDrop = (
 		case "componentvariant": {
 			const [, , variantNamespace, variantName] =
 				component.path.parseVariantKey(metadataItem)
-			uesio.builder.addDefinition(
+			api.builder.addDefinition(
 				dropNode,
 				{
 					[`${propDef.namespace}.${propDef.name}`]: {
@@ -72,7 +64,7 @@ const handleDrop = (
 			const key = component.path.getKeyAtPath(dragNode)
 			const toPath = `${dropNode}["${dropIndex}"]`
 			// Selection Handling
-			uesio.builder.moveDefinition(
+			api.builder.moveDefinition(
 				component.path.getParentPath(dragNode),
 				toPath,
 				key || undefined
@@ -97,10 +89,8 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
-		dragNode,
-		definition
-	)
+	const [propDef] =
+		component.registry.getPropertiesDefinitionFromPath(dragNode)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([

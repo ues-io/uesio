@@ -1,9 +1,10 @@
 import { FunctionComponent, DragEvent } from "react"
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { definition, component, api, styles } from "@uesio/ui"
 import { handleDrop, isDropAllowed, isNextSlot } from "../../shared/dragdrop"
 import PanelPortal from "../../shared/panelportal"
 import TopActions from "../../shared/topactions"
 import BottomActions from "../../shared/bottomactions"
+import { useBuilderState } from "../../api/stateapi"
 
 const getIndex = (
 	target: Element | null,
@@ -34,14 +35,10 @@ const getIndex = (
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const context = props.context
-	const uesio = hooks.useUesio(props)
 
-	const [dimensions] = uesio.component.useState<[number, number]>(
-		uesio.component.makeComponentId(
-			context,
-			"uesio/builder.mainwrapper",
-			"dimensions"
-		)
+	const [dimensions] = useBuilderState<[number, number]>(
+		context,
+		"dimensions"
 	)
 
 	const width = dimensions && dimensions[0]
@@ -93,8 +90,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [, , dropPath] = uesio.builder.useDropNode()
+	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
+	const [, , dropPath] = api.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
 		dragType,
 		dragItem,
@@ -114,7 +111,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	// out the drop node.
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
-			uesio.builder.clearDropNode()
+			api.builder.clearDropNode()
 		} else {
 			const currentTarget = e.currentTarget as HTMLDivElement
 			const bounds = currentTarget.getBoundingClientRect()
@@ -123,7 +120,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			const outsideTop = e.pageY < bounds.top
 			const outsideBottom = e.pageY > bounds.bottom
 			if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
-				uesio.builder.clearDropNode()
+				api.builder.clearDropNode()
 			}
 		}
 	}
@@ -155,13 +152,13 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				usePath = `${validPath}["${index + 1}"]`
 			}
 			if (dropPath !== usePath) {
-				uesio.builder.setDropNode("viewdef", viewDefId, usePath)
+				api.builder.setDropNode("viewdef", viewDefId, usePath)
 			}
 			return
 		}
 
 		if (dropPath !== "") {
-			uesio.builder.clearDropNode()
+			api.builder.clearDropNode()
 		}
 	}
 
@@ -177,7 +174,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			viewDefId,
 			component.path.getParentPath(dropPath)
 		)
-		handleDrop(fullDragPath, fullDropPath, index, viewDef)
+		handleDrop(fullDragPath, fullDropPath, index)
 	}
 
 	return (

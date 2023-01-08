@@ -1,6 +1,5 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
-import { getComponents } from "./registry"
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -30,71 +29,6 @@ const getComponentTypePropsDef = (
 	sections: [],
 })
 
-const getPanelPropsDef = (): BuildPropertiesDefinition => {
-	const componentList = getComponents(/*"uesio.panel"*/)
-	return {
-		title: "Panel",
-		defaultDefinition: () => ({}),
-		properties: [
-			{
-				name: "name",
-				type: "KEY",
-				label: "Panel Id",
-			},
-			{
-				type: "SELECT",
-				name: "uesio.type",
-				label: "Panel Component",
-				options: componentList.map(() => ({
-					value: "",
-					label: "",
-				})),
-			},
-		],
-		type: "panel",
-		sections: [],
-	}
-}
-
-const getWirePropsDef = (): BuildPropertiesDefinition => ({
-	title: "Wire",
-	defaultDefinition: () => ({}),
-	properties: [
-		{
-			name: "name",
-			type: "KEY",
-			label: "Name",
-		},
-		{
-			name: "collection",
-			type: "METADATA",
-			metadataType: "COLLECTION",
-			label: "Collection",
-		},
-		{
-			name: "batchsize",
-			type: "NUMBER",
-			label: "Batch Size",
-		},
-	],
-	sections: [
-		{
-			title: "Fields",
-			type: "FIELDS",
-		},
-		{
-			title: "Conditions",
-			type: "CONDITIONS",
-		},
-		{
-			title: "Order by",
-			type: "ORDER",
-		},
-	],
-	actions: [],
-	type: "wire",
-})
-
 const getFieldPropsDef = (
 	name: string,
 	namespace: string,
@@ -112,68 +46,4 @@ const getFieldPropsDef = (
 	name,
 })
 
-const getParamPropsDef = (): BuildPropertiesDefinition => ({
-	title: "Parameter",
-	defaultDefinition: () => ({}),
-	properties: [
-		{
-			name: "name",
-			type: "KEY",
-			label: "Name",
-		},
-		{
-			name: "required",
-			type: "BOOLEAN",
-			label: "Required",
-		},
-		{
-			name: "type",
-			type: "SELECT",
-			label: "Parameter Type",
-			options: [
-				{
-					label: "Record ID",
-					value: "RECORD",
-				},
-				{
-					label: "Text",
-					value: "TEXT",
-				},
-			],
-		},
-		{
-			name: "collection",
-			type: "METADATA",
-			metadataType: "COLLECTION",
-			label: "Collection",
-			display: [
-				{
-					property: "type",
-					value: "recordId",
-				},
-			],
-		},
-		{
-			name: "defaultValue",
-			type: "TEXT",
-			label: "Default Value",
-			display: [
-				{
-					property: "type",
-					value: "text",
-				},
-			],
-		},
-	],
-	sections: [],
-	actions: [],
-	type: "param",
-})
-
-export {
-	getComponentTypePropsDef,
-	getWirePropsDef,
-	getFieldPropsDef,
-	getPanelPropsDef,
-	getParamPropsDef,
-}
+export { getComponentTypePropsDef, getFieldPropsDef }

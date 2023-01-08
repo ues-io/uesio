@@ -7,6 +7,7 @@ import * as component from "./componentexports"
 import * as context from "./context/context"
 import * as definition from "./definition/definition"
 import * as hooks from "./hooks/hooks"
+import * as api from "./api/api"
 import loader from "./loader/loader"
 import * as signal from "./signalexports"
 import * as state from "./stateexports"
@@ -25,6 +26,7 @@ import { register } from "./component/registry"
 register("uesio/core.view", View)
 
 export {
+	api,
 	builder,
 	collection,
 	component,

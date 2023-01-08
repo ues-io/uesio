@@ -1,48 +1,15 @@
-import {
-	definition,
-	component,
-	hooks,
-	styles,
-	metadata,
-	context as ctx,
-} from "@uesio/ui"
+import { definition, component, hooks, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
 import PropertiesPanel from "../../shared/propertiespanel"
-import ViewInfoPanel from "../../shared/viewinfopanel"
-import CodeArea from "./codearea"
+import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
+import CodeArea from "./codearea/codearea"
+import { useBuildMode } from "../../api/stateapi"
 
 const Grid = component.getUtility("uesio/io.grid")
 
-const getBuilderState = <T extends definition.Definition>(
-	context: ctx.Context,
-	id: string
-) => {
-	const uesio = hooks.useUesio()
-	return uesio.component.getExternalState<T>(
-		uesio.component.makeComponentId(
-			context,
-			"uesio/builder.buildwrapper",
-			id
-		)
-	)
-}
-
-const getBuilderNamespaces = (context: ctx.Context) =>
-	getBuilderState<Record<string, metadata.MetadataInfo>>(
-		context,
-		"namespaces"
-	) || {}
-
-const getBuildMode = (context: ctx.Context) =>
-	getBuilderState<boolean>(context, "buildmode") || {}
-
 const MainWrapper: definition.UesioComponent = (props) => {
-	const uesio = hooks.useUesio(props)
-
-	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
-		uesio.component.getComponentIdFromProps("buildmode", props)
-	)
 	const { context } = props
+	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addFrame({
 		theme: "uesio/studio.default",
@@ -82,7 +49,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 	hooks.useHotKeyCallback(
 		"meta+u",
 		() => {
-			uesio.builder.getBuilderDeps(context).then(() => {
+			api.builder.getBuilderDeps(context).then(() => {
 				setBuildMode(!buildMode)
 			})
 		},
@@ -91,7 +58,7 @@ const MainWrapper: definition.UesioComponent = (props) => {
 	)
 
 	hooks.useHotKeyCallback("meta+p", () => {
-		uesio.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
+		api.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
 	})
 
 	if (!buildMode) {
@@ -128,7 +95,5 @@ MainWrapper.signals = {
 		target: "dimensions",
 	},
 }
-
-export { getBuildMode, getBuilderNamespaces }
 
 export default MainWrapper

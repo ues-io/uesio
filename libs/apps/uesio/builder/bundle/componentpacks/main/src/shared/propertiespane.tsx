@@ -1,5 +1,5 @@
 import { FunctionComponent, Fragment } from "react"
-import { component, hooks, styles } from "@uesio/ui"
+import { component, api, styles } from "@uesio/ui"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import BuildSection from "./buildproparea/buildsection"
 const PropList = component.getUtility("uesio/builder.proplist")
@@ -9,7 +9,6 @@ const TabLabels = component.getUtility("uesio/io.tablabels")
 const IconButton = component.getUtility("uesio/io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { propsDef, path = "", context, valueAPI, className } = props
 
 	const classes = styles.useUtilityStyles(
@@ -61,14 +60,14 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		</div>
 	)
 
-	const componentId = uesio.component.getComponentId(
+	const componentId = api.component.getComponentId(
 		"propertiespanel" + path,
 		"uesio/builder.mainwrapper",
 		path,
 		context
 	)
 
-	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+	const [selectedTab, setSelectedTab] = api.component.useState<string>(
 		componentId,
 		""
 	)
@@ -93,7 +92,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 									icon="close"
 									onClick={(e: MouseEvent) => {
 										e.stopPropagation()
-										uesio.builder.unSelectNode()
+										api.builder.unSelectNode()
 									}}
 								/>
 							)

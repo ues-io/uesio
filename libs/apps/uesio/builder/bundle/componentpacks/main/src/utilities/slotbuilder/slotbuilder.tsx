@@ -1,6 +1,6 @@
 import { definition, component, hooks } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
-import { getBuildMode } from "../../components/mainwrapper/mainwrapper"
+import { getBuildMode } from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
 import PlaceHolder from "../placeholder/placeholder"
 

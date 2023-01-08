@@ -1,7 +1,6 @@
 import { FC } from "react"
 import {
 	BaseProps,
-	DefinitionMap,
 	UesioComponent,
 	UtilityProps,
 } from "../definition/definition"
@@ -19,15 +18,8 @@ import {
 } from "./path"
 import toPath from "lodash/toPath"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import {
-	getComponentTypePropsDef,
-	getFieldPropsDef,
-	getWirePropsDef,
-	getPanelPropsDef,
-	getParamPropsDef,
-} from "./builtinpropsdefs"
+import { getComponentTypePropsDef, getFieldPropsDef } from "./builtinpropsdefs"
 import { MetadataKey } from "../bands/builder/types"
-import get from "lodash/get"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -100,15 +92,8 @@ const standardActions: ActionDescriptor[] = [
 	{ type: "CLONE" },
 ]
 
-const standardMapActions: ActionDescriptor[] = [
-	{ type: "DELETE" },
-	{ type: "MOVE" },
-	{ type: "CLONEKEY" },
-]
-
 const getPropertiesDefinitionFromPath = (
-	path: string,
-	definition: DefinitionMap | undefined
+	path: string
 ): [BuildPropertiesDefinition, string] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	if (metadataType === "component")
@@ -150,55 +135,6 @@ const getPropertiesDefinitionFromPath = (
 	}
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
-		if (pathArray[0] === "wires") {
-			const wirePropsDef = getWirePropsDef()
-			return [
-				{
-					...wirePropsDef,
-					actions: standardMapActions.concat(
-						...(wirePropsDef.actions || [])
-					),
-				},
-				fromPath(pathArray.slice(0, 2)),
-			]
-		}
-		if (pathArray[0] === "panels" && pathArray.length === 2) {
-			const panelsPropDef = getPanelPropsDef()
-			const trimmedPath = fromPath(pathArray.slice(0, 2))
-			const panelDef = get(definition, trimmedPath) as DefinitionMap
-			const componentType = panelDef["uesio.type"] as
-				| MetadataKey
-				| undefined
-			if (!componentType) return [panelsPropDef, trimmedPath]
-			const componentPropsDef = getPropertiesDefinition(componentType)
-			if (!componentPropsDef.properties)
-				return [panelsPropDef, trimmedPath]
-			return [
-				{
-					...panelsPropDef,
-					properties: panelsPropDef?.properties?.concat(
-						componentPropsDef.properties
-					),
-					actions: standardMapActions.concat(
-						...(panelsPropDef.actions || [])
-					),
-				},
-				trimmedPath,
-			]
-		}
-		if (pathArray[0] === "params") {
-			const paramsPropsDef = getParamPropsDef()
-			return [
-				{
-					...paramsPropsDef,
-					actions: standardMapActions.concat(
-						...(paramsPropsDef.actions || [])
-					),
-				},
-				fromPath(pathArray.slice(0, 2)),
-			]
-		}
-
 		const trimmedPath = trimPath(pathArray)
 		const trimmedPathString = fromPath(trimmedPath)
 		const componentFullName = getKeyAtPath(trimmedPathString) as MetadataKey
@@ -235,18 +171,13 @@ const getPropertiesDefinitionFromPath = (
 		localPath,
 	]
 }
-const getComponents = () => []
-
-const getBuilderComponents = () => getComponents(/*"uesio.standalone"*/)
 
 export {
 	register,
 	registerUtilityComponent,
-	getComponents,
 	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
-	getBuilderComponents,
 }

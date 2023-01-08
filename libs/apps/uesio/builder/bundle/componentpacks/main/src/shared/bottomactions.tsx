@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { definition, component, hooks, styles, api } from "@uesio/ui"
 
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
@@ -7,7 +7,6 @@ const Group = component.getUtility("uesio/io.group")
 
 const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -32,7 +31,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const toggleCode = uesio.signal.getHandler(
+	const toggleCode = api.signal.getHandler(
 		[
 			{
 				signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE/codepanel",
@@ -42,7 +41,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const setDimensions = (height: number, width: number) =>
-		uesio.signal.getHandler(
+		api.signal.getHandler(
 			[
 				{
 					signal: "component/uesio/builder.mainwrapper/SET_DIMENSIONS/dimensions",
@@ -121,7 +120,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					icon={<Icon context={context} icon="wysiwyg" />}
 					variant="uesio/builder.minoricontoolbar"
 					onClick={() => {
-						uesio.signal.run(
+						api.signal.run(
 							{ signal: "route/REDIRECT_TO_VIEW_CONFIG" },
 							props.context
 						)
@@ -138,7 +137,7 @@ const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
 							return
 						}
 
-						uesio.signal.run(
+						api.signal.run(
 							{
 								signal: "route/REDIRECT",
 								path: `/app/${workspace.app}/workspace/${workspace.name}/views`,

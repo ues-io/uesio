@@ -1,7 +1,7 @@
 import { builder, component, hooks } from "@uesio/ui"
 
 import PropListsList from "../../shared/proplistslist"
-import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
+import BuildActionsArea from "../../helpers/buildactionsarea"
 import toPath from "lodash/toPath"
 
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
@@ -57,19 +57,19 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 						<BuildActionsArea
 							path={selectedItem || ""}
 							context={context}
-							valueAPI={valueAPI}
-							actions={[
-								{
-									type: "CUSTOM",
-									label: "Add item",
-									handler: (e) => {
-										e.stopPropagation()
-										valueAPI.add(path, {}, -1)
-									},
-									icon: "add",
-								},
-							]}
-							propsDef={{ ...propsDef, type: "" }}
+							// valueAPI={valueAPI}
+							// actions={[
+							// 	{
+							// 		type: "CUSTOM",
+							// 		label: "Add item",
+							// 		handler: (e) => {
+							// 			e.stopPropagation()
+							// 			valueAPI.add(path, {}, -1)
+							// 		},
+							// 		icon: "add",
+							// 	},
+							// ]}
+							// propsDef={{ ...propsDef, type: "" }}
 						/>
 					}
 					context={context}

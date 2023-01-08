@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { component, context, builder, wire, hooks } from "@uesio/ui"
-import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
+import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesPane from "../../shared/propertiespane"
 import {
 	getBaseProps,
@@ -20,25 +20,25 @@ type Props = {
 
 const Grid = component.getUtility("uesio/io.grid")
 
-const defaultConditionDef = {
-	field: null,
-	operator: "",
-}
-const defaultConditionGroupDef = {
-	type: "GROUP",
-	conjunction: "AND",
-	conditions: [defaultConditionDef],
-}
+// const defaultConditionDef = {
+// 	field: null,
+// 	operator: "",
+// }
+// const defaultConditionGroupDef = {
+// 	type: "GROUP",
+// 	conjunction: "AND",
+// 	conditions: [defaultConditionDef],
+// }
 
-const conditionItemActions: builder.ActionDescriptor[] = [
-	{ type: "DELETE" },
-	{ type: "MOVE" },
-	// TO-DO
-	// {
-	// 	label: "Toggle Condition",
-	// 	type: "TOGGLE_CONDITION",
-	// },
-]
+// const conditionItemActions: builder.ActionDescriptor[] = [
+// 	{ type: "DELETE" },
+// 	{ type: "MOVE" },
+// 	// TO-DO
+// 	// {
+// 	// 	label: "Toggle Condition",
+// 	// 	type: "TOGGLE_CONDITION",
+// 	// },
+// ]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -171,29 +171,29 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea
 					context={context}
-					path={conditionPath}
-					valueAPI={valueAPI}
-					actions={
-						isGroup
-							? [
-									...conditionItemActions,
-									{
-										label: "Add Condition",
-										type: "ADD_CONDITION",
-										path: conditionPath,
-										definition: defaultConditionDef,
-										logo: "add",
-									},
-									{
-										label: "Add Group",
-										type: "ADD_CONDITION",
-										path: conditionPath,
-										definition: defaultConditionGroupDef,
-										logo: "library_add",
-									},
-							  ]
-							: [...conditionItemActions]
-					}
+					// path={conditionPath}
+					// valueAPI={valueAPI}
+					// actions={
+					// 	isGroup
+					// 		? [
+					// 				...conditionItemActions,
+					// 				{
+					// 					label: "Add Condition",
+					// 					type: "ADD_CONDITION",
+					// 					path: conditionPath,
+					// 					definition: defaultConditionDef,
+					// 					logo: "add",
+					// 				},
+					// 				{
+					// 					label: "Add Group",
+					// 					type: "ADD_CONDITION",
+					// 					path: conditionPath,
+					// 					definition: defaultConditionGroupDef,
+					// 					logo: "library_add",
+					// 				},
+					// 		  ]
+					// 		: [...conditionItemActions]
+					// }
 				/>
 			</IOExpandPanel>
 		</PropNodeTag>

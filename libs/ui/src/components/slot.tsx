@@ -48,7 +48,7 @@ const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 	return (
 		<>
 			{getSlotProps(props).map((props, index) => (
-				<Component key={index} index={index} {...props} />
+				<Component key={index} {...props} />
 			))}
 		</>
 	)

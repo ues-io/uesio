@@ -2,14 +2,14 @@ import { FC, DragEvent } from "react"
 import {
 	definition,
 	component,
-	hooks,
+	api,
 	styles,
 	builder,
 	metadata,
 } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
-import { getBuilderNamespaces } from "../components/mainwrapper/mainwrapper"
+import { getBuilderNamespaces } from "../../../api/stateapi"
 
 const Text = component.getUtility("uesio/io.text")
 const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
@@ -23,7 +23,6 @@ type VariantsBlockProps = {
 } & definition.UtilityProps
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, variants, selectedItem } = props
 
 	const classes = styles.useUtilityStyles(
@@ -38,7 +37,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	return (
 		<div className={classes.root}>
 			{variants.map((variant) => {
-				const variantKey = uesio.component.getVariantId(variant)
+				const variantKey = api.component.getVariantId(variant)
 				const isVariantSelected = selectedItem === variantKey
 
 				return (
@@ -46,7 +45,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 						key={variantKey}
 						onClick={(e: MouseEvent) => {
 							e.stopPropagation()
-							uesio.builder.setSelectedNode(
+							api.builder.setSelectedNode(
 								"componentvariant",
 								variantKey,
 								""
@@ -77,8 +76,6 @@ type ComponentBlockProps = {
 } & definition.UtilityProps
 
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-
 	const { context, propDef, variants, selectedType, selectedItem } = props
 	const { namespace, name } = propDef
 	if (!namespace) throw new Error("Invalid Property Definition")
@@ -101,7 +98,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 			context={context}
 			key={fullName}
 			onClick={() =>
-				uesio.builder.setSelectedNode("componenttype", fullName, "")
+				api.builder.setSelectedNode("componenttype", fullName, "")
 			}
 			draggable={`component:${fullName}`}
 			selected={selected}
@@ -178,7 +175,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 }
 
 type ComponentTagProps = {
-	// namespaceInfo: metadata.MetadataInfo
 	propDef: builder.BuildPropertiesDefinition
 } & definition.UtilityProps
 
@@ -222,8 +218,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 	)
 }
 
-const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
-	const uesio = hooks.useUesio(props)
+const ComponentsPanel: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -234,8 +229,8 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 		},
 		props
 	)
-	const selectedItem = uesio.builder.useSelectedItem()
-	const selectedType = uesio.builder.useSelectedType()
+	const selectedItem = api.builder.useSelectedItem()
+	const selectedType = api.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
@@ -243,15 +238,15 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 			const metadataType = typeArray.shift()
 			const metadataItem = typeArray.join(":")
 			if (metadataType && metadataItem) {
-				uesio.builder.setDragNode(metadataType, metadataItem, "")
+				api.builder.setDragNode(metadataType, metadataItem, "")
 			}
 		}
 	}
 	const onDragEnd = () => {
-		uesio.builder.clearDragNode()
-		uesio.builder.clearDropNode()
+		api.builder.clearDragNode()
+		api.builder.clearDropNode()
 	}
-	const builderComponents = component.registry.getBuilderComponents()
+	const builderComponents: never[] = []
 	const categoryOrder = [
 		"LAYOUT",
 		"CONTENT",
@@ -267,7 +262,7 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 		() => "UNCATEGORIZED"
 	)
 
-	const variants = uesio.component.useAllVariants()
+	const variants = api.component.useAllVariants()
 	const variantsByComponent = groupBy(
 		variants,
 		(variant) => variant.component

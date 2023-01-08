@@ -2,26 +2,17 @@ import { FC, SyntheticEvent } from "react"
 import { getErrorString } from "../bands/utils"
 import { UtilityProps } from "../definition/definition"
 
-import { useUesio } from "../hooks/hooks"
-
 interface Props extends UtilityProps {
 	error: Error
 }
 
 const slotError: FC<Props> = (props) => {
 	const cname = props.componentType
-	const uesio = useUesio(props)
-	const viewDefId = props.context.getViewDefId() || ""
 	const message = getErrorString(props.error)
 
 	return (
 		<div
 			onClick={(event: SyntheticEvent) => {
-				uesio.builder.setSelectedNode(
-					"viewdef",
-					viewDefId,
-					props.path || ""
-				)
 				event.stopPropagation()
 			}}
 			style={{
