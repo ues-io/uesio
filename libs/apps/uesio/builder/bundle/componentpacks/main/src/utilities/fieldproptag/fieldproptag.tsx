@@ -12,7 +12,7 @@ const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 import { FC, useState } from "react"
-import BuildActionsArea from "../../shared/buildproparea/buildactionsarea"
+import BuildActionsArea from "../../helpers/buildactionsarea"
 
 interface T extends definition.UtilityProps {
 	collectionKey: string
@@ -107,16 +107,16 @@ const FieldPropTag: FC<T> = (props) => {
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea
 					context={context}
-					path={path}
-					valueAPI={valueAPI}
-					actions={[
-						{
-							type: "MOVE",
-						},
-						{
-							type: "DELETE",
-						},
-					]}
+					// path={path}
+					// valueAPI={valueAPI}
+					// actions={[
+					// 	{
+					// 		type: "MOVE",
+					// 	},
+					// 	{
+					// 		type: "DELETE",
+					// 	},
+					// ]}
 				/>
 			</IOExpandPanel>
 		</PropNodeTag>

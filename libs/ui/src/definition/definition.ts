@@ -43,7 +43,6 @@ export type UploadSpec = {
 
 export type BaseProps = {
 	definition?: BaseDefinition
-	index?: number
 	path?: string
 	componentType?: MetadataKey
 	context: Context
@@ -53,6 +52,8 @@ export type BaseProps = {
 export type UesioComponent<T extends BaseProps = BaseProps> = FC<T> & {
 	signals?: Record<string, ComponentSignalDescriptor>
 }
+
+export type UtilityComponent<T extends UtilityProps = UtilityProps> = FC<T>
 
 export interface UtilityProps {
 	index?: number

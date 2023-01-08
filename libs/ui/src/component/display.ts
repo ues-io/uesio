@@ -1,6 +1,6 @@
 import { Context } from "../context/context"
 import { BaseDefinition, DefinitionMap } from "../definition/definition"
-import { useUesio } from "../hooks/hooks"
+import { wire as wireApi } from "../api/api"
 
 type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
 
@@ -279,8 +279,7 @@ const useShouldFilter = <T extends BaseDefinition>(
 		return conditions ? [conditions] : []
 	})
 
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(
+	wireApi.useWires(
 		getWiresForConditions(
 			conditionsList?.flatMap((c) => c),
 			context
@@ -299,8 +298,7 @@ const useContextFilter = <T>(
 	contextFunc: (item: T, context: Context) => Context,
 	context: Context
 ): ItemContext<T>[] => {
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context), context)
+	wireApi.useWires(getWiresForConditions(conditions, context), context)
 	return items.flatMap((item) => {
 		const newContext = contextFunc(item, context)
 		return shouldAll(conditions, newContext)
@@ -318,8 +316,7 @@ const useShould = (
 	conditions: DisplayCondition[] | undefined,
 	context: Context
 ) => {
-	const uesio = useUesio({ context })
-	uesio.wire.useWires(getWiresForConditions(conditions, context), context)
+	wireApi.useWires(getWiresForConditions(conditions, context), context)
 	return shouldAll(conditions, context)
 }
 

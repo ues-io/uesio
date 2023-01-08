@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from "react"
-import { definition, hooks, collection, util, component } from "@uesio/ui"
+import { definition, api, collection, util, component } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 import ImportButton from "./importbutton"
 
@@ -20,7 +20,7 @@ interface State {
 const Button = component.getUtility("uesio/io.button")
 const DataImport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
-	const uesio = hooks.useUesio(props)
+
 	const collectionId = context.mergeString(definition.collectionId)
 
 	const [uploaded, setUploaded] = useState<State>({
@@ -37,7 +37,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		setUploaded({ success, csvFields, file })
 	}
 
-	const collectionInstance = uesio.collection.useCollection(
+	const collectionInstance = api.collection.useCollection(
 		context,
 		collectionId
 	)
@@ -92,18 +92,18 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		const tenant = context.getTenant()
 		if (!tenant) throw new Error("Invalid context for collection list")
 		const tenantType = context.getTenantType()
-		const jobResponse = await uesio.collection.createJob(context, spec)
+		const jobResponse = await api.collection.createJob(context, spec)
 		if (!jobResponse.id) return
 
 		try {
-			await uesio.collection.importData(context, file, jobResponse.id)
+			await api.collection.importData(context, file, jobResponse.id)
 		} catch (error) {
 			const message = util.getErrorString(error)
-			uesio.notification.addError("Import error: " + message, context)
+			api.notification.addError("Import error: " + message, context)
 			return
 		}
 
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "route/REDIRECT",
 				path: `/app/${tenant.app}/${tenantType}/${
@@ -143,7 +143,6 @@ const DataImport: FunctionComponent<Props> = (props) => {
 					return (
 						<ImportBodyItem
 							key={`${fieldName}.${i}`}
-							index={i + 1}
 							context={context}
 							csvOptions={csvOptions}
 							mapping={spec.mappings[fieldName]}

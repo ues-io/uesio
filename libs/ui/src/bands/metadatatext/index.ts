@@ -37,6 +37,10 @@ const adapter = createEntityAdapter<MetadataState>({
 		`${metadatatext.metadatatype}:${metadatatext.key}`,
 })
 
+const toStringOptions = {
+	indent: 2,
+}
+
 const selectors = adapter.getSelectors((state: RootState) => state.metadatatext)
 
 const cancelAll = (state: EntityState<MetadataState>) => {
@@ -93,7 +97,7 @@ const metadataSlice = createSlice({
 				index || 0
 			)
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(setDefinition, (state, { payload }) => {
 			const { path, definition } = payload
@@ -114,7 +118,7 @@ const metadataSlice = createSlice({
 			const newNode = yamlDoc.createNode(newNodeSrc)
 			setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(setDefinitionContent, (state, { payload }) => {
 			const { metadataType, metadataItem, content } = payload
@@ -133,7 +137,7 @@ const metadataSlice = createSlice({
 			const yamlDoc = parse(item.content)
 			removeNodeAtPath(pathArray, yamlDoc.contents)
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(moveDefinition, (state, { payload }) => {
 			const [toType, toItem, localToPath] = getFullPathParts(
@@ -199,7 +203,7 @@ const metadataSlice = createSlice({
 
 			if (!item.original) item.original = item.content
 
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(cloneDefinition, (state, { payload }) => {
 			const { path } = payload
@@ -214,7 +218,7 @@ const metadataSlice = createSlice({
 			const items = parentNode.items
 			items.splice(index, 0, items[index])
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(cloneKeyDefinition, (state, { payload }) => {
 			const { path, newKey } = payload
@@ -227,7 +231,7 @@ const metadataSlice = createSlice({
 			if (!isMap(parentNode)) return
 			parentNode.setIn([newKey], cloneNode)
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
 			const { path, key: newKey } = payload
@@ -252,7 +256,7 @@ const metadataSlice = createSlice({
 			yamlDoc.setIn(pathArray, newNode)
 			yamlDoc.deleteIn(toPath(localPath))
 			if (!item.original) item.original = item.content
-			item.content = yamlDoc.toString()
+			item.content = yamlDoc.toString(toStringOptions)
 		})
 	},
 })

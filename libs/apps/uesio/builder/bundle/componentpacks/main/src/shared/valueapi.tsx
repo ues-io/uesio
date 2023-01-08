@@ -1,4 +1,4 @@
-import { component, hooks, util, definition } from "@uesio/ui"
+import { component, api, util, definition } from "@uesio/ui"
 
 const getValueAPI = (
 	metadataType: string,
@@ -13,8 +13,7 @@ const getValueAPI = (
 		autoSelect?: boolean
 	) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.setDefinition(
+		api.builder.setDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, path),
 			value,
 			autoSelect
@@ -22,22 +21,19 @@ const getValueAPI = (
 	},
 	clone: (path: string) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.cloneDefinition(
+		api.builder.cloneDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, path)
 		)
 	},
 	cloneKey: (path: string) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.cloneKeyDefinition(
+		api.builder.cloneKeyDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, path)
 		)
 	},
 	add: (path: string, value: string, number?: number) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.addDefinition(
+		api.builder.addDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, path),
 			value,
 			number
@@ -45,31 +41,27 @@ const getValueAPI = (
 	},
 	remove: (path: string) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.removeDefinition(
+		api.builder.removeDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, path)
 		)
 	},
 	changeKey: (path: string, key: string) => {
 		if (path === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.changeDefinitionKey(
+		api.builder.changeDefinitionKey(
 			component.path.makeFullPath(metadataType, metadataItem, path),
 			key
 		)
 	},
 	move: (fromPath: string, toPath: string, selectKey?: string) => {
 		if (fromPath === undefined || toPath === undefined) return
-		const uesio = hooks.useUesio()
-		uesio.builder.moveDefinition(
+		api.builder.moveDefinition(
 			component.path.makeFullPath(metadataType, metadataItem, fromPath),
 			component.path.makeFullPath(metadataType, metadataItem, toPath),
 			selectKey
 		)
 	},
 	select: (path: string) => {
-		const uesio = hooks.useUesio()
-		uesio.builder.setSelectedNode(metadataType, metadataItem, path)
+		api.builder.setSelectedNode(metadataType, metadataItem, path)
 	},
 	isSelected: (path: string) => path === selectedPath,
 	hasSelectedChild: (path: string) =>

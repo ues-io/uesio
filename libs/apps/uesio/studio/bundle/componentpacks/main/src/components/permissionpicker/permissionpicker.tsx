@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, wire } from "@uesio/ui"
+import { definition, api, component, wire } from "@uesio/ui"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -19,10 +19,9 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		definition: { fieldId, wireName },
 	} = props
 
-	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 
-	const wire = uesio.wire.useWire(wireName || "", context)
+	const wire = api.wire.useWire(wireName || "", context)
 
 	const workspaceContext = context.getWorkspace()
 	if (!workspaceContext) throw new Error("No workspace context provided")

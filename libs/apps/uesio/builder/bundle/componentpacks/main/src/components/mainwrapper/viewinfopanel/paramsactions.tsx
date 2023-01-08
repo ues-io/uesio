@@ -1,15 +1,14 @@
-import { FunctionComponent } from "react"
-import { definition, styles, component, hooks } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
+import { set } from "../../../api/defapi"
 
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
-const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
+const ParamsActions: definition.UtilityComponent = (props) => {
 	const { context } = props
-	const uesio = hooks.useUesio(props)
 	const metadataType = "viewdef"
 	const metadataItem = context.getViewDefId() || ""
-	const localPath = '["wires"]'
+	const localPath = '["params"]'
 	const path = component.path.makeFullPath(
 		metadataType,
 		metadataItem,
@@ -39,15 +38,16 @@ const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						variant="uesio/builder.actionicon"
 					/>
 				}
-				label="New Wire"
+				label="New Parameter"
 				onClick={() =>
-					uesio.builder.setDefinition(
+					set(
 						path +
 							`[${
-								"newwire" + (Math.floor(Math.random() * 60) + 1)
+								"newparam" +
+								(Math.floor(Math.random() * 60) + 1)
 							}]`,
 						{
-							fields: null,
+							type: "recordId",
 						}
 					)
 				}
@@ -55,6 +55,6 @@ const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		</div>
 	)
 }
-WiresActions.displayName = "WiresActions"
+ParamsActions.displayName = "ParamsActions"
 
-export default WiresActions
+export default ParamsActions

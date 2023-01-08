@@ -67,7 +67,6 @@ const create = (initialState: InitialState) => {
 			featureflag,
 			metadatatext,
 			site,
-			workspace: (state) => state || {},
 		},
 		devTools: true,
 		preloadedState: initialState,

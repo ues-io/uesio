@@ -1,15 +1,13 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component, api } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 import getValueAPI from "./valueapi"
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-
 	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+		api.builder.useSelectedNode()
 
-	const definition = uesio.builder.useDefinition(
+	const definition = api.builder.useDefinition(
 		metadataType,
 		metadataItem,
 		""
@@ -22,7 +20,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const [propsDef, trimmedPath] =
-		component.registry.getPropertiesDefinitionFromPath(fullPath, definition)
+		component.registry.getPropertiesDefinitionFromPath(fullPath)
 
 	return (
 		<PropertiesPane

@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useRef } from "react"
-import { definition, component, hooks, styles, util } from "@uesio/ui"
+import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
@@ -45,7 +45,6 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 ]
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 
 	const classes = styles.useStyles(
@@ -63,9 +62,9 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const viewId = context.getViewDefId() || ""
-	const metadataType = uesio.builder.useSelectedType() || "viewdef"
+	const metadataType = api.builder.useSelectedType() || "viewdef"
 	const metadataItem =
-		uesio.builder.useSelectedItem() ||
+		api.builder.useSelectedItem() ||
 		(metadataType === "viewdef" ? viewId : "")
 	const metadataTypeRef = useRef<string>(metadataType)
 	const metadataItemRef = useRef<string>(metadataItem)
@@ -73,11 +72,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	metadataItemRef.current = metadataItem
 
 	const fullYaml =
-		uesio.builder.useDefinitionContent(metadataType, metadataItem) || ""
+		api.builder.useDefinitionContent(metadataType, metadataItem) || ""
 
 	const yamlDoc = util.yaml.parse(fullYaml)
 
-	const [, , selectedNodePath] = uesio.builder.useSelectedNode()
+	const [, , selectedNodePath] = api.builder.useSelectedNode()
 
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
@@ -144,6 +143,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		editorRef.current = editor
 		monacoRef.current = monaco
 
+		editor.getModel()?.updateOptions({ tabSize: 4 })
+
 		editor.onDidChangeCursorSelection((e) => {
 			// Monaco has reasons for cursor change, 3 being explicit within the editor.
 			// Everything else we don't want to capture (like updating a property in the ui)
@@ -170,7 +171,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			)
 
 			if (relevantNode && nodePath)
-				uesio.builder.setSelectedNode(
+				api.builder.setSelectedNode(
 					metadataTypeRef.current,
 					metadataItemRef.current,
 					nodePath
@@ -217,7 +218,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 							variant="uesio/builder.buildtitle"
 							icon="close"
-							onClick={uesio.signal.getHandler(
+							onClick={api.signal.getHandler(
 								[
 									{
 										signal: "component/uesio/builder.mainwrapper/TOGGLE_CODE",
@@ -247,7 +248,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
-						uesio.builder.setDefinitionContent(
+						api.builder.setDefinitionContent(
 							metadataTypeRef.current,
 							metadataItemRef.current,
 							newValue || ""

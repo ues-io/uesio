@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from "react"
-import { hooks, component, wire, param, definition, util } from "@uesio/ui"
+import { hooks, api, component, wire, param, definition, util } from "@uesio/ui"
 
 const Button = component.getUtility("uesio/io.button")
 const Dialog = component.getUtility("uesio/io.dialog")
@@ -25,7 +25,6 @@ const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
 
 const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const { context } = props
-	const uesio = hooks.useUesio(props)
 
 	const record = context.getRecord()
 	if (!record) throw new Error("No Record Context Provided")
@@ -42,11 +41,11 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const [open, setOpen] = useState<boolean>(false)
 
-	uesio.wire.useDynamicWire(
+	api.wire.useDynamicWire(
 		open ? WIRE_NAME : "",
 		{
 			viewOnly: true,
-			fields: uesio.wire.getWireFieldsFromParams(params),
+			fields: api.wire.getWireFieldsFromParams(params),
 			init: {
 				create: true,
 			},
@@ -63,9 +62,9 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const previewHandler = (record?: wire.WireRecord) => {
 		const urlParams =
 			hasParams && record
-				? new URLSearchParams(uesio.wire.getParamValues(params, record))
+				? new URLSearchParams(api.wire.getParamValues(params, record))
 				: undefined
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "route/REDIRECT",
 				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
