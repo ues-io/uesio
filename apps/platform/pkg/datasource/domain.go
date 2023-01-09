@@ -28,7 +28,6 @@ func QueryDomainFromSite(siteID string) (*meta.SiteDomain, error) {
 				},
 			},
 			BatchSize: 1,
-			LoadAll:   false,
 		},
 		sess.GetStudioAnonSession(),
 	)
