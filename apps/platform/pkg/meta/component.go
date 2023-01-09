@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 
+	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,6 +20,9 @@ func NewBaseComponent(namespace, name string) *Component {
 }
 
 type Component struct {
+	Title          string   `yaml:"title,omitempty" json:"uesio/studio.title"`
+	Description    string   `yaml:"description,omitempty" json:"uesio/studio.description"`
+	Category       string   `yaml:"category,omitempty" json:"uesio/studio.category"`
 	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
 	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
 	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
@@ -29,6 +33,22 @@ type Component struct {
 }
 
 type ComponentWrapper Component
+
+func (c *Component) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(c)
+}
+
+func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
+	enc.AddStringKey("namespace", c.Namespace)
+	enc.AddStringKey("name", c.Name)
+	enc.AddStringKey("title", c.Title)
+	enc.AddStringKey("description", c.Description)
+	enc.AddStringKey("category", c.Category)
+}
+
+func (c *Component) IsNil() bool {
+	return c == nil
+}
 
 func (c *Component) GetCollectionName() string {
 	return COMPONENT_COLLECTION_NAME

@@ -1,7 +1,15 @@
 import { FunctionComponent } from "react"
 
-import { component, styles, hooks } from "@uesio/ui"
-import { BoxProps } from "./boxdefinition"
+import { component, styles, hooks, signal, definition } from "@uesio/ui"
+
+type BoxDefinition = {
+	signals?: signal.SignalDefinition[]
+}
+
+interface BoxProps extends definition.BaseProps {
+	definition: BoxDefinition
+}
+
 const Box: FunctionComponent<BoxProps> = (props) => {
 	const classes = styles.useStyles(
 		{
@@ -29,5 +37,23 @@ const Box: FunctionComponent<BoxProps> = (props) => {
 		</div>
 	)
 }
+
+/*
+// Old definition
+const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Box",
+	description:
+		"A container that can group other components and apply styles around them.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "LAYOUT",
+}
+*/
 
 export default Box
