@@ -31,16 +31,16 @@ const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
 	registry[key] = item
 }
 
-const register = (key: MetadataKey, componentType: UesioComponent) => {
-	addToRegistry<FC<BaseProps>>(registry, key, componentType)
-	componentType.signals && registerSignals(key, componentType.signals)
-}
-
 const registerSignals = (
 	key: MetadataKey,
 	signals: Registry<ComponentSignalDescriptor>
 ) => {
 	addToRegistry(componentSignalsRegistry, key, signals)
+}
+
+const register = (key: MetadataKey, componentType: UesioComponent) => {
+	addToRegistry<FC<BaseProps>>(registry, key, componentType)
+	componentType.signals && registerSignals(key, componentType.signals)
 }
 
 const registerUtilityComponent = (
