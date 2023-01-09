@@ -2,3 +2,4 @@ name: users
 path: app/{app:\w*\/\w*}/site/{sitename}/users
 view: uesio/studio.users
 theme: uesio/studio.default
+title: Users
