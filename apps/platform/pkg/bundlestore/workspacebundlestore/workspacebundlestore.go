@@ -45,6 +45,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
+			LoadAll:    true,
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
