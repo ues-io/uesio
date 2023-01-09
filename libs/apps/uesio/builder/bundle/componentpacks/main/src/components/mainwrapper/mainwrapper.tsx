@@ -30,8 +30,16 @@ const MainWrapper: definition.UesioComponent = (props) => {
 				padding: "6px",
 				rowGap: "6px",
 			},
-			propertiespanel: { gridRow: 1, gridColumn: 1 },
-			viewinfopanel: { gridRow: 2, gridColumn: 1 },
+			propertiespanel: {
+				gridRow: 1,
+				gridColumn: 1,
+				width: "300px",
+			},
+			viewinfopanel: {
+				gridRow: 2,
+				gridColumn: 1,
+				width: "300px",
+			},
 			canvas: {
 				gridRow: "1 / 3",
 				gridColumn: "2",

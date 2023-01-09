@@ -1,13 +1,22 @@
-import { FunctionComponent } from "react"
-import { hooks, styles, component } from "@uesio/ui"
-import { ButtonProps } from "./buttondefinition"
+import { hooks, styles, component, signal, definition } from "@uesio/ui"
 import { IconUtilityProps } from "../../utilities/icon/icon"
 import { ButtonUtilityProps } from "../../utilities/button/button"
+
+type ButtonDefinition = {
+	text?: string
+	icon?: string
+	signals?: signal.SignalDefinition[]
+	hotkey?: string
+} & definition.BaseDefinition
+
+interface ButtonProps extends definition.BaseProps {
+	definition: ButtonDefinition
+}
 
 const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
-const Button: FunctionComponent<ButtonProps> = (props) => {
+const Button: definition.UesioComponent<ButtonProps> = (props) => {
 	const { definition, context } = props
 	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
@@ -52,5 +61,41 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		/>
 	)
 }
+
+// Old unmigrated definition
+/*
+defaultDefinition: () => ({
+		text: "New Button",
+	}),
+	properties: [
+		{
+			name: "text",
+			type: "TEXT",
+			label: "Text",
+		},
+		{
+			name: "icon",
+			type: "ICON",
+			label: "Icon",
+		},
+	],
+	sections: [
+		{
+			title: "Signals",
+			type: "SIGNALS",
+		},
+	],
+	actions: [
+		{
+			label: "Run Signals",
+			type: "RUN_SIGNALS",
+			slot: "signals",
+		},
+	],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+
+*/
 
 export default Button

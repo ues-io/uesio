@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -329,7 +330,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return errors.New("Failed to get translated labels: " + err.Error())
 	}
 
-	componentDefs := map[string]string{}
+	componentDefs := map[string]json.RawMessage{}
 
 	for _, component := range components {
 
@@ -338,12 +339,12 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 			return err
 		}
 
-		componentYamlBytes, err := yaml.Marshal(component)
+		componentYamlBytes, err := component.GetBytes()
 		if err != nil {
 			return err
 		}
 
-		componentDefs[component.GetKey()] = string(componentYamlBytes)
+		componentDefs[component.GetKey()] = componentYamlBytes
 	}
 
 	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
