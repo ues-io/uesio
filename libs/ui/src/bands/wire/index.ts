@@ -175,8 +175,10 @@ const wireSlice = createSlice({
 		),
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
 			(state, { recordId }) => {
+				const record = state.data[recordId]
+				if (!record) return
 				state.deletes[recordId] = {
-					[ID_FIELD]: state.data[recordId][ID_FIELD],
+					[ID_FIELD]: record[ID_FIELD],
 				}
 			}
 		),
