@@ -329,7 +329,7 @@ func boostPayloadWithTemplate(username string, payload map[string]interface{}, s
 
 	host := datasource.GetHostFromDomain(domain, site)
 
-	link := fmt.Sprintf("%s/%s?code={####}", host, options.Redirect)
+	link := fmt.Sprintf("%s/%s?code={####}&username=%s", host, options.Redirect, username)
 
 	templateMergeValues := map[string]interface{}{
 		"app":      site.GetAppFullName(),
