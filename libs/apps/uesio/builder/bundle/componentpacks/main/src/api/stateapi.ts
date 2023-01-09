@@ -39,6 +39,7 @@ export {
 	getBuildMode,
 	useBuildMode,
 	getBuilderNamespaces,
+	getBuilderState,
 	useBuilderState,
 	useSelectedPath,
 	isSelected,
