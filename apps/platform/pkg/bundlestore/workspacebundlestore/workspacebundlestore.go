@@ -45,6 +45,7 @@ func processItems(items []meta.BundleableItem, session *sess.Session, connection
 			Collection: group,
 			Namespace:  namespace,
 		}, &datasource.PlatformLoadOptions{
+			LoadAll:    true,
 			Connection: connection,
 			Conditions: []adapt.LoadRequestCondition{
 				{
@@ -154,6 +155,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
 		Connection: connection,
+		LoadAll:    true,
 	}, session.RemoveWorkspaceContext())
 
 }
