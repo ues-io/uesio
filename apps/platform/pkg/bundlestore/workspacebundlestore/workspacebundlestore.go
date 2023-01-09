@@ -154,6 +154,7 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 	}, &datasource.PlatformLoadOptions{
 		Conditions: loadConditions,
 		Connection: connection,
+		LoadAll:    true,
 	}, session.RemoveWorkspaceContext())
 
 }
