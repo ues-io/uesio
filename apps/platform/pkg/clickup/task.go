@@ -54,17 +54,9 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 	}
 
 	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) <= 0 {
-		return errors.New("Must Provide at least one condition")
+	if op.Conditions == nil || len(op.Conditions) != 1 {
+		return errors.New("Tasks can only be queried by task ID or list ID")
 	}
-
-	listIDCondition := op.Conditions[0]
-
-	if listIDCondition.Field != "tcm/timetracker.list" {
-		return errors.New("The first condition must be on the type field")
-	}
-
-	listID := listIDCondition.Value
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:       "name",
@@ -76,20 +68,36 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		Label:      "Name",
 	})
 
-	if listID == "" || listID == nil {
+	condition := op.Conditions[0]
+	value := condition.Value
+	if value == "" || value == nil {
 		return nil
 	}
 
-	url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", listID)
-
 	data := &TaskResponse{}
 
-	err = integ.ExecByKey(&integ.IntegrationOptions{
-		URL:   url,
-		Cache: true,
-	}, nil, data, "tcm/timetracker.clickup", session)
-	if err != nil {
-		return err
+	if condition.Field == "tcm/timetracker.id" {
+		url := fmt.Sprintf("task/%v?include_subtasks=false", value)
+		ldata := &Task{}
+		err = integ.ExecByKey(&integ.IntegrationOptions{
+			URL:   url,
+			Cache: true,
+		}, nil, ldata, "tcm/timetracker.clickup", session)
+		if err != nil {
+			return err
+		}
+		data.Tasks = append(data.Tasks, *ldata)
+	}
+
+	if condition.Field == "tcm/timetracker.list" {
+		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", value)
+		err = integ.ExecByKey(&integ.IntegrationOptions{
+			URL:   url,
+			Cache: true,
+		}, nil, data, "tcm/timetracker.clickup", session)
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, task := range data.Tasks {
