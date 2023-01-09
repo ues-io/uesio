@@ -2,12 +2,8 @@ package routing
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/francoispqt/gojay"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"gopkg.in/yaml.v3"
 )
 
 type ComponentMergeData struct {
@@ -15,6 +11,13 @@ type ComponentMergeData struct {
 	ComponentType string      `json:"componentType"`
 	View          string      `json:"view"`
 	State         interface{} `json:"state"`
+}
+
+func NewComponentsMergeData() *ComponentsMergeData {
+	return &ComponentsMergeData{
+		IDs:      []string{},
+		Entities: map[string]ComponentMergeData{},
+	}
 }
 
 type ComponentsMergeData struct {
@@ -42,6 +45,15 @@ func NewItem() *MetadataMergeData {
 	}
 }
 
+func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
+	id := dep.GetKey()
+	parsedbytes, err := dep.GetBytes()
+	if err != nil {
+		return err
+	}
+	return mmd.AddItem(id, parsedbytes)
+}
+
 func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
@@ -53,10 +65,17 @@ func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
 
 func NewPreloadMetadata() *PreloadMetadata {
 	return &PreloadMetadata{
-		Component: &ComponentsMergeData{
-			IDs:      []string{},
-			Entities: map[string]ComponentMergeData{},
-		},
+		Component:        NewComponentsMergeData(),
+		Theme:            NewItem(),
+		ViewDef:          NewItem(),
+		ComponentPack:    NewItem(),
+		ComponentVariant: NewItem(),
+		ConfigValue:      NewItem(),
+		Label:            NewItem(),
+		FeatureFlag:      NewItem(),
+		MetadataText:     NewItem(),
+		Wire:             NewItem(),
+		Collection:       NewItem(),
 	}
 }
 
@@ -93,101 +112,4 @@ func (mti *MetadataTextItem) IsNil() bool {
 type Depable interface {
 	GetKey() string
 	GetBytes() ([]byte, error)
-}
-
-func (pm *PreloadMetadata) AddItem(item Depable, includeText bool) error {
-
-	var bucket *MetadataMergeData
-	var metadataType string
-	var metadataText string
-	switch v := item.(type) {
-	case *meta.Theme:
-		if pm.Theme == nil {
-			pm.Theme = NewItem()
-		}
-		bucket = pm.Theme
-		metadataType = "theme"
-	case *meta.View:
-		if pm.ViewDef == nil {
-			pm.ViewDef = NewItem()
-		}
-		bucket = pm.ViewDef
-		metadataType = "viewdef"
-		if includeText {
-			bytes, err := yaml.Marshal(v.Definition)
-			if err != nil {
-				return err
-			}
-			metadataText = string(bytes)
-		}
-	case *meta.ComponentVariant:
-		if pm.ComponentVariant == nil {
-			pm.ComponentVariant = NewItem()
-		}
-		bucket = pm.ComponentVariant
-		metadataType = "componentvariant"
-	case *meta.ComponentPack:
-		if pm.ComponentPack == nil {
-			pm.ComponentPack = NewItem()
-		}
-		bucket = pm.ComponentPack
-		metadataType = "componentpack"
-	case *meta.ConfigValue:
-		if pm.ConfigValue == nil {
-			pm.ConfigValue = NewItem()
-		}
-		bucket = pm.ConfigValue
-		metadataType = "configvalue"
-	case *meta.Label:
-		if pm.Label == nil {
-			pm.Label = NewItem()
-		}
-		bucket = pm.Label
-		metadataType = "label"
-	case *meta.FeatureFlag:
-		if pm.FeatureFlag == nil {
-			pm.FeatureFlag = NewItem()
-		}
-		bucket = pm.FeatureFlag
-		metadataType = "featureflag"
-	case *adapt.CollectionMetadata:
-		if pm.Collection == nil {
-			pm.Collection = NewItem()
-		}
-		bucket = pm.Collection
-		metadataType = "collection"
-	case *adapt.LoadOp:
-		if pm.Wire == nil {
-			pm.Wire = NewItem()
-		}
-		bucket = pm.Wire
-		metadataType = "wire"
-	default:
-		return fmt.Errorf("Cannot add this type to dependencies: %T", v)
-	}
-
-	if includeText {
-
-		if pm.MetadataText == nil {
-			pm.MetadataText = NewItem()
-		}
-		fullKey := metadataType + ":" + item.GetKey()
-		bytes, err := gojay.MarshalJSONObject(&MetadataTextItem{
-			Content:      metadataText,
-			Key:          item.GetKey(),
-			MetadataType: metadataType,
-		})
-		if err != nil {
-			return err
-		}
-		pm.MetadataText.AddItem(fullKey, bytes)
-	}
-
-	parsedbytes, err := item.GetBytes()
-	if err != nil {
-		return err
-	}
-
-	return bucket.AddItem(item.GetKey(), parsedbytes)
-
 }

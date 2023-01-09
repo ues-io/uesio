@@ -1,15 +1,8 @@
 import { FC, DragEvent } from "react"
-import {
-	definition,
-	component,
-	api,
-	styles,
-	builder,
-	metadata,
-} from "@uesio/ui"
+import { definition, component, api, styles, metadata, util } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
-import { getBuilderNamespaces } from "../../../api/stateapi"
+import { getBuilderNamespaces, getBuilderState } from "../../../api/stateapi"
 
 const Text = component.getUtility("uesio/io.text")
 const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
@@ -21,6 +14,14 @@ type VariantsBlockProps = {
 	selectedItem: metadata.MetadataKey
 	selectedType: string
 } & definition.UtilityProps
+
+type ComponentDef = {
+	name: string
+	namespace: string
+	title: string
+	description: string
+	category: string
+}
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 	const { context, variants, selectedItem } = props
@@ -69,7 +70,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 }
 
 type ComponentBlockProps = {
-	propDef: builder.BuildPropertiesDefinition
+	propDef: ComponentDef
 	variants: component.ComponentVariant[]
 	selectedItem: metadata.MetadataKey
 	selectedType: string
@@ -119,7 +120,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 }
 
 type CategoryBlockProps = {
-	propDefs: builder.BuildPropertiesDefinition[]
+	propDefs: ComponentDef[]
 	variants: Record<string, component.ComponentVariant[]>
 	selectedItem: metadata.MetadataKey
 	selectedType: string
@@ -175,7 +176,7 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 }
 
 type ComponentTagProps = {
-	propDef: builder.BuildPropertiesDefinition
+	propDef: ComponentDef
 } & definition.UtilityProps
 
 const ComponentTag: FC<ComponentTagProps> = (props) => {
@@ -229,6 +230,21 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 		},
 		props
 	)
+	const componentsYAML = getBuilderState(context, "componentdefs") as Record<
+		string,
+		string
+	>
+
+	const components = Object.entries(componentsYAML).map(([key, value]) => {
+		const comp = util.yaml.parse(value).toJS()
+		const [namespace] = component.path.parseKey(key)
+		comp.namespace = namespace
+		comp.description = "Temp Description"
+		comp.category = "LAYOUT"
+		comp.title = "Temp Title"
+		return comp
+	}) as ComponentDef[]
+
 	const selectedItem = api.builder.useSelectedItem()
 	const selectedType = api.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {
@@ -246,7 +262,7 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 		api.builder.clearDragNode()
 		api.builder.clearDropNode()
 	}
-	const builderComponents: never[] = []
+
 	const categoryOrder = [
 		"LAYOUT",
 		"CONTENT",
@@ -258,8 +274,8 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 
 	// sort the variants by category
 	const componentsByCategory = groupBy(
-		builderComponents,
-		() => "UNCATEGORIZED"
+		components,
+		(component) => component.category || "UNCATEGORIZED"
 	)
 
 	const variants = api.component.useAllVariants()
