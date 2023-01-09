@@ -2,3 +2,4 @@ name: files
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/files
 view: uesio/studio.files
 theme: uesio/studio.default
+title: Files
