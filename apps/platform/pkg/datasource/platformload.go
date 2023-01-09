@@ -16,6 +16,7 @@ type PlatformLoadOptions struct {
 	Orders     []adapt.LoadRequestOrder
 	Connection adapt.Connection
 	BatchSize  int
+	LoadAll    bool
 }
 
 func (plo *PlatformLoadOptions) GetConditionsDebug() string {
@@ -66,6 +67,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 		Order:          options.Orders,
 		Query:          true,
 		BatchSize:      options.BatchSize,
+		LoadAll:        options.LoadAll,
 	}, options.Connection, session)
 }
 
@@ -78,7 +80,7 @@ func doPlatformLoad(op *adapt.LoadOp, connection adapt.Connection, session *sess
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
 
-	if op.HasMoreBatches {
+	if op.LoadAll && op.HasMoreBatches {
 		return doPlatformLoad(op, connection, session)
 	}
 
