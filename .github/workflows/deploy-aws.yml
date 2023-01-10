@@ -43,12 +43,12 @@ jobs:
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
-            - name: Docker Tag and Push to ECR
+            - name: Docker Build, Tag, and Push to ECR
               id: push-ecr
               env:
                   IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
               run: |
-                  docker tag $IMAGE_TAG
+                  docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile .
                   docker push $IMAGE_TAG
                   echo "image=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
