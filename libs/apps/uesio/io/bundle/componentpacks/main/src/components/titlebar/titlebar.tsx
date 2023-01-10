@@ -1,11 +1,17 @@
-import { FunctionComponent } from "react"
-
-import { TitleBarProps } from "./titlebardefinition"
-import { component } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 
 const IOTitleBar = component.getUtility("uesio/io.titlebar")
 
-const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
+type TitleBarDefinition = {
+	title: string
+	subtitle: string
+} & definition.BaseDefinition
+
+interface TitleBarProps extends definition.BaseProps {
+	definition: TitleBarDefinition
+}
+
+const TitleBar: definition.UtilityComponent<TitleBarProps> = (props) => {
 	const { definition, path, context } = props
 
 	return (
@@ -26,5 +32,31 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 		/>
 	)
 }
+
+/*
+const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Title Bar",
+	description: "A section description with a main title and subtitle.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({ title: "New Title" }),
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+		{
+			name: "subtitle",
+			type: "TEXT",
+			label: "Subtitle",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	type: "component",
+	category: "CONTENT",
+}
+*/
 
 export default TitleBar

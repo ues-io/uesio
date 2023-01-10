@@ -1,11 +1,22 @@
-import { FunctionComponent } from "react"
-
-import { component, styles, hooks } from "@uesio/ui"
-import { Props } from "./tabsdefinition"
+import { component, styles, api, definition } from "@uesio/ui"
 
 const TabLabels = component.getUtility("uesio/io.tablabels")
 
-const Tabs: FunctionComponent<Props> = (props) => {
+type TabsDefinition = {
+	id?: string
+	tabs?: {
+		id: string
+		label: string
+		components: definition.DefinitionList
+	}[]
+	footer?: definition.DefinitionList
+} & definition.BaseDefinition
+
+interface Props extends definition.BaseProps {
+	definition: TabsDefinition
+}
+
+const Tabs: definition.UesioComponent<Props> = (props) => {
 	const { definition, context, path } = props
 	const classes = styles.useStyles(
 		{
@@ -18,14 +29,13 @@ const Tabs: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
-	const componentId = uesio.component.getComponentIdFromProps(
+	const componentId = api.component.getComponentIdFromProps(
 		definition.id,
 		props
 	)
 
-	const [selectedTabId, setSelectedTab] = uesio.component.useState<string>(
+	const [selectedTabId, setSelectedTab] = api.component.useState<string>(
 		"tabs",
 		componentId
 	)
@@ -70,5 +80,41 @@ const Tabs: FunctionComponent<Props> = (props) => {
 		</div>
 	)
 }
+
+/*
+const PropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Tabs",
+	description: "Organized view content in to tabbed sections",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [],
+	sections: [
+		{
+			type: "PROPLISTS",
+			name: "tabs",
+			nameFallback: "tab",
+			nameTemplate: "${label}",
+			title: "Tabs",
+			properties: [
+				{
+					name: "id",
+					type: "TEXT",
+					label: "ID",
+				},
+				{
+					name: "label",
+					type: "TEXT",
+					label: "Label",
+				},
+			],
+		},
+	],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root", "content", "tabLabels", "tab", "tabSelected", "footer"],
+	type: "component",
+	category: "LAYOUT",
+}
+*/
 
 export default Tabs

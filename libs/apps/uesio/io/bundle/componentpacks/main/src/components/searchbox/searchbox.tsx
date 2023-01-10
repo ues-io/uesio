@@ -1,13 +1,19 @@
-import { ChangeEvent, FunctionComponent } from "react"
-
-import { SearchBoxProps } from "./searchboxdefinition"
-import { styles, hooks } from "@uesio/ui"
+import { styles, api, metadata, definition } from "@uesio/ui"
 import debounce from "lodash/debounce"
 
-const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
+type SearchBoxDefinition = {
+	placeholder?: string
+	wire: string
+	searchFields: metadata.MetadataKey[]
+} & definition.BaseDefinition
+
+interface SearchBoxProps extends definition.BaseProps {
+	definition: SearchBoxDefinition
+}
+
+const SearchBox: definition.UesioComponent<SearchBoxProps> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire, context)
+	const wire = api.wire.useWire(definition.wire, context)
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -22,7 +28,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 	)
 	if (!wire) return null
 	const search = (searchValue: string) => {
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "wire/SEARCH",
 				search: searchValue,
@@ -39,12 +45,46 @@ const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 				className={classes.input}
 				type="search"
 				placeholder={definition.placeholder || "Search"}
-				onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+				onChange={(event) => {
 					debouncedRequest(event.target.value)
 				}}
 			/>
 		</div>
 	)
 }
+
+/*
+
+const SearchBoxPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Search Box",
+	description: "Filter a wire based on a user's text search.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "Wire",
+		},
+		{
+			name: "searchFields",
+			type: "FIELDS",
+			label: "Search Fields",
+			wireField: "wire",
+		},
+		{
+			name: "placeholder",
+			type: "TEXT",
+			label: "Placeholder",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "INTERACTION",
+}
+*/
 
 export default SearchBox

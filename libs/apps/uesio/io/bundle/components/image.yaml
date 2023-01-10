@@ -1,3 +1,6 @@
 name: image
+title: Image
+description: Display an image.
+category: CONTENT
 pack: main
 entrypoint: components/image/image

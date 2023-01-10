@@ -1,3 +1,6 @@
 name: list
+title: List
+description: Iterate over records in a wire and render content in the context of each record.
+category: DATA
 pack: main
 entrypoint: components/list/list

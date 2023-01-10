@@ -8,7 +8,7 @@ import {
 	context,
 	metadata,
 } from "@uesio/ui"
-import { ReferenceFieldOptions } from "../../components/field/fielddefinition"
+import { ReferenceFieldOptions } from "../../components/field/field"
 
 const TextField = component.getUtility("uesio/io.textfield")
 const AutoComplete = component.getUtility("uesio/io.autocomplete")

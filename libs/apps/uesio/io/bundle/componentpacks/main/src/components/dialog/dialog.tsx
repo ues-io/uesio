@@ -1,14 +1,23 @@
-import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 import { DialogUtilityProps } from "../../utilities/dialog/dialog"
 
 const IODialog = component.getUtility<DialogUtilityProps>("uesio/io.dialog")
 
-const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
-	const uesio = hooks.useUesio(props)
+type DialogDefinition = {
+	title?: string
+	width?: string
+	height?: string
+	id?: string
+}
+
+interface DialogProps extends definition.BaseProps {
+	definition: DialogDefinition
+}
+
+const Dialog: definition.UesioComponent<DialogProps> = (props) => {
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
-	const onClose = uesio.signal.getHandler(
+	const onClose = api.signal.getHandler(
 		[
 			{
 				signal: "panel/TOGGLE",
@@ -26,15 +35,13 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			height={definition.height as string | undefined}
 			title={definition.title as string | undefined}
 			actions={
-				definition?.actions && (
-					<component.Slot
-						definition={definition}
-						listName="actions"
-						path={path}
-						accepts={["uesio.standalone"]}
-						context={context}
-					/>
-				)
+				<component.Slot
+					definition={definition}
+					listName="actions"
+					path={path}
+					accepts={["uesio.standalone"]}
+					context={context}
+				/>
 			}
 		>
 			<component.Slot
@@ -47,5 +54,36 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 		</IODialog>
 	)
 }
+
+/*
+const DialogPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Dialog",
+	defaultDefinition: () => ({
+		title: "New Dialog",
+	}),
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+		{
+			name: "width",
+			type: "TEXT",
+			label: "Width",
+		},
+		{
+			name: "height",
+			type: "TEXT",
+			label: "Height",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.panel"],
+	classes: ["root"],
+	type: "component",
+}
+*/
 
 export default Dialog

@@ -1,3 +1,6 @@
 name: group
+title: Group
+description: Create a horizontal line of inline elements.
+category: LAYOUT
 pack: main
 entrypoint: components/group/group

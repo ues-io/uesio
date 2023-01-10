@@ -1,4 +1,6 @@
 name: code
+title: Code
+description: Displays the syntax highlighted text of a file.
 pack: main
 entrypoint: components/code/code
 variants:

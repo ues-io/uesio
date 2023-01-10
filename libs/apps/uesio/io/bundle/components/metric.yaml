@@ -1,4 +1,7 @@
 name: metric
+title: Metric
+description: A metric box
+category: VISUALIZATION
 pack: main
 entrypoint: components/metric/metric
 variants:

@@ -1,9 +1,21 @@
-import { FC } from "react"
+import { api, styles, signal, definition } from "@uesio/ui"
 
-import { VideoProps } from "./videodefinition"
-import { hooks, styles } from "@uesio/ui"
+type VideoDefinition = {
+	file?: string
+	src?: string
+	height?: string
+	width?: string
+	muted?: boolean
+	autoplay?: boolean
+	loop?: boolean
+	signals?: signal.SignalDefinition[]
+}
 
-const Video: FC<VideoProps> = (props) => {
+interface VideoProps extends definition.BaseProps {
+	definition: VideoDefinition
+}
+
+const Video: definition.UesioComponent<VideoProps> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -20,14 +32,13 @@ const Video: FC<VideoProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
 	return (
 		<div
 			className={classes.root}
 			onClick={
 				definition?.signals &&
-				uesio.signal.getHandler(definition.signals, context)
+				api.signal.getHandler(definition.signals, context)
 			}
 		>
 			<video
@@ -40,7 +51,7 @@ const Video: FC<VideoProps> = (props) => {
 				<source
 					src={
 						definition.file
-							? uesio.file.getURLFromFullName(
+							? api.file.getURLFromFullName(
 									context,
 									definition.file
 							  )
@@ -52,5 +63,62 @@ const Video: FC<VideoProps> = (props) => {
 		</div>
 	)
 }
+
+/*
+const VideoPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Video",
+	description: "Display a video.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "file",
+			type: "METADATA",
+			metadataType: "FILE",
+			label: "File",
+		},
+		{
+			name: "src",
+			type: "TEXT",
+			label: "url",
+		},
+		{
+			name: "height",
+			type: "TEXT",
+			label: "Height",
+		},
+		{
+			name: "width",
+			type: "TEXT",
+			label: "Width",
+		},
+		{
+			name: "muted",
+			type: "BOOLEAN",
+			label: "Muted",
+		},
+		{
+			name: "loop",
+			type: "BOOLEAN",
+			label: "Loop",
+		},
+		{
+			name: "autoplay",
+			type: "BOOLEAN",
+			label: "Auto play",
+		},
+	],
+	sections: [
+		{
+			title: "Signals",
+			type: "SIGNALS",
+		},
+	],
+	traits: ["uesio.standalone"],
+	classes: ["root", "inner"],
+	type: "component",
+	category: "CONTENT",
+}
+*/
 
 export default Video

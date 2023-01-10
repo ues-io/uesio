@@ -1,11 +1,19 @@
-import { FunctionComponent } from "react"
-
-import { component, styles } from "@uesio/ui"
-import { GroupProps } from "./groupdefinition"
+import { component, styles, definition } from "@uesio/ui"
 
 const IOGroup = component.getUtility("uesio/io.group")
 
-const Grid: FunctionComponent<GroupProps> = (props) => {
+type GroupDefinition = {
+	columnGap: string
+	alignItems: string
+	justifyContent: string
+	components?: definition.DefinitionList
+}
+
+interface GroupProps extends definition.BaseProps {
+	definition: GroupDefinition
+}
+
+const Grid: definition.UesioComponent<GroupProps> = (props) => {
 	const { context, definition, path } = props
 	const classes = styles.useStyles(
 		{
@@ -32,5 +40,77 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 		</IOGroup>
 	)
 }
+
+/*
+const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Group",
+	description: "Create a horizontal line of inline elements.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({ columnGap: "10px" }),
+	properties: [
+		{
+			name: "columnGap",
+			type: "TEXT",
+			label: "Column Gap",
+		},
+		{
+			name: "alignItems",
+			type: "SELECT",
+			label: "Vertical alignment",
+			options: [
+				{
+					label: "Start",
+					value: "start",
+				},
+				{
+					label: "Center",
+					value: "center",
+				},
+				{
+					label: "End",
+					value: "end",
+				},
+			],
+		},
+		{
+			name: "justifyContent",
+			type: "SELECT",
+			label: "Horizontal distribution",
+			options: [
+				{
+					label: "Start",
+					value: "start",
+				},
+				{
+					label: "Center",
+					value: "center",
+				},
+				{
+					label: "Space between",
+					value: "space-between",
+				},
+				{
+					label: "Space around",
+					value: "space-around",
+				},
+				{
+					label: "Space evenly",
+					value: "space-evenly",
+				},
+				{
+					label: "End",
+					value: "end",
+				},
+			],
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "LAYOUT",
+}
+*/
 
 export default Grid
