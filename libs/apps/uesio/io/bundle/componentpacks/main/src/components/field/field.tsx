@@ -66,7 +66,7 @@ type FieldDefinition = {
 	user?: UserFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
-} & definition.BaseDefinition
+}
 
 type LabelPosition = "none" | "top" | "left"
 
@@ -78,10 +78,6 @@ type FieldState = {
 	collectionId: string
 	fileName: string
 	mimeType: string
-}
-
-interface FieldProps extends definition.BaseProps {
-	definition: FieldDefinition
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
@@ -193,7 +189,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 	}
 }
 
-const Field: definition.UesioComponent<FieldProps> = (props) => {
+const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition } = props
 	const { fieldId, id, placeholder } = definition
 

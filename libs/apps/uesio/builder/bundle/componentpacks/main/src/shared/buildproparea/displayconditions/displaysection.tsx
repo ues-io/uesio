@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { hooks, component } from "@uesio/ui"
+import { api, component } from "@uesio/ui"
 import { SectionRendererProps } from "../sectionrendererdefinition"
 
 import PropertiesPane from "../../propertiespane"
@@ -13,10 +13,9 @@ const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
 
-	const uesio = hooks.useUesio(props)
 	const displayPath = `${path}["uesio.display"]`
 
-	const [, , selectedNode] = uesio.builder.useSelectedNode()
+	const [, , selectedNode] = api.builder.useSelectedNode()
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
@@ -59,7 +58,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 							selected={selected}
 							key={index}
 							onClick={() => {
-								uesio.builder.setSelectedNode(
+								api.builder.setSelectedNode(
 									"viewdef",
 									viewDefId,
 									conditionPath

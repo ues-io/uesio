@@ -1,18 +1,16 @@
-import { Definition } from "../definition/definition"
-
 type ValueAdder = (
 	path: string | undefined,
-	value: Definition,
+	value: unknown,
 	index?: number
 ) => void
 
 type ValueSetter = (
 	path: string | undefined,
-	value: Definition,
+	value: unknown,
 	autoSelect?: boolean
 ) => void
 
-type ValueGetter = (path: string | undefined) => Definition
+type ValueGetter = (path: string | undefined) => unknown
 
 type ValueRemover = (path: string | undefined) => void
 

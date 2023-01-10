@@ -9,7 +9,7 @@ export default (element: HTMLElement | null, initialState: InitialState) => {
 	ReactDOM.render(
 		<StrictMode>
 			<Provider store={create(initialState)}>
-				<Route path="" context={new Context()} />
+				<Route context={new Context()} />
 			</Provider>
 		</StrictMode>,
 		element

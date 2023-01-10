@@ -1,13 +1,9 @@
-import { styles, hooks, definition } from "@uesio/ui"
+import { styles, api, definition } from "@uesio/ui"
 
 type Definition = {
 	levels?: 1 | 2 | 3 | 4 | 5 | 6
 	mdField?: string
 	title?: string
-}
-
-interface Props extends definition.BaseProps {
-	definition: Definition
 }
 
 const getHeadingOverview = (mdValue: string, level: 1 | 2 | 3 | 4 | 5 | 6) => {
@@ -35,9 +31,8 @@ const getHeadingOverview = (mdValue: string, level: 1 | 2 | 3 | 4 | 5 | 6) => {
 	}[]
 }
 
-const MarkdownNavigation: definition.UesioComponent<Props> = (props) => {
+const MarkdownNavigation: definition.UC<Definition> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useStyles(
 		{
@@ -51,7 +46,7 @@ const MarkdownNavigation: definition.UesioComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null
-	const value = uesio.file.useUserFile(
+	const value = api.file.useUserFile(
 		context,
 		record,
 		definition.mdField || ""

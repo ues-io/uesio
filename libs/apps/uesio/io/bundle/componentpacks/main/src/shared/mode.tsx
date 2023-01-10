@@ -1,4 +1,4 @@
-import { hooks, signal, context, definition } from "@uesio/ui"
+import { api, signal, context } from "@uesio/ui"
 
 type ModeState = {
 	mode?: context.FieldMode
@@ -26,17 +26,11 @@ const setEditMode: signal.ComponentSignalDescriptor<ModeState> = {
 	properties: () => [],
 }
 
-const useMode = (
-	id: string,
-	initialMode: context.FieldMode | undefined,
-	props: definition.BaseProps
-) => {
-	const uesio = hooks.useUesio(props)
-	return uesio.component.useStateSlice<context.FieldMode>(
+const useMode = (id: string, initialMode: context.FieldMode | undefined) =>
+	api.component.useStateSlice<context.FieldMode>(
 		"mode",
 		id,
 		initialMode || "READ"
 	)
-}
 
 export { toggleMode, useMode, setEditMode, setReadMode }

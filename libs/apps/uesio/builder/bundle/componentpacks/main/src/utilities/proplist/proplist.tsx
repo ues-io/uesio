@@ -16,7 +16,6 @@ const BooleanProp = component.getUtility("uesio/builder.booleanprop")
 const ConditionProp = component.getUtility("uesio/builder.conditionprop")
 const NamespaceProp = component.getUtility("uesio/builder.namespaceprop")
 const BotProp = component.getUtility("uesio/builder.botprop")
-const CustomProp = component.getUtility("uesio/builder.customprop")
 const IconProp = component.getUtility("uesio/builder.iconprop")
 const FieldProp = component.getUtility("uesio/builder.fieldprop")
 const FieldsProp = component.getUtility("uesio/builder.fieldsprop")
@@ -59,8 +58,6 @@ function getPropHandler(type?: string) {
 			return TextAreaProp
 		case "ICON":
 			return IconProp
-		case "CUSTOM":
-			return CustomProp
 		case "PARAM":
 			return ParamProp
 		case "PARAMS":

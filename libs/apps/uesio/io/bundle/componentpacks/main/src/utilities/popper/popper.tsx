@@ -56,7 +56,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	)
 
 	return (
-		<component.Panel context={props.context}>
+		<component.Panel>
 			<div
 				className={classes.popper}
 				ref={setPopperEl}

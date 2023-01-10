@@ -1,34 +1,34 @@
 import { FunctionComponent } from "react"
 import {
-	BaseDefinition,
-	BaseProps,
 	DefinitionList,
 	DefinitionMap,
 	UtilityProps,
 } from "../definition/definition"
-import { Component, getUtility } from "../component/component"
+import { Component } from "../component/component"
 import { MetadataKey } from "../bands/builder/types"
+import { getUtilityLoader } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
-	definition?: BaseDefinition
+	definition?: DefinitionMap
 	accepts: string[]
 	direction?: "VERTICAL" | "HORIZONTAL"
 	label?: string
 	message?: string
 }
 
-const getSlotProps = (props: SlotUtilityProps): BaseProps[] => {
-	const { path, context, listName, definition } = props
+const getSlotProps = (props: SlotUtilityProps) => {
+	const { path, context, listName } = props
+	const definition = props.definition as DefinitionMap
 	if (!definition) return []
 
 	const listDef = (definition?.[listName] || []) as DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 
 	return listDef.flatMap((itemDef, index) => {
+		if (!itemDef) return []
 		const componentType = Object.keys(itemDef)[0]
 		const unWrappedDef = itemDef[componentType]
-		if (!itemDef) return []
 		return {
 			definition: unWrappedDef as DefinitionMap,
 			componentType: componentType as MetadataKey,
@@ -41,8 +41,9 @@ const getSlotProps = (props: SlotUtilityProps): BaseProps[] => {
 const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 	const slotWrapper = props.context.getWorkspace()?.slotwrapper
 	if (slotWrapper) {
-		const SlotBuilder = getUtility(slotWrapper)
-		return <SlotBuilder {...props} />
+		const Loader = getUtilityLoader(slotWrapper)
+		if (!Loader) throw "Could not load component: " + slotWrapper
+		return <Loader {...props} />
 	}
 
 	return (

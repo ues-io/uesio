@@ -20,10 +20,6 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
-} & definition.BaseDefinition
-
-interface FilterProps extends definition.BaseProps {
-	definition: FilterDefinition
 }
 
 type CommonProps = {
@@ -54,7 +50,7 @@ const getFilterContent = (
 	}
 }
 
-const Filter: definition.UesioComponent<FilterProps> = (props) => {
+const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition } = props
 	const { fieldId, conditionId } = definition
 	const wire = api.wire.useWire(definition.wire, context)

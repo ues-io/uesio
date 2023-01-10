@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, wire, collection, styles } from "@uesio/ui"
+import { definition, api, wire, collection, styles } from "@uesio/ui"
 
 interface WeekFilterProps extends definition.UtilityProps {
 	wire: wire.Wire
@@ -45,7 +45,6 @@ const parseDateConditionValue = (value: wire.FieldValue) => {
 const WeekFilter: FunctionComponent<WeekFilterProps> = (props) => {
 	const { wire, fieldMetadata, context } = props
 
-	const uesio = hooks.useUesio(props)
 	const conditionId = props.conditionId || props.path || ""
 	const wireId = wire.getId()
 
@@ -70,7 +69,7 @@ const WeekFilter: FunctionComponent<WeekFilterProps> = (props) => {
 			type="week"
 			onChange={(event) => {
 				const value = event.target.value
-				uesio.signal.runMany(
+				api.signal.runMany(
 					[
 						{
 							signal: "wire/SET_CONDITION",

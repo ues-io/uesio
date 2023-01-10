@@ -1,4 +1,4 @@
-import View from "./components/view/view"
+import View from "./components/view"
 
 // For use in exports as the uesio api
 import * as builder from "./buildmode/buildpropdefinition"

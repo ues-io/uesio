@@ -1,4 +1,4 @@
-import { builder, component, hooks } from "@uesio/ui"
+import { builder, component, api } from "@uesio/ui"
 
 import PropListsList from "../../shared/proplistslist"
 import BuildActionsArea from "../../helpers/buildactionsarea"
@@ -13,9 +13,8 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
 	const items = (valueAPI.get(path) as unknown[]) || []
-	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+		api.builder.useSelectedNode()
 	const selected = selectedPath.startsWith(path)
 	const selectedItem = !isNaN(parseFloat(toPath(selectedPath).pop() || ""))
 		? selectedPath
@@ -25,7 +24,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 		<PropNodeTag
 			context={context}
 			onClick={() =>
-				uesio.builder.setSelectedNode(
+				api.builder.setSelectedNode(
 					metadataType,
 					metadataItem,
 					selected ? component.path.getParentPath(path) : path
@@ -45,7 +44,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 										context={context}
 										icon="close"
 										onClick={() =>
-											uesio.builder.unSelectNode()
+											api.builder.unSelectNode()
 										}
 									/>
 								)
@@ -118,7 +117,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 						<IconButton
 							context={context}
 							icon="expand_more"
-							onClick={() => uesio.builder.unSelectNode()}
+							onClick={() => api.builder.unSelectNode()}
 						/>
 					</div>
 				</div>

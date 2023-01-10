@@ -4,11 +4,7 @@ type BoxDefinition = {
 	signals?: signal.SignalDefinition[]
 }
 
-interface BoxProps extends definition.BaseProps {
-	definition: BoxDefinition
-}
-
-const Box: definition.UesioComponent<BoxProps> = (props) => {
+const Box: definition.UC<BoxDefinition> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},

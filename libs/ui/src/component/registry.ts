@@ -1,9 +1,5 @@
 import { FC } from "react"
-import {
-	BaseProps,
-	UesioComponent,
-	UtilityProps,
-} from "../definition/definition"
+import { UC, UtilityProps } from "../definition/definition"
 import {
 	ActionDescriptor,
 	BuildPropertiesDefinition,
@@ -11,18 +7,16 @@ import {
 import {
 	parseKey,
 	getFullPathParts,
-	parseFieldKey,
 	parseVariantKey,
 	getKeyAtPath,
 	fromPath,
 } from "./path"
 import toPath from "lodash/toPath"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import { getComponentTypePropsDef, getFieldPropsDef } from "./builtinpropsdefs"
 import { MetadataKey } from "../bands/builder/types"
 
 type Registry<T> = Record<string, T>
-const registry: Registry<FC<BaseProps>> = {}
+const registry: Registry<UC> = {}
 const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
 	{}
@@ -38,8 +32,8 @@ const registerSignals = (
 	addToRegistry(componentSignalsRegistry, key, signals)
 }
 
-const register = (key: MetadataKey, componentType: UesioComponent) => {
-	addToRegistry<FC<BaseProps>>(registry, key, componentType)
+const register = (key: MetadataKey, componentType: UC) => {
+	addToRegistry<UC>(registry, key, componentType)
 	componentType.signals && registerSignals(key, componentType.signals)
 }
 
@@ -111,25 +105,6 @@ const getPropertiesDefinitionFromPath = (
 				sections: [],
 				properties: [],
 			},
-			localPath,
-		]
-	}
-	if (metadataType === "componenttype") {
-		return [
-			getComponentTypePropsDef(getPropertiesDefinition(metadataItem)),
-			localPath,
-		]
-	}
-	if (metadataType === "field") {
-		const [namespace, name, collectionNamespace, collectionName] =
-			parseFieldKey(metadataItem)
-		return [
-			getFieldPropsDef(
-				namespace,
-				name,
-				collectionNamespace,
-				collectionName
-			),
 			localPath,
 		]
 	}

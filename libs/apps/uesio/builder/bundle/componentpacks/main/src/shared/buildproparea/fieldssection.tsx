@@ -2,7 +2,7 @@ import { FC, DragEvent, useState, useEffect } from "react"
 import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
-import { hooks, component, wire } from "@uesio/ui"
+import { api, component, wire } from "@uesio/ui"
 
 const FieldPropTag = component.getUtility("uesio/builder.fieldproptag")
 
@@ -15,7 +15,6 @@ const Icon = component.getUtility("uesio/io.icon")
 
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
-	const uesio = hooks.useUesio(props)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [showPopper, setShowPopper] = useState(false)
 
@@ -26,12 +25,12 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
-			uesio.builder.setDragNode("field", target.dataset.type, "")
+			api.builder.setDragNode("field", target.dataset.type, "")
 		}
 	}
 	const onDragEnd = () => {
-		uesio.builder.clearDragNode()
-		uesio.builder.clearDropNode()
+		api.builder.clearDragNode()
+		api.builder.clearDropNode()
 	}
 
 	useEffect(() => {

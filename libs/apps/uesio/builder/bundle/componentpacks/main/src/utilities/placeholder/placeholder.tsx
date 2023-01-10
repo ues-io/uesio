@@ -22,7 +22,7 @@ const PlaceHolder: FC<T> = (props) => {
 
 	const isVertical = direction !== "HORIZONTAL"
 
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			label: {
 				opacity: 0.4,

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, wire, component, hooks, collection } from "@uesio/ui"
+import { definition, wire, component, api, collection } from "@uesio/ui"
 
 interface FileUploadAreaProps extends definition.UtilityProps {
 	accept?: string
@@ -15,8 +15,6 @@ const UploadArea = component.getUtility("uesio/io.uploadarea")
 const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	const { context, record, wire, fieldId } = props
 
-	const uesio = hooks.useUesio(props)
-
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 
 	const userFileId = userFile?.[collection.ID_FIELD] as string
@@ -26,7 +24,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 			const collectionFullName = wire.getCollection().getFullName()
 			const recordId = record.getIdFieldValue() || ""
 			const file = files[0]
-			const fileResponse = await uesio.file.uploadFile(
+			const fileResponse = await api.file.uploadFile(
 				context,
 				file,
 				collectionFullName,
@@ -39,7 +37,7 @@ const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	}
 
 	const deleteFile = async () => {
-		await uesio.file.deleteFile(context, userFileId)
+		await api.file.deleteFile(context, userFileId)
 		record.set(fieldId, "")
 	}
 

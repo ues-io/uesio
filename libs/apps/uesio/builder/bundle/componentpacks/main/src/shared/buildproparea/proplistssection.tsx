@@ -9,7 +9,6 @@ const Icon = component.getUtility("uesio/io.icon")
 
 const PropListsSection: FC<SectionRendererProps> = (props) => {
 	const { path = "", context, propsDef, valueAPI } = props
-	// const uesio = hooks.useUesio(props)
 
 	const section = props.section as builder.PropListsSection
 	const itemsPath = path + `["${section.name}"]`

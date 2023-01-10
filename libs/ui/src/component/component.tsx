@@ -1,9 +1,5 @@
-import { PropsWithChildren, forwardRef, FunctionComponent } from "react"
-import {
-	DefinitionMap,
-	BaseProps,
-	UtilityProps,
-} from "../definition/definition"
+import { forwardRef } from "react"
+import { DefinitionMap, UtilityProps, UC } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
@@ -44,18 +40,6 @@ function additionalContext(context: Context, additional: ContextFrame) {
 		return context.addFrame(frame)
 	}
 	return context
-}
-
-function Component<T>(props: PropsWithChildren<BaseProps & T>) {
-	const { componentType, path } = props
-	return (
-		<ErrorBoundary {...props}>
-			<ComponentInternal
-				{...props}
-				path={`${path}["${componentType}"]`}
-			/>
-		</ErrorBoundary>
-	)
 }
 
 function getThemeOverride(
@@ -116,7 +100,19 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+const Component: UC<Record<string, unknown>> = (props) => {
+	const { componentType, path } = props
+	return (
+		<ErrorBoundary {...props}>
+			<ComponentInternal
+				{...props}
+				path={`${path}["${componentType}"]`}
+			/>
+		</ErrorBoundary>
+	)
+}
+
+const ComponentInternal: UC<Record<string, unknown>> = (props) => {
 	const { componentType, context, definition } = props
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
@@ -132,7 +128,7 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	return (
 		<Loader
 			{...props}
-			definition={mergedDefinition}
+			definition={mergedDefinition || {}}
 			context={additionalContext(
 				context,
 				mergedDefinition?.["uesio.context"] as ContextFrame

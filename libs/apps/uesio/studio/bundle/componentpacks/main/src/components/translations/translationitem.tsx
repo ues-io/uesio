@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, component, api, wire } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	namespace: string
 	value: wire.PlainWireRecord
 	setValue: (value: wire.PlainWireRecord) => void

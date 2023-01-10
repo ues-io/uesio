@@ -1,12 +1,11 @@
 import { FunctionComponent } from "react"
-import { builder, hooks, signal, definition, component } from "@uesio/ui"
+import { builder, api, signal, definition, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
 const ToggleConditionAction: FunctionComponent<
 	ActionProps<builder.ToggleConditionAction>
 > = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { path = "", valueAPI } = props
 
 	const def = valueAPI.get(path) as definition.DefinitionMap
@@ -14,7 +13,7 @@ const ToggleConditionAction: FunctionComponent<
 	if (!pathArray) return null
 
 	const wireName = component.path.getKeyAtPath(pathArray[1])
-	const wire = uesio.wire.useWire(wireName || "", props.context)
+	const wire = api.wire.useWire(wireName || "", props.context)
 
 	const conditionId = def.id as string
 
@@ -39,7 +38,7 @@ const ToggleConditionAction: FunctionComponent<
 	const clickHandler =
 		signals &&
 		signals.length &&
-		uesio.signal.getHandler(signals, props.context)
+		api.signal.getHandler(signals, props.context)
 
 	const action = props.action
 	if (!action || !clickHandler || !condition) {

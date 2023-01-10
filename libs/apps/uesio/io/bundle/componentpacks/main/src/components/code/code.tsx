@@ -9,14 +9,10 @@ type CodeFieldDefinition = {
 
 type CodeFieldLanguage = "yaml" | "json" | "javascript" | "html" | "css"
 
-interface CodeProps extends definition.BaseProps {
-	definition: CodeFieldDefinition
-}
-
 const IOCodeField =
 	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
-const CodeField: definition.UesioComponent<CodeProps> = (props) => {
+const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(

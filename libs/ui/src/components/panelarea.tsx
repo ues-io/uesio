@@ -1,11 +1,10 @@
-import { FC } from "react"
 import { usePanels } from "../bands/panel/selectors"
 import { ComponentInternal } from "../component/component"
-import { BaseProps } from "../definition/definition"
 import { PanelDefinitionMap } from "../definition/panel"
 import { Context } from "../context/context"
+import { FC } from "react"
 
-const PanelArea: FC<BaseProps> = () => {
+const PanelArea: FC = () => {
 	const panels = usePanels()
 
 	return (

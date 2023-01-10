@@ -7,10 +7,11 @@ import { Context } from "../context/context"
 import { ComponentSignalDescriptor } from "./signal"
 
 export type BaseDefinition = {
-	"uesio.styles"?: Record<string, Record<string, string>>
+	"uesio.styles"?: DefinitionMap
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
-} & DefinitionMap
+	"uesio.classes"?: DisplayCondition[]
+}
 
 export type YamlDoc = yaml.Document<yaml.Node>
 
@@ -41,19 +42,19 @@ export type UploadSpec = {
 	uploadfield?: string
 }
 
-export type BaseProps = {
-	definition?: BaseDefinition
+export type BaseProps<T = DefinitionMap> = {
+	definition: T & BaseDefinition
 	path?: string
 	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
 }
 
-export type UesioComponent<T extends BaseProps = BaseProps> = FC<T> & {
+export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
 	signals?: Record<string, ComponentSignalDescriptor>
 }
 
-export type UtilityComponent<T extends UtilityProps = UtilityProps> = FC<T>
+export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 
 export interface UtilityProps {
 	index?: number
@@ -67,9 +68,7 @@ export interface UtilityProps {
 	componentType?: MetadataKey
 }
 
-export type DefinitionMap = {
-	[key: string]: Definition
-}
+export type DefinitionMap = Record<string, unknown>
 
 export type DefinitionList = DefinitionMap[]
 

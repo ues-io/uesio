@@ -181,9 +181,9 @@ function useStyles<K extends string>(
 		defaults,
 		mergeDefinitionMaps(
 			{},
-			props?.definition?.["uesio.styles"] as DefinitionMap,
+			props?.definition?.["uesio.styles"] || {},
 			props?.context
-		),
+		) as Record<string, CSSInterpolation>,
 		props?.componentType
 	)
 }
@@ -215,7 +215,7 @@ function useUtilityStyles<K extends string>(
 			classNames[className] = cx(
 				css([
 					defaults[className],
-					styles?.[className],
+					styles?.[className] as CSSInterpolation,
 					{
 						label: getClassNameLabel(
 							props?.componentType,

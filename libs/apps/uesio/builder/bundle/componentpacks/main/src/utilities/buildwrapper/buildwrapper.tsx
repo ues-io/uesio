@@ -1,5 +1,5 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
-import { definition, styles, component, hooks } from "@uesio/ui"
+import { definition, styles, component, api } from "@uesio/ui"
 import styling from "./styling"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
@@ -10,7 +10,6 @@ const Text = component.getUtility("uesio/io.text")
 const Popper = component.getUtility("uesio/io.popper")
 
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { children, path = "", definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
@@ -19,7 +18,7 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	if (!viewDefId || !viewDef) return null
 
-	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
+	const nodeState = api.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
 	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
@@ -29,8 +28,8 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	if (!propDef) throw new Error("No Prop Def Provided")
 	const accepts = propDef.accepts
 
-	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [, , dropPath] = uesio.builder.useDropNode()
+	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
+	const [, , dropPath] = api.builder.useDropNode()
 	const isDragging =
 		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
 
@@ -79,34 +78,26 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 					e.stopPropagation()
 					setTimeout(() => {
 						if (dragPath !== path) {
-							uesio.builder.setDragNode(
-								"viewdef",
-								viewDefId,
-								path
-							)
+							api.builder.setDragNode("viewdef", viewDefId, path)
 						}
 					})
 				}}
 				onDragEnd={() => {
-					uesio.builder.clearDragNode()
-					uesio.builder.clearDropNode()
+					api.builder.clearDragNode()
+					api.builder.clearDropNode()
 				}}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected &&
-						uesio.builder.setSelectedNode(
-							"viewdef",
-							viewDefId,
-							path
-						)
+						api.builder.setSelectedNode("viewdef", viewDefId, path)
 					event.stopPropagation()
 				}}
 				onMouseEnter={() => {
 					!isActive &&
-						uesio.builder.setActiveNode("viewdef", viewDefId, path)
+						api.builder.setActiveNode("viewdef", viewDefId, path)
 				}}
 				onMouseLeave={() => {
-					isActive && uesio.builder.clearActiveNode()
+					isActive && api.builder.clearActiveNode()
 				}}
 				draggable={canDrag}
 			>

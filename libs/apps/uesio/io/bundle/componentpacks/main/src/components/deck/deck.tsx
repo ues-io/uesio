@@ -1,20 +1,12 @@
-import { FunctionComponent } from "react"
-
 import { component, styles, definition } from "@uesio/ui"
 import List, { ListDefinition } from "../list/list"
 import { GridDefinition } from "../grid/grid"
 
-type DeckDefinition = GridDefinition &
-	ListDefinition &
-	definition.BaseDefinition
-
-interface DeckProps extends definition.BaseProps {
-	definition: DeckDefinition
-}
+type DeckDefinition = GridDefinition & ListDefinition
 
 const IOGrid = component.getUtility("uesio/io.grid")
 
-const Deck: FunctionComponent<DeckProps> = (props) => {
+const Deck: definition.UC<DeckDefinition> = (props) => {
 	const { definition, context } = props
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",

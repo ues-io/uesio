@@ -107,7 +107,6 @@ type PropDescriptor =
 	| TextProp
 	| TextAreaProp
 	| NumberProp
-	| CustomProp
 	| SelectProp
 	| BooleanProp
 	| MetadataProp
@@ -186,11 +185,6 @@ interface ParamProp extends DefinitionBasedPropDescriptor {
 }
 interface ParamsProp extends BasePropDescriptor {
 	type: "PARAMS"
-}
-
-interface CustomProp extends BasePropDescriptor {
-	type: "CUSTOM"
-	renderFunc: PropComponent<CustomProp>
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -362,7 +356,6 @@ export {
 	TextAreaProp,
 	IconProp,
 	NumberProp,
-	CustomProp,
 	MetadataProp,
 	SelectProp,
 	BooleanProp,

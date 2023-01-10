@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, builder, component } from "@uesio/ui"
+import { definition, api, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropertiesPane from "../propertiespane"
 
@@ -37,8 +37,8 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
-	const uesio = hooks.useUesio(props)
-	const [, , selectedNode] = uesio.builder.useSelectedNode()
+
+	const [, , selectedNode] = api.builder.useSelectedNode()
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
@@ -81,7 +81,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						selected={selected}
 						key={index}
 						onClick={() => {
-							uesio.builder.setSelectedNode(
+							api.builder.setSelectedNode(
 								"viewdef",
 								viewDefId,
 								orderPath

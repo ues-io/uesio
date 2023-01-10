@@ -1,11 +1,10 @@
-import { FunctionComponent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import { set } from "../../../api/defapi"
 
 const Button = component.getUtility("uesio/io.button")
 const Icon = component.getUtility("uesio/io.icon")
 
-const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
+const WiresActions: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const metadataType = "viewdef"
 	const metadataItem = context.getViewDefId() || ""
@@ -15,7 +14,7 @@ const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		localPath
 	)
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
 				display: "flex",

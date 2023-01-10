@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, metadata, styles } from "@uesio/ui"
+import { definition, component, api, metadata, styles } from "@uesio/ui"
 
 interface MetadataPickerProps extends definition.UtilityProps {
 	value: string | undefined
@@ -30,7 +30,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping,
 		fieldWrapperVariant,
 	} = props
-	const uesio = hooks.useUesio(props)
 
 	if (!context.getWorkspace() && !context.getSiteAdmin()) {
 		throw new Error("Must provide either siteadmin or workspace context")
@@ -80,7 +79,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		props
 	)
 
-	const [metadata, error] = uesio.builder.useMetadataList(
+	const [metadata, error] = api.builder.useMetadataList(
 		context,
 		metadataType,
 		"",

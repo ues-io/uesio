@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { component, context, builder, wire, hooks } from "@uesio/ui"
+import { component, context, builder, wire, api } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesPane from "../../shared/propertiespane"
 import {
@@ -96,7 +96,6 @@ const getConditionProperties = (
 
 const ConditionItem: FunctionComponent<Props> = (props) => {
 	const { conditionPath, context, condition, valueAPI } = props
-	const uesio = hooks.useUesio(props)
 
 	const isGroup = condition.type === "GROUP"
 	const groupConditions =
@@ -106,10 +105,10 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 		e.stopPropagation()
 		const viewDefId = context.getViewDefId()
 		viewDefId &&
-			uesio.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
+			api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
 	}
 
-	const [, , selectedNode] = uesio.builder.useSelectedNode()
+	const [, , selectedNode] = api.builder.useSelectedNode()
 	const selected = selectedNode === conditionPath
 
 	return (

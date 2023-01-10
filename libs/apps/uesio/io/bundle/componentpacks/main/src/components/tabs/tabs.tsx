@@ -2,21 +2,19 @@ import { component, styles, api, definition } from "@uesio/ui"
 
 const TabLabels = component.getUtility("uesio/io.tablabels")
 
-type TabsDefinition = {
-	id?: string
-	tabs?: {
-		id: string
-		label: string
-		components: definition.DefinitionList
-	}[]
-	footer?: definition.DefinitionList
-} & definition.BaseDefinition
-
-interface Props extends definition.BaseProps {
-	definition: TabsDefinition
+type TabDefinition = {
+	id: string
+	label: string
+	components: definition.DefinitionList
 }
 
-const Tabs: definition.UesioComponent<Props> = (props) => {
+type TabsDefinition = {
+	id?: string
+	tabs?: TabDefinition[]
+	footer?: definition.DefinitionList
+}
+
+const Tabs: definition.UC<TabsDefinition> = (props) => {
 	const { definition, context, path } = props
 	const classes = styles.useStyles(
 		{

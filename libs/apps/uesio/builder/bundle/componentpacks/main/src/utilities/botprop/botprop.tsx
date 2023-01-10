@@ -1,14 +1,13 @@
-import { hooks, builder } from "@uesio/ui"
+import { api, builder } from "@uesio/ui"
 import SelectProp from "../selectprop/selectprop"
 
 const BotProp: builder.PropComponent<builder.BotProp> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, descriptor } = props
 	const botType = descriptor.botType
 	const namespace = descriptor.namespace
 	if (!namespace) return null
 
-	const [metadata] = uesio.builder.useMetadataList(
+	const [metadata] = api.builder.useMetadataList(
 		context,
 		"BOT",
 		namespace,

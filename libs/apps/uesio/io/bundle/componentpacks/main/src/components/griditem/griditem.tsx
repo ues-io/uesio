@@ -5,11 +5,7 @@ type GridItemDefinition = {
 	area?: string
 }
 
-interface GridItemProps extends definition.BaseProps {
-	definition?: GridItemDefinition
-}
-
-const GridItem: definition.UesioComponent<GridItemProps> = (props) => {
+const GridItem: definition.UC<GridItemDefinition> = (props) => {
 	const { definition, context, path } = props
 	if (!definition) return <div />
 	const classes = styles.useStyles(

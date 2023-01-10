@@ -56,9 +56,6 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 	}
 }
 
-// This is the wire api exposed on the uesio object returned
-// to components using the useUesio hook.
-
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
 const useWire = (wireName: string | undefined, context: Context) => {

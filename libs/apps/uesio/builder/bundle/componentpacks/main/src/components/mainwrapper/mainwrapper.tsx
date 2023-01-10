@@ -7,7 +7,7 @@ import { useBuildMode } from "../../api/stateapi"
 
 const Grid = component.getUtility("uesio/io.grid")
 
-const MainWrapper: definition.UesioComponent = (props) => {
+const MainWrapper: definition.UC = (props) => {
 	const { context } = props
 	const [buildMode, setBuildMode] = useBuildMode(context)
 

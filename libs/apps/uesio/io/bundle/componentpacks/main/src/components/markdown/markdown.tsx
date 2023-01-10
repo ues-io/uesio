@@ -8,13 +8,9 @@ const MarkDownField = component.getUtility<MarkDownFieldProps>(
 type MarkDownDefinition = {
 	markdown?: string
 	mode: context.FieldMode
-} & definition.BaseDefinition
-
-interface MarkDownProps extends definition.BaseProps {
-	definition: MarkDownDefinition
 }
 
-const MarkDown: definition.UesioComponent<MarkDownProps> = (props) => {
+const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import {
 	wire,
-	hooks,
+	api,
 	collection,
 	definition,
 	component,
@@ -25,7 +25,6 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 }
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const {
 		fieldId,
 		fieldMetadata,
@@ -38,7 +37,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		placeholder,
 	} = props
 
-	const referencedCollection = uesio.collection.useCollection(
+	const referencedCollection = api.collection.useCollection(
 		context,
 		fieldMetadata.source.reference?.collection || ""
 	)
@@ -111,7 +110,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				) => {
 					const searchFields = options?.searchFields || [nameField]
 					const returnFields = options?.returnFields || [nameField]
-					const result = await uesio.platform.loadData(context, {
+					const result = await api.platform.loadData(context, {
 						wires: [
 							{
 								name: "search",

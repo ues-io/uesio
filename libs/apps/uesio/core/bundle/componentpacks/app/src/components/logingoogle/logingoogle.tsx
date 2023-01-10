@@ -1,6 +1,6 @@
 import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 
 type LoginDefinition = {
@@ -14,14 +14,13 @@ interface LoginProps extends definition.BaseProps {
 }
 
 const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
 	const clientIdKey = definition.clientId
-	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
+	const clientIdValue = api.view.useConfigValue(clientIdKey)
 	const buttonText = definition.text
 
 	const responseGoogle = (response: GoogleLoginResponse): void => {
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "user/LOGIN",
 				type: "google",

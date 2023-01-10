@@ -5,13 +5,9 @@ const IOTitleBar = component.getUtility("uesio/io.titlebar")
 type TitleBarDefinition = {
 	title: string
 	subtitle: string
-} & definition.BaseDefinition
-
-interface TitleBarProps extends definition.BaseProps {
-	definition: TitleBarDefinition
 }
 
-const TitleBar: definition.UtilityComponent<TitleBarProps> = (props) => {
+const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 	const { definition, path, context } = props
 
 	return (

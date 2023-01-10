@@ -1,4 +1,4 @@
-import { builder, context, hooks, wire, component, styles } from "@uesio/ui"
+import { builder, context, api, wire, component, styles } from "@uesio/ui"
 import React, { FC } from "react"
 import has from "lodash/has"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
@@ -26,9 +26,7 @@ const useFields = (
 
 	const [collection, setCollection] = React.useState(wireCollection)
 
-	const uesio = hooks.useUesio()
-
-	const [collectionFields] = uesio.builder.useMetadataList(
+	const [collectionFields] = api.builder.useMetadataList(
 		context,
 		"FIELD",
 		"",
@@ -80,7 +78,7 @@ const FieldPicker: FC<T> = (props) => {
 	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
 	const transformStart = "translate(-5px, 0)"
 	const transformEnd = "translate(0, 0)"
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			breadcrumbs: {
 				maxWidth: "100%",
@@ -163,7 +161,7 @@ const FieldPicker: FC<T> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
+
 	const [fieldKeys, collectionKey, setCollection] = useFields(
 		wireDef,
 		context
@@ -180,7 +178,7 @@ const FieldPicker: FC<T> = (props) => {
 	}
 	const { searchTerm, setSearchTerm, result } = useSearch(fieldKeys)
 
-	const collection = uesio.collection.useCollection(context, collectionKey)
+	const collection = api.collection.useCollection(context, collectionKey)
 
 	// Scroll the fieldlist div to the top when switching collections
 	React.useEffect(() => {

@@ -1,12 +1,11 @@
 import { FunctionComponent } from "react"
-import { builder, hooks, signal, definition } from "@uesio/ui"
+import { builder, api, signal, definition } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
 const RunSignalsAction: FunctionComponent<
 	ActionProps<builder.RunSignalsAction>
 > = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { path, context, valueAPI } = props
 
 	const def = valueAPI.get(path) as definition.DefinitionMap
@@ -22,7 +21,7 @@ const RunSignalsAction: FunctionComponent<
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={uesio.signal.getHandler(signals, context)}
+			onClick={api.signal.getHandler(signals, context)}
 			icon="router"
 			context={context}
 		/>

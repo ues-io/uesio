@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	csvOptions: collection.SelectOption[]
 	mapping: definition.ImportMapping | undefined
 	setMapping: (mapping: definition.ImportMapping) => void

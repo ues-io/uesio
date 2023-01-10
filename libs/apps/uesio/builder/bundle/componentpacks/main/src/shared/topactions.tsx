@@ -1,13 +1,13 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, styles } from "@uesio/ui"
+import { definition, component, api, hooks, styles } from "@uesio/ui"
 
 const Button = component.getUtility("uesio/io.button")
 const Group = component.getUtility("uesio/io.group")
 
 const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context } = props
-	const uesio = hooks.useUesio(props)
-	const hasChanges = uesio.builder.useHasChanges()
+
+	const hasChanges = api.builder.useHasChanges()
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -25,11 +25,11 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	hooks.useHotKeyCallback("meta+s", () => {
-		uesio.builder.save(context)
+		api.builder.save(context)
 	})
 
 	hooks.useHotKeyCallback("meta+shift+c", () => {
-		uesio.builder.cancel(context)
+		api.builder.cancel(context)
 	})
 
 	return (
@@ -46,7 +46,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						disabled={!hasChanges}
 						variant="uesio/builder.primarytoolbar"
 						onClick={() => {
-							uesio.builder.save(context)
+							api.builder.save(context)
 						}}
 					/>
 					<Button
@@ -55,7 +55,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						disabled={!hasChanges}
 						variant="uesio/builder.secondarytoolbar"
 						onClick={() => {
-							uesio.builder.cancel(context)
+							api.builder.cancel(context)
 						}}
 					/>
 				</Group>

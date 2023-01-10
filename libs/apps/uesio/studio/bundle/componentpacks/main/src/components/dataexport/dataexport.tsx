@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 
 type DataExportDefinition = {
 	collectionId: string
@@ -15,12 +15,12 @@ const Button = component.getUtility("uesio/io.button")
 
 const DataExport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
-	const uesio = hooks.useUesio(props)
+
 	const collectionId = context.mergeString(definition?.collectionId)
 
 	const wireName = definition?.wireName
 
-	const collection = uesio.collection.useCollection(context, collectionId)
+	const collection = api.collection.useCollection(context, collectionId)
 	if (!collection) return null
 
 	const spec: definition.ExportSpec = {
@@ -30,17 +30,17 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	}
 
 	const triggerExport = async () => {
-		const jobResponse = await uesio.collection.createJob(context, spec)
+		const jobResponse = await api.collection.createJob(context, spec)
 
 		if (!jobResponse.id) {
-			uesio.notification.addError(
+			api.notification.addError(
 				"Something went wrong unable to create the job",
 				context
 			)
 			return
 		}
 
-		uesio.signal.run(
+		api.signal.run(
 			{
 				signal: "wire/LOAD",
 				wires: [wireName],

@@ -5,7 +5,7 @@ import {
 	collection,
 	wire,
 	component,
-	hooks,
+	api,
 } from "@uesio/ui"
 import { UserFieldOptions } from "../../components/field/field"
 
@@ -26,8 +26,6 @@ const ReferenceField = component.getUtility("uesio/io.referencefield")
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { mode, record, fieldId, context, options } = props
 	const readonly = mode === "READ"
-
-	const uesio = hooks.useUesio(props)
 
 	if (!readonly) {
 		return <ReferenceField {...props} />
@@ -51,7 +49,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const fullName =
 		firstName && lastName ? `${firstName} ${lastName}` : uniquekey
 
-	const fileURL = uesio.file.getUserFileURL(
+	const fileURL = api.file.getUserFileURL(
 		context.getWorkspace() ? new ctx.Context() : context,
 		picture?.getIdFieldValue()
 	)

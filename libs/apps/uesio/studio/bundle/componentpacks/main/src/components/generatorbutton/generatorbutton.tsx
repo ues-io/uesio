@@ -1,6 +1,6 @@
 import { FunctionComponent, useState } from "react"
 import {
-	hooks,
+	api,
 	param,
 	definition,
 	component,
@@ -60,7 +60,7 @@ const getLayoutFieldsFromParams = (
 const GeneratorButton: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const { label, generator } = definition
-	const uesio = hooks.useUesio(props)
+
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
 	const workspaceContext = context.getWorkspace()
@@ -68,18 +68,18 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 
 	const [open, setOpen] = useState<boolean>(false)
 
-	const [params] = uesio.bot.useParams(
+	const [params] = api.bot.useParams(
 		context,
 		genNamespace,
 		genName,
 		"generator"
 	)
 
-	uesio.wire.useDynamicWire(
+	api.wire.useDynamicWire(
 		open ? WIRE_NAME : "",
 		{
 			viewOnly: true,
-			fields: uesio.wire.getWireFieldsFromParams(params),
+			fields: api.wire.getWireFieldsFromParams(params),
 			init: {
 				create: true,
 			},
@@ -96,7 +96,7 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 				onClick={() => setOpen(true)}
 			/>
 			{open && (
-				<component.Panel key="generatorpanel" context={context}>
+				<component.Panel>
 					<Dialog
 						context={context}
 						width="400px"
@@ -110,14 +110,14 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 							content={getLayoutFieldsFromParams(params)}
 							submitLabel="Generate"
 							onSubmit={async (record: wire.WireRecord) => {
-								await uesio.bot.callGenerator(
+								await api.bot.callGenerator(
 									context,
 									genNamespace,
 									genName,
-									uesio.wire.getParamValues(params, record)
+									api.wire.getParamValues(params, record)
 								)
 								setOpen(false)
-								return uesio.signal.run(
+								return api.signal.run(
 									{
 										signal: "route/RELOAD",
 									},
