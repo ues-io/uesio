@@ -2,9 +2,6 @@ FROM golang:1.19-alpine AS multistage
 
 WORKDIR /src
 COPY ./apps/platform .
-RUN \
-    --mount=type=cache,target=$GOPATH \
-    go install
 RUN go build
 
 ##
