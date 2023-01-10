@@ -1,12 +1,30 @@
-import { FunctionComponent } from "react"
-
-import { FilterDefinition, FilterProps } from "./filterdefinition"
-import { component, hooks, collection, wire, definition } from "@uesio/ui"
+import {
+	component,
+	api,
+	collection,
+	wire,
+	definition,
+	metadata,
+} from "@uesio/ui"
 
 const SelectFilter = component.getUtility("uesio/io.selectfilter")
 const MonthFilter = component.getUtility("uesio/io.monthfilter")
 const WeekFilter = component.getUtility("uesio/io.weekfilter")
 const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+
+type FilterDefinition = {
+	fieldId: string
+	wire: string
+	label?: string
+	labelPosition?: string
+	displayAs?: string
+	wrapperVariant: metadata.MetadataKey
+	conditionId?: string
+} & definition.BaseDefinition
+
+interface FilterProps extends definition.BaseProps {
+	definition: FilterDefinition
+}
 
 type CommonProps = {
 	fieldMetadata: collection.Field
@@ -36,11 +54,10 @@ const getFilterContent = (
 	}
 }
 
-const Filter: FunctionComponent<FilterProps> = (props) => {
+const Filter: definition.UesioComponent<FilterProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId, conditionId } = definition
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire, context)
+	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
 
 	const collection = wire.getCollection()
@@ -71,5 +88,30 @@ const Filter: FunctionComponent<FilterProps> = (props) => {
 		</FieldWrapper>
 	)
 }
+
+/*
+const FilterPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Filter",
+	description: "Just a Filter",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "Wire",
+		},
+		{
+			name: "fieldId",
+			type: "TEXT",
+			label: "id",
+		},
+	],
+	sections: [],
+	actions: [],
+	type: "component",
+	classes: ["root"],
+}
+*/
 
 export default Filter

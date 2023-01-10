@@ -8,7 +8,7 @@ import {
 	context,
 	metadata,
 } from "@uesio/ui"
-import { ReferenceGroupFieldOptions } from "../../components/field/fielddefinition"
+import { ReferenceGroupFieldOptions } from "../../components/field/field"
 
 const TextField = component.getUtility("uesio/io.textfield")
 

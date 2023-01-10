@@ -1,4 +1,12 @@
-import { hooks, styles, component, wire, signal, definition } from "@uesio/ui"
+import {
+	api,
+	styles,
+	component,
+	wire,
+	signal,
+	definition,
+	context,
+} from "@uesio/ui"
 import omit from "lodash/omit"
 import partition from "lodash/partition"
 import { toggleMode, useMode } from "../../shared/mode"
@@ -13,8 +21,38 @@ import { GroupUtilityProps } from "../../utilities/group/group"
 import { MenuButtonUtilityProps } from "../../utilities/menubutton/menubutton"
 import { PaginatorUtilityProps } from "../../utilities/paginator/paginator"
 import { TableUtilityProps } from "../../utilities/table/table"
+import { ReferenceFieldOptions, UserFieldOptions } from "../field/field"
 
-import { ColumnDefinition, TableProps } from "./tabledefinition"
+type TableDefinition = {
+	id: string
+	wire: string
+	mode: context.FieldMode
+	columns: ColumnDefinition[]
+	rowactions?: RowAction[]
+	recordDisplay?: component.DisplayCondition[]
+	rownumbers?: boolean
+	pagesize?: string
+	order?: boolean
+	selectable?: boolean
+} & definition.BaseDefinition
+
+interface TableProps extends definition.BaseProps {
+	definition: TableDefinition
+}
+
+type RowAction = {
+	text: string
+	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
+}
+
+type ColumnDefinition = {
+	field: string
+	reference?: ReferenceFieldOptions
+	user?: UserFieldOptions
+	label: string
+	components: definition.DefinitionList
+}
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
@@ -42,8 +80,7 @@ const Paginator =
 
 const Table: definition.UesioComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire, context)
+	const wire = api.wire.useWire(definition.wire, context)
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
@@ -52,7 +89,7 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const componentId = uesio.component.getComponentIdFromProps(
+	const componentId = api.component.getComponentIdFromProps(
 		definition.id,
 		props
 	)
@@ -83,7 +120,7 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 		newContext
 	)
 
-	const [selected, setSelected] = uesio.component.useStateSlice<
+	const [selected, setSelected] = api.component.useStateSlice<
 		Record<string, boolean>
 	>("selected", componentId, {})
 
@@ -109,7 +146,7 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 
 	const defaultActionsFunc = defaultActions.length
 		? (recordContext: RecordContext) => {
-				const handler = uesio.signal.getHandler(
+				const handler = api.signal.getHandler(
 					defaultActions.flatMap((action) => action.signals),
 					recordContext.context
 				)
@@ -125,7 +162,7 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 					context={recordContext.context}
 				>
 					{otherActions.map((action, i) => {
-						const handler = uesio.signal.getHandler(
+						const handler = api.signal.getHandler(
 							action.signals,
 							recordContext.context
 						)
@@ -287,7 +324,7 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 					loadMore={
 						wire.hasMore()
 							? async () => {
-									await uesio.signal.run(
+									await api.signal.run(
 										{
 											signal: "wire/LOAD_NEXT_BATCH",
 											wires: [wire.getId()],
@@ -304,5 +341,70 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 }
 
 Table.signals = signals
+
+/*
+const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Table",
+	description: "View and edit tabular data.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	properties: [
+		{
+			name: "id",
+			type: "TEXT",
+			label: "id",
+		},
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "wire",
+		},
+		{
+			name: "mode",
+			type: "SELECT",
+			label: "Mode",
+			options: [
+				{
+					value: "READ",
+					label: "Read",
+				},
+				{
+					value: "EDIT",
+					label: "Edit",
+				},
+			],
+		},
+		{
+			name: "pagesize",
+			type: "TEXT",
+			label: "Page size",
+		},
+	],
+	sections: [],
+	actions: [],
+	accepts: ["uesio.field"],
+	traits: ["uesio.standalone"],
+	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+
+		const uesio = hooks.useUesio()
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode + '["columns"]',
+				{
+					field: `${fieldNamespace}.${fieldName}`,
+				},
+				dropIndex
+			)
+		}
+	},
+	type: "component",
+	classes: ["root"],
+	category: "DATA",
+}
+*/
 
 export default Table

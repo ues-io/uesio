@@ -1,4 +1,4 @@
-import { hooks, component, signal, definition } from "@uesio/ui"
+import { api, component, signal, definition, context } from "@uesio/ui"
 
 import {
 	setEditMode,
@@ -7,7 +7,15 @@ import {
 	useMode,
 } from "../../shared/mode"
 
-import { ListProps } from "./listdefinition"
+type ListDefinition = {
+	id: string
+	wire: string
+	mode: context.FieldMode
+}
+
+interface ListProps extends definition.BaseProps {
+	definition: ListDefinition
+}
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
@@ -17,8 +25,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 
 const List: definition.UesioComponent<ListProps> = (props) => {
 	const { path, context, definition } = props
-	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire, context)
+	const wire = api.wire.useWire(definition.wire, context)
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
@@ -27,7 +34,7 @@ const List: definition.UesioComponent<ListProps> = (props) => {
 		  })
 		: context
 
-	const componentId = uesio.component.getComponentIdFromProps(
+	const componentId = api.component.getComponentIdFromProps(
 		definition.id,
 		props
 	)
@@ -53,6 +60,69 @@ const List: definition.UesioComponent<ListProps> = (props) => {
 		</>
 	)
 }
+
+/*
+const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "List",
+	description:
+		"Iterate over records in a wire and render content in the context of each record.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	properties: [
+		{
+			name: "id",
+			type: "TEXT",
+			label: "id",
+		},
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "Wire",
+		},
+		{
+			name: "mode",
+			type: "SELECT",
+			label: "Mode",
+			options: [
+				{
+					value: "READ",
+					label: "Read",
+				},
+				{
+					value: "EDIT",
+					label: "Edit",
+				},
+			],
+		},
+	],
+	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+		const uesio = hooks.useUesio()
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					"uesio/io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
+					},
+				},
+				dropIndex
+			)
+		}
+	},
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	type: "component",
+	classes: ["root"],
+	category: "DATA",
+}
+*/
+
+export { ListDefinition }
 
 List.signals = signals
 export default List

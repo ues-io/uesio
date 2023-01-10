@@ -11,10 +11,7 @@ import {
 	metadata,
 } from "@uesio/ui"
 
-import {
-	FieldState,
-	LabelPosition,
-} from "../../components/field/fielddefinition"
+import { FieldState, LabelPosition } from "../../components/field/field"
 
 import { MarkDownFieldProps } from "../markdownfield/markdownfield"
 

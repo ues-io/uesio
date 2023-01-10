@@ -1,8 +1,15 @@
-import { FunctionComponent } from "react"
-import { component, styles } from "@uesio/ui"
-import { GridItemProps } from "./griditemdefinition"
+import { component, styles, definition } from "@uesio/ui"
 
-const GridItem: FunctionComponent<GridItemProps> = (props) => {
+type GridItemDefinition = {
+	column?: string
+	area?: string
+}
+
+interface GridItemProps extends definition.BaseProps {
+	definition?: GridItemDefinition
+}
+
+const GridItem: definition.UesioComponent<GridItemProps> = (props) => {
 	const { definition, context, path } = props
 	if (!definition) return <div />
 	const classes = styles.useStyles(
@@ -26,5 +33,31 @@ const GridItem: FunctionComponent<GridItemProps> = (props) => {
 		</div>
 	)
 }
+
+/*
+const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Grid Item",
+	description: "Grid Item",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({
+		components: [],
+	}),
+	properties: [
+		{
+			name: "column",
+			type: "TEXT",
+			label: "Column",
+		},
+		{
+			name: "area",
+			type: "TEXT",
+			label: "Area",
+		},
+	],
+	sections: [],
+	classes: ["root"],
+	type: "component",
+}
+*/
 
 export default GridItem

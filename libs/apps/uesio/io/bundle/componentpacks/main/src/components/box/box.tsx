@@ -1,6 +1,4 @@
-import { FunctionComponent } from "react"
-
-import { component, styles, hooks, signal, definition } from "@uesio/ui"
+import { component, styles, api, signal, definition } from "@uesio/ui"
 
 type BoxDefinition = {
 	signals?: signal.SignalDefinition[]
@@ -10,22 +8,19 @@ interface BoxProps extends definition.BaseProps {
 	definition: BoxDefinition
 }
 
-const Box: FunctionComponent<BoxProps> = (props) => {
+const Box: definition.UesioComponent<BoxProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
+
 	const { definition, context, path } = props
 	return (
 		<div
 			className={classes.root}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals, context)
-			}
+			onClick={api.signal.getHandler(definition.signals, context)}
 		>
 			<component.Slot
 				definition={definition}

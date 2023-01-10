@@ -1,9 +1,20 @@
-import { FC } from "react"
+import { api, signal, definition, styles } from "@uesio/ui"
 
-import { ImageProps } from "./imagedefinition"
-import { hooks, styles } from "@uesio/ui"
+type ImageDefinition = {
+	file?: string
+	height?: string
+	align?: "left" | "center" | "right"
+	signals?: signal.SignalDefinition[]
+	loading: "lazy" | "eager"
+	alt: string
+	src?: string
+}
 
-const Image: FC<ImageProps> = (props) => {
+interface ImageProps extends definition.BaseProps {
+	definition: ImageDefinition
+}
+
+const Image: definition.UesioComponent<ImageProps> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -21,24 +32,17 @@ const Image: FC<ImageProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 
 	return (
 		<div
 			className={classes.root}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals, context)
-			}
+			onClick={api.signal.getHandler(definition.signals, context)}
 		>
 			<img
 				className={classes.inner}
 				src={
 					definition.file
-						? uesio.file.getURLFromFullName(
-								context,
-								definition.file
-						  )
+						? api.file.getURLFromFullName(context, definition.file)
 						: context.mergeString(definition.src)
 				}
 				loading={definition.loading}
@@ -47,5 +51,81 @@ const Image: FC<ImageProps> = (props) => {
 		</div>
 	)
 }
+
+/*
+const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Image",
+	description: "Display an image.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "file",
+			type: "METADATA",
+			metadataType: "FILE",
+			label: "File",
+		},
+		{
+			name: "src",
+			type: "TEXT",
+			label: "url",
+		},
+		{
+			name: "alt",
+			type: "TEXT",
+			label: "Alt text",
+		},
+		{
+			name: "height",
+			type: "TEXT",
+			label: "Height",
+		},
+		{
+			name: "align",
+			type: "SELECT",
+			label: "Alignment",
+			options: [
+				{
+					value: "left",
+					label: "Left",
+				},
+				{
+					value: "center",
+					label: "Center",
+				},
+				{
+					value: "right",
+					label: "Right",
+				},
+			],
+		},
+		{
+			name: "loading",
+			type: "SELECT",
+			label: "Loading",
+			options: [
+				{
+					value: "lazy",
+					label: "Lazy",
+				},
+				{
+					value: "eager",
+					label: "Eager",
+				},
+			],
+		},
+	],
+	sections: [
+		{
+			title: "Signals",
+			type: "SIGNALS",
+		},
+	],
+	traits: ["uesio.standalone"],
+	classes: ["root", "inner"],
+	type: "component",
+	category: "CONTENT",
+}
+*/
 
 export default Image

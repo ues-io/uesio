@@ -1,14 +1,24 @@
-import { FunctionComponent } from "react"
-import { component, styles, hooks } from "@uesio/ui"
-import { CodeProps } from "./codedefinition"
+import { component, styles, api, definition } from "@uesio/ui"
 import { CodeFieldUtilityProps } from "../../utilities/codefield/codefield"
+
+type CodeFieldDefinition = {
+	language?: CodeFieldLanguage
+	label?: string
+	file: string
+}
+
+type CodeFieldLanguage = "yaml" | "json" | "javascript" | "html" | "css"
+
+interface CodeProps extends definition.BaseProps {
+	definition: CodeFieldDefinition
+}
 
 const IOCodeField =
 	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
-const CodeField: FunctionComponent<CodeProps> = (props) => {
+const CodeField: definition.UesioComponent<CodeProps> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
+
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -16,7 +26,7 @@ const CodeField: FunctionComponent<CodeProps> = (props) => {
 		props
 	)
 	const language = definition?.language || "yaml"
-	const fileContent = uesio.file.useFile(context, definition.file)
+	const fileContent = api.file.useFile(context, definition.file)
 
 	return (
 		<IOCodeField
@@ -33,5 +43,61 @@ const CodeField: FunctionComponent<CodeProps> = (props) => {
 		/>
 	)
 }
+/*
+const CodePropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Code",
+	description: "Code editor",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "language",
+			type: "SELECT",
+			label: "Language",
+			options: [
+				{
+					value: "",
+					label: "",
+				},
+				{
+					value: "yaml",
+					label: "yaml",
+				},
+				{
+					value: "json",
+					label: "json",
+				},
+				{
+					value: "javascript",
+					label: "javascript",
+				},
+				{
+					value: "html",
+					label: "html",
+				},
+				{
+					value: "css",
+					label: "css",
+				},
+			],
+		},
+		{
+			name: "label",
+			type: "TEXT",
+			label: "label",
+		},
+		{
+			name: "file",
+			type: "METADATA",
+			metadataType: "FILE",
+			label: "File",
+		},
+	],
+	sections: [],
+	actions: [],
+	//traits: ["uesio.standalone"],
+	type: "component",
+	classes: ["root"],
+} */
 
 export default CodeField

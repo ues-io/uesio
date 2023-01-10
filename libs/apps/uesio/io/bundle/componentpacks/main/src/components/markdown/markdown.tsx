@@ -1,14 +1,20 @@
-import { FunctionComponent } from "react"
-
-import { MarkDownProps } from "./markdowndefinition"
-import { component, styles } from "@uesio/ui"
+import { component, styles, context, definition } from "@uesio/ui"
 import { MarkDownFieldProps } from "../../utilities/markdownfield/markdownfield"
 
 const MarkDownField = component.getUtility<MarkDownFieldProps>(
 	"uesio/io.markdownfield"
 )
 
-const MarkDown: FunctionComponent<MarkDownProps> = (props) => {
+type MarkDownDefinition = {
+	markdown?: string
+	mode: context.FieldMode
+} & definition.BaseDefinition
+
+interface MarkDownProps extends definition.BaseProps {
+	definition: MarkDownDefinition
+}
+
+const MarkDown: definition.UesioComponent<MarkDownProps> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -28,5 +34,29 @@ const MarkDown: FunctionComponent<MarkDownProps> = (props) => {
 		/>
 	)
 }
+
+/*
+const MarkDownPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "MarkDown",
+	description: "Display formatted markdown text.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({
+		markdown: "MarkDown Goes Here",
+	}),
+	properties: [
+		{
+			name: "markdown",
+			type: "TEXT_AREA",
+			label: "Markdown",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "CONTENT",
+}
+*/
 
 export default MarkDown

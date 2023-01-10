@@ -1,4 +1,4 @@
-import { hooks, styles, component, signal, definition } from "@uesio/ui"
+import { api, styles, component, signal, definition } from "@uesio/ui"
 import { IconUtilityProps } from "../../utilities/icon/icon"
 import { ButtonUtilityProps } from "../../utilities/button/button"
 
@@ -18,7 +18,6 @@ const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const Button: definition.UesioComponent<ButtonProps> = (props) => {
 	const { definition, context } = props
-	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -33,18 +32,14 @@ const Button: definition.UesioComponent<ButtonProps> = (props) => {
 		"selected",
 		definition
 	)
-	const handler = uesio.signal.getHandler(definition.signals, context)
-	uesio.signal.useRegisterHotKey(
-		definition.hotkey,
-		definition.signals,
-		context
-	)
+
+	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
 	return (
 		<IOButton
 			variant={definition["uesio.variant"]}
 			classes={classes}
 			label={definition.text}
-			onClick={handler}
+			onClick={api.signal.getHandler(definition.signals, context)}
 			context={context}
 			isSelected={isSelected}
 			icon={

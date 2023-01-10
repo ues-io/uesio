@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, styles, component, wire } from "@uesio/ui"
-import { LabelPosition } from "../../components/field/fielddefinition"
+import { LabelPosition } from "../../components/field/field"
 
 interface FieldWrapperUtilityProps extends definition.UtilityProps {
 	label?: string

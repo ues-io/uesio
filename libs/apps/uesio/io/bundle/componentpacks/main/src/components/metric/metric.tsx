@@ -1,10 +1,19 @@
-import { FC } from "react"
-import { styles, component, hooks } from "@uesio/ui"
-import { Props } from "./metricdefinition"
+import { styles, component, api, definition, signal } from "@uesio/ui"
 
 const MetricUtility = component.getUtility("uesio/io.metric")
 
-const MetricComponent: FC<Props> = (props) => {
+export type MetricDefinition = {
+	title?: string
+	unit?: string
+	value: string
+	signals?: signal.SignalDefinition[]
+} & definition.BaseDefinition
+
+export interface Props extends definition.BaseProps {
+	definition: MetricDefinition
+}
+
+const MetricComponent: definition.UesioComponent<Props> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(
@@ -18,13 +27,11 @@ const MetricComponent: FC<Props> = (props) => {
 		props
 	)
 
-	const uesio = hooks.useUesio(props)
-	const handler = uesio.signal.getHandler(definition.signals, context)
 	const value = context.merge(definition.value)
 
 	return (
 		<MetricUtility
-			onClick={handler}
+			onClick={api.signal.getHandler(definition.signals, context)}
 			classes={classes}
 			context={context}
 			title={definition.title}
@@ -34,4 +41,27 @@ const MetricComponent: FC<Props> = (props) => {
 	)
 }
 
+/*
+const PropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Metric",
+	description: "A metric box",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({
+		text: "New metric",
+	}),
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "VISUALIZATION",
+}
+*/
 export default MetricComponent

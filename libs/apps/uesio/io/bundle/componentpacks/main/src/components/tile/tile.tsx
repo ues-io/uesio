@@ -1,12 +1,19 @@
-import { FunctionComponent } from "react"
-
-import { component, styles, hooks } from "@uesio/ui"
-import { TileProps } from "./tiledefinition"
+import { component, styles, api, definition, signal } from "@uesio/ui"
 import { TileUtilityProps } from "../../utilities/tile/tile"
 
 const IOTile = component.getUtility<TileUtilityProps>("uesio/io.tile")
 
-const Tile: FunctionComponent<TileProps> = (props) => {
+type TileDefinition = {
+	signals?: signal.SignalDefinition[]
+	avatar?: definition.DefinitionList
+	content?: definition.DefinitionList
+} & definition.BaseDefinition
+
+interface TileProps extends definition.BaseProps {
+	definition: TileDefinition
+}
+
+const Tile: definition.UesioComponent<TileProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -16,9 +23,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		},
 		props
 	)
-	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
-	const handler = uesio.signal.getHandler(definition.signals, context)
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
@@ -30,7 +35,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
-			onClick={handler}
+			onClick={api.signal.getHandler(definition.signals, context)}
 			isSelected={isSelected}
 			avatar={
 				definition.avatar && (
@@ -54,5 +59,26 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		</IOTile>
 	)
 }
+
+/*
+const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Tile",
+	description: "A clickable tag representing a record.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({}),
+	properties: [],
+	sections: [
+		{
+			title: "Signals",
+			type: "SIGNALS",
+		},
+	],
+	actions: [],
+	traits: ["uesio.standalone"],
+	type: "component",
+	classes: ["root", "content", "avatar"],
+	category: "CONTENT",
+}
+*/
 
 export default Tile
