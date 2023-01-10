@@ -32,6 +32,13 @@ jobs:
         needs: build-and-test
 
         steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Download dist from previous Job
+              uses: actions/download-artifact@v3
+              with:
+                  name: dist
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
               with:
@@ -47,6 +54,7 @@ jobs:
               id: push-ecr
               env:
                   IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
+                  GITSHA: ${{ github.sha }}
               run: |
                   docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile .
                   docker push $IMAGE_TAG
