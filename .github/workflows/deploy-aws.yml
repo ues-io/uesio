@@ -1,11 +1,10 @@
 name: Build and Deploy DEV
 
 on:
-    - push:
-          branches:
-              - master
-              - workflow-changes
-    - workflow_dispatch:
+    push:
+        branches:
+            - master
+            - workflow-changes
 
 env:
     # AWS_REGION: MY_AWS_REGION # set this to your preferred AWS region, e.g. us-west-1
