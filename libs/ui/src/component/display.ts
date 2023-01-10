@@ -1,5 +1,5 @@
 import { Context } from "../context/context"
-import { BaseDefinition, DefinitionMap } from "../definition/definition"
+import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
 
 type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
@@ -323,7 +323,7 @@ const useShould = (
 function shouldHaveClass(
 	context: Context,
 	className: string,
-	definition?: DefinitionMap
+	definition?: BaseDefinition
 ) {
 	const classesLogic = definition?.["uesio.classes"] as
 		| Record<string, DisplayCondition[]>

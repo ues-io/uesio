@@ -7,13 +7,9 @@ type TextDefinition = {
 	element?: string
 	color?: string
 	align?: string
-} & definition.BaseDefinition
-
-interface TextProps extends definition.BaseProps {
-	definition: TextDefinition
 }
 
-const Text: definition.UesioComponent<TextProps> = (props) => {
+const Text: definition.UC<TextDefinition> = (props) => {
 	const { definition, context } = props
 	const classes = styles.useStyles(
 		{

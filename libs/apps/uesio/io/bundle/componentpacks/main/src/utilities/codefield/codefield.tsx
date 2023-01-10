@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context, hooks } from "@uesio/ui"
+import { definition, styles, context, api } from "@uesio/ui"
 import Editor, { EditorProps, loader, OnChange } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
@@ -12,7 +12,7 @@ interface CodeFieldUtilityProps extends definition.UtilityProps {
 	onMount?: EditorProps["onMount"]
 }
 
-const staticAssetPath = hooks.useUesio().platform.getStaticAssetsPath()
+const staticAssetPath = api.platform.getStaticAssetsPath()
 
 loader.config({
 	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },

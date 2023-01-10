@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
@@ -44,10 +44,10 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 	},
 ]
 
-const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
+const CodePanel: definition.UtilityComponent = (props) => {
 	const { context, className } = props
 
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			highlightLines: {
 				backgroundColor: "rgb(255,238,240)",

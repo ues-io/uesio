@@ -2,18 +2,14 @@ import { styles, component, api, definition, signal } from "@uesio/ui"
 
 const MetricUtility = component.getUtility("uesio/io.metric")
 
-export type MetricDefinition = {
+type MetricDefinition = {
 	title?: string
 	unit?: string
 	value: string
 	signals?: signal.SignalDefinition[]
-} & definition.BaseDefinition
-
-export interface Props extends definition.BaseProps {
-	definition: MetricDefinition
 }
 
-const MetricComponent: definition.UesioComponent<Props> = (props) => {
+const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(

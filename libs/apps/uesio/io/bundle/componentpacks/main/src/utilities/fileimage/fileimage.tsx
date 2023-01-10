@@ -6,7 +6,7 @@ import {
 	component,
 	context,
 	wire,
-	hooks,
+	api,
 } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 
@@ -24,14 +24,13 @@ const Icon = component.getUtility("uesio/io.icon")
 const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, fieldId, record, context, wire, mode } = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
 	const userModDate = userFile?.["uesio/core.updatedat"] as string
 	const accept = fieldMetadata.getAccept()
-	const fileUrl = uesio.file.getUserFileURL(context, userFileId, userModDate)
+	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
 	const actionIconStyles: CSSProperties = {
 		cursor: "pointer",

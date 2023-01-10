@@ -7,16 +7,12 @@ type ButtonDefinition = {
 	icon?: string
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
-} & definition.BaseDefinition
-
-interface ButtonProps extends definition.BaseProps {
-	definition: ButtonDefinition
 }
 
 const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
-const Button: definition.UesioComponent<ButtonProps> = (props) => {
+const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props
 	const classes = styles.useStyles(
 		{

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, api, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 type LoginDefinition = {
 	clientId: string
@@ -15,9 +15,8 @@ const Grid = component.getUtility("uesio/io.grid")
 const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach"]
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const useMock = uesio.view.useConfigValue("uesio/core.mock_auth")
+	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
 
 	if (useMock !== "true") {
 		return null
@@ -41,7 +40,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						key={user}
 						context={context}
 						onClick={(): void => {
-							uesio.signal.run(
+							api.signal.run(
 								{
 									signal: "user/LOGIN",
 									authSource: "uesio/core.mock",

@@ -1,4 +1,4 @@
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component, api } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { getBuildMode } from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
@@ -18,8 +18,6 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		context,
 	} = props
 
-	const uesio = hooks.useUesio(props)
-
 	const buildMode = getBuildMode(context)
 
 	const ref = useRef<HTMLDivElement>(null)
@@ -28,8 +26,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
 
-	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [, , dropPath] = uesio.builder.useDropNode()
+	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
+	const [, , dropPath] = api.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
 		dragType,
 		dragItem,
@@ -53,7 +51,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 		return (
 			<>
 				{component.getSlotProps(props).map((props, index) => (
-					<component.Component key={index} index={index} {...props} />
+					<component.Component key={index} {...props} />
 				))}
 			</>
 		)
@@ -75,7 +73,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			<>
 				{component.getSlotProps(props).map((props, index) => (
 					<BuildWrapper key={index} {...props}>
-						<component.Component index={index} {...props} />
+						<component.Component {...props} />
 					</BuildWrapper>
 				))}
 			</>

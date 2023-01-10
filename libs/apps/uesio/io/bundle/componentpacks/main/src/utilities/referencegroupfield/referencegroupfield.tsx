@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import {
 	wire,
-	hooks,
+	api,
 	collection,
 	definition,
 	component,
@@ -25,11 +25,10 @@ interface ReferenceGroupFieldProps extends definition.UtilityProps {
 const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 	props
 ) => {
-	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, fieldId, record, context, variant, options, path } =
 		props
 
-	const referencedCollection = uesio.collection.useCollection(
+	const referencedCollection = api.collection.useCollection(
 		context,
 		fieldMetadata.source.referencegroup?.collection || ""
 	)

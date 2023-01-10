@@ -14,7 +14,7 @@ const ParamsActions: definition.UtilityComponent = (props) => {
 		metadataItem,
 		localPath
 	)
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
 				display: "flex",

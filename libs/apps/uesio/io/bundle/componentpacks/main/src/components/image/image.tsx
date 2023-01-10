@@ -10,11 +10,7 @@ type ImageDefinition = {
 	src?: string
 }
 
-interface ImageProps extends definition.BaseProps {
-	definition: ImageDefinition
-}
-
-const Image: definition.UesioComponent<ImageProps> = (props) => {
+const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(

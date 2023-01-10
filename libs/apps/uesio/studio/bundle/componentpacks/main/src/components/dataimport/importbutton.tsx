@@ -1,9 +1,9 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, styles } from "@uesio/ui"
+import { definition, api, component, styles } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
 import Papa, { ParseResult } from "papaparse"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	changeUploaded: (success: boolean, csvFields: string[], file: File) => void
 	type?: "button" | "area"
 }
@@ -40,7 +40,7 @@ const UploadArea = component.getUtility("uesio/io.uploadarea")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded, type } = props
-	const uesio = hooks.useUesio(props)
+
 	const uploadLabelId = nanoid()
 
 	const classes = styles.useUtilityStyles(
@@ -73,10 +73,10 @@ const ImportButton: FunctionComponent<Props> = (props) => {
 						const file = files[0]
 						changeUploaded(true, csvFields, file)
 					} else {
-						uesio.notification.addError("Invalid CSV", context)
+						api.notification.addError("Invalid CSV", context)
 					}
 				} else {
-					uesio.notification.addError("No file found", context)
+					api.notification.addError("No file found", context)
 				}
 			}}
 			uploadLabelId={uploadLabelId}

@@ -5,13 +5,9 @@ type SearchBoxDefinition = {
 	placeholder?: string
 	wire: string
 	searchFields: metadata.MetadataKey[]
-} & definition.BaseDefinition
-
-interface SearchBoxProps extends definition.BaseProps {
-	definition: SearchBoxDefinition
 }
 
-const SearchBox: definition.UesioComponent<SearchBoxProps> = (props) => {
+const SearchBox: definition.UC<SearchBoxDefinition> = (props) => {
 	const { definition, context } = props
 	const wire = api.wire.useWire(definition.wire, context)
 	const classes = styles.useStyles(

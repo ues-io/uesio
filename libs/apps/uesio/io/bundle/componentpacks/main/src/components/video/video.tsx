@@ -11,11 +11,7 @@ type VideoDefinition = {
 	signals?: signal.SignalDefinition[]
 }
 
-interface VideoProps extends definition.BaseProps {
-	definition: VideoDefinition
-}
-
-const Video: definition.UesioComponent<VideoProps> = (props) => {
+const Video: definition.UC<VideoDefinition> = (props) => {
 	const { definition, context } = props
 
 	const classes = styles.useStyles(

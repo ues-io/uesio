@@ -6,7 +6,7 @@ interface State {
 	error: Error | null
 }
 
-class ErrorBoundary extends Component<BaseProps, State> {
+class ErrorBoundary extends Component<BaseProps> {
 	public state: State = { error: null }
 	public updatedWithError = false
 

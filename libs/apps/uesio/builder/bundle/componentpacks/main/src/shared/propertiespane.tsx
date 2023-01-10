@@ -135,6 +135,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			)}
 			{selectedSection && propsDef && (
 				<BuildSection
+					definition={{}}
 					path={path}
 					propsDef={propsDef}
 					section={selectedSection}

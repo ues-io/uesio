@@ -13,17 +13,13 @@ type ListDefinition = {
 	mode: context.FieldMode
 }
 
-interface ListProps extends definition.BaseProps {
-	definition: ListDefinition
-}
-
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
 	SET_READ_MODE: setReadMode,
 	SET_EDIT_MODE: setEditMode,
 }
 
-const List: definition.UesioComponent<ListProps> = (props) => {
+const List: definition.UC<ListDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
 
@@ -38,7 +34,7 @@ const List: definition.UesioComponent<ListProps> = (props) => {
 		definition.id,
 		props
 	)
-	const [mode] = useMode(componentId, definition.mode, props)
+	const [mode] = useMode(componentId, definition.mode)
 
 	if (!wire || !mode) return null
 
@@ -98,7 +94,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
-		const uesio = hooks.useUesio()
+
 		if (metadataType === "field") {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)

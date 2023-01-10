@@ -1,13 +1,18 @@
-import { FC } from "react"
-import { styles, hooks } from "@uesio/ui"
-import { Props } from "./linechartdefinition"
+import { styles, api, definition } from "@uesio/ui"
 
 import { Line } from "react-chartjs-2"
 import { Chart, registerables } from "chart.js"
-import { aggregate } from "../../shared/aggregate"
+import { aggregate, SeriesDefinition } from "../../shared/aggregate"
+import { LabelsDefinition } from "../../shared/labels"
 Chart.register(...registerables)
 
-const ChartComponent: FC<Props> = (props) => {
+type LineChartDefinition = {
+	labels: LabelsDefinition
+	title?: string
+	series: SeriesDefinition[]
+}
+
+const ChartComponent: definition.UC<LineChartDefinition> = (props) => {
 	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for chart")
@@ -25,12 +30,10 @@ const ChartComponent: FC<Props> = (props) => {
 		props
 	)
 
-	const uesio = hooks.useUesio(props)
-
 	// Get a list of all wires used
 	const wireNames = definition.series.map(({ wire }) => wire || "")
 
-	const wires = uesio.wire.useWires(wireNames, context)
+	const wires = api.wire.useWires(wireNames, context)
 
 	const [datasets, categories] = aggregate(
 		wires,
@@ -60,5 +63,29 @@ const ChartComponent: FC<Props> = (props) => {
 		</div>
 	)
 }
+
+/*
+const PropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Line Chart",
+	description: "Visualized data with lines.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({
+		text: "New chart",
+	}),
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+	],
+	sections: [],
+	actions: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "VISUALIZATION",
+}
+*/
 
 export default ChartComponent

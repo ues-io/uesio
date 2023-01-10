@@ -6,7 +6,7 @@ import {
 	context,
 	collection,
 	wire,
-	hooks,
+	api,
 	component,
 	metadata,
 } from "@uesio/ui"
@@ -34,7 +34,6 @@ interface FileMarkDownProps extends definition.UtilityProps {
 }
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
-	const uesio = hooks.useUesio(props)
 	const { fieldId, fieldMetadata, record, wire, context, id, mode, options } =
 		props
 
@@ -42,25 +41,22 @@ const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {
 	const fileName = userFile?.["uesio/core.name"] as string
 	const mimeType = "text/markdown; charset=utf-8"
 
-	const fileContent = uesio.file.useUserFile(context, record, fieldId)
-	const componentId = uesio.component.getComponentId(
+	const fileContent = api.file.useUserFile(context, record, fieldId)
+	const componentId = api.component.getComponentId(
 		id,
 		"uesio/io.field",
 		props.path,
 		context
 	)
-	const [state, setState] = uesio.component.useState<FieldState>(
-		componentId,
-		{
-			value: fileContent,
-			originalValue: fileContent,
-			recordId: record.getIdFieldValue() || "",
-			fieldId,
-			collectionId: wire.getCollection().getFullName(),
-			fileName,
-			mimeType,
-		}
-	)
+	const [state, setState] = api.component.useState<FieldState>(componentId, {
+		value: fileContent,
+		originalValue: fileContent,
+		recordId: record.getIdFieldValue() || "",
+		fieldId,
+		collectionId: wire.getCollection().getFullName(),
+		fileName,
+		mimeType,
+	})
 
 	return (
 		<MarkDownField

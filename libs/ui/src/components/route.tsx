@@ -1,9 +1,8 @@
-import { FC, useEffect, RefObject, useRef } from "react"
-import { BaseProps } from "../definition/definition"
+import { useEffect, RefObject, useRef } from "react"
 import { useRoute } from "../bands/route/selectors"
 import { injectGlobal, css } from "@emotion/css"
 import Progress from "./progress"
-import View from "./view/view"
+import View from "./view"
 import { useSite } from "../bands/site"
 import { Context } from "../context/context"
 import routeOps from "../bands/route/operations"
@@ -11,6 +10,7 @@ import NotificationArea from "./notificationarea"
 import { ComponentInternal } from "../component/component"
 import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
+import { UtilityComponent } from "../definition/definition"
 
 // This applies the global styles
 injectGlobal({
@@ -30,7 +30,7 @@ injectGlobal({
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
-const Route: FC<BaseProps> = (props) => {
+const Route: UtilityComponent = (props) => {
 	portalsDomNode = useRef<HTMLDivElement>(null)
 
 	const site = useSite()
@@ -102,6 +102,7 @@ const Route: FC<BaseProps> = (props) => {
 			context={routeContext}
 			componentType={workspace.wrapper}
 			path=""
+			definition={{}}
 		>
 			{view}
 		</ComponentInternal>
@@ -118,7 +119,7 @@ const Route: FC<BaseProps> = (props) => {
 					pointerEvents: "none",
 				}}
 			>
-				<PanelArea context={props.context} />
+				<PanelArea />
 			</div>
 		</>
 	)

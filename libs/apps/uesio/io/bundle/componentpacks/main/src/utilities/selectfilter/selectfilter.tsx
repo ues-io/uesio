@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, wire, collection } from "@uesio/ui"
+import { definition, component, api, wire, collection } from "@uesio/ui"
 
 const SelectField = component.getUtility("uesio/io.selectfield")
 
@@ -14,7 +14,6 @@ interface SelectFilterProps extends definition.UtilityProps {
 const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 	const { wire, fieldMetadata, context } = props
 
-	const uesio = hooks.useUesio(props)
 	const conditionId = props.conditionId || props.path || ""
 	const wireId = wire.getId()
 
@@ -33,7 +32,7 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 			variant={"uesio/io.filter"}
 			value={condition.value || ""}
 			setValue={(value: string) => {
-				uesio.signal.runMany(
+				api.signal.runMany(
 					[
 						{
 							signal: "wire/SET_CONDITION",

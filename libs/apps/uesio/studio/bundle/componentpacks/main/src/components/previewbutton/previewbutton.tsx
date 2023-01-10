@@ -84,7 +84,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 				onClick={togglePreview}
 			/>
 			{open && (
-				<component.Panel key="previewpanel" context={context}>
+				<component.Panel key="previewpanel">
 					<Dialog
 						context={context}
 						width="400px"

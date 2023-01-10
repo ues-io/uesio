@@ -1,11 +1,4 @@
-import {
-	builder,
-	component,
-	definition,
-	wire,
-	hooks,
-	metadata,
-} from "@uesio/ui"
+import { builder, component, definition, wire, api, metadata } from "@uesio/ui"
 
 const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
@@ -31,9 +24,9 @@ const FieldPropTag: FC<T> = (props) => {
 		variant,
 		path = "",
 	} = props
-	const uesio = hooks.useUesio(props)
+
 	const [expanded, setExpanded] = useState<boolean>(false)
-	const collectionMetadata = uesio.collection.useCollection(
+	const collectionMetadata = api.collection.useCollection(
 		context,
 		collectionKey
 	)

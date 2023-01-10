@@ -10,11 +10,7 @@ type DialogDefinition = {
 	id?: string
 }
 
-interface DialogProps extends definition.BaseProps {
-	definition: DialogDefinition
-}
-
-const Dialog: definition.UesioComponent<DialogProps> = (props) => {
+const Dialog: definition.UC<DialogDefinition> = (props) => {
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
 	const onClose = api.signal.getHandler(

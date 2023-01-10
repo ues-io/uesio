@@ -1,4 +1,4 @@
-import { hooks, wire, definition, component } from "@uesio/ui"
+import { api, wire, definition, component } from "@uesio/ui"
 
 import { Fragment, FunctionComponent } from "react"
 
@@ -14,9 +14,9 @@ const Group = component.getUtility("uesio/io.group")
 
 const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel, content } = props
-	const uesio = hooks.useUesio(props)
+
 	const wireName = props.wire
-	const wire = uesio.wire.useWire(wireName, context)
+	const wire = api.wire.useWire(wireName, context)
 
 	if (!wire) return null
 
@@ -52,7 +52,6 @@ const Form: FunctionComponent<FormProps> = (props) => {
 									definition={{
 										fieldId: field.id,
 									}}
-									index={i}
 									path={`${path}["${field.id}"]["${i}"]`}
 									context={recordContext}
 								/>

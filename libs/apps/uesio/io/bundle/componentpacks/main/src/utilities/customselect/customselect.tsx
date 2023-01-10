@@ -126,7 +126,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 					<Icon icon="expand_more" context={context} />
 				</button>
 			</div>
-			<component.Panel context={context}>
+			<component.Panel>
 				<div
 					ref={setPopperEl}
 					style={{

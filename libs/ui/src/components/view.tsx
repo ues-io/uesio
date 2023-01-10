@@ -1,14 +1,13 @@
-import Slot from "../slot"
-import { useViewDef } from "../../bands/viewdef"
-import { ViewProps } from "./viewdefinition"
-import { makeViewId } from "../../bands/view"
-import { component as componentApi } from "../../api/api"
-import { useLoadWires } from "../../bands/view/operations/load"
+import Slot from "./slot"
+import { useViewDef } from "../bands/viewdef"
+import { makeViewId } from "../bands/view"
+import { component as componentApi } from "../api/api"
+import { useLoadWires } from "../bands/view/operations/load"
 import {
 	ComponentSignalDescriptor,
 	SignalDefinition,
-} from "../../definition/signal"
-import { UesioComponent } from "../../definition/definition"
+} from "../definition/signal"
+import { UC } from "../definition/definition"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -48,7 +47,13 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 	},
 }
 
-const View: UesioComponent<ViewProps> = (props) => {
+type ViewDefinition = {
+	view: string
+	id?: string
+	params?: Record<string, string>
+}
+
+const View: UC<ViewDefinition> = (props) => {
 	const {
 		path,
 		context,
@@ -95,5 +100,35 @@ const View: UesioComponent<ViewProps> = (props) => {
 }
 
 View.signals = signals
+
+/*
+const ViewPropertyDefinition: BuildPropertiesDefinition = {
+	title: "View",
+	description:
+		"A collection of wires, components and panels that represent a user interface.",
+	link: "https://docs.ues.io/",
+	defaultDefinition: () => ({
+		view: "",
+	}),
+	properties: [
+		{
+			name: "view",
+			type: "METADATA",
+			metadataType: "VIEW",
+			label: "View",
+		},
+		{
+			name: "params",
+			type: "PARAMS",
+			label: "Params",
+		},
+	],
+	sections: [],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
+	category: "LAYOUT",
+}
+*/
 
 export default View

@@ -1,7 +1,7 @@
-import { FC, useEffect } from "react"
+import { useEffect } from "react"
 import { definition, api, component } from "@uesio/ui"
 
-const PanelPortal: FC<definition.BaseProps> = (props) => {
+const PanelPortal: definition.UtilityComponent = (props) => {
 	const [metadataType, , selectedPath] = api.builder.useSelectedNode()
 
 	const pathArray = component.path.toPath(selectedPath)

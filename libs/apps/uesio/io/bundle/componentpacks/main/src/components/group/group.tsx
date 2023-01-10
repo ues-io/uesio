@@ -9,11 +9,7 @@ type GroupDefinition = {
 	components?: definition.DefinitionList
 }
 
-interface GroupProps extends definition.BaseProps {
-	definition: GroupDefinition
-}
-
-const Grid: definition.UesioComponent<GroupProps> = (props) => {
+const Grid: definition.UC<GroupDefinition> = (props) => {
 	const { context, definition, path } = props
 	const classes = styles.useStyles(
 		{

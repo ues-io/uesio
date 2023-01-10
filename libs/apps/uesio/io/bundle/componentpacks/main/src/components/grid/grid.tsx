@@ -11,11 +11,7 @@ type GridDefinition = {
 	gap?: string
 }
 
-interface GridProps extends definition.BaseProps {
-	definition: GridDefinition
-}
-
-const Grid: definition.UesioComponent<GridProps> = (props) => {
+const Grid: definition.UC<GridDefinition> = (props) => {
 	const { definition, context } = props
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
@@ -106,7 +102,6 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
 
-		const uesio = hooks.useUesio()
 		if (metadataType === "field") {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)

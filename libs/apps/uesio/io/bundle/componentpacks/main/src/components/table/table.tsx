@@ -34,10 +34,6 @@ type TableDefinition = {
 	pagesize?: string
 	order?: boolean
 	selectable?: boolean
-} & definition.BaseDefinition
-
-interface TableProps extends definition.BaseProps {
-	definition: TableDefinition
 }
 
 type RowAction = {
@@ -52,7 +48,7 @@ type ColumnDefinition = {
 	user?: UserFieldOptions
 	label: string
 	components: definition.DefinitionList
-}
+} & definition.BaseDefinition
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
@@ -78,7 +74,7 @@ const IOTable =
 const Paginator =
 	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
-const Table: definition.UesioComponent<TableProps> = (props) => {
+const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
 
@@ -93,11 +89,10 @@ const Table: definition.UesioComponent<TableProps> = (props) => {
 		definition.id,
 		props
 	)
-	const [mode] = useMode(componentId, definition.mode, props)
+	const [mode] = useMode(componentId, definition.mode)
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
-		wire?.getBatchId(),
-		props
+		wire?.getBatchId()
 	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
@@ -388,7 +383,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 		const [metadataType, metadataItem] =
 			component.path.getFullPathParts(dragNode)
 
-		const uesio = hooks.useUesio()
+
 		if (metadataType === "field") {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)

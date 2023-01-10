@@ -1,3 +1,6 @@
 name: barchart
+title: Bar Chart
+description: Visualize data with bars.
+category: VISUALIZATION
 pack: chart
 entrypoint: components/barchart/barchart

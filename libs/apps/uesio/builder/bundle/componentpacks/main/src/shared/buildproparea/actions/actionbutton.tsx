@@ -1,7 +1,7 @@
 import { SyntheticEvent, FunctionComponent } from "react"
 import { definition, component } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	title: string
 	icon: string
 	onClick?: (event: SyntheticEvent) => void

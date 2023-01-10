@@ -5,15 +5,9 @@ import SelectProp from "../selectprop/selectprop"
 type DefinitionSelectorProps = builder.PropRendererProps & {
 	definitionPath: string
 	noValueLabel: string
-	filter?: (def: definition.Definition, index: string | number) => boolean
-	valueGrabber?: (
-		def: definition.Definition,
-		index: string | number
-	) => string | undefined
-	labelGrabber?: (
-		def: definition.Definition,
-		index: string | number
-	) => string | undefined
+	filter?: (def: unknown, index: string | number) => boolean
+	valueGrabber?: (def: unknown, index: string | number) => string | undefined
+	labelGrabber?: (def: unknown, index: string | number) => string | undefined
 }
 const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 	props

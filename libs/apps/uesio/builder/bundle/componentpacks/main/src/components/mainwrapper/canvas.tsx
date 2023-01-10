@@ -198,7 +198,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 							<PanelPortal context={context} />
 						</div>
 					</div>
-					<component.PanelArea context={props.context} />
+					<component.PanelArea />
 				</div>
 			</div>
 			<BottomActions context={context} />

@@ -1,0 +1,6 @@
+name: metricgroup
+title: Metric Group
+description: A group of metric boxes
+category: VISUALIZATION
+pack: chart
+entrypoint: components/metricgroup/metricgroup

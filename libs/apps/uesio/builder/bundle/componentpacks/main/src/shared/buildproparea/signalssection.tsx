@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import { hooks, definition, signal, component } from "@uesio/ui"
+import { api, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 
@@ -12,9 +12,9 @@ const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, valueAPI } = props
-	const uesio = hooks.useUesio(props)
+
 	const [metadataType, metadataItem, selectedNode] =
-		uesio.builder.useSelectedNode()
+		api.builder.useSelectedNode()
 
 	const componentDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
@@ -60,7 +60,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						selected={selected}
 						key={index}
 						onClick={(): void =>
-							uesio.builder.setSelectedNode(
+							api.builder.setSelectedNode(
 								metadataType,
 								metadataItem,
 								signalPath
@@ -77,9 +77,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									sections: [],
 									defaultDefinition: () => ({}),
 									properties:
-										uesio.builder.getSignalProperties(
-											signal
-										),
+										api.builder.getSignalProperties(signal),
 									actions: [
 										{ type: "DELETE" },
 										{ type: "MOVE" },

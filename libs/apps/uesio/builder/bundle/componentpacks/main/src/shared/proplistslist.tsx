@@ -1,5 +1,5 @@
 import React, { FC } from "react"
-import { builder, context, hooks, component, styles } from "@uesio/ui"
+import { builder, context, api, component, styles } from "@uesio/ui"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "./hooks/uselistscroll"
 const PropList = component.getUtility("uesio/builder.proplist")
@@ -49,12 +49,11 @@ const PropListsList: FC<T> = (props) => {
 		valueAPI,
 		propsDef,
 	} = props
-	const uesio = hooks.useUesio(props)
 
 	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
 	const transformStart = "translate(-5px, 0)"
 	const transformEnd = "translate(0, 0)"
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			item: {
 				"&-enter": {
@@ -84,7 +83,7 @@ const PropListsList: FC<T> = (props) => {
 	)
 
 	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+		api.builder.useSelectedNode()
 	const itemsRef = useListScroll(items.length)
 	return (
 		<div>
@@ -122,7 +121,7 @@ const PropListsList: FC<T> = (props) => {
 										key={i}
 										context={context}
 										onClick={() =>
-											uesio.builder.setSelectedNode(
+											api.builder.setSelectedNode(
 												metadataType,
 												metadataItem,
 												path + `[${i}]`
@@ -148,7 +147,7 @@ const PropListsList: FC<T> = (props) => {
 																			e: MouseEvent
 																		) => {
 																			e.stopPropagation()
-																			uesio.builder.unSelectNode()
+																			api.builder.unSelectNode()
 																		}}
 																	/>
 																)

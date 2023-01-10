@@ -7,11 +7,7 @@ type AvatarDefinition = {
 	text?: string
 }
 
-interface AvatarProps extends definition.BaseProps {
-	definition: AvatarDefinition
-}
-
-const Avatar: definition.UesioComponent<AvatarProps> = (props) => {
+const Avatar: definition.UC<AvatarDefinition> = (props) => {
 	const { definition, context } = props
 	const classes = styles.useStyles(
 		{
