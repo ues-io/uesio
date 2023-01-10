@@ -6,4 +6,4 @@ on:
             - workflow-changes
 jobs:
     build-and-test:
-        uses: https://github.com/TheCloudMasters/uesio/.github/workflows/build.yml@workflow-changes
+        uses: ./build.yml
