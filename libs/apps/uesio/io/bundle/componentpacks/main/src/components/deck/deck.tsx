@@ -1,10 +1,9 @@
-import { component, styles, definition } from "@uesio/ui"
+import { styles, definition } from "@uesio/ui"
 import List, { ListDefinition } from "../list/list"
 import { GridDefinition } from "../grid/grid"
+import { default as IOGrid } from "../../utilities/grid/grid"
 
 type DeckDefinition = GridDefinition & ListDefinition
-
-const IOGrid = component.getUtility("uesio/io.grid")
 
 const Deck: definition.UC<DeckDefinition> = (props) => {
 	const { definition, context } = props

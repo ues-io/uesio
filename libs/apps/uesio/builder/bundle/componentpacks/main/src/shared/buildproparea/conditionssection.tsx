@@ -1,11 +1,8 @@
 import { FunctionComponent } from "react"
 import { definition, wire, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
+import ConditionItem from "../../utilities/conditionitem/conditionitem"
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const ConditionItem = component.getUtility("uesio/builder.conditionitem")
 const defaultConditionDef = {
 	field: null,
 	operator: "",
@@ -17,6 +14,9 @@ const defaultConditionGroupDef = {
 }
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap

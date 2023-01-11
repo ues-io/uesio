@@ -49,6 +49,9 @@ func CreateEntryFiles() ([]string, error) {
 	// Coalate components by pack
 	for _, component := range *components {
 		pack := component.Pack
+		if pack == "" {
+			continue
+		}
 		packData, ok := packMap[pack]
 		if !ok {
 			packMap[pack] = PackData{
@@ -63,6 +66,9 @@ func CreateEntryFiles() ([]string, error) {
 	// Coalate utilities by pack
 	for _, utility := range *utilities {
 		pack := utility.Pack
+		if pack == "" {
+			continue
+		}
 		packData, ok := packMap[pack]
 		if !ok {
 			packMap[pack] = PackData{

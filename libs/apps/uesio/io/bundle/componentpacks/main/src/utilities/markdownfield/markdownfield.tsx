@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection } from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { code, h } from "./mdcomponents"
@@ -10,8 +10,8 @@ const defaultMDOptions: MDOptions = {
 }
 
 interface MarkDownFieldProps extends definition.UtilityProps {
-	setValue?: (value: string) => void
-	value: string | null
+	setValue?: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	fieldMetadata?: collection.Field
 	mode?: context.FieldMode
 	options?: MDOptions
@@ -64,7 +64,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 	)
 
 	const commonProps = {
-		value: value || "",
+		value: (value as string) || "",
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
 		onChange: (
@@ -77,7 +77,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 	return readonly ? (
 		<div className={classes.root}>
 			<ReactMarkdown
-				children={value || ""}
+				children={(value as string) || ""}
 				remarkPlugins={[remarkGfm]}
 				className={classes.markdown}
 				components={{

@@ -1,14 +1,7 @@
 import { FunctionComponent } from "react"
-import {
-	definition,
-	context,
-	collection,
-	component,
-	api,
-	wire,
-} from "@uesio/ui"
+import { definition, context, collection, api, wire } from "@uesio/ui"
 import { FieldState, LabelPosition } from "../../components/field/field"
-import { CodeFieldUtilityProps } from "../codefield/codefield"
+import CodeField from "../codefield/codefield"
 
 interface FileTextProps extends definition.UtilityProps {
 	label?: string
@@ -21,9 +14,6 @@ interface FileTextProps extends definition.UtilityProps {
 	record: wire.WireRecord
 	wire: wire.Wire
 }
-
-const CodeField =
-	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const { fieldId, record, wire, context, id } = props

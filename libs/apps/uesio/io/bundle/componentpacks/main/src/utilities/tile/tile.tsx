@@ -4,7 +4,7 @@ import { definition, styles } from "@uesio/ui"
 interface TileUtilityProps extends definition.UtilityProps {
 	avatar?: ReactNode
 	onClick?: () => void
-	isSelected: boolean
+	isSelected?: boolean
 	rootAttributes?: HTMLAttributes<HTMLDivElement>
 }
 
@@ -24,7 +24,8 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 			avatar: {},
 			selected: {},
 		},
-		props
+		props,
+		"uesio/io.tile"
 	)
 
 	return (

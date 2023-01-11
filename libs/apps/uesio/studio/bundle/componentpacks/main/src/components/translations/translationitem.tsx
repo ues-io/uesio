@@ -7,9 +7,8 @@ interface Props extends definition.UtilityProps {
 	setValue: (value: wire.PlainWireRecord) => void
 }
 
-const MapField = component.getUtility("uesio/io.mapfield")
-
 const TranslationItem: FunctionComponent<Props> = (props) => {
+	const MapField = component.getUtility("uesio/io.mapfield")
 	const { context, namespace, value, setValue } = props
 
 	const [metadata] = api.builder.useMetadataList(context, "LABEL", namespace)

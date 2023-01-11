@@ -15,11 +15,10 @@ interface MetadataPickerProps extends definition.UtilityProps {
 
 type MetadataItem = string
 
-const CustomSelect = component.getUtility("uesio/io.customselect")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-const Icon = component.getUtility("uesio/io.icon")
-
 const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
+	const CustomSelect = component.getUtility("uesio/io.customselect")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+	const Icon = component.getUtility("uesio/io.icon")
 	const {
 		value,
 		setValue,

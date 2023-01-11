@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { TooltipUtilityProps } from "../tooltip/tooltip"
+import { definition, styles } from "@uesio/ui"
 import { Placement } from "@popperjs/core"
+import Tooltip from "../tooltip/tooltip"
 
 interface ButtonUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
@@ -12,8 +12,6 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	tooltip?: string
 	tooltipPlacement?: Placement
 }
-
-const Tooltip = component.getUtility<TooltipUtilityProps>("uesio/io.tooltip")
 
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
@@ -36,7 +34,8 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 				cursor: "default",
 			},
 		},
-		props
+		props,
+		"uesio/io.button"
 	)
 	const {
 		onClick,

@@ -1,23 +1,17 @@
 import { FC } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
+import Fieldset from "../fieldset/fieldset"
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
-	value?: string
+	value?: wire.FieldValue
 	width?: string
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
 }
-const Fieldset = component.getUtility("uesio/io.fieldset")
+
 const RadioButtons: FC<SelectFieldProps> = (props) => {
 	const {
 		setValue,

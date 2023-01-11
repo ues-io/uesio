@@ -1,6 +1,8 @@
 import { FunctionComponent, useState, ReactNode } from "react"
-import { definition, component, styles } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import { useSelect } from "downshift"
+import IconButton from "../iconbutton/iconbutton"
+import Popper from "../popper/popper"
 
 interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
 	itemRenderer: (item: I) => ReactNode
@@ -9,9 +11,6 @@ interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
 	fill?: boolean
 	items: I[]
 }
-
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const Popper = component.getUtility("uesio/io.popper")
 
 const MenuButton: FunctionComponent<MenuButtonUtilityProps<unknown>> = (
 	props

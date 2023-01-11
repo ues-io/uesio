@@ -1,5 +1,4 @@
 import {
-	component,
 	collection,
 	wire,
 	context,
@@ -7,32 +6,30 @@ import {
 	metadata,
 	signal,
 } from "@uesio/ui"
-
-const TextField = component.getUtility("uesio/io.textfield")
-const SelectField = component.getUtility("uesio/io.selectfield")
-const RadioButtonsField = component.getUtility("uesio/io.radiobuttonsfield")
-const ToggleField = component.getUtility("uesio/io.togglefield")
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-const MultiCheckField = component.getUtility("uesio/io.multicheckfield")
-const ReferenceField = component.getUtility("uesio/io.referencefield")
-const FileText = component.getUtility("uesio/io.filetext")
-const FileImage = component.getUtility("uesio/io.fileimage")
-const FileVideo = component.getUtility("uesio/io.filevideo")
-const FilePreview = component.getUtility("uesio/io.filepreview")
-const FileCmp = component.getUtility("uesio/io.file")
-const UserField = component.getUtility("uesio/io.userfield")
-const TimestampField = component.getUtility("uesio/io.timestampfield")
-const ListField = component.getUtility("uesio/io.listfield")
-const ListFieldDeck = component.getUtility("uesio/io.listfielddeck")
-const DateField = component.getUtility("uesio/io.datefield")
-const NumberField = component.getUtility("uesio/io.numberfield")
-const EmailField = component.getUtility("uesio/io.emailfield")
-const ReferenceGroupField = component.getUtility("uesio/io.referencegroupfield")
-const MarkDownField = component.getUtility("uesio/io.markdownfield")
-const FileMarkDown = component.getUtility("uesio/io.filemarkdown")
-const TextAreaField = component.getUtility("uesio/io.textareafield")
-
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+import CheckboxField from "../../utilities/checkboxfield/checkboxfield"
+import DateField from "../../utilities/datefield/datefield"
+import EmailField from "../../utilities/emailfield/emailfield"
+import MarkDownField from "../../utilities/markdownfield/markdownfield"
+import MultiCheckField from "../../utilities/multicheckfield/multicheckfield"
+import NumberField from "../../utilities/numberfield/numberfield"
+import RadioButtons from "../../utilities/radiobuttonsfield/radiobuttonsfield"
+import ReferenceField from "../../utilities/referencefield/referencefield"
+import SelectField from "../../utilities/selectfield/selectfield"
+import TextAreaField from "../../utilities/textareafield/textareafield"
+import TextField from "../../utilities/textfield/textfield"
+import TimestampField from "../../utilities/timestampfield/timestampfield"
+import ToggleField from "../../utilities/togglefield/togglefield"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import FileText from "../../utilities/filetext/filetext"
+import FileImage from "../../utilities/fileimage/fileimage"
+import FilePreview from "../../utilities/filepreview/filepreview"
+import FileMarkDown from "../../utilities/filemarkdown/filemarkdown"
+import FileVideo from "../../utilities/filevideo/filevideo"
+import UserField from "../../utilities/userfield/userfield"
+import ListFieldDeck from "../../utilities/listfielddeck/listfielddeck"
+import ListField from "../../utilities/listfield/listfield"
+import ReferenceGroupField from "../../utilities/referencegroupfield/referencegroupfield"
+import { default as FileCmp } from "../../utilities/file/file"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -118,7 +115,7 @@ type CommonProps = {
 	wire: wire.Wire
 	setValue: (value: wire.FieldValue) => void
 	placeholder?: string
-} & definition.UtilityProps
+} & definition.BaseProps
 
 const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 	const { displayAs, reference, list, user } = definition
@@ -146,7 +143,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 		case "SELECT": {
 			const selectOptions = fieldMetadata.getSelectOptions()
 			if (displayAs === "RADIO")
-				return <RadioButtonsField {...common} options={selectOptions} />
+				return <RadioButtons {...common} options={selectOptions} />
 			return <SelectField {...common} options={selectOptions} />
 		}
 		case "MULTISELECT": {
@@ -221,9 +218,9 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
-		variant:
-			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
+		variant: definition["uesio.variant"],
 		placeholder,
+		definition,
 	}
 
 	return (

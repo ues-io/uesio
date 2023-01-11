@@ -1,21 +1,12 @@
 import { FunctionComponent } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	component,
-	wire,
-} from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
+import Icon from "../icon/icon"
 
 interface CheckboxFieldProps extends definition.UtilityProps {
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 }
-
-const Icon = component.getUtility("uesio/io.icon")
 
 const getIcon = (value: boolean | undefined) => {
 	if (value === undefined) return "indeterminate_check_box"

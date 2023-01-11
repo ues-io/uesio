@@ -32,7 +32,7 @@ const getSlotProps = (props: SlotUtilityProps) => {
 		return {
 			definition: unWrappedDef as DefinitionMap,
 			componentType: componentType as MetadataKey,
-			path: `${listPath}["${index}"]`,
+			path: `${listPath}["${index}"]["${componentType}"]`,
 			context,
 		}
 	})
@@ -54,6 +54,8 @@ const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 		</>
 	)
 }
+
+Slot.displayName = "Slot"
 
 export { SlotUtilityProps, getSlotProps }
 export default Slot

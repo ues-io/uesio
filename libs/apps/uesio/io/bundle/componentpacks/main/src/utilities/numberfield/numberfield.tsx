@@ -1,29 +1,22 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection } from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
 
 interface NumberFieldProps extends definition.UtilityProps {
-	setValue: (value: number | null) => void
-	value: number
+	setValue: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	placeholder?: string
-	max: number
-	min: number
-	increment: number
+	max?: number
+	min?: number
+	increment?: number
 }
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
-	const {
-		setValue,
-		value,
-		mode,
-		placeholder,
-		fieldMetadata,
-		min,
-		max,
-		increment,
-	} = props
+	const { setValue, mode, placeholder, fieldMetadata, min, max, increment } =
+		props
 	const readonly = mode === "READ"
+	const value = props.value as number
 
 	const classes = styles.useUtilityStyles(
 		{

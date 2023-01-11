@@ -1,16 +1,17 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context } from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
-	setValue: (value: string) => void
-	value: string | null
+	setValue?: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	mode?: context.FieldMode
 	placeholder?: string
 	password?: boolean
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder, password } = props
+	const { setValue, mode, placeholder, password } = props
+	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -19,7 +20,8 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 			},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	return (
@@ -29,7 +31,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 			placeholder={placeholder}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			disabled={readonly}
-			onChange={(event) => setValue(event.target.value)}
+			onChange={(event) => setValue?.(event.target.value)}
 		/>
 	)
 }

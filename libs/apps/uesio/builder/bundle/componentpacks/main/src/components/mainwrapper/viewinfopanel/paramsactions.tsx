@@ -1,10 +1,9 @@
 import { definition, styles, component } from "@uesio/ui"
 import { set } from "../../../api/defapi"
 
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-
 const ParamsActions: definition.UtilityComponent = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { context } = props
 	const metadataType = "viewdef"
 	const metadataItem = context.getViewDefId() || ""

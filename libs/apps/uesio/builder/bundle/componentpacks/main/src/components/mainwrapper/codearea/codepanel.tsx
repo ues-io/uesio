@@ -5,11 +5,6 @@ import type monaco from "monaco-editor"
 
 const ANIMATION_DURATION = 3000
 
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const IOCodeField = component.getUtility("uesio/io.codefield")
-
 const getNodeLines = (
 	node: util.yaml.lib.Node,
 	model: monaco.editor.ITextModel
@@ -45,6 +40,11 @@ const getSelectedAreaDecorations = (range: monaco.Range, className: string) => [
 ]
 
 const CodePanel: definition.UtilityComponent = (props) => {
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const IOCodeField = component.getUtility("uesio/io.codefield")
+
 	const { context, className } = props
 
 	const classes = styles.useUtilityStyles(

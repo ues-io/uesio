@@ -17,10 +17,6 @@ interface Props extends definition.BaseProps {
 	definition: GeneratorButtonDefinition
 }
 
-const Button = component.getUtility("uesio/io.button")
-const Dialog = component.getUtility("uesio/io.dialog")
-const Form = component.getUtility("uesio/io.form")
-
 const WIRE_NAME = "paramData"
 
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
@@ -58,6 +54,9 @@ const getLayoutFieldsFromParams = (
 }
 
 const GeneratorButton: FunctionComponent<Props> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const Form = component.getUtility("uesio/io.form")
 	const { context, definition } = props
 	const { label, generator } = definition
 

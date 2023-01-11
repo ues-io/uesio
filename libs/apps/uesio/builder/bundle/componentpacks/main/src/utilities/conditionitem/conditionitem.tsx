@@ -8,8 +8,7 @@ import {
 	getValueProp,
 	valueSourceProps,
 } from "./conditionitemprops"
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+import PropNodeTag from "../propnodetag/propnodetag"
 
 type Props = {
 	conditionPath: string
@@ -17,8 +16,6 @@ type Props = {
 	condition: wire.WireConditionState
 	valueAPI: builder.ValueAPI
 }
-
-const Grid = component.getUtility("uesio/io.grid")
 
 // const defaultConditionDef = {
 // 	field: null,
@@ -95,6 +92,8 @@ const getConditionProperties = (
 }
 
 const ConditionItem: FunctionComponent<Props> = (props) => {
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+	const Grid = component.getUtility("uesio/io.grid")
 	const { conditionPath, context, condition, valueAPI } = props
 
 	const isGroup = condition.type === "GROUP"
@@ -119,7 +118,6 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 			popperChildren={
 				<PropertiesPane
 					path={conditionPath}
-					index={0}
 					context={context}
 					propsDef={{
 						title: "Condition",

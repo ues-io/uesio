@@ -8,12 +8,11 @@ import BuildActionsArea from "../../../helpers/buildactionsarea"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
 import MoveActions from "../../../actions/moveactions"
-
-const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 
 const WiresPanel: definition.UtilityComponent = ({ context }) => {
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const [selectedPath, setSelectedPath] = useSelectedPath(context)
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)

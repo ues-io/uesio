@@ -1,9 +1,5 @@
-import { component, styles, context, definition } from "@uesio/ui"
-import { MarkDownFieldProps } from "../../utilities/markdownfield/markdownfield"
-
-const MarkDownField = component.getUtility<MarkDownFieldProps>(
-	"uesio/io.markdownfield"
-)
+import { styles, context, definition } from "@uesio/ui"
+import MarkDownField from "../../utilities/markdownfield/markdownfield"
 
 type MarkDownDefinition = {
 	markdown?: string

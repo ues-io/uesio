@@ -3,11 +3,10 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder, component } from "@uesio/ui"
 import PropListsList from "../proplistslist"
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-
 const PropListsSection: FC<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { path = "", context, propsDef, valueAPI } = props
 
 	const section = props.section as builder.PropListsSection

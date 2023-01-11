@@ -10,10 +10,9 @@ interface Props extends definition.BaseProps {
 	definition: ConfigLoginsDefinition
 }
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-
 const ConfigLogins: FunctionComponent<Props> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
 	const user = definition?.user ? context.mergeString(definition?.user) : ""
 	const email = definition?.email

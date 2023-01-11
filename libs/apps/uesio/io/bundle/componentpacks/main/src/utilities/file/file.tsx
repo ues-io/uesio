@@ -1,28 +1,18 @@
 import { FunctionComponent } from "react"
-import {
-	definition,
-	styles,
-	collection,
-	component,
-	context,
-	wire,
-	api,
-} from "@uesio/ui"
+import { definition, styles, collection, context, wire, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
+import FileUploadArea from "../fileuploadarea/fileuploadarea"
+import Tile from "../tile/tile"
+import Icon from "../icon/icon"
 
 interface FileUtilityProps extends definition.UtilityProps {
 	width?: string
-	fieldMetadata: collection.Field
 	fieldId: string
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
 }
-
-const Tile = component.getUtility("uesio/io.tile")
-const Icon = component.getUtility("uesio/io.icon")
-const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const { fieldId, record, context, wire } = props

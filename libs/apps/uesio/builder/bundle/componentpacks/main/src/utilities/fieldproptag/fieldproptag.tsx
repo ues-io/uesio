@@ -1,11 +1,9 @@
 import { builder, component, definition, wire, api, metadata } from "@uesio/ui"
 
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-
 import { FC, useState } from "react"
 import BuildActionsArea from "../../helpers/buildactionsarea"
+import NamespaceLabel from "../namespacelabel/namespacelabel"
+import PropNodeTag from "../propnodetag/propnodetag"
 
 interface T extends definition.UtilityProps {
 	collectionKey: string
@@ -15,6 +13,7 @@ interface T extends definition.UtilityProps {
 	variant?: metadata.MetadataKey
 }
 const FieldPropTag: FC<T> = (props) => {
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const {
 		fieldId,
 		fieldDef,

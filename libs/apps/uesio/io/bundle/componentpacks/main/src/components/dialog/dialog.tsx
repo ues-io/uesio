@@ -1,7 +1,6 @@
 import { definition, api, component } from "@uesio/ui"
-import { DialogUtilityProps } from "../../utilities/dialog/dialog"
 
-const IODialog = component.getUtility<DialogUtilityProps>("uesio/io.dialog")
+import { default as IODialog } from "../../utilities/dialog/dialog"
 
 type DialogDefinition = {
 	title?: string

@@ -1,6 +1,5 @@
 import { component, styles, definition } from "@uesio/ui"
-
-const IOGroup = component.getUtility("uesio/io.group")
+import { default as IOGroup } from "../../utilities/group/group"
 
 type GroupDefinition = {
 	columnGap: string

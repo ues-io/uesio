@@ -9,9 +9,8 @@ interface Props extends definition.UtilityProps {
 	className?: string
 }
 
-const IconButton = component.getUtility("uesio/io.iconbutton")
-
 const ActionButton: FunctionComponent<Props> = (props) => {
+	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const { title, onClick, icon, disabled, context, className } = props
 
 	return (

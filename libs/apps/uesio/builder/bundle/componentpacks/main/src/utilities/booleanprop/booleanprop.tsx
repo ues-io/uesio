@@ -1,15 +1,14 @@
 import { builder, component } from "@uesio/ui"
 
-const SelectField = component.getUtility("uesio/io.selectfield")
-const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
 	descriptor,
 	valueAPI,
 	context,
 	path,
 }) => {
+	const SelectField = component.getUtility("uesio/io.selectfield")
+	const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const selected = !!valueAPI.get(path)
 	const getInput = () => {
 		switch ((descriptor as builder.BooleanProp).displaytype) {

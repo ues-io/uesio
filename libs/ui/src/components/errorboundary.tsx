@@ -45,6 +45,8 @@ class ErrorBoundary extends Component<BaseProps> {
 		}
 		return this.props.children
 	}
+
+	static displayName = "ErrorBoundary"
 }
 
 export default ErrorBoundary

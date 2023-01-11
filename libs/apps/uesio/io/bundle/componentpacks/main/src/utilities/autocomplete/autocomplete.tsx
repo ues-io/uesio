@@ -9,14 +9,14 @@ type DropDownProps<T> = {
 	setValue: (value: T) => void
 	getItems: (search: string, callback: (items: T[]) => void) => void
 	itemToString: (item: T) => string
-	loadingRenderer: () => ReactNode
+	loadingRenderer?: () => ReactNode
 	itemRenderer: (
 		item: T,
 		index: number,
 		highlightedIndex: number
 	) => ReactNode
 	placeholder?: string
-} & definition.BaseProps
+} & definition.UtilityProps
 
 const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 	props

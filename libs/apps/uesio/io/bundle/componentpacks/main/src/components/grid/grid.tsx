@@ -1,6 +1,5 @@
 import { component, styles, definition } from "@uesio/ui"
-
-const IOGrid = component.getUtility("uesio/io.grid")
+import { default as IOGrid } from "../../utilities/grid/grid"
 
 type GridDefinition = {
 	templateColumns?: styles.ResponsiveDefinition
@@ -120,6 +119,8 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	category: "LAYOUT",
 }
 */
+
+Grid.displayName = "Grid"
 
 export { GridDefinition }
 

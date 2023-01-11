@@ -57,7 +57,6 @@ export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
 export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 
 export interface UtilityProps {
-	index?: number
 	path?: string
 	variant?: MetadataKey
 	styles?: Record<string, CSSInterpolation>
@@ -65,7 +64,6 @@ export interface UtilityProps {
 	className?: string
 	context: Context
 	children?: ReactNode
-	componentType?: MetadataKey
 }
 
 export type DefinitionMap = Record<string, unknown>

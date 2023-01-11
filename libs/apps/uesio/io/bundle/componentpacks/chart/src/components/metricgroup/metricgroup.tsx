@@ -3,8 +3,6 @@ import { api, component, definition, signal } from "@uesio/ui"
 import { aggregate, SeriesDefinition } from "../../shared/aggregate"
 import { LabelsDefinition } from "../../shared/labels"
 
-const MetricUtility = component.getUtility("uesio/io.metric")
-
 type MetricGroupDefinition = {
 	labels: LabelsDefinition
 	title?: string
@@ -13,6 +11,7 @@ type MetricGroupDefinition = {
 }
 
 const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
+	const MetricUtility = component.getUtility("uesio/io.metric")
 	const { definition, context } = props
 	if (!definition || !definition.series || !definition.labels) {
 		console.warn("missing definition for metric group")

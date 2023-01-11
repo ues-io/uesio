@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
-import { definition, component, api, wire, collection } from "@uesio/ui"
-
-const SelectField = component.getUtility("uesio/io.selectfield")
+import { definition, api, wire, collection } from "@uesio/ui"
+import SelectField from "../selectfield/selectfield"
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -24,6 +23,7 @@ const SelectFilter: FunctionComponent<SelectFilterProps> = (props) => {
 
 	return (
 		<SelectField
+			fieldMetadata={fieldMetadata}
 			context={context}
 			options={addBlankSelectOption(
 				fieldMetadata.getSelectMetadata()?.options || [],

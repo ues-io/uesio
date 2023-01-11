@@ -8,11 +8,11 @@ interface Props extends definition.UtilityProps {
 	removeMapping: () => void
 	field: collection.Field
 }
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
-const TextField = component.getUtility("uesio/io.textfield")
-const SelectField = component.getUtility("uesio/io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
+	const CheckboxField = component.getUtility("uesio/io.checkboxfield")
+	const TextField = component.getUtility("uesio/io.textfield")
+	const SelectField = component.getUtility("uesio/io.selectfield")
 	const { context, csvOptions, setMapping, removeMapping, field, mapping } =
 		props
 
@@ -38,7 +38,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				alignItems: "center",
 			},
 		},
-		null
+		props
 	)
 
 	return (

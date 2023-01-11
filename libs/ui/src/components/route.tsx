@@ -7,7 +7,7 @@ import { useSite } from "../bands/site"
 import { Context } from "../context/context"
 import routeOps from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
-import { ComponentInternal } from "../component/component"
+import { Component } from "../component/component"
 import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
@@ -98,14 +98,14 @@ const Route: UtilityComponent = (props) => {
 	)
 
 	const wrappedView = workspace ? (
-		<ComponentInternal
+		<Component
 			context={routeContext}
 			componentType={workspace.wrapper}
 			path=""
 			definition={{}}
 		>
 			{view}
-		</ComponentInternal>
+		</Component>
 	) : (
 		<>
 			{view}
@@ -145,6 +145,8 @@ const Route: UtilityComponent = (props) => {
 		</>
 	)
 }
+
+Route.displayName = "Route"
 
 export { portalsDomNode }
 

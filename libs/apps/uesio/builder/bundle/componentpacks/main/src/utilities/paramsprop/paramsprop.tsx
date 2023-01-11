@@ -1,9 +1,8 @@
 import { component, builder, definition, api } from "@uesio/ui"
 
-const TextField = component.getUtility("uesio/io.textfield")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
+	const TextField = component.getUtility("uesio/io.textfield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const { valueAPI, path, context } = props
 
 	if (!path) return null

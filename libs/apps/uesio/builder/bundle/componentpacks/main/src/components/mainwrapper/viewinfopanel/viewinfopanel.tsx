@@ -8,9 +8,6 @@ import PanelsActions from "./panelsactions"
 import ParamsActions from "./paramsactions"
 import { useBuilderState } from "../../../api/stateapi"
 
-const TabLabels = component.getUtility("uesio/io.tablabels")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-
 const content: Record<string, definition.UtilityComponent> = {
 	components: ComponentsPanel,
 	wires: WiresPanel,
@@ -25,6 +22,8 @@ const actions: Record<string, definition.UtilityComponent> = {
 }
 
 const ViewInfoPanel: definition.UtilityComponent = (props) => {
+	const TabLabels = component.getUtility("uesio/io.tablabels")
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const { context } = props
 
 	const [selectedTab, setSelectedTab] = useBuilderState<string>(

@@ -10,11 +10,11 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const Button = component.getUtility("uesio/io.button")
-const Grid = component.getUtility("uesio/io.grid")
 const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach"]
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Grid = component.getUtility("uesio/io.grid")
 	const { context, definition } = props
 	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
 

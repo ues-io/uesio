@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { ButtonUtilityProps } from "../button/button"
-import { IconUtilityProps } from "../icon/icon"
+import { definition, styles } from "@uesio/ui"
+import Button from "../button/button"
+import Icon from "../icon/icon"
 
 interface Tab {
 	label: string
@@ -14,9 +14,6 @@ interface TabsUtilityProps extends definition.UtilityProps {
 	selectedTab: string
 	setSelectedTab: (selected: string) => void
 }
-
-const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
@@ -34,7 +31,8 @@ const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 				cursor: "default",
 			},
 		},
-		props
+		props,
+		"uesio/io.tablabels"
 	)
 
 	return (

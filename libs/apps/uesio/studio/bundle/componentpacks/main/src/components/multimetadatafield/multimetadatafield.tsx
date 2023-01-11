@@ -8,12 +8,12 @@ type MultiMetadataFieldDefinition = {
 	namespace?: string
 }
 
-const MultiMetadataPicker = component.getUtility(
-	"uesio/builder.multimetadatapicker"
-)
 const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 	props
 ) => {
+	const MultiMetadataPicker = component.getUtility(
+		"uesio/builder.multimetadatapicker"
+	)
 	const {
 		context,
 		definition: { fieldId, metadataType },

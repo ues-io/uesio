@@ -1,7 +1,5 @@
 import { component, styles, api, definition, signal } from "@uesio/ui"
-import { TileUtilityProps } from "../../utilities/tile/tile"
-
-const IOTile = component.getUtility<TileUtilityProps>("uesio/io.tile")
+import { default as IOTile } from "../../utilities/tile/tile"
 
 type TileDefinition = {
 	signals?: signal.SignalDefinition[]

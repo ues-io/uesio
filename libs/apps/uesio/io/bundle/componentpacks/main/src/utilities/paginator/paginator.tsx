@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { IconButtonUtilityProps } from "../iconbutton/iconbutton"
-import { GroupUtilityProps } from "../group/group"
+import { definition, styles } from "@uesio/ui"
+import Group from "../group/group"
+import IconButton from "../iconbutton/iconbutton"
 
 interface PaginatorUtilityProps extends definition.UtilityProps {
 	currentPage: number
@@ -9,11 +9,6 @@ interface PaginatorUtilityProps extends definition.UtilityProps {
 	setPage: (page: number) => void
 	loadMore?: () => Promise<void>
 }
-
-const IconButton = component.getUtility<IconButtonUtilityProps>(
-	"uesio/io.iconbutton"
-)
-const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
 
 const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	const { currentPage, maxPages, setPage, loadMore, context } = props

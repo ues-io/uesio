@@ -3,17 +3,15 @@ import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
 import { api, component, wire } from "@uesio/ui"
-
-const FieldPropTag = component.getUtility("uesio/builder.fieldproptag")
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const Popper = component.getUtility("uesio/io.popper")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
+import FieldPropTag from "../../utilities/fieldproptag/fieldproptag"
 
 const FieldsSection: FC<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const Popper = component.getUtility("uesio/io.popper")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { path, context, valueAPI } = props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [showPopper, setShowPopper] = useState(false)

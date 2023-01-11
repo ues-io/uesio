@@ -2,13 +2,13 @@ import { FunctionComponent, Fragment } from "react"
 import { component, api, styles } from "@uesio/ui"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import BuildSection from "./buildproparea/buildsection"
-const PropList = component.getUtility("uesio/builder.proplist")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const TabLabels = component.getUtility("uesio/io.tablabels")
-const IconButton = component.getUtility("uesio/io.iconbutton")
+import PropList from "../utilities/proplist/proplist"
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const TabLabels = component.getUtility("uesio/io.tablabels")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const { propsDef, path = "", context, valueAPI, className } = props
 
 	const classes = styles.useUtilityStyles(

@@ -9,9 +9,8 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const ColorPicker: FunctionComponent<Props> = (props) => {
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const {
 		context,
 		definition: { fieldId },

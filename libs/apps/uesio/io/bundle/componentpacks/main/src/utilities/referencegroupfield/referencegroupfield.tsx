@@ -6,11 +6,9 @@ import {
 	definition,
 	component,
 	context,
-	metadata,
 } from "@uesio/ui"
 import { ReferenceGroupFieldOptions } from "../../components/field/field"
-
-const TextField = component.getUtility("uesio/io.textfield")
+import TextField from "../textfield/textfield"
 
 interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
@@ -18,7 +16,6 @@ interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant: metadata.MetadataKey
 	options?: ReferenceGroupFieldOptions
 }
 
@@ -54,7 +51,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 		for (const element of item) {
 			items.push(itemToString(element))
 		}
-		return items
+		return items.join(",")
 	}
 
 	const value = record.getFieldValue<wire.PlainWireRecord[]>(fieldId)

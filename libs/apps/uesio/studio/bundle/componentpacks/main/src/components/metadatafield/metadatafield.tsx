@@ -13,8 +13,8 @@ interface Props extends definition.BaseProps {
 	definition: MetadataFieldDefinition
 }
 
-const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 const MetadataField: FunctionComponent<Props> = (props) => {
+	const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 	const {
 		context,
 		definition: { fieldId, metadataType },

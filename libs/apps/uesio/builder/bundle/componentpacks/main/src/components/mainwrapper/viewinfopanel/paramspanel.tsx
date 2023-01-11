@@ -8,11 +8,10 @@ import {
 	useSelectedPath,
 } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
-
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
 const ParamsPanel: definition.UtilityComponent = ({ context }) => {
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const [selectedPath, setSelectedPath] = useSelectedPath(context)
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)

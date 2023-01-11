@@ -1,15 +1,15 @@
-import { FC } from "react"
-import { definition, component } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import { getBuilderNamespaces } from "../../api/stateapi"
+import IconLabel from "../iconlabel/iconlabel"
 
-const IconLabel = component.getUtility("uesio/builder.iconlabel")
-
-interface T extends definition.UtilityProps {
+type NamespaceLabelProps = {
 	metadatakey: string // This can either be 'uesio/crm' or a full key like 'uesio/crm.name'
 	title?: string
 }
 
-const NamespaceLabel: FC<T> = (props) => {
+const NamespaceLabel: definition.UtilityComponent<NamespaceLabelProps> = (
+	props
+) => {
 	const { metadatakey = "", title, context, classes } = props
 	const [ns, name] = metadatakey.split(".")
 

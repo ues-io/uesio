@@ -12,13 +12,12 @@ interface MultiMetadataPickerProps extends definition.UtilityProps {
 	fieldWrapperVariant?: string
 }
 
-const Icon = component.getUtility("uesio/io.icon")
-const CustomSelect = component.getUtility("uesio/io.customselect")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const MultiMetadataPicker: FunctionComponent<MultiMetadataPickerProps> = (
 	props
 ) => {
+	const Icon = component.getUtility("uesio/io.icon")
+	const CustomSelect = component.getUtility("uesio/io.customselect")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const {
 		value,
 		setValue,

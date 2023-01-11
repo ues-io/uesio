@@ -1,6 +1,5 @@
-import { styles, component, api, definition, signal } from "@uesio/ui"
-
-const MetricUtility = component.getUtility("uesio/io.metric")
+import { styles, api, definition, signal } from "@uesio/ui"
+import Metric from "../../utilities/metric/metric"
 
 type MetricDefinition = {
 	title?: string
@@ -26,12 +25,12 @@ const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	const value = context.merge(definition.value)
 
 	return (
-		<MetricUtility
+		<Metric
 			onClick={api.signal.getHandler(definition.signals, context)}
 			classes={classes}
 			context={context}
 			title={definition.title}
-			value={value}
+			value={value as string}
 			unit={definition.unit}
 		/>
 	)

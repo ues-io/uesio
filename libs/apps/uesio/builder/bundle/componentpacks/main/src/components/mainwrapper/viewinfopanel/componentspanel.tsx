@@ -3,11 +3,11 @@ import { definition, component, api, styles, metadata } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
 import { getBuilderNamespaces, getBuilderState } from "../../../api/stateapi"
+import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
+import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
 const Text = component.getUtility("uesio/io.text")
-const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]

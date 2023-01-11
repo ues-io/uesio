@@ -33,7 +33,8 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 				position: "relative",
 			},
 		},
-		props
+		props,
+		"uesio/io.titlebar"
 	)
 
 	return (

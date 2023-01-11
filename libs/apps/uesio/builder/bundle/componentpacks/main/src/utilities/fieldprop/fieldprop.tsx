@@ -1,6 +1,5 @@
 import { builder, component, wire, util } from "@uesio/ui"
-
-const SelectProp = component.getUtility("uesio/builder.selectprop")
+import SelectProp from "../selectprop/selectprop"
 
 const FieldProp: builder.PropComponent<builder.FieldProp> = (props) => {
 	const { valueAPI, path, descriptor } = props

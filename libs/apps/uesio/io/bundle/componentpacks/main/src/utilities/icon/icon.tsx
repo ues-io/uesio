@@ -26,7 +26,8 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
 			},
 		},
-		props
+		props,
+		"uesio/io.icon"
 	)
 
 	if (props.icon === undefined) return null
