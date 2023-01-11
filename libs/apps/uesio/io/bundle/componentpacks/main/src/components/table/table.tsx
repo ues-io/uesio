@@ -16,11 +16,12 @@ import {
 	prevPage,
 	usePagination,
 } from "../../shared/pagination"
-import { ButtonUtilityProps } from "../../utilities/button/button"
-import { GroupUtilityProps } from "../../utilities/group/group"
-import { MenuButtonUtilityProps } from "../../utilities/menubutton/menubutton"
-import { PaginatorUtilityProps } from "../../utilities/paginator/paginator"
-import { TableUtilityProps } from "../../utilities/table/table"
+import Button from "../../utilities/button/button"
+import Group from "../../utilities/group/group"
+import MenuButton from "../../utilities/menubutton/menubutton"
+import Paginator from "../../utilities/paginator/paginator"
+import { default as IOTable } from "../../utilities/table/table"
+
 import { ReferenceFieldOptions, UserFieldOptions } from "../field/field"
 
 type TableDefinition = {
@@ -52,27 +53,11 @@ type ColumnDefinition = {
 
 type RecordContext = component.ItemContext<wire.WireRecord>
 
-type MenuItem = {
-	label: string
-}
-
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
 }
-
-const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
-const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
-const MenuButton = component.getUtility<MenuButtonUtilityProps<MenuItem>>(
-	"uesio/io.menubutton"
-)
-const IOTable =
-	component.getUtility<TableUtilityProps<RecordContext, ColumnDefinition>>(
-		"uesio/io.table"
-	)
-const Paginator =
-	component.getUtility<PaginatorUtilityProps>("uesio/io.paginator")
 
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
@@ -189,8 +174,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 							{ label: "Sort Z-A" },
 							{ label: "Sort Remove Sorting" },
 						]}
-						itemRenderer={(item) => item.label}
-						onSelect={(item) => console.log(item.label)}
+						itemRenderer={(item: ColumnDefinition) => item.label}
+						onSelect={(item: ColumnDefinition) =>
+							console.log(item.label)
+						}
 						fill={false}
 						context={context}
 					/>

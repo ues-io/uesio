@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import {
 	wire,
 	api,
@@ -6,25 +5,24 @@ import {
 	definition,
 	component,
 	context,
-	metadata,
 } from "@uesio/ui"
 import { ReferenceFieldOptions } from "../../components/field/field"
+import Autocomplete from "../autocomplete/autocomplete"
+import TextField from "../textfield/textfield"
 
-const TextField = component.getUtility("uesio/io.textfield")
-const AutoComplete = component.getUtility("uesio/io.autocomplete")
-
-interface ReferenceFieldProps extends definition.UtilityProps {
+interface ReferenceFieldProps {
 	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	variant: metadata.MetadataKey
 	options?: ReferenceFieldOptions
 	placeholder?: string
 }
 
-const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
+const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
+	props
+) => {
 	const {
 		fieldId,
 		fieldMetadata,
@@ -57,14 +55,12 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 			const itemContext = context.addFrame({
 				recordData: item,
 			})
-			return itemContext.mergeString(template)
+			return itemContext.mergeString(template) as string
 		}
-		return (
-			item[nameField] ||
+		return (item[nameField] ||
 			item[collection.UNIQUE_KEY_FIELD] ||
 			item[collection.ID_FIELD] ||
-			""
-		)
+			"") as string
 	}
 
 	const value = record.getFieldValue<wire.PlainWireRecord>(fieldId)
@@ -80,7 +76,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		)
 	} else {
 		return (
-			<AutoComplete
+			<Autocomplete
 				context={context}
 				variant={variant}
 				value={value}

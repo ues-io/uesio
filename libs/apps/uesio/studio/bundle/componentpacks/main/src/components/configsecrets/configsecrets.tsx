@@ -1,12 +1,11 @@
 import { FunctionComponent, useState } from "react"
 import { definition, api, component } from "@uesio/ui"
 
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Dialog = component.getUtility("uesio/io.dialog")
-const TextField = component.getUtility("uesio/io.textfield")
-
 const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const TextField = component.getUtility("uesio/io.textfield")
 	const { context } = props
 
 	const valueType = props.definition?.valueType

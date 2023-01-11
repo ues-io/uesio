@@ -1,8 +1,8 @@
 import { FC, SyntheticEvent } from "react"
 import { getErrorString } from "../bands/utils"
-import { UtilityProps } from "../definition/definition"
+import { BaseProps } from "../definition/definition"
 
-interface Props extends UtilityProps {
+interface Props extends BaseProps {
 	error: Error
 }
 

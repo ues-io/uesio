@@ -1,8 +1,6 @@
 import { FunctionComponent, ChangeEvent } from "react"
 import { definition, styles, component, context as ctx } from "@uesio/ui"
 
-const Button = component.getUtility("uesio/io.button")
-
 type BulkjobDefinition = {
 	id: string
 	label: string
@@ -42,6 +40,7 @@ const handleChange = (
 }
 
 const Bulkjob: FunctionComponent<Props> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
 	const {
 		definition: { id, label },
 		context,

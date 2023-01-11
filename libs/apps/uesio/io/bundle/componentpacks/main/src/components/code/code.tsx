@@ -1,5 +1,5 @@
-import { component, styles, api, definition } from "@uesio/ui"
-import { CodeFieldUtilityProps } from "../../utilities/codefield/codefield"
+import { styles, api, definition } from "@uesio/ui"
+import { default as IOCodeField } from "../../utilities/codefield/codefield"
 
 type CodeFieldDefinition = {
 	language?: CodeFieldLanguage
@@ -8,9 +8,6 @@ type CodeFieldDefinition = {
 }
 
 type CodeFieldLanguage = "yaml" | "json" | "javascript" | "html" | "css"
-
-const IOCodeField =
-	component.getUtility<CodeFieldUtilityProps>("uesio/io.codefield")
 
 const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const { definition, context } = props

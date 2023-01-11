@@ -1,15 +1,16 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context } from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
 
 interface TextAreaFieldProps extends definition.UtilityProps {
-	setValue: (value: string) => void
-	value: string | null
+	setValue: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	mode?: context.FieldMode
 	placeholder?: string
 }
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder } = props
+	const { setValue, mode, placeholder } = props
+	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{

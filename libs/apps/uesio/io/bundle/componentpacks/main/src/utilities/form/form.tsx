@@ -1,6 +1,8 @@
 import { api, wire, definition, component } from "@uesio/ui"
 
 import { Fragment, FunctionComponent } from "react"
+import Button from "../button/button"
+import Group from "../group/group"
 
 interface FormProps extends definition.UtilityProps {
 	wire?: string
@@ -8,9 +10,6 @@ interface FormProps extends definition.UtilityProps {
 	onSubmit?: (record: wire.WireRecord) => void
 	content: definition.DefinitionList
 }
-
-const Button = component.getUtility("uesio/io.button")
-const Group = component.getUtility("uesio/io.group")
 
 const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel, content } = props

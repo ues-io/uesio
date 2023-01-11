@@ -1,5 +1,9 @@
-import { forwardRef } from "react"
-import { DefinitionMap, UtilityProps, UC } from "../definition/definition"
+import {
+	DefinitionMap,
+	UtilityProps,
+	UC,
+	UtilityComponent,
+} from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
@@ -101,18 +105,6 @@ function mergeContextVariants(
 }
 
 const Component: UC<Record<string, unknown>> = (props) => {
-	const { componentType, path } = props
-	return (
-		<ErrorBoundary {...props}>
-			<ComponentInternal
-				{...props}
-				path={`${path}["${componentType}"]`}
-			/>
-		</ErrorBoundary>
-	)
-}
-
-const ComponentInternal: UC<Record<string, unknown>> = (props) => {
 	const { componentType, context, definition } = props
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
@@ -124,18 +116,21 @@ const ComponentInternal: UC<Record<string, unknown>> = (props) => {
 		componentType,
 		context
 	)
-
 	return (
-		<Loader
-			{...props}
-			definition={mergedDefinition || {}}
-			context={additionalContext(
-				context,
-				mergedDefinition?.["uesio.context"] as ContextFrame
-			)}
-		/>
+		<ErrorBoundary {...props}>
+			<Loader
+				{...props}
+				definition={mergedDefinition || {}}
+				context={additionalContext(
+					context,
+					mergedDefinition?.["uesio.context"] as ContextFrame
+				)}
+			/>
+		</ErrorBoundary>
 	)
 }
+
+Component.displayName = "Component"
 
 const parseVariantName = (
 	fullName: MetadataKey | undefined,
@@ -152,62 +147,15 @@ const parseVariantName = (
 	return [key, `${keyNamespace}.default` as MetadataKey]
 }
 
-function getVariantStylesDef(
-	componentType: MetadataKey,
-	variantName: MetadataKey,
-	context: Context
-) {
-	const variant = context.getComponentVariant(componentType, variantName)
-	if (!variant) return {}
-	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return variantDefinition?.["uesio.styles"] as DefinitionMap
-}
-
-const getVariantStyleInfo = (props: UtilityProps, key: MetadataKey) => {
-	const { variant, context, styles } = props
-	const [componentType, variantName] = parseVariantName(variant, key)
-	if (!variantName) {
-		return styles as DefinitionMap
-	}
-
-	const variantStyles = getVariantStylesDef(
-		componentType,
-		variantName,
-		context
-	)
-
-	if (!styles) {
-		return variantStyles
-	}
-
-	return mergeDefinitionMaps(
-		variantStyles,
-		styles as DefinitionMap,
-		undefined
-	)
-}
-
 interface UtilityPropsPlus extends UtilityProps {
 	[x: string]: unknown
 }
 
 const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	key: MetadataKey
-) => {
-	const returnFunc = forwardRef((props: T, ref) => {
-		const Loader = getUtilityLoader(key)
-		if (!Loader) throw "Could not load component: " + key
-		const styles = getVariantStyleInfo(props, key)
-		return (
-			<Loader ref={ref} {...props} styles={styles} componentType={key} />
-		)
-	})
-	returnFunc.displayName = key
-	return returnFunc
-}
+) => getUtilityLoader(key) as UtilityComponent<T>
 
 export {
-	ComponentInternal,
 	Component,
 	getDefinitionFromVariant,
 	additionalContext,

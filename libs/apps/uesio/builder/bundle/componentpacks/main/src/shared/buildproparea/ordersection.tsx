@@ -2,11 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, api, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropertiesPane from "../propertiespane"
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 function getOrderTitle(order: OrderDefinition): string {
 	if (order.field) {
@@ -33,6 +29,9 @@ const getOrderProperties = (): builder.PropDescriptor[] => [
 type OrderDefinition = { desc: boolean; field: string }
 
 const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
@@ -90,7 +89,6 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						popperChildren={
 							<PropertiesPane
 								path={orderPath}
-								index={0}
 								context={context}
 								propsDef={{
 									title: "Order By",

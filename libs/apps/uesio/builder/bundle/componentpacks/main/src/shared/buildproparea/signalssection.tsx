@@ -3,14 +3,13 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { api, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 import BuildActionsArea from "../../helpers/buildactionsarea"
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const { path, context, valueAPI } = props
 
 	const [metadataType, metadataItem, selectedNode] =
@@ -70,7 +69,6 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						popperChildren={
 							<PropertiesPane
 								path={signalPath}
-								index={0}
 								context={context}
 								propsDef={{
 									title: "Signal",

@@ -5,11 +5,10 @@ import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
 import { getBuilderNamespaces } from "../../api/stateapi"
 
-const Text = component.getUtility("uesio/io.text")
-
-const Popper = component.getUtility("uesio/io.popper")
-
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
+	const Text = component.getUtility("uesio/io.text")
+	const Popper = component.getUtility("uesio/io.popper")
+
 	const { children, path = "", definition, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)

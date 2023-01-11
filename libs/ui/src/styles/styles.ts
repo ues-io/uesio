@@ -10,6 +10,11 @@ import {
 import { css, cx, CSSInterpolation } from "@emotion/css"
 import { mergeDefinitionMaps } from "../component/merge"
 import * as colors from "./colors"
+import {
+	getDefinitionFromVariant,
+	parseVariantName,
+} from "../component/component"
+import { MetadataKey } from "../metadataexports"
 
 type ResponsiveDefinition =
 	| string
@@ -201,14 +206,41 @@ function useStyle<K extends string>(
 	)
 }
 
+function getVariantStyles(
+	props: UtilityProps,
+	componentType: MetadataKey | undefined
+) {
+	if (!componentType) return {}
+
+	const [variantComponentType, variantName] = parseVariantName(
+		props.variant,
+		componentType
+	)
+
+	if (!variantComponentType || !variantName) return {}
+
+	const variant = props.context.getComponentVariant(
+		variantComponentType,
+		variantName
+	)
+	if (!variant) return {}
+	const variantDefinition = getDefinitionFromVariant(variant, props.context)
+	return mergeDefinitionMaps(
+		{},
+		variantDefinition?.["uesio.styles"] as DefinitionMap,
+		props.context
+	)
+}
+
 function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
-	props: UtilityProps | null
+	props: UtilityProps,
+	defaultVariantComponentType?: MetadataKey
 ) {
 	const styles = mergeDefinitionMaps(
-		{},
-		props?.styles as DefinitionMap,
-		props?.context
+		getVariantStyles(props, defaultVariantComponentType),
+		props.styles as DefinitionMap,
+		props.context
 	)
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
@@ -216,17 +248,11 @@ function useUtilityStyles<K extends string>(
 				css([
 					defaults[className],
 					styles?.[className] as CSSInterpolation,
-					{
-						label: getClassNameLabel(
-							props?.componentType,
-							className
-						),
-					},
 				]),
-				props?.classes?.[className],
+				props.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.
-				className === "root" && props?.className
+				className === "root" && props.className
 			)
 			return classNames
 		},

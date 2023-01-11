@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
-import { definition, wire, component, api, collection } from "@uesio/ui"
+import { definition, wire, api, collection } from "@uesio/ui"
+import UploadArea from "../uploadarea/uploadarea"
 
 interface FileUploadAreaProps extends definition.UtilityProps {
 	accept?: string
@@ -9,8 +10,6 @@ interface FileUploadAreaProps extends definition.UtilityProps {
 	uploadLabelId?: string
 	deleteLabelId?: string
 }
-
-const UploadArea = component.getUtility("uesio/io.uploadarea")
 
 const FileUploadArea: FunctionComponent<FileUploadAreaProps> = (props) => {
 	const { context, record, wire, fieldId } = props

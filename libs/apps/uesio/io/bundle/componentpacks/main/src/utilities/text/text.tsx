@@ -1,20 +1,14 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TextProps extends definition.UtilityProps {
-	text?: string
-	element?: string
-	color?: string
-	align?:
-		| "start"
-		| "end"
-		| "left"
-		| "right"
-		| "center"
-		| "justify"
-		| "match-parent"
-		| "inherit"
-}
+type AlignValues =
+	| "start"
+	| "end"
+	| "left"
+	| "right"
+	| "center"
+	| "justify"
+	| "match-parent"
+	| "inherit"
 
 type AcceptedElements =
 	| "p"
@@ -28,7 +22,14 @@ type AcceptedElements =
 	| "h6"
 	| "pre"
 
-const Text: FunctionComponent<TextProps> = (props) => {
+interface TextProps {
+	text?: string
+	element?: AcceptedElements
+	color?: string
+	align?: AlignValues
+}
+
+const Text: definition.UtilityComponent<TextProps> = (props) => {
 	const { text, element, color, align } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -40,11 +41,14 @@ const Text: FunctionComponent<TextProps> = (props) => {
 				verticalAlign: "inherit",
 			},
 		},
-		props
+		props,
+		"uesio/io.text"
 	)
 	const Tag = (element ? element : "span") as AcceptedElements
 	const mergedText = props.context.mergeString(text)
 	return <Tag className={classes.root}>{mergedText}</Tag>
 }
+
+export { AcceptedElements, AlignValues }
 
 export default Text

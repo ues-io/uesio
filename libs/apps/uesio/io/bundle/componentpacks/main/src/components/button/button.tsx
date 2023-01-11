@@ -1,6 +1,6 @@
 import { api, styles, component, signal, definition } from "@uesio/ui"
-import { IconUtilityProps } from "../../utilities/icon/icon"
-import { ButtonUtilityProps } from "../../utilities/button/button"
+import { default as IOButton } from "../../utilities/button/button"
+import Icon from "../../utilities/icon/icon"
 
 type ButtonDefinition = {
 	text?: string
@@ -8,9 +8,6 @@ type ButtonDefinition = {
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
 }
-
-const IOButton = component.getUtility<ButtonUtilityProps>("uesio/io.button")
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const Button: definition.UC<ButtonDefinition> = (props) => {
 	const { definition, context } = props

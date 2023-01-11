@@ -1,6 +1,6 @@
-import { styles, component, definition } from "@uesio/ui"
+import { styles, definition } from "@uesio/ui"
 
-const IOAvatar = component.getUtility("uesio/io.avatar")
+import { default as IOAvatar } from "../../utilities/avatar/avatar"
 
 type AvatarDefinition = {
 	image?: string

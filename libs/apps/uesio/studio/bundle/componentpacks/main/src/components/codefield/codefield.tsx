@@ -14,10 +14,9 @@ interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
 
-const IOCodeField = component.getUtility("uesio/io.codefield")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-
 const CodeField: FunctionComponent<Props> = (props) => {
+	const IOCodeField = component.getUtility("uesio/io.codefield")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const { context, definition } = props
 	const record = context.getRecord()
 	const wire = context.getWire()

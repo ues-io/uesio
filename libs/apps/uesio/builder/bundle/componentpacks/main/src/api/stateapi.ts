@@ -33,7 +33,7 @@ const isSelected = (selectedPath: string | undefined, checkPath: string) =>
 	selectedPath === checkPath
 
 const isInSelection = (selectedPath: string | undefined, checkPath: string) =>
-	selectedPath && selectedPath.startsWith(checkPath)
+	selectedPath ? selectedPath.startsWith(checkPath) : undefined
 
 export {
 	getBuildMode,

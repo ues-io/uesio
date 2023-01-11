@@ -1,18 +1,10 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { GroupUtilityProps } from "../group/group"
-import { DialogPlainUtilityProps } from "../dialogplain/dialogplain"
-import { IconButtonUtilityProps } from "../iconbutton/iconbutton"
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const IconButton = component.getUtility<IconButtonUtilityProps>(
-	"uesio/io.iconbutton"
-)
-const Grid = component.getUtility("uesio/io.grid")
-const Group = component.getUtility<GroupUtilityProps>("uesio/io.group")
-const IODialogPlain = component.getUtility<DialogPlainUtilityProps>(
-	"uesio/io.dialogplain"
-)
+import { definition, styles } from "@uesio/ui"
+import DialogPlain from "../dialogplain/dialogplain"
+import Grid from "../grid/grid"
+import TitleBar from "../titlebar/titlebar"
+import IconButton from "../iconbutton/iconbutton"
+import Group from "../group/group"
 
 interface DialogUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
@@ -38,7 +30,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 	)
 	const { context, title, onClose, width, height, children, actions } = props
 	return (
-		<IODialogPlain
+		<DialogPlain
 			context={props.context}
 			height={height}
 			width={width}
@@ -70,7 +62,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 					{actions}
 				</Group>
 			</Grid>
-		</IODialogPlain>
+		</DialogPlain>
 	)
 }
 export { DialogUtilityProps }

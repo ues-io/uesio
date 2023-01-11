@@ -1,13 +1,10 @@
 import { FunctionComponent } from "react"
-import {
-	definition,
-	context as ctx,
-	collection,
-	wire,
-	component,
-	api,
-} from "@uesio/ui"
+import { definition, context as ctx, collection, wire, api } from "@uesio/ui"
 import { UserFieldOptions } from "../../components/field/field"
+import ReferenceField from "../referencefield/referencefield"
+import Tile from "../tile/tile"
+import Avatar from "../avatar/avatar"
+import TitleBar from "../titlebar/titlebar"
 
 interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
@@ -18,17 +15,12 @@ interface UserFieldProps extends definition.UtilityProps {
 	options?: UserFieldOptions
 }
 
-const Tile = component.getUtility("uesio/io.tile")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Avatar = component.getUtility("uesio/io.avatar")
-const ReferenceField = component.getUtility("uesio/io.referencefield")
-
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { mode, record, fieldId, context, options } = props
 	const readonly = mode === "READ"
 
 	if (!readonly) {
-		return <ReferenceField {...props} />
+		return <ReferenceField {...props} options={{}} />
 	}
 
 	const user = record.getReferenceValue(fieldId)

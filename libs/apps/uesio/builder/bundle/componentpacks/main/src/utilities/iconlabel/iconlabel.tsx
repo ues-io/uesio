@@ -1,9 +1,6 @@
 import { FC } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
-const Text = component.getUtility("uesio/io.text")
-const Tooltip = component.getUtility("uesio/io.tooltip")
-
 interface T extends definition.UtilityProps {
 	icon: string
 	color: string
@@ -12,6 +9,8 @@ interface T extends definition.UtilityProps {
 }
 
 const IconLabel: FC<T> = (props) => {
+	const Text = component.getUtility("uesio/io.text")
+	const Tooltip = component.getUtility("uesio/io.tooltip")
 	const { icon, color, text, tooltip, context } = props
 
 	const classes = styles.useUtilityStyles(

@@ -5,10 +5,9 @@ import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import CodeArea from "./codearea/codearea"
 import { useBuildMode } from "../../api/stateapi"
 
-const Grid = component.getUtility("uesio/io.grid")
-
 const MainWrapper: definition.UC = (props) => {
 	const { context } = props
+	const Grid = component.getUtility("uesio/io.grid")
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addFrame({

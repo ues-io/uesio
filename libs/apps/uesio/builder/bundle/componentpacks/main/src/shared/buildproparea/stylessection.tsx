@@ -1,10 +1,7 @@
 import { FunctionComponent, useState } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder, component, definition } from "@uesio/ui"
-
-const PropList = component.getUtility("uesio/builder.proplist")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const ListField = component.getUtility("uesio/io.listfield")
+import PropList from "../../utilities/proplist/proplist"
 
 type StyleValue = {
 	key: string
@@ -12,6 +9,8 @@ type StyleValue = {
 }
 
 const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const ListField = component.getUtility("uesio/io.listfield")
 	const { path, context, propsDef, valueAPI } = props
 
 	const stylesPath = `${path}["uesio.styles"]`

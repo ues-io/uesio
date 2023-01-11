@@ -1,23 +1,10 @@
 import { FunctionComponent } from "react"
 import { MDOptions } from "../markdownfield/types"
 
-import {
-	definition,
-	context,
-	collection,
-	wire,
-	api,
-	component,
-	metadata,
-} from "@uesio/ui"
+import { definition, context, collection, wire, api, metadata } from "@uesio/ui"
 
 import { FieldState, LabelPosition } from "../../components/field/field"
-
-import { MarkDownFieldProps } from "../markdownfield/markdownfield"
-
-const MarkDownField = component.getUtility<MarkDownFieldProps>(
-	"uesio/io.markdownfield"
-)
+import MarkDownField from "../markdownfield/markdownfield"
 
 interface FileMarkDownProps extends definition.UtilityProps {
 	label?: string
@@ -30,7 +17,7 @@ interface FileMarkDownProps extends definition.UtilityProps {
 	record: wire.WireRecord
 	wire: wire.Wire
 	variant?: metadata.MetadataKey
-	options: MDOptions
+	options?: MDOptions
 }
 
 const FileMarkDown: FunctionComponent<FileMarkDownProps> = (props) => {

@@ -1,11 +1,10 @@
-import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface GridProps extends definition.UtilityProps {
+interface GridProps {
 	onClick?: () => void
 }
 
-const Grid: FunctionComponent<GridProps> = (props) => {
+const Grid: definition.UtilityComponent<GridProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -20,5 +19,7 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 		</div>
 	)
 }
+
+Grid.displayName = "GridUtility"
 
 export default Grid

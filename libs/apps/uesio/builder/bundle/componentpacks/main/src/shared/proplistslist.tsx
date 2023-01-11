@@ -2,12 +2,10 @@ import React, { FC } from "react"
 import { builder, context, api, component, styles } from "@uesio/ui"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "./hooks/uselistscroll"
-const PropList = component.getUtility("uesio/builder.proplist")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+
 import BuildActionsArea from "../helpers/buildactionsarea"
+import PropNodeTag from "../utilities/propnodetag/propnodetag"
+import PropList from "../utilities/proplist/proplist"
 
 const TitleBar = component.getUtility("uesio/io.titlebar")
 type T = {
@@ -40,6 +38,9 @@ export const mergeTemplate = (
 }
 
 const PropListsList: FC<T> = (props) => {
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const {
 		items,
 		context,

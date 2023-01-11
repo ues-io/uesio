@@ -1,6 +1,5 @@
 import { component, styles, api, definition } from "@uesio/ui"
-
-const TabLabels = component.getUtility("uesio/io.tablabels")
+import TabLabels from "../../utilities/tablabels/tablabels"
 
 type TabDefinition = {
 	id: string

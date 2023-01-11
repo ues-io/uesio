@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react"
 import { definition, component, api, hooks, styles } from "@uesio/ui"
 
-const Button = component.getUtility("uesio/io.button")
-const Group = component.getUtility("uesio/io.group")
-
 const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Group = component.getUtility("uesio/io.group")
 	const { context } = props
 
 	const hasChanges = api.builder.useHasChanges()

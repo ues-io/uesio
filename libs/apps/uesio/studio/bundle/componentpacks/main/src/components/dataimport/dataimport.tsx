@@ -17,8 +17,9 @@ interface State {
 	csvFields: string[]
 	file: File | null
 }
-const Button = component.getUtility("uesio/io.button")
+
 const DataImport: FunctionComponent<Props> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
 	const { context, definition } = props
 
 	const collectionId = context.mergeString(definition.collectionId)

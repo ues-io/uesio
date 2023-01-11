@@ -1,34 +1,20 @@
-import { FC } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
+import Fieldset from "../fieldset/fieldset"
+import CheckboxField from "../checkboxfield/checkboxfield"
 
-interface SelectFieldProps extends definition.UtilityProps {
+interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void
-	value?: Record<string, boolean>
+	value?: wire.FieldValue
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
 }
 
-const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
-const Fieldset = component.getUtility("uesio/io.fieldset")
-
-const MultiCheckField: FC<SelectFieldProps> = (props) => {
-	const {
-		setValue,
-		value = {},
-		mode,
-		options,
-		context,
-		fieldMetadata,
-	} = props
+const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
+	props
+) => {
+	const { setValue, mode, options, context, fieldMetadata } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -46,6 +32,9 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 		props
 	)
 
+	// TODO: Better checking here
+	const value = props.value as Record<string, boolean>
+
 	const fieldLabel = fieldMetadata.getLabel()
 
 	return (
@@ -61,8 +50,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 						`${fieldLabel}_check_${option.value}`.replace(/ /g, "_")
 					return (
 						<div className={classes.option} key={option.value}>
-							<CheckBoxField
-								id={optionId}
+							<CheckboxField
 								value={value && value[option.value]}
 								context={context}
 								setValue={(optionVal: boolean) =>

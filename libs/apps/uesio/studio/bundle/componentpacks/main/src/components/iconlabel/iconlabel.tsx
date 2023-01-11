@@ -12,9 +12,8 @@ interface Props extends definition.BaseProps {
 	definition: IconLabelDefinition
 }
 
-const IconLabelUtility = component.getUtility("uesio/builder.iconlabel")
-
 const IconLabel: FunctionComponent<Props> = (props) => {
+	const IconLabelUtility = component.getUtility("uesio/builder.iconlabel")
 	const {
 		context,
 		definition: { icon, color, text, tooltip },

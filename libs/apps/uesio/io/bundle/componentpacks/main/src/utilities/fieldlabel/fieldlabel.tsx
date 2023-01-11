@@ -11,7 +11,8 @@ const FieldLabel: FunctionComponent<FieldLabelProps> = (props) => {
 		{
 			root: {},
 		},
-		props
+		props,
+		"uesio/io.fieldlabel"
 	)
 	return <div className={classes.root}>{label}</div>
 }

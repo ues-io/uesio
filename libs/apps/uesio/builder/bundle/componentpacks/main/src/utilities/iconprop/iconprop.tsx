@@ -2,14 +2,13 @@ import { ChangeEvent, useState } from "react"
 
 import { api, component, styles, materialIcons, builder } from "@uesio/ui"
 
-const TextField = component.getUtility("uesio/io.textfield")
-const Popper = component.getUtility("uesio/io.popper")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-
 const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
+	const TextField = component.getUtility("uesio/io.textfield")
+	const Popper = component.getUtility("uesio/io.popper")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const { descriptor, path, context, valueAPI } = props
 
 	const [, , selectedNode] = api.builder.useSelectedNode()
@@ -59,7 +58,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 				fontSize: "8pt",
 			},
 		},
-		null
+		props
 	)
 
 	const viewDefId = context.getViewDefId()

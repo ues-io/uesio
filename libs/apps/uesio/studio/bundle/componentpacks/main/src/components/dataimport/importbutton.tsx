@@ -8,8 +8,6 @@ interface Props extends definition.UtilityProps {
 	type?: "button" | "area"
 }
 
-const Button = component.getUtility("uesio/io.button")
-
 const getHeaderFields = async (files: FileList | null): Promise<string[]> => {
 	if (!files || files.length === 0) return []
 	const file = files[0]
@@ -35,10 +33,10 @@ const readCSV = async (file: File): Promise<string[][]> =>
 		})
 	})
 
-const Icon = component.getUtility("uesio/io.icon")
-const UploadArea = component.getUtility("uesio/io.uploadarea")
-
 const ImportButton: FunctionComponent<Props> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+	const UploadArea = component.getUtility("uesio/io.uploadarea")
 	const { context, changeUploaded, type } = props
 
 	const uploadLabelId = nanoid()

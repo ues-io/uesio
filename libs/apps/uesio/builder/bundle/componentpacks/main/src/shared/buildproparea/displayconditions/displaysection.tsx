@@ -4,13 +4,12 @@ import { SectionRendererProps } from "../sectionrendererdefinition"
 
 import PropertiesPane from "../../propertiespane"
 import conditionProperties from "./conditionProperties"
-
-const TitleBar = component.getUtility("uesio/io.titlebar")
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
+	const TitleBar = component.getUtility("uesio/io.titlebar")
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
 	const { path, context, valueAPI } = props
 
 	const displayPath = `${path}["uesio.display"]`

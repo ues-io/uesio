@@ -1,12 +1,11 @@
-import { component, styles, definition } from "@uesio/ui"
-
-const IOText = component.getUtility("uesio/io.text")
+import { styles, definition } from "@uesio/ui"
+import { AcceptedElements, default as IOText } from "../../utilities/text/text"
 
 type TextDefinition = {
 	text?: string
-	element?: string
+	element?: AcceptedElements
 	color?: string
-	align?: string
+	align?: AlignSetting
 }
 
 const Text: definition.UC<TextDefinition> = (props) => {

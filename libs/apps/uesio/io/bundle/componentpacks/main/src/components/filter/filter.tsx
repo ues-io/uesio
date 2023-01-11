@@ -1,22 +1,15 @@
-import {
-	component,
-	api,
-	collection,
-	wire,
-	definition,
-	metadata,
-} from "@uesio/ui"
-
-const SelectFilter = component.getUtility("uesio/io.selectfilter")
-const MonthFilter = component.getUtility("uesio/io.monthfilter")
-const WeekFilter = component.getUtility("uesio/io.weekfilter")
-const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
+import { api, collection, wire, definition, metadata } from "@uesio/ui"
+import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
+import MonthFilter from "../../utilities/monthfilter/monthfilter"
+import SelectFilter from "../../utilities/selectfilter/selectfilter"
+import WeekFilter from "../../utilities/weekfilter/weekfilter"
+import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
 	fieldId: string
 	wire: string
 	label?: string
-	labelPosition?: string
+	labelPosition?: LabelPosition
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string

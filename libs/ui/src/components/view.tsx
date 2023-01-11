@@ -131,4 +131,6 @@ const ViewPropertyDefinition: BuildPropertiesDefinition = {
 }
 */
 
+View.displayName = "View"
+
 export default View

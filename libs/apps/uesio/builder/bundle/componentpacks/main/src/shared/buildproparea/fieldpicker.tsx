@@ -5,10 +5,8 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
-
-const NamespaceLabel = component.getUtility("uesio/builder.namespacelabel")
-const Icon = component.getUtility("uesio/io.icon")
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
+import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
+import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 type T = {
 	valueAPI: builder.ValueAPI
@@ -72,6 +70,7 @@ const useSearch = (items: string[] = []) => {
 }
 
 const FieldPicker: FC<T> = (props) => {
+	const Icon = component.getUtility("uesio/io.icon")
 	const { valueAPI, path, context, wireDef } = props
 	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([])
 

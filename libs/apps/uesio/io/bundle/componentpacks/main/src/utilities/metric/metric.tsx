@@ -1,16 +1,14 @@
-import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
+import Tile from "../tile/tile"
 
-interface MetricProps extends definition.UtilityProps {
+interface MetricProps {
 	onClick?: () => void
 	title?: string
 	unit?: string
 	value: string
 }
 
-const Tile = component.getUtility("uesio/io.tile")
-
-const Metric: FunctionComponent<MetricProps> = (props) => {
+const Metric: definition.UtilityComponent<MetricProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},

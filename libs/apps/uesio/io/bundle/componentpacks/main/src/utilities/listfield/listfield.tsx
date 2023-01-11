@@ -5,21 +5,19 @@ import {
 	definition,
 	context,
 	metadata,
-	component,
 	styles,
 } from "@uesio/ui"
-
-const TextField = component.getUtility("uesio/io.textfield")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const Grid = component.getUtility("uesio/io.grid")
-const FieldLabel = component.getUtility("uesio/io.fieldlabel")
+import Grid from "../grid/grid"
+import FieldLabel from "../fieldlabel/fieldlabel"
+import IconButton from "../iconbutton/iconbutton"
+import TextField from "../textfield/textfield"
 
 interface ListFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
-	value: (wire.PlainWireRecord | wire.FieldValue)[]
-	setValue: (value: (wire.PlainWireRecord | wire.FieldValue)[]) => void
-	subFields: collection.FieldMetadataMap
-	subType: string
+	value: wire.FieldValue
+	setValue: (value: wire.FieldValue) => void
+	subFields?: collection.FieldMetadataMap
+	subType?: string
 	autoAdd?: boolean
 	noAdd?: boolean
 	fieldVariant?: metadata.MetadataKey
@@ -32,13 +30,15 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		subType,
 		mode,
 		context,
-		value,
-		setValue,
 		autoAdd,
 		noAdd,
 		fieldVariant,
 		labelVariant,
 	} = props
+	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
+	const setValue = props.setValue as (
+		value: (wire.PlainWireRecord | wire.FieldValue)[]
+	) => void
 	const editMode = mode === "EDIT"
 	const isText = subType === "TEXT"
 	const numFields = subFields ? Object.keys(subFields).length : 0

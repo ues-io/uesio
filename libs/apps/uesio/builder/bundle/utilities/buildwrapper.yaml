@@ -1,3 +1,0 @@
-name: buildwrapper
-pack: main
-entrypoint: utilities/buildwrapper/buildwrapper

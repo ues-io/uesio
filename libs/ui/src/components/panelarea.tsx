@@ -1,5 +1,5 @@
 import { usePanels } from "../bands/panel/selectors"
-import { ComponentInternal } from "../component/component"
+import { Component } from "../component/component"
 import { PanelDefinitionMap } from "../definition/panel"
 import { Context } from "../context/context"
 import { FC } from "react"
@@ -27,7 +27,7 @@ const PanelArea: FC = () => {
 					if (!componentType) return null
 
 					return [
-						<ComponentInternal
+						<Component
 							key={panelId}
 							definition={{ ...panelDef, id: panelId }}
 							path={`["panels"]["${panelId}"]`}

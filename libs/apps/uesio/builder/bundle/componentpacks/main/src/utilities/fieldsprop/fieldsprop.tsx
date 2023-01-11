@@ -1,6 +1,5 @@
 import { builder, component, wire, util } from "@uesio/ui"
-
-const MultiSelectProp = component.getUtility("uesio/builder.multiselectprop")
+import MultiSelectProp from "../multiselectprop/multiselectprop"
 
 const FieldsProp: builder.PropComponent<builder.FieldsProp> = (props) => {
 	const { valueAPI, path } = props

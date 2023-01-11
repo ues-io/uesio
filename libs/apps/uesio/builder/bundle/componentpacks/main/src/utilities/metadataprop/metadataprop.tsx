@@ -1,6 +1,5 @@
 import { component, builder } from "@uesio/ui"
-
-const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
+import MetadataPicker from "../metadatapicker/metadatapicker"
 
 const MetadataProp: builder.PropComponent<builder.MetadataProp> = (props) => {
 	const { path, valueAPI, context, descriptor } = props

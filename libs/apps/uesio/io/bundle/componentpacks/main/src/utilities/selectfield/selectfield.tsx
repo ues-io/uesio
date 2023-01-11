@@ -1,17 +1,18 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context, collection } from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
 import TextField from "../textfield/textfield"
 
 interface SelectFieldProps extends definition.UtilityProps {
-	setValue: (value: string) => void
-	value: string
+	setValue: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
 }
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, value, mode, options } = props
+	const { setValue, mode, options } = props
+	const value = props.value as string
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)

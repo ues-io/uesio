@@ -3,13 +3,12 @@ import { builder, component, api } from "@uesio/ui"
 import PropListsList from "../../shared/proplistslist"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import toPath from "lodash/toPath"
-
-const PropNodeTag = component.getUtility("uesio/builder.propnodetag")
-const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-const IconButton = component.getUtility("uesio/io.iconbutton")
-const TitleBar = component.getUtility("uesio/io.titlebar")
+import PropNodeTag from "../propnodetag/propnodetag"
 
 const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
+	const IconButton = component.getUtility("uesio/io.iconbutton")
+	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
 	const items = (valueAPI.get(path) as unknown[]) || []

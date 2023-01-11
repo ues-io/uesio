@@ -2,9 +2,8 @@ import { definition, component, api } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
 import { getBuildMode } from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
+import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
-
-const BuildWrapper = component.getUtility("uesio/builder.buildwrapper")
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const {

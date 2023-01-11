@@ -1,17 +1,17 @@
-import { FC } from "react"
-import { definition, styles, context, collection, component } from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
+import TextField from "../textfield/textfield"
 
-interface DateFieldProps extends definition.UtilityProps {
-	setValue: (value: string) => void
-	value: string
-	fieldMetadata: collection.Field
+type DateFieldProps = {
+	setValue: (value: wire.FieldValue) => void
+	value: wire.FieldValue
 	mode?: context.FieldMode
 }
 
-const TextField = component.getUtility("uesio/io.textfield")
+const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
+	const { setValue, mode } = props
 
-const DateField: FC<DateFieldProps> = (props) => {
-	const { setValue, value, mode } = props
+	// TODO: Better type checking here
+	const value = props.value as string
 
 	const readonly = mode === "READ"
 

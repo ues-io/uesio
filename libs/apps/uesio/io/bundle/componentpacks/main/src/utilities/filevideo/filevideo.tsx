@@ -1,14 +1,8 @@
 import { FunctionComponent, CSSProperties } from "react"
-import {
-	definition,
-	styles,
-	collection,
-	component,
-	context,
-	wire,
-	api,
-} from "@uesio/ui"
+import { definition, styles, collection, context, wire, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
+import FileUploadArea from "../fileuploadarea/fileuploadarea"
+import Icon from "../icon/icon"
 
 interface FileVideoProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
@@ -17,12 +11,9 @@ interface FileVideoProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	record: wire.WireRecord
 	wire: wire.Wire
-	muted: boolean
-	autoplay: boolean
+	muted?: boolean
+	autoplay?: boolean
 }
-
-const Icon = component.getUtility("uesio/io.icon")
-const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 	const { fieldMetadata, fieldId, record, context, wire, autoplay, muted } =

@@ -2,7 +2,7 @@ import { useState, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
-import { IconUtilityProps } from "../icon/icon"
+import Icon from "../icon/icon"
 
 type CustomSelectProps<T> = {
 	value: T
@@ -17,8 +17,6 @@ type CustomSelectProps<T> = {
 	) => ReactNode
 	tagRenderer: (item: T) => ReactNode
 } & definition.BaseProps
-
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
 
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {

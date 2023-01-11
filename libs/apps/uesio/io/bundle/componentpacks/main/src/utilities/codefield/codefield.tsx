@@ -1,9 +1,8 @@
-import { FunctionComponent } from "react"
 import { definition, styles, context, api } from "@uesio/ui"
 import Editor, { EditorProps, loader, OnChange } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 
-interface CodeFieldUtilityProps extends definition.UtilityProps {
+interface CodeFieldUtilityProps {
 	setValue: OnChange
 	value: string
 	language?: string
@@ -18,7 +17,9 @@ loader.config({
 	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
 })
 
-const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
+const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
+	props
+) => {
 	const { setValue, value, language, options, onMount } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -27,7 +28,8 @@ const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 			},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.codefield"
 	)
 
 	return (
@@ -49,7 +51,5 @@ const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
 		</div>
 	)
 }
-
-export { CodeFieldUtilityProps }
 
 export default CodeField

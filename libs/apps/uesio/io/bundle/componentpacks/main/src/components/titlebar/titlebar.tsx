@@ -1,6 +1,5 @@
 import { component, definition } from "@uesio/ui"
-
-const IOTitleBar = component.getUtility("uesio/io.titlebar")
+import { default as IOTitleBar } from "../../utilities/titlebar/titlebar"
 
 type TitleBarDefinition = {
 	title: string

@@ -1,6 +1,7 @@
 import { FunctionComponent, ReactNode } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import { cx } from "@emotion/css"
+import CheckboxField from "../checkboxfield/checkboxfield"
 
 interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rows: R[]
@@ -17,8 +18,6 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
 }
-
-const CheckboxField = component.getUtility("uesio/io.checkboxfield")
 
 const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 	props
@@ -93,7 +92,8 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 			},
 			rowDeleted: {},
 		},
-		props
+		props,
+		"uesio/io.table"
 	)
 
 	const getRowNumberHeaderCell = () => {

@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
-import { definition, component } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import type { Placement } from "@popperjs/core"
-import { ButtonUtilityProps } from "../button/button"
-import { IconUtilityProps } from "../icon/icon"
+import Button from "../button/button"
+import Icon from "../icon/icon"
 
 interface IconButtonUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
@@ -12,9 +12,6 @@ interface IconButtonUtilityProps extends definition.UtilityProps {
 	disabled?: boolean
 	tooltipPlacement?: Placement
 }
-
-const Icon = component.getUtility<IconUtilityProps>("uesio/io.icon")
-const Button = component.getUtility<ButtonUtilityProps>("uesio/io.button")
 
 const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 	const {

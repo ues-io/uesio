@@ -1,28 +1,27 @@
 import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
+import MetadataProp from "../metadataprop/metadataprop"
+import SelectProp from "../selectprop/selectprop"
+import MultiSelectProp from "../multiselectprop/multiselectprop"
+import KeyProp from "../keyprop/keyprop"
+import WireProp from "../wireprop/wireprop"
+import BotProp from "../botprop/botprop"
+import WiresProp from "../wiresprop/wiresprop"
+import NamespaceProp from "../namespaceprop/namespaceprop"
+import NumberProp from "../numberprop/numberprop"
+import BooleanProp from "../booleanprop/booleanprop"
+import TextProp from "../textprop/textprop"
+import TextAreaProp from "../textareaprop/textareaprop"
+import IconProp from "../iconprop/iconprop"
+import ParamProp from "../paramprop/paramprop"
+import ParamsProp from "../paramsprop/paramsprop"
+import FieldProp from "../fieldprop/fieldprop"
+import FieldsProp from "../fieldsprop/fieldsprop"
+import PropListProp from "../proplistprop/proplistprop"
+import ConditionPropComponent from "../conditionprop/conditionprop"
+import ProplistsProp from "../proplistsprop/proplistsprop"
 
-const TextProp = component.getUtility("uesio/builder.textprop")
-const TextAreaProp = component.getUtility("uesio/builder.textareaprop")
-const SelectProp = component.getUtility("uesio/builder.selectprop")
-const MultiSelectProp = component.getUtility("uesio/builder.multiselectprop")
-const KeyProp = component.getUtility("uesio/builder.keyprop")
-const WireProp = component.getUtility("uesio/builder.wireprop")
-const WiresProp = component.getUtility("uesio/builder.wiresprop")
-const MetadataProp = component.getUtility("uesio/builder.metadataprop")
-const NumberProp = component.getUtility("uesio/builder.numberprop")
-const ParamProp = component.getUtility("uesio/builder.paramprop")
-const ParamsProp = component.getUtility("uesio/builder.paramsprop")
-const BooleanProp = component.getUtility("uesio/builder.booleanprop")
-const ConditionProp = component.getUtility("uesio/builder.conditionprop")
-const NamespaceProp = component.getUtility("uesio/builder.namespaceprop")
-const BotProp = component.getUtility("uesio/builder.botprop")
-const IconProp = component.getUtility("uesio/builder.iconprop")
-const FieldProp = component.getUtility("uesio/builder.fieldprop")
-const FieldsProp = component.getUtility("uesio/builder.fieldsprop")
-const PropListsProp = component.getUtility("uesio/builder.proplistsprop")
-const PropListProp = component.getUtility("uesio/builder.proplistprop")
-
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
 	valueAPI: builder.ValueAPI
@@ -43,7 +42,7 @@ function getPropHandler(type?: string) {
 		case "BOT":
 			return BotProp
 		case "CONDITION":
-			return ConditionProp
+			return ConditionPropComponent
 		case "NAMESPACE":
 			return NamespaceProp
 		case "WIRES":
@@ -67,7 +66,7 @@ function getPropHandler(type?: string) {
 		case "FIELDS":
 			return FieldsProp
 		case "PROPLISTS":
-			return PropListsProp
+			return ProplistsProp
 		case "PROPLIST":
 			return PropListProp
 		default:
@@ -114,7 +113,7 @@ const PropList: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			{propertiesToRender.map((descriptor, index) => {
+			{propertiesToRender.map((descriptor) => {
 				const newPath =
 					descriptor.type === "KEY"
 						? path
@@ -127,6 +126,9 @@ const PropList: FunctionComponent<Props> = (props) => {
 
 				const PropHandler = getPropHandler(descriptor.type)
 
+				console.log(PropHandler, key, propsDef, context)
+				return null
+				/*
 				return (
 					PropHandler && (
 						<PropHandler
@@ -134,12 +136,13 @@ const PropList: FunctionComponent<Props> = (props) => {
 							path={newPath}
 							propsDef={propsDef}
 							descriptor={descriptor}
-							index={index}
+							//index={index}
 							context={context}
 							valueAPI={valueAPI}
 						/>
 					)
 				)
+				*/
 			})}
 		</>
 	)

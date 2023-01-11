@@ -8,10 +8,9 @@ type Props = {
 	popperChildren?: ReactNode
 } & definition.UtilityProps
 
-const Tile = component.getUtility("uesio/io.tile")
-const Popper = component.getUtility("uesio/io.popper")
-
 const PropNodeTag: FC<Props> = (props) => {
+	const Tile = component.getUtility("uesio/io.tile")
+	const Popper = component.getUtility("uesio/io.popper")
 	const { onClick, draggable, selected, context, popperChildren, variant } =
 		props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)

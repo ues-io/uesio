@@ -1,11 +1,10 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks, styles, api } from "@uesio/ui"
 
-const Button = component.getUtility("uesio/io.button")
-const Icon = component.getUtility("uesio/io.icon")
-const Group = component.getUtility("uesio/io.group")
-
 const BottomActions: FunctionComponent<definition.UtilityProps> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+	const Icon = component.getUtility("uesio/io.icon")
+	const Group = component.getUtility("uesio/io.group")
 	const { context } = props
 
 	const classes = styles.useUtilityStyles(
