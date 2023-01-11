@@ -86,12 +86,19 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, errors.New("Cannot process that file type: " + fileFormat)
 	}
 
+	conditions := []adapt.LoadRequestCondition{}
+
+	for _, condition := range spec.Conditions {
+		conditions = append(conditions, adapt.LoadRequestCondition{Field: condition.Field, Operator: condition.Operator, Value: condition.Value})
+	}
+
 	op := &adapt.LoadOp{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,
 		Fields:         fields,
 		Query:          true,
+		Conditions:     conditions,
 	}
 
 	err = loadData(op, session)
