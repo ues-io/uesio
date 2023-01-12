@@ -1,0 +1,84 @@
+name: Master/Release Branch Build
+on:
+  push:
+    branches:
+      - master
+      - workflow-changes
+      # - stable-december-2022
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+        go-version: [~1.19]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Use Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - name: Cache ~/.npm
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-node-
+      - name: Install npm Dependencies
+        run: npm ci
+      - name: Cache ./node_modules/.cache for nx usage
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules/.cache
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
+            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Lint
+        shell: bash
+        run: |
+          npm run prettier-check
+          npm run lint -- --parallel
+      - name: Build All
+        shell: bash
+        run: |
+          npm run build-all
+      - name: Test
+        shell: bash
+        run: |
+          npm run test -- --parallel
+          # npm run e2e -- --parallel
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ secrets.AWS_REGION_DEV }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+      - name: Docker Build, Tag, and Push to ECR
+        id: push-ecr
+        env:
+          IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
+          GITSHA: ${{ github.sha }}
+        run: |
+          docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile .
+          docker push $IMAGE_TAG
+          echo "image=$IMAGE_TAG" >> $GITHUB_OUTPUT
