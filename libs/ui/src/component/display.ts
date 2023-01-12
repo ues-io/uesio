@@ -88,8 +88,13 @@ type WireHasRecords = {
 	type: "wireHasRecords"
 	wire: string
 }
+type NamedPermission = {
+	type: "namedPermission"
+	profile: string
+}
 
 type DisplayCondition =
+	| NamedPermission
 	| WireHasChanges
 	| WireHasNoChanges
 	| HasNoValueCondition
@@ -157,6 +162,9 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "recordIsNotNew") {
 		return !context.getRecord()?.isNew()
+	}
+	if (condition.type === "namedPermission") {
+		return context.getUser()?.profile === condition.profile
 	}
 
 	if (
