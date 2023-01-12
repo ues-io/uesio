@@ -19,7 +19,8 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 			},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	const commonProps = {

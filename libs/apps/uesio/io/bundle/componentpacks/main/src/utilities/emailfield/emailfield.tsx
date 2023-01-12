@@ -17,7 +17,8 @@ const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
 			input: {},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	return (

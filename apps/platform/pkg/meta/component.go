@@ -25,6 +25,7 @@ type Component struct {
 	Category       string   `yaml:"category,omitempty" json:"uesio/studio.category"`
 	Pack           string   `yaml:"pack,omitempty" json:"uesio/studio.pack"`
 	EntryPoint     string   `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
+	Discoverable   bool     `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
 	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`

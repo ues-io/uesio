@@ -23,7 +23,8 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 			input: {},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	const numberOptions = fieldMetadata?.getNumberMetadata()

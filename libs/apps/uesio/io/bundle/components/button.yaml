@@ -4,3 +4,4 @@ description: Run signals based on user interaction.
 category: INTERACTION
 pack: main
 entrypoint: components/button/button
+discoverable: true

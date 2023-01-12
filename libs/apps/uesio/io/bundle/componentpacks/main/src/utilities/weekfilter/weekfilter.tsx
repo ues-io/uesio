@@ -59,7 +59,8 @@ const WeekFilter: FunctionComponent<WeekFilterProps> = (props) => {
 			input: {},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	return (

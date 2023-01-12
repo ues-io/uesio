@@ -38,7 +38,8 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				appearance: "none",
 			},
 		},
-		props
+		props,
+		"uesio/io.selectfield"
 	)
 
 	return (

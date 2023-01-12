@@ -334,6 +334,10 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	for _, component := range components {
 
+		if !component.Discoverable {
+			continue
+		}
+
 		err := getDepsForComponent(component, deps, session)
 		if err != nil {
 			return err
