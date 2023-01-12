@@ -98,6 +98,7 @@ jobs:
           repository: thecloudmasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
           path: aws/dev/ecr/task_definitions
+      - name: Update Docker container image tag for dev
         env:
           newImageId: ${{needs.build.outputs.newImage}}
         run: |
