@@ -22,7 +22,11 @@ import MenuButton from "../../utilities/menubutton/menubutton"
 import Paginator from "../../utilities/paginator/paginator"
 import { default as IOTable } from "../../utilities/table/table"
 
-import { ReferenceFieldOptions, UserFieldOptions } from "../field/field"
+import {
+	NumberFieldOptions,
+	ReferenceFieldOptions,
+	UserFieldOptions,
+} from "../field/field"
 
 type TableDefinition = {
 	id: string
@@ -47,6 +51,7 @@ type ColumnDefinition = {
 	field: string
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
+	number?: NumberFieldOptions
 	label: string
 	components: definition.DefinitionList
 } & definition.BaseDefinition
@@ -210,6 +215,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					fieldId: column.field,
 					user: column.user,
 					reference: column.reference,
+					number: column.number,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
 					"uesio.variant": "uesio/io.field:uesio/io.table",

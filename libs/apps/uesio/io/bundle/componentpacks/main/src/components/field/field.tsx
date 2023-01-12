@@ -52,6 +52,12 @@ type UserFieldOptions = {
 	subtitle?: string
 }
 
+type NumberFieldOptions = {
+	increment?: number
+	max?: number
+	min?: number
+}
+
 type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
@@ -61,6 +67,7 @@ type FieldDefinition = {
 	reference?: ReferenceFieldOptions
 	list?: ListFieldOptions
 	user?: UserFieldOptions
+	number?: NumberFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
 }
@@ -118,7 +125,7 @@ type CommonProps = {
 } & definition.BaseProps
 
 const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
-	const { displayAs, reference, list, user } = definition
+	const { displayAs, reference, list, user, number } = definition
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
@@ -137,7 +144,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 		case "AUTONUMBER":
 			return <TextField {...common} />
 		case "NUMBER":
-			return <NumberField {...common} />
+			return <NumberField {...common} options={number} />
 		case "EMAIL":
 			return <EmailField {...common} />
 		case "SELECT": {
@@ -328,6 +335,7 @@ export {
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
+	NumberFieldOptions,
 }
 
 export default Field
