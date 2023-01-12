@@ -94,10 +94,10 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v3
-          with:
-            repository: thecloudmasters/uesio-infra
-            token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-            path: aws/dev/ecr/task_definitions
+        with:
+          repository: thecloudmasters/uesio-infra
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          path: aws/dev/ecr/task_definitions
         env:
           newImageId: ${{needs.build.outputs.newImage}}
         run: |
