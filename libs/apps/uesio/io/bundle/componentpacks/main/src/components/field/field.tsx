@@ -53,7 +53,7 @@ type UserFieldOptions = {
 }
 
 type NumberFieldOptions = {
-	increment?: number
+	step?: number
 	max?: number
 	min?: number
 }
