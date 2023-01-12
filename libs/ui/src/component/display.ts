@@ -163,7 +163,7 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "recordIsNotNew") {
 		return !context.getRecord()?.isNew()
 	}
-	if (condition.type === "namedPermission") {
+	if (condition.type === "hasProfile") {
 		return context.getUser()?.profile === condition.profile
 	}
 
