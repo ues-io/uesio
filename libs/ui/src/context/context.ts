@@ -111,9 +111,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 				user.picture
 			)
 		}
-		if (expression === "id") return user.id
-		if (expression === "username") return user.username
-		return ""
+		return user[expression as keyof typeof user] || ""
 	},
 	Time: (expression, context) => {
 		const value = context.getRecord()?.getFieldValue(expression)
