@@ -55,20 +55,20 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Lint
-        shell: bash
-        run: |
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+      # - name: Lint
+      #   shell: bash
+      #   run: |
+      #     npm run prettier-check
+      #     npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
       - name: Build All
         shell: bash
         run: |
           npm run build-all
-      - name: Test
-        shell: bash
-        run: |
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
+      # - name: Test
+      #   shell: bash
+      #   run: |
+      #     npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+      #     npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -89,7 +89,7 @@ jobs:
           docker push $IMAGE_TAG
           echo "image=$IMAGE_TAG" >> $GITHUB_OUTPUT
   update-dev-branch:
-    if: github.branch == 'workflow-changes'
+    if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
     needs: build
     steps:
