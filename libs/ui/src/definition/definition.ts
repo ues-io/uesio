@@ -4,7 +4,6 @@ import yaml from "yaml"
 import { MetadataKey } from "../bands/builder/types"
 import { DisplayCondition } from "../component/display"
 import { Context } from "../context/context"
-import { WireConditionState } from "../wireexports"
 
 export type BaseDefinition = {
 	"uesio.styles"?: Record<string, Record<string, string>>
@@ -33,7 +32,6 @@ export type ExportSpec = {
 	jobtype: "EXPORT"
 	collection: string
 	filetype: "CSV"
-	conditions?: WireConditionState[]
 }
 
 export type UploadSpec = {

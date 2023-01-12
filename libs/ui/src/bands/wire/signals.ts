@@ -25,7 +25,6 @@ import initWiresOp from "./operations/initialize"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
-import createJob from "./operations/createjob"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { RegularWireDefinition } from "../../definition/wire"
 
@@ -107,10 +106,6 @@ interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
 	searchFields?: string[]
-}
-
-interface CreateJobSignal extends SignalDefinition {
-	wire: string
 }
 
 const getWiresWith = (key: "conditions" | "order") =>
@@ -447,19 +442,6 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wires",
 				type: "WIRES",
 				label: "Wires",
-			},
-		],
-	},
-	[`${WIRE_BAND}/CREATE_JOB`]: {
-		dispatcher: (signal: CreateJobSignal, context: Context) =>
-			createJob(context.mergeString(signal.wire), context),
-		label: "Create Export Job",
-		description: "Create Export Job for a wire",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "wire",
-				label: "wire",
 			},
 		],
 	},
