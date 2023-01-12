@@ -5,6 +5,9 @@ on:
       - master
       - workflow-changes
       # - stable-december-2022
+    secrets:
+      GH_PAT:
+        required: true
 
 jobs:
   build:
@@ -13,6 +16,8 @@ jobs:
       matrix:
         node-version: [16.x]
         go-version: [~1.19]
+    outputs:
+      newImage: ${{ steps.push-ecr.outputs.image }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -77,8 +82,28 @@ jobs:
         id: push-ecr
         env:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
-          GITSHA: ${{ github.sha }}
+          FULL_SHA: ${{ github.sha }}
         run: |
+          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile .
           docker push $IMAGE_TAG
           echo "image=$IMAGE_TAG" >> $GITHUB_OUTPUT
+  update-dev-branch:
+    if: github.branch == 'workflow-changes'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+          with:
+            repository: thecloudmasters/uesio-infra
+            token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+            path: aws/dev/ecr/task_definitions
+        env:
+          newImageId: ${{needs.build.outputs.newImage}}
+        run: |
+          echo "$newImageId" >> image.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add image.txt
+          git commit -m "ci: Auto-update dev image to $newImageId"
+          git push
