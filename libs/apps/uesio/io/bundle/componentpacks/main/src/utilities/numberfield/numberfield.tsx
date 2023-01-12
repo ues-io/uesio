@@ -41,7 +41,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 				)
 			}}
 			placeholder={placeholder}
-			step={options?.increment}
+			step={options?.step}
 			min={options?.min}
 			max={options?.max}
 		/>
