@@ -36,7 +36,8 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 			input: {},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	return (

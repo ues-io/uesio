@@ -1,9 +1,12 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, api } from "@uesio/ui"
-import styling from "./styling"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
 import { getBuilderNamespaces } from "../../api/stateapi"
+
+const SELECTED_COLOR = "#aaa"
+const HOVER_COLOR = "#aaaaaaae"
+const INACTIVE_COLOR = "#eee"
 
 const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 	const Text = component.getUtility("uesio/io.text")
@@ -51,8 +54,60 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
+	const borderColor = (() => {
+		if (isSelected) return SELECTED_COLOR
+		if (isActive) return HOVER_COLOR
+		return INACTIVE_COLOR
+	})()
 	const classes = styles.useUtilityStyles(
-		styling(isSelected, isActive, isDragging),
+		{
+			root: {
+				cursor: "pointer",
+				position: "relative",
+				userSelect: "none",
+				zIndex: isSelected ? 1 : 0,
+				transition: "all 0.18s ease",
+				"&:hover": {
+					zIndex: 1,
+				},
+				...(isDragging && {
+					display: "none",
+				}),
+				padding: "6px",
+			},
+			wrapper: {
+				border: `1px solid ${borderColor}`,
+				borderRadius: "4px",
+				overflow: "hidden",
+			},
+			header: {
+				color: "#333",
+				backgroundColor: isSelected ? "white" : "transparent",
+				padding: "10px 10px 2px",
+				textTransform: "uppercase",
+				fontSize: "8pt",
+			},
+			popper: {
+				width: "auto",
+				border: "1px solid #ddd",
+				borderRadius: "8px",
+				boxShadow: "0 0 12px #00000033",
+			},
+			popperInner: {
+				borderRadius: "7px",
+			},
+			inner: {
+				padding: "8px",
+				position: "relative",
+				overflow: "auto",
+			},
+			titleicon: {
+				marginRight: "4px",
+			},
+			titletext: {
+				verticalAlign: "middle",
+			},
+		},
 		props
 	)
 	return (

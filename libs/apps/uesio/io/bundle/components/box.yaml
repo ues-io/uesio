@@ -4,3 +4,4 @@ description: A container that can group other components and apply styles around
 category: LAYOUT
 pack: main
 entrypoint: components/box/box
+discoverable: true

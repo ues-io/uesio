@@ -41,7 +41,8 @@ const MonthFilter: definition.UtilityComponent<MonthFilterProps> = (props) => {
 			input: {},
 			readonly: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	return (
