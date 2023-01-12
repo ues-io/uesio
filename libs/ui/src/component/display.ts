@@ -94,7 +94,7 @@ type HasProfile = {
 }
 
 type DisplayCondition =
-	| NamedPermission
+	| HasProfile
 	| WireHasChanges
 	| WireHasNoChanges
 	| HasNoValueCondition
