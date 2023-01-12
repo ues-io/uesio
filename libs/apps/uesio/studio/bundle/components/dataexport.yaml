@@ -1,7 +1,0 @@
-name: dataexport
-pack: main
-entrypoint: components/dataexport/dataexport
-variants:
-  - uesio/io.button:uesio/io.primary
-utilities:
-  - uesio/io.button
