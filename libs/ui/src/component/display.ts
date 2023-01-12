@@ -88,8 +88,8 @@ type WireHasRecords = {
 	type: "wireHasRecords"
 	wire: string
 }
-type NamedPermission = {
-	type: "namedPermission"
+type HasProfile = {
+	type: "hasProfile"
 	profile: string
 }
 
