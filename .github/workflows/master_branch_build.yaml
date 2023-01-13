@@ -118,11 +118,14 @@ jobs:
           echo "NEW_IMAGE=$(cat ./new_image.txt)" >> $GITHUB_ENV
           echo "SHORT_SHA=$(cat ./short_sha.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
+        env:
+          taskDefPath: ./aws/dev/ecr/task_definitions/uesio_web.json
         run: |
           echo "Docker image SHA updated to $SHORT_SHA"
-          echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
+          jq --arg img "$NEW_IMAGE" '.containerDefinitions[0].image = $img' $taskDefPath > tmp.json
+          mv tmp.json $taskDefPath
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./aws/dev/ecr/task_definitions/image.txt
+          git add $taskDefPath
           git commit -m "ci: Auto-update dev image to $SHORT_SHA"
           git push
