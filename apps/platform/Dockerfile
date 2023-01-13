@@ -14,7 +14,7 @@ COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
 COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
-COPY ./dist/platform .
+COPY ./dist/platform/uesio ./uesio
 
 ENV GITSHA=""
 
