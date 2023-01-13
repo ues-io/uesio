@@ -91,7 +91,11 @@ const getFullPathPair = (
 
 const useSelectedPath = (context: ctx.Context): [FullPath, PathSelector] => {
 	const [fullPath, set] = useBuilderState<string>(context, "selected")
-	return getFullPathPair(fullPath, set)
+	const [parsedPath, wrappedSet] = getFullPathPair(fullPath, set)
+	if (!parsedPath.itemType) parsedPath.itemType = "viewdef"
+	if (parsedPath.itemType === "viewdef" && !parsedPath.itemName)
+		parsedPath.itemName = context.getViewDefId() || ""
+	return [parsedPath, wrappedSet]
 }
 
 const useDropPath = (context: ctx.Context): [FullPath, PathSelector] => {
