@@ -101,9 +101,9 @@ jobs:
         env:
           newImageId: ${{needs.build.outputs.newImage}}
         run: |
-          echo "$newImageId" >> aws/dev/ecr/task_definitions/image.txt
+          echo "$newImageId" >> ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add image.txt
+          git add ./aws/dev/ecr/task_definitions/image.txt
           git commit -m "ci: Auto-update dev image to $newImageId"
           git push
