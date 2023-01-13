@@ -37,7 +37,6 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 						definition={definition}
 						listName="avatar"
 						path={path}
-						accepts={["uesio.standalone"]}
 						context={context}
 					/>
 				)
@@ -47,7 +46,6 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 				definition={definition}
 				listName="content"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</IOTile>

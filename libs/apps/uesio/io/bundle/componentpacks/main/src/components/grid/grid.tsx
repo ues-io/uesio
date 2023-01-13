@@ -52,11 +52,6 @@ const Grid: definition.UC<GridDefinition> = (props) => {
 				definition={definition}
 				listName="items"
 				path={props.path}
-				accepts={[
-					"uesio/io.griditem",
-					"uesio.standalone",
-					"uesio.field",
-				]}
 				context={context}
 			/>
 		</IOGrid>

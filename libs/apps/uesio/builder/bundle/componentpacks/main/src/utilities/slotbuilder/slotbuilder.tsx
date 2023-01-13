@@ -1,26 +1,14 @@
 import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
-import {
-	FullPath,
-	getBuildMode,
-	useDragPath,
-	useDropPath,
-} from "../../api/stateapi"
+import { FullPath } from "../../api/path"
+import { getBuildMode, useDragPath, useDropPath } from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const {
-		accepts,
-		definition,
-		listName,
-		path,
-		direction,
-		label,
-		message,
-		context,
-	} = props
+	const { definition, listName, path, direction, label, message, context } =
+		props
 
 	const buildMode = getBuildMode(context)
 
@@ -33,6 +21,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
 	const [dragPath] = useDragPath(context)
 	const [dropPath] = useDropPath(context)
+
+	const accepts = ["component"]
 
 	const isHovering =
 		dropPath.equals(

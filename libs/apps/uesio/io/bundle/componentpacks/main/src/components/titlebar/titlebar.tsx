@@ -20,7 +20,6 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 					definition={definition}
 					listName="actions"
 					path={path}
-					accepts={["uesio.standalone"]}
 					context={context}
 				/>
 			}

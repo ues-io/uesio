@@ -92,7 +92,6 @@ const View: UC<ViewDefinition> = (props) => {
 			definition={viewDef}
 			listName="components"
 			path=""
-			accepts={["uesio.standalone"]}
 			context={viewContext}
 			message="Drag and drop any component here to get started."
 		/>

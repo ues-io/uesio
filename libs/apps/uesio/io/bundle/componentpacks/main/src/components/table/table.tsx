@@ -204,7 +204,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 			<component.Slot
 				definition={column}
 				listName="components"
-				accepts={["uesio.context"]}
 				direction="HORIZONTAL"
 				{...sharedProps}
 			/>
@@ -370,7 +369,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
-	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex) => {
 		const [metadataType, metadataItem] =

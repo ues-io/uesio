@@ -1,11 +1,12 @@
 import { definition, api, component, wire } from "@uesio/ui"
-import { FullPath, useSelectedPath } from "../../../api/stateapi"
+import { useSelectedPath } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
 import MoveActions from "../../../actions/moveactions"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
+import { FullPath } from "../../../api/path"
 
 const WiresPanel: definition.UtilityComponent = ({ context }) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")

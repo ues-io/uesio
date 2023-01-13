@@ -34,7 +34,6 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 					definition={definition}
 					listName="actions"
 					path={path}
-					accepts={["uesio.standalone"]}
 					context={context}
 				/>
 			}
@@ -43,7 +42,6 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</IODialog>

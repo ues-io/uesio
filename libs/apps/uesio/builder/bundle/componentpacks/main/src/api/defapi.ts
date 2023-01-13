@@ -1,5 +1,5 @@
 import { definition, api } from "@uesio/ui"
-import { FullPath } from "./stateapi"
+import { FullPath } from "./path"
 
 const get = (path: FullPath): definition.Definition => {
 	if (path === undefined) return
@@ -16,6 +16,14 @@ const set = (
 
 const remove = (path: FullPath) => {
 	api.builder.removeDefinition(path.pathCombine())
+}
+
+const add = (
+	path: FullPath,
+	definition: definition.Definition,
+	index?: number
+) => {
+	api.builder.addDefinition(path.pathCombine(), definition, index)
 }
 
 const move = (fromPath: FullPath, toPath: FullPath, selectKey?: string) => {
@@ -41,4 +49,4 @@ const setContent = (path: FullPath, value: string) => {
 	api.builder.setDefinitionContent(path.itemType, path.itemName, value || "")
 }
 
-export { set, remove, move, get, clone, cloneKey, useContent, setContent }
+export { set, add, remove, move, get, clone, cloneKey, useContent, setContent }

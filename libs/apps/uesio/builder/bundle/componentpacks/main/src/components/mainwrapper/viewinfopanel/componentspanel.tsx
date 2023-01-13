@@ -5,16 +5,15 @@ import groupBy from "lodash/groupBy"
 import pickBy from "lodash/pickBy"
 import {
 	ComponentDef,
-	FullPath,
 	getBuilderNamespaces,
 	getComponentDefs,
-	PathSelector,
 	useDragPath,
 	useDropPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
 import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import { FullPath, PathSelector } from "../../../api/path"
 
 const Text = component.getUtility("uesio/io.text")
 const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
@@ -95,15 +94,15 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 			context={context}
 			key={fullName}
 			onClick={() => {
-				setSelected(new FullPath("componenttype", fullName))
+				setSelected(new FullPath("component", fullName))
 			}}
 			draggable={`component:${fullName}`}
-			selected={isSelected("componenttype", fullName)}
+			selected={isSelected("component", fullName)}
 		>
 			<ComponentTag component={component} context={context} />
 			<IOExpandPanel
 				context={context}
-				expanded={isSelected("componenttype", fullName)}
+				expanded={isSelected("component", fullName)}
 			>
 				{validVariants && validVariants.length > 0 && (
 					<VariantsBlock

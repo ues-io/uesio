@@ -14,7 +14,7 @@ func (ufmc *UserFileMetadataCollection) GetName() string {
 }
 
 func (ufmc *UserFileMetadataCollection) GetFields() []string {
-	return USERACCESSTOKEN_FIELDS
+	return USERFILEMETADATA_FIELDS
 }
 
 func (ufmc *UserFileMetadataCollection) NewItem() Item {

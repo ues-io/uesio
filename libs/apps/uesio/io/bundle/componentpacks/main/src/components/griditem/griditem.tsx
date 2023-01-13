@@ -23,7 +23,6 @@ const GridItem: definition.UC<GridItemDefinition> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</div>

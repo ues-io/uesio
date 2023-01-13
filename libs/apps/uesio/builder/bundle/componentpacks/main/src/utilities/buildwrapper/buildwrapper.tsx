@@ -3,13 +3,13 @@ import { definition, styles, component } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
 import {
-	FullPath,
 	getBuilderNamespaces,
 	getComponentDef,
 	useDragPath,
 	useDropPath,
 	useSelectedPath,
 } from "../../api/stateapi"
+import { FullPath } from "../../api/path"
 
 const BuildWrapper: definition.UC = (props) => {
 	const Text = component.getUtility("uesio/io.text")
@@ -31,8 +31,6 @@ const BuildWrapper: definition.UC = (props) => {
 	const componentDef = getComponentDef(context, componentType)
 
 	if (!componentType || !componentDef) return <>{children}</>
-
-	const accepts = ["uesio.standalone"]
 
 	const isDragging = dragPath.equals(fullPath)
 
@@ -112,7 +110,7 @@ const BuildWrapper: definition.UC = (props) => {
 			<div
 				data-index={index}
 				ref={setAnchorEl}
-				data-accepts={accepts?.join(",")}
+				data-accepts={[].join(",")}
 				data-path={path}
 				onDragStart={(e: DragEvent) => {
 					// We do this because we don't want

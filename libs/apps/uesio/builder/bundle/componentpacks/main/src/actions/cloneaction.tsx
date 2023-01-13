@@ -1,7 +1,7 @@
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 import { clone } from "../api/defapi"
 import { definition } from "@uesio/ui"
-import { FullPath } from "../api/stateapi"
+import { FullPath } from "../api/path"
 
 type Props = {
 	path: FullPath

@@ -19,7 +19,6 @@ const ListFieldDeck: FunctionComponent<ListFieldDeckUtilityProps> = (props) => {
 					definition={props.options}
 					listName="components"
 					path={props.path}
-					accepts={["uesio.standalone"]}
 					context={props.context.addFrame({
 						recordData: record,
 					})}
