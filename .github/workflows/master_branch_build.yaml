@@ -102,6 +102,8 @@ jobs:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
     needs: build
+    env:
+      NEW_IMAGE: ${{ needs.build.outputs.fullImage }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -111,12 +113,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: new-image
-          path: ./aws/dev/ecr/task_definitions/image.txt
       - name: Load new image into env var
-        run: echo "NEW_IMAGE=$(cat ./aws/dev/ecr/task_definitions/image.txt)" >> $GITHUB_ENV
+        run: echo "NEW_IMAGE=$(cat new-image.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         run: |
           echo "Docker image SHA updated to $NEW_IMAGE"
+          echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
+          cat ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
