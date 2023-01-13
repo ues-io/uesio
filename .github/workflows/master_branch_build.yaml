@@ -96,7 +96,15 @@ jobs:
           echo "FULL_SHA is $FULL_SHA"
           echo "GITSHA is $GITSHA"
           echo "IMAGE_TAG is $IMAGE_TAG"
+          echo "$IMAGE_TAG" > new_image.txt
+          cat new_image.txt
           echo "fullImage=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+      - name: Upload image id
+        uses: actions/upload-artifact@v3
+        with:
+          name: new-image
+          path: |
+            new_image.txt
   update-dev-branch:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
@@ -108,8 +116,13 @@ jobs:
         with:
           repository: thecloudmasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+      - name: Download image id artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: new-image
       - name: Update Docker container image tag for dev
         run: |
+          cat new_image.txt
           echo "Docker image SHA updated to $NEW_IMAGE"
           echo "Docker image SHA updated to ${{ needs.build.outputs.fullImage }}"
           echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
