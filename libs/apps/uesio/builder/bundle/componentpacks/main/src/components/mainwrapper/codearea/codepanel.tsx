@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react"
 import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
+import { useSelectedPath } from "../../../api/stateapi"
+import { setContent, useContent } from "../../../api/defapi"
 
 const ANIMATION_DURATION = 3000
 
@@ -61,28 +63,10 @@ const CodePanel: definition.UtilityComponent = (props) => {
 		props
 	)
 
-	const viewId = context.getViewDefId() || ""
-	const metadataType = api.builder.useSelectedType() || "viewdef"
-	const metadataItem =
-		api.builder.useSelectedItem() ||
-		(metadataType === "viewdef" ? viewId : "")
-	const metadataTypeRef = useRef<string>(metadataType)
-	const metadataItemRef = useRef<string>(metadataItem)
-	metadataTypeRef.current = metadataType
-	metadataItemRef.current = metadataItem
-
-	const fullYaml =
-		api.builder.useDefinitionContent(metadataType, metadataItem) || ""
+	const [selectedPath, setSelected] = useSelectedPath(context)
+	const fullYaml = useContent(selectedPath)
 
 	const yamlDoc = util.yaml.parse(fullYaml)
-
-	const [, , selectedNodePath] = api.builder.useSelectedNode()
-
-	/*
-	const lastModifiedNode = uesio.builder.useLastModifiedNode()
-	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
-		component.path.getFullPathParts(lastModifiedNode || "")
-		*/
 
 	const ast = useRef<definition.YamlDoc | undefined>(yamlDoc)
 	ast.current = yamlDoc
@@ -99,7 +83,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	useEffect(() => {
 		if (e && m && ast.current && ast.current.contents) {
 			const node = util.yaml.getNodeAtPath(
-				selectedNodePath,
+				selectedPath.localPath,
 				ast.current.contents
 			)
 
@@ -171,11 +155,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 			)
 
 			if (relevantNode && nodePath)
-				api.builder.setSelectedNode(
-					metadataTypeRef.current,
-					metadataItemRef.current,
-					nodePath
-				)
+				setSelected(selectedPath.setLocal(nodePath))
 		})
 		/*
 
@@ -248,11 +228,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
-						api.builder.setDefinitionContent(
-							metadataTypeRef.current,
-							metadataItemRef.current,
-							newValue || ""
-						)
+						setContent(selectedPath, newValue || "")
 					}) as EditorProps["onChange"]
 				}
 				onMount={onMount}

@@ -1,11 +1,13 @@
 import { useEffect } from "react"
 import { definition, api, component } from "@uesio/ui"
+import { useSelectedPath } from "../api/stateapi"
 
 const PanelPortal: definition.UtilityComponent = (props) => {
-	const [metadataType, , selectedPath] = api.builder.useSelectedNode()
+	const [selectedPath] = useSelectedPath(props.context)
 
 	const pathArray = component.path.toPath(selectedPath)
-	const isPanel = metadataType === "viewdef" && pathArray[0] === "panels"
+	const isPanel =
+		selectedPath.itemType === "viewdef" && pathArray[0] === "panels"
 	const panelId = pathArray[1]
 	const togglePanel = api.signal.getHandler(
 		[

@@ -1,8 +1,13 @@
 import { FunctionComponent, Fragment } from "react"
-import { component, api, styles } from "@uesio/ui"
-import { PropertiesPaneProps } from "./propertiespaneldefinition"
+import { component, api, styles, definition, builder } from "@uesio/ui"
 import BuildSection from "./buildproparea/buildsection"
 import PropList from "../utilities/proplist/proplist"
+
+interface PropertiesPaneProps extends definition.UtilityProps {
+	propsDef: builder.BuildPropertiesDefinition
+	valueAPI: builder.ValueAPI
+	path: string
+}
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
@@ -92,7 +97,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 									icon="close"
 									onClick={(e: MouseEvent) => {
 										e.stopPropagation()
-										api.builder.unSelectNode()
+										//api.builder.unSelectNode()
 									}}
 								/>
 							)

@@ -7,6 +7,7 @@ import Avatar from "../avatar/avatar"
 import TitleBar from "../titlebar/titlebar"
 
 interface UserFieldProps extends definition.UtilityProps {
+	path: string
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode: ctx.FieldMode

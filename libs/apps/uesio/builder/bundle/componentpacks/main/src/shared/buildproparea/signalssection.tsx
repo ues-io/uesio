@@ -12,9 +12,6 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const { path, context, valueAPI } = props
 
-	const [metadataType, metadataItem, selectedNode] =
-		api.builder.useSelectedNode()
-
 	const componentDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
@@ -53,11 +50,12 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			/>
 			{signalsDef?.map((signal: signal.SignalDefinition, index) => {
 				const signalPath = `${signalsPath}["${index}"]`
-				const selected = selectedNode.startsWith(signalPath)
+				const selected = false
 				return (
 					<PropNodeTag
 						selected={selected}
 						key={index}
+						/*
 						onClick={(): void =>
 							api.builder.setSelectedNode(
 								metadataType,
@@ -65,6 +63,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								signalPath
 							)
 						}
+						*/
 						context={context}
 						popperChildren={
 							<PropertiesPane

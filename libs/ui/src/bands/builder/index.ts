@@ -1,155 +1,43 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-
-import { BuilderState } from "./types"
-import { Definition, DefinitionMap } from "../../definition/definition"
-
-import { getParentPath } from "../../component/path"
-
-type SetDefinitionPayload = {
-	path: string
-	definition: Definition
-	autoSelect?: boolean
-}
-
-type AddDefinitionPayload = {
-	path: string
-	definition: Definition
-	index?: number
-	type?: string
-}
-
-type RemoveDefinitionPayload = {
-	path: string
-}
-
-type MoveDefinitionPayload = {
-	toPath: string
-	fromPath: string
-	selectKey?: string // Optionally select one level deeper
-}
-
-type ChangeDefinitionKeyPayload = {
-	path: string
-	key: string
-}
-
-type SetDefinitionContentPayload = {
-	metadataType: string
-	metadataItem: string
-	content: string
-}
-
-type CloneDefinitionPayload = {
-	path: string
-}
-
-type CloneKeyDefinitionPayload = {
-	path: string
-	newKey: string
-}
+import { createSlice } from "@reduxjs/toolkit"
 
 const builderSlice = createSlice({
 	name: "builder",
-	initialState: {} as BuilderState,
+	initialState: {},
 	reducers: {
-		setDefinition: (
-			state,
-			{ payload }: PayloadAction<SetDefinitionPayload>
-		) => {
-			state.lastModifiedNode = payload.path
-			if (payload.autoSelect) {
-				state.selectedNode = payload.path
-			}
+		setDefinition: (state, { payload }) => {
+			console.log("SET", payload)
 		},
-		cloneDefinition: (
-			state,
-			{ payload }: PayloadAction<CloneDefinitionPayload>
-		) => {
-			// nothing actually happens here, just something for others to listen to.
-			state.lastModifiedNode = payload.path
+		cloneDefinition: (state, { payload }) => {
+			console.log("CLONE", payload)
 		},
-		cloneKeyDefinition: (
-			state,
-			{ payload }: PayloadAction<CloneKeyDefinitionPayload>
-		) => {
-			// nothing actually happens here, just something for others to listen to.
-			state.lastModifiedNode = payload.path
+		cloneKeyDefinition: (state, { payload }) => {
+			console.log("CLONEKEY", payload)
 		},
-		addDefinition: (
-			state,
-			{ payload }: PayloadAction<AddDefinitionPayload>
-		) => {
-			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
-			if (payload.type === "component") {
-				const def = payload.definition as DefinitionMap
-				const key = Object.keys(def)[0]
-				state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
-			}
+		addDefinition: (state, { payload }) => {
+			console.log("ADD", payload)
 		},
-		removeDefinition: (
-			state,
-			{ payload }: PayloadAction<RemoveDefinitionPayload>
-		) => {
-			// nothing actually happens here, just something for others to listen to.
-			if (payload.path === state.selectedNode) {
-				state.selectedNode = getParentPath(payload.path)
-			}
-			state.lastModifiedNode = ""
+		removeDefinition: (state, { payload }) => {
+			console.log("REMOVE", payload)
 		},
-		changeDefinitionKey: (
-			state,
-			{
-				payload: { path, key },
-			}: PayloadAction<ChangeDefinitionKeyPayload>
-		) => {
-			const parentPath = getParentPath(path)
-			state.selectedNode = `${parentPath}["${key}"]`
-			state.lastModifiedNode = parentPath
+		changeDefinitionKey: (state, { payload }) => {
+			console.log("CHANGE DEF KEY", payload)
 		},
-		moveDefinition: (
-			state,
-			{ payload }: PayloadAction<MoveDefinitionPayload>
-		) => {
-			state.selectedNode =
-				payload.toPath +
-				(payload.selectKey ? `["${payload.selectKey}"]` : "")
-			state.lastModifiedNode = payload.toPath
+		moveDefinition: (state, { payload }) => {
+			console.log("MOVE", payload)
 		},
 		save: () => {
-			//console.log("SAVING")
+			console.log("SAVING")
 		},
-		cancel: (state) => {
-			state.selectedNode = ""
-			state.lastModifiedNode = ""
+		cancel: () => {
+			console.log("CANCELLING")
 		},
-		setDefinitionContent: (
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			state,
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			action: PayloadAction<SetDefinitionContentPayload>
-		) => {
-			//state.lastModifiedNode = payload.path
-		},
-		setActiveNode: (state, { payload }: PayloadAction<string>) => {
-			state.activeNode = payload
-		},
-		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
-			state.selectedNode = payload
-		},
-		setDragNode: (state, { payload }: PayloadAction<string>) => {
-			state.draggingNode = payload
-		},
-		setDropNode: (state, { payload }: PayloadAction<string>) => {
-			state.droppingNode = payload
+		setDefinitionContent: (state, { payload }) => {
+			console.log("SETCONTENT", payload)
 		},
 	},
 })
 
 export const {
-	setActiveNode,
-	setSelectedNode,
-	setDragNode,
-	setDropNode,
 	setDefinition,
 	cloneDefinition,
 	cloneKeyDefinition,
@@ -161,14 +49,5 @@ export const {
 	save,
 	cancel,
 } = builderSlice.actions
-export {
-	CloneDefinitionPayload,
-	CloneKeyDefinitionPayload,
-	SetDefinitionPayload,
-	AddDefinitionPayload,
-	RemoveDefinitionPayload,
-	MoveDefinitionPayload,
-	ChangeDefinitionKeyPayload,
-	SetDefinitionContentPayload,
-}
+
 export default builderSlice.reducer

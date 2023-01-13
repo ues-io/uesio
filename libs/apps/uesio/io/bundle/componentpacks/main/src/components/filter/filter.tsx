@@ -16,6 +16,7 @@ type FilterDefinition = {
 }
 
 type CommonProps = {
+	path: string
 	fieldMetadata: collection.Field
 	wire: wire.Wire
 	conditionId: string | undefined
@@ -44,7 +45,7 @@ const getFilterContent = (
 }
 
 const Filter: definition.UC<FilterDefinition> = (props) => {
-	const { context, definition } = props
+	const { context, definition, path } = props
 	const { fieldId, conditionId } = definition
 	const wire = api.wire.useWire(definition.wire, context)
 	if (!wire) return null
@@ -58,6 +59,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	const label = definition.label || fieldMetadata.getLabel()
 
 	const common = {
+		path,
 		context,
 		fieldMetadata,
 		wire,

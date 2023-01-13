@@ -7,6 +7,7 @@ import { FieldState, LabelPosition } from "../../components/field/field"
 import MarkDownField from "../markdownfield/markdownfield"
 
 interface FileMarkDownProps extends definition.UtilityProps {
+	path: string
 	label?: string
 	width?: string
 	fieldId: string

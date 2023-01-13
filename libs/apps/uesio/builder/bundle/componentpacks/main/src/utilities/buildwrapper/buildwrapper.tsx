@@ -1,71 +1,60 @@
-import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
-import { definition, styles, component, api } from "@uesio/ui"
+import { SyntheticEvent, DragEvent, useState } from "react"
+import { definition, styles, component } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
-import { getBuilderNamespaces } from "../../api/stateapi"
+import {
+	FullPath,
+	getBuilderNamespaces,
+	getComponentDef,
+	useDragPath,
+	useDropPath,
+	useSelectedPath,
+} from "../../api/stateapi"
 
-const SELECTED_COLOR = "#aaa"
-const HOVER_COLOR = "#aaaaaaae"
-const INACTIVE_COLOR = "#eee"
-
-const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
+const BuildWrapper: definition.UC = (props) => {
 	const Text = component.getUtility("uesio/io.text")
 	const Popper = component.getUtility("uesio/io.popper")
 
-	const { children, path = "", definition, context } = props
+	const { children, path, context, componentType } = props
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+
 	const viewDefId = context.getViewDefId()
-	const viewDef = context.getViewDef()
+	const [selectedPath, setSelected] = useSelectedPath(context)
+	const [dragPath, setDragPath] = useDragPath(context)
+	const [dropPath, setDropPath] = useDropPath(context)
 
-	if (!viewDefId || !viewDef) return null
+	const fullPath = new FullPath("viewdef", viewDefId, path)
 
-	const nodeState = api.builder.useNodeState("viewdef", viewDefId, path)
-	const isActive = nodeState === "active"
-	const isSelected = nodeState === "selected"
-	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
-		component.path.makeFullPath("viewdef", viewDefId, path)
-	)
+	const selected = selectedPath.equals(fullPath)
 
-	if (!propDef) throw new Error("No Prop Def Provided")
-	const accepts = propDef.accepts
+	const componentDef = getComponentDef(context, componentType)
 
-	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
-	const [, , dropPath] = api.builder.useDropNode()
-	const isDragging =
-		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
+	if (!componentType || !componentDef) return <>{children}</>
+
+	const accepts = ["uesio.standalone"]
+
+	const isDragging = dragPath.equals(fullPath)
 
 	const wrapperPath = component.path.getParentPath(path)
 	const index = component.path.getIndexFromPath(path) || 0
-	const componentKey = props.componentType
 
-	if (!componentKey) throw new Error("Bad component key")
+	const [componentNamespace] = component.path.parseKey(componentType)
 
-	//const valueAPI = getValueAPI("viewdef", viewDefId, path, viewDef)
+	const nsInfo = getBuilderNamespaces(context)[componentNamespace]
 
-	const [componentNamespace] = component.path.parseKey(componentKey)
+	const addBeforePlaceholder =
+		`${wrapperPath}["${index}"]` === dropPath.localPath
+	const addAfterPlaceholder =
+		`${wrapperPath}["${index + 1}"]` === dropPath.localPath
 
-	const title =
-		componentKey === "uesio/core.view"
-			? definition?.view || componentKey
-			: propDef.title || "unknown"
-
-	const nsInfo = getBuilderNamespaces(props.context)[componentNamespace]
-
-	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
-	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
-	const borderColor = (() => {
-		if (isSelected) return SELECTED_COLOR
-		if (isActive) return HOVER_COLOR
-		return INACTIVE_COLOR
-	})()
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				cursor: "pointer",
 				position: "relative",
 				userSelect: "none",
-				zIndex: isSelected ? 1 : 0,
+				zIndex: selected ? 1 : 0,
 				transition: "all 0.18s ease",
 				"&:hover": {
 					zIndex: 1,
@@ -76,13 +65,13 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 				padding: "6px",
 			},
 			wrapper: {
-				border: `1px solid ${borderColor}`,
+				border: `1px solid ${selected ? "#aaa" : "#eee"}`,
 				borderRadius: "4px",
 				overflow: "hidden",
 			},
 			header: {
 				color: "#333",
-				backgroundColor: isSelected ? "white" : "transparent",
+				backgroundColor: selected ? "white" : "transparent",
 				padding: "10px 10px 2px",
 				textTransform: "uppercase",
 				fontSize: "8pt",
@@ -130,32 +119,24 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 					// this component to always be draggable
 					// that's why we do the setCanDrag thing
 					e.stopPropagation()
-					setTimeout(() => {
-						if (dragPath !== path) {
-							api.builder.setDragNode("viewdef", viewDefId, path)
-						}
-					})
+					if (dragPath.equals(fullPath)) {
+						setTimeout(() => {
+							setDragPath(fullPath)
+						})
+					}
 				}}
 				onDragEnd={() => {
-					api.builder.clearDragNode()
-					api.builder.clearDropNode()
+					setDropPath()
+					setDragPath()
 				}}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
-					!isSelected &&
-						api.builder.setSelectedNode("viewdef", viewDefId, path)
+					!selected && setSelected(fullPath)
 					event.stopPropagation()
-				}}
-				onMouseEnter={() => {
-					!isActive &&
-						api.builder.setActiveNode("viewdef", viewDefId, path)
-				}}
-				onMouseLeave={() => {
-					isActive && api.builder.clearActiveNode()
 				}}
 				draggable={canDrag}
 			>
-				{isSelected && (
+				{selected && (
 					<Popper
 						referenceEl={anchorEl}
 						context={context}
@@ -191,7 +172,9 @@ const BuildWrapper: FunctionComponent<definition.BaseProps> = (props) => {
 								color={nsInfo.color}
 								context={context}
 							/>
-							<span className={classes.titletext}>{title}</span>
+							<span className={classes.titletext}>
+								{componentDef.title || componentDef.name}
+							</span>
 						</div>
 					}
 					<div className={classes.inner}>{children}</div>

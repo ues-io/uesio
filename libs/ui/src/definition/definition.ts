@@ -44,7 +44,7 @@ export type UploadSpec = {
 
 export type BaseProps<T = DefinitionMap> = {
 	definition: T & BaseDefinition
-	path?: string
+	path: string
 	componentType?: MetadataKey
 	context: Context
 	children?: ReactNode
@@ -57,7 +57,6 @@ export type UC<T = DefinitionMap> = FC<BaseProps<T>> & {
 export type UtilityComponent<T = DefinitionMap> = FC<T & UtilityProps>
 
 export interface UtilityProps {
-	path?: string
 	variant?: MetadataKey
 	styles?: Record<string, CSSInterpolation>
 	classes?: Record<string, string>

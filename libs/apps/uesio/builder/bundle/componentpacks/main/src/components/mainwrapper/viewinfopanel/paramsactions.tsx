@@ -1,18 +1,13 @@
 import { definition, styles, component } from "@uesio/ui"
 import { set } from "../../../api/defapi"
+import { FullPath } from "../../../api/stateapi"
 
 const ParamsActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const { context } = props
-	const metadataType = "viewdef"
-	const metadataItem = context.getViewDefId() || ""
-	const localPath = '["params"]'
-	const path = component.path.makeFullPath(
-		metadataType,
-		metadataItem,
-		localPath
-	)
+
+	const path = new FullPath("viewdef", context.getViewDefId(), '["params"]')
 	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
@@ -40,11 +35,12 @@ const ParamsActions: definition.UtilityComponent = (props) => {
 				label="New Parameter"
 				onClick={() =>
 					set(
-						path +
+						path.addLocal(
 							`[${
 								"newparam" +
 								(Math.floor(Math.random() * 60) + 1)
-							}]`,
+							}]`
+						),
 						{
 							type: "recordId",
 						}

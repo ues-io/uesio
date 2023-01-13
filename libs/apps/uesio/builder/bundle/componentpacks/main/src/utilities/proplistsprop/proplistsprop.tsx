@@ -1,8 +1,7 @@
-import { builder, component, api } from "@uesio/ui"
+import { builder, component } from "@uesio/ui"
 
 import PropListsList from "../../shared/proplistslist"
 import BuildActionsArea from "../../helpers/buildactionsarea"
-import toPath from "lodash/toPath"
 import PropNodeTag from "../propnodetag/propnodetag"
 
 const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
@@ -12,16 +11,17 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const { valueAPI, path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
 	const items = (valueAPI.get(path) as unknown[]) || []
-	const [metadataType, metadataItem, selectedPath] =
-		api.builder.useSelectedNode()
-	const selected = selectedPath.startsWith(path)
-	const selectedItem = !isNaN(parseFloat(toPath(selectedPath).pop() || ""))
-		? selectedPath
-		: null
+	//const [metadataType, metadataItem, selectedPath] =
+	//	api.builder.useSelectedNode()
+	//const selected = selectedPath.startsWith(path)
+	//const selectedItem = !isNaN(parseFloat(toPath(selectedPath).pop() || ""))
+	//	? selectedPath
+	//	: null
 
 	return (
 		<PropNodeTag
 			context={context}
+			/*
 			onClick={() =>
 				api.builder.setSelectedNode(
 					metadataType,
@@ -29,7 +29,8 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 					selected ? component.path.getParentPath(path) : path
 				)
 			}
-			selected={selected}
+			*/
+			selected={false}
 			popperChildren={
 				<ScrollPanel
 					header={
@@ -42,9 +43,9 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 										variant="uesio/builder.buildtitle"
 										context={context}
 										icon="close"
-										onClick={() =>
-											api.builder.unSelectNode()
-										}
+										onClick={() => {
+											//api.builder.unSelectNode()
+										}}
 									/>
 								)
 							}
@@ -53,7 +54,7 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 					}
 					footer={
 						<BuildActionsArea
-							path={selectedItem || ""}
+							//path={selectedItem || ""}
 							context={context}
 							// valueAPI={valueAPI}
 							// actions={[
@@ -104,9 +105,9 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 						style={{
 							display: "inline-block",
 
-							transform: selected
-								? "rotate(90deg)"
-								: "rotate(270deg)",
+							//transform: false
+							//	? "rotate(90deg)"
+							//	: "rotate(270deg)",
 
 							transition: "all 0.3s ease-in-out",
 
@@ -116,7 +117,9 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 						<IconButton
 							context={context}
 							icon="expand_more"
-							onClick={() => api.builder.unSelectNode()}
+							onClick={() => {
+								//api.builder.unSelectNode()}
+							}}
 						/>
 					</div>
 				</div>

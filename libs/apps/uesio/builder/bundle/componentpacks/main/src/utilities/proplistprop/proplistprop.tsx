@@ -11,9 +11,9 @@ const PropListProp: builder.PropComponent<builder.PropListProp> = (props) => (
 			}}
 		>
 			<PropList
+				{...props}
 				path={props.path + `["${props.descriptor.name}"]`}
 				properties={props.descriptor.properties}
-				{...props}
 			/>
 		</div>
 	</div>

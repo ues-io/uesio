@@ -8,6 +8,7 @@ import PropNodeTag from "../propnodetag/propnodetag"
 interface T extends definition.UtilityProps {
 	collectionKey: string
 	fieldId: string
+	path: string
 	fieldDef: wire.WireFieldDefinition
 	valueAPI: builder.ValueAPI
 	variant?: metadata.MetadataKey

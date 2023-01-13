@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from "react"
 
-import { api, component, styles, materialIcons, builder } from "@uesio/ui"
+import { component, styles, materialIcons, builder } from "@uesio/ui"
+import { useSelectedPath } from "../../api/stateapi"
 
 const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	const TextField = component.getUtility("uesio/io.textfield")
@@ -11,8 +12,8 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const { descriptor, path, context, valueAPI } = props
 
-	const [, , selectedNode] = api.builder.useSelectedNode()
-	const selected = selectedNode === path
+	const [selectedPath] = useSelectedPath(context)
+	const selected = selectedPath.localPath === path
 
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
@@ -84,6 +85,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 						className={classes.iconpreview}
 						icon={valueAPI.get(path) || ""}
 						context={context}
+						/*
 						onClick={() => {
 							api.builder.setSelectedNode(
 								"viewdef",
@@ -91,6 +93,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 								path
 							)
 						}}
+						*/
 					/>
 				</div>
 			</FieldWrapper>
@@ -114,9 +117,9 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 												context={context}
 												variant="uesio/builder.buildtitle"
 												icon="close"
-												onClick={() =>
-													api.builder.unSelectNode()
-												}
+												onClick={() => {
+													//api.builder.unSelectNode()
+												}}
 											/>
 										)
 									}

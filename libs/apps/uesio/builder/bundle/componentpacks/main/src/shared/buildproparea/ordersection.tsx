@@ -1,8 +1,9 @@
 import { FunctionComponent } from "react"
-import { definition, api, builder, component } from "@uesio/ui"
+import { definition, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import PropertiesPane from "../propertiespane"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
+import { useSelectedPath } from "../../api/stateapi"
 
 function getOrderTitle(order: OrderDefinition): string {
 	if (order.field) {
@@ -37,7 +38,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.DefinitionMap
 		| undefined
 
-	const [, , selectedNode] = api.builder.useSelectedNode()
+	const [selectedPath] = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
@@ -74,17 +75,19 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 			/>
 			{orderDef?.map((order: OrderDefinition, index) => {
 				const orderPath = `${ordersPath}["${index}"]`
-				const selected = selectedNode.startsWith(orderPath)
+				const selected = selectedPath.localPath.startsWith(orderPath)
 				return (
 					<PropNodeTag
 						selected={selected}
 						key={index}
 						onClick={() => {
+							/*
 							api.builder.setSelectedNode(
 								"viewdef",
 								viewDefId,
 								orderPath
 							)
+							*/
 						}}
 						popperChildren={
 							<PropertiesPane

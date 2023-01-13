@@ -2,7 +2,7 @@ import { FC, DragEvent, useState, useEffect } from "react"
 import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
-import { api, component, wire } from "@uesio/ui"
+import { component, wire } from "@uesio/ui"
 import FieldPropTag from "../../utilities/fieldproptag/fieldproptag"
 
 const FieldsSection: FC<SectionRendererProps> = (props) => {
@@ -23,12 +23,12 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
-			api.builder.setDragNode("field", target.dataset.type, "")
+			//api.builder.setDragNode("field", target.dataset.type, "")
 		}
 	}
 	const onDragEnd = () => {
-		api.builder.clearDragNode()
-		api.builder.clearDropNode()
+		//api.builder.clearDragNode()
+		//api.builder.clearDropNode()
 	}
 
 	useEffect(() => {

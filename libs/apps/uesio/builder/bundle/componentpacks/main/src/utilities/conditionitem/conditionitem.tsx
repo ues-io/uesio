@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { component, context, builder, wire, api } from "@uesio/ui"
+import { component, context, builder, wire } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesPane from "../../shared/propertiespane"
 import {
@@ -9,6 +9,7 @@ import {
 	valueSourceProps,
 } from "./conditionitemprops"
 import PropNodeTag from "../propnodetag/propnodetag"
+import { useSelectedPath } from "../../api/stateapi"
 
 type Props = {
 	conditionPath: string
@@ -102,13 +103,13 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		e.stopPropagation()
-		const viewDefId = context.getViewDefId()
-		viewDefId &&
-			api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
+		//const viewDefId = context.getViewDefId()
+		//viewDefId &&
+		//	api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
 	}
 
-	const [, , selectedNode] = api.builder.useSelectedNode()
-	const selected = selectedNode === conditionPath
+	const [selectedPath] = useSelectedPath(context)
+	const selected = selectedPath.localPath === conditionPath
 
 	return (
 		<PropNodeTag
@@ -126,7 +127,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 						properties: getConditionProperties(
 							context,
 							valueAPI.get(
-								selectedNode
+								selectedPath.localPath
 							) as wire.WireConditionState
 						),
 					}}

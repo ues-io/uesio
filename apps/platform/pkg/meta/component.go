@@ -45,6 +45,7 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("title", c.Title)
 	enc.AddStringKey("description", c.Description)
 	enc.AddStringKey("category", c.Category)
+	enc.AddBoolKey("discoverable", c.Discoverable)
 }
 
 func (c *Component) IsNil() bool {

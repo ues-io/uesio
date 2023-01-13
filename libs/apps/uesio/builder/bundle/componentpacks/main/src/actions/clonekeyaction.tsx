@@ -1,9 +1,14 @@
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 import { definition } from "@uesio/ui"
 import { cloneKey } from "../api/defapi"
+import { FullPath } from "../api/stateapi"
 
-const CloneKeyAction: definition.UtilityComponent = ({
-	path = "",
+type Props = {
+	path: FullPath
+}
+
+const CloneKeyAction: definition.UtilityComponent<Props> = ({
+	path,
 	context,
 }) => (
 	<ActionButton

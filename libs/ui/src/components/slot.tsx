@@ -10,6 +10,7 @@ import { getUtilityLoader } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
+	path: string
 	definition?: DefinitionMap
 	accepts: string[]
 	direction?: "VERTICAL" | "HORIZONTAL"

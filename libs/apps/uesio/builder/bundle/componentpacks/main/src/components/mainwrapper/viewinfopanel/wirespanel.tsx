@@ -1,9 +1,5 @@
 import { definition, api, component, wire } from "@uesio/ui"
-import {
-	isInSelection,
-	isSelected,
-	useSelectedPath,
-} from "../../../api/stateapi"
+import { FullPath, useSelectedPath } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
@@ -17,20 +13,23 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)
 	if (!viewDefId || !viewDef || !viewDef.wires) return null
-	const localPath = ["viewdef", viewDefId, "wires"]
+
+	const getWirePath = (wireId: string) =>
+		component.path.fromPath(["wires"].concat(wireId))
+
+	const getFullPath = (wireId: string) =>
+		new FullPath("viewdef", viewDefId, getWirePath(wireId))
 
 	return (
 		<div>
 			{Object.entries(viewDef.wires).map(([key, value]) => {
-				const wirePath = component.path.fromPath(localPath.concat(key))
+				const wirePath = getFullPath(key)
 				const wireDef = value as wire.RegularWireDefinition
-				const selected = isSelected(selectedPath, wirePath)
-				const inSelection = isInSelection(selectedPath, wirePath)
 				return (
 					<PropNodeTag
 						onClick={() => setSelectedPath(wirePath)}
-						key={wirePath}
-						selected={inSelection}
+						key={key}
+						selected={wirePath.startsWith(selectedPath)}
 						context={context}
 					>
 						<div className="tagroot">
@@ -40,7 +39,10 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 								metadatakey={wireDef.collection}
 							/>
 						</div>
-						<IOExpandPanel context={context} expanded={selected}>
+						<IOExpandPanel
+							context={context}
+							expanded={wirePath.equals(selectedPath)}
+						>
 							<BuildActionsArea context={context}>
 								<DeleteAction
 									context={context}

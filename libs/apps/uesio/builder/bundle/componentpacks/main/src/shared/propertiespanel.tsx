@@ -4,8 +4,8 @@ import PropertiesPane from "./propertiespane"
 import getValueAPI from "./valueapi"
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
-	const [metadataType, metadataItem, selectedPath] =
-		api.builder.useSelectedNode()
+	const metadataType = "viewdef"
+	const metadataItem = props.context.getViewDefId() || ""
 
 	const definition = api.builder.useDefinition(
 		metadataType,
@@ -13,11 +13,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		""
 	) as definition.DefinitionMap
 
-	const fullPath = component.path.makeFullPath(
-		metadataType,
-		metadataItem,
-		selectedPath
-	)
+	const fullPath = component.path.makeFullPath(metadataType, metadataItem, "")
 
 	const [propsDef, trimmedPath] =
 		component.registry.getPropertiesDefinitionFromPath(fullPath)
@@ -28,12 +24,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={props.className}
 			propsDef={propsDef}
 			path={trimmedPath}
-			valueAPI={getValueAPI(
-				metadataType,
-				metadataItem,
-				selectedPath,
-				definition
-			)}
+			valueAPI={getValueAPI(metadataType, metadataItem, "", definition)}
 		/>
 	)
 }

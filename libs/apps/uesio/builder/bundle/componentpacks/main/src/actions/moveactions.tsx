@@ -1,22 +1,22 @@
 import { component, definition } from "@uesio/ui"
 import { move, get } from "../api/defapi"
+import { FullPath } from "../api/stateapi"
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 
 const getArrayMoveParams = (
-	path: string,
+	path: FullPath,
 	selectKey?: string
 ): [boolean, boolean, () => void, () => void] => {
-	const index = component.path.getIndexFromPath(path)
-	const indexPath = component.path.getIndexPath(path)
+	const index = component.path.getIndexFromPath(path.localPath)
+	const indexPath = component.path.getIndexPath(path.localPath)
 	const parentPath = component.path.getParentPath(indexPath)
-	const parentDef = get(parentPath) as definition.Definition[]
+	const parentDef = get(path.setLocal(parentPath)) as definition.Definition[]
 	const size = parentDef?.length
 	const enableBackward = !!index
 	const enableForward = !!(index !== null && size && index < size - 1)
 
 	const moveToIndex = (index: number) => {
-		const toPath = `${parentPath}["${index}"]`
-		move(path, toPath, selectKey)
+		move(path, path.setLocal(`${parentPath}["${index}"]`), selectKey)
 	}
 
 	return [
@@ -32,11 +32,11 @@ const getArrayMoveParams = (
 }
 
 const getMapMoveParams = (
-	path: string
+	path: FullPath
 ): [boolean, boolean, () => void, () => void] => {
-	const parentPath = component.path.getParentPath(path)
-	const itemKey = component.path.getKeyAtPath(path)
-	const parentDef = get(parentPath) as definition.DefinitionMap
+	const parentPath = component.path.getParentPath(path.localPath)
+	const itemKey = component.path.getKeyAtPath(path.localPath)
+	const parentDef = get(path.setLocal(parentPath)) as definition.DefinitionMap
 	const entries = Object.entries(parentDef)
 	const size = entries.length
 	const index = entries.findIndex(([key]) => key === itemKey)
@@ -47,20 +47,22 @@ const getMapMoveParams = (
 		enableForward,
 		() => {
 			const newKey = entries[index - 1][0]
-			move(`${parentPath}["${newKey}"]`, path)
+			move(path.setLocal(`${parentPath}["${newKey}"]`), path)
 		},
 		() => {
 			const newKey = entries[index + 1][0]
-			move(`${parentPath}["${newKey}"]`, path)
+			move(path.setLocal(`${parentPath}["${newKey}"]`), path)
 		},
 	]
 }
 
-const MoveActions: definition.UtilityComponent = ({ path, context }) => {
-	if (!path) return null
+type Props = {
+	path: FullPath
+}
 
+const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 	const isArrayMove = component.path.isNumberIndex(
-		component.path.getKeyAtPath(path)
+		component.path.getKeyAtPath(path.localPath)
 	)
 	const paramGetter = isArrayMove ? getArrayMoveParams : getMapMoveParams
 	const [enableBackward, enableForward, onClickBackward, onClickForward] =

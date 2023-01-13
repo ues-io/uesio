@@ -55,7 +55,9 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			context={context}
 			className={props.className}
 		>
-			{Content && <Content context={context} />}
+			<component.ErrorBoundary definition={{}} path="" context={context}>
+				{Content && <Content context={context} />}
+			</component.ErrorBoundary>
 		</ScrollPanel>
 	)
 }

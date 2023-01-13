@@ -1,10 +1,15 @@
 import { FunctionComponent, DragEvent } from "react"
-import { definition, component, api, styles } from "@uesio/ui"
+import { definition, component, styles } from "@uesio/ui"
 import { handleDrop, isDropAllowed, isNextSlot } from "../../shared/dragdrop"
 import PanelPortal from "../../shared/panelportal"
 import TopActions from "../../shared/topactions"
 import BottomActions from "../../shared/bottomactions"
-import { useBuilderState } from "../../api/stateapi"
+import {
+	FullPath,
+	useBuilderState,
+	useDragPath,
+	useDropPath,
+} from "../../api/stateapi"
 
 const getIndex = (
 	target: Element | null,
@@ -90,13 +95,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
-	const [, , dropPath] = api.builder.useDropNode()
-	const fullDragPath = component.path.makeFullPath(
-		dragType,
-		dragItem,
-		dragPath
-	)
+	const [dragPath] = useDragPath(context)
+	const [dropPath, setDropPath] = useDropPath(context)
 
 	const viewDefId = context.getViewDefId()
 	const viewDef = context.getViewDef()
@@ -111,7 +111,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	// out the drop node.
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
-			api.builder.clearDropNode()
+			setDropPath()
 		} else {
 			const currentTarget = e.currentTarget as HTMLDivElement
 			const bounds = currentTarget.getBoundingClientRect()
@@ -120,7 +120,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			const outsideTop = e.pageY < bounds.top
 			const outsideBottom = e.pageY > bounds.bottom
 			if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
-				api.builder.clearDropNode()
+				setDropPath()
 			}
 		}
 	}
@@ -136,7 +136,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		let validPath = ""
 		while (target !== null && target !== e.currentTarget) {
 			const accepts = target.getAttribute("data-accepts")?.split(",")
-			if (accepts && isDropAllowed(accepts, fullDragPath)) {
+			if (accepts && isDropAllowed(accepts, dragPath)) {
 				validPath = target.getAttribute("data-path") || ""
 				break
 			}
@@ -144,37 +144,32 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			target = target.parentElement || null
 		}
 
-		if (validPath) {
+		if (validPath && dropPath && dragPath) {
 			const index = getIndex(target, prevTarget, e)
 			let usePath = `${validPath}["${index}"]`
-			if (usePath === component.path.getParentPath(dragPath)) {
+			if (usePath === component.path.getParentPath(dragPath.localPath)) {
 				// Don't drop on ourselfs, just move to the next index
 				usePath = `${validPath}["${index + 1}"]`
 			}
-			if (dropPath !== usePath) {
-				api.builder.setDropNode("viewdef", viewDefId, usePath)
+			if (dropPath.localPath !== usePath) {
+				setDropPath(new FullPath("viewdef", viewDefId, usePath))
 			}
 			return
 		}
 
-		if (dropPath !== "") {
-			api.builder.clearDropNode()
+		if (!dropPath) {
+			setDropPath()
 		}
 	}
 
 	const onDrop = (e: DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		if (!dropPath) {
+		if (!dropPath || !dragPath) {
 			return
 		}
-		const index = component.path.getIndexFromPath(dropPath) || 0
-		const fullDropPath = component.path.makeFullPath(
-			"viewdef",
-			viewDefId,
-			component.path.getParentPath(dropPath)
-		)
-		handleDrop(fullDragPath, fullDropPath, index)
+		const index = component.path.getIndexFromPath(dropPath.localPath) || 0
+		handleDrop(dragPath, dropPath, index)
 	}
 
 	return (

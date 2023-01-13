@@ -7,6 +7,7 @@ import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
 
 interface FilePreviewProps extends definition.UtilityProps {
+	path: string
 	fieldMetadata: collection.Field
 	fieldId: string
 	record: wire.WireRecord

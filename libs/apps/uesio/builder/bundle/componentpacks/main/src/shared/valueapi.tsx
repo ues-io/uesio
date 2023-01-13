@@ -60,8 +60,8 @@ const getValueAPI = (
 			selectKey
 		)
 	},
-	select: (path: string) => {
-		api.builder.setSelectedNode(metadataType, metadataItem, path)
+	select: () => {
+		//api.builder.setSelectedNode(metadataType, metadataItem, path)
 	},
 	isSelected: (path: string) => path === selectedPath,
 	hasSelectedChild: (path: string) =>

@@ -7,6 +7,7 @@ import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
 import { Context } from "../context/context"
+import { MetadataKey } from "../bands/builder/types"
 
 const getComponentId = (
 	namedId: string | undefined,
@@ -99,7 +100,7 @@ const useExternalState = <T extends PlainComponentState>(
 	componentId: string
 ): T | undefined => useComponentState<T>(componentId)
 
-const getVariantId = selectId as (variant: ComponentVariant) => string
+const getVariantId = selectId as (variant: ComponentVariant) => MetadataKey
 
 const useAllVariants = useComponentVariants
 

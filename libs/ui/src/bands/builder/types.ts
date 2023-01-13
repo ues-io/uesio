@@ -23,14 +23,6 @@ const METADATA = {
 type MetadataType = keyof typeof METADATA
 type MetadataKey = `${string}/${string}.${string}`
 
-type BuilderState = {
-	activeNode?: string
-	selectedNode?: string
-	draggingNode?: string
-	droppingNode?: string
-	lastModifiedNode?: string
-}
-
 type MetadataListResponse = {
 	metadataType: MetadataType
 	namespace: string
@@ -38,10 +30,4 @@ type MetadataListResponse = {
 	metadata: Record<string, boolean>
 }
 
-export {
-	BuilderState,
-	MetadataListResponse,
-	MetadataType,
-	METADATA,
-	MetadataKey,
-}
+export { MetadataListResponse, MetadataType, METADATA, MetadataKey }
