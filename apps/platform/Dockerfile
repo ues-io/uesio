@@ -14,7 +14,8 @@ COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
 COPY ./dist ./dist
 
-ENV GITSHA=""
+ARG git_sha=""
+ENV GITSHA=$git_sha
 
 EXPOSE 3000
 
