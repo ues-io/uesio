@@ -2,6 +2,7 @@ import { definition, builder, signal, component, context } from "@uesio/ui"
 import {
 	NumberFieldOptions,
 	ReferenceFieldOptions,
+	TextAreaFieldOptions,
 	UserFieldOptions,
 } from "../field/fielddefinition"
 
@@ -33,6 +34,7 @@ type ColumnDefinition = {
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
+	textArea?: TextAreaFieldOptions
 	label: string
 	components: definition.DefinitionList
 }

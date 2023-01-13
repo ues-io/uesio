@@ -27,6 +27,11 @@ type NumberFieldOptions = {
 	min?: number
 }
 
+type TextAreaFieldOptions = {
+	cols?: number
+	rows?: number
+}
+
 type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
@@ -37,6 +42,7 @@ type FieldDefinition = {
 	list?: ListFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
+	textArea?: TextAreaFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
@@ -148,6 +154,7 @@ export {
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
 	NumberFieldOptions,
+	TextAreaFieldOptions,
 }
 
 export default FieldPropertyDefinition

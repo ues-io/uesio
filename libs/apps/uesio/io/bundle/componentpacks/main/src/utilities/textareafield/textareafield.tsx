@@ -1,15 +1,17 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context } from "@uesio/ui"
+import { TextAreaFieldOptions } from "../../components/field/fielddefinition"
 
 interface TextAreaFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string | null
 	mode?: context.FieldMode
 	placeholder?: string
+	options?: TextAreaFieldOptions
 }
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder } = props
+	const { setValue, value, mode, placeholder, options } = props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -29,6 +31,8 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 		onChange: (
 			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 		) => setValue(event.target.value),
+		rows: options?.rows,
+		cols: options?.cols,
 	}
 
 	return <textarea {...commonProps} />
