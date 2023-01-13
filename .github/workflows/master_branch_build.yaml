@@ -114,7 +114,7 @@ jobs:
         with:
           name: new-image
       - name: Load new image into env var
-        run: echo "NEW_IMAGE=$(cat new-image.txt)" >> $GITHUB_ENV
+        run: echo "NEW_IMAGE=$(cat new_image.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         run: |
           echo "Docker image SHA updated to $NEW_IMAGE"
