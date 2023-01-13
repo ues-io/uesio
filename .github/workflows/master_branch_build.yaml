@@ -22,48 +22,50 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Use Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Cache ~/.npm
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-
-      - name: Install npm Dependencies
-        run: npm ci
-      - name: Cache ./node_modules/.cache for nx usage
-        uses: actions/cache@v2
-        with:
-          path: ./node_modules/.cache
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
-      - name: Cache Go modules
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+      # - name: Use Node.js ${{ matrix.node-version }}
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
+      # - name: Use Go ${{ matrix.go-version }}
+      #   uses: actions/setup-go@v2
+      #   with:
+      #     go-version: ${{ matrix.go-version }}
+      #   id: go
+      # - name: Cache ~/.npm
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.node-version }}-node-
+      # - name: Install npm Dependencies
+      #   run: npm ci
+      # - name: Cache ./node_modules/.cache for nx usage
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ./node_modules/.cache
+      #     key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
+      #       ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
+      # - name: Cache Go modules
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-go-
       # - name: Lint
       #   shell: bash
       #   run: |
       #     npm run prettier-check
       #     npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-      - name: Build All
-        shell: bash
-        run: |
-          npm run build-all
+
+      # - name: Build All
+      #   shell: bash
+      #   run: |
+      #     npm run build-all
+
       # - name: Test
       #   shell: bash
       #   run: |
@@ -83,11 +85,15 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
           FULL_SHA: ${{ github.sha }}
+          # docker build -t $IMAGE_TAG --build-arg git_sha=${GITSHA} -f ./apps/platform/Dockerfile .
+          # docker push $IMAGE_TAG
         run: |
+          echo "FULL_SHA is $FULL_SHA"
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
-          docker build -t $IMAGE_TAG --build-arg git_sha=${GITSHA} -f ./apps/platform/Dockerfile .
-          docker push $IMAGE_TAG
+          echo "GITSHA is $GITSHA"
+          echo "IMAGE_TAG is $IMAGE_TAG"
           echo "NEW_IMAGE=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
   update-dev-branch:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
@@ -105,4 +111,4 @@ jobs:
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
           git commit -m "ci: Auto-update dev image to ${{ needs.build.outputs.NEW_IMAGE }}"
-          git push
+          # git push
