@@ -16,8 +16,6 @@ jobs:
       matrix:
         node-version: [16.x]
         go-version: [~1.19]
-    outputs:
-      fullImage: ${{ steps.dockerize.outputs.fullImage }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -93,12 +91,7 @@ jobs:
           # docker build -t $IMAGE_TAG --build-arg git_sha=${GITSHA} -f ./apps/platform/Dockerfile .
           # docker push $IMAGE_TAG
         run: |
-          echo "FULL_SHA is $FULL_SHA"
-          echo "GITSHA is $GITSHA"
-          echo "IMAGE_TAG is $IMAGE_TAG"
           echo "$IMAGE_TAG" > new_image.txt
-          cat new_image.txt
-          echo "fullImage=${IMAGE_TAG}" >> $GITHUB_OUTPUT
       - name: Upload image id
         uses: actions/upload-artifact@v3
         with:
@@ -109,8 +102,6 @@ jobs:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
     needs: build
-    env:
-      NEW_IMAGE: ${{ needs.build.outputs.fullImage }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -120,13 +111,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: new-image
+          path: ./aws/dev/ecr/task_definitions/image.txt
+      - name: Load new image into env var
+        run: echo "NEW_IMAGE=$(cat ./aws/dev/ecr/task_definitions/image.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         run: |
-          cat new_image.txt
           echo "Docker image SHA updated to $NEW_IMAGE"
-          echo "Docker image SHA updated to ${{ needs.build.outputs.fullImage }}"
-          echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
-          cat ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
