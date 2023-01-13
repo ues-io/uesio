@@ -115,8 +115,8 @@ jobs:
           name: image-artifacts
       - name: Load new image into env var
         run: |
-          echo "NEW_IMAGE=$(cat ./artifacts/new_image.txt)" >> $GITHUB_ENV
-          echo "SHORT_SHA=$(cat ./artifacts/short_sha.txt)" >> $GITHUB_ENV
+          echo "NEW_IMAGE=$(cat ./new_image.txt)" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(cat ./short_sha.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         run: |
           echo "Docker image SHA updated to $SHORT_SHA"
