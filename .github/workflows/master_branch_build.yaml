@@ -17,7 +17,7 @@ jobs:
         node-version: [16.x]
         go-version: [~1.19]
     outputs:
-      image: ${{ steps.dockerize.outputs.image }}
+      NEW_IMAGE: ${{ steps.dockerize.outputs.NEW_IMAGE }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -87,7 +87,7 @@ jobs:
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG --build-arg git_sha=${GITSHA} -f ./apps/platform/Dockerfile .
           docker push $IMAGE_TAG
-          echo "image=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "NEW_IMAGE=$IMAGE_TAG" >> $GITHUB_OUTPUT
   update-dev-branch:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
@@ -99,10 +99,10 @@ jobs:
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
       - name: Update Docker container image tag for dev
         run: |
-          echo "Docker image SHA updated to ${{needs.build.outputs.image}}"
-          echo "${{needs.build.outputs.image}}" > ./aws/dev/ecr/task_definitions/image.txt
+          echo "Docker image SHA updated to ${{ needs.build.outputs.NEW_IMAGE }}"
+          echo "${{ needs.build.outputs.NEW_IMAGE }}" > ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
-          git commit -m "ci: Auto-update dev image to ${{needs.build.outputs.image}}"
+          git commit -m "ci: Auto-update dev image to ${{ needs.build.outputs.NEW_IMAGE }}"
           git push

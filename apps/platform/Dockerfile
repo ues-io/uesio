@@ -1,21 +1,25 @@
-FROM golang:1.19-alpine AS multistage
+# FROM golang:1.19-alpine AS multistage
 
-WORKDIR /src
-COPY ./apps/platform .
-RUN go build
+# WORKDIR /src
+# COPY ./apps/platform .
+# RUN go build
 
 ##
 
 FROM alpine:latest
-COPY --from=multistage /src/uesio .
+# COPY --from=multistage /src/uesio .
 COPY ./apps/platform/fonts ./fonts
 COPY ./apps/platform/seed ./seed
 COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
-COPY ./dist ./dist
+COPY ./dist/ui ./dist/ui
+COPY ./dist/vendor ./dist/vendor
+COPY ./dist/platform .
 
 ARG git_sha=""
 ENV GITSHA=$git_sha
+
+RUN echo "GITSHA ENV is $GITSHA"
 
 EXPOSE 3000
 
