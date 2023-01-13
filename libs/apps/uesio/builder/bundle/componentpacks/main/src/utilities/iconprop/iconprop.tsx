@@ -84,6 +84,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 						className={classes.iconpreview}
 						icon={valueAPI.get(path) || ""}
 						context={context}
+						/*
 						onClick={() => {
 							api.builder.setSelectedNode(
 								"viewdef",
@@ -91,6 +92,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 								path
 							)
 						}}
+						*/
 					/>
 				</div>
 			</FieldWrapper>
@@ -114,9 +116,9 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 												context={context}
 												variant="uesio/builder.buildtitle"
 												icon="close"
-												onClick={() =>
-													api.builder.unSelectNode()
-												}
+												onClick={() => {
+													//api.builder.unSelectNode()
+												}}
 											/>
 										)
 									}

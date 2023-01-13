@@ -94,6 +94,7 @@ const Route: UtilityComponent = (props) => {
 				view: route.view,
 				params: route.params,
 			}}
+			path=""
 		/>
 	)
 

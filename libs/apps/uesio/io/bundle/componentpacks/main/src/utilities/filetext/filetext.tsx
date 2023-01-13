@@ -4,6 +4,7 @@ import { FieldState, LabelPosition } from "../../components/field/field"
 import CodeField from "../codefield/codefield"
 
 interface FileTextProps extends definition.UtilityProps {
+	path: string
 	label?: string
 	width?: string
 	fieldId: string

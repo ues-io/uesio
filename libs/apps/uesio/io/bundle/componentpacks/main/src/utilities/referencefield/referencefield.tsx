@@ -11,6 +11,7 @@ import Autocomplete from "../autocomplete/autocomplete"
 import TextField from "../textfield/textfield"
 
 interface ReferenceFieldProps {
+	path: string
 	fieldId: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode

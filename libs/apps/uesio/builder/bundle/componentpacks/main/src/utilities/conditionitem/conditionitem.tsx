@@ -102,9 +102,9 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 
 	const onClick = (e: MouseEvent) => {
 		e.stopPropagation()
-		const viewDefId = context.getViewDefId()
-		viewDefId &&
-			api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
+		//const viewDefId = context.getViewDefId()
+		//viewDefId &&
+		//	api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
 	}
 
 	const [, , selectedNode] = api.builder.useSelectedNode()

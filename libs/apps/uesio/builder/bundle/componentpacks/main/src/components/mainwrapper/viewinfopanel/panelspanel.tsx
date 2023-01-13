@@ -1,41 +1,45 @@
-import { definition, api, component } from "@uesio/ui"
+import { definition, api, component, metadata } from "@uesio/ui"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
 import MoveActions from "../../../actions/moveactions"
-import {
-	isInSelection,
-	isSelected,
-	useSelectedPath,
-} from "../../../api/stateapi"
+import { FullPath, useSelectedPath } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
 const PanelsPanel: definition.UtilityComponent = ({ context }) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const [selectedPath, setSelectedPath] = useSelectedPath(context)
-	const viewDefId = context.getViewDefId() || ""
-	const viewDef = api.view.useViewDef(viewDefId)
+	const viewDefId = context.getViewDefId()
+	const viewDef = api.view.useViewDef(viewDefId as string)
 	if (!viewDefId || !viewDef || !viewDef.panels) return null
-	const localPath = ["viewdef", viewDefId, "panels"]
+
+	const getPanelPath = (panelId: string) =>
+		component.path.fromPath(["panels"].concat(panelId))
+
+	const getFullPath = (panelId: string) =>
+		new FullPath(
+			"viewdef",
+			viewDefId as metadata.MetadataKey,
+			getPanelPath(panelId)
+		)
 
 	return (
 		<div>
 			{Object.entries(viewDef.panels).map(([panelId /*, panelDef*/]) => {
-				const panelPath = component.path.fromPath(
-					localPath.concat(panelId)
-				)
-				const selected = isSelected(selectedPath, panelPath)
-				const inSelection = isInSelection(selectedPath, panelPath)
+				const panelPath = getFullPath(panelId)
 
 				return (
 					<PropNodeTag
 						onClick={() => setSelectedPath(panelPath)}
-						key={panelPath}
-						selected={inSelection}
+						key={panelId}
+						selected={selectedPath.startsWith(panelPath)}
 						context={context}
 					>
 						<div className="tagroot">{panelId}</div>
-						<IOExpandPanel context={context} expanded={selected}>
+						<IOExpandPanel
+							context={context}
+							expanded={selectedPath.equals(panelPath)}
+						>
 							<BuildActionsArea context={context}>
 								<DeleteAction
 									context={context}

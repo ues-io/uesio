@@ -5,6 +5,7 @@ import Button from "../button/button"
 import Group from "../group/group"
 
 interface FormProps extends definition.UtilityProps {
+	path: string
 	wire?: string
 	submitLabel?: string
 	onSubmit?: (record: wire.WireRecord) => void

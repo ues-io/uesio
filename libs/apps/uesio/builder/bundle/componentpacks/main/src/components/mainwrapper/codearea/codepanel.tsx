@@ -158,10 +158,12 @@ const CodePanel: definition.UtilityComponent = (props) => {
 			if (endColumn !== startColumn || endLineNumber !== startLineNumber)
 				return
 
+			/*
 			const offset = model.getOffsetAt({
 				lineNumber: startLineNumber,
 				column: startColumn,
 			})
+
 
 			const [relevantNode, nodePath] = util.yaml.getNodeAtOffset(
 				offset,
@@ -170,12 +172,14 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				true
 			)
 
+
 			if (relevantNode && nodePath)
+
 				api.builder.setSelectedNode(
 					metadataTypeRef.current,
 					metadataItemRef.current,
 					nodePath
-				)
+				)*/
 		})
 		/*
 

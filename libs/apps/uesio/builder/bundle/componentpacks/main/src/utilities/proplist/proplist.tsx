@@ -25,6 +25,7 @@ interface Props extends definition.UtilityProps {
 	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
 	valueAPI: builder.ValueAPI
+	path: string
 }
 
 function getPropHandler(type?: string) {

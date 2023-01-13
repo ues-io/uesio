@@ -1,10 +1,12 @@
-import { api, component } from "@uesio/ui"
+import { FullPath } from "../api/stateapi"
 
 const handleDrop = (
-	dragNode: string,
-	dropNode: string,
+	dragNode: FullPath,
+	dropNode: FullPath,
 	dropIndex: number
 ): void => {
+	console.log("diddrop", dragNode, dropNode, dropIndex)
+	/*
 	const [propDef] =
 		component.registry.getPropertiesDefinitionFromPath(dragNode)
 
@@ -72,6 +74,7 @@ const handleDrop = (
 			break
 		}
 	}
+	*/
 }
 
 const isNextSlot = (
@@ -88,7 +91,9 @@ const isNextSlot = (
 	return position >= halfWay
 }
 
-const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
+const isDropAllowed = (accepts: string[], dragNode: FullPath): boolean => {
+	if (!dragNode) return false
+	/*
 	const [propDef] =
 		component.registry.getPropertiesDefinitionFromPath(dragNode)
 	if (propDef) {
@@ -103,6 +108,7 @@ const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
 			}
 		}
 	}
+	*/
 	return false
 }
 

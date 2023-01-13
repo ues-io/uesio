@@ -5,6 +5,7 @@ import SelectField from "../selectfield/selectfield"
 const addBlankSelectOption = collection.addBlankSelectOption
 
 interface SelectFilterProps extends definition.UtilityProps {
+	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	conditionId: string | undefined

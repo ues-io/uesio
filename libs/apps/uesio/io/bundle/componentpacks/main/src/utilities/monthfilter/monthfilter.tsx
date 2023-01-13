@@ -1,6 +1,7 @@
 import { definition, api, wire, collection, styles } from "@uesio/ui"
 
 interface MonthFilterProps {
+	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	conditionId: string | undefined

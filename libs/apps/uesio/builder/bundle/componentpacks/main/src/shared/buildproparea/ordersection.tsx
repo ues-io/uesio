@@ -80,11 +80,13 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						selected={selected}
 						key={index}
 						onClick={() => {
+							/*
 							api.builder.setSelectedNode(
 								"viewdef",
 								viewDefId,
 								orderPath
 							)
+							*/
 						}}
 						popperChildren={
 							<PropertiesPane

@@ -1,6 +1,11 @@
-import { definition, component, api } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 import { FunctionComponent, useEffect, useRef } from "react"
-import { getBuildMode } from "../../api/stateapi"
+import {
+	FullPath,
+	getBuildMode,
+	useDragPath,
+	useDropPath,
+} from "../../api/stateapi"
 import { isDropAllowed } from "../../shared/dragdrop"
 import BuildWrapper from "../buildwrapper/buildwrapper"
 import PlaceHolder from "../placeholder/placeholder"
@@ -24,17 +29,15 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
+	const viewDefId = context.getViewDefId()
 
-	const [dragType, dragItem, dragPath] = api.builder.useDragNode()
-	const [, , dropPath] = api.builder.useDropNode()
-	const fullDragPath = component.path.makeFullPath(
-		dragType,
-		dragItem,
-		dragPath
-	)
+	const [dragPath] = useDragPath(context)
+	const [dropPath] = useDropPath(context)
 
 	const isHovering =
-		dropPath === `${listPath}["0"]` && isDropAllowed(accepts, fullDragPath)
+		dropPath.equals(
+			new FullPath("viewdef", viewDefId, `${listPath}["0"]`)
+		) && isDropAllowed(accepts, dragPath)
 
 	useEffect(() => {
 		const parentElem = ref?.current?.parentElement

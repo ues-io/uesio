@@ -130,26 +130,10 @@ const builderSlice = createSlice({
 		) => {
 			//state.lastModifiedNode = payload.path
 		},
-		setActiveNode: (state, { payload }: PayloadAction<string>) => {
-			state.activeNode = payload
-		},
-		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
-			state.selectedNode = payload
-		},
-		setDragNode: (state, { payload }: PayloadAction<string>) => {
-			state.draggingNode = payload
-		},
-		setDropNode: (state, { payload }: PayloadAction<string>) => {
-			state.droppingNode = payload
-		},
 	},
 })
 
 export const {
-	setActiveNode,
-	setSelectedNode,
-	setDragNode,
-	setDropNode,
 	setDefinition,
 	cloneDefinition,
 	cloneKeyDefinition,

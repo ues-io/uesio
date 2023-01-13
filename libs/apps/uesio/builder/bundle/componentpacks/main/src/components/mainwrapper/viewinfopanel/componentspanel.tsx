@@ -2,7 +2,17 @@ import { FC, DragEvent } from "react"
 import { definition, component, api, styles, metadata } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
-import { getBuilderNamespaces, getBuilderState } from "../../../api/stateapi"
+import pickBy from "lodash/pickBy"
+import {
+	ComponentDef,
+	FullPath,
+	getBuilderNamespaces,
+	getComponentDefs,
+	PathSelector,
+	useDragPath,
+	useDropPath,
+	useSelectedPath,
+} from "../../../api/stateapi"
 import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
@@ -11,20 +21,12 @@ const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
-	selectedItem: metadata.MetadataKey
-	selectedType: string
+	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	setSelected: PathSelector
 } & definition.UtilityProps
 
-type ComponentDef = {
-	name: string
-	namespace: string
-	title: string
-	description: string
-	category: string
-}
-
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
-	const { context, variants, selectedItem } = props
+	const { context, variants, isSelected, setSelected } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -39,20 +41,17 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 		<div className={classes.root}>
 			{variants.map((variant) => {
 				const variantKey = api.component.getVariantId(variant)
-				const isVariantSelected = selectedItem === variantKey
 
 				return (
 					<PropNodeTag
 						key={variantKey}
 						onClick={(e: MouseEvent) => {
 							e.stopPropagation()
-							api.builder.setSelectedNode(
-								"componentvariant",
-								variantKey,
-								""
+							setSelected(
+								new FullPath("componentvariant", variantKey)
 							)
 						}}
-						selected={isVariantSelected}
+						selected={isSelected("componentvariant", variantKey)}
 						draggable={`componentvariant:${variantKey}`}
 						context={context}
 						variant="uesio/builder.smallpropnodetag"
@@ -72,15 +71,15 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 type ComponentBlockProps = {
 	component: ComponentDef
 	variants: component.ComponentVariant[]
-	selectedItem: metadata.MetadataKey
-	selectedType: string
+	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	setSelected: PathSelector
 } & definition.UtilityProps
 
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
-	const { context, component, variants, selectedType, selectedItem } = props
+	const { context, component, variants, isSelected, setSelected } = props
 	const { namespace, name } = component
 	if (!namespace) throw new Error("Invalid Property Definition")
-	const fullName = `${namespace}.${name}`
+	const fullName = `${namespace}.${name}` as metadata.MetadataKey
 
 	const allNSInfo = getBuilderNamespaces(context)
 
@@ -90,26 +89,26 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 		(variant) => !!allNSInfo[variant.namespace]
 	)
 
-	const selected =
-		selectedType === "componenttype" && selectedItem === fullName
-
 	// Loop over the variants for this component
 	return (
 		<PropNodeTag
 			context={context}
 			key={fullName}
-			onClick={() =>
-				api.builder.setSelectedNode("componenttype", fullName, "")
-			}
+			onClick={() => {
+				setSelected(new FullPath("componenttype", fullName))
+			}}
 			draggable={`component:${fullName}`}
-			selected={selected}
+			selected={isSelected("componenttype", fullName)}
 		>
 			<ComponentTag component={component} context={context} />
-			<IOExpandPanel context={context} expanded={selected}>
+			<IOExpandPanel
+				context={context}
+				expanded={isSelected("componenttype", fullName)}
+			>
 				{validVariants && validVariants.length > 0 && (
 					<VariantsBlock
-						selectedItem={selectedItem}
-						selectedType={selectedType}
+						isSelected={isSelected}
+						setSelected={setSelected}
 						variants={validVariants}
 						context={context}
 					/>
@@ -122,8 +121,8 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 type CategoryBlockProps = {
 	components: ComponentDef[]
 	variants: Record<string, component.ComponentVariant[]>
-	selectedItem: metadata.MetadataKey
-	selectedType: string
+	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
+	setSelected: PathSelector
 	category: string
 } & definition.UtilityProps
 
@@ -138,14 +137,8 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 		},
 		props
 	)
-	const {
-		context,
-		components,
-		category,
-		variants,
-		selectedType,
-		selectedItem,
-	} = props
+	const { context, components, category, variants, isSelected, setSelected } =
+		props
 	const comps = components
 	if (!comps || !comps.length) return null
 	comps.sort((a, b) => {
@@ -166,8 +159,8 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 						variants={variants[fullName]}
 						component={component}
 						context={context}
-						selectedType={selectedType}
-						selectedItem={selectedItem}
+						isSelected={isSelected}
+						setSelected={setSelected}
 					/>
 				)
 			})}
@@ -230,13 +223,15 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 		},
 		props
 	)
-	const components = getBuilderState<Record<string, ComponentDef>>(
-		context,
-		"componentdefs"
+	const components = pickBy(
+		getComponentDefs(context),
+		(component) => component.discoverable
 	)
 
-	const selectedItem = api.builder.useSelectedItem()
-	const selectedType = api.builder.useSelectedType()
+	const [selectedPath, setSelected] = useSelectedPath(context)
+	const [, setDragPath] = useDragPath(context)
+	const [, setDropPath] = useDropPath(context)
+
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type) {
@@ -244,13 +239,13 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 			const metadataType = typeArray.shift()
 			const metadataItem = typeArray.join(":")
 			if (metadataType && metadataItem) {
-				api.builder.setDragNode(metadataType, metadataItem, "")
+				setDragPath(new FullPath(metadataType, metadataItem))
 			}
 		}
 	}
 	const onDragEnd = () => {
-		api.builder.clearDragNode()
-		api.builder.clearDropNode()
+		setDragPath()
+		setDropPath()
 	}
 
 	const categoryOrder = [
@@ -274,6 +269,11 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 		(variant) => variant.component
 	)
 
+	const isComponentSelected = (
+		itemtype: string,
+		itemname: metadata.MetadataKey
+	) => selectedPath.equals(new FullPath(itemtype, itemname))
+
 	return (
 		<div
 			onDragStart={onDragStart}
@@ -286,8 +286,8 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 					variants={variantsByComponent}
 					components={componentsByCategory[category]}
 					category={category}
-					selectedType={selectedType}
-					selectedItem={selectedItem}
+					isSelected={isComponentSelected}
+					setSelected={setSelected}
 					context={context}
 				/>
 			))}

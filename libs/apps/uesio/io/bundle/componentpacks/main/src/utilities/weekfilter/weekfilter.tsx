@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, api, wire, collection, styles } from "@uesio/ui"
 
 interface WeekFilterProps extends definition.UtilityProps {
+	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	conditionId: string | undefined

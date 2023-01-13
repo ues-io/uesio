@@ -5,6 +5,7 @@ import { ListFieldOptions } from "../../components/field/field"
 interface ListFieldDeckUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	value: wire.FieldValue
+	path: string
 	options?: ListFieldOptions
 }
 

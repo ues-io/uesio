@@ -1,8 +1,13 @@
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 import { clone } from "../api/defapi"
 import { definition } from "@uesio/ui"
+import { FullPath } from "../api/stateapi"
 
-const CloneAction: definition.UtilityComponent = ({ path = "", context }) => (
+type Props = {
+	path: FullPath
+}
+
+const CloneAction: definition.UtilityComponent<Props> = ({ path, context }) => (
 	<ActionButton
 		title="Clone"
 		onClick={() => clone(path)}

@@ -1,37 +1,37 @@
 import { definition, api } from "@uesio/ui"
+import { FullPath } from "./stateapi"
 
-const get = (path: string | undefined): definition.Definition => {
+const get = (path: FullPath): definition.Definition => {
 	if (path === undefined) return
-	return api.builder.getDefinitionAtPath(path)
+	return api.builder.getDefinitionAtPath(path.pathCombine())
 }
 
 const set = (
-	path: string | undefined,
+	path: FullPath,
 	definition: definition.Definition,
 	autoSelect?: boolean
 ) => {
-	if (path === undefined) return
-	api.builder.setDefinition(path, definition, autoSelect)
+	api.builder.setDefinition(path.pathCombine(), definition, autoSelect)
 }
 
-const remove = (path: string | undefined) => {
-	if (path === undefined) return
-	api.builder.removeDefinition(path)
+const remove = (path: FullPath) => {
+	api.builder.removeDefinition(path.pathCombine())
 }
 
-const move = (fromPath: string, toPath: string, selectKey?: string) => {
-	if (fromPath === undefined || toPath === undefined) return
-	api.builder.moveDefinition(fromPath, toPath, selectKey)
+const move = (fromPath: FullPath, toPath: FullPath, selectKey?: string) => {
+	api.builder.moveDefinition(
+		fromPath.pathCombine(),
+		toPath.pathCombine(),
+		selectKey
+	)
 }
 
-const clone = (path: string) => {
-	if (path === undefined) return
-	api.builder.cloneDefinition(path)
+const clone = (path: FullPath) => {
+	api.builder.cloneDefinition(path.pathCombine())
 }
 
-const cloneKey = (path: string) => {
-	if (path === undefined) return
-	api.builder.cloneKeyDefinition(path)
+const cloneKey = (path: FullPath) => {
+	api.builder.cloneKeyDefinition(path.pathCombine())
 }
 
 export { set, remove, move, get, clone, cloneKey }

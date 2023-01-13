@@ -13,10 +13,6 @@ import componentSignal from "../bands/component/signals"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
 import {
-	setActiveNode as setAN,
-	setDragNode as setDrgN,
-	setDropNode as setDrpN,
-	setSelectedNode as setSN,
 	cloneDefinition as cloneDef,
 	setDefinition as setDef,
 	addDefinition as addDef,
@@ -35,8 +31,6 @@ import {
 	fromPath,
 	getFullPathParts,
 	getKeyAtPath,
-	getParentPath,
-	makeFullPath,
 	toPath,
 } from "../component/path"
 import { Definition, DefinitionMap } from "../definition/definition"
@@ -88,61 +82,6 @@ const useHasChanges = () =>
 		}
 		return false
 	})
-
-const setActiveNode = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => {
-	dispatch(setAN(makeFullPath(metadataType, metadataItem, path)))
-}
-
-const clearActiveNode = () => {
-	dispatch(setAN(""))
-}
-
-const setSelectedNode = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => {
-	dispatch(setSN(makeFullPath(metadataType, metadataItem, path)))
-}
-
-const unSelectNode = () => {
-	const selectedNode = getCurrentState().builder.selectedNode
-	if (!selectedNode) return
-	const newPath = getParentPath(selectedNode)
-	dispatch(setSN(newPath))
-}
-
-const clearSelectedNode = () => {
-	dispatch(setSN(""))
-}
-
-const setDragNode = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => {
-	dispatch(setDrgN(makeFullPath(metadataType, metadataItem, path)))
-}
-
-const clearDragNode = () => {
-	dispatch(setDrgN(""))
-}
-
-const setDropNode = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => {
-	dispatch(setDrpN(makeFullPath(metadataType, metadataItem, path)))
-}
-
-const clearDropNode = () => {
-	dispatch(setDrpN(""))
-}
 
 const cloneDefinition = (path: string) => dispatch(cloneDef({ path }))
 
@@ -369,15 +308,6 @@ export {
 	useDragNode,
 	useDropNode,
 	useHasChanges,
-	setActiveNode,
-	clearActiveNode,
-	setSelectedNode,
-	unSelectNode,
-	clearSelectedNode,
-	setDragNode,
-	clearDragNode,
-	setDropNode,
-	clearDropNode,
 	save,
 	cancel,
 	cloneDefinition,

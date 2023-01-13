@@ -11,6 +11,7 @@ import { ReferenceGroupFieldOptions } from "../../components/field/field"
 import TextField from "../textfield/textfield"
 
 interface ReferenceGroupFieldProps extends definition.UtilityProps {
+	path: string
 	fieldMetadata: collection.Field
 	fieldId: string
 	mode: context.FieldMode

@@ -113,6 +113,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 }
 
 type CommonProps = {
+	path: string
 	mode: context.FieldMode
 	fieldMetadata: collection.Field
 	fieldId: string
@@ -122,7 +123,7 @@ type CommonProps = {
 	wire: wire.Wire
 	setValue: (value: wire.FieldValue) => void
 	placeholder?: string
-} & definition.BaseProps
+} & definition.UtilityProps
 
 const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 	const { displayAs, reference, list, user, number } = definition
@@ -194,7 +195,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 }
 
 const Field: definition.UC<FieldDefinition> = (props) => {
-	const { context, definition } = props
+	const { context, definition, path } = props
 	const { fieldId, id, placeholder } = definition
 
 	const record = context.getRecord()
@@ -216,6 +217,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 
 	const common = {
+		path,
 		context,
 		mode,
 		fieldMetadata,

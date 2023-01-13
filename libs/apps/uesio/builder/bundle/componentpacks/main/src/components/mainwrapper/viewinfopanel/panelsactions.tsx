@@ -1,18 +1,12 @@
 import { definition, styles, component } from "@uesio/ui"
 import { set } from "../../../api/defapi"
+import { FullPath } from "../../../api/stateapi"
 
 const PanelsActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const { context } = props
-	const metadataType = "viewdef"
-	const metadataItem = context.getViewDefId() || ""
-	const localPath = '["panels"]'
-	const path = component.path.makeFullPath(
-		metadataType,
-		metadataItem,
-		localPath
-	)
+	const path = new FullPath("viewdef", context.getViewDefId(), '["panels"]')
 	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
@@ -40,11 +34,12 @@ const PanelsActions: definition.UtilityComponent = (props) => {
 				label="New Panel"
 				onClick={() =>
 					set(
-						path +
+						path.addLocal(
 							`[${
 								"newpanel" +
 								(Math.floor(Math.random() * 60) + 1)
-							}]`,
+							}]`
+						),
 						{
 							"uesio.type": "uesio/io.dialog",
 							components: [],

@@ -1,5 +1,5 @@
 import React, { FC } from "react"
-import { builder, context, api, component, styles } from "@uesio/ui"
+import { builder, context, component, styles } from "@uesio/ui"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import useListScroll from "./hooks/uselistscroll"
 
@@ -83,14 +83,14 @@ const PropListsList: FC<T> = (props) => {
 		props
 	)
 
-	const [metadataType, metadataItem, selectedPath] =
-		api.builder.useSelectedNode()
+	//const [metadataType, metadataItem, selectedPath] =
+	//	api.builder.useSelectedNode()
 	const itemsRef = useListScroll(items.length)
 	return (
 		<div>
 			<TransitionGroup className="items-section__list">
 				{items.map((item, i) => {
-					const selected = selectedPath === path + `["${i}"]`
+					const selected = false //selectedPath === path + `["${i}"]`
 					return (
 						<CSSTransition
 							key={path + i}
@@ -121,6 +121,7 @@ const PropListsList: FC<T> = (props) => {
 									<PropNodeTag
 										key={i}
 										context={context}
+										/*
 										onClick={() =>
 											api.builder.setSelectedNode(
 												metadataType,
@@ -128,6 +129,7 @@ const PropListsList: FC<T> = (props) => {
 												path + `[${i}]`
 											)
 										}
+										*/
 										selected={selected}
 										popperChildren={
 											expandType === "popper" && (
@@ -148,7 +150,7 @@ const PropListsList: FC<T> = (props) => {
 																			e: MouseEvent
 																		) => {
 																			e.stopPropagation()
-																			api.builder.unSelectNode()
+																			//api.builder.unSelectNode()
 																		}}
 																	/>
 																)

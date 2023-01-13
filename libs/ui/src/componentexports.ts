@@ -15,9 +15,11 @@ import {
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
+import ErrorBoundary from "./components/errorboundary"
 
 export {
 	Slot,
+	ErrorBoundary,
 	SlotUtilityProps,
 	getSlotProps,
 	View,

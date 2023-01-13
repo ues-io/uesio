@@ -56,6 +56,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 						<PropNodeTag
 							selected={selected}
 							key={index}
+							/*
 							onClick={() => {
 								api.builder.setSelectedNode(
 									"viewdef",
@@ -63,6 +64,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 									conditionPath
 								)
 							}}
+							*/
 							popperChildren={
 								<PropertiesPane
 									path={conditionPath}
