@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
+import { useSelectedPath } from "../../../api/stateapi"
 
 const ANIMATION_DURATION = 3000
 
@@ -62,10 +63,8 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	)
 
 	const viewId = context.getViewDefId() || ""
-	const metadataType = api.builder.useSelectedType() || "viewdef"
-	const metadataItem =
-		api.builder.useSelectedItem() ||
-		(metadataType === "viewdef" ? viewId : "")
+	const metadataType = "viewdef"
+	const metadataItem = viewId
 	const metadataTypeRef = useRef<string>(metadataType)
 	const metadataItemRef = useRef<string>(metadataItem)
 	metadataTypeRef.current = metadataType
@@ -76,7 +75,9 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const yamlDoc = util.yaml.parse(fullYaml)
 
-	const [, , selectedNodePath] = api.builder.useSelectedNode()
+	const [selectedPath] = useSelectedPath(context)
+
+	//const [, , selectedNodePath] = api.builder.useSelectedNode()
 
 	/*
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
@@ -99,7 +100,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 	useEffect(() => {
 		if (e && m && ast.current && ast.current.contents) {
 			const node = util.yaml.getNodeAtPath(
-				selectedNodePath,
+				selectedPath.localPath,
 				ast.current.contents
 			)
 

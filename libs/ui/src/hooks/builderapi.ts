@@ -1,13 +1,3 @@
-import {
-	useDragNode as useDrgNode,
-	useDropNode as useDrpNode,
-	useNodeState,
-	useSelectedNode as useSN,
-	useLastModifiedNode,
-	useSelectedType as useST,
-	useSelectedItem as useSI,
-} from "../bands/builder/selectors"
-
 import componentSignal from "../bands/component/signals"
 
 import { Context } from "../context/context"
@@ -49,21 +39,6 @@ import { registry } from "../signals/signals"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { addBlankSelectOption } from "../bands/field/utils"
 import { makeComponentId } from "./componentapi"
-
-const useSelectedNode = (): [string, string, string] => {
-	const [metadataType, metadataItem, localPath] = getFullPathParts(useSN())
-	if (!metadataType || !metadataItem) return ["viewdef", "", ""]
-	return [metadataType, metadataItem, localPath]
-}
-
-const useSelectedType = () => useST() || "viewdef"
-
-const useSelectedItem = () => useSI() || ""
-
-const useDragNode = () => getFullPathParts(useDrgNode())
-
-const useDropNode = (): [string, string, string] =>
-	getFullPathParts(useDrpNode())
 
 const useHasChanges = () =>
 	useSelector(({ metadatatext }: RootState) => {
@@ -300,13 +275,6 @@ const defaultSignalProps = (): PropDescriptor[] => {
 }
 
 export {
-	useNodeState,
-	useSelectedNode,
-	useSelectedType,
-	useSelectedItem,
-	useLastModifiedNode,
-	useDragNode,
-	useDropNode,
 	useHasChanges,
 	save,
 	cancel,

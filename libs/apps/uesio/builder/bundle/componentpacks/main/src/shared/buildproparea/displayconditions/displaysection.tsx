@@ -1,10 +1,11 @@
 import { FC } from "react"
-import { api, component } from "@uesio/ui"
+import { component } from "@uesio/ui"
 import { SectionRendererProps } from "../sectionrendererdefinition"
 
 import PropertiesPane from "../../propertiespane"
 import conditionProperties from "./conditionProperties"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import { useSelectedPath } from "../../../api/stateapi"
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -14,7 +15,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 
 	const displayPath = `${path}["uesio.display"]`
 
-	const [, , selectedNode] = api.builder.useSelectedNode()
+	const [selectedPath] = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
@@ -50,7 +51,8 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 			{!!conditions.length &&
 				conditions.map((c, index) => {
 					const conditionPath = `${displayPath}["${index}"]`
-					const selected = selectedNode.startsWith(conditionPath)
+					const selected =
+						selectedPath.localPath.startsWith(conditionPath)
 
 					return (
 						<PropNodeTag
