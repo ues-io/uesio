@@ -1,11 +1,9 @@
-name: Deploy to AWS PRODUCTION
-#on:
-#    push:
-#        branches:
-#            - master
-on: workflow_dispatch
+name: Build and Test
+on:
+    workflow_call:
+
 jobs:
-    build:
+    build_and_test:
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -28,9 +26,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/.npm
-                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-node-
+                      ${{ runner.os }}-${{ matrix.node-version }}-node-
             - name: Install npm Dependencies
               run: npm ci
             - name: Cache ./node_modules/.cache for nx usage
@@ -48,24 +46,17 @@ jobs:
                   key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
                   restore-keys: |
                       ${{ runner.os }}-go-
-            - name: Run Build all resources
+            - name: Lint
               shell: bash
-              run: npm run build-all
-            - name: Build image
-              run: npm run nx -- build-image platform
-            # Now run steps to deploy to AWS
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ${{ secrets.AWS_REGION }}
-            - name: Login to Amazon ECR
-              id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
-            - name: Tag image to Amazon ECR
               run: |
-                  docker tag uesio:latest ${{ secrets.ECR_REGISTRY }}/uesio:latest
-            - name: Push image to Amazon ECR
+                  npm run prettier-check
+                  npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+            - name: Build All
+              shell: bash
               run: |
-                  docker push ${{ secrets.ECR_REGISTRY }}/uesio:latest
+                  npm run build-all
+            - name: Test
+              shell: bash
+              run: |
+                  npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+                  npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
