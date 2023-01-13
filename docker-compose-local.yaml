@@ -4,11 +4,12 @@ services:
     build:
       context: "."
       dockerfile: ./apps/platform/Dockerfile
+      args:
+        # Increment this number to force static asset versions to be refetched when running in Docker
+        - GITSHA=latest1
     ports:
       - "3000:3000"
     environment:
-      # Increment this number to force static asset versions to be refetched when running in Docker
-      GITSHA: latest1
       REDIS_HOST: host.docker.internal
       REDIS_PORT: 6379
       UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev

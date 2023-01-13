@@ -92,7 +92,7 @@ jobs:
           mkdir artifacts
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
-          docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile .
+          docker build -t $IMAGE_TAG -f --build-arg GITSHA ./apps/platform/Dockerfile .
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
