@@ -101,14 +101,14 @@ jobs:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
     needs: build
+    env:
+      NEW_IMAGE: ${{ needs.build.outputs.fullImage }}
     steps:
       - uses: actions/checkout@v3
         with:
           repository: thecloudmasters/uesio-infra
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
       - name: Update Docker container image tag for dev
-        env:
-          NEW_IMAGE: ${{ needs.build.outputs.fullImage }}
         run: |
           echo "Docker image SHA updated to $NEW_IMAGE"
           echo "Docker image SHA updated to ${{ needs.build.outputs.fullImage }}"
