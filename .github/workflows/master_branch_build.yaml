@@ -96,7 +96,7 @@ jobs:
           echo "FULL_SHA is $FULL_SHA"
           echo "GITSHA is $GITSHA"
           echo "IMAGE_TAG is $IMAGE_TAG"
-          echo "fullImage={IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "fullImage=$(echo `$IMAGE_TAG`)" >> $GITHUB_OUTPUT
 
   update-dev-branch:
     if: github.ref_name == 'workflow-changes'
