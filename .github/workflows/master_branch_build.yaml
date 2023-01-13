@@ -17,7 +17,7 @@ jobs:
         node-version: [16.x]
         go-version: [~1.19]
     outputs:
-      newImage: ${{ steps.push-ecr.outputs.image }}
+      image: ${{ steps.push-ecr.outputs.image }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -99,11 +99,11 @@ jobs:
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
       - name: Update Docker container image tag for dev
         env:
-          newImageId: ${{needs.build.outputs.newImage}}
+          image: ${{needs.build.outputs.image}}
         run: |
-          echo "$newImageId" >> ./aws/dev/ecr/task_definitions/image.txt
+          echo "$image" > ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
-          git commit -m "ci: Auto-update dev image to $newImageId"
+          git commit -m "ci: Auto-update dev image to $image"
           git push
