@@ -92,7 +92,6 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 								definition={options}
 								listName="components"
 								path={`${path}["reference"]["${index}"]`}
-								accepts={["uesio.context"]}
 								context={context.addFrame({
 									recordData: item,
 								})}

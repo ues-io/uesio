@@ -4,9 +4,8 @@ import { dispatch } from "../store/store"
 import { remove as removeNotification } from "../bands/notification"
 import { getUtility } from "../component/component"
 
-const Alert = getUtility("uesio/io.alert")
-
 const NotificationArea: UtilityComponent = (props) => {
+	const Alert = getUtility("uesio/io.alert")
 	const notifications = useNotifications()
 
 	if (!notifications.length) return null

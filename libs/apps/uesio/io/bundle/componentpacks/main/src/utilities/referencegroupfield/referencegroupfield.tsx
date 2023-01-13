@@ -66,7 +66,6 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 						definition={options}
 						listName="components"
 						path={`${path}["referencegroup"]["${index}"]`}
-						accepts={["uesio.context"]}
 						context={context.addFrame({
 							recordData: item,
 						})}

@@ -59,7 +59,6 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					definition={selectedTab}
 					listName="components"
 					path={`${path}["tabs"]["${selectedIndex}"]`}
-					accepts={["uesio.standalone"]}
 					context={context}
 					label={selectedTab?.label}
 				/>
@@ -70,7 +69,6 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					listName="footer"
 					path={path}
 					label="footer"
-					accepts={["uesio.standalone"]}
 					context={context}
 				/>
 			</div>

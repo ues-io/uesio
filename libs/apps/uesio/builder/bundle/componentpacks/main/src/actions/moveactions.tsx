@@ -1,6 +1,6 @@
 import { component, definition } from "@uesio/ui"
 import { move, get } from "../api/defapi"
-import { FullPath } from "../api/stateapi"
+import { FullPath } from "../api/path"
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 
 const getArrayMoveParams = (

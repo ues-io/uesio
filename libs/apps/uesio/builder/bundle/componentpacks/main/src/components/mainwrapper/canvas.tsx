@@ -1,15 +1,108 @@
 import { FunctionComponent, DragEvent } from "react"
-import { definition, component, styles } from "@uesio/ui"
-import { handleDrop, isDropAllowed, isNextSlot } from "../../shared/dragdrop"
+import { definition, component, styles, context as ctx } from "@uesio/ui"
+import { isDropAllowed, isNextSlot } from "../../shared/dragdrop"
 import PanelPortal from "../../shared/panelportal"
 import TopActions from "../../shared/topactions"
 import BottomActions from "../../shared/bottomactions"
 import {
-	FullPath,
+	getComponentDef,
 	useBuilderState,
 	useDragPath,
 	useDropPath,
 } from "../../api/stateapi"
+import { add } from "../../api/defapi"
+import { FullPath } from "../../api/path"
+
+const handleDrop = (
+	drag: FullPath,
+	drop: FullPath,
+	context: ctx.Context
+): void => {
+	switch (drag.itemType) {
+		case "component": {
+			const [index, parentDrop] = drop.popIndex()
+			const componentDef = getComponentDef(context, drag.itemName)
+			if (!componentDef) return
+			add(
+				parentDrop,
+				{
+					[`${componentDef.namespace}.${componentDef.name}`]: {},
+				},
+				index
+			)
+		}
+	}
+
+	/*
+	const [propDef] =
+		component.registry.getPropertiesDefinitionFromPath(dragNode)
+
+	api.builder.clearDragNode()
+	api.builder.clearDropNode()
+
+	if (!propDef) {
+		console.log("No prop def found")
+		return
+	}
+
+	const [metadataType, metadataItem] =
+		component.path.getFullPathParts(dragNode)
+
+	switch (metadataType) {
+		case "field": {
+			const [dropPropDef] =
+				component.registry.getPropertiesDefinitionFromPath(dropNode)
+			const handler = dropPropDef?.handleFieldDrop
+			if (handler) {
+				handler(dragNode, dropNode, dropIndex, propDef)
+			}
+			break
+		}
+		case "component": {
+			api.builder.addDefinition(
+				dropNode,
+				{
+					[`${propDef.namespace}.${propDef.name}`]:
+						propDef.defaultDefinition(),
+				},
+				dropIndex,
+				metadataType
+			)
+			break
+		}
+		case "componentvariant": {
+			const [, , variantNamespace, variantName] =
+				component.path.parseVariantKey(metadataItem)
+			api.builder.addDefinition(
+				dropNode,
+				{
+					[`${propDef.namespace}.${propDef.name}`]: {
+						...propDef.defaultDefinition(),
+						...{
+							[`uesio.variant`]:
+								variantNamespace + "." + variantName,
+						},
+					},
+				},
+				dropIndex,
+				metadataType
+			)
+			break
+		}
+		case "viewdef": {
+			const key = component.path.getKeyAtPath(dragNode)
+			const toPath = `${dropNode}["${dropIndex}"]`
+			// Selection Handling
+			api.builder.moveDefinition(
+				component.path.getParentPath(dragNode),
+				toPath,
+				key || undefined
+			)
+			break
+		}
+	}
+	*/
+}
 
 const getIndex = (
 	target: Element | null,
@@ -168,8 +261,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		if (!dropPath || !dragPath) {
 			return
 		}
-		const index = component.path.getIndexFromPath(dropPath.localPath) || 0
-		handleDrop(dragPath, dropPath, index)
+		handleDrop(dragPath, dropPath, context)
 	}
 
 	return (

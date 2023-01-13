@@ -46,7 +46,6 @@ const List: definition.UC<ListDefinition> = (props) => {
 					definition={definition}
 					listName="components"
 					path={path}
-					accepts={["uesio.standalone", "uesio.field"]}
 					context={newContext.addFrame({
 						record: record.getId(),
 						fieldMode: mode,

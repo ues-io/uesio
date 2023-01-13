@@ -12,7 +12,6 @@ interface SlotUtilityProps extends UtilityProps {
 	listName: string
 	path: string
 	definition?: DefinitionMap
-	accepts: string[]
 	direction?: "VERTICAL" | "HORIZONTAL"
 	label?: string
 	message?: string

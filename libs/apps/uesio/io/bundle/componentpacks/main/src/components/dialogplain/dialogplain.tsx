@@ -7,7 +7,6 @@ const PlainDialog: definition.UC = (props) => (
 			definition={props.definition}
 			listName="components"
 			path={props.path}
-			accepts={["uesio.standalone"]}
 			context={props.context}
 		/>
 	</IODialogPlain>

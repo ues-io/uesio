@@ -22,7 +22,6 @@ const Box: definition.UC<BoxDefinition> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 			/>
 		</div>

@@ -28,7 +28,6 @@ const Grid: definition.UC<GroupDefinition> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
 				context={context}
 				direction="HORIZONTAL"
 			/>
