@@ -17,7 +17,7 @@ jobs:
         node-version: [16.x]
         go-version: [~1.19]
     outputs:
-      newImage: ${{ steps.dockerize.outputs.fullImage }}
+      fullImage: ${{ steps.dockerize.outputs.fullImage }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -97,9 +97,6 @@ jobs:
           echo "GITSHA is $GITSHA"
           echo "IMAGE_TAG is $IMAGE_TAG"
           echo "fullImage=${IMAGE_TAG}" >> $GITHUB_OUTPUT
-      - name: Check vars
-        run: echo "${{ steps.dockerize.outputs.fullImage }}"
-
   update-dev-branch:
     if: github.ref_name == 'workflow-changes'
     runs-on: ubuntu-latest
@@ -111,10 +108,11 @@ jobs:
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
       - name: Update Docker container image tag for dev
         env:
-          NEW_IMAGE: ${{ needs.build.outputs.newImage }}
+          NEW_IMAGE: ${{ needs.build.outputs.fullImage }}
         run: |
           echo "Docker image SHA updated to $NEW_IMAGE"
-          echo "NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
+          echo "Docker image SHA updated to ${{ needs.build.outputs.fullImage }}"
+          echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
