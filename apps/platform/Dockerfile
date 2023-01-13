@@ -15,7 +15,8 @@ COPY ./apps/platform/platform ./platform
 COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
 
-ENV GITSHA=""
+ARG GITSHA
+ENV GITSHA ${GITSHA}
 
 EXPOSE 3000
 
