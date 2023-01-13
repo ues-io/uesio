@@ -52,6 +52,7 @@ views:
   uesio/studio.sitecollectiondata: true
   uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
+  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
@@ -60,6 +61,7 @@ views:
   uesio/studio.translation: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.authsources: true
   uesio/studio.authsource: true
   uesio/studio.siteusage: true
@@ -124,6 +126,7 @@ routes:
   uesio/studio.sitecollectiondata: true
   uesio/studio.collectionimport: true
   uesio/studio.sitecollectiondataimport: true
+  uesio/studio.sitecollectiondataexport: true
   uesio/studio.featureflags: true
   uesio/studio.featureflag: true
   uesio/studio.labels: true
@@ -132,6 +135,7 @@ routes:
   uesio/studio.translation: true
   uesio/studio.collectionexport: true
   uesio/studio.collectionexportbatches: true
+  uesio/studio.sitecollectionexportbatches: true
   uesio/studio.siteusage: true
   uesio/studio.userprofile: true
   uesio/studio.changepassword: true

@@ -3,6 +3,7 @@ import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { appDispatch } from "../store/store"
 import componentSignal from "../bands/component/signals"
 
+import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
@@ -13,6 +14,7 @@ import { additionalContext } from "../component/component"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
 const registry: Record<string, SignalDescriptor> = {
+	...collectionSignals,
 	...botSignals,
 	...routeSignals,
 	...userSignals,
