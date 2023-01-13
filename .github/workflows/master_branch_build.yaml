@@ -113,6 +113,7 @@ jobs:
           echo "Docker image SHA updated to $NEW_IMAGE"
           echo "Docker image SHA updated to ${{ needs.build.outputs.fullImage }}"
           echo "$NEW_IMAGE" > ./aws/dev/ecr/task_definitions/image.txt
+          cat ./aws/dev/ecr/task_definitions/image.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./aws/dev/ecr/task_definitions/image.txt
