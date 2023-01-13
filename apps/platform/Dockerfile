@@ -16,8 +16,7 @@ COPY ./dist/ui ./dist/ui
 COPY ./dist/vendor ./dist/vendor
 COPY ./dist/platform .
 
-ARG git_sha=""
-ENV GITSHA=$git_sha
+ENV GITSHA=""
 
 RUN echo "GITSHA ENV is $GITSHA"
 
