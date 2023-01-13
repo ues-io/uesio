@@ -117,7 +117,7 @@ jobs:
           echo "SHORT_SHA=$(cat ./short_sha.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         env:
-          taskDefPath: ./aws/dev/ecr/task_definitions/uesio_web.json
+          taskDefPath: ./aws/dev/ecs/task_definitions/uesio_web.json
         run: |
           echo "Docker image SHA updated to $SHORT_SHA"
           jq --arg img "$NEW_IMAGE" '.containerDefinitions[0].image = $img' $taskDefPath > tmp.json

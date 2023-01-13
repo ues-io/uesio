@@ -41,13 +41,17 @@ type InitialState = {
 	featureflag?: EntityState<FeatureFlagState>
 	metadatatext?: EntityState<MetadataState>
 	wire?: EntityState<PlainWire>
-	collection?: EntityState<PlainCollection>
+	collection?: EntityState<PlainCollection>,
+	staticAssetsPath?: string,
 }
 
 let store: ReturnType<typeof create>
 
 const create = (initialState: InitialState) => {
 	attachDefToWires(initialState.wire, initialState.viewdef)
+
+	// Suppress Redux errors about this property not having a reducer
+	delete initialState.staticAssetsPath;
 
 	const newStore = configureStore({
 		reducer: {
