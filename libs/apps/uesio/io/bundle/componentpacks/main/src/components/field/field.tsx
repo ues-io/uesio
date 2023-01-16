@@ -58,7 +58,7 @@ type NumberFieldOptions = {
 	min?: number
 }
 
-type TextAreaFieldOptions = {
+type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
 }
@@ -73,7 +73,7 @@ type FieldDefinition = {
 	list?: ListFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
-	textArea?: TextAreaFieldOptions
+	longtext?: LongTextFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
 }
@@ -131,7 +131,7 @@ type CommonProps = {
 } & definition.BaseProps
 
 const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
-	const { displayAs, reference, list, user, number, textArea } = definition
+	const { displayAs, reference, list, user, number, longtext } = definition
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
@@ -141,7 +141,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 			return <DateField {...common} />
 		case "LONGTEXT": {
 			if (displayAs === "MARKDOWN") return <MarkDownField {...common} />
-			return <TextAreaField {...common} options={textArea} />
+			return <TextAreaField {...common} options={longtext} />
 		}
 		case "TEXT":
 			if (displayAs === "PASSWORD")
@@ -342,7 +342,7 @@ export {
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
 	NumberFieldOptions,
-	TextAreaFieldOptions,
+	LongTextFieldOptions,
 }
 
 export default Field

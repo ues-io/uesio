@@ -25,7 +25,7 @@ import { default as IOTable } from "../../utilities/table/table"
 import {
 	NumberFieldOptions,
 	ReferenceFieldOptions,
-	TextAreaFieldOptions,
+	LongTextFieldOptions,
 	UserFieldOptions,
 } from "../field/field"
 
@@ -53,7 +53,7 @@ type ColumnDefinition = {
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
-	textArea?: TextAreaFieldOptions
+	longtext?: LongTextFieldOptions
 	label: string
 	components: definition.DefinitionList
 } & definition.BaseDefinition
@@ -218,7 +218,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 					user: column.user,
 					reference: column.reference,
 					number: column.number,
-					textArea: column.textArea,
+					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
 					"uesio.variant": "uesio/io.field:uesio/io.table",
