@@ -41,7 +41,7 @@ type CommonProps = {
 } & definition.UtilityProps
 
 const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
-	const { displayAs, reference, list, user, number } = definition
+	const { displayAs, reference, list, user, number, longtext } = definition
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
@@ -51,7 +51,7 @@ const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
 			return <DateField {...common} />
 		case "LONGTEXT": {
 			if (displayAs === "MARKDOWN") return <MarkDownField {...common} />
-			return <TextAreaField {...common} />
+			return <TextAreaField {...common} options={longtext} />
 		}
 		case "TEXT":
 			if (displayAs === "PASSWORD")
