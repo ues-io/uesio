@@ -7,12 +7,14 @@ import BottomActions from "../../shared/bottomactions"
 import {
 	getComponentDef,
 	setDropPath,
+	setDragPath,
 	useBuilderState,
 	useDragPath,
 	useDropPath,
 } from "../../api/stateapi"
 import { add, move } from "../../api/defapi"
 import { FullPath } from "../../api/path"
+import { batch } from "react-redux"
 
 const handleDrop = (
 	drag: FullPath,
@@ -23,14 +25,22 @@ const handleDrop = (
 		case "component": {
 			const componentDef = getComponentDef(context, drag.itemName)
 			if (!componentDef) return
-			add(context, drop, {
-				[drag.itemName]: {},
+			batch(() => {
+				add(context, drop, {
+					[drag.itemName]: {},
+				})
+				setDropPath(context)
+				setDragPath(context)
 			})
 			break
 		}
 		case "viewdef": {
 			const [key, parent] = drag.pop()
-			move(context, parent, drop, key)
+			batch(() => {
+				move(context, parent, drop, key)
+				setDropPath(context)
+				setDragPath(context)
+			})
 			break
 		}
 		/*

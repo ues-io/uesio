@@ -77,7 +77,7 @@ const useStateSlice = <T extends Definition>(
 
 	const stateSetter = (state: T) => {
 		setState(componentId, {
-			...selectState<Record<string, T>>(getCurrentState(), componentId),
+			...getExternalState<Record<string, T>>(componentId),
 			[slice]: state,
 		})
 	}

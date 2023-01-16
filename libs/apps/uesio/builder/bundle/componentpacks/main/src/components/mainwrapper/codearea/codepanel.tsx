@@ -3,9 +3,9 @@ import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import {
-	getSelectedPath,
+	getSelectedViewPath,
 	setSelectedPath,
-	useSelectedPath,
+	useSelectedViewPath,
 } from "../../../api/stateapi"
 import { setContent, useContent } from "../../../api/defapi"
 
@@ -67,7 +67,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 		props
 	)
 
-	const selectedPath = useSelectedPath(context)
+	const selectedPath = useSelectedViewPath(context)
 
 	const fullYaml = useContent(selectedPath)
 
@@ -233,7 +233,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
-						const selectedPath = getSelectedPath(context)
+						const selectedPath = getSelectedViewPath(context)
 						setContent(selectedPath, newValue || "")
 					}) as EditorProps["onChange"]
 				}

@@ -73,11 +73,7 @@ const BuildWrapper: definition.UC = (props) => {
 				cursor: "pointer",
 				position: "relative",
 				userSelect: "none",
-				zIndex: selected ? 1 : 0,
 				transition: "all 0.18s ease",
-				"&:hover": {
-					zIndex: 1,
-				},
 				...(isDragging && {
 					display: "none",
 				}),
@@ -102,7 +98,7 @@ const BuildWrapper: definition.UC = (props) => {
 				width: "auto",
 				border: "1px solid #ddd",
 				borderRadius: "8px",
-				boxShadow: "0 0 12px #00000033",
+				boxShadow: "0 0 8px #00000020",
 			},
 			popperInner: {
 				borderRadius: "7px",
@@ -158,7 +154,7 @@ const BuildWrapper: definition.UC = (props) => {
 				}}
 				draggable={canDrag}
 			>
-				{selected && (
+				{selected && !dragPath.isSet() && (
 					<Popper
 						referenceEl={anchorEl}
 						context={context}

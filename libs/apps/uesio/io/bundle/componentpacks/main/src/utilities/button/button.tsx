@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
-import { Placement } from "@popperjs/core"
 import Tooltip from "../tooltip/tooltip"
+import { Placement } from "@floating-ui/react"
 
 interface ButtonUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
@@ -11,6 +11,7 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	disabled?: boolean
 	tooltip?: string
 	tooltipPlacement?: Placement
+	tooltipOffset?: number
 }
 
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
@@ -46,6 +47,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 		tooltip,
 		context,
 		tooltipPlacement,
+		tooltipOffset,
 	} = props
 
 	const button = (
@@ -66,7 +68,12 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	)
 
 	return tooltip && !disabled ? (
-		<Tooltip text={tooltip} context={context} placement={tooltipPlacement}>
+		<Tooltip
+			text={tooltip}
+			context={context}
+			placement={tooltipPlacement}
+			offset={tooltipOffset}
+		>
 			{button}
 		</Tooltip>
 	) : (

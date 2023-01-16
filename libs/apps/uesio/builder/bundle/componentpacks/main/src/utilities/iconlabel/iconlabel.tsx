@@ -42,7 +42,7 @@ const IconLabel: FC<T> = (props) => {
 	return (
 		<div className={classes.root}>
 			{tooltip ? (
-				<Tooltip text={tooltip} context={context}>
+				<Tooltip text={tooltip} offset={10} context={context}>
 					{iconElement}
 				</Tooltip>
 			) : (

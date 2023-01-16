@@ -1,8 +1,8 @@
 import { useState, useRef, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles } from "@uesio/ui"
-import { usePopper } from "react-popper"
 import debounce from "lodash/debounce"
+import { useFloating } from "@floating-ui/react"
 
 type DropDownProps<T> = {
 	value: T
@@ -107,14 +107,12 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 		},
 	})
 
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const popper = usePopper(anchorEl, popperEl, {
+	const { x, y, strategy, refs } = useFloating({
 		placement: "bottom-start",
 	})
 
 	return (
-		<div ref={setAnchorEl}>
+		<div ref={refs.setReference}>
 			<div className={classes.root} {...getComboboxProps()}>
 				<input
 					className={classes.input}
@@ -124,9 +122,13 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 			</div>
 
 			<div
-				ref={setPopperEl}
-				style={popper.styles.popper}
-				{...popper.attributes.popper}
+				ref={refs.setFloating}
+				style={{
+					position: strategy,
+					top: y ?? 0,
+					left: x ?? 0,
+					width: "max-content",
+				}}
 			>
 				<div
 					className={classes.menu}

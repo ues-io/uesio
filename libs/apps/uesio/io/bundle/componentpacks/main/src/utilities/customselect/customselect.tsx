@@ -1,8 +1,8 @@
-import { useState, FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
-import { usePopper } from "react-popper"
 import Icon from "../icon/icon"
+import { useFloating } from "@floating-ui/react"
 
 type CustomSelectProps<T> = {
 	value: T
@@ -97,20 +97,14 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 			const selectedItem = changes.selectedItem
 			selectedItem && setValue(selectedItem)
 		},
-		onIsOpenChange: () => {
-			popper.forceUpdate?.()
-		},
 	})
 
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const popper = usePopper(anchorEl, popperEl, {
+	const { x, y, strategy, refs } = useFloating({
 		placement: "bottom-start",
-		modifiers: [{ name: "offset", options: { offset: [0, 4] } }],
 	})
 
 	return (
-		<div style={{ position: "relative" }} ref={setAnchorEl}>
+		<div style={{ position: "relative" }} ref={refs.setReference}>
 			<div onClick={() => openMenu()} className={classes.label}>
 				<div
 					onFocus={openMenu}
@@ -126,13 +120,13 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 			</div>
 			<component.Panel>
 				<div
-					ref={setPopperEl}
+					ref={refs.setFloating}
 					style={{
-						...popper.styles.popper,
-						zIndex: "2",
-						...(!isOpen && { visibility: "hidden" }),
+						position: strategy,
+						top: y ?? 0,
+						left: x ?? 0,
+						width: "max-content",
 					}}
-					{...popper.attributes.popper}
 					className={classes.menu}
 				>
 					<div {...getMenuProps()}>

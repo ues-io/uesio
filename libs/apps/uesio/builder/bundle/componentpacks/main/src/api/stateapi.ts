@@ -52,27 +52,29 @@ const getBuildMode = (context: ctx.Context) =>
 const useBuildMode = (context: ctx.Context) =>
 	useBuilderState<boolean>(context, "buildmode") || false
 
-const useSelectedPath = (context: ctx.Context) => {
+const useSelectedPath = (context: ctx.Context) =>
+	parseFullPath(useBuilderExternalState<string>(context, "selected"))
+
+const useSelectedViewPath = (context: ctx.Context) => {
 	const fullPath = useBuilderExternalState<string>(context, "selected")
 	const parsedPath = parseFullPath(fullPath)
-	if (!parsedPath.itemType) parsedPath.itemType = "viewdef"
-	if (parsedPath.itemType === "viewdef" && !parsedPath.itemName)
-		parsedPath.itemName = context.getViewDefId() || ""
-	return parsedPath
+	if (parsedPath.itemType === "viewdef") return parsedPath
+	return new FullPath("viewdef", context.getViewDefId(), "")
+}
+
+const getSelectedViewPath = (context: ctx.Context) => {
+	const fullPath = getBuilderExternalState<string>(context, "selected")
+	const parsedPath = parseFullPath(fullPath)
+	if (parsedPath.itemType === "viewdef") return parsedPath
+	return new FullPath("viewdef", context.getViewDefId(), "")
 }
 
 const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
 	setBuilderState<string>(context, "selected", combinePath(path))
 }
 
-const getSelectedPath = (context: ctx.Context) => {
-	const fullPath = getBuilderExternalState<string>(context, "selected")
-	const parsedPath = parseFullPath(fullPath)
-	if (!parsedPath.itemType) parsedPath.itemType = "viewdef"
-	if (parsedPath.itemType === "viewdef" && !parsedPath.itemName)
-		parsedPath.itemName = context.getViewDefId() || ""
-	return parsedPath
-}
+const getSelectedPath = (context: ctx.Context) =>
+	parseFullPath(getBuilderExternalState<string>(context, "selected"))
 
 const useDropPath = (context: ctx.Context) =>
 	parseFullPath(useBuilderExternalState<string>(context, "drop"))
@@ -111,5 +113,7 @@ export {
 	useSelectedPath,
 	getSelectedPath,
 	setSelectedPath,
+	useSelectedViewPath,
+	getSelectedViewPath,
 	ComponentDef,
 }
