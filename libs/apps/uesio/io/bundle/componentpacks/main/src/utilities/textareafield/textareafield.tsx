@@ -1,13 +1,13 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context } from "@uesio/ui"
-import { TextAreaFieldOptions } from "../../components/field/fielddefinition"
+import { LongTextFieldOptions } from "../../components/field/fielddefinition"
 
 interface TextAreaFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string | null
 	mode?: context.FieldMode
 	placeholder?: string
-	options?: TextAreaFieldOptions
+	options?: LongTextFieldOptions
 }
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {

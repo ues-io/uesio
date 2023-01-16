@@ -27,7 +27,7 @@ type NumberFieldOptions = {
 	min?: number
 }
 
-type TextAreaFieldOptions = {
+type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
 }
@@ -42,7 +42,7 @@ type FieldDefinition = {
 	list?: ListFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
-	textArea?: TextAreaFieldOptions
+	longtext?: LongTextFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
@@ -154,7 +154,7 @@ export {
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
 	NumberFieldOptions,
-	TextAreaFieldOptions,
+	LongTextFieldOptions,
 }
 
 export default FieldPropertyDefinition
