@@ -8,7 +8,6 @@ import {
 	setDragPath,
 	setDropPath,
 	setSelectedPath,
-	useBuilderExternalState,
 	useDragPath,
 	useDropPath,
 	useSelectedPath,

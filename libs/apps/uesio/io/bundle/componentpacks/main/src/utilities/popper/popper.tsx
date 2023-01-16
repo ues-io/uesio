@@ -3,6 +3,7 @@ import { definition, component, styles } from "@uesio/ui"
 import {
 	useFloating,
 	autoUpdate,
+	hide,
 	autoPlacement,
 	Placement,
 } from "@floating-ui/react"
@@ -16,10 +17,13 @@ interface TooltipProps extends definition.UtilityProps {
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
-	const { x, y, strategy, refs } = useFloating({
+	const { x, y, strategy, refs, middlewareData } = useFloating({
 		whileElementsMounted: autoUpdate,
 		placement: props.placement,
-		middleware: [autoPlacement({ allowedPlacements: ["top", "bottom"] })],
+		middleware: [
+			autoPlacement({ allowedPlacements: ["top", "bottom"] }),
+			hide(),
+		],
 	})
 
 	useLayoutEffect(() => {
@@ -42,6 +46,9 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 					top: y ?? 0,
 					left: x ?? 0,
 					width: "max-content",
+					visibility: middlewareData.hide?.referenceHidden
+						? "hidden"
+						: "visible",
 				}}
 				className={classes.popper}
 			>

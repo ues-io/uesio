@@ -115,6 +115,5 @@ export {
 	setSelectedPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
-	useBuilderExternalState,
 	ComponentDef,
 }
