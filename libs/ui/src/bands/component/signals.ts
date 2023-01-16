@@ -22,6 +22,11 @@ export default {
 
 		const scope = `${owner}/${component}`
 		const handler = getSignal(scope, type)
+		if (!handler) {
+			throw new Error(
+				`Missing handler for componentsgnal. "${scope}" has no signal of type "${type}"`
+			)
+		}
 
 		const target = signalTarget || handler.target || ""
 		const state = getCurrentState()
