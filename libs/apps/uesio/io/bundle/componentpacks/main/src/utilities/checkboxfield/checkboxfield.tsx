@@ -23,11 +23,13 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 			native: {
 				opacity: "0",
 				position: "absolute",
+				inset: "0 0 0 0",
 				cursor: readonly ? "inherit" : "pointer",
 			},
 			input: {
 				opacity: readonly ? 0.5 : 1,
 				cursor: readonly ? "inherit" : "pointer",
+				position: "relative",
 			},
 			readonly: {},
 		},
