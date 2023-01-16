@@ -1,6 +1,8 @@
 import { definition, builder, signal, component, context } from "@uesio/ui"
 import {
+	NumberFieldOptions,
 	ReferenceFieldOptions,
+	LongTextFieldOptions,
 	UserFieldOptions,
 } from "../field/fielddefinition"
 
@@ -31,6 +33,8 @@ type ColumnDefinition = {
 	field: string
 	reference?: ReferenceFieldOptions
 	user?: UserFieldOptions
+	number?: NumberFieldOptions
+	longtext?: LongTextFieldOptions
 	label: string
 	components: definition.DefinitionList
 }

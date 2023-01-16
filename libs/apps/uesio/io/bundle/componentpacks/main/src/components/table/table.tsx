@@ -178,6 +178,8 @@ const Table: FC<TableProps> = (props) => {
 					fieldId: column.field,
 					user: column.user,
 					reference: column.reference,
+					number: column.number,
+					longtext: column.longtext,
 					labelPosition: "none",
 					wrapperVariant: "uesio/io.table",
 					"uesio.variant": "uesio/io.field:uesio/io.table",

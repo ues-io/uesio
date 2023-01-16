@@ -92,18 +92,27 @@ definition:
                     components:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
-                          title: ${uesio/studio.name} - Jobs
+                          title: ${uesio/studio.name}
+                          subtitle: Export Jobs
                           actions:
                             - uesio/io.group:
                                 components:
-                                  - uesio/studio.dataexport:
+                                  - uesio/io.button:
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      collectionId: $Param{namespace}.$Param{collectionname}
-                                      namespace: $Param{app}
-                                      wireName: "bulkjobs"
+                                      signals:
+                                        - signal: collection/CREATE_JOB
+                                          collection: $Param{namespace}.$Param{collectionname}
+                                          onerror:
+                                            signals:
+                                              - signal: notification/ADD_ERRORS
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - bulkjobs
+                                      text: Create Export Job
+                                      uesio.variant: uesio/io.primary
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Collection Config"

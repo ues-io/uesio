@@ -21,6 +21,17 @@ type UserFieldOptions = {
 	subtitle?: string
 }
 
+type NumberFieldOptions = {
+	step?: number
+	max?: number
+	min?: number
+}
+
+type LongTextFieldOptions = {
+	cols?: number
+	rows?: number
+}
+
 type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
@@ -30,6 +41,8 @@ type FieldDefinition = {
 	reference?: ReferenceFieldOptions
 	list?: ListFieldOptions
 	user?: UserFieldOptions
+	number?: NumberFieldOptions
+	longtext?: LongTextFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
@@ -140,6 +153,8 @@ export {
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,
+	NumberFieldOptions,
+	LongTextFieldOptions,
 }
 
 export default FieldPropertyDefinition

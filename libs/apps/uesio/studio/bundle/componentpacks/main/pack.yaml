@@ -75,11 +75,6 @@ components:
       variants:
         - uesio/io.button:uesio/io.secondary
         - uesio/io.button:uesio/io.primary
-    dataexport:
-      variants:
-        - uesio/io.button:uesio/io.primary
-      utilities:
-        - uesio/io.button
     multimetadatafield:
       utilities:
         - uesio/builder.metadatapicker
