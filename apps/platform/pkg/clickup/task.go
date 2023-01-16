@@ -3,6 +3,7 @@ package clickup
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -54,8 +55,8 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 	}
 
 	// Verify that a type condition was provided
-	if op.Conditions == nil || len(op.Conditions) != 1 {
-		return errors.New("Tasks can only be queried by task ID or list ID")
+	if op.Conditions == nil || len(op.Conditions) != 2 {
+		return errors.New("Tasks can only be queried by type and task ID or list ID")
 	}
 
 	collectionMetadata.SetField(&adapt.FieldMetadata{
@@ -68,16 +69,27 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		Label:      "Name",
 	})
 
-	condition := op.Conditions[0]
-	value := condition.Value
-	if value == "" || value == nil {
+	conditionType := op.Conditions[0]
+	valueType := conditionType.Value
+	if valueType == "" || valueType == nil {
+		return nil
+	}
+
+	conditionID := op.Conditions[1]
+	valueID := conditionID.Value.(string)
+	if valueID == "" {
 		return nil
 	}
 
 	data := &TaskResponse{}
 
-	if condition.Field == "tcm/timetracker.id" {
-		url := fmt.Sprintf("task/%v?include_subtasks=false", value)
+	if conditionType.Field == "tcm/timetracker.type" && valueType == "TASK" {
+
+		if strings.HasPrefix(valueID, "#") {
+			valueID = valueID[1:]
+		}
+
+		url := fmt.Sprintf("task/%v?include_subtasks=false", valueID)
 		ldata := &Task{}
 		err = integ.ExecByKey(&integ.IntegrationOptions{
 			URL:   url,
@@ -89,8 +101,9 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		data.Tasks = append(data.Tasks, *ldata)
 	}
 
-	if condition.Field == "tcm/timetracker.list" {
-		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", value)
+	if conditionType.Field == "tcm/timetracker.type" && valueType == "LIST" {
+
+		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", valueID)
 		err = integ.ExecByKey(&integ.IntegrationOptions{
 			URL:   url,
 			Cache: true,
