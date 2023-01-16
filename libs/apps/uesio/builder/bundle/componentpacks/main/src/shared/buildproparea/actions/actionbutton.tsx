@@ -23,6 +23,7 @@ const ActionButton: FunctionComponent<Props> = (props) => {
 			variant="uesio/builder.actionbutton"
 			label={title}
 			tooltipPlacement="bottom"
+			tooltipOffset={10}
 			context={context}
 		/>
 	)

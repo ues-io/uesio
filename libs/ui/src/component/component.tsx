@@ -147,6 +147,8 @@ const parseVariantName = (
 	return [key, `${keyNamespace}.default` as MetadataKey]
 }
 
+// This is bad and should eventually go away when we do proper typing
+// for utilities.
 interface UtilityPropsPlus extends UtilityProps {
 	[x: string]: unknown
 }

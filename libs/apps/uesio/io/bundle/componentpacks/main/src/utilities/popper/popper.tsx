@@ -1,7 +1,11 @@
-import { FunctionComponent, useState, useEffect } from "react"
-import { definition, styles, component } from "@uesio/ui"
-import { usePopper } from "react-popper"
-import type { Placement } from "@popperjs/core"
+import { FunctionComponent, useLayoutEffect } from "react"
+import { definition, component, styles } from "@uesio/ui"
+import {
+	useFloating,
+	autoUpdate,
+	autoPlacement,
+	Placement,
+} from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
@@ -11,46 +15,20 @@ interface TooltipProps extends definition.UtilityProps {
 	offset?: [number, number]
 }
 
-const getRelativeParent = (elem: Element | null): Element | null => {
-	if (!elem) return null
-	const parent = elem.parentElement
-	if (!parent) return elem
-	const style = window.getComputedStyle(parent)
-	if (style.getPropertyValue("position") === "relative") return parent
-	return getRelativeParent(parent)
-}
-
 const Popper: FunctionComponent<TooltipProps> = (props) => {
-	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
-	const referenceEl = props.useFirstRelativeParent
-		? getRelativeParent(props.referenceEl)
-		: props.referenceEl
-	const popper = usePopper(referenceEl, popperEl, {
+	const { x, y, strategy, refs } = useFloating({
+		whileElementsMounted: autoUpdate,
 		placement: props.placement,
-		modifiers: [
-			{ name: "offset", options: { offset: props.offset ?? [0, 6] } },
-			{ name: "preventOverflow", options: { padding: 6 } },
-		],
+		middleware: [autoPlacement({ allowedPlacements: ["top", "bottom"] })],
 	})
 
-	useEffect(() => {
-		const checkIfClickedOutside = (e: MouseEvent) => {
-			// If the clicked target is outside the popper element
-			if (popperEl && !popperEl.contains(e.target as Element)) {
-				props.onOutsideClick && props.onOutsideClick()
-			}
-		}
-		document.addEventListener("mousedown", checkIfClickedOutside)
-		return () => {
-			document.removeEventListener("mousedown", checkIfClickedOutside)
-		}
-	})
+	useLayoutEffect(() => {
+		refs.setReference(props.referenceEl)
+	}, [refs, props.referenceEl])
 
 	const classes = styles.useUtilityStyles(
 		{
-			popper: {
-				zIndex: 1,
-			},
+			popper: {},
 		},
 		props
 	)
@@ -58,10 +36,14 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	return (
 		<component.Panel>
 			<div
+				ref={refs.setFloating}
+				style={{
+					position: strategy,
+					top: y ?? 0,
+					left: x ?? 0,
+					width: "max-content",
+				}}
 				className={classes.popper}
-				ref={setPopperEl}
-				style={popper.styles.popper}
-				{...popper.attributes.popper}
 			>
 				{props.children}
 			</div>

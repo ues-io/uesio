@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition } from "@uesio/ui"
-import type { Placement } from "@popperjs/core"
+import { Placement } from "@floating-ui/react"
 import Button from "../button/button"
 import Icon from "../icon/icon"
 
@@ -11,6 +11,7 @@ interface IconButtonUtilityProps extends definition.UtilityProps {
 	fill?: boolean
 	disabled?: boolean
 	tooltipPlacement?: Placement
+	tooltipOffset?: number
 }
 
 const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
@@ -20,6 +21,7 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 		fill,
 		label,
 		tooltipPlacement,
+		tooltipOffset,
 		onClick,
 		disabled,
 		variant,
@@ -31,6 +33,7 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 			context={context}
 			tooltip={label}
 			tooltipPlacement={tooltipPlacement}
+			tooltipOffset={tooltipOffset}
 			disabled={disabled}
 			icon={<Icon context={context} icon={icon} fill={fill} />}
 			variant={variant}
