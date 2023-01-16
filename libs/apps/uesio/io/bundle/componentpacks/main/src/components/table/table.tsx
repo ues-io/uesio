@@ -9,7 +9,12 @@ import {
 } from "@uesio/ui"
 import omit from "lodash/omit"
 import partition from "lodash/partition"
-import { toggleMode, useMode } from "../../shared/mode"
+import {
+	setEditMode,
+	setReadMode,
+	toggleMode,
+	useMode,
+} from "../../shared/mode"
 import {
 	nextPage,
 	paginate,
@@ -62,6 +67,8 @@ type RecordContext = component.ItemContext<wire.WireRecord>
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	TOGGLE_MODE: toggleMode,
+	SET_EDIT_MODE: setEditMode,
+	SET_READ_MODE: setReadMode,
 	NEXT_PAGE: nextPage,
 	PREV_PAGE: prevPage,
 }
