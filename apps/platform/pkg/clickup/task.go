@@ -3,6 +3,7 @@ package clickup
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -75,14 +76,18 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 	}
 
 	conditionID := op.Conditions[1]
-	valueID := conditionID.Value
-	if valueID == "" || valueID == nil {
+	valueID := conditionID.Value.(string)
+	if valueID == "" {
 		return nil
 	}
 
 	data := &TaskResponse{}
 
 	if conditionType.Field == "tcm/timetracker.type" && valueType == "TASK" {
+
+		if strings.HasPrefix(valueID, "#") {
+			valueID = valueID[1:]
+		}
 
 		url := fmt.Sprintf("task/%v?include_subtasks=false", valueID)
 		ldata := &Task{}
