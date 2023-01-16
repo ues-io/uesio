@@ -27,20 +27,35 @@ func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
 	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
+func IsUniqueKeyChanging(change *ChangeItem, keyFields []string) bool {
+	//are the keyfield on the change item??
+	for _, keyField := range keyFields {
+		value, _ := change.FieldChanges.GetField(keyField)
+		if value != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
 func SetUniqueKey(change *ChangeItem) error {
 	if change.UniqueKey != "" {
 		return nil
 	}
-	// First see if the unique key already exists.
-	existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
-	if err == nil && existingKey != "" {
-		change.UniqueKey = existingKey
-		return nil
-	}
+
 	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
 		keyFields = []string{ID_FIELD}
 	}
+
+	// First see if the unique key already exists.
+	existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
+	if err == nil && existingKey != "" && !IsUniqueKeyChanging(change, keyFields) {
+		change.UniqueKey = existingKey
+		return nil
+	}
+
 	keyValues := make([]string, len(keyFields))
 	for i, keyField := range keyFields {
 		value, err := GetUniqueKeyPart(change, keyField)
