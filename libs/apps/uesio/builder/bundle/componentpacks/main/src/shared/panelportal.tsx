@@ -3,7 +3,7 @@ import { definition, api, component } from "@uesio/ui"
 import { useSelectedPath } from "../api/stateapi"
 
 const PanelPortal: definition.UtilityComponent = (props) => {
-	const [selectedPath] = useSelectedPath(props.context)
+	const selectedPath = useSelectedPath(props.context)
 
 	const pathArray = component.path.toPath(selectedPath)
 	const isPanel =

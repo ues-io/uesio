@@ -19,10 +19,10 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	const size = listDef.length
 	const viewDefId = context.getViewDefId()
 
-	const [dragPath] = useDragPath(context)
-	const [dropPath] = useDropPath(context)
+	const dragPath = useDragPath(context)
+	const dropPath = useDropPath(context)
 
-	const accepts = ["component"]
+	const accepts = ["component", "viewdef" /* "componentvariant"*/]
 
 	const isHovering =
 		dropPath.equals(

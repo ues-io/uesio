@@ -1,5 +1,5 @@
 import { definition, api, metadata, context as ctx } from "@uesio/ui"
-import { FullPath, getFullPathPair, PathSelector } from "./path"
+import { combinePath, FullPath, parseFullPath } from "./path"
 
 type ComponentDef = {
 	name: string
@@ -24,6 +24,22 @@ const useBuilderState = <T extends definition.Definition>(
 	initialState?: T
 ) => api.component.useState<T>(getBuilderComponentId(context, id), initialState)
 
+const useBuilderExternalState = <T extends definition.Definition>(
+	context: ctx.Context,
+	id: string
+) => api.component.useExternalState<T>(getBuilderComponentId(context, id))
+
+const getBuilderExternalState = <T extends definition.Definition>(
+	context: ctx.Context,
+	id: string
+) => api.component.getExternalState<T>(getBuilderComponentId(context, id))
+
+const setBuilderState = <T extends definition.Definition>(
+	context: ctx.Context,
+	id: string,
+	state: T
+) => api.component.setState<T>(getBuilderComponentId(context, id), state)
+
 const getBuilderNamespaces = (context: ctx.Context) =>
 	getBuilderState<Record<string, metadata.MetadataInfo>>(
 		context,
@@ -36,23 +52,40 @@ const getBuildMode = (context: ctx.Context) =>
 const useBuildMode = (context: ctx.Context) =>
 	useBuilderState<boolean>(context, "buildmode") || false
 
-const useSelectedPath = (context: ctx.Context): [FullPath, PathSelector] => {
-	const [fullPath, set] = useBuilderState<string>(context, "selected")
-	const [parsedPath, wrappedSet] = getFullPathPair(fullPath, set)
+const useSelectedPath = (context: ctx.Context) => {
+	const fullPath = useBuilderExternalState<string>(context, "selected")
+	const parsedPath = parseFullPath(fullPath)
 	if (!parsedPath.itemType) parsedPath.itemType = "viewdef"
 	if (parsedPath.itemType === "viewdef" && !parsedPath.itemName)
 		parsedPath.itemName = context.getViewDefId() || ""
-	return [parsedPath, wrappedSet]
+	return parsedPath
 }
 
-const useDropPath = (context: ctx.Context): [FullPath, PathSelector] => {
-	const [fullPath, set] = useBuilderState<string>(context, "drop")
-	return getFullPathPair(fullPath, set)
+const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
+	setBuilderState<string>(context, "selected", combinePath(path))
 }
 
-const useDragPath = (context: ctx.Context): [FullPath, PathSelector] => {
-	const [fullPath, set] = useBuilderState<string>(context, "drag")
-	return getFullPathPair(fullPath, set)
+const getSelectedPath = (context: ctx.Context) => {
+	const fullPath = getBuilderExternalState<string>(context, "selected")
+	const parsedPath = parseFullPath(fullPath)
+	if (!parsedPath.itemType) parsedPath.itemType = "viewdef"
+	if (parsedPath.itemType === "viewdef" && !parsedPath.itemName)
+		parsedPath.itemName = context.getViewDefId() || ""
+	return parsedPath
+}
+
+const useDropPath = (context: ctx.Context) =>
+	parseFullPath(useBuilderExternalState<string>(context, "drop"))
+
+const setDropPath = (context: ctx.Context, path?: FullPath) => {
+	setBuilderState<string>(context, "drop", combinePath(path))
+}
+
+const useDragPath = (context: ctx.Context) =>
+	parseFullPath(useBuilderExternalState<string>(context, "drag"))
+
+const setDragPath = (context: ctx.Context, path?: FullPath) => {
+	setBuilderState<string>(context, "drag", combinePath(path))
 }
 
 const getComponentDefs = (context: ctx.Context) =>
@@ -67,12 +100,16 @@ export {
 	getBuildMode,
 	useBuildMode,
 	useDropPath,
+	setDropPath,
 	useDragPath,
+	setDragPath,
 	getBuilderNamespaces,
 	getBuilderState,
 	getComponentDefs,
 	getComponentDef,
 	useBuilderState,
 	useSelectedPath,
+	getSelectedPath,
+	setSelectedPath,
 	ComponentDef,
 }

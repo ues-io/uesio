@@ -2,7 +2,11 @@ import { useEffect, useRef } from "react"
 import { definition, component, api, styles, util } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
-import { useSelectedPath } from "../../../api/stateapi"
+import {
+	getSelectedPath,
+	setSelectedPath,
+	useSelectedPath,
+} from "../../../api/stateapi"
 import { setContent, useContent } from "../../../api/defapi"
 
 const ANIMATION_DURATION = 3000
@@ -63,7 +67,8 @@ const CodePanel: definition.UtilityComponent = (props) => {
 		props
 	)
 
-	const [selectedPath, setSelected] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
+
 	const fullYaml = useContent(selectedPath)
 
 	const yamlDoc = util.yaml.parse(fullYaml)
@@ -155,7 +160,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 			)
 
 			if (relevantNode && nodePath)
-				setSelected(selectedPath.setLocal(nodePath))
+				setSelectedPath(context, selectedPath.setLocal(nodePath))
 		})
 		/*
 
@@ -228,6 +233,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				language="yaml"
 				setValue={
 					((newValue): void => {
+						const selectedPath = getSelectedPath(context)
 						setContent(selectedPath, newValue || "")
 					}) as EditorProps["onChange"]
 				}

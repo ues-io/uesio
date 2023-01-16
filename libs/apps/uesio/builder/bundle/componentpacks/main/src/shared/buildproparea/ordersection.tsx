@@ -38,7 +38,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.DefinitionMap
 		| undefined
 
-	const [selectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 

@@ -5,11 +5,17 @@ import PlaceHolder from "../placeholder/placeholder"
 import {
 	getBuilderNamespaces,
 	getComponentDef,
+	setDragPath,
+	setDropPath,
+	setSelectedPath,
 	useDragPath,
 	useDropPath,
 	useSelectedPath,
 } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
+import DeleteAction from "../../actions/deleteaction"
+import MoveActions from "../../actions/moveactions"
+import CloneAction from "../../actions/cloneaction"
 
 const BuildWrapper: definition.UC = (props) => {
 	const Text = component.getUtility("uesio/io.text")
@@ -19,32 +25,47 @@ const BuildWrapper: definition.UC = (props) => {
 	const [canDrag, setCanDrag] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
-	const viewDefId = context.getViewDefId()
-	const [selectedPath, setSelected] = useSelectedPath(context)
-	const [dragPath, setDragPath] = useDragPath(context)
-	const [dropPath, setDropPath] = useDropPath(context)
-
-	const fullPath = new FullPath("viewdef", viewDefId, path)
-
-	const selected = selectedPath.equals(fullPath)
+	const selectedPath = useSelectedPath(context)
+	const dragPath = useDragPath(context)
+	const dropPath = useDropPath(context)
 
 	const componentDef = getComponentDef(context, componentType)
 
 	if (!componentType || !componentDef) return <>{children}</>
 
-	const isDragging = dragPath.equals(fullPath)
-
-	const wrapperPath = component.path.getParentPath(path)
-	const index = component.path.getIndexFromPath(path) || 0
-
 	const [componentNamespace] = component.path.parseKey(componentType)
-
 	const nsInfo = getBuilderNamespaces(context)[componentNamespace]
 
-	const addBeforePlaceholder =
-		`${wrapperPath}["${index}"]` === dropPath.localPath
-	const addAfterPlaceholder =
-		`${wrapperPath}["${index + 1}"]` === dropPath.localPath
+	const viewDefId = context.getViewDefId()
+	const fullPath = new FullPath("viewdef", viewDefId, path)
+
+	// Get the path without the component type portion
+	// from: ["components"]["0"]["mycomponent"]
+	// to:   ["components"]["0"]
+	const parent = fullPath.parent()
+	const [trueindex, grandparent] = parent.popIndex()
+
+	// Special handling for sibling records where the item being dragged
+	// has a lower index than this item. We need the item being dragged
+	// to not take up a spot so we reduce the index by one.
+	let index = trueindex
+	if (dragPath.isSet() && dragPath.itemType === "viewdef") {
+		const [dragIndex, dragParent] = dragPath.parent().popIndex()
+		if (dragParent.equals(grandparent) && dragIndex < index) index--
+	}
+
+	const isDragging = dragPath.equals(fullPath)
+	const addBeforePlaceholder = grandparent
+		.addLocal("" + index)
+		.equals(dropPath)
+	const addAfterPlaceholder = grandparent
+		.addLocal("" + (index + 1))
+		.equals(dropPath)
+
+	// We are considered selected if the seleced path is either
+	// ["components"]["0"]["mycomponent"] or ["components"]["0"]
+	const selected =
+		selectedPath.equals(fullPath) || selectedPath.equals(parent)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -60,6 +81,9 @@ const BuildWrapper: definition.UC = (props) => {
 				...(isDragging && {
 					display: "none",
 				}),
+				"&:active > div": {
+					backgroundColor: "white",
+				},
 				padding: "6px",
 			},
 			wrapper: {
@@ -117,19 +141,19 @@ const BuildWrapper: definition.UC = (props) => {
 					// this component to always be draggable
 					// that's why we do the setCanDrag thing
 					e.stopPropagation()
-					if (dragPath.equals(fullPath)) {
+					if (!dragPath.equals(fullPath)) {
 						setTimeout(() => {
-							setDragPath(fullPath)
+							setDragPath(context, fullPath)
 						})
 					}
 				}}
 				onDragEnd={() => {
-					setDropPath()
-					setDragPath()
+					setDropPath(context)
+					setDragPath(context)
 				}}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
-					!selected && setSelected(fullPath)
+					!selected && setSelectedPath(context, fullPath)
 					event.stopPropagation()
 				}}
 				draggable={canDrag}
@@ -147,13 +171,13 @@ const BuildWrapper: definition.UC = (props) => {
 						<BuildActionsArea
 							context={context}
 							classes={{
-								wrapper: classes.popperInner,
+								root: classes.popperInner,
 							}}
-							// path={path}
-							// valueAPI={valueAPI}
-							// propsDef={propDef}
-							// actions={propDef.actions}
-						/>
+						>
+							<DeleteAction context={context} path={parent} />
+							<MoveActions context={context} path={parent} />
+							<CloneAction context={context} path={parent} />
+						</BuildActionsArea>
 					</Popper>
 				)}
 				<div className={classes.wrapper}>

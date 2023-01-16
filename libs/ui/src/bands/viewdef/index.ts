@@ -196,8 +196,8 @@ const metadataSlice = createSlice({
 	},
 })
 
-const useViewDef = (key: string) =>
-	useSelector((state: RootState) => selectors.selectById(state, key))
+const useViewDef = (key: string | undefined) =>
+	useSelector((state: RootState) => selectors.selectById(state, key || ""))
 		?.definition
 
 // This function doesn't run a selector so it will only get the current

@@ -1,5 +1,5 @@
 import { definition, api, component, wire } from "@uesio/ui"
-import { useSelectedPath } from "../../../api/stateapi"
+import { setSelectedPath, useSelectedPath } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
@@ -10,7 +10,7 @@ import { FullPath } from "../../../api/path"
 
 const WiresPanel: definition.UtilityComponent = ({ context }) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-	const [selectedPath, setSelectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)
 	if (!viewDefId || !viewDef || !viewDef.wires) return null
@@ -28,9 +28,9 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 				const wireDef = value as wire.RegularWireDefinition
 				return (
 					<PropNodeTag
-						onClick={() => setSelectedPath(wirePath)}
+						onClick={() => setSelectedPath(context, wirePath)}
 						key={key}
-						selected={wirePath.startsWith(selectedPath)}
+						selected={selectedPath.startsWith(wirePath)}
 						context={context}
 					>
 						<div className="tagroot">

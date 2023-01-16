@@ -1,9 +1,10 @@
-import { component, definition } from "@uesio/ui"
+import { component, context, definition } from "@uesio/ui"
 import { move, get } from "../api/defapi"
 import { FullPath } from "../api/path"
 import ActionButton from "../shared/buildproparea/actions/actionbutton"
 
 const getArrayMoveParams = (
+	context: context.Context,
 	path: FullPath,
 	selectKey?: string
 ): [boolean, boolean, () => void, () => void] => {
@@ -16,7 +17,12 @@ const getArrayMoveParams = (
 	const enableForward = !!(index !== null && size && index < size - 1)
 
 	const moveToIndex = (index: number) => {
-		move(path, path.setLocal(`${parentPath}["${index}"]`), selectKey)
+		move(
+			context,
+			path,
+			path.setLocal(`${parentPath}["${index}"]`),
+			selectKey
+		)
 	}
 
 	return [
@@ -32,6 +38,7 @@ const getArrayMoveParams = (
 }
 
 const getMapMoveParams = (
+	context: context.Context,
 	path: FullPath
 ): [boolean, boolean, () => void, () => void] => {
 	const parentPath = component.path.getParentPath(path.localPath)
@@ -47,11 +54,11 @@ const getMapMoveParams = (
 		enableForward,
 		() => {
 			const newKey = entries[index - 1][0]
-			move(path.setLocal(`${parentPath}["${newKey}"]`), path)
+			move(context, path.setLocal(`${parentPath}["${newKey}"]`), path)
 		},
 		() => {
 			const newKey = entries[index + 1][0]
-			move(path.setLocal(`${parentPath}["${newKey}"]`), path)
+			move(context, path.setLocal(`${parentPath}["${newKey}"]`), path)
 		},
 	]
 }
@@ -66,7 +73,7 @@ const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 	)
 	const paramGetter = isArrayMove ? getArrayMoveParams : getMapMoveParams
 	const [enableBackward, enableForward, onClickBackward, onClickForward] =
-		paramGetter(path, undefined)
+		paramGetter(context, path, undefined)
 	return (
 		<>
 			<ActionButton
