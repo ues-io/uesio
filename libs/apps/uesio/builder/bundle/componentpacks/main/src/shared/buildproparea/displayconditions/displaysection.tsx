@@ -15,7 +15,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 
 	const displayPath = `${path}["uesio.display"]`
 
-	const [selectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 

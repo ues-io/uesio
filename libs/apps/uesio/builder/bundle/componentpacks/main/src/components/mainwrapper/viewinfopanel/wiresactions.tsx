@@ -34,14 +34,14 @@ const WiresActions: definition.UtilityComponent = (props) => {
 				label="New Wire"
 				onClick={() =>
 					set(
+						context,
 						path.addLocal(
-							`[${
-								"newwire" + (Math.floor(Math.random() * 60) + 1)
-							}]`
+							"newwire" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
 							fields: null,
-						}
+						},
+						true
 					)
 				}
 			/>

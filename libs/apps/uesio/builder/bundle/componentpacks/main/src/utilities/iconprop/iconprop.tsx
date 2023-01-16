@@ -12,7 +12,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const { descriptor, path, context, valueAPI } = props
 
-	const [selectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const selected = selectedPath.localPath === path
 
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)

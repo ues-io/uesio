@@ -3,13 +3,13 @@ import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
 import MoveActions from "../../../actions/moveactions"
 import { FullPath } from "../../../api/path"
-import { useSelectedPath } from "../../../api/stateapi"
+import { setSelectedPath, useSelectedPath } from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 
 const PanelsPanel: definition.UtilityComponent = ({ context }) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-	const [selectedPath, setSelectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
 	const viewDef = api.view.useViewDef(viewDefId as string)
 	if (!viewDefId || !viewDef || !viewDef.panels) return null
@@ -31,7 +31,7 @@ const PanelsPanel: definition.UtilityComponent = ({ context }) => {
 
 				return (
 					<PropNodeTag
-						onClick={() => setSelectedPath(panelPath)}
+						onClick={() => setSelectedPath(context, panelPath)}
 						key={panelId}
 						selected={selectedPath.startsWith(panelPath)}
 						context={context}

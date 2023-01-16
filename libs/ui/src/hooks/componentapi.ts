@@ -38,26 +38,33 @@ const makeComponentId = (
 	return `${viewId}:${componentType}:${id}${recordSuffix}`
 }
 
+const setState = <T extends PlainComponentState>(
+	componentId: string,
+	state: T | undefined
+) => {
+	dispatch(
+		setComponent({
+			id: componentId,
+			state,
+		})
+	)
+}
+
 const useState = <T extends PlainComponentState>(
 	componentId: string,
 	initialState?: T
 ): [T | undefined, (state: T) => void] => {
 	const state = useComponentState<T>(componentId)
-	const setState = (state: T | undefined) => {
-		dispatch(
-			setComponent({
-				id: componentId,
-				state,
-			})
-		)
+	const stateSetter = (state: T | undefined) => {
+		setState(componentId, state)
 	}
 	useEffect(() => {
 		if (state === undefined) {
-			setState(initialState)
+			stateSetter(initialState)
 		}
 	}, [componentId])
 
-	return [state ?? initialState, setState]
+	return [state ?? initialState, stateSetter]
 }
 
 const useStateSlice = <T extends Definition>(
@@ -68,28 +75,20 @@ const useStateSlice = <T extends Definition>(
 	const fullState = useComponentState<Record<string, T>>(componentId)
 	const state = fullState?.[slice] ?? undefined
 
-	const setState = (state: T) => {
-		dispatch(
-			setComponent({
-				id: componentId,
-				state: {
-					...selectState<Record<string, T>>(
-						getCurrentState(),
-						componentId
-					),
-					[slice]: state,
-				},
-			})
-		)
+	const stateSetter = (state: T) => {
+		setState(componentId, {
+			...selectState<Record<string, T>>(getCurrentState(), componentId),
+			[slice]: state,
+		})
 	}
 
 	useEffect(() => {
 		if (state === undefined && initialState !== undefined) {
-			setState(initialState)
+			stateSetter(initialState)
 		}
 	}, [componentId])
 
-	return [state ?? initialState, setState]
+	return [state ?? initialState, stateSetter]
 }
 
 const getExternalState = <T extends PlainComponentState>(
@@ -109,6 +108,7 @@ export {
 	getComponentIdFromProps,
 	makeComponentId,
 	useState,
+	setState,
 	useStateSlice,
 	useExternalState,
 	getExternalState,

@@ -13,7 +13,7 @@ const DeleteAction: definition.UtilityComponent<Props> = ({
 }) => (
 	<ActionButton
 		title="Delete"
-		onClick={() => remove(path)}
+		onClick={() => remove(context, path)}
 		icon="delete"
 		context={context}
 	/>

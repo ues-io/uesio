@@ -7,25 +7,24 @@ import {
 	ComponentDef,
 	getBuilderNamespaces,
 	getComponentDefs,
-	useDragPath,
-	useDropPath,
+	setDragPath,
+	setDropPath,
+	setSelectedPath,
 	useSelectedPath,
 } from "../../../api/stateapi"
 import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
-import { FullPath, PathSelector } from "../../../api/path"
+import { FullPath } from "../../../api/path"
 
-const Text = component.getUtility("uesio/io.text")
-const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
+const getUtility = component.getUtility
 
 type VariantsBlockProps = {
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-	setSelected: PathSelector
 } & definition.UtilityProps
 
 const VariantsBlock: FC<VariantsBlockProps> = (props) => {
-	const { context, variants, isSelected, setSelected } = props
+	const { context, variants, isSelected } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -46,7 +45,8 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 						key={variantKey}
 						onClick={(e: MouseEvent) => {
 							e.stopPropagation()
-							setSelected(
+							setSelectedPath(
+								context,
 								new FullPath("componentvariant", variantKey)
 							)
 						}}
@@ -71,11 +71,11 @@ type ComponentBlockProps = {
 	component: ComponentDef
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-	setSelected: PathSelector
 } & definition.UtilityProps
 
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
-	const { context, component, variants, isSelected, setSelected } = props
+	const IOExpandPanel = getUtility("uesio/io.expandpanel")
+	const { context, component, variants, isSelected } = props
 	const { namespace, name } = component
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}` as metadata.MetadataKey
@@ -94,7 +94,7 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 			context={context}
 			key={fullName}
 			onClick={() => {
-				setSelected(new FullPath("component", fullName))
+				setSelectedPath(context, new FullPath("component", fullName))
 			}}
 			draggable={`component:${fullName}`}
 			selected={isSelected("component", fullName)}
@@ -107,7 +107,6 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 				{validVariants && validVariants.length > 0 && (
 					<VariantsBlock
 						isSelected={isSelected}
-						setSelected={setSelected}
 						variants={validVariants}
 						context={context}
 					/>
@@ -121,7 +120,6 @@ type CategoryBlockProps = {
 	components: ComponentDef[]
 	variants: Record<string, component.ComponentVariant[]>
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
-	setSelected: PathSelector
 	category: string
 } & definition.UtilityProps
 
@@ -136,8 +134,7 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 		},
 		props
 	)
-	const { context, components, category, variants, isSelected, setSelected } =
-		props
+	const { context, components, category, variants, isSelected } = props
 	const comps = components
 	if (!comps || !comps.length) return null
 	comps.sort((a, b) => {
@@ -159,7 +156,6 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 						component={component}
 						context={context}
 						isSelected={isSelected}
-						setSelected={setSelected}
 					/>
 				)
 			})}
@@ -172,6 +168,7 @@ type ComponentTagProps = {
 } & definition.UtilityProps
 
 const ComponentTag: FC<ComponentTagProps> = (props) => {
+	const Text = getUtility("uesio/io.text")
 	const { context, component } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -227,9 +224,7 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 		(component) => component.discoverable
 	)
 
-	const [selectedPath, setSelected] = useSelectedPath(context)
-	const [, setDragPath] = useDragPath(context)
-	const [, setDropPath] = useDropPath(context)
+	const selectedPath = useSelectedPath(context)
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -238,13 +233,13 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 			const metadataType = typeArray.shift()
 			const metadataItem = typeArray.join(":")
 			if (metadataType && metadataItem) {
-				setDragPath(new FullPath(metadataType, metadataItem))
+				setDragPath(context, new FullPath(metadataType, metadataItem))
 			}
 		}
 	}
 	const onDragEnd = () => {
-		setDragPath()
-		setDropPath()
+		setDragPath(context)
+		setDropPath(context)
 	}
 
 	const categoryOrder = [
@@ -286,7 +281,6 @@ const ComponentsPanel: definition.UtilityComponent = (props) => {
 					components={componentsByCategory[category]}
 					category={category}
 					isSelected={isComponentSelected}
-					setSelected={setSelected}
 					context={context}
 				/>
 			))}

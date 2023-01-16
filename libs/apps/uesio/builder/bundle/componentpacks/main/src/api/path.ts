@@ -30,8 +30,12 @@ class FullPath {
 	setLocal = (localPath: string) =>
 		new FullPath(this.itemType, this.itemName, localPath)
 
-	addLocal = (localPath: string) =>
-		new FullPath(this.itemType, this.itemName, this.localPath + localPath)
+	addLocal = (addition: string) =>
+		new FullPath(
+			this.itemType,
+			this.itemName,
+			this.localPath + `["${addition}"]`
+		)
 
 	pop = (): [string | undefined, FullPath] => {
 		const pathArray = toPath(this.localPath)
@@ -48,11 +52,33 @@ class FullPath {
 
 	popIndex = (): [number, FullPath] => {
 		const [numString, newPath] = this.pop()
-		if (numString && component.path.isNumberIndex(numString)) {
-			return [parseInt(numString, 10) || 0, newPath]
-		}
-		return [0, newPath]
+		if (!numString || !component.path.isNumberIndex(numString))
+			throw new Error(
+				"Invalid Index in Path: " +
+					newPath.combine() +
+					" : " +
+					numString
+			)
+		return [parseInt(numString, 10) || 0, newPath]
 	}
+
+	parent = () =>
+		new FullPath(
+			this.itemType,
+			this.itemName,
+			component.path.getParentPath(this.localPath)
+		)
+
+	nextSibling = () => {
+		const [index, rest] = this.popIndex()
+		return new FullPath(
+			this.itemType,
+			this.itemName,
+			`${rest.localPath}["${index + 1}"]`
+		)
+	}
+
+	isSet = () => this.itemType && this.itemName
 }
 
 const parseFullPath = (fullPath: string | undefined) => {
@@ -60,20 +86,6 @@ const parseFullPath = (fullPath: string | undefined) => {
 	return new FullPath(itemType, itemName, localPath)
 }
 
-type PathSelector = (path?: FullPath) => void
+const combinePath = (path?: FullPath) => (path ? path.combine() : "::")
 
-const getFullPathPair = (
-	fullPath: string | undefined,
-	setter: (fullPath: string) => void
-): [FullPath, PathSelector] => [
-	parseFullPath(fullPath),
-	(path?: FullPath) => {
-		if (!path) {
-			setter("::")
-			return
-		}
-		setter(path?.combine())
-	},
-]
-
-export { getFullPathPair, FullPath, PathSelector }
+export { parseFullPath, combinePath, FullPath }

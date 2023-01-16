@@ -1,16 +1,17 @@
 import { FunctionComponent, DragEvent } from "react"
-import { definition, component, styles, context as ctx } from "@uesio/ui"
+import { definition, component, styles, api, context as ctx } from "@uesio/ui"
 import { isDropAllowed, isNextSlot } from "../../shared/dragdrop"
 import PanelPortal from "../../shared/panelportal"
 import TopActions from "../../shared/topactions"
 import BottomActions from "../../shared/bottomactions"
 import {
 	getComponentDef,
+	setDropPath,
 	useBuilderState,
 	useDragPath,
 	useDropPath,
 } from "../../api/stateapi"
-import { add } from "../../api/defapi"
+import { add, move } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 
 const handleDrop = (
@@ -20,17 +21,38 @@ const handleDrop = (
 ): void => {
 	switch (drag.itemType) {
 		case "component": {
-			const [index, parentDrop] = drop.popIndex()
 			const componentDef = getComponentDef(context, drag.itemName)
 			if (!componentDef) return
-			add(
-				parentDrop,
-				{
-					[`${componentDef.namespace}.${componentDef.name}`]: {},
-				},
-				index
-			)
+			add(context, drop, {
+				[drag.itemName]: {},
+			})
+			break
 		}
+		case "viewdef": {
+			const [key, parent] = drag.pop()
+			move(context, parent, drop, key)
+			break
+		}
+		/*
+		case "componentvariant": {
+			const [
+				componentNamespace,
+				componentName,
+				variantNamespace,
+				variantName,
+			] = component.path.parseVariantKey(drag.itemName)
+			const componentKey = `${componentNamespace}.${componentName}`
+			const componentDef = getComponentDef(context, componentKey)
+			if (!componentDef) return
+			add(context, drop, {
+				[componentKey]: {
+					text: "blah",
+					[`uesio.variant`]: variantNamespace + "." + variantName,
+				},
+			})
+			break
+		}
+		*/
 	}
 
 	/*
@@ -109,16 +131,37 @@ const getIndex = (
 	prevTarget: Element | null,
 	e: DragEvent
 ): number => {
-	if (!prevTarget) {
-		const dataInsertIndex = target?.getAttribute("data-insertindex")
-		return dataInsertIndex ? parseInt(dataInsertIndex, 10) : 0
-	}
-	const dataIndex = prevTarget.getAttribute("data-index")
-	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
 	const dataDirection =
 		target?.getAttribute("data-direction") === "HORIZONTAL"
 			? "HORIZONTAL"
 			: "VERTICAL"
+	if (!prevTarget) {
+		const dataInsertIndex = target?.getAttribute("data-insertindex")
+		const bounds = target?.getBoundingClientRect()
+		// This code is for when we're dropping between gaps in components.
+		// It allows us to have gaps between components with out that annoying
+		// jitter.
+		if (bounds && target) {
+			if (dataDirection === "HORIZONTAL") {
+				let index: string | null = null
+				// loop over targets children
+				for (const child of Array.from(target.children)) {
+					const childBounds = child.getBoundingClientRect()
+					if (childBounds.right < e.pageX + window.scrollX) {
+						index = child.getAttribute("data-index")
+						continue
+					}
+					break
+				}
+				if (index) {
+					return parseInt(index, 10)
+				}
+			}
+		}
+		return dataInsertIndex ? parseInt(dataInsertIndex, 10) : 0
+	}
+	const dataIndex = prevTarget.getAttribute("data-index")
+	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
 
 	if (!dataIndex) return 0
 	const index = parseInt(dataIndex, 10)
@@ -188,11 +231,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
-	const [dragPath] = useDragPath(context)
-	const [dropPath, setDropPath] = useDropPath(context)
+	const dragPath = useDragPath(context)
+	const dropPath = useDropPath(context)
 
 	const viewDefId = context.getViewDefId()
-	const viewDef = context.getViewDef()
+	const viewDef = api.view.useViewDef(viewDefId)
 	const route = context.getRoute()
 
 	if (!route || !viewDefId || !viewDef) return null
@@ -204,7 +247,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	// out the drop node.
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
-			setDropPath()
+			setDropPath(context)
 		} else {
 			const currentTarget = e.currentTarget as HTMLDivElement
 			const bounds = currentTarget.getBoundingClientRect()
@@ -213,7 +256,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			const outsideTop = e.pageY < bounds.top
 			const outsideBottom = e.pageY > bounds.bottom
 			if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
-				setDropPath()
+				setDropPath(context)
 			}
 		}
 	}
@@ -245,13 +288,16 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				usePath = `${validPath}["${index + 1}"]`
 			}
 			if (dropPath.localPath !== usePath) {
-				setDropPath(new FullPath("viewdef", viewDefId, usePath))
+				setDropPath(
+					context,
+					new FullPath("viewdef", viewDefId, usePath)
+				)
 			}
 			return
 		}
 
 		if (!dropPath) {
-			setDropPath()
+			setDropPath(context)
 		}
 	}
 

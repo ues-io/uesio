@@ -35,15 +35,14 @@ const ParamsActions: definition.UtilityComponent = (props) => {
 				label="New Parameter"
 				onClick={() =>
 					set(
+						context,
 						path.addLocal(
-							`[${
-								"newparam" +
-								(Math.floor(Math.random() * 60) + 1)
-							}]`
+							"newparam" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
 							type: "recordId",
-						}
+						},
+						true
 					)
 				}
 			/>

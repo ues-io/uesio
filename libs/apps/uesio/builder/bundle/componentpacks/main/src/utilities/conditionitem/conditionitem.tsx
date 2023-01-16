@@ -108,7 +108,7 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 		//	api.builder.setSelectedNode("viewdef", viewDefId, conditionPath)
 	}
 
-	const [selectedPath] = useSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const selected = selectedPath.localPath === conditionPath
 
 	return (

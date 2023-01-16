@@ -34,11 +34,9 @@ const PanelsActions: definition.UtilityComponent = (props) => {
 				label="New Panel"
 				onClick={() =>
 					set(
+						context,
 						path.addLocal(
-							`[${
-								"newpanel" +
-								(Math.floor(Math.random() * 60) + 1)
-							}]`
+							"newpanel" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
 							"uesio.type": "uesio/io.dialog",
