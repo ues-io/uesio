@@ -1,15 +1,17 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
+import { LongTextFieldOptions } from "../../components/field/field"
 
 interface TextAreaFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
 	placeholder?: string
+	options?: LongTextFieldOptions
 }
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
-	const { setValue, mode, placeholder } = props
+	const { setValue, mode, placeholder, options } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
@@ -31,6 +33,8 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 		onChange: (
 			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 		) => setValue(event.target.value),
+		rows: options?.rows,
+		cols: options?.cols,
 	}
 
 	return <textarea {...commonProps} />
