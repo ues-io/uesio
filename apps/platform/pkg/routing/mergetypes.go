@@ -56,7 +56,7 @@ type MergeData struct {
 	Site             *SiteMergeData      `json:"site"`
 	Workspace        *WorkspaceMergeData `json:"workspace,omitempty"`
 	DevMode          bool                `json:"-"`
-	StaticAssetsPath string              `json:"staticAssetsPath"`
+	StaticAssetsPath string              `json:"-"`
 	*PreloadMetadata
 }
 
