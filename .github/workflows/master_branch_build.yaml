@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      # - stable-december-2022
+      - stable-december-2022
     secrets:
       GH_PAT:
         required: true
