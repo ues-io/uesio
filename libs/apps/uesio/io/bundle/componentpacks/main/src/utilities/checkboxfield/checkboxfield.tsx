@@ -33,8 +33,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 			},
 			readonly: {},
 		},
-		props,
-		"uesio/io.field"
+		props
 	)
 
 	return (

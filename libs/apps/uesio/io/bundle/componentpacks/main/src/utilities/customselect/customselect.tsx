@@ -2,7 +2,7 @@ import { FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import Icon from "../icon/icon"
-import { useFloating } from "@floating-ui/react"
+import { autoPlacement, useFloating, autoUpdate } from "@floating-ui/react"
 
 type CustomSelectProps<T> = {
 	value: T
@@ -101,6 +101,10 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 
 	const { x, y, strategy, refs } = useFloating({
 		placement: "bottom-start",
+		middleware: [
+			autoPlacement({ allowedPlacements: ["top-start", "bottom-start"] }),
+		],
+		whileElementsMounted: autoUpdate,
 	})
 
 	return (
@@ -122,6 +126,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				<div
 					ref={refs.setFloating}
 					style={{
+						...(!isOpen && { visibility: "hidden" }),
 						position: strategy,
 						top: y ?? 0,
 						left: x ?? 0,

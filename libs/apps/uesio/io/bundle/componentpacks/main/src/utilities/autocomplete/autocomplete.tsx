@@ -54,7 +54,8 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 				},
 			},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 	const [loading, setLoading] = useState(false)
 	const [inputItems, setInputItems] = useState<unknown[]>([])
