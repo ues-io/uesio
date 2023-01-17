@@ -27,16 +27,7 @@ func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
 	return GetFieldValueString(value, UNIQUE_KEY_FIELD)
 }
 
-func SetUniqueKey(change *ChangeItem) error {
-	if change.UniqueKey != "" {
-		return nil
-	}
-	// First see if the unique key already exists.
-	existingKey, err := change.GetFieldAsString(UNIQUE_KEY_FIELD)
-	if err == nil && existingKey != "" {
-		change.UniqueKey = existingKey
-		return nil
-	}
+func GetUniqueKeyValue(change *ChangeItem) (string, error) {
 	keyFields := change.Metadata.UniqueKey
 	if len(keyFields) == 0 {
 		keyFields = []string{ID_FIELD}
@@ -45,24 +36,20 @@ func SetUniqueKey(change *ChangeItem) error {
 	for i, keyField := range keyFields {
 		value, err := GetUniqueKeyPart(change, keyField)
 		if err != nil {
-			return fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, change.Metadata.GetFullName(), err)
-		}
-		if value == "" {
-			return fmt.Errorf("Required Unique Key Value Not Provided: %v : %v", change.Metadata.GetFullName(), keyField)
+			return "", fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, change.Metadata.GetFullName(), err)
 		}
 		keyValues[i] = value
 	}
+	return strings.Join(keyValues, ":"), nil
+}
 
-	uniqueKey := strings.Join(keyValues, ":")
-
-	err = change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
+func SetUniqueKey(change *ChangeItem) error {
+	uniqueKey, err := GetUniqueKeyValue(change)
 	if err != nil {
 		return err
 	}
-
 	change.UniqueKey = uniqueKey
-
-	return nil
+	return change.SetField(UNIQUE_KEY_FIELD, uniqueKey)
 }
 
 func HandleOldValuesLookup(

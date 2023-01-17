@@ -16,7 +16,12 @@ func processLocalReferences(
 	// Special case for allowing self-references
 	if op.Metadata.GetFullName() == refCollectionMetadata.GetFullName() {
 
-		if change.UniqueKey == uniqueKeyFieldValue {
+		baseUniqueKeyValue, err := GetUniqueKeyValue(change)
+		if err != nil {
+			return false, err
+		}
+
+		if baseUniqueKeyValue == uniqueKeyFieldValue {
 			concreteItem, err := GetLoadable(refValue)
 			if err != nil {
 				return false, err
@@ -25,8 +30,14 @@ func processLocalReferences(
 		}
 		// As a final Fallback check to see if any of the changes have that id
 		foundMatch := false
-		err := op.LoopChanges(func(innerChange *ChangeItem) error {
-			if innerChange.UniqueKey == uniqueKeyFieldValue {
+		err = op.LoopChanges(func(innerChange *ChangeItem) error {
+
+			innerBaseUniqueKeyValue, err := GetUniqueKeyValue(innerChange)
+			if err != nil {
+				return err
+			}
+
+			if innerBaseUniqueKeyValue == uniqueKeyFieldValue {
 				foundMatch = true
 				concreteItem, err := GetLoadable(refValue)
 				if err != nil {
