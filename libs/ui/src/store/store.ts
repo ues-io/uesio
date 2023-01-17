@@ -41,7 +41,7 @@ type InitialState = {
 	featureflag?: EntityState<FeatureFlagState>
 	metadatatext?: EntityState<MetadataState>
 	wire?: EntityState<PlainWire>
-	collection?: EntityState<PlainCollection>,
+	collection?: EntityState<PlainCollection>
 }
 
 let store: ReturnType<typeof create>
