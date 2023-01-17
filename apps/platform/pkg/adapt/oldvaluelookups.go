@@ -2,7 +2,6 @@ package adapt
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -36,7 +35,8 @@ func GetUniqueKeyValue(change *ChangeItem) (string, error) {
 	for i, keyField := range keyFields {
 		value, err := GetUniqueKeyPart(change, keyField)
 		if err != nil {
-			return "", fmt.Errorf("Failed to get part: %v : %+v : %v : %v : %v", keyField, change, keyFields, change.Metadata.GetFullName(), err)
+			// If we can't get field data here, just use an empty string
+			value = ""
 		}
 		keyValues[i] = value
 	}
