@@ -50,6 +50,19 @@ class FullPath {
 		]
 	}
 
+	shift = (): [string | undefined, FullPath] => {
+		const pathArray = toPath(this.localPath)
+		const value = pathArray.shift()
+		return [
+			value,
+			new FullPath(
+				this.itemType,
+				this.itemName,
+				component.path.fromPath(pathArray)
+			),
+		]
+	}
+
 	popIndex = (): [number, FullPath] => {
 		const [numString, newPath] = this.pop()
 		if (!numString || !component.path.isNumberIndex(numString))

@@ -12,9 +12,9 @@ type Props = {
 	title: string
 	path: FullPath
 	tabs?: Tab[]
-	selectedTab: string
-	setSelectedTab: (selected: string) => void
-	onUnselect: () => void
+	selectedTab?: string
+	setSelectedTab?: (selected: string) => void
+	onUnselect?: () => void
 }
 
 const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
@@ -91,7 +91,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 									icon="close"
 									onClick={(e: MouseEvent) => {
 										e.stopPropagation()
-										props.onUnselect()
+										props.onUnselect?.()
 									}}
 								/>
 							)
