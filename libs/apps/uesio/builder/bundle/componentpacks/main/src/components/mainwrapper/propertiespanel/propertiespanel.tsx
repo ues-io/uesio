@@ -38,7 +38,7 @@ const PropertiesPanel: definition.UtilityComponent = (props) => {
 			// If our topmost key was an index we need to get the next one
 			// from the definition
 			if (component.path.isNumberIndex(key) && selectedDef) {
-				path = selectedPath.addLocal(selectedDef[0] as string)
+				path = selectedPath.addLocal(Object.keys(selectedDef)[0])
 			}
 			// Trim our path down to our nearest component
 			path = path.trim()
