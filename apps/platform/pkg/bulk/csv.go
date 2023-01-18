@@ -100,6 +100,8 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			loaderFuncs = append(loaderFuncs, getNumberLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else if fieldMetadata.Type == "REFERENCE" {
 			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
+		} else if fieldMetadata.Type == "DATE" {
+			loaderFuncs = append(loaderFuncs, getDateLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else {
 			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, valueGetter))
 		}
@@ -118,7 +120,10 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 		changeRequest := adapt.Item{}
 
 		for _, loaderFunc := range loaderFuncs {
-			loaderFunc(changeRequest, record)
+			err := loaderFunc(changeRequest, record)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		changes = append(changes, &changeRequest)
