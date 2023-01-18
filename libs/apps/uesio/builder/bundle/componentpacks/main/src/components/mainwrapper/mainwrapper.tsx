@@ -1,6 +1,6 @@
 import { definition, component, hooks, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
-import PropertiesPanel from "../../shared/propertiespanel"
+import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
 import CodeArea from "./codearea/codearea"
 import { useBuildMode } from "../../api/stateapi"

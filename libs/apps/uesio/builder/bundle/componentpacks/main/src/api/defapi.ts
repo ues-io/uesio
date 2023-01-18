@@ -56,6 +56,9 @@ const cloneKey = (path: FullPath) => {
 	api.builder.cloneKeyDefinition(path.pathCombine())
 }
 
+const useDefinition = (path: FullPath) =>
+	api.builder.useDefinition(path.itemType, path.itemName, path.localPath)
+
 const useContent = (path: FullPath) =>
 	api.builder.useDefinitionContent(path.itemType, path.itemName) || ""
 
@@ -69,4 +72,15 @@ const setContent = (path: FullPath, value: string) => {
 	}
 }
 
-export { set, add, remove, move, get, clone, cloneKey, useContent, setContent }
+export {
+	set,
+	add,
+	remove,
+	move,
+	get,
+	clone,
+	cloneKey,
+	useContent,
+	setContent,
+	useDefinition,
+}

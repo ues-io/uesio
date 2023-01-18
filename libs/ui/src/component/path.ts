@@ -77,6 +77,9 @@ const makeFullPath = (
 const isNumberIndex = (index: string | null | undefined) =>
 	index && /^\d+$/.test(index)
 
+const isComponentIndex = (index: string | null | undefined) =>
+	index && /^\w+\/\w+\.\w+$/.test(index)
+
 // Trims a path to the closest index segment
 const getIndexPath = (path: string) => {
 	const pathArray = toPath(path)
@@ -129,5 +132,6 @@ export {
 	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,
+	isComponentIndex,
 	parseRelativePath,
 }
