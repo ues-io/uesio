@@ -79,6 +79,24 @@ class FullPath {
 	}
 
 	isSet = () => this.itemType && this.itemName
+
+	clone = () => new FullPath(this.itemType, this.itemName, this.localPath)
+
+	// Trims any path to the last element that is fully namespaced
+	// (meaning the path element contains a dot)
+	trim = (): FullPath => {
+		const pathArray = component.path.toPath(this.localPath)
+		const size = pathArray.length
+		if (size === 0) {
+			return this.clone()
+		}
+		const nextItem = pathArray[size - 1]
+		if (component.path.isComponentIndex(nextItem)) {
+			return this.clone()
+		}
+		const [, rest] = this.pop()
+		return rest.trim()
+	}
 }
 
 const parseFullPath = (fullPath: string | undefined) => {

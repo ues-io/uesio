@@ -7,19 +7,7 @@ import WiresActions from "./wiresactions"
 import PanelsActions from "./panelsactions"
 import ParamsActions from "./paramsactions"
 import { useBuilderState } from "../../../api/stateapi"
-
-const content: Record<string, definition.UtilityComponent> = {
-	components: ComponentsPanel,
-	wires: WiresPanel,
-	panels: PanelsPanel,
-	params: ParamsPanel,
-}
-
-const actions: Record<string, definition.UtilityComponent> = {
-	wires: WiresActions,
-	panels: PanelsActions,
-	params: ParamsActions,
-}
+import { ReactNode } from "react"
 
 const ViewInfoPanel: definition.UtilityComponent = (props) => {
 	const TabLabels = component.getUtility("uesio/io.tablabels")
@@ -32,8 +20,29 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 		"components"
 	)
 
-	const Content = selectedTab ? content[selectedTab] : undefined
-	const Actions = selectedTab ? actions[selectedTab] : undefined
+	let content: ReactNode = null
+	let actions: ReactNode = null
+
+	switch (selectedTab) {
+		case "components": {
+			content = <ComponentsPanel context={context} />
+			break
+		}
+		case "wires": {
+			content = <WiresPanel context={context} />
+			actions = <WiresActions context={context} />
+			break
+		}
+		case "panels": {
+			content = <PanelsPanel context={context} />
+			actions = <PanelsActions context={context} />
+			break
+		}
+		case "params": {
+			content = <ParamsPanel context={context} />
+			actions = <ParamsActions context={context} />
+		}
+	}
 
 	return (
 		<ScrollPanel
@@ -51,12 +60,12 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 					context={context}
 				/>
 			}
-			footer={Actions && <Actions context={context} />}
+			footer={actions}
 			context={context}
 			className={props.className}
 		>
 			<component.ErrorBoundary definition={{}} path="" context={context}>
-				{Content && <Content context={context} />}
+				{content}
 			</component.ErrorBoundary>
 		</ScrollPanel>
 	)
