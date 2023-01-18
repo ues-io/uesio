@@ -5,11 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/timeutils"
 )
 
 type DataScanner struct {
@@ -56,15 +54,6 @@ func (ds *DataScanner) Scan(src interface{}) error {
 			return errors.New("Postgresql number parse error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), f)
-	}
-
-	if fieldMetadata.Type == "DATE" {
-		stringValue := src.(string)
-		_, err := time.Parse(timeutils.ISO8601Date, stringValue)
-		if err != nil {
-			return errors.New("Postgresql date parsing error: " + fieldMetadata.GetFullName() + " : " + err.Error())
-		}
-		return (*ds.Item).SetField(fieldMetadata.GetFullName(), stringValue)
 	}
 
 	if adapt.IsReference(fieldMetadata.Type) {
