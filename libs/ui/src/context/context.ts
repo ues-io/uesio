@@ -37,7 +37,6 @@ interface FieldModeContext {
 
 interface WireContext {
 	wire: string
-	fieldMode?: FieldMode
 }
 
 interface RecordContext extends WireContext {
@@ -47,7 +46,7 @@ interface RecordContext extends WireContext {
 
 interface ViewContext {
 	view: string
-	viewDef: string
+	viewDef?: string
 	params?: Record<string, string>
 }
 
@@ -114,6 +113,9 @@ const isRecordContextFrame = (
 ): frame is RecordContextFrame => frame.type === "RECORD"
 const isWireContextFrame = (frame: ContextFrame): frame is WireContextFrame =>
 	frame.type === "WIRE"
+const isFieldModeContextFrame = (
+	frame: ContextFrame
+): frame is FieldModeContextFrame => frame.type === "FIELD_MODE"
 const hasParamsContext = (
 	frame: ContextFrame
 ): frame is ParamsContextFrame | ViewContextFrame =>
@@ -140,9 +142,7 @@ const providesWireContext = (
 	o: ContextOptions
 ): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
-const providesFieldModeContext = (
-	o: ContextOptions
-): o is FieldModeContext | RecordContext | WireContext =>
+const providesFieldModeContext = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
 function injectDynamicContext(context: Context, additional: ContextOptions) {
@@ -189,7 +189,7 @@ function injectDynamicContext(context: Context, additional: ContextOptions) {
 	return context
 }
 
-const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
+const newContext = () => new Context()
 
 const ANCESTOR_INDICATOR = "Parent."
 
@@ -369,8 +369,7 @@ class Context {
 	}
 
 	getFieldMode = () =>
-		this.stack.filter(hasWireContext).find((frame) => frame?.fieldMode)
-			?.fieldMode || "READ"
+		this.stack.find(isFieldModeContextFrame)?.fieldMode || "READ"
 
 	getUser = () => getCurrentState().user
 

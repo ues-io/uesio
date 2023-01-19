@@ -26,7 +26,7 @@ export const testWireSignal = async ({
 }: WireSignalTest) => {
 	const store = create({})
 
-	const context = newContext({ view })
+	const context = newContext().addViewFrame({ view })
 
 	const test = run()
 

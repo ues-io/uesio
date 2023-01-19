@@ -12,7 +12,7 @@ async function responseRedirect(response: LoginResponse, context: Context) {
 		? routeOps.redirect(context, response.redirectPath)
 		: routeOps.navigate(
 				// Always run the logout action in the site context.
-				newContext({
+				newContext().addRouteFrame({
 					site: context.getSite(),
 				}),
 				{

@@ -15,7 +15,7 @@ type T = {
 }
 const createTestWire = ({ signals, wireId, viewId, wireDef }: T) => {
 	const store = create({})
-	const context = newContext({ view: viewId })
+	const context = newContext().addViewFrame({ view: viewId })
 
 	api.wire.initWires(context, {
 		[wireId]: wireDef,

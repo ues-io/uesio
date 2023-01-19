@@ -83,12 +83,15 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const [mode] = useMode(componentId, definition.mode)
 
 	// If we got a wire from the definition, add it to context
-	const newContext = definition.wire
-		? context.addWireFrame({
-				wire: definition.wire,
-				fieldMode: mode,
-		  })
-		: context
+	let newContext = context
+	if (definition.wire) {
+		newContext = newContext.addWireFrame({
+			wire: definition.wire,
+		})
+	}
+	if (mode) {
+		newContext = newContext.addFieldModeFrame(mode)
+	}
 
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
@@ -111,8 +114,6 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				? context.addRecordFrame({
 						wire: definition.wire,
 						record: record.getId(),
-						recordData: record.source,
-						fieldMode: mode,
 				  })
 				: context,
 		newContext
