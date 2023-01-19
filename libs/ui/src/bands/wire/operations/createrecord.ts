@@ -27,7 +27,7 @@ export default (context: Context, wirename: string, prepend?: boolean) => {
 		})
 	)
 	return context.addRecordFrame({
-		wire: wirename,
 		record: recordId,
+		wire: wirename,
 	})
 }

@@ -2,6 +2,7 @@ import {
 	Context,
 	ContextOptions,
 	injectDynamicContext,
+	newContext,
 } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import componentSignal from "../bands/component/signals"
@@ -60,8 +61,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							severity: "error",
 					  }))),
 			]
-			// Do we need to start a new context here? Or is it okay to continue with the previous ones?
-			await runMany(signals, context)
+			await runMany(signals, newContext())
 			if (!signal.onerror?.continue) break
 		}
 	}

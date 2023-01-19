@@ -16,7 +16,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel, content } = props
 
 	const wireName = props.wire
-	const wire = !wireName ? api.wire.useWire(wireName, context) : undefined
+	const wire = wireName ? api.wire.useWire(wireName, context) : undefined
 
 	if (!wire) return null
 

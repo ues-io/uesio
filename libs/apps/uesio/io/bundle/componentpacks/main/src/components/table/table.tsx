@@ -109,13 +109,18 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
 		data,
 		definition.recordDisplay,
-		(record, context) =>
-			record
-				? context.addRecordFrame({
-						wire: definition.wire,
-						record: record.getId(),
-				  })
-				: context,
+		(record, context) => {
+			if (record) {
+				context = context.addRecordFrame({
+					wire: definition.wire,
+					record: record.getId(),
+			  	})
+			}
+			if (mode) {
+				context = context.addFieldModeFrame(mode)
+			}
+			return context
+		},
 		newContext
 	)
 

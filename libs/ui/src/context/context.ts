@@ -45,13 +45,13 @@ interface RecordContext {
 	recordData?: PlainWireRecord // A way to store arbitrary record data in context
 }
 
-interface ViewContext {
+interface ViewContext extends ParamsContext {
 	view: string
 	viewDef?: string
 	params?: Record<string, string>
 }
 
-interface RouteContext {
+interface RouteContext extends ParamsContext {
 	params?: Record<string, string>
 	route?: RouteState
 	siteadmin?: SiteAdminState
@@ -119,8 +119,8 @@ const isFieldModeContextFrame = (
 ): frame is FieldModeContextFrame => frame.type === "FIELD_MODE"
 const hasParamsContext = (
 	frame: ContextFrame
-): frame is ParamsContextFrame | ViewContextFrame =>
-	["PARAMS", "VIEW"].includes(frame.type)
+): frame is ParamsContextFrame | ViewContextFrame | RouteContextFrame =>
+	["PARAMS", "VIEW", "ROUTE"].includes(frame.type)
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === "ROUTE"
 const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
@@ -135,31 +135,31 @@ const hasViewContext = (
 	["VIEW", "ROUTE"].includes(frame.type)
 
 // Type Guards for pre-resolved Context objects (no type property yet)
-const providesWorkspaceContext = (o: ContextOptions): o is RouteContext =>
+const providesWorkspace = (o: ContextOptions): o is RouteContext =>
 	Object.prototype.hasOwnProperty.call(o, "workspace")
-const providesSiteAdminContext = (o: ContextOptions): o is RouteContext =>
+const providesSiteAdmin = (o: ContextOptions): o is RouteContext =>
 	Object.prototype.hasOwnProperty.call(o, "siteadmin")
-const providesWireContext = (
-	o: ContextOptions
-): o is WireContext | RecordContext =>
+const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
-const providesFieldModeContext = (o: ContextOptions): o is FieldModeContext =>
+const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
+const providesParams = (
+	o: ContextOptions
+): o is RouteContext | ParamsContext | ViewContext =>
+	Object.prototype.hasOwnProperty.call(o, "params")
 
 function injectDynamicContext(context: Context, additional: ContextOptions) {
 	if (additional) {
-		const workspace = providesWorkspaceContext(additional)
+		const workspace = providesWorkspace(additional)
 			? additional.workspace
 			: undefined
-		const siteadmin = providesSiteAdminContext(additional)
+		const siteadmin = providesSiteAdmin(additional)
 			? additional.siteadmin
 			: undefined
-		const fieldMode = providesFieldModeContext(additional)
+		const fieldMode = providesFieldMode(additional)
 			? additional.fieldMode
 			: undefined
-		const wire = providesWireContext(additional)
-			? additional.wire
-			: undefined
+		const wire = providesWire(additional) ? additional.wire : undefined
 
 		if (workspace) {
 			context = context.addRouteFrame({
@@ -254,11 +254,13 @@ class Context {
 		return undefined
 	}
 
-	getViewId = () => this.stack.find(hasViewContext)?.view
+	getViewId = () =>
+		this.stack.filter(hasViewContext).find((f) => f.view)?.view
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () => this.stack.find(hasParamsContext)?.params
+	getParams = () =>
+		this.stack.filter(hasParamsContext).find(providesParams)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
@@ -269,7 +271,8 @@ class Context {
 		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
 		defaultTheme
 
-	getThemeId = () => this.stack.find(isRouteContextFrame)?.theme
+	getThemeId = () =>
+		this.stack.filter(isRouteContextFrame).find((f) => f.theme)?.theme
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -294,9 +297,13 @@ class Context {
 
 	getRoute = () => this.stack.find(isRouteContextFrame)?.route
 
-	getWorkspace = () => this.stack.find(isRouteContextFrame)?.workspace
+	getWorkspace = () =>
+		this.stack.filter(isRouteContextFrame).find(providesWorkspace)
+			?.workspace
 
-	getSiteAdmin = () => this.stack.find(isRouteContextFrame)?.siteadmin
+	getSiteAdmin = () =>
+		this.stack.filter(isRouteContextFrame).find(providesSiteAdmin)
+			?.siteadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -311,12 +318,13 @@ class Context {
 		return undefined
 	}
 
-	getSite = () => this.stack.find(isRouteContextFrame)?.site
+	getSite = () =>
+		this.stack.filter(isRouteContextFrame).find((f) => f.site)?.site
 
-	getWireId = () => this.stack.find(hasWireContext)?.wire
+	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
 	findWireFrame = () => {
-		const index = this.stack.findIndex(hasWireContext)
+		const index = this.stack.filter(hasWireContext).findIndex(providesWire)
 		if (index < 0) {
 			return undefined
 		}
@@ -491,6 +499,7 @@ class Context {
 	getViewStack = () =>
 		this.stack
 			.filter(hasViewContext)
+			.filter((f) => f.viewDef)
 			.map((contextFrame) => contextFrame.viewDef)
 }
 
