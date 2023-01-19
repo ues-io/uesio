@@ -112,12 +112,16 @@ const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
 const isRecordContextFrame = (
 	frame: ContextFrame
 ): frame is RecordContextFrame => frame.type === "RECORD"
+const isWireContextFrame = (frame: ContextFrame): frame is WireContextFrame =>
+	frame.type === "WIRE"
 const hasParamsContext = (
 	frame: ContextFrame
 ): frame is ParamsContextFrame | ViewContextFrame =>
 	["PARAMS", "VIEW"].includes(frame.type)
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === "ROUTE"
+const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
+	frame.type === "VIEW"
 const hasWireContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | WireContextFrame =>
@@ -497,6 +501,10 @@ export {
 	FieldMode,
 	RouteState,
 	getWire,
+	isRouteContextFrame,
+	isRecordContextFrame,
+	isViewContextFrame,
+	isWireContextFrame,
 	newContext,
 	injectDynamicContext,
 }
