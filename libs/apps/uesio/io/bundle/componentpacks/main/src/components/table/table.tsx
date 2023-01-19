@@ -114,7 +114,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				context = context.addRecordFrame({
 					wire: definition.wire,
 					record: record.getId(),
-			  	})
+				})
 			}
 			if (mode) {
 				context = context.addFieldModeFrame(mode)
