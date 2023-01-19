@@ -4,7 +4,7 @@ import {
 	UC,
 	UtilityComponent,
 } from "../definition/definition"
-import { Context, ContextFrame } from "../context/context"
+import { injectDynamicContext, Context, ContextFrame } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
@@ -13,38 +13,6 @@ import ErrorBoundary from "../components/errorboundary"
 import { mergeDefinitionMaps } from "./merge"
 import { MetadataKey } from "../bands/builder/types"
 import { useShould } from "./display"
-
-function additionalContext(context: Context, additional: ContextFrame) {
-	if (additional) {
-		const frame: ContextFrame = {}
-		const workspace = additional.workspace
-		const siteadmin = additional.siteadmin
-		const fieldMode = additional.fieldMode
-
-		if (workspace) {
-			frame.workspace = {
-				name: context.mergeString(workspace.name),
-				app: context.mergeString(workspace.app),
-			}
-		}
-		if (fieldMode) {
-			frame.fieldMode = fieldMode
-		}
-
-		if (siteadmin) {
-			frame.siteadmin = {
-				name: context.mergeString(siteadmin.name),
-				app: context.mergeString(siteadmin.app),
-			}
-		}
-		const wire = additional.wire
-		if (wire) {
-			frame.wire = wire
-		}
-		return context.addFrame(frame)
-	}
-	return context
-}
 
 function getThemeOverride(
 	variant: ComponentVariant,
@@ -121,7 +89,7 @@ const Component: UC<Record<string, unknown>> = (props) => {
 			<Loader
 				{...props}
 				definition={mergedDefinition || {}}
-				context={additionalContext(
+				context={injectDynamicContext(
 					context,
 					mergedDefinition?.["uesio.context"] as ContextFrame
 				)}

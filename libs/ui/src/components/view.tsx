@@ -71,7 +71,11 @@ const View: UC<ViewDefinition> = (props) => {
 		context.mergeStringMap(params)
 	)
 
-	const viewContext = context.addViewFrame(viewId, viewDefId, paramState)
+	const viewContext = context.addViewFrame({
+		view: viewId,
+		viewDef: viewDefId,
+		params: paramState,
+	})
 
 	useLoadWires(viewContext, viewDef)
 

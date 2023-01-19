@@ -83,7 +83,10 @@ export default async (context: Context, wires?: string[]) => {
 		if (changeKeys.length === 1) {
 			const [, name] = getWireParts(wire.wire)
 			const errors = getErrorStrings(wire)
-			const resultContext = context.addRecordFrame(name, changeKeys[0])
+			const resultContext = context.addRecordFrame({
+				wire: name,
+				record: changeKeys[0],
+			})
 			if (errors.length)
 				return resultContext.addErrorFrame(getErrorStrings(wire))
 			return resultContext

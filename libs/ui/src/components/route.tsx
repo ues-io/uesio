@@ -80,7 +80,6 @@ const Route: UtilityComponent = (props) => {
 	const workspace = route.workspace
 
 	const routeContext = props.context.addRouteFrame({
-		type: "ROUTE",
 		site,
 		route,
 		workspace,
