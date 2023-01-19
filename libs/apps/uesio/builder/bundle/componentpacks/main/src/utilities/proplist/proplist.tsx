@@ -1,30 +1,29 @@
 import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
-import MetadataProp from "../metadataprop/metadataprop"
-import SelectProp from "../selectprop/selectprop"
-import MultiSelectProp from "../multiselectprop/multiselectprop"
-import KeyProp from "../keyprop/keyprop"
-import WireProp from "../wireprop/wireprop"
-import BotProp from "../botprop/botprop"
-import WiresProp from "../wiresprop/wiresprop"
-import NamespaceProp from "../namespaceprop/namespaceprop"
-import NumberProp from "../numberprop/numberprop"
-import BooleanProp from "../booleanprop/booleanprop"
-import TextProp from "../textprop/textprop"
-import TextAreaProp from "../textareaprop/textareaprop"
+import MetadataProp from "../../propertyrenderers/metadataprop"
+import SelectProp from "../../propertyrenderers/selectprop"
+import MultiSelectProp from "../../propertyrenderers/multiselectprop"
+import KeyProp from "../../propertyrenderers/keyprop"
+import WireProp from "../../propertyrenderers/wireprop"
+import BotProp from "../../propertyrenderers/botprop"
+import WiresProp from "../../propertyrenderers/wiresprop"
+import NamespaceProp from "../../propertyrenderers/namespaceprop"
+import NumberProp from "../../propertyrenderers/numberprop"
+import BooleanProp from "../../propertyrenderers/booleanprop"
+import TextProp from "../../propertyrenderers/textprop"
+import TextAreaProp from "../../propertyrenderers/textareaprop"
 import IconProp from "../iconprop/iconprop"
-import ParamProp from "../paramprop/paramprop"
+import ParamProp from "../../propertyrenderers/paramprop"
 import ParamsProp from "../paramsprop/paramsprop"
 import FieldProp from "../fieldprop/fieldprop"
 import FieldsProp from "../fieldsprop/fieldsprop"
 import PropListProp from "../proplistprop/proplistprop"
-import ConditionPropComponent from "../conditionprop/conditionprop"
+import ConditionPropComponent from "../../propertyrenderers/conditionprop"
 import ProplistsProp from "../proplistsprop/proplistsprop"
 
 interface Props extends definition.UtilityProps {
 	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
-	valueAPI: builder.ValueAPI
 	path: string
 }
 
@@ -107,9 +106,9 @@ export const propsToRender = (
 	})
 
 const PropList: FunctionComponent<Props> = (props) => {
-	const { path, propsDef, context, properties, valueAPI } = props
+	const { path, propsDef, context, properties } = props
 
-	const conditionValues = valueAPI.get(path) as definition.DefinitionMap
+	const conditionValues = {} as definition.DefinitionMap
 	const propertiesToRender = propsToRender(properties, conditionValues)
 
 	return (
@@ -139,7 +138,6 @@ const PropList: FunctionComponent<Props> = (props) => {
 							descriptor={descriptor}
 							//index={index}
 							context={context}
-							valueAPI={valueAPI}
 						/>
 					)
 				)

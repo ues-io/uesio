@@ -13,28 +13,12 @@ type T = {
 	context: context.Context
 	path: string
 	propsDef: builder.BuildPropertiesDefinition
-	valueAPI: builder.ValueAPI
 	expandType?: "popper"
 	descriptor: {
 		properties: builder.PropDescriptor[]
 		nameTemplate?: string
 		nameFallback?: string
 	}
-}
-
-// TODO: Write test
-export const mergeTemplate = (
-	template: string,
-	basePath: string,
-	valueAPI: builder.ValueAPI
-) => {
-	const res = template.replace(
-		/\${(\w*)}/g,
-		(expression, key: string) =>
-			valueAPI.get(basePath + `[${key}]`) as string
-	)
-
-	return res === "undefined" || res === "null" ? null : res
 }
 
 const PropListsList: FC<T> = (props) => {
@@ -46,8 +30,7 @@ const PropListsList: FC<T> = (props) => {
 		context,
 		expandType,
 		path = "",
-		descriptor: { properties, nameTemplate, nameFallback },
-		valueAPI,
+		descriptor: { properties, nameFallback },
 		propsDef,
 	} = props
 
@@ -178,7 +161,6 @@ const PropListsList: FC<T> = (props) => {
 																properties
 															}
 															context={context}
-															valueAPI={valueAPI}
 														/>
 													</div>
 												</ScrollPanel>
@@ -192,16 +174,9 @@ const PropListsList: FC<T> = (props) => {
 													propsDef={propsDef}
 													properties={properties}
 													context={context}
-													valueAPI={valueAPI}
 												/>
 											) : (
-												<span>
-													{mergeTemplate(
-														nameTemplate || "",
-														path + `[${i}]`,
-														valueAPI
-													) || nameFallback}
-												</span>
+												<span>{nameFallback}</span>
 											)}
 										</div>
 

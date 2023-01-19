@@ -1,22 +1,20 @@
-import { FunctionComponent } from "react"
-import { definition, builder } from "@uesio/ui"
-import SelectProp from "../selectprop/selectprop"
+import { definition } from "@uesio/ui"
+import SelectProp from "./selectprop"
+import { FullPath } from "../api/path"
 
-type DefinitionSelectorProps = builder.PropRendererProps & {
+type DefinitionSelectorProps = {
+	path: FullPath
+	label: string
 	definitionPath: string
 	noValueLabel: string
 	filter?: (def: unknown, index: string | number) => boolean
 	valueGrabber?: (def: unknown, index: string | number) => string | undefined
 	labelGrabber?: (def: unknown, index: string | number) => string | undefined
 }
-const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
-	props
-) => {
-	const descriptor = props.descriptor
-
-	const definitions = props.valueAPI.get(
-		props.definitionPath
-	) as definition.DefinitionMap
+const DefinitionSelectorProp: definition.UtilityComponent<
+	DefinitionSelectorProps
+> = (props) => {
+	const definitions = {} as definition.DefinitionMap
 
 	let entries = Object.keys(definitions || {})
 	if (props.filter) {
@@ -39,16 +37,7 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 		})),
 	]
 
-	return (
-		<SelectProp
-			{...props}
-			descriptor={{
-				...descriptor,
-				type: "SELECT",
-				options,
-			}}
-		/>
-	)
+	return <SelectProp {...props} options={options} context={props.context} />
 }
 
 export default DefinitionSelectorProp

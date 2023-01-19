@@ -2,10 +2,8 @@ import { definition, api, context as ctx } from "@uesio/ui"
 import { FullPath } from "./path"
 import { setSelectedPath } from "./stateapi"
 
-const get = (path: FullPath): definition.Definition => {
-	if (path === undefined) return
-	return api.builder.getDefinitionAtPath(path.pathCombine())
-}
+const get = (context: ctx.Context, path: FullPath) =>
+	api.builder.getDefinitionAtPath(path.pathCombine())
 
 const set = (
 	context: ctx.Context,
@@ -48,12 +46,17 @@ const move = (
 	setSelectedPath(context, toPath)
 }
 
-const clone = (path: FullPath) => {
+const clone = (context: ctx.Context, path: FullPath) => {
 	api.builder.cloneDefinition(path.pathCombine())
 }
 
-const cloneKey = (path: FullPath) => {
+const cloneKey = (context: ctx.Context, path: FullPath) => {
 	api.builder.cloneKeyDefinition(path.pathCombine())
+}
+
+const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
+	api.builder.changeDefinitionKey(path.pathCombine(), key)
+	setSelectedPath(context, path.addLocal(key))
 }
 
 const useDefinition = (path: FullPath) =>
@@ -80,6 +83,7 @@ export {
 	get,
 	clone,
 	cloneKey,
+	changeKey,
 	useContent,
 	setContent,
 	useDefinition,

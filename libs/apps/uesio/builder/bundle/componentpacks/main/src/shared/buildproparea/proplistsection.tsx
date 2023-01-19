@@ -4,7 +4,7 @@ import { builder } from "@uesio/ui"
 import PropList from "../../utilities/proplist/proplist"
 
 const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { path, context, propsDef, valueAPI } = props
+	const { path, context, propsDef } = props
 	const section = props.section as builder.PropListSection
 
 	return (
@@ -15,7 +15,6 @@ const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
 					propsDef={propsDef}
 					properties={section.properties}
 					context={context}
-					valueAPI={valueAPI}
 				/>
 			)}
 		</>

@@ -10,11 +10,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
-	const { path, context, valueAPI } = props
+	const { path, context } = props
 
-	const componentDef = valueAPI.get(path || "") as
-		| definition.DefinitionMap
-		| undefined
+	const componentDef = {} as definition.DefinitionMap | undefined
 
 	const signalsDef = componentDef?.signals as
 		| definition.Definition[]
@@ -41,9 +39,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						label="New Signal"
 						onClick={() => {
-							valueAPI.add(signalsPath, {
-								signal: "NEW_SIGNAL",
-							})
+							//valueAPI.add(signalsPath, {
+							//	signal: "NEW_SIGNAL",
+							//})
 						}}
 					/>
 				}
@@ -75,13 +73,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									defaultDefinition: () => ({}),
 									properties:
 										api.builder.getSignalProperties(signal),
-									actions: [
-										{ type: "DELETE" },
-										{ type: "MOVE" },
-										{ type: "CLONE" },
-									],
 								}}
-								valueAPI={valueAPI}
 							/>
 						}
 					>

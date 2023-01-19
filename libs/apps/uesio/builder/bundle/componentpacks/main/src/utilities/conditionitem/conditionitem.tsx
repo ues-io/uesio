@@ -1,13 +1,8 @@
 import { FunctionComponent } from "react"
-import { component, context, builder, wire } from "@uesio/ui"
+import { component, context, wire } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesPane from "../../shared/propertiespane"
-import {
-	getBaseProps,
-	getOperatorProp,
-	getValueProp,
-	valueSourceProps,
-} from "./conditionitemprops"
+
 import PropNodeTag from "../propnodetag/propnodetag"
 import { useSelectedPath } from "../../api/stateapi"
 
@@ -15,28 +10,7 @@ type Props = {
 	conditionPath: string
 	context: context.Context
 	condition: wire.WireConditionState
-	valueAPI: builder.ValueAPI
 }
-
-// const defaultConditionDef = {
-// 	field: null,
-// 	operator: "",
-// }
-// const defaultConditionGroupDef = {
-// 	type: "GROUP",
-// 	conjunction: "AND",
-// 	conditions: [defaultConditionDef],
-// }
-
-// const conditionItemActions: builder.ActionDescriptor[] = [
-// 	{ type: "DELETE" },
-// 	{ type: "MOVE" },
-// 	// TO-DO
-// 	// {
-// 	// 	label: "Toggle Condition",
-// 	// 	type: "TOGGLE_CONDITION",
-// 	// },
-// ]
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -73,29 +47,10 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 	return ""
 }
 
-const getConditionProperties = (
-	context: context.Context,
-	conditionState: wire.WireConditionState
-): builder.PropDescriptor[] => {
-	const wire = context.getWire()
-	const collection = wire?.getCollection()
-	const fieldId =
-		conditionState && "field" in conditionState ? conditionState.field : ""
-	const field = collection?.getField(fieldId)
-	const collectionName = collection?.getFullName() || ""
-
-	return [
-		...getBaseProps(collectionName),
-		getOperatorProp(field),
-		getValueProp(field),
-		...valueSourceProps,
-	]
-}
-
 const ConditionItem: FunctionComponent<Props> = (props) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 	const Grid = component.getUtility("uesio/io.grid")
-	const { conditionPath, context, condition, valueAPI } = props
+	const { conditionPath, context, condition } = props
 
 	const isGroup = condition.type === "GROUP"
 	const groupConditions =
@@ -124,14 +79,8 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 						title: "Condition",
 						sections: [],
 						defaultDefinition: () => ({}),
-						properties: getConditionProperties(
-							context,
-							valueAPI.get(
-								selectedPath.localPath
-							) as wire.WireConditionState
-						),
+						properties: [],
 					}}
-					valueAPI={valueAPI}
 				/>
 			}
 		>
@@ -158,7 +107,6 @@ const ConditionItem: FunctionComponent<Props> = (props) => {
 									conditionPath={conditionOnGroupPath}
 									context={context}
 									condition={conditionOnGroup}
-									valueAPI={valueAPI}
 								/>
 							)
 						}

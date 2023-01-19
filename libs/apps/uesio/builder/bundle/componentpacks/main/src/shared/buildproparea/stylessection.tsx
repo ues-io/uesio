@@ -11,10 +11,10 @@ type StyleValue = {
 const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const ListField = component.getUtility("uesio/io.listfield")
-	const { path, context, propsDef, valueAPI } = props
+	const { path, context, propsDef } = props
 
-	const stylesPath = `${path}["uesio.styles"]`
-	const styleData = valueAPI.get(stylesPath) as definition.DefinitionMap
+	//const stylesPath = `${path}["uesio.styles"]`
+	const styleData = {} as definition.DefinitionMap
 	const componentType = component.path.getKeyAtPath(path || "")
 
 	const [styleError, setStyleError] = useState<Record<string, StyleValue[]>>()
@@ -50,6 +50,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			const { [className]: value, ...newStyleError } = styleError
 			setStyleError(newStyleError)
 		}
+		/*
 		valueAPI.set(
 			`${stylesPath}["${className}"]`,
 			value.reduce(
@@ -60,6 +61,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 				{} as Record<string, StyleValue>
 			)
 		)
+		*/
 	}
 
 	const properties: builder.PropDescriptor[] = [
@@ -79,7 +81,6 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 				propsDef={propsDef}
 				properties={properties}
 				context={context}
-				valueAPI={valueAPI}
 			/>
 			{propsDef.classes?.map((className) => (
 				<>

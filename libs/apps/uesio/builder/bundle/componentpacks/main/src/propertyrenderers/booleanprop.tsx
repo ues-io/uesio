@@ -1,25 +1,35 @@
-import { builder, component } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
+import { get, set } from "../api/defapi"
+import { FullPath } from "../api/path"
 
-const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
-	descriptor,
-	valueAPI,
-	context,
+interface BooleanProps {
+	label: string
+	path: FullPath
+	displayType?: string
+}
+
+const BooleanProp: definition.UtilityComponent<BooleanProps> = ({
+	label,
 	path,
+	context,
+	displayType,
 }) => {
 	const SelectField = component.getUtility("uesio/io.selectfield")
 	const CheckBoxField = component.getUtility("uesio/io.checkboxfield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-	const selected = !!valueAPI.get(path)
+	const selected = !!get(context, path)
 	const getInput = () => {
-		switch ((descriptor as builder.BooleanProp).displaytype) {
+		switch (displayType) {
 			case "switch":
 				return <div>Switch not supported yet</div>
 			case "select": {
 				return (
 					<SelectField
 						value={selected}
-						setValue={(value: string) =>
-							valueAPI.set(path, value === "true")
+						setValue={
+							(/*value: string*/) => {
+								//valueAPI.set(path, value === "true")
+							}
 						}
 						options={[
 							{ value: "true", label: "True" },
@@ -34,7 +44,9 @@ const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
 				return (
 					<CheckBoxField
 						value={selected}
-						setValue={(value: boolean) => valueAPI.set(path, value)}
+						setValue={(value: boolean) => {
+							set(context, path, value)
+						}}
 						context={context}
 					/>
 				)
@@ -45,7 +57,7 @@ const BooleanProp: builder.PropComponent<builder.BooleanProp> = ({
 		<FieldWrapper
 			variant="uesio/builder.propfield"
 			labelPosition="left"
-			label={descriptor.label}
+			label={label}
 			context={context}
 		>
 			{getInput()}

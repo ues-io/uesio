@@ -1,15 +1,22 @@
-import { component, builder } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
+import { changeKey } from "../api/defapi"
+import { FullPath } from "../api/path"
 
-const KeyProp: builder.PropComponent<builder.KeyProp> = (props) => {
+interface KeyProps {
+	label: string
+	path: FullPath
+}
+
+const KeyProp: definition.UtilityComponent<KeyProps> = (props) => {
 	const TextField = component.getUtility("uesio/io.textfield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-	const { path, descriptor, context, valueAPI } = props
+	const { path, context, label } = props
 	if (!path) return null
-	const key = component.path.getKeyAtPath(path)
+	const [key] = path.pop()
 	return (
 		<FieldWrapper
 			labelPosition="left"
-			label={descriptor.label}
+			label={label}
 			context={context}
 			variant="uesio/builder.propfield"
 		>
@@ -17,7 +24,7 @@ const KeyProp: builder.PropComponent<builder.KeyProp> = (props) => {
 				variant="uesio/io.field:uesio/builder.propfield"
 				value={key}
 				setValue={(value: string): void =>
-					valueAPI.changeKey(path, value)
+					changeKey(context, path, value)
 				}
 				context={context}
 			/>

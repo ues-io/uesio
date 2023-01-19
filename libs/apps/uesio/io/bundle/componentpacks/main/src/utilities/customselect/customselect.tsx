@@ -50,7 +50,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 				color: "#444",
 				border: "none",
 				outline: "none",
-				padding: "6px 3px 6px 0",
+				padding: "0px 3px 0px 0",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",

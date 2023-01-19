@@ -12,11 +12,11 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const Popper = component.getUtility("uesio/io.popper")
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
-	const { path, context, valueAPI } = props
+	const { path, context } = props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [showPopper, setShowPopper] = useState(false)
 
-	const wireDef = valueAPI.get(path) as wire.RegularWireDefinition | undefined
+	const wireDef = {} as wire.RegularWireDefinition | undefined
 
 	if (!wireDef) return null
 
@@ -71,7 +71,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 							wireDef={wireDef}
 							context={context}
 							path={path || ""}
-							valueAPI={valueAPI}
 						/>
 					</ScrollPanel>
 				</Popper>
@@ -111,7 +110,6 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 						key={fieldId}
 						fieldDef={wireDef.fields[fieldId]}
 						context={context}
-						valueAPI={valueAPI}
 					/>
 				))}
 			</div>

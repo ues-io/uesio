@@ -1,7 +1,7 @@
 import { component, context, definition } from "@uesio/ui"
 import { move, get } from "../api/defapi"
 import { FullPath } from "../api/path"
-import ActionButton from "../shared/buildproparea/actions/actionbutton"
+import ActionButton from "../helpers/actionbutton"
 
 const getArrayMoveParams = (
 	context: context.Context,
@@ -11,7 +11,10 @@ const getArrayMoveParams = (
 	const index = component.path.getIndexFromPath(path.localPath)
 	const indexPath = component.path.getIndexPath(path.localPath)
 	const parentPath = component.path.getParentPath(indexPath)
-	const parentDef = get(path.setLocal(parentPath)) as definition.Definition[]
+	const parentDef = get(
+		context,
+		path.setLocal(parentPath)
+	) as definition.Definition[]
 	const size = parentDef?.length
 	const enableBackward = !!index
 	const enableForward = !!(index !== null && size && index < size - 1)
@@ -43,7 +46,10 @@ const getMapMoveParams = (
 ): [boolean, boolean, () => void, () => void] => {
 	const parentPath = component.path.getParentPath(path.localPath)
 	const itemKey = component.path.getKeyAtPath(path.localPath)
-	const parentDef = get(path.setLocal(parentPath)) as definition.DefinitionMap
+	const parentDef = get(
+		context,
+		path.setLocal(parentPath)
+	) as definition.DefinitionMap
 	const entries = Object.entries(parentDef)
 	const size = entries.length
 	const index = entries.findIndex(([key]) => key === itemKey)

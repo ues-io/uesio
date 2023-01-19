@@ -11,7 +11,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
-	const { path, context, valueAPI } = props
+	const { path, context } = props
 
 	const displayPath = `${path}["uesio.display"]`
 
@@ -19,8 +19,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) return null
 
-	const conditions =
-		(valueAPI.get(displayPath) as component.DisplayCondition[]) || []
+	const conditions = {} as component.DisplayCondition[]
 
 	return (
 		<>
@@ -41,9 +40,9 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 						}
 						label="New Condition"
 						onClick={() => {
-							valueAPI.add(displayPath, {
-								type: "null",
-							})
+							//valueAPI.add(displayPath, {
+							//	type: "null",
+							//})
 						}}
 					/>
 				}
@@ -77,7 +76,6 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 										defaultDefinition: () => ({}),
 										properties: conditionProperties,
 									}}
-									valueAPI={valueAPI}
 								/>
 							}
 							context={context}

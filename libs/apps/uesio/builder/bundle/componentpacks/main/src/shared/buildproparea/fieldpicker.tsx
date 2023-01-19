@@ -1,4 +1,4 @@
-import { builder, context, api, wire, component, styles } from "@uesio/ui"
+import { context, api, wire, component, styles } from "@uesio/ui"
 import React, { FC } from "react"
 import has from "lodash/has"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
@@ -9,7 +9,6 @@ import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 type T = {
-	valueAPI: builder.ValueAPI
 	path: string
 	context: context.Context
 	wireDef: wire.WireDefinition | undefined
@@ -71,7 +70,7 @@ const useSearch = (items: string[] = []) => {
 
 const FieldPicker: FC<T> = (props) => {
 	const Icon = component.getUtility("uesio/io.icon")
-	const { valueAPI, path, context, wireDef } = props
+	const { path, context, wireDef } = props
 	const [scrollBoxRef, scrolledStyles] = useShadowOnScroll([])
 
 	const transition = "opacity 150ms ease-in, transform 300ms ease-in-out"
@@ -315,9 +314,7 @@ const FieldPicker: FC<T> = (props) => {
 								<PropNodeTag
 									key={index}
 									onClick={() => {
-										selected
-											? valueAPI.remove(setPath)
-											: valueAPI.set(setPath, null, true)
+										//
 									}}
 									selected={selected}
 									context={context}
