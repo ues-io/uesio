@@ -494,7 +494,9 @@ class Context {
 		this.mergeMap(map) as Record<string, string>
 
 	getCurrentErrors = () =>
-		isErrorContextFrame(this.stack[0]) ? this.stack[0].errors : []
+		this.stack.length && isErrorContextFrame(this.stack[0])
+			? this.stack[0].errors
+			: []
 
 	getViewStack = () =>
 		this.stack
