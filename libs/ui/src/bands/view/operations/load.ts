@@ -4,11 +4,8 @@ import initializeWiresOp from "../../wire/operations/initialize"
 import { runMany } from "../../../signals/signals"
 import { getCurrentState } from "../../../store/store"
 import { selectWire } from "../../wire"
-import { dispatchRouteDeps } from "../../route/utils"
-import { batch } from "react-redux"
 import { useEffect } from "react"
 import { ViewDefinition } from "../../../definition/viewdef"
-import { platform } from "../../../platform/platform"
 
 const useLoadWires = (
 	context: Context,
@@ -16,20 +13,6 @@ const useLoadWires = (
 ) => {
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Def Context Provided")
-
-	useEffect(() => {
-		;(async () => {
-			if (context.getBuildMode()) {
-				if (!viewDef) {
-					const deps = await platform.getBuilderDeps(context)
-					if (!deps) throw new Error("Could not get View Def")
-					batch(() => {
-						dispatchRouteDeps(deps)
-					})
-				}
-			}
-		})()
-	}, [viewDefId])
 
 	if (!viewDef) throw new Error("Could not get View Def")
 

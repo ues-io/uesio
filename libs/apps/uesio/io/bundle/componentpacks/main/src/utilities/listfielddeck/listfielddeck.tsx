@@ -19,7 +19,7 @@ const ListFieldDeck: FunctionComponent<ListFieldDeckUtilityProps> = (props) => {
 					definition={props.options}
 					listName="components"
 					path={props.path}
-					context={props.context.addFrame({
+					context={props.context.addRecordFrame({
 						recordData: record,
 					})}
 				/>

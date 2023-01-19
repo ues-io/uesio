@@ -125,10 +125,4 @@ const getUtility = <T extends UtilityProps = UtilityPropsPlus>(
 	key: MetadataKey
 ) => getUtilityLoader(key) as UtilityComponent<T>
 
-export {
-	Component,
-	getDefinitionFromVariant,
-	additionalContext,
-	getUtility,
-	parseVariantName,
-}
+export { Component, getDefinitionFromVariant, getUtility, parseVariantName }

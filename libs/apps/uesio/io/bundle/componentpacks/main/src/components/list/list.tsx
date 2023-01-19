@@ -25,7 +25,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
-		? context.addFrame({
+		? context.addWireFrame({
 				wire: definition.wire,
 		  })
 		: context
@@ -46,10 +46,12 @@ const List: definition.UC<ListDefinition> = (props) => {
 					definition={definition}
 					listName="components"
 					path={path}
-					context={newContext.addFrame({
-						record: record.getId(),
-						fieldMode: mode,
-					})}
+					context={newContext
+						.addRecordFrame({
+							wire: wire.getId(),
+							record: record.getId(),
+						})
+						.addFieldModeFrame(mode)}
 				/>
 			))}
 		</>

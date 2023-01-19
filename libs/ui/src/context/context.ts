@@ -39,8 +39,9 @@ interface WireContext {
 	wire: string
 }
 
-interface RecordContext extends WireContext {
-	record: string
+interface RecordContext {
+	wire?: string
+	record?: string
 	recordData?: PlainWireRecord // A way to store arbitrary record data in context
 }
 

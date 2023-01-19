@@ -58,12 +58,9 @@ const Route: UtilityComponent = (props) => {
 				return
 			}
 			routeOps.navigate(
-				new Context([
-					{
-						type: "WORKSPACE",
-						workspace: event.state.workspace,
-					},
-				]),
+				new Context().addRouteFrame({
+					workspace: event.state.workspace,
+				}),
 				{
 					path: event.state.path,
 					namespace: event.state.namespace,
