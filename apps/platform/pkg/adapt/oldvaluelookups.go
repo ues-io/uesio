@@ -9,8 +9,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
-	value, err := GetFieldValue(item, fieldName)
+func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
+	value, err := change.GetField(fieldName)
 	if err != nil {
 		return "", err
 	}

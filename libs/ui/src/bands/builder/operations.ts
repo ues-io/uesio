@@ -64,6 +64,10 @@ const save =
 			if (defState?.content) {
 				changes[defKey] = {
 					"uesio/studio.definition": defState.content,
+					// "uesio/studio.workspace": {
+					// 	[UNIQUE_KEY_FIELD]: `${workspace.app}:${workspace.name}`,
+					// },
+					// "uesio/studio.name": `${name}`,
 					[UNIQUE_KEY_FIELD]: `${workspace.app}:${workspace.name}:${name}`,
 				}
 			}
