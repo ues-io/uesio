@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, component, api, metadata, styles } from "@uesio/ui"
+import NamespaceLabel from "../namespacelabel/namespacelabel"
 
 interface MetadataPickerProps extends definition.UtilityProps {
 	value: string | undefined
@@ -37,15 +38,17 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			itemwrapper: {
-				color: "white",
+				color: "#444",
 				display: "flex",
 				alignItems: "center",
-				margin: "5px 0",
-				padding: "0 3px",
+				padding: "8px",
+				fontSize: "8pt",
 			},
 			notfound: {
 				textTransform: "capitalize",
 				color: "#999",
+				fontSize: "8pt",
+				padding: "5px",
 			},
 			namespacetag: {
 				display: "inline-block",
@@ -66,10 +69,10 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				color: "#333",
 			},
 			editbutton: {
-				color: "#444",
+				color: "#777",
 				border: "none",
 				outline: "none",
-				padding: "0px 5px 0px 0",
+				padding: "0px 5px 0px 2px",
 				backgroundColor: "transparent",
 				fontSize: "initial",
 				cursor: "pointer",
@@ -87,45 +90,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 
 	const items: MetadataItem[] = metadata ? Object.keys(metadata) : []
 
-	const tag = (
-		ns: string,
-		name: string,
-		background: string,
-		selected: boolean
-	) => (
-		<>
-			<span
-				className={classes.namespacetag}
-				style={{
-					...(background && { backgroundColor: background }),
-					...(selected && {
-						borderRight: "2px solid white",
-						borderTop: "2px solid white",
-						marginTop: "-2px",
-						marginBottom: "-2px",
-						borderBottom: "2px solid white",
-					}),
-				}}
-			>
-				{ns}
-			</span>
-			<span
-				style={{
-					...(selected && {
-						whiteSpace: "nowrap",
-						overflow: "hidden",
-						marginRight: "4px",
-						maxWidth: "44px",
-						textOverflow: "ellipsis",
-					}),
-				}}
-				className={classes.nametag}
-			>
-				{name}
-			</span>
-		</>
-	)
-
 	const renderer = (
 		item: MetadataItem | null,
 		highlighted: boolean,
@@ -136,16 +100,9 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				<div
 					className={styles.cx(classes.itemwrapper, classes.notfound)}
 				>
-					{tag(
-						`No ${metadataType.toLowerCase()} Selected`,
-						"",
-						"#eee",
-						false
-					)}
+					{`No ${metadataType.toLowerCase()} Selected`}
 				</div>
 			)
-		const [ns, name] = component.path.parseKey(item)
-		const metadataInfo = metadata?.[item]
 
 		return (
 			<div
@@ -155,14 +112,12 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				)}
 				style={{
 					...(selected && {
-						padding: "0",
+						padding: "0 8px 3px 8px",
 						display: "inline-flex",
-						borderRadius: "14px",
-						backgroundColor: "#dcdcdc",
 					}),
 				}}
 			>
-				{tag(ns, name, metadataInfo?.color || "#eee", !!selected)}
+				<NamespaceLabel context={context} metadatakey={item} />
 				{selected && (
 					<button
 						tabIndex={-1}

@@ -23,7 +23,7 @@ import {
 	getKeyAtPath,
 	toPath,
 } from "../component/path"
-import { Definition, DefinitionMap } from "../definition/definition"
+import { Definition } from "../definition/definition"
 import { batch, useSelector } from "react-redux"
 
 import { selectors as viewSelectors } from "../bands/viewdef"
@@ -185,9 +185,9 @@ const getDefinition = (
 			metadataItem
 		)?.definition
 		if (!localPath) {
-			return viewDef as DefinitionMap
+			return viewDef as Definition
 		}
-		return get(viewDef, localPath) as DefinitionMap
+		return get(viewDef, localPath) as Definition
 	}
 
 	if (metadataType === "componentvariant" && metadataItem) {

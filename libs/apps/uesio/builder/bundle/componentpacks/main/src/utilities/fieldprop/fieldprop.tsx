@@ -1,8 +1,11 @@
-import { builder, component, wire, util } from "@uesio/ui"
-import SelectProp from "../selectprop/selectprop"
+import { definition } from "@uesio/ui"
 
-const FieldProp: builder.PropComponent<builder.FieldProp> = (props) => {
-	const { valueAPI, path, descriptor } = props
+const FieldProp: definition.UtilityComponent = () => {
+	console.log("not implemented")
+	return null
+	/*
+	const { path, descriptor } = props
+
 	const wirePath = component.path.parseRelativePath(
 		descriptor.wireField,
 		path || ""
@@ -23,19 +26,16 @@ const FieldProp: builder.PropComponent<builder.FieldProp> = (props) => {
 	return (
 		<SelectProp
 			{...props}
-			descriptor={{
-				...descriptor,
-				type: "SELECT",
-				options: [
-					{
-						label: getOptionsLabel(),
-						value: "",
-					},
-					...options,
-				],
-			}}
+			options={[
+				{
+					label: getOptionsLabel(),
+					value: "",
+				},
+				...options,
+			]}
 		/>
 	)
+	*/
 }
 
 export default FieldProp

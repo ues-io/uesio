@@ -1,4 +1,4 @@
-import ActionButton from "../shared/buildproparea/actions/actionbutton"
+import ActionButton from "../helpers/actionbutton"
 import { remove } from "../api/defapi"
 import { definition } from "@uesio/ui"
 import { FullPath } from "../api/path"

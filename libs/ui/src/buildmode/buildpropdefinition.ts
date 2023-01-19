@@ -4,9 +4,9 @@ import {
 	DefinitionMap,
 	DefinitionValue,
 } from "../definition/definition"
-import React, { FC } from "react"
+import { FC } from "react"
+
 import { MetadataType } from "../bands/builder/types"
-import ValueAPI from "./valueapi"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -14,16 +14,9 @@ type BuildPropertiesDefinition = {
 	link?: string
 	properties?: PropDescriptor[]
 	sections: PropertySection[]
-	actions?: ActionDescriptor[]
 	defaultDefinition: () => DefinitionMap
 	signals?: SignalProperties[]
 	traits?: string[]
-	handleFieldDrop?: (
-		dragNode: string,
-		dropNode: string,
-		dropIndex: number,
-		propDef: BuildPropertiesDefinition
-	) => void
 	name?: string // auto-populated
 	namespace?: string // auto-populated
 	type?: string
@@ -92,7 +85,6 @@ interface StylesSection extends BasePropSection {
 interface SectionRendererProps extends BaseProps {
 	section: PropertySection
 	propsDef: BuildPropertiesDefinition
-	valueAPI: ValueAPI
 }
 interface CustomSection extends BasePropSection {
 	type: "CUSTOM"
@@ -247,72 +239,6 @@ interface PropListProp extends BasePropDescriptor {
 	properties: PropDescriptor[]
 }
 
-type ActionDescriptor =
-	| AddAction
-	| CustomAction
-	| RunSignalsAction
-	| LoadWireAction
-	| ToggleConditionAction
-	| CloneAction
-	| CloneKeyAction
-	| DeleteAction
-	| MoveAction
-	| AddCondition
-
-type AddCondition = {
-	label: string
-	type: "ADD_CONDITION"
-	path: string
-	definition: Definition
-	logo: string
-}
-
-type AddAction = {
-	label: string
-	type: "ADD"
-	componentKey: string
-	slot: string
-}
-
-type DeleteAction = {
-	type: "DELETE"
-}
-
-type CustomAction = {
-	type: "CUSTOM"
-	handler: (e: React.SyntheticEvent<Element, Event>) => void
-	label: string
-	icon: string
-	disabled?: boolean
-}
-
-type MoveAction = {
-	type: "MOVE"
-}
-
-type CloneAction = {
-	type: "CLONE"
-}
-
-type CloneKeyAction = {
-	type: "CLONEKEY"
-}
-
-type LoadWireAction = {
-	type: "LOAD_WIRE"
-}
-
-type ToggleConditionAction = {
-	label: string
-	type: "TOGGLE_CONDITION"
-}
-
-type RunSignalsAction = {
-	label: string
-	type: "RUN_SIGNALS"
-	slot: string
-}
-
 type PropertySelectOption = {
 	value: string
 	label: string
@@ -326,7 +252,6 @@ type SignalProperties = {
 interface PropRendererProps<T = PropDescriptor> extends BaseProps {
 	descriptor: T
 	propsDef: BuildPropertiesDefinition
-	valueAPI: ValueAPI
 }
 
 type PropComponent<T = PropDescriptor> = FC<PropRendererProps<T>>
@@ -338,19 +263,11 @@ export {
 	ParamsProp,
 	SectionRendererProps,
 	DisplayCondition,
-	ValueAPI,
 	PropRendererProps,
 	BuildPropertiesDefinition,
 	PropertySection,
 	PropDescriptor,
 	PropertySelectOption,
-	ActionDescriptor,
-	AddAction,
-	ToggleConditionAction,
-	CustomAction,
-	CloneAction,
-	RunSignalsAction,
-	LoadWireAction,
 	TextProp,
 	TextAreaProp,
 	IconProp,
@@ -375,7 +292,6 @@ export {
 	OrderSection,
 	PropListProp,
 	PropListsProp,
-	AddCondition,
 	FieldProp,
 	FieldsProp,
 }

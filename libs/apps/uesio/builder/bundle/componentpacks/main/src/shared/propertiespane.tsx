@@ -5,7 +5,6 @@ import PropList from "../utilities/proplist/proplist"
 
 interface PropertiesPaneProps extends definition.UtilityProps {
 	propsDef: builder.BuildPropertiesDefinition
-	valueAPI: builder.ValueAPI
 	path: string
 }
 
@@ -14,7 +13,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const TabLabels = component.getUtility("uesio/io.tablabels")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
-	const { propsDef, path = "", context, valueAPI, className } = props
+	const { propsDef, path = "", context, className } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -68,7 +67,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const componentId = api.component.getComponentId(
 		"propertiespanel" + path,
 		"uesio/builder.mainwrapper",
-		path,
+		undefined,
 		context
 	)
 
@@ -135,7 +134,6 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					propsDef={propsDef}
 					properties={propsDef.properties}
 					context={context}
-					valueAPI={valueAPI}
 				/>
 			)}
 			{selectedSection && propsDef && (
@@ -145,7 +143,6 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					propsDef={propsDef}
 					section={selectedSection}
 					context={context}
-					valueAPI={valueAPI}
 				/>
 			)}
 		</ScrollPanel>

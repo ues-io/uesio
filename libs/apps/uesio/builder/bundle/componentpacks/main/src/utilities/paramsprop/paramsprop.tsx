@@ -3,12 +3,10 @@ import { component, builder, definition, api } from "@uesio/ui"
 const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 	const TextField = component.getUtility("uesio/io.textfield")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
-	const { valueAPI, path, context } = props
+	const { path, context } = props
 
 	if (!path) return null
-	const definition = valueAPI.get(
-		component.path.getParentPath(path || "")
-	) as definition.DefinitionMap
+	const definition = {} as definition.DefinitionMap
 	if (!definition?.view) return null
 	const params = api.view.useViewDef(definition.view as string)
 		?.params as Record<string, Record<"type", string>>
@@ -18,6 +16,7 @@ const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 			{params &&
 				Object.keys(params).map((el: string) => {
 					const paramPath = `${path}["${el}"]`
+					console.log(paramPath)
 					return (
 						<FieldWrapper
 							labelPosition="left"
@@ -27,10 +26,12 @@ const ParamsProp: builder.PropComponent<builder.ParamsProp> = (props) => {
 							variant="uesio/builder.propfield"
 						>
 							<TextField
-								value={valueAPI.get(paramPath)}
+								value={/*valueAPI.get(paramPath)*/ ""}
 								label={el}
-								setValue={(value: string) =>
-									valueAPI.set(paramPath, value)
+								setValue={
+									(/*value: string*/) => {
+										//valueAPI.set(paramPath, value)
+									}
 								}
 								context={context}
 								variant="uesio/io.field:uesio/builder.propfield"

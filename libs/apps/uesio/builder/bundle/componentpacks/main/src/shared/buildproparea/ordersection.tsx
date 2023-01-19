@@ -33,10 +33,8 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
-	const { path, context, valueAPI } = props
-	const wireDef = valueAPI.get(path || "") as
-		| definition.DefinitionMap
-		| undefined
+	const { path, context } = props
+	const wireDef = {} as definition.DefinitionMap | undefined
 
 	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId()
@@ -65,10 +63,10 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 						}
 						label="New Ordering"
 						onClick={() => {
-							valueAPI.add(ordersPath, {
-								field: null,
-								desc: false,
-							})
+							//valueAPI.add(ordersPath, {
+							//	field: null,
+							//	desc: false,
+							//})
 						}}
 					/>
 				}
@@ -98,9 +96,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 									sections: [],
 									defaultDefinition: () => ({}),
 									properties: getOrderProperties(),
-									actions: [],
 								}}
-								valueAPI={valueAPI}
 							/>
 						}
 						context={context}

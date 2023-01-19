@@ -10,7 +10,7 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-	const { descriptor, path, context, valueAPI } = props
+	const { descriptor, path, context } = props
 
 	const selectedPath = useSelectedPath(context)
 	const selected = selectedPath.localPath === path
@@ -75,15 +75,19 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 			>
 				<div className={classes.iconfield}>
 					<TextField
-						value={valueAPI.get(path)}
+						value={/*valueAPI.get(path)*/ ""}
 						label={descriptor.label}
-						setValue={(value: string) => valueAPI.set(path, value)}
+						setValue={
+							(/*value: string*/) => {
+								//valueAPI.set(path, value)
+							}
+						}
 						context={context}
 						variant="uesio/io.field:uesio/builder.propfield"
 					/>
 					<IconButton
 						className={classes.iconpreview}
-						icon={valueAPI.get(path) || ""}
+						icon={/*valueAPI.get(path) || */ ""}
 						context={context}
 						/*
 						onClick={() => {
@@ -142,9 +146,9 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 									key={iconName}
 									icon={iconName}
 									context={context}
-									onClick={(): void =>
-										valueAPI.set(path, iconName)
-									}
+									onClick={(): void => {
+										//valueAPI.set(path, iconName)
+									}}
 								/>
 							))}
 						</div>

@@ -1,37 +1,39 @@
-import { builder, component, wire, util } from "@uesio/ui"
-import MultiSelectProp from "../multiselectprop/multiselectprop"
+import { wire, util, definition } from "@uesio/ui"
+import { FullPath } from "../../api/path"
+import MultiSelectProp from "../../propertyrenderers/multiselectprop"
 
-const FieldsProp: builder.PropComponent<builder.FieldsProp> = (props) => {
-	const { valueAPI, path } = props
+type FieldsProps = {
+	path: FullPath
+}
+
+const FieldsProp: definition.UtilityComponent<FieldsProps> = (props) => {
+	//const { path } = props
+	/*
 	const wirePath = component.path.parseRelativePath(
 		props.descriptor.wireField,
 		path || ""
 	)
-	const wireId = valueAPI.get(wirePath)
-	const wireDef = (valueAPI.get('["wires"][' + wireId + "]") ||
-		{}) as wire.WireDefinition
+	*/
+	const wireId = "" //valueAPI.get(wirePath)
+	const wireDef = {} as wire.WireDefinition
 	const options = util.getWireFieldSelectOptions(wireDef) || []
 
 	return (
 		<MultiSelectProp
 			{...props}
-			descriptor={{
-				name: "searchFields",
-				label: "Fields",
-				type: "MULTISELECT",
-				options: [
-					...(!wireId
-						? [
-								{
-									disabled: true,
-									label: "Select a wire first",
-									value: "",
-								},
-						  ]
-						: []),
-					...options,
-				],
-			}}
+			label="Fields"
+			options={[
+				...(!wireId
+					? [
+							{
+								disabled: true,
+								label: "Select a wire first",
+								value: "",
+							},
+					  ]
+					: []),
+				...options,
+			]}
 		/>
 	)
 }

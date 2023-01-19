@@ -7,15 +7,17 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
-	const { path = "", context, propsDef, valueAPI } = props
+	const { path = "", context, propsDef } = props
 
 	const section = props.section as builder.PropListsSection
 	const itemsPath = path + `["${section.name}"]`
-	const items = (valueAPI.get(itemsPath) as unknown[]) || []
+	const items = [] as unknown[]
 
+	/*
 	const defaultItemDef = section.defaultDefinition
 		? section.defaultDefinition()
 		: {}
+		*/
 	return (
 		<>
 			<TitleBar
@@ -34,9 +36,9 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 							/>
 						}
 						label="Add"
-						onClick={() =>
-							valueAPI.add(itemsPath, defaultItemDef, -1)
-						}
+						onClick={() => {
+							//valueAPI.add(itemsPath, defaultItemDef, -1)
+						}}
 					/>
 				}
 			/>
@@ -46,7 +48,6 @@ const PropListsSection: FC<SectionRendererProps> = (props) => {
 					context={context}
 					path={itemsPath}
 					propsDef={propsDef}
-					valueAPI={valueAPI}
 					descriptor={section}
 					expandType={"popper"}
 				/>

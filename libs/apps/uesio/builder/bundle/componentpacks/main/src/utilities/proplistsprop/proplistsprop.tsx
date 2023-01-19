@@ -8,9 +8,9 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
-	const { valueAPI, path = "", propsDef, context } = props
+	const { path = "", propsDef, context } = props
 	const descriptor = props.descriptor as builder.PropListProp
-	const items = (valueAPI.get(path) as unknown[]) || []
+	const items = [] as unknown[]
 	//const [metadataType, metadataItem, selectedPath] =
 	//	api.builder.useSelectedNode()
 	//const selected = selectedPath.startsWith(path)
@@ -82,7 +82,6 @@ const ProplistsProp: builder.PropComponent<builder.PropListProp> = (props) => {
 							context={context}
 							path={path}
 							propsDef={propsDef}
-							valueAPI={valueAPI}
 							descriptor={descriptor}
 						/>
 					</div>

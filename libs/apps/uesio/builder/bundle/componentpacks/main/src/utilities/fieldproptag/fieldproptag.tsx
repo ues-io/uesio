@@ -1,4 +1,4 @@
-import { builder, component, definition, wire, api, metadata } from "@uesio/ui"
+import { component, definition, wire, api, metadata } from "@uesio/ui"
 
 import { FC, useState } from "react"
 import BuildActionsArea from "../../helpers/buildactionsarea"
@@ -10,7 +10,6 @@ interface T extends definition.UtilityProps {
 	fieldId: string
 	path: string
 	fieldDef: wire.WireFieldDefinition
-	valueAPI: builder.ValueAPI
 	variant?: metadata.MetadataKey
 }
 const FieldPropTag: FC<T> = (props) => {
@@ -20,7 +19,6 @@ const FieldPropTag: FC<T> = (props) => {
 		fieldDef,
 		collectionKey,
 		context,
-		valueAPI,
 		variant,
 		path = "",
 	} = props
@@ -34,8 +32,8 @@ const FieldPropTag: FC<T> = (props) => {
 	const fieldMetadata = collectionMetadata.getField(fieldId)
 	if (!fieldMetadata) return null
 
-	const selected = valueAPI.isSelected(path)
-	const hasSelectedChild = valueAPI.hasSelectedChild(path)
+	const selected = false // valueAPI.isSelected(path)
+	const hasSelectedChild = false // valueAPI.hasSelectedChild(path)
 	const subFields = Object.keys(fieldDef?.fields || {})
 
 	return (
@@ -46,7 +44,7 @@ const FieldPropTag: FC<T> = (props) => {
 			selected={selected || hasSelectedChild}
 			context={context}
 			onClick={(e: MouseEvent) => {
-				valueAPI.select(path)
+				//valueAPI.select(path)
 				e.stopPropagation()
 			}}
 		>
@@ -89,7 +87,6 @@ const FieldPropTag: FC<T> = (props) => {
 									fieldDef={fieldDef?.fields[fieldId]}
 									context={context}
 									key={fieldId}
-									valueAPI={valueAPI}
 									path={`${path}["fields"]["${fieldId}"]`}
 								/>
 							)
