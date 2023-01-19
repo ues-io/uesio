@@ -293,9 +293,11 @@ class Context {
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
-	getViewDefId = () => this.stack.find(hasViewContext)?.viewDef
+	getViewDefId = () =>
+		this.stack.filter(hasViewContext).find((f) => f.viewDef)?.viewDef
 
-	getRoute = () => this.stack.find(isRouteContextFrame)?.route
+	getRoute = () =>
+		this.stack.filter(isRouteContextFrame).find((f) => f.route)?.route
 
 	getWorkspace = () =>
 		this.stack.filter(isRouteContextFrame).find(providesWorkspace)
