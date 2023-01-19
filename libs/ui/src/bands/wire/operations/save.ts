@@ -82,15 +82,15 @@ export default async (context: Context, wires?: string[]) => {
 		const changeKeys = Object.keys(changes)
 		if (changeKeys.length === 1) {
 			const [, name] = getWireParts(wire.wire)
-			return context.addFrame({
-				record: changeKeys[0],
-				wire: name,
-				errors: getErrorStrings(wire),
-			})
+			const errors = getErrorStrings(wire)
+			const resultContext = context.addRecordFrame(name, changeKeys[0])
+			if (errors.length)
+				return resultContext.addErrorFrame(getErrorStrings(wire))
+			return resultContext
 		}
 	}
 
 	const errors = response.wires.flatMap(getErrorStrings)
 
-	return errors.length > 0 ? context.addFrame({ errors }) : context
+	return errors.length > 0 ? context.addErrorFrame(errors) : context
 }

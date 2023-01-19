@@ -27,23 +27,78 @@ type FieldMode = "READ" | "EDIT"
 
 type Mergeable = string | number | boolean | undefined
 
-type ContextFrame = {
-	wire?: string
-	record?: string
-	recordData?: PlainWireRecord // A way to store arbitrary record data in context
-	view?: string
-	viewDef?: string
-	buildMode?: boolean
+interface WorkspaceContext {
+	type: "WORKSPACE"
+	workspace: string
+}
+
+interface ErrorContextFrame {
+	type: "ERROR"
+	errors: string[]
+}
+
+interface WireContextFrame {
+	type: "WIRE"
+	wire: string
 	fieldMode?: FieldMode
-	noMerge?: boolean
+}
+
+interface RecordContextFrame extends Omit<WireContextFrame, "type"> {
+	type: "RECORD"
+	record: string
+	recordData?: PlainWireRecord // A way to store arbitrary record data in context
+}
+
+interface ViewContextFrame {
+	type: "VIEW"
+	view: string
+	viewDef: string
+	params?: Record<string, string>
+}
+
+interface RouteContextFrame extends Omit<ViewContextFrame, "type"> {
+	type: "ROUTE"
 	route?: RouteState
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
 	site?: SiteState
 	theme?: string
-	errors?: string[]
+}
+
+interface ParamsContextFrame {
+	type: "PARAMS"
 	params?: Record<string, string>
 }
+
+// Type Guards
+const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
+	frame.type === "ERROR"
+const isRecordContextFrame = (
+	frame: ContextFrame
+): frame is RecordContextFrame => frame.type === "RECORD"
+const hasParamsContext = (
+	frame: ContextFrame
+): frame is ParamsContextFrame | ViewContextFrame =>
+	["PARAMS", "VIEW"].includes(frame.type)
+const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
+	frame.type === "ROUTE"
+const hasWireContext = (
+	frame: ContextFrame
+): frame is RecordContextFrame | WireContextFrame =>
+	["RECORD", "WIRE"].includes(frame.type)
+const hasViewContext = (
+	frame: ContextFrame
+): frame is ViewContextFrame | RouteContextFrame =>
+	["VIEW", "ROUTE"].includes(frame.type)
+
+type ContextFrame =
+	| RouteContextFrame
+	| ViewContextFrame
+	| RecordContextFrame
+	| WireContextFrame
+	| ParamsContextFrame
+	| ErrorContextFrame
+	| WorkspaceContext
 
 const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
 
@@ -59,7 +114,7 @@ const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 
 class Context {
 	constructor(stack?: ContextFrame[]) {
-		this.stack = stack || []
+		this.stack = stack || ([] as ContextFrame[])
 	}
 
 	stack: ContextFrame[]
@@ -67,14 +122,16 @@ class Context {
 	getRecordId = () => this.getRecord()?.getId()
 
 	getRecordData = () =>
-		this.stack.find((frame) => frame?.recordData)?.recordData
+		this.stack.find((frame): frame is RecordContextFrame =>
+			isRecordContextFrame(frame)
+		)?.recordData
 
 	removeRecordFrame = (times: number): Context => {
 		if (!times) {
 			return this
 		}
 		const index = this.stack.findIndex(
-			(frame) => frame?.record || frame?.wire
+			(frame): frame is RecordContextFrame => isRecordContextFrame(frame)
 		)
 		if (index === -1) {
 			return new Context()
@@ -85,10 +142,11 @@ class Context {
 	}
 
 	getRecord = () => {
-		const recordFrame = this.findRecordFrame()
+		const recordFrame: RecordContextFrame | undefined =
+			this.findRecordFrame()
 
 		// if we don't have a record id in context return the first
-		if (!recordFrame) {
+		if (undefined === recordFrame) {
 			return undefined
 		}
 		if (recordFrame.recordData) {
@@ -107,11 +165,11 @@ class Context {
 		return undefined
 	}
 
-	getViewId = () => this.stack.find((frame) => frame?.view)?.view
+	getViewId = () => this.stack.find(hasViewContext)?.view
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () => this.stack.find((frame) => frame?.params)?.params
+	getParams = () => this.stack.find(hasParamsContext)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
@@ -122,7 +180,7 @@ class Context {
 		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
 		defaultTheme
 
-	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
+	getThemeId = () => this.stack.find(isRouteContextFrame)?.theme
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -143,13 +201,13 @@ class Context {
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
-	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
+	getViewDefId = () => this.stack.find(hasViewContext)?.viewDef
 
-	getRoute = () => this.stack.find((frame) => frame?.route)?.route
+	getRoute = () => this.stack.find(isRouteContextFrame)?.route
 
-	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
+	getWorkspace = () => this.stack.find(isRouteContextFrame)?.workspace
 
-	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
+	getSiteAdmin = () => this.stack.find(isRouteContextFrame)?.siteadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -164,12 +222,12 @@ class Context {
 		return undefined
 	}
 
-	getSite = () => this.stack.find((frame) => frame?.site)?.site
+	getSite = () => this.stack.find(isRouteContextFrame)?.site
 
-	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
+	getWireId = () => this.stack.find(hasWireContext)?.wire
 
 	findWireFrame = () => {
-		const index = this.stack.findIndex((frame) => frame?.wire)
+		const index = this.stack.findIndex(hasWireContext)
 		if (index < 0) {
 			return undefined
 		}
@@ -177,11 +235,9 @@ class Context {
 	}
 
 	findRecordFrame = () => {
-		const index = this.stack.findIndex(
-			(frame) => frame?.recordData || frame?.record || frame?.wire
-		)
+		const index = this.stack.findIndex(isRecordContextFrame)
 		if (index === undefined) return undefined
-		return this.stack[index]
+		return this.stack[index] as RecordContextFrame
 	}
 
 	getWire = () => {
@@ -225,32 +281,75 @@ class Context {
 	}
 
 	getFieldMode = () =>
-		this.stack.find((frame) => frame?.fieldMode)?.fieldMode || "READ"
-
-	getBuildMode = () => {
-		for (const frame of this.stack) {
-			if (frame.buildMode) {
-				return true
-			}
-			if (frame.buildMode === false) {
-				return false
-			}
-		}
-		return false
-	}
+		this.stack.filter(hasWireContext).find((frame) => frame?.fieldMode)
+			?.fieldMode || "READ"
 
 	getUser = () => getCurrentState().user
 
-	getNoMerge = () => this.stack.some((frame) => frame?.noMerge)
+	addWireFrame = (wireName: string, fieldMode?: FieldMode) => {
+		const wireFrame: ContextFrame = {
+			type: "WIRE",
+			wire: wireName,
+			fieldMode,
+		}
+		const newFrames: Array<ContextFrame> = [wireFrame]
+		return new Context(newFrames.concat(this.stack))
+	}
 
-	addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
+	addRecordFrame = (
+		wireName: string,
+		record: string,
+		recordData?: PlainWireRecord,
+		fieldMode?: FieldMode
+	) => {
+		const newFrame: ContextFrame = {
+			type: "RECORD",
+			wire: wireName,
+			record,
+			recordData,
+			fieldMode,
+		}
+		return this.addFrame(newFrame)
+	}
+
+	addRouteFrame = (frame: RouteContextFrame) => this.addFrame(frame)
+
+	addViewFrame = (
+		viewId: string,
+		viewDef: string,
+		params?: Record<string, string>
+	) => {
+		const newFrame: ContextFrame = {
+			type: "VIEW",
+			view: viewId,
+			viewDef,
+			params,
+		}
+		return this.addFrame(newFrame)
+	}
+
+	addErrorFrame = (errors: string[]) => {
+		const newFrame: ContextFrame = {
+			type: "ERROR",
+			errors,
+		}
+		return this.addFrame(newFrame)
+	}
+
+	addParamsFrame = (params: Record<string, string>) => {
+		const newFrame: ContextFrame = {
+			type: "PARAMS",
+			params,
+		}
+		return this.addFrame(newFrame)
+	}
+
+	addFrame = (frame: ContextFrame) => {
+		const newFrames: Array<ContextFrame> = [frame]
+		return new Context(newFrames.concat(this.stack))
+	}
 
 	merge = (template: Mergeable) => {
-		// If we are in a no-merge context, just return the template
-		if (this.getNoMerge()) {
-			return template || ""
-		}
-
 		if (typeof template !== "string") {
 			return template
 		}
@@ -297,12 +396,13 @@ class Context {
 	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
 		this.mergeMap(map) as Record<string, string>
 
-	getCurrentErrors = () => this.stack[0].errors || []
+	getCurrentErrors = () =>
+		isErrorContextFrame(this.stack[0]) ? this.stack[0].errors : []
 
 	getViewStack = () =>
 		this.stack
-			.map((contextFrame) => contextFrame?.viewDef)
-			.filter((def) => def)
+			.filter(hasViewContext)
+			.map((contextFrame) => contextFrame.viewDef)
 }
 
 export { Context, ContextFrame, FieldMode, RouteState, getWire, newContext }

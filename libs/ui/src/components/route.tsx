@@ -60,6 +60,7 @@ const Route: UtilityComponent = (props) => {
 			routeOps.navigate(
 				new Context([
 					{
+						type: "WORKSPACE",
 						workspace: event.state.workspace,
 					},
 				]),
@@ -78,7 +79,8 @@ const Route: UtilityComponent = (props) => {
 
 	const workspace = route.workspace
 
-	const routeContext = props.context.addFrame({
+	const routeContext = props.context.addRouteFrame({
+		type: "ROUTE",
 		site,
 		route,
 		workspace,

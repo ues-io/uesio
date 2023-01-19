@@ -49,7 +49,7 @@ const signUpConfirm = async (
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
-		return context.addFrame({ errors: [message] })
+		return context.addErrorFrame([message])
 	}
 }
 
@@ -67,7 +67,7 @@ const login = async (
 	} catch (error) {
 		//CAST the error and decide what error message show to the user, for this operation.
 		const message = getErrorString(error)
-		return context.addFrame({ errors: [message] })
+		return context.addErrorFrame([message])
 	}
 }
 
@@ -117,7 +117,7 @@ const forgotPassword = async (
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
-		return context.addFrame({ errors: [message] })
+		return context.addErrorFrame([message])
 	}
 }
 
@@ -137,7 +137,7 @@ const forgotPasswordConfirm = async (
 		return context
 	} catch (error) {
 		const message = getErrorString(error)
-		return context.addFrame({ errors: [message] })
+		return context.addErrorFrame([message])
 	}
 }
 

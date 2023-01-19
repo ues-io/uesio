@@ -37,7 +37,7 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 		try {
 			context = await run(signal, context)
 		} catch (error) {
-			context = context.addFrame({ errors: [getErrorString(error)] })
+			context = context.addErrorFrame([getErrorString(error)])
 		}
 
 		// Any errors in this frame are the result of the signal run above, nothing else
@@ -54,7 +54,8 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 							severity: "error",
 					  }))),
 			]
-			await runMany(signals, context.addFrame({}))
+			// Do we need to start a new context here? Or is it okay to continue with the previous ones?
+			await runMany(signals, context)
 			if (!signal.onerror?.continue) break
 		}
 	}
