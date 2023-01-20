@@ -1,5 +1,9 @@
-import { definition, api, component, wire } from "@uesio/ui"
-import { setSelectedPath, useSelectedPath } from "../../../api/stateapi"
+import { definition, api, component, wire, metadata } from "@uesio/ui"
+import {
+	getBuilderNamespace,
+	setSelectedPath,
+	useSelectedPath,
+} from "../../../api/stateapi"
 import BuildActionsArea from "../../../helpers/buildactionsarea"
 import CloneKeyAction from "../../../actions/clonekeyaction"
 import DeleteAction from "../../../actions/deleteaction"
@@ -26,6 +30,12 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 			{Object.entries(viewDef.wires).map(([key, value]) => {
 				const wirePath = getFullPath(key)
 				const wireDef = value as wire.RegularWireDefinition
+
+				const nsInfo = getBuilderNamespace(
+					context,
+					wireDef.collection as metadata.MetadataKey
+				)
+
 				return (
 					<PropNodeTag
 						onClick={() => setSelectedPath(context, wirePath)}
@@ -36,6 +46,7 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 						<div className="tagroot">
 							{key}
 							<NamespaceLabel
+								metadatainfo={nsInfo}
 								context={context}
 								metadatakey={wireDef.collection}
 							/>

@@ -46,6 +46,15 @@ const getBuilderNamespaces = (context: ctx.Context) =>
 		"namespaces"
 	) || {}
 
+const getBuilderNamespace = (
+	context: ctx.Context,
+	key: metadata.MetadataKey
+) => {
+	const namespaces = getBuilderNamespaces(context)
+	const [ns] = key.split(".")
+	return namespaces[ns]
+}
+
 const getBuildMode = (context: ctx.Context) =>
 	getBuilderState<boolean>(context, "buildmode") || false
 
@@ -106,6 +115,7 @@ export {
 	useDragPath,
 	setDragPath,
 	getBuilderNamespaces,
+	getBuilderNamespace,
 	getBuilderState,
 	getComponentDefs,
 	getComponentDef,

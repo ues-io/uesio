@@ -1,6 +1,7 @@
 import { component, definition, wire, api, metadata } from "@uesio/ui"
 
 import { FC, useState } from "react"
+import { getBuilderNamespace } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import NamespaceLabel from "../namespacelabel/namespacelabel"
 import PropNodeTag from "../propnodetag/propnodetag"
@@ -36,6 +37,8 @@ const FieldPropTag: FC<T> = (props) => {
 	const hasSelectedChild = false // valueAPI.hasSelectedChild(path)
 	const subFields = Object.keys(fieldDef?.fields || {})
 
+	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
+
 	return (
 		<PropNodeTag
 			variant={variant}
@@ -51,6 +54,7 @@ const FieldPropTag: FC<T> = (props) => {
 			<div className="tagroot">
 				<NamespaceLabel
 					context={context}
+					metadatainfo={nsInfo}
 					metadatakey={fieldId}
 					title={fieldMetadata.getLabel()}
 				/>

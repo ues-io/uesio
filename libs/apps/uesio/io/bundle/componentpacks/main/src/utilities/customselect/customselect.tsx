@@ -2,7 +2,12 @@ import { FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles, component } from "@uesio/ui"
 import Icon from "../icon/icon"
-import { autoPlacement, useFloating, autoUpdate } from "@floating-ui/react"
+import {
+	autoPlacement,
+	useFloating,
+	autoUpdate,
+	offset,
+} from "@floating-ui/react"
 
 type CustomSelectProps<T> = {
 	value: T
@@ -35,49 +40,14 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 			root: {},
 			input: {},
 			readonly: {},
-			menu: {
-				backgroundColor: "white",
-				fontSize: "10pt",
-				border: "1px solid #ccc",
-				borderRadius: "4px",
-				overflow: "hidden",
-				boxShadow: "0 0 4px #00000033",
-			},
-			menuitem: {
-				cursor: "pointer",
-			},
-			editbutton: {
-				color: "#444",
-				border: "none",
-				outline: "none",
-				padding: "0px 3px 0px 0",
-				backgroundColor: "transparent",
-				fontSize: "initial",
-				cursor: "pointer",
-			},
-			displayarea: {
-				flex: 1,
-			},
-			label: {
-				display: "flex",
-				alignItems: "center",
-				border: "1px solid #00000044",
-				cursor: "pointer",
-				padding: "3px",
-			},
-			searchbox: {
-				minWidth: "200px",
-				borderRadius: "4px",
-				margin: "6px",
-				padding: "6px",
-				border: "1px solid #00000044",
-				"::placeholder": {
-					fontSize: "9pt",
-					color: "#999",
-				},
-			},
+			menu: {},
+			menuitem: {},
+			editbutton: {},
+			displayarea: {},
+			searchbox: {},
 		},
-		props
+		props,
+		"uesio/io.customselectfield"
 	)
 
 	const {
@@ -102,14 +72,15 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const { x, y, strategy, refs } = useFloating({
 		placement: "bottom-start",
 		middleware: [
+			offset(2),
 			autoPlacement({ allowedPlacements: ["top-start", "bottom-start"] }),
 		],
 		whileElementsMounted: autoUpdate,
 	})
 
 	return (
-		<div style={{ position: "relative" }} ref={refs.setReference}>
-			<div onClick={() => openMenu()} className={classes.label}>
+		<div className={classes.root} ref={refs.setReference}>
+			<div onClick={() => openMenu()} className={classes.input}>
 				<div
 					onFocus={openMenu}
 					tabIndex={isOpen ? -1 : 0}

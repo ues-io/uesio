@@ -1,0 +1,10 @@
+name: metadatafield
+label: Metadata Field
+extends: uesio/builder.metadatafield
+definition:
+  uesio.styles:
+    selected:
+      padding: "0 2px 2px 2px"
+    notfound:
+      fontSize: "9pt"
+public: true

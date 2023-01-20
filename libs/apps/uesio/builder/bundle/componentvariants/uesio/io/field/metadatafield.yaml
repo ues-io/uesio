@@ -1,0 +1,30 @@
+name: metadatafield
+label: Metadata Field
+extends: uesio/builder.propfield
+definition:
+  uesio.styles:
+    itemwrapper:
+      color: "#444"
+      display: "flex"
+      alignItems: "center"
+      padding: "8px"
+      fontSize: "8pt"
+    selected:
+      padding: "0 2px"
+      display: "inline-flex"
+    notfound:
+      textTransform: "capitalize"
+      color: "#999"
+      fontSize: "8pt"
+      padding: "5px"
+    highlighteditem:
+      backgroundColor: "#eee"
+    editbutton:
+      color: "#777"
+      border: "none"
+      outline: "none"
+      padding: "0px 5px 0px 2px"
+      backgroundColor: "transparent"
+      fontSize: "initial"
+      cursor: "pointer"
+public: true
