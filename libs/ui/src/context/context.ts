@@ -327,7 +327,13 @@ class Context {
 	// Finds closest frame that provides a wire, and then back-tracks in the context
 	// to get the parent view's id
 	findWireAndView = () => {
-		const index = this.stack.findIndex(providesWire)
+		// CRUCIAL -- we need to ONLY find true WIRE context frames here, NOT RECORD context,
+		// otherwise we will end up too close in the stack.
+		// This is pretty brittle and confusing, but the order in which we attach contexts really matters right now.
+		// TODO: Revisit registration of wires and their association to views.
+		// We may need to require "view" (the view id) to be provided whenever we addWireFrame(), in order to identify which view the wire is bound to,
+		// but that will likely have other unintended consequences.
+		const index = this.stack.findIndex(isWireContextFrame)
 		if (index < 0) {
 			return undefined
 		}
