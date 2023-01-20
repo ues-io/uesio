@@ -70,12 +70,12 @@ class Wire {
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		const context = newContext()
+			.addViewFrame({
+				view: this.getViewId(),
+			})
 			.addRecordFrame({
 				wire: this.getId(),
 				record: recordId,
-			})
-			.addViewFrame({
-				view: this.getViewId(),
 			})
 		updateRecordOp(context, path, record)
 	}

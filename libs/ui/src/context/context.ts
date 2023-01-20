@@ -211,9 +211,8 @@ class Context {
 	getRecordId = () => this.getRecord()?.getId()
 
 	getRecordData = () =>
-		this.stack.find((frame): frame is RecordContextFrame =>
-			isRecordContextFrame(frame)
-		)?.recordData
+		this.stack.filter(isRecordContextFrame).find((f) => f.recordData)
+			?.recordData
 
 	removeRecordFrame = (times: number): Context => {
 		if (!times) {
@@ -294,7 +293,7 @@ class Context {
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
 	getViewDefId = () =>
-		this.stack.filter(hasViewContext).find((f) => f.viewDef)?.viewDef
+		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef
 
 	getRoute = () =>
 		this.stack.filter(isRouteContextFrame).find((f) => f.route)?.route
@@ -337,7 +336,7 @@ class Context {
 		const viewId = this.stack
 			.slice(index)
 			.filter(isViewContextFrame)
-			.find((f) => f.view)?.view
+			.find((f) => f?.view)?.view
 		return {
 			wireId,
 			viewId,
@@ -513,7 +512,7 @@ class Context {
 	getViewStack = () =>
 		this.stack
 			.filter(hasViewContext)
-			.filter((f) => f.viewDef)
+			.filter((f) => f?.viewDef)
 			.map((contextFrame) => contextFrame.viewDef)
 }
 
