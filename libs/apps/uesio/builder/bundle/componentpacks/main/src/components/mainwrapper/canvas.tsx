@@ -67,25 +67,28 @@ const getIndex = (
 				const childBounds = child.getBoundingClientRect()
 				const childIndex = child.getAttribute("data-index")
 				if (childIndex === null || childIndex === undefined) continue
-				if (dataDirection === "HORIZONTAL") {
-					if (childBounds.right - 1 <= e.pageX + window.scrollX) {
-						index = childIndex
-						continue
-					}
+				// I'm not sure exactly why we need this offset
+				// but it helps reduce the jitter. I think it has something
+				// to do with the border of the child elements.
+				const offset = 1
+				const isChildBeforePosition =
+					dataDirection === "HORIZONTAL"
+						? childBounds.right - offset <= e.pageX + window.scrollX
+						: childBounds.bottom - offset <=
+						  e.pageY + window.scrollY
+
+				if (isChildBeforePosition) {
+					index = childIndex
+					continue
 				}
-				if (dataDirection === "VERTICAL") {
-					if (childBounds.bottom - 1 <= e.pageY + window.scrollY) {
-						index = childIndex
-						continue
-					}
-				}
+
 				break
 			}
 			if (index) {
 				return parseInt(index, 10)
 			}
 		}
-		console.log("We failed :(", target, bounds)
+		// If we can't figure out what the index is, fall back to zero
 		return 0
 	}
 	const dataIndex = prevTarget.getAttribute("data-index")
