@@ -326,7 +326,7 @@ class Context {
 	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
 	findWireFrame = () => {
-		const index = this.stack.filter(hasWireContext).findIndex(providesWire)
+		const index = this.stack.findIndex(providesWire)
 		if (index < 0) {
 			return undefined
 		}
