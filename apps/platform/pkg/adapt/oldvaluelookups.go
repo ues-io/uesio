@@ -108,6 +108,9 @@ func HandleOldValuesLookup(
 
 		}
 		// END TEMPORARY FIX
+		allFields = append(allFields, LoadRequestField{
+			ID: fieldID,
+		})
 	}
 
 	// Go through all the changes and get a list of the upsert keys
