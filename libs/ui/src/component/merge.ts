@@ -9,7 +9,7 @@ function mergeDefinitionMaps(
 ) {
 	//const key = JSON.stringify([destDef, sourceDef])
 	//if (cache[key]) return cache[key]
-	const destClone = JSON.parse(JSON.stringify(destDef))
+	const destClone = structuredClone(destDef)
 	const result = mergeDeep(destClone, sourceDef, context)
 	//cache[key] = result
 	return result

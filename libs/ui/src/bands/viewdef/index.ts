@@ -120,7 +120,7 @@ const metadataSlice = createSlice({
 			const toParentPath = getParentPath(localToPath)
 			const toParent = get(viewDef.definition, toParentPath)
 
-			const clonedNode = JSON.parse(JSON.stringify(fromNode))
+			const clonedNode = structuredClone(fromNode)
 
 			const isArrayMove = Array.isArray(fromParent)
 			const isMapMove = !isArrayMove && fromParentPath === toParentPath
