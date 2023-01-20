@@ -35,9 +35,8 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 			parentElem.setAttribute("data-accepts", accepts.join(","))
 			parentElem.setAttribute("data-direction", direction || "")
 			parentElem.setAttribute("data-path", listPath)
-			parentElem.setAttribute("data-insertindex", size + "")
 		}
-	}, [path, size, accepts, direction])
+	}, [path, accepts, direction])
 
 	if (!buildMode) {
 		return (
