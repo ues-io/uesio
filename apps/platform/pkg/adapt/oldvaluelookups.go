@@ -9,8 +9,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetUniqueKeyPart(item meta.Item, fieldName string) (string, error) {
-	value, err := GetFieldValue(item, fieldName)
+func GetUniqueKeyPart(change *ChangeItem, fieldName string) (string, error) {
+	value, err := change.GetField(fieldName)
 	if err != nil {
 		return "", err
 	}
@@ -61,6 +61,54 @@ func HandleOldValuesLookup(
 	allFields := []LoadRequestField{}
 
 	for fieldID := range op.Metadata.Fields {
+
+		// TEMPORARY FIX:
+		// Currently we allow unique keys to contain pieces of reference fields, e.g.
+		// View’s Unique Key is: [workspace.app, workspace.name, name]
+		// “ben/jobs:dev:jobs”
+		// Where workspace.app = “ben/jobs”, workspace.name = “dev”, view = “jobs”
+		// (1) If the fields on the reference record (e.g. ‘workspace’) are changed — we
+		// don’t go update the unique key of Views, so we have inconsistent unique keys
+		// (2) When upserting the main record (e.g. a view), if we were to change either
+		// the workspace or the name of the view, but not BOTH, we would need to go
+		// lookup the other fields in order to reconstruct the unique key properly.
+
+		// PROPOSED LONG TERM FIX:
+		// Only allow level 1 fields to be in a unique key. E.g. we could store the
+		// stable id of the reference field (e.g. workspace id) but NOT any fields ON
+		// the workspace (e.g. workspace name, workspace app would NOT be allowed to be
+		// stored / used in the unique key for View)
+
+		fieldMetadata, err := op.Metadata.GetField(fieldID)
+		if err != nil {
+			return err
+		}
+		if IsReference(fieldMetadata.Type) {
+
+			isPartOfKey := false
+
+			for _, keypart := range op.Metadata.UniqueKey {
+				if keypart == fieldID {
+					isPartOfKey = true
+					break
+				}
+			}
+
+			if isPartOfKey {
+				allFields = append(allFields, LoadRequestField{
+					ID: fieldID,
+					Fields: []LoadRequestField{
+						{
+							ID: UNIQUE_KEY_FIELD,
+						},
+					},
+				})
+				continue
+			}
+
+		}
+		// END TEMPORARY FIX
+
 		allFields = append(allFields, LoadRequestField{
 			ID: fieldID,
 		})
