@@ -325,12 +325,23 @@ class Context {
 
 	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
-	findWireFrame = () => {
+	// Finds closest frame that provides a wire, and then back-tracks in the context
+	// to get the parent view's id
+	findWireAndView = () => {
 		const index = this.stack.findIndex(providesWire)
 		if (index < 0) {
 			return undefined
 		}
-		return new Context(this.stack.slice(index))
+		const wireId = (this.stack[index] as WireContextFrame).wire
+		// backtrack in the context to find the next view
+		const viewId = this.stack
+			.slice(index)
+			.filter(isViewContextFrame)
+			.find((f) => f.view)?.view
+		return {
+			wireId,
+			viewId,
+		}
 	}
 
 	findRecordFrame = () => {
@@ -368,10 +379,9 @@ class Context {
 	}
 
 	getPlainWire = () => {
-		const wireFrame = this.findWireFrame()
-		const wireId = wireFrame?.getWireId()
-		if (!wireId) return undefined
-		return getWire(wireFrame?.getViewId(), wireId)
+		const lookup = this.findWireAndView()
+		if (lookup === undefined) return undefined
+		return getWire(lookup.viewId, lookup.wireId)
 	}
 
 	getPlainWireByName = (wirename: string) => {
