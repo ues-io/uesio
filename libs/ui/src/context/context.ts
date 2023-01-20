@@ -37,9 +37,11 @@ interface FieldModeContext {
 
 interface WireContext {
 	wire: string
+	view?: string
 }
 
 interface RecordContext {
+	view?: string
 	wire?: string
 	record?: string
 	recordData?: PlainWireRecord // A way to store arbitrary record data in context
@@ -77,6 +79,8 @@ interface RecordContextFrame extends RecordContext {
 }
 interface WireContextFrame extends WireContext {
 	type: "WIRE"
+	// We will throw an error if view is not available at time of construction
+	view: string
 }
 interface ParamsContextFrame extends ParamsContext {
 	type: "PARAMS"
@@ -137,10 +141,17 @@ const hasViewContext = (
 // Type Guards for pre-resolved Context objects (no type property yet)
 const providesWorkspace = (o: ContextOptions): o is RouteContext =>
 	Object.prototype.hasOwnProperty.call(o, "workspace")
+const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
+	Object.prototype.hasOwnProperty.call(o, "view")
 const providesSiteAdmin = (o: ContextOptions): o is RouteContext =>
 	Object.prototype.hasOwnProperty.call(o, "siteadmin")
 const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
+const providesWireAndView = (
+	o: ContextOptions
+): o is WireContext | RecordContext =>
+	Object.prototype.hasOwnProperty.call(o, "wire") &&
+	Object.prototype.hasOwnProperty.call(o, "view")
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 const providesParams = (
@@ -253,8 +264,15 @@ class Context {
 		return undefined
 	}
 
-	getViewId = () =>
-		this.stack.filter(hasViewContext).find((f) => f.view)?.view
+	// Find the first WireFrame or RecordFrame which provides a wire and a view
+	getWireProviderFrame = () =>
+		this.stack.filter(hasWireContext).find(providesWireAndView)
+
+	getViewId = () => {
+		const frame = this.stack.filter(hasViewContext).find(providesView)
+		if (!frame || !frame.view) throw "No View frame found in context"
+		return frame.view
+	}
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
@@ -324,31 +342,6 @@ class Context {
 
 	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
-	// Finds closest frame that provides a wire, and then back-tracks in the context
-	// to get the parent view's id
-	findWireAndView = () => {
-		// CRUCIAL -- we need to ONLY find true WIRE context frames here, NOT RECORD context,
-		// otherwise we will end up too close in the stack.
-		// This is pretty brittle and confusing, but the order in which we attach contexts really matters right now.
-		// TODO: Revisit registration of wires and their association to views.
-		// We may need to require "view" (the view id) to be provided whenever we addWireFrame(), in order to identify which view the wire is bound to,
-		// but that will likely have other unintended consequences.
-		const index = this.stack.findIndex(isWireContextFrame)
-		if (index < 0) {
-			return undefined
-		}
-		const wireId = (this.stack[index] as WireContextFrame).wire
-		// backtrack in the context to find the next view
-		const viewId = this.stack
-			.slice(index)
-			.filter(isViewContextFrame)
-			.find((f) => f?.view)?.view
-		return {
-			wireId,
-			viewId,
-		}
-	}
-
 	findRecordFrame = () => {
 		const index = this.stack.findIndex(isRecordContextFrame)
 		if (index === undefined) return undefined
@@ -384,9 +377,9 @@ class Context {
 	}
 
 	getPlainWire = () => {
-		const lookup = this.findWireAndView()
-		if (lookup === undefined) return undefined
-		return getWire(lookup.viewId, lookup.wireId)
+		const wireProviderFrame = this.getWireProviderFrame()
+		if (wireProviderFrame === undefined) return undefined
+		return getWire(wireProviderFrame.view, wireProviderFrame.wire)
 	}
 
 	getPlainWireByName = (wirename: string) => {
@@ -402,7 +395,8 @@ class Context {
 	addWireFrame = (wireContext: WireContext) => {
 		const newFrame: WireContextFrame = {
 			type: "WIRE",
-			...wireContext,
+			view: wireContext.view || this.getViewId(),
+			wire: wireContext.wire,
 		}
 		return this.#addFrame(newFrame)
 	}
@@ -410,7 +404,10 @@ class Context {
 	addRecordFrame = (recordContext: RecordContext) => {
 		const newFrame: RecordContextFrame = {
 			type: "RECORD",
-			...recordContext,
+			view: recordContext.view || this.getViewId(),
+			wire: recordContext.wire,
+			record: recordContext.record,
+			recordData: recordContext.recordData,
 		}
 		return this.#addFrame(newFrame)
 	}
@@ -523,6 +520,8 @@ class Context {
 }
 
 export {
+	WireContext,
+	RecordContext,
 	Context,
 	ContextOptions,
 	ContextFrame,

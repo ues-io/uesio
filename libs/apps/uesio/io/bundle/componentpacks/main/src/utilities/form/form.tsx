@@ -16,7 +16,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 	const { context, path, onSubmit, submitLabel, content } = props
 
 	const wireName = props.wire
-	const wire = wireName ? api.wire.useWire(wireName, context) : undefined
+	const wire = api.wire.useWire(wireName, context)
 
 	if (!wire) return null
 
@@ -27,6 +27,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 					.addRecordFrame({
 						wire: wireName,
 						record: record.getId(),
+						view: wire.getViewId(),
 					})
 					.addFieldModeFrame("EDIT")
 				// Loop over all the fields in the wire

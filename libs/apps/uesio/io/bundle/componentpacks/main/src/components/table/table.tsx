@@ -84,9 +84,10 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	// If we got a wire from the definition, add it to context
 	let newContext = context
-	if (definition.wire) {
+	if (definition.wire && wire) {
 		newContext = newContext.addWireFrame({
 			wire: definition.wire,
+			view: wire.getViewId(),
 		})
 	}
 	if (mode) {
@@ -114,6 +115,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				context = context.addRecordFrame({
 					wire: definition.wire,
 					record: record.getId(),
+					view: wire ? wire.getViewId() : undefined,
 				})
 			}
 			if (mode) {

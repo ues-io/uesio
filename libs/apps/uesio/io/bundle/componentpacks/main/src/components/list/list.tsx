@@ -24,11 +24,13 @@ const List: definition.UC<ListDefinition> = (props) => {
 	const wire = api.wire.useWire(definition.wire, context)
 
 	// If we got a wire from the definition, add it to context
-	const newContext = definition.wire
-		? context.addWireFrame({
-				wire: definition.wire,
-		  })
-		: context
+	const newContext =
+		definition.wire && wire
+			? context.addWireFrame({
+					wire: definition.wire,
+					view: wire.getViewId(),
+			  })
+			: context
 
 	const componentId = api.component.getComponentIdFromProps(
 		definition.id,
@@ -50,6 +52,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 						.addRecordFrame({
 							wire: wire.getId(),
 							record: record.getId(),
+							view: wire.getViewId(),
 						})
 						.addFieldModeFrame(mode)}
 				/>

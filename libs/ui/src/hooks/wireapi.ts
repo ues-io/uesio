@@ -66,9 +66,10 @@ const useWire = (wireId: string | undefined, context: Context) => {
 	if (wireId) {
 		viewId = context.getViewId()
 	} else {
-		const lookup = context.findWireAndView()
-		if (lookup !== undefined) {
-			;({ wireId, viewId } = lookup)
+		const wireProviderFrame = context.getWireProviderFrame()
+		if (wireProviderFrame !== undefined) {
+			wireId = wireProviderFrame.wire
+			viewId = wireProviderFrame.view
 		}
 	}
 	const plainWire = uWire(viewId, wireId)
