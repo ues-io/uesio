@@ -1,4 +1,4 @@
-import { context, api, wire, component, styles } from "@uesio/ui"
+import { context, api, wire, component, styles, metadata } from "@uesio/ui"
 import React, { FC } from "react"
 import has from "lodash/has"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
@@ -7,6 +7,7 @@ import toPath from "lodash/toPath"
 import useShadowOnScroll from "../hooks/useshadowonscroll"
 import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
+import { getBuilderNamespace } from "../../api/stateapi"
 
 type T = {
 	path: string
@@ -206,6 +207,10 @@ const FieldPicker: FC<T> = (props) => {
 							{stack.map((frame, i) => {
 								const isFirst = i === 0
 								const isLast = stack.length === i + 1
+								const nsInfo = getBuilderNamespace(
+									context,
+									frame.collection as metadata.MetadataKey
+								)
 								return (
 									<CSSTransition
 										key={frame.collection + i}
@@ -231,6 +236,7 @@ const FieldPicker: FC<T> = (props) => {
 										>
 											{isFirst || isLast ? (
 												<NamespaceLabel
+													metadatainfo={nsInfo}
 													context={context}
 													metadatakey={
 														frame.collection
@@ -254,6 +260,9 @@ const FieldPicker: FC<T> = (props) => {
 													<span className="label">
 														<NamespaceLabel
 															context={context}
+															metadatainfo={
+																nsInfo
+															}
 															metadatakey={
 																frame.collection
 															}
@@ -310,6 +319,11 @@ const FieldPicker: FC<T> = (props) => {
 							const setPath = currentFrame.path + `["${fieldId}"]`
 							const selected = isFieldSelected(setPath)
 
+							const nsInfo = getBuilderNamespace(
+								context,
+								fieldId as metadata.MetadataKey
+							)
+
 							return (
 								<PropNodeTag
 									key={index}
@@ -327,6 +341,7 @@ const FieldPicker: FC<T> = (props) => {
 									>
 										<NamespaceLabel
 											context={context}
+											metadatainfo={nsInfo}
 											metadatakey={fieldId}
 										/>
 

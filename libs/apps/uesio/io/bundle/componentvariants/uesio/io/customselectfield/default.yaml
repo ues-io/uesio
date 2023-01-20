@@ -1,0 +1,45 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      position: "relative"
+    input:
+      width: "100%"
+      backgroundColor: white
+      padding: 5px
+      border: "1px solid #00000044"
+      display: "flex"
+      alignItems: "center"
+      "&:focus":
+        outline: none
+        background: "#ddd"
+    menu:
+      backgroundColor: "white"
+      fontSize: "10pt"
+      border: "1px solid #ccc"
+      borderRadius: "4px"
+      overflow: "hidden"
+      boxShadow: "0 0 4px #00000033"
+    menuitem:
+      cursor: "pointer"
+    editbutton:
+      color: "#444"
+      border: "none"
+      outline: "none"
+      padding: "0px 3px 0px 0"
+      backgroundColor: "transparent"
+      fontSize: "initial"
+      cursor: "pointer"
+    displayarea:
+      flex: 1
+    searchbox:
+      minWidth: "200px"
+      borderRadius: "4px"
+      margin: "6px"
+      padding: "6px"
+      border: "1px solid #00000044"
+      "::placeholder":
+        fontSize: "9pt"
+        color: "#999"
+public: true

@@ -10,7 +10,7 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	labelPosition?: string
 	grouping?: string
 	defaultNamespace?: string
-	selectVariant?: string
+	selectVariant?: metadata.MetadataKey
 	fieldWrapperVariant?: metadata.MetadataKey
 }
 
@@ -29,6 +29,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		context,
 		grouping,
 		fieldWrapperVariant,
+		selectVariant,
 	} = props
 
 	if (!context.getWorkspace() && !context.getSiteAdmin()) {
@@ -37,48 +38,14 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			itemwrapper: {
-				color: "#444",
-				display: "flex",
-				alignItems: "center",
-				padding: "8px",
-				fontSize: "8pt",
-			},
-			notfound: {
-				textTransform: "capitalize",
-				color: "#999",
-				fontSize: "8pt",
-				padding: "5px",
-			},
-			namespacetag: {
-				display: "inline-block",
-				backgroundColor: "#ddd",
-				padding: "6px 10px",
-				marginRight: "4px",
-				borderRadius: "14px",
-				fontSize: "8pt",
-				verticalAlign: "middle",
-			},
-			highlighteditem: {
-				backgroundColor: "#eee",
-			},
-			nametag: {
-				display: "inline-block",
-				fontSize: "9pt",
-				verticalAlign: "middle",
-				color: "#333",
-			},
-			editbutton: {
-				color: "#777",
-				border: "none",
-				outline: "none",
-				padding: "0px 5px 0px 2px",
-				backgroundColor: "transparent",
-				fontSize: "initial",
-				cursor: "pointer",
-			},
+			itemwrapper: {},
+			selected: {},
+			notfound: {},
+			highlighteditem: {},
+			editbutton: {},
 		},
-		props
+		props,
+		"uesio/io.field"
 	)
 
 	const [metadata, error] = api.builder.useMetadataList(
@@ -108,16 +75,15 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			<div
 				className={styles.cx(
 					classes.itemwrapper,
-					highlighted && classes.highlighteditem
+					highlighted && classes.highlighteditem,
+					selected && classes.selected
 				)}
-				style={{
-					...(selected && {
-						padding: "0 8px 3px 8px",
-						display: "inline-flex",
-					}),
-				}}
 			>
-				<NamespaceLabel context={context} metadatakey={item} />
+				<NamespaceLabel
+					metadatainfo={metadata?.[item]}
+					context={context}
+					metadatakey={item}
+				/>
 				{selected && (
 					<button
 						tabIndex={-1}
@@ -154,6 +120,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					const isHighlighted = index === highlightedIndex
 					return renderer(item, isHighlighted)
 				}}
+				variant={selectVariant}
 				tagRenderer={renderer(value || null, false, true)}
 				context={context}
 				setValue={(item: MetadataItem) => setValue(item || "")}

@@ -1,6 +1,8 @@
 name: multimetadatafield
 pack: main
 entrypoint: components/multimetadatafield/multimetadatafield
+variants:
+  - uesio/io.customselectfield
 utilities:
   - uesio/builder.metadatapicker
   - uesio/io.textfield

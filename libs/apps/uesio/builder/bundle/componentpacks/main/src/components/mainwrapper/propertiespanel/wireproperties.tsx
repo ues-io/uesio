@@ -9,6 +9,7 @@ import {
 import MetadataProp from "../../../propertyrenderers/metadataprop"
 import { useDefinition } from "../../../api/defapi"
 import KeyProp from "../../../propertyrenderers/keyprop"
+import NumberProp from "../../../propertyrenderers/numberprop"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -48,6 +49,11 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					metadataType="COLLECTION"
 					label="Collection"
 					path={selectedPath.addLocal("collection")}
+					context={context}
+				/>
+				<NumberProp
+					label="Batch Size"
+					path={selectedPath.addLocal("batchsize")}
 					context={context}
 				/>
 			</component.ErrorBoundary>

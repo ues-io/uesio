@@ -5,6 +5,7 @@ import groupBy from "lodash/groupBy"
 import pickBy from "lodash/pickBy"
 import {
 	ComponentDef,
+	getBuilderNamespace,
 	getBuilderNamespaces,
 	getComponentDefs,
 	setDragPath,
@@ -40,6 +41,11 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 			{variants.map((variant) => {
 				const variantKey = api.component.getVariantId(variant)
 
+				const nsInfo = getBuilderNamespace(
+					context,
+					variant.namespace as metadata.MetadataKey
+				)
+
 				return (
 					<PropNodeTag
 						key={variantKey}
@@ -57,6 +63,7 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 					>
 						<NamespaceLabel
 							metadatakey={variant.namespace}
+							metadatainfo={nsInfo}
 							title={variant.name}
 							context={context}
 						/>
@@ -185,10 +192,17 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 		},
 		props
 	)
+
+	const nsInfo = getBuilderNamespace(
+		context,
+		component.namespace as metadata.MetadataKey
+	)
+
 	return (
 		<div className={classes.root}>
 			<NamespaceLabel
 				metadatakey={component.namespace}
+				metadatainfo={nsInfo}
 				title={component.title || component.name}
 				context={context}
 				classes={{
