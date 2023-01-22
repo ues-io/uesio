@@ -56,29 +56,40 @@ const getIndex = (
 			? "HORIZONTAL"
 			: "VERTICAL"
 	if (!prevTarget) {
-		const dataInsertIndex = target?.getAttribute("data-insertindex")
 		const bounds = target?.getBoundingClientRect()
 		// This code is for when we're dropping between gaps in components.
 		// It allows us to have gaps between components with out that annoying
 		// jitter.
 		if (bounds && target) {
-			if (dataDirection === "HORIZONTAL") {
-				let index: string | null = null
-				// loop over targets children
-				for (const child of Array.from(target.children)) {
-					const childBounds = child.getBoundingClientRect()
-					if (childBounds.right < e.pageX + window.scrollX) {
-						index = child.getAttribute("data-index")
-						continue
-					}
-					break
+			let index: string | null = null
+			// loop over targets children
+			for (const child of Array.from(target.children)) {
+				const childBounds = child.getBoundingClientRect()
+				const childIndex = child.getAttribute("data-index")
+				if (childIndex === null || childIndex === undefined) continue
+				// I'm not sure exactly why we need this offset
+				// but it helps reduce the jitter. I think it has something
+				// to do with the border of the child elements.
+				const offset = 1
+				const isChildBeforePosition =
+					dataDirection === "HORIZONTAL"
+						? childBounds.right - offset <= e.pageX + window.scrollX
+						: childBounds.bottom - offset <=
+						  e.pageY + window.scrollY
+
+				if (isChildBeforePosition) {
+					index = childIndex
+					continue
 				}
-				if (index) {
-					return parseInt(index, 10)
-				}
+
+				break
+			}
+			if (index) {
+				return parseInt(index, 10)
 			}
 		}
-		return dataInsertIndex ? parseInt(dataInsertIndex, 10) : 0
+		// If we can't figure out what the index is, fall back to zero
+		return 0
 	}
 	const dataIndex = prevTarget.getAttribute("data-index")
 	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")

@@ -28,6 +28,7 @@ const PlaceHolder: FC<T> = (props) => {
 				opacity: 0.4,
 				fontSize: "0.7em",
 				textAlign: "center",
+				margin: "10px",
 				transition: "all 0.125s ease",
 				...(isHovering && {
 					opacity: 0.6,
@@ -43,20 +44,8 @@ const PlaceHolder: FC<T> = (props) => {
 					opacity: 0.5,
 				}),
 			},
-			placeholder: {
-				borderRadius: "6px",
-				border: "1px dashed #eee",
-				transition: "all 0.125s ease",
-				...(isHovering && {
-					border: "1px dashed #ccc",
-					backgroundColor: "#e5e5e5",
-				}),
-				display: "grid",
-				alignItems: "center",
-				justifyItems: "center",
-			},
 			wrapper: {
-				padding: "6px",
+				margin: "6px",
 				minWidth: "52px",
 				minHeight: "52px",
 				display: "grid",
@@ -66,6 +55,15 @@ const PlaceHolder: FC<T> = (props) => {
 						display: "grid",
 					},
 				}),
+				borderRadius: "6px",
+				border: "1px dashed #eee",
+				transition: "all 0.125s ease",
+				...(isHovering && {
+					border: "1px dashed #ccc",
+					backgroundColor: "#e5e5e5",
+				}),
+				alignItems: "center",
+				justifyItems: "center",
 			},
 		},
 		props
@@ -76,16 +74,14 @@ const PlaceHolder: FC<T> = (props) => {
 			data-placeholder="true"
 			data-index={index}
 		>
-			<div className={classes.placeholder}>
-				{isVertical && (
-					<div>
-						{label && <div className={classes.label}>{label}</div>}
-						{message && (
-							<div className={classes.message}>{message}</div>
-						)}
-					</div>
-				)}
-			</div>
+			{isVertical && (
+				<div>
+					{label && <div className={classes.label}>{label}</div>}
+					{message && (
+						<div className={classes.message}>{message}</div>
+					)}
+				</div>
+			)}
 		</div>
 	)
 }

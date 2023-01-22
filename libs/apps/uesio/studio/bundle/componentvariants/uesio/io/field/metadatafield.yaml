@@ -3,8 +3,10 @@ label: Metadata Field
 extends: uesio/builder.metadatafield
 definition:
   uesio.styles:
+    itemwrapper:
+      fontSize: 10pt
     selected:
-      padding: "0 2px 2px 2px"
+      padding: 4px
     notfound:
-      fontSize: "9pt"
+      padding: 5px
 public: true

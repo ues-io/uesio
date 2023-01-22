@@ -69,7 +69,7 @@ const MenuButton: FunctionComponent<MenuButtonUtilityProps<unknown>> = (
 				referenceEl={anchorEl}
 				context={props.context}
 				placement={"bottom-start"}
-				offset={[0, -12]}
+				offset={-12}
 			>
 				<ul
 					className={styles.cx(classes.menu, !isOpen && "hidden")}

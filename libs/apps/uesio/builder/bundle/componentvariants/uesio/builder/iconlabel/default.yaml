@@ -1,0 +1,12 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    root:
+      display: "flex"
+      gap: "5px"
+      alignItems: "center"
+    icon:
+    title:
+      paddingTop: "1px"
+public: true

@@ -1,5 +1,7 @@
 name: iconlabel
 pack: main
 entrypoint: components/iconlabel/iconlabel
+variants:
+  - uesio/builder.iconlabel:uesio/builder.default
 utilities:
   - uesio/builder.iconlabel

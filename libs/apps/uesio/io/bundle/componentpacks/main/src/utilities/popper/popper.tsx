@@ -6,6 +6,7 @@ import {
 	hide,
 	autoPlacement,
 	Placement,
+	offset,
 } from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
@@ -13,7 +14,7 @@ interface TooltipProps extends definition.UtilityProps {
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
 	useFirstRelativeParent?: boolean
-	offset?: [number, number]
+	offset?: number
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
@@ -21,6 +22,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		whileElementsMounted: autoUpdate,
 		placement: props.placement,
 		middleware: [
+			offset(props.offset),
 			autoPlacement({ allowedPlacements: ["top", "bottom"] }),
 			hide(),
 		],

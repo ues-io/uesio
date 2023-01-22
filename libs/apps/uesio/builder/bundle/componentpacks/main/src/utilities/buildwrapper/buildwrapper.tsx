@@ -1,4 +1,4 @@
-import { SyntheticEvent, DragEvent, useState } from "react"
+import { useState } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
@@ -77,18 +77,13 @@ const BuildWrapper: definition.UC = (props) => {
 				...(isDragging && {
 					display: "none",
 				}),
-				"&:active > div": {
-					backgroundColor: "white",
-				},
-				padding: "6px",
-			},
-			wrapper: {
 				border: `1px solid ${selected ? "#aaa" : "#eee"}`,
 				borderRadius: "4px",
 				overflow: "hidden",
+				margin: "6px",
 			},
 			header: {
-				color: "#333",
+				color: "#444",
 				backgroundColor: selected ? "white" : "transparent",
 				padding: "10px 10px 2px",
 				textTransform: "uppercase",
@@ -110,9 +105,11 @@ const BuildWrapper: definition.UC = (props) => {
 			},
 			titleicon: {
 				marginRight: "4px",
+				opacity: selected ? 1 : 0.7,
 			},
 			titletext: {
 				verticalAlign: "middle",
+				opacity: selected ? 1 : 0.7,
 			},
 		},
 		props
@@ -132,7 +129,7 @@ const BuildWrapper: definition.UC = (props) => {
 				ref={setAnchorEl}
 				data-accepts={[].join(",")}
 				data-path={path}
-				onDragStart={(e: DragEvent) => {
+				onDragStart={(e) => {
 					// We do this because we don't want
 					// this component to always be draggable
 					// that's why we do the setCanDrag thing
@@ -148,7 +145,7 @@ const BuildWrapper: definition.UC = (props) => {
 					setDragPath(context)
 				}}
 				className={classes.root}
-				onClick={(event: SyntheticEvent) => {
+				onClick={(event) => {
 					!selected && setSelectedPath(context, fullPath)
 					event.stopPropagation()
 				}}
@@ -162,7 +159,7 @@ const BuildWrapper: definition.UC = (props) => {
 						classes={{
 							popper: classes.popper,
 						}}
-						offset={[0, 0]}
+						offset={2}
 					>
 						<BuildActionsArea
 							context={context}
@@ -176,27 +173,23 @@ const BuildWrapper: definition.UC = (props) => {
 						</BuildActionsArea>
 					</Popper>
 				)}
-				<div className={classes.wrapper}>
-					{
-						<div
-							className={classes.header}
-							onMouseDown={() => setCanDrag(true)}
-							onMouseUp={() => dragPath && setCanDrag(false)}
-						>
-							<Text
-								variant="uesio/io.icon"
-								className={classes.titleicon}
-								text={nsInfo.icon}
-								color={nsInfo.color}
-								context={context}
-							/>
-							<span className={classes.titletext}>
-								{componentDef.title || componentDef.name}
-							</span>
-						</div>
-					}
-					<div className={classes.inner}>{children}</div>
+				<div
+					className={classes.header}
+					onMouseDown={() => setCanDrag(true)}
+					onMouseUp={() => dragPath && setCanDrag(false)}
+				>
+					<Text
+						variant="uesio/io.icon"
+						className={classes.titleicon}
+						text={nsInfo.icon}
+						color={nsInfo.color}
+						context={context}
+					/>
+					<span className={classes.titletext}>
+						{componentDef.title || componentDef.name}
+					</span>
 				</div>
+				<div className={classes.inner}>{children}</div>
 			</div>
 			{addAfterPlaceholder && (
 				<PlaceHolder
