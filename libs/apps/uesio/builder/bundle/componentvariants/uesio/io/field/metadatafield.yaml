@@ -8,15 +8,14 @@ definition:
       display: "flex"
       alignItems: "center"
       padding: "8px"
-      fontSize: "8pt"
+      fontSize: "9pt"
     selected:
       padding: "0 2px"
       display: "inline-flex"
     notfound:
       textTransform: "capitalize"
       color: "#999"
-      fontSize: "8pt"
-      padding: "5px"
+      padding: "0px 3px"
     highlighteditem:
       backgroundColor: "#eee"
     editbutton:

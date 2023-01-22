@@ -15,23 +15,19 @@ const IconLabel: FC<T> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "flex",
-				gap: "5px",
-				alignItems: "center",
-				fontSize: "10pt",
+			root: {},
+			icon: {
+				...(!icon && { visibility: "hidden" }),
 			},
-			icon: {},
-			title: {
-				paddingTop: "1px",
-			},
+			title: {},
 		},
-		props
+		props,
+		"uesio/builder.iconlabel"
 	)
 	const iconElement = (
 		<Text
 			variant="uesio/io.icon"
-			text={icon}
+			text={icon || "circle"}
 			color={color}
 			classes={{
 				root: classes.icon,
