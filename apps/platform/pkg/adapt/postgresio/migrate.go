@@ -3,53 +3,74 @@ package postgresio
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"time"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	"github.com/gofrs/uuid"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getMigrationsDirectory() string {
+	return "file://./migrations"
+}
+func getConnectionString(credentials *adapt.Credentials) (string, error) {
+	host, ok := (*credentials)["host"]
+	if !ok {
+		return "", errors.New("No host provided in credentials")
+	}
+
+	port, ok := (*credentials)["port"]
+	if !ok {
+		port = "5432"
+	}
+
+	user, ok := (*credentials)["user"]
+	if !ok {
+		return "", errors.New("No user provided in credentials")
+	}
+
+	password, ok := (*credentials)["password"]
+	if !ok {
+		return "", errors.New("No password provided in credentials")
+	}
+
+	dbname, ok := (*credentials)["database"]
+
+	if !ok {
+		return "", errors.New("No database name provided in credentials")
+	}
+
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
+}
+
 func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
+
 	db := c.GetClient()
 
-	_, err := db.Exec(context.Background(), `
-		create table if not exists public.data
-		(
-			id         uuid           not null,
-			collection varchar(255)   not null,
-			tenant     varchar(255)   not null,
-			uniquekey  varchar(255)   not null,
-			fields     jsonb          not null,
-			owner      uuid           not null,
-			createdby  uuid           not null,
-			updatedby  uuid           not null,
-			createdat  timestamptz(0) not null,
-			updatedat  timestamptz(0) not null,
-			autonumber integer        not null,
+	migrationsDir := getMigrationsDirectory()
 
-			primary key(tenant,collection,id)
-		);
+	connStr, err := getConnectionString(c.credentials)
 
-		create table if not exists public.tokens
-		(
-			recordid   uuid         not null,
-			collection varchar(255) not null,
-			tenant     varchar(255) not null,
-			token      varchar(255) not null,
-			readonly   boolean      not null,
-
-			primary key(tenant,collection,recordid,token)
-		);
-
-		create unique index if not exists unique_idx on data (tenant,collection,uniquekey);
-		create unique index if not exists autonumber_idx on data (tenant,collection,autonumber);
-
-		create index if not exists _idx on tokens (tenant,collection,recordid);
-
-	`)
 	if err != nil {
+		return err
+	}
+
+	m, err := migrate.New(
+		migrationsDir,
+		connStr)
+	if err != nil {
+		return err
+	}
+	err = m.Up()
+
+	if err != nil && err.Error() != "no change" {
 		return err
 	}
 

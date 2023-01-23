@@ -10,6 +10,7 @@ FROM alpine:latest
 COPY --from=multistage /src/uesio .
 COPY ./apps/platform/fonts ./fonts
 COPY ./apps/platform/seed ./seed
+COPY ./apps/platform/migrations ./migrations
 COPY ./libs/apps ./libs/apps
 COPY ./apps/platform/platform ./platform
 COPY ./dist/ui ./dist/ui

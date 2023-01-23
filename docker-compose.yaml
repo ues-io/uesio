@@ -13,9 +13,15 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: mysecretpassword
+      # Master user and database
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgresio
+      POSTGRES_DATABASE: postgres
+      # Create 2 databases, one for dev and one for running tests:
+      # - dev: postgresio (owned by postgres user)
+      # - test: pgtest (owned by pgtest user)
+      POSTGRES_MULTIPLE_DATABASES: "postgresio,postgres:pgtest,pgtest"
     volumes:
+      - ./apps/platform/scripts/create-multiple-databases.sh:/docker-entrypoint-initdb.d/create-multiple-databases.sh
       - pgdata:/var/lib/postgresql/data
 
 volumes:

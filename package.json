@@ -31,6 +31,7 @@
     "prettier-format": "prettier --write .",
     "lint": "nx workspace-lint && nx lint",
     "lint-all": "nx run-many --target=lint --all",
+    "migrate:create": "migrate create -dir apps/platform/migrations -ext sql -seq -digits 1",
     "nx": "nx",
     "setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
     "start": "nx serve platform",
