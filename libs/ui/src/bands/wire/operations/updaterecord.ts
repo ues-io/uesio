@@ -11,12 +11,9 @@ export default (
 		wireName: string | undefined
 	): ThunkFunc =>
 	(dispatch) => {
-		console.log({ ctx: context.stack })
 		const viewId = context.getViewId()
 		if (!viewId) return context
-
 		const recordId = context.getRecordId(wireName)
-		console.log({ recordId, wireName, value })
 		if (!recordId) return context
 		const wireId = wireName || context.getWireId()
 		if (!wireId) return context
