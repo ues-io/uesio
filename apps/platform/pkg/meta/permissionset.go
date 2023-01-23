@@ -19,6 +19,24 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 	}, nil
 }
 
+type DataAccess struct {
+	ModifyAllRecords bool `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
+	ViewAllRecords   bool `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
+}
+
+type PermissionOptions struct {
+	Read   bool
+	Create bool
+	Edit   bool
+	Delete bool
+}
+
+type CollectionPermission struct {
+	PermissionOptions
+	DataAccess
+	FieldRefs map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
+}
+
 type PermissionSet struct {
 	ID                  string          `yaml:"-" json:"uesio/core.id"`
 	UniqueKey           string          `yaml:"-" json:"uesio/core.uniquekey"`
@@ -34,15 +52,14 @@ type PermissionSet struct {
 	AllowAllViews       bool            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
-	ModifyAllRecords    bool            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
-	ViewAllRecords      bool            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	itemMeta            *ItemMeta       `yaml:"-" json:"-"`
-	CreatedBy           *User           `yaml:"-" json:"uesio/core.createdby"`
-	Owner               *User           `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy           *User           `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt           int64           `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt           int64           `yaml:"-" json:"uesio/core.createdat"`
-	Public              bool            `yaml:"public,omitempty" json:"uesio/studio.public"`
+	DataAccess
+	itemMeta  *ItemMeta `yaml:"-" json:"-"`
+	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
+	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
+	Public    bool      `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type PermissionSetWrapper PermissionSet
@@ -247,7 +264,8 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,
 		AllowAllCollections: allowAllCollections,
-		ModifyAllRecords:    modifyAllRecords,
-		ViewAllRecords:      viewAllRecords,
+		DataAccess:          DataAccess{modifyAllRecords, viewAllRecords},
+		// ModifyAllRecords:    modifyAllRecords,
+		// ViewAllRecords:      viewAllRecords,
 	}
 }
