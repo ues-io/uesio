@@ -10,7 +10,7 @@ test("wire init", () => {
 	const store = create({})
 	const viewId = "myview"
 	const wireId = "mywire"
-	const context = newContext({ view: viewId })
+	const context = newContext().addViewFrame({ view: viewId, viewDef: viewId })
 	initializeWiresOp(context, {
 		[wireId]: {
 			viewOnly: true,

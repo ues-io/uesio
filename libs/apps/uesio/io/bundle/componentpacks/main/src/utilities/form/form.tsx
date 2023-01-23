@@ -6,7 +6,7 @@ import Group from "../group/group"
 
 interface FormProps extends definition.UtilityProps {
 	path: string
-	wire?: string
+	wire: string
 	submitLabel?: string
 	onSubmit?: (record: wire.WireRecord) => void
 	content: definition.DefinitionList
@@ -23,13 +23,13 @@ const Form: FunctionComponent<FormProps> = (props) => {
 	return (
 		<>
 			{wire.getData().map((record, i) => {
-				const recordContext = context.addFrame({
-					...(wireName && {
+				const recordContext = context
+					.addRecordFrame({
 						wire: wireName,
-					}),
-					record: record.getId(),
-					fieldMode: "EDIT",
-				})
+						record: record.getId(),
+						view: wire.getViewId(),
+					})
+					.addFieldModeFrame("EDIT")
 				// Loop over all the fields in the wire
 				return (
 					<Fragment key={record.getId()}>

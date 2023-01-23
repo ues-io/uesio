@@ -53,7 +53,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (!item) return ""
 
 		if (template) {
-			const itemContext = context.addFrame({
+			const itemContext = context.addRecordDataFrame({
 				recordData: item,
 			})
 			return itemContext.mergeString(template) as string
@@ -92,7 +92,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 								definition={options}
 								listName="components"
 								path={`${path}["reference"]["${index}"]`}
-								context={context.addFrame({
+								context={context.addRecordDataFrame({
 									recordData: item,
 								})}
 							/>

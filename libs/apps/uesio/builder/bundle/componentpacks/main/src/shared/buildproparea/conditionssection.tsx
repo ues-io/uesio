@@ -31,7 +31,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const wireId = component.path.getKeyAtPath(path || "")
 	const newContext = wireId
-		? context.addFrame({
+		? context.addWireFrame({
 				wire: wireId,
 		  })
 		: context

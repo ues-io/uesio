@@ -26,8 +26,9 @@ export default (context: Context, wirename: string, prepend?: boolean) => {
 			prepend: !!prepend,
 		})
 	)
-	return context.addFrame({
+	return context.addRecordFrame({
 		record: recordId,
 		wire: wirename,
+		view: viewId,
 	})
 }

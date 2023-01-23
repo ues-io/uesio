@@ -76,19 +76,24 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
-
-	// If we got a wire from the definition, add it to context
-	const newContext = definition.wire
-		? context.addFrame({
-				wire: definition.wire,
-		  })
-		: context
-
 	const componentId = api.component.getComponentIdFromProps(
 		definition.id,
 		props
 	)
 	const [mode] = useMode(componentId, definition.mode)
+
+	// If we got a wire from the definition, add it to context
+	let newContext = context
+	if (definition.wire && wire) {
+		newContext = newContext.addWireFrame({
+			wire: definition.wire,
+			view: wire.getViewId(),
+		})
+	}
+	if (mode) {
+		newContext = newContext.addFieldModeFrame(mode)
+	}
+
 	const [currentPage, setCurrentPage] = usePagination(
 		componentId,
 		wire?.getBatchId()
@@ -105,12 +110,19 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const itemContexts = component.useContextFilter<wire.WireRecord>(
 		data,
 		definition.recordDisplay,
-		(record, context) =>
-			context.addFrame({
-				record: record.getId(),
-				wire: wire?.getId(),
-				fieldMode: mode,
-			}),
+		(record, context) => {
+			if (record && wire) {
+				context = context.addRecordFrame({
+					wire: definition.wire,
+					record: record.getId(),
+					view: wire.getViewId(),
+				})
+			}
+			if (mode) {
+				context = context.addFieldModeFrame(mode)
+			}
+			return context
+		},
 		newContext
 	)
 

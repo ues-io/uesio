@@ -27,25 +27,234 @@ type FieldMode = "READ" | "EDIT"
 
 type Mergeable = string | number | boolean | undefined
 
-type ContextFrame = {
-	wire?: string
-	record?: string
-	recordData?: PlainWireRecord // A way to store arbitrary record data in context
+interface ErrorContext {
+	errors: string[]
+}
+
+interface FieldModeContext {
+	fieldMode: FieldMode
+}
+
+interface WireContext {
+	wire: string
 	view?: string
-	viewDef?: string
-	buildMode?: boolean
-	fieldMode?: FieldMode
-	noMerge?: boolean
-	route?: RouteState
-	workspace?: WorkspaceState
-	siteadmin?: SiteAdminState
-	site?: SiteState
-	theme?: string
-	errors?: string[]
+}
+
+interface RecordContext {
+	view?: string
+	wire: string
+	record: string
+}
+
+interface RecordDataContext {
+	recordData: PlainWireRecord // A way to store arbitrary record data in context
+}
+
+interface ViewContext extends ParamsContext {
+	view: string
+	viewDef: string
+}
+
+interface RouteContext extends ParamsContext {
+	route: RouteState
+	site: SiteState
+	theme: string
+	view: string
+	viewDef: string
+}
+
+interface ThemeContext {
+	theme: string
+}
+
+interface WorkspaceContext {
+	workspace: WorkspaceState
+}
+
+interface SiteAdminContext {
+	siteadmin: SiteAdminState
+}
+
+interface ParamsContext {
 	params?: Record<string, string>
 }
 
-const newContext = (initialFrame: ContextFrame) => new Context([initialFrame])
+interface ThemeContextFrame extends ThemeContext {
+	type: "THEME"
+}
+
+interface SiteAdminContextFrame extends SiteAdminContext {
+	type: "SITE_ADMIN"
+}
+
+interface WorkspaceContextFrame extends WorkspaceContext {
+	type: "WORKSPACE"
+}
+
+interface RouteContextFrame extends RouteContext {
+	type: "ROUTE"
+}
+
+interface ViewContextFrame extends ViewContext {
+	type: "VIEW"
+}
+
+interface RecordContextFrame extends RecordContext {
+	type: "RECORD"
+	// We will throw an error if view is not available at time of construction
+	view: string
+}
+
+interface RecordDataContextFrame extends RecordDataContext {
+	type: "RECORD_DATA"
+}
+
+interface WireContextFrame extends WireContext {
+	type: "WIRE"
+	// We will throw an error if view is not available at time of construction
+	view: string
+}
+
+interface ParamsContextFrame extends ParamsContext {
+	type: "PARAMS"
+}
+
+interface ErrorContextFrame extends ErrorContext {
+	type: "ERROR"
+}
+
+interface FieldModeContextFrame extends FieldModeContext {
+	type: "FIELD_MODE"
+}
+
+type ContextOptions =
+	| RouteContext
+	| SiteAdminContext
+	| WorkspaceContext
+	| ThemeContext
+	| ViewContext
+	| RecordContext
+	| RecordDataContext
+	| WireContext
+	| ParamsContext
+	| ErrorContext
+	| FieldModeContext
+
+type ContextFrame =
+	| RouteContextFrame
+	| SiteAdminContextFrame
+	| WorkspaceContextFrame
+	| ThemeContextFrame
+	| ViewContextFrame
+	| RecordContextFrame
+	| RecordDataContextFrame
+	| WireContextFrame
+	| ParamsContextFrame
+	| ErrorContextFrame
+	| FieldModeContextFrame
+
+// Type Guards for fully-resolved Context FRAMES (with "type" property appended)
+const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
+	frame.type === "ERROR"
+
+const isSiteAdminContextFrame = (
+	frame: ContextFrame
+): frame is SiteAdminContextFrame => frame.type === "SITE_ADMIN"
+
+const isWorkspaceContextFrame = (
+	frame: ContextFrame
+): frame is WorkspaceContextFrame => frame.type === "WORKSPACE"
+
+const isThemeContextFrame = (
+	frame: ContextFrame
+): frame is ThemeContextFrame | RouteContextFrame =>
+	["THEME", "ROUTE"].includes(frame.type)
+
+const isRecordContextFrame = (
+	frame: ContextFrame
+): frame is RecordContextFrame | RecordDataContextFrame =>
+	["RECORD", "RECORD_DATA"].includes(frame.type)
+
+const isFieldModeContextFrame = (
+	frame: ContextFrame
+): frame is FieldModeContextFrame => frame.type === "FIELD_MODE"
+const hasParamsContext = (
+	frame: ContextFrame
+): frame is ParamsContextFrame | ViewContextFrame | RouteContextFrame =>
+	["PARAMS", "VIEW", "ROUTE"].includes(frame.type)
+const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
+	frame.type === "ROUTE"
+const hasWireContext = (
+	frame: ContextFrame
+): frame is RecordContextFrame | WireContextFrame =>
+	["RECORD", "WIRE"].includes(frame.type)
+const hasViewContext = (
+	frame: ContextFrame
+): frame is ViewContextFrame | RouteContextFrame =>
+	["VIEW", "ROUTE"].includes(frame.type)
+
+// Type Guards for pre-resolved Context objects (no type property yet)
+const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
+	Object.prototype.hasOwnProperty.call(o, "workspace")
+
+const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
+	Object.prototype.hasOwnProperty.call(o, "view")
+
+const providesSiteAdmin = (o: ContextOptions): o is SiteAdminContext =>
+	Object.prototype.hasOwnProperty.call(o, "siteadmin")
+
+const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
+	Object.prototype.hasOwnProperty.call(o, "wire")
+
+const providesWireAndView = (
+	o: ContextOptions
+): o is WireContext | RecordContext =>
+	Object.prototype.hasOwnProperty.call(o, "wire") &&
+	Object.prototype.hasOwnProperty.call(o, "view")
+
+const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
+	Object.prototype.hasOwnProperty.call(o, "fieldMode")
+
+const providesParams = (
+	o: ContextOptions
+): o is RouteContext | ParamsContext | ViewContext =>
+	Object.prototype.hasOwnProperty.call(o, "params")
+
+function injectDynamicContext(context: Context, additional: unknown) {
+	if (!additional) return context
+
+	if (providesWorkspace(additional)) {
+		const workspace = additional.workspace
+		context = context.addWorkspaceFrame({
+			name: context.mergeString(workspace.name),
+			app: context.mergeString(workspace.app),
+		})
+	}
+
+	if (providesFieldMode(additional)) {
+		const fieldMode = additional.fieldMode
+		context = context.addFieldModeFrame(fieldMode)
+	}
+
+	if (providesSiteAdmin(additional)) {
+		const siteadmin = additional.siteadmin
+		context = context.addSiteAdminFrame({
+			name: context.mergeString(siteadmin.name),
+			app: context.mergeString(siteadmin.app),
+		})
+	}
+
+	if (providesWire(additional) && additional.wire) {
+		const wire = additional.wire
+		context = context.addWireFrame({
+			wire,
+		})
+	}
+
+	return context
+}
+
+const newContext = () => new Context()
 
 const ANCESTOR_INDICATOR = "Parent."
 
@@ -53,28 +262,24 @@ const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
 		? viewSelectors.selectById(getCurrentState(), viewDefId)?.definition
 		: undefined
-
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getCurrentState(), viewId, wireId)
 
 class Context {
 	constructor(stack?: ContextFrame[]) {
-		this.stack = stack || []
+		this.stack = stack || ([] as ContextFrame[])
 	}
 
 	stack: ContextFrame[]
 
 	getRecordId = () => this.getRecord()?.getId()
 
-	getRecordData = () =>
-		this.stack.find((frame) => frame?.recordData)?.recordData
-
 	removeRecordFrame = (times: number): Context => {
 		if (!times) {
 			return this
 		}
 		const index = this.stack.findIndex(
-			(frame) => frame?.record || frame?.wire
+			(frame): frame is RecordContextFrame => isRecordContextFrame(frame)
 		)
 		if (index === -1) {
 			return new Context()
@@ -85,13 +290,13 @@ class Context {
 	}
 
 	getRecord = () => {
-		const recordFrame = this.findRecordFrame()
+		const recordFrame = this.stack.find(isRecordContextFrame)
 
 		// if we don't have a record id in context return the first
-		if (!recordFrame) {
+		if (undefined === recordFrame) {
 			return undefined
 		}
-		if (recordFrame.recordData) {
+		if (recordFrame.type === "RECORD_DATA") {
 			return new WireRecord(recordFrame.recordData, "", new Wire())
 		}
 
@@ -107,11 +312,20 @@ class Context {
 		return undefined
 	}
 
-	getViewId = () => this.stack.find((frame) => frame?.view)?.view
+	// Find the first WireFrame or RecordFrame which provides a wire and a view
+	getWireProviderFrame = () =>
+		this.stack.filter(hasWireContext).find(providesWireAndView)
+
+	getViewId = () => {
+		const frame = this.stack.filter(hasViewContext).find(providesView)
+		if (!frame || !frame.view) throw "No View frame found in context"
+		return frame.view
+	}
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () => this.stack.find((frame) => frame?.params)?.params
+	getParams = () =>
+		this.stack.filter(hasParamsContext).find(providesParams)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
@@ -122,7 +336,7 @@ class Context {
 		themeSelectors.selectById(getCurrentState(), this.getThemeId() || "") ||
 		defaultTheme
 
-	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
+	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -143,13 +357,20 @@ class Context {
 
 	getFeatureFlag = (name: string) => selectByName(getCurrentState(), name)
 
-	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
+	getViewDefId = () =>
+		this.stack.filter(hasViewContext).find((f) => f?.viewDef)?.viewDef
 
-	getRoute = () => this.stack.find((frame) => frame?.route)?.route
+	getRoute = () =>
+		this.stack.filter(isRouteContextFrame).find((f) => f.route)?.route
 
-	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
+	getRouteContext = () => {
+		const routeFrame = this.stack.find(isRouteContextFrame)
+		return routeFrame ? new Context([routeFrame]) : newContext()
+	}
 
-	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
+	getWorkspace = () => this.stack.find(isWorkspaceContextFrame)?.workspace
+
+	getSiteAdmin = () => this.stack.find(isSiteAdminContextFrame)?.siteadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -164,25 +385,10 @@ class Context {
 		return undefined
 	}
 
-	getSite = () => this.stack.find((frame) => frame?.site)?.site
+	getSite = () =>
+		this.stack.filter(isRouteContextFrame).find((f) => f.site)?.site
 
-	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
-
-	findWireFrame = () => {
-		const index = this.stack.findIndex((frame) => frame?.wire)
-		if (index < 0) {
-			return undefined
-		}
-		return new Context(this.stack.slice(index))
-	}
-
-	findRecordFrame = () => {
-		const index = this.stack.findIndex(
-			(frame) => frame?.recordData || frame?.record || frame?.wire
-		)
-		if (index === undefined) return undefined
-		return this.stack[index]
-	}
+	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
 	getWire = () => {
 		const state = getCurrentState()
@@ -213,10 +419,9 @@ class Context {
 	}
 
 	getPlainWire = () => {
-		const wireFrame = this.findWireFrame()
-		const wireId = wireFrame?.getWireId()
-		if (!wireId) return undefined
-		return getWire(wireFrame?.getViewId(), wireId)
+		const wireProviderFrame = this.getWireProviderFrame()
+		if (wireProviderFrame === undefined) return undefined
+		return getWire(wireProviderFrame.view, wireProviderFrame.wire)
 	}
 
 	getPlainWireByName = (wirename: string) => {
@@ -225,32 +430,86 @@ class Context {
 	}
 
 	getFieldMode = () =>
-		this.stack.find((frame) => frame?.fieldMode)?.fieldMode || "READ"
-
-	getBuildMode = () => {
-		for (const frame of this.stack) {
-			if (frame.buildMode) {
-				return true
-			}
-			if (frame.buildMode === false) {
-				return false
-			}
-		}
-		return false
-	}
+		this.stack.find(isFieldModeContextFrame)?.fieldMode || "READ"
 
 	getUser = () => getCurrentState().user
 
-	getNoMerge = () => this.stack.some((frame) => frame?.noMerge)
+	addWireFrame = (wireContext: WireContext) =>
+		this.#addFrame({
+			type: "WIRE",
+			view: wireContext.view || this.getViewId(),
+			wire: wireContext.wire,
+		})
 
-	addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
+	addRecordFrame = (recordContext: RecordContext) =>
+		this.#addFrame({
+			type: "RECORD",
+			view: recordContext.view || this.getViewId(),
+			wire: recordContext.wire,
+			record: recordContext.record,
+		})
+
+	// addRecordDataFrame provides a single-argument method, vs an argument method, since this is the common usage
+	addRecordDataFrame = (recordData: PlainWireRecord) =>
+		this.#addFrame({
+			type: "RECORD_DATA",
+			recordData,
+		})
+
+	addRouteFrame = (routeContext: RouteContext) =>
+		this.#addFrame({
+			type: "ROUTE",
+			...routeContext,
+		})
+
+	addSiteAdminFrame = (siteadmin: SiteAdminState) =>
+		this.#addFrame({
+			type: "SITE_ADMIN",
+			siteadmin,
+		})
+
+	addWorkspaceFrame = (workspace: WorkspaceState) =>
+		this.#addFrame({
+			type: "WORKSPACE",
+			workspace,
+		})
+
+	addThemeFrame = (theme: string) =>
+		this.#addFrame({
+			type: "THEME",
+			theme,
+		})
+
+	addViewFrame = (viewContext: ViewContext) =>
+		this.#addFrame({
+			type: "VIEW",
+			...viewContext,
+		})
+
+	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
+	addErrorFrame = (errors: string[]) =>
+		this.#addFrame({
+			type: "ERROR",
+			errors,
+		})
+
+	// addParamsFrame provides a single-argument method, vs an argument method, since this is the common usage
+	addParamsFrame = (params: Record<string, string>) =>
+		this.#addFrame({
+			type: "PARAMS",
+			params,
+		})
+
+	// addFieldModeFrame provides a single-argument method, vs an argument method, since this is the common usage
+	addFieldModeFrame = (fieldMode: FieldMode) =>
+		this.#addFrame({
+			type: "FIELD_MODE",
+			fieldMode,
+		})
+
+	#addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
 
 	merge = (template: Mergeable) => {
-		// If we are in a no-merge context, just return the template
-		if (this.getNoMerge()) {
-			return template || ""
-		}
-
 		if (typeof template !== "string") {
 			return template
 		}
@@ -297,12 +556,23 @@ class Context {
 	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
 		this.mergeMap(map) as Record<string, string>
 
-	getCurrentErrors = () => this.stack[0].errors || []
+	getCurrentErrors = () =>
+		this.stack.length && isErrorContextFrame(this.stack[0])
+			? this.stack[0].errors
+			: []
 
 	getViewStack = () =>
 		this.stack
-			.map((contextFrame) => contextFrame?.viewDef)
-			.filter((def) => def)
+			.filter(hasViewContext)
+			.filter((f) => f?.viewDef)
+			.map((contextFrame) => contextFrame.viewDef)
 }
 
-export { Context, ContextFrame, FieldMode, RouteState, getWire, newContext }
+export {
+	Context,
+	ContextFrame,
+	FieldMode,
+	newContext,
+	injectDynamicContext,
+	getWire,
+}

@@ -69,7 +69,7 @@ class Wire {
 	getFields = () => this.source?.fields || {}
 
 	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		const context = newContext({
+		const context = newContext().addRecordFrame({
 			wire: this.getId(),
 			record: recordId,
 			view: this.getViewId(),
@@ -152,6 +152,8 @@ class Wire {
 	save = (context: Context) => saveWiresOp(context, [this.getId()])
 
 	load = (context: Context) => loadWireOp(context, [this.getId()])
+
+	getEvents = () => this.source.events
 }
 
 export default Wire

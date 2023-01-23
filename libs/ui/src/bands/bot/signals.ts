@@ -27,10 +27,10 @@ const signals: Record<string, SignalDescriptor> = {
 					mergedParams || {}
 				)
 
-				return context.addFrame({ params: response.params })
+				return context.addParamsFrame(response.params)
 			} catch (error) {
 				const message = getErrorString(error)
-				return context.addFrame({ errors: [message] })
+				return context.addErrorFrame([message])
 			}
 		},
 		label: "Call Bot",

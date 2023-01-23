@@ -71,7 +71,7 @@ const View: UC<ViewDefinition> = (props) => {
 		context.mergeStringMap(params)
 	)
 
-	const viewContext = context.addFrame({
+	const viewContext = context.addViewFrame({
 		view: viewId,
 		viewDef: viewDefId,
 		params: paramState,

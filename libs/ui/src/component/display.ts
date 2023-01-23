@@ -174,7 +174,9 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireHasNoChanges"
 	) {
 		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
+			? context.addWireFrame({
+					wire: condition.wire,
+			  })
 			: context
 		const hasChanges = ctx.getWire()?.getChanges().length
 		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
@@ -185,7 +187,9 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireIsNotLoading"
 	) {
 		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
+			? context.addWireFrame({
+					wire: condition.wire,
+			  })
 			: context
 		const isLoading = ctx.getWire()?.isLoading()
 		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
@@ -196,7 +200,9 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireHasNoRecords"
 	) {
 		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
+			? context.addWireFrame({
+					wire: condition.wire,
+			  })
 			: context
 		const hasRecords = ctx.getWire()?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
@@ -218,7 +224,9 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (!condition.type || condition.type === "fieldValue") {
 		const ctx = condition.wire
-			? context.addFrame({ wire: condition.wire })
+			? context.addWireFrame({
+					wire: condition.wire,
+			  })
 			: context
 		const ctxRecord = ctx.getRecord()
 		// If we have a record in context, use it.
