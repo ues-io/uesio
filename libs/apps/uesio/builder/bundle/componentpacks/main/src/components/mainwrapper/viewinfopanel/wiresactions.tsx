@@ -1,26 +1,17 @@
-import { definition, styles, component } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 import { set } from "../../../api/defapi"
 import { FullPath } from "../../../api/path"
+import BuildActionsArea from "../../../helpers/buildactionsarea"
 
 const WiresActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const { context } = props
+
 	const path = new FullPath("viewdef", context.getViewDefId(), '["wires"]')
-	const classes = styles.useUtilityStyles(
-		{
-			wrapper: {
-				display: "flex",
-				justifyContent: "space-around",
-				padding: "8px",
-				position: "relative",
-				backgroundColor: "#fcfcfc",
-			},
-		},
-		props
-	)
+
 	return (
-		<div className={classes.wrapper}>
+		<BuildActionsArea justify="space-around" context={context}>
 			<Button
 				context={context}
 				variant="uesio/builder.actionbutton"
@@ -45,7 +36,7 @@ const WiresActions: definition.UtilityComponent = (props) => {
 					)
 				}
 			/>
-		</div>
+		</BuildActionsArea>
 	)
 }
 WiresActions.displayName = "WiresActions"

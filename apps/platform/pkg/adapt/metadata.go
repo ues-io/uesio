@@ -45,6 +45,7 @@ type CollectionMetadata struct {
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 	TableName             string                                 `json:"-"`
 	Public                bool                                   `json:"public"`
+	HasAllFields          bool                                   `json:"hasAllFields"`
 }
 
 func (cm *CollectionMetadata) IsWriteProtected() bool {

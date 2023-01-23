@@ -51,6 +51,7 @@ const getBuilderNamespace = (
 	key: metadata.MetadataKey
 ) => {
 	const namespaces = getBuilderNamespaces(context)
+	if (!key) return undefined
 	const [ns] = key.split(".")
 	return namespaces[ns]
 }

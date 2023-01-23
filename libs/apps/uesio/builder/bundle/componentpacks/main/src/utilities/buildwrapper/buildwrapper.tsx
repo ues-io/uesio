@@ -105,11 +105,11 @@ const BuildWrapper: definition.UC = (props) => {
 			},
 			titleicon: {
 				marginRight: "4px",
-				opacity: selected ? 1 : 0.7,
+				opacity: selected ? 1 : 0.6,
 			},
 			titletext: {
 				verticalAlign: "middle",
-				opacity: selected ? 1 : 0.7,
+				fontWeight: 300,
 			},
 		},
 		props

@@ -1,6 +1,6 @@
-import { definition, api, context as ctx } from "@uesio/ui"
+import { definition, api, context as ctx, component } from "@uesio/ui"
 import { FullPath } from "./path"
-import { setSelectedPath } from "./stateapi"
+import { getSelectedPath, setSelectedPath } from "./stateapi"
 
 const get = (context: ctx.Context, path: FullPath) =>
 	api.builder.getDefinitionAtPath(path.pathCombine())
@@ -19,7 +19,17 @@ const set = (
 
 const remove = (context: ctx.Context, path: FullPath) => {
 	api.builder.removeDefinition(path.pathCombine())
-	setSelectedPath(context)
+
+	const selectedPath = getSelectedPath(context)
+	const [key, poppedSelectedPath] = selectedPath.pop()
+	// If we're a component then we may be selected at two paths
+	// ["components"]["0"] or ["components"]["0"]["blah/blah.blah"]
+	const wasSelected =
+		(component.path.isComponentIndex(key) &&
+			poppedSelectedPath.equals(path)) ||
+		selectedPath.equals(path)
+
+	if (wasSelected) setSelectedPath(context)
 }
 
 const add = (
