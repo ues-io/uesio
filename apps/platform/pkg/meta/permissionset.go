@@ -34,24 +34,24 @@ type PermissionOptions struct {
 type CollectionPermission struct {
 	PermissionOptions
 	DataAccess
-	FieldRefs map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
+	FieldRefs map[string]PermissionOptions `yaml:"fields" json:"uesio/studio.fieldrefs"`
 }
 
 type PermissionSet struct {
-	ID                  string          `yaml:"-" json:"uesio/core.id"`
-	UniqueKey           string          `yaml:"-" json:"uesio/core.uniquekey"`
-	Name                string          `yaml:"name" json:"uesio/studio.name"`
-	Namespace           string          `yaml:"-" json:"-"`
-	NamedRefs           map[string]bool `yaml:"named" json:"uesio/studio.namedrefs"`
-	ViewRefs            map[string]bool `yaml:"views" json:"uesio/studio.viewrefs"`
-	CollectionRefs      map[string]bool `yaml:"collections" json:"uesio/studio.collectionrefs"`
-	RouteRefs           map[string]bool `yaml:"routes" json:"uesio/studio.routerefs"`
-	FileRefs            map[string]bool `yaml:"files" json:"uesio/studio.filerefs"`
-	Workspace           *Workspace      `yaml:"-" json:"uesio/studio.workspace"`
-	AllowAllCollections bool            `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
-	AllowAllViews       bool            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
-	AllowAllRoutes      bool            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
-	AllowAllFiles       bool            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
+	ID                  string                          `yaml:"-" json:"uesio/core.id"`
+	UniqueKey           string                          `yaml:"-" json:"uesio/core.uniquekey"`
+	Name                string                          `yaml:"name" json:"uesio/studio.name"`
+	Namespace           string                          `yaml:"-" json:"-"`
+	NamedRefs           map[string]bool                 `yaml:"named" json:"uesio/studio.namedrefs"`
+	ViewRefs            map[string]bool                 `yaml:"views" json:"uesio/studio.viewrefs"`
+	CollectionRefs      map[string]CollectionPermission `yaml:"collections" json:"uesio/studio.collectionrefs"`
+	RouteRefs           map[string]bool                 `yaml:"routes" json:"uesio/studio.routerefs"`
+	FileRefs            map[string]bool                 `yaml:"files" json:"uesio/studio.filerefs"`
+	Workspace           *Workspace                      `yaml:"-" json:"uesio/studio.workspace"`
+	AllowAllCollections bool                            `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
+	AllowAllViews       bool                            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
+	AllowAllRoutes      bool                            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
+	AllowAllFiles       bool                            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
 	DataAccess
 	itemMeta  *ItemMeta `yaml:"-" json:"-"`
 	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
