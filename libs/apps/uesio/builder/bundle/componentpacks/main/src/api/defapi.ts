@@ -1,5 +1,4 @@
-import { definition, api, context as ctx } from "@uesio/ui"
-import { isComponentIndex } from "libs/ui/src/component/path"
+import { definition, api, context as ctx, component } from "@uesio/ui"
 import { FullPath } from "./path"
 import { getSelectedPath, setSelectedPath } from "./stateapi"
 
@@ -26,7 +25,8 @@ const remove = (context: ctx.Context, path: FullPath) => {
 	// If we're a component then we may be selected at two paths
 	// ["components"]["0"] or ["components"]["0"]["blah/blah.blah"]
 	const wasSelected =
-		(isComponentIndex(key) && poppedSelectedPath.equals(path)) ||
+		(component.path.isComponentIndex(key) &&
+			poppedSelectedPath.equals(path)) ||
 		selectedPath.equals(path)
 
 	if (wasSelected) setSelectedPath(context)
