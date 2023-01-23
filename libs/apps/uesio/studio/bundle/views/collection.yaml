@@ -197,9 +197,18 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: "uesio/io.secondary"
+                                      uesio.variant: "uesio/io.primary"
                                       text: "New Field"
+                                      hotkey: "meta+n"
                                       signals:
+                                        - signal: wire/EMPTY
+                                          wire: newfield
+                                        - signal: wire/CREATE_RECORD
+                                          wire: newfield
+                                        - signal: wire/UPDATE_RECORD
+                                          wire: newfield
+                                          field: uesio/studio.type
+                                          value: "TEXT"
                                         - signal: panel/TOGGLE
                                           panel: "newField"
                       - uesio/io.table:
@@ -298,7 +307,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Create a New Field
       width: 400px
-      height: 500px
+      height: 620px
       components:
         - uesio/io.list:
             id: newfieldlist
@@ -393,6 +402,7 @@ definition:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
             text: "Save"
+            hotkey: "meta+s"
             signals:
               - signal: wire/SAVE
                 wires:
@@ -402,8 +412,6 @@ definition:
                   - "workspaces"
                   - "fields"
               - signal: wire/EMPTY
-                wire: newfield
-              - signal: wire/CREATE_RECORD
                 wire: newfield
               - signal: "panel/TOGGLE"
                 panel: "newField"
@@ -415,8 +423,6 @@ definition:
             text: "Cancel"
             signals:
               - signal: wire/EMPTY
-                wire: newfield
-              - signal: wire/CREATE_RECORD
                 wire: newfield
               - signal: "panel/TOGGLE"
                 panel: "newField"
