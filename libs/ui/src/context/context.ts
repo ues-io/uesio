@@ -190,7 +190,7 @@ class Context {
 
 	stack: ContextFrame[]
 
-	getRecordId = () => this.getRecord()?.getId()
+	getRecordId = (wireId?: string) => this.getRecord(wireId)?.getId()
 
 	getRecordData = () =>
 		this.stack.find((frame) => frame?.recordData)?.recordData
@@ -210,8 +210,8 @@ class Context {
 		)
 	}
 
-	getRecord = () => {
-		const recordFrame = this.findRecordFrame()
+	getRecord = (wireId?: string) => {
+		const recordFrame = this.findRecordFrame(wireId)
 
 		// if we don't have a record id in context return the first
 		if (!recordFrame) {
@@ -305,13 +305,15 @@ class Context {
 		return new Context(this.stack.slice(index))
 	}
 
-	findRecordFrame = () => {
-		const index = this.stack.findIndex(
-			(frame) => frame?.recordData || frame?.record || frame?.wire
-		)
-		if (index === undefined) return undefined
-		return this.stack[index]
-	}
+	findRecordFrame = (wireId?: string) =>
+		this.stack.find((frame) => {
+			if (wireId)
+				return (
+					frame.wire === wireId &&
+					(frame?.recordData || frame?.record)
+				)
+			return frame?.recordData || frame?.record || frame.wire
+		})
 
 	getWire = () => {
 		const state = getCurrentState()

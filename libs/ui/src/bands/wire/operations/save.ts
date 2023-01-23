@@ -74,6 +74,7 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 		}
 
 		dispatch(save(response))
+		console.log("saving 1")
 
 		// Special handling for saves of just one wire and one record
 		if (response?.wires.length === 1) {
@@ -82,6 +83,13 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 			const changeKeys = Object.keys(changes)
 			if (changeKeys.length === 1) {
 				const [, name] = getWireParts(wire.wire)
+				console.log({
+					saveCtx: context.addFrame({
+						record: changeKeys[0],
+						wire: name,
+						errors: getErrorStrings(wire),
+					}),
+				})
 				return context.addFrame({
 					record: changeKeys[0],
 					wire: name,
@@ -89,8 +97,9 @@ export default (context: Context, wires?: string[]): ThunkFunc =>
 				})
 			}
 		}
+		console.log("saving 2")
 
 		const errors = response.wires.flatMap(getErrorStrings)
-
+		console.log({ errors })
 		return errors.length > 0 ? context.addFrame({ errors }) : context
 	}

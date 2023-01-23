@@ -7,14 +7,18 @@ import { runManyThrottled } from "../../../signals/signals"
 export default (
 		context: Context,
 		path: string[],
-		value: FieldValue
+		value: FieldValue,
+		wireName: string | undefined
 	): ThunkFunc =>
 	(dispatch) => {
+		console.log({ ctx: context.stack })
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		const recordId = context.getRecordId()
+
+		const recordId = context.getRecordId(wireName)
+		console.log({ recordId, wireName, value })
 		if (!recordId) return context
-		const wireId = context.getWireId()
+		const wireId = wireName || context.getWireId()
 		if (!wireId) return context
 		const wire = getWire(viewId, wireId)
 		if (!wire) return context
