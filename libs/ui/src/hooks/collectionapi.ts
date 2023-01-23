@@ -10,7 +10,7 @@ const useCollection = (context: Context, collectionName: string) => {
 	const plainCollection = useColl(collectionName)
 
 	useEffect(() => {
-		if (!plainCollection) {
+		if (!plainCollection || !plainCollection.hasAllFields) {
 			getMetadata(collectionName, context)
 		}
 	}, [])

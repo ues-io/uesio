@@ -17,6 +17,7 @@ const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
 				boxShadow: "rgb(0 0 0 / 10%) 0px 0px 8px",
 				background: "white",
 				position: "relative",
+				height: "100%",
 			},
 			inner: {
 				overflowY: "auto",

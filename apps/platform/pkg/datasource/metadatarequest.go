@@ -244,6 +244,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			if err != nil {
 				return err
 			}
+			metadata.HasAllFields = true
 		} else {
 			addBuiltinFields(metadata, collection)
 			// Automagially add the id field and the name field whether they were requested or not.

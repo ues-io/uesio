@@ -9,6 +9,7 @@ type PlainCollection = {
 	updateable: boolean
 	deleteable: boolean
 	fields: FieldMetadataMap
+	hasAllFields?: boolean
 }
 
 type PlainCollectionMap = {

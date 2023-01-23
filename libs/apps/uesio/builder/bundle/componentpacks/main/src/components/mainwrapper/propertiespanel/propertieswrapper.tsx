@@ -27,6 +27,9 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
+			root: {
+				width: "300px",
+			},
 			crumbwrapper: {
 				lineHeight: "10px",
 			},
@@ -114,7 +117,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 					)}
 				</>
 			}
-			className={props.className}
+			className={styles.cx(props.className, classes.root)}
 			context={context}
 		>
 			{props.children}

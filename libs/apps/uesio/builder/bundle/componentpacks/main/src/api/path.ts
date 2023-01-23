@@ -110,6 +110,18 @@ class FullPath {
 		const [, rest] = this.pop()
 		return rest.trim()
 	}
+
+	trimToSize = (size: number) => {
+		const pathArray = component.path.toPath(this.localPath)
+		if (pathArray.length > size) {
+			return new FullPath(
+				this.itemType,
+				this.itemName,
+				component.path.fromPath(pathArray.slice(0, size))
+			)
+		}
+		return this
+	}
 }
 
 const parseFullPath = (fullPath: string | undefined) => {

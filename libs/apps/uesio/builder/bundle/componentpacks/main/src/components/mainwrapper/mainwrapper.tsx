@@ -30,7 +30,6 @@ const MainWrapper: definition.UC = (props) => {
 			propertiespanel: {
 				gridRow: 1,
 				gridColumn: 1,
-				width: "300px",
 			},
 			viewinfopanel: {
 				gridRow: 2,

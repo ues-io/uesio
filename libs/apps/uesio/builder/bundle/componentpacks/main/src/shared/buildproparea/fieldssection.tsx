@@ -3,7 +3,6 @@ import FieldPicker from "./fieldpicker"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 
 import { component, wire } from "@uesio/ui"
-import FieldPropTag from "../../utilities/fieldproptag/fieldproptag"
 
 const FieldsSection: FC<SectionRendererProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -101,18 +100,7 @@ const FieldsSection: FC<SectionRendererProps> = (props) => {
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
 				ref={setAnchorEl}
-			>
-				{Object.keys(wireDef.fields || {}).map((fieldId) => (
-					<FieldPropTag
-						collectionKey={wireDef.collection}
-						fieldId={fieldId}
-						path={`${path}["fields"]["${fieldId}"]`}
-						key={fieldId}
-						fieldDef={wireDef.fields[fieldId]}
-						context={context}
-					/>
-				))}
-			</div>
+			/>
 		</>
 	)
 }

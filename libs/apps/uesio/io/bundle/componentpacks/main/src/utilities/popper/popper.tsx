@@ -7,29 +7,59 @@ import {
 	autoPlacement,
 	Placement,
 	offset,
+	size,
 } from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
 	referenceEl: HTMLDivElement | null
 	onOutsideClick?: () => void
-	useFirstRelativeParent?: boolean
 	offset?: number
+	autoPlacement?: Placement[]
+	useFirstRelativeParent?: boolean
+	matchHeight?: boolean
+}
+
+const defaultPlacement: Placement[] = ["top", "bottom"]
+
+const getRelativeParent = (elem: Element | null): Element | null => {
+	if (!elem) return null
+	const parent = elem.parentElement
+	if (!parent) return elem
+	const style = window.getComputedStyle(parent)
+	if (style.getPropertyValue("position") === "relative") return parent
+	return getRelativeParent(parent)
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
+	const autoPlacements = props.autoPlacement || defaultPlacement
+
 	const { x, y, strategy, refs, middlewareData } = useFloating({
 		whileElementsMounted: autoUpdate,
 		placement: props.placement,
 		middleware: [
 			offset(props.offset),
-			autoPlacement({ allowedPlacements: ["top", "bottom"] }),
+			autoPlacement({ allowedPlacements: autoPlacements }),
 			hide(),
+			...(props.matchHeight
+				? [
+						size({
+							apply({ rects, elements }) {
+								Object.assign(elements.floating.style, {
+									height: `${rects.reference.height}px`,
+								})
+							},
+						}),
+				  ]
+				: []),
 		],
 	})
 
 	useLayoutEffect(() => {
-		refs.setReference(props.referenceEl)
+		const referenceEl = props.useFirstRelativeParent
+			? getRelativeParent(props.referenceEl)
+			: props.referenceEl
+		refs.setReference(referenceEl)
 	}, [refs, props.referenceEl])
 
 	const classes = styles.useUtilityStyles(

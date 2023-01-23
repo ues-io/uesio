@@ -6,7 +6,7 @@ import ComponentTypeProperties from "./componenttypeproperties"
 import NothingSelectedProperties from "./nothingselectedproperties"
 import PanelProperties from "./panelproperties"
 import ParamProperties from "./paramproperties"
-import WireProperties from "./wireproperties"
+import WireProperties from "./wire/wireproperties"
 
 const PropertiesPanel: definition.UtilityComponent = (props) => {
 	const { context } = props
