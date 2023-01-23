@@ -1,13 +1,13 @@
 name: usageactiontype
 options:
-  - label: "LOAD"
-    value: "LOAD"
-  - label: "SAVE"
-    value: "SAVE"
   - label: "DOWNLOAD"
     value: "DOWNLOAD"
   - label: "DOWNLOAD_BYTES"
     value: "DOWNLOAD_BYTES"
+  - label: "LOAD"
+    value: "LOAD"
+  - label: "SAVE"
+    value: "SAVE"
   - label: "UPLOAD"
     value: "UPLOAD"
   - label: "UPLOAD_BYTES"
