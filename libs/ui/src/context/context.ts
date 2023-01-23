@@ -568,12 +568,4 @@ class Context {
 			.map((contextFrame) => contextFrame.viewDef)
 }
 
-export {
-	Context,
-	ContextFrame,
-	FieldMode,
-	RouteState,
-	getWire,
-	newContext,
-	injectDynamicContext,
-}
+export { Context, ContextFrame, FieldMode, newContext, injectDynamicContext }
