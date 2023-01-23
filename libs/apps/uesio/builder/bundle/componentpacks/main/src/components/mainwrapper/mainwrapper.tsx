@@ -10,9 +10,7 @@ const MainWrapper: definition.UC = (props) => {
 	const Grid = component.getUtility("uesio/io.grid")
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
-	const builderContext = context.addRouteFrame({
-		theme: "uesio/studio.default",
-	})
+	const builderContext = context.addThemeFrame("uesio/studio.default")
 
 	const classes = styles.useStyles(
 		{

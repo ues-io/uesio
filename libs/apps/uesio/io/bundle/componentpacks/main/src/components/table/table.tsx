@@ -111,11 +111,11 @@ const Table: definition.UC<TableDefinition> = (props) => {
 		data,
 		definition.recordDisplay,
 		(record, context) => {
-			if (record) {
+			if (record && wire) {
 				context = context.addRecordFrame({
 					wire: definition.wire,
 					record: record.getId(),
-					view: wire ? wire.getViewId() : undefined,
+					view: wire.getViewId(),
 				})
 			}
 			if (mode) {

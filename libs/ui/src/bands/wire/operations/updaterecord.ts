@@ -1,28 +1,26 @@
-import { Context, getWire } from "../../../context/context"
-import { getFullWireId, updateRecord } from ".."
+import { Context } from "../../../context/context"
+import { updateRecord } from ".."
 import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 import { dispatch } from "../../../store/store"
 
 export default async (context: Context, path: string[], value: FieldValue) => {
-	const recordFrame = context.findRecordFrame()
-	if (!recordFrame) return context
-	const { view, wire, record } = recordFrame
-	if (!view || !record || !wire) return context
-	const actualWire = getWire(view, wire)
+	const record = context.getRecord()
+	if (!record) return context
+	const wire = record.getWire()
 	if (!wire) return context
 
 	dispatch(
 		updateRecord({
-			recordId: record,
+			recordId: record.id,
 			record: value,
-			entity: getFullWireId(view, wire),
+			entity: wire.getFullId(),
 			path,
 		})
 	)
 
 	// Now run change events
-	const changeEvents = actualWire?.events?.onChange
+	const changeEvents = wire.getEvents()?.onChange
 
 	if (changeEvents) {
 		for (const changeEvent of changeEvents) {

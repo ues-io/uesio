@@ -1,9 +1,4 @@
-import {
-	Context,
-	ContextOptions,
-	injectDynamicContext,
-	newContext,
-} from "../context/context"
+import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import componentSignal from "../bands/component/signals"
 
@@ -16,6 +11,7 @@ import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
 import debounce from "lodash/debounce"
 import { getErrorString } from "../utilexports"
+
 const registry: Record<string, SignalDescriptor> = {
 	...collectionSignals,
 	...botSignals,
@@ -30,10 +26,7 @@ const run = (signal: SignalDefinition, context: Context) => {
 	const descriptor = registry[signal.signal] || componentSignal
 	return descriptor.dispatcher(
 		signal,
-		injectDynamicContext(
-			context,
-			signal?.["uesio.context"] as ContextOptions
-		)
+		injectDynamicContext(context, signal?.["uesio.context"])
 	)
 }
 

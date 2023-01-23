@@ -58,9 +58,7 @@ const Route: UtilityComponent = (props) => {
 				return
 			}
 			routeOps.navigate(
-				new Context().addRouteFrame({
-					workspace: event.state.workspace,
-				}),
+				new Context().addWorkspaceFrame(event.state.workspace),
 				{
 					path: event.state.path,
 					namespace: event.state.namespace,
@@ -76,14 +74,17 @@ const Route: UtilityComponent = (props) => {
 
 	const workspace = route.workspace
 
-	const routeContext = props.context.addRouteFrame({
+	let routeContext = props.context.addRouteFrame({
 		site,
 		route,
-		workspace,
 		viewDef: route.view,
 		theme: route.theme,
 		view: makeViewId(route.view, "$root"),
 	})
+
+	if (workspace) {
+		routeContext = routeContext.addWorkspaceFrame(workspace)
+	}
 
 	const view = (
 		<View

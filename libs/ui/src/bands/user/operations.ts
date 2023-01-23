@@ -1,4 +1,4 @@
-import { Context, newContext } from "../../context/context"
+import { Context } from "../../context/context"
 import { dispatch } from "../../store/store"
 import { set as setUser } from "."
 import wireAddError from "../wire/operations/adderror"
@@ -11,10 +11,8 @@ async function responseRedirect(response: LoginResponse, context: Context) {
 	return "redirectPath" in response
 		? routeOps.redirect(context, response.redirectPath)
 		: routeOps.navigate(
-				// Always run the logout action in the site context.
-				newContext().addRouteFrame({
-					site: context.getSite(),
-				}),
+				// Always run the logout action in the base route context.
+				context.getRouteContext(),
 				{
 					path: response.redirectRouteName,
 					namespace: response.redirectRouteNamespace,

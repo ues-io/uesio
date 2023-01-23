@@ -4,11 +4,7 @@ import {
 	UC,
 	UtilityComponent,
 } from "../definition/definition"
-import {
-	injectDynamicContext,
-	Context,
-	ContextOptions,
-} from "../context/context"
+import { injectDynamicContext, Context } from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
@@ -95,7 +91,7 @@ const Component: UC<Record<string, unknown>> = (props) => {
 				definition={mergedDefinition || {}}
 				context={injectDynamicContext(
 					context,
-					mergedDefinition?.["uesio.context"] as ContextOptions
+					mergedDefinition?.["uesio.context"]
 				)}
 			/>
 		</ErrorBoundary>
