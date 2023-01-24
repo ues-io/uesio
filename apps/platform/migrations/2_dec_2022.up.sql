@@ -54,8 +54,20 @@ update public.data
         #- '{uesio/core.createdat}'
         #- '{uesio/core.updatedat}';
 
--- add not null constraints
+CREATE TEMPORARY TABLE sys_users ON COMMIT DROP
+    AS select tenant, id as sys_user_id from public.data
+    WHERE fields->>'uesio/core.username' = 'system';
 
+-- before adding not null constraints, we need to ensure that all fields are populated
+UPDATE public.data d
+    SET "owner" = su.sys_user_id,
+        createdby = su.sys_user_id,
+        updatedby = su.sys_user_id
+    FROM sys_users su
+    WHERE d.tenant = su.tenant
+    AND "owner" is null OR createdby is null or updatedby is null;
+
+-- add not null constraints
 alter table public.data alter column id set not null;
 alter table public.data alter column owner set not null;
 alter table public.data alter column createdby set not null;
