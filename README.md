@@ -337,3 +337,37 @@ Most of commmands you might run related to npm modules.
 2. `docker tag uesio:latest us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
 3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
+
+### Migrations
+
+We use `golang-migrate` package for running SQL migrations. This package maintains the current state of migration runs via a `schema_migrations` table.
+
+#### install
+
+```
+brew install golang-migrate
+```
+
+#### adding migrations
+
+New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
+
+#### manually setting the migration "pointer"
+
+To forcibly set the migration version to latest (currently 3), use:
+
+```
+export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
+migrate -path apps/platform/migrations -database "$CONN_STR" force 3
+```
+
+This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 3
+
+#### testing migrations
+
+To test running migrations (against a separate `pgtest` database alongside your main `postgresio` database for dev), do the following (run from THIS top-level directory!):
+
+```
+docker compose up -d
+bash apps/platform/migrations_test/test_migrations.sh
+```

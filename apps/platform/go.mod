@@ -12,6 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.33
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.20.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.11
+	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimchansky/utfbom v1.1.1
 	github.com/dop251/goja v0.0.0-20220915101355-d79e1b125a30
@@ -20,6 +21,7 @@ require (
 	github.com/francoispqt/gojay v1.2.13
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/gofrs/uuid v4.3.1+incompatible
+	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gomodule/redigo v1.8.9
 	github.com/gorilla/mux v1.8.0
 	github.com/icza/session v1.2.0
@@ -33,8 +35,13 @@ require (
 )
 
 require (
-	github.com/bigkevmcd/go-cachewrapper v0.0.0-20200727210054-e5d8068f6a7e // indirect
+	github.com/google/go-github/v39 v39.2.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/lib/pq v1.10.2 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
 )
 
 require (

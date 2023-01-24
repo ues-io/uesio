@@ -1,95 +1,70 @@
 package postgresio
 
 import (
-	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
-	"time"
-
-	"github.com/gofrs/uuid"
-	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
+
+func getMigrationsDirectory() string {
+	return "file://./migrations"
+}
+func getConnectionString(credentials *adapt.Credentials) (string, error) {
+	host, ok := (*credentials)["host"]
+	if !ok {
+		return "", errors.New("No host provided in credentials")
+	}
+
+	port, ok := (*credentials)["port"]
+	if !ok {
+		port = "5432"
+	}
+
+	user, ok := (*credentials)["user"]
+	if !ok {
+		return "", errors.New("No user provided in credentials")
+	}
+
+	password, ok := (*credentials)["password"]
+	if !ok {
+		return "", errors.New("No password provided in credentials")
+	}
+
+	dbname, ok := (*credentials)["database"]
+
+	if !ok {
+		return "", errors.New("No database name provided in credentials")
+	}
+
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
+}
 
 func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
-	db := c.GetClient()
 
-	_, err := db.Exec(context.Background(), `
-		create table if not exists public.data
-		(
-			id         uuid           not null,
-			collection varchar(255)   not null,
-			tenant     varchar(255)   not null,
-			uniquekey  varchar(255)   not null,
-			fields     jsonb          not null,
-			owner      uuid           not null,
-			createdby  uuid           not null,
-			updatedby  uuid           not null,
-			createdat  timestamptz(0) not null,
-			updatedat  timestamptz(0) not null,
-			autonumber integer        not null,
+	migrationsDir := getMigrationsDirectory()
 
-			primary key(tenant,collection,id)
-		);
+	connStr, err := getConnectionString(c.credentials)
 
-		create table if not exists public.tokens
-		(
-			recordid   uuid         not null,
-			collection varchar(255) not null,
-			tenant     varchar(255) not null,
-			token      varchar(255) not null,
-			readonly   boolean      not null,
-
-			primary key(tenant,collection,recordid,token)
-		);
-
-		create unique index if not exists unique_idx on data (tenant,collection,uniquekey);
-		create unique index if not exists autonumber_idx on data (tenant,collection,autonumber);
-
-		create index if not exists _idx on tokens (tenant,collection,recordid);
-
-	`)
 	if err != nil {
 		return err
 	}
 
-	systemUserID, err := uuid.NewV7()
+	m, err := migrate.New(
+		migrationsDir,
+		connStr)
 	if err != nil {
 		return err
 	}
-	systemUserName := "system"
-	timestamp := time.Now().Unix()
+	err = m.Up()
 
-	// Now insert the system user
-	tenantID := sess.MakeSiteTenantID("uesio/studio:prod")
-	collectionName := "uesio/core.user"
-	uniqueID := systemUserName
-	fullRecordID := systemUserID
-
-	var existingSystemUser string
-	err = db.QueryRow(context.Background(), "select id from public.data where uniquekey=$1 AND collection=$2 AND tenant=$3", uniqueID, collectionName, tenantID).Scan(&existingSystemUser)
-	if err != nil {
-		fmt.Println("Creating System User...")
-		// We couldn't find a system user let's insert one.
-		data := map[string]interface{}{
-			"uesio/core.type":      "PERSON",
-			"uesio/core.profile":   "uesio/studio.standard",
-			"uesio/core.firstname": "Super",
-			"uesio/core.lastname":  "Admin",
-			"uesio/core.username":  "system",
-		}
-
-		fieldJSON, err := json.Marshal(&data)
-		if err != nil {
-			return err
-		}
-
-		_, err = db.Exec(context.Background(), INSERT_QUERY, fullRecordID, uniqueID, systemUserID, systemUserID, systemUserID, timestamp, timestamp, collectionName, tenantID, 0, fieldJSON)
-		if err != nil {
-			return err
-		}
-	} else {
-		fmt.Println("System User Already exists. Skipping.")
+	// If all migrations have run before, "no change" error will be returned, which is fine
+	// so handle this case and move on without error
+	if err != nil && err.Error() != "no change" {
+		return err
 	}
 
 	return nil
