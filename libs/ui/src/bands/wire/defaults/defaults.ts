@@ -8,7 +8,7 @@ import toPath from "lodash/toPath"
 import get from "lodash/get"
 import Collection from "../../collection/class"
 import set from "lodash/set"
-
+import { getFieldPath } from "../../utils"
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
 
@@ -43,7 +43,7 @@ const getDefaultValue = (
 		const firstRecord = Object.values(lookupWire.data)[0]
 		if (!firstRecord || !item.lookupField) return
 
-		const path = toPath(item.lookupField.split("->"))
+		const path = toPath(getFieldPath(item.lookupField).pathArray)
 		return get(firstRecord, path)
 	}
 	if (item.valueSource === "VALUE") {
@@ -76,7 +76,7 @@ const getDefaultRecord = (
 			throw new Error("No metadata for field in default: " + fieldName)
 
 		if (value) {
-			const fieldNameParts = fieldName?.split("->")
+			const fieldNameParts = getFieldPath(fieldName).pathArray
 			if (field.isReference()) fieldNameParts.push(ID_FIELD)
 			set(defaultRecord, fieldNameParts, value)
 		}

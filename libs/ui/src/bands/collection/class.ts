@@ -1,7 +1,7 @@
 import { getCurrentState } from "../../store/store"
 import Field from "../field/class"
 import { FieldMetadata } from "../field/types"
-
+import { getFieldPath } from "../utils"
 import { ID_FIELD, PlainCollection } from "./types"
 
 function getSubFieldMetadata(
@@ -28,14 +28,13 @@ class Collection {
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
 	getFullName = () => this.getNamespace() + "." + this.getId()
-	getField = (fieldName: string | null): Field | undefined => {
+	getField = (fieldName: (string | null) | string[]): Field | undefined => {
+		if (!fieldName) return
+		const { pathArray, pathString } = getFieldPath(fieldName)
 		// Special handling for maps
-		const fieldNameParts = fieldName?.split("->")
-		if (!fieldNameParts) return undefined
-		if (fieldNameParts.length > 1) {
+		if (pathArray.length > 1) {
 			// Get the metadata for the base field
-			const baseFieldMetadata =
-				this.source.fields[fieldNameParts.shift() || ""]
+			const baseFieldMetadata = this.source.fields[pathArray[0] || ""]
 
 			if (
 				baseFieldMetadata.type === "REFERENCE" ||
@@ -50,19 +49,22 @@ class Collection {
 
 				if (!state) return undefined
 				const collection = new Collection(state)
-				return collection.getField(fieldNameParts.join("->"))
+				return collection.getField(pathString.slice(0, 1))
 			}
 
 			if (!baseFieldMetadata || !baseFieldMetadata.subfields)
 				return undefined
 			const subFieldMetadata = getSubFieldMetadata(
-				fieldNameParts,
+				pathArray,
 				baseFieldMetadata
 			)
 			if (!subFieldMetadata) return undefined
 			return new Field(subFieldMetadata)
 		}
-		const fieldMetadata = fieldName ? this.source.fields[fieldName] : null
+
+		const fieldMetadata = fieldName
+			? this.source.fields[pathArray.join("->")]
+			: null
 		if (!fieldMetadata) return undefined
 		return new Field(fieldMetadata)
 	}

@@ -5,6 +5,11 @@ type EntityPayload = {
 	entity: string
 }
 
+type FieldPath = {
+	pathString: string
+	pathArray: string[]
+}
+
 /**
 #move - Moves an array item from one position in an array to another.
 
@@ -54,6 +59,11 @@ const getWireFieldSelectOptions = (wireDef: definition.DefinitionMap) => {
 		.map((el) => ({ value: el, label: el }))
 }
 
+const getFieldPath = (path: string | string[]): FieldPath => ({
+	pathString: Array.isArray(path) ? path.join("->") : path,
+	pathArray: Array.isArray(path) ? path : path.split("->"),
+})
+
 export {
 	createEntityReducer,
 	EntityPayload,
@@ -61,4 +71,6 @@ export {
 	getWireFieldSelectOptions,
 	move,
 	initEntity,
+	getFieldPath,
+	FieldPath,
 }

@@ -1,6 +1,7 @@
 import get from "lodash/get"
 import { ID_FIELD, UNIQUE_KEY_FIELD } from "../collection/types"
 import Wire from "../wire/class"
+import { getFieldPath } from "../utils"
 import { FieldValue, PlainWireRecord } from "./types"
 
 class WireRecord {
@@ -19,11 +20,8 @@ class WireRecord {
 	getFieldValue = <T extends FieldValue>(
 		fieldName: string
 	): T | undefined => {
-		const fieldNameParts = fieldName?.split("->")
-		return get(
-			this.source,
-			fieldNameParts.length === 1 ? fieldName : fieldNameParts
-		)
+		const { pathArray } = getFieldPath(fieldName)
+		return get(this.source, pathArray.length === 1 ? fieldName : pathArray)
 	}
 	getReferenceValue = (fieldName: string) => {
 		const plain = this.getFieldValue<PlainWireRecord>(fieldName)
@@ -43,13 +41,13 @@ class WireRecord {
 	}
 
 	update = (fieldId: string, value: FieldValue) => {
-		const fieldNameParts = fieldId?.split("->")
-		return this.wire.updateRecord(this.id, value, fieldNameParts)
+		const { pathArray } = getFieldPath(fieldId)
+		return this.wire.updateRecord(this.id, value, pathArray)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
-		const fieldNameParts = fieldId?.split("->")
-		return this.wire.setRecord(this.id, value, fieldNameParts)
+		const { pathArray } = getFieldPath(fieldId)
+		return this.wire.setRecord(this.id, value, pathArray)
 	}
 }
 
