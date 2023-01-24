@@ -29,7 +29,7 @@ const remove = (context: ctx.Context, path: FullPath) => {
 			poppedSelectedPath.equals(path)) ||
 		selectedPath.equals(path)
 
-	if (wasSelected) setSelectedPath(context)
+	if (wasSelected) setSelectedPath(context, path.parent())
 }
 
 const add = (

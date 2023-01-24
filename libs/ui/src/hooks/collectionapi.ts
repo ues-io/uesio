@@ -1,4 +1,7 @@
-import { useCollection as useColl } from "../bands/collection/selectors"
+import {
+	useCollection as useColl,
+	getCollection as getColl,
+} from "../bands/collection/selectors"
 import { Context } from "../context/context"
 
 import { useEffect } from "react"
@@ -18,7 +21,12 @@ const useCollection = (context: Context, collectionName: string) => {
 	return plainCollection && new Collection(plainCollection)
 }
 
+const getCollection = (collectionName: string) => {
+	const plainCollection = getColl(collectionName)
+	return plainCollection && new Collection(plainCollection)
+}
+
 const createJob = platform.createJob
 const importData = platform.importData
 
-export { useCollection, createJob, importData }
+export { useCollection, getCollection, createJob, importData }

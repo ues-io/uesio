@@ -37,6 +37,13 @@ class FullPath {
 			this.localPath + `["${addition}"]`
 		)
 
+	merge = (path: FullPath) =>
+		new FullPath(
+			this.itemType,
+			this.itemName,
+			this.localPath + path.localPath
+		)
+
 	pop = (): [string | undefined, FullPath] => {
 		const pathArray = toPath(this.localPath)
 		const value = pathArray.pop()
@@ -122,6 +129,8 @@ class FullPath {
 		}
 		return this
 	}
+
+	size = () => component.path.toPath(this.localPath).length
 }
 
 const parseFullPath = (fullPath: string | undefined) => {

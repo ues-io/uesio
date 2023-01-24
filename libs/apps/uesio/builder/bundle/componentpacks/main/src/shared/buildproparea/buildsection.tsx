@@ -2,7 +2,6 @@ import { FunctionComponent, ComponentType } from "react"
 
 import PropListSection from "./proplistsection"
 import PropListsSection from "./proplistssection"
-import FieldsSection from "./fieldssection"
 import ConditionsSection from "./conditionssection"
 import SignalsSection from "./signalssection"
 import ConditionalDisplaySection from "./displayconditions/displaysection"
@@ -13,7 +12,6 @@ import OrderSection from "./ordersection"
 const SECTION_TO_COMPONENT: {
 	[key: string]: ComponentType<SectionRendererProps>
 } = {
-	FIELDS: FieldsSection,
 	CONDITIONS: ConditionsSection,
 	SIGNALS: SignalsSection,
 	PROPLIST: PropListSection,

@@ -1,6 +1,7 @@
 import { definition, component, styles } from "@uesio/ui"
-import { Fragment } from "react"
+import { Fragment, ReactNode } from "react"
 import { FullPath } from "../../../api/path"
+import SearchArea from "../../../helpers/searcharea"
 
 type Tab = {
 	label: string
@@ -14,6 +15,9 @@ type Props = {
 	tabs?: Tab[]
 	selectedTab?: string
 	setSelectedTab?: (selected: string) => void
+	searchTerm?: string
+	setSearchTerm?: (searchTerm: string) => void
+	searchAreaActions?: ReactNode
 	onUnselect?: () => void
 }
 
@@ -23,7 +27,17 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 	const TabLabels = component.getUtility("uesio/io.tablabels")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 
-	const { path, tabs, selectedTab, setSelectedTab, title, context } = props
+	const {
+		path,
+		tabs,
+		selectedTab,
+		setSelectedTab,
+		searchTerm,
+		searchAreaActions,
+		setSearchTerm,
+		title,
+		context,
+	} = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -112,6 +126,14 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={tabs}
+							context={context}
+						/>
+					)}
+					{setSearchTerm && (
+						<SearchArea
+							actions={searchAreaActions}
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
 							context={context}
 						/>
 					)}

@@ -1,27 +1,25 @@
-import { definition, api, metadata } from "@uesio/ui"
+import { definition, metadata, collection } from "@uesio/ui"
 import { remove, set } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 
 import { getBuilderNamespace } from "../../../../api/stateapi"
+import ActionButton from "../../../../helpers/actionbutton"
+import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 
 type Props = {
-	collectionKey: string
-	fieldId: string
+	setReferencePath: (path: FullPath) => void
+	fieldMetadata: collection.Field
 	path: FullPath
 	selected: boolean
 }
 const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
-	const { fieldId, collectionKey, context, path, selected } = props
+	const { fieldMetadata, context, path, selected, setReferencePath } = props
+	const fieldId = fieldMetadata.getId()
 
-	const collectionMetadata = api.collection.useCollection(
-		context,
-		collectionKey
-	)
-	if (!collectionMetadata) return null
-	const fieldMetadata = collectionMetadata.getField(fieldId)
-	if (!fieldMetadata) return null
+	const referenceMetadata =
+		fieldMetadata.isReference() && fieldMetadata.getReferenceMetadata()
 
 	const nsInfo = getBuilderNamespace(context, fieldId as metadata.MetadataKey)
 
@@ -42,10 +40,22 @@ const FieldSelectPropTag: definition.UtilityComponent<Props> = (props) => {
 					metadatakey={fieldId}
 					title={fieldMetadata.getLabel()}
 				/>
-				<div>
-					<span className="infotag">{fieldMetadata.getType()}</span>
-				</div>
+
+				<span className="infotag">{fieldMetadata.getType()}</span>
 			</div>
+			{referenceMetadata && (
+				<BuildActionsArea context={context}>
+					<ActionButton
+						title="Add Reference Fields"
+						icon={"arrow_forward"}
+						onClick={(e) => {
+							e.stopPropagation()
+							setReferencePath(path.addLocal("fields"))
+						}}
+						context={context}
+					/>
+				</BuildActionsArea>
+			)}
 		</PropNodeTag>
 	)
 }

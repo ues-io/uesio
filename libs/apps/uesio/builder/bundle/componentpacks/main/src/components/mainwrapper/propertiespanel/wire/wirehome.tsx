@@ -8,19 +8,20 @@ import NumberProp from "../../../../propertyrenderers/numberprop"
 const WireHome: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const selectedPath = useSelectedPath(context)
+	const wirePath = selectedPath.trimToSize(2)
 
 	return (
 		<>
-			<KeyProp label="Name" path={selectedPath} context={context} />
+			<KeyProp label="Name" path={wirePath} context={context} />
 			<MetadataProp
 				metadataType="COLLECTION"
 				label="Collection"
-				path={selectedPath.addLocal("collection")}
+				path={wirePath.addLocal("collection")}
 				context={context}
 			/>
 			<NumberProp
 				label="Batch Size"
-				path={selectedPath.addLocal("batchsize")}
+				path={wirePath.addLocal("batchsize")}
 				context={context}
 			/>
 		</>
