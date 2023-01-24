@@ -36,7 +36,7 @@ const FieldsProperties: definition.UtilityComponent = (props) => {
 				>
 					<FieldPicker
 						context={context}
-						collectionKey={wireDef.collection}
+						baseCollectionKey={wireDef.collection}
 						path={fieldsPath}
 						onClose={() => setShowPopper(false)}
 					/>
