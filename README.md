@@ -354,14 +354,14 @@ New migrations can be created using `npm run migrate:create -- <SOME_NAME>`
 
 #### manually setting the migration "pointer"
 
-To forcibly set the migration version to latest (currently 2), use:
+To forcibly set the migration version to latest (currently 3), use:
 
 ```
 export CONN_STR="postgres://postgres:mysecretpassword@localhost:5432/postgresio?sslmode=disable"
-migrate -path apps/platform/migrations -database "$CONN_STR" force 2
+migrate -path apps/platform/migrations -database "$CONN_STR" force 3
 ```
 
-This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 2
+This will skip running any migrations but update `schema_migrations` table to think you've run them all up through 3
 
 #### testing migrations
 

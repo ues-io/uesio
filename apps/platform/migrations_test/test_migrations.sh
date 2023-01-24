@@ -35,6 +35,9 @@ echo "seeded with dummy data"
 # 4. Run migrations to get to master/2023 state
 migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 2
 
+# 5. Ensure system user is created
+migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" goto 3
+
 echo "Ran migration to get up to latest master state"
 
 migrate -source "$MIGRATIONS_PATH" -database "$CONN_STR" version
