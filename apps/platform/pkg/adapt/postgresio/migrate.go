@@ -3,6 +3,8 @@ package postgresio
 import (
 	"errors"
 	"fmt"
+	"net/url"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -15,7 +17,7 @@ func getMigrationsDirectory() string {
 func getConnectionString(credentials *adapt.Credentials) (string, error) {
 	host, ok := (*credentials)["host"]
 	if !ok {
-		return "", errors.New("No host provided in credentials")
+		return "", errors.New("no host provided in credentials")
 	}
 
 	port, ok := (*credentials)["port"]
@@ -25,18 +27,20 @@ func getConnectionString(credentials *adapt.Credentials) (string, error) {
 
 	user, ok := (*credentials)["user"]
 	if !ok {
-		return "", errors.New("No user provided in credentials")
+		return "", errors.New("no user provided in credentials")
 	}
 
 	password, ok := (*credentials)["password"]
 	if !ok {
-		return "", errors.New("No password provided in credentials")
+		return "", errors.New("no password provided in credentials")
 	}
+	// escape invalid url characters in the password
+	password = url.PathEscape(password)
 
 	dbname, ok := (*credentials)["database"]
 
 	if !ok {
-		return "", errors.New("No database name provided in credentials")
+		return "", errors.New("no database name provided in credentials")
 	}
 
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname), nil
