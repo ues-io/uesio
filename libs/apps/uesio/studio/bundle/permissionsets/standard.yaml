@@ -183,7 +183,7 @@ collections:
   uesio/studio.team:
   uesio/studio.theme:
     read: true
-    create: true
+    create: false
     edit: false
     delete: false
     modifyallrecords: false

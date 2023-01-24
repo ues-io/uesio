@@ -186,7 +186,8 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 				return false
 			} else {
 				//we got the collection let's check it
-				if collectionPermission.Create {
+				//maybe this is not the place to check it :(
+				if collectionPermission.Read {
 					println("LOAD")
 				}
 			}
@@ -194,6 +195,19 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	}
 
 	return true
+}
+
+func mergeCollectionPermission(newVal CollectionPermission, existingVal CollectionPermission) CollectionPermission {
+
+	existingVal.Create = existingVal.Create || newVal.Create
+	existingVal.Delete = existingVal.Delete || newVal.Delete
+	existingVal.Edit = existingVal.Edit || newVal.Edit
+	existingVal.Read = existingVal.Read || newVal.Read
+	existingVal.ModifyAllRecords = existingVal.ModifyAllRecords || newVal.ModifyAllRecords
+	existingVal.ViewAllRecords = existingVal.ViewAllRecords || newVal.ViewAllRecords
+	//TO-DO Fields in here
+
+	return existingVal
 }
 
 func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
@@ -231,7 +245,16 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 			}
 		}
 		for key, value := range permissionSet.CollectionRefs {
-			collectionPerms[key] = value
+
+			//standar and public might say opposite things how we merge this ??
+			//check if key is already on the map
+			if existingVal, ok := collectionPerms[key]; !ok {
+				collectionPerms[key] = value
+			} else {
+				// got something already, then merge it!
+				collectionPerms[key] = mergeCollectionPermission(value, existingVal)
+			}
+
 		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true
