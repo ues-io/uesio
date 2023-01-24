@@ -101,10 +101,9 @@ func (c *Collection) GetPath() string {
 
 func (c *Collection) GetPermChecker() *PermissionSet {
 	key := c.GetKey()
+	collectionRefs := map[string]CollectionPermission{key: {Read: false}}
 	return &PermissionSet{
-		CollectionRefs: map[string]bool{
-			key: true,
-		},
+		CollectionRefs: collectionRefs,
 	}
 }
 

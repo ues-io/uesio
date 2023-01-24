@@ -19,22 +19,19 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 	}, nil
 }
 
-type DataAccess struct {
-	ModifyAllRecords bool `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
-	ViewAllRecords   bool `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-}
-
-type PermissionOptions struct {
-	Read   bool
-	Create bool
-	Edit   bool
-	Delete bool
+type FieldPermissionOptions struct {
+	Read bool `yaml:"read" json:"uesio/studio.read"`
+	Edit bool `yaml:"edit" json:"uesio/studio.edit"`
 }
 
 type CollectionPermission struct {
-	PermissionOptions
-	DataAccess
-	FieldRefs map[string]PermissionOptions `yaml:"fields" json:"uesio/studio.fieldrefs"`
+	Read             bool                              `yaml:"read" json:"uesio/studio.read"`
+	Create           bool                              `yaml:"create" json:"uesio/studio.create"`
+	Edit             bool                              `yaml:"edit" json:"uesio/studio.edit"`
+	Delete           bool                              `yaml:"delete" json:"uesio/studio.delete"`
+	ModifyAllRecords bool                              `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
+	ViewAllRecords   bool                              `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
+	FieldRefs        map[string]FieldPermissionOptions `yaml:"fields" json:"uesio/studio.fieldrefs"`
 }
 
 type PermissionSet struct {
@@ -52,14 +49,15 @@ type PermissionSet struct {
 	AllowAllViews       bool                            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool                            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
 	AllowAllFiles       bool                            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
-	DataAccess
-	itemMeta  *ItemMeta `yaml:"-" json:"-"`
-	CreatedBy *User     `yaml:"-" json:"uesio/core.createdby"`
-	Owner     *User     `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy *User     `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt int64     `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt int64     `yaml:"-" json:"uesio/core.createdat"`
-	Public    bool      `yaml:"public,omitempty" json:"uesio/studio.public"`
+	ModifyAllRecords    bool                            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
+	ViewAllRecords      bool                            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
+	itemMeta            *ItemMeta                       `yaml:"-" json:"-"`
+	CreatedBy           *User                           `yaml:"-" json:"uesio/core.createdby"`
+	Owner               *User                           `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy           *User                           `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt           int64                           `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt           int64                           `yaml:"-" json:"uesio/core.createdat"`
+	Public              bool                            `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type PermissionSetWrapper PermissionSet
@@ -182,11 +180,14 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	}
 
 	if !ps.AllowAllCollections {
-		for key, value := range check.CollectionRefs {
-
-			if value {
-				if !ps.CollectionRefs[key] {
-					return false
+		for key := range check.CollectionRefs {
+			if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+				//we don't even have the collection
+				return false
+			} else {
+				//we got the collection let's check it
+				if collectionPermission.Create {
+					println("LOAD")
 				}
 			}
 		}
@@ -200,7 +201,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	viewPerms := map[string]bool{}
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
-	collectionPerms := map[string]bool{}
+	collectionPerms := map[string]CollectionPermission{}
 	allowAllViews := false
 	allowAllRoutes := false
 	allowAllFiles := false
@@ -230,9 +231,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 			}
 		}
 		for key, value := range permissionSet.CollectionRefs {
-			if value {
-				collectionPerms[key] = true
-			}
+			collectionPerms[key] = value
 		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true
@@ -264,8 +263,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,
 		AllowAllCollections: allowAllCollections,
-		DataAccess:          DataAccess{modifyAllRecords, viewAllRecords},
-		// ModifyAllRecords:    modifyAllRecords,
-		// ViewAllRecords:      viewAllRecords,
+		ModifyAllRecords:    modifyAllRecords,
+		ViewAllRecords:      viewAllRecords,
 	}
 }
