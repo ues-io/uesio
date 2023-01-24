@@ -13,10 +13,10 @@ export default (
 	(dispatch) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		const recordId = context.getRecordId(wireName)
-		if (!recordId) return context
 		const wireId = wireName || context.getWireId()
 		if (!wireId) return context
+		const recordId = context.getRecordId(wireName)
+		if (!recordId) return context
 		const wire = getWire(viewId, wireId)
 		if (!wire) return context
 
