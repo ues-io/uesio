@@ -1,7 +1,7 @@
 import { definition, component } from "@uesio/ui"
-import { set } from "../../../api/defapi"
-import { FullPath } from "../../../api/path"
-import BuildActionsArea from "../../../helpers/buildactionsarea"
+import { set } from "../../../../api/defapi"
+import { FullPath } from "../../../../api/path"
+import BuildActionsArea from "../../../../helpers/buildactionsarea"
 
 const WiresActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")

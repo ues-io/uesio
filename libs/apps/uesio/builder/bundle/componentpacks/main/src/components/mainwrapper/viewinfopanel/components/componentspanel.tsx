@@ -12,10 +12,10 @@ import {
 	setDropPath,
 	setSelectedPath,
 	useSelectedPath,
-} from "../../../api/stateapi"
-import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
-import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
-import { FullPath } from "../../../api/path"
+} from "../../../../api/stateapi"
+import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
+import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
+import { FullPath } from "../../../../api/path"
 
 const getUtility = component.getUtility
 
