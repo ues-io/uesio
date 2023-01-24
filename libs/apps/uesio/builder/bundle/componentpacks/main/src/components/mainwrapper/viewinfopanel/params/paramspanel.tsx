@@ -1,11 +1,11 @@
 import { definition, api, component } from "@uesio/ui"
-import CloneKeyAction from "../../../actions/clonekeyaction"
-import DeleteAction from "../../../actions/deleteaction"
-import MoveActions from "../../../actions/moveactions"
-import { FullPath } from "../../../api/path"
-import { setSelectedPath, useSelectedPath } from "../../../api/stateapi"
-import BuildActionsArea from "../../../helpers/buildactionsarea"
-import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import CloneKeyAction from "../../../../actions/clonekeyaction"
+import DeleteAction from "../../../../actions/deleteaction"
+import MoveActions from "../../../../actions/moveactions"
+import { FullPath } from "../../../../api/path"
+import { setSelectedPath, useSelectedPath } from "../../../../api/stateapi"
+import BuildActionsArea from "../../../../helpers/buildactionsarea"
+import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
 
 const ParamsPanel: definition.UtilityComponent = ({ context }) => {
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")

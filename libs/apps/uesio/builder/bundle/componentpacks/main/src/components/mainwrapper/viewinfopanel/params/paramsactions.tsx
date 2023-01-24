@@ -1,12 +1,13 @@
 import { definition, styles, component } from "@uesio/ui"
-import { set } from "../../../api/defapi"
-import { FullPath } from "../../../api/path"
+import { set } from "../../../../api/defapi"
+import { FullPath } from "../../../../api/path"
 
-const PanelsActions: definition.UtilityComponent = (props) => {
+const ParamsActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Icon = component.getUtility("uesio/io.icon")
 	const { context } = props
-	const path = new FullPath("viewdef", context.getViewDefId(), '["panels"]')
+
+	const path = new FullPath("viewdef", context.getViewDefId(), '["params"]')
 	const classes = styles.useUtilityStyles(
 		{
 			wrapper: {
@@ -31,23 +32,23 @@ const PanelsActions: definition.UtilityComponent = (props) => {
 						variant="uesio/builder.actionicon"
 					/>
 				}
-				label="New Panel"
+				label="New Parameter"
 				onClick={() =>
 					set(
 						context,
 						path.addLocal(
-							"newpanel" + (Math.floor(Math.random() * 60) + 1)
+							"newparam" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
-							"uesio.type": "uesio/io.dialog",
-							components: [],
-						}
+							type: "recordId",
+						},
+						true
 					)
 				}
 			/>
 		</div>
 	)
 }
-PanelsActions.displayName = "PanelsActions"
+ParamsActions.displayName = "ParamsActions"
 
-export default PanelsActions
+export default ParamsActions
