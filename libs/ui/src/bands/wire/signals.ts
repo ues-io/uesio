@@ -189,7 +189,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
 			updateRecordOp(
 				context,
-				signal.field.split("->"),
+				[signal.field],
 				context.merge(signal.value),
 				signal.wire
 			),
