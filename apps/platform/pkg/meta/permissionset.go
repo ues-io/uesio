@@ -34,6 +34,12 @@ type CollectionPermission struct {
 	FieldRefs        map[string]FieldPermissionOptions `yaml:"fields" json:"uesio/studio.fieldrefs"`
 }
 
+// type CollectionPermissionWrapper CollectionPermission
+
+// func (cp *CollectionPermission) UnmarshalYAML(node *yaml.Node) error {
+// 	return node.Decode((*CollectionPermissionWrapper)(cp))
+// }
+
 type PermissionSet struct {
 	ID                  string                          `yaml:"-" json:"uesio/core.id"`
 	UniqueKey           string                          `yaml:"-" json:"uesio/core.uniquekey"`
@@ -181,20 +187,50 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 
 	if !ps.AllowAllCollections {
 		for key := range check.CollectionRefs {
-			if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+			if _, ok := ps.CollectionRefs[key]; !ok {
 				//we don't even have the collection
 				return false
-			} else {
-				//we got the collection let's check it
-				//maybe this is not the place to check it :(
-				if collectionPermission.Read {
-					println("LOAD")
-				}
 			}
 		}
 	}
 
 	return true
+}
+
+func (ps *PermissionSet) HasReadPermission(key string) bool {
+	//I think might be safe here to access directly with the key to the map but let's double check it
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ViewAllRecords || collectionPermission.Read
+	}
+}
+
+func (ps *PermissionSet) HasCreatePermission(key string) bool {
+	//I think might be safe here to access directly with the key to the map but let's double check it
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ModifyAllRecords || collectionPermission.Create
+	}
+}
+
+func (ps *PermissionSet) HasEditPermission(key string) bool {
+	//I think might be safe here to access directly with the key to the map but let's double check it
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ModifyAllRecords || collectionPermission.Edit
+	}
+}
+
+func (ps *PermissionSet) HasDeletePermission(key string) bool {
+	//I think might be safe here to access directly with the key to the map but let's double check it
+	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
+		return false
+	} else {
+		return collectionPermission.ModifyAllRecords || collectionPermission.Delete
+	}
 }
 
 func mergeCollectionPermission(newVal CollectionPermission, existingVal CollectionPermission) CollectionPermission {

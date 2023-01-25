@@ -78,6 +78,8 @@ func NewOpList(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
 	opList := NewOpList(request, collectionMetadata)
+	permissions := session.GetPermissions()
+	collectionKey := collectionMetadata.GetFullName()
 
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
@@ -89,8 +91,15 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 					return err
 				}
 
+				if !permissions.HasCreatePermission(collectionKey) {
+					return errors.New("No Create access for collection: " + collectionKey)
+				}
 				opList.addInsert(item, recordKey, newID)
 			} else {
+
+				if !permissions.HasEditPermission(collectionKey) {
+					return errors.New("No Edit access for collection: " + collectionKey)
+				}
 				opList.addUpdate(item, recordKey, idValue.(string))
 			}
 			return nil
@@ -105,6 +114,10 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
+			}
+
+			if !permissions.HasDeletePermission(collectionKey) {
+				return errors.New("No Delete access for collection: " + collectionKey)
 			}
 			opList.addDelete(item, idValue.(string))
 			return nil

@@ -182,21 +182,33 @@ collections:
   uesio/studio.teammember:
   uesio/studio.team:
   uesio/studio.theme:
+    read: false
+    create: false
+    edit: false
+    delete: false
+    modifyallrecords: true
+    viewallrecords: true
+  uesio/studio.translation:
+  uesio/studio.utility:
+  uesio/studio.view:
+  uesio/studio.workspace:
     read: true
     create: false
     edit: false
     delete: false
     modifyallrecords: false
     viewallrecords: false
-  uesio/studio.translation:
-  uesio/studio.utility:
-  uesio/studio.view:
-  uesio/studio.workspace:
   uesio/core.userfile:
   uesio/core.user:
   uesio/core.loginmethod:
   uesio/studio.usage:
   uesio/core.featureflagassignment:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    modifyallrecords: false
+    viewallrecords: false
   uesio/studio.useraccesstoken:
   uesio/studio.license:
   uesio/studio.licensetemplate:

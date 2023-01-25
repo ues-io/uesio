@@ -283,6 +283,9 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
+		if !session.GetPermissions().HasReadPermission(op.CollectionName) {
+			return nil, errors.New("No Read access for collection: " + op.CollectionName)
+		}
 		// Verify that the id field is present
 		hasIDField := false
 		hasUniqueKeyField := false
