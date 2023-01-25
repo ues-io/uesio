@@ -182,12 +182,12 @@ collections:
   uesio/studio.teammember:
   uesio/studio.team:
   uesio/studio.theme:
-    read: false
+    read: true
     create: false
     edit: false
     delete: false
-    modifyallrecords: true
-    viewallrecords: true
+    modifyallrecords: false
+    viewallrecords: false
   uesio/studio.translation:
   uesio/studio.utility:
   uesio/studio.view:

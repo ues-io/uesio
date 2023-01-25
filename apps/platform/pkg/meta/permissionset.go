@@ -198,6 +198,9 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 }
 
 func (ps *PermissionSet) HasReadPermission(key string) bool {
+	if ps.ViewAllRecords {
+		return true
+	}
 	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
@@ -207,6 +210,9 @@ func (ps *PermissionSet) HasReadPermission(key string) bool {
 }
 
 func (ps *PermissionSet) HasCreatePermission(key string) bool {
+	if ps.ModifyAllRecords {
+		return true
+	}
 	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
@@ -216,6 +222,9 @@ func (ps *PermissionSet) HasCreatePermission(key string) bool {
 }
 
 func (ps *PermissionSet) HasEditPermission(key string) bool {
+	if ps.ModifyAllRecords {
+		return true
+	}
 	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
@@ -225,6 +234,9 @@ func (ps *PermissionSet) HasEditPermission(key string) bool {
 }
 
 func (ps *PermissionSet) HasDeletePermission(key string) bool {
+	if ps.ModifyAllRecords {
+		return true
+	}
 	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
