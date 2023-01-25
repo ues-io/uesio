@@ -107,7 +107,7 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 				return false
 			}
 		}
-		return (isDefinition || !definitionOnly)
+		return isDefinition || !definitionOnly
 	}
 	return false
 }

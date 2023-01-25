@@ -2,6 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -9,12 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
-
-type BotResponse struct {
-	Params  map[string]interface{} `json:"params"`
-	Success bool                   `json:"success"`
-	Error   string                 `json:"error"`
-}
 
 func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -39,7 +35,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &BotResponse{
+	file.RespondJSON(w, r, &bot.BotResponse{
 		Params:  returnParams,
 		Success: true,
 	})

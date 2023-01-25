@@ -2,6 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -52,7 +54,7 @@ func Secrets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, response)
+	file.RespondJSON(w, r, response)
 }
 
 type SecretSetRequest struct {
@@ -78,7 +80,7 @@ func SetSecret(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJSON(w, r, &BotResponse{
+	file.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }

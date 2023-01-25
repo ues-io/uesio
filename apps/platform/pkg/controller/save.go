@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -28,7 +29,7 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		_, ok := err.(*adapt.SaveError)
 		if ok {
-			respondJSON(w, r, &saveRequestBatch)
+			file.RespondJSON(w, r, &saveRequestBatch)
 			return
 		}
 		// If the error is a save error still respond
@@ -37,5 +38,5 @@ func Save(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	respondJSON(w, r, &saveRequestBatch)
+	file.RespondJSON(w, r, &saveRequestBatch)
 }

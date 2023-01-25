@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"strings"
 
@@ -53,6 +54,6 @@ func Rest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, op.Collection)
+	file.RespondJSON(w, r, op.Collection)
 
 }

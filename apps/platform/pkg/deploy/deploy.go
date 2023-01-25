@@ -202,7 +202,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 	}
 
 	// Upload workspace properties like homeRoute and loginRoute
-	workspaceItem := (&meta.Workspace{
+	workspaceItem := &meta.Workspace{
 		BuiltIn: meta.BuiltIn{
 			ID: workspace.ID,
 		},
@@ -215,7 +215,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 		HomeRoute:     by.HomeRoute,
 		PublicProfile: by.PublicProfile,
 		DefaultTheme:  by.DefaultTheme,
-	})
+	}
 
 	// We set the valid fields here because it's an update and we don't want
 	// to overwrite the other fields

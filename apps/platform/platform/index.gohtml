@@ -25,10 +25,11 @@
         window.uesioStaticAssetsPath = "{{ .StaticAssetsPath }}"
     </script>
     {{$workspace := .Route.Workspace -}}
+    {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
             {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                {{- $packURL := getPackURL . $workspace -}}
+                {{- $packURL := getPackURL . $workspace $site -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
                 {{- end -}}

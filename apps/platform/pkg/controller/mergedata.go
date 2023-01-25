@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -18,7 +19,7 @@ import (
 
 var indexTemplate, cssTemplate *template.Template
 
-func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
+func getPackUrl(key string, workspace *routing.WorkspaceMergeData, site *routing.SiteMergeData) string {
 	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return ""
@@ -28,12 +29,21 @@ func getPackUrl(key string, workspace *routing.WorkspaceMergeData) string {
 		return ""
 	}
 
-	builderSuffix := "runtime.js"
+	filePath := "runtime.js"
 
 	if workspace != nil {
-		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, builderSuffix)
+		return fmt.Sprintf("/workspace/%s/%s/componentpacks/%s/%s/%s/%s", workspace.App, workspace.Name, user, namepart, name, filePath)
 	}
-	return fmt.Sprintf("/site/componentpacks/%s/%s/%s/%s", user, namepart, name, builderSuffix)
+
+	siteBundleVersion := "/" + site.Version
+
+	// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
+	// but we DO update the static assets version for the whole Docker image, so replace the version with that
+	if strings.HasPrefix(site.App, "uesio/") && file.GetAssetsPath() != "" {
+		siteBundleVersion = file.GetAssetsPath()
+	}
+
+	return fmt.Sprintf("/site/componentpacks/%s/%s%s/%s/%s", user, namepart, siteBundleVersion, name, filePath)
 
 }
 
@@ -111,10 +121,11 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			App:       site.GetAppFullName(),
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
+			Version:   site.Bundle.GetVersionString(),
 		},
 		DevMode:          devMode,
 		PreloadMetadata:  preload,
-		StaticAssetsPath: GetAssetsPath(),
+		StaticAssetsPath: file.GetAssetsPath(),
 	}
 
 	err := indexTemplate.Execute(w, mergeData)
