@@ -52,7 +52,9 @@ class Collection {
 
 				if (!state) return undefined
 				const collection = new Collection(state)
-				return collection.getField(fieldNameParts.join("->"))
+				return collection.getField(
+					fieldNameParts.slice(0, 1).join("->")
+				)
 			}
 
 			if (!baseFieldMetadata || !baseFieldMetadata.subfields)
