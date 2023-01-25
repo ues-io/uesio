@@ -1,6 +1,6 @@
 import { definition, styles, context, collection, wire } from "@uesio/ui"
 import Fieldset from "../fieldset/fieldset"
-import CheckboxField from "../checkboxfield/checkboxfield"
+import CheckboxField from "./checkbox"
 
 interface SelectFieldProps {
 	setValue: (value: wire.FieldValue) => void

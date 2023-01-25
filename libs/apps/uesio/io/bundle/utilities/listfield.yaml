@@ -1,3 +1,3 @@
 name: listfield
 pack: main
-entrypoint: utilities/listfield/listfield
+entrypoint: utilities/field/list

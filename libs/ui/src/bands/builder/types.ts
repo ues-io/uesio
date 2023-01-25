@@ -4,6 +4,7 @@ const METADATA = {
 	VIEW: "views",
 	DATASOURCE: "datasources",
 	AUTHSOURCE: "authsources",
+	FILESOURCE: "filesources",
 	SIGNUPMETHOD: "signupmethods",
 	SECRET: "secrets",
 	THEME: "themes",

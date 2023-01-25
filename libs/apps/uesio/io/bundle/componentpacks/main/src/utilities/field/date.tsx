@@ -1,5 +1,5 @@
 import { definition, styles, context, wire } from "@uesio/ui"
-import TextField from "../textfield/textfield"
+import TextField from "./text"
 
 type DateFieldProps = {
 	setValue: (value: wire.FieldValue) => void

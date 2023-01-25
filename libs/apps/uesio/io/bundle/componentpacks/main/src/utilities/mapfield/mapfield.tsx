@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { wire, collection, definition, context, metadata } from "@uesio/ui"
-import ListField from "../listfield/listfield"
+import ListField from "../field/list"
 
 interface MapFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode

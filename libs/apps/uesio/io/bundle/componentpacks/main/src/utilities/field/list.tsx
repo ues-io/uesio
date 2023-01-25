@@ -10,7 +10,7 @@ import {
 import Grid from "../grid/grid"
 import FieldLabel from "../fieldlabel/fieldlabel"
 import IconButton from "../iconbutton/iconbutton"
-import TextField from "../textfield/textfield"
+import TextField from "./text"
 
 interface ListFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
