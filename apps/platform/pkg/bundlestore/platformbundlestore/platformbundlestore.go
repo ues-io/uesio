@@ -64,11 +64,13 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 		meta.Copy(item, cachedItem)
 		return nil
 	}
-	_, stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
+	modTime, stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
 	if err != nil {
 		return err
 	}
 	defer stream.Close()
+
+	item.SetModified(modTime)
 	err = bundlestore.DecodeYAML(item, stream)
 	if err != nil {
 		return err
