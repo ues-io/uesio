@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import { cx } from "@emotion/css"
-import CheckboxField from "../checkboxfield/checkboxfield"
+import CheckboxField from "../field/checkbox"
 
 interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rows: R[]

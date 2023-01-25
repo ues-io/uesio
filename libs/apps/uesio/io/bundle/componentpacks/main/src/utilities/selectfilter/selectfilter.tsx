@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, api, wire, collection } from "@uesio/ui"
-import SelectField from "../selectfield/selectfield"
+import SelectField from "../field/select"
 
 const addBlankSelectOption = collection.addBlankSelectOption
 

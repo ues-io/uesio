@@ -1,3 +1,3 @@
 name: multicheckfield
 pack: main
-entrypoint: utilities/multicheckfield/multicheckfield
+entrypoint: utilities/field/multicheck

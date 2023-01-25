@@ -8,7 +8,7 @@ import {
 } from "@uesio/ui"
 import { ReferenceFieldOptions } from "../../components/field/field"
 import Autocomplete from "../autocomplete/autocomplete"
-import TextField from "../textfield/textfield"
+import TextField from "./text"
 
 interface ReferenceFieldProps {
 	path: string

@@ -103,9 +103,7 @@ definition:
                             - label: Collection
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}
@@ -142,9 +140,7 @@ definition:
                             - label: Collection
                               components:
                                 - uesio/studio.iconlabel:
-                                    uesio.styles:
-                                      root:
-                                        padding: 16px
+                                    uesio.variant: uesio/studio.namespacefield
                                     text: ${uesio/studio.name}
                                     icon: ${uesio/studio.appicon}
                                     color: ${uesio/studio.appcolor}

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, context, collection, wire } from "@uesio/ui"
-import TextField from "../textfield/textfield"
+import TextField from "./text"
 
 interface TimestampFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
