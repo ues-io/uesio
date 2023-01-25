@@ -4,23 +4,43 @@ import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 import { dispatch } from "../../../store/store"
 
-export default async (context: Context, path: string[], value: FieldValue) => {
-	const record = context.getRecord()
-	if (!record) return context
-	const wire = record.getWire()
+export default (
+	context: Context,
+	path: string[],
+	value: FieldValue,
+	wireId: string
+) => {
+	const fieldPath = path.join("->")
+	const recordId = context.getRecordId()
+	if (!recordId) return context
+	const wire = wireId ? context.getWireByName(wireId) : context.getWire()
 	if (!wire) return context
+
+	// Append the id field when we're dealing with ref fields
+	const baseFieldType = wire
+		.getCollection()
+		.getBaseFieldMetadata(fieldPath)?.type
+	const isRef = baseFieldType === "REFERENCE"
+	const isMap = baseFieldType === "MAP"
+
+	if (!isRef && !isMap && path.length > 1)
+		throw new Error(`Fieldpath contains too may items: ${fieldPath}`)
+
+	const updatePath = [
+		...path,
+		...(isRef && path.length === 1 ? ["uesio/core.id"] : []),
+	]
 
 	dispatch(
 		updateRecord({
-			recordId: record.id,
+			recordId,
 			record: value,
 			entity: wire.getFullId(),
-			path,
+			path: updatePath,
 		})
 	)
-
 	// Now run change events
-	const changeEvents = wire.getEvents()?.onChange
+	const changeEvents = wire?.source.events?.onChange
 
 	if (changeEvents) {
 		for (const changeEvent of changeEvents) {

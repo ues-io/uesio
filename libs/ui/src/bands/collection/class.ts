@@ -28,19 +28,21 @@ class Collection {
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
 	getFullName = () => this.getNamespace() + "." + this.getId()
+	getBaseFieldMetadata = (fieldName: string | null) =>
+		fieldName ? this.source.fields[fieldName?.split("->")[0]] : undefined
+
 	getField = (fieldName: string | null): Field | undefined => {
 		// Special handling for maps
 		const fieldNameParts = fieldName?.split("->")
 		if (!fieldNameParts) return undefined
 		if (fieldNameParts.length > 1) {
 			// Get the metadata for the base field
-			const baseFieldMetadata =
-				this.source.fields[fieldNameParts.shift() || ""]
+			const baseFieldMetadata = this.getBaseFieldMetadata(fieldName)
 
 			if (
-				baseFieldMetadata.type === "REFERENCE" ||
-				baseFieldMetadata.type === "FILE" ||
-				baseFieldMetadata.type === "USER"
+				baseFieldMetadata?.type === "REFERENCE" ||
+				baseFieldMetadata?.type === "FILE" ||
+				baseFieldMetadata?.type === "USER"
 			) {
 				if (!baseFieldMetadata.reference?.collection) return undefined
 				const state =
