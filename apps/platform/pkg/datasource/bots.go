@@ -46,7 +46,7 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 }
 
 func hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
+	_, stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
 	if err != nil {
 		return err
 	}

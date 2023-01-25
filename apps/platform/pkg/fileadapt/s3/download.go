@@ -6,20 +6,21 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func (c *Connection) Download(path string) (io.ReadCloser, error) {
+func (c *Connection) Download(path string) (time.Time, io.ReadCloser, error) {
 	return c.DownloadWithDownloader(&s3.GetObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
 }
 
-func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (io.ReadCloser, error) {
+func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (time.Time, io.ReadCloser, error) {
 	ctx := context.Background()
 	downloader := manager.NewDownloader(c.client)
 	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
@@ -28,7 +29,7 @@ func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (io.ReadCl
 	})
 
 	if err != nil {
-		return nil, errors.New("failed to retrieve object information: " + err.Error())
+		return time.Time{}, nil, errors.New("failed to retrieve object information: " + err.Error())
 	}
 
 	buf := make([]byte, head.ContentLength)
@@ -37,18 +38,18 @@ func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (io.ReadCl
 	_, err = downloader.Download(ctx, w, input)
 
 	if err != nil {
-		return nil, errors.New("failed to retrieve Object")
+		return time.Time{}, nil, errors.New("failed to retrieve Object")
 	}
 
-	return ioutil.NopCloser(bytes.NewBuffer(buf)), nil
+	return *head.LastModified, ioutil.NopCloser(bytes.NewBuffer(buf)), nil
 }
 
-func (c *Connection) DownloadWithGetObject(input *s3.GetObjectInput) (io.ReadCloser, error) {
+func (c *Connection) DownloadWithGetObject(input *s3.GetObjectInput) (time.Time, io.ReadCloser, error) {
 	ctx := context.Background()
 	result, err := c.client.GetObject(ctx, input)
 	if err != nil {
-		return nil, errors.New("failed to retrieve Object")
+		return time.Time{}, nil, errors.New("failed to retrieve Object")
 	}
 
-	return result.Body, nil
+	return *result.LastModified, result.Body, nil
 }

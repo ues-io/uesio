@@ -38,7 +38,7 @@ func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[stri
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the bot.
-	stream, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session)
+	_, stream, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session)
 	if err != nil {
 		return "", err
 	}

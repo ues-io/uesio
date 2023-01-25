@@ -3,6 +3,7 @@ package fileadapt
 import (
 	"errors"
 	"io"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -18,7 +19,7 @@ type FileAdapter interface {
 
 type FileConnection interface {
 	Upload(fileData io.Reader, path string) error
-	Download(path string) (io.ReadCloser, error)
+	Download(path string) (time.Time, io.ReadCloser, error)
 	Delete(path string) error
 	List(path string) ([]string, error)
 	EmptyDir(path string) error

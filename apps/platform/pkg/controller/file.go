@@ -27,7 +27,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stream, err := bundle.GetItemAttachment(file, file.Path, session)
+	_, stream, err := bundle.GetItemAttachment(file, file.Path, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)

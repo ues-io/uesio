@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -159,20 +160,21 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 
 }
 
-func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+	modTime := time.Time{}
 	err := b.GetItem(item, version, session, nil)
 	if err != nil {
-		return nil, err
+		return modTime, nil, err
 	}
 	recordID, err := item.GetField(adapt.ID_FIELD)
 	if err != nil {
-		return nil, err
+		return modTime, nil, err
 	}
 	stream, _, err := filesource.DownloadAttachment(recordID.(string), path, session.RemoveWorkspaceContext())
 	if err != nil {
-		return nil, err
+		return modTime, nil, err
 	}
-	return stream, nil
+	return modTime, stream, nil
 }
 
 func (b *WorkspaceBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {

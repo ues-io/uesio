@@ -67,7 +67,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 					return err
 				}
 				for _, path := range paths {
-					attachment, err := bs.GetItemAttachment(attachableItem, version, path, session)
+					_, attachment, err := bs.GetItemAttachment(attachableItem, version, path, session)
 					if err != nil {
 						return err
 					}
