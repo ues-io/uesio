@@ -186,8 +186,6 @@ collections:
     create: false
     edit: false
     delete: false
-    modifyallrecords: false
-    viewallrecords: false
   uesio/studio.translation:
   uesio/studio.utility:
   uesio/studio.view:
@@ -196,8 +194,6 @@ collections:
     create: false
     edit: false
     delete: false
-    modifyallrecords: false
-    viewallrecords: false
   uesio/core.userfile:
   uesio/core.user:
   uesio/core.loginmethod:
@@ -207,8 +203,6 @@ collections:
     create: false
     edit: false
     delete: false
-    modifyallrecords: false
-    viewallrecords: false
   uesio/studio.useraccesstoken:
   uesio/studio.license:
   uesio/studio.licensetemplate:

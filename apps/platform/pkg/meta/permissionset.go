@@ -25,45 +25,44 @@ type FieldPermissionOptions struct {
 }
 
 type CollectionPermission struct {
-	Read             bool                              `yaml:"read" json:"uesio/studio.read"`
-	Create           bool                              `yaml:"create" json:"uesio/studio.create"`
-	Edit             bool                              `yaml:"edit" json:"uesio/studio.edit"`
-	Delete           bool                              `yaml:"delete" json:"uesio/studio.delete"`
-	ModifyAllRecords bool                              `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
-	ViewAllRecords   bool                              `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	FieldRefs        map[string]FieldPermissionOptions `yaml:"fields" json:"uesio/studio.fieldrefs"`
+	Read   bool `yaml:"read" json:"uesio/studio.read"`
+	Create bool `yaml:"create" json:"uesio/studio.create"`
+	Edit   bool `yaml:"edit" json:"uesio/studio.edit"`
+	Delete bool `yaml:"delete" json:"uesio/studio.delete"`
 }
 
-// type CollectionPermissionWrapper CollectionPermission
+type CollectionPermissionMapWrapper CollectionPermissionMap
+type CollectionPermissionMap map[string]CollectionPermission
 
-// func (cp *CollectionPermission) UnmarshalYAML(node *yaml.Node) error {
-// 	return node.Decode((*CollectionPermissionWrapper)(cp))
-// }
+func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
+	test := node.Decode((*CollectionPermissionMapWrapper)(cpm))
+	return test
+}
 
 type PermissionSet struct {
-	ID                  string                          `yaml:"-" json:"uesio/core.id"`
-	UniqueKey           string                          `yaml:"-" json:"uesio/core.uniquekey"`
-	Name                string                          `yaml:"name" json:"uesio/studio.name"`
-	Namespace           string                          `yaml:"-" json:"-"`
-	NamedRefs           map[string]bool                 `yaml:"named" json:"uesio/studio.namedrefs"`
-	ViewRefs            map[string]bool                 `yaml:"views" json:"uesio/studio.viewrefs"`
-	CollectionRefs      map[string]CollectionPermission `yaml:"collections" json:"uesio/studio.collectionrefs"`
-	RouteRefs           map[string]bool                 `yaml:"routes" json:"uesio/studio.routerefs"`
-	FileRefs            map[string]bool                 `yaml:"files" json:"uesio/studio.filerefs"`
-	Workspace           *Workspace                      `yaml:"-" json:"uesio/studio.workspace"`
-	AllowAllCollections bool                            `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
-	AllowAllViews       bool                            `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
-	AllowAllRoutes      bool                            `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
-	AllowAllFiles       bool                            `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
-	ModifyAllRecords    bool                            `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
-	ViewAllRecords      bool                            `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	itemMeta            *ItemMeta                       `yaml:"-" json:"-"`
-	CreatedBy           *User                           `yaml:"-" json:"uesio/core.createdby"`
-	Owner               *User                           `yaml:"-" json:"uesio/core.owner"`
-	UpdatedBy           *User                           `yaml:"-" json:"uesio/core.updatedby"`
-	UpdatedAt           int64                           `yaml:"-" json:"uesio/core.updatedat"`
-	CreatedAt           int64                           `yaml:"-" json:"uesio/core.createdat"`
-	Public              bool                            `yaml:"public,omitempty" json:"uesio/studio.public"`
+	ID                  string                  `yaml:"-" json:"uesio/core.id"`
+	UniqueKey           string                  `yaml:"-" json:"uesio/core.uniquekey"`
+	Name                string                  `yaml:"name" json:"uesio/studio.name"`
+	Namespace           string                  `yaml:"-" json:"-"`
+	NamedRefs           map[string]bool         `yaml:"named" json:"uesio/studio.namedrefs"`
+	ViewRefs            map[string]bool         `yaml:"views" json:"uesio/studio.viewrefs"`
+	CollectionRefs      CollectionPermissionMap `yaml:"collections" json:"uesio/studio.collectionrefs"`
+	RouteRefs           map[string]bool         `yaml:"routes" json:"uesio/studio.routerefs"`
+	FileRefs            map[string]bool         `yaml:"files" json:"uesio/studio.filerefs"`
+	Workspace           *Workspace              `yaml:"-" json:"uesio/studio.workspace"`
+	AllowAllCollections bool                    `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
+	AllowAllViews       bool                    `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
+	AllowAllRoutes      bool                    `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
+	AllowAllFiles       bool                    `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
+	ModifyAllRecords    bool                    `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
+	ViewAllRecords      bool                    `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
+	itemMeta            *ItemMeta               `yaml:"-" json:"-"`
+	CreatedBy           *User                   `yaml:"-" json:"uesio/core.createdby"`
+	Owner               *User                   `yaml:"-" json:"uesio/core.owner"`
+	UpdatedBy           *User                   `yaml:"-" json:"uesio/core.updatedby"`
+	UpdatedAt           int64                   `yaml:"-" json:"uesio/core.updatedat"`
+	CreatedAt           int64                   `yaml:"-" json:"uesio/core.createdat"`
+	Public              bool                    `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type PermissionSetWrapper PermissionSet
@@ -198,50 +197,46 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 }
 
 func (ps *PermissionSet) HasReadPermission(key string) bool {
-	if ps.ViewAllRecords {
+	if ps.AllowAllCollections {
 		return true
 	}
-	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.ViewAllRecords || collectionPermission.Read
+		return collectionPermission.Read
 	}
 }
 
 func (ps *PermissionSet) HasCreatePermission(key string) bool {
-	if ps.ModifyAllRecords {
+	if ps.AllowAllCollections {
 		return true
 	}
-	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.ModifyAllRecords || collectionPermission.Create
+		return collectionPermission.Create
 	}
 }
 
 func (ps *PermissionSet) HasEditPermission(key string) bool {
-	if ps.ModifyAllRecords {
+	if ps.AllowAllCollections {
 		return true
 	}
-	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.ModifyAllRecords || collectionPermission.Edit
+		return collectionPermission.Edit
 	}
 }
 
 func (ps *PermissionSet) HasDeletePermission(key string) bool {
-	if ps.ModifyAllRecords {
+	if ps.AllowAllCollections {
 		return true
 	}
-	//I think might be safe here to access directly with the key to the map but let's double check it
 	if collectionPermission, ok := ps.CollectionRefs[key]; !ok {
 		return false
 	} else {
-		return collectionPermission.ModifyAllRecords || collectionPermission.Delete
+		return collectionPermission.Delete
 	}
 }
 
@@ -251,9 +246,6 @@ func mergeCollectionPermission(newVal CollectionPermission, existingVal Collecti
 	existingVal.Delete = existingVal.Delete || newVal.Delete
 	existingVal.Edit = existingVal.Edit || newVal.Edit
 	existingVal.Read = existingVal.Read || newVal.Read
-	existingVal.ModifyAllRecords = existingVal.ModifyAllRecords || newVal.ModifyAllRecords
-	existingVal.ViewAllRecords = existingVal.ViewAllRecords || newVal.ViewAllRecords
-	//TO-DO Fields in here
 
 	return existingVal
 }
