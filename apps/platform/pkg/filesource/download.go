@@ -72,7 +72,7 @@ func download(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCl
 
 	fullPath := userFile.GetFullPath(session.GetTenantID())
 
-	content, err := conn.Download(fullPath)
+	_, content, err := conn.Download(fullPath)
 	if err != nil {
 		return nil, nil, err
 	}

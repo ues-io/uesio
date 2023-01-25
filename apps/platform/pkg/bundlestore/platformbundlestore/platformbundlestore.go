@@ -29,12 +29,12 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (io.ReadCloser, error) {
+func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (time.Time, io.ReadCloser, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
 	conn, err := getPlatformFileConnection(session)
 	if err != nil {
-		return nil, err
+		return time.Time{}, nil, err
 	}
 
 	return conn.Download(filePath)
@@ -64,7 +64,7 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 		meta.Copy(item, cachedItem)
 		return nil
 	}
-	stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
+	_, stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
 	if err != nil {
 		return err
 	}
@@ -133,12 +133,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 }
 
 func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
-	modTime := time.Time{}
-	stream, err := getStream(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
-	if err != nil {
-		return modTime, nil, err
-	}
-	return modTime, stream, nil
+	return getStream(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
 }
 
 func (b *PlatformBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {
@@ -181,7 +176,7 @@ func (b *PlatformBundleStore) DeleteBundle(namespace, version string, session *s
 
 func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error) {
 	var by meta.BundleDef
-	stream, err := getStream(namespace, version, "", "bundle.yaml", session)
+	_, stream, err := getStream(namespace, version, "", "bundle.yaml", session)
 	if err != nil {
 		return nil, err
 	}
