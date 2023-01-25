@@ -1,35 +1,49 @@
 import { ThunkFunc } from "../../../store/store"
-import { Context, getWire } from "../../../context/context"
-import { getFullWireId, updateRecord } from ".."
+import { Context } from "../../../context/context"
+import { updateRecord } from ".."
 import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 
 export default (
 		context: Context,
 		path: string[],
-		value: FieldValue
+		value: FieldValue,
+		wireId: string
 	): ThunkFunc =>
 	(dispatch) => {
+		const fieldPath = path.join("->")
 		const viewId = context.getViewId()
 		if (!viewId) return context
 		const recordId = context.getRecordId()
 		if (!recordId) return context
-		const wireId = context.getWireId()
-		if (!wireId) return context
-		const wire = getWire(viewId, wireId)
+		const wire = wireId ? context.getWireByName(wireId) : context.getWire()
 		if (!wire) return context
+
+		// Append the id field when we're dealing with ref fields
+		const baseFieldType = wire
+			.getCollection()
+			.getBaseFieldMetadata(fieldPath)?.type
+		const isRef = baseFieldType === "REFERENCE"
+		const isMap = baseFieldType === "MAP"
+
+		if (!isRef && !isMap && path.length > 1)
+			throw new Error(`Fieldpath contains too may items: ${fieldPath}`)
+
+		const updatePath = [
+			...path,
+			...(isRef && path.length === 1 ? ["uesio/core.id"] : []),
+		]
 
 		dispatch(
 			updateRecord({
 				recordId,
 				record: value,
-				entity: getFullWireId(viewId, wireId),
-				path,
+				entity: wire.getFullId(),
+				path: updatePath,
 			})
 		)
-
 		// Now run change events
-		const changeEvents = wire?.events?.onChange
+		const changeEvents = wire?.source.events?.onChange
 
 		if (changeEvents) {
 			for (const changeEvent of changeEvents) {

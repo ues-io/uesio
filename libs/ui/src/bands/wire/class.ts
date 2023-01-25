@@ -74,7 +74,7 @@ class Wire {
 			record: recordId,
 			view: this.getViewId(),
 		})
-		appDispatch()(updateRecordOp(context, path, record))
+		appDispatch()(updateRecordOp(context, path, record, this.source.name))
 	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
