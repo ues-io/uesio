@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -27,11 +28,6 @@ func getBasePath(namespace, version string) string {
 func getFile(namespace string, version string, objectname string, filename string) (*os.File, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 	return os.Open(filePath)
-}
-
-func getFileInfo(namespace string, version string, objectname string, filename string) (os.FileInfo, error) {
-	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
-	return os.Stat(filePath)
 }
 
 func GetFilePaths(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions, conn fileadapt.FileConnection) ([]string, error) {
@@ -83,17 +79,17 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return nil
 	}
 
-	fileInfo, err := getFileInfo(namespace, version, collectionName, item.GetPath())
+	file, err := getFile(namespace, version, collectionName, item.GetPath())
+	if err != nil {
+		return err
+	}
+
+	fileInfo, err := file.Stat()
 	if err != nil {
 		return err
 	}
 
 	item.SetModified(fileInfo.ModTime())
-
-	file, err := getFile(namespace, version, collectionName, item.GetPath())
-	if err != nil {
-		return err
-	}
 
 	defer file.Close()
 	err = bundlestore.DecodeYAML(item, file)
@@ -158,8 +154,16 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 	return nil
 }
 
-func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error) {
-	return getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+	file, err := getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
+	if err != nil {
+		return time.Time{}, nil, err
+	}
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return time.Time{}, nil, err
+	}
+	return fileInfo.ModTime(), file, nil
 }
 
 func (b *SystemBundleStore) GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error) {

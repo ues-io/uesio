@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -173,10 +174,10 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item, version, session, connection)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (io.ReadCloser, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
-		return nil, err
+		return time.Time{}, nil, err
 	}
 	return bs.GetItemAttachment(item, version, path, session)
 }

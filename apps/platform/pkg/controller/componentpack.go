@@ -27,14 +27,21 @@ func ServeComponentPack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	path := "runtime.js"
-	stream, err := bundle.GetItemAttachment(componentPack, path, session)
+	fileModTime, stream, err := bundle.GetItemAttachment(componentPack, path, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
 		return
 	}
 
-	respondFile(w, r, "pack.js", time.Unix(componentPack.UpdatedAt, 0), stream)
+	modTime := fileModTime.Unix()
+
+	// Get the greater of the two modtimes
+	if modTime < componentPack.UpdatedAt {
+		modTime = componentPack.UpdatedAt
+	}
+
+	respondFile(w, r, "pack.js", time.Unix(modTime, 0), stream)
 }
 
 func ServeComponentPackMap(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +61,7 @@ func ServeComponentPackMap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	path := "runtime.js"
-	stream, err := bundle.GetItemAttachment(componentPack, path+".map", session)
+	_, stream, err := bundle.GetItemAttachment(componentPack, path+".map", session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)

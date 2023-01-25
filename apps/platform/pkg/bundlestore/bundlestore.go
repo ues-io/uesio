@@ -3,6 +3,7 @@ package bundlestore
 import (
 	"errors"
 	"io"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -51,7 +52,7 @@ type BundleStore interface {
 	GetManyItems(items []meta.BundleableItem, version string, session *sess.Session, connection adapt.Connection) error
 	GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) error
 	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session, connection adapt.Connection) (bool, error)
-	GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (io.ReadCloser, error)
+	GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error)
 	GetAttachmentPaths(item meta.AttachableItem, version string, session *sess.Session) ([]string, error)
 	StoreItem(namespace, version, path string, reader io.Reader, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session, connection adapt.Connection) (*meta.BundleDef, error)
