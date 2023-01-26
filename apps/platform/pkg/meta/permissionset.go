@@ -35,8 +35,32 @@ type CollectionPermissionMapWrapper CollectionPermissionMap
 type CollectionPermissionMap map[string]CollectionPermission
 
 func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
-	test := node.Decode((*CollectionPermissionMapWrapper)(cpm))
-	return test
+
+	if *cpm == nil {
+		*cpm = *(&CollectionPermissionMap{})
+	}
+
+	collectionPermissionPairs, err := GetMapNodes(node)
+	if err != nil {
+		return err
+	}
+
+	for _, collectionPermissionPair := range collectionPermissionPairs {
+		node := collectionPermissionPair.Node
+		if node == nil {
+			return nil
+		}
+		if node.Kind == yaml.MappingNode {
+			cp := CollectionPermission{}
+			node.Decode((*CollectionPermission)(&cp))
+			(*cpm)[collectionPermissionPair.Key] = cp
+		}
+		if node.Kind == yaml.ScalarNode {
+			(*cpm)[collectionPermissionPair.Key] = CollectionPermission{Read: true, Create: true, Edit: true, Delete: true}
+		}
+	}
+
+	return nil
 }
 
 type PermissionSet struct {
