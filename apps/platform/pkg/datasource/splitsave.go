@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -92,13 +93,13 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 				}
 
 				if !permissions.HasCreatePermission(collectionKey) {
-					return errors.New("No Create access for collection: " + collectionKey)
+					return errors.New(fmt.Sprintf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey))
 				}
 				opList.addInsert(item, recordKey, newID)
 			} else {
 
 				if !permissions.HasEditPermission(collectionKey) {
-					return errors.New("No Edit access for collection: " + collectionKey)
+					return errors.New(fmt.Sprintf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey))
 				}
 				opList.addUpdate(item, recordKey, idValue.(string))
 			}
@@ -117,7 +118,7 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 			}
 
 			if !permissions.HasDeletePermission(collectionKey) {
-				return errors.New("No Delete access for collection: " + collectionKey)
+				return errors.New(fmt.Sprintf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey))
 			}
 			opList.addDelete(item, idValue.(string))
 			return nil
