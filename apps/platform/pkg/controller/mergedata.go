@@ -63,16 +63,23 @@ func init() {
 
 func GetUserMergeData(session *sess.Session) *routing.UserMergeData {
 	userInfo := session.GetUserInfo()
-	return &routing.UserMergeData{
+	userPicture := userInfo.GetPicture()
+	userMergeData := &routing.UserMergeData{
 		ID:        userInfo.ID,
 		Username:  userInfo.UniqueKey,
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
 		Profile:   userInfo.Profile,
-		PictureID: userInfo.GetPictureID(),
 		Site:      session.GetSite().ID,
 		Language:  userInfo.Language,
 	}
+	if userPicture != nil {
+		userMergeData.Picture = &routing.UserPictureMergeData{
+			ID:        userPicture.ID,
+			UpdatedAt: userPicture.UpdatedAt,
+		}
+	}
+	return userMergeData
 }
 
 func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeData {

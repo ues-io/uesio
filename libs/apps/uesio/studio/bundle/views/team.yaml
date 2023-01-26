@@ -43,6 +43,8 @@ definition:
             uesio/core.firstname:
             uesio/core.lastname:
             uesio/core.picture:
+              fields:
+                uesio/core.updatedat:
         uesio/studio.team:
       conditions:
         - field: uesio/studio.app

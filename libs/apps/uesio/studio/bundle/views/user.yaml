@@ -46,6 +46,8 @@ definition:
         uesio/core.initials:
         uesio/core.profile:
         uesio/core.picture:
+          fields:
+            uesio/core.updatedat:
         uesio/core.language:
         uesio/core.owner:
       conditions:

@@ -21,7 +21,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 		props
 
 	const userFileId = userFile?.[collection.ID_FIELD]
-	const userModDate = userFile?.["uesio/core.updatedat"]
+	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
 	const actionIconStyles: CSSProperties = {

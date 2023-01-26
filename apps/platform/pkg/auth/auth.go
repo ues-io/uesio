@@ -197,6 +197,9 @@ func getUser(field, value string, session *sess.Session, connection adapt.Connec
 						{
 							ID: adapt.ID_FIELD,
 						},
+						{
+							ID: adapt.UPDATED_AT_FIELD,
+						},
 					},
 				},
 				{

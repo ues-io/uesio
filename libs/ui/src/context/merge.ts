@@ -2,8 +2,9 @@ import Wire from "../bands/wire/class"
 import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
 import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
-import { ID_FIELD } from "../collectionexports"
+import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
+import { UserState } from "../bands/user/types"
 
 type MergeType =
 	| "Record"
@@ -66,13 +67,16 @@ const handlers: Record<MergeType, MergeHandler> = {
 				: user.id.charAt(0)
 		}
 		if (expression === "picture") {
+			if (!user.picture) return ""
 			// Remove the workspace context here
+			const useContext = context.getWorkspace() ? new Context() : context
 			return getUserFileURL(
-				context.getWorkspace() ? new Context() : context,
-				user.picture
+				useContext,
+				user.picture.id,
+				"" + user.picture.updatedat
 			)
 		}
-		return user[expression as keyof typeof user] || ""
+		return user[expression as keyof Omit<UserState, "picture">] || ""
 	},
 	Time: (expression, context) => {
 		const value = context.getRecord()?.getDateValue(expression)
@@ -108,7 +112,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (!file) return ""
 		const fileId = file[ID_FIELD] as string
 		if (!fileId) return ""
-		return getUserFileURL(context, fileId)
+		const fileVersion = file[UPDATED_AT_FIELD] as string
+		return getUserFileURL(context, fileId, fileVersion)
 	},
 	Site: (expression, context) => {
 		const site = context.getSite()

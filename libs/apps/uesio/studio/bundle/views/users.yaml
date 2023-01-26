@@ -44,6 +44,8 @@ definition:
         uesio/core.username:
         uesio/core.initials:
         uesio/core.picture:
+          fields:
+            uesio/core.updatedat:
       init:
         query: false
       conditions:

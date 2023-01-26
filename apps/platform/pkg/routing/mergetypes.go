@@ -24,15 +24,20 @@ type RouteMergeData struct {
 	Dependencies *PreloadMetadata    `json:"dependencies"`
 }
 
-type UserMergeData struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Profile   string `json:"profile"`
-	Site      string `json:"site"`
+type UserPictureMergeData struct {
 	ID        string `json:"id"`
-	Username  string `json:"username"`
-	PictureID string `json:"picture"`
-	Language  string `json:"language"`
+	UpdatedAt int64  `json:"updatedat"`
+}
+
+type UserMergeData struct {
+	FirstName string                `json:"firstname"`
+	LastName  string                `json:"lastname"`
+	Profile   string                `json:"profile"`
+	Site      string                `json:"site"`
+	ID        string                `json:"id"`
+	Username  string                `json:"username"`
+	Picture   *UserPictureMergeData `json:"picture"`
+	Language  string                `json:"language"`
 }
 
 type SiteMergeData struct {
