@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"net/url"
 
@@ -51,7 +52,7 @@ func redirectResponse(w http.ResponseWriter, r *http.Request, redirectKey string
 		}
 	}
 
-	respondJSON(w, r, &routing.LoginResponse{
+	file.RespondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,

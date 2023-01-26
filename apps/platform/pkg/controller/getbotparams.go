@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -61,5 +62,5 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	respondJSON(w, r, GetParamResponse(robot.Params))
+	file.RespondJSON(w, r, GetParamResponse(robot.Params))
 }

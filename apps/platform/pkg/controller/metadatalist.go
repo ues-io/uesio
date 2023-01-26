@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"strings"
 
@@ -101,6 +102,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &collectionKeyMap)
+	file.RespondJSON(w, r, &collectionKeyMap)
 
 }

@@ -3,6 +3,8 @@ package controller
 import (
 	"archive/zip"
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"io"
 	"net/http"
 
@@ -47,7 +49,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &BotResponse{
+	file.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 

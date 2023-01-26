@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -35,6 +36,10 @@ func getFullItemParam(paramName string) string {
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var itemParam = fmt.Sprintf("%s/{name}", nsParam)
+
+// Version will either be a Uesio bundle version string, e.g. v1.2.3,
+// Or an 8-character short Git sha, e.g. abcd1234
+var versionedItemParam = nsParam + fmt.Sprintf("/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}")
 var groupingParam = getFullItemParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
@@ -60,7 +65,7 @@ func serve(cmd *cobra.Command, args []string) {
 	staticAssetsPath := ""
 	if cacheStaticAssets {
 		staticAssetsPath = "/" + gitsha
-		controller.SetAssetsPath(staticAssetsPath)
+		file.SetAssetsPath(staticAssetsPath)
 		fontsPrefix = staticAssetsPath + fontsPrefix
 		staticPrefix = staticAssetsPath + staticPrefix
 	}
@@ -69,8 +74,8 @@ func serve(cmd *cobra.Command, args []string) {
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.Handle(staticPrefix+"/{filename:.*}", controller.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
+	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
+	r.HandleFunc("/favicon.ico", file.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -116,19 +121,19 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
-	sr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
-	wr.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
-	sa.HandleFunc(userfileUploadPath, controller.UploadUserFile).Methods(http.MethodPost)
+	sr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
 
 	userfileDeletePath := "/userfiles/delete/{fileid:.*}"
-	sr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
-	wr.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
-	sa.HandleFunc(userfileDeletePath, controller.DeleteUserFile).Methods(http.MethodPost)
+	sr.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
+	wr.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
+	sa.HandleFunc(userfileDeletePath, file.DeleteUserFile).Methods(http.MethodPost)
 
 	userfileDownloadPath := "/userfiles/download"
-	sr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
-	wr.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
-	sa.HandleFunc(userfileDownloadPath, controller.DownloadUserFile).Methods(http.MethodGet)
+	sr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
+	wr.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
+	sa.HandleFunc(userfileDownloadPath, file.DownloadUserFile).Methods(http.MethodGet)
 
 	// Wire load and save routes for site and workspace context
 	wireLoadPath := "/wires/load"
@@ -152,8 +157,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// File (actual metadata, not userfiles) routes for site and workspace context
 	filesPath := fmt.Sprintf("/files/%s", itemParam)
-	sr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
-	wr.HandleFunc(filesPath, controller.ServeFile).Methods(http.MethodGet)
+	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)
@@ -171,12 +176,21 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 	wr.HandleFunc(pathRoutePath, controller.Route).Methods(http.MethodGet)
 
-	// Component pack routes for site and workspace context
+	// Currently the only component pack files which we support fetching are:
+	// - runtime.js
+	// - runtime.js.map
+	// NOTE: Gorilla Mux requires use of non-capturing groups, hence the use of ?: here
+	componentPackFileSuffix := "/{filename:(?:runtime\\.js(?:\\.map)?)}"
+
+	// Un-versioned Component pack routes - for backwards compatibility, and for local development
 	componentPackPath := fmt.Sprintf("/componentpacks/%s", itemParam)
-	sr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js", controller.ServeComponentPack).Methods(http.MethodGet)
-	sr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap).Methods(http.MethodGet)
-	wr.HandleFunc(componentPackPath+"/runtime.js.map", controller.ServeComponentPackMap).Methods(http.MethodGet)
+	sr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(componentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+
+	// Versioned component pack file routes
+	versionedComponentPackPath := fmt.Sprintf("/componentpacks/%s", versionedItemParam)
+	sr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedComponentPackPath+componentPackFileSuffix, file.ServeComponentPackFile).Methods(http.MethodGet)
 
 	// Workspace context specific routes
 	wr.HandleFunc("/metadata/deploy", controller.Deploy).Methods(http.MethodPost)

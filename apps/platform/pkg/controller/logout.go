@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
@@ -35,7 +36,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &routing.LoginResponse{
+	file.RespondJSON(w, r, &routing.LoginResponse{
 		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,

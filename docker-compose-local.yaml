@@ -6,7 +6,7 @@ services:
       dockerfile: ./apps/platform/Dockerfile
       args:
         # Increment this number to force static asset versions to be refetched when running in Docker
-        - GITSHA=latest1
+        - GITSHA=latest11
     ports:
       - "3000:3000"
     environment:

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"strings"
 
@@ -25,7 +26,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 	route, err := routing.GetRouteFromCollection(r, collectionNamespace, collectionName, viewtype, id, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &routing.RouteMergeData{
+		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
 			Title: "Not Found",
@@ -39,7 +40,7 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &routing.RouteMergeData{
+	file.RespondJSON(w, r, &routing.RouteMergeData{
 		View:         route.ViewRef,
 		Params:       route.Params,
 		Namespace:    route.Namespace,
@@ -70,7 +71,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &routing.RouteMergeData{
+		file.RespondJSON(w, r, &routing.RouteMergeData{
 			View:  "uesio/core.notfound",
 			Theme: "uesio/core.default",
 		})
@@ -84,7 +85,7 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &routing.RouteMergeData{
+	file.RespondJSON(w, r, &routing.RouteMergeData{
 		View:         route.ViewRef,
 		Params:       route.Params,
 		Namespace:    route.Namespace,
