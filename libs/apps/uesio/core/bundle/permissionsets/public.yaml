@@ -23,7 +23,7 @@ files:
   uesio/core.splash: true
   uesio/core.whitesplash: true
 collections:
-  uesio/core.bulkjob:
-  uesio/core.bulkbatch:
-  uesio/core.featureflagassignment:
-  uesio/core.user:
+  uesio/core.bulkjob: true
+  uesio/core.bulkbatch: true
+  uesio/core.featureflagassignment: true
+  uesio/core.user: true

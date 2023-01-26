@@ -211,7 +211,6 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	if !ps.AllowAllCollections {
 		for key := range check.CollectionRefs {
 			if _, ok := ps.CollectionRefs[key]; !ok {
-				//we don't even have the collection
 				return false
 			}
 		}
@@ -309,16 +308,11 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 			}
 		}
 		for key, value := range permissionSet.CollectionRefs {
-
-			//standar and public might say opposite things how we merge this ??
-			//check if key is already on the map
 			if existingVal, ok := collectionPerms[key]; !ok {
 				collectionPerms[key] = value
 			} else {
-				// got something already, then merge it!
 				collectionPerms[key] = mergeCollectionPermission(value, existingVal)
 			}
-
 		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true

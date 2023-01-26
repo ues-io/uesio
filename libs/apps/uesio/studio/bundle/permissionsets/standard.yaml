@@ -152,64 +152,52 @@ files:
 collections:
   uesio/studio.allmetadata: true
   uesio/studio.authsource: true
-  uesio/studio.signupmethod:
-  uesio/studio.app:
-  uesio/studio.bot:
-  uesio/studio.bundledependency:
-  uesio/studio.bundle:
-  uesio/studio.bundlelisting:
-  uesio/studio.collection:
-  uesio/studio.component:
-  uesio/studio.componentpack:
-  uesio/studio.componentvariant:
-  uesio/studio.configvalue:
-  uesio/studio.credential:
-  uesio/studio.datasource:
-  uesio/studio.featureflag:
-  uesio/studio.field:
-  uesio/studio.filecollection:
-  uesio/studio.file:
-  uesio/studio.filesource:
-  uesio/studio.integration:
-  uesio/studio.label:
-  uesio/studio.permissionset:
-  uesio/studio.profile:
-  uesio/studio.route:
-  uesio/studio.secret:
-  uesio/studio.selectlist:
-  uesio/studio.sitedomain:
-  uesio/studio.site:
-  uesio/studio.teammember:
-  uesio/studio.team:
-  uesio/studio.theme:
-    read: true
-    create: false
-    edit: false
-    delete: false
-  uesio/studio.translation:
-  uesio/studio.utility:
-  uesio/studio.view:
-  uesio/studio.workspace:
-    read: true
-    create: false
-    edit: false
-    delete: false
-  uesio/core.userfile:
-  uesio/core.user:
-  uesio/core.loginmethod:
-  uesio/studio.usage:
-  uesio/core.featureflagassignment:
-    read: true
-    create: false
-    edit: false
-    delete: false
-  uesio/studio.useraccesstoken:
-  uesio/studio.license:
-  uesio/studio.licensetemplate:
-  uesio/studio.licensepricingtemplate:
-  uesio/studio.licensepricingitem:
-  uesio/studio.invoice:
-  uesio/studio.invoicelineitem:
-  uesio/studio.payment:
+  uesio/studio.signupmethod: true
+  uesio/studio.app: true
+  uesio/studio.bot: true
+  uesio/studio.bundledependency: true
+  uesio/studio.bundle: true
+  uesio/studio.bundlelisting: true
+  uesio/studio.collection: true
+  uesio/studio.component: true
+  uesio/studio.componentpack: true
+  uesio/studio.componentvariant: true
+  uesio/studio.configvalue: true
+  uesio/studio.credential: true
+  uesio/studio.datasource: true
+  uesio/studio.featureflag: true
+  uesio/studio.field: true
+  uesio/studio.filecollection: true
+  uesio/studio.file: true
+  uesio/studio.filesource: true
+  uesio/studio.integration: true
+  uesio/studio.label: true
+  uesio/studio.permissionset: true
+  uesio/studio.profile: true
+  uesio/studio.route: true
+  uesio/studio.secret: true
+  uesio/studio.selectlist: true
+  uesio/studio.sitedomain: true
+  uesio/studio.site: true
+  uesio/studio.teammember: true
+  uesio/studio.team: true
+  uesio/studio.theme: true
+  uesio/studio.translation: true
+  uesio/studio.utility: true
+  uesio/studio.view: true
+  uesio/studio.workspace: true
+  uesio/core.userfile: true
+  uesio/core.user: true
+  uesio/core.loginmethod: true
+  uesio/studio.usage: true
+  uesio/core.featureflagassignment: true
+  uesio/studio.useraccesstoken: true
+  uesio/studio.license: true
+  uesio/studio.licensetemplate: true
+  uesio/studio.licensepricingtemplate: true
+  uesio/studio.licensepricingitem: true
+  uesio/studio.invoice: true
+  uesio/studio.invoicelineitem: true
+  uesio/studio.payment: true
 modifyallrecords: false
 viewallrecords: false
