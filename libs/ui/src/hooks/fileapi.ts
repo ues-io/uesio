@@ -1,5 +1,4 @@
 import { Context } from "../context/context"
-import WireRecord from "../bands/wirerecord/class"
 import { useEffect, useState } from "react"
 import { PlainWireRecord } from "../wireexports"
 import { ID_FIELD } from "../collectionexports"
@@ -26,10 +25,12 @@ const deleteFile = platform.deleteFile
 
 const uploadFile = platform.uploadFile
 
-const useUserFile = (context: Context, record: WireRecord, fieldId: string) => {
+const useUserFile = (
+	context: Context,
+	userFile: PlainWireRecord | undefined
+) => {
 	const [content, setContent] = useState<string>("")
 	useEffect(() => {
-		const userFile = record.getFieldValue<PlainWireRecord>(fieldId)
 		const userFileId = userFile?.[ID_FIELD] as string
 		const fileUrl = getUserFileURL(context, userFileId)
 		if (!fileUrl) {

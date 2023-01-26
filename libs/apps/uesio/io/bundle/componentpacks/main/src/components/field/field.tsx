@@ -1,11 +1,4 @@
-import {
-	collection,
-	wire,
-	context,
-	definition,
-	metadata,
-	signal,
-} from "@uesio/ui"
+import { wire, definition, metadata, signal, collection } from "@uesio/ui"
 import CheckboxField from "../../utilities/field/checkbox"
 import DateField from "../../utilities/field/date"
 import EmailField from "../../utilities/field/email"
@@ -20,16 +13,12 @@ import TextField from "../../utilities/field/text"
 import TimestampField from "../../utilities/field/timestamp"
 import ToggleField from "../../utilities/field/toggle"
 import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
-import FileText from "../../utilities/filetext/filetext"
-import FileImage from "../../utilities/fileimage/fileimage"
-import FilePreview from "../../utilities/filepreview/filepreview"
-import FileMarkDown from "../../utilities/filemarkdown/filemarkdown"
-import FileVideo from "../../utilities/filevideo/filevideo"
 import UserField from "../../utilities/field/user"
 import ListFieldDeck from "../../utilities/field/listdeck"
 import ListField from "../../utilities/field/list"
 import ReferenceGroupField from "../../utilities/field/referencegroup"
-import { default as FileCmp } from "../../utilities/file/file"
+import { ReactNode } from "react"
+import FileField from "../../utilities/field/file"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -80,30 +69,41 @@ type FieldDefinition = {
 
 type LabelPosition = "none" | "top" | "left"
 
+type UserFileMetadata = {
+	[collection.ID_FIELD]: string
+	["uesio/core.name"]: string
+	["uesio/core.mimetype"]: string
+	["uesio/core.path"]: string
+	["uesio/core.recordid"]: string
+	["uesio/core.collectionid"]: string
+	["uesio/core.fieldid"]?: string
+	["uesio/core.updatedat"]: string
+}
+
 type FieldState = {
 	value: string
 	originalValue: string
-	fieldId: string
-	recordId: string
-	collectionId: string
-	fileName: string
-	mimeType: string
+	fileInfo?: UserFileMetadata
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 	SAVE_FILE: {
 		dispatcher: (state, signal, context, platform) => {
-			const blob = new Blob([state.value], { type: state.mimeType })
-			const fileName = state.fileName
+			if (!state.fileInfo) return
+			const mimeType = state.fileInfo["uesio/core.mimetype"]
+			const blob = new Blob([state.value], {
+				type: mimeType,
+			})
+			const fileName = state.fileInfo["uesio/core.path"]
 			const file = new File([blob], fileName, {
-				type: state.mimeType,
+				type: mimeType,
 			})
 			platform.uploadFile(
 				context,
 				file,
-				state.collectionId,
-				state.recordId,
-				state.fieldId
+				state.fileInfo["uesio/core.collectionid"],
+				state.fileInfo["uesio/core.recordid"],
+				state.fileInfo["uesio/core.fieldid"]
 			)
 		},
 		label: "Save File",
@@ -118,91 +118,19 @@ const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
 	},
 }
 
-type CommonProps = {
-	path: string
-	mode: context.FieldMode
-	fieldMetadata: collection.Field
-	fieldId: string
-	id?: string
-	value: wire.FieldValue
-	record: wire.WireRecord
-	wire: wire.Wire
-	setValue: (value: wire.FieldValue) => void
-	placeholder?: string
-} & definition.UtilityProps
-
-const getFieldContent = (common: CommonProps, definition: FieldDefinition) => {
-	const { displayAs, reference, list, user, number, longtext } = definition
-
-	const fieldMetadata = common.fieldMetadata
-	const type = fieldMetadata.getType()
-
-	switch (type) {
-		case "DATE":
-			return <DateField {...common} />
-		case "LONGTEXT": {
-			if (displayAs === "MARKDOWN") return <MarkDownField {...common} />
-			return <TextAreaField {...common} options={longtext} />
-		}
-		case "TEXT":
-			if (displayAs === "PASSWORD")
-				return <TextField {...common} password={true} />
-			return <TextField {...common} />
-		case "AUTONUMBER":
-			return <TextField {...common} />
-		case "NUMBER":
-			return <NumberField {...common} options={number} />
-		case "EMAIL":
-			return <EmailField {...common} />
-		case "SELECT": {
-			const selectOptions = fieldMetadata.getSelectOptions()
-			if (displayAs === "RADIO")
-				return <RadioButtons {...common} options={selectOptions} />
-			return <SelectField {...common} options={selectOptions} />
-		}
-		case "MULTISELECT": {
-			const selectOptions = fieldMetadata.getSelectOptions()
-			return <MultiCheckField {...common} options={selectOptions} />
-		}
-		case "CHECKBOX": {
-			if (displayAs === "TOGGLE") return <ToggleField {...common} />
-			return <CheckboxField {...common} />
-		}
-		case "REFERENCE":
-			return <ReferenceField {...common} options={reference} />
-		case "TIMESTAMP":
-			return <TimestampField {...common} />
-		case "FILE": {
-			if (displayAs === "TEXT") return <FileText {...common} />
-			if (displayAs === "IMAGE") return <FileImage {...common} />
-			if (displayAs === "VIDEO") return <FileVideo {...common} />
-			if (displayAs === "PREVIEW") return <FilePreview {...common} />
-			if (displayAs === "MARKDOWN") return <FileMarkDown {...common} />
-			return <FileCmp {...common} />
-		}
-		case "USER":
-			return <UserField {...common} options={user} />
-		case "LIST": {
-			if (displayAs === "DECK")
-				return <ListFieldDeck {...common} options={list} />
-			return (
-				<ListField
-					{...common}
-					subFields={fieldMetadata.source.subfields}
-					subType={fieldMetadata.source.subtype}
-				/>
-			)
-		}
-		case "REFERENCEGROUP":
-			return <ReferenceGroupField {...common} options={reference} />
-		default:
-			return null
-	}
-}
-
 const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { fieldId, id, placeholder } = definition
+	const {
+		fieldId,
+		id,
+		placeholder,
+		displayAs,
+		reference,
+		list,
+		user,
+		number,
+		longtext,
+	} = definition
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -232,10 +160,96 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
-		wire,
 		variant: definition["uesio.variant"],
 		placeholder,
-		definition,
+	}
+
+	let content: ReactNode
+
+	switch (fieldMetadata.getType()) {
+		case "DATE":
+			content = <DateField {...common} />
+			break
+		case "LONGTEXT":
+			content =
+				displayAs === "MARKDOWN" ? (
+					<MarkDownField {...common} />
+				) : (
+					<TextAreaField {...common} options={longtext} />
+				)
+			break
+		case "TEXT":
+			content =
+				displayAs === "PASSWORD" ? (
+					<TextField {...common} password={true} />
+				) : (
+					<TextField {...common} />
+				)
+			break
+		case "AUTONUMBER":
+			content = <TextField {...common} />
+			break
+		case "NUMBER":
+			content = <NumberField {...common} options={number} />
+			break
+		case "EMAIL":
+			content = <EmailField {...common} />
+			break
+		case "SELECT": {
+			const selectOptions = fieldMetadata.getSelectOptions()
+			content =
+				displayAs === "RADIO" ? (
+					<RadioButtons {...common} options={selectOptions} />
+				) : (
+					<SelectField {...common} options={selectOptions} />
+				)
+			break
+		}
+		case "MULTISELECT":
+			content = (
+				<MultiCheckField
+					{...common}
+					options={fieldMetadata.getSelectOptions()}
+				/>
+			)
+			break
+		case "CHECKBOX":
+			content =
+				displayAs === "TOGGLE" ? (
+					<ToggleField {...common} />
+				) : (
+					<CheckboxField {...common} />
+				)
+			break
+		case "REFERENCE":
+			content = <ReferenceField {...common} options={reference} />
+			break
+		case "TIMESTAMP":
+			content = <TimestampField {...common} />
+			break
+		case "FILE":
+			content = <FileField {...common} displayAs={displayAs} />
+			break
+		case "USER":
+			content = <UserField {...common} options={user} />
+			break
+		case "LIST":
+			content =
+				displayAs === "DECK" ? (
+					<ListFieldDeck {...common} options={list} />
+				) : (
+					<ListField
+						{...common}
+						subFields={fieldMetadata.source.subfields}
+						subType={fieldMetadata.source.subtype}
+					/>
+				)
+			break
+		case "REFERENCEGROUP":
+			content = <ReferenceGroupField {...common} options={reference} />
+			break
+		default:
+			content = null
 	}
 
 	return (
@@ -246,7 +260,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 			variant={definition.wrapperVariant}
 			errors={errors}
 		>
-			{getFieldContent(common, definition)}
+			{content}
 		</FieldWrapper>
 	)
 }
@@ -338,6 +352,7 @@ Field.signals = signals
 
 export {
 	FieldState,
+	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,
 	ReferenceFieldOptions,

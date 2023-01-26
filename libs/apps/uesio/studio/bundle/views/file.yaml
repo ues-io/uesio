@@ -19,6 +19,7 @@ definition:
       fields:
         uesio/core.id:
         uesio/studio.name:
+        uesio/studio.path:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -27,6 +28,31 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: filename
+    attachments:
+      collection: uesio/core.userfile
+      fields:
+        uesio/core.id:
+        uesio/core.path:
+        uesio/core.recordid:
+        uesio/core.collectionid:
+        uesio/core.mimetype:
+        uesio/core.updatedat:
+      conditions:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: files
+          lookupField: uesio/core.id
+      init:
+        create: true
+        query: true
+      defaults:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: files
+          lookupField: uesio/core.id
+        - field: uesio/core.collectionid
+          valueSource: VALUE
+          value: uesio/studio.file
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -68,6 +94,38 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.edit}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: READ
+                                      signals:
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: filesDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.primary
+                                      text: $Label{uesio/io.save}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - files
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: filesDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
+                                      text: $Label{uesio/io.cancel}
+                                      uesio.display:
+                                        - type: fieldMode
+                                          mode: EDIT
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: files
+                                        - signal: component/uesio/io.list/TOGGLE_MODE
+                                          target: filesDeck
+                                  - uesio/io.button:
+                                      uesio.variant: uesio/io.secondary
                                       text: "Delete"
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
@@ -91,3 +149,12 @@ definition:
                                 items:
                                   - uesio/io.field:
                                       fieldId: uesio/studio.name
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.path
+                            - uesio/io.list:
+                                id: Attachments
+                                wire: attachments
+                                components:
+                                  - uesio/io.fileattachment:
+                                      displayAs: PREVIEW
+                                      mode: EDIT

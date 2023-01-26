@@ -8,11 +8,6 @@ import (
 )
 
 func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	return cleanUserFiles(request, connection, session)
-}
-
-func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
 	ids := []string{}
 	for i := range request.Deletes {
 		ids = append(ids, request.Deletes[i].IDValue)
@@ -37,6 +32,8 @@ func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session 
 		return err
 	}
 
+	tenantID := session.GetTenantID()
+
 	for i := range ufmc {
 		ufm := ufmc[i]
 
@@ -49,7 +46,9 @@ func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session 
 			return err
 		}
 
-		err = conn.Delete(ufm.Path)
+		fullPath := ufm.GetFullPath(tenantID)
+
+		err = conn.Delete(fullPath)
 		if err != nil {
 			return err
 		}

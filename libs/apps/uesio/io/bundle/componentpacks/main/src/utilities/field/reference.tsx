@@ -16,7 +16,6 @@ interface ReferenceFieldProps {
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
 	record: wire.WireRecord
-	wire: wire.Wire
 	options?: ReferenceFieldOptions
 	placeholder?: string
 }
