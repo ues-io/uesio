@@ -74,10 +74,9 @@ func (c *Collection) GetBundleFolderName() string {
 
 func (c *Collection) GetPermChecker() *PermissionSet {
 	key := c.GetKey()
+	collectionRefs := map[string]CollectionPermission{key: {}}
 	return &PermissionSet{
-		CollectionRefs: map[string]bool{
-			key: true,
-		},
+		CollectionRefs: collectionRefs,
 	}
 }
 
