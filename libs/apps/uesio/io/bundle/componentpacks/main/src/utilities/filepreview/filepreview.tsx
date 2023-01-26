@@ -1,24 +1,25 @@
 import { FC } from "react"
-import { definition, collection, wire } from "@uesio/ui"
+import { definition, context } from "@uesio/ui"
 import FileMarkDown from "../filemarkdown/filemarkdown"
 import File from "../file/file"
 import FileText from "../filetext/filetext"
 import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
+import { UserFileMetadata } from "../../components/field/field"
 
 interface FilePreviewProps extends definition.UtilityProps {
 	path: string
-	fieldMetadata: collection.Field
-	fieldId: string
-	record: wire.WireRecord
-	wire: wire.Wire
+	id?: string
+	mode?: context.FieldMode
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	accept?: string
 }
 
 const FilePreview: FC<FilePreviewProps> = (props) => {
-	const { fieldId, record } = props
-
-	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
-	const mimeType = userFile?.["uesio/core.mimetype"] as string
+	const { userFile } = props
+	const mimeType = userFile?.["uesio/core.mimetype"]
 	if (!mimeType) return <File {...props} />
 
 	const mime = mimeType.slice(0, mimeType.indexOf("/"))

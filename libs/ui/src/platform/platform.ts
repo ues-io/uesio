@@ -234,7 +234,7 @@ const platform = {
 		fileData: File,
 		collectionID: string,
 		recordID: string,
-		fieldID: string
+		fieldID?: string
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
@@ -242,7 +242,7 @@ const platform = {
 		params.append("name", fileData.name)
 		params.append("collectionid", collectionID)
 		params.append("recordid", recordID)
-		params.append("fieldid", fieldID)
+		if (fieldID) params.append("fieldid", fieldID)
 
 		const response = await fetch(url + "?" + params.toString(), {
 			method: "POST",

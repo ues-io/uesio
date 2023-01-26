@@ -1,26 +1,24 @@
 import { FunctionComponent, CSSProperties } from "react"
-import { definition, styles, collection, context, wire, api } from "@uesio/ui"
+import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
-import FileUploadArea from "../fileuploadarea/fileuploadarea"
 import Icon from "../icon/icon"
+import { UserFileMetadata } from "../../components/field/field"
+import UploadArea from "../uploadarea/uploadarea"
 
 interface FileImageProps extends definition.UtilityProps {
-	width?: string
-	fieldMetadata: collection.Field
-	fieldId: string
 	id?: string
 	mode?: context.FieldMode
-	record: wire.WireRecord
-	wire: wire.Wire
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	accept?: string
 }
 
 const FileImage: FunctionComponent<FileImageProps> = (props) => {
-	const { fieldMetadata, fieldId, record, context, wire, mode } = props
+	const { context, mode, userFile, accept, onUpload, onDelete } = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const userModDate = userFile?.["uesio/core.updatedat"] as string
-	const accept = fieldMetadata.getAccept()
+	const userModDate = userFile?.["uesio/core.updatedat"]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, userModDate)
 
 	const actionIconStyles: CSSProperties = {
@@ -73,12 +71,11 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const deleteLabelId = nanoid()
 
 	return (
-		<FileUploadArea
+		<UploadArea
+			onUpload={onUpload}
+			onDelete={onDelete}
 			context={context}
-			record={record}
-			wire={wire}
 			accept={accept}
-			fieldId={fieldId}
 			className={classes.root}
 			uploadLabelId={uploadLabelId}
 			deleteLabelId={deleteLabelId}
@@ -115,7 +112,7 @@ const FileImage: FunctionComponent<FileImageProps> = (props) => {
 					/>
 				</div>
 			)}
-		</FileUploadArea>
+		</UploadArea>
 	)
 }
 

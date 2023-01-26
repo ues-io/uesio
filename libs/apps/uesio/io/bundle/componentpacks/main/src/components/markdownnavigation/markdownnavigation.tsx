@@ -1,4 +1,5 @@
 import { styles, api, definition } from "@uesio/ui"
+import { UserFileMetadata } from "../field/field"
 
 type Definition = {
 	levels?: 1 | 2 | 3 | 4 | 5 | 6
@@ -46,11 +47,11 @@ const MarkdownNavigation: definition.UC<Definition> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null
-	const value = api.file.useUserFile(
-		context,
-		record,
+	const userFile = record.getFieldValue(
 		definition.mdField || ""
-	)
+	) as UserFileMetadata
+	if (!userFile) return null
+	const value = api.file.useUserFile(context, userFile)
 
 	const headingOverview =
 		getHeadingOverview(String(value), definition.levels || 3) || []
