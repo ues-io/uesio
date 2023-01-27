@@ -15,7 +15,14 @@ type loaderFunc func(change adapt.Item, data interface{}) error
 
 func getNumberLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) error {
-		number, err := strconv.ParseFloat(getValue(data, mapping, index), 64)
+		value := getValue(data, mapping, index)
+
+		if value == "" {
+			//change[fieldMetadata.GetFullName()] = nil
+			return nil
+		}
+
+		number, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			return errors.New("Invalid number format: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}

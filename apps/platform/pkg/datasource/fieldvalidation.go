@@ -98,6 +98,9 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
+		if val == nil {
+			return nil
+		}
 		_, isFloat := val.(float64)
 		_, isInt64 := val.(int64)
 		_, isInt := val.(int)
