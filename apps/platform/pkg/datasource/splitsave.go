@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -79,8 +78,6 @@ func NewOpList(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
 	opList := NewOpList(request, collectionMetadata)
-	permissions := session.GetPermissions()
-	collectionKey := collectionMetadata.GetFullName()
 
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item meta.Item, recordKey string) error {
@@ -95,16 +92,8 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 				if err != nil {
 					return err
 				}
-
-				if !permissions.HasCreatePermission(collectionKey) {
-					return errors.New(fmt.Sprintf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey))
-				}
 				opList.addInsert(item, recordKey, newIDString)
 			} else {
-
-				if !permissions.HasEditPermission(collectionKey) {
-					return errors.New(fmt.Sprintf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey))
-				}
 				opList.addUpdate(item, recordKey, idValue.(string))
 			}
 			return nil
@@ -119,10 +108,6 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
-			}
-
-			if !permissions.HasDeletePermission(collectionKey) {
-				return errors.New(fmt.Sprintf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey))
 			}
 			opList.addDelete(item, idValue.(string))
 			return nil
