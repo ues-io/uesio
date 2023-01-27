@@ -49,18 +49,29 @@ func Test_getStringValue(t *testing.T) {
 				&adapt.FieldMetadata{
 					Type: "TIMESTAMP",
 				},
-				-1,
+				"foo",
 			},
 			"",
 			"Bad timestamp value",
 		},
 		{
-			"stringify TIMESTAMP fields in ISO-8601/RFC-3339 format",
+			"stringify TIMESTAMP fields with float64 values into RFC-3339 UTC format",
 			args{
 				&adapt.FieldMetadata{
 					Type: "TIMESTAMP",
 				},
-				1674836033.0,
+				float64(1674836033),
+			},
+			"2023-01-27T16:13:53Z",
+			"",
+		},
+		{
+			"stringify TIMESTAMP fields with int64 values into RFC-3339 UTC format",
+			args{
+				&adapt.FieldMetadata{
+					Type: "TIMESTAMP",
+				},
+				int64(1674836033),
 			},
 			"2023-01-27T16:13:53Z",
 			"",

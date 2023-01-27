@@ -16,12 +16,18 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 	}
 	// Export TIMESTAMPs in RFC3339/ISO-8601 datetime format
 	if fieldMetadata.Type == "TIMESTAMP" {
-		timestamp, ok := value.(float64)
-		if !ok {
+		// Depending on how the timestamp was created, it may be a float64 or int64,
+		// so we need to handle both cases
+		var unixTimestamp time.Time
+		if timestampFloat, isFloat := value.(float64); isFloat {
+			sec, dec := math.Modf(timestampFloat)
+			unixTimestamp = time.Unix(int64(sec), int64(dec*(1e9))).UTC()
+		} else if timestampInt, isInt := value.(int64); isInt {
+			unixTimestamp = time.Unix(timestampInt, 0).UTC()
+		} else {
+			// It is neither -- this is not a supported format
 			return "", errors.New("Bad timestamp value")
 		}
-		sec, dec := math.Modf(timestamp)
-		unixTimestamp := time.Unix(int64(sec), int64(dec*(1e9))).UTC()
 		return unixTimestamp.Format(time.RFC3339), nil
 	}
 	if fieldMetadata.Type == "NUMBER" {
