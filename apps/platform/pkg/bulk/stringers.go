@@ -3,6 +3,7 @@ package bulk
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -14,11 +15,12 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 		return adapt.GetReferenceKey(value)
 	}
 	if fieldMetadata.Type == "TIMESTAMP" {
-		timestamp, ok := value.(int64)
+		timestamp, ok := value.(float64)
 		if !ok {
 			return "", errors.New("Bad timestamp value")
 		}
-		tm := time.Unix(timestamp, 0)
+		sec, dec := math.Modf(timestamp)
+		tm := time.Unix(int64(sec), int64(dec*(1e9)))
 		return tm.String(), nil
 	}
 	if fieldMetadata.Type == "NUMBER" {
