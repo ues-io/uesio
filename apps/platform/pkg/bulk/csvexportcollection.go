@@ -111,7 +111,7 @@ func (c *CSVExportCollection) AddItem(item meta.Item) {
 
 	err := c.writer.Write(c.current.GetData())
 	if err != nil {
-		// Probably shoudln't be ignoring errors here...
+		// Probably shouldn't be ignoring errors here...
 	}
 	c.current.Reset()
 }

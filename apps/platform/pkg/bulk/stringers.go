@@ -14,14 +14,15 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 	if adapt.IsReference(fieldMetadata.Type) {
 		return adapt.GetReferenceKey(value)
 	}
+	// Export TIMESTAMPs in RFC3339/ISO-8601 datetime format
 	if fieldMetadata.Type == "TIMESTAMP" {
 		timestamp, ok := value.(float64)
 		if !ok {
 			return "", errors.New("Bad timestamp value")
 		}
 		sec, dec := math.Modf(timestamp)
-		tm := time.Unix(int64(sec), int64(dec*(1e9)))
-		return tm.String(), nil
+		unixTimestamp := time.Unix(int64(sec), int64(dec*(1e9))).UTC()
+		return unixTimestamp.Format(time.RFC3339), nil
 	}
 	if fieldMetadata.Type == "NUMBER" {
 		return fmt.Sprintf("%v", value), nil
