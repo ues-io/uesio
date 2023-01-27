@@ -48,9 +48,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-        - field: uesio/studio.path
-          valueSource: VALUE
-          value: ""
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:

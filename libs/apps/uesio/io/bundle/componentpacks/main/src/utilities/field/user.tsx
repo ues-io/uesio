@@ -12,7 +12,6 @@ interface UserFieldProps extends definition.UtilityProps {
 	fieldId: string
 	mode: ctx.FieldMode
 	record: wire.WireRecord
-	wire: wire.Wire
 	options?: UserFieldOptions
 }
 

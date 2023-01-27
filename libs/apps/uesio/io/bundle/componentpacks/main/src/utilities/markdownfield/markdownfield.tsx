@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
+import { definition, styles, context, wire } from "@uesio/ui"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { code, h } from "./mdcomponents"
@@ -12,7 +12,6 @@ const defaultMDOptions: MDOptions = {
 interface MarkDownFieldProps extends definition.UtilityProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
-	fieldMetadata?: collection.Field
 	mode?: context.FieldMode
 	options?: MDOptions
 }

@@ -11,6 +11,14 @@ import { PlainWireRecord } from "../bands/wirerecord/types"
 import { ParamDefinition } from "../definition/param"
 import { UserState } from "../bands/user/types"
 
+// Hack for Monaco loader to be able to load assets from custom paths
+interface UesioWindow extends Window {
+	uesioStaticAssetsPath: string
+}
+
+const getStaticAssetsPath = () =>
+	(window as unknown as UesioWindow).uesioStaticAssetsPath
+
 type BotParams = {
 	[key: string]: string
 }
@@ -88,6 +96,20 @@ const getPrefix = (context: Context) => {
 		return `/siteadmin/${siteadmin.app}/${siteadmin.name}`
 	}
 	return "/site"
+}
+
+const getSiteBundleVersion = (context: Context) => {
+	const site = context.getSite()
+	const staticAssetsPath = getStaticAssetsPath()
+	if (site && site.version) {
+		// Special case --- if this is a Uesio-provided site, we don't (currently) ever update the bundle versions,
+		// but we DO update the static assets path for the whole Docker image, so use that. It will look like "/abcdefg"
+		if (site.app.startsWith("uesio/") && staticAssetsPath) {
+			return staticAssetsPath
+		}
+		return `/${site.version}`
+	}
+	return ""
 }
 
 const isPathRouteRequest = (
@@ -234,7 +256,7 @@ const platform = {
 		fileData: File,
 		collectionID: string,
 		recordID: string,
-		fieldID: string
+		fieldID?: string
 	): Promise<PlainWireRecord> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
@@ -242,7 +264,7 @@ const platform = {
 		params.append("name", fileData.name)
 		params.append("collectionid", collectionID)
 		params.append("recordid", recordID)
-		params.append("fieldid", fieldID)
+		if (fieldID) params.append("fieldid", fieldID)
 
 		const response = await fetch(url + "?" + params.toString(), {
 			method: "POST",
@@ -270,8 +292,9 @@ const platform = {
 		namespace: string,
 		name: string
 	) => {
+		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
-		return `${prefix}/componentpacks/${namespace}/${name}/runtime.js`
+		return `${prefix}/componentpacks/${namespace}${siteBundleVersion}/${name}/runtime.js`
 	},
 	getMetadataList: async (
 		context: Context,
@@ -506,6 +529,7 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
+	getStaticAssetsPath,
 }
 
 type Platform = typeof platform

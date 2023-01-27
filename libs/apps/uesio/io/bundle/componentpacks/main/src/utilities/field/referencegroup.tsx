@@ -16,7 +16,6 @@ interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	fieldId: string
 	mode: context.FieldMode
 	record: wire.WireRecord
-	wire: wire.Wire
 	options?: ReferenceGroupFieldOptions
 }
 

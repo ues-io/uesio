@@ -1,4 +1,4 @@
-package controller
+package file
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -50,7 +51,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJSON(w, r, ufm[0])
+	RespondJSON(w, r, ufm[0])
 }
 
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +65,7 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJSON(w, r, &BotResponse{
+	RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }
@@ -72,6 +73,9 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
+	// TODO: Add revision number/hash field and have Platform API send this via query string parameters
+	//version := r.URL.Query().Get("version")
+	version := ""
 	if userFileID == "" {
 		err := errors.New("no userfileid in the request url query")
 		logger.LogError(err)
@@ -86,5 +90,10 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondFile(w, r, userFile.Path, time.Unix(userFile.UpdatedAt, 0), fileStream)
+	respondFile(w, r, &FileRequest{
+		Path:         userFile.Path,
+		LastModified: time.Unix(userFile.UpdatedAt, 0),
+		Namespace:    "",
+		Version:      version,
+	}, fileStream)
 }

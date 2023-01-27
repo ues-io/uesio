@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -24,7 +25,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &bulk.BatchResponse{
+	file.RespondJSON(w, r, &bulk.BatchResponse{
 		ID: batch.ID,
 	})
 

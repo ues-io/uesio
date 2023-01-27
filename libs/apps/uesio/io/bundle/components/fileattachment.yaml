@@ -1,0 +1,3 @@
+name: fileattachment
+pack: main
+entrypoint: components/fileattachment/fileattachment

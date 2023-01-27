@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -50,5 +51,5 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &namespaces)
+	file.RespondJSON(w, r, &namespaces)
 }

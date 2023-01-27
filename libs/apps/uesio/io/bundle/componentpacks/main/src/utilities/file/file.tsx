@@ -1,28 +1,26 @@
 import { FunctionComponent } from "react"
-import { definition, styles, collection, context, wire, api } from "@uesio/ui"
+import { definition, styles, collection, context, api } from "@uesio/ui"
 import { nanoid } from "@reduxjs/toolkit"
-import FileUploadArea from "../fileuploadarea/fileuploadarea"
 import Tile from "../tile/tile"
 import Icon from "../icon/icon"
+import UploadArea from "../uploadarea/uploadarea"
+import { UserFileMetadata } from "../../components/field/field"
 
 interface FileUtilityProps extends definition.UtilityProps {
-	width?: string
-	fieldId: string
 	id?: string
 	mode?: context.FieldMode
-	record: wire.WireRecord
-	wire: wire.Wire
+	userFile?: UserFileMetadata
+	onUpload: (files: FileList | null) => void
+	onDelete?: () => void
+	accept?: string
 }
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
-	const { fieldId, record, context, wire } = props
+	const { context, userFile, onUpload, onDelete, accept } = props
 
-	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
-		fieldId
-	)
-	const userFileId = userFile?.[collection.ID_FIELD] as string
-	const fileModDate = userFile?.["uesio/core.updatedat"] as string
-	const fileName = userFile?.["uesio/core.filename"] as string
+	const userFileId = userFile?.[collection.ID_FIELD]
+	const fileModDate = userFile?.["uesio/core.updatedat"]
+	const fileName = userFile?.["uesio/core.path"]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
 
 	const classes = styles.useUtilityStyles(
@@ -67,17 +65,17 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 
 	return (
 		<>
-			<FileUploadArea
+			<UploadArea
+				onUpload={onUpload}
+				onDelete={onDelete}
 				context={context}
-				record={record}
-				wire={wire}
-				fieldId={fieldId}
+				accept={accept}
 				className={classes.uploadarea}
 				uploadLabelId={uploadLabelId}
 				deleteLabelId={deleteLabelId}
 			>
 				<div>Drag your file here to upload.</div>
-			</FileUploadArea>
+			</UploadArea>
 			{userFile && (
 				<Tile context={context} className={classes.filetag}>
 					<span className={classes.filename}>{fileName}</span>

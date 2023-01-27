@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,6 +28,6 @@ func BuilderMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &deps)
+	file.RespondJSON(w, r, &deps)
 
 }

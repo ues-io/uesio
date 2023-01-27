@@ -2,6 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -81,7 +83,7 @@ func ConfigValues(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, response)
+	file.RespondJSON(w, r, response)
 }
 
 func ConfigValue(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +99,7 @@ func ConfigValue(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, response)
+	file.RespondJSON(w, r, response)
 }
 
 type ConfigValueSetRequest struct {
@@ -123,7 +125,7 @@ func SetConfigValue(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJSON(w, r, &BotResponse{
+	file.RespondJSON(w, r, &bot.BotResponse{
 		Success: true,
 	})
 }
