@@ -86,7 +86,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: featureflagsDeck
+                          uesio.id: featureflagsDeck
                           wire: featureflags
                           uesio.variant: uesio/io.section
                           components:
@@ -111,7 +111,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newfeatureflaglist
+            uesio.id: newfeatureflaglist
             wire: newfeatureflag
             mode: EDIT
             components:

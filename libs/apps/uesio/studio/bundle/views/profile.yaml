@@ -68,7 +68,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: profilesDeck
+                    uesio.id: profilesDeck
                     wire: profiles
                     mode: READ
                     components:

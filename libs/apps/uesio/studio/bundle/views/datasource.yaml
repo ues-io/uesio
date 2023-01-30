@@ -59,7 +59,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: datasourcesDeck
+                    uesio.id: datasourcesDeck
                     wire: datasources
                     mode: READ
                     components:

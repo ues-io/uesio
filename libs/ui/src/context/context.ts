@@ -23,6 +23,18 @@ import { MetadataKey } from "../bands/builder/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
 
+const PARAMS = "PARAMS",
+	ERROR = "ERROR",
+	RECORD = "RECORD",
+	THEME = "THEME",
+	VIEW = "VIEW",
+	ROUTE = "ROUTE",
+	FIELD_MODE = "FIELD_MODE",
+	WIRE = "WIRE",
+	WORKSPACE = "WORKSPACE",
+	SITE_ADMIN = "SITE_ADMIN",
+	RECORD_DATA = "RECORD_DATA"
+
 type FieldMode = "READ" | "EDIT"
 
 type Mergeable = string | number | boolean | undefined
@@ -165,33 +177,40 @@ const isWorkspaceContextFrame = (
 	frame: ContextFrame
 ): frame is WorkspaceContextFrame => frame.type === "WORKSPACE"
 
+const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
+	frame.type === VIEW
+
 const isThemeContextFrame = (
 	frame: ContextFrame
 ): frame is ThemeContextFrame | RouteContextFrame =>
-	["THEME", "ROUTE"].includes(frame.type)
+	[THEME, ROUTE].includes(frame.type)
 
 const isRecordContextFrame = (
 	frame: ContextFrame
+): frame is RecordContextFrame => frame.type === "RECORD"
+
+const providesRecordContext = (
+	frame: ContextFrame
 ): frame is RecordContextFrame | RecordDataContextFrame =>
-	["RECORD", "RECORD_DATA"].includes(frame.type)
+	[RECORD, RECORD_DATA].includes(frame.type)
 
 const isFieldModeContextFrame = (
 	frame: ContextFrame
-): frame is FieldModeContextFrame => frame.type === "FIELD_MODE"
+): frame is FieldModeContextFrame => frame.type === FIELD_MODE
 const hasParamsContext = (
 	frame: ContextFrame
 ): frame is ParamsContextFrame | ViewContextFrame | RouteContextFrame =>
-	["PARAMS", "VIEW", "ROUTE"].includes(frame.type)
+	[PARAMS, VIEW, ROUTE].includes(frame.type)
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
-	frame.type === "ROUTE"
+	frame.type === ROUTE
 const hasWireContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | WireContextFrame =>
-	["RECORD", "WIRE"].includes(frame.type)
+	[RECORD, WIRE].includes(frame.type)
 const hasViewContext = (
 	frame: ContextFrame
 ): frame is ViewContextFrame | RouteContextFrame =>
-	["VIEW", "ROUTE"].includes(frame.type)
+	[VIEW, ROUTE].includes(frame.type)
 
 // Type Guards for pre-resolved Context objects (no type property yet)
 const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
@@ -279,7 +298,7 @@ class Context {
 			return this
 		}
 		const index = this.stack.findIndex(
-			(frame): frame is RecordContextFrame => isRecordContextFrame(frame)
+			(frame): frame is RecordContextFrame => providesRecordContext(frame)
 		)
 		if (index === -1) {
 			return new Context()
@@ -290,7 +309,7 @@ class Context {
 	}
 
 	getRecord = () => {
-		const recordFrame = this.stack.find(isRecordContextFrame)
+		const recordFrame = this.stack.find(providesRecordContext)
 
 		// if we don't have a record id in context return the first
 		if (undefined === recordFrame) {
@@ -436,14 +455,14 @@ class Context {
 
 	addWireFrame = (wireContext: WireContext) =>
 		this.#addFrame({
-			type: "WIRE",
+			type: WIRE,
 			view: wireContext.view || this.getViewId(),
 			wire: wireContext.wire,
 		})
 
 	addRecordFrame = (recordContext: RecordContext) =>
 		this.#addFrame({
-			type: "RECORD",
+			type: RECORD,
 			view: recordContext.view || this.getViewId(),
 			wire: recordContext.wire,
 			record: recordContext.record,
@@ -452,58 +471,58 @@ class Context {
 	// addRecordDataFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addRecordDataFrame = (recordData: PlainWireRecord) =>
 		this.#addFrame({
-			type: "RECORD_DATA",
+			type: RECORD_DATA,
 			recordData,
 		})
 
 	addRouteFrame = (routeContext: RouteContext) =>
 		this.#addFrame({
-			type: "ROUTE",
+			type: ROUTE,
 			...routeContext,
 		})
 
 	addSiteAdminFrame = (siteadmin: SiteAdminState) =>
 		this.#addFrame({
-			type: "SITE_ADMIN",
+			type: SITE_ADMIN,
 			siteadmin,
 		})
 
 	addWorkspaceFrame = (workspace: WorkspaceState) =>
 		this.#addFrame({
-			type: "WORKSPACE",
+			type: WORKSPACE,
 			workspace,
 		})
 
 	addThemeFrame = (theme: string) =>
 		this.#addFrame({
-			type: "THEME",
+			type: THEME,
 			theme,
 		})
 
 	addViewFrame = (viewContext: ViewContext) =>
 		this.#addFrame({
-			type: "VIEW",
+			type: VIEW,
 			...viewContext,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addErrorFrame = (errors: string[]) =>
 		this.#addFrame({
-			type: "ERROR",
+			type: ERROR,
 			errors,
 		})
 
 	// addParamsFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addParamsFrame = (params: Record<string, string>) =>
 		this.#addFrame({
-			type: "PARAMS",
+			type: PARAMS,
 			params,
 		})
 
 	// addFieldModeFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addFieldModeFrame = (fieldMode: FieldMode) =>
 		this.#addFrame({
-			type: "FIELD_MODE",
+			type: FIELD_MODE,
 			fieldMode,
 		})
 
@@ -572,7 +591,9 @@ export {
 	Context,
 	ContextFrame,
 	FieldMode,
-	newContext,
-	injectDynamicContext,
 	getWire,
+	injectDynamicContext,
+	isViewContextFrame,
+	isRecordContextFrame,
+	newContext,
 }

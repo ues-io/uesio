@@ -154,7 +154,7 @@ definition:
                       - uesio/io.list:
                           wire: listing
                           mode: READ
-                          id: listingList
+                          uesio.id: listingList
                           components:
                             - uesio/io.grid:
                                 rowGap: 10px
@@ -254,7 +254,7 @@ definition:
                             - uesio/io.list:
                                 wire: versions
                                 mode: READ
-                                id: versionsList
+                                uesio.id: versionsList
                                 components:
                                   - uesio/io.box:
                                       uesio.styles:

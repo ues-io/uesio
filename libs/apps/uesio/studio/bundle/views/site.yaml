@@ -57,7 +57,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: siteDeck
+                    uesio.id: siteDeck
                     wire: sites
                     mode: READ
                     components:
@@ -164,7 +164,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: editsiteslist
+            uesio.id: editsiteslist
             wire: sites
             mode: EDIT
             components:

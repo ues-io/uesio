@@ -1,4 +1,4 @@
-import { wire, definition, metadata, signal, collection } from "@uesio/ui"
+import { api, wire, definition, metadata, signal, collection } from "@uesio/ui"
 import CheckboxField from "../../utilities/field/checkbox"
 import DateField from "../../utilities/field/date"
 import EmailField from "../../utilities/field/email"
@@ -56,7 +56,6 @@ type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
 	label?: string
-	id?: string
 	displayAs?: string
 	reference?: ReferenceFieldOptions
 	list?: ListFieldOptions
@@ -65,7 +64,7 @@ type FieldDefinition = {
 	longtext?: LongTextFieldOptions
 	placeholder: string
 	wrapperVariant: metadata.MetadataKey
-}
+} & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"
 
@@ -122,7 +121,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	const { context, definition, path } = props
 	const {
 		fieldId,
-		id,
 		placeholder,
 		displayAs,
 		reference,
@@ -131,6 +129,8 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		number,
 		longtext,
 	} = definition
+
+	const componentId = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -156,7 +156,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		mode,
 		fieldMetadata,
 		fieldId,
-		id,
+		id: componentId,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,

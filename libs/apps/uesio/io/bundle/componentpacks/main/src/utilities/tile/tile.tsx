@@ -9,7 +9,7 @@ interface TileUtilityProps extends definition.UtilityProps {
 }
 
 const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
-	const { avatar, children, onClick, isSelected, rootAttributes } = props
+	const { avatar, children, onClick, id, isSelected, rootAttributes } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -32,6 +32,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		<div
 			{...rootAttributes}
 			ref={ref}
+			id={id}
 			className={styles.cx(classes.root, isSelected && classes.selected)}
 			onClick={onClick}
 		>

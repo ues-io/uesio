@@ -30,6 +30,7 @@ components:
             components:
               - uesio/io.button:
                   uesio.variant: uesio/io.nav
+                  uesio.id: logout
                   text: Log Out
                   signals:
                     - signal: "user/LOGOUT"

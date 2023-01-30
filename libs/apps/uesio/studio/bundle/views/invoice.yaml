@@ -63,7 +63,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -83,7 +83,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Header
                       - uesio/io.list:
-                          id: invoiceList
+                          uesio.id: invoiceList
                           wire: invoice
                           components:
                             - uesio/io.griditem:
@@ -114,7 +114,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Items
                       - uesio/io.table:
-                          id: invoicelinesTable
+                          uesio.id: invoicelinesTable
                           wire: invoicelines
                           uesio.styles:
                             root:

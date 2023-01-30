@@ -44,6 +44,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 		disabled,
 		isSelected,
 		icon,
+		id,
 		tooltip,
 		context,
 		tooltipPlacement,
@@ -52,6 +53,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 
 	const button = (
 		<button
+			id={id}
 			disabled={disabled}
 			onClick={onClick}
 			className={styles.cx(

@@ -71,7 +71,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: installedDeck
+                    uesio.id: installedDeck
                     wire: installedapp
                     mode: READ
                     components:
@@ -113,7 +113,7 @@ definition:
                           uesio.variant: uesio/io.section
                           title: Versions
                       - uesio/io.deck:
-                          id: versionslist
+                          uesio.id: versionslist
                           wire: versions
                           uesio.variant: uesio/io.section
                           components:

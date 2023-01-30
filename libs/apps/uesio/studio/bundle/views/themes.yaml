@@ -87,7 +87,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: themesDeck
+                          uesio.id: themesDeck
                           wire: themes
                           uesio.variant: uesio/io.section
                           components:
@@ -112,7 +112,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newthemelist
+            uesio.id: newthemelist
             wire: newtheme
             mode: EDIT
             components:

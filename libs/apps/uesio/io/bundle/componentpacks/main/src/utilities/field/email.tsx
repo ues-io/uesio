@@ -9,7 +9,7 @@ interface EmailFieldProps extends definition.UtilityProps {
 }
 
 const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
-	const { setValue, mode, placeholder } = props
+	const { setValue, mode, placeholder, id } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
@@ -23,6 +23,7 @@ const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
 
 	return (
 		<input
+			id={id}
 			value={value}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="email"

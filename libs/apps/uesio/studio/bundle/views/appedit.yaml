@@ -5,7 +5,7 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio/io.list:
-        id: editapplist
+        uesio.id: editapplist
         mode: EDIT
         components:
           - uesio/io.grid:

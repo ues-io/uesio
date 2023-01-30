@@ -92,7 +92,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: filesDeck
+                          uesio.id: filesDeck
                           wire: files
                           uesio.variant: uesio/io.section
                           components:
@@ -117,7 +117,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newfilelist
+            uesio.id: newfilelist
             wire: newfile
             mode: EDIT
             components:

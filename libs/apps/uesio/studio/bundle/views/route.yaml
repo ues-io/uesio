@@ -62,7 +62,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: routesDeck
+                    uesio.id: routesDeck
                     wire: routes
                     mode: READ
                     components:

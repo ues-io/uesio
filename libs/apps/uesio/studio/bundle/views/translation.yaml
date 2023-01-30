@@ -68,7 +68,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: translationsDeck
+                    uesio.id: translationsDeck
                     wire: translations
                     mode: READ
                     components:

@@ -54,7 +54,7 @@ definition:
                       - uesio/io.box:
                           components:
                             - uesio/io.list:
-                                id: credslist
+                                uesio.id: credslist
                                 wire: credentials
                                 mode: EDIT
                                 components:
@@ -65,8 +65,10 @@ definition:
                                       components:
                                         - uesio/io.field:
                                             fieldId: uesio/viewonly.username
+                                            uesio.id: username
                                         - uesio/io.field:
                                             fieldId: uesio/viewonly.password
+                                            uesio.id: password
                                             displayAs: PASSWORD
                                         - uesio/io.group:
                                             uesio.styles:
@@ -75,6 +77,7 @@ definition:
                                             components:
                                               - uesio/io.button:
                                                   uesio.variant: uesio/io.primary
+                                                  uesio.id: sign-in
                                                   text: Sign In
                                                   uesio.styles:
                                                     root:

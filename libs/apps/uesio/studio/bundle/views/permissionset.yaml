@@ -111,7 +111,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: permissionsetsDeck
+                    uesio.id: permissionsetsDeck
                     wire: permissionsets
                     mode: READ
                     components:

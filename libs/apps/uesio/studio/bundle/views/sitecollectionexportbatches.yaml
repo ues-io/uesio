@@ -98,7 +98,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: bulkbatchesDeck
+                          uesio.id: bulkbatchesDeck
                           wire: bulkbatches
                           uesio.variant: uesio/io.section
                           components:

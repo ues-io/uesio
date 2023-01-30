@@ -105,7 +105,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: collectionsDeck
+                    uesio.id: collectionsDeck
                     wire: collections
                     mode: READ
                     components:
@@ -215,7 +215,7 @@ definition:
                           uesio.styles:
                             root:
                               padding: 40px
-                          id: "fields"
+                          uesio.id: "fields"
                           wire: "fields"
                           mode: "READ"
                           rowactions:
@@ -261,7 +261,7 @@ definition:
       height: 560px
       components:
         - uesio/io.list:
-            id: editCollectionList
+            uesio.id: editCollectionList
             wire: collections
             mode: EDIT
             uesio.context:
@@ -310,7 +310,7 @@ definition:
       height: 620px
       components:
         - uesio/io.list:
-            id: newfieldlist
+            uesio.id: newfieldlist
             wire: newfield
             mode: EDIT
             uesio.context:

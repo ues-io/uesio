@@ -4,7 +4,7 @@ definition:
     - uesio/core.view:
         view: uesio/crm.topbar
     - uesio/io.list:
-        id: accountList
+        uesio.id: accountList
         wire: accounts
         mode: READ
         components:

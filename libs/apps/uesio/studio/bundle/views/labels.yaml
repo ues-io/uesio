@@ -87,7 +87,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: labelsDeck
+                          uesio.id: labelsDeck
                           wire: labels
                           uesio.variant: uesio/io.section
                           components:
@@ -112,7 +112,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlabellist
+            uesio.id: newlabellist
             wire: newlabel
             mode: EDIT
             components:

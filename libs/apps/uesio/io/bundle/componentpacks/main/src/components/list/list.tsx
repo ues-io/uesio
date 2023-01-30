@@ -32,10 +32,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 			  })
 			: context
 
-	const componentId = api.component.getComponentIdFromProps(
-		definition.id,
-		props
-	)
+	const componentId = api.component.getComponentIdFromProps(props)
 	const [mode] = useMode(componentId, definition.mode)
 
 	if (!wire || !mode) return null
