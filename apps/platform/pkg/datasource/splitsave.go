@@ -92,6 +92,7 @@ func splitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 				if err != nil {
 					return err
 				}
+
 				opList.addInsert(item, recordKey, newIDString)
 			} else {
 				opList.addUpdate(item, recordKey, idValue.(string))
