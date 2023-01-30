@@ -115,6 +115,10 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 				ID: adapt.UNIQUE_KEY_FIELD,
 			},
 		}, adapt.UNIQUE_KEY_FIELD, session, func(item meta.Item, matchIndexes []adapt.ReferenceLocator, ID string) error {
+
+			if item == nil {
+				return errors.New("Could not match upload on unique key: " + ID)
+			}
 			//One collection with more than 1 fields of type File
 			for i := range matchIndexes {
 				match := matchIndexes[i].Item
