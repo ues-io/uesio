@@ -6,6 +6,7 @@ import (
 )
 
 type UserFileMetadata struct {
+	BuiltIn       `yaml:",inline"`
 	CollectionID  string `json:"uesio/core.collectionid"`
 	MimeType      string `json:"uesio/core.mimetype"`
 	FieldID       string `json:"uesio/core.fieldid"`
@@ -14,7 +15,6 @@ type UserFileMetadata struct {
 	RecordID      string `json:"uesio/core.recordid"`
 	Type          string `json:"uesio/core.type"`
 	ContentLength int64  `json:"uesio/core.contentlength"`
-	BuiltIn       `yaml:",inline"`
 }
 
 func (ufm *UserFileMetadata) GetCollectionName() string {

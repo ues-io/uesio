@@ -1,6 +1,7 @@
 package meta
 
 type Site struct {
+	BuiltIn     `yaml:",inline"`
 	Name        string     `json:"uesio/studio.name"`
 	Bundle      *Bundle    `json:"uesio/studio.bundle"`
 	App         *App       `json:"uesio/studio.app"`
@@ -8,7 +9,6 @@ type Site struct {
 	Domain      string
 	Subdomain   string
 	Permissions *PermissionSet `json:"-"`
-	BuiltIn     `yaml:",inline"`
 }
 
 func (s *Site) GetFullName() string {

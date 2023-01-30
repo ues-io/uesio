@@ -1,13 +1,13 @@
 package meta
 
 type LicensePricingTemplate struct {
+	BuiltIn         `yaml:",inline"`
 	App             *App             `json:"uesio/studio.app"`
 	LicenseTemplate *LicenseTemplate `json:"uesio/studio.licensetemplate"`
 	Price           float64          `json:"uesio/studio.price"`
 	MetadataType    string           `json:"uesio/studio.metadatatype"`
 	ActionType      string           `json:"uesio/studio.actiontype"`
 	MetadataName    string           `json:"uesio/studio.metadataname"`
-	BuiltIn         `yaml:",inline"`
 }
 
 func (lt *LicensePricingTemplate) GetCollectionName() string {

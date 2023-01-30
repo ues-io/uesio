@@ -8,10 +8,10 @@ import (
 )
 
 type FeatureFlag struct {
-	Value          bool
-	User           string
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Value          bool
+	User           string
 }
 
 type FeatureFlagWrapper FeatureFlag

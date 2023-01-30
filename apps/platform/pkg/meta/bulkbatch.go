@@ -1,11 +1,11 @@
 package meta
 
 type BulkBatch struct {
+	BuiltIn   `yaml:",inline"`
 	AutoID    string            `json:"uesio/core.autoid"`
 	BulkJobID string            `json:"uesio/core.bulkjobid"`
 	Status    string            `json:"uesio/core.status"`
 	Result    *UserFileMetadata `json:"uesio/core.result"`
-	BuiltIn   `yaml:",inline"`
 }
 
 func (bb *BulkBatch) GetCollectionName() string {

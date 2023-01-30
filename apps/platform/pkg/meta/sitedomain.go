@@ -1,10 +1,10 @@
 package meta
 
 type SiteDomain struct {
+	BuiltIn `yaml:",inline"`
 	Site    *Site  `json:"uesio/studio.site"`
 	Type    string `json:"uesio/studio.type"`
 	Domain  string `json:"uesio/studio.domain"`
-	BuiltIn `yaml:",inline"`
 }
 
 func (s *SiteDomain) GetCollectionName() string {

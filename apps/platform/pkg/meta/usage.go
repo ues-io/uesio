@@ -1,6 +1,7 @@
 package meta
 
 type Usage struct {
+	BuiltIn      `yaml:",inline"`
 	Total        int64  `json:"uesio/studio.total"`
 	MetadataType string `json:"uesio/studio.metadatatype"`
 	ActionType   string `json:"uesio/studio.actiontype"`
@@ -9,7 +10,6 @@ type Usage struct {
 	User         string `json:"uesio/studio.user"`
 	App          *App   `json:"uesio/studio.app"`
 	Site         *Site  `json:"uesio/studio.site"`
-	BuiltIn      `yaml:",inline"`
 }
 
 func (u *Usage) GetCollectionName() string {

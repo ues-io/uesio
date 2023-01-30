@@ -21,10 +21,10 @@ func NewBaseProfile(namespace, name string) *Profile {
 }
 
 type Profile struct {
-	PermissionSetRefs []string        `yaml:"permissionSets" json:"uesio/studio.permissionsetsrefs"`
-	PermissionSets    []PermissionSet `yaml:"-" json:"-"`
 	BuiltIn           `yaml:",inline"`
 	BundleableBase    `yaml:",inline"`
+	PermissionSetRefs []string        `yaml:"permissionSets" json:"uesio/studio.permissionsetsrefs"`
+	PermissionSets    []PermissionSet `yaml:"-" json:"-"`
 }
 
 type ProfileWrapper Profile

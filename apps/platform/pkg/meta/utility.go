@@ -9,10 +9,10 @@ func NewBaseUtility(namespace, name string) *Utility {
 }
 
 type Utility struct {
-	Pack           string `yaml:"pack,omitempty" json:"uesio/studio.pack"`
-	EntryPoint     string `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Pack           string `yaml:"pack,omitempty" json:"uesio/studio.pack"`
+	EntryPoint     string `yaml:"entrypoint,omitempty" json:"uesio/studio.entrypoint"`
 }
 
 type UtilityWrapper Utility

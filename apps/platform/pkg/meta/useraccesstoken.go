@@ -17,12 +17,12 @@ func NewBaseUserAccessToken(namespace, name string) *UserAccessToken {
 }
 
 type UserAccessToken struct {
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
 	Type           string            `yaml:"type" json:"uesio/studio.type"`
 	Collection     string            `yaml:"collection" json:"uesio/studio.collection"`
 	Conditions     []*TokenCondition `yaml:"conditions"  json:"uesio/studio.conditions"`
 	Token          string            `yaml:"token"  json:"uesio/studio.token"`
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
 }
 
 func (uat *UserAccessToken) GetCollectionName() string {

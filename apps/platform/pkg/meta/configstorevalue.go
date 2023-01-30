@@ -1,9 +1,9 @@
 package meta
 
 type ConfigStoreValue struct {
+	BuiltIn `yaml:",inline"`
 	Key     string `json:"uesio/core.key"`
 	Value   string `json:"uesio/core.value"`
-	BuiltIn `yaml:",inline"`
 }
 
 func (c *ConfigStoreValue) GetCollectionName() string {

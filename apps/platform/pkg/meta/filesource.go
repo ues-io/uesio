@@ -19,10 +19,10 @@ func NewBaseFileSource(namespace, name string) *FileSource {
 }
 
 type FileSource struct {
-	Type           string `yaml:"type,omitempty" json:"-"`
-	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Type           string `yaml:"type,omitempty" json:"-"`
+	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
 }
 
 type FileSourceWrapper FileSource

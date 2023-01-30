@@ -1,12 +1,12 @@
 package meta
 
 type Payment struct {
+	BuiltIn `yaml:",inline"`
 	AutoID  string  `json:"uesio/studio.autoid"`
 	User    *User   `json:"uesio/studio.user"`
 	Date    string  `json:"uesio/studio.date"`
 	Total   float64 `json:"uesio/studio.total"`
 	Payment string  `json:"uesio/studio.payment"`
-	BuiltIn `yaml:",inline"`
 }
 
 func (l *Payment) GetCollectionName() string {
