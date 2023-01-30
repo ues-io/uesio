@@ -2,3 +2,4 @@ name: type
 type: SELECT
 selectList: uesio/studio.sitedomaintype
 label: Domain
+required: true
