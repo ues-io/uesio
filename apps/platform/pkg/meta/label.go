@@ -8,9 +8,9 @@ import (
 )
 
 type Label struct {
-	Value          string `yaml:"value" json:"uesio/studio.value"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Value          string `yaml:"value" json:"uesio/studio.value"`
 }
 
 type LabelWrapper Label

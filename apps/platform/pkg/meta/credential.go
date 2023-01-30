@@ -24,9 +24,9 @@ type CredentialEntry struct {
 }
 
 type Credential struct {
-	Entries        map[string]CredentialEntry `yaml:"entries" json:"uesio/studio.entries"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Entries        map[string]CredentialEntry `yaml:"entries" json:"uesio/studio.entries"`
 }
 
 type CredentialWrapper Credential

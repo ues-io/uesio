@@ -23,7 +23,7 @@ var specialRefs = map[string]SpecialReferences{
 		ReferenceMetadata: &adapt.ReferenceMetadata{
 			Collection: "uesio/core.userfile",
 		},
-		Fields: []string{"uesio/core.mimetype", "uesio/core.path"},
+		Fields: []string{"uesio/core.mimetype", "uesio/core.path", "uesio/core.updatedat"},
 	},
 	"USER": {
 		ReferenceMetadata: &adapt.ReferenceMetadata{

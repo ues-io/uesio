@@ -155,10 +155,17 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
+	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
+
+	// Un-versioned file serving routes - for backwards compatibility, and for local development
 	filesPath := fmt.Sprintf("/files/%s", itemParam)
 	sr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
 	wr.HandleFunc(filesPath, file.ServeFile).Methods(http.MethodGet)
+	// Versioned file serving routes
+	versionedFilesPath := fmt.Sprintf("/files/%s", versionedItemParam)
+	sr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
+	wr.HandleFunc(versionedFilesPath, file.ServeFile).Methods(http.MethodGet)
 
 	// Explicit namespaced route page load access for site and workspace context
 	serveRoutePath := fmt.Sprintf("/app/%s/{route:.*}", nsParam)

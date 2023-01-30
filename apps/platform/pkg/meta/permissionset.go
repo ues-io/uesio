@@ -63,6 +63,8 @@ func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
 }
 
 type PermissionSet struct {
+	BuiltIn             `yaml:",inline"`
+	BundleableBase      `yaml:",inline"`
 	NamedRefs           map[string]bool         `yaml:"named" json:"uesio/studio.namedrefs"`
 	ViewRefs            map[string]bool         `yaml:"views" json:"uesio/studio.viewrefs"`
 	CollectionRefs      CollectionPermissionMap `yaml:"collections" json:"uesio/studio.collectionrefs"`
@@ -74,8 +76,6 @@ type PermissionSet struct {
 	AllowAllFiles       bool                    `yaml:"allowallfiles" json:"uesio/studio.allowallfiles"`
 	ModifyAllRecords    bool                    `yaml:"modifyallrecords" json:"uesio/studio.modifyallrecords"`
 	ViewAllRecords      bool                    `yaml:"viewallrecords" json:"uesio/studio.viewallrecords"`
-	BuiltIn             `yaml:",inline"`
-	BundleableBase      `yaml:",inline"`
 }
 
 type PermissionSetWrapper PermissionSet

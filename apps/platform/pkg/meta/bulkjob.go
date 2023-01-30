@@ -1,10 +1,10 @@
 package meta
 
 type BulkJob struct {
+	BuiltIn    `yaml:",inline"`
 	AutoID     string   `json:"uesio/core.autoid"`
 	Spec       *JobSpec `json:"uesio/core.spec"`
 	Collection string   `json:"uesio/core.collection"`
-	BuiltIn    `yaml:",inline"`
 }
 
 func (bj *BulkJob) GetCollectionName() string {

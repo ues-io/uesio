@@ -43,7 +43,8 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 
 	const fileURL = api.file.getUserFileURL(
 		context.getWorkspace() ? new ctx.Context() : context,
-		picture?.getIdFieldValue()
+		picture?.getIdFieldValue(),
+		picture?.getFieldValue<string>(collection.UPDATED_AT_FIELD)
 	)
 
 	return (

@@ -242,14 +242,22 @@ const platform = {
 		return respondJSON(response)
 	},
 	getFileURL: (context: Context, namespace: string, name: string) => {
+		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)
-		return `${prefix}/files/${namespace}/${name}`
+		return `${prefix}/files/${namespace}${siteBundleVersion}/${name}`
 	},
-	getUserFileURL: (context: Context, userfileid: string) => {
+	getUserFileURL: (
+		context: Context,
+		userfileid: string,
+		fileVersion?: string
+	) => {
 		const prefix = getPrefix(context)
+		const fileVersionParam = fileVersion
+			? `&version=${encodeURIComponent(fileVersion)}`
+			: ""
 		return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 			userfileid
-		)}`
+		)}${fileVersionParam}`
 	},
 	uploadFile: async (
 		context: Context,

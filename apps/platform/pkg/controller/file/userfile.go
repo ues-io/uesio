@@ -73,9 +73,7 @@ func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
-	// TODO: Add revision number/hash field and have Platform API send this via query string parameters
-	//version := r.URL.Query().Get("version")
-	version := ""
+	version := r.URL.Query().Get("version")
 	if userFileID == "" {
 		err := errors.New("no userfileid in the request url query")
 		logger.LogError(err)

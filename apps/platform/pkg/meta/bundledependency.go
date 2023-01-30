@@ -3,10 +3,10 @@ package meta
 import "fmt"
 
 type BundleDependency struct {
+	BuiltIn   `yaml:",inline"`
 	Workspace *Workspace `json:"uesio/studio.workspace"`
 	App       *App       `json:"uesio/studio.app"`
 	Bundle    *Bundle    `json:"uesio/studio.bundle"`
-	BuiltIn   `yaml:",inline"`
 }
 
 func (b *BundleDependency) GetVersionString() string {

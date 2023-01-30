@@ -47,6 +47,8 @@ type TokenCondition struct {
 }
 
 type Collection struct {
+	BuiltIn               `yaml:",inline"`
+	BundleableBase        `yaml:",inline"`
 	Type                  string                            `yaml:"type,omitempty" json:"uesio/studio.type"`
 	Label                 string                            `yaml:"label" json:"uesio/studio.label"`
 	PluralLabel           string                            `yaml:"pluralLabel" json:"uesio/studio.plurallabel"`
@@ -58,8 +60,6 @@ type Collection struct {
 	AccessField           string                            `yaml:"accessField,omitempty" json:"-"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" json:"uesio/studio.recordchallengetokens"`
 	TableName             string                            `yaml:"tablename,omitempty" json:"uesio/studio.tablename"`
-	BuiltIn               `yaml:",inline"`
-	BundleableBase        `yaml:",inline"`
 }
 
 type CollectionWrapper Collection
