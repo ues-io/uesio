@@ -85,8 +85,11 @@ func Get(key string, data interface{}) error {
 	return json.Unmarshal([]byte(dataString), data)
 }
 
+// We made a change to user data cached in Redis in 1/2023 which required modifying the key
+// so that the previous cache data would be ignored, hence the use of "v2" here.
+// Once this change is deployed, we can absolutely remove the ":v2" from the key
 func GetUserKey(userid, siteid string) string {
-	return fmt.Sprintf("user:%s:%s", userid, siteid)
+	return fmt.Sprintf("user:v2:%s:%s", userid, siteid)
 }
 
 func GetHostKey(domainType, domainValue string) string {
