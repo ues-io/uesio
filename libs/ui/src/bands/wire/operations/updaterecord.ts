@@ -28,7 +28,10 @@ export default (
 
 	const updatePath = [
 		...path,
-		...(isRef && path.length === 1 ? ["uesio/core.id"] : []),
+		// Conditionally add the id field to the path for refs where the value is not an object
+		...(isRef && typeof value === "string" && path.length === 1
+			? ["uesio/core.id"]
+			: []),
 	]
 
 	dispatch(
