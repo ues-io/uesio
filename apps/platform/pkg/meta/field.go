@@ -38,6 +38,8 @@ func NewFields(keys map[string]bool, collectionKey string) ([]BundleableItem, er
 }
 
 type Field struct {
+	BuiltIn                `yaml:",inline"`
+	BundleableBase         `yaml:",inline"`
 	CollectionRef          string                  `yaml:"-" json:"uesio/studio.collection"`
 	Type                   string                  `yaml:"type" json:"uesio/studio.type"`
 	Label                  string                  `yaml:"label" json:"uesio/studio.label"`
@@ -57,8 +59,6 @@ type Field struct {
 	SubType                string                  `yaml:"subtype,omitempty" json:"uesio/studio.subtype"`
 	LanguageLabel          string                  `yaml:"languageLabel,omitempty" json:"uesio/studio.languagelabel"`
 	ColumnName             string                  `yaml:"columnname,omitempty" json:"uesio/studio.columnname"`
-	BuiltIn                `yaml:",inline"`
-	BundleableBase         `yaml:",inline"`
 }
 
 type FieldWrapper Field

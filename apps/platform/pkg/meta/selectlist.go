@@ -12,10 +12,10 @@ type SelectListOption struct {
 }
 
 type SelectList struct {
-	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
-	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
 	BuiltIn          `yaml:",inline"`
 	BundleableBase   `yaml:",inline"`
+	Options          []SelectListOption `yaml:"options" json:"uesio/studio.options"`
+	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" json:"uesio/studio.blank_option_label"`
 }
 
 type SelectListWrapper SelectList

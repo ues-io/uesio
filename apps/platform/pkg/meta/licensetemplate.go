@@ -1,10 +1,10 @@
 package meta
 
 type LicenseTemplate struct {
+	BuiltIn      `yaml:",inline"`
 	App          *App    `json:"uesio/studio.app"`
 	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
 	AutoCreate   bool    `json:"uesio/studio.autocreate"`
-	BuiltIn      `yaml:",inline"`
 }
 
 func (lt *LicenseTemplate) GetCollectionName() string {

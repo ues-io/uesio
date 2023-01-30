@@ -1,6 +1,7 @@
 package meta
 
 type App struct {
+	BuiltIn     `yaml:",inline"`
 	FullName    string `json:"uesio/studio.fullname"`
 	Name        string `json:"uesio/studio.name"`
 	User        *User  `json:"uesio/studio.user"`
@@ -8,7 +9,6 @@ type App struct {
 	Color       string `json:"uesio/studio.color"`
 	Icon        string `json:"uesio/studio.icon"`
 	Public      bool   `json:"uesio/studio.public"`
-	BuiltIn     `yaml:",inline"`
 }
 
 func (a *App) GetCollectionName() string {

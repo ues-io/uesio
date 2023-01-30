@@ -1,6 +1,7 @@
 package meta
 
 type User struct {
+	BuiltIn   `yaml:",inline"`
 	FirstName string            `json:"uesio/core.firstname"`
 	LastName  string            `json:"uesio/core.lastname"`
 	Profile   string            `json:"uesio/core.profile"`
@@ -10,7 +11,6 @@ type User struct {
 	Type      string            `json:"uesio/core.type"`
 	Picture   *UserFileMetadata `json:"uesio/core.picture"`
 	Language  string            `json:"uesio/core.language"`
-	BuiltIn   `yaml:",inline"`
 }
 
 func (u *User) GetPictureID() string {

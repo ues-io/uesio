@@ -20,6 +20,8 @@ func NewBaseComponent(namespace, name string) *Component {
 }
 
 type Component struct {
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
 	Title          string   `yaml:"title,omitempty" json:"uesio/studio.title"`
 	Description    string   `yaml:"description,omitempty" json:"uesio/studio.description"`
 	Category       string   `yaml:"category,omitempty" json:"uesio/studio.category"`
@@ -29,8 +31,6 @@ type Component struct {
 	ConfigValues   []string `yaml:"configvalues,omitempty" json:"uesio/studio.configvalues"`
 	Variants       []string `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
 }
 
 type ComponentWrapper Component

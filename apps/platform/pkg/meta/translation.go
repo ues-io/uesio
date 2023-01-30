@@ -16,10 +16,11 @@ func NewBaseTranslation(namespace, language string) *Translation {
 }
 
 type Translation struct {
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:"-"`
 	Labels         map[string]string `yaml:"labels" json:"uesio/studio.labels"`
 	Language       string            `yaml:"language" json:"uesio/studio.language"`
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
+	Public         bool              `yaml:"public,omitempty" json:"uesio/studio.public"`
 }
 
 type TranslationWrapper Translation
@@ -53,11 +54,29 @@ func (t *Translation) GetField(fieldName string) (interface{}, error) {
 }
 
 func (t *Translation) Loop(iter func(string, interface{}) error) error {
-	return StandardItemLoop(t, iter)
+	itemMeta := t.GetItemMeta()
+	for _, fieldName := range TRANSLATION_FIELDS {
+		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
+			continue
+		}
+		val, err := t.GetField(fieldName)
+		if err != nil {
+			return err
+		}
+		err = iter(fieldName, val)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (t *Translation) IsPublic() bool {
+	return t.Public
 }
 
 func (t *Translation) Len() int {
-	return StandardItemLen(t)
+	return len(TRANSLATION_FIELDS)
 }
 
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {

@@ -15,7 +15,19 @@ var TRANSLATION_FOLDER_NAME = "translations"
 // We have to hardcode these fields because translations don't have a uesio/studio.name
 // field that we want to query. If we used the StandardGetFields (like the other metadata items)
 // it would try to query for a name field that does not exist.
-var TRANSLATION_FIELDS = []string{"uesio/studio.labels", "uesio/studio.language"}
+var TRANSLATION_FIELDS = []string{
+	"uesio/core.id",
+	"uesio/core.uniquekey",
+	"uesio/core.createdby",
+	"uesio/core.owner",
+	"uesio/core.updatedby",
+	"uesio/core.updatedat",
+	"uesio/core.createdat",
+	"uesio/studio.labels",
+	"uesio/studio.language",
+	"uesio/studio.workspace",
+	"uesio/studio.public",
+}
 
 func (tc *TranslationCollection) GetName() string {
 	return TRANSLATION_COLLECTION_NAME

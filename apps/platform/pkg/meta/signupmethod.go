@@ -24,6 +24,8 @@ type EmailTemplateOptions struct {
 	Redirect     string `yaml:"redirect" json:"uesio/studio.redirect"`
 }
 type SignupMethod struct {
+	BuiltIn          `yaml:",inline"`
+	BundleableBase   `yaml:",inline"`
 	AuthSource       string               `yaml:"authsource" json:"uesio/studio.authsource"`
 	Profile          string               `yaml:"profile" json:"uesio/studio.profile"`
 	UsernameTemplate string               `yaml:"usernameTemplate" json:"uesio/studio.usernametemplate"`
@@ -32,8 +34,6 @@ type SignupMethod struct {
 	AdminCreate      EmailTemplateOptions `yaml:"adminCreate" json:"uesio/studio.admincreate"`
 	Signup           EmailTemplateOptions `yaml:"signup" json:"uesio/studio.signup"`
 	ForgotPassword   EmailTemplateOptions `yaml:"forgotPassword" json:"uesio/studio.forgotpassword"`
-	BuiltIn          `yaml:",inline"`
-	BundleableBase   `yaml:",inline"`
 }
 
 type SignupMethodWrapper SignupMethod

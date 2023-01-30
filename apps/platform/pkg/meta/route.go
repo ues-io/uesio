@@ -19,6 +19,8 @@ func NewBaseRoute(namespace, name string) *Route {
 }
 
 type Route struct {
+	BuiltIn        `yaml:",inline"`
+	BundleableBase `yaml:",inline"`
 	Path           string            `yaml:"path" json:"uesio/studio.path"`
 	ViewType       string            `yaml:"viewtype,omitempty" json:"uesio/studio.viewtype"`
 	ViewRef        string            `yaml:"view" json:"uesio/studio.view"`
@@ -26,8 +28,6 @@ type Route struct {
 	Params         map[string]string `yaml:"params,omitempty" json:"uesio/studio.params"`
 	ThemeRef       string            `yaml:"theme" json:"uesio/studio.theme"`
 	Title          string            `yaml:"title" json:"uesio/studio.title"`
-	BuiltIn        `yaml:",inline"`
-	BundleableBase `yaml:",inline"`
 }
 
 type RouteWrapper Route

@@ -1,11 +1,11 @@
 package meta
 
 type License struct {
+	BuiltIn      `yaml:",inline"`
 	Active       bool    `json:"uesio/studio.active"`
 	App          *App    `json:"uesio/studio.app"`
 	AppLicensed  *App    `json:"uesio/studio.applicensed"`
 	MonthlyPrice float64 `json:"uesio/studio.monthlyprice"`
-	BuiltIn      `yaml:",inline"`
 }
 
 func (l *License) GetCollectionName() string {

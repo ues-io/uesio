@@ -8,9 +8,9 @@ import (
 )
 
 type Theme struct {
-	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
 	BuiltIn        `yaml:",inline"`
 	BundleableBase `yaml:",inline"`
+	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
 }
 
 type ThemeWrapper Theme

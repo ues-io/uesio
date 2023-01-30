@@ -1,10 +1,10 @@
 package meta
 
 type LoginMethod struct {
+	BuiltIn      `yaml:",inline"`
 	FederationID string `json:"uesio/core.federation_id"`
 	AuthSource   string `json:"uesio/core.auth_source"`
 	User         *User  `json:"uesio/core.user"`
-	BuiltIn      `yaml:",inline"`
 }
 
 func (lm *LoginMethod) GetCollectionName() string {
