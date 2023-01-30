@@ -1,3 +1,4 @@
 name: type
-type: TEXT
-label: type
+type: SELECT
+selectList: uesio/studio.sitedomaintype
+label: Domain
