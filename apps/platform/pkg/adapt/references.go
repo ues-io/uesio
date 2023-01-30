@@ -155,9 +155,11 @@ func LoadLooper(
 	if err != nil {
 		return err
 	}
-	// If we still have values in our idMap, then we didn't find some of our references.
-	for id, locator := range idMap {
-		return looper(nil, locator, id)
+	if len(idMap) > 0 {
+		// If we still have values in our idMap, then we didn't find some of our references.
+		for id, locator := range idMap {
+			return looper(nil, locator, id)
+		}
 	}
 	return nil
 

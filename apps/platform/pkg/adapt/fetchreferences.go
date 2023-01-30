@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"fmt"
+	"github.com/gofrs/uuid"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -69,7 +70,7 @@ func FetchReferences(
 	referencedIDCollections := ReferenceRegistry{}
 	referencedUniqueKeyCollections := ReferenceRegistry{}
 
-	// Load All Reference Fields for Inserts add add to changes
+	// Load All Reference Fields for Inserts and add to changes
 	for i := range op.Metadata.Fields {
 		field := op.Metadata.Fields[i]
 		if IsReference(field.Type) {
@@ -93,14 +94,32 @@ func FetchReferences(
 					return nil
 				}
 
-				idFieldValue, err := GetFieldValueString(refValue, ID_FIELD)
-				if err != nil {
-					idFieldValue = ""
+				idFieldValue := ""
+				uniqueKeyFieldValue := ""
+
+				// If the reference value is a String, see if it is a unique id or a UUID,
+				// and if so use it as the id field/unique field value
+				if refValueString, isString := refValue.(string); isString {
+					// First check for a UUID match
+					if _, err := uuid.FromString(refValueString); err == nil {
+						idFieldValue = refValueString
+					} else {
+						// Otherwise assume it is a unique key
+						uniqueKeyFieldValue = refValueString
+					}
 				}
 
-				uniqueKeyFieldValue, err := GetFieldValueString(refValue, UNIQUE_KEY_FIELD)
-				if err != nil {
-					uniqueKeyFieldValue = ""
+				// If the value wasn't a string, assume it is an object
+				if idFieldValue == "" && uniqueKeyFieldValue == "" {
+					idFieldValue, err = GetFieldValueString(refValue, ID_FIELD)
+					if err != nil {
+						idFieldValue = ""
+					}
+
+					uniqueKeyFieldValue, err = GetFieldValueString(refValue, UNIQUE_KEY_FIELD)
+					if err != nil {
+						uniqueKeyFieldValue = ""
+					}
 				}
 
 				if idFieldValue != "" {
