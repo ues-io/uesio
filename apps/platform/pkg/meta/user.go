@@ -13,11 +13,22 @@ type User struct {
 	BuiltIn   `yaml:",inline"`
 }
 
+func (u *User) GetPicture() *UserFileMetadata {
+	return u.Picture
+}
+
 func (u *User) GetPictureID() string {
 	if u.Picture != nil {
 		return u.Picture.ID
 	}
 	return ""
+}
+
+func (u *User) GetPictureUpdatedAt() int64 {
+	if u.Picture != nil {
+		return u.Picture.UpdatedAt
+	}
+	return 0
 }
 
 func (u *User) GetCollectionName() string {

@@ -198,6 +198,8 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	switch collectionName {
 	case "uesio/core.user":
 		botFunction = runUserAfterSaveBot
+	case "uesio/core.userfile":
+		botFunction = runUserFileAfterSaveBot
 	case "uesio/studio.site":
 		botFunction = runSiteAfterSaveBot
 	case "uesio/studio.sitedomain":

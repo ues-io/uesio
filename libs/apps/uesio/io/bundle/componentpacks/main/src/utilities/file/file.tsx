@@ -19,7 +19,7 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const { context, userFile, onUpload, onDelete, accept } = props
 
 	const userFileId = userFile?.[collection.ID_FIELD]
-	const fileModDate = userFile?.["uesio/core.updatedat"]
+	const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
 	const fileName = userFile?.["uesio/core.path"]
 	const fileUrl = api.file.getUserFileURL(context, userFileId, fileModDate)
 

@@ -1,8 +1,9 @@
 import { Context } from "../context/context"
 import { useEffect, useState } from "react"
 import { PlainWireRecord } from "../wireexports"
-import { ID_FIELD } from "../collectionexports"
+import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { platform } from "../platform/platform"
+const { deleteFile, uploadFile } = platform
 
 const getURL = platform.getFileURL
 
@@ -14,16 +15,11 @@ const getURLFromFullName = (context: Context, fullName: string) => {
 const getUserFileURL = (
 	context: Context,
 	userfileid: string | undefined,
-	cacheBuster?: string
+	fileVersion?: string
 ) => {
 	if (!userfileid) return ""
-	const url = platform.getUserFileURL(context, userfileid)
-	return cacheBuster ? url + "&cb=" + cacheBuster : url
+	return platform.getUserFileURL(context, userfileid, fileVersion)
 }
-
-const deleteFile = platform.deleteFile
-
-const uploadFile = platform.uploadFile
 
 const useUserFile = (
 	context: Context,
@@ -32,7 +28,8 @@ const useUserFile = (
 	const [content, setContent] = useState<string>("")
 	useEffect(() => {
 		const userFileId = userFile?.[ID_FIELD] as string
-		const fileUrl = getUserFileURL(context, userFileId)
+		const updatedAt = userFile?.[UPDATED_AT_FIELD] as string
+		const fileUrl = getUserFileURL(context, userFileId, updatedAt)
 		if (!fileUrl) {
 			setContent("")
 			return
