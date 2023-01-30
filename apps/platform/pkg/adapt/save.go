@@ -117,7 +117,7 @@ func (ci *ChangeItem) MarshalJSONObject(enc *gojay.Encoder) {
 			UPDATED_AT_FIELD:
 			return nil
 		}
-		if value == nil {
+		if value == nil || value == "" {
 			return nil
 		}
 		fieldMetadata, err := ci.Metadata.GetField(fieldID)
