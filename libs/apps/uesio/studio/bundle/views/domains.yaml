@@ -182,5 +182,5 @@ definition:
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newDomain"
-              - signal: wire/CANCEL
+              - signal: wire/RESET
                 wire: newdomain
