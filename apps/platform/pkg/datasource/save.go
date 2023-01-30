@@ -193,7 +193,7 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 	for _, op := range batch {
 
-		permissions := session.GetPermissions()
+		permissions := session.GetContextPermissions()
 		collectionKey := op.Metadata.GetFullName()
 
 		err := adapt.FetchReferences(connection, op, session)
