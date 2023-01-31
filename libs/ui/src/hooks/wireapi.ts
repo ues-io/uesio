@@ -59,20 +59,9 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
 const useWire = (wireId: string | undefined, context: Context) => {
-	let viewId
-	// To resolve the fully-qualified name for a wire, we need the view.
-	// If we have a wire provided, just use the closest view's id.
-	// Otherwise, we need to find a wire, then get the NEXT-closest ancestor view.
-	if (wireId) {
-		viewId = context.getViewId()
-	} else {
-		const wireProviderFrame = context.getWireProviderFrame()
-		if (wireProviderFrame !== undefined) {
-			wireId = wireProviderFrame.wire
-			viewId = wireProviderFrame.view
-		}
-	}
-	const plainWire = uWire(viewId, wireId)
+	const [view, wire] = context.getViewAndWireId(wireId)
+	if (!view || !wire) return undefined
+	const plainWire = uWire(view, wire)
 	const collectionName = plainWire?.collection
 	const plainCollection = useCollection(collectionName)
 	if (!plainCollection) return undefined

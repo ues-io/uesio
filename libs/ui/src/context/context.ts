@@ -5,7 +5,6 @@ import {
 	SiteAdminState,
 	WorkspaceState,
 } from "../bands/route/types"
-import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectors as viewSelectors } from "../bands/viewdef"
 import { selectors as labelSelectors } from "../bands/label"
 import { selectors as componentVariantSelectors } from "../bands/componentvariant"
@@ -22,6 +21,7 @@ import { parseVariantName } from "../component/component"
 import { MetadataKey } from "../bands/builder/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
+import { getCollection } from "../bands/collection/selectors"
 
 const PARAMS = "PARAMS",
 	ERROR = "ERROR",
@@ -92,51 +92,51 @@ interface ParamsContext {
 }
 
 interface ThemeContextFrame extends ThemeContext {
-	type: "THEME"
+	type: typeof THEME
 }
 
 interface SiteAdminContextFrame extends SiteAdminContext {
-	type: "SITE_ADMIN"
+	type: typeof SITE_ADMIN
 }
 
 interface WorkspaceContextFrame extends WorkspaceContext {
-	type: "WORKSPACE"
+	type: typeof WORKSPACE
 }
 
 interface RouteContextFrame extends RouteContext {
-	type: "ROUTE"
+	type: typeof ROUTE
 }
 
 interface ViewContextFrame extends ViewContext {
-	type: "VIEW"
+	type: typeof VIEW
 }
 
 interface RecordContextFrame extends RecordContext {
-	type: "RECORD"
+	type: typeof RECORD
 	// We will throw an error if view is not available at time of construction
 	view: string
 }
 
 interface RecordDataContextFrame extends RecordDataContext {
-	type: "RECORD_DATA"
+	type: typeof RECORD_DATA
 }
 
 interface WireContextFrame extends WireContext {
-	type: "WIRE"
+	type: typeof WIRE
 	// We will throw an error if view is not available at time of construction
 	view: string
 }
 
 interface ParamsContextFrame extends ParamsContext {
-	type: "PARAMS"
+	type: typeof PARAMS
 }
 
 interface ErrorContextFrame extends ErrorContext {
-	type: "ERROR"
+	type: typeof ERROR
 }
 
 interface FieldModeContextFrame extends FieldModeContext {
-	type: "FIELD_MODE"
+	type: typeof FIELD_MODE
 }
 
 type ContextOptions =
@@ -225,12 +225,6 @@ const providesSiteAdmin = (o: ContextOptions): o is SiteAdminContext =>
 const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
 
-const providesWireAndView = (
-	o: ContextOptions
-): o is WireContext | RecordContext =>
-	Object.prototype.hasOwnProperty.call(o, "wire") &&
-	Object.prototype.hasOwnProperty.call(o, "view")
-
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
@@ -308,8 +302,12 @@ class Context {
 		)
 	}
 
-	getRecord = () => {
-		const recordFrame = this.stack.find(providesRecordContext)
+	getRecord = (wireid?: string) => {
+		const recordFrame = this.stack
+			.filter(providesRecordContext)
+			.find((frame) =>
+				wireid ? frame.type === "RECORD" && frame.wire === wireid : true
+			)
 
 		// if we don't have a record id in context return the first
 		if (undefined === recordFrame) {
@@ -331,9 +329,16 @@ class Context {
 		return undefined
 	}
 
-	// Find the first WireFrame or RecordFrame which provides a wire and a view
-	getWireProviderFrame = () =>
-		this.stack.filter(hasWireContext).find(providesWireAndView)
+	getViewAndWireId = (
+		wireid?: string
+	): [string | undefined, string | undefined] => {
+		const frame = this.stack
+			.filter(hasWireContext)
+			.find((frame) => (wireid ? frame.wire === wireid : true))
+		if (frame) return [frame.view, frame.wire]
+		if (wireid) return [this.getViewId(), wireid]
+		return [undefined, undefined]
+	}
 
 	getViewId = () => {
 		const frame = this.stack.filter(hasViewContext).find(providesView)
@@ -409,43 +414,21 @@ class Context {
 
 	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
-	getWire = () => {
-		const state = getCurrentState()
-		const plainWire = this.getPlainWire()
+	getWire = (wireid?: string) => {
+		const plainWire = this.getPlainWire(wireid)
+		if (!plainWire) return undefined
 		const wire = new Wire(plainWire)
-		const plainCollection = collectionSelectors.selectById(
-			state,
-			plainWire?.collection || ""
-		)
+		const plainCollection = getCollection(plainWire.collection)
 		if (!plainCollection) return undefined
 		const collection = new Collection(plainCollection)
 		wire.attachCollection(collection.source)
 		return wire
 	}
 
-	getWireByName = (wirename: string) => {
-		const state = getCurrentState()
-		const plainWire = this.getPlainWireByName(wirename)
-		const wire = new Wire(plainWire)
-		const plainCollection = collectionSelectors.selectById(
-			state,
-			plainWire?.collection || ""
-		)
-		if (!plainCollection) return undefined
-		const collection = new Collection(plainCollection)
-		wire.attachCollection(collection.source)
-		return wire
-	}
-
-	getPlainWire = () => {
-		const wireProviderFrame = this.getWireProviderFrame()
-		if (wireProviderFrame === undefined) return undefined
-		return getWire(wireProviderFrame.view, wireProviderFrame.wire)
-	}
-
-	getPlainWireByName = (wirename: string) => {
-		if (!wirename) return undefined
-		return getWire(this.getViewId(), wirename)
+	getPlainWire = (wireid?: string) => {
+		const [view, wire] = this.getViewAndWireId(wireid)
+		if (!view || !wire) return undefined
+		return getWire(view, wire)
 	}
 
 	getFieldMode = () =>
