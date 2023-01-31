@@ -1,3 +1,4 @@
 name: domain
 type: TEXT
-label: domain
+label: Domain
+required: true
