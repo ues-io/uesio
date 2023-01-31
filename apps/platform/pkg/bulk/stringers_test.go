@@ -33,6 +33,28 @@ func Test_getStringValue(t *testing.T) {
 			"",
 		},
 		{
+			"stringify number fields with 0 value",
+			args{
+				&adapt.FieldMetadata{
+					Type: "NUMBER",
+				},
+				0,
+			},
+			"0",
+			"",
+		},
+		{
+			"stringify number fields with nil value",
+			args{
+				&adapt.FieldMetadata{
+					Type: "NUMBER",
+				},
+				nil,
+			},
+			"",
+			"",
+		},
+		{
 			"stringify number fields with integer precision",
 			args{
 				&adapt.FieldMetadata{
@@ -41,6 +63,39 @@ func Test_getStringValue(t *testing.T) {
 				123,
 			},
 			"123",
+			"",
+		},
+		{
+			"stringify CHECKBOX true",
+			args{
+				&adapt.FieldMetadata{
+					Type: "CHECKBOX",
+				},
+				true,
+			},
+			"true",
+			"",
+		},
+		{
+			"stringify CHECKBOX false",
+			args{
+				&adapt.FieldMetadata{
+					Type: "CHECKBOX",
+				},
+				false,
+			},
+			"false",
+			"",
+		},
+		{
+			"stringify CHECKBOX fields with nil value",
+			args{
+				&adapt.FieldMetadata{
+					Type: "CHECKBOX",
+				},
+				nil,
+			},
+			"",
 			"",
 		},
 		{
@@ -129,7 +184,7 @@ func Test_getStringValue(t *testing.T) {
 			if tt.wantErr != "" {
 				assert.EqualError(t, err, tt.wantErr)
 			} else {
-				assert.Equal(t, got, tt.want)
+				assert.Equal(t, tt.want, got)
 			}
 		})
 	}

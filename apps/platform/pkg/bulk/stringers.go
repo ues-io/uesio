@@ -11,11 +11,16 @@ import (
 
 func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (string, error) {
 
+	// Handle all nils as empty string
+	if value == nil {
+		return "", nil
+	}
 	if adapt.IsReference(fieldMetadata.Type) {
 		return adapt.GetReferenceKey(value)
 	}
-	// Export TIMESTAMPs in RFC3339/ISO-8601 datetime format
-	if fieldMetadata.Type == "TIMESTAMP" {
+	switch fieldMetadata.Type {
+	case "TIMESTAMP":
+		// Export TIMESTAMPs in RFC3339/ISO-8601 datetime format
 		// Depending on how the timestamp was created, it may be a float64 or int64,
 		// so we need to handle both cases
 		var unixTimestamp time.Time
@@ -29,14 +34,19 @@ func getStringValue(fieldMetadata *adapt.FieldMetadata, value interface{}) (stri
 			return "", errors.New("Bad timestamp value")
 		}
 		return unixTimestamp.Format(time.RFC3339), nil
-	}
-	if fieldMetadata.Type == "NUMBER" {
+	case "NUMBER":
 		return fmt.Sprintf("%v", value), nil
+	case "CHECKBOX":
+		if value == true {
+			return "true", nil
+		}
+		return "false", nil
+	default:
+		stringVal, ok := value.(string)
+		if !ok {
+			fmt.Println("Failed to set: " + fieldMetadata.GetFullName() + ":" + fieldMetadata.Type)
+			stringVal = ""
+		}
+		return stringVal, nil
 	}
-	stringVal, ok := value.(string)
-	if !ok {
-		fmt.Println("Failed to set: " + fieldMetadata.GetFullName() + ":" + fieldMetadata.Type)
-		stringVal = ""
-	}
-	return stringVal, nil
 }
