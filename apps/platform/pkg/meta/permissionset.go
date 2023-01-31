@@ -18,11 +18,6 @@ func NewBasePermissionSet(namespace, name string) *PermissionSet {
 	return &PermissionSet{BundleableBase: NewBase(namespace, name)}
 }
 
-type FieldPermissionOptions struct {
-	Read bool `yaml:"read" json:"uesio/studio.read"`
-	Edit bool `yaml:"edit" json:"uesio/studio.edit"`
-}
-
 type CollectionPermission struct {
 	Read   bool `yaml:"read" json:"uesio/studio.read"`
 	Create bool `yaml:"create" json:"uesio/studio.create"`
@@ -30,7 +25,6 @@ type CollectionPermission struct {
 	Delete bool `yaml:"delete" json:"uesio/studio.delete"`
 }
 
-type CollectionPermissionMapWrapper CollectionPermissionMap
 type CollectionPermissionMap map[string]CollectionPermission
 
 func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
@@ -55,7 +49,15 @@ func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
 			(*cpm)[collectionPermissionPair.Key] = cp
 		}
 		if node.Kind == yaml.ScalarNode {
-			(*cpm)[collectionPermissionPair.Key] = CollectionPermission{Read: true, Create: true, Edit: true, Delete: true}
+			// Backwards compatible support for old metadata format
+			if node.Value == "true" || node.Value == "null" || node.Value == "" {
+				(*cpm)[collectionPermissionPair.Key] = CollectionPermission{
+					Read:   true,
+					Create: true,
+					Edit:   true,
+					Delete: true,
+				}
+			}
 		}
 	}
 
@@ -208,16 +210,6 @@ func (ps *PermissionSet) HasDeletePermission(key string) bool {
 	}
 }
 
-func mergeCollectionPermission(newVal CollectionPermission, existingVal CollectionPermission) CollectionPermission {
-
-	existingVal.Create = existingVal.Create || newVal.Create
-	existingVal.Delete = existingVal.Delete || newVal.Delete
-	existingVal.Edit = existingVal.Edit || newVal.Edit
-	existingVal.Read = existingVal.Read || newVal.Read
-
-	return existingVal
-}
-
 func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	namedPerms := map[string]bool{}
 	viewPerms := map[string]bool{}
@@ -256,7 +248,11 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 			if existingVal, ok := collectionPerms[key]; !ok {
 				collectionPerms[key] = value
 			} else {
-				collectionPerms[key] = mergeCollectionPermission(value, existingVal)
+				existingVal.Create = existingVal.Create || value.Create
+				existingVal.Delete = existingVal.Delete || value.Delete
+				existingVal.Edit = existingVal.Edit || value.Edit
+				existingVal.Read = existingVal.Read || value.Read
+				collectionPerms[key] = existingVal
 			}
 		}
 		if permissionSet.AllowAllViews {

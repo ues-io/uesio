@@ -284,7 +284,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
 		if !session.GetContextPermissions().HasReadPermission(op.CollectionName) {
-			return nil, errors.New(fmt.Sprintf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName))
+			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName)
 		}
 		// Verify that the id field is present
 		hasIDField := false

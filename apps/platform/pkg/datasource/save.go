@@ -210,19 +210,19 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 		if len(op.Inserts) > 0 {
 			if !permissions.HasCreatePermission(collectionKey) {
-				return errors.New(fmt.Sprintf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey))
+				return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
 			}
 		}
 
 		if len(op.Updates) > 0 {
 			if !permissions.HasEditPermission(collectionKey) {
-				return errors.New(fmt.Sprintf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey))
+				return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
 			}
 		}
 
 		if len(op.Deletes) > 0 {
 			if !permissions.HasDeletePermission(collectionKey) {
-				return errors.New(fmt.Sprintf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey))
+				return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
 			}
 		}
 
