@@ -3,6 +3,7 @@ package datasource
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -192,6 +193,9 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 
 	for _, op := range batch {
 
+		permissions := session.GetContextPermissions()
+		collectionKey := op.Metadata.GetFullName()
+
 		err := adapt.FetchReferences(connection, op, session)
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
@@ -202,6 +206,24 @@ func applyBatches(dsKey string, batch []*adapt.SaveOp, connection adapt.Connecti
 		if err != nil {
 			op.AddError(adapt.NewGenericSaveError(err))
 			return err
+		}
+
+		if len(op.Inserts) > 0 {
+			if !permissions.HasCreatePermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have create access to the %s collection.", session.GetProfile(), collectionKey)
+			}
+		}
+
+		if len(op.Updates) > 0 {
+			if !permissions.HasEditPermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have edit access to the %s collection.", session.GetProfile(), collectionKey)
+			}
+		}
+
+		if len(op.Deletes) > 0 {
+			if !permissions.HasDeletePermission(collectionKey) {
+				return fmt.Errorf("Profile %s does not have delete access to the %s collection.", session.GetProfile(), collectionKey)
+			}
 		}
 
 		err = adapt.HandleOldValuesLookup(connection, op, session)
