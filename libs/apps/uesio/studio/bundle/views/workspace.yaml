@@ -145,13 +145,11 @@ definition:
                                                         workspace:
                                                           name: $Param{workspacename}
                                                           app: $Param{app}
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{app}"
+                                                    - signal: route/NAVIGATE
+                                                      path: app/$Param{app}
                                                       uesio.context:
-                                                        #This removes the workspace
-                                                        workspace:
-                                                          name:
-                                                          app:
+                                                        #This removes the previous context
+                                                        REMOVE_PREV_CTX
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:

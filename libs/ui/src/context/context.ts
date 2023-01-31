@@ -251,6 +251,10 @@ function injectDynamicContext(context: Context, additional: unknown) {
 		})
 	}
 
+	if (additional === "REMOVE_PREV_CTX") {
+		context = context.removeRecordFrame(1)
+	}
+
 	return context
 }
 
