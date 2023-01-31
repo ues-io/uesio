@@ -102,6 +102,8 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else if fieldMetadata.Type == "DATE" {
 			loaderFuncs = append(loaderFuncs, getDateLoader(index, &mapping, fieldMetadata, valueGetter))
+		} else if fieldMetadata.Type == "TIMESTAMP" {
+			loaderFuncs = append(loaderFuncs, getTimestampLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else {
 			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, valueGetter))
 		}
