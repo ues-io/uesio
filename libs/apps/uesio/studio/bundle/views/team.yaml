@@ -90,7 +90,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: teamDeck
+                    uesio.id: teamDeck
                     wire: teams
                     mode: READ
                     components:
@@ -116,7 +116,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: teammembersslist
+                          uesio.id: teammembersslist
                           wire: teammembers
                           uesio.variant: uesio/io.section
                           components:
@@ -174,7 +174,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newteamlist
+            uesio.id: newteamlist
             wire: newteammember
             mode: EDIT
             components:

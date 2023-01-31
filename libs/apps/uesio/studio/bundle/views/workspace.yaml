@@ -131,7 +131,7 @@ definition:
                                                   text: Package New Version
                                                   signals:
                                                     - signal: notification/ADD
-                                                      id: newversion
+                                                      uesio.id: newversion
                                                       text: We are creating your new bundle
                                                       details: it may take a while, please wait until this notification disappears.
                                                       severity: info
@@ -139,7 +139,7 @@ definition:
                                                       onerror:
                                                         signals:
                                                           - signal: notification/REMOVE
-                                                            id: newversion
+                                                            uesio.id: newversion
                                                       bot: "uesio/studio.createbundle"
                                                       uesio.context:
                                                         workspace:
@@ -168,7 +168,7 @@ definition:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}/workspace/$Param{workspacename}/bundlestore"
                                   - uesio/io.deck:
-                                      id: installedbundleslist
+                                      uesio.id: installedbundleslist
                                       wire: installedapps
                                       uesio.variant: uesio/io.section
                                       components:
@@ -213,13 +213,13 @@ definition:
                 panel: deleteWorkspace
     editWorkspace:
       uesio.type: uesio/io.dialog
-      id: editWorkspace
+      uesio.id: editWorkspace
       title: Edit Workspace
       width: 400px
       height: 560px
       components:
         - uesio/io.list:
-            id: editWorkspaceList
+            uesio.id: editWorkspaceList
             wire: workspaces
             mode: EDIT
             uesio.context:

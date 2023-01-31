@@ -8,7 +8,7 @@ type DateFieldProps = {
 }
 
 const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
-	const { setValue, mode } = props
+	const { setValue, mode, id } = props
 
 	// TODO: Better type checking here
 	const value = props.value as string
@@ -42,6 +42,7 @@ const DateField: definition.UtilityComponent<DateFieldProps> = (props) => {
 
 	return (
 		<input
+			id={id}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			value={value}
 			type="date"

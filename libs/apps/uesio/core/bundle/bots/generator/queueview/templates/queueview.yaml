@@ -36,7 +36,7 @@ components:
         - uesio/io.box:
             components:
               - uesio/core.view:
-                  id: detailview
+                  uesio.id: detailview
                   view: ${detailviewname}
                   params:
                     recordid: ""

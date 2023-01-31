@@ -81,11 +81,12 @@ definition:
                     actions:
                       - uesio/io.button:
                           icon: add
+                          uesio.id: add-app
                           signals:
                             - signal: panel/TOGGLE
                               panel: newApp
                 - uesio/io.list:
-                    id: appslist
+                    uesio.id: appslist
                     wire: apps
                     components:
                       - uesio/io.tile:
@@ -119,11 +120,12 @@ definition:
                     actions:
                       - uesio/io.button:
                           icon: add
+                          uesio.id: add-organization
                           signals:
                             - signal: panel/TOGGLE
                               panel: newOrg
                 - uesio/io.list:
-                    id: orglist
+                    uesio.id: orglist
                     wire: orgs
                     components:
                       - uesio/io.tile:
@@ -264,7 +266,7 @@ definition:
       height: 300px
       components:
         - uesio/io.list:
-            id: editorglist
+            uesio.id: editorglist
             mode: EDIT
             wire: neworg
             components:

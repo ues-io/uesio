@@ -77,7 +77,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -116,7 +116,7 @@ definition:
                                 title: Bundles
                                 subtitle: Pack it up. Pack it in. Let me begin.
                             - uesio/io.deck:
-                                id: bundleslist
+                                uesio.id: bundleslist
                                 wire: bundles
                                 uesio.variant: uesio/io.section
                                 components:
@@ -150,7 +150,7 @@ definition:
                                               - signal: "panel/TOGGLE"
                                                 panel: "newTeam"
                             - uesio/io.deck:
-                                id: teamslist
+                                uesio.id: teamslist
                                 wire: teams
                                 uesio.variant: uesio/io.section
                                 components:
@@ -226,7 +226,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newteamlist
+            uesio.id: newteamlist
             wire: newteam
             mode: EDIT
             components:

@@ -15,7 +15,7 @@ const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach"]
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Grid = component.getUtility("uesio/io.grid")
-	const { context, definition } = props
+	const { context, definition, path } = props
 	const useMock = api.view.useConfigValue("uesio/core.mock_auth")
 
 	if (useMock !== "true") {
@@ -38,6 +38,12 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				{MockUsernames.map((user) => (
 					<Button
 						key={user}
+						id={api.component.getComponentId(
+							`mock-login-${user}`,
+							"uesio/core.loginmock",
+							path,
+							context
+						)}
 						context={context}
 						onClick={(): void => {
 							api.signal.run(

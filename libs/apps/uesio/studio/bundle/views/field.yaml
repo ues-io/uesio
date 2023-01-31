@@ -89,7 +89,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: fieldsDeck
+                    uesio.id: fieldsDeck
                     wire: fields
                     mode: READ
                     components:

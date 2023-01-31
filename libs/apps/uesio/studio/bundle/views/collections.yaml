@@ -83,6 +83,7 @@ definition:
                             - uesio/io.button:
                                 text: Create a New Collection
                                 uesio.variant: uesio/io.secondary
+                                uesio.id: new-collection
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newCollection
@@ -154,7 +155,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newcollectionlist
+            uesio.id: newcollectionlist
             wire: newcollection
             mode: EDIT
             components:
@@ -167,6 +168,7 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            uesio.id: save-new-collection
             text: "Save"
             signals:
               - signal: wire/SAVE
@@ -176,6 +178,7 @@ definition:
                 path: "app/$Param{app}/workspace/$Param{workspacename}/collections/$Param{app}/${uesio/studio.name}"
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
+            uesio.id: cancel-new-collection
             text: "Cancel"
             signals:
               - signal: "panel/TOGGLE"

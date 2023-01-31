@@ -86,7 +86,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: collectionsDeck
+                    uesio.id: collectionsDeck
                     wire: collections
                     mode: READ
                     components:
@@ -123,7 +123,7 @@ definition:
                           uesio.variant: uesio/io.section
                           components:
                             - uesio/io.deck:
-                                id: bulkjobsDeck
+                                uesio.id: bulkjobsDeck
                                 wire: bulkjobs
                                 uesio.variant: uesio/io.section
                                 components:

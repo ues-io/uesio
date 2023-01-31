@@ -63,7 +63,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: botsDeck
+                    uesio.id: botsDeck
                     wire: bots
                     mode: READ
                     components:
@@ -169,7 +169,7 @@ definition:
       height: 560px
       components:
         - uesio/io.list:
-            id: editBotList
+            uesio.id: editBotList
             wire: bots
             mode: EDIT
             components:

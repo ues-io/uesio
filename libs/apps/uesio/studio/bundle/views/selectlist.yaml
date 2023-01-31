@@ -59,7 +59,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: selectlistsDeck
+                    uesio.id: selectlistsDeck
                     wire: selectlists
                     mode: READ
                     components:

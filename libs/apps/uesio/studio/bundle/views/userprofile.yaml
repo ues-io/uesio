@@ -40,7 +40,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: userDeck
+                    uesio.id: userDeck
                     wire: users
                     mode: READ
                     components:

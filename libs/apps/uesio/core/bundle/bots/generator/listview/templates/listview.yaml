@@ -16,13 +16,14 @@ components:
                     - signal: wire/CREATE_RECORD
                       wire: ${wirename}
                   text: Create
-                  uesio.variant: uesio/io.secondary
+                  uesio.variant: uesio/io.primary
               - uesio/io.button:
                   signals:
                     - signal: wire/SAVE
                       wires:
                         - ${wirename}
                   text: Save
+                  hotkey: "meta+s"
                   uesio.variant: uesio/io.secondary
               - uesio/io.button:
                   signals:
@@ -33,7 +34,7 @@ components:
               - uesio/io.button:
                   signals:
                     - signal: component/uesio/io.table/TOGGLE_MODE
-                      target: table1
+                      target: ${wirename}-table
                   text: Mode
                   uesio.variant: uesio/io.secondary
   - uesio/io.box:
@@ -45,6 +46,6 @@ components:
                 signals:
                   - signal: wire/TOGGLE_DELETE_STATUS
             columns: ${tableColumns}
-            id: table1
+            uesio.id: ${wirename}-table
             mode: EDIT
             wire: ${wirename}

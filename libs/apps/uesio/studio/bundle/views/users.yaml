@@ -115,7 +115,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: userslist
+                          uesio.id: userslist
                           wire: users
                           uesio.variant: uesio/io.section
                           components:
@@ -147,7 +147,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newuserlist
+            uesio.id: newuserlist
             wire: newuser
             mode: EDIT
             components:

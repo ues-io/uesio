@@ -101,7 +101,7 @@ definition:
                       - uesio/io.searchbox:
                           wire: allviews
                       - uesio/io.table:
-                          id: viewsTable
+                          uesio.id: viewsTable
                           wire: allviews
                           recordDisplay:
                             - field: uesio/studio.namespace
@@ -160,7 +160,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newviewlist
+            uesio.id: newviewlist
             wire: newview
             mode: EDIT
             components:

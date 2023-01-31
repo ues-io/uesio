@@ -75,15 +75,17 @@ definition:
         actions:
           - uesio/io.button:
               icon: add
+              uesio.id: add-workspace
               signals:
                 - signal: panel/TOGGLE
                   panel: newWorkspace
     - uesio/io.list:
-        id: workspaceslist
+        uesio.id: workspaceslist
         wire: workspaces
         components:
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: "open-workspace-$Record{uesio/studio.name}"
               signals:
                 - signal: "route/NAVIGATE"
                   path: "app/$Param{app}/workspace/${uesio/studio.name}"
@@ -104,11 +106,12 @@ definition:
         actions:
           - uesio/io.button:
               icon: add
+              uesio.id: add-site
               signals:
                 - signal: panel/TOGGLE
                   panel: newSite
     - uesio/io.list:
-        id: siteslist
+        uesio.id: siteslist
         wire: sites
         components:
           - uesio/io.tile:
@@ -170,7 +173,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newworkspacelist
+            uesio.id: newworkspacelist
             wire: newworkspace
             mode: EDIT
             components:
@@ -201,7 +204,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newsitelist
+            uesio.id: newsitelist
             wire: newsite
             mode: EDIT
             components:

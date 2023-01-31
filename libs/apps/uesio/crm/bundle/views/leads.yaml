@@ -79,7 +79,7 @@ definition:
                             - field: uesio/crm.status
                             - field: uesio/core.updatedat
                             - field: uesio/core.createdat
-                          id: leadsTable
+                          uesio.id: leadsTable
                           mode: EDIT
                           wire: leads
                           uesio.variant: uesio/io.default
@@ -92,7 +92,7 @@ definition:
                     element: div
                     uesio.variant: uesio/io.smalltitle
                 - uesio/io.table:
-                    id: closedleadstable
+                    uesio.id: closedleadstable
                     mode: READ
                     columns:
                       - field: uesio/crm.converted_to_contact

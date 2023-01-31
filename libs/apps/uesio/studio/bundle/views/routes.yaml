@@ -94,7 +94,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: routesDeck
+                          uesio.id: routesDeck
                           wire: routes
                           uesio.variant: uesio/io.section
                           components:
@@ -119,7 +119,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newroutelist
+            uesio.id: newroutelist
             wire: newroute
             mode: EDIT
             uesio.context:

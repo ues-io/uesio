@@ -8,7 +8,6 @@ type TabDefinition = {
 }
 
 type TabsDefinition = {
-	id?: string
 	tabs?: TabDefinition[]
 	footer?: definition.DefinitionList
 }
@@ -27,10 +26,7 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 		props
 	)
 
-	const componentId = api.component.getComponentIdFromProps(
-		definition.id,
-		props
-	)
+	const componentId = api.component.getComponentIdFromProps(props)
 
 	const [selectedTabId, setSelectedTab] = api.component.useState<string>(
 		"tabs",

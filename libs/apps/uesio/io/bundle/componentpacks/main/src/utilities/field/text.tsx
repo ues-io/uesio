@@ -10,7 +10,7 @@ interface TextFieldProps extends definition.UtilityProps {
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, mode, placeholder, password } = props
+	const { setValue, mode, placeholder, password, id } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
@@ -26,6 +26,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<input
+			id={id}
 			type={password ? "password" : "text"}
 			value={value || ""}
 			placeholder={placeholder}

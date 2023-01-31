@@ -87,7 +87,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: selectlistsDeck
+                          uesio.id: selectlistsDeck
                           wire: selectlists
                           uesio.variant: uesio/io.section
                           components:
@@ -112,7 +112,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newselectlistlist
+            uesio.id: newselectlistlist
             wire: newselectlist
             mode: EDIT
             components:

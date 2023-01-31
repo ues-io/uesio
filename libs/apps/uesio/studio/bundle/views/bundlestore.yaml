@@ -71,7 +71,7 @@ definition:
                     title: Add a Bundle
                 - uesio/io.deck:
                     wire: bundlelistings
-                    id: bundleListingList
+                    uesio.id: bundleListingList
                     mode: READ
                     uesio.styles:
                       root:

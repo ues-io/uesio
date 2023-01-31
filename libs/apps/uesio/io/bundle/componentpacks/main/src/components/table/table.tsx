@@ -76,10 +76,7 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
-	const componentId = api.component.getComponentIdFromProps(
-		definition.id,
-		props
-	)
+	const componentId = api.component.getComponentIdFromProps(props)
 	const [mode] = useMode(componentId, definition.mode)
 
 	// If we got a wire from the definition, add it to context

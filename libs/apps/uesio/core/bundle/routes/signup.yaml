@@ -2,3 +2,4 @@ name: signup
 path: signup
 view: uesio/core.signup
 public: true
+title: Uesio - Signup

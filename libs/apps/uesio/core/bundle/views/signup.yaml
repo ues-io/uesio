@@ -61,7 +61,7 @@ definition:
                               path: "https://$Site{domain}"
 
                       - uesio/io.list:
-                          id: credslist
+                          uesio.id: credslist
                           wire: userData
                           mode: EDIT
                           components:

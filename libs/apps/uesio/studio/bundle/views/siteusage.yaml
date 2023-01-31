@@ -277,7 +277,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.table:
-                          id: usagetable
+                          uesio.id: usagetable
                           wire: usage
                           mode: READ
                           pagesize: 10

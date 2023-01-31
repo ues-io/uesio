@@ -24,6 +24,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	props
 ) => {
 	const {
+		id,
 		fieldId,
 		fieldMetadata,
 		mode,
@@ -68,6 +69,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	if (mode === "READ") {
 		return (
 			<TextField
+				id={id}
 				value={itemToString(value)}
 				context={context}
 				variant={variant}
@@ -77,6 +79,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	} else {
 		return (
 			<Autocomplete
+				id={id}
 				context={context}
 				variant={variant}
 				value={value}
