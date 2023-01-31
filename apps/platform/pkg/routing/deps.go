@@ -200,7 +200,11 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 		subParams := map[string]string{}
 
-		viewID := meta.GetNodeValueAsString(viewCompDef, "id")
+		viewID := meta.GetNodeValueAsString(viewCompDef, "uesio.id")
+		// Backwards compatibility until we can get Morandi/TimeTracker migrated to using "uesio.id" consistently
+		if viewID == "" {
+			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
+		}
 
 		// Process the params
 		for i, prop := range viewCompDef.Content {
