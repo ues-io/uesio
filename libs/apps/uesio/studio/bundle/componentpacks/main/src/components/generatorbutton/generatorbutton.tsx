@@ -13,8 +13,13 @@ type GeneratorButtonDefinition = {
 	label: string
 }
 
-interface Props extends definition.BaseProps {
+interface ButtonProps extends definition.BaseProps {
 	definition: GeneratorButtonDefinition
+}
+
+interface FormProps {
+	generator: string
+	setOpen: (value: boolean) => void
 }
 
 const WIRE_NAME = "paramData"
@@ -53,19 +58,13 @@ const getLayoutFieldsFromParams = (
 	return params.map((def) => getLayoutFieldFromParamDef(def))
 }
 
-const GeneratorButton: FunctionComponent<Props> = (props) => {
-	const Button = component.getUtility("uesio/io.button")
-	const Dialog = component.getUtility("uesio/io.dialog")
-	const Form = component.getUtility("uesio/io.form")
-	const { context, definition } = props
-	const { label, generator } = definition
+const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
+	const { context, generator, setOpen } = props
 
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
-	const workspaceContext = context.getWorkspace()
-	if (!workspaceContext) throw new Error("No Workspace Context Provided")
-
-	const [open, setOpen] = useState<boolean>(false)
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const Form = component.getUtility("uesio/io.form")
 
 	const [params] = api.bot.useParams(
 		context,
@@ -74,8 +73,8 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 		"generator"
 	)
 
-	api.wire.useDynamicWire(
-		open ? WIRE_NAME : "",
+	const paramWire = api.wire.useDynamicWire(
+		WIRE_NAME,
 		{
 			viewOnly: true,
 			fields: api.wire.getWireFieldsFromParams(params),
@@ -86,6 +85,54 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 		context
 	)
 
+	if (!paramWire) return null
+
+	return (
+		<component.Panel>
+			<Dialog
+				context={context}
+				width="400px"
+				height="500px"
+				onClose={() => setOpen(false)}
+				title="Set Generator Parameters"
+			>
+				<Form
+					wire={WIRE_NAME}
+					context={context}
+					content={getLayoutFieldsFromParams(params)}
+					submitLabel="Generate"
+					onSubmit={async (record: wire.WireRecord) => {
+						await api.bot.callGenerator(
+							context,
+							genNamespace,
+							genName,
+							api.wire.getParamValues(params, record)
+						)
+						setOpen(false)
+						return api.signal.run(
+							{
+								signal: "route/RELOAD",
+							},
+							new ctx.Context()
+						)
+					}}
+				/>
+			</Dialog>
+		</component.Panel>
+	)
+}
+
+const GeneratorButton: FunctionComponent<ButtonProps> = (props) => {
+	const Button = component.getUtility("uesio/io.button")
+
+	const { context, definition } = props
+	const { label, generator } = definition
+
+	const workspaceContext = context.getWorkspace()
+	if (!workspaceContext) throw new Error("No Workspace Context Provided")
+
+	const [open, setOpen] = useState<boolean>(false)
+
 	return (
 		<>
 			<Button
@@ -95,37 +142,11 @@ const GeneratorButton: FunctionComponent<Props> = (props) => {
 				onClick={() => setOpen(true)}
 			/>
 			{open && (
-				<component.Panel>
-					<Dialog
-						context={context}
-						width="400px"
-						height="500px"
-						onClose={() => setOpen(false)}
-						title="Set Generator Parameters"
-					>
-						<Form
-							wire={WIRE_NAME}
-							context={context}
-							content={getLayoutFieldsFromParams(params)}
-							submitLabel="Generate"
-							onSubmit={async (record: wire.WireRecord) => {
-								await api.bot.callGenerator(
-									context,
-									genNamespace,
-									genName,
-									api.wire.getParamValues(params, record)
-								)
-								setOpen(false)
-								return api.signal.run(
-									{
-										signal: "route/RELOAD",
-									},
-									new ctx.Context()
-								)
-							}}
-						/>
-					</Dialog>
-				</component.Panel>
+				<GeneratorForm
+					setOpen={setOpen}
+					generator={generator}
+					context={context}
+				/>
 			)}
 		</>
 	)

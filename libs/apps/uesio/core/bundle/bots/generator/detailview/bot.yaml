@@ -14,8 +14,4 @@ params:
     type: METADATAMULTI
     metadataType: FIELD
     grouping: ${collection}
-  wirename:
-    prompt: Wire Name
-    type: TEXT
-    default: ${name}Wire
 public: true

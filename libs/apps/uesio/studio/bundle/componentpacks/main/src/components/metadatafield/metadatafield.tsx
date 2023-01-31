@@ -21,16 +21,13 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	} = props
 
 	const record = context.getRecord()
-	const wire = context.getWire()
 
 	const grouping = context.mergeString(props.definition.grouping)
 	const namespace = context.mergeString(props.definition.namespace)
 
-	if (!wire || !record) {
-		return null
-	}
+	if (!record) return null
 
-	const collection = wire.getCollection()
+	const collection = record.getWire().getCollection()
 	const fieldMetadata = collection.getField(fieldId)
 	const value = record.getFieldValue<string>(fieldId)
 
