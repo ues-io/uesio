@@ -329,19 +329,15 @@ class Context {
 		return undefined
 	}
 
-	// Find the first WireFrame or RecordFrame which provides a wire and a view
-	getWireProviderFrame = (wireid?: string) => {
+	getViewAndWireId = (
+		wireid?: string
+	): [string | undefined, string | undefined] => {
 		const frame = this.stack
 			.filter(hasWireContext)
 			.find((frame) => (wireid ? frame.wire === wireid : true))
-		if (frame) return frame
-		if (wireid)
-			return {
-				type: WIRE,
-				view: this.getViewId(),
-				wire: wireid,
-			} as WireContextFrame
-		return undefined
+		if (frame) return [frame.view, frame.wire]
+		if (wireid) return [this.getViewId(), wireid]
+		return [undefined, undefined]
 	}
 
 	getViewId = () => {
@@ -430,9 +426,9 @@ class Context {
 	}
 
 	getPlainWire = (wireid?: string) => {
-		const wireProviderFrame = this.getWireProviderFrame(wireid)
-		if (wireProviderFrame === undefined) return undefined
-		return getWire(wireProviderFrame.view, wireProviderFrame.wire)
+		const [view, wire] = this.getViewAndWireId(wireid)
+		if (!view || !wire) return undefined
+		return getWire(view, wire)
 	}
 
 	getFieldMode = () =>
