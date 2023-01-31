@@ -6,7 +6,11 @@ import { set as setComponent } from "../bands/component"
 import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
-import { Context } from "../context/context"
+import {
+	Context,
+	isRecordContextFrame,
+	isViewContextFrame,
+} from "../context/context"
 import { MetadataKey } from "../bands/builder/types"
 
 const getComponentId = (
@@ -16,15 +20,23 @@ const getComponentId = (
 	context: Context
 ) => makeComponentId(context, componentType, namedId || path || "")
 
-const getComponentIdFromProps = (
-	namedId: string | undefined,
-	props: BaseProps
-) =>
-	makeComponentId(
+const getComponentIdFromProps = (props: BaseProps) => {
+	// "props.definition.id" here is TEMPORARY - for backwards compatibility
+	// on components like Table/List/Deck that initially had "id"
+	// Once morandi / timetracker / etc. are migrated to using "uesio.id"
+	// in their metadata, we can remove this affordance.
+	let userDefinedId = props.definition["uesio.id"] || props.definition.id
+	// Optimization --- IF and only if we KNOW that the id for this component is user-defined (vs the path)
+	// then run mergeString() to resolve any merge variables that may be present in the id
+	if (userDefinedId) {
+		userDefinedId = props.context.mergeString(userDefinedId)
+	}
+	return makeComponentId(
 		props.context,
 		props.componentType as string,
-		namedId || props.path || ""
+		userDefinedId || props.path || ""
 	)
+}
 
 const makeComponentId = (
 	context: Context,
@@ -32,10 +44,25 @@ const makeComponentId = (
 	id: string,
 	noRecordContext?: boolean
 ) => {
-	const viewId = context.getViewId()
-	const recordId = context.getRecordId()
-	const recordSuffix = !noRecordContext && recordId ? `:${recordId}` : ""
-	return `${viewId}:${componentType}:${id}${recordSuffix}`
+	// Iterate over context frames to serialize ALL parent View Ids, in order in which they were encountered
+	const viewPrefix = context.stack
+		.filter(isViewContextFrame)
+		.map((frame) => frame.view)
+		.join(":")
+	// Unless explicitly requested NOT to, suffix the component ids with all record ids in context in order in which they were encountered
+	// Generally this will be only one record id but it's possible there will be multiple.
+	// Target selectors (see "selectors.ts") may choose to exclude record context when constructing component ids.
+	let recordSuffix = ""
+	if (noRecordContext) {
+		const recordIds = context.stack
+			.filter(isRecordContextFrame)
+			.filter((frame) => frame.record)
+			.map((frame) => frame.record)
+		if (recordIds.length) {
+			recordSuffix += recordIds.join(":")
+		}
+	}
+	return `${viewPrefix}:${componentType}:${id}${recordSuffix}`
 }
 
 const setState = <T extends PlainComponentState>(

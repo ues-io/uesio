@@ -121,7 +121,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: userDeck
+                    uesio.id: userDeck
                     wire: users
                     mode: READ
                     components:
@@ -259,7 +259,7 @@ definition:
                                             text: Add Method
                                             uesio.variant: uesio/io.secondary
                             - uesio/io.deck:
-                                id: loginmethodlist
+                                uesio.id: loginmethodlist
                                 wire: loginmethods
                                 uesio.variant: uesio/io.section
                                 components:
@@ -327,7 +327,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newloginmethodlist
+            uesio.id: newloginmethodlist
             wire: newloginmethod
             mode: EDIT
             components:

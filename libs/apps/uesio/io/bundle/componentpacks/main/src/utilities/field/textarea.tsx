@@ -11,7 +11,7 @@ interface TextAreaFieldProps extends definition.UtilityProps {
 }
 
 const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
-	const { setValue, mode, placeholder, options } = props
+	const { id, mode, placeholder, options, setValue } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
@@ -26,6 +26,7 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 	)
 
 	const commonProps = {
+		id,
 		value: value || "",
 		placeholder,
 		className: styles.cx(classes.input, readonly && classes.readonly),

@@ -81,7 +81,7 @@ definition:
                     uesio.variant: uesio/io.nav
                     title: Workspaces
                 - uesio/io.list:
-                    id: workspaceslist
+                    uesio.id: workspaceslist
                     wire: workspaces
                     components:
                       - uesio/io.tile:
@@ -104,7 +104,7 @@ definition:
                     uesio.variant: uesio/io.nav
                     title: Sites
                 - uesio/io.list:
-                    id: siteslist
+                    uesio.id: siteslist
                     wire: sites
                     components:
                       - uesio/io.tile:
@@ -127,7 +127,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: bundleDeck
+                    uesio.id: bundleDeck
                     wire: bundles
                     mode: READ
                     components:

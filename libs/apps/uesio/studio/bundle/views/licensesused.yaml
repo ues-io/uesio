@@ -65,7 +65,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -86,7 +86,7 @@ definition:
                           title: Invoices
                           subtitle: a list of goods sent or services provided, with a statement of the sum due for these.
                       - uesio/io.table:
-                          id: invoiceTable
+                          uesio.id: invoiceTable
                           wire: invoices
                           pagesize: 10
                           uesio.styles:
@@ -109,7 +109,7 @@ definition:
                           title: Licenses
                           subtitle: List of applications licensed for use by $Param{app}
                       - uesio/io.table:
-                          id: licensesTable
+                          uesio.id: licensesTable
                           wire: licenses
                           pagesize: 10
                           uesio.styles:

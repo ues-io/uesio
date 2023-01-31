@@ -35,6 +35,7 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 			onClick={api.signal.getHandler(definition.signals, context)}
 		>
 			<img
+				id={api.component.getComponentIdFromProps(props)}
 				className={classes.inner}
 				src={
 					definition.file

@@ -8,6 +8,8 @@ type TileDefinition = {
 }
 
 const Tile: definition.UC<TileDefinition> = (props) => {
+	const { definition, context, path } = props
+
 	const classes = styles.useStyles(
 		{
 			root: {},
@@ -17,7 +19,6 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		},
 		props
 	)
-	const { definition, context, path } = props
 	const isSelected = component.shouldHaveClass(
 		context,
 		"selected",
@@ -26,6 +27,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 
 	return (
 		<IOTile
+			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}

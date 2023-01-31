@@ -114,7 +114,7 @@ definition:
                     uesio.variant: uesio/io.section
                     components:
                       - uesio/io.deck:
-                          id: bulkjobsDeck
+                          uesio.id: bulkjobsDeck
                           wire: bulkjobs
                           uesio.variant: uesio/io.section
                           components:

@@ -35,7 +35,7 @@ definition:
                     text: Mode
                     uesio.variant: uesio/io.secondary
     - uesio/io.deck:
-        id: NewId
+        uesio.id: NewId
         mode: READ
         wire: contacts
         uesio.styles:

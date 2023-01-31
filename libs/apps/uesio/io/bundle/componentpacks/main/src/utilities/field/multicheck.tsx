@@ -14,7 +14,7 @@ interface SelectFieldProps {
 const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 	props
 ) => {
-	const { setValue, mode, options, context, fieldMetadata } = props
+	const { id, setValue, mode, options, context, fieldMetadata } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -39,6 +39,7 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 
 	return (
 		<Fieldset
+			id={id}
 			context={context}
 			fieldLabel={fieldLabel}
 			disabled={mode === "READ"}

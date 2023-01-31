@@ -7,7 +7,7 @@ import {
 	ComponentSignalDescriptor,
 	SignalDefinition,
 } from "../definition/signal"
-import { UC } from "../definition/definition"
+import { BaseDefinition, UC } from "../definition/definition"
 
 interface SetParamSignal extends SignalDefinition {
 	param: string
@@ -49,25 +49,21 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 
 type ViewDefinition = {
 	view: string
-	id?: string
 	params?: Record<string, string>
-}
+} & BaseDefinition
 
 const View: UC<ViewDefinition> = (props) => {
-	const {
-		path,
-		context,
-		definition: { params, view: viewDefId, id },
-	} = props
-
-	const viewId = makeViewId(viewDefId, path ? id || path : "$root")
+	const { path, context, definition } = props
+	const { params, view: viewDefId } = definition
+	const uesioId = definition["uesio.id"]
+	const viewId = makeViewId(viewDefId, path ? uesioId || path : "$root")
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
 
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentId(id, "uesio/core.view", path, context),
+		componentApi.getComponentId(uesioId, "uesio/core.view", path, context),
 		context.mergeStringMap(params)
 	)
 

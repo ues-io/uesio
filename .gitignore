@@ -11,6 +11,7 @@
 # IDEs and editors
 apps/.idea
 /.idea
+**/*.idea
 .project
 .classpath
 .c9/
@@ -19,8 +20,8 @@ apps/.idea
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
-!.vscode/settings.json
+**/.vscode/*
+.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -58,3 +59,14 @@ firebase.json
 firebase-debug.log
 .firebaserc
 __debug_bin
+
+
+# Uesio binaries
+**/.clio
+**/.uesio
+uesio
+
+
+# TEMPORARY: CYPRESS
+
+cypress*

@@ -134,7 +134,7 @@ definition:
               uesio.variant: uesio/studio.leftbar
               components:
                 - uesio/core.view:
-                    id: appnavview
+                    uesio.id: appnavview
                     view: uesio/studio.appnav
                     uesio.context:
                       wire: apps
@@ -178,7 +178,7 @@ definition:
                                         - signal: wire/SAVE
                                           wire: licensetemplate
                       - uesio/io.list:
-                          id: licensetemplateList
+                          uesio.id: licensetemplateList
                           wire: licensetemplate
                           mode: EDIT
                           components:
@@ -219,7 +219,7 @@ definition:
                                   - type: wireHasRecords
                                     wire: licensetemplate
                       - uesio/io.table:
-                          id: licensepricingtemplateTable
+                          uesio.id: licensepricingtemplateTable
                           wire: licensepricingtemplate
                           uesio.styles:
                             root:
@@ -238,7 +238,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlicenseTemplatelist
+            uesio.id: newlicenseTemplatelist
             wire: newlicensetemplate
             mode: EDIT
             components:
@@ -272,7 +272,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            id: newlicensePricingTemplatelist
+            uesio.id: newlicensePricingTemplatelist
             wire: newlicensepricingtemplate
             mode: EDIT
             components:

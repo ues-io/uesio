@@ -16,6 +16,7 @@ definition:
           - uesio/io.griditem:
               components:
                 - uesio/io.image:
+                    uesio.id: img-uesio-logo
                     uesio.styles:
                       root:
                         margin: 0 16px
@@ -34,7 +35,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.app
-                    id: appslist
+                    uesio.id: appslist
                     components:
                       - uesio/io.tile:
                           uesio.variant: uesio/io.tag
@@ -52,7 +53,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.site
-                    id: sitestag
+                    uesio.id: sitestag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -88,7 +89,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.bundle
-                    id: sitestag
+                    uesio.id: sitestag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -124,7 +125,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.team
-                    id: teamstag
+                    uesio.id: teamstag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -160,7 +161,7 @@ definition:
                     uesio.display:
                       - type: collectionContext
                         collection: uesio/studio.workspace
-                    id: workspaceapptag
+                    uesio.id: workspaceapptag
                     components:
                       - uesio/io.tile:
                           signals:
@@ -248,11 +249,13 @@ definition:
               components:
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
+                    uesio.id: logout
                     text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
                 - uesio/io.button:
                     uesio.variant: uesio/io.nav
+                    uesio.id: user-profile
                     text: Profile
                     signals:
                       - signal: "route/NAVIGATE"

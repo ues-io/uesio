@@ -14,7 +14,7 @@ const getIcon = (value: boolean | undefined) => {
 }
 
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const { setValue, value, mode, context } = props
+	const { id, setValue, value, mode, context } = props
 	const readonly = mode === "READ"
 
 	const checked = value === true
@@ -39,6 +39,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	return (
 		<div className={classes.input}>
 			<input
+				id={id}
 				className={classes.native}
 				checked={checked}
 				type="checkbox"

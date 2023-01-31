@@ -25,6 +25,7 @@ components:
                             wires:
                               - ${wirename}
                         text: Save
+                        hotkey: "meta+s"
                         uesio.variant: uesio/io.secondary
                     - uesio/io.button:
                         signals:
@@ -35,11 +36,12 @@ components:
                     - uesio/io.button:
                         signals:
                           - signal: component/uesio/io.table/TOGGLE_MODE
-                            target: table1
+                            target: ${wirename}-list
                         text: Mode
                         uesio.variant: uesio/io.secondary
         - uesio/io.list:
             wire: ${wirename}
+            uesio.id: ${wirename}-list
             components:
               - uesio/io.box:
                   uesio.variant: uesio/io.section

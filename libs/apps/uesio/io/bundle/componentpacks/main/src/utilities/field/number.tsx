@@ -12,7 +12,7 @@ interface NumberFieldProps extends definition.UtilityProps {
 }
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
-	const { setValue, mode, placeholder, fieldMetadata, options } = props
+	const { mode, placeholder, fieldMetadata, id, options, setValue } = props
 	const readonly = mode === "READ"
 	const value = props.value as number
 
@@ -32,6 +32,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 
 	return (
 		<input
+			id={id}
 			value={lvalue || ""}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="number"

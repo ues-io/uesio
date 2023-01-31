@@ -10,7 +10,7 @@ definition:
               uesio.variant: uesio/io.section
               title: Recent Leads
           - uesio/io.deck:
-              id: homeLeads
+              uesio.id: homeLeads
               wire: leads
               uesio.variant: uesio/io.section
               components:
@@ -34,7 +34,7 @@ definition:
               uesio.variant: uesio/io.section
               title: Recent Accounts
           - uesio/io.deck:
-              id: homeAccounts
+              uesio.id: homeAccounts
               wire: accounts
               uesio.variant: uesio/io.section
               components:
@@ -58,7 +58,7 @@ definition:
               uesio.variant: uesio/io.section
               title: Recent Contacts
           - uesio/io.deck:
-              id: homeContacts
+              uesio.id: homeContacts
               wire: contacts
               uesio.variant: uesio/io.section
               components:

@@ -57,7 +57,7 @@ definition:
               uesio.variant: uesio/studio.content
               components:
                 - uesio/io.list:
-                    id: configvaluesDeck
+                    uesio.id: configvaluesDeck
                     wire: configvalues
                     mode: READ
                     components:
