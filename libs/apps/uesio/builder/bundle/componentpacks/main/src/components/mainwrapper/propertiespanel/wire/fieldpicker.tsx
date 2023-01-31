@@ -57,7 +57,10 @@ const FieldPicker: definition.UtilityComponent<Props> = (props) => {
 
 	const collectionMetadata = api.collection.useCollection(
 		context,
-		collectionKey
+		collectionKey,
+		{
+			needAllFieldMetadata: true,
+		}
 	)
 
 	const fieldsDef = get(context, referencePath) as wire.WireFieldDefinitionMap
