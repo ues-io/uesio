@@ -4,7 +4,12 @@ import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 import { dispatch } from "../../../store/store"
 
-export default async (context: Context, path: string[], value: FieldValue) => {
+export default async (
+	context: Context,
+	path: string[],
+	value: FieldValue,
+	wireId: string
+) => {
 	const record = context.getRecord()
 	if (!record) return context
 	const wire = record.getWire()

@@ -10,12 +10,12 @@ class Field {
 
 	getId = () => this.source.namespace + "." + this.source.name
 	getLabel = () => this.source.label
-	getReferenceMetadata = () => this.source.reference || undefined
+	getReferenceMetadata = () => this.source.reference
 	getType = () => this.source.type
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getSelectMetadata = () => this.source.selectlist || null
+	getSelectMetadata = () => this.source.selectlist
 	getSelectOptions = () => {
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
@@ -38,11 +38,12 @@ class Field {
 				return ""
 		}
 	}
-	getNumberMetadata = () => this.source.number || null
+	getNumberMetadata = () => this.source.number
 	isReference = () =>
 		this.source.type === "REFERENCE" ||
 		this.source.type === "USER" ||
 		this.source.type === "FILE"
+	getSubFields = () => this.source.subfields
 }
 
 export default Field
