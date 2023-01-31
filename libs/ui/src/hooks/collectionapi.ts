@@ -9,11 +9,22 @@ import getMetadata from "../bands/collection/operations/get"
 import { platform } from "../platform/platform"
 import Collection from "../bands/collection/class"
 
-const useCollection = (context: Context, collectionName: string) => {
+type UseCollectionOptions = {
+	needAllFieldMetadata?: boolean
+}
+
+const useCollection = (
+	context: Context,
+	collectionName: string,
+	options?: UseCollectionOptions
+) => {
 	const plainCollection = useColl(collectionName)
 
 	useEffect(() => {
-		if (!plainCollection || !plainCollection.hasAllFields) {
+		if (
+			!plainCollection ||
+			(!plainCollection.hasAllFields && options?.needAllFieldMetadata)
+		) {
 			getMetadata(collectionName, context)
 		}
 	}, [])
@@ -29,4 +40,10 @@ const getCollection = (collectionName: string) => {
 const createJob = platform.createJob
 const importData = platform.importData
 
-export { useCollection, getCollection, createJob, importData }
+export {
+	useCollection,
+	getCollection,
+	createJob,
+	importData,
+	UseCollectionOptions,
+}
