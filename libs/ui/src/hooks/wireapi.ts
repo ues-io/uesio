@@ -60,7 +60,6 @@ const getValueForParam = (def: ParamDefinition, record: WireRecord) => {
 // with convenience methods to make the api easier to consume for end users.
 const useWire = (wireId: string | undefined, context: Context) => {
 	const [view, wire] = context.getViewAndWireId(wireId)
-	if (!view || !wire) return undefined
 	const plainWire = uWire(view, wire)
 	const collectionName = plainWire?.collection
 	const plainCollection = useCollection(collectionName)
