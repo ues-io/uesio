@@ -109,9 +109,29 @@ definition:
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: "domain"
                                 content:
                                   - uesio/io.text:
-                                      text: ${uesio/studio.type} ${uesio/studio.domain}
+                                      text: "${uesio/studio.type}: ${uesio/studio.domain}"
+                                avatar:
+                                  - uesio/io.text:
+                                      uesio.variant: uesio/io.icon
+                                      color: "#ccc"
+                                      text: verified_user
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://${uesio/studio.domain}"
+                                    newtab: true
+                            - uesio/io.tile:
+                                uesio.variant: uesio/io.item
+                                uesio.display:
+                                  - field: uesio/studio.type
+                                    value: "subdomain"
+                                content:
+                                  - uesio/io.text:
+                                      text: "${uesio/studio.type}: ${uesio/studio.domain}"
                                 avatar:
                                   - uesio/io.text:
                                       uesio.variant: uesio/io.icon
@@ -135,6 +155,11 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.domain
+              - uesio/io.field:
+                  fieldId: uesio/studio.type
+                  uesio.display:
+                    - type: featureFlag
+                      name: manage_domains
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
@@ -160,5 +185,5 @@ definition:
             signals:
               - signal: "panel/TOGGLE"
                 panel: "newDomain"
-              - signal: wire/CANCEL
+              - signal: wire/RESET
                 wire: newdomain
