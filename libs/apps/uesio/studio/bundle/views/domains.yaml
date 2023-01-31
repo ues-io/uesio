@@ -157,6 +157,9 @@ definition:
                   fieldId: uesio/studio.domain
               - uesio/io.field:
                   fieldId: uesio/studio.type
+                  uesio.display:
+                    - type: featureFlag
+                      name: manage_domains
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
