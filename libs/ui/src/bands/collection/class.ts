@@ -46,7 +46,8 @@ class Collection {
 		const baseMetadata = this.getBaseField(fieldPath)
 		if (!fieldPath || !baseMetadata) return undefined
 		if (fieldPath.length > 1) {
-			fieldPath.shift()
+			// Non-mutating equivalent of .shift() 
+			[_, ...fieldPath] = fieldPath;
 			if (baseMetadata.isReference()) {
 				const referenceMetadata = baseMetadata.getReferenceMetadata()
 				const collection = new Collection(
