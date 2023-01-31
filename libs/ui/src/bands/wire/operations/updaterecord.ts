@@ -8,12 +8,11 @@ export default async (
 	context: Context,
 	path: string[],
 	value: FieldValue,
-	wireId: string
+	wireId?: string
 ) => {
-	const record = context.getRecord()
+	const record = context.getRecord(wireId)
 	if (!record) return context
 	const wire = record.getWire()
-	if (!wire) return context
 
 	dispatch(
 		updateRecord({

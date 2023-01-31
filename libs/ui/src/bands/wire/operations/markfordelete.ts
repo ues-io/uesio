@@ -3,15 +3,14 @@ import { markForDelete } from ".."
 import { dispatch } from "../../..//store/store"
 
 export default (context: Context) => {
-	const recordId = context.getRecord()?.getId()
-	const wire = context.getWire()
+	const record = context.getRecord()
 
-	if (!recordId || !wire) return context
+	if (!record) return context
 
 	dispatch(
 		markForDelete({
-			entity: wire.getFullId(),
-			recordId,
+			entity: record.getWire().getFullId(),
+			recordId: record.getId(),
 		})
 	)
 	return context

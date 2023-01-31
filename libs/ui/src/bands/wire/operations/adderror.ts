@@ -3,13 +3,12 @@ import { addError } from ".."
 import { dispatch } from "../../../store/store"
 
 export default (context: Context, fieldId: string, message: string) => {
-	const recordId = context.getRecord()?.getId()
-	const wire = context.getWire()
-	if (!recordId || !wire) return context
+	const record = context.getRecord()
+	if (!record) return context
 	dispatch(
 		addError({
-			entity: wire.getFullId(),
-			recordId,
+			entity: record.getWire().getFullId(),
+			recordId: record.getId(),
 			fieldId,
 			message,
 		})

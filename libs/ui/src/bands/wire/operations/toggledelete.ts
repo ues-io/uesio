@@ -4,12 +4,8 @@ import unmarkForDeleteOp from "./unmarkfordelete"
 
 export default (context: Context) => {
 	const record = context.getRecord()
-	const wire = context.getWire()
-
-	if (!record || !wire) return context
-
+	if (!record) return context
 	const recordId = record.getId()
-	const isDeleted = wire.isMarkedForDeletion(recordId)
-
+	const isDeleted = record.getWire().isMarkedForDeletion(recordId)
 	return isDeleted ? unmarkForDeleteOp(context) : markForDeleteOp(context)
 }
