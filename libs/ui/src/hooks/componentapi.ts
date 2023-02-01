@@ -53,7 +53,7 @@ const makeComponentId = (
 	// Generally this will be only one record id but it's possible there will be multiple.
 	// Target selectors (see "selectors.ts") may choose to exclude record context when constructing component ids.
 	let recordSuffix = ""
-	if (noRecordContext) {
+	if (!noRecordContext) {
 		const recordIds = context.stack
 			.filter(isRecordContextFrame)
 			.filter((frame) => frame.record)
