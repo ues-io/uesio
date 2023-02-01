@@ -177,9 +177,6 @@ const isWorkspaceContextFrame = (
 	frame: ContextFrame
 ): frame is WorkspaceContextFrame => frame.type === "WORKSPACE"
 
-const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
-	frame.type === VIEW
-
 const isThemeContextFrame = (
 	frame: ContextFrame
 ): frame is ThemeContextFrame | RouteContextFrame =>
@@ -576,7 +573,7 @@ export {
 	FieldMode,
 	getWire,
 	injectDynamicContext,
-	isViewContextFrame,
+	hasViewContext,
 	isRecordContextFrame,
 	newContext,
 }
