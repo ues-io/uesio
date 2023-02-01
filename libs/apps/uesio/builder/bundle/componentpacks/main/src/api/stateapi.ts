@@ -11,7 +11,12 @@ type ComponentDef = {
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
-	api.component.makeComponentId(context, "uesio/builder.mainwrapper", id)
+	api.component.makeComponentId(
+		context.getRouteContext(),
+		"uesio/builder.mainwrapper",
+		id,
+		true
+	)
 
 const getBuilderState = <T extends definition.Definition>(
 	context: ctx.Context,

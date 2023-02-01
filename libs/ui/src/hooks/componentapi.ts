@@ -8,8 +8,8 @@ import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
 import {
 	Context,
+	hasViewContext,
 	isRecordContextFrame,
-	isViewContextFrame,
 } from "../context/context"
 import { MetadataKey } from "../bands/builder/types"
 
@@ -46,14 +46,14 @@ const makeComponentId = (
 ) => {
 	// Iterate over context frames to serialize ALL parent View Ids, in order in which they were encountered
 	const viewPrefix = context.stack
-		.filter(isViewContextFrame)
+		.filter(hasViewContext)
 		.map((frame) => frame.view)
 		.join(":")
 	// Unless explicitly requested NOT to, suffix the component ids with all record ids in context in order in which they were encountered
 	// Generally this will be only one record id but it's possible there will be multiple.
 	// Target selectors (see "selectors.ts") may choose to exclude record context when constructing component ids.
 	let recordSuffix = ""
-	if (noRecordContext) {
+	if (!noRecordContext) {
 		const recordIds = context.stack
 			.filter(isRecordContextFrame)
 			.filter((frame) => frame.record)
