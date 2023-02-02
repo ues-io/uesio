@@ -81,15 +81,17 @@ type UserFileMetadata = {
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
 	UPLOAD_FILE: {
-		dispatcher: () => {
-			// No Op. Just for listening to
+		dispatcher: (state) => {
+			api.event.publish("upload")
+			return state
 		},
 		label: "Upload File",
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: () => {
-			// No Op. Just for listening to
+		dispatcher: (state) => {
+			api.event.publish("cancel")
+			return state
 		},
 		label: "Cancel File",
 		properties: () => [],
