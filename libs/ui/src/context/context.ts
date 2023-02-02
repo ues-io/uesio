@@ -198,26 +198,10 @@ const providesParams = (
 function injectDynamicContext(context: Context, additional: unknown) {
 	if (!additional) return context
 
-	// if (providesWorkspace(additional)) {
-	// 	const workspace = additional.workspace
-	// 	context = context.addWorkspaceFrame({
-	// 		name: context.mergeString(workspace.name),
-	// 		app: context.mergeString(workspace.app),
-	// 	})
-	// }
-
 	if (providesFieldMode(additional)) {
 		const fieldMode = additional.fieldMode
 		context = context.addFieldModeFrame(fieldMode)
 	}
-
-	// if (providesSiteAdmin(additional)) {
-	// 	const siteadmin = additional.siteadmin
-	// 	context = context.addSiteAdminFrame({
-	// 		name: context.mergeString(siteadmin.name),
-	// 		app: context.mergeString(siteadmin.app),
-	// 	})
-	// }
 
 	if (providesWire(additional) && additional.wire) {
 		const wire = additional.wire
