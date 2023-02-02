@@ -31,8 +31,6 @@ const PARAMS = "PARAMS",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
-	WORKSPACE = "WORKSPACE",
-	SITE_ADMIN = "SITE_ADMIN",
 	RECORD_DATA = "RECORD_DATA"
 
 type FieldMode = "READ" | "EDIT"
@@ -79,28 +77,12 @@ interface ThemeContext {
 	theme: string
 }
 
-interface WorkspaceContext {
-	workspace: WorkspaceState
-}
-
-interface SiteAdminContext {
-	siteadmin: SiteAdminState
-}
-
 interface ParamsContext {
 	params?: Record<string, string>
 }
 
 interface ThemeContextFrame extends ThemeContext {
 	type: typeof THEME
-}
-
-interface SiteAdminContextFrame extends SiteAdminContext {
-	type: typeof SITE_ADMIN
-}
-
-interface WorkspaceContextFrame extends WorkspaceContext {
-	type: typeof WORKSPACE
 }
 
 interface RouteContextFrame extends RouteContext {
@@ -141,8 +123,6 @@ interface FieldModeContextFrame extends FieldModeContext {
 
 type ContextOptions =
 	| RouteContext
-	| SiteAdminContext
-	| WorkspaceContext
 	| ThemeContext
 	| ViewContext
 	| RecordContext
@@ -154,8 +134,6 @@ type ContextOptions =
 
 type ContextFrame =
 	| RouteContextFrame
-	| SiteAdminContextFrame
-	| WorkspaceContextFrame
 	| ThemeContextFrame
 	| ViewContextFrame
 	| RecordContextFrame
@@ -168,14 +146,6 @@ type ContextFrame =
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
 	frame.type === "ERROR"
-
-const isSiteAdminContextFrame = (
-	frame: ContextFrame
-): frame is SiteAdminContextFrame => frame.type === "SITE_ADMIN"
-
-const isWorkspaceContextFrame = (
-	frame: ContextFrame
-): frame is WorkspaceContextFrame => frame.type === "WORKSPACE"
 
 const isThemeContextFrame = (
 	frame: ContextFrame
@@ -210,14 +180,9 @@ const hasViewContext = (
 	[VIEW, ROUTE].includes(frame.type)
 
 // Type Guards for pre-resolved Context objects (no type property yet)
-const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
-	Object.prototype.hasOwnProperty.call(o, "workspace")
 
 const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
 	Object.prototype.hasOwnProperty.call(o, "view")
-
-const providesSiteAdmin = (o: ContextOptions): o is SiteAdminContext =>
-	Object.prototype.hasOwnProperty.call(o, "siteadmin")
 
 const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
@@ -233,26 +198,26 @@ const providesParams = (
 function injectDynamicContext(context: Context, additional: unknown) {
 	if (!additional) return context
 
-	if (providesWorkspace(additional)) {
-		const workspace = additional.workspace
-		context = context.addWorkspaceFrame({
-			name: context.mergeString(workspace.name),
-			app: context.mergeString(workspace.app),
-		})
-	}
+	// if (providesWorkspace(additional)) {
+	// 	const workspace = additional.workspace
+	// 	context = context.addWorkspaceFrame({
+	// 		name: context.mergeString(workspace.name),
+	// 		app: context.mergeString(workspace.app),
+	// 	})
+	// }
 
 	if (providesFieldMode(additional)) {
 		const fieldMode = additional.fieldMode
 		context = context.addFieldModeFrame(fieldMode)
 	}
 
-	if (providesSiteAdmin(additional)) {
-		const siteadmin = additional.siteadmin
-		context = context.addSiteAdminFrame({
-			name: context.mergeString(siteadmin.name),
-			app: context.mergeString(siteadmin.app),
-		})
-	}
+	// if (providesSiteAdmin(additional)) {
+	// 	const siteadmin = additional.siteadmin
+	// 	context = context.addSiteAdminFrame({
+	// 		name: context.mergeString(siteadmin.name),
+	// 		app: context.mergeString(siteadmin.app),
+	// 	})
+	// }
 
 	if (providesWire(additional) && additional.wire) {
 		const wire = additional.wire
@@ -281,6 +246,8 @@ class Context {
 	}
 
 	stack: ContextFrame[]
+	workspace?: WorkspaceState
+	siteadmin?: SiteAdminState
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -389,9 +356,13 @@ class Context {
 		return routeFrame ? new Context([routeFrame]) : newContext()
 	}
 
-	getWorkspace = () => this.stack.find(isWorkspaceContextFrame)?.workspace
+	getWorkspace = () => this.workspace
 
-	getSiteAdmin = () => this.stack.find(isSiteAdminContextFrame)?.siteadmin
+	deleteWorkspace = () => delete this.workspace
+
+	getSiteAdmin = () => this.siteadmin
+
+	deleteSiteAdmin = () => delete this.siteadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -461,23 +432,21 @@ class Context {
 			...routeContext,
 		})
 
-	addSiteAdminFrame = (siteadmin: SiteAdminState) =>
-		this.#addFrame({
-			type: SITE_ADMIN,
-			siteadmin,
-		})
-
-	addWorkspaceFrame = (workspace: WorkspaceState) =>
-		this.#addFrame({
-			type: WORKSPACE,
-			workspace,
-		})
-
 	addThemeFrame = (theme: string) =>
 		this.#addFrame({
 			type: THEME,
 			theme,
 		})
+
+	addSiteAdmin = (siteadmin: SiteAdminState) => {
+		this.siteadmin = siteadmin
+		return this
+	}
+
+	addWorkspace = (workspace: WorkspaceState) => {
+		this.workspace = workspace
+		return this
+	}
 
 	addViewFrame = (viewContext: ViewContext) =>
 		this.#addFrame({
