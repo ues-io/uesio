@@ -79,38 +79,17 @@ type UserFileMetadata = {
 	["uesio/core.updatedat"]: string
 }
 
-type FieldState = {
-	value: string
-	originalValue: string
-	fileInfo?: UserFileMetadata
-}
-
-const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
-	SAVE_FILE: {
-		dispatcher: (state, signal, context, platform) => {
-			if (!state.fileInfo) return
-			const mimeType = state.fileInfo["uesio/core.mimetype"]
-			const blob = new Blob([state.value], {
-				type: mimeType,
-			})
-			const fileName = state.fileInfo["uesio/core.path"]
-			const file = new File([blob], fileName, {
-				type: mimeType,
-			})
-			platform.uploadFile(
-				context,
-				file,
-				state.fileInfo["uesio/core.collectionid"],
-				state.fileInfo["uesio/core.recordid"],
-				state.fileInfo["uesio/core.fieldid"]
-			)
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	UPLOAD_FILE: {
+		dispatcher: () => {
+			// No Op. Just for listening to
 		},
-		label: "Save File",
+		label: "Upload File",
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (state) => {
-			state.value = state.originalValue
+		dispatcher: () => {
+			// No Op. Just for listening to
 		},
 		label: "Cancel File",
 		properties: () => [],
@@ -351,7 +330,6 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 Field.signals = signals
 
 export {
-	FieldState,
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,

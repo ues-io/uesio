@@ -3,7 +3,6 @@ import FileText from "../filetext/filetext"
 import FileImage from "../fileimage/fileimage"
 import FileVideo from "../filevideo/filevideo"
 import FilePreview from "../filepreview/filepreview"
-import FileMarkDown from "../filemarkdown/filemarkdown"
 import File from "../file/file"
 import { UserFileMetadata } from "../../components/field/field"
 
@@ -34,24 +33,28 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 	const userFile = value as UserFileMetadata | undefined
 	const userFileId = userFile?.[collection.ID_FIELD]
 
-	const onUpload = async (files: FileList | null) => {
-		if (files && files.length > 0) {
-			const collectionFullName = record
-				.getWire()
-				.getCollection()
-				.getFullName()
-			const recordId = record.getIdFieldValue() || ""
-			const file = files[0]
-			const fileResponse = await api.file.uploadFile(
-				context,
-				file,
-				collectionFullName,
-				recordId,
-				fieldId
-			)
-
-			record.set(fieldId, fileResponse)
+	const onUpload = async (file: FileList | File | null) => {
+		if (!file) return
+		if (file instanceof FileList) {
+			if (file.length === 0) return
+			file = file[0]
 		}
+
+		const collectionFullName = record
+			.getWire()
+			.getCollection()
+			.getFullName()
+		const recordId = record.getIdFieldValue() || ""
+
+		const fileResponse = await api.file.uploadFile(
+			context,
+			file,
+			collectionFullName,
+			recordId,
+			fieldId
+		)
+
+		record.set(fieldId, fileResponse)
 	}
 
 	const onDelete = async () => {
@@ -69,10 +72,12 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 		variant,
 		onUpload,
 		onDelete,
+		displayAs,
 	}
 
 	switch (displayAs) {
 		case "TEXT":
+		case "MARKDOWN":
 			return <FileText {...common} />
 		case "IMAGE":
 			return <FileImage {...common} />
@@ -80,8 +85,6 @@ const FileField: definition.UtilityComponent<FileUtilityProps> = (props) => {
 			return <FileVideo {...common} />
 		case "PREVIEW":
 			return <FilePreview {...common} />
-		case "MARKDOWN":
-			return <FileMarkDown {...common} />
 		default:
 			return <File {...common} />
 	}

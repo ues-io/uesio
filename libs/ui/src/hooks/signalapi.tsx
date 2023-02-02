@@ -2,6 +2,7 @@ import { SignalDefinition } from "../definition/signal"
 import { Context } from "../context/context"
 import { run, runMany } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
+import { DependencyList, useEffect } from "react"
 
 // Returns a handler function for running a list of signals
 const getHandler = (
@@ -22,4 +23,17 @@ const useRegisterHotKey = (
 		getHandler(signals, context)?.()
 	})
 
-export { getHandler, useRegisterHotKey, runMany, run }
+const useSubscribe = (
+	signal: string,
+	callback: () => void,
+	deps: DependencyList
+) => {
+	useEffect(() => {
+		document.addEventListener(signal, callback)
+		return () => {
+			document.removeEventListener(signal, callback)
+		}
+	}, deps)
+}
+
+export { getHandler, useRegisterHotKey, runMany, run, useSubscribe }
