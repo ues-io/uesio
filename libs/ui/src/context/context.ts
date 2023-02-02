@@ -77,6 +77,10 @@ interface ThemeContext {
 	theme: string
 }
 
+interface WorkspaceContext {
+	workspace: WorkspaceState
+}
+
 interface ParamsContext {
 	params?: Record<string, string>
 }
@@ -123,6 +127,7 @@ interface FieldModeContextFrame extends FieldModeContext {
 
 type ContextOptions =
 	| RouteContext
+	| WorkspaceContext
 	| ThemeContext
 	| ViewContext
 	| RecordContext
@@ -181,6 +186,9 @@ const hasViewContext = (
 
 // Type Guards for pre-resolved Context objects (no type property yet)
 
+const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
+	Object.prototype.hasOwnProperty.call(o, "workspace")
+
 const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
 	Object.prototype.hasOwnProperty.call(o, "view")
 
@@ -197,6 +205,14 @@ const providesParams = (
 
 function injectDynamicContext(context: Context, additional: unknown) {
 	if (!additional) return context
+
+	if (providesWorkspace(additional)) {
+		const workspace = additional.workspace
+		context = context.addWorkspace({
+			name: context.mergeString(workspace.name),
+			app: context.mergeString(workspace.app),
+		})
+	}
 
 	if (providesFieldMode(additional)) {
 		const fieldMode = additional.fieldMode
