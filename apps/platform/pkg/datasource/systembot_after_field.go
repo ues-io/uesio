@@ -135,6 +135,18 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 				return errors.New("Field: invalid expression:" + err.Error())
 			}
 
+			for key := range testEval.fieldKeys {
+				field, err := collectionMetadata.GetField(key)
+				if err != nil {
+					return err
+				}
+
+				if field.IsFormula {
+					return errors.New("Field: invalid expression: Formula field cannot reference another")
+				}
+
+			}
+
 			//make sure that the field in the expression are valid
 			err = depMap.AddMap(testEval.fieldKeys, "field")
 			if err != nil {

@@ -224,9 +224,10 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 			return err
 		}
 
-		formulaPopulations(item)
-		//Ignore errors. if a formula cannot be evaluated, we should display the following records and not kill the execution
-		//TO-DO find a way to display the errors in each record
+		err = formulaPopulations(item)
+		if err != nil {
+			return err
+		}
 
 		index++
 
