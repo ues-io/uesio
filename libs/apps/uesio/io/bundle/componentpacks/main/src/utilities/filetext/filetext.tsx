@@ -31,7 +31,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		userFile
 	)
 
-	const onUploadSignal = () => {
+	const onUploadEvent = () => {
 		if (!userFile) return
 		const fileName = userFile["uesio/core.path"]
 		const mimeType = userFile["uesio/core.mimetype"]
@@ -39,7 +39,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		onUpload(stringToFile(content, fileName, mimeType))
 	}
 
-	const onCancelSignal = () => {
+	const onCancelEvent = () => {
 		cancel()
 	}
 
@@ -47,11 +47,8 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		setContent(value)
 	}
 
-	const uploadSignal = "upload"
-	const cancelSignal = "cancel"
-
-	api.event.useEvent(uploadSignal, onUploadSignal, [content])
-	api.event.useEvent(cancelSignal, onCancelSignal, [original])
+	api.event.useEvent("upload", onUploadEvent, [content])
+	api.event.useEvent("cancel", onCancelEvent, [original])
 
 	if (displayAs === "MARKDOWN") {
 		return (
