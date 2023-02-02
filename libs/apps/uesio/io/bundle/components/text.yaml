@@ -1,3 +1,7 @@
 name: text
+title: Text
+description: Display text content
+category: CONTENT
 pack: main
 entrypoint: components/text/text
+discoverable: true

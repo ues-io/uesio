@@ -80,7 +80,7 @@ export default async (
 	batch(() => {
 		dispatch(load([allResults, response.collections]))
 		allResults.forEach((wire) => {
-			if (wire?.create) {
+			if (wire.create && !Object.keys(wire.data).length) {
 				createrecord(context, wire.name)
 			}
 		})

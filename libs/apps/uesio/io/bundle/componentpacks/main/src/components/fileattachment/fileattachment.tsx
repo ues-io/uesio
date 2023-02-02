@@ -1,11 +1,10 @@
 import { definition, context, api, collection } from "@uesio/ui"
 import File from "../../utilities/file/file"
 import FileImage from "../../utilities/fileimage/fileimage"
-import FileMarkDown from "../../utilities/filemarkdown/filemarkdown"
 import FilePreview from "../../utilities/filepreview/filepreview"
 import FileText from "../../utilities/filetext/filetext"
 import FileVideo from "../../utilities/filevideo/filevideo"
-import { UserFileMetadata } from "../field/field"
+import { fileTextSignals, UserFileMetadata } from "../field/field"
 
 type FileDefinition = {
 	id?: string
@@ -15,7 +14,8 @@ type FileDefinition = {
 
 const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { id, displayAs, mode } = definition
+	const { displayAs, mode } = definition
+	const id = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
 
@@ -34,14 +34,16 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const userFile = record.source as UserFileMetadata
 	const userFileId = userFile?.[collection.ID_FIELD]
 
-	const onUpload = async (files: FileList | null) => {
+	const onUpload = async (file: FileList | File | null) => {
+		if (!file) return
+		if (file instanceof FileList) {
+			if (file.length === 0) return
+			file = file[0]
+		}
 		const recordId = userFile?.["uesio/core.recordid"]
 		const collectionId = userFile?.["uesio/core.collectionid"]
 		if (!recordId || !collectionId) return
-		if (files && files.length > 0) {
-			const file = files[0]
-			await api.file.uploadFile(context, file, collectionId, recordId)
-		}
+		await api.file.uploadFile(context, file, collectionId, recordId)
 	}
 
 	const onDelete = async () => {
@@ -62,6 +64,7 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 
 	switch (displayAs) {
 		case "TEXT":
+		case "MARKDOWN":
 			return <FileText {...common} />
 		case "IMAGE":
 			return <FileImage {...common} />
@@ -69,11 +72,11 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 			return <FileVideo {...common} />
 		case "PREVIEW":
 			return <FilePreview {...common} />
-		case "MARKDOWN":
-			return <FileMarkDown {...common} />
 		default:
 			return <File {...common} />
 	}
 }
+
+FileAttachment.signals = fileTextSignals
 
 export default FileAttachment

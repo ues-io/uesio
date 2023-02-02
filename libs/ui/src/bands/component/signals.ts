@@ -42,6 +42,11 @@ export default {
 			componentStates = selectTarget(state, targetSearch)
 		}
 
+		// If we still can't find a target, we'll need to create entirely new state
+		if (!componentStates.length) {
+			componentStates = [{ id: targetSearch, state: {} }]
+		}
+
 		// Loop over all ids that match the target and dispatch
 		// to them all
 		batch(() => {
@@ -50,7 +55,13 @@ export default {
 					setComponent({
 						id: componentState.id,
 						state: produce(componentState.state, (draft) =>
-							handler.dispatcher(draft, signal, context, platform)
+							handler.dispatcher(
+								draft,
+								signal,
+								context,
+								platform,
+								componentState.id
+							)
 						),
 					})
 				)

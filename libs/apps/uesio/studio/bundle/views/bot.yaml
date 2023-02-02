@@ -34,6 +34,31 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: botname
+    attachments:
+      collection: uesio/core.userfile
+      fields:
+        uesio/core.id:
+        uesio/core.path:
+        uesio/core.recordid:
+        uesio/core.collectionid:
+        uesio/core.mimetype:
+        uesio/core.updatedat:
+      conditions:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: bots
+          lookupField: uesio/core.id
+      init:
+        create: true
+        query: true
+      defaults:
+        - field: uesio/core.recordid
+          valueSource: LOOKUP
+          lookupWire: bots
+          lookupField: uesio/core.id
+        - field: uesio/core.collectionid
+          valueSource: VALUE
+          value: uesio/studio.bot
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -77,17 +102,13 @@ definition:
                                       uesio.variant: uesio/io.secondary
                                       text: "Save"
                                       signals:
-                                        - signal: component/uesio/io.field/SAVE_FILE
+                                        - signal: component/uesio/io.fileattachment/UPLOAD_FILE
                                           target: botcontent
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - workspaces
-                                            - bots
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Cancel"
                                       signals:
-                                        - signal: component/uesio/io.field/CANCEL_FILE
+                                        - signal: component/uesio/io.fileattachment/CANCEL_FILE
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
@@ -136,6 +157,14 @@ definition:
                                       fieldId: uesio/core.updatedby
                                   - uesio/io.field:
                                       fieldId: uesio/core.updatedat
+                            - uesio/io.list:
+                                id: Attachments
+                                wire: attachments
+                                components:
+                                  - uesio/io.fileattachment:
+                                      uesio.id: botcontent
+                                      displayAs: TEXT
+                                      mode: EDIT
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog

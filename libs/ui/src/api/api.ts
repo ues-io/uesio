@@ -11,6 +11,7 @@ import * as secret from "../hooks/secretapi"
 import * as notification from "../hooks/notificationapi"
 import * as featureflag from "../hooks/featureflagapi"
 import * as bot from "../hooks/botapi"
+import * as event from "../hooks/eventapi"
 
 export {
 	signal,
@@ -26,4 +27,5 @@ export {
 	featureflag,
 	notification,
 	bot,
+	event,
 }
