@@ -47,16 +47,11 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 		setContent(value)
 	}
 
-	const isFieldFile = !!userFile?.["uesio/core.fieldid"]
-	const parentComponent = isFieldFile
-		? "uesio/io.field"
-		: "uesio/io.fileattachment"
+	const uploadSignal = "upload"
+	const cancelSignal = "cancel"
 
-	const uploadSignal = `component/${parentComponent}/UPLOAD_FILE`
-	const cancelSignal = `component/${parentComponent}/CANCEL_FILE`
-
-	api.signal.useSubscribe(uploadSignal, onUploadSignal, [content])
-	api.signal.useSubscribe(cancelSignal, onCancelSignal, [original])
+	api.event.useEvent(uploadSignal, onUploadSignal, [content])
+	api.event.useEvent(cancelSignal, onCancelSignal, [original])
 
 	if (displayAs === "MARKDOWN") {
 		return (

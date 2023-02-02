@@ -59,12 +59,6 @@ const runMany = async (signals: SignalDefinition[], context: Context) => {
 		}
 	}
 
-	// Now that these signals have run, publish events for anyone subscribed to these signals
-	for (const signal of signals) {
-		const event = new CustomEvent(signal.signal, { detail: signal })
-		document.dispatchEvent(event)
-	}
-
 	return context
 }
 
