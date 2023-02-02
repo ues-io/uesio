@@ -117,30 +117,35 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      uesio.id: "export-collection-data"
                                       text: "Export Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/export/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      uesio.id: "import-collection-data"
                                       text: "Import Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/import/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      uesio.id: "manage-collection-data"
                                       text: "Manage Data"
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{app}/workspace/$Param{workspacename}/data/$Param{namespace}/$Param{collectionname}"
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      uesio.id: "edit-collection"
                                       text: "Edit"
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: editCollection
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      uesio.id: "delete-collection"
                                       text: "Delete"
                                       signals:
                                         - signal: panel/TOGGLE
@@ -198,6 +203,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: "uesio/io.primary"
+                                      uesio.id: "new-field"
                                       text: "New Field"
                                       hotkey: "meta+n"
                                       signals:
@@ -240,6 +246,7 @@ definition:
       actions:
         - uesio/io.button:
             text: Delete
+            uesio.id: "confirm-delete-collection"
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE
@@ -320,12 +327,16 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: "new-field-name"
               - uesio/io.field:
                   fieldId: uesio/studio.type
+                  uesio.id: "new-field-type"
               - uesio/io.field:
                   fieldId: uesio/studio.label
+                  uesio.id: "new-field-label"
               - uesio/studio.metadatafield:
                   fieldId: uesio/studio.languagelabel
+                  uesio.id: "new-field-language-label"
                   metadataType: "LABEL"
                   label: "Language Label"
               - uesio/io.box:
@@ -337,6 +348,7 @@ definition:
                         fieldId: uesio/studio.reference->uesio/studio.collection
                         metadataType: "COLLECTION"
                         label: "Ref. Collection"
+                        uesio.id: "new-field-collection"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -344,8 +356,10 @@ definition:
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.formula->uesio/studio.expression
+                        uesio.id: "new-field-formula-expression"
                     - uesio/io.field:
                         fieldId: uesio/studio.formula->uesio/studio.returntype
+                        uesio.id: "new-field-formula-return-type"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -353,6 +367,7 @@ definition:
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.autopopulate
+                        uesio.id: "new-field-timestamp-autopopulate"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -360,6 +375,7 @@ definition:
                   components:
                     - uesio/studio.metadatafield:
                         fieldId: uesio/studio.selectlist
+                        uesio.id: "new-field-selectlist"
                         metadataType: "SELECTLIST"
                         label: "Select List"
               - uesio/io.box:
@@ -369,8 +385,10 @@ definition:
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.autonumber->uesio/studio.prefix
+                        uesio.id: "new-field-autonumber-prefix"
                     - uesio/io.field:
                         fieldId: uesio/studio.autonumber->uesio/studio.leadingzeros
+                        uesio.id: "new-field-autonumber-leading-zeros"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -378,6 +396,7 @@ definition:
                   components:
                     - uesio/io.field:
                         fieldId: uesio/studio.number->uesio/studio.decimals
+                        uesio.id: "new-field-number-decimals"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -387,6 +406,7 @@ definition:
                         fieldId: uesio/studio.selectlist
                         metadataType: "SELECTLIST"
                         label: "Select List"
+                        uesio.id: "new-field-multi-selectlist"
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
@@ -396,11 +416,14 @@ definition:
                         fieldId: uesio/studio.file->uesio/studio.filesource
                         metadataType: "FILESOURCE"
                         label: "File Source"
+                        uesio.id: "new-field-file-source"
                     - uesio/io.field:
                         fieldId: uesio/studio.file->uesio/studio.accept
+                        uesio.id: "new-field-file-accept"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            uesio.id: "save-new-field"
             text: "Save"
             hotkey: "meta+s"
             signals:
@@ -420,6 +443,7 @@ definition:
                 severity: success
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
+            uesio.id: "cancel-new-field"
             text: "Cancel"
             signals:
               - signal: wire/EMPTY

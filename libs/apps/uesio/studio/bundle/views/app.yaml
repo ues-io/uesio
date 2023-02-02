@@ -98,12 +98,14 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       text: Edit
+                                      uesio.id: edit-app
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: editApp
                                   - uesio/io.button:
                                       text: Delete
+                                      uesio.id: delete-app
                                       uesio.variant: uesio/io.secondary
                                       signals:
                                         - signal: panel/TOGGLE
@@ -180,6 +182,7 @@ definition:
       actions:
         - uesio/io.button:
             text: Delete
+            uesio.id: confirm-delete-app
             uesio.variant: uesio/io.primary
             signals:
               - signal: wire/MARK_FOR_DELETE

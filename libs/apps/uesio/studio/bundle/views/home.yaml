@@ -244,6 +244,8 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
+            uesio.id: "save-new-app"
+            hotkey: "meta+s"
             text: "Save"
             signals:
               - signal: wire/SAVE
@@ -275,6 +277,8 @@ definition:
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
+            uesio.id: "save-new-org"
+            hotkey: "meta+s"
             text: "Save"
             signals:
               - signal: wire/SAVE
