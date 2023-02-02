@@ -79,18 +79,21 @@ type UserFileMetadata = {
 	["uesio/core.updatedat"]: string
 }
 
-const signals: Record<string, signal.ComponentSignalDescriptor> = {
+const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
+const CANCEL_FILE_EVENT = "component:uesio/io.field:cancel"
+
+const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 	UPLOAD_FILE: {
-		dispatcher: (state) => {
-			api.event.publish("upload")
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
 			return state
 		},
 		label: "Upload File",
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (state) => {
-			api.event.publish("cancel")
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(CANCEL_FILE_EVENT, { target: id })
 			return state
 		},
 		label: "Cancel File",
@@ -329,9 +332,12 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 }
 */
 
-Field.signals = signals
+Field.signals = fileTextSignals
 
 export {
+	fileTextSignals,
+	UPLOAD_FILE_EVENT,
+	CANCEL_FILE_EVENT,
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,

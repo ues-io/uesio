@@ -2,7 +2,7 @@ import { DependencyList, useEffect } from "react"
 
 const useEvent = (
 	eventName: string,
-	callback: () => void,
+	callback: (event: CustomEvent) => void,
 	deps: DependencyList
 ) => {
 	useEffect(() => {
@@ -13,8 +13,8 @@ const useEvent = (
 	}, deps)
 }
 
-const publish = (eventName: string) => {
-	document.dispatchEvent(new CustomEvent(eventName))
+const publish = (eventName: string, detail?: unknown) => {
+	document.dispatchEvent(new CustomEvent(eventName, { detail }))
 }
 
 export { useEvent, publish }

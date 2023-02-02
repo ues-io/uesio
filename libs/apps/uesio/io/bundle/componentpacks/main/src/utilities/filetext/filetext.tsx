@@ -1,6 +1,10 @@
 import { FunctionComponent } from "react"
 import { definition, context, api } from "@uesio/ui"
-import { UserFileMetadata } from "../../components/field/field"
+import {
+	CANCEL_FILE_EVENT,
+	UPLOAD_FILE_EVENT,
+	UserFileMetadata,
+} from "../../components/field/field"
 import CodeField from "../codefield/codefield"
 import MarkDownField from "../markdownfield/markdownfield"
 import { MDOptions } from "../markdownfield/types"
@@ -24,31 +28,40 @@ const stringToFile = (value: string, fileName: string, mimeType: string) => {
 }
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
-	const { context, userFile, onUpload, mode, options, displayAs } = props
+	const { context, userFile, onUpload, mode, options, displayAs, id } = props
 
 	const [content, original, setContent, reset, cancel] = api.file.useUserFile(
 		context,
 		userFile
 	)
 
-	const onUploadEvent = () => {
-		if (!userFile) return
-		const fileName = userFile["uesio/core.path"]
-		const mimeType = userFile["uesio/core.mimetype"]
-		reset()
-		onUpload(stringToFile(content, fileName, mimeType))
-	}
-
-	const onCancelEvent = () => {
-		cancel()
-	}
-
 	const changeHandler = (value: string) => {
 		setContent(value)
 	}
 
-	api.event.useEvent("upload", onUploadEvent, [content])
-	api.event.useEvent("cancel", onCancelEvent, [original])
+	api.event.useEvent(
+		UPLOAD_FILE_EVENT,
+		(e) => {
+			const isTarget = id && id.startsWith(e.detail.target)
+			if (!isTarget) return
+			if (!userFile) return
+			const fileName = userFile["uesio/core.path"]
+			const mimeType = userFile["uesio/core.mimetype"]
+			onUpload(stringToFile(content, fileName, mimeType))
+			reset()
+		},
+		[content]
+	)
+
+	api.event.useEvent(
+		CANCEL_FILE_EVENT,
+		(e) => {
+			const isTarget = id && id.startsWith(e.detail.target)
+			if (!isTarget) return
+			cancel()
+		},
+		[original]
+	)
 
 	if (displayAs === "MARKDOWN") {
 		return (

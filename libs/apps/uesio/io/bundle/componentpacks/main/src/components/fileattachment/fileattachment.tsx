@@ -1,10 +1,10 @@
-import { definition, context, api, collection, signal } from "@uesio/ui"
+import { definition, context, api, collection } from "@uesio/ui"
 import File from "../../utilities/file/file"
 import FileImage from "../../utilities/fileimage/fileimage"
 import FilePreview from "../../utilities/filepreview/filepreview"
 import FileText from "../../utilities/filetext/filetext"
 import FileVideo from "../../utilities/filevideo/filevideo"
-import { UserFileMetadata } from "../field/field"
+import { fileTextSignals, UserFileMetadata } from "../field/field"
 
 type FileDefinition = {
 	id?: string
@@ -12,28 +12,10 @@ type FileDefinition = {
 	mode?: context.FieldMode
 }
 
-const signals: Record<string, signal.ComponentSignalDescriptor> = {
-	UPLOAD_FILE: {
-		dispatcher: (state) => {
-			api.event.publish("upload")
-			return state
-		},
-		label: "Upload File",
-		properties: () => [],
-	},
-	CANCEL_FILE: {
-		dispatcher: (state) => {
-			api.event.publish("cancel")
-			return state
-		},
-		label: "Cancel File",
-		properties: () => [],
-	},
-}
-
 const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { id, displayAs, mode } = definition
+	const { displayAs, mode } = definition
+	const id = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
 
@@ -95,6 +77,6 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	}
 }
 
-FileAttachment.signals = signals
+FileAttachment.signals = fileTextSignals
 
 export default FileAttachment

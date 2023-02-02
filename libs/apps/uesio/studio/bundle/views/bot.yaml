@@ -162,7 +162,7 @@ definition:
                                 wire: attachments
                                 components:
                                   - uesio/io.fileattachment:
-                                      uesio.id: bottext
+                                      uesio.id: botcontent
                                       displayAs: TEXT
                                       mode: EDIT
   panels:

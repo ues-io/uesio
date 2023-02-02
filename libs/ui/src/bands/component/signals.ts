@@ -55,7 +55,13 @@ export default {
 					setComponent({
 						id: componentState.id,
 						state: produce(componentState.state, (draft) =>
-							handler.dispatcher(draft, signal, context, platform)
+							handler.dispatcher(
+								draft,
+								signal,
+								context,
+								platform,
+								componentState.id
+							)
 						),
 					})
 				)

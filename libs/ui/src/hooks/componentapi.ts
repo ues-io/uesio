@@ -47,6 +47,7 @@ const makeComponentId = (
 	// Iterate over context frames to serialize ALL parent View Ids, in order in which they were encountered
 	const viewPrefix = context.stack
 		.filter(hasViewContext)
+		.reverse()
 		.map((frame) => frame.view)
 		.join(":")
 	// Unless explicitly requested NOT to, suffix the component ids with all record ids in context in order in which they were encountered
@@ -57,9 +58,10 @@ const makeComponentId = (
 		const recordIds = context.stack
 			.filter(isRecordContextFrame)
 			.filter((frame) => frame.record)
+			.reverse()
 			.map((frame) => frame.record)
 		if (recordIds.length) {
-			recordSuffix += recordIds.join(":")
+			recordSuffix = ":" + recordIds.join(":")
 		}
 	}
 	return `${viewPrefix}:${componentType}:${id}${recordSuffix}`
