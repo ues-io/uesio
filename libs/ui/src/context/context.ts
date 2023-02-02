@@ -81,6 +81,10 @@ interface WorkspaceContext {
 	workspace: WorkspaceState
 }
 
+interface SiteAdminContext {
+	siteadmin: SiteAdminState
+}
+
 interface ParamsContext {
 	params?: Record<string, string>
 }
@@ -127,6 +131,7 @@ interface FieldModeContextFrame extends FieldModeContext {
 
 type ContextOptions =
 	| RouteContext
+	| SiteAdminContext
 	| WorkspaceContext
 	| ThemeContext
 	| ViewContext
@@ -192,6 +197,9 @@ const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
 const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
 	Object.prototype.hasOwnProperty.call(o, "view")
 
+const providesSiteAdmin = (o: ContextOptions): o is SiteAdminContext =>
+	Object.prototype.hasOwnProperty.call(o, "siteadmin")
+
 const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 	Object.prototype.hasOwnProperty.call(o, "wire")
 
@@ -217,6 +225,14 @@ function injectDynamicContext(context: Context, additional: unknown) {
 	if (providesFieldMode(additional)) {
 		const fieldMode = additional.fieldMode
 		context = context.addFieldModeFrame(fieldMode)
+	}
+
+	if (providesSiteAdmin(additional)) {
+		const siteadmin = additional.siteadmin
+		context = context.setSiteAdmin({
+			name: context.mergeString(siteadmin.name),
+			app: context.mergeString(siteadmin.app),
+		})
 	}
 
 	if (providesWire(additional) && additional.wire) {
