@@ -142,7 +142,7 @@ func runFieldAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, se
 				}
 
 				if field.IsFormula {
-					return errors.New("Field: invalid expression: Formula field cannot reference another")
+					return errors.New("Field: invalid expression: Formula field cannot reference another formula field")
 				}
 
 			}
