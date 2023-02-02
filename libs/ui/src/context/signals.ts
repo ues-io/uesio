@@ -5,12 +5,14 @@ import { Context } from "./context"
 // The key for the entire band
 const CONTEXT_BAND = "context"
 
-interface ClearSignal extends SignalDefinition {
-	type: "WORKSPACE" | "SITE_ADMIN"
+type Type = "WORKSPACE" | "SITE_ADMIN"
+
+interface ClearContextSignal extends SignalDefinition {
+	type: Type
 }
 
-interface SetSignal extends SignalDefinition {
-	type: "WORKSPACE" | "SITE_ADMIN"
+interface SetContextSignal extends SignalDefinition {
+	type: Type
 	name: string
 	app: string
 }
@@ -18,7 +20,7 @@ interface SetSignal extends SignalDefinition {
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${CONTEXT_BAND}/CLEAR`]: {
-		dispatcher: (signal: ClearSignal, context: Context) => {
+		dispatcher: (signal: ClearContextSignal, context: Context) => {
 			if (signal.type === "SITE_ADMIN") {
 				context.deleteSiteAdmin()
 			} else if (signal.type === "WORKSPACE") {
@@ -37,14 +39,17 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 	},
 	[`${CONTEXT_BAND}/SET`]: {
-		dispatcher: (signal: SetSignal, context: Context) => {
+		dispatcher: (signal: SetContextSignal, context: Context) => {
+			if (signal.type !== "SITE_ADMIN" && signal.type !== "WORKSPACE")
+				throw new Error("Type not supported")
+
 			if (signal.type === "SITE_ADMIN") {
-				context.addSiteAdmin({
+				context.setSiteAdmin({
 					name: context.mergeString(signal.name),
 					app: context.mergeString(signal.app),
 				})
 			} else if (signal.type === "WORKSPACE") {
-				context.addWorkspace({
+				context.setWorkspace({
 					name: context.mergeString(signal.name),
 					app: context.mergeString(signal.app),
 				})

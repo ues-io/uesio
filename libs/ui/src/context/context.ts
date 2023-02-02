@@ -208,7 +208,7 @@ function injectDynamicContext(context: Context, additional: unknown) {
 
 	if (providesWorkspace(additional)) {
 		const workspace = additional.workspace
-		context = context.addWorkspace({
+		context = context.setWorkspace({
 			name: context.mergeString(workspace.name),
 			app: context.mergeString(workspace.app),
 		})
@@ -438,12 +438,12 @@ class Context {
 			theme,
 		})
 
-	addSiteAdmin = (siteadmin: SiteAdminState) => {
+	setSiteAdmin = (siteadmin: SiteAdminState) => {
 		this.siteadmin = siteadmin
 		return this
 	}
 
-	addWorkspace = (workspace: WorkspaceState) => {
+	setWorkspace = (workspace: WorkspaceState) => {
 		this.workspace = workspace
 		return this
 	}
