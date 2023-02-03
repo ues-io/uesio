@@ -143,6 +143,7 @@ const wireSlice = createSlice({
 	reducers: {
 		initAll: initEntity<PlainWire>,
 		upsertMany: wireAdapter.upsertMany,
+		removeOne: wireAdapter.removeOne,
 		addError: createEntityReducer<AddErrorPayload, PlainWire>(
 			(state, { recordId, fieldId, message }) => {
 				const recordFieldKey = `${recordId}:${fieldId}`
@@ -484,6 +485,7 @@ export const {
 	removeCondition,
 	initAll,
 	upsertMany,
+	removeOne,
 	setConditionValue,
 	setIsLoading,
 } = wireSlice.actions

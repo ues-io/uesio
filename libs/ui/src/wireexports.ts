@@ -4,6 +4,7 @@ import {
 	WireFieldDefinitionMap,
 	RegularWireDefinition,
 	WireFieldDefinition,
+	ViewOnlyField,
 } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
@@ -40,4 +41,5 @@ export {
 	LookupConditionState,
 	WireFieldDefinitionMap,
 	WireFieldDefinition,
+	ViewOnlyField,
 }
