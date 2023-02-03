@@ -455,13 +455,15 @@ class Context {
 		})
 
 	setSiteAdmin = (siteadmin: SiteAdminState) => {
-		this.siteadmin = siteadmin
-		return this
+		const newContext = new Context(this.stack)
+		newContext.siteadmin = siteadmin
+		return newContext
 	}
 
 	setWorkspace = (workspace: WorkspaceState) => {
-		this.workspace = workspace
-		return this
+		const newContext = new Context(this.stack)
+		newContext.workspace = workspace
+		return newContext
 	}
 
 	addViewFrame = (viewContext: ViewContext) =>
@@ -493,12 +495,8 @@ class Context {
 
 	#addFrame = (frame: ContextFrame) => {
 		const newContext = new Context([frame].concat(this.stack))
-		if (this.siteadmin) {
-			newContext.siteadmin = this.siteadmin
-		}
-		if (this.workspace) {
-			newContext.workspace = this.workspace
-		}
+		if (this.siteadmin) newContext.siteadmin = this.siteadmin
+		if (this.workspace) newContext.workspace = this.workspace
 		return newContext
 	}
 
