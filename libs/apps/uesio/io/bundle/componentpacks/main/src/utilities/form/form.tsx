@@ -9,13 +9,11 @@ interface FormProps extends definition.UtilityProps {
 	wire?: string
 	submitLabel?: string
 	onSubmit?: (record: wire.WireRecord) => void
-	showSubmitButton?: boolean
 	content: definition.DefinitionList
 }
 
 const Form: FunctionComponent<FormProps> = (props) => {
-	const { context, path, onSubmit, submitLabel, showSubmitButton, content } =
-		props
+	const { context, path, onSubmit, submitLabel, content } = props
 
 	const wireName = props.wire
 	const wire = api.wire.useWire(wireName, context)
@@ -58,7 +56,7 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								/>
 							))
 						)}
-						{showSubmitButton !== false ? (
+						{onSubmit ? (
 							<Group
 								styles={{
 									root: {
