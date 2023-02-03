@@ -491,7 +491,16 @@ class Context {
 			fieldMode,
 		})
 
-	#addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
+	#addFrame = (frame: ContextFrame) => {
+		const newContext = new Context([frame].concat(this.stack))
+		if (this.siteadmin) {
+			newContext.setSiteAdmin(this.siteadmin)
+		}
+		if (this.workspace) {
+			newContext.setWorkspace(this.workspace)
+		}
+		return newContext
+	}
 
 	merge = (template: Mergeable) => {
 		if (typeof template !== "string") {
