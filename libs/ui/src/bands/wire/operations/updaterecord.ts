@@ -3,6 +3,7 @@ import { updateRecord } from ".."
 import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 import { dispatch } from "../../../store/store"
+import { publish } from "../../../hooks/eventapi"
 
 export default async (
 	context: Context,
@@ -22,6 +23,14 @@ export default async (
 			path,
 		})
 	)
+
+	// Publish events
+	publish("wire.record.updated", {
+		wireId: wire.getFullId(),
+		recordId: record.id,
+		field: path[0],
+		value,
+	})
 
 	// Now run change events
 	const changeEvents = wire.getEvents()?.onChange

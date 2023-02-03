@@ -260,6 +260,12 @@ class Context {
 	constructor(stack?: ContextFrame[]) {
 		this.stack = stack || ([] as ContextFrame[])
 	}
+	clone(stack?: ContextFrame[]) {
+		const ctx = new Context(stack ? stack : this.stack)
+		ctx.workspace = this.workspace
+		ctx.siteadmin = this.siteadmin
+		return ctx
+	}
 
 	stack: ContextFrame[]
 	workspace?: WorkspaceState
@@ -275,9 +281,9 @@ class Context {
 			(frame): frame is RecordContextFrame => providesRecordContext(frame)
 		)
 		if (index === -1) {
-			return new Context()
+			return this.clone([])
 		}
-		return new Context(this.stack.slice(index + 1)).removeRecordFrame(
+		return this.clone(this.stack.slice(index + 1)).removeRecordFrame(
 			times - 1
 		)
 	}
@@ -369,16 +375,23 @@ class Context {
 
 	getRouteContext = () => {
 		const routeFrame = this.stack.find(isRouteContextFrame)
-		return routeFrame ? new Context([routeFrame]) : newContext()
+		return routeFrame ? this.clone([routeFrame]) : newContext()
 	}
 
 	getWorkspace = () => this.workspace
 
-	deleteWorkspace = () => delete this.workspace
-
+	deleteWorkspace = () => {
+		const newContext = this.clone()
+		delete newContext.workspace
+		return newContext
+	}
 	getSiteAdmin = () => this.siteadmin
 
-	deleteSiteAdmin = () => delete this.siteadmin
+	deleteSiteAdmin = () => {
+		const newContext = this.clone()
+		delete newContext.siteadmin
+		return newContext
+	}
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -455,13 +468,13 @@ class Context {
 		})
 
 	setSiteAdmin = (siteadmin: SiteAdminState) => {
-		const newContext = new Context(this.stack)
+		const newContext = this.clone()
 		newContext.siteadmin = siteadmin
 		return newContext
 	}
 
 	setWorkspace = (workspace: WorkspaceState) => {
-		const newContext = new Context(this.stack)
+		const newContext = this.clone()
 		newContext.workspace = workspace
 		return newContext
 	}
@@ -493,12 +506,7 @@ class Context {
 			fieldMode,
 		})
 
-	#addFrame = (frame: ContextFrame) => {
-		const newContext = new Context([frame].concat(this.stack))
-		if (this.siteadmin) newContext.siteadmin = this.siteadmin
-		if (this.workspace) newContext.workspace = this.workspace
-		return newContext
-	}
+	#addFrame = (frame: ContextFrame) => this.clone([frame].concat(this.stack))
 
 	merge = (template: Mergeable) => {
 		if (typeof template !== "string") {
