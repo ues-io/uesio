@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from "react"
 import { hooks, api, component, wire, param, definition, util } from "@uesio/ui"
+import { FloatingPortal } from "@floating-ui/react"
 
 const WIRE_NAME = "paramData"
 
@@ -83,7 +84,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 				onClick={togglePreview}
 			/>
 			{open && (
-				<component.Panel key="previewpanel">
+				<FloatingPortal>
 					<Dialog
 						context={context}
 						width="400px"
@@ -98,7 +99,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 							onSubmit={previewHandler}
 						/>
 					</Dialog>
-				</component.Panel>
+				</FloatingPortal>
 			)}
 		</>
 	)

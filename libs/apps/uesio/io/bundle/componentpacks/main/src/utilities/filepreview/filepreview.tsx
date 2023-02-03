@@ -1,6 +1,5 @@
 import { FC } from "react"
 import { definition, context } from "@uesio/ui"
-import FileMarkDown from "../filemarkdown/filemarkdown"
 import File from "../file/file"
 import FileText from "../filetext/filetext"
 import FileImage from "../fileimage/fileimage"
@@ -32,7 +31,7 @@ const FilePreview: FC<FilePreviewProps> = (props) => {
 		case "text":
 			switch (subMime) {
 				case "markdown":
-					return <FileMarkDown {...props} />
+					return <FileText {...props} displayAs="MARKDOWN" />
 			}
 			return <FileText {...props} />
 		case "application":
