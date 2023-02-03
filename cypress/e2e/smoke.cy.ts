@@ -16,7 +16,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 	context("Create Collection and Fields", () => {
 		it("creates collection and fields", () => {
 			cy.visitRoute(workspaceBasePath)
-			cy.get('[id$="uesio/io.tile:collections"]').click()
+			cy.get('[id*=":uesio/io.tile:collections"]').click()
 			cy.url().should("contain", `${workspaceBasePath}/collections`)
 			// Test the hotkey for creating a new collection
 			cy.hotkey("{meta}n")

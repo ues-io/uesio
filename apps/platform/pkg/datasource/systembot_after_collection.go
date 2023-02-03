@@ -40,6 +40,7 @@ func deleteCollectionFields(request *adapt.SaveOp, connection adapt.Connection, 
 				Operator: "IN",
 			},
 		},
+		Connection: connection,
 	}, session)
 	if err != nil {
 		return err

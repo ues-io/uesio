@@ -31,7 +31,7 @@ const useMockLogin = Cypress.env("use_mock_login")
 const automationUsername = Cypress.env("automation_username")
 const automationPassword = Cypress.env("automation_password")
 const idEndsWithSelector = (el: string, idSuffix: string) =>
-	`${el}[id$="${idSuffix}"]`
+	`${el}[id*=":${idSuffix}"]`
 
 // Logs in to the app
 // and creates an App and Workspace to use for subsequent tests
