@@ -68,11 +68,11 @@ definition:
           value: PERSON
   events:
     onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
         wires:
           - users
   components:
@@ -172,22 +172,22 @@ definition:
             uesio.variant: uesio/io.primary
             text: "Save"
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/SAVE
                 wires:
                   - newuser
-                uesio.context:
-                  siteadmin:
-                    name: $Param{sitename}
-                    app: $Param{app}
+              - signal: wire/LOAD
+                wires:
+                  - users
               - signal: "panel/TOGGLE"
                 panel: "newUser"
               - signal: wire/EMPTY
                 wire: newuser
               - signal: wire/CREATE_RECORD
                 wire: newuser
-              - signal: wire/LOAD
-                wires:
-                  - users
         - uesio/io.button:
             uesio.variant: "uesio/io.secondary"
             text: "Cancel"

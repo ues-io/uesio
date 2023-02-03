@@ -135,23 +135,20 @@ definition:
                                                       text: We are creating your new bundle
                                                       details: it may take a while, please wait until this notification disappears.
                                                       severity: info
+                                                    - signal: context/SET
+                                                      type: WORKSPACE
+                                                      name: $Param{workspacename}
+                                                      app: $Param{app}
                                                     - signal: "bot/CALL"
                                                       onerror:
                                                         signals:
                                                           - signal: notification/REMOVE
                                                             uesio.id: newversion
                                                       bot: "uesio/studio.createbundle"
-                                                      uesio.context:
-                                                        workspace:
-                                                          name: $Param{workspacename}
-                                                          app: $Param{app}
+                                                    - signal: context/CLEAR
+                                                      type: WORKSPACE
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{app}"
-                                                      uesio.context:
-                                                        #This removes the workspace
-                                                        workspace:
-                                                          name:
-                                                          app:
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:

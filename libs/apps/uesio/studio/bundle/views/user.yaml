@@ -87,11 +87,11 @@ definition:
           lookupField: uesio/core.id
   events:
     onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
       - signal: wire/LOAD
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
         wires:
           - users
           - loginmethods
@@ -308,10 +308,16 @@ definition:
             text: Delete
             uesio.variant: uesio/io.primary
             signals:
+              - signal: context/SET
+                type: SITE_ADMIN
+                name: $Param{sitename}
+                app: $Param{app}
               - signal: wire/MARK_FOR_DELETE
               - signal: wire/SAVE
                 wires:
                   - "users"
+              - signal: context/CLEAR
+                type: SITE_ADMIN
               - signal: "route/NAVIGATE"
                 path: app/$Param{app}/site/$Param{sitename}/users
         - uesio/io.button:

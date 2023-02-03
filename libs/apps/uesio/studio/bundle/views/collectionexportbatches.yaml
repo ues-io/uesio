@@ -48,11 +48,11 @@ definition:
         query: false
   events:
     onload:
+      - signal: context/SET
+        type: WORKSPACE
+        name: $Param{workspacename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          workspace:
-            name: $Param{workspacename}
-            app: $Param{app}
         wires:
           - bulkbatches
 
@@ -117,10 +117,6 @@ definition:
                                         - uesio/io.field:
                                             fieldId: uesio/core.status
                                         - uesio/io.field:
-                                            uesio.context:
-                                              workspace:
-                                                name: $Param{workspacename}
-                                                app: $Param{app}
                                             uesio.display:
                                               - field: uesio/core.status
                                                 value: "completed"
