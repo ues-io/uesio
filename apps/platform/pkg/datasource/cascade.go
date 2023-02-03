@@ -89,8 +89,7 @@ func getCascadeDeletes(
 				ids := []string{}
 				for _, deletion := range wire.Deletes {
 
-					item := deletion.OldValues
-					refInterface, err := item.GetField(adapt.ID_FIELD)
+					refInterface, err := deletion.GetField(adapt.ID_FIELD)
 					if err != nil {
 						continue
 					}
