@@ -56,28 +56,32 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								/>
 							))
 						)}
-						<Group
-							styles={{
-								root: {
-									justifyContent: "end",
-									marginTop: "10px",
-								},
-							}}
-							context={context}
-						>
-							<Button
+						{onSubmit ? (
+							<Group
+								styles={{
+									root: {
+										justifyContent: "end",
+										marginTop: "10px",
+									},
+								}}
 								context={context}
-								variant="uesio/io.primary"
-								label={submitLabel || "Save"}
-								onClick={
-									onSubmit
-										? () => {
-												onSubmit(record)
-										  }
-										: undefined
-								}
-							/>
-						</Group>
+							>
+								<Button
+									context={context}
+									variant="uesio/io.primary"
+									label={submitLabel || "Save"}
+									onClick={
+										onSubmit
+											? () => {
+													onSubmit(record)
+											  }
+											: undefined
+									}
+								/>
+							</Group>
+						) : (
+							<></>
+						)}
 					</Fragment>
 				)
 			})}
