@@ -11,7 +11,6 @@
     "affected": "nx affected",
     "affected:apps": "nx affected:apps",
     "affected:build": "nx affected:build",
-    "affected:dep-graph": "nx affected:dep-graph",
     "affected:e2e": "nx affected:e2e",
     "affected:libs": "nx affected:libs",
     "affected:lint": "nx affected:lint",
@@ -19,8 +18,7 @@
     "build": "nx build",
     "build-all": "nx run-many --target=build --all",
     "build-all-ignore-cache": "nx run-many --target=build --all --skip-nx-cache",
-    "dep-graph": "nx dep-graph",
-    "e2e": "nx e2e",
+    "e2e": "npx cypress run",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "format:write": "nx format:write",
@@ -36,9 +34,7 @@
     "setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
     "start": "nx serve platform",
     "test": "nx test",
-    "update": "nx migrate latest",
-    "clio": "WD=$PWD && cd $INIT_CWD && $WD/dist/clio/clio",
-    "workspace-generator": "nx workspace-generator"
+    "clio": "WD=$PWD && cd $INIT_CWD && $WD/dist/clio/clio"
   },
   "files": [],
   "devDependencies": {
@@ -65,6 +61,7 @@
     "@typescript-eslint/parser": "5.38.0",
     "chai": "^4.3.6",
     "chart.js": "^3.9.1",
+    "cypress": "^12.3.0",
     "downshift": "^6.1.12",
     "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",

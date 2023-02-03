@@ -31,6 +31,7 @@ definition:
                     text: smart_toy
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: collections
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -51,6 +52,7 @@ definition:
                 - type: featureFlag
                   name: manage_datasources
               uesio.variant: uesio/io.nav
+              uesio.id: datasources
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -68,6 +70,7 @@ definition:
                     text: dynamic_feed
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: selectlists
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -88,6 +91,7 @@ definition:
               title: User Interface
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: views
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -105,6 +109,7 @@ definition:
                     text: view_quilt
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: routes
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -125,6 +130,7 @@ definition:
                 - type: featureFlag
                   name: manage_components
               uesio.variant: uesio/io.nav
+              uesio.id: components
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -142,6 +148,7 @@ definition:
                     text: widgets
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: themes
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -159,6 +166,7 @@ definition:
                     text: palette
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: labels
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -182,6 +190,7 @@ definition:
                 - type: featureFlag
                   name: manage_config_values
               uesio.variant: uesio/io.nav
+              uesio.id: config-values
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -202,6 +211,7 @@ definition:
                 - type: featureFlag
                   name: manage_credentials
               uesio.variant: uesio/io.nav
+              uesio.id: credentials
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -219,6 +229,7 @@ definition:
                     text: vpn_key
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: files
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -236,6 +247,7 @@ definition:
                     text: collections
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: permission-sets
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -253,6 +265,7 @@ definition:
                     text: rule
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: profiles
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -273,6 +286,7 @@ definition:
                 - type: featureFlag
                   name: manage_secrets
               uesio.variant: uesio/io.nav
+              uesio.id: secrets
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -293,6 +307,7 @@ definition:
                 - type: featureFlag
                   name: manage_feature_flags
               uesio.variant: uesio/io.nav
+              uesio.id: feature-flags
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -310,6 +325,7 @@ definition:
                     text: new_releases
           - uesio/io.tile:
               uesio.variant: uesio/io.nav
+              uesio.id: translations
               uesio.classes:
                 selected:
                   - type: paramValue
@@ -329,6 +345,7 @@ definition:
               uesio.display:
                 - type: featureFlag
                   name: manage_auth_methods
+              uesio.id: auth-methods
               uesio.variant: uesio/io.nav
               uesio.classes:
                 selected:

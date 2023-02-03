@@ -10,7 +10,7 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach"]
+const MockUsernames = ["ben", "abel", "wessel", "gregg", "zach", "uesio"]
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const Button = component.getUtility("uesio/io.button")

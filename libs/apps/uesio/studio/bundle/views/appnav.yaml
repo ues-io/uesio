@@ -179,9 +179,11 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: workspace-name
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
+            uesio.id: "save-workspace"
             uesio.context:
               wire: newworkspace
             text: "Save"
@@ -210,8 +212,10 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: "site-name"
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
+                  uesio.id: "site-bundle-version"
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"

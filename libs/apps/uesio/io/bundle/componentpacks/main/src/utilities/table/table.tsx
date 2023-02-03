@@ -23,6 +23,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 	props
 ) => {
 	const {
+		id,
 		columns,
 		rows,
 		rowNumberFunc,
@@ -135,6 +136,7 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 	return (
 		<div className={classes.root}>
 			<table
+				id={id}
 				className={styles.cx(
 					classes.table,
 					defaultActionFunc && "defaultaction"

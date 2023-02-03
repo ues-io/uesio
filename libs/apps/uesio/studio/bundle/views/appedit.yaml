@@ -14,14 +14,17 @@ definition:
               items:
                 - uesio/io.field:
                     fieldId: uesio/studio.user
+                    uesio.id: new-app-user
                     reference:
                       requirewriteaccess: true
                 - uesio/io.field:
                     fieldId: uesio/studio.name
+                    uesio.id: new-app-name
               uesio.display:
                 - type: recordIsNew
           - uesio/io.field:
               fieldId: uesio/studio.description
+              uesio.id: new-app-description
           - uesio/io.field:
               fieldId: uesio/studio.public
               display:

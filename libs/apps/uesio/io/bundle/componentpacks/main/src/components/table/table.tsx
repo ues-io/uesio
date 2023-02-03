@@ -35,7 +35,6 @@ import {
 } from "../field/field"
 
 type TableDefinition = {
-	id: string
 	wire: string
 	mode: context.FieldMode
 	columns: ColumnDefinition[]
@@ -300,6 +299,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	return (
 		<>
 			<IOTable
+				id={api.component.getComponentIdFromProps(props)}
 				variant={definition["uesio.variant"]}
 				rows={paginated}
 				columns={columnsToDisplay}

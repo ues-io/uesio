@@ -11,7 +11,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, mode, options } = props
+	const { setValue, mode, options, id } = props
 	const value = props.value as string
 
 	if (mode === "READ") {
@@ -48,6 +48,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				className={classes.input}
 				onChange={(e) => setValue(e.target.value)}
 				value={value}
+				id={id}
 			>
 				{options?.map((option) => (
 					<option

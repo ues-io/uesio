@@ -89,7 +89,7 @@ jobs:
           mkdir artifacts
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
-          docker build -t $IMAGE_TAG -f ./apps/platform/Dockerfile --build-arg GITSHA .
+          docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
@@ -97,6 +97,12 @@ jobs:
           name: image-artifacts
           path: |
             artifacts
+      - name: Add studio subdomain to /etc/hosts
+        run: |
+          sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
+      - name: Run End-to-End tests against app image in Docker
+        run: |
+          bash ./run-e2e-tests.sh
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'master'

@@ -1,0 +1,54 @@
+version: "3.2"
+
+name: "uesio_test"
+
+services:
+  redis:
+    image: "redis:alpine"
+  db:
+    image: "postgres:14"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pgtest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 10s
+      retries: 4
+      start_period: 10s
+  app:
+    image: "$GITSHA"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "3009:3000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      UESIO_BUNDLES_BUCKET_NAME: uesiobundlestore-dev
+      UESIO_CACHE_SITE_BUNDLES: "true"
+      UESIO_DB_DATABASE: pgtest
+      UESIO_DB_HOST: db
+      UESIO_DB_USER: postgres
+      UESIO_DB_PASSWORD: postgres
+      UESIO_DB_PORT: 5432
+      UESIO_PLATFORM_AUTHSOURCE_TYPE: local
+      UESIO_PLATFORM_AUTHSOURCE_CREDENTIALS: uesio/core.cognito
+      UESIO_PLATFORM_BUNDLESTORE_CREDENTIALS: uesio/core.aws
+      UESIO_PLATFORM_BUNDLESTORE_TYPE: uesio.local
+      UESIO_PLATFORM_DATASOURCE_CREDENTIALS: uesio/core.db
+      UESIO_PLATFORM_DATASOURCE_TYPE: uesio.postgresio
+      UESIO_PLATFORM_FILESOURCE_CREDENTIALS: uesio/core.aws
+      UESIO_PLATFORM_FILESOURCE_TYPE: uesio.local
+      UESIO_SESSION_STORE: redis
+      UESIO_USERFILES_BUCKET_NAME: uesiofiles-dev
+      UESIO_MOCK_AUTH: "true"
+      UESIO_USE_HTTPS: "true"
+      PORT: 3000
+    volumes:
+      - ./apps/platform/ssl:/ssl
+    command: sh -c "./uesio seed && ./uesio serve"

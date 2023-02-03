@@ -82,7 +82,8 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Collection
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "meta+n"
+                                uesio.variant: uesio/io.primary
                                 uesio.id: new-collection
                                 signals:
                                   - signal: panel/TOGGLE
@@ -161,10 +162,13 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: new-collection-name
               - uesio/io.field:
                   fieldId: uesio/studio.label
+                  uesio.id: new-collection-label
               - uesio/io.field:
                   fieldId: uesio/studio.plurallabel
+                  uesio.id: new-collection-plural-label
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

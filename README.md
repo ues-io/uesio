@@ -371,3 +371,16 @@ To test running migrations (against a separate `pgtest` database alongside your 
 docker compose up -d
 bash apps/platform/migrations_test/test_migrations.sh
 ```
+
+## End-to-end Testing and Component Testing
+
+We use [Cypress](https://cypress.io) for writing end-to-end tests of the Uesio app, as well as testing of React Components.
+
+All tests are defined in `cypress` directory:
+
+-   e2e: End-to-End tests
+-   component: React Component tests
+
+If you're running Uesio locally, you can use `npx cypress open` to launch Cypress' visual UI for running tests.
+
+To simulate how Cypress tests are run in CI, run `bash run-e2e-tests.sh`. This script is run in Github Actions on master build, and spins up the Uesio app in Docker, along with all dependencies, to use for running tests.
