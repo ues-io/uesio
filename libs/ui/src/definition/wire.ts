@@ -68,6 +68,7 @@ type WireOrderDescription = {
 }
 
 export {
+	WireDefault,
 	WireDefinition,
 	WireDefinitionMap,
 	WireEvents,

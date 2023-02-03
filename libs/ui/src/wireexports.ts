@@ -5,6 +5,7 @@ import {
 	RegularWireDefinition,
 	WireFieldDefinition,
 	ViewOnlyField,
+	ViewOnlyWireDefinition,
 } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
@@ -42,4 +43,5 @@ export {
 	WireFieldDefinitionMap,
 	WireFieldDefinition,
 	ViewOnlyField,
+	ViewOnlyWireDefinition,
 }
