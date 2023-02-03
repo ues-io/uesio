@@ -1,4 +1,4 @@
-import { useEffect, RefObject, useRef } from "react"
+import { useEffect } from "react"
 import { useRoute } from "../bands/route/selectors"
 import { injectGlobal, css } from "@emotion/css"
 import Progress from "./progress"
@@ -28,11 +28,7 @@ injectGlobal({
 	},
 })
 
-let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
-
 const Route: UtilityComponent = (props) => {
-	portalsDomNode = useRef<HTMLDivElement>(null)
-
 	const site = useSite()
 	const route = useRoute()
 
@@ -109,18 +105,7 @@ const Route: UtilityComponent = (props) => {
 	) : (
 		<>
 			{view}
-			<div
-				style={{
-					position: "fixed",
-					width: "100%",
-					height: "100%",
-					top: 0,
-					left: 0,
-					pointerEvents: "none",
-				}}
-			>
-				<PanelArea />
-			</div>
+			<PanelArea />
 		</>
 	)
 
@@ -141,13 +126,10 @@ const Route: UtilityComponent = (props) => {
 			>
 				<NotificationArea context={props.context} />
 			</div>
-			<div ref={portalsDomNode} />
 		</>
 	)
 }
 
 Route.displayName = "Route"
-
-export { portalsDomNode }
 
 export default Route

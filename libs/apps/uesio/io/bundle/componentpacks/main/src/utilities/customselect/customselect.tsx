@@ -1,12 +1,13 @@
 import { FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
 import {
 	autoPlacement,
 	useFloating,
 	autoUpdate,
 	offset,
+	FloatingPortal,
 } from "@floating-ui/react"
 
 type CustomSelectProps<T> = {
@@ -93,7 +94,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 					<Icon icon="expand_more" context={context} />
 				</button>
 			</div>
-			<component.Panel>
+			<FloatingPortal>
 				<div
 					ref={refs.setFloating}
 					style={{
@@ -144,7 +145,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 						})}
 					</div>
 				</div>
-			</component.Panel>
+			</FloatingPortal>
 		</div>
 	)
 }

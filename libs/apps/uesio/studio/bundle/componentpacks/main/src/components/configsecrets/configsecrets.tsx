@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from "react"
 import { definition, api, component } from "@uesio/ui"
+import { FloatingPortal } from "@floating-ui/react"
 
 const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -75,7 +76,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 				)
 			})}
 			{state.selected !== "" && (
-				<component.Panel>
+				<FloatingPortal>
 					<Dialog
 						width="400px"
 						height="300px"
@@ -105,7 +106,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						/>
 					</Dialog>
-				</component.Panel>
+				</FloatingPortal>
 			)}
 		</>
 	)

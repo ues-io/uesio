@@ -1,3 +1,8 @@
 name: fileattachment
 pack: main
 entrypoint: components/fileattachment/fileattachment
+variants:
+  - uesio/io.field:uesio/io.default
+  - uesio/io.codefield:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default

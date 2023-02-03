@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
+import { FloatingOverlay } from "@floating-ui/react"
 
 const minPagePadding = "40px"
 
@@ -13,13 +14,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
-				position: "absolute",
-				top: 0,
-				bottom: 0,
-				height: "100%",
-				width: "100%",
 				backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
-				pointerEvents: "auto",
 			},
 			root: {
 				position: "absolute",
@@ -49,12 +44,15 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	)
 
 	return (
-		<>
-			<div className={classes.blocker} onClick={props.onClose} />
-			<div className={classes.root}>
+		<FloatingOverlay
+			className={classes.blocker}
+			lockScroll
+			onClick={props.onClose}
+		>
+			<div className={classes.root} onClick={(e) => e.stopPropagation()}>
 				<div className={classes.inner}>{props.children}</div>
 			</div>
-		</>
+		</FloatingOverlay>
 	)
 }
 

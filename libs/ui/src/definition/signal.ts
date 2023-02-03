@@ -14,7 +14,8 @@ type ComponentSignalDispatcher<T> = (
 	state: Draft<T>,
 	signal: SignalDefinition,
 	context: Context,
-	platform: Platform
+	platform: Platform,
+	id: string
 ) => void
 
 type SignalDescriptor = {

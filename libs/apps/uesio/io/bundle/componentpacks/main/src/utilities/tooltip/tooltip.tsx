@@ -7,6 +7,7 @@ import {
 	offset,
 	useHover,
 	Placement,
+	FloatingPortal,
 } from "@floating-ui/react"
 
 interface TooltipUtilityProps extends definition.UtilityProps {
@@ -94,22 +95,24 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 			<div ref={refs.setReference} {...getReferenceProps()}>
 				{props.children}
 			</div>
-			{open && (
-				<div
-					{...getFloatingProps()}
-					className={classes.tooltip}
-					ref={refs.setFloating}
-					style={{
-						position: strategy,
-						top: y ?? 0,
-						left: x ?? 0,
-						width: "max-content",
-					}}
-				>
-					{props.text}
-					<div ref={arrowRef} className={classes.arrow} />
-				</div>
-			)}
+			<FloatingPortal>
+				{open && (
+					<div
+						{...getFloatingProps()}
+						className={classes.tooltip}
+						ref={refs.setFloating}
+						style={{
+							position: strategy,
+							top: y ?? 0,
+							left: x ?? 0,
+							width: "max-content",
+						}}
+					>
+						{props.text}
+						<div ref={arrowRef} className={classes.arrow} />
+					</div>
+				)}
+			</FloatingPortal>
 		</>
 	)
 }

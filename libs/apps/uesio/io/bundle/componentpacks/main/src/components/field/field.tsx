@@ -79,38 +79,22 @@ type UserFileMetadata = {
 	["uesio/core.updatedat"]: string
 }
 
-type FieldState = {
-	value: string
-	originalValue: string
-	fileInfo?: UserFileMetadata
-}
+const UPLOAD_FILE_EVENT = "component:uesio/io.field:upload"
+const CANCEL_FILE_EVENT = "component:uesio/io.field:cancel"
 
-const signals: Record<string, signal.ComponentSignalDescriptor<FieldState>> = {
-	SAVE_FILE: {
-		dispatcher: (state, signal, context, platform) => {
-			if (!state.fileInfo) return
-			const mimeType = state.fileInfo["uesio/core.mimetype"]
-			const blob = new Blob([state.value], {
-				type: mimeType,
-			})
-			const fileName = state.fileInfo["uesio/core.path"]
-			const file = new File([blob], fileName, {
-				type: mimeType,
-			})
-			platform.uploadFile(
-				context,
-				file,
-				state.fileInfo["uesio/core.collectionid"],
-				state.fileInfo["uesio/core.recordid"],
-				state.fileInfo["uesio/core.fieldid"]
-			)
+const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
+	UPLOAD_FILE: {
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
+			return state
 		},
-		label: "Save File",
+		label: "Upload File",
 		properties: () => [],
 	},
 	CANCEL_FILE: {
-		dispatcher: (state) => {
-			state.value = state.originalValue
+		dispatcher: (state, signal, context, platform, id) => {
+			api.event.publish(CANCEL_FILE_EVENT, { target: id })
+			return state
 		},
 		label: "Cancel File",
 		properties: () => [],
@@ -348,10 +332,12 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 }
 */
 
-Field.signals = signals
+Field.signals = fileTextSignals
 
 export {
-	FieldState,
+	fileTextSignals,
+	UPLOAD_FILE_EVENT,
+	CANCEL_FILE_EVENT,
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,
