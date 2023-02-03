@@ -494,10 +494,10 @@ class Context {
 	#addFrame = (frame: ContextFrame) => {
 		const newContext = new Context([frame].concat(this.stack))
 		if (this.siteadmin) {
-			newContext.setSiteAdmin(this.siteadmin)
+			newContext.siteadmin = this.siteadmin
 		}
 		if (this.workspace) {
-			newContext.setWorkspace(this.workspace)
+			newContext.workspace = this.workspace
 		}
 		return newContext
 	}
