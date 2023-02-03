@@ -1,5 +1,5 @@
 import { FunctionComponent, useLayoutEffect } from "react"
-import { definition, component, styles } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import {
 	useFloating,
 	autoUpdate,
@@ -8,6 +8,7 @@ import {
 	Placement,
 	offset,
 	size,
+	FloatingPortal,
 } from "@floating-ui/react"
 
 interface TooltipProps extends definition.UtilityProps {
@@ -70,7 +71,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	)
 
 	return (
-		<component.Panel>
+		<FloatingPortal>
 			<div
 				ref={refs.setFloating}
 				style={{
@@ -86,7 +87,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 			>
 				{props.children}
 			</div>
-		</component.Panel>
+		</FloatingPortal>
 	)
 }
 
