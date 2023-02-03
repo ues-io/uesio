@@ -5,3 +5,10 @@ category: INTERACTION
 pack: main
 entrypoint: components/button/button
 discoverable: true
+properties:
+  - name: text
+    type: TEXT
+    label: Text
+  - name: icon
+    type: TEXT
+    label: Text

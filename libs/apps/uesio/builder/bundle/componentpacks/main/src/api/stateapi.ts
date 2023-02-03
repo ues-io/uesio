@@ -1,6 +1,14 @@
 import { definition, api, metadata, context as ctx } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 
+type TextProperty = {
+	type: "TEXT"
+	name: string
+	label: string
+}
+
+type ComponentProperty = TextProperty
+
 type ComponentDef = {
 	name: string
 	namespace: string
@@ -8,6 +16,7 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
+	properties: ComponentProperty[]
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
