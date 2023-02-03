@@ -13,7 +13,6 @@ interface FormProps extends definition.UtilityProps {
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	const { context, onSubmit, submitLabel, content, id, fields, path } = props
 
-	console.log("meep")
 	const wire = api.wire.useDynamicWire(
 		"dynamicwire:" + id,
 		{
