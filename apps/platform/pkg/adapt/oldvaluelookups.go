@@ -140,7 +140,7 @@ func HandleOldValuesLookup(
 	return LoadLooper(connection, op.Metadata.GetFullName(), idMap, allFields, ID_FIELD, session, func(item meta.Item, matchIndexes []ReferenceLocator, ID string) error {
 
 		if item == nil {
-			return errors.New("Could not find record to update or delete")
+			return errors.New("Could not find record to update or delete: " + ID)
 		}
 
 		if len(matchIndexes) != 1 {
