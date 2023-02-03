@@ -15,6 +15,10 @@ func getCascadeDeletes(
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
 
+	if len(wire.Deletes) == 0 {
+		return cascadeDeleteFKs, nil
+	}
+
 	metadata := connection.GetMetadata()
 
 	for _, collectionMetadata := range metadata.Collections {
@@ -88,26 +92,7 @@ func getCascadeDeletes(
 
 				ids := []string{}
 				for _, deletion := range wire.Deletes {
-
-					item := deletion.OldValues
-					refInterface, err := item.GetField(adapt.ID_FIELD)
-					if err != nil {
-						continue
-					}
-
-					if refInterface == nil {
-						continue
-					}
-
-					fkString, ok := refInterface.(string)
-					if !ok {
-						return nil, errors.New("Delete id must be a string")
-					}
-
-					ids = append(ids, fkString)
-				}
-				if len(ids) == 0 {
-					continue
+					ids = append(ids, deletion.IDValue)
 				}
 
 				fields := []adapt.LoadRequestField{{ID: adapt.ID_FIELD}}
