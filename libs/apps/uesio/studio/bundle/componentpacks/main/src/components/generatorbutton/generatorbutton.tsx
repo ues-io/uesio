@@ -7,6 +7,7 @@ import {
 	wire,
 	context as ctx,
 } from "@uesio/ui"
+import { FloatingPortal } from "@floating-ui/react"
 
 type GeneratorButtonDefinition = {
 	generator: string
@@ -67,7 +68,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	if (!params) return null
 
 	return (
-		<component.Panel>
+		<FloatingPortal>
 			<Dialog
 				context={context}
 				width="400px"
@@ -99,7 +100,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					}}
 				/>
 			</Dialog>
-		</component.Panel>
+		</FloatingPortal>
 	)
 }
 

@@ -40,11 +40,11 @@ export default {
 		if (!componentStates.length) {
 			const targetSearch = makeComponentId(context, scope, target, true)
 			componentStates = selectTarget(state, targetSearch)
-		}
 
-		// If we still can't find a target, we'll need to create entirely new state
-		if (!componentStates.length) {
-			componentStates = [{ id: targetSearch, state: {} }]
+			// If we still can't find a target, we'll need to create entirely new state
+			if (!componentStates.length) {
+				componentStates = [{ id: targetSearch, state: {} }]
+			}
 		}
 
 		// Loop over all ids that match the target and dispatch

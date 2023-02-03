@@ -64,7 +64,7 @@ __debug_bin
 # Uesio binaries
 **/.clio
 **/.uesio
-uesio
+/uesio
 
 
 # TEMPORARY: CYPRESS
