@@ -31,8 +31,6 @@ const PARAMS = "PARAMS",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
-	WORKSPACE = "WORKSPACE",
-	SITE_ADMIN = "SITE_ADMIN",
 	RECORD_DATA = "RECORD_DATA"
 
 type FieldMode = "READ" | "EDIT"
@@ -95,14 +93,6 @@ interface ThemeContextFrame extends ThemeContext {
 	type: typeof THEME
 }
 
-interface SiteAdminContextFrame extends SiteAdminContext {
-	type: typeof SITE_ADMIN
-}
-
-interface WorkspaceContextFrame extends WorkspaceContext {
-	type: typeof WORKSPACE
-}
-
 interface RouteContextFrame extends RouteContext {
 	type: typeof ROUTE
 }
@@ -154,8 +144,6 @@ type ContextOptions =
 
 type ContextFrame =
 	| RouteContextFrame
-	| SiteAdminContextFrame
-	| WorkspaceContextFrame
 	| ThemeContextFrame
 	| ViewContextFrame
 	| RecordContextFrame
@@ -168,14 +156,6 @@ type ContextFrame =
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
 	frame.type === "ERROR"
-
-const isSiteAdminContextFrame = (
-	frame: ContextFrame
-): frame is SiteAdminContextFrame => frame.type === "SITE_ADMIN"
-
-const isWorkspaceContextFrame = (
-	frame: ContextFrame
-): frame is WorkspaceContextFrame => frame.type === "WORKSPACE"
 
 const isThemeContextFrame = (
 	frame: ContextFrame
@@ -210,6 +190,7 @@ const hasViewContext = (
 	[VIEW, ROUTE].includes(frame.type)
 
 // Type Guards for pre-resolved Context objects (no type property yet)
+
 const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
 	Object.prototype.hasOwnProperty.call(o, "workspace")
 
@@ -235,7 +216,7 @@ function injectDynamicContext(context: Context, additional: unknown) {
 
 	if (providesWorkspace(additional)) {
 		const workspace = additional.workspace
-		context = context.addWorkspaceFrame({
+		context = context.setWorkspace({
 			name: context.mergeString(workspace.name),
 			app: context.mergeString(workspace.app),
 		})
@@ -248,7 +229,7 @@ function injectDynamicContext(context: Context, additional: unknown) {
 
 	if (providesSiteAdmin(additional)) {
 		const siteadmin = additional.siteadmin
-		context = context.addSiteAdminFrame({
+		context = context.setSiteAdmin({
 			name: context.mergeString(siteadmin.name),
 			app: context.mergeString(siteadmin.app),
 		})
@@ -281,6 +262,8 @@ class Context {
 	}
 
 	stack: ContextFrame[]
+	workspace?: WorkspaceState
+	siteadmin?: SiteAdminState
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -389,9 +372,13 @@ class Context {
 		return routeFrame ? new Context([routeFrame]) : newContext()
 	}
 
-	getWorkspace = () => this.stack.find(isWorkspaceContextFrame)?.workspace
+	getWorkspace = () => this.workspace
 
-	getSiteAdmin = () => this.stack.find(isSiteAdminContextFrame)?.siteadmin
+	deleteWorkspace = () => delete this.workspace
+
+	getSiteAdmin = () => this.siteadmin
+
+	deleteSiteAdmin = () => delete this.siteadmin
 
 	getTenant = () => {
 		const workspace = this.getWorkspace()
@@ -461,23 +448,21 @@ class Context {
 			...routeContext,
 		})
 
-	addSiteAdminFrame = (siteadmin: SiteAdminState) =>
-		this.#addFrame({
-			type: SITE_ADMIN,
-			siteadmin,
-		})
-
-	addWorkspaceFrame = (workspace: WorkspaceState) =>
-		this.#addFrame({
-			type: WORKSPACE,
-			workspace,
-		})
-
 	addThemeFrame = (theme: string) =>
 		this.#addFrame({
 			type: THEME,
 			theme,
 		})
+
+	setSiteAdmin = (siteadmin: SiteAdminState) => {
+		this.siteadmin = siteadmin
+		return this
+	}
+
+	setWorkspace = (workspace: WorkspaceState) => {
+		this.workspace = workspace
+		return this
+	}
 
 	addViewFrame = (viewContext: ViewContext) =>
 		this.#addFrame({
@@ -506,7 +491,16 @@ class Context {
 			fieldMode,
 		})
 
-	#addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
+	#addFrame = (frame: ContextFrame) => {
+		const newContext = new Context([frame].concat(this.stack))
+		if (this.siteadmin) {
+			newContext.siteadmin = this.siteadmin
+		}
+		if (this.workspace) {
+			newContext.workspace = this.workspace
+		}
+		return newContext
+	}
 
 	merge = (template: Mergeable) => {
 		if (typeof template !== "string") {

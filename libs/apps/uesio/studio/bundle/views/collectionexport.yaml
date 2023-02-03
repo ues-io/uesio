@@ -49,11 +49,11 @@ definition:
         query: false
   events:
     onload:
+      - signal: context/SET
+        type: WORKSPACE
+        name: $Param{workspacename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          workspace:
-            name: $Param{workspacename}
-            app: $Param{app}
         wires:
           - bulkjobs
 
@@ -98,11 +98,11 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.context:
-                                        workspace:
+                                      signals:
+                                        - signal: context/SET
+                                          type: WORKSPACE
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      signals:
                                         - signal: collection/CREATE_JOB
                                           collection: $Param{namespace}.$Param{collectionname}
                                           onerror:

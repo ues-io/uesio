@@ -49,11 +49,11 @@ definition:
         query: false
   events:
     onload:
+      - signal: context/SET
+        type: SITE_ADMIN
+        name: $Param{sitename}
+        app: $Param{app}
       - signal: "wire/LOAD"
-        uesio.context:
-          siteadmin:
-            name: $Param{sitename}
-            app: $Param{app}
         wires:
           - bulkbatches
 
