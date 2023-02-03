@@ -9,11 +9,13 @@ interface FormProps extends definition.UtilityProps {
 	wire?: string
 	submitLabel?: string
 	onSubmit?: (record: wire.WireRecord) => void
+	showSubmitButton?: boolean
 	content: definition.DefinitionList
 }
 
 const Form: FunctionComponent<FormProps> = (props) => {
-	const { context, path, onSubmit, submitLabel, content } = props
+	const { context, path, onSubmit, submitLabel, showSubmitButton, content } =
+		props
 
 	const wireName = props.wire
 	const wire = api.wire.useWire(wireName, context)
@@ -56,28 +58,32 @@ const Form: FunctionComponent<FormProps> = (props) => {
 								/>
 							))
 						)}
-						<Group
-							styles={{
-								root: {
-									justifyContent: "end",
-									marginTop: "10px",
-								},
-							}}
-							context={context}
-						>
-							<Button
+						{showSubmitButton !== false ? (
+							<Group
+								styles={{
+									root: {
+										justifyContent: "end",
+										marginTop: "10px",
+									},
+								}}
 								context={context}
-								variant="uesio/io.primary"
-								label={submitLabel || "Save"}
-								onClick={
-									onSubmit
-										? () => {
-												onSubmit(record)
-										  }
-										: undefined
-								}
-							/>
-						</Group>
+							>
+								<Button
+									context={context}
+									variant="uesio/io.primary"
+									label={submitLabel || "Save"}
+									onClick={
+										onSubmit
+											? () => {
+													onSubmit(record)
+											  }
+											: undefined
+									}
+								/>
+							</Group>
+						) : (
+							<></>
+						)}
 					</Fragment>
 				)
 			})}
