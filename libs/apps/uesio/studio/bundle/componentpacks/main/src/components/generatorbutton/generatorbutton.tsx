@@ -23,8 +23,6 @@ interface FormProps {
 	setOpen: (value: boolean) => void
 }
 
-const WIRE_NAME = "paramData"
-
 const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 	switch (def.type) {
 		case "METADATA":
@@ -52,20 +50,13 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 	}
 }
 
-const getLayoutFieldsFromParams = (
-	params: param.ParamDefinition[] | undefined
-) => {
-	if (!params) return []
-	return params.map((def) => getLayoutFieldFromParamDef(def))
-}
-
 const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	const { context, generator, setOpen } = props
 
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
 	const Dialog = component.getUtility("uesio/io.dialog")
-	const Form = component.getUtility("uesio/io.form")
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 
 	const [params] = api.bot.useParams(
 		context,
@@ -74,19 +65,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 		"generator"
 	)
 
-	const paramWire = api.wire.useDynamicWire(
-		WIRE_NAME,
-		{
-			viewOnly: true,
-			fields: api.wire.getWireFieldsFromParams(params),
-			init: {
-				create: true,
-			},
-		},
-		context
-	)
-
-	if (!paramWire) return null
+	if (!params) return null
 
 	return (
 		<FloatingPortal>
@@ -97,10 +76,12 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 				onClose={() => setOpen(false)}
 				title="Set Generator Parameters"
 			>
-				<Form
-					wire={WIRE_NAME}
+				<DynamicForm
 					context={context}
-					content={getLayoutFieldsFromParams(params)}
+					content={params.map((def) =>
+						getLayoutFieldFromParamDef(def)
+					)}
+					fields={api.wire.getWireFieldsFromParams(params)}
 					submitLabel="Generate"
 					onSubmit={async (record: wire.WireRecord) => {
 						await api.bot.callGenerator(

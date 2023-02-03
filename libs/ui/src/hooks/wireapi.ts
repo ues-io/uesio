@@ -3,6 +3,7 @@ import {
 	getFullWireId,
 	useWire as uWire,
 	useWires as uWires,
+	removeOne as removeWire,
 } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
@@ -13,6 +14,7 @@ import { useEffect } from "react"
 import { ParamDefinition } from "../definition/param"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD } from "../bands/collection/types"
+import { dispatch } from "../store/store"
 
 const getWireFieldFromParamDef = (def: ParamDefinition): ViewOnlyField => {
 	switch (def.type) {
@@ -67,6 +69,12 @@ const useWire = (wireId: string | undefined, context: Context) => {
 	return new Wire(plainWire).attachCollection(plainCollection)
 }
 
+const remove = (wireId: string, context: Context) => {
+	const [view, wire] = context.getViewAndWireId(wireId)
+	if (!view || !wire) return
+	dispatch(removeWire(getFullWireId(view, wire)))
+}
+
 const useDynamicWire = (
 	wireName: string,
 	wireDef: WireDefinition | null,
@@ -79,6 +87,9 @@ const useDynamicWire = (
 			[wireName]: wireDef,
 		})
 		loadWires(context, [wireName])
+		return () => {
+			remove(wireName, context)
+		}
 	}, [wireName, JSON.stringify(wireDef)])
 	return wire
 }
