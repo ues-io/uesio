@@ -40,6 +40,11 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			onUnselect={() => setSelectedPath(context)}
 		>
 			<div>{componentDef.description}</div>
+			{componentDef.properties?.map((property) => (
+				<div key={property.name}>
+					{property.name} - {property.type}
+				</div>
+			))}
 		</PropertiesWrapper>
 	)
 }
