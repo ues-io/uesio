@@ -21,7 +21,7 @@ propertiesPanelView:
           fontSize: 9pt
           border: "1px solid #eee"
           color: "#777"
-      text: Testing Custom Content
+      text: "The text is: ${text}"
       element: div
   - uesio/io.field:
       uesio.variant: uesio/builder.propfield
