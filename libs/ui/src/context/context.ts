@@ -130,16 +130,9 @@ interface FieldModeContextFrame extends FieldModeContext {
 }
 
 type ContextOptions =
-	| RouteContext
 	| SiteAdminContext
 	| WorkspaceContext
-	| ThemeContext
-	| ViewContext
-	| RecordContext
-	| RecordDataContext
 	| WireContext
-	| ParamsContext
-	| ErrorContext
 	| FieldModeContext
 
 type ContextFrame =
@@ -194,9 +187,6 @@ const hasViewContext = (
 const providesWorkspace = (o: ContextOptions): o is WorkspaceContext =>
 	Object.prototype.hasOwnProperty.call(o, "workspace")
 
-const providesView = (o: ContextOptions): o is RouteContext | ViewContext =>
-	Object.prototype.hasOwnProperty.call(o, "view")
-
 const providesSiteAdmin = (o: ContextOptions): o is SiteAdminContext =>
 	Object.prototype.hasOwnProperty.call(o, "siteadmin")
 
@@ -206,12 +196,7 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
-const providesParams = (
-	o: ContextOptions
-): o is RouteContext | ParamsContext | ViewContext =>
-	Object.prototype.hasOwnProperty.call(o, "params")
-
-function injectDynamicContext(context: Context, additional: unknown) {
+function injectDynamicContext(context: Context, additional: ContextOptions) {
 	if (!additional) return context
 
 	if (providesWorkspace(additional)) {
@@ -327,15 +312,14 @@ class Context {
 	}
 
 	getViewId = () => {
-		const frame = this.stack.filter(hasViewContext).find(providesView)
+		const frame = this.stack.find(hasViewContext)
 		if (!frame || !frame.view) throw "No View frame found in context"
 		return frame.view
 	}
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () =>
-		this.stack.filter(hasParamsContext).find(providesParams)?.params
+	getParams = () => this.stack.find(hasParamsContext)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
