@@ -50,6 +50,6 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	)
 }
 
-ComponentInstanceProperties.displayName = "WireProperties"
+ComponentInstanceProperties.displayName = "Component Properties"
 
 export default ComponentInstanceProperties

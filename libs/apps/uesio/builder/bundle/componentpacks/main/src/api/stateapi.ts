@@ -1,13 +1,36 @@
 import { definition, api, metadata, context as ctx } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 
-type TextProperty = {
-	type: "TEXT"
+type BaseProperty = {
 	name: string
-	label: string
+	label?: string
+	required?: boolean
+	type: string
 }
 
-type ComponentProperty = TextProperty
+type TextProperty = {
+	type: "TEXT"
+} & BaseProperty
+
+type NumberProperty = {
+	type: "NUMBER"
+} & BaseProperty
+
+type KeyProperty = {
+	type: "KEY"
+} & BaseProperty
+
+type MetadataProperty = {
+	type: "METADATA"
+	// TODO: EXPAND THIS LIST
+	metadataType: "COLLECTION" | "FILE" | "VIEW"
+} & BaseProperty
+
+type ComponentProperty =
+	| TextProperty
+	| NumberProperty
+	| KeyProperty
+	| MetadataProperty
 
 type ComponentDef = {
 	name: string

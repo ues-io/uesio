@@ -1,30 +1,54 @@
 import { definition } from "@uesio/ui"
-import { useSelectedPath } from "../../../../api/stateapi"
+import {
+	useSelectedPath,
+	ComponentProperty,
+	setSelectedPath,
+} from "../../../../api/stateapi"
+import PropertiesForm from "../../../../helpers/propertiesform"
+import PropertiesWrapper from "../../../../components/mainwrapper/propertiespanel/propertieswrapper"
 
-import MetadataProp from "../../../../propertyrenderers/metadataprop"
-import KeyProp from "../../../../propertyrenderers/keyprop"
-import NumberProp from "../../../../propertyrenderers/numberprop"
+const wireHomeProperties = [
+	{
+		name: "wirename",
+		label: "Wire Name",
+		required: true,
+		type: "KEY",
+	},
+	{
+		name: "collection",
+		label: "Collection",
+		required: true,
+		type: "METADATA",
+		metadataType: "COLLECTION",
+	},
+	{
+		name: "batchsize",
+		label: "Batch Size",
+		type: "NUMBER",
+	},
+] as ComponentProperty[]
 
 const WireHome: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const selectedPath = useSelectedPath(context)
-	const wirePath = selectedPath.trimToSize(2)
+	const path = selectedPath.trimToSize(2)
+	// const [key] = path.pop()
 
 	return (
-		<>
-			<KeyProp label="Name" path={wirePath} context={context} />
-			<MetadataProp
-				metadataType="COLLECTION"
-				label="Collection"
-				path={wirePath.addLocal("collection")}
+		<PropertiesWrapper
+			context={props.context}
+			className={props.className}
+			path={path}
+			title={"Wire Home"}
+			onUnselect={() => setSelectedPath(context)}
+		>
+			<PropertiesForm
+				id={path.combine()}
 				context={context}
+				properties={wireHomeProperties}
+				path={path}
 			/>
-			<NumberProp
-				label="Batch Size"
-				path={wirePath.addLocal("batchsize")}
-				context={context}
-			/>
-		</>
+		</PropertiesWrapper>
 	)
 }
 
