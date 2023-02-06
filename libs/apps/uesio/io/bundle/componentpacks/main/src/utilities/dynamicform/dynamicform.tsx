@@ -38,12 +38,15 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		context
 	)
 
+	const currentValueString = JSON.stringify(currentValue)
+
 	useEffect(() => {
 		if (!currentValue || !wire) return
 		const record = wire.getFirstRecord()
 		if (!record) return
+		if (JSON.stringify(record.source) === currentValueString) return
 		record.setAll(currentValue)
-	}, [!!wire, JSON.stringify(currentValue)])
+	}, [!!wire, currentValueString])
 
 	api.event.useEvent(
 		"wire.record.updated",
