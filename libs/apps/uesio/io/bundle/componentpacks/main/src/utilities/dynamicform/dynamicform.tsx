@@ -10,7 +10,7 @@ interface FormProps extends definition.UtilityProps {
 	fields: Record<string, wire.ViewOnlyField>
 	content: definition.DefinitionList
 	onUpdate?: (field: string, value: wire.FieldValue) => void
-	currentValue?: wire.PlainWireRecord
+	initialValue?: wire.PlainWireRecord
 }
 
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
@@ -23,7 +23,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		fields,
 		path,
 		onUpdate,
-		currentValue,
+		initialValue,
 	} = props
 
 	const wire = api.wire.useDynamicWire(
@@ -38,14 +38,14 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		context
 	)
 
-	const currentValueString = JSON.stringify(currentValue)
+	const currentValueString = JSON.stringify(initialValue)
 
 	useEffect(() => {
-		if (!currentValue || !wire) return
+		if (!initialValue || !wire) return
 		const record = wire.getFirstRecord()
 		if (!record) return
 		if (JSON.stringify(record.source) === currentValueString) return
-		record.setAll(currentValue)
+		record.setAll(initialValue)
 	}, [!!wire, currentValueString])
 
 	api.event.useEvent(

@@ -37,9 +37,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { properties, path, context, id } = props
 
-	const currentValue: wire.PlainWireRecord = {}
+	const initialValue: wire.PlainWireRecord = {}
 	properties?.forEach((property) => {
-		currentValue[property.name] = get(
+		initialValue[property.name] = get(
 			context,
 			path.addLocal(property.name)
 		) as string
@@ -54,7 +54,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			onUpdate={(field: string, value: string) => {
 				set(context, path.addLocal(field), value)
 			}}
-			currentValue={currentValue}
+			currentValue={initialValue}
 		/>
 	)
 }
