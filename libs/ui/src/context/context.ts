@@ -31,7 +31,8 @@ const PARAMS = "PARAMS",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
-	RECORD_DATA = "RECORD_DATA"
+	RECORD_DATA = "RECORD_DATA",
+	SLOT = "SLOT"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -63,6 +64,10 @@ interface RecordDataContext {
 interface ViewContext extends ParamsContext {
 	view: string
 	viewDef: string
+}
+
+interface SlotContext {
+	slot: MetadataKey
 }
 
 interface RouteContext extends ParamsContext {
@@ -99,6 +104,10 @@ interface RouteContextFrame extends RouteContext {
 
 interface ViewContextFrame extends ViewContext {
 	type: typeof VIEW
+}
+
+interface SlotContextFrame extends SlotContext {
+	type: typeof SLOT
 }
 
 interface RecordContextFrame extends RecordContext {
@@ -145,6 +154,7 @@ type ContextFrame =
 	| ParamsContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
+	| SlotContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -157,7 +167,10 @@ const isThemeContextFrame = (
 
 const isRecordContextFrame = (
 	frame: ContextFrame
-): frame is RecordContextFrame => frame.type === "RECORD"
+): frame is RecordContextFrame => frame.type === RECORD
+
+const isSlotContextFrame = (frame: ContextFrame): frame is SlotContextFrame =>
+	frame.type === SLOT
 
 const providesRecordContext = (
 	frame: ContextFrame
@@ -341,6 +354,8 @@ class Context {
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
+	getCustomSlot = () => this.stack.find(isSlotContextFrame)?.slot
+
 	getComponentVariant = (
 		componentType: MetadataKey,
 		variantName: MetadataKey
@@ -458,6 +473,12 @@ class Context {
 		this.#addFrame({
 			type: THEME,
 			theme,
+		})
+
+	addSlotFrame = (slot: MetadataKey) =>
+		this.#addFrame({
+			type: SLOT,
+			slot,
 		})
 
 	setSiteAdmin = (siteadmin: SiteAdminState) => {

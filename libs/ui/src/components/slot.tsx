@@ -39,7 +39,7 @@ const getSlotProps = (props: SlotUtilityProps) => {
 }
 
 const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
-	const slotWrapper = props.context.getWorkspace()?.slotwrapper
+	const slotWrapper = props.context.getCustomSlot()
 	if (slotWrapper) {
 		const Loader = getUtilityLoader(slotWrapper)
 		if (!Loader) throw "Could not load component: " + slotWrapper
