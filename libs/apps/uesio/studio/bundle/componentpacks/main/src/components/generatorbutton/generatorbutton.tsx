@@ -8,6 +8,10 @@ import {
 	context as ctx,
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
+import {
+	getParamValues,
+	getWireFieldsFromParams,
+} from "../previewbutton/previewbutton"
 
 type GeneratorButtonDefinition = {
 	generator: string
@@ -81,14 +85,14 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					content={params.map((def) =>
 						getLayoutFieldFromParamDef(def)
 					)}
-					fields={api.wire.getWireFieldsFromParams(params)}
+					fields={getWireFieldsFromParams(params)}
 					submitLabel="Generate"
 					onSubmit={async (record: wire.WireRecord) => {
 						await api.bot.callGenerator(
 							context,
 							genNamespace,
 							genName,
-							api.wire.getParamValues(params, record)
+							getParamValues(params, record)
 						)
 						setOpen(false)
 						return api.signal.run(

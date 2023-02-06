@@ -1,5 +1,14 @@
 import { FunctionComponent, useState } from "react"
-import { hooks, api, component, wire, param, definition, util } from "@uesio/ui"
+import {
+	hooks,
+	api,
+	collection,
+	component,
+	wire,
+	param,
+	definition,
+	util,
+} from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 
 const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
@@ -16,6 +25,74 @@ const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
 			name: key,
 		}
 	})
+}
+
+const getValueForParam = (
+	def: param.ParamDefinition,
+	record: wire.WireRecord
+) => {
+	const fieldKey = def.name
+	switch (def.type) {
+		case "RECORD":
+			return (
+				record.getFieldValue<string>(
+					`${fieldKey}->${collection.ID_FIELD}`
+				) || ""
+			)
+		case "METADATAMULTI": {
+			const values = record.getFieldValue<string[]>(fieldKey) || []
+			return values.join(",")
+		}
+		default:
+			return record.getFieldValue<string>(fieldKey) || ""
+	}
+}
+
+const getParamValues = (
+	params: param.ParamDefinition[] | undefined,
+	record: wire.WireRecord
+) => {
+	if (!params) return {}
+	return Object.fromEntries(
+		params.map((def) => [def.name, getValueForParam(def, record)])
+	)
+}
+
+const getWireFieldFromParamDef = (
+	def: param.ParamDefinition
+): wire.ViewOnlyField => {
+	switch (def.type) {
+		case "RECORD":
+			return {
+				label: def.prompt || def.name,
+				required: !!def.required,
+				type: "REFERENCE" as const,
+				reference: {
+					collection: def.collection,
+				},
+			}
+		case "METADATAMULTI":
+			return {
+				label: def.prompt || def.name,
+				required: !!def.required,
+				type: "LIST" as const,
+			}
+		default:
+			return {
+				label: def.prompt || def.name,
+				required: !!def.required,
+				type: "TEXT" as const,
+			}
+	}
+}
+
+const getWireFieldsFromParams = (
+	params: param.ParamDefinition[] | undefined
+) => {
+	if (!params) return {}
+	return Object.fromEntries(
+		params.map((def) => [def.name, getWireFieldFromParamDef(def)])
+	)
 }
 
 interface FormProps {
@@ -43,7 +120,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 			>
 				<DynamicForm
 					id="previewform"
-					fields={api.wire.getWireFieldsFromParams(params)}
+					fields={getWireFieldsFromParams(params)}
 					context={context}
 					onSubmit={onSubmit}
 				/>
@@ -80,7 +157,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const previewHandler = (record?: wire.WireRecord) => {
 		const urlParams =
 			hasParams && record
-				? new URLSearchParams(api.wire.getParamValues(params, record))
+				? new URLSearchParams(getParamValues(params, record))
 				: undefined
 		api.signal.run(
 			{
@@ -112,5 +189,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 		</>
 	)
 }
+
+export { getParamValues, getWireFieldsFromParams }
 
 export default PreviewButton
