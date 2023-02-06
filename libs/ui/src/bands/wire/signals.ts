@@ -267,7 +267,7 @@ const signals: Record<string, SignalDescriptor> = {
 		description: "Toggle wire condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
 			toggleConditionOp(context, signal.wire, signal.conditionId),
-		properties: (signal: SignalDefinition): PropDescriptor[] => [
+		properties: (signal: ToggleConditionSignal): PropDescriptor[] => [
 			...getWireAndConditionsDescriptor(<string>signal.wire),
 		],
 	},
@@ -282,7 +282,7 @@ const signals: Record<string, SignalDescriptor> = {
 				signal.conditionId,
 				context.merge(signal.value)
 			),
-		properties: (signal): PropDescriptor[] => [
+		properties: (signal: SetConditionValueSignal): PropDescriptor[] => [
 			...getWireAndConditionsDescriptor(<string>signal.wire),
 			{
 				name: "value",
@@ -309,7 +309,7 @@ const signals: Record<string, SignalDescriptor> = {
 		description: "Remove wire condition",
 		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
 			removeConditionOp(context, signal.wire, signal.conditionId),
-		properties: (signal: SignalDefinition): PropDescriptor[] => [
+		properties: (signal: RemoveConditionSignal): PropDescriptor[] => [
 			...getWireAndConditionsDescriptor(<string>signal.wire),
 		],
 	},
