@@ -32,7 +32,6 @@ const WireHome: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const selectedPath = useSelectedPath(context)
 	const path = selectedPath.trimToSize(2)
-	// const [key] = path.pop()
 
 	return (
 		<PropertiesWrapper

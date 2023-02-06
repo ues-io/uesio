@@ -4,3 +4,11 @@ description: Display an image or initials to represent a record.
 category: CONTENT
 pack: main
 entrypoint: components/avatar/avatar
+discoverable: true
+properties:
+  - name: text
+    type: TEXT
+    label: Text
+  - name: image
+    type: TEXT
+    label: Image

@@ -9,6 +9,11 @@ import {
 } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
+import {
+	FieldMetadata,
+	SelectOption,
+	SelectListMetadata,
+} from "./bands/field/types"
 import WireRecord from "./bands/wirerecord/class"
 import { FieldValue, PlainWireRecord } from "./bands/wirerecord/types"
 import {
@@ -33,6 +38,9 @@ export {
 	WireRecord,
 	Wire,
 	FieldValue,
+	FieldMetadata,
+	SelectListMetadata,
+	SelectOption,
 	WireDefinition,
 	RegularWireDefinition,
 	WireDefinitionMap,

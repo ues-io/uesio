@@ -74,6 +74,7 @@ export {
 	FieldMetadata,
 	FieldMetadataMap,
 	SelectOption,
+	SelectListMetadata,
 	FieldType,
 	NumberMetadata,
 	ReferenceMetadata,
