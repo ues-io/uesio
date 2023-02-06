@@ -16,7 +16,7 @@ interface FileUtilityProps extends definition.UtilityProps {
 }
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
-	const { context, userFile, onUpload, onDelete, accept } = props
+	const { context, userFile, onUpload, onDelete, accept, mode } = props
 
 	const userFileId = userFile?.[collection.ID_FIELD]
 	const fileModDate = userFile?.[collection.UPDATED_AT_FIELD]
@@ -65,17 +65,20 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 
 	return (
 		<>
-			<UploadArea
-				onUpload={onUpload}
-				onDelete={onDelete}
-				context={context}
-				accept={accept}
-				className={classes.uploadarea}
-				uploadLabelId={uploadLabelId}
-				deleteLabelId={deleteLabelId}
-			>
-				<div>Drag your file here to upload.</div>
-			</UploadArea>
+			{mode === "EDIT" && (
+				<UploadArea
+					onUpload={onUpload}
+					onDelete={onDelete}
+					context={context}
+					accept={accept}
+					className={classes.uploadarea}
+					uploadLabelId={uploadLabelId}
+					deleteLabelId={deleteLabelId}
+				>
+					<div>Drag your file here to upload.</div>
+				</UploadArea>
+			)}
+
 			{userFile && (
 				<Tile context={context} className={classes.filetag}>
 					<span className={classes.filename}>{fileName}</span>
@@ -86,13 +89,15 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 							context={context}
 						/>
 					</a>
-					<label htmlFor={deleteLabelId}>
-						<Icon
-							icon="delete"
-							className={classes.actionbutton}
-							context={context}
-						/>
-					</label>
+					{mode === "EDIT" && (
+						<label htmlFor={deleteLabelId}>
+							<Icon
+								icon="delete"
+								className={classes.actionbutton}
+								context={context}
+							/>
+						</label>
+					)}
 				</Tile>
 			)}
 		</>
