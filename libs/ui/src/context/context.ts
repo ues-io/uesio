@@ -31,9 +31,11 @@ const PARAMS = "PARAMS",
 	ROUTE = "ROUTE",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
+	BUILDER = "BUILDER",
 	RECORD_DATA = "RECORD_DATA"
 
 type FieldMode = "READ" | "EDIT"
+type ComponentWrapperType = "CANVAS" | "PROPERTIES"
 
 type Mergeable = string | number | boolean | undefined
 
@@ -89,6 +91,10 @@ interface ParamsContext {
 	params?: Record<string, string>
 }
 
+interface BuilderContext {
+	componentWrapperType: ComponentWrapperType
+}
+
 interface ThemeContextFrame extends ThemeContext {
 	type: typeof THEME
 }
@@ -129,6 +135,10 @@ interface FieldModeContextFrame extends FieldModeContext {
 	type: typeof FIELD_MODE
 }
 
+interface BuilderContextFrame extends BuilderContext {
+	type: typeof BUILDER
+}
+
 type ContextOptions =
 	| RouteContext
 	| SiteAdminContext
@@ -141,6 +151,7 @@ type ContextOptions =
 	| ParamsContext
 	| ErrorContext
 	| FieldModeContext
+	| BuilderContext
 
 type ContextFrame =
 	| RouteContextFrame
@@ -152,6 +163,7 @@ type ContextFrame =
 	| ParamsContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
+	| BuilderContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -188,6 +200,9 @@ const hasViewContext = (
 	frame: ContextFrame
 ): frame is ViewContextFrame | RouteContextFrame =>
 	[VIEW, ROUTE].includes(frame.type)
+const isBuilderContextFrame = (
+	frame: ContextFrame
+): frame is BuilderContextFrame => frame.type === BUILDER
 
 // Type Guards for pre-resolved Context objects (no type property yet)
 
@@ -380,6 +395,8 @@ class Context {
 
 	getWorkspace = () => this.workspace
 
+	getBuilderContext = () => this.stack.find(isBuilderContextFrame)
+
 	deleteWorkspace = () => {
 		const newContext = this.clone()
 		delete newContext.workspace
@@ -465,6 +482,12 @@ class Context {
 		this.#addFrame({
 			type: THEME,
 			theme,
+		})
+
+	addBuilderFrame = (builderContext: BuilderContext) =>
+		this.#addFrame({
+			type: BUILDER,
+			...builderContext,
 		})
 
 	setSiteAdmin = (siteadmin: SiteAdminState) => {

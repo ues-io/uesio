@@ -31,7 +31,13 @@ const BuildWrapper: definition.UC = (props) => {
 
 	const componentDef = getComponentDef(context, componentType)
 
-	if (!componentType || !componentDef) return <>{children}</>
+	// TODO: If we are using a "PROPERTIES" wrapper type, wrap in a different wrapper,
+	// but for now just don't use any wrapper at all, to avoid showing the full chrome
+	// that we use for components in the Canvas area
+	const noChrome =
+		context.getBuilderContext()?.componentWrapperType === "PROPERTIES"
+
+	if (!componentType || !componentDef || noChrome) return <>{children}</>
 
 	const [componentNamespace] = component.path.parseKey(componentType)
 	const nsInfo = getBuilderNamespaces(context)[componentNamespace]

@@ -35,7 +35,7 @@ const getWireFieldsFromProperties = (
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { properties, path, context, id } = props
+	const { properties, path, id } = props
 
 	const initialValue: wire.PlainWireRecord = {}
 	properties?.forEach((property) => {
@@ -43,6 +43,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			context,
 			path.addLocal(property.name)
 		) as string
+	})
+
+	// Ensure that we don't add Canvas wrapper components around properties panel components
+	const context = props.context.addBuilderFrame({
+		componentWrapperType: "PROPERTIES",
 	})
 
 	return (
