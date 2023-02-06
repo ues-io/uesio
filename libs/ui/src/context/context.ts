@@ -196,6 +196,11 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
+const providesParams = (
+	o: RouteContext | ParamsContext | ViewContext
+): o is RouteContext | ParamsContext | ViewContext =>
+	Object.prototype.hasOwnProperty.call(o, "params")
+
 function injectDynamicContext(
 	context: Context,
 	additional: ContextOptions | undefined
@@ -322,7 +327,8 @@ class Context {
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () => this.stack.find(hasParamsContext)?.params
+	getParams = () =>
+		this.stack.filter(hasParamsContext).find(providesParams)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
