@@ -64,6 +64,7 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	return (
 		<Form
+			key={id}
 			content={content}
 			path={path}
 			onSubmit={onSubmit}

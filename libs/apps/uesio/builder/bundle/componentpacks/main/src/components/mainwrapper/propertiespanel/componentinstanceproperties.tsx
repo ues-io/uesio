@@ -41,7 +41,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			onUnselect={() => setSelectedPath(context)}
 		>
 			<PropertiesForm
-				id="componentinstanceprops"
+				id={path.combine()}
 				context={context}
 				properties={componentDef.properties}
 				path={path}
