@@ -25,7 +25,6 @@ type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 type SelectOption = {
 	label: string
 	value: string
-	title?: string
 	disabled?: boolean
 }
 
@@ -74,6 +73,7 @@ export {
 	FieldMetadata,
 	FieldMetadataMap,
 	SelectOption,
+	SelectListMetadata,
 	FieldType,
 	NumberMetadata,
 	ReferenceMetadata,

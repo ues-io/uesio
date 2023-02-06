@@ -1,5 +1,9 @@
 import { WireDefault } from "../bands/wire/defaults/defaults"
-import { FieldType, ReferenceMetadata } from "../bands/field/types"
+import {
+	FieldType,
+	ReferenceMetadata,
+	SelectListMetadata,
+} from "../bands/field/types"
 import { SignalDefinition } from "./signal"
 import { WireConditionState } from "../bands/wire/conditions/conditions"
 import { MetadataKey } from "../bands/builder/types"
@@ -12,6 +16,7 @@ type ViewOnlyField = {
 	required: boolean
 	type: FieldType // get better type
 	reference?: ReferenceMetadata
+	selectlist?: SelectListMetadata
 	fields?: Record<string, ViewOnlyField>
 }
 

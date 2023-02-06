@@ -55,8 +55,6 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 						disabled={option.disabled}
 						key={option.value}
 						value={option.value}
-						hidden={option.disabled}
-						title={option.title}
 					>
 						{option.label}
 					</option>

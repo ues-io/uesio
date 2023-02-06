@@ -26,11 +26,26 @@ type MetadataProperty = {
 	metadataType: "COLLECTION" | "FILE" | "VIEW"
 } & BaseProperty
 
+type SelectProperty = {
+	type: "SELECT"
+	options: SelectOption[]
+	required?: boolean
+	defaultValue?: string | number | boolean
+	blankOptionLabel?: string
+} & BaseProperty
+
+type SelectOption = {
+	value: string // TODO This should be able to be a boolean or number as well
+	label: string
+	disabled?: boolean
+}
+
 type ComponentProperty =
 	| TextProperty
 	| NumberProperty
 	| KeyProperty
 	| MetadataProperty
+	| SelectProperty
 
 type ComponentDef = {
 	name: string
@@ -166,4 +181,6 @@ export {
 	getSelectedViewPath,
 	ComponentDef,
 	ComponentProperty,
+	SelectOption,
+	SelectProperty,
 }

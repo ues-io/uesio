@@ -1,7 +1,11 @@
 import { component, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { FullPath } from "../api/path"
-import { ComponentProperty } from "../api/stateapi"
+import {
+	ComponentProperty,
+	SelectProperty,
+	SelectOption,
+} from "../api/stateapi"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -48,11 +52,29 @@ const getFormFieldsFromProperties = (
 	return properties.map(getFormFieldFromProperty)
 }
 
+const getSelectListMetadata = (def: SelectProperty) => ({
+	name: `${def.name}_options`,
+	blankOptionLabel: def.blankOptionLabel,
+	options: def.options.map(
+		(o: SelectOption) =>
+			({
+				...o,
+			} as wire.SelectOption)
+	),
+})
+
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty
 ): wire.ViewOnlyField => {
 	const { name, type, label, required } = def
 	switch (type) {
+		case "SELECT":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "SELECT" as const,
+				selectlist: getSelectListMetadata(def),
+			}
 		case "NUMBER":
 			return {
 				label: label || name,

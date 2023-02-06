@@ -72,6 +72,7 @@ const initViewOnlyWire = (
 			type: fieldDef.type,
 			label: fieldDef.label,
 			reference: fieldDef.reference,
+			selectlist: fieldDef.selectlist,
 		}
 	})
 	const viewOnlyMetadata: PlainCollection = {

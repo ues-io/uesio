@@ -3,5 +3,33 @@ title: Code
 description: Displays the syntax highlighted text of a file.
 pack: main
 entrypoint: components/code/code
+discoverable: true
+category: CONTENT
 variants:
   - uesio/io.fieldlabel:uesio/io.default
+properties:
+  - name: label
+    type: TEXT
+    label: Label
+    required: true
+  - name: language
+    type: SELECT
+    label: Language
+    required: true
+    options:
+      - value: ""
+        label: "--None Selected--"
+      - value: "yaml"
+        label: "YAML"
+      - value: "json"
+        label: "JSON"
+      - value: "javascript"
+        label: "JavaScript"
+      - value: "html"
+        label: "HTML"
+      - value: "css"
+        label: "CSS"
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
