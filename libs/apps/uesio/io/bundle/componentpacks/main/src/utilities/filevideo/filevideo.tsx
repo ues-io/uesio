@@ -17,8 +17,16 @@ interface FileVideoProps extends definition.UtilityProps {
 }
 
 const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
-	const { context, autoplay, muted, userFile, onUpload, onDelete, accept } =
-		props
+	const {
+		mode,
+		context,
+		autoplay,
+		muted,
+		userFile,
+		onUpload,
+		onDelete,
+		accept,
+	} = props
 
 	const userFileId = userFile?.[collection.ID_FIELD]
 	const userModDate = userFile?.[collection.UPDATED_AT_FIELD]
@@ -83,7 +91,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 			uploadLabelId={uploadLabelId}
 			deleteLabelId={deleteLabelId}
 		>
-			{
+			{mode === "EDIT" && (
 				<>
 					<label
 						className={styles.cx(classes.editicon, "hovershow")}
@@ -103,7 +111,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 						</label>
 					)}
 				</>
-			}
+			)}
 			{userFileId ? (
 				<>
 					<video autoPlay={autoplay || true} muted={muted || true}>
