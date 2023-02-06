@@ -44,6 +44,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 				id={path.combine()}
 				context={context}
 				properties={componentDef.properties}
+				content={componentDef.propertiesPanelView}
 				path={path}
 			/>
 		</PropertiesWrapper>

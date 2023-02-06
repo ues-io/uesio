@@ -5,6 +5,7 @@ import { ComponentProperty } from "../api/stateapi"
 
 type Props = {
 	properties?: ComponentProperty[]
+	content?: definition.DefinitionList
 	path: FullPath
 }
 
@@ -102,7 +103,7 @@ type SetterFunction = (a: string) => void
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { properties, path, context, id } = props
+	const { properties, path, context, id, content } = props
 
 	const setters = new Map()
 	const initialValue: wire.PlainWireRecord = {}
@@ -132,7 +133,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			id={id}
 			path={path.localPath}
 			fields={getWireFieldsFromProperties(properties)}
-			content={getFormFieldsFromProperties(properties)}
+			content={content || getFormFieldsFromProperties(properties)}
 			context={context}
 			onUpdate={(field: string, value: string) => {
 				setters.get(field)(value)
