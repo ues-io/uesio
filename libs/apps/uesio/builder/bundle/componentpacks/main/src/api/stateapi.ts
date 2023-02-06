@@ -40,6 +40,7 @@ type ComponentDef = {
 	category: string
 	discoverable: boolean
 	properties: ComponentProperty[]
+	propertiesPanelView: definition.DefinitionList
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>

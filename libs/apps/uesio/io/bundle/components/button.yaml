@@ -12,3 +12,24 @@ properties:
   - name: icon
     type: TEXT
     label: Icon
+propertiesPanelView:
+  - uesio/io.text:
+      uesio.styles:
+        root:
+          padding: 8px
+          margin: 8px
+          fontSize: 9pt
+          border: "1px solid #eee"
+          color: "#777"
+      text: Testing Custom Content
+      element: div
+  - uesio/io.field:
+      uesio.variant: uesio/builder.propfield
+      wrapperVariant: uesio/builder.propfield
+      labelPosition: left
+      fieldId: text
+  - uesio/io.field:
+      uesio.variant: uesio/builder.propfield
+      wrapperVariant: uesio/builder.propfield
+      labelPosition: left
+      fieldId: icon
