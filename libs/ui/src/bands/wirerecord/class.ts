@@ -60,6 +60,8 @@ class WireRecord {
 		const fieldNameParts = fieldId?.split("->")
 		return this.wire.setRecord(this.id, value, fieldNameParts)
 	}
+
+	setAll = (value: PlainWireRecord) => this.wire.setRecord(this.id, value, [])
 }
 
 export default WireRecord

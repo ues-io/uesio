@@ -141,4 +141,5 @@ export {
 	useSelectedViewPath,
 	getSelectedViewPath,
 	ComponentDef,
+	ComponentProperty,
 }

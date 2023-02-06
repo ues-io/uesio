@@ -11,4 +11,4 @@ properties:
     label: Text
   - name: icon
     type: TEXT
-    label: Text
+    label: Icon

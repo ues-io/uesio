@@ -7,6 +7,7 @@ import {
 } from "../../../api/stateapi"
 
 import { useDefinition } from "../../../api/defapi"
+import PropertiesForm from "../../../helpers/propertiesform"
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -39,12 +40,12 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			title={componentDef.title || componentDef.name}
 			onUnselect={() => setSelectedPath(context)}
 		>
-			<div>{componentDef.description}</div>
-			{componentDef.properties?.map((property) => (
-				<div key={property.name}>
-					{property.name} - {property.type}
-				</div>
-			))}
+			<PropertiesForm
+				id="componentinstanceprops"
+				context={context}
+				properties={componentDef.properties}
+				path={path}
+			/>
 		</PropertiesWrapper>
 	)
 }
