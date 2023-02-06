@@ -22,9 +22,9 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${CONTEXT_BAND}/CLEAR`]: {
 		dispatcher: (signal: ClearContextSignal, context: Context) => {
 			if (signal.type === "SITE_ADMIN") {
-				context.deleteSiteAdmin()
+				context = context.deleteSiteAdmin()
 			} else if (signal.type === "WORKSPACE") {
-				context.deleteWorkspace()
+				context = context.deleteWorkspace()
 			}
 			return context
 		},
@@ -44,12 +44,12 @@ const signals: Record<string, SignalDescriptor> = {
 				throw new Error("Type not supported")
 
 			if (signal.type === "SITE_ADMIN") {
-				context.setSiteAdmin({
+				context = context.setSiteAdmin({
 					name: context.mergeString(signal.name),
 					app: context.mergeString(signal.app),
 				})
 			} else if (signal.type === "WORKSPACE") {
-				context.setWorkspace({
+				context = context.setWorkspace({
 					name: context.mergeString(signal.name),
 					app: context.mergeString(signal.app),
 				})
