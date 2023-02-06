@@ -38,7 +38,6 @@ type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
 	disabled?: boolean
-	title?: string
 }
 
 type ComponentProperty =
