@@ -2,8 +2,6 @@ import { FunctionComponent, useState } from "react"
 import { hooks, api, component, wire, param, definition, util } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 
-const WIRE_NAME = "paramData"
-
 const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
 	const viewDef =
 		record.getFieldValue<string>("uesio/studio.definition") || ""
@@ -20,10 +18,42 @@ const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
 	})
 }
 
+interface FormProps {
+	setOpen: (value: boolean) => void
+	onSubmit: (record: wire.WireRecord) => void
+	params: param.ParamDefinition[]
+}
+
+const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
+	const { context, params, setOpen, onSubmit } = props
+
+	const Dialog = component.getUtility("uesio/io.dialog")
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+
+	if (!params) return null
+
+	return (
+		<FloatingPortal>
+			<Dialog
+				context={context}
+				width="400px"
+				height="500px"
+				onClose={() => setOpen(false)}
+				title="Set Preview Parameters"
+			>
+				<DynamicForm
+					id="previewform"
+					fields={api.wire.getWireFieldsFromParams(params)}
+					context={context}
+					onSubmit={onSubmit}
+				/>
+			</Dialog>
+		</FloatingPortal>
+	)
+}
+
 const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
-	const Dialog = component.getUtility("uesio/io.dialog")
-	const Form = component.getUtility("uesio/io.form")
 	const { context } = props
 
 	const record = context.getRecord()
@@ -40,18 +70,6 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	const workspaceName = workspaceContext.name
 
 	const [open, setOpen] = useState<boolean>(false)
-
-	api.wire.useDynamicWire(
-		open ? WIRE_NAME : "",
-		{
-			viewOnly: true,
-			fields: api.wire.getWireFieldsFromParams(params),
-			init: {
-				create: true,
-			},
-		},
-		context
-	)
 
 	const togglePreview = () => (hasParams ? setOpen(true) : previewHandler())
 
@@ -84,22 +102,12 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 				onClick={togglePreview}
 			/>
 			{open && (
-				<FloatingPortal>
-					<Dialog
-						context={context}
-						width="400px"
-						height="500px"
-						onClose={() => setOpen(false)}
-						title="Set Preview Parameters"
-					>
-						<Form
-							wire={WIRE_NAME}
-							context={context}
-							submitLabel="Preview"
-							onSubmit={previewHandler}
-						/>
-					</Dialog>
-				</FloatingPortal>
+				<PreviewForm
+					params={params}
+					onSubmit={previewHandler}
+					setOpen={setOpen}
+					context={context}
+				/>
 			)}
 		</>
 	)
