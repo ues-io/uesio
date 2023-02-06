@@ -4,7 +4,11 @@ import {
 	UC,
 	UtilityComponent,
 } from "../definition/definition"
-import { injectDynamicContext, Context } from "../context/context"
+import {
+	injectDynamicContext,
+	Context,
+	ContextOptions,
+} from "../context/context"
 import { getRuntimeLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
@@ -72,7 +76,7 @@ function mergeContextVariants(
 	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
-const Component: UC<Record<string, unknown>> = (props) => {
+const Component: UC<DefinitionMap> = (props) => {
 	const { componentType, context, definition } = props
 	if (definition && !useShould(definition["uesio.display"], context))
 		return null
@@ -91,7 +95,7 @@ const Component: UC<Record<string, unknown>> = (props) => {
 				definition={mergedDefinition || {}}
 				context={injectDynamicContext(
 					context,
-					mergedDefinition?.["uesio.context"]
+					mergedDefinition?.["uesio.context"] as ContextOptions
 				)}
 			/>
 		</ErrorBoundary>

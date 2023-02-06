@@ -196,7 +196,10 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
-function injectDynamicContext(context: Context, additional: ContextOptions) {
+function injectDynamicContext(
+	context: Context,
+	additional: ContextOptions | undefined
+) {
 	if (!additional) return context
 
 	if (providesWorkspace(additional)) {
@@ -555,6 +558,7 @@ export {
 	Context,
 	ContextFrame,
 	FieldMode,
+	ContextOptions,
 	getWire,
 	injectDynamicContext,
 	hasViewContext,

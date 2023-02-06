@@ -74,7 +74,7 @@ export type DefinitionMap = Record<string, unknown>
 
 export type DefinitionList = DefinitionMap[]
 
-export type DefinitionValue = string | number | boolean | null | undefined
+export type DefinitionValue = unknown
 
 export type Definition =
 	| DefinitionValue

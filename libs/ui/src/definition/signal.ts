@@ -1,4 +1,4 @@
-import { Context } from "../context/context"
+import { Context, ContextOptions } from "../context/context"
 import { Definition } from "./definition"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
@@ -35,6 +35,7 @@ type ComponentSignalDescriptor<T = PlainComponentState> = {
 type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
+	"uesio.context"?: ContextOptions
 	onerror?: {
 		continue: boolean
 		notify: boolean
