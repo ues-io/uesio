@@ -14,6 +14,10 @@ properties:
     label: Icon
 propertiesPanelView:
   - uesio/io.text:
+      uesio.display:
+        - field: text
+          operator: NOT_EQUALS
+          value: hideme
       uesio.styles:
         root:
           padding: 8px
