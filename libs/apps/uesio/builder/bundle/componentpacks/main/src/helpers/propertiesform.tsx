@@ -31,6 +31,8 @@ const getFormFieldFromProperty = (property: ComponentProperty) => {
 		default:
 			return {
 				"uesio/io.field": {
+					"uesio.variant": "uesio/builder.propfield",
+					labelPosition: "left",
 					fieldId: property.name,
 				},
 			}
