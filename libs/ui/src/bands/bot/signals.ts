@@ -27,8 +27,17 @@ const signals: Record<string, SignalDescriptor> = {
 					mergedParams || {}
 				)
 
-				return context.addParamsFrame(response.params)
+				// If this invocation was given a stable identifier,
+				// expose its outputs for later use
+				if (response && signal.signalInvocationId) {
+					return context.addSignalOutputFrame(
+						signal.signalInvocationId,
+						response.params
+					)
+				}
+				return context
 			} catch (error) {
+				// TODO: Recommend putting errors within signal output frame as well
 				const message = getErrorString(error)
 				return context.addErrorFrame([message])
 			}

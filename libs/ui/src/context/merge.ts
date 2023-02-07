@@ -5,6 +5,7 @@ import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { UserState } from "../bands/user/types"
+import { get } from "lodash"
 
 type MergeType =
 	| "Record"
@@ -20,6 +21,7 @@ type MergeType =
 	| "Label"
 	| "SelectList"
 	| "Sum"
+	| "Output"
 
 type MergeHandler = (expression: string, context: Context) => string
 
@@ -58,6 +60,22 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return "" + total
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
+	Output: (expression, context) => {
+		// Expression MUST have 2+ parts, e.g. $Output{frameId.field}
+		const parts = expression.split(".")
+		if (parts.length < 2) {
+			throw "Invalid Output merge - a signalInvocationId and field must be provided, e.g. $Output{signalInvocationId.field}"
+		}
+		const [frameId, ...fieldPath] = parts
+		const signalOutputFrame = context.getSignalOutputs(frameId)
+		if (!signalOutputFrame) {
+			throw (
+				"Could not find outputs for the requested signal invocation: " +
+				frameId
+			)
+		}
+		return get(signalOutputFrame.data, fieldPath)
+	},
 	User: (expression, context) => {
 		const user = context.getUser()
 		if (!user) return ""
