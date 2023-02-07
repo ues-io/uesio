@@ -3,10 +3,12 @@ package controller
 import (
 	"archive/zip"
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/controller/bot"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"io"
 	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/bot"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -35,7 +37,7 @@ func GenerateToWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	retrieveData := bundlestore.GetFileReader(func(data io.Writer) error {
 		zipwriter := zip.NewWriter(data)
-		err := datasource.CallGeneratorBot(zipwriter.Create, namespace, name, params, nil, session)
+		err := datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
 		if err != nil {
 			return err
 		}

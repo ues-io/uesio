@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
 func Generate(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +31,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 
 	zipwriter := zip.NewWriter(w)
 
-	err = datasource.CallGeneratorBot(zipwriter.Create, namespace, name, params, nil, session)
+	err = datasource.CallGeneratorBot(retrieve.NewWriterCreator(zipwriter.Create), namespace, name, params, nil, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
