@@ -5,6 +5,7 @@ import {
 	ComponentProperty,
 	SelectProperty,
 	SelectOption,
+	WireProperty,
 } from "../api/stateapi"
 
 type Props = {
@@ -33,6 +34,21 @@ const getFormFieldFromProperty = (property: ComponentProperty) => {
 		// 			grouping: property.grouping,
 		// 		},
 		// 	}
+		case "NUMBER": {
+			return {
+				"uesio/io.field": {
+					"uesio.variant": "uesio/builder.propfield",
+					wrapperVariant: "uesio/builder.propfield",
+					labelPosition: "left",
+					fieldId: property.name,
+					number: {
+						step: property.step,
+						max: property.max,
+						min: property.min,
+					},
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
@@ -63,6 +79,20 @@ const getSelectListMetadata = (def: SelectProperty) => ({
 	),
 })
 
+const getAvailableWires = () => {
+	const availableWires = {} as wire.WireDefinitionMap
+	return Object.keys(availableWires)
+}
+
+const getWireSelectListMetadata = (def: WireProperty) => ({
+	name: `${def.name}_options`,
+	blankOptionLabel: "No Wire selected",
+	options: getAvailableWires().map((wireId) => ({
+		value: wireId,
+		label: wireId,
+	})),
+})
+
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty
 ): wire.ViewOnlyField => {
@@ -86,6 +116,13 @@ const getWireFieldFromPropertyDef = (
 				label: label || name,
 				required: true,
 				type: "TEXT" as const,
+			}
+		case "WIRE":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "SELECT" as const,
+				selectlist: getWireSelectListMetadata(def),
 			}
 		default:
 			return {

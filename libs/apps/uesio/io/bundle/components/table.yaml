@@ -1,4 +1,6 @@
 name: table
+title: Table
+description: View and edit tabular data.
 pack: main
 entrypoint: components/table/table
 variants:
@@ -8,3 +10,28 @@ variants:
   - uesio/io.button:uesio/io.nav
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.field:uesio/io.table
+category: DATA
+discoverable: true
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: uesio/core.id
+    label: Table Id
+    type: COMPONENT_ID
+    required: true
+  - name: mode
+    label: Display Mode
+    type: SELECT
+    required: true
+    options:
+      - value: READ
+        label: Read
+      - value: EDIT
+        label: Edit
+  - name: pagesize
+    label: Page size
+    type: NUMBER
+    min: 1
+    max: 500
