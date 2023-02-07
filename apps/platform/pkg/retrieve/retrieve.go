@@ -74,13 +74,12 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 			if err != nil {
 				return err
 			}
+			defer f.Close()
 
 			encoder := yaml.NewEncoder(f)
 			encoder.SetIndent(2)
 			err = encoder.Encode(item)
 			if err != nil {
-				// Make sure we close even if encoding produced an error
-				f.Close()
 				return err
 			}
 
