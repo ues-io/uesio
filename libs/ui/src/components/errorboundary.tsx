@@ -8,34 +8,17 @@ interface State {
 
 class ErrorBoundary extends Component<BaseProps> {
 	public state: State = { error: null }
-	public updatedWithError = false
 
 	public static getDerivedStateFromError(error: Error): State {
 		// Update state so the next render will show the fallback UI.
 		return { error }
 	}
 
-	public componentDidMount() {
+	public componentDidUpdate(prevProps: BaseProps) {
 		const { error } = this.state
-
-		if (error !== null) {
-			this.updatedWithError = true
-		}
-	}
-
-	public reset() {
-		this.updatedWithError = false
-		this.setState({ error: null })
-	}
-
-	public componentDidUpdate() {
-		const { error } = this.state
-		if (error !== null && !this.updatedWithError) {
-			this.updatedWithError = true
-			return
-		}
-		if (error !== null) {
-			this.reset()
+		// Only reset if the definition has changed
+		if (error !== null && prevProps.definition !== this.props.definition) {
+			this.setState({ error: null })
 		}
 	}
 

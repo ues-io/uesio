@@ -50,9 +50,12 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("description", c.Description)
 	enc.AddStringKey("category", c.Category)
 	enc.AddBoolKey("discoverable", c.Discoverable)
-	enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
-	enc.AddArrayKey("propertiesPanelView", (*YAMLDefinition)(&c.PropertiesPanelView))
-
+	if c.Properties.Content != nil {
+		enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
+	}
+	if c.PropertiesPanelView.Content != nil {
+		enc.AddArrayKey("propertiesPanelView", (*YAMLDefinition)(&c.PropertiesPanelView))
+	}
 }
 
 func (c *Component) IsNil() bool {
