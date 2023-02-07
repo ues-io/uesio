@@ -74,6 +74,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 			if err != nil {
 				return err
 			}
+			defer f.Close()
 
 			encoder := yaml.NewEncoder(f)
 			encoder.SetIndent(2)
@@ -81,7 +82,6 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 			if err != nil {
 				return err
 			}
-			f.Close()
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
@@ -96,6 +96,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 						return err
 					}
 					f, err := create(filepath.Join(metadataType, attachableItem.GetBasePath(), path))
+					defer f.Close()
 					if err != nil {
 						return err
 					}
@@ -103,7 +104,6 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 					if err != nil {
 						return err
 					}
-					f.Close()
 				}
 			}
 
@@ -121,6 +121,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	encoder := yaml.NewEncoder(f)
 	encoder.SetIndent(2)
@@ -128,7 +129,6 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 	if err != nil {
 		return err
 	}
-	f.Close()
 
 	return nil
 
