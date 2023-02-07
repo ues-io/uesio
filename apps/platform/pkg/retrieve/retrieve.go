@@ -13,7 +13,27 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type WriterCreator func(fileName string) (io.Writer, error)
+type WriterCreator func(fileName string) (io.WriteCloser, error)
+
+func NewWriterCreator(creator func(string) (io.Writer, error)) WriterCreator {
+	return func(path string) (io.WriteCloser, error) {
+		w, err := creator(path)
+		if err != nil {
+			return nil, err
+		}
+		return NopWriterCloser(w), nil
+	}
+}
+
+func NopWriterCloser(w io.Writer) io.WriteCloser {
+	return nopWriterCloser{w}
+}
+
+type nopWriterCloser struct {
+	io.Writer
+}
+
+func (nopWriterCloser) Close() error { return nil }
 
 func Retrieve(writer io.Writer, session *sess.Session) error {
 	workspace := session.GetWorkspace()
@@ -27,7 +47,7 @@ func Retrieve(writer io.Writer, session *sess.Session) error {
 	}
 	// Create a new zip archive.
 	zipwriter := zip.NewWriter(writer)
-	err = RetrieveBundle(zipwriter.Create, namespace, version, bs, session)
+	err = RetrieveBundle(NewWriterCreator(zipwriter.Create), namespace, version, bs, session)
 	if err != nil {
 		return err
 	}
@@ -57,7 +77,11 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 			encoder := yaml.NewEncoder(f)
 			encoder.SetIndent(2)
-			encoder.Encode(item)
+			err = encoder.Encode(item)
+			if err != nil {
+				return err
+			}
+			f.Close()
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
 
@@ -79,6 +103,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 					if err != nil {
 						return err
 					}
+					f.Close()
 				}
 			}
 
@@ -99,7 +124,11 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 	encoder := yaml.NewEncoder(f)
 	encoder.SetIndent(2)
-	encoder.Encode(by)
+	err = encoder.Encode(by)
+	if err != nil {
+		return err
+	}
+	f.Close()
 
 	return nil
 

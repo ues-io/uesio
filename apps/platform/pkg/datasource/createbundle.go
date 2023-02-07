@@ -15,7 +15,7 @@ func StoreBundleAssets(namespace, sourceversion, destversion string, source bund
 	if err != nil {
 		return err
 	}
-	creator := func(path string) (io.Writer, error) {
+	creator := func(path string) (io.WriteCloser, error) {
 		r, w := io.Pipe()
 		go func() {
 			dest.StoreItem(namespace, destversion, path, r, session)
