@@ -21,7 +21,8 @@ type MergeType =
 	| "Label"
 	| "SelectList"
 	| "Sum"
-	| "Output"
+	| "SignalOutput"
+	| "ComponentOutput"
 
 type MergeHandler = (expression: string, context: Context) => string
 
@@ -60,21 +61,34 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return "" + total
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
-	Output: (expression, context) => {
-		// Expression MUST have 2+ parts, e.g. $Output{frameId.field}
+	SignalOutput: (expression, context) => {
+		// Expression MUST have 2+ parts, e.g. $SignalOutput{label.propertyPath}
 		const parts = expression.split(".")
 		if (parts.length < 2) {
-			throw "Invalid Output merge - a signalInvocationId and field must be provided, e.g. $Output{signalInvocationId.field}"
+			throw "Invalid SignalOutput merge - a label and field must be provided, e.g. $Output{signalInvocationId.field}"
 		}
-		const [frameId, ...fieldPath] = parts
-		const signalOutputFrame = context.getSignalOutputs(frameId)
+		const [label, ...propertyPath] = parts
+		const signalOutputFrame = context.getSignalOutputs(label)
 		if (!signalOutputFrame) {
+			throw "Could not find signal output associated with label: " + label
+		}
+		return get(signalOutputFrame.data, propertyPath)
+	},
+	ComponentOutput: (expression, context) => {
+		// Expression MUST have 2+ parts, e.g. $ComponentOutput{componentType.property}
+		const parts = expression.split(".")
+		if (parts.length < 2) {
+			throw "Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $Output{signalInvocationId.field}"
+		}
+		const [componentType, ...propertyPath] = parts
+		const frame = context.getComponentData(componentType)
+		if (!frame) {
 			throw (
-				"Could not find outputs for the requested signal invocation: " +
-				frameId
+				"Could not find component output data for component: " +
+				componentType
 			)
 		}
-		return get(signalOutputFrame.data, fieldPath)
+		return get(frame.data, propertyPath)
 	},
 	User: (expression, context) => {
 		const user = context.getUser()

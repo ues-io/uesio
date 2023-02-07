@@ -36,7 +36,7 @@ type SignalDefinition = {
 	signal: string
 	[key: string]: Definition
 	"uesio.context"?: ContextOptions
-	signalInvocationId?: string
+	stepId?: string
 	onerror?: {
 		continue: boolean
 		notify: boolean

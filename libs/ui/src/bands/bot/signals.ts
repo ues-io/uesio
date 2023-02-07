@@ -15,9 +15,9 @@ interface CallSignal extends SignalDefinition {
 
 const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
-		dispatcher: async (signal: CallSignal, context: Context) => {
-			const [namespace, name] = parseKey(signal.bot)
-			const mergedParams = context.mergeStringMap(signal.params)
+		dispatcher: async (signalInvocation: CallSignal, context: Context) => {
+			const [namespace, name] = parseKey(signalInvocation.bot)
+			const mergedParams = context.mergeStringMap(signalInvocation.params)
 
 			try {
 				const response = await platform.callBot(
@@ -29,9 +29,9 @@ const signals: Record<string, SignalDescriptor> = {
 
 				// If this invocation was given a stable identifier,
 				// expose its outputs for later use
-				if (response && signal.signalInvocationId) {
+				if (response && signalInvocation.stepId) {
 					return context.addSignalOutputFrame(
-						signal.signalInvocationId,
+						signalInvocation.stepId,
 						response.params
 					)
 				}

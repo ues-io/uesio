@@ -35,13 +35,9 @@ const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
 				const value = datasets[0].data[i]
 				const handler = api.signal.getHandler(
 					definition.signals,
-					// TODO: What was this needed for?
-					// Can we name this signals invocation? Need to understand how this is configured...
-					// Can we give this a name? Or do other components require this???
-					// props.context.addParamsFrame({
-					// 	category,
-					// })
-					props.context
+					props.context.addComponentFrame("uesio/chart.metricgroup", {
+						category,
+					})
 				)
 				return (
 					<MetricUtility

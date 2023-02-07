@@ -24,6 +24,7 @@ import { handlers, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
 
 const ERROR = "ERROR",
+	COMPONENT = "COMPONENT",
 	RECORD = "RECORD",
 	THEME = "THEME",
 	VIEW = "VIEW",
@@ -96,7 +97,17 @@ interface ParamsContext {
 
 interface SignalOutputContext {
 	data: object
-	frameId: string
+	errors?: string[]
+	label: string
+}
+
+interface ComponentContext {
+	componentType: string
+	data: object
+}
+
+interface ComponentContextFrame extends ComponentContext {
+	type: typeof COMPONENT
 }
 
 interface ThemeContextFrame extends ThemeContext {
@@ -151,6 +162,7 @@ type ContextOptions =
 
 type ContextFrame =
 	| RouteContextFrame
+	| ComponentContextFrame
 	| ThemeContextFrame
 	| ViewContextFrame
 	| RecordContextFrame
@@ -173,6 +185,10 @@ const isThemeContextFrame = (
 const isRecordContextFrame = (
 	frame: ContextFrame
 ): frame is RecordContextFrame => frame.type === RECORD
+
+const isComponentContextFrame = (
+	frame: ContextFrame
+): frame is ComponentContextFrame => frame.type === COMPONENT
 
 const isSignalOutputContextFrame = (
 	frame: ContextFrame
@@ -490,10 +506,10 @@ class Context {
 			slot,
 		})
 
-	addSignalOutputFrame = (frameId: string, data: object) =>
+	addSignalOutputFrame = (label: string, data: object) =>
 		this.#addFrame({
 			type: SIGNAL_OUTPUT,
-			frameId,
+			label,
 			data,
 		})
 
@@ -513,6 +529,13 @@ class Context {
 		this.#addFrame({
 			type: VIEW,
 			...viewContext,
+		})
+
+	addComponentFrame = (componentType: string, data: object) =>
+		this.#addFrame({
+			type: COMPONENT,
+			componentType,
+			data,
 		})
 
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
@@ -589,10 +612,16 @@ class Context {
 			.filter((f) => f?.viewDef)
 			.map((contextFrame) => contextFrame.viewDef)
 
-	getSignalOutputs = (frameId: string) =>
+	getSignalOutputs = (label: string) =>
 		this.stack.find(
-			(f) => isSignalOutputContextFrame(f) && f.frameId === frameId
+			(f) => isSignalOutputContextFrame(f) && f.label === label
 		) as SignalOutputContextFrame
+
+	getComponentData = (componentType: string) =>
+		this.stack.find(
+			(f) =>
+				isComponentContextFrame(f) && f.componentType === componentType
+		) as ComponentContextFrame
 }
 
 export {
