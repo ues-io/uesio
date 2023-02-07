@@ -33,7 +33,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	return (
 		<input
 			id={id}
-			value={lvalue || ""}
+			value={lvalue === 0 || lvalue ? lvalue : ""}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="number"
 			disabled={readonly}
