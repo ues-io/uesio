@@ -38,6 +38,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				gridRow: "2 / 3",
 				gridColumn: "2 / 3",
 				pointerEvents: "auto",
+				overflow: "scroll",
 			},
 		},
 		props
