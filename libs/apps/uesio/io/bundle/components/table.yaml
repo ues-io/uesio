@@ -33,5 +33,6 @@ properties:
   - name: pagesize
     label: Page size
     type: NUMBER
-    min: 1
+    min: 5
     max: 500
+    step: 5

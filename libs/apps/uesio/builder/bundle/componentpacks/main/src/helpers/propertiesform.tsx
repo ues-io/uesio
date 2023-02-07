@@ -1,5 +1,6 @@
-import { component, definition, wire } from "@uesio/ui"
+import { component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
+import { getAvailableWireIds } from "../api/wireapi"
 import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
@@ -79,22 +80,21 @@ const getSelectListMetadata = (def: SelectProperty) => ({
 	),
 })
 
-const getAvailableWires = () => {
-	const availableWires = {} as wire.WireDefinitionMap
-	return Object.keys(availableWires)
-}
-
-const getWireSelectListMetadata = (def: WireProperty) => ({
+const getWireSelectListMetadata = (
+	context: context.Context,
+	def: WireProperty
+) => ({
 	name: `${def.name}_options`,
 	blankOptionLabel: "No Wire selected",
-	options: getAvailableWires().map((wireId) => ({
+	options: getAvailableWireIds(context).map((wireId) => ({
 		value: wireId,
 		label: wireId,
 	})),
 })
 
 const getWireFieldFromPropertyDef = (
-	def: ComponentProperty
+	def: ComponentProperty,
+	context: context.Context
 ): wire.ViewOnlyField => {
 	const { name, type, label, required } = def
 	switch (type) {
@@ -122,7 +122,7 @@ const getWireFieldFromPropertyDef = (
 				label: label || name,
 				required: required || false,
 				type: "SELECT" as const,
-				selectlist: getWireSelectListMetadata(def),
+				selectlist: getWireSelectListMetadata(context, def),
 			}
 		default:
 			return {
@@ -134,11 +134,15 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getWireFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined
+	properties: ComponentProperty[] | undefined,
+	context: context.Context
 ) => {
 	if (!properties) return {}
 	return Object.fromEntries(
-		properties.map((def) => [def.name, getWireFieldFromPropertyDef(def)])
+		properties.map((def) => [
+			def.name,
+			getWireFieldFromPropertyDef(def, context),
+		])
 	)
 }
 
@@ -191,7 +195,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		<DynamicForm
 			id={id}
 			path={path.localPath}
-			fields={getWireFieldsFromProperties(properties)}
+			fields={getWireFieldsFromProperties(properties, context)}
 			content={content || getFormFieldsFromProperties(properties)}
 			context={context}
 			onUpdate={(field: string, value: string) => {
