@@ -57,11 +57,14 @@ class WireRecord {
 		const fieldNameParts = fieldId?.split("->")
 		const wire = this.getWire()
 		updateRecordOp(
-			context.addRecordFrame({
-				wire: wire.getId(),
-				record: this.getId(),
-				view: wire.getViewId(),
-			}),
+			// Only a new record frame if this record is not the current record
+			context.getRecordId() !== this.getId()
+				? context.addRecordFrame({
+						wire: wire.getId(),
+						record: this.getId(),
+						view: wire.getViewId(),
+				  })
+				: context,
 			fieldNameParts,
 			value
 		)
