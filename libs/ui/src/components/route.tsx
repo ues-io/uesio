@@ -100,22 +100,20 @@ const Route: UtilityComponent = (props) => {
 		</>
 	)
 
-	const wrappedView = workspace ? (
-		<Component
-			context={routeContext}
-			componentType={workspace.wrapper}
-			path=""
-			definition={{}}
-		>
-			{view}
-		</Component>
-	) : (
-		<>{view}</>
-	)
-
 	return (
 		<>
-			{wrappedView}
+			{workspace ? (
+				<Component
+					context={routeContext}
+					componentType={workspace.wrapper}
+					path=""
+					definition={{}}
+				>
+					{view}
+				</Component>
+			) : (
+				view
+			)}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div
 				className={css({
