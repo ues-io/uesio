@@ -83,18 +83,21 @@ const Route: UtilityComponent = (props) => {
 	}
 
 	const view = (
-		<View
-			context={
-				workspace?.slotwrapper
-					? routeContext.addSlotFrame(workspace.slotwrapper)
-					: routeContext
-			}
-			definition={{
-				view: route.view,
-				params: route.params,
-			}}
-			path=""
-		/>
+		<>
+			<View
+				context={
+					workspace?.slotwrapper
+						? routeContext.addSlotFrame(workspace.slotwrapper)
+						: routeContext
+				}
+				definition={{
+					view: route.view,
+					params: route.params,
+				}}
+				path=""
+			/>
+			<PanelArea />
+		</>
 	)
 
 	const wrappedView = workspace ? (
@@ -107,10 +110,7 @@ const Route: UtilityComponent = (props) => {
 			{view}
 		</Component>
 	) : (
-		<>
-			{view}
-			<PanelArea />
-		</>
+		<>{view}</>
 	)
 
 	return (

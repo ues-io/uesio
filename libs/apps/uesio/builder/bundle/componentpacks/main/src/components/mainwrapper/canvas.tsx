@@ -143,21 +143,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				margin: "0 auto",
 				transition: "all 0.3s ease",
 			},
-
-			contentwrapper: {
-				overflow: "auto",
-				height: "100%",
-				position: "relative",
-			},
-
-			inner: {
-				minHeight: "100%",
-				padding: "0.05px", // Hack to prevent margin collapse
-				position: "relative",
-				"&.empty": {
-					display: "grid",
-				},
-			},
 		},
 		props
 	)
@@ -170,8 +155,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const route = context.getRoute()
 
 	if (!route || !viewDefId || !viewDef) return null
-
-	const isEmpty = !viewDef.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -250,22 +233,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<TopActions context={context} />
 			<div className={classes.scrollwrapper}>
-				<div className={classes.outerwrapper}>
-					<div className={classes.contentwrapper}>
-						<div
-							className={styles.cx(
-								classes.inner,
-								isEmpty && "empty"
-							)}
-						>
-							{props.children}
-							<PanelPortal context={context} />
-						</div>
-					</div>
-					<component.PanelArea />
-				</div>
+				<div className={classes.outerwrapper}>{props.children}</div>
 			</div>
 			<BottomActions context={context} />
+			<PanelPortal context={context} />
 		</div>
 	)
 }

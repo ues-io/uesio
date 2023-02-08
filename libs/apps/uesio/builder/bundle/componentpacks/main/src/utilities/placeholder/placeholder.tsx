@@ -28,7 +28,7 @@ const PlaceHolder: FC<T> = (props) => {
 				opacity: 0.4,
 				fontSize: "0.7em",
 				textAlign: "center",
-				margin: "10px",
+				margin: "4px",
 				transition: "all 0.125s ease",
 				...(isHovering && {
 					opacity: 0.6,
@@ -46,6 +46,7 @@ const PlaceHolder: FC<T> = (props) => {
 			},
 			wrapper: {
 				margin: "6px",
+				padding: "10px",
 				minWidth: "52px",
 				minHeight: "52px",
 				display: "grid",
