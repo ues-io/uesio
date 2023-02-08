@@ -55,19 +55,7 @@ class WireRecord {
 
 	update = (fieldId: string, value: FieldValue, context: Context) => {
 		const fieldNameParts = fieldId?.split("->")
-		const wire = this.getWire()
-		updateRecordOp(
-			// Only a new record frame if this record is not the current record
-			context.getRecordId() !== this.getId()
-				? context.addRecordFrame({
-						wire: wire.getId(),
-						record: this.getId(),
-						view: wire.getViewId(),
-				  })
-				: context,
-			fieldNameParts,
-			value
-		)
+		updateRecordOp(context, fieldNameParts, value, this)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {

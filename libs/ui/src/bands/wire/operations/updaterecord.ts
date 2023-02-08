@@ -4,17 +4,15 @@ import { FieldValue } from "../../wirerecord/types"
 import { runManyThrottled } from "../../../signals/signals"
 import { dispatch } from "../../../store/store"
 import { publish } from "../../../hooks/eventapi"
+import WireRecord from "../../wirerecord/class"
 
 export default async (
 	context: Context,
 	path: string[],
 	value: FieldValue,
-	wireId?: string
+	record: WireRecord
 ) => {
-	const record = context.getRecord(wireId)
-	if (!record) return context
 	const wire = record.getWire()
-
 	dispatch(
 		updateRecord({
 			recordId: record.id,

@@ -186,13 +186,16 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Value",
 			},
 		],
-		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
-			updateRecordOp(
+		dispatcher: (signal: UpdateRecordSignal, context: Context) => {
+			const record = context.getRecord(signal.wire)
+			if (!record) return context
+			return updateRecordOp(
 				context,
 				signal.field.split("->"),
 				context.merge(signal.value),
-				signal.wire
-			),
+				record
+			)
+		},
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",
