@@ -15,7 +15,7 @@ import (
 type BotDialect interface {
 	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI) error
 	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI) error
-	CallBot(bot *meta.Bot, botAPI *CallBotAPI) error
+	CallBot(bot *meta.Bot, botAPI *CallBotAPI) (map[string]interface{}, error)
 	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI) error
 }
 
@@ -300,7 +300,6 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 			params: params,
 		},
 		connection: connection,
-		results:    map[string]interface{}{},
 	}
 
 	err = hydrateBot(robot, session)
@@ -313,10 +312,10 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
-	err = dialect.CallBot(robot, botAPI)
+	results, err := dialect.CallBot(robot, botAPI)
 	if err != nil {
 		return nil, err
 	}
 
-	return botAPI.results, nil
+	return results, nil
 }
