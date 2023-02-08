@@ -9,11 +9,11 @@ import (
 )
 
 func NewListenerBot(namespace, name string) *Bot {
-	return NewBaseBot("LISTENER", "_", namespace, name)
+	return NewBaseBot("LISTENER", "", namespace, name)
 }
 
 func NewGeneratorBot(namespace, name string) *Bot {
-	return NewBaseBot("GENERATOR", "_", namespace, name)
+	return NewBaseBot("GENERATOR", "", namespace, name)
 }
 
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
