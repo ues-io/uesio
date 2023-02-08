@@ -13,9 +13,8 @@ import {
 } from "."
 import saveWiresOp from "./operations/save"
 import loadWireOp from "./operations/load"
-import updateRecordOp from "./operations/updaterecord"
 import { PlainWire } from "./types"
-import { Context, newContext } from "../../context/context"
+import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
@@ -67,15 +66,6 @@ class Wire {
 	hasMore = () => this.source.more
 
 	getFields = () => this.source?.fields || {}
-
-	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
-		const context = newContext().addRecordFrame({
-			wire: this.getId(),
-			record: recordId,
-			view: this.getViewId(),
-		})
-		updateRecordOp(context, path, record, this.getId())
-	}
 
 	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		dispatch(

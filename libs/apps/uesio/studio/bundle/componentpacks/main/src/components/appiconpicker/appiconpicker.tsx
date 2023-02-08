@@ -62,7 +62,7 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 	useEffect(() => {
 		if (!iconValue && record) {
 			// Update to a random color if we haven't set one.
-			record.update(fieldId, getRandomIcon())
+			record.update(fieldId, getRandomIcon(), context)
 		}
 	}, [])
 
@@ -130,7 +130,7 @@ const AppIconPicker: FunctionComponent<Props> = (props) => {
 								[classes.selected]: isSelected,
 							})}
 							onClick={() => {
-								record.update(fieldId, icon)
+								record.update(fieldId, icon, context)
 							}}
 						>
 							<Icon

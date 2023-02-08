@@ -84,7 +84,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 				variant={variant}
 				value={value}
 				setValue={(value: wire.PlainWireRecord) => {
-					record.update(fieldId, value)
+					record.update(fieldId, value, context)
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord, index: number) => {

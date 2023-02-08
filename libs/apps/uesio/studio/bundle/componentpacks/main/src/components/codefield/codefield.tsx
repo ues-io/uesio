@@ -35,7 +35,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	const changeHandler = (newValue: string) => {
 		const oldValue = context.getRecord()?.getFieldValue(fieldId) || ""
-		if (newValue !== oldValue) record.update(fieldId, newValue)
+		if (newValue !== oldValue) record.update(fieldId, newValue, context)
 	}
 
 	return (

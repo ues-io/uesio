@@ -64,7 +64,7 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 			label={label}
 			value={value || []}
 			setValue={(nvalue: string[]) => {
-				record.update(fieldId, nvalue)
+				record.update(fieldId, nvalue, context)
 			}}
 			context={context}
 			grouping={grouping}
