@@ -37,7 +37,7 @@ const Translation: FunctionComponent<Props> = (props) => {
 					namespace={entry}
 					context={context}
 					setValue={(value: wire.PlainWireRecord): void => {
-						record.update(fieldId, value)
+						record.update(fieldId, value, context)
 					}}
 				/>
 			))}

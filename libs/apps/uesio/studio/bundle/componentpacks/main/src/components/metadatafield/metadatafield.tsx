@@ -51,7 +51,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			label={label}
 			value={value}
 			setValue={(value: string) => {
-				record.update(fieldId, value)
+				record.update(fieldId, value, context)
 			}}
 			context={context}
 			{...(grouping && {

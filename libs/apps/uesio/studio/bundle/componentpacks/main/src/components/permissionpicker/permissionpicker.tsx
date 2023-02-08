@@ -45,11 +45,11 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		const hasProperty = getValue(listRecord)
 		if (!hasProperty) {
 			const updValue = { ...value, [listRecord]: true }
-			record.update(fieldId, updValue)
+			record.update(fieldId, updValue, context)
 		} else {
 			const currentValue = value[listRecord]
 			const updValue = { ...value, [listRecord]: !currentValue }
-			record.update(fieldId, updValue)
+			record.update(fieldId, updValue, context)
 		}
 	}
 

@@ -142,7 +142,8 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		fieldId,
 		id: componentId,
 		value: record.getFieldValue(fieldId),
-		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
+		setValue: (value: wire.FieldValue) =>
+			record.update(fieldId, value, context),
 		record,
 		variant: definition["uesio.variant"],
 		placeholder,
