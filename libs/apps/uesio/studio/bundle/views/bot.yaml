@@ -52,6 +52,9 @@ definition:
         create: true
         query: true
       defaults:
+        - field: uesio/core.path
+          valueSource: VALUE
+          value: "bot.js"
         - field: uesio/core.recordid
           valueSource: LOOKUP
           lookupWire: bots
