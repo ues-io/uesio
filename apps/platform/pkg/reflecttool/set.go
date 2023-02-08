@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+
+	"gopkg.in/yaml.v3"
 )
 
 // SetField sets the provided obj field with provided value. obj param has
@@ -79,12 +81,29 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 		from = from.Elem()
 		fromKind = from.Kind()
 	}
+	if fromKind == reflect.String {
+		// Special handling for yaml.Node
+		toValue := to.Interface()
+		_, ok := toValue.(yaml.Node)
+		if !ok {
+			return fmt.Errorf("Cannot set kind: %s to a %s struct", fromKind, structType)
+		}
+		yamlDoc := &yaml.Node{}
+		err := yaml.Unmarshal([]byte(from.String()), yamlDoc)
+		if err != nil {
+			return err
+		}
+		if len(yamlDoc.Content) == 1 {
+			to.Set(reflect.ValueOf(yamlDoc.Content[0]).Elem())
+		}
+		return nil
+	}
 	if fromKind == reflect.Struct {
 		to.Set(from)
 		return nil
 	}
 	if fromKind != reflect.Map {
-		return fmt.Errorf("Cannot set kind: %s to struct to a %s struct", fromKind, structType)
+		return fmt.Errorf("Cannot set kind: %s to a %s struct", fromKind, structType)
 	}
 	for _, key := range from.MapKeys() {
 		fieldName, err := getFieldName(structType, key.String())

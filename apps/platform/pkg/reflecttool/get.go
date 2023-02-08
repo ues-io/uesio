@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 func reflectValue(obj interface{}) reflect.Value {
@@ -65,6 +67,8 @@ func getPointer(from reflect.Value) (interface{}, error) {
 	return from.Interface(), nil
 }
 
+var yamlType = reflect.ValueOf(yaml.Node{}).Type()
+
 func getFieldReflect(value reflect.Value) (interface{}, error) {
 
 	if !value.IsValid() {
@@ -74,6 +78,17 @@ func getFieldReflect(value reflect.Value) (interface{}, error) {
 	switch value.Kind() {
 	case reflect.Ptr:
 		return getPointer(value)
+	case reflect.Struct:
+		// Special handling for yaml.Node
+		returnValue := value.Interface()
+		yamlNode, ok := returnValue.(yaml.Node)
+		if ok {
+			bytes, err := yaml.Marshal(yamlNode)
+			if err != nil {
+				return nil, err
+			}
+			return string(bytes), nil
+		}
 	}
 
 	return value.Interface(), nil

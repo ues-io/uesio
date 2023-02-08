@@ -64,30 +64,10 @@ func (t *Theme) GetBundleFolderName() string {
 }
 
 func (t *Theme) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio/studio.definition" {
-		var definition yaml.Node
-		if value != nil {
-			err := yaml.Unmarshal([]byte(value.(string)), &definition)
-			if err != nil {
-				return err
-			}
-			if len(definition.Content) > 0 {
-				t.Definition = *definition.Content[0]
-			}
-		}
-		return nil
-	}
 	return StandardFieldSet(t, fieldName, value)
 }
 
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "uesio/studio.definition" {
-		bytes, err := yaml.Marshal(&t.Definition)
-		if err != nil {
-			return nil, err
-		}
-		return string(bytes), nil
-	}
 	return StandardFieldGet(t, fieldName)
 }
 
