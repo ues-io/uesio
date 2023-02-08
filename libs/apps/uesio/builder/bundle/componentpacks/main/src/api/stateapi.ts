@@ -12,8 +12,15 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type ComponentIdProperty = {
+	type: "COMPONENT_ID"
+} & BaseProperty
+
 type NumberProperty = {
 	type: "NUMBER"
+	min?: number
+	max?: number
+	step?: number
 } & BaseProperty
 
 type KeyProperty = {
@@ -24,6 +31,10 @@ type MetadataProperty = {
 	type: "METADATA"
 	// TODO: EXPAND THIS LIST
 	metadataType: "COLLECTION" | "FILE" | "VIEW"
+} & BaseProperty
+
+type WireProperty = {
+	type: "WIRE"
 } & BaseProperty
 
 type SelectProperty = {
@@ -46,6 +57,8 @@ type ComponentProperty =
 	| KeyProperty
 	| MetadataProperty
 	| SelectProperty
+	| WireProperty
+	| ComponentIdProperty
 
 type ComponentDef = {
 	name: string
@@ -183,4 +196,5 @@ export {
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,
+	WireProperty,
 }
