@@ -28,11 +28,7 @@ func removeEmptyDir(path string) {
 	removeEmptyDir(filepath.Dir(path))
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
-	bucket, ok := (*credentials)["bucket"]
-	if !ok {
-		return nil, errors.New("No bucket provided in credentials")
-	}
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (fileadapt.FileConnection, error) {
 	return &Connection{
 		bucket: bucket,
 	}, nil

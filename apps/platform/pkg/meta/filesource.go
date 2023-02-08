@@ -23,6 +23,7 @@ type FileSource struct {
 	BundleableBase `yaml:",inline"`
 	Type           string `yaml:"type,omitempty" json:"-"`
 	Credentials    string `yaml:"credentials" json:"uesio/studio.credentials"`
+	Bucket         string `yaml:"bucket" json:"uesio/studio.bucket"`
 }
 
 type FileSourceWrapper FileSource
