@@ -294,14 +294,13 @@ class Context {
 		)
 	}
 
-	getRecord = (wireid?: string) => {
+	getRecord = (wireId?: string) => {
 		const recordFrame = this.stack
 			.filter(providesRecordContext)
 			.find((frame) =>
-				wireid ? frame.type === "RECORD" && frame.wire === wireid : true
+				wireId ? frame.type === "RECORD" && frame.wire === wireId : true
 			)
 
-		// if we don't have a record id in context return the first
 		if (undefined === recordFrame) {
 			return undefined
 		}
@@ -309,16 +308,10 @@ class Context {
 			return new WireRecord(recordFrame.recordData, "", new Wire())
 		}
 
-		const wire = this.getWire()
-		if (!wire) {
-			return undefined
-		}
-
-		if (recordFrame.record) {
-			return wire.getRecord(recordFrame.record)
-		}
-
-		return undefined
+		const wire = this.getWire(wireId)
+		return wire && recordFrame.record
+			? wire.getRecord(recordFrame.record)
+			: undefined
 	}
 
 	getViewAndWireId = (
