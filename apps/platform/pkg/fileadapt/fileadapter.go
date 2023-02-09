@@ -14,7 +14,7 @@ import (
 )
 
 type FileAdapter interface {
-	GetFileConnection(*adapt.Credentials) (FileConnection, error)
+	GetFileConnection(*adapt.Credentials, string) (FileConnection, error)
 }
 
 type FileConnection interface {
@@ -43,18 +43,6 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetFileSource(fileSourceID string, session *sess.Session) (*meta.FileSource, error) {
-	fs, err := meta.NewFileSource(fileSourceID)
-	if err != nil {
-		return nil, err
-	}
-	err = bundle.Load(fs, session, nil)
-	if err != nil {
-		return nil, errors.New("No file source found: " + fileSourceID + ", " + err.Error())
-	}
-	return fs, nil
-}
-
 func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnection, error) {
 	fs, err := meta.NewFileSource(fileSourceID)
 	if err != nil {
@@ -74,5 +62,10 @@ func GetFileConnection(fileSourceID string, session *sess.Session) (FileConnecti
 		return nil, err
 	}
 
-	return fileAdapter.GetFileConnection(credentials)
+	mergedBucket, err := configstore.Merge(fs.Bucket, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return fileAdapter.GetFileConnection(credentials, mergedBucket)
 }
