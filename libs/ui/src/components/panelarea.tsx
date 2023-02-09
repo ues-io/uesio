@@ -17,10 +17,9 @@ const PanelArea: UtilityComponent = (props) => {
 			<FloatingPortal root={portalsDomNode.current}>
 				{panels &&
 					panels.map((panel) => {
-						const panelContext = props.context.clone([])
-
+						if (!panel.context) return null
+						const panelContext = props.context.clone(panel.context)
 						const panelId = panel.id
-						if (!panelContext) return <></>
 						const viewDef = panelContext.getViewDef()
 						const panels: PanelDefinitionMap | undefined =
 							viewDef?.panels
