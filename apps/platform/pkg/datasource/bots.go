@@ -270,9 +270,6 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	//Note: for now just golang bots return params
-	//we need to look how to get the params out of goja
-
 	var botFunction CallBotFunc
 
 	switch namespace + "." + name {
