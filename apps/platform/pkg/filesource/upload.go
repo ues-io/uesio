@@ -14,6 +14,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+const PLATFORM_FILE_SOURCE = "uesio/core.platform"
+
 func GetFileType(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
@@ -80,6 +82,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			Type:          GetFileType(details),
 			RecordID:      details.RecordID,
 			ContentLength: details.ContentLength,
+			FileSourceID:  PLATFORM_FILE_SOURCE,
 		}
 
 		if details.RecordID == "" {
