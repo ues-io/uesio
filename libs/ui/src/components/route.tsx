@@ -11,6 +11,7 @@ import { Component } from "../component/component"
 import PanelArea from "./panelarea"
 import { makeViewId } from "../bands/view"
 import { UtilityComponent } from "../definition/definition"
+import { context } from ".."
 
 // This applies the global styles
 injectGlobal({
@@ -96,7 +97,12 @@ const Route: UtilityComponent = (props) => {
 				}}
 				path=""
 			/>
-			<PanelArea />
+			<PanelArea
+				createPanelContext={(stack: context.ContextFrame[]) => {
+					const ctx = new Context(stack)
+					return workspace ? ctx.setWorkspace(workspace) : ctx
+				}}
+			/>
 		</>
 	)
 

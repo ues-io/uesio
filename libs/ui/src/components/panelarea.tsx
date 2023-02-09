@@ -1,13 +1,16 @@
 import { usePanels } from "../bands/panel/selectors"
 import { Component } from "../component/component"
 import { PanelDefinitionMap } from "../definition/panel"
-import { Context } from "../context/context"
 import { FC, RefObject, useRef } from "react"
 import { FloatingPortal } from "@floating-ui/react"
+import { context } from ".."
 
 let portalsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
-const PanelArea: FC = () => {
+type T = {
+	createPanelContext: (stack: context.ContextFrame[]) => context.Context
+}
+const PanelArea: FC<T> = ({ createPanelContext }) => {
 	const panels = usePanels()
 
 	portalsDomNode = useRef<HTMLDivElement>(null)
@@ -17,8 +20,9 @@ const PanelArea: FC = () => {
 			<FloatingPortal root={portalsDomNode.current}>
 				{panels &&
 					panels.map((panel) => {
-						const panelContext = new Context(panel.context || [])
-
+						const panelContext = createPanelContext(
+							panel.context || []
+						)
 						const panelId = panel.id
 						if (!panelContext) return <></>
 						const viewDef = panelContext.getViewDef()
