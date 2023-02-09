@@ -297,7 +297,6 @@ class Context {
 	getRecord = (wireId?: string) => {
 		const recordFrame = this.stack
 			.filter(providesRecordContext)
-			// if we don't have a record id in context return the first
 			.find((frame) =>
 				wireId ? frame.type === "RECORD" && frame.wire === wireId : true
 			)
