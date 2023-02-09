@@ -96,7 +96,7 @@ const Route: UtilityComponent = (props) => {
 				}}
 				path=""
 			/>
-			<PanelArea />
+			<PanelArea context={routeContext} />
 		</>
 	)
 
