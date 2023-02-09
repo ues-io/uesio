@@ -67,8 +67,6 @@ func getPointer(from reflect.Value) (interface{}, error) {
 	return from.Interface(), nil
 }
 
-var yamlType = reflect.ValueOf(yaml.Node{}).Type()
-
 func getFieldReflect(value reflect.Value) (interface{}, error) {
 
 	if !value.IsValid() {
