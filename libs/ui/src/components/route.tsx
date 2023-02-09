@@ -83,39 +83,37 @@ const Route: UtilityComponent = (props) => {
 	}
 
 	const view = (
-		<View
-			context={
-				workspace?.slotwrapper
-					? routeContext.addSlotFrame(workspace.slotwrapper)
-					: routeContext
-			}
-			definition={{
-				view: route.view,
-				params: route.params,
-			}}
-			path=""
-		/>
-	)
-
-	const wrappedView = workspace ? (
-		<Component
-			context={routeContext}
-			componentType={workspace.wrapper}
-			path=""
-			definition={{}}
-		>
-			{view}
-		</Component>
-	) : (
 		<>
-			{view}
-			<PanelArea />
+			<View
+				context={
+					workspace?.slotwrapper
+						? routeContext.addSlotFrame(workspace.slotwrapper)
+						: routeContext
+				}
+				definition={{
+					view: route.view,
+					params: route.params,
+				}}
+				path=""
+			/>
+			<PanelArea context={routeContext} />
 		</>
 	)
 
 	return (
 		<>
-			{wrappedView}
+			{workspace ? (
+				<Component
+					context={routeContext}
+					componentType={workspace.wrapper}
+					path=""
+					definition={{}}
+				>
+					{view}
+				</Component>
+			) : (
+				view
+			)}
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
 			<div
 				className={css({

@@ -5,7 +5,7 @@ import { useSelectedPath } from "../api/stateapi"
 const PanelPortal: definition.UtilityComponent = (props) => {
 	const selectedPath = useSelectedPath(props.context)
 
-	const pathArray = component.path.toPath(selectedPath)
+	const pathArray = component.path.toPath(selectedPath.localPath)
 	const isPanel =
 		selectedPath.itemType === "viewdef" && pathArray[0] === "panels"
 	const panelId = pathArray[1]

@@ -48,6 +48,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 			className={classes.blocker}
 			lockScroll
 			onClick={props.onClose}
+			style={{ position: "absolute" }}
 		>
 			<div className={classes.root} onClick={(e) => e.stopPropagation()}>
 				<div className={classes.inner}>{props.children}</div>
