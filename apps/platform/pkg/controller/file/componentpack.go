@@ -29,7 +29,7 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileModTime, stream, err := bundle.GetItemAttachment(componentPack, path, session)
+	fileModTime, stream, err := bundle.GetItemAttachment(componentPack, "dist/"+path, session)
 
 	if err != nil {
 		logger.LogError(err)
