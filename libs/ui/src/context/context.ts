@@ -23,8 +23,8 @@ import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
 
-const PARAMS = "PARAMS",
-	ERROR = "ERROR",
+const ERROR = "ERROR",
+	COMPONENT = "COMPONENT",
 	RECORD = "RECORD",
 	THEME = "THEME",
 	VIEW = "VIEW",
@@ -32,7 +32,8 @@ const PARAMS = "PARAMS",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
 	RECORD_DATA = "RECORD_DATA",
-	SLOT = "SLOT"
+	SLOT = "SLOT",
+	SIGNAL_OUTPUT = "SIGNAL_OUTPUT"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -94,6 +95,21 @@ interface ParamsContext {
 	params?: Record<string, string>
 }
 
+interface SignalOutputContext {
+	data: object
+	errors?: string[]
+	label: string
+}
+
+interface ComponentContext {
+	componentType: string
+	data: object
+}
+
+interface ComponentContextFrame extends ComponentContext {
+	type: typeof COMPONENT
+}
+
 interface ThemeContextFrame extends ThemeContext {
 	type: typeof THEME
 }
@@ -126,16 +142,16 @@ interface WireContextFrame extends WireContext {
 	view: string
 }
 
-interface ParamsContextFrame extends ParamsContext {
-	type: typeof PARAMS
-}
-
 interface ErrorContextFrame extends ErrorContext {
 	type: typeof ERROR
 }
 
 interface FieldModeContextFrame extends FieldModeContext {
 	type: typeof FIELD_MODE
+}
+
+interface SignalOutputContextFrame extends SignalOutputContext {
+	type: typeof SIGNAL_OUTPUT
 }
 
 type ContextOptions =
@@ -146,15 +162,16 @@ type ContextOptions =
 
 type ContextFrame =
 	| RouteContextFrame
+	| ComponentContextFrame
 	| ThemeContextFrame
 	| ViewContextFrame
 	| RecordContextFrame
 	| RecordDataContextFrame
 	| WireContextFrame
-	| ParamsContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
 	| SlotContextFrame
+	| SignalOutputContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
 const isErrorContextFrame = (frame: ContextFrame): frame is ErrorContextFrame =>
@@ -169,6 +186,14 @@ const isRecordContextFrame = (
 	frame: ContextFrame
 ): frame is RecordContextFrame => frame.type === RECORD
 
+const isComponentContextFrame = (
+	frame: ContextFrame
+): frame is ComponentContextFrame => frame.type === COMPONENT
+
+const isSignalOutputContextFrame = (
+	frame: ContextFrame
+): frame is SignalOutputContextFrame => frame.type === SIGNAL_OUTPUT
+
 const isSlotContextFrame = (frame: ContextFrame): frame is SlotContextFrame =>
 	frame.type === SLOT
 
@@ -180,10 +205,10 @@ const providesRecordContext = (
 const isFieldModeContextFrame = (
 	frame: ContextFrame
 ): frame is FieldModeContextFrame => frame.type === FIELD_MODE
-const hasParamsContext = (
+const maySupplyParams = (
 	frame: ContextFrame
-): frame is ParamsContextFrame | ViewContextFrame | RouteContextFrame =>
-	[PARAMS, VIEW, ROUTE].includes(frame.type)
+): frame is ViewContextFrame | RouteContextFrame =>
+	[VIEW, ROUTE].includes(frame.type)
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === ROUTE
 const hasWireContext = (
@@ -210,8 +235,8 @@ const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
 
 const providesParams = (
-	o: RouteContext | ParamsContext | ViewContext
-): o is RouteContext | ParamsContext | ViewContext =>
+	o: RouteContext | ViewContext
+): o is RouteContext | ViewContext =>
 	Object.prototype.hasOwnProperty.call(o, "params")
 
 function injectDynamicContext(
@@ -334,7 +359,7 @@ class Context {
 	getViewDef = () => getViewDef(this.getViewDefId())
 
 	getParams = () =>
-		this.stack.filter(hasParamsContext).find(providesParams)?.params
+		this.stack.filter(maySupplyParams).find(providesParams)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
@@ -474,6 +499,13 @@ class Context {
 			slot,
 		})
 
+	addSignalOutputFrame = (label: string, data: object) =>
+		this.#addFrame({
+			type: SIGNAL_OUTPUT,
+			label,
+			data,
+		})
+
 	setSiteAdmin = (siteadmin: SiteAdminState) => {
 		const newContext = this.clone()
 		newContext.siteadmin = siteadmin
@@ -492,18 +524,18 @@ class Context {
 			...viewContext,
 		})
 
+	addComponentFrame = (componentType: string, data: object) =>
+		this.#addFrame({
+			type: COMPONENT,
+			componentType,
+			data,
+		})
+
 	// addErrorFrame provides a single-argument method, vs an argument method, since this is the common usage
 	addErrorFrame = (errors: string[]) =>
 		this.#addFrame({
 			type: ERROR,
 			errors,
-		})
-
-	// addParamsFrame provides a single-argument method, vs an argument method, since this is the common usage
-	addParamsFrame = (params: Record<string, string>) =>
-		this.#addFrame({
-			type: PARAMS,
-			params,
 		})
 
 	// addFieldModeFrame provides a single-argument method, vs an argument method, since this is the common usage
@@ -572,6 +604,17 @@ class Context {
 			.filter(hasViewContext)
 			.filter((f) => f?.viewDef)
 			.map((contextFrame) => contextFrame.viewDef)
+
+	getSignalOutputs = (label: string) =>
+		this.stack.find(
+			(f) => isSignalOutputContextFrame(f) && f.label === label
+		) as SignalOutputContextFrame
+
+	getComponentData = (componentType: string) =>
+		this.stack.find(
+			(f) =>
+				isComponentContextFrame(f) && f.componentType === componentType
+		) as ComponentContextFrame
 }
 
 export {

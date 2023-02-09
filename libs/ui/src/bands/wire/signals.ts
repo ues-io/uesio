@@ -162,8 +162,24 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Wire",
 			},
 		],
-		dispatcher: (signal: CreateRecordSignal, context: Context) =>
-			createRecordOp(context, signal.wire, signal.prepend),
+		dispatcher: (signal: CreateRecordSignal, context: Context) => {
+			const newContext = createRecordOp(
+				context,
+				signal.wire,
+				signal.prepend
+			)
+			// Add the newly-created record as a named Signal Output if this step has id
+			if (signal.stepId) {
+				const record = newContext.getRecord()
+				if (record) {
+					return newContext.addSignalOutputFrame(signal.stepId, {
+						recordId: record?.getId(),
+						record,
+					})
+				}
+			}
+			return newContext
+		},
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
 		label: "Update Record",

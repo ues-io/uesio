@@ -5,6 +5,7 @@ import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { UserState } from "../bands/user/types"
+import { get } from "lodash"
 
 type MergeType =
 	| "Record"
@@ -20,6 +21,8 @@ type MergeType =
 	| "Label"
 	| "SelectList"
 	| "Sum"
+	| "SignalOutput"
+	| "ComponentOutput"
 
 type MergeHandler = (expression: string, context: Context) => string
 
@@ -58,6 +61,45 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return "" + total
 	},
 	Param: (expression, context) => context.getParam(expression) || "",
+	SignalOutput: (expression, context) => {
+		// Expression MUST have 2+ parts, e.g. $SignalOutput{[stepId][propertyPath]}
+		const parts = expression.split("][")
+		if (parts.length !== 2) {
+			throw "Invalid SignalOutput merge - a stepId and propertyPath must be provided, e.g. $SignalOutput{[stepId][propertyPath]}"
+		}
+		const [label, propertyPath] = parts
+		const trimmedLabel = label.substring(1)
+		const signalOutputFrame = context.getSignalOutputs(trimmedLabel)
+		if (!signalOutputFrame) {
+			throw (
+				"Could not find signal output associated with label: " +
+				trimmedLabel
+			)
+		}
+		return get(
+			signalOutputFrame.data,
+			propertyPath.substring(0, propertyPath.length - 1)
+		)
+	},
+	ComponentOutput: (expression, context) => {
+		// Expression MUST have 2+ parts, e.g. $ComponentOutput{[componentType][property]}
+		const parts = expression.split("][")
+		if (parts.length !== 2) {
+			throw "Invalid ComponentOutput merge - a componentType and property must be provided, e.g. $ComponentOutput{[componentType][propertyPath]}"
+		}
+		const [componentType, propertyPath] = parts
+		const frame = context.getComponentData(componentType.substring(1))
+		if (!frame) {
+			throw (
+				"Could not find component output data for component: " +
+				componentType
+			)
+		}
+		return get(
+			frame.data,
+			propertyPath.substring(0, propertyPath.length - 1)
+		)
+	},
 	User: (expression, context) => {
 		const user = context.getUser()
 		if (!user) return ""

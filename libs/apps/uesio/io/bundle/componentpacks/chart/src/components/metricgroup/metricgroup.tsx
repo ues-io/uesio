@@ -35,7 +35,7 @@ const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
 				const value = datasets[0].data[i]
 				const handler = api.signal.getHandler(
 					definition.signals,
-					props.context.addParamsFrame({
+					props.context.addComponentFrame("uesio/chart.metricgroup", {
 						category,
 					})
 				)
