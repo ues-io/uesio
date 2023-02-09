@@ -14,6 +14,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
+const PLATFORM_FILE_SOURCE = "uesio/core.platform"
+
 func GetFileType(details *fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
@@ -80,6 +82,7 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			Type:          GetFileType(details),
 			RecordID:      details.RecordID,
 			ContentLength: details.ContentLength,
+			FileSourceID:  PLATFORM_FILE_SOURCE,
 		}
 
 		if details.RecordID == "" {
@@ -144,18 +147,9 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			return nil, err
 		}
 
-		fileSourceKey := "uesio/core.platform"
-
-		fs, err := fileadapt.GetFileSource(fileSourceKey, session)
-		if err != nil {
-			return nil, err
-		}
-
 		fullPath := ufm.GetFullPath(tenantID)
 
-		ufm.FileSourceID = fileSourceKey
-
-		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
 		if err != nil {
 			return nil, err
 		}
@@ -164,8 +158,8 @@ func Upload(ops []FileUploadOp, connection adapt.Connection, session *sess.Sessi
 			return nil, err
 		}
 
-		usage.RegisterEvent("UPLOAD", "FILESOURCE", fs.GetKey(), 0, session)
-		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", fs.GetKey(), ufm.ContentLength, session)
+		usage.RegisterEvent("UPLOAD", "FILESOURCE", ufm.FileSourceID, 0, session)
+		usage.RegisterEvent("UPLOAD_BYTES", "FILESOURCE", ufm.FileSourceID, ufm.ContentLength, session)
 	}
 
 	err := datasource.PlatformSave(datasource.PlatformSaveRequest{

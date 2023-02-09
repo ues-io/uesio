@@ -37,11 +37,7 @@ func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection
 	for i := range ufmc {
 		ufm := ufmc[i]
 
-		fs, err := fileadapt.GetFileSource(ufm.FileSourceID, session)
-		if err != nil {
-			return err
-		}
-		conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
 		if err != nil {
 			return err
 		}

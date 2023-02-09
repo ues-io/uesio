@@ -60,12 +60,8 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 }
 
 func download(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
-	fs, err := fileadapt.GetFileSource(userFile.FileSourceID, session)
-	if err != nil {
-		return nil, nil, err
-	}
 
-	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -77,8 +73,8 @@ func download(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCl
 		return nil, nil, err
 	}
 
-	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
-	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
+	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", userFile.FileSourceID, 0, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", userFile.FileSourceID, userFile.ContentLength, session)
 
 	return content, userFile, nil
 }

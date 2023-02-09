@@ -13,11 +13,7 @@ import (
 type FileAdapter struct {
 }
 
-func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials) (fileadapt.FileConnection, error) {
-	bucket, ok := (*credentials)["bucket"]
-	if !ok || bucket == "" {
-		return nil, errors.New("No bucket provided in credentials")
-	}
+func (a *FileAdapter) GetFileConnection(credentials *adapt.Credentials, bucket string) (fileadapt.FileConnection, error) {
 	client, err := getS3Client(context.Background(), credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
