@@ -374,6 +374,9 @@ func GetMapNodes(node *yaml.Node) ([]NodePair, error) {
 }
 
 func GetMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
+	if node.Kind == yaml.DocumentNode {
+		return GetMapNode(node.Content[0], key)
+	}
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
 	}
@@ -446,6 +449,9 @@ func (yd *YAMLDefinition) MarshalJSONArray(enc *gojay.Encoder) {
 
 func (yd *YAMLDefinition) MarshalJSONObject(enc *gojay.Encoder) {
 
+	if yd.Kind == yaml.DocumentNode {
+		(*YAMLDefinition)(yd.Content[0]).MarshalJSONObject(enc)
+	}
 	if yd.Kind == yaml.ScalarNode {
 		enc.AddString(yd.Value)
 	}
