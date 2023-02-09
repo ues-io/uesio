@@ -1,7 +1,6 @@
 package jsdialect
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -19,13 +18,13 @@ type JSDialect struct {
 
 const MAX_SECONDS time.Duration = 5
 
-func runBot(botName string, contents string, api interface{}, errorFunc func(string)) (map[string]interface{}, error) {
+func runBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
 	// TODO: We could possibly not start a new VM for every bot we run.
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
 	err := vm.Set("log", Logger)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	time.AfterFunc(MAX_SECONDS*time.Second, func() {
@@ -35,60 +34,41 @@ func runBot(botName string, contents string, api interface{}, errorFunc func(str
 
 	runner, err := vm.RunString("(" + contents + ")")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	change, ok := goja.AssertFunction(runner)
 	if !ok {
-		return nil, err
+		return err
 	}
 
-	resultsValue, err := change(goja.Undefined(), vm.ToValue(api))
-
+	_, err = change(goja.Undefined(), vm.ToValue(api))
 	if err != nil {
 		if errorFunc == nil {
-			return nil, err
+			return err
 		}
 		if jserr, ok := err.(*goja.Exception); ok {
 			errorFunc(jserr.Error())
 		} else {
 			// Not a Javascript error
-			return nil, err
+			return err
 		}
 	}
 
-	// If there is no result value, we are done
-	if resultsValue == nil {
-		return nil, nil
-	}
-
-	// Otherwise, attempt to convert into a JavaScript object
-	resultsMap := make(map[string]interface{})
-
-	err = vm.ExportTo(resultsValue, &resultsMap)
-
-	// Convert the Goja result into a map. If it fails, return an error
-	if err != nil {
-		return nil, errors.New("Bot results must be a JavaScript object")
-	}
-
-	return resultsMap, nil
+	return nil
 }
 
 func (b *JSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI) error {
-	_, err := runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
-	return err
+	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI) error {
-	_, err := runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
-	return err
+	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
-func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI) (map[string]interface{}, error) {
+func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI) error {
 	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI) error {
-	_, err := runBot(bot.Name, bot.FileContents, botAPI, nil)
-	return err
+	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }
