@@ -42,7 +42,7 @@ func TestViewGetField(t *testing.T) {
 			"uesio/studio.definition",
 			"get the definition field",
 			&View{
-				Definition: *basicViewDefYaml,
+				Definition: *basicViewDefYaml.Content[0],
 			},
 			strings.TrimPrefix(basicViewDef, "\n"),
 		},
@@ -87,7 +87,7 @@ func TestViewSetField(t *testing.T) {
 			"set the definition field",
 			basicViewDef,
 			&View{
-				Definition: *basicViewDefYaml,
+				Definition: *basicViewDefYaml.Content[0],
 			},
 		},
 	}

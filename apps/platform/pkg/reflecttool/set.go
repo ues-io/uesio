@@ -94,7 +94,7 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 			return err
 		}
 		if len(yamlDoc.Content) == 1 {
-			to.Set(reflect.ValueOf(yamlDoc).Elem())
+			to.Set(reflect.ValueOf(yamlDoc.Content[0]).Elem())
 		}
 		return nil
 	}
