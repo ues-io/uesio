@@ -33,7 +33,7 @@ func RegisterBotDialect(name string, dialect BotDialect) {
 	botDialectMap[name] = dialect
 }
 
-func getBotDialect(botDialectName string) (BotDialect, error) {
+func GetBotDialect(botDialectName string) (BotDialect, error) {
 	dialectKey, ok := meta.GetBotDialects()[botDialectName]
 	if !ok {
 		return nil, errors.New("Invalid bot dialect name: " + botDialectName)
@@ -45,7 +45,7 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
-func hydrateBot(bot *meta.Bot, session *sess.Session) error {
+func HydrateBot(bot *meta.Bot, session *sess.Session) error {
 	_, stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
 	if err != nil {
 		return err
@@ -70,12 +70,12 @@ func runBot(botType string, collectionName string, dialectFunc func(BotDialect, 
 	}
 
 	for _, bot := range robots {
-		err := hydrateBot(bot, session)
+		err := HydrateBot(bot, session)
 		if err != nil {
 			return err
 		}
 
-		dialect, err := getBotDialect(bot.Dialect)
+		dialect, err := GetBotDialect(bot.Dialect)
 		if err != nil {
 			return err
 		}
@@ -254,12 +254,12 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 		bot:    robot,
 	}
 
-	err = hydrateBot(robot, session)
+	err = HydrateBot(robot, session)
 	if err != nil {
 		return err
 	}
 
-	dialect, err := getBotDialect(robot.Dialect)
+	dialect, err := GetBotDialect(robot.Dialect)
 	if err != nil {
 		return err
 	}
@@ -303,12 +303,12 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		results:    map[string]interface{}{},
 	}
 
-	err = hydrateBot(robot, session)
+	err = HydrateBot(robot, session)
 	if err != nil {
 		return nil, err
 	}
 
-	dialect, err := getBotDialect(robot.Dialect)
+	dialect, err := GetBotDialect(robot.Dialect)
 	if err != nil {
 		return nil, err
 	}

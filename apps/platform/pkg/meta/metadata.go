@@ -228,6 +228,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	(&IntegrationCollection{}).GetBundleFolderName():      func() BundleableGroup { return &IntegrationCollection{} },
 	(&ComponentCollection{}).GetBundleFolderName():        func() BundleableGroup { return &ComponentCollection{} },
 	(&UtilityCollection{}).GetBundleFolderName():          func() BundleableGroup { return &UtilityCollection{} },
+	(&ScheduledJobCollection{}).GetBundleFolderName():     func() BundleableGroup { return &ScheduledJobCollection{} },
 }
 
 func GetGroupingConditions(metadataType, grouping string) (BundleConditions, error) {

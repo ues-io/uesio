@@ -1,0 +1,3 @@
+name: one
+schedule: "*/1 * * * *"
+bot: uesio/studio.convertlead

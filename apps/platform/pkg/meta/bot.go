@@ -16,6 +16,10 @@ func NewGeneratorBot(namespace, name string) *Bot {
 	return NewBaseBot("GENERATOR", "", namespace, name)
 }
 
+func NewScheduledBot(namespace, name string) *Bot {
+	return NewBaseBot("SCHEDULED", "", namespace, name)
+}
+
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef:  collectionKey,
@@ -104,6 +108,7 @@ func GetBotTypes() map[string]string {
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
 		"GENERATOR":  "generator",
+		"SCHEDULED":  "Scheduled",
 	}
 }
 
