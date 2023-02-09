@@ -62,16 +62,17 @@ interface RecordDataContext {
 	recordData: PlainWireRecord // A way to store arbitrary record data in context
 }
 
-interface ViewContext extends ParamsContext {
+interface ViewContext {
 	view: string
 	viewDef: string
+	params?: Record<string, string>
 }
 
 interface SlotContext {
 	slot: MetadataKey
 }
 
-interface RouteContext extends ParamsContext {
+interface RouteContext {
 	route: RouteState
 	site: SiteState
 	theme: string
@@ -89,10 +90,6 @@ interface WorkspaceContext {
 
 interface SiteAdminContext {
 	siteadmin: SiteAdminState
-}
-
-interface ParamsContext {
-	params?: Record<string, string>
 }
 
 interface SignalOutputContext {
@@ -205,10 +202,8 @@ const providesRecordContext = (
 const isFieldModeContextFrame = (
 	frame: ContextFrame
 ): frame is FieldModeContextFrame => frame.type === FIELD_MODE
-const maySupplyParams = (
-	frame: ContextFrame
-): frame is ViewContextFrame | RouteContextFrame =>
-	[VIEW, ROUTE].includes(frame.type)
+const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
+	frame.type === VIEW
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
 	frame.type === ROUTE
 const hasWireContext = (
@@ -233,11 +228,6 @@ const providesWire = (o: ContextOptions): o is WireContext | RecordContext =>
 
 const providesFieldMode = (o: ContextOptions): o is FieldModeContext =>
 	Object.prototype.hasOwnProperty.call(o, "fieldMode")
-
-const providesParams = (
-	o: RouteContext | ViewContext
-): o is RouteContext | ViewContext =>
-	Object.prototype.hasOwnProperty.call(o, "params")
 
 function injectDynamicContext(
 	context: Context,
@@ -358,8 +348,7 @@ class Context {
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
-	getParams = () =>
-		this.stack.filter(maySupplyParams).find(providesParams)?.params
+	getParams = () => this.stack.find(isViewContextFrame)?.params
 
 	getParam = (param: string) => this.getParams()?.[param]
 
