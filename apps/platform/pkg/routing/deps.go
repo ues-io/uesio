@@ -302,7 +302,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	viewYamlBytes, err := yaml.Marshal(view.Definition.Content[0])
+	viewYamlBytes, err := yaml.Marshal(view.Definition)
 	if err != nil {
 		return err
 	}

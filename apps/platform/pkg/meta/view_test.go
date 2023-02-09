@@ -8,12 +8,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var basicViewDef = `
+var basicViewDef = strings.TrimPrefix(`
 # a cool comment
 components: []
 # another cool comment
 wires: {}
-`
+`, "\n")
+
+func getYamlNode(yamlContent string) yaml.Node {
+	yamlNode := &yaml.Node{}
+	yaml.Unmarshal([]byte(yamlContent), yamlNode)
+	return *yamlNode.Content[0]
+}
 
 func TestViewGetField(t *testing.T) {
 
@@ -23,9 +29,6 @@ func TestViewGetField(t *testing.T) {
 		view        *View
 		expectvalue interface{}
 	}
-
-	basicViewDefYaml := &yaml.Node{}
-	yaml.Unmarshal([]byte(basicViewDef), basicViewDefYaml)
 
 	var tests = []testCase{
 		{
@@ -42,9 +45,9 @@ func TestViewGetField(t *testing.T) {
 			"uesio/studio.definition",
 			"get the definition field",
 			&View{
-				Definition: *basicViewDefYaml.Content[0],
+				Definition: getYamlNode(basicViewDef),
 			},
-			strings.TrimPrefix(basicViewDef, "\n"),
+			basicViewDef,
 		},
 	}
 
@@ -68,9 +71,6 @@ func TestViewSetField(t *testing.T) {
 		expectview  *View
 	}
 
-	basicViewDefYaml := &yaml.Node{}
-	yaml.Unmarshal([]byte(basicViewDef), basicViewDefYaml)
-
 	var tests = []testCase{
 		{
 			"uesio/studio.name",
@@ -87,7 +87,7 @@ func TestViewSetField(t *testing.T) {
 			"set the definition field",
 			basicViewDef,
 			&View{
-				Definition: *basicViewDefYaml.Content[0],
+				Definition: getYamlNode(basicViewDef),
 			},
 		},
 	}
