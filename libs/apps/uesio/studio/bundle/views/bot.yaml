@@ -48,20 +48,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: bots
           lookupField: uesio/core.id
-      init:
-        create: true
-        query: true
-      defaults:
-        - field: uesio/core.path
-          valueSource: VALUE
-          value: "bot.js"
-        - field: uesio/core.recordid
-          valueSource: LOOKUP
-          lookupWire: bots
-          lookupField: uesio/core.id
-        - field: uesio/core.collectionid
-          valueSource: VALUE
-          value: uesio/studio.bot
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -102,7 +88,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: "Save"
                                       signals:
                                         - signal: component/uesio/io.fileattachment/UPLOAD_FILE
@@ -113,12 +99,6 @@ definition:
                                       signals:
                                         - signal: component/uesio/io.fileattachment/CANCEL_FILE
                                           target: botcontent
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Edit"
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: editBot
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Delete"
@@ -168,6 +148,8 @@ definition:
                                       uesio.id: botcontent
                                       displayAs: TEXT
                                       mode: EDIT
+                                      typeDefinitionFileURIs:
+                                        - $StaticFile{/ui/types/types.d.ts}
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog
@@ -194,54 +176,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: deleteBot
-    editBot:
-      uesio.type: uesio/io.dialog
-      title: Edit Bot
-      width: 400px
-      height: 560px
-      components:
-        - uesio/io.list:
-            uesio.id: editBotList
-            wire: bots
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-              - uesio/io.field:
-                  fieldId: uesio/studio.dialect
-              - uesio/io.box:
-                  uesio.display:
-                    - field: uesio/studio.type
-                      value: "LISTENER"
-                      type: "fieldValue"
-                      operator: "NOT_EQUALS"
-                  components:
-                    - uesio/studio.metadatafield:
-                        uesio.context:
-                          workspace:
-                            name: $Param{workspacename}
-                            app: $Param{app}
-                        fieldId: uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Collection"
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: "Save"
-            hotkey: "meta+s"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: wire/CANCEL
-                wire: bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"

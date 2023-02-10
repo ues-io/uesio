@@ -10,11 +10,13 @@ type FileDefinition = {
 	id?: string
 	displayAs?: string
 	mode?: context.FieldMode
+	// An array of URIs which contain ambient type definitions to load in this code field
+	typeDefinitionFileURIs?: string[]
 }
 
 const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { displayAs, mode } = definition
+	const { displayAs, mode, typeDefinitionFileURIs } = definition
 	const id = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
@@ -65,7 +67,12 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	switch (displayAs) {
 		case "TEXT":
 		case "MARKDOWN":
-			return <FileText {...common} />
+			return (
+				<FileText
+					{...common}
+					typeDefinitionFileURIs={typeDefinitionFileURIs}
+				/>
+			)
 		case "IMAGE":
 			return <FileImage {...common} />
 		case "VIDEO":

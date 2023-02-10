@@ -4,6 +4,7 @@ import { PlainWireRecord } from "../bands/wirerecord/types"
 import WireRecord from "../bands/wirerecord/class"
 import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
+import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import { get } from "lodash"
 
@@ -21,6 +22,7 @@ type MergeType =
 	| "Label"
 	| "SelectList"
 	| "Sum"
+	| "StaticFile"
 	| "SignalOutput"
 	| "ComponentOutput"
 
@@ -165,6 +167,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		return ""
 	},
+	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {
 		const label = context.getLabel(expression)
 		if (!label) return expression

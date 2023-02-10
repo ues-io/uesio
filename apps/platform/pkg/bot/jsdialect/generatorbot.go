@@ -26,20 +26,20 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 }
 
 type GeneratorBotAPI struct {
-	session    *sess.Session
+	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	create     retrieve.WriterCreator
-	bot        *meta.Bot
-	connection adapt.Connection
+	Create     retrieve.WriterCreator
+	Bot        *meta.Bot
+	Connection adapt.Connection
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
-	return datasource.CallGeneratorBot(gba.create, namespace, name, params, gba.connection, gba.session)
+	return datasource.CallGeneratorBot(gba.Create, namespace, name, params, gba.Connection, gba.Session)
 }
 
 func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
-	// Load in the template text from the bot.
-	_, stream, err := bundle.GetItemAttachment(gba.bot, templateFile, gba.session)
+	// Load in the template text from the Bot.
+	_, stream, err := bundle.GetItemAttachment(gba.Bot, templateFile, gba.Session)
 	if err != nil {
 		return "", err
 	}
@@ -94,7 +94,7 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 		gba.AddFile(filename, strings.NewReader(templateString))
 		return nil
 	}
-	f, err := gba.create(filename)
+	f, err := gba.Create(filename)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 }
 
 func (gba *GeneratorBotAPI) AddFile(filename string, r io.Reader) error {
-	f, err := gba.create(filename)
+	f, err := gba.Create(filename)
 	if err != nil {
 		return err
 	}

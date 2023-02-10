@@ -20,10 +20,38 @@ func Logger(message string) {
 type JSDialect struct {
 }
 
+const DefaultListenerBotBody = `function %s(bot) {
+    const a = bot.params.get("a")
+    const b = bot.params.get("b")
+    bot.addResult("answer", a + b)
+}`
+
+const DefaultBeforeSaveBotBody = `function %s(bot) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
+const DefaultAfterSaveBotBody = `function %s(bot) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
+const DefaultBotBody = `function %s(bot) {
+
+}`
+
 const MAX_SECONDS time.Duration = 5
 
-func hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
+func (b *JSDialect) hydrateBot(bot *meta.Bot, session *sess.Session) error {
+	_, stream, err := bundle.GetItemAttachment(bot, b.GetFilePath(), session)
 	if err != nil {
 		return err
 	}
@@ -35,8 +63,9 @@ func hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func runBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
-	// TODO: We could possibly not start a new VM for every bot we run.
+func RunBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
+
+	// TODO: We could possibly not start a new VM for every Bot we run.
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
 	err := vm.Set("log", Logger)
@@ -76,57 +105,57 @@ func runBot(botName string, contents string, api interface{}, errorFunc func(str
 
 func (b *JSDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	botAPI := NewBeforeSaveAPI(request, connection, session)
-	err := hydrateBot(bot, session)
+	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil
 	}
-	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	botAPI := NewAfterSaveAPI(request, connection, session)
-	err := hydrateBot(bot, session)
+	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil
 	}
-	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
+	return RunBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 	botAPI := &CallBotAPI{
-		session: session,
+		Session: session,
 		Params: &ParamsAPI{
-			params: params,
+			Params: params,
 		},
-		connection: connection,
-		results:    map[string]interface{}{},
+		Connection: connection,
+		Results:    map[string]interface{}{},
 	}
-	err := hydrateBot(bot, session)
+	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil, err
 	}
-	err = runBot(bot.Name, bot.FileContents, botAPI, nil)
+	err = RunBot(bot.Name, bot.FileContents, botAPI, nil)
 	if err != nil {
 		return nil, err
 	}
-	return botAPI.results, nil
+	return botAPI.Results, nil
 }
 
 func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
 	botAPI := &GeneratorBotAPI{
-		session: session,
+		Session: session,
 		Params: &ParamsAPI{
-			params: params,
+			Params: params,
 		},
-		create:     create,
-		bot:        bot,
-		connection: connection,
+		Create:     create,
+		Bot:        bot,
+		Connection: connection,
 	}
-	err := hydrateBot(bot, session)
+	err := b.hydrateBot(bot, session)
 	if err != nil {
 		return nil
 	}
-	return runBot(bot.Name, bot.FileContents, botAPI, nil)
+	return RunBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error {
@@ -135,4 +164,21 @@ func (b *JSDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Ses
 
 func (b *JSDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 	return nil
+}
+
+func (b *JSDialect) GetFilePath() string {
+	return "bot.js"
+}
+
+func (b *JSDialect) GetDefaultFileBody(botType string) string {
+	switch botType {
+	case "LISTENER":
+		return DefaultListenerBotBody
+	case "BEFORESAVE":
+		return DefaultBeforeSaveBotBody
+	case "AFTERSAVE":
+		return DefaultAfterSaveBotBody
+	default:
+		return DefaultBotBody
+	}
 }

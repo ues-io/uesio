@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/bot"
 	"mime"
 	"os"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
+	"github.com/thecloudmasters/uesio/pkg/bot/tsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
@@ -20,7 +22,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	cse "github.com/thecloudmasters/uesio/pkg/configstore/environment"
 	csp "github.com/thecloudmasters/uesio/pkg/configstore/platform"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
 	ffsp "github.com/thecloudmasters/uesio/pkg/featureflagstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
@@ -72,8 +73,9 @@ func init() {
 	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})
 
 	// Bot Dialects
-	datasource.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
-	datasource.RegisterBotDialect("system", &systemdialect.SystemDialect{})
+	bot.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
+	bot.RegisterBotDialect("system", &systemdialect.SystemDialect{})
+	bot.RegisterBotDialect("typescript", &tsdialect.TSDialect{})
 
 	// Integration Types
 	integ.RegisterConfigStore("web", &web.WebIntegration{})

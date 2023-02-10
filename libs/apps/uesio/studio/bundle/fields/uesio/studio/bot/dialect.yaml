@@ -3,3 +3,4 @@ type: SELECT
 label: Dialect
 selectList: uesio/studio.botdialect
 required: true
+createOnly: true

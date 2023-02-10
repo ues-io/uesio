@@ -7,14 +7,14 @@ import (
 )
 
 type CallBotAPI struct {
-	session    *sess.Session
+	Session    *sess.Session
 	Params     *ParamsAPI `bot:"params"`
-	connection adapt.Connection
-	results    map[string]interface{}
+	Connection adapt.Connection
+	Results    map[string]interface{}
 }
 
 func (cba *CallBotAPI) AddResult(key string, value interface{}) {
-	cba.results[key] = value
+	cba.Results[key] = value
 }
 
 func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
@@ -25,7 +25,7 @@ func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
 			Changes:    &changes,
 		},
 	}
-	err := datasource.Save(requests, cba.session)
+	err := datasource.Save(requests, cba.Session)
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
@@ -43,7 +43,7 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Query:          true,
 	}
 
-	err := loadData(op, bs.session, nil)
+	err := loadData(op, bs.Session, nil)
 	if err != nil {
 		return nil, err
 	}

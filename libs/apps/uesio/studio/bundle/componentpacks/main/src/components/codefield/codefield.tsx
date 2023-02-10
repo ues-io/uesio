@@ -8,7 +8,7 @@ type CodeFieldDefinition = {
 	id?: string
 }
 
-type CodeFieldLanguage = "yaml" | "json" | "javascript"
+type CodeFieldLanguage = "yaml" | "json" | "javascript" | "typescript"
 
 interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
