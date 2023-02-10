@@ -3,6 +3,7 @@ package systemdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/clickup"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -46,13 +47,12 @@ func (b *SystemDialect) BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connect
 		botFunction = runUserBeforeSaveBot
 	}
 
-	if botFunction != nil {
-		err := botFunction(request, connection, session)
-		if err != nil {
-			return err
-		}
+	if botFunction == nil {
+		return nil
 	}
-	return nil
+
+	return botFunction(request, connection, session)
+
 }
 
 func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -81,13 +81,12 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runLicenseAfterSaveBot
 	}
 
-	if botFunction != nil {
-		err := botFunction(request, connection, session)
-		if err != nil {
-			return err
-		}
+	if botFunction == nil {
+		return nil
 	}
-	return nil
+
+	return botFunction(request, connection, session)
+
 }
 
 func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
@@ -100,12 +99,12 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 		botFunction = runMakePaymentListenerBot
 	}
 
-	if botFunction != nil {
-		// We can quit early here because we found the code for this bot
-		return botFunction(params, connection, session)
-
+	if botFunction == nil {
+		return nil, datasource.NewSystemBotNotFoundError()
 	}
-	return nil, nil
+
+	return botFunction(params, connection, session)
+
 }
 
 func (b *SystemDialect) CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error {
@@ -122,13 +121,12 @@ func (b *SystemDialect) RouteBot(bot *meta.Bot, route *meta.Route, session *sess
 		botFunction = runPaymentSuccessRouteBot
 	}
 
-	if botFunction != nil {
-		err := botFunction(route, session)
-		if err != nil {
-			return err
-		}
+	if botFunction == nil {
+		return datasource.NewSystemBotNotFoundError()
 	}
-	return nil
+
+	return botFunction(route, session)
+
 }
 
 func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
@@ -143,11 +141,10 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 		botFunction = clickup.TaskLoadBot
 	}
 
-	if botFunction != nil {
-		err := botFunction(op, connection, session)
-		if err != nil {
-			return err
-		}
+	if botFunction == nil {
+		return datasource.NewSystemBotNotFoundError()
 	}
-	return nil
+
+	return botFunction(op, connection, session)
+
 }

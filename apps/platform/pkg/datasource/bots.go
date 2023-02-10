@@ -19,6 +19,17 @@ type BotDialect interface {
 	LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 }
 
+type SystemBotNotFoundError struct {
+}
+
+func NewSystemBotNotFoundError() *SystemBotNotFoundError {
+	return &SystemBotNotFoundError{}
+}
+
+func (e *SystemBotNotFoundError) Error() string {
+	return "System Bot Not Found"
+}
+
 var botDialectMap = map[string]BotDialect{}
 
 func RegisterBotDialect(name string, dialect BotDialect) {
@@ -37,16 +48,9 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
-var SYSTEM_ROUTE_BOTS = map[string]bool{
-	"uesio/studio.paymentsuccess": true,
-}
-
 func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
 
-	_, hasSystemBot := SYSTEM_ROUTE_BOTS[route.GetKey()]
-	if !hasSystemBot {
-		return route, nil
-	}
+	// First try to run a system bot
 
 	dialect, err := getBotDialect("SYSTEM")
 	if err != nil {
@@ -54,23 +58,14 @@ func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error)
 	}
 	err = dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
 	if err != nil {
+		_, isNotFoundError := err.(*SystemBotNotFoundError)
+		if isNotFoundError {
+			return route, nil
+		}
 		return nil, err
 	}
 
 	return route, nil
-}
-
-var SYSTEM_BEFORESAVE_BOT_COLLECTIONS = map[string]bool{
-	"uesio/core.userfile":     true,
-	"uesio/studio.field":      true,
-	"uesio/studio.view":       true,
-	"uesio/studio.theme":      true,
-	"uesio/studio.route":      true,
-	"uesio/studio.collection": true,
-	"uesio/studio.bot":        true,
-	"uesio/studio.app":        true,
-	"uesio/studio.usage":      true,
-	"uesio/core.user":         true,
 }
 
 func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
@@ -87,16 +82,15 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 		return err
 	}
 
-	_, hasSystemBot := SYSTEM_BEFORESAVE_BOT_COLLECTIONS[collectionName]
-	if hasSystemBot {
-		namespace, name, err := meta.ParseKey(collectionName)
-		if err != nil {
-			return err
-		}
-		systembot := meta.NewBeforeSaveBot(namespace, name, collectionName)
-		systembot.Dialect = "SYSTEM"
-		robots = append(robots, systembot)
+	// Always add a systembot, it will be a no-op if no corresponding
+	// system bot is found
+	namespace, name, err := meta.ParseKey(collectionName)
+	if err != nil {
+		return err
 	}
+	systembot := meta.NewBeforeSaveBot(namespace, name, collectionName)
+	systembot.Dialect = "SYSTEM"
+	robots = append(robots, systembot)
 
 	for _, bot := range robots {
 
@@ -130,19 +124,6 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 
 }
 
-var SYSTEM_AFTERSAVE_BOT_COLLECTIONS = map[string]bool{
-	"uesio/core.user":               true,
-	"uesio/core.userfile":           true,
-	"uesio/studio.site":             true,
-	"uesio/studio.sitedomain":       true,
-	"uesio/studio.collection":       true,
-	"uesio/studio.field":            true,
-	"uesio/studio.workspace":        true,
-	"uesio/studio.bundle":           true,
-	"uesio/studio.bundledependency": true,
-	"uesio/studio.license":          true,
-}
-
 func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	collectionName := request.Metadata.GetFullName()
@@ -157,16 +138,15 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 		return err
 	}
 
-	_, hasSystemBot := SYSTEM_AFTERSAVE_BOT_COLLECTIONS[collectionName]
-	if hasSystemBot {
-		namespace, name, err := meta.ParseKey(collectionName)
-		if err != nil {
-			return err
-		}
-		systembot := meta.NewAfterSaveBot(namespace, name, collectionName)
-		systembot.Dialect = "SYSTEM"
-		robots = append(robots, systembot)
+	// Always add a systembot, it will be a no-op if no corresponding
+	// system bot is found
+	namespace, name, err := meta.ParseKey(collectionName)
+	if err != nil {
+		return err
 	}
+	systembot := meta.NewAfterSaveBot(namespace, name, collectionName)
+	systembot.Dialect = "SYSTEM"
+	robots = append(robots, systembot)
 
 	for _, bot := range robots {
 
@@ -201,23 +181,29 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 
 }
 
-var SYSTEM_LISTENER_BOTS = map[string]bool{
-	"uesio/studio.createbundle": true,
-	"uesio/studio.makepayment":  true,
-}
-
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	robot := meta.NewListenerBot(namespace, name)
+	// First try to run a system bot
+	sysrobot := meta.NewListenerBot(namespace, name)
+	sysrobot.Dialect = "SYSTEM"
 
-	_, hasSystemBot := SYSTEM_LISTENER_BOTS[namespace+"."+name]
-	if hasSystemBot {
-		robot.Dialect = "SYSTEM"
-	} else {
-		err := bundle.Load(robot, session, connection)
-		if err != nil {
-			return nil, err
-		}
+	sysdialect, err := getBotDialect(sysrobot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	sysresults, err := sysdialect.CallBot(sysrobot, params, connection, session)
+	_, isNotFoundError := err.(*SystemBotNotFoundError)
+	if !isNotFoundError {
+		// If we found a system bot, we can go ahead and just return the results of
+		// that bot, no need to look for another bot to run.
+		return sysresults, err
+	}
+
+	robot := meta.NewListenerBot(namespace, name)
+	err = bundle.Load(robot, session, connection)
+	if err != nil {
+		return nil, err
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)
