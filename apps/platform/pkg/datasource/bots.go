@@ -50,7 +50,9 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 
 func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
 
-	// First try to run a system bot
+	// For now, route bots are only available as system bots
+	// So we just check if one exists. If it doesn't we just return
+	// the route unchanged.
 
 	dialect, err := getBotDialect("SYSTEM")
 	if err != nil {
