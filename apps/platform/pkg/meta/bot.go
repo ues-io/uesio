@@ -8,12 +8,28 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func NewBeforeSaveBot(namespace, name, collection string) *Bot {
+	return NewBaseBot("BEFORESAVE", collection, namespace, name)
+}
+
+func NewAfterSaveBot(namespace, name, collection string) *Bot {
+	return NewBaseBot("AFTERSAVE", collection, namespace, name)
+}
+
 func NewListenerBot(namespace, name string) *Bot {
 	return NewBaseBot("LISTENER", "", namespace, name)
 }
 
 func NewGeneratorBot(namespace, name string) *Bot {
 	return NewBaseBot("GENERATOR", "", namespace, name)
+}
+
+func NewRouteBot(namespace, name string) *Bot {
+	return NewBaseBot("ROUTE", "", namespace, name)
+}
+
+func NewLoadBot(namespace, name string) *Bot {
+	return NewBaseBot("LOAD", "", namespace, name)
 }
 
 func NewBaseBot(botType, collectionKey, namespace, name string) *Bot {
@@ -104,12 +120,15 @@ func GetBotTypes() map[string]string {
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
 		"GENERATOR":  "generator",
+		"LOAD":       "load",
+		"ROUTE":      "route",
 	}
 }
 
 func GetBotDialects() map[string]string {
 	return map[string]string{
 		"JAVASCRIPT": "javascript",
+		"SYSTEM":     "system",
 	}
 }
 

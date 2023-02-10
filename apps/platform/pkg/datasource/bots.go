@@ -2,30 +2,22 @@ package datasource
 
 import (
 	"errors"
-	"io/ioutil"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/clickup"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type BotDialect interface {
-	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI) error
-	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI) error
-	CallBot(bot *meta.Bot, botAPI *CallBotAPI) error
-	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI) error
+	BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+	AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
+	CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
+	CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
+	RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error
+	LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
 }
-
-type BotFunc func(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
-
-type LoadBotFunc func(request *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
-
-type CallBotFunc func(params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
-
-type RouteBotFunc func(*meta.Route, *sess.Session) error
 
 var botDialectMap = map[string]BotDialect{}
 
@@ -45,119 +37,78 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
-func hydrateBot(bot *meta.Bot, session *sess.Session) error {
-	_, stream, err := bundle.GetItemAttachment(bot, "bot.js", session)
-	if err != nil {
-		return err
-	}
-	content, err := ioutil.ReadAll(stream)
-	if err != nil {
-		return err
-	}
-	bot.FileContents = string(content)
-	return nil
+var SYSTEM_ROUTE_BOTS = map[string]bool{
+	"uesio/studio.paymentsuccess": true,
 }
 
-func runBot(botType string, collectionName string, dialectFunc func(BotDialect, *meta.Bot) error, session *sess.Session) error {
+func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
+
+	_, hasSystemBot := SYSTEM_ROUTE_BOTS[route.GetKey()]
+	if !hasSystemBot {
+		return route, nil
+	}
+
+	dialect, err := getBotDialect("SYSTEM")
+	if err != nil {
+		return nil, err
+	}
+	err = dialect.RouteBot(meta.NewRouteBot(route.Namespace, route.Name), route, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return route, nil
+}
+
+var SYSTEM_BEFORESAVE_BOT_COLLECTIONS = map[string]bool{
+	"uesio/core.userfile":     true,
+	"uesio/studio.field":      true,
+	"uesio/studio.view":       true,
+	"uesio/studio.theme":      true,
+	"uesio/studio.route":      true,
+	"uesio/studio.collection": true,
+	"uesio/studio.bot":        true,
+	"uesio/studio.app":        true,
+	"uesio/studio.usage":      true,
+	"uesio/core.user":         true,
+}
+
+func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+
+	collectionName := request.Metadata.GetFullName()
+
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio/studio.collection": collectionName,
-		"uesio/studio.type":       botType,
+		"uesio/studio.type":       "BEFORESAVE",
 	}, session, nil)
 	if err != nil {
 		return err
 	}
 
-	for _, bot := range robots {
-		err := hydrateBot(bot, session)
+	_, hasSystemBot := SYSTEM_BEFORESAVE_BOT_COLLECTIONS[collectionName]
+	if hasSystemBot {
+		namespace, name, err := meta.ParseKey(collectionName)
 		if err != nil {
 			return err
 		}
+		systembot := meta.NewBeforeSaveBot(namespace, name, collectionName)
+		systembot.Dialect = "SYSTEM"
+		robots = append(robots, systembot)
+	}
+
+	for _, bot := range robots {
 
 		dialect, err := getBotDialect(bot.Dialect)
 		if err != nil {
 			return err
 		}
 
-		err = dialectFunc(dialect, bot)
+		err = dialect.BeforeSave(bot, request, connection, session)
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-
-}
-
-func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
-
-	var botFunction RouteBotFunc
-
-	routeKey := route.GetKey()
-
-	switch routeKey {
-	case "uesio/studio.paymentsuccess":
-		botFunction = runPaymentSuccessRouteBot
-	}
-
-	if botFunction != nil {
-		err := botFunction(route, session)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return route, nil
-}
-
-func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-
-	// System bot triggers
-	// These are some actions we want to take for specific types, but don't want
-	// to use regular bots here
-
-	var botFunction BotFunc
-
-	collectionName := request.Metadata.GetFullName()
-
-	switch collectionName {
-	case "uesio/core.userfile":
-		botFunction = runUserFileBeforeSaveBot
-	case "uesio/studio.field":
-		botFunction = runFieldBeforeSaveBot
-	case "uesio/studio.view":
-		botFunction = runViewBeforeSaveBot
-	case "uesio/studio.theme":
-		botFunction = runThemeBeforeSaveBot
-	case "uesio/studio.route":
-		botFunction = runRouteBeforeSaveBot
-	case "uesio/studio.collection":
-		botFunction = runCollectionBeforeSaveBot
-	case "uesio/studio.bot":
-		botFunction = runBotBeforeSaveBot
-	case "uesio/studio.app":
-		botFunction = runAppBeforeSaveBot
-	case "uesio/studio.usage":
-		botFunction = runUsageBeforeSaveBot
-	case "uesio/core.user":
-		botFunction = runUserBeforeSaveBot
-	}
-
-	if botFunction != nil {
-		err := botFunction(request, connection, session)
-		if err != nil {
-			return err
-		}
-	}
-
-	botAPI := NewBeforeSaveAPI(request, connection, session)
-
-	err := runBot("BEFORESAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
-		return dialect.BeforeSave(bot, botAPI)
-	}, session)
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -165,73 +116,69 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 
 func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
 
-	var botFunction LoadBotFunc
-
-	switch op.CollectionName {
-	case "uesio/studio.allmetadata":
-		botFunction = runAllMetadataLoadBot
-	case "tcm/timetracker.project":
-		botFunction = clickup.ProjectLoadBot
-	case "tcm/timetracker.task":
-		botFunction = clickup.TaskLoadBot
+	// Currently, all dynamic collections are routed to
+	// the system bot dialect.
+	dialect, err := getBotDialect("SYSTEM")
+	if err != nil {
+		return err
 	}
-
-	if botFunction != nil {
-		err := botFunction(op, connection, session)
-		if err != nil {
-			return err
-		}
+	namespace, name, err := meta.ParseKey(op.CollectionName)
+	if err != nil {
+		return err
 	}
-	return nil
+	return dialect.LoadBot(meta.NewLoadBot(namespace, name), op, connection, session)
+
+}
+
+var SYSTEM_AFTERSAVE_BOT_COLLECTIONS = map[string]bool{
+	"uesio/core.user":               true,
+	"uesio/core.userfile":           true,
+	"uesio/studio.site":             true,
+	"uesio/studio.sitedomain":       true,
+	"uesio/studio.collection":       true,
+	"uesio/studio.field":            true,
+	"uesio/studio.workspace":        true,
+	"uesio/studio.bundle":           true,
+	"uesio/studio.bundledependency": true,
+	"uesio/studio.license":          true,
 }
 
 func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
-	// System bot triggers
-	// These are some actions we want to take for specific types, but don't want
-	// to use regular bots here
-
-	var botFunction BotFunc
-
 	collectionName := request.Metadata.GetFullName()
 
-	switch collectionName {
-	case "uesio/core.user":
-		botFunction = runUserAfterSaveBot
-	case "uesio/core.userfile":
-		botFunction = runUserFileAfterSaveBot
-	case "uesio/studio.site":
-		botFunction = runSiteAfterSaveBot
-	case "uesio/studio.sitedomain":
-		botFunction = runDomainAfterSaveSiteBot
-	case "uesio/studio.collection":
-		botFunction = runCollectionAfterSaveBot
-	case "uesio/studio.field":
-		botFunction = runFieldAfterSaveBot
-	case "uesio/studio.workspace":
-		botFunction = runWorkspaceAfterSaveBot
-	case "uesio/studio.bundle":
-		botFunction = runBundleAfterSaveBot
-	case "uesio/studio.bundledependency":
-		botFunction = runBundleDependencyAfterSaveBot
-	case "uesio/studio.license":
-		botFunction = runLicenseAfterSaveBot
+	var robots meta.BotCollection
+
+	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
+		"uesio/studio.collection": collectionName,
+		"uesio/studio.type":       "AFTERSAVE",
+	}, session, nil)
+	if err != nil {
+		return err
 	}
 
-	if botFunction != nil {
-		err := botFunction(request, connection, session)
+	_, hasSystemBot := SYSTEM_AFTERSAVE_BOT_COLLECTIONS[collectionName]
+	if hasSystemBot {
+		namespace, name, err := meta.ParseKey(collectionName)
 		if err != nil {
 			return err
 		}
+		systembot := meta.NewAfterSaveBot(namespace, name, collectionName)
+		systembot.Dialect = "SYSTEM"
+		robots = append(robots, systembot)
 	}
 
-	botAPI := NewAfterSaveAPI(request, connection, session)
+	for _, bot := range robots {
 
-	err := runBot("AFTERSAVE", collectionName, func(dialect BotDialect, bot *meta.Bot) error {
-		return dialect.AfterSave(bot, botAPI)
-	}, session)
-	if err != nil {
-		return err
+		dialect, err := getBotDialect(bot.Dialect)
+		if err != nil {
+			return err
+		}
+
+		err = dialect.AfterSave(bot, request, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -245,64 +192,32 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 		return err
 	}
 
-	botAPI := &GeneratorBotAPI{
-		session: session,
-		Params: &ParamsAPI{
-			params: params,
-		},
-		create: create,
-		bot:    robot,
-	}
-
-	err = hydrateBot(robot, session)
-	if err != nil {
-		return err
-	}
-
 	dialect, err := getBotDialect(robot.Dialect)
 	if err != nil {
 		return err
 	}
 
-	return dialect.CallGeneratorBot(robot, botAPI)
+	return dialect.CallGeneratorBot(robot, create, params, connection, session)
 
+}
+
+var SYSTEM_LISTENER_BOTS = map[string]bool{
+	"uesio/studio.createbundle": true,
+	"uesio/studio.makepayment":  true,
 }
 
 func CallListenerBot(namespace, name string, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error) {
 
-	var botFunction CallBotFunc
-
-	switch namespace + "." + name {
-	case "uesio/studio.createbundle":
-		botFunction = runCreateBundleListenerBot
-	case "uesio/studio.makepayment":
-		botFunction = runMakePaymentListenerBot
-	}
-
-	if botFunction != nil {
-		// We can quit early here because we found the code for this bot
-		return botFunction(params, connection, session)
-	}
-
 	robot := meta.NewListenerBot(namespace, name)
 
-	err := bundle.Load(robot, session, connection)
-	if err != nil {
-		return nil, err
-	}
-
-	botAPI := &CallBotAPI{
-		session: session,
-		Params: &ParamsAPI{
-			params: params,
-		},
-		connection: connection,
-		results:    map[string]interface{}{},
-	}
-
-	err = hydrateBot(robot, session)
-	if err != nil {
-		return nil, err
+	_, hasSystemBot := SYSTEM_LISTENER_BOTS[namespace+"."+name]
+	if !hasSystemBot {
+		robot.Dialect = "SYSTEM"
+	} else {
+		err := bundle.Load(robot, session, connection)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)
@@ -310,10 +225,6 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
-	err = dialect.CallBot(robot, botAPI)
-	if err != nil {
-		return nil, err
-	}
+	return dialect.CallBot(robot, params, connection, session)
 
-	return botAPI.results, nil
 }

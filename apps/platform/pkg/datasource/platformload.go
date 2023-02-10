@@ -39,7 +39,7 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
-func getLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
+func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
 	fields := []adapt.LoadRequestField{}
 	for _, field := range fieldStrings {
 		fields = append(fields, adapt.LoadRequestField{
@@ -56,7 +56,7 @@ func PlatformLoad(group meta.CollectionableGroup, options *PlatformLoadOptions, 
 	}
 	fields := options.Fields
 	if fields == nil {
-		fields = getLoadRequestFields(group.GetFields())
+		fields = GetLoadRequestFields(group.GetFields())
 	}
 	return doPlatformLoad(&adapt.LoadOp{
 		WireName:       group.GetName() + "Wire",
