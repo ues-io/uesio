@@ -1,0 +1,11 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outFile": "../../dist/ui/types/types.d.ts",
+		"allowJs": false,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"typeRoots": ["src/public_types"]
+	},
+	"include": ["src/public_types/*.ts"]
+}

@@ -396,7 +396,8 @@
 					"options": {
 						"commands": [
 							"./../../dist/clio/clio packui",
-							"npx tsc --noEmit --project ./tsconfig.lib.json"
+							"npx tsc --noEmit --project ./tsconfig.lib.json",
+							"npx tsc --project ./tsconfig.exports.json"
 						],
 						"parallel": false,
 						"cwd": "libs/ui"

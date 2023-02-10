@@ -7,7 +7,13 @@ type CodeFieldDefinition = {
 	file: string
 }
 
-type CodeFieldLanguage = "yaml" | "json" | "javascript" | "html" | "css"
+type CodeFieldLanguage =
+	| "yaml"
+	| "json"
+	| "javascript"
+	| "typescript"
+	| "html"
+	| "css"
 
 const CodeField: definition.UC<CodeFieldDefinition> = (props) => {
 	const { definition, context } = props
@@ -63,6 +69,10 @@ const CodePropertyDefinition: builder.BuildPropertiesDefinition = {
 				{
 					value: "javascript",
 					label: "javascript",
+				},
+				{
+					value: "typescript",
+					label: "typescript",
 				},
 				{
 					value: "html",

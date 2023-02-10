@@ -129,6 +129,7 @@ func GetBotDialects() map[string]string {
 	return map[string]string{
 		"JAVASCRIPT": "javascript",
 		"SYSTEM":     "system",
+		"TYPESCRIPT": "typescript",
 	}
 }
 
@@ -142,7 +143,11 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 }
 
 func (b *Bot) GetBotFilePath() string {
-	return filepath.Join(b.GetBasePath(), "bot.js")
+	botFile := "bot.js"
+	if b.Dialect == "TYPESCRIPT" {
+		botFile = "bot.ts"
+	}
+	return filepath.Join(b.GetBasePath(), botFile)
 }
 
 func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {

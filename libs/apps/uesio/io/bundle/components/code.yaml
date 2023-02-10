@@ -25,6 +25,8 @@ properties:
         label: "JSON"
       - value: "javascript"
         label: "JavaScript"
+      - value: "typescript"
+        label: "TypeScript"
       - value: "html"
         label: "HTML"
       - value: "css"

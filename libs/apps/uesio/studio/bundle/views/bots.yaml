@@ -43,7 +43,7 @@ definition:
           lookupField: uesio/core.id
         - field: uesio/studio.dialect
           valueSource: VALUE
-          value: "JAVASCRIPT"
+          value: "TYPESCRIPT"
         - field: uesio/studio.type
           valueSource: VALUE
           value: "LISTENER"
@@ -83,7 +83,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Bot
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
                                 hotkey: "meta+n"
                                 signals:
                                   - signal: wire/RESET

@@ -1,9 +1,9 @@
 package jsdialect
 
 type ParamsAPI struct {
-	params map[string]interface{}
+	Params map[string]interface{} `bot:"params"`
 }
 
 func (p *ParamsAPI) Get(paramName string) interface{} {
-	return p.params[paramName]
+	return p.Params[paramName]
 }

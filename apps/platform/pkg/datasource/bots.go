@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"errors"
+	"github.com/thecloudmasters/uesio/pkg/bot"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -9,15 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
-
-type BotDialect interface {
-	BeforeSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
-	AfterSave(bot *meta.Bot, request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error
-	CallBot(bot *meta.Bot, params map[string]interface{}, connection adapt.Connection, session *sess.Session) (map[string]interface{}, error)
-	CallGeneratorBot(bot *meta.Bot, create retrieve.WriterCreator, params map[string]interface{}, connection adapt.Connection, session *sess.Session) error
-	RouteBot(bot *meta.Bot, route *meta.Route, session *sess.Session) error
-	LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error
-}
 
 type SystemBotNotFoundError struct {
 }
@@ -30,31 +21,13 @@ func (e *SystemBotNotFoundError) Error() string {
 	return "System Bot Not Found"
 }
 
-var botDialectMap = map[string]BotDialect{}
-
-func RegisterBotDialect(name string, dialect BotDialect) {
-	botDialectMap[name] = dialect
-}
-
-func getBotDialect(botDialectName string) (BotDialect, error) {
-	dialectKey, ok := meta.GetBotDialects()[botDialectName]
-	if !ok {
-		return nil, errors.New("Invalid bot dialect name: " + botDialectName)
-	}
-	dialect, ok := botDialectMap[dialectKey]
-	if !ok {
-		return nil, errors.New("No dialect found for this bot: " + botDialectName)
-	}
-	return dialect, nil
-}
-
 func RunRouteBots(route *meta.Route, session *sess.Session) (*meta.Route, error) {
 
 	// For now, route bots are only available as system bots
 	// So we just check if one exists. If it doesn't we just return
 	// the route unchanged.
 
-	dialect, err := getBotDialect("SYSTEM")
+	dialect, err := bot.GetBotDialect("SYSTEM")
 	if err != nil {
 		return nil, err
 	}
@@ -94,14 +67,14 @@ func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessi
 	systembot.Dialect = "SYSTEM"
 	robots = append(robots, systembot)
 
-	for _, bot := range robots {
+	for _, robot := range robots {
 
-		dialect, err := getBotDialect(bot.Dialect)
+		dialect, err := bot.GetBotDialect(robot.Dialect)
 		if err != nil {
 			return err
 		}
 
-		err = dialect.BeforeSave(bot, request, connection, session)
+		err = dialect.BeforeSave(robot, request, connection, session)
 		if err != nil {
 			return err
 		}
@@ -114,7 +87,7 @@ func runDynamicCollectionLoadBots(op *adapt.LoadOp, connection adapt.Connection,
 
 	// Currently, all dynamic collections are routed to
 	// the system bot dialect.
-	dialect, err := getBotDialect("SYSTEM")
+	dialect, err := bot.GetBotDialect("SYSTEM")
 	if err != nil {
 		return err
 	}
@@ -150,14 +123,14 @@ func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, sessio
 	systembot.Dialect = "SYSTEM"
 	robots = append(robots, systembot)
 
-	for _, bot := range robots {
+	for _, robot := range robots {
 
-		dialect, err := getBotDialect(bot.Dialect)
+		dialect, err := bot.GetBotDialect(robot.Dialect)
 		if err != nil {
 			return err
 		}
 
-		err = dialect.AfterSave(bot, request, connection, session)
+		err = dialect.AfterSave(robot, request, connection, session)
 		if err != nil {
 			return err
 		}
@@ -174,7 +147,7 @@ func CallGeneratorBot(create retrieve.WriterCreator, namespace, name string, par
 		return err
 	}
 
-	dialect, err := getBotDialect(robot.Dialect)
+	dialect, err := bot.GetBotDialect(robot.Dialect)
 	if err != nil {
 		return err
 	}
@@ -189,7 +162,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	sysrobot := meta.NewListenerBot(namespace, name)
 	sysrobot.Dialect = "SYSTEM"
 
-	sysdialect, err := getBotDialect(sysrobot.Dialect)
+	sysdialect, err := bot.GetBotDialect(sysrobot.Dialect)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +181,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 		return nil, err
 	}
 
-	dialect, err := getBotDialect(robot.Dialect)
+	dialect, err := bot.GetBotDialect(robot.Dialect)
 	if err != nil {
 		return nil, err
 	}

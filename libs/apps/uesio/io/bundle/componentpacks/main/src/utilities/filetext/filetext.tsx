@@ -16,6 +16,8 @@ interface FileTextProps extends definition.UtilityProps {
 	onUpload: (files: FileList | File | null) => void
 	displayAs?: string
 	options?: MDOptions
+	// An array of URIs which contain ambient type definitions to load in this code field
+	typeDefinitionFileURIs?: string[]
 }
 
 const stringToFile = (value: string, fileName: string, mimeType: string) => {
@@ -28,7 +30,16 @@ const stringToFile = (value: string, fileName: string, mimeType: string) => {
 }
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
-	const { context, userFile, onUpload, mode, options, displayAs, id } = props
+	const {
+		context,
+		userFile,
+		onUpload,
+		mode,
+		options,
+		displayAs,
+		id,
+		typeDefinitionFileURIs,
+	} = props
 
 	const [content, original, setContent, reset, cancel] = api.file.useUserFile(
 		context,
@@ -77,7 +88,12 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 	}
 
 	return (
-		<CodeField context={context} value={content} setValue={changeHandler} />
+		<CodeField
+			context={context}
+			value={content}
+			setValue={changeHandler}
+			typeDefinitionFileURIs={typeDefinitionFileURIs}
+		/>
 	)
 }
 

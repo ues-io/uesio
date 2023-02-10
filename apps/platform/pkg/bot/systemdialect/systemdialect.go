@@ -79,6 +79,8 @@ func (b *SystemDialect) AfterSave(bot *meta.Bot, request *adapt.SaveOp, connecti
 		botFunction = runBundleDependencyAfterSaveBot
 	case "uesio/studio.license":
 		botFunction = runLicenseAfterSaveBot
+	case "uesio/studio.bot":
+		botFunction = runBotAfterSaveBot
 	}
 
 	if botFunction == nil {
@@ -147,4 +149,14 @@ func (b *SystemDialect) LoadBot(bot *meta.Bot, op *adapt.LoadOp, connection adap
 
 	return botFunction(op, connection, session)
 
+}
+
+// Unused by System Dialects, there is no actual file to load since they're all defined in Go code
+func (b *SystemDialect) GetFilePath() string {
+	return ""
+}
+
+// UNUSED for System Dialect
+func (b *SystemDialect) GetDefaultFileBody(botType string) string {
+	return ""
 }

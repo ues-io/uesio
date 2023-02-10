@@ -6,6 +6,7 @@ import { set as setComponent } from "../bands/component"
 import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
+import { useAsync } from "./useasync"
 import {
 	Context,
 	hasViewContext,
@@ -136,6 +137,7 @@ export {
 	getComponentId,
 	getComponentIdFromProps,
 	makeComponentId,
+	useAsync,
 	useState,
 	setState,
 	useStateSlice,

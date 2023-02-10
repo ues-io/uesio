@@ -49,19 +49,8 @@ definition:
           lookupWire: bots
           lookupField: uesio/core.id
       init:
-        create: true
+        create: false
         query: true
-      defaults:
-        - field: uesio/core.path
-          valueSource: VALUE
-          value: "bot.js"
-        - field: uesio/core.recordid
-          valueSource: LOOKUP
-          lookupWire: bots
-          lookupField: uesio/core.id
-        - field: uesio/core.collectionid
-          valueSource: VALUE
-          value: uesio/studio.bot
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -168,6 +157,8 @@ definition:
                                       uesio.id: botcontent
                                       displayAs: TEXT
                                       mode: EDIT
+                                      typeDefinitionFileURIs:
+                                        - "/static/ui/types/types.d.ts"
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog
@@ -209,8 +200,10 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.type
-              - uesio/io.field:
-                  fieldId: uesio/studio.dialect
+              # Do not allow changing the dialect, as that would require us storing the bot file somewhere else.
+              # Maybe we can add that capability later, but for now it would be a mess to change/move/delete files
+              # - uesio/io.field:
+              #     fieldId: uesio/studio.dialect
               - uesio/io.box:
                   uesio.display:
                     - field: uesio/studio.type
