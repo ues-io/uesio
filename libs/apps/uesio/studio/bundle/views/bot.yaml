@@ -48,9 +48,6 @@ definition:
           valueSource: LOOKUP
           lookupWire: bots
           lookupField: uesio/core.id
-      init:
-        create: false
-        query: true
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -91,7 +88,7 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
+                                      uesio.variant: uesio/io.primary
                                       text: "Save"
                                       signals:
                                         - signal: component/uesio/io.fileattachment/UPLOAD_FILE
