@@ -104,12 +104,6 @@ definition:
                                           target: botcontent
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
-                                      text: "Edit"
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: editBot
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
                                       text: "Delete"
                                       signals:
                                         - signal: panel/TOGGLE
@@ -185,56 +179,3 @@ definition:
             signals:
               - signal: panel/TOGGLE
                 panel: deleteBot
-    editBot:
-      uesio.type: uesio/io.dialog
-      title: Edit Bot
-      width: 400px
-      height: 560px
-      components:
-        - uesio/io.list:
-            uesio.id: editBotList
-            wire: bots
-            mode: EDIT
-            components:
-              - uesio/io.field:
-                  fieldId: uesio/studio.name
-              - uesio/io.field:
-                  fieldId: uesio/studio.type
-              # Do not allow changing the dialect, as that would require us storing the bot file somewhere else.
-              # Maybe we can add that capability later, but for now it would be a mess to change/move/delete files
-              # - uesio/io.field:
-              #     fieldId: uesio/studio.dialect
-              - uesio/io.box:
-                  uesio.display:
-                    - field: uesio/studio.type
-                      value: "LISTENER"
-                      type: "fieldValue"
-                      operator: "NOT_EQUALS"
-                  components:
-                    - uesio/studio.metadatafield:
-                        uesio.context:
-                          workspace:
-                            name: $Param{workspacename}
-                            app: $Param{app}
-                        fieldId: uesio/studio.collection
-                        metadataType: "COLLECTION"
-                        label: "Collection"
-      actions:
-        - uesio/io.button:
-            uesio.variant: uesio/io.primary
-            text: "Save"
-            hotkey: "meta+s"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"
-        - uesio/io.button:
-            uesio.variant: "uesio/io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: wire/CANCEL
-                wire: bots
-              - signal: "panel/TOGGLE"
-                panel: "editBot"
