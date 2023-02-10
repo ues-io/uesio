@@ -26,6 +26,24 @@ const DefaultListenerBotBody = `function %s(bot) {
     bot.addResult("answer", a + b)
 }`
 
+const DefaultBeforeSaveBotBody = `function %s(bot) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
+const DefaultAfterSaveBotBody = `function %s(bot) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
 const DefaultBotBody = `function %s(bot) {
 
 }`
@@ -156,6 +174,10 @@ func (b *JSDialect) GetDefaultFileBody(botType string) string {
 	switch botType {
 	case "LISTENER":
 		return DefaultListenerBotBody
+	case "BEFORESAVE":
+		return DefaultBeforeSaveBotBody
+	case "AFTERSAVE":
+		return DefaultAfterSaveBotBody
 	default:
 		return DefaultBotBody
 	}

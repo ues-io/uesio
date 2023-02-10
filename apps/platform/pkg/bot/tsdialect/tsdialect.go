@@ -28,6 +28,28 @@ function %s(bot: ListenerBotApi) {
     bot.addResult("answer", a + b)
 }`
 
+const DefaultBeforeSaveBotBody = `import { BeforeSaveBotApi } from "uesio/bots"
+
+function %s(bot: BeforeSaveBotApi) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
+const DefaultAfterSaveBotBody = `import { AfterSaveBotApi } from "uesio/bots"
+
+function %s(bot: AfterSaveBotApi) {
+	bot.inserts.get().forEach(function (change) {
+		const recordId = change.get("uesio/core.id");
+	});
+	bot.deletes.get().forEach(function (recordId) {
+
+	});
+}`
+
 const DefaultBotBody = `function %s(bot) {
 }`
 
@@ -132,6 +154,10 @@ func (b *TSDialect) GetDefaultFileBody(botType string) string {
 	switch botType {
 	case "LISTENER":
 		return DefaultListenerBotBody
+	case "BEFORESAVE":
+		return DefaultBeforeSaveBotBody
+	case "AFTERSAVE":
+		return DefaultAfterSaveBotBody
 	default:
 		return DefaultBotBody
 	}
