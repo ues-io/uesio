@@ -91,12 +91,13 @@ func CreateEntryFiles() ([]string, error) {
 		}
 
 		baseURL := fmt.Sprintf("bundle/componentpacks/%s/", packName)
+		distURL := fmt.Sprintf("%sdist", baseURL)
 		srcURL := fmt.Sprintf("%s/src/", baseURL)
 		// Loop over the components
 		for _, comp := range *packData.Components {
 			hasDefinition := fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, comp.EntryPoint))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s from \"./src/%s\";", comp.Name, comp.EntryPoint))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s from \"../src/%s\";", comp.Name, comp.EntryPoint))
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.register(\"%[2]s.%[1]s\",%[1]s);", comp.Name, namespace))
 			}
 		}
@@ -104,7 +105,7 @@ func CreateEntryFiles() ([]string, error) {
 		for _, util := range *packData.Utilities {
 			hasDefinition := fileExists(fmt.Sprintf("%s/%s.tsx", srcURL, util.EntryPoint))
 			if hasDefinition {
-				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s_utility from \"./src/%s\";", util.Name, util.EntryPoint))
+				runtimeImports = append(runtimeImports, fmt.Sprintf("import %s_utility from \"../src/%s\";", util.Name, util.EntryPoint))
 				runtimeRegistrations = append(runtimeRegistrations, fmt.Sprintf("component.registry.registerUtilityComponent(\"%[2]s.%[1]s\",%[1]s_utility)", util.Name, namespace))
 			}
 		}
@@ -114,7 +115,12 @@ func CreateEntryFiles() ([]string, error) {
 			runtimeEntry = strings.Join(append(runtimeImports, runtimeRegistrations...), "\n")
 		}
 
-		runtimeFileName := fmt.Sprintf("%[1]s/runtime.ts", baseURL)
+		// Create the dist dir, if needed
+		err = os.Mkdir(distURL, 0777)
+		if err != nil && !os.IsExist(err) {
+			return nil, err
+		}
+		runtimeFileName := fmt.Sprintf("%[1]s/runtime.ts", distURL)
 
 		err := os.WriteFile(runtimeFileName, []byte(runtimeEntry), 0777)
 		if err != nil {
