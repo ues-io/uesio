@@ -211,7 +211,7 @@ func CallListenerBot(namespace, name string, params map[string]interface{}, conn
 	robot := meta.NewListenerBot(namespace, name)
 
 	_, hasSystemBot := SYSTEM_LISTENER_BOTS[namespace+"."+name]
-	if !hasSystemBot {
+	if hasSystemBot {
 		robot.Dialect = "SYSTEM"
 	} else {
 		err := bundle.Load(robot, session, connection)
