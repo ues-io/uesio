@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
 	"github.com/thecloudmasters/uesio/pkg/bot/jsdialect"
+	"github.com/thecloudmasters/uesio/pkg/bot/systemdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
@@ -72,6 +73,7 @@ func init() {
 
 	// Bot Dialects
 	datasource.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
+	datasource.RegisterBotDialect("system", &systemdialect.SystemDialect{})
 
 	// Integration Types
 	integ.RegisterConfigStore("web", &web.WebIntegration{})

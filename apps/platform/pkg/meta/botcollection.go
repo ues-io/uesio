@@ -86,6 +86,9 @@ func (bc *BotCollection) FilterPath(path string, conditions BundleConditions, de
 	}
 
 	if botType == "listener" || botType == "generator" {
+		if partLength != 3 {
+			return false
+		}
 		isDefinition := parts[2] == "bot.yaml"
 		return partLength == 3 && (isDefinition || !definitionOnly)
 	}
