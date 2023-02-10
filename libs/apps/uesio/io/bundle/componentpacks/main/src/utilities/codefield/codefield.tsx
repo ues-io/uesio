@@ -1,4 +1,4 @@
-import { definition, styles, api } from "@uesio/ui"
+import { definition, styles, api, context } from "@uesio/ui"
 import Editor, { loader, Monaco, useMonaco } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import { CodeFieldUtilityProps } from "./types"
@@ -11,19 +11,21 @@ loader.config({
 	paths: { vs: staticAssetPath + "/static/vendor/monaco-editor/min/vs" },
 })
 
-const preprocessTypeFileURIs = (uris: string[] | undefined) => {
+const preprocessTypeFileURIs = (
+	uris: string[] | undefined,
+	context: context.Context
+) => {
 	if (uris === undefined) return []
-	return uris.map((uri) =>
-		uri.startsWith("/static") ? staticAssetPath + uri : uri
-	)
+	return uris.map((uri) => context.mergeString(uri))
 }
 
 const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	props
 ) => {
-	const { setValue, value, language, options, onMount } = props
+	const { setValue, value, language, options, onMount, context } = props
 	const typeDefinitionFileURIs = preprocessTypeFileURIs(
-		props.typeDefinitionFileURIs
+		props.typeDefinitionFileURIs,
+		context
 	)
 	const classes = styles.useUtilityStyles(
 		{
@@ -50,7 +52,7 @@ const CodeField: definition.UtilityComponent<CodeFieldUtilityProps> = (
 	useEffect(() => {
 		const fetchFile = async (uri: string) => {
 			const result = await fetch(uri)
-			if (result.status !== 200) {
+			if (result.status >= 400) {
 				throw new Error(
 					"Failed to load resource: " +
 						uri +

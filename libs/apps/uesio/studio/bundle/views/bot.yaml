@@ -158,7 +158,7 @@ definition:
                                       displayAs: TEXT
                                       mode: EDIT
                                       typeDefinitionFileURIs:
-                                        - "/static/ui/types/types.d.ts"
+                                        - $StaticFile{/ui/types/types.d.ts}
   panels:
     deleteBot:
       uesio.type: uesio/io.dialog
