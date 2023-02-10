@@ -7,10 +7,10 @@ import (
 )
 
 type CallBotAPI struct {
-	Session    *sess.Session          `bot:"session"`
-	Params     *ParamsAPI             `bot:"params"`
-	Connection adapt.Connection       `bot:"connection"`
-	Results    map[string]interface{} `bot:"Results"`
+	Session    *sess.Session
+	Params     *ParamsAPI `bot:"params"`
+	Connection adapt.Connection
+	Results    map[string]interface{}
 }
 
 func (cba *CallBotAPI) AddResult(key string, value interface{}) {

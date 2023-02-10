@@ -26,11 +26,11 @@ func mergeTemplate(file io.Writer, params map[string]interface{}, templateString
 }
 
 type GeneratorBotAPI struct {
-	Session    *sess.Session          `bot:"session"`
-	Params     *ParamsAPI             `bot:"params"`
-	Create     retrieve.WriterCreator `bot:"create"`
-	Bot        *meta.Bot              `bot:"bot"`
-	Connection adapt.Connection       `bot:"connection"`
+	Session    *sess.Session
+	Params     *ParamsAPI `bot:"params"`
+	Create     retrieve.WriterCreator
+	Bot        *meta.Bot
+	Connection adapt.Connection
 }
 
 func (gba *GeneratorBotAPI) RunGenerator(namespace, name string, params map[string]interface{}) error {
