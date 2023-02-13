@@ -1,18 +1,6 @@
 import { definition, api, metadata, context as ctx } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 
-type MetadataType =
-	| "BOT"
-	| "COLLECTION"
-	| "FIELD"
-	| "FILE"
-	| "LABEL"
-	| "PROFILE"
-	| "SELECTLIST"
-	| "THEME"
-	| "VIEW"
-	| "ROUTE"
-
 type BaseProperty = {
 	name: string
 	label?: string
@@ -43,14 +31,14 @@ type KeyProperty = {
 
 type MetadataProperty = {
 	type: "METADATA"
-	metadataType: MetadataType
+	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
 
 type MultiMetadataProperty = {
 	type: "MULTI_METADATA"
-	metadataType: MetadataType
+	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
