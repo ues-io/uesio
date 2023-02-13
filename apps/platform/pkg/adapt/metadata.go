@@ -21,6 +21,11 @@ func (mc *MetadataCache) AddCollection(key string, metadata *CollectionMetadata)
 }
 
 func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) {
+
+	if mc == nil {
+		return nil, errors.New("No metadata provided")
+	}
+
 	collectionMetadata, ok := mc.Collections[key]
 	if !ok {
 		return nil, errors.New("No metadata provided for collection: " + key)
