@@ -217,8 +217,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			value = get(context, path.addLocal(name)) as string
 		}
 		setters.set(name, setter)
-		if (value === undefined && defaultValue !== undefined) {
+		if (
+			value === undefined &&
+			defaultValue !== undefined &&
+			setter !== undefined
+		) {
 			value = defaultValue
+			// Run the setter initially to update the state
+			setter(value)
 		}
 		initialValue[name] = value
 	})
