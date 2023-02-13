@@ -52,7 +52,12 @@ func populateFormulaField(field *FieldMetadata, exec gval.Evaluable) evalFunc {
 
 		value, err := exec(context.Background(), evaluator)
 		if err != nil {
-			return err
+			field.Type = "TEXT"
+			err = item.SetField(field.GetFullName(), err.Error())
+			if err != nil {
+				return err
+			}
+			return nil
 		}
 
 		err = item.SetField(field.GetFullName(), value)
