@@ -124,7 +124,7 @@ definition:
                                       fieldId: uesio/studio.type
                                   - uesio/io.field:
                                       fieldId: uesio/studio.dialect
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}

@@ -15,26 +15,38 @@ type Props = {
 	path: FullPath
 }
 
-const getFormFieldFromProperty = (property: ComponentProperty) => {
+const getFormFieldFromProperty = (
+	property: ComponentProperty,
+	context: context.Context,
+	path: FullPath
+) => {
 	switch (property.type) {
-		// TODO: ADD support for more advanced builder-specific fields
-		// case "METADATA":
-		// 	return {
-		// 		// TODO: WHY IS THIS COMPONENT NOT AVAILABLE?
-		// 		"uesio/studio.metadatafield": {
-		// 			fieldId: property.name,
-		// 			metadataType: property.metadataType,
-		// 			// grouping: property.grouping,
-		// 		},
-		// 	}
-		// case "METADATAMULTI":
-		// 	return {
-		// 		"uesio/studio.multimetadatafield": {
-		// 			fieldId: property.name,
-		// 			metadataType: property.metadataType,
-		// 			grouping: property.grouping,
-		// 		},
-		// 	}
+		case "METADATA":
+			return {
+				"uesio/builder.metadatafield": {
+					fieldId: property.name,
+					metadataType: property.metadataType,
+					grouping: getGrouping(
+						path,
+						context,
+						property.groupingPath,
+						property.groupingValue
+					),
+				},
+			}
+		case "MULTI_METADATA":
+			return {
+				"uesio/builder.multimetadatafield": {
+					fieldId: property.name,
+					metadataType: property.metadataType,
+					grouping: getGrouping(
+						path,
+						context,
+						property.groupingPath,
+						property.groupingValue
+					),
+				},
+			}
 		case "NUMBER": {
 			return {
 				"uesio/io.field": {
@@ -63,10 +75,14 @@ const getFormFieldFromProperty = (property: ComponentProperty) => {
 }
 
 const getFormFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined
+	properties: ComponentProperty[] | undefined,
+	context: context.Context,
+	path: FullPath
 ) => {
 	if (!properties) return []
-	return properties.map(getFormFieldFromProperty)
+	return properties.map((prop) =>
+		getFormFieldFromProperty(prop, context, path)
+	)
 }
 
 const getSelectListMetadata = (def: SelectProperty) => ({
@@ -146,21 +162,22 @@ const getWireFieldsFromProperties = (
 	)
 }
 
-// const getGrouping = (
-// 	path: FullPath,
-// 	groupingPath?: string,
-// 	groupingValue?: string
-// ): string | undefined => {
-// 	if (groupingValue) return groupingValue
-// 	if (!groupingPath) return undefined
+const getGrouping = (
+	path: FullPath,
+	context: context.Context,
+	groupingPath?: string,
+	groupingValue?: string
+): string | undefined => {
+	if (groupingValue) return groupingValue
+	if (!groupingPath) return undefined
 
-// 	const parsePath = component.path.parseRelativePath(
-// 		groupingPath,
-// 		path.localPath || ""
-// 	)
+	const parsePath = component.path.parseRelativePath(
+		groupingPath,
+		path.localPath || ""
+	)
 
-// 	return get(context, path.setLocal(parsePath)) as string
-// }
+	return get(context, path.setLocal(parsePath)) as string
+}
 
 type SetterFunction = (a: string) => void
 
@@ -172,9 +189,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const initialValue: wire.PlainWireRecord = {}
 
 	properties?.forEach((property) => {
-		const { name, type } = property
+		const { name, type, defaultValue } = property
 		let setter: SetterFunction
-		let value: string
+		let value
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
@@ -188,6 +205,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			value = get(context, path.addLocal(name)) as string
 		}
 		setters.set(name, setter)
+		if (value === undefined && defaultValue !== undefined) {
+			value = defaultValue
+		}
 		initialValue[name] = value
 	})
 
@@ -196,7 +216,10 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			id={id}
 			path={path.localPath}
 			fields={getWireFieldsFromProperties(properties, context)}
-			content={content || getFormFieldsFromProperties(properties)}
+			content={
+				content ||
+				getFormFieldsFromProperties(properties, context, path)
+			}
 			context={context}
 			onUpdate={(field: string, value: string) => {
 				setters.get(field)(value)

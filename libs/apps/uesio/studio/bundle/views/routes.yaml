@@ -131,18 +131,18 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.path
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.view
                   metadataType: "VIEW"
                   label: "View"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.theme
                   metadataType: "THEME"
                   label: "Theme"
               - uesio/io.field:
                   fieldId: uesio/studio.title
                   label: "Title"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.collection
                   metadataType: "COLLECTION"
                   label: "Collection"

@@ -60,7 +60,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			{...(namespace && {
 				defaultNamespace: namespace,
 			})}
-			variant="uesio/studio.metadatafield"
+			variant="uesio/builder.metadatafield"
 		/>
 	)
 }

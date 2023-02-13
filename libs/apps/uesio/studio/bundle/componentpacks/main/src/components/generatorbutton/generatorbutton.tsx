@@ -31,7 +31,7 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 	switch (def.type) {
 		case "METADATA":
 			return {
-				"uesio/studio.metadatafield": {
+				"uesio/builder.metadatafield": {
 					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,
@@ -39,7 +39,7 @@ const getLayoutFieldFromParamDef = (def: param.ParamDefinition) => {
 			}
 		case "METADATAMULTI":
 			return {
-				"uesio/studio.multimetadatafield": {
+				"uesio/builder.multimetadatafield": {
 					fieldId: def.name,
 					metadataType: def.metadataType,
 					grouping: def.grouping,

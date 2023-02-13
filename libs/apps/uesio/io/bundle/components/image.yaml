@@ -4,3 +4,38 @@ description: Display an image.
 category: CONTENT
 pack: main
 entrypoint: components/image/image
+discoverable: true
+properties:
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
+  - name: url
+    type: TEXT
+    label: URL
+  - name: height
+    type: TEXT
+    label: Height
+  - name: alt
+    type: TEXT
+    label: Alt text
+  - name: align
+    type: SELECT
+    label: Alignment
+    defaultValue: left
+    options:
+      - value: "left"
+        label: "Left"
+      - value: "center"
+        label: "Center"
+      - value: "right"
+        label: "Right"
+  - name: loading
+    type: SELECT
+    label: Loading
+    defaultValue: lazy
+    options:
+      - value: "lazy"
+        label: "Lazy"
+      - value: "eager"
+        label: "Eager"
