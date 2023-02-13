@@ -127,6 +127,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "NUMBER" as const,
 			}
+		case "CHECKBOX":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "CHECKBOX" as const,
+			}
 		case "KEY":
 			return {
 				label: label || name,

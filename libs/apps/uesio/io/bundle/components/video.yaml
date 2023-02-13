@@ -1,0 +1,33 @@
+name: video
+title: Video
+description: Display a video.
+category: CONTENT
+pack: main
+entrypoint: components/video/video
+discoverable: true
+properties:
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
+  - name: src
+    type: TEXT
+    label: URL
+  - name: height
+    type: TEXT
+    label: Height
+  - name: width
+    type: TEXT
+    label: Width
+  - name: muted
+    type: CHECKBOX
+    defaultValue: false
+    label: Muted
+  - name: loop
+    type: CHECKBOX
+    defaultValue: false
+    label: Loop
+  - name: autoplay
+    type: CHECKBOX
+    defaultValue: true
+    label: Auto play
