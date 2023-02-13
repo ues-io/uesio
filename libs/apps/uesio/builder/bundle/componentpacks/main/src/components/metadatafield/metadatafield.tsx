@@ -5,8 +5,11 @@ type MetadataFieldDefinition = {
 	fieldId: string
 	metadataType: metadata.MetadataType
 	label: string
+	labelPosition?: string
 	grouping?: string
 	namespace?: string
+	selectVariant?: metadata.MetadataKey
+	fieldWrapperVariant?: metadata.MetadataKey
 }
 
 interface Props extends definition.BaseProps {
@@ -17,7 +20,13 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 	const {
 		context,
-		definition: { fieldId, metadataType },
+		definition: {
+			fieldId,
+			metadataType,
+			selectVariant,
+			fieldWrapperVariant,
+			labelPosition,
+		},
 	} = props
 
 	const record = context.getRecord()
@@ -53,6 +62,9 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			setValue={(value: string) => {
 				record.update(fieldId, value, context)
 			}}
+			selectVariant={selectVariant}
+			fieldWrapperVariant={fieldWrapperVariant}
+			labelPosition={labelPosition}
 			context={context}
 			{...(grouping && {
 				grouping,

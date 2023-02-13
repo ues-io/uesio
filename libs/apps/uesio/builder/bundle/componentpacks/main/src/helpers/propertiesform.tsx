@@ -26,6 +26,9 @@ const getFormFieldFromProperty = (
 				"uesio/builder.metadatafield": {
 					fieldId: property.name,
 					metadataType: property.metadataType,
+					fieldWrapperVariant: "uesio/builder.propfield",
+					selectVariant: "uesio/builder.propfield",
+					labelPosition: "left",
 					grouping: getGrouping(
 						path,
 						context,
@@ -39,6 +42,9 @@ const getFormFieldFromProperty = (
 				"uesio/builder.multimetadatafield": {
 					fieldId: property.name,
 					metadataType: property.metadataType,
+					fieldWrapperVariant: "uesio/builder.propfield",
+					selectVariant: "uesio/builder.propfield",
+					labelPosition: "left",
 					grouping: getGrouping(
 						path,
 						context,
