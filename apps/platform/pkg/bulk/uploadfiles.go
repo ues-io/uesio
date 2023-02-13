@@ -65,12 +65,10 @@ func NewFileUploadBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Sess
 		defer f.Close()
 	}
 
-	connection, err := datasource.GetPlatformConnection(session, nil)
+	connection, err := datasource.GetPlatformConnection(metadata, session, nil)
 	if err != nil {
 		return nil, err
 	}
-
-	connection.SetMetadata(metadata)
 
 	_, err = filesource.Upload(uploadOps, connection, session)
 	if err != nil {
