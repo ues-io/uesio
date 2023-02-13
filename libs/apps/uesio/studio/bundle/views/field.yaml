@@ -147,11 +147,11 @@ definition:
                                       fieldId: uesio/studio.type
                                   - uesio/io.field:
                                       fieldId: uesio/studio.label
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.languagelabel
                                       metadataType: "LABEL"
                                       label: "Language Label"
-                                  - uesio/studio.metadatafield:
+                                  - uesio/builder.metadatafield:
                                       fieldId: uesio/studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
@@ -160,7 +160,7 @@ definition:
                                         - field: uesio/studio.type
                                           value: "REFERENCE"
                                       components:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.reference->uesio/studio.collection
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
@@ -176,7 +176,7 @@ definition:
                                         - field: uesio/studio.type
                                           value: "SELECT"
                                       components:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
                                             metadataType: "SELECTLIST"
                                             label: "Select List"
@@ -185,7 +185,7 @@ definition:
                                         - field: uesio/studio.type
                                           value: "FILE"
                                       components:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.file->uesio/studio.filesource
                                             metadataType: "FILESOURCE"
                                             label: "File Source"
@@ -229,7 +229,7 @@ definition:
                                         - field: uesio/studio.type
                                           value: "MULTISELECT"
                                       components:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.selectlist
                                             metadataType: "SELECTLIST"
                                             label: "Select List"

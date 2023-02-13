@@ -136,7 +136,7 @@ definition:
                       type: "fieldValue"
                       operator: "NOT_EQUALS"
                   components:
-                    - uesio/studio.metadatafield:
+                    - uesio/builder.metadatafield:
                         uesio.context:
                           workspace:
                             name: $Param{workspacename}

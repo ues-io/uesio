@@ -11,5 +11,5 @@ variants:
   - uesio/io.button:uesio/io.secondary
   - uesio/io.button:uesio/io.primary
   - uesio/io.customselectfield:uesio/io.default
-  - uesio/io.field:uesio/studio.metadatafield
+  - uesio/io.field:uesio/builder.metadatafield
   - uesio/builder.iconlabel:uesio/builder.default

@@ -6,6 +6,7 @@ type BaseProperty = {
 	label?: string
 	required?: boolean
 	type: string
+	defaultValue?: string
 }
 
 type TextProperty = {
@@ -21,6 +22,7 @@ type NumberProperty = {
 	min?: number
 	max?: number
 	step?: number
+	defaultValue?: number
 } & BaseProperty
 
 type KeyProperty = {
@@ -29,8 +31,21 @@ type KeyProperty = {
 
 type MetadataProperty = {
 	type: "METADATA"
-	// TODO: EXPAND THIS LIST
-	metadataType: "COLLECTION" | "FILE" | "VIEW"
+	metadataType: metadata.MetadataType
+	groupingPath?: string
+	groupingValue?: string
+} & BaseProperty
+
+type MultiMetadataProperty = {
+	type: "MULTI_METADATA"
+	metadataType: metadata.MetadataType
+	groupingPath?: string
+	groupingValue?: string
+} & BaseProperty
+
+type CheckboxProperty = {
+	type: "CHECKBOX"
+	defaultValue?: boolean
 } & BaseProperty
 
 type WireProperty = {
@@ -56,9 +71,11 @@ type ComponentProperty =
 	| NumberProperty
 	| KeyProperty
 	| MetadataProperty
+	| MultiMetadataProperty
 	| SelectProperty
 	| WireProperty
 	| ComponentIdProperty
+	| CheckboxProperty
 
 type ComponentDef = {
 	name: string

@@ -96,19 +96,19 @@ definition:
                                         lg: 1fr 1fr 1fr 1fr
                                       columnGap: 10px
                                       items:
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.homeroute
                                             metadataType: "ROUTE"
                                             label: "Home Route"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.loginroute
                                             metadataType: "ROUTE"
                                             label: "Login Route"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
-                                        - uesio/studio.metadatafield:
+                                        - uesio/builder.metadatafield:
                                             fieldId: uesio/studio.defaulttheme
                                             metadataType: "THEME"
                                             label: "Default Theme"
@@ -231,19 +231,19 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.homeroute
                   metadataType: "ROUTE"
                   label: "Home Route"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.loginroute
                   metadataType: "ROUTE"
                   label: "Login Route"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.publicprofile
                   metadataType: "PROFILE"
                   label: "Public Profile"
-              - uesio/studio.metadatafield:
+              - uesio/builder.metadatafield:
                   fieldId: uesio/studio.defaulttheme
                   metadataType: "THEME"
                   label: "Default Theme"
