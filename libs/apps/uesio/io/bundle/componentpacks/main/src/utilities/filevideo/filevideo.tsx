@@ -26,8 +26,16 @@ const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, fieldId, record, context, wire, autoplay, muted } =
-		props
+	const {
+		fieldMetadata,
+		fieldId,
+		record,
+		context,
+		wire,
+		autoplay,
+		muted,
+		mode,
+	} = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord>(fieldId)
 	const userFileId = userFile?.[collection.ID_FIELD] as string
@@ -95,7 +103,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 			uploadLabelId={uploadLabelId}
 			deleteLabelId={deleteLabelId}
 		>
-			{
+			{mode === "EDIT" && (
 				<>
 					<label
 						className={styles.cx(classes.editicon, "hovershow")}
@@ -115,7 +123,7 @@ const FileVideo: FunctionComponent<FileVideoProps> = (props) => {
 						</label>
 					)}
 				</>
-			}
+			)}
 			{userFileId ? (
 				<>
 					<video autoPlay={autoplay || true} muted={muted || true}>
