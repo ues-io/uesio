@@ -26,7 +26,7 @@ const FileUploadArea = component.getUtility("uesio/io.fileuploadarea")
 
 const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldId, record, context, wire } = props
+	const { fieldId, record, context, wire, mode } = props
 
 	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId
@@ -78,34 +78,40 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 
 	return (
 		<>
-			<FileUploadArea
-				context={context}
-				record={record}
-				wire={wire}
-				fieldId={fieldId}
-				className={classes.uploadarea}
-				uploadLabelId={uploadLabelId}
-				deleteLabelId={deleteLabelId}
-			>
-				<div>Drag your file here to upload.</div>
-			</FileUploadArea>
+			{mode === "EDIT" && (
+				<FileUploadArea
+					context={context}
+					record={record}
+					wire={wire}
+					fieldId={fieldId}
+					className={classes.uploadarea}
+					uploadLabelId={uploadLabelId}
+					deleteLabelId={deleteLabelId}
+				>
+					<div>Drag your file here to upload.</div>
+				</FileUploadArea>
+			)}
 			{userFile && (
 				<Tile context={context} className={classes.filetag}>
 					<span className={classes.filename}>{fileName}</span>
-					<a href={fileUrl} className={classes.download}>
-						<Icon
-							icon="file_download"
-							className={classes.actionbutton}
-							context={context}
-						/>
-					</a>
-					<label htmlFor={deleteLabelId}>
-						<Icon
-							icon="delete"
-							className={classes.actionbutton}
-							context={context}
-						/>
-					</label>
+					{mode === "EDIT" && (
+						<>
+							<a href={fileUrl} className={classes.download}>
+								<Icon
+									icon="file_download"
+									className={classes.actionbutton}
+									context={context}
+								/>
+							</a>
+							<label htmlFor={deleteLabelId}>
+								<Icon
+									icon="delete"
+									className={classes.actionbutton}
+									context={context}
+								/>
+							</label>
+						</>
+					)}
 				</Tile>
 			)}
 		</>
