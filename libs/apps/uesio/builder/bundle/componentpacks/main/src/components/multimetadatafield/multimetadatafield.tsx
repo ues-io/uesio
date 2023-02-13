@@ -4,8 +4,11 @@ type MultiMetadataFieldDefinition = {
 	fieldId: string
 	metadataType: metadata.MetadataType
 	label: string
+	labelPosition?: string
 	grouping?: string
 	namespace?: string
+	selectVariant?: metadata.MetadataKey
+	fieldWrapperVariant?: metadata.MetadataKey
 }
 
 const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
@@ -16,7 +19,13 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 	)
 	const {
 		context,
-		definition: { fieldId, metadataType },
+		definition: {
+			fieldId,
+			metadataType,
+			selectVariant,
+			fieldWrapperVariant,
+			labelPosition,
+		},
 	} = props
 
 	const record = context.getRecord()
@@ -66,6 +75,9 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 			setValue={(nvalue: string[]) => {
 				record.update(fieldId, nvalue, context)
 			}}
+			selectVariant={selectVariant}
+			fieldWrapperVariant={fieldWrapperVariant}
+			labelPosition={labelPosition}
 			context={context}
 			grouping={grouping}
 			defaultNamespace={namespace}
