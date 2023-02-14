@@ -30,7 +30,7 @@ const baseUrl = Cypress.env("studio_base_url")
 const useMockLogin = Cypress.env("use_mock_login")
 const automationUsername = Cypress.env("automation_username")
 const automationPassword = Cypress.env("automation_password")
-const idEndsWithSelector = (el: string, idSuffix: string) =>
+const idContainsSelector = (el: string, idSuffix: string) =>
 	`${el}[id*=":${idSuffix}"]`
 
 // Logs in to the app
@@ -52,32 +52,32 @@ Cypress.Commands.add("login", () => {
 	cy.session("automationSession2", login)
 })
 
-// Gets an element of a given type whose id ends with a given string
+// Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
 	"getByIdSuffix",
 	(elementType: string, idSuffix: string) => {
-		cy.get(idEndsWithSelector(elementType, idSuffix))
+		cy.get(idContainsSelector(elementType, idSuffix))
 	}
 )
 
-// Gets an input element whose id ends with a given string, and types a string into it
+// Gets an input element whose id contains a given string, and types a string into it
 Cypress.Commands.add("typeInInput", (idSuffix: string, value: string) => {
-	cy.get(idEndsWithSelector("input", idSuffix)).type(value)
+	cy.get(idContainsSelector("input", idSuffix)).type(value)
 })
 
 // Changes the value of a <select>
 Cypress.Commands.add(
 	"changeSelectValue",
 	(selectElementIdSuffix: string, value: string) => {
-		cy.get(idEndsWithSelector("select", selectElementIdSuffix)).select(
+		cy.get(idContainsSelector("select", selectElementIdSuffix)).select(
 			value
 		)
 	}
 )
 
-// Gets a button element whose id ends with a given string
+// Gets a button element whose id contains a given string
 Cypress.Commands.add("clickButton", (idSuffix: string) => {
-	cy.get(idEndsWithSelector("button", idSuffix)).click()
+	cy.get(idContainsSelector("button", idSuffix)).click()
 })
 
 // Enters a global hotkey
