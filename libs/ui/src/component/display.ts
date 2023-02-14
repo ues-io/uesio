@@ -9,6 +9,7 @@ type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
 type FieldValueCondition = {
 	type: "fieldValue" | undefined
 	wire?: string
+	allRecords?: boolean
 	field: string
 	operator: DisplayOperator
 	value: string
@@ -223,24 +224,11 @@ function should(condition: DisplayCondition, context: Context) {
 		)
 
 	if (!condition.type || condition.type === "fieldValue") {
-		const ctx = condition.wire
-			? context.addWireFrame({
-					wire: condition.wire,
-			  })
-			: context
-		const ctxRecord = ctx.getRecord()
-		// If we have a record in context, use it.
-		if (ctxRecord)
-			return compare(
-				compareToValue,
-				ctxRecord.getFieldValue(condition.field) || "",
-				condition.operator
-			)
-
-		// If we have no record in context, test against all records in the wire.
-		const ctxWire = ctx.getWire()
-		if (ctxWire) {
-			const records = ctxWire.getData()
+		if (condition.allRecords) {
+			console.log("ALL THE RECORDS!!!!11!!")
+			const wire = context.getWire(condition.wire)
+			if (!wire) return
+			const records = wire.getData()
 
 			// When we check for false condition, we want to check every record.
 			const arrayMethod =
@@ -258,7 +246,15 @@ function should(condition: DisplayCondition, context: Context) {
 				)
 			)
 		}
-		return false
+		console.log("ONLY ONE!")
+
+		const record = context.getRecord(condition.wire)
+		if (!record) return false
+		return compare(
+			compareToValue,
+			record.getFieldValue(condition.field) || "",
+			condition.operator
+		)
 	}
 
 	console.warn(`Unknown display condition type: ${condition.type}`)
