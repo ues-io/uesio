@@ -30,8 +30,8 @@ const baseUrl = Cypress.env("studio_base_url")
 const useMockLogin = Cypress.env("use_mock_login")
 const automationUsername = Cypress.env("automation_username")
 const automationPassword = Cypress.env("automation_password")
-const idContainsSelector = (el: string, idSuffix: string) =>
-	`${el}[id*=":${idSuffix}"]`
+const idContainsSelector = (el: string, idFragment: string) =>
+	`${el}[id*=":${idFragment}"]`
 
 // Logs in to the app
 // and creates an App and Workspace to use for subsequent tests
@@ -54,30 +54,30 @@ Cypress.Commands.add("login", () => {
 
 // Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
-	"getByIdSuffix",
-	(elementType: string, idSuffix: string) => {
-		cy.get(idContainsSelector(elementType, idSuffix))
+	"getByIdFragment",
+	(elementType: string, idFragment: string) => {
+		cy.get(idContainsSelector(elementType, idFragment))
 	}
 )
 
 // Gets an input element whose id contains a given string, and types a string into it
-Cypress.Commands.add("typeInInput", (idSuffix: string, value: string) => {
-	cy.get(idContainsSelector("input", idSuffix)).type(value)
+Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
+	cy.get(idContainsSelector("input", idFragment)).type(value)
 })
 
 // Changes the value of a <select>
 Cypress.Commands.add(
 	"changeSelectValue",
-	(selectElementIdSuffix: string, value: string) => {
-		cy.get(idContainsSelector("select", selectElementIdSuffix)).select(
+	(selectElementIdFragment: string, value: string) => {
+		cy.get(idContainsSelector("select", selectElementIdFragment)).select(
 			value
 		)
 	}
 )
 
 // Gets a button element whose id contains a given string
-Cypress.Commands.add("clickButton", (idSuffix: string) => {
-	cy.get(idContainsSelector("button", idSuffix)).click()
+Cypress.Commands.add("clickButton", (idFragment: string) => {
+	cy.get(idContainsSelector("button", idFragment)).click()
 })
 
 // Enters a global hotkey
@@ -103,15 +103,12 @@ declare global {
 			): Chainable<void>
 			login(): Chainable<void>
 			visitRoute(route: string): Chainable<void>
-			getByIdSuffix(
-				elementType: string,
-				idSuffix: string
-			): Chainable<void>
-			typeInInput(inputIdSuffix: string, value: string): Chainable<void>
-			clickButton(idSuffix: string): Chainable<void>
+			getByIdFragment(elementType: string, id: string): Chainable<void>
+			typeInInput(inputIdFragment: string, value: string): Chainable<void>
+			clickButton(idFragment: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
-				selectElementIdSuffix: string,
+				selectElementIdFragment: string,
 				value: string
 			): Chainable<void>
 			//   drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
