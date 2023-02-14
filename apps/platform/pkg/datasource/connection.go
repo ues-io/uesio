@@ -24,7 +24,6 @@ func GetConnection(dataSourceKey string, metadata *adapt.MetadataCache, session 
 	if connections != nil {
 		connection, ok := connections[dataSourceKey]
 		if ok {
-			connection.SetMetadata(metadata)
 			return connection, nil
 		}
 	}

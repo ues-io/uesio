@@ -288,16 +288,3 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 
 	return nil
 }
-
-func CollateMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, collatedMetadata map[string]*adapt.MetadataCache) {
-	dsKey := collectionMetadata.DataSource
-	_, ok := collatedMetadata[dsKey]
-	if !ok {
-		collatedMetadata[dsKey] = &adapt.MetadataCache{}
-	}
-	_, ok = collatedMetadata[dsKey].Collections[collectionKey]
-	if !ok {
-		cache := collatedMetadata[dsKey]
-		cache.AddCollection(collectionKey, collectionMetadata)
-	}
-}

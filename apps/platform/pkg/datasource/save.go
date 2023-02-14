@@ -94,11 +94,6 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		metadataResponse = options.Metadata
 	}
 
-	platformConnection, err := GetPlatformConnection(session, options.Connections)
-	if err != nil {
-		return err
-	}
-
 	// Loop over the requests and batch per data source
 	for index := range requests {
 
@@ -117,7 +112,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			return err
 		}
 
-		err = collections.Load(metadataResponse, session, platformConnection)
+		err = collections.Load(metadataResponse, session, nil)
 		if err != nil {
 			return err
 		}
@@ -143,7 +138,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err = GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
 		Metadata:    metadataResponse,
 		Connections: options.Connections,
 	}, session)
