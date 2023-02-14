@@ -76,11 +76,9 @@ const getDefaultRecord = (
 		if (!field)
 			throw new Error("No metadata for field in default: " + fieldName)
 
-		if (value) {
-			const fieldNameParts = fieldName?.split("->")
-			if (field.isReference()) fieldNameParts.push(ID_FIELD)
-			set(defaultRecord, fieldNameParts, value)
-		}
+		const fieldNameParts = fieldName?.split("->")
+		if (field.isReference()) fieldNameParts.push(ID_FIELD)
+		set(defaultRecord, fieldNameParts, value)
 	})
 	return defaultRecord
 }
