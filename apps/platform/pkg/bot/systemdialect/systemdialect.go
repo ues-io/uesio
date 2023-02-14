@@ -95,9 +95,9 @@ func (b *SystemDialect) CallBot(bot *meta.Bot, params map[string]interface{}, co
 	var botFunction CallBotFunc
 
 	switch bot.GetKey() {
-	case "uesio/studio.createbundle":
+	case "listener:uesio/studio.createbundle":
 		botFunction = runCreateBundleListenerBot
-	case "uesio/studio.makepayment":
+	case "listener:uesio/studio.makepayment":
 		botFunction = runMakePaymentListenerBot
 	}
 
