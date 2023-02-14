@@ -3,7 +3,7 @@ import IconLabel from "../iconlabel/iconlabel"
 
 type NamespaceLabelProps = {
 	metadatakey: string // This can either be 'uesio/crm' or a full key like 'uesio/crm.name'
-	metadatainfo?: metadata.MetadataInfo
+	metadatainfo?: metadata.NamespaceInfo
 	title?: string
 }
 

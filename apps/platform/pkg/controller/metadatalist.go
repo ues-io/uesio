@@ -2,9 +2,10 @@ package controller
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -59,7 +60,10 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 			return nil, errors.New("Could not find app info for uesio/core")
 		}
 		for _, field := range datasource.BUILTIN_FIELDS {
-			collectionKeyMap[field.GetFullName()] = appInfo
+			collectionKeyMap[field.GetFullName()] = datasource.MetadataResponse{
+				NamespaceInfo: appInfo,
+				Key:           field.GetFullName(),
+			}
 		}
 	}
 
@@ -76,7 +80,10 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		if !ok {
 			return errors.New("Could not find app info for " + ns)
 		}
-		collectionKeyMap[key] = appInfo
+		collectionKeyMap[key] = datasource.MetadataResponse{
+			NamespaceInfo: appInfo,
+			Key:           key,
+		}
 		return nil
 	})
 	if err != nil {
