@@ -23,7 +23,7 @@ class WireRecord {
 	): T | undefined => {
 		const fieldNameParts = fieldName?.split("->")
 		return get(
-			this.source,
+			this.source.recordData ? this.source.recordData : this.source,
 			fieldNameParts.length === 1 ? fieldName : fieldNameParts
 		)
 	}
