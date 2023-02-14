@@ -18,10 +18,14 @@ injectGlobal({
 		margin: 0,
 		fontFamily: "Roboto, Helvetica, Arial, sans-serif",
 		fontWeight: 400,
+		overflow: "auto",
+		height: "100%",
 	},
 	/* apply a natural box layout model to all elements, but allowing components to change */
 	html: {
 		boxSizing: "border-box",
+		overflow: "auto",
+		height: "100vh",
 	},
 	"*": {
 		boxSizing: "inherit",
