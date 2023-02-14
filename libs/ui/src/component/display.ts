@@ -178,7 +178,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const hasChanges = ctx.getWire()?.getChanges().length
+		const hasChanges = !!ctx.getWire()?.getChanges().length
 		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
 	}
 
@@ -191,7 +191,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const isLoading = ctx.getWire()?.isLoading()
+		const isLoading = !!ctx.getWire()?.isLoading()
 		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
@@ -204,7 +204,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const hasRecords = ctx.getWire()?.getData().length
+		const hasRecords = !!ctx.getWire()?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
 	}
 
@@ -233,15 +233,15 @@ function should(condition: DisplayCondition, context: Context) {
 
 		// If we have no record in context, test against all records in the wire.
 		const wire = context.getWire(condition.wire)
-		if (!wire) return
+		if (!wire) return condition.operator === "NOT_EQUALS"
 		const records = wire.getData()
+
+		// If there are no records, not_equal applies
+		if (!records.length) return condition.operator === "NOT_EQUALS"
 
 		// When we check for false condition, we want to check every record.
 		const arrayMethod =
 			condition.operator === "NOT_EQUALS" ? "every" : "some"
-
-		// If there are no records, not_equal applies
-		if (condition.operator === "NOT_EQUALS" && !records.length) return true
 
 		return records[arrayMethod]((r) =>
 			compare(
