@@ -178,7 +178,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const hasChanges = ctx.getWire()?.getChanges().length
+		const hasChanges = !!ctx.getWire()?.getChanges().length
 		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
 	}
 
@@ -191,7 +191,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const isLoading = ctx.getWire()?.isLoading()
+		const isLoading = !!ctx.getWire()?.isLoading()
 		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
@@ -204,7 +204,7 @@ function should(condition: DisplayCondition, context: Context) {
 					wire: condition.wire,
 			  })
 			: context
-		const hasRecords = ctx.getWire()?.getData().length
+		const hasRecords = !!ctx.getWire()?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
 	}
 
@@ -223,42 +223,33 @@ function should(condition: DisplayCondition, context: Context) {
 		)
 
 	if (!condition.type || condition.type === "fieldValue") {
-		const ctx = condition.wire
-			? context.addWireFrame({
-					wire: condition.wire,
-			  })
-			: context
-		const ctxRecord = ctx.getRecord()
-		// If we have a record in context, use it.
-		if (ctxRecord)
+		const record = context.getRecord(condition.wire)
+		if (record)
 			return compare(
 				compareToValue,
-				ctxRecord.getFieldValue(condition.field) || "",
+				record.getFieldValue(condition.field) || "",
 				condition.operator
 			)
 
 		// If we have no record in context, test against all records in the wire.
-		const ctxWire = ctx.getWire()
-		if (ctxWire) {
-			const records = ctxWire.getData()
+		const wire = context.getWire(condition.wire)
+		if (!wire) return condition.operator === "NOT_EQUALS"
+		const records = wire.getData()
 
-			// When we check for false condition, we want to check every record.
-			const arrayMethod =
-				condition.operator === "NOT_EQUALS" ? "every" : "some"
+		// If there are no records, not_equal applies
+		if (!records.length) return condition.operator === "NOT_EQUALS"
 
-			// If there are no records, not_equal applies
-			if (condition.operator === "NOT_EQUALS" && !records.length)
-				return true
+		// When we check for false condition, we want to check every record.
+		const arrayMethod =
+			condition.operator === "NOT_EQUALS" ? "every" : "some"
 
-			return records[arrayMethod]((r) =>
-				compare(
-					compareToValue,
-					r.getFieldValue(condition.field) || "",
-					condition.operator
-				)
+		return records[arrayMethod]((r) =>
+			compare(
+				compareToValue,
+				r.getFieldValue(condition.field) || "",
+				condition.operator
 			)
-		}
-		return false
+		)
 	}
 
 	console.warn(`Unknown display condition type: ${condition.type}`)
