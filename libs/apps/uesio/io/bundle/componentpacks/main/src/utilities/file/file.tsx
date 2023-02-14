@@ -94,15 +94,15 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 			{userFile && (
 				<Tile context={context} className={classes.filetag}>
 					<span className={classes.filename}>{fileName}</span>
-					{mode === "EDIT" && (
-						<>
-							<a href={fileUrl} className={classes.download}>
-								<Icon
-									icon="file_download"
-									className={classes.actionbutton}
-									context={context}
-								/>
-							</a>
+					<>
+						<a href={fileUrl} className={classes.download}>
+							<Icon
+								icon="file_download"
+								className={classes.actionbutton}
+								context={context}
+							/>
+						</a>
+						{mode === "EDIT" && (
 							<label htmlFor={deleteLabelId}>
 								<Icon
 									icon="delete"
@@ -110,8 +110,8 @@ const File: FunctionComponent<FileUtilityProps> = (props) => {
 									context={context}
 								/>
 							</label>
-						</>
-					)}
+						)}
+					</>
 				</Tile>
 			)}
 		</>
