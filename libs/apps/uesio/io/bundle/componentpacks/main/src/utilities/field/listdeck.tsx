@@ -13,7 +13,7 @@ const ListFieldDeck: FunctionComponent<ListFieldDeckUtilityProps> = (props) => {
 	const value = props.value as wire.PlainWireRecord[]
 	return (
 		<>
-			{value.map((record, i) => (
+			{value?.map((record, i) => (
 				<component.Slot
 					key={i}
 					definition={props.options}

@@ -1,33 +1,34 @@
-import { definition, api, component } from "@uesio/ui"
-import { useSelectedPath } from "../../../../api/stateapi"
+import { definition, api } from "@uesio/ui"
 import { FullPath } from "../../../../api/path"
-import WirePropTag from "./wireproptag"
+
+import PropertiesForm from "../../../../helpers/propertiesform"
 
 const WiresPanel: definition.UtilityComponent = ({ context }) => {
-	const selectedPath = useSelectedPath(context)
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)
 	if (!viewDefId || !viewDef || !viewDef.wires) return null
-
-	const getFullPath = (wireId: string) =>
-		new FullPath(
-			"viewdef",
-			viewDefId,
-			component.path.fromPath(["wires"].concat(wireId))
-		)
+	const path = new FullPath("viewdef", viewDefId)
 
 	return (
-		<div>
-			{Object.entries(viewDef.wires).map(([key]) => (
-				<WirePropTag
-					context={context}
-					path={getFullPath(key)}
-					key={key}
-					wireId={key}
-					selectedPath={selectedPath}
-				/>
-			))}
-		</div>
+		<PropertiesForm
+			id={path.combine()}
+			context={context}
+			properties={[
+				{
+					name: "wires",
+					components: [
+						{
+							"uesio/builder.wiretag": {
+								wireId: "${key}",
+								collection: "${collection}",
+							},
+						},
+					],
+					type: "KEYLIST",
+				},
+			]}
+			path={path}
+		/>
 	)
 }
 WiresPanel.displayName = "WiresPanel"

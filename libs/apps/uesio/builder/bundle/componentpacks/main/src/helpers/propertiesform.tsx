@@ -68,6 +68,19 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "KEYLIST": {
+			return {
+				"uesio/io.field": {
+					fieldId: property.name,
+					wrapperVariant: "uesio/io.minimal",
+					displayAs: "DECK",
+					labelPosition: "none",
+					list: {
+						components: property.components,
+					},
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
@@ -152,6 +165,12 @@ const getWireFieldFromPropertyDef = (
 				type: "SELECT" as const,
 				selectlist: getWireSelectListMetadata(context, def),
 			}
+		case "KEYLIST":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "LIST" as const,
+			}
 		default:
 			return {
 				label: label || name,
@@ -212,6 +231,19 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
+		} else if (type === "KEYLIST") {
+			setter = () => {
+				/* No setter */
+			}
+			const nodevalue = get(context, path.addLocal(name)) as Record<
+				string,
+				wire.PlainWireRecord
+			>
+			// Add a property called "key" to the value
+			value = Object.entries(nodevalue).map(([key, item]) => ({
+				...item,
+				key,
+			}))
 		} else {
 			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
