@@ -7,7 +7,6 @@ type MultiMetadataFieldDefinition = {
 	labelPosition?: string
 	grouping?: string
 	namespace?: string
-	selectVariant?: metadata.MetadataKey
 	fieldWrapperVariant?: metadata.MetadataKey
 }
 
@@ -22,7 +21,6 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 		definition: {
 			fieldId,
 			metadataType,
-			selectVariant,
 			fieldWrapperVariant,
 			labelPosition,
 		},
@@ -75,12 +73,12 @@ const MultiMetadataField: definition.UC<MultiMetadataFieldDefinition> = (
 			setValue={(nvalue: string[]) => {
 				record.update(fieldId, nvalue, context)
 			}}
-			selectVariant={selectVariant}
 			fieldWrapperVariant={fieldWrapperVariant}
 			labelPosition={labelPosition}
 			context={context}
 			grouping={grouping}
 			defaultNamespace={namespace}
+			variant={props.definition["uesio.variant"]}
 		/>
 	)
 }

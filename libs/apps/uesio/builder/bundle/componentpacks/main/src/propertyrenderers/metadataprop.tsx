@@ -44,8 +44,7 @@ const MetadataProp: definition.UtilityComponent<MetadataProps> = (props) => {
 			setValue={(value: string) => set(context, path, value)}
 			context={context}
 			grouping={getGrouping(path, groupingPath, groupingValue)}
-			selectVariant="uesio/builder.propfield"
-			variant="uesio/builder.metadatafield"
+			variant="uesio/builder.propfield"
 			fieldWrapperVariant="uesio/builder.propfield"
 		/>
 	)

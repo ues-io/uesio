@@ -124,7 +124,7 @@ const setBuilderState = <T extends definition.Definition>(
 ) => api.component.setState<T>(getBuilderComponentId(context, id), state)
 
 const getBuilderNamespaces = (context: ctx.Context) =>
-	getBuilderState<Record<string, metadata.MetadataInfo>>(
+	getBuilderState<Record<string, metadata.NamespaceInfo>>(
 		context,
 		"namespaces"
 	) || {}
