@@ -37,9 +37,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 
 	const itemToString = (item: wire.PlainWireRecord) => {
 		if (template) {
-			const itemContext = context.addRecordDataFrame({
-				recordData: item,
-			})
+			const itemContext = context.addRecordDataFrame(item)
 			return itemContext.mergeString(template)
 		}
 		return item[nameField] || ""
@@ -65,9 +63,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 						definition={options}
 						listName="components"
 						path={`${path}["referencegroup"]["${index}"]`}
-						context={context.addRecordDataFrame({
-							recordData: item,
-						})}
+						context={context.addRecordDataFrame(item)}
 					/>
 				))}
 			</>
