@@ -40,7 +40,8 @@ const ParamsActions: definition.UtilityComponent = (props) => {
 							"newparam" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
-							type: "recordId",
+							type: "RECORD",
+							required: true,
 						},
 						true
 					)

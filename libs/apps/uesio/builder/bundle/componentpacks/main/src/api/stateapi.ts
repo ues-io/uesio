@@ -1,4 +1,4 @@
-import { definition, api, metadata, context as ctx } from "@uesio/ui"
+import { definition, api, metadata, context as ctx, component } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 
 type BaseProperty = {
@@ -6,6 +6,7 @@ type BaseProperty = {
 	label?: string
 	required?: boolean
 	type: string
+	displayConditions?: component.DisplayCondition[]
 }
 
 type TextProperty = {
