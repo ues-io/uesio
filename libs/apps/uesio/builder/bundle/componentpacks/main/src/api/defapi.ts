@@ -66,7 +66,7 @@ const cloneKey = (context: ctx.Context, path: FullPath) => {
 
 const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
 	api.builder.changeDefinitionKey(path.pathCombine(), key)
-	setSelectedPath(context, path.addLocal(key))
+	setSelectedPath(context, path.pop()[1].addLocal(key))
 }
 
 const useDefinition = (path: FullPath) =>
