@@ -18,6 +18,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 			cy.visitRoute(workspaceBasePath)
 			cy.get('[id*=":uesio/io.tile:collections"]').click()
 			cy.url().should("contain", `${workspaceBasePath}/collections`)
+			cy.getByIdFragment("button", "new-collection").should("be.visible")
 			// Test the hotkey for creating a new collection
 			cy.hotkey("{meta}n")
 			// Fill out the form to create a new collection
@@ -30,7 +31,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"contain",
 				`${workspaceBasePath}/collections/${username}/${appName}/animal`
 			)
-			cy.getByIdSuffix("table", "fields").scrollIntoView()
+			cy.getByIdFragment("table", "fields").scrollIntoView()
 			// Create a CHECKBOX field
 			cy.hotkey("{meta}n")
 			cy.typeInInput("new-field-name", "is_extinct")

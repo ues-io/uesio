@@ -143,6 +143,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				margin: "0 auto",
 				transition: "all 0.3s ease",
 			},
+			contentwrapper: {
+				overflow: "auto",
+				height: "100%",
+			},
 		},
 		props
 	)
@@ -233,7 +237,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<TopActions context={context} />
 			<div className={classes.scrollwrapper}>
-				<div className={classes.outerwrapper}>{props.children}</div>
+				<div className={classes.outerwrapper}>
+					<div className={classes.contentwrapper}>
+						{props.children}
+					</div>
+				</div>
 			</div>
 			<BottomActions context={context} />
 			<PanelPortal context={context} />

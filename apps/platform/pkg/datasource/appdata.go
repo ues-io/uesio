@@ -7,11 +7,17 @@ import (
 )
 
 type MetadataResponse struct {
-	Color string `json:"color"`
-	Icon  string `json:"icon"`
+	NamespaceInfo `json:",inline"`
+	Key           string `json:"key"`
 }
 
-func GetAppData(namespaces []string) (map[string]MetadataResponse, error) {
+type NamespaceInfo struct {
+	Color     string `json:"color"`
+	Icon      string `json:"icon"`
+	Namespace string `json:"namespace"`
+}
+
+func GetAppData(namespaces []string) (map[string]NamespaceInfo, error) {
 	apps := meta.AppCollection{}
 
 	// Load in App Settings
@@ -36,13 +42,14 @@ func GetAppData(namespaces []string) (map[string]MetadataResponse, error) {
 		return nil, err
 	}
 
-	appData := map[string]MetadataResponse{}
+	appData := map[string]NamespaceInfo{}
 
 	for index := range apps {
 		app := apps[index]
-		appData[app.UniqueKey] = MetadataResponse{
-			Color: app.Color,
-			Icon:  app.Icon,
+		appData[app.UniqueKey] = NamespaceInfo{
+			Color:     app.Color,
+			Icon:      app.Icon,
+			Namespace: app.UniqueKey,
 		}
 	}
 
