@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/francoispqt/gojay"
@@ -174,6 +175,32 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 	depMap, err := GetViewDependencies(view, session)
 	if err != nil {
 		return err
+	}
+
+	for key, props := range depMap.ParamsDefinition {
+		value, isPresent := params[key]
+
+		if props.Required && !isPresent {
+			return errors.New("Missing required param: " + key)
+		}
+
+		if props.Required && value == "" {
+			//check if default is provided and add it in for you
+			if props.Default != "" {
+				params[key] = props.Default
+				continue
+			}
+			return errors.New("Empty Required param: " + key)
+		}
+
+		//if I want to set empty string as value I can't do it
+		if !props.Required && value == "" {
+			if props.Default != "" {
+				params[key] = props.Default
+				continue
+			}
+		}
+
 	}
 
 	for key := range depMap.Variants {
@@ -600,11 +627,18 @@ func isComponentLike(node *yaml.Node) bool {
 	return true
 }
 
+type Param struct {
+	Type     string
+	Required bool
+	Default  string
+}
+
 type ViewDepMap struct {
-	Components map[string]*meta.Component
-	Variants   map[string]bool
-	Views      map[string]*yaml.Node
-	Wires      []meta.NodePair
+	Components       map[string]*meta.Component
+	Variants         map[string]bool
+	Views            map[string]*yaml.Node
+	Wires            []meta.NodePair
+	ParamsDefinition map[string]Param
 }
 
 func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Component, error) {
@@ -626,10 +660,11 @@ func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Co
 
 func NewViewDefMap() *ViewDepMap {
 	return &ViewDepMap{
-		Components: map[string]*meta.Component{},
-		Variants:   map[string]bool{},
-		Views:      map[string]*yaml.Node{},
-		Wires:      []meta.NodePair{},
+		Components:       map[string]*meta.Component{},
+		Variants:         map[string]bool{},
+		Views:            map[string]*yaml.Node{},
+		Wires:            []meta.NodePair{},
+		ParamsDefinition: map[string]Param{},
 	}
 }
 
@@ -647,6 +682,11 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 	wires, err := meta.GetMapNode(&v.Definition, "wires")
 	if err != nil {
 		wires = nil
+	}
+
+	params, err := meta.GetMapNode(&v.Definition, "params")
+	if err != nil {
+		params = nil
 	}
 
 	depMap := NewViewDefMap()
@@ -689,6 +729,60 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 			return nil, err
 		}
 		depMap.Wires = wirePairs
+	}
+
+	//TO-DO move to a function
+	if params != nil && params.Kind == yaml.MappingNode {
+
+		paramsPairs, err := meta.GetMapNodes(params)
+		if err != nil {
+			return nil, err
+		}
+
+		p := make(map[string]Param, len(paramsPairs))
+		for _, param := range paramsPairs {
+
+			//TEST
+			node := param.Node
+			lparam := Param{}
+
+			if node != nil && node.Kind == yaml.MappingNode {
+
+				paramType, _ := meta.GetMapNode(node, "type")
+				// if err != nil {
+				// 	return nil, err
+				// }
+
+				if paramType != nil && paramType.Kind == yaml.ScalarNode {
+					lparam.Type = paramType.Value
+				}
+
+				paramRequired, _ := meta.GetMapNode(node, "required")
+				// if err != nil {
+				// 	return nil, err
+				// }
+
+				if paramRequired != nil && paramRequired.Kind == yaml.ScalarNode {
+					boolVal, _ := strconv.ParseBool(paramRequired.Value)
+					lparam.Required = boolVal
+				}
+
+				paramDefault, _ := meta.GetMapNode(node, "default")
+				// if err != nil {
+				// 	return nil, err
+				// }
+
+				if paramDefault != nil && paramDefault.Kind == yaml.ScalarNode {
+					lparam.Default = paramDefault.Value
+				}
+
+			}
+			//TEST
+
+			p[param.Key] = lparam
+
+		}
+		depMap.ParamsDefinition = p
 	}
 
 	return depMap, nil
