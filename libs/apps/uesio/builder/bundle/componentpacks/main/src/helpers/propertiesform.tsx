@@ -201,9 +201,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const initialValue: wire.PlainWireRecord = {}
 
 	properties?.forEach((property) => {
-		const { name, type, defaultValue } = property
+		const { name, type } = property
 		let setter: SetterFunction
-		let value
+		let value: string
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
@@ -217,9 +217,6 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			value = get(context, path.addLocal(name)) as string
 		}
 		setters.set(name, setter)
-		if (value === undefined && defaultValue !== undefined) {
-			value = defaultValue
-		}
 		initialValue[name] = value
 	})
 

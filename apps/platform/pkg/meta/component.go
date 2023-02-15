@@ -34,6 +34,7 @@ type Component struct {
 	// Builder Properties
 	Discoverable        bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
 	Properties          yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
+	DefaultDefinition   yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
 	PropertiesPanelView yaml.Node `yaml:"propertiesPanelView" json:"uesio/studio.propertiespanelview"`
 }
 
@@ -55,6 +56,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.PropertiesPanelView.Content != nil {
 		enc.AddArrayKey("propertiesPanelView", (*YAMLDefinition)(&c.PropertiesPanelView))
+	}
+	if c.DefaultDefinition.Content != nil {
+		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(&c.DefaultDefinition))
 	}
 }
 

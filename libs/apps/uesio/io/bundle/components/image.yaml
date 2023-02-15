@@ -5,6 +5,9 @@ category: CONTENT
 pack: main
 entrypoint: components/image/image
 discoverable: true
+defaultDefinition:
+  align: left
+  loading: lazy
 properties:
   - name: file
     type: METADATA
@@ -22,7 +25,6 @@ properties:
   - name: align
     type: SELECT
     label: Alignment
-    defaultValue: left
     options:
       - value: "left"
         label: "Left"
@@ -33,7 +35,6 @@ properties:
   - name: loading
     type: SELECT
     label: Loading
-    defaultValue: lazy
     options:
       - value: "lazy"
         label: "Lazy"
