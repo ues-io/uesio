@@ -20,31 +20,23 @@ const getFormFieldFromProperty = (
 	context: context.Context,
 	path: FullPath
 ) => {
-	switch (property.type) {
+	const { name, type, displayConditions } = property
+	const baseFieldDef = {
+		fieldId: name,
+		"uesio.variant": "uesio/builder.propfield",
+		"uesio.display": displayConditions,
+		labelPosition: "left",
+	}
+	switch (type) {
 		case "METADATA":
-			return {
-				"uesio/builder.metadatafield": {
-					fieldId: property.name,
-					metadataType: property.metadataType,
-					fieldWrapperVariant: "uesio/builder.propfield",
-					"uesio.variant": "uesio/builder.propfield",
-					labelPosition: "left",
-					grouping: getGrouping(
-						path,
-						context,
-						property.groupingPath,
-						property.groupingValue
-					),
-				},
-			}
 		case "MULTI_METADATA":
 			return {
-				"uesio/builder.multimetadatafield": {
-					fieldId: property.name,
+				[`uesio/builder.${
+					type === "METADATA" ? "" : "multi"
+				}metadatafield`]: {
+					...baseFieldDef,
 					metadataType: property.metadataType,
 					fieldWrapperVariant: "uesio/builder.propfield",
-					"uesio.variant": "uesio/builder.propfield",
-					labelPosition: "left",
 					grouping: getGrouping(
 						path,
 						context,
@@ -56,10 +48,8 @@ const getFormFieldFromProperty = (
 		case "NUMBER": {
 			return {
 				"uesio/io.field": {
-					"uesio.variant": "uesio/builder.propfield",
+					...baseFieldDef,
 					wrapperVariant: "uesio/builder.propfield",
-					labelPosition: "left",
-					fieldId: property.name,
 					number: {
 						step: property.step,
 						max: property.max,
@@ -71,10 +61,8 @@ const getFormFieldFromProperty = (
 		default:
 			return {
 				"uesio/io.field": {
-					"uesio.variant": "uesio/builder.propfield",
+					...baseFieldDef,
 					wrapperVariant: "uesio/builder.propfield",
-					labelPosition: "left",
-					fieldId: property.name,
 				},
 			}
 	}
