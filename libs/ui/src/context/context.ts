@@ -22,6 +22,7 @@ import { MetadataKey } from "../bands/builder/types"
 import { SiteState } from "../bands/site"
 import { handlers, MergeType } from "./merge"
 import { getCollection } from "../bands/collection/selectors"
+import { Definition, DefinitionMap } from "../definition/definition"
 
 const ERROR = "ERROR",
 	COMPONENT = "COMPONENT",
@@ -568,17 +569,26 @@ class Context {
 		return result
 	}
 
-	mergeMap = (
-		map: Record<string, Mergeable> | undefined
-	): Record<string, Mergeable> =>
-		map
-			? Object.fromEntries(
-					Object.entries(map).map((entries) => [
-						entries[0],
-						this.merge(entries[1]),
-					])
-			  )
-			: {}
+	isMergeable = (value: unknown) => {
+		const t = typeof value
+		return (
+			t === "string" ||
+			t === "number" ||
+			t === "boolean" ||
+			t === "undefined"
+		)
+	}
+
+	mergeMap = <T>(definition: DefinitionMap | undefined): T =>
+		Object.entries(definition || {}).reduce(
+			(prev, [key, expression]) => ({
+				...prev,
+				[key]: this.isMergeable(expression)
+					? this.merge(expression as Mergeable)
+					: expression,
+			}),
+			{}
+		) as T
 
 	mergeStringMap = (map: Record<string, Mergeable> | undefined) =>
 		this.mergeMap(map) as Record<string, string>
