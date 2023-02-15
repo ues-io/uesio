@@ -19,6 +19,8 @@ import ListField from "../../utilities/field/list"
 import ReferenceGroupField from "../../utilities/field/referencegroup"
 import { ReactNode } from "react"
 import FileField from "../../utilities/field/file"
+import MapField from "../../utilities/mapfield/mapfield"
+import MapFieldDeck from "../../utilities/field/mapdeck"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -34,6 +36,10 @@ type ReferenceFieldOptions = {
 }
 
 type ListFieldOptions = {
+	components?: definition.DefinitionList
+}
+
+type MapFieldOptions = {
 	components?: definition.DefinitionList
 }
 
@@ -59,6 +65,7 @@ type FieldDefinition = {
 	displayAs?: string
 	reference?: ReferenceFieldOptions
 	list?: ListFieldOptions
+	map?: MapFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -109,6 +116,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		reference,
 		list,
+		map,
 		user,
 		number,
 		longtext,
@@ -230,6 +238,35 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 					/>
 				)
 			break
+		case "MAP":
+			content =
+				displayAs === "DECK" ? (
+					<MapFieldDeck {...common} options={map} />
+				) : (
+					<MapField
+						{...common}
+						keyField={{
+							name: "key",
+							label: "Label",
+							type: "TEXT",
+							namespace: "",
+							accessible: true,
+							createable: false,
+							updateable: false,
+						}}
+						valueField={{
+							name: "value",
+							label: "Value",
+							type: fieldMetadata.source
+								.subtype as collection.FieldType,
+							namespace: "",
+							accessible: true,
+							createable: false,
+							updateable: false,
+						}}
+					/>
+				)
+			break
 		case "REFERENCEGROUP":
 			content = <ReferenceGroupField {...common} options={reference} />
 			break
@@ -342,6 +379,7 @@ export {
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,
+	MapFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,

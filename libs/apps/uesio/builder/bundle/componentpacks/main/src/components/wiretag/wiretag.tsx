@@ -5,8 +5,8 @@ import MoveActions from "../../actions/moveactions"
 import { FullPath } from "../../api/path"
 import {
 	getBuilderNamespace,
-	getSelectedPath,
 	setSelectedPath,
+	useSelectedPath,
 } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import NamespaceLabel from "../../utilities/namespacelabel/namespacelabel"
@@ -18,20 +18,24 @@ type Props = {
 }
 
 const WireTag: definition.UC<Props> = (props) => {
-	const { definition, context } = props
-	const wireId = context.merge(definition.wireId) as string
-	const collection = context.merge(definition.collection) as string
+	const { context } = props
+	const record = context.getRecord()
+
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 	const viewDefId = context.getViewDefId() || ""
-	if (!viewDefId) return null
+	if (!viewDefId || !record) return null
+
+	const wireId = record.getFieldValue("key") as string
+	const collection = record.getFieldValue("value->collection") as string
+
 	const path = new FullPath(
 		"viewdef",
 		viewDefId,
 		component.path.fromPath(["wires"].concat(wireId))
 	)
 
-	const selectedPath = getSelectedPath(context)
+	const selectedPath = useSelectedPath(context)
 	const nsInfo = getBuilderNamespace(
 		context,
 		collection as metadata.MetadataKey

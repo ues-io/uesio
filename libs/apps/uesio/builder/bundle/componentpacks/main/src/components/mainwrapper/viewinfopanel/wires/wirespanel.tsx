@@ -18,13 +18,10 @@ const WiresPanel: definition.UtilityComponent = ({ context }) => {
 					name: "wires",
 					components: [
 						{
-							"uesio/builder.wiretag": {
-								wireId: "${key}",
-								collection: "${collection}",
-							},
+							"uesio/builder.wiretag": {},
 						},
 					],
-					type: "KEYLIST",
+					type: "MAP",
 				},
 			]}
 			path={path}

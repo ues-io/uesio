@@ -60,8 +60,8 @@ type SelectProperty = {
 	blankOptionLabel?: string
 } & BaseProperty
 
-type KeyListProperty = {
-	type: "KEYLIST"
+type MapProperty = {
+	type: "MAP"
 	components: definition.DefinitionList
 } & BaseProperty
 
@@ -81,7 +81,7 @@ type ComponentProperty =
 	| WireProperty
 	| ComponentIdProperty
 	| CheckboxProperty
-	| KeyListProperty
+	| MapProperty
 
 type ComponentDef = {
 	name: string

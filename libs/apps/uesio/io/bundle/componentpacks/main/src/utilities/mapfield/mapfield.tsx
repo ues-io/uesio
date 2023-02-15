@@ -4,7 +4,7 @@ import ListField from "../field/list"
 
 interface MapFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
-	value: wire.PlainWireRecord
+	value: wire.FieldValue
 	setValue: (value: wire.PlainWireRecord) => void
 	keyField: collection.FieldMetadata
 	valueField: collection.FieldMetadata
@@ -19,7 +19,6 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 	const {
 		mode,
 		context,
-		value,
 		keys,
 		setValue,
 		keyField,
@@ -30,6 +29,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		labelVariant,
 	} = props
 
+	const value = props.value as Record<string, wire.FieldValue>
 	const mapValue = keys
 		? {
 				...keys.reduce((obj, key) => ({ ...obj, [key]: null }), {}),
