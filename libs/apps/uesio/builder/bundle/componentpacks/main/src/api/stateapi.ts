@@ -57,6 +57,11 @@ type SelectProperty = {
 	blankOptionLabel?: string
 } & BaseProperty
 
+type MapProperty = {
+	type: "MAP"
+	components: definition.DefinitionList
+} & BaseProperty
+
 type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
@@ -73,6 +78,7 @@ type ComponentProperty =
 	| WireProperty
 	| ComponentIdProperty
 	| CheckboxProperty
+	| MapProperty
 
 type ComponentDef = {
 	name: string

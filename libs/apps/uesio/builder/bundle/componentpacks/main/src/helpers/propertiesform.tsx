@@ -58,6 +58,19 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "MAP": {
+			return {
+				"uesio/io.field": {
+					fieldId: property.name,
+					wrapperVariant: "uesio/io.minimal",
+					displayAs: "DECK",
+					labelPosition: "none",
+					map: {
+						components: property.components,
+					},
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
@@ -140,6 +153,12 @@ const getWireFieldFromPropertyDef = (
 				type: "SELECT" as const,
 				selectlist: getWireSelectListMetadata(context, def),
 			}
+		case "MAP":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "MAP" as const,
+			}
 		default:
 			return {
 				label: label || name,
@@ -200,6 +219,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
+		} else if (type === "MAP") {
+			setter = () => {
+				/* No setter */
+			}
+			value = get(context, path.addLocal(name)) as Record<
+				string,
+				wire.PlainWireRecord
+			>
 		} else {
 			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
