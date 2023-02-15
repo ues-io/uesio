@@ -210,7 +210,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	properties?.forEach((property) => {
 		const { name, type } = property
 		let setter: SetterFunction
-		let value: string
+		let value: wire.FieldValue
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
