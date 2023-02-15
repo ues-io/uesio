@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react"
 import { definition, component, metadata } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
@@ -8,22 +7,16 @@ type MetadataFieldDefinition = {
 	labelPosition?: string
 	grouping?: string
 	namespace?: string
-	selectVariant?: metadata.MetadataKey
 	fieldWrapperVariant?: metadata.MetadataKey
 }
 
-interface Props extends definition.BaseProps {
-	definition: MetadataFieldDefinition
-}
-
-const MetadataField: FunctionComponent<Props> = (props) => {
+const MetadataField: definition.UC<MetadataFieldDefinition> = (props) => {
 	const MetadataPicker = component.getUtility("uesio/builder.metadatapicker")
 	const {
 		context,
 		definition: {
 			fieldId,
 			metadataType,
-			selectVariant,
 			fieldWrapperVariant,
 			labelPosition,
 		},
@@ -62,7 +55,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			setValue={(value: string) => {
 				record.update(fieldId, value, context)
 			}}
-			selectVariant={selectVariant}
 			fieldWrapperVariant={fieldWrapperVariant}
 			labelPosition={labelPosition}
 			context={context}
@@ -72,7 +64,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			{...(namespace && {
 				defaultNamespace: namespace,
 			})}
-			variant="uesio/builder.metadatafield"
+			variant={props.definition["uesio.variant"]}
 		/>
 	)
 }

@@ -1,5 +1,4 @@
-import { FunctionComponent, ReactNode } from "react"
-import { useCombobox } from "downshift"
+import { FunctionComponent, ReactNode, useRef, useState } from "react"
 import { definition, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
 import {
@@ -8,69 +7,59 @@ import {
 	autoUpdate,
 	offset,
 	FloatingPortal,
+	useListNavigation,
+	useInteractions,
+	useDismiss,
+	useClick,
+	useRole,
+	FloatingFocusManager,
 } from "@floating-ui/react"
 
 type CustomSelectProps<T> = {
-	value: T
-	setValue: (value: T) => void
-	items: T[]
-	itemToString: (item: T) => string
-	allowSearch?: true
-	itemRenderer: (
-		item: T,
-		index: number,
-		highlightedIndex: number
-	) => ReactNode
-	tagRenderer: (item: T) => ReactNode
+	onSelect: (item: T) => void
+	onUnSelect: (item: T) => void
+	items: T[] | undefined
+	isSelected: (item: T) => boolean
+	getItemKey: (item: T) => string
+	onSearch?: (search: string) => void
+	searchFilter?: (item: T, search: string) => boolean
+	itemRenderer: (item: T) => ReactNode
 } & definition.BaseProps
 
 const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const {
-		allowSearch = true,
+		onSearch,
+		searchFilter,
+		isSelected,
+		getItemKey,
 		items = [],
-		setValue,
-		value,
-		itemToString,
-		itemRenderer = (item) => <div>{itemToString(item)}</div>,
-		tagRenderer = (item) => <div>{itemToString(item)}</div>,
+		onSelect,
+		onUnSelect,
+		itemRenderer,
 		context,
 	} = props
 
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
-			input: {},
-			readonly: {},
 			menu: {},
 			menuitem: {},
+			notfound: {},
 			editbutton: {},
-			displayarea: {},
+			selecteditemwrapper: {},
+			highlighted: {},
 			searchbox: {},
 		},
 		props,
 		"uesio/io.customselectfield"
 	)
 
-	const {
-		isOpen,
-		getMenuProps,
-		getComboboxProps,
-		getLabelProps,
-		highlightedIndex,
-		getItemProps,
-		getInputProps,
-		inputValue,
-		openMenu,
-	} = useCombobox({
-		items,
-		selectedItem: value || "",
-		onSelectedItemChange: (changes) => {
-			const selectedItem = changes.selectedItem
-			selectedItem && setValue(selectedItem)
-		},
-	})
+	const [isOpen, setIsOpen] = useState(false)
+	const [searchText, setSearchText] = useState("")
 
-	const { x, y, strategy, refs } = useFloating({
+	const floating = useFloating({
+		open: isOpen,
+		onOpenChange: setIsOpen,
 		placement: "bottom-start",
 		middleware: [
 			offset(2),
@@ -79,74 +68,144 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 		whileElementsMounted: autoUpdate,
 	})
 
-	return (
-		<div className={classes.root} ref={refs.setReference}>
-			<div onClick={() => openMenu()} className={classes.input}>
-				<div
-					onFocus={openMenu}
-					tabIndex={isOpen ? -1 : 0}
-					className={classes.displayarea}
-				>
-					{tagRenderer}
-				</div>
+	const { x, y, strategy, refs } = floating
 
-				<button className={classes.editbutton} type="button">
+	const listRef = useRef<(HTMLDivElement | null)[]>([])
+
+	const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+	const dismiss = useDismiss(floating.context)
+	const click = useClick(floating.context)
+	const role = useRole(floating.context, { role: "listbox" })
+
+	const listNavigation = useListNavigation(floating.context, {
+		listRef,
+		activeIndex,
+		onNavigate: setActiveIndex,
+		focusItemOnOpen: false,
+	})
+
+	const { getReferenceProps, getFloatingProps, getItemProps } =
+		useInteractions([click, dismiss, role, listNavigation])
+
+	const selectedItems = items ? items.filter(isSelected) : []
+
+	return (
+		<>
+			<div
+				tabIndex={0}
+				className={classes.root}
+				ref={refs.setReference}
+				{...getReferenceProps()}
+			>
+				<div>
+					{!selectedItems.length && (
+						<div className={classes.notfound}>Nothing Selected</div>
+					)}
+					{selectedItems.map((item) => (
+						<div
+							key={getItemKey(item)}
+							className={classes.selecteditemwrapper}
+						>
+							{itemRenderer(item)}
+							<button
+								tabIndex={-1}
+								className={classes.editbutton}
+								type="button"
+								onClick={(event) => {
+									event.preventDefault() // Prevent the label from triggering
+									onUnSelect(item)
+								}}
+							>
+								<Icon icon="close" context={context} />
+							</button>
+						</div>
+					))}
+				</div>
+				<button
+					tabIndex={-1}
+					className={classes.editbutton}
+					type="button"
+				>
 					<Icon icon="expand_more" context={context} />
 				</button>
 			</div>
 			<FloatingPortal>
-				<div
-					ref={refs.setFloating}
-					style={{
-						...(!isOpen && { visibility: "hidden" }),
-						position: strategy,
-						top: y ?? 0,
-						left: x ?? 0,
-						width: "max-content",
-					}}
-					className={classes.menu}
-				>
-					<div {...getMenuProps()}>
-						<div {...getComboboxProps()}>
-							<label {...getLabelProps()}>
-								<input
-									type="text"
-									//autoFocus
-									className={classes.searchbox}
-									placeholder="Search..."
-									style={{
-										display: allowSearch ? "auto" : "none",
-									}}
-									{...getInputProps()}
-								/>
-							</label>
+				{isOpen && (
+					<FloatingFocusManager
+						context={floating.context}
+						modal={false}
+					>
+						<div
+							ref={refs.setFloating}
+							style={{
+								position: strategy,
+								top: y ?? 0,
+								left: x ?? 0,
+							}}
+							className={classes.menu}
+							{...getFloatingProps()}
+						>
+							<div>
+								{(onSearch || searchFilter) && (
+									<input
+										type="text"
+										value={searchText}
+										autoFocus
+										className={classes.searchbox}
+										placeholder="Search..."
+										onChange={(e) => {
+											onSearch?.(e.target.value)
+											setSearchText(e.target.value)
+										}}
+									/>
+								)}
+								{items
+									.filter((item) => {
+										if (!searchFilter) return true
+										if (!searchText) return true
+										return searchFilter(item, searchText)
+									})
+									.map((item, index) => (
+										<div
+											className={styles.cx(
+												classes.menuitem,
+												activeIndex === index &&
+													classes.highlighted
+											)}
+											key={getItemKey(item)}
+											tabIndex={
+												activeIndex === index ? 0 : -1
+											}
+											ref={(node) => {
+												listRef.current[index] = node
+											}}
+											role="option"
+											{...getItemProps({
+												// Handle pointer select.
+												onClick() {
+													onSelect(item)
+													setIsOpen(false)
+												},
+												// Handle keyboard select.
+												onKeyDown(event) {
+													if (event.key === "Enter") {
+														event.preventDefault()
+														onSelect(item)
+														setIsOpen(false)
+													}
+												},
+											})}
+										>
+											{itemRenderer(item)}
+										</div>
+									))}
+							</div>
 						</div>
-						{items.map((item: string, index) => {
-							// hacky, but downshift needs the index in order to determine what element this is.
-							// That's why we can't filter the items array beforehand.
-							if (allowSearch && !item.includes(inputValue))
-								return null
-							return (
-								<div
-									className={classes.menuitem}
-									key={index}
-									{...getItemProps({
-										item,
-										index,
-									})}
-								>
-									{itemRenderer(
-										item,
-										index,
-										highlightedIndex
-									)}
-								</div>
-							)
-						})}
-					</div>
-				</div>
+					</FloatingFocusManager>
+				)}
 			</FloatingPortal>
-		</div>
+		</>
 	)
 }
 

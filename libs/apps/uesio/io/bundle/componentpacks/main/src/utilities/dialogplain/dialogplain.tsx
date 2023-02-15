@@ -39,6 +39,10 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 				gridColumn: "2 / 3",
 				pointerEvents: "auto",
 			},
+			spacer: {
+				gridRow: "3",
+				gridColumn: "2 / 3",
+			},
 		},
 		props
 	)
@@ -52,6 +56,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 		>
 			<div className={classes.root} onClick={(e) => e.stopPropagation()}>
 				<div className={classes.inner}>{props.children}</div>
+				<div className={classes.spacer} />
 			</div>
 		</FloatingOverlay>
 	)

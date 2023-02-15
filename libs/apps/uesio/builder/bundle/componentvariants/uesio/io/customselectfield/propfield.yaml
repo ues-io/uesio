@@ -3,11 +3,17 @@ label: Property Field
 extends: uesio/io.default
 definition:
   uesio.styles:
-    input:
-      backgroundColor: white
-      fontSize: 8pt
-      padding: 4px
+    root:
+      padding: 2px 4px
       borderRadius: 4px
       border: "1px solid #00000022"
       color: "#444"
+    selecteditemwrapper:
+      fontSize: 9pt
+    menuitem:
+      padding: 6px 14px 6px 8px
+      fontSize: 9pt
+    notfound:
+      fontSize: 9pt
+      padding: "4px 2px"
 public: true
