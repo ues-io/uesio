@@ -19,7 +19,7 @@ const MapFieldDeck: FunctionComponent<MapFieldDeckUtilityProps> = (props) => {
 		: []
 	return (
 		<>
-			{values.map((record, i) => (
+			{values.map((record) => (
 				<component.Slot
 					key={record.key}
 					definition={props.options}
