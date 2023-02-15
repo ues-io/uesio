@@ -55,15 +55,16 @@ type ViewDefinition = {
 const View: UC<ViewDefinition> = (props) => {
 	const { path, context, definition } = props
 	const { params, view: viewDefId } = definition
-	const uesioId = definition["uesio.id"]
+	// Backwards compatibility for definition.id
+	// TODO: Remove when all instances of this are fixed
+	const uesioId = definition["uesio.id"] || definition.id
 	const viewId = makeViewId(viewDefId, path ? uesioId || path : "$root")
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
-
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentId(uesioId, "uesio/core.view", path, context),
+		componentApi.getComponentIdFromProps(props),
 		context.mergeStringMap(params)
 	)
 
