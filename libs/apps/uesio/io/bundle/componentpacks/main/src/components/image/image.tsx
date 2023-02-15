@@ -16,9 +16,12 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition: unmergedDefinition, context } = props
 
 	const definition = context.mergeMap<ImageDefinition>(unmergedDefinition)
+	const getSrc = () => {
+		const { file, src, fieldId } = definition
+		if (file) return api.file.getURLFromFullName(context, file)
+		if (src) return src
 
-	const getSrcFromField = () => {
-		const fieldId = definition.fieldId
+		// FieldId
 		const record = context.getRecord()
 		if (!fieldId || !record) return
 		const fileMetaData = record?.getFieldValue<UserFileMetadata>(fieldId)
@@ -26,12 +29,6 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 		const userFileId = fileMetaData[collection.ID_FIELD] as string
 		const userModDate = fileMetaData[collection.UPDATED_AT_FIELD]
 		return api.file.getUserFileURL(context, userFileId, userModDate)
-	}
-	const getSrc = () => {
-		const { file, src, fieldId } = definition
-		if (file) return api.file.getURLFromFullName(context, file)
-		if (src) return src
-		if (fieldId) return getSrcFromField()
 	}
 	const classes = styles.useStyles(
 		{
