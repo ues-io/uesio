@@ -1,4 +1,5 @@
-import { api, signal, definition, styles } from "@uesio/ui"
+import { api, signal, definition, styles, collection } from "@uesio/ui"
+import { UserFileMetadata } from "../../components/field/field"
 
 type ImageDefinition = {
 	file?: string
@@ -6,13 +7,29 @@ type ImageDefinition = {
 	align?: "left" | "center" | "right"
 	signals?: signal.SignalDefinition[]
 	loading: "lazy" | "eager"
-	alt: string
+	alt?: string
 	src?: string
+	fieldId?: string
 }
 
 const Image: definition.UC<ImageDefinition> = (props) => {
 	const { definition, context } = props
 
+	const getSrcFromField = () => {
+		const fieldId = context.merge(definition.fieldId) as string
+		const record = context.getRecord()
+		const fileMetaData = record?.getFieldValue<UserFileMetadata>(fieldId)
+		if (!fileMetaData) return
+		const userFileId = fileMetaData[collection.ID_FIELD] as string
+		const userModDate = fileMetaData[collection.UPDATED_AT_FIELD]
+		return api.file.getUserFileURL(context, userFileId, userModDate)
+	}
+	const getSrc = () => {
+		if (definition.file)
+			return api.file.getURLFromFullName(context, definition.file || "")
+		if (definition.src) return context.mergeString(definition.src)
+		if (definition.fieldId) return getSrcFromField()
+	}
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -37,11 +54,7 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 			<img
 				id={api.component.getComponentIdFromProps(props)}
 				className={classes.inner}
-				src={
-					definition.file
-						? api.file.getURLFromFullName(context, definition.file)
-						: context.mergeString(definition.src)
-				}
+				src={getSrc()}
 				loading={definition.loading}
 				alt={definition.alt}
 			/>
