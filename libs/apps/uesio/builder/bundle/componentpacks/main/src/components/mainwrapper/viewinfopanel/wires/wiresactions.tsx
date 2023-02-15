@@ -31,6 +31,7 @@ const WiresActions: definition.UtilityComponent = (props) => {
 						),
 						{
 							fields: null,
+							batchsize: 200,
 						},
 						true
 					)

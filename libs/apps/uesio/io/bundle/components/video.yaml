@@ -5,6 +5,10 @@ category: CONTENT
 pack: main
 entrypoint: components/video/video
 discoverable: true
+defaultDefinition:
+  muted: false
+  loop: false
+  autoplay: true
 properties:
   - name: file
     type: METADATA
@@ -21,13 +25,10 @@ properties:
     label: Width
   - name: muted
     type: CHECKBOX
-    defaultValue: false
     label: Muted
   - name: loop
     type: CHECKBOX
-    defaultValue: false
     label: Loop
   - name: autoplay
     type: CHECKBOX
-    defaultValue: true
     label: Auto play

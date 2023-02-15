@@ -6,7 +6,6 @@ type BaseProperty = {
 	label?: string
 	required?: boolean
 	type: string
-	defaultValue?: string
 }
 
 type TextProperty = {
@@ -22,7 +21,6 @@ type NumberProperty = {
 	min?: number
 	max?: number
 	step?: number
-	defaultValue?: number
 } & BaseProperty
 
 type KeyProperty = {
@@ -45,7 +43,6 @@ type MultiMetadataProperty = {
 
 type CheckboxProperty = {
 	type: "CHECKBOX"
-	defaultValue?: boolean
 } & BaseProperty
 
 type WireProperty = {
@@ -56,7 +53,6 @@ type SelectProperty = {
 	type: "SELECT"
 	options: SelectOption[]
 	required?: boolean
-	defaultValue?: string | number | boolean
 	blankOptionLabel?: string
 } & BaseProperty
 
@@ -86,6 +82,7 @@ type ComponentDef = {
 	discoverable: boolean
 	properties: ComponentProperty[]
 	propertiesPanelView: definition.DefinitionList
+	defaultDefinition: definition.DefinitionMap
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>

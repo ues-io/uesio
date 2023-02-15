@@ -6,7 +6,7 @@ import {
 	useSelectedPath,
 	getComponentDef,
 } from "../../../api/stateapi"
-import { get, set } from "../../../api/defapi"
+import { get } from "../../../api/defapi"
 const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
 
@@ -16,7 +16,6 @@ const panelProperties = [
 		label: "Panel Type",
 		required: true,
 		type: "SELECT",
-		defaultValue: defaultPanelComponentType,
 		options: [{ value: defaultPanelComponentType, label: "Dialog" }],
 	},
 ] as ComponentProperty[]
@@ -29,15 +28,6 @@ const getPanelComponentProperties = (
 const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const path = useSelectedPath(context)
-	let panelComponentType = get(
-		context,
-		path.addLocal(panelComponentTypeProp)
-	) as string
-	if (panelComponentType === undefined) {
-		panelComponentType = defaultPanelComponentType
-		set(context, path.addLocal(panelComponentTypeProp), panelComponentType)
-	}
-
 	return (
 		<PropertiesWrapper
 			context={props.context}
@@ -49,7 +39,13 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 				id={path.combine()}
 				context={context}
 				properties={panelProperties.concat(
-					getPanelComponentProperties(context, panelComponentType)
+					getPanelComponentProperties(
+						context,
+						get(
+							context,
+							path.addLocal(panelComponentTypeProp)
+						) as string
+					)
 				)}
 				path={path}
 			/>

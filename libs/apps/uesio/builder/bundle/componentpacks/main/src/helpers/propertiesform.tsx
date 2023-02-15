@@ -2,7 +2,6 @@ import { component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds } from "../api/wireapi"
 import { FullPath } from "../api/path"
-import { useEffect } from "react"
 import {
 	ComponentProperty,
 	SelectProperty,
@@ -193,7 +192,6 @@ const getGrouping = (
 }
 
 type SetterFunction = (a: string) => void
-type StateUpdate = [string, string]
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
@@ -201,10 +199,9 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 
 	const setters = new Map()
 	const initialValue: wire.PlainWireRecord = {}
-	const stateUpdates = [] as StateUpdate[]
 
 	properties?.forEach((property) => {
-		const { name, type, defaultValue } = property
+		const { name, type } = property
 		let setter: SetterFunction
 		let value: string
 		if (type === "KEY") {
@@ -220,26 +217,8 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			value = get(context, path.addLocal(name)) as string
 		}
 		setters.set(name, setter)
-		if (
-			value === undefined &&
-			defaultValue !== undefined &&
-			setter !== undefined
-		) {
-			value = defaultValue
-			// Run the setter initially to update the state
-			stateUpdates.push([name, value] as StateUpdate)
-		}
 		initialValue[name] = value
 	})
-
-	useEffect(() => {
-		if (stateUpdates.length) {
-			stateUpdates.forEach((stateUpdate: StateUpdate) => {
-				const [propName, propValue] = stateUpdate
-				set(context, path.addLocal(propName), propValue)
-			})
-		}
-	}, [stateUpdates])
 
 	return (
 		<DynamicForm

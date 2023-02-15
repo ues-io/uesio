@@ -27,7 +27,7 @@ const handleDrop = (
 			if (!componentDef) return
 			batch(() => {
 				add(context, drop, {
-					[drag.itemName]: {},
+					[drag.itemName]: componentDef.defaultDefinition || {},
 				})
 				setDropPath(context)
 				setDragPath(context)

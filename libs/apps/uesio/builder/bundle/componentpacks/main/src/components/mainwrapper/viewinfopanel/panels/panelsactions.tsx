@@ -1,6 +1,8 @@
 import { definition, styles, component } from "@uesio/ui"
 import { set } from "../../../../api/defapi"
+import { getComponentDef } from "../../../../api/stateapi"
 import { FullPath } from "../../../../api/path"
+const defaultPanelComponentType = "uesio/io.dialog"
 
 const PanelsActions: definition.UtilityComponent = (props) => {
 	const Button = component.getUtility("uesio/io.button")
@@ -39,8 +41,12 @@ const PanelsActions: definition.UtilityComponent = (props) => {
 							"newpanel" + (Math.floor(Math.random() * 60) + 1)
 						),
 						{
-							"uesio.type": "uesio/io.dialog",
+							"uesio.type": defaultPanelComponentType,
 							components: [],
+							...getComponentDef(
+								context,
+								defaultPanelComponentType
+							)?.defaultDefinition,
 						}
 					)
 				}

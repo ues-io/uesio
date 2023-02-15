@@ -3,6 +3,10 @@ pack: main
 entrypoint: components/dialog/dialog
 variants:
   - uesio/io.titlebar:uesio/io.dialog
+defaultDefinition:
+  width: "60%"
+  height: "60%"
+  title: "New Panel"
 properties:
   - name: panelid
     label: Panel Id
@@ -12,14 +16,11 @@ properties:
     label: Title
     required: false
     type: TEXT
-    defaultValue: "New Panel"
   - name: width
     label: Width
     required: true
     type: TEXT
-    defaultValue: "60%"
   - name: height
     label: Height
     required: true
     type: TEXT
-    defaultValue: "60%"
