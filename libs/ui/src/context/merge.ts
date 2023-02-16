@@ -30,6 +30,7 @@ type MergeHandler = (expression: string, context: Context) => string
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context) => {
+		const RETURN_TYPES = ["boolean", "string", "number"]
 		const expressionParts = fullExpression.split(":")
 		let record: WireRecord | undefined
 		let expression = fullExpression
@@ -42,7 +43,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 			expression = expressionParts[1]
 		}
 		const value = record?.getFieldValue(expression)
-		return value !== undefined && value !== null ? `${value}` : ""
+		const valueType = typeof value
+		return RETURN_TYPES.includes(valueType) ? `${value}` : ""
 	},
 	Sum: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")
