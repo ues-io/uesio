@@ -91,24 +91,23 @@ const Route: UtilityComponent = (props) => {
 		routeContext = routeContext.setWorkspace(workspace)
 	}
 
-	const getRouteContextWithSlot = () =>
-		workspace?.slotwrapper
-			? routeContext.setCustomSlot(workspace.slotwrapper)
-			: routeContext
+	const routeContextWithSlot = workspace?.slotwrapper
+		? routeContext.setCustomSlot(workspace.slotwrapper)
+		: routeContext
 
 	// View and PanelArea both need their own unique context stacks in order to prevent issues,
 	// so we need to generate a unique context stack for each by cloning
 	const view = (
 		<>
 			<View
-				context={getRouteContextWithSlot()}
+				context={routeContextWithSlot}
 				definition={{
 					view: viewId,
 					params,
 				}}
 				path=""
 			/>
-			<PanelArea context={getRouteContextWithSlot()} />
+			<PanelArea context={routeContextWithSlot} />
 		</>
 	)
 
