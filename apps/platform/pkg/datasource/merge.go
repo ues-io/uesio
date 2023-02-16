@@ -6,24 +6,27 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetMergeFuncs(session *sess.Session, params map[string]string) map[string]interface{} {
-	return map[string]interface{}{
-		"Param": func(m map[string]interface{}, key string) (interface{}, error) {
-			val, ok := params[key]
-			if !ok {
-				return nil, errors.New("missing param " + key)
-			}
-			return val, nil
-		},
-		"User": func(m map[string]interface{}, key string) (interface{}, error) {
+type ServerMergeData struct {
+	Session     *sess.Session
+	ParamValues map[string]string
+}
 
-			userID := session.GetUserID()
+var ServerMergeFuncs = map[string]interface{}{
+	"Param": func(m ServerMergeData, key string) (interface{}, error) {
+		val, ok := m.ParamValues[key]
+		if !ok {
+			return nil, errors.New("missing param " + key)
+		}
+		return val, nil
+	},
+	"User": func(m ServerMergeData, key string) (interface{}, error) {
 
-			if key == "id" {
-				return userID, nil
-			}
+		userID := m.Session.GetUserID()
 
-			return nil, nil
-		},
-	}
+		if key == "id" {
+			return userID, nil
+		}
+
+		return nil, nil
+	},
 }

@@ -71,18 +71,18 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return nil, errors.New("No Route Found in Cache")
 	}
 
-	// Process merge syntax for default route params
-	mergeFuncs := datasource.GetMergeFuncs(session, nil)
-
 	processedParams := map[string]string{}
 
 	for paramName, paramValue := range route.Params {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, mergeFuncs)
+		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, datasource.ServerMergeFuncs)
 		if err != nil {
 			return nil, err
 		}
 
-		mergedValue, err := templating.Execute(template, nil)
+		mergedValue, err := templating.Execute(template, datasource.ServerMergeData{
+			Session:     session,
+			ParamValues: nil,
+		})
 		if err != nil {
 			return nil, err
 		}

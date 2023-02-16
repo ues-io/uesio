@@ -190,8 +190,6 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 	}
 
-	mergeFuncs := datasource.GetMergeFuncs(session, params)
-
 	for viewKey, viewCompDef := range depMap.Views {
 
 		if key == viewKey {
@@ -218,17 +216,17 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 						return err
 					}
 					for _, param := range paramsNodes {
-						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, mergeFuncs)
+						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, datasource.ServerMergeFuncs)
 						if err != nil {
 							return err
 						}
 
-						mergedValue, err := templating.Execute(template, nil)
+						mergedValue, err := templating.Execute(template, datasource.ServerMergeData{
+							Session:     session,
+							ParamValues: params,
+						})
 						if err != nil {
-							// If we fail here just bail on making params.
-							// We'll process the view client side.
-							subParams = nil
-							break
+							return err
 						}
 						subParams[param.Key] = mergedValue
 					}

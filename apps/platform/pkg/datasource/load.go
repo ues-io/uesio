@@ -54,8 +54,6 @@ func processConditions(
 	session *sess.Session,
 ) error {
 
-	mergeFuncs := GetMergeFuncs(session, params)
-
 	for i, condition := range conditions {
 
 		if condition.Type == "SUBQUERY" || condition.Type == "GROUP" {
@@ -74,12 +72,16 @@ func processConditions(
 			if !ok {
 				continue
 			}
-			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, mergeFuncs)
+			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, ServerMergeFuncs)
 			if err != nil {
 				return err
 			}
 
-			mergedValue, err := templating.Execute(template, nil)
+			mergedValue, err := templating.Execute(template, ServerMergeData{
+				Session:     session,
+				ParamValues: params,
+			})
+
 			if err != nil {
 				return err
 			}
