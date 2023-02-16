@@ -32,7 +32,6 @@ const ERROR = "ERROR",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
 	RECORD_DATA = "RECORD_DATA",
-	SLOT = "SLOT",
 	SIGNAL_OUTPUT = "SIGNAL_OUTPUT"
 
 type FieldMode = "READ" | "EDIT"
@@ -66,10 +65,6 @@ interface ViewContext {
 	view: string
 	viewDef: string
 	params?: Record<string, string>
-}
-
-interface SlotContext {
-	slot: MetadataKey
 }
 
 interface RouteContext {
@@ -119,10 +114,6 @@ interface ViewContextFrame extends ViewContext {
 	type: typeof VIEW
 }
 
-interface SlotContextFrame extends SlotContext {
-	type: typeof SLOT
-}
-
 interface RecordContextFrame extends RecordContext {
 	type: typeof RECORD
 	// We will throw an error if view is not available at time of construction
@@ -167,7 +158,6 @@ type ContextFrame =
 	| WireContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
-	| SlotContextFrame
 	| SignalOutputContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
@@ -190,9 +180,6 @@ const isComponentContextFrame = (
 const isSignalOutputContextFrame = (
 	frame: ContextFrame
 ): frame is SignalOutputContextFrame => frame.type === SIGNAL_OUTPUT
-
-const isSlotContextFrame = (frame: ContextFrame): frame is SlotContextFrame =>
-	frame.type === SLOT
 
 const providesRecordContext = (
 	frame: ContextFrame
@@ -285,12 +272,14 @@ class Context {
 		const ctx = new Context(stack ? stack : this.stack)
 		ctx.workspace = this.workspace
 		ctx.siteadmin = this.siteadmin
+		ctx.slot = this.slot
 		return ctx
 	}
 
 	stack: ContextFrame[]
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
+	slot?: MetadataKey
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -361,7 +350,7 @@ class Context {
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
-	getCustomSlot = () => this.stack.find(isSlotContextFrame)?.slot
+	getCustomSlot = () => this.slot
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -405,6 +394,12 @@ class Context {
 	deleteSiteAdmin = () => {
 		const newContext = this.clone()
 		delete newContext.siteadmin
+		return newContext
+	}
+
+	deleteCustomSlot = () => {
+		const newContext = this.clone()
+		delete newContext.slot
 		return newContext
 	}
 
@@ -482,12 +477,6 @@ class Context {
 			theme,
 		})
 
-	addSlotFrame = (slot: MetadataKey) =>
-		this.#addFrame({
-			type: SLOT,
-			slot,
-		})
-
 	addSignalOutputFrame = (label: string, data: object) =>
 		this.#addFrame({
 			type: SIGNAL_OUTPUT,
@@ -504,6 +493,12 @@ class Context {
 	setWorkspace = (workspace: WorkspaceState) => {
 		const newContext = this.clone()
 		newContext.workspace = workspace
+		return newContext
+	}
+
+	setCustomSlot = (slot: MetadataKey) => {
+		const newContext = this.clone()
+		newContext.slot = slot
 		return newContext
 	}
 

@@ -38,12 +38,13 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		if (!route) return
+		const { namespace, path, workspace } = route
 		// This makes sure that the namespace and path of the route is specified in the history.
 		window.history.replaceState(
 			{
-				namespace: route.namespace,
-				path: route.path,
-				workspace: route.workspace,
+				namespace,
+				path,
+				workspace,
 			},
 			""
 		)
@@ -51,56 +52,62 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
-			if (!event.state.path || !event.state.namespace) {
+			const { path, workspace, namespace, title } = event.state
+
+			if (!path || !namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
 				routeOps.redirect(new Context(), document.location.pathname)
 				return
 			}
+
 			routeOps.navigate(
-				new Context().setWorkspace(event.state.workspace),
+				new Context().setWorkspace(workspace),
 				{
-					path: event.state.path,
-					namespace: event.state.namespace,
-					title: event.state.title,
+					path,
+					namespace,
+					title,
 				},
 				true
 			)
 		}
 	}, [])
 
-	// Quit rendering early if we don't have our theme yet.
+	// Quit rendering early if we don't have our route yet
 	if (!route) return null
 
-	const workspace = route.workspace
+	const { workspace, params, theme } = route
+	const viewId = route.view
 
 	let routeContext = props.context.addRouteFrame({
 		site,
 		route,
-		viewDef: route.view,
-		theme: route.theme,
-		view: makeViewId(route.view, "$root"),
+		viewDef: viewId,
+		theme,
+		view: makeViewId(viewId, "$root"),
 	})
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)
 	}
 
+	const routeContextWithSlot = workspace?.slotwrapper
+		? routeContext.setCustomSlot(workspace.slotwrapper)
+		: routeContext
+
+	// View and PanelArea both need their own unique context stacks in order to prevent issues,
+	// so we need to generate a unique context stack for each by cloning
 	const view = (
 		<>
 			<View
-				context={
-					workspace?.slotwrapper
-						? routeContext.addSlotFrame(workspace.slotwrapper)
-						: routeContext
-				}
+				context={routeContextWithSlot}
 				definition={{
-					view: route.view,
-					params: route.params,
+					view: viewId,
+					params,
 				}}
 				path=""
 			/>
-			<PanelArea context={routeContext} />
+			<PanelArea context={routeContextWithSlot} />
 		</>
 	)
 

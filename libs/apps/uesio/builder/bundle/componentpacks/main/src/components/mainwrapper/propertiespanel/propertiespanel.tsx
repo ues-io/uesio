@@ -20,7 +20,13 @@ const PropertiesPanel: definition.UtilityComponent = (props) => {
 				case "wires":
 					return <WireProperties {...props} />
 				case "panels":
-					return <PanelProperties {...props} />
+					return selectedPath.size() === 2 ? (
+						// The Panel itself is selected, so display its properties
+						<PanelProperties {...props} />
+					) : (
+						// A component within the panel is selected, so display its properties
+						<ComponentInstanceProperties {...props} />
+					)
 				case "params":
 					return <ParamProperties {...props} />
 			}
