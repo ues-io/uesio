@@ -175,6 +175,12 @@ const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
 			const panelId = pathArray[1]
 			api.signal.run(
 				{
+					signal: "panel/CLOSE_ALL",
+				},
+				context
+			)
+			api.signal.run(
+				{
 					signal: "panel/OPEN",
 					panel: panelId,
 				},

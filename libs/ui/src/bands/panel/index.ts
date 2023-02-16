@@ -7,11 +7,12 @@ const panelSlice = createSlice({
 	initialState: panelAdapter.getInitialState(),
 	reducers: {
 		set: panelAdapter.upsertOne,
+		removeAll: panelAdapter.removeAll,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(setRoute, panelAdapter.removeAll)
 	},
 })
 
-export const { set } = panelSlice.actions
+export const { set, removeAll } = panelSlice.actions
 export default panelSlice.reducer
