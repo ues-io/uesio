@@ -4,37 +4,43 @@ import { PanelDefinitionMap } from "../definition/panel"
 import { UtilityComponent } from "../definition/definition"
 import { useViewDef } from "../bands/viewdef"
 
+type Props = {
+	panelId: string
+}
+
+const Panel: UtilityComponent<Props> = ({ panelId, context }) => {
+	const viewDef = useViewDef(context.getViewDefId())
+	const panels: PanelDefinitionMap | undefined = viewDef?.panels
+	if (!panels) return null
+	const panelDef = panels[panelId]
+	if (!panelDef) return null
+	const componentType = panelDef["uesio.type"]
+	if (!componentType) return null
+	return (
+		<Component
+			key={panelId}
+			definition={{ ...panelDef, id: panelId }}
+			path={`["panels"]["${panelId}"]`}
+			context={context}
+			componentType={componentType}
+		/>
+	)
+}
+
 const PanelArea: UtilityComponent = (props) => {
 	const panels = usePanels()
-	useViewDef(props.context.getViewDefId())
-
 	return (
 		<>
 			{panels &&
 				panels.map((panel) => {
 					if (!panel.context) return null
-					const panelContext = props.context.clone(panel.context)
-					const panelId = panel.id
-					const viewDef = panelContext.getViewDef()
-					const panels: PanelDefinitionMap | undefined =
-						viewDef?.panels
-					if (!panels || !panelId) return null
-
-					const panelDef = panels[panelId]
-					if (!panelDef) return null
-					const componentType = panelDef["uesio.type"]
-
-					if (!componentType) return null
-
-					return [
-						<Component
-							key={panelId}
-							definition={{ ...panelDef, id: panelId }}
-							path={`["panels"]["${panelId}"]`}
-							context={panelContext}
-							componentType={componentType}
-						/>,
-					]
+					return (
+						<Panel
+							key={panel.id}
+							context={props.context.clone(panel.context)}
+							panelId={panel.id}
+						/>
+					)
 				})}
 		</>
 	)
