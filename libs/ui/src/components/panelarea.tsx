@@ -2,9 +2,11 @@ import { usePanels } from "../bands/panel/selectors"
 import { Component } from "../component/component"
 import { PanelDefinitionMap } from "../definition/panel"
 import { UtilityComponent } from "../definition/definition"
+import { useViewDef } from "../bands/viewdef"
 
 const PanelArea: UtilityComponent = (props) => {
 	const panels = usePanels()
+	useViewDef(props.context.getViewDefId())
 
 	return (
 		<>
