@@ -50,6 +50,16 @@ type WireProperty = {
 	type: "WIRE"
 } & BaseProperty
 
+type FieldProperty = {
+	type: "FIELD"
+	wireField: string
+} & BaseProperty
+
+type FieldsProperty = {
+	type: "FIELDS"
+	wireField: string
+} & BaseProperty
+
 type SelectProperty = {
 	type: "SELECT"
 	options: SelectOption[]
@@ -76,6 +86,8 @@ type ComponentProperty =
 	| MultiMetadataProperty
 	| SelectProperty
 	| WireProperty
+	| FieldProperty
+	| FieldsProperty
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty

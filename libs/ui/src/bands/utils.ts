@@ -1,5 +1,6 @@
 import { EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { definition } from ".."
+import { SelectOption } from "./field/types"
 
 type EntityPayload = {
 	entity: string
@@ -39,7 +40,7 @@ const getErrorString = (error: unknown) => {
 }
 type Field = [string, null | { fields: { [key: string]: Field } }]
 const getWireFieldSelectOptions = (wireDef: definition.DefinitionMap) => {
-	if (!wireDef || !wireDef.fields) return null
+	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
 
 	const getFields = (field: Field): string | string[] => {
 		const [key, value] = field
@@ -51,7 +52,7 @@ const getWireFieldSelectOptions = (wireDef: definition.DefinitionMap) => {
 
 	return Object.entries(wireDef.fields)
 		.flatMap((el) => getFields(el as Field))
-		.map((el) => ({ value: el, label: el }))
+		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
 export {
