@@ -4,3 +4,7 @@ description: A group of metric boxes
 category: VISUALIZATION
 pack: chart
 entrypoint: components/metricgroup/metricgroup
+utilities:
+  - uesio/io.metric
+variants:
+  - uesio/io.metric:uesio/io.default
