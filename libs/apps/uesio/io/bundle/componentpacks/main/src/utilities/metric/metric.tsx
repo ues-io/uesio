@@ -17,7 +17,8 @@ const Metric: definition.UtilityComponent<MetricProps> = (props) => {
 			value: {},
 			unit: {},
 		},
-		props
+		props,
+		"uesio/io.metric"
 	)
 	return (
 		<Tile
