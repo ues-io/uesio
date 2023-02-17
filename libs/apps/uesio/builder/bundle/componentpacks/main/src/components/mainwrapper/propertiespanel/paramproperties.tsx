@@ -1,7 +1,8 @@
 import { definition } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
-import { ComponentProperty, useSelectedPath } from "../../../api/stateapi"
+import { useSelectedPath } from "../../../api/stateapi"
+import { ComponentProperty } from "../../../api/componentproperty"
 
 const paramProperties = [
 	{

@@ -1,96 +1,7 @@
 import { definition, api, metadata, context as ctx, component } from "@uesio/ui"
+import { ComponentProperty } from "./componentproperty"
 import { combinePath, FullPath, parseFullPath } from "./path"
-
-type BaseProperty = {
-	name: string
-	label?: string
-	required?: boolean
-	type: string
-	displayConditions?: component.DisplayCondition[]
-}
-
-type TextProperty = {
-	type: "TEXT"
-} & BaseProperty
-
-type ComponentIdProperty = {
-	type: "COMPONENT_ID"
-} & BaseProperty
-
-type NumberProperty = {
-	type: "NUMBER"
-	min?: number
-	max?: number
-	step?: number
-} & BaseProperty
-
-type KeyProperty = {
-	type: "KEY"
-} & BaseProperty
-
-type MetadataProperty = {
-	type: "METADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
-} & BaseProperty
-
-type MultiMetadataProperty = {
-	type: "MULTI_METADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
-} & BaseProperty
-
-type CheckboxProperty = {
-	type: "CHECKBOX"
-} & BaseProperty
-
-type WireProperty = {
-	type: "WIRE"
-} & BaseProperty
-
-type FieldProperty = {
-	type: "FIELD"
-	wireField: string
-} & BaseProperty
-
-type FieldsProperty = {
-	type: "FIELDS"
-	wireField: string
-} & BaseProperty
-
-type SelectProperty = {
-	type: "SELECT"
-	options: SelectOption[]
-	required?: boolean
-	blankOptionLabel?: string
-} & BaseProperty
-
-type MapProperty = {
-	type: "MAP"
-	components: definition.DefinitionList
-} & BaseProperty
-
-type SelectOption = {
-	value: string // TODO This should be able to be a boolean or number as well
-	label: string
-	disabled?: boolean
-}
-
-type ComponentProperty =
-	| TextProperty
-	| NumberProperty
-	| KeyProperty
-	| MetadataProperty
-	| MultiMetadataProperty
-	| SelectProperty
-	| WireProperty
-	| FieldProperty
-	| FieldsProperty
-	| ComponentIdProperty
-	| CheckboxProperty
-	| MapProperty
+import { PropertiesPanelSection } from "./propertysection"
 
 type ComponentDef = {
 	name: string
@@ -99,9 +10,9 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
-	properties: ComponentProperty[]
-	propertiesPanelView: definition.DefinitionList
-	defaultDefinition: definition.DefinitionMap
+	properties?: ComponentProperty[]
+	sections?: PropertiesPanelSection[]
+	defaultDefinition?: definition.DefinitionMap
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
@@ -248,8 +159,4 @@ export {
 	useSelectedViewPath,
 	getSelectedViewPath,
 	ComponentDef,
-	ComponentProperty,
-	SelectOption,
-	SelectProperty,
-	WireProperty,
 }

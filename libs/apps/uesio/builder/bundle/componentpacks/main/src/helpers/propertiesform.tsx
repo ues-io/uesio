@@ -7,11 +7,11 @@ import {
 	SelectProperty,
 	SelectOption,
 	WireProperty,
-} from "../api/stateapi"
+} from "../api/componentproperty"
 
 type Props = {
 	properties?: ComponentProperty[]
-	content?: definition.DefinitionList
+	content?: definition.DefinitionList[]
 	path: FullPath
 }
 
