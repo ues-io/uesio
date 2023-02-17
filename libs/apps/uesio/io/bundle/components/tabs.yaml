@@ -1,3 +1,12 @@
 name: tabs
+label: Tabs
+description: Organized view content in to tabbed sections
 pack: main
 entrypoint: components/tabs/tabs
+category: LAYOUT
+discoverable: true
+sections:
+  - label: Tabs
+    id: tabs
+    viewDefinition:
+      # TODO: Custom component for defining list of Tab definitions?

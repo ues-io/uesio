@@ -37,3 +37,9 @@ properties:
     min: 5
     max: 500
     step: 5
+sections:
+  - type: HOME
+  - label: Fields
+    id: fields
+    viewDefinition:
+    # TODO: Custom component for Table Fields / sub-components

@@ -7,7 +7,7 @@ import {
 	SelectProperty,
 	SelectOption,
 	WireProperty,
-} from "../api/stateapi"
+} from "../api/componentproperty"
 
 type Props = {
 	properties?: ComponentProperty[]

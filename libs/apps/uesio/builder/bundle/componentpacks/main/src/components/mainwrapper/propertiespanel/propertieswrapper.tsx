@@ -150,3 +150,5 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 PropertiesWrapper.displayName = "PropertiesWrapper"
 
 export default PropertiesWrapper
+
+export { Tab }
