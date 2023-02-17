@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -72,12 +73,12 @@ func processConditions(
 			if !ok {
 				continue
 			}
-			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, ServerMergeFuncs)
+			template, err := templating.NewWithFuncs(stringValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 			if err != nil {
 				return err
 			}
 
-			mergedValue, err := templating.Execute(template, ServerMergeData{
+			mergedValue, err := templating.Execute(template, merge.ServerMergeData{
 				Session:     session,
 				ParamValues: params,
 			})

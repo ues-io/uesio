@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -216,12 +217,12 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 						return err
 					}
 					for _, param := range paramsNodes {
-						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, datasource.ServerMergeFuncs)
+						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 						if err != nil {
 							return err
 						}
 
-						mergedValue, err := templating.Execute(template, datasource.ServerMergeData{
+						mergedValue, err := templating.Execute(template, merge.ServerMergeData{
 							Session:     session,
 							ParamValues: params,
 						})
