@@ -7,10 +7,11 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	password?: boolean
+	focusOnRender?: boolean
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, mode, placeholder, password, id } = props
+	const { setValue, mode, placeholder, password, id, focusOnRender } = props
 	const value = props.value as string
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
@@ -33,6 +34,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			disabled={readonly}
 			onChange={(event) => setValue?.(event.target.value)}
+			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
 		/>
 	)
 }
