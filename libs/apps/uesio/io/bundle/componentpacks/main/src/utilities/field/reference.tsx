@@ -5,12 +5,12 @@ import {
 	definition,
 	context,
 	component,
-	styles,
 } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import { useState } from "react"
 import { ReferenceFieldOptions } from "../../components/field/field"
 import CustomSelect from "../customselect/customselect"
+import ReadOnlyField from "./readonly"
 
 interface ReferenceFieldProps {
 	path: string
@@ -25,19 +25,16 @@ interface ReferenceFieldProps {
 const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	props
 ) => {
-	const { fieldId, fieldMetadata, mode, record, context, options, path } =
-		props
-
-	const classes = styles.useUtilityStyles(
-		{
-			input: {
-				fontSize: "10pt",
-				color: "#444",
-			},
-		},
-		props,
-		"uesio/io.field"
-	)
+	const {
+		fieldId,
+		fieldMetadata,
+		mode,
+		record,
+		context,
+		options,
+		path,
+		variant,
+	} = props
 
 	const referencedCollection = api.collection.useCollection(
 		context,
@@ -110,7 +107,9 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 
 	if (mode === "READ") {
 		return (
-			<div className={classes.input}>{value ? renderer(value) : ""}</div>
+			<ReadOnlyField variant={variant} context={context}>
+				{value ? renderer(value) : ""}
+			</ReadOnlyField>
 		)
 	} else {
 		return (
