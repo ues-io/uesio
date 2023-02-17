@@ -68,6 +68,10 @@ type SelectOption = {
 	disabled?: boolean
 }
 
+type ParamsProperty = {
+	type: "PARAMS"
+} & BaseProperty
+
 type ComponentProperty =
 	| TextProperty
 	| NumberProperty
@@ -79,6 +83,7 @@ type ComponentProperty =
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
+	| ParamsProperty
 
 type ComponentDef = {
 	name: string

@@ -159,6 +159,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "MAP" as const,
 			}
+		case "PARAMS":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "TEXT" as const,
+			}
 		default:
 			return {
 				label: label || name,
