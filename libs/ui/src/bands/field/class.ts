@@ -19,6 +19,8 @@ class Field {
 	getSelectOptions = () => {
 		const selectMetadata = this.getSelectMetadata()
 		if (!selectMetadata) return []
+		if (selectMetadata.blank_option_label === undefined)
+			return selectMetadata.options || []
 		return addBlankSelectOption(
 			selectMetadata.options,
 			selectMetadata.blank_option_label

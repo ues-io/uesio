@@ -1,10 +1,9 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
-import TextField from "./text"
 
 interface SelectFieldProps extends definition.UtilityProps {
-	setValue: (value: wire.FieldValue) => void
-	value: string[]
+	setValue: (value: wire.PlainFieldValue[]) => void
+	value: wire.PlainFieldValue[]
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
@@ -14,11 +13,15 @@ interface SelectFieldProps extends definition.UtilityProps {
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { setValue, value, mode, options } = props
 	if (mode === "READ") {
-		const optionMatch = options?.find((option) =>
-			value.includes(option.value)
-		)
-		const valueLabel = optionMatch?.label || ""
-		return <TextField {...props} value={valueLabel} />
+		let displayLabel
+		if (value !== undefined && value.length) {
+			const valuesArray = value as wire.PlainFieldValue[]
+			displayLabel = options
+				?.filter((option) => valuesArray.includes(option.value))
+				.map((option) => option?.label || option.value)
+				.join(", ")
+		}
+		return <span>{displayLabel || ""}</span>
 	}
 
 	const classes = styles.useUtilityStyles(
@@ -42,7 +45,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 					)
 				)
 			}}
-			value={value}
+			value={value as string[]}
 		>
 			{options?.map((option) => (
 				<option key={option.value} value={option.value}>
