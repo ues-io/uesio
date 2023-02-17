@@ -25,7 +25,7 @@ interface CustomSection extends BaseSection {
 	label: string
 	id?: string
 	icon?: string
-	viewDefinition: definition.DefinitionList[]
+	viewDefinition: definition.DefinitionList
 	type?: "CUSTOM"
 }
 

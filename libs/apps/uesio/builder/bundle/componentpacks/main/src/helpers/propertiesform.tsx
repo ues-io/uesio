@@ -11,7 +11,7 @@ import {
 
 type Props = {
 	properties?: ComponentProperty[]
-	content?: definition.DefinitionList[]
+	content?: definition.DefinitionList
 	path: FullPath
 }
 
