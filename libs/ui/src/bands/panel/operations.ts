@@ -1,6 +1,6 @@
 import { Context } from "../../context/context"
 import { dispatch, getCurrentState } from "../../store/store"
-import { set as setPanel } from "."
+import { set as setPanel, removeAll } from "."
 import { selectors } from "./adapter"
 
 const Operations: Record<string, (context: Context, panel: string) => Context> =
@@ -22,6 +22,10 @@ const Operations: Record<string, (context: Context, panel: string) => Context> =
 					context: undefined,
 				})
 			)
+			return context
+		},
+		closeAll: (context) => {
+			dispatch(removeAll())
 			return context
 		},
 		open: (context, panel) => {

@@ -1,7 +1,6 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, styles, api, context as ctx } from "@uesio/ui"
 import { isDropAllowed, isNextSlot } from "../../shared/dragdrop"
-import PanelPortal from "../../shared/panelportal"
 import TopActions from "../../shared/topactions"
 import BottomActions from "../../shared/bottomactions"
 import {
@@ -244,7 +243,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				</div>
 			</div>
 			<BottomActions context={context} />
-			<PanelPortal context={context} />
 		</div>
 	)
 }

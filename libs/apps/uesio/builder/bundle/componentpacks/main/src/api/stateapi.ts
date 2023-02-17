@@ -167,6 +167,28 @@ const getSelectedViewPath = (context: ctx.Context) => {
 }
 
 const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
+	// If the selected path is a panel, make sure it's opened
+	if (path) {
+		const pathArray = component.path.toPath(path.localPath)
+		const isPanel = path.itemType === "viewdef" && pathArray[0] === "panels"
+		if (isPanel) {
+			const panelId = pathArray[1]
+			api.signal.run(
+				{
+					signal: "panel/CLOSE_ALL",
+				},
+				context
+			)
+			api.signal.run(
+				{
+					signal: "panel/OPEN",
+					panel: panelId,
+				},
+				context
+			)
+		}
+	}
+
 	setBuilderState<string>(context, "selected", combinePath(path))
 }
 

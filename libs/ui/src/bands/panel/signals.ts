@@ -50,6 +50,13 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${PANEL_BAND}/CLOSE_ALL`]: {
+		dispatcher: (signal: ToggleSignal, context: Context) =>
+			operations.closeAll(context, signal.panel),
+		label: "Close all",
+		description: "Close all panels",
+		properties: () => [],
+	},
 }
 
 export default signals
