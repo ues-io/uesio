@@ -51,10 +51,7 @@
 			"architect": {
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
-					"outputs": [
-						"libs/apps/uesio/core/bundle/componentpacks/app/builder.bundle.js",
-						"libs/apps/uesio/core/bundle/componentpacks/app/runtime.bundle.js"
-					],
+					"outputs": ["libs/apps/uesio/core/bundle/componentpacks/app/dist"],
 					"options": {
 						"commands": [
 							"./../../../../dist/clio/clio pack",
@@ -166,10 +163,7 @@
 			"architect": {
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
-					"outputs": [
-						"libs/apps/uesio/io/bundle/componentpacks/main/builder.bundle.js",
-						"libs/apps/uesio/io/bundle/componentpacks/main/runtime.bundle.js"
-					],
+					"outputs": ["libs/apps/uesio/io/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
 							"./../../../../dist/clio/clio pack",
@@ -204,10 +198,7 @@
 			"architect": {
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
-					"outputs": [
-						"libs/apps/uesio/builder/bundle/componentpacks/main/builder.bundle.js",
-						"libs/apps/uesio/builder/bundle/componentpacks/main/runtime.bundle.js"
-					],
+					"outputs": ["libs/apps/uesio/builder/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
 							"./../../../../dist/clio/clio pack",
@@ -242,10 +233,7 @@
 			"architect": {
 				"build": {
 					"builder": "@nrwl/workspace:run-commands",
-					"outputs": [
-						"libs/apps/uesio/studio/bundle/componentpacks/main/builder.bundle.js",
-						"libs/apps/uesio/studio/bundle/componentpacks/main/runtime.bundle.js"
-					],
+					"outputs": ["libs/apps/uesio/studio/bundle/componentpacks/main/dist"],
 					"options": {
 						"commands": [
 							"./../../../../dist/clio/clio pack",
