@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useRef, useState } from "react"
+import { ReactNode, useRef, useState } from "react"
 import { definition, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
 import {
@@ -19,18 +19,20 @@ type CustomSelectProps<T> = {
 	onSelect: (item: T) => void
 	onUnSelect: (item: T) => void
 	items: T[] | undefined
-	isSelected: (item: T) => boolean
+	selectedItems: T[]
 	getItemKey: (item: T) => string
 	onSearch?: (search: string) => void
 	searchFilter?: (item: T, search: string) => boolean
 	itemRenderer: (item: T) => ReactNode
-} & definition.BaseProps
+}
 
-const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
+const CustomSelect: definition.UtilityComponent<CustomSelectProps<unknown>> = (
+	props
+) => {
 	const {
 		onSearch,
 		searchFilter,
-		isSelected,
+		selectedItems,
 		getItemKey,
 		items = [],
 		onSelect,
@@ -88,8 +90,6 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 	const { getReferenceProps, getFloatingProps, getItemProps } =
 		useInteractions([click, dismiss, role, listNavigation])
 
-	const selectedItems = items ? items.filter(isSelected) : []
-
 	return (
 		<>
 			<div
@@ -114,6 +114,7 @@ const CustomSelect: FunctionComponent<CustomSelectProps<unknown>> = (props) => {
 								type="button"
 								onClick={(event) => {
 									event.preventDefault() // Prevent the label from triggering
+									event.stopPropagation()
 									onUnSelect(item)
 								}}
 							>

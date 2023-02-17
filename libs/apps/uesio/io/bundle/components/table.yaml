@@ -10,6 +10,7 @@ variants:
   - uesio/io.button:uesio/io.nav
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.field:uesio/io.table
+  - uesio/io.customselectfield:uesio/io.default
 category: DATA
 discoverable: true
 properties:
