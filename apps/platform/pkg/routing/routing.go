@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -71,18 +72,18 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		return nil, errors.New("No Route Found in Cache")
 	}
 
-	// Process merge syntax for default route params
-	mergeFuncs := datasource.GetMergeFuncs(session, nil)
-
 	processedParams := map[string]string{}
 
 	for paramName, paramValue := range route.Params {
-		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, mergeFuncs)
+		template, err := templating.NewWithFuncs(paramValue, templating.ForceErrorFunc, merge.ServerMergeFuncs)
 		if err != nil {
 			return nil, err
 		}
 
-		mergedValue, err := templating.Execute(template, nil)
+		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+			Session:     session,
+			ParamValues: nil,
+		})
 		if err != nil {
 			return nil, err
 		}
