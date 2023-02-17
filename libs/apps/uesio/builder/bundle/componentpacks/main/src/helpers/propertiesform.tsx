@@ -1,4 +1,4 @@
-import { component, context, definition, wire, util } from "@uesio/ui"
+import { component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
@@ -8,12 +8,29 @@ import {
 	SelectOption,
 	WireProperty,
 } from "../api/stateapi"
-const { getWireFieldSelectOptions } = util
 
 type Props = {
 	properties?: ComponentProperty[]
 	content?: definition.DefinitionList
 	path: FullPath
+}
+
+const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
+	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
+
+	const getFields = (
+		key: string,
+		value: wire.ViewOnlyField | wire.WireFieldDefinition
+	): string | string[] => {
+		if (!value) return key
+		return Object.entries(value)
+			.map(([key2, value2]) => [`${key}->${key2}`, value2])
+			.flatMap(([key, value]) => getFields(key, value))
+	}
+
+	return Object.entries(wireDef.fields)
+		.flatMap(([key, value]) => getFields(key, value))
+		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
 const getFormFieldFromProperty = (

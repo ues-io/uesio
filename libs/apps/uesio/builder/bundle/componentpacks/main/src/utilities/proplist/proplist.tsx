@@ -16,7 +16,6 @@ import IconProp from "../iconprop/iconprop"
 import ParamProp from "../../propertyrenderers/paramprop"
 import ParamsProp from "../paramsprop/paramsprop"
 import FieldProp from "../fieldprop/fieldprop"
-import FieldsProp from "../fieldsprop/fieldsprop"
 import PropListProp from "../proplistprop/proplistprop"
 import ConditionPropComponent from "../../propertyrenderers/conditionprop"
 import ProplistsProp from "../proplistsprop/proplistsprop"
@@ -63,8 +62,6 @@ function getPropHandler(type?: string) {
 			return ParamsProp
 		case "FIELD":
 			return FieldProp
-		case "FIELDS":
-			return FieldsProp
 		case "PROPLISTS":
 			return ProplistsProp
 		case "PROPLIST":
