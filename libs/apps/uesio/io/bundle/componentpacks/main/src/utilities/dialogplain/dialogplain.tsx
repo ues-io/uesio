@@ -14,6 +14,7 @@ interface DialogPlainUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
+	initialFocus?: number
 }
 
 const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
@@ -70,7 +71,10 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 			lockScroll
 			style={{ position: "absolute" }}
 		>
-			<FloatingFocusManager context={floating.context} initialFocus={1}>
+			<FloatingFocusManager
+				context={floating.context}
+				initialFocus={props.initialFocus}
+			>
 				<div
 					className={classes.root}
 					ref={floating.refs.setFloating}
