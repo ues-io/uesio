@@ -38,7 +38,6 @@ const useDynamicWire = (
 	const wire = useWire(wireName, context)
 	useEffect(() => {
 		if (!wireDef || !wireName) return
-		if (!wireDef.viewOnly && !wireDef.collection) return
 		initWires(context, {
 			[wireName]: wireDef,
 		})
