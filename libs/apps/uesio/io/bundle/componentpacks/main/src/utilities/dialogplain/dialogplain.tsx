@@ -61,24 +61,35 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 		},
 	})
 
-	const dismiss = useDismiss(floating.context)
+	const dismiss = useDismiss(floating.context, {
+		outsidePress: false,
+		referencePress: true,
+		bubbles: false,
+	})
 
-	const { getFloatingProps } = useInteractions([dismiss])
+	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
 
 	return (
 		<FloatingOverlay
 			className={classes.blocker}
 			lockScroll
 			style={{ position: "absolute" }}
+			ref={floating.refs.setReference}
+			{...getReferenceProps()}
 		>
 			<FloatingFocusManager
 				context={floating.context}
 				initialFocus={props.initialFocus}
+				closeOnFocusOut={false}
 			>
 				<div
 					className={classes.root}
 					ref={floating.refs.setFloating}
-					{...getFloatingProps()}
+					{...getFloatingProps({
+						onPointerDown(e) {
+							e.stopPropagation()
+						},
+					})}
 				>
 					<div className={classes.inner}>{props.children}</div>
 					<div className={classes.spacer} />
