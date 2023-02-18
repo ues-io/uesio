@@ -97,6 +97,19 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "LIST": {
+			return {
+				"uesio/io.field": {
+					fieldId: property.name,
+					wrapperVariant: "uesio/io.minimal",
+					displayAs: "DECK",
+					labelPosition: "none",
+					map: {
+						components: property.components,
+					},
+				},
+			}
+		}
 		case "COMPONENT_ID":
 		case "KEY": {
 			return {
@@ -238,6 +251,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "MAP" as const,
 			}
+		case "LIST":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "LIST" as const,
+			}
 		default:
 			return {
 				label: label || name,
@@ -280,6 +299,9 @@ const getGrouping = (
 
 type SetterFunction = (a: wire.FieldValue) => void
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const NoOp = function () {}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { properties, path, context, id, content } = props
@@ -300,13 +322,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			}
 			setter = (value: string) => changeKey(context, path, value)
 		} else if (type === "MAP") {
-			setter = () => {
-				/* No setter */
-			}
+			setter = NoOp
 			value = get(context, path.addLocal(name)) as Record<
 				string,
 				wire.PlainWireRecord
 			>
+		} else if (type === "LIST") {
+			setter = NoOp
+			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
 		} else if (type === "FIELDS") {
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))

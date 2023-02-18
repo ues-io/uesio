@@ -120,7 +120,24 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			break
 		}
 		case "uesio.signals": {
-			content = <>SIGNALS</>
+			content = (
+				<PropertiesForm
+					id={path.combine()}
+					context={context}
+					properties={[
+						{
+							name: "signals",
+							components: [
+								{
+									"uesio/builder.signaltag": {},
+								},
+							],
+							type: "LIST",
+						},
+					]}
+					path={path}
+				/>
+			)
 			break
 		}
 		default:
