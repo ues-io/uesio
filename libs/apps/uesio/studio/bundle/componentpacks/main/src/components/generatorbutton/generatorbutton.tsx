@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import {
 	api,
 	param,
@@ -61,6 +61,8 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	const Dialog = component.getUtility("uesio/io.dialog")
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const Group = component.getUtility("uesio/io.group")
+	const Button = component.getUtility("uesio/io.button")
 
 	const [params] = api.bot.useParams(
 		context,
@@ -68,6 +70,8 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 		genName,
 		"generator"
 	)
+
+	const wireRef = useRef<wire.Wire | undefined>()
 
 	if (!params) return null
 
@@ -87,22 +91,40 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					)}
 					fields={getWireFieldsFromParams(params)}
 					submitLabel="Generate"
-					onSubmit={async (record: wire.WireRecord) => {
-						await api.bot.callGenerator(
-							context,
-							genNamespace,
-							genName,
-							getParamValues(params, record)
-						)
-						setOpen(false)
-						return api.signal.run(
-							{
-								signal: "route/RELOAD",
-							},
-							new ctx.Context()
-						)
-					}}
+					wireRef={wireRef}
 				/>
+				<Group
+					styles={{
+						root: {
+							justifyContent: "end",
+							marginTop: "10px",
+						},
+					}}
+					context={context}
+				>
+					<Button
+						context={context}
+						variant="uesio/io.primary"
+						label="Generate"
+						onClick={async () => {
+							const result = wireRef.current?.getFirstRecord()
+							if (!result) return
+							await api.bot.callGenerator(
+								context,
+								genNamespace,
+								genName,
+								getParamValues(params, result)
+							)
+							setOpen(false)
+							return api.signal.run(
+								{
+									signal: "route/RELOAD",
+								},
+								new ctx.Context()
+							)
+						}}
+					/>
+				</Group>
 			</Dialog>
 		</FloatingPortal>
 	)
