@@ -75,6 +75,24 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	if (!params) return null
 
+	const onClick = async () => {
+		const result = wireRef.current?.getFirstRecord()
+		if (!result) return
+		await api.bot.callGenerator(
+			context,
+			genNamespace,
+			genName,
+			getParamValues(params, result)
+		)
+		setOpen(false)
+		return api.signal.run(
+			{
+				signal: "route/RELOAD",
+			},
+			new ctx.Context()
+		)
+	}
+
 	return (
 		<FloatingPortal>
 			<Dialog
@@ -98,23 +116,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 						context={context}
 						variant="uesio/io.primary"
 						label="Generate"
-						onClick={async () => {
-							const result = wireRef.current?.getFirstRecord()
-							if (!result) return
-							await api.bot.callGenerator(
-								context,
-								genNamespace,
-								genName,
-								getParamValues(params, result)
-							)
-							setOpen(false)
-							return api.signal.run(
-								{
-									signal: "route/RELOAD",
-								},
-								new ctx.Context()
-							)
-						}}
+						onClick={onClick}
 					/>
 				</Group>
 			</Dialog>

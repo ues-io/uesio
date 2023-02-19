@@ -133,9 +133,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 						context={context}
 						variant="uesio/io.primary"
 						label="Generate"
-						onClick={() => {
-							onSubmit(wireRef.current)
-						}}
+						onClick={() => onSubmit(wireRef.current)}
 					/>
 				</Group>
 			</Dialog>
@@ -169,10 +167,10 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	})
 
 	const previewHandler = (wire?: wire.Wire) => {
-		const result = wire?.getFirstRecord()
+		const record = wire?.getFirstRecord()
 		const urlParams =
-			hasParams && result
-				? new URLSearchParams(getParamValues(params, result))
+			hasParams && record
+				? new URLSearchParams(getParamValues(params, record))
 				: undefined
 		api.signal.run(
 			{
