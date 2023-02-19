@@ -1,12 +1,5 @@
 import { FunctionComponent, useRef, useState } from "react"
-import {
-	api,
-	param,
-	definition,
-	component,
-	wire,
-	context as ctx,
-} from "@uesio/ui"
+import { api, param, definition, component, wire } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
 	getParamValues,
@@ -89,7 +82,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 			{
 				signal: "route/RELOAD",
 			},
-			new ctx.Context()
+			context.deleteWorkspace()
 		)
 	}
 
