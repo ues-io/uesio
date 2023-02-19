@@ -128,15 +128,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 					context={context}
 					wireRef={wireRef}
 				/>
-				<Group
-					styles={{
-						root: {
-							justifyContent: "end",
-							marginTop: "10px",
-						},
-					}}
-					context={context}
-				>
+				<Group justifyContent="end" context={context}>
 					<Button
 						context={context}
 						variant="uesio/io.primary"
@@ -178,7 +170,6 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const previewHandler = (wire?: wire.Wire) => {
 		const result = wire?.getFirstRecord()
-		if (!result) return
 		const urlParams =
 			hasParams && result
 				? new URLSearchParams(getParamValues(params, result))

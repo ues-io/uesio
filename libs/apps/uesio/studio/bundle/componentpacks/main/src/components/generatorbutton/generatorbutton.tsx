@@ -93,15 +93,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					submitLabel="Generate"
 					wireRef={wireRef}
 				/>
-				<Group
-					styles={{
-						root: {
-							justifyContent: "end",
-							marginTop: "10px",
-						},
-					}}
-					context={context}
-				>
+				<Group justifyContent="end" context={context}>
 					<Button
 						context={context}
 						variant="uesio/io.primary"
