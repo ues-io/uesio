@@ -15,7 +15,11 @@ import {
 	SelectListMetadata,
 } from "./bands/field/types"
 import WireRecord from "./bands/wirerecord/class"
-import { FieldValue, PlainWireRecord } from "./bands/wirerecord/types"
+import {
+	FieldValue,
+	PlainWireRecord,
+	PlainFieldValue,
+} from "./bands/wirerecord/types"
 import {
 	LookupConditionState,
 	ParamConditionState,
@@ -34,6 +38,7 @@ export {
 	LoadResponseBatch,
 	LoadRequestField,
 	PlainWireRecord,
+	PlainFieldValue,
 	PlainWire,
 	WireRecord,
 	Wire,

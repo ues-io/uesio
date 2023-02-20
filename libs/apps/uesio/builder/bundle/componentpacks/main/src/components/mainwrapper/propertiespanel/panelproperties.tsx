@@ -1,11 +1,8 @@
 import { definition, context } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
-import {
-	ComponentProperty,
-	useSelectedPath,
-	getComponentDef,
-} from "../../../api/stateapi"
+import { useSelectedPath, getComponentDef } from "../../../api/stateapi"
+import { ComponentProperty } from "../../../api/componentproperty"
 import { get } from "../../../api/defapi"
 const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"

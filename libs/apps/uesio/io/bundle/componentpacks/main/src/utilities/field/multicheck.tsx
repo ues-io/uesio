@@ -3,8 +3,8 @@ import Fieldset from "../fieldset/fieldset"
 import CheckboxField from "./checkbox"
 
 interface SelectFieldProps {
-	setValue: (value: wire.FieldValue) => void
-	value?: wire.FieldValue
+	setValue: (value: wire.PlainFieldValue[]) => void
+	value: wire.PlainFieldValue[]
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
@@ -15,6 +15,8 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 	props
 ) => {
 	const { id, setValue, mode, options, context, fieldMetadata } = props
+
+	const selectedVals = props.value
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -31,9 +33,6 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 		},
 		props
 	)
-
-	// TODO: Better checking here
-	const value = props.value as Record<string, boolean>
 
 	const fieldLabel = fieldMetadata.getLabel()
 
@@ -52,21 +51,18 @@ const MultiCheckField: definition.UtilityComponent<SelectFieldProps> = (
 					return (
 						<div className={classes.option} key={option.value}>
 							<CheckboxField
-								value={value && value[option.value]}
+								value={selectedVals.includes(option.value)}
 								context={context}
-								setValue={(optionVal: boolean) =>
-									// Set the false/true value, then filter out the false values before setting
+								setValue={(checked: boolean) =>
 									setValue(
-										Object.entries({
-											...value,
-											[option.value]: optionVal,
-										}).reduce(
-											(prev, [key, val]) =>
-												val
-													? { ...prev, [key]: true }
-													: null,
-											{}
-										)
+										checked
+											? // If we are selecting this value, append it to the array
+											  selectedVals.concat(option.value)
+											: // If unselecting this value, get the current vals array without the current option
+											  selectedVals.filter(
+													(val) =>
+														val !== option.value
+											  )
 									)
 								}
 							/>

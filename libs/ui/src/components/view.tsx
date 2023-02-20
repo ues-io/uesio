@@ -57,8 +57,8 @@ const View: UC<ViewDefinition> = (props) => {
 	const { params, view: viewDefId } = definition
 	// Backwards compatibility for definition.id
 	// TODO: Remove when all instances of this are fixed
-	const uesioId = definition["uesio.id"] || definition.id
-	const viewId = makeViewId(viewDefId, path ? uesioId || path : "$root")
+	const uesioId = definition["uesio.id"] || definition.id || path || "$root"
+	const viewId = makeViewId(viewDefId, uesioId)
 
 	const isSubView = !!path
 
@@ -82,7 +82,7 @@ const View: UC<ViewDefinition> = (props) => {
 	}
 
 	const [paramState] = componentApi.useState<Record<string, string>>(
-		componentApi.getComponentIdFromProps(props),
+		componentApi.getComponentId(uesioId, "uesio/core.view", path, context),
 		context.mergeStringMap(paramsToUse)
 	)
 
