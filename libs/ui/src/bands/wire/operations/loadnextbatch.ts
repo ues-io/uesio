@@ -1,11 +1,6 @@
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
-import {
-	getFullWireId,
-	getWireParts,
-	getWiresFromDefinitonOrContext,
-	load,
-} from ".."
+import { getFullWireId, getWiresFromDefinitonOrContext, load } from ".."
 import { getWireRequest } from "./load"
 import { dispatch } from "../../../store/store"
 import { platform } from "../../../platform/platform"
@@ -30,12 +25,13 @@ export default async (context: Context, wires?: string[]) => {
 	const wiresRequestMap = getWiresMap(wiresToLoad)
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
-		const requestWire = wiresRequestMap[wire.name]
-		const [view, name] = getWireParts(wire.name)
+		const view = context.getViewId()
+		const wireName = getFullWireId(view, wire.name)
+		const requestWire = wiresRequestMap[wireName]
 
 		wiresResponse[wire.name] = {
 			...requestWire,
-			name,
+			name: wire.name,
 			view,
 			query: true,
 			batchid: requestWire.batchid,
