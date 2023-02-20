@@ -15,3 +15,6 @@ properties:
   - name: icon
     type: TEXT
     label: Icon
+sections:
+  - type: HOME
+  - type: SIGNALS

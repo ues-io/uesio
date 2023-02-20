@@ -90,7 +90,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const [selectedTab, setSelectedTab] = useBuilderState<string>(
 		context,
 		"selectedpropertiestab",
-		sections[0].id || sections[0].label
+		getSectionId(sections[0])
 	)
 
 	if (!componentDef) return null
@@ -99,12 +99,15 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	// useDefinition(selectedPath) as definition.DefinitionMap
 
 	let content: ReactNode = null
+	const selectedSection =
+		sections.find((section) => selectedTab === getSectionId(section)) ||
+		sections[0]
 
-	switch (selectedTab) {
-		case "uesio.home": {
+	switch (selectedSection?.type) {
+		case "HOME": {
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab).combine()}
+					id={path.addLocal(selectedTab || "uesio.home").combine()}
 					context={context}
 					properties={componentDef.properties}
 					path={path}
@@ -112,14 +115,14 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 			break
 		}
-		case "uesio.display": {
+		case "DISPLAY": {
 			content = <>DISPLAY</>
 			break
 		}
-		case "uesio.styles": {
+		case "STYLES": {
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab).combine()}
+					id={path.addLocal(selectedTab || "uesio.styles").combine()}
 					context={context}
 					properties={[
 						// Style Variant
@@ -131,7 +134,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 			break
 		}
-		case "uesio.signals": {
+		case "SIGNALS": {
 			content = (
 				<PropertiesForm
 					id={path.combine()}
@@ -174,7 +177,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 	}
 
-	function getSectionForTab(section: PropertiesPanelSection): Tab {
+	function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 		return {
 			id: getSectionId(section),
 			label: getSectionLabel(section),
@@ -191,7 +194,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			onUnselect={() => setSelectedPath(context)}
 			selectedTab={selectedTab}
 			setSelectedTab={setSelectedTab}
-			tabs={sections.map(getSectionForTab)}
+			tabs={sections.map(getPropertyTabForSection)}
 		>
 			{content}
 		</PropertiesWrapper>

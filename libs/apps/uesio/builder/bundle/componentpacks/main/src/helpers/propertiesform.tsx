@@ -92,7 +92,7 @@ const getFormFieldFromProperty = (
 					wrapperVariant: "uesio/io.minimal",
 					displayAs: "DECK",
 					labelPosition: "none",
-					map: {
+					[type.toLowerCase()]: {
 						components: property.components,
 					},
 				},
