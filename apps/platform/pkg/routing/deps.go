@@ -191,6 +191,33 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 	}
 
+	// Augment this view's params with this view's default values
+
+	mergedParamValues := map[string]string{}
+
+	// loop over the definition params (the params that this view says it knows about)
+	for _, nodepair := range depMap.Params {
+		// check to see if this param was provided by my parent (could be a route or a view)
+		sentInValue, ok := params[nodepair.Key]
+		if !ok {
+			// Ok, well give the default
+			mergedParamValues[nodepair.Key] = meta.GetNodeValueAsString(nodepair.Node, "default")
+		}
+		if ok {
+			mergedParamValues[nodepair.Key] = sentInValue
+		}
+	}
+
+	// Now we loop over the given parameter values to make sure we didn't get anything unexpected
+	for paramkey, paramvalue := range params {
+		// Check to see if we were given something that we don't expect
+		_, ok := mergedParamValues[paramkey]
+		if !ok {
+			//return errors.New("We found an unexpected parameter called: " + paramkey)
+		}
+		mergedParamValues[paramkey] = paramvalue
+	}
+
 	for viewKey, viewCompDef := range depMap.Views {
 
 		if key == viewKey {
@@ -224,7 +251,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 						mergedValue, err := templating.Execute(template, merge.ServerMergeData{
 							Session:     session,
-							ParamValues: params,
+							ParamValues: mergedParamValues,
 						})
 						if err != nil {
 							return err
@@ -604,6 +631,7 @@ type ViewDepMap struct {
 	Variants   map[string]bool
 	Views      map[string]*yaml.Node
 	Wires      []meta.NodePair
+	Params     []meta.NodePair
 }
 
 func (vdm *ViewDepMap) AddComponent(key string, session *sess.Session) (*meta.Component, error) {
@@ -639,6 +667,11 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 		return nil, err
 	}
 	panels, err := meta.GetMapNode(&v.Definition, "panels")
+	if err != nil {
+		panels = nil
+	}
+
+	params, err := meta.GetMapNode(&v.Definition, "params")
 	if err != nil {
 		panels = nil
 	}
@@ -688,6 +721,14 @@ func GetViewDependencies(v *meta.View, session *sess.Session) (*ViewDepMap, erro
 			return nil, err
 		}
 		depMap.Wires = wirePairs
+	}
+
+	if params != nil && params.Kind == yaml.MappingNode {
+		paramPairs, err := meta.GetMapNodes(params)
+		if err != nil {
+			return nil, err
+		}
+		depMap.Params = paramPairs
 	}
 
 	return depMap, nil

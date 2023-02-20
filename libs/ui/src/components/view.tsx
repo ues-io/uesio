@@ -63,9 +63,27 @@ const View: UC<ViewDefinition> = (props) => {
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
+
+	const paramsToUse: Record<string, string> = params || {}
+
+	// TEMPORARY
+	// We really should just process the params server side, and pass them
+	// down as view component state. But since we don't have a good system
+	// for doing that yet, we can just figure out the parameters client side too.
+	const paramDefs = viewDef?.params
+	if (paramDefs) {
+		Object.entries(paramDefs).forEach(([paramKey, paramDef]) => {
+			const currentParam = paramsToUse[paramKey]
+
+			if (!currentParam && paramDef.default) {
+				paramsToUse[paramKey] = paramDef.default
+			}
+		})
+	}
+
 	const [paramState] = componentApi.useState<Record<string, string>>(
 		componentApi.getComponentIdFromProps(props),
-		context.mergeStringMap(params)
+		context.mergeStringMap(paramsToUse)
 	)
 
 	const viewContext = context.addViewFrame({
