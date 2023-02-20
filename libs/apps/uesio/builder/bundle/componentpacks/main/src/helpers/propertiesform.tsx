@@ -22,7 +22,15 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		key: string,
 		value: wire.ViewOnlyField | wire.WireFieldDefinition
 	): string | string[] => {
-		if (!value) return key
+		// Sometimes value (the field definition) will be undefined,
+		// sometimes it will be an empty object, sometimes it will contain other subfields.
+		// If it's either an empty object or undefined, just return the key.
+		if (
+			!value ||
+			(typeof value === "object" && Object.keys(value).length === 0)
+		) {
+			return key
+		}
 		return Object.entries(value)
 			.map(([key2, value2]) => [`${key}->${key2}`, value2])
 			.flatMap(([key, value]) => getFields(key, value))
