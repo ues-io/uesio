@@ -9,9 +9,10 @@ const loadAllOp = async (context: Context, wires?: string[]) => {
 	if (!viewId) throw new Error("No ViewId in Context")
 
 	// Get the wires that still need to be loaded
-	const loadWires = wires?.filter(
-		(wireName) => selectWire(getCurrentState(), viewId, wireName)?.more
-	)
+	const loadWires = wires?.filter((wireName) => {
+		const wire = selectWire(getCurrentState(), viewId, wireName)
+		return wire?.more || wire?.batchnumber === 0
+	})
 
 	if (!loadWires || loadWires.length === 0) return context
 
