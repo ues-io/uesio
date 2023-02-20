@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/francoispqt/gojay"
@@ -197,11 +198,20 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 
 	// loop over the definition params (the params that this view says it knows about)
 	for _, nodepair := range depMap.Params {
+
+		isRequired, _ := strconv.ParseBool(meta.GetNodeValueAsString(nodepair.Node, "required"))
+
 		// check to see if this param was provided by my parent (could be a route or a view)
 		sentInValue, ok := params[nodepair.Key]
 		if !ok {
 			// Ok, well give the default
-			mergedParamValues[nodepair.Key] = meta.GetNodeValueAsString(nodepair.Node, "default")
+			defaultValue := meta.GetNodeValueAsString(nodepair.Node, "default")
+
+			if isRequired && defaultValue == "" {
+				return errors.New("Missing required parameter for the view " + key + " called: " + nodepair.Key)
+			}
+
+			mergedParamValues[nodepair.Key] = defaultValue
 		}
 		if ok {
 			mergedParamValues[nodepair.Key] = sentInValue
@@ -213,7 +223,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		// Check to see if we were given something that we don't expect
 		_, ok := mergedParamValues[paramkey]
 		if !ok {
-			//return errors.New("We found an unexpected parameter called: " + paramkey)
+			return errors.New("We found an unexpected parameter for the view " + key + " called: " + paramkey)
 		}
 		mergedParamValues[paramkey] = paramvalue
 	}
