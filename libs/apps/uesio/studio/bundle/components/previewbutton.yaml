@@ -3,7 +3,6 @@ pack: main
 entrypoint: components/previewbutton/previewbutton
 utilities:
   - uesio/io.button
-  - uesio/io.form
   - uesio/io.dialog
 variants:
   - uesio/io.button:uesio/io.secondary

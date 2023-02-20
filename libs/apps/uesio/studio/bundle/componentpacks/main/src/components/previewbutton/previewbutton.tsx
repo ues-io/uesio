@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import {
 	hooks,
 	api,
@@ -97,7 +97,7 @@ const getWireFieldsFromParams = (
 
 interface FormProps {
 	setOpen: (value: boolean) => void
-	onSubmit: (record: wire.WireRecord) => void
+	onSubmit: (wire: wire.Wire | undefined) => void
 	params: param.ParamDefinition[]
 }
 
@@ -106,6 +106,10 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	const Dialog = component.getUtility("uesio/io.dialog")
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const Group = component.getUtility("uesio/io.group")
+	const Button = component.getUtility("uesio/io.button")
+
+	const wireRef = useRef<wire.Wire | undefined>()
 
 	if (!params) return null
 
@@ -122,8 +126,16 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 					id="previewform"
 					fields={getWireFieldsFromParams(params)}
 					context={context}
-					onSubmit={onSubmit}
+					wireRef={wireRef}
 				/>
+				<Group justifyContent="end" context={context}>
+					<Button
+						context={context}
+						variant="uesio/io.primary"
+						label="Generate"
+						onClick={() => onSubmit(wireRef.current)}
+					/>
+				</Group>
 			</Dialog>
 		</FloatingPortal>
 	)
@@ -154,7 +166,8 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 		togglePreview()
 	})
 
-	const previewHandler = (record?: wire.WireRecord) => {
+	const previewHandler = (wire?: wire.Wire) => {
+		const record = wire?.getFirstRecord()
 		const urlParams =
 			hasParams && record
 				? new URLSearchParams(getParamValues(params, record))
