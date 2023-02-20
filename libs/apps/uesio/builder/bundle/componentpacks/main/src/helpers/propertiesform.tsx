@@ -84,19 +84,7 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
-		case "MAP": {
-			return {
-				"uesio/io.field": {
-					fieldId: property.name,
-					wrapperVariant: "uesio/io.minimal",
-					displayAs: "DECK",
-					labelPosition: "none",
-					map: {
-						components: property.components,
-					},
-				},
-			}
-		}
+		case "MAP":
 		case "LIST": {
 			return {
 				"uesio/io.field": {

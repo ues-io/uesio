@@ -17,15 +17,11 @@ type PropListItemDefinition = {
 const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 	const {
 		context,
-		definition: { popperProperties },
+		definition: { displayTemplate, popperProperties },
 	} = props
 
 	const record = context.getRecord()
-
-	// TODO INJECT THE INDEX
-	const index = record?.getFieldValue("index") as string
-	// const recordValue = record?.getFieldValue("value") as wire.PlainWireRecord
-	// const collection = record?.getFieldValue("value->collection") as string
+	const index = context.getRecordDataIndex(record)
 
 	const path = new FullPath()
 
@@ -56,8 +52,7 @@ const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 			}
 		>
 			<div className="tagroot">
-				TEMPLATE SHOULD BE MERGED
-				{/* context.merge(displayTemplate) */}
+				{context.merge(displayTemplate)}
 				{/* <NamespaceLabel
 					metadatainfo={nsInfo}
 					context={context}

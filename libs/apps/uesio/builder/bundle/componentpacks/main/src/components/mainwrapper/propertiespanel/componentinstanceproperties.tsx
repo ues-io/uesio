@@ -24,7 +24,10 @@ import {
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
-import { getStyleVariantProperty } from "../../../api/componentproperty"
+import {
+	ComponentProperty,
+	getStyleVariantProperty,
+} from "../../../api/componentproperty"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -50,6 +53,15 @@ function getSections(componentDef?: ComponentDef) {
 	}
 	return sections
 }
+
+const signalProperties = [
+	{
+		name: "signal",
+		label: "Signal Name",
+		required: true,
+		type: "TEXT",
+	},
+] as ComponentProperty[]
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -129,7 +141,10 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 							name: "signals",
 							components: [
 								{
-									"uesio/builder.signaltag": {},
+									"uesio/builder.proplistitem": {
+										displayTemplate: "${signal}",
+										popperProperties: signalProperties,
+									},
 								},
 							],
 							type: "LIST",
