@@ -102,12 +102,14 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const selectedSection =
 		sections.find((section) => selectedTab === getSectionId(section)) ||
 		sections[0]
+	let selectedSectionId: string
 
 	switch (selectedSection?.type) {
 		case "HOME": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.home"
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab || "uesio.home").combine()}
+					id={path.addLocal(selectedSectionId).combine()}
 					context={context}
 					properties={componentDef.properties}
 					path={path}
@@ -116,13 +118,15 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			break
 		}
 		case "DISPLAY": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.display"
 			content = <>DISPLAY</>
 			break
 		}
 		case "STYLES": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.styles"
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab || "uesio.styles").combine()}
+					id={path.addLocal(selectedSectionId).combine()}
 					context={context}
 					properties={[
 						// Style Variant
@@ -135,18 +139,21 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			break
 		}
 		case "SIGNALS": {
+			selectedSectionId = getSectionId(selectedSection) || "signals"
 			content = (
 				<PropertiesForm
-					id={path.combine()}
+					id={path.addLocal(selectedSectionId).combine()}
 					context={context}
 					properties={[
 						{
-							name: "signals",
+							name: selectedSectionId,
 							components: [
 								{
 									"uesio/builder.proplistitem": {
 										displayTemplate: "${signal}",
 										popperProperties: signalProperties,
+										propertyName: selectedSectionId,
+										parentPath: path,
 									},
 								},
 							],

@@ -37,16 +37,13 @@ const fromPath = (pathArray: string[]) => {
 	return `["${pathArray.join(`"]["`)}"]`
 }
 
-// Trims the last item of a path
-const getParentPath = (path: string) => {
-	const pathArray = toPath(path)
-	pathArray.pop()
-	return fromPath(pathArray)
-}
+// Removes the last item from a path
+const getParentPath = (path: string) => getAncestorPath(path, 1)
 
 const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
 
-const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))
+// Removes the last 2 items from a path
+const getGrandParentPath = (path: string) => getAncestorPath(path, 2)
 
 /**
  * Trims a path N levels up

@@ -10,41 +10,43 @@ import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 type PropListItemDefinition = {
+	propertyName: string
 	displayTemplate: string
+	parentPath: FullPath
 	popperProperties?: ComponentProperty[]
 }
 
 const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 	const {
 		context,
-		definition: { displayTemplate, popperProperties },
+		definition: {
+			parentPath,
+			propertyName,
+			displayTemplate,
+			popperProperties,
+		},
 	} = props
 
 	const record = context.getRecord()
 	const index = context.getRecordDataIndex(record)
-
-	const path = new FullPath()
-
 	const IOExpandPanel = component.getUtility("uesio/io.expandpanel")
 
 	const viewDefId = context.getViewDefId() || ""
 	if (!viewDefId || !record) return null
 
 	const selectedPath = useSelectedPath(context)
-	// const nsInfo = getBuilderNamespace(
-	// 	context,
-	// 	collection as metadata.MetadataKey
-	// )
+	const listPath = parentPath.addLocal(propertyName)
+	const listItemPath = listPath.addLocal(`${index}`)
 
 	return (
 		<PropNodeTag
-			onClick={() => setSelectedPath(context, path)}
-			selected={selectedPath.startsWith(path)}
+			onClick={() => setSelectedPath(context, listItemPath)}
+			selected={selectedPath.startsWith(listItemPath)}
 			context={context}
 			popperChildren={
 				popperProperties && (
 					<PropertiesForm
-						path={path.addLocal(`["${index}"]`)}
+						path={listItemPath}
 						context={context}
 						properties={popperProperties}
 					/>
@@ -61,12 +63,12 @@ const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 			</div>
 			<IOExpandPanel
 				context={context}
-				expanded={path.equals(selectedPath)}
+				expanded={listItemPath.equals(selectedPath)}
 			>
 				<BuildActionsArea context={context}>
-					<DeleteAction context={context} path={path} />
-					<MoveActions context={context} path={path} />
-					<CloneKeyAction context={context} path={path} />
+					<DeleteAction context={context} path={listItemPath} />
+					<MoveActions context={context} path={listItemPath} />
+					<CloneKeyAction context={context} path={listItemPath} />
 				</BuildActionsArea>
 			</IOExpandPanel>
 		</PropNodeTag>
