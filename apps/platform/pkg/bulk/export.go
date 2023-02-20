@@ -1,6 +1,8 @@
 package bulk
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
 	"io"
 	"strconv"
@@ -17,6 +19,7 @@ import (
 type Exportable interface {
 	meta.Group
 	GetData() (io.Reader, error)
+	GetFileFieldIDs() []string
 }
 
 func loadData(op *adapt.LoadOp, session *sess.Session) error {
@@ -38,7 +41,7 @@ func generateFileName(collectionName string) string {
 	hour, min, sec := time.Now().Clock()
 	dateTime := strconv.Itoa(y) + "_" + m.String() + "_" + strconv.Itoa(d) + "_" + strconv.Itoa(hour) + ":" + strconv.Itoa(min) + ":" + strconv.Itoa(sec)
 
-	return collectionName + "_" + dateTime + ".csv"
+	return collectionName + "_" + dateTime + ".zip"
 }
 
 func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
@@ -121,9 +124,45 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
+	buf := new(bytes.Buffer)
+
+	// Create a new zip archive.
+	zipwriter := zip.NewWriter(buf)
+
+	file, err := zipwriter.Create("records.csv")
+	if err != nil {
+		return nil, err
+	}
+	_, err = io.Copy(file, data)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check to see if we found any file fields
+	fileIDs := collection.GetFileFieldIDs()
+
+	if len(fileIDs) > 0 {
+		for _, fileID := range fileIDs {
+			filedata, filemetadata, err := filesource.Download(fileID, session)
+			if err != nil {
+				return nil, err
+			}
+			file, err := zipwriter.Create(filemetadata.GetRelativePath())
+			if err != nil {
+				return nil, err
+			}
+			_, err = io.Copy(file, filedata)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	zipwriter.Close()
+
 	_, err = filesource.Upload([]filesource.FileUploadOp{
 		{
-			Data:    data,
+			Data:    buf,
 			Details: details,
 		},
 	}, nil, session)

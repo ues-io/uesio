@@ -9,7 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func NewCSVExportItem(collectionMetadata *adapt.CollectionMetadata) *CSVExportItem {
+func NewCSVExportItem(collectionMetadata *adapt.CollectionMetadata, parent *CSVExportCollection) *CSVExportItem {
 	columnIndexes := map[string]int{}
 	index := 0
 	for fieldName := range collectionMetadata.Fields {
@@ -20,6 +20,7 @@ func NewCSVExportItem(collectionMetadata *adapt.CollectionMetadata) *CSVExportIt
 		data:               make([]string, len(columnIndexes)),
 		collectionMetadata: collectionMetadata,
 		columnIndexes:      columnIndexes,
+		parent:             parent,
 	}
 }
 
@@ -27,6 +28,7 @@ type CSVExportItem struct {
 	data               []string
 	columnIndexes      map[string]int
 	collectionMetadata *adapt.CollectionMetadata
+	parent             *CSVExportCollection
 }
 
 func (i *CSVExportItem) SetField(fieldName string, value interface{}) error {
@@ -42,6 +44,11 @@ func (i *CSVExportItem) SetField(fieldName string, value interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	if fieldMetadata.Type == "FILE" && stringVal != "" {
+		i.parent.fileFieldIDs = append(i.parent.fileFieldIDs, stringVal)
+	}
+
 	index := i.columnIndexes[fieldName]
 	i.data[index] = stringVal
 
@@ -72,12 +79,13 @@ func (i *CSVExportItem) Len() int {
 
 func NewCSVExportCollection(collectionMetadata *adapt.CollectionMetadata) *CSVExportCollection {
 	buffer := &bytes.Buffer{}
-	return &CSVExportCollection{
+	exportCollection := &CSVExportCollection{
 		buffer:             buffer,
 		writer:             csv.NewWriter(buffer),
-		current:            NewCSVExportItem(collectionMetadata),
 		collectionMetadata: collectionMetadata,
 	}
+	exportCollection.current = NewCSVExportItem(collectionMetadata, exportCollection)
+	return exportCollection
 }
 
 type CSVExportCollection struct {
@@ -86,6 +94,7 @@ type CSVExportCollection struct {
 	writer             *csv.Writer
 	hasHeader          bool
 	collectionMetadata *adapt.CollectionMetadata
+	fileFieldIDs       []string
 }
 
 func (c *CSVExportCollection) GetItem(index int) meta.Item {
@@ -136,4 +145,8 @@ func (c *CSVExportCollection) GetData() (io.Reader, error) {
 		return nil, err
 	}
 	return c.buffer, nil
+}
+
+func (c *CSVExportCollection) GetFileFieldIDs() []string {
+	return c.fileFieldIDs
 }
