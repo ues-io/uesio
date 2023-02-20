@@ -40,6 +40,7 @@ const useDynamicWire = (
 	context: Context
 ) => {
 	const wire = useWire(wireName, context)
+	// This Hook handles wireName changes --- there's a lot more work to do here.
 	useEffect(() => {
 		if (!wireDef || !wireName) return
 		initWiresOp(context, {
@@ -51,6 +52,8 @@ const useDynamicWire = (
 		}
 	}, [wireName])
 
+	// This Hook runs if any change is made to the wire definition,
+	// but we don't need to update as much state, so this logic is split out
 	useEffect(() => {
 		if (!wire || !wireDef) return
 		const collections: PlainCollectionMap = {}
