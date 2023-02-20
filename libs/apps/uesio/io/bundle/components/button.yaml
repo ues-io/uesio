@@ -5,6 +5,9 @@ category: INTERACTION
 pack: main
 entrypoint: components/button/button
 discoverable: true
+defaultDefinition:
+  text: New Button
+  icon: bolt
 properties:
   - name: text
     type: TEXT
