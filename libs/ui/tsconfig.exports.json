@@ -1,7 +1,7 @@
 {
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"outFile": "../../dist/ui/types/types.d.ts",
+		"outFile": "../../dist/ui/server/types/types.d.ts",
 		"allowJs": false,
 		"declaration": true,
 		"emitDeclarationOnly": true,
