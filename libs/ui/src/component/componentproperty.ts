@@ -1,11 +1,13 @@
-import { definition, metadata, component } from "@uesio/ui"
+import { DisplayCondition } from "./display"
+import { MetadataType } from "../metadataexports"
+import { DefinitionList } from "../definition/definition"
 
 type BaseProperty = {
 	name: string
 	label?: string
 	required?: boolean
 	type: string
-	displayConditions?: component.DisplayCondition[]
+	displayConditions?: DisplayCondition[]
 }
 type TextProperty = {
 	type: "TEXT"
@@ -28,14 +30,14 @@ type KeyProperty = {
 
 type MetadataProperty = {
 	type: "METADATA"
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
 
 type MultiMetadataProperty = {
 	type: "MULTI_METADATA"
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
@@ -67,12 +69,12 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
-	components: definition.DefinitionList
+	components: DefinitionList
 } & BaseProperty
 
 type ListProperty = {
 	type: "LIST"
-	components: definition.DefinitionList
+	components: DefinitionList
 } & BaseProperty
 
 type SelectOption = {

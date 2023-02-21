@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component, definition, signal as signalApi } from "@uesio/ui"
 import PropertiesWrapper, { Tab } from "./propertieswrapper"
 import {
 	getComponentDef,
@@ -24,10 +24,6 @@ import {
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
-import {
-	ComponentProperty,
-	getStyleVariantProperty,
-} from "../../../api/componentproperty"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -54,14 +50,8 @@ function getSections(componentDef?: ComponentDef) {
 	return sections
 }
 
-const signalProperties = [
-	{
-		name: "signal",
-		label: "Signal Name",
-		required: true,
-		type: "TEXT",
-	},
-] as ComponentProperty[]
+const getSignalProperties = (signal: signalApi.SignalDefinition) =>
+	signalApi.getSignal(signal.signal)
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -132,7 +122,9 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					context={context}
 					properties={[
 						// Style Variant
-						getStyleVariantProperty(componentType as string),
+						component.getStyleVariantProperty(
+							componentType as string
+						),
 						// Custom Styles
 					]}
 					path={path}
@@ -145,7 +137,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			content = (
 				<ListProperty
 					path={path}
-					itemProperties={signalProperties}
+					itemProperties={getSignalProperties}
 					itemPropertiesPanelTitle={"Signal Properties"}
 					propertyName={selectedSectionId}
 					context={context}

@@ -1,8 +1,7 @@
-import { definition, component } from "@uesio/ui"
+import { definition, component, wire } from "@uesio/ui"
 import CloneKeyAction from "../../actions/clonekeyaction"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
-import { ComponentProperty } from "../../api/componentproperty"
 import { FullPath } from "../../api/path"
 import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
@@ -10,10 +9,14 @@ import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
 
+type ItemPropertiesGetter = (
+	item: wire.WireRecord
+) => component.ComponentProperty[]
+
 type Props = {
 	displayTemplate: string
 	parentPath: FullPath
-	itemProperties?: ComponentProperty[]
+	itemProperties?: component.ComponentProperty[] | ItemPropertiesGetter
 	itemPropertiesPanelTitle?: string
 } & definition.UtilityComponent
 
@@ -49,12 +52,17 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 						// className={props.className}
 						path={listItemPath}
 						title={itemPropertiesPanelTitle || "Properties"}
+						onUnselect={() => setSelectedPath(context, parentPath)}
 					>
 						<PropertiesForm
 							id={listItemPath.combine()}
 							path={listItemPath}
 							context={context}
-							properties={itemProperties}
+							properties={
+								typeof itemProperties === "function"
+									? itemProperties(record)
+									: itemProperties
+							}
 						/>
 					</PropertiesWrapper>
 				)

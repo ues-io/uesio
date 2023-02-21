@@ -1,8 +1,10 @@
 import { definition, wire, component } from "@uesio/ui"
-
-import { ComponentProperty } from "../../api/componentproperty"
 import { FullPath } from "../../api/path"
 import { get } from "../../api/defapi"
+
+type ItemPropertiesGetter = (
+	item: wire.WireRecord
+) => component.ComponentProperty[]
 
 type Props = {
 	path: FullPath
@@ -11,7 +13,7 @@ type Props = {
 	itemDisplayTemplate: string
 	itemPropertiesPanelTitle: string
 	addAction: () => void
-	itemProperties?: ComponentProperty[]
+	itemProperties?: component.ComponentProperty[] | ItemPropertiesGetter
 } & definition.UtilityProps
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {

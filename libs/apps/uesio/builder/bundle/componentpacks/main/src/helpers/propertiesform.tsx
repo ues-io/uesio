@@ -2,21 +2,15 @@ import { component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
-import {
-	ComponentProperty,
-	SelectProperty,
-	SelectOption,
-	WireProperty,
-} from "../api/componentproperty"
 
 type Props = {
-	properties?: ComponentProperty[]
+	properties?: component.ComponentProperty[]
 	content?: definition.DefinitionList
 	path: FullPath
 }
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
-	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
+	if (!wireDef || !wireDef.fields) return [] as component.SelectOption[]
 
 	const getFields = (
 		key: string,
@@ -38,11 +32,11 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
-		.map((el) => ({ value: el, label: el } as SelectOption))
+		.map((el) => ({ value: el, label: el } as component.SelectOption))
 }
 
 const getFormFieldFromProperty = (
-	property: ComponentProperty,
+	property: component.ComponentProperty,
 	context: context.Context,
 	path: FullPath
 ) => {
@@ -127,7 +121,7 @@ const getFormFieldFromProperty = (
 }
 
 const getFormFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
+	properties: component.ComponentProperty[] | undefined,
 	context: context.Context,
 	path: FullPath
 ) => {
@@ -139,7 +133,7 @@ const getFormFieldsFromProperties = (
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
-	options: SelectOption[],
+	options: component.SelectOption[],
 	blankOptionLabel?: string
 ) =>
 	({
@@ -148,11 +142,11 @@ const getSelectListMetadataFromOptions = (
 		options,
 	} as wire.SelectListMetadata)
 
-const getSelectListMetadata = (def: SelectProperty) =>
+const getSelectListMetadata = (def: component.SelectProperty) =>
 	getSelectListMetadataFromOptions(
 		def.name,
 		def.options.map(
-			(o: SelectOption) =>
+			(o: component.SelectOption) =>
 				({
 					...o,
 				} as wire.SelectOption)
@@ -162,7 +156,7 @@ const getSelectListMetadata = (def: SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: WireProperty
+	def: component.WireProperty
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -177,7 +171,7 @@ const getWireSelectListMetadata = (
 	)
 
 const getWireFieldFromPropertyDef = (
-	def: ComponentProperty,
+	def: component.ComponentProperty,
 	context: context.Context,
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
@@ -255,7 +249,7 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getWireFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
+	properties: component.ComponentProperty[] | undefined,
 	context: context.Context,
 	initialValue: wire.PlainWireRecord
 ) => {

@@ -9,7 +9,7 @@ import { batch } from "react-redux"
 import { platform } from "../../platform/platform"
 import { makeComponentId } from "../../hooks/componentapi"
 
-interface ComponentSignal extends SignalDefinition {
+export interface ComponentSignal extends SignalDefinition {
 	target?: string
 }
 
