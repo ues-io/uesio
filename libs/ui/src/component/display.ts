@@ -229,8 +229,6 @@ function should(condition: DisplayCondition, context: Context) {
 			: context
 		const isFullyLoaded = !!ctx.getWire()?.isFullyLoaded()
 
-		console.log({ isFullyLoaded })
-
 		return condition.type === "wireIsNotFullyLoaded"
 			? !isFullyLoaded
 			: isFullyLoaded
