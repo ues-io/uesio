@@ -10,6 +10,7 @@ variants:
   - uesio/io.button:uesio/io.nav
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.field:uesio/io.table
+  - uesio/io.customselectfield:uesio/io.default
 category: DATA
 discoverable: true
 properties:
@@ -36,3 +37,9 @@ properties:
     min: 5
     max: 500
     step: 5
+sections:
+  - type: HOME
+  - label: Fields
+    id: fields
+    viewDefinition:
+    # TODO: Custom component for Table Fields / sub-components

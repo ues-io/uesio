@@ -13,4 +13,7 @@ const getAvailableWires = (context: context.Context) => {
 	return result
 }
 
-export { getAvailableWireIds, getAvailableWires }
+const getWireDefinition = (context: context.Context, wireId: string) =>
+	getAvailableWires(context)?.[wireId]
+
+export { getAvailableWireIds, getAvailableWires, getWireDefinition }

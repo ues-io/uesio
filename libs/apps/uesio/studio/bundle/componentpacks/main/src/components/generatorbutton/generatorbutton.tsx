@@ -1,12 +1,5 @@
-import { FunctionComponent, useState } from "react"
-import {
-	api,
-	param,
-	definition,
-	component,
-	wire,
-	context as ctx,
-} from "@uesio/ui"
+import { FunctionComponent, useRef, useState } from "react"
+import { api, param, definition, component, wire } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
 	getParamValues,
@@ -61,6 +54,8 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 
 	const Dialog = component.getUtility("uesio/io.dialog")
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const Group = component.getUtility("uesio/io.group")
+	const Button = component.getUtility("uesio/io.button")
 
 	const [params] = api.bot.useParams(
 		context,
@@ -69,7 +64,27 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 		"generator"
 	)
 
+	const wireRef = useRef<wire.Wire | undefined>()
+
 	if (!params) return null
+
+	const onClick = async () => {
+		const result = wireRef.current?.getFirstRecord()
+		if (!result) return
+		await api.bot.callGenerator(
+			context,
+			genNamespace,
+			genName,
+			getParamValues(params, result)
+		)
+		setOpen(false)
+		return api.signal.run(
+			{
+				signal: "route/RELOAD",
+			},
+			context.deleteWorkspace()
+		)
+	}
 
 	return (
 		<FloatingPortal>
@@ -87,22 +102,16 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 					)}
 					fields={getWireFieldsFromParams(params)}
 					submitLabel="Generate"
-					onSubmit={async (record: wire.WireRecord) => {
-						await api.bot.callGenerator(
-							context,
-							genNamespace,
-							genName,
-							getParamValues(params, record)
-						)
-						setOpen(false)
-						return api.signal.run(
-							{
-								signal: "route/RELOAD",
-							},
-							new ctx.Context()
-						)
-					}}
+					wireRef={wireRef}
 				/>
+				<Group justifyContent="end" context={context}>
+					<Button
+						context={context}
+						variant="uesio/io.primary"
+						label="Generate"
+						onClick={onClick}
+					/>
+				</Group>
 			</Dialog>
 		</FloatingPortal>
 	)

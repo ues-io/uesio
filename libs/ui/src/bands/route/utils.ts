@@ -20,35 +20,36 @@ import { ThemeState } from "../../definition/theme"
 import { MetadataState } from "../metadata/types"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { initExistingWire } from "../wire/operations/initialize"
-import { RegularWireDefinition } from "../../definition/wire"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainWire } from "../wire/types"
 import { dispatch } from "../../store/store"
 import { ComponentState } from "../component/types"
+import { PlainCollection, PlainCollectionMap } from "../collection/types"
 
 type Dep<T> = Record<string, T> | undefined
 
 const attachDefToWires = (
 	wires?: EntityState<PlainWire>,
-	viewdefs?: EntityState<PlainViewDef>
+	viewdefs?: EntityState<PlainViewDef>,
+	collections?: EntityState<PlainCollection>
 ) => {
 	if (!wires || !viewdefs) return
 	wires.ids.forEach((wirename) => {
 		const wire = wires.entities[wirename]
-		if (wire) {
-			const viewId = wire.view.split("(")[0]
-			const wireDef = viewdefs.entities?.[viewId]?.definition.wires?.[
-				wire.name
-			] as RegularWireDefinition
-			if (!wireDef)
-				throw new Error(
-					"Could not find wire def for wire: " +
-						wire.view +
-						" : " +
-						wire.name
-				)
-			wires.entities[wirename] = initExistingWire(wire, wireDef)
-		}
+		if (!wire) return
+
+		const viewId = wire.view.split("(")[0]
+		const wireDef =
+			viewdefs.entities?.[viewId]?.definition.wires?.[wire.name]
+		if (!wireDef)
+			throw new Error(
+				`Could not find wire def for wire: ${wire.view} : ${wire.name}`
+			)
+		wires.entities[wirename] = initExistingWire(
+			wire,
+			wireDef,
+			(collections?.entities || {}) as PlainCollectionMap
+		)
 	})
 }
 
@@ -81,7 +82,7 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 
 	const wires = deps.wire
 	if (wires && viewdefs) {
-		attachDefToWires(wires, deps.viewdef)
+		attachDefToWires(wires, deps.viewdef, deps.collection)
 		dispatch(initWire(wires))
 	}
 

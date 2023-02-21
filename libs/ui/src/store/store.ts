@@ -47,7 +47,11 @@ type InitialState = {
 let store: ReturnType<typeof create>
 
 const create = (initialState: InitialState) => {
-	attachDefToWires(initialState.wire, initialState.viewdef)
+	attachDefToWires(
+		initialState.wire,
+		initialState.viewdef,
+		initialState.collection
+	)
 
 	const newStore = configureStore({
 		reducer: {

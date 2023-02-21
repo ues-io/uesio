@@ -1,0 +1,3 @@
+name: constrainedinput
+pack: main
+entrypoint: utilities/constrainedinput/constrainedinput

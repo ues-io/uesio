@@ -9,6 +9,7 @@ import {
 	cancel,
 	empty,
 	toggleCondition,
+	setConditionValue,
 	getFullWireId,
 } from "."
 import saveWiresOp from "./operations/save"
@@ -134,6 +135,16 @@ class Wire {
 		)
 	}
 
+	setConditionValue = (conditionId: string, value: FieldValue) => {
+		dispatch(
+			setConditionValue({
+				entity: this.getFullId(),
+				id: conditionId,
+				value,
+			})
+		)
+	}
+
 	attachCollection = (collection: PlainCollection) => {
 		this.collection = new Collection(collection)
 		return this
@@ -141,7 +152,7 @@ class Wire {
 
 	save = (context: Context) => saveWiresOp(context, [this.getId()])
 
-	load = (context: Context) => loadWireOp(context, [this.getId()])
+	load = (context: Context) => loadWireOp(context, [this.getId()], true)
 
 	getEvents = () => this.source.events
 }

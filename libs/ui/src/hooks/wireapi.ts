@@ -4,14 +4,18 @@ import {
 	useWire as uWire,
 	useWires as uWires,
 	removeOne as removeWire,
+	init,
 } from "../bands/wire"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
-import initWiresOp from "../bands/wire/operations/initialize"
+import initWiresOp, {
+	initExistingWire,
+} from "../bands/wire/operations/initialize"
 import { Context } from "../context/context"
 import { WireDefinition } from "../definition/wire"
 import { useEffect } from "react"
 import { dispatch } from "../store/store"
+import { PlainCollectionMap } from "../bands/collection/types"
 
 // Wraps our store's useWire result (POJO) in a nice Wire class
 // with convenience methods to make the api easier to consume for end users.
@@ -36,15 +40,29 @@ const useDynamicWire = (
 	context: Context
 ) => {
 	const wire = useWire(wireName, context)
+	// This Hook handles wireName changes --- there's a lot more work to do here.
 	useEffect(() => {
 		if (!wireDef || !wireName) return
-		initWires(context, {
+		initWiresOp(context, {
 			[wireName]: wireDef,
 		})
-		loadWires(context, [wireName])
+		loadWiresOp(context, [wireName])
 		return () => {
 			remove(wireName, context)
 		}
+	}, [wireName])
+
+	// This Hook runs if any change is made to the wire definition,
+	// but we don't need to update as much state, so this logic is split out
+	useEffect(() => {
+		if (!wire || !wireDef) return
+		const collections: PlainCollectionMap = {}
+		const initializedWires = initExistingWire(
+			wire.source,
+			wireDef,
+			collections
+		)
+		dispatch(init([[initializedWires], collections]))
 	}, [wireName, JSON.stringify(wireDef)])
 	return wire
 }

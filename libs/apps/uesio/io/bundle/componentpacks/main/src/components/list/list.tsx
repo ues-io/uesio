@@ -8,9 +8,10 @@ import {
 } from "../../shared/mode"
 
 type ListDefinition = {
-	id: string
-	wire: string
-	mode: context.FieldMode
+	id?: string
+	wire?: string
+	mode?: context.FieldMode
+	components?: definition.DefinitionList
 }
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
@@ -22,15 +23,6 @@ const signals: Record<string, signal.ComponentSignalDescriptor> = {
 const List: definition.UC<ListDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
-
-	// If we got a wire from the definition, add it to context
-	const newContext =
-		definition.wire && wire
-			? context.addWireFrame({
-					wire: definition.wire,
-					view: wire.getViewId(),
-			  })
-			: context
 
 	const componentId = api.component.getComponentIdFromProps(props)
 	const [mode] = useMode(componentId, definition.mode)
@@ -45,7 +37,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 					definition={definition}
 					listName="components"
 					path={path}
-					context={newContext
+					context={context
 						.addRecordFrame({
 							wire: wire.getId(),
 							record: record.getId(),
