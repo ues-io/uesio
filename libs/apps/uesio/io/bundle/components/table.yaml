@@ -14,13 +14,13 @@ variants:
 category: DATA
 discoverable: true
 properties:
+  - name: uesio.id
+    label: Table Id
+    type: COMPONENT_ID
+    required: true
   - name: wire
     label: Wire
     type: WIRE
-    required: true
-  - name: uesio/core.id
-    label: Table Id
-    type: COMPONENT_ID
     required: true
   - name: mode
     label: Display Mode
