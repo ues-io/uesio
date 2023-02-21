@@ -39,7 +39,7 @@ const add = (
 ) => {
 	const [index, parent] = path.popIndex()
 	api.builder.addDefinition(parent.pathCombine(), definition, index)
-	//setSelectedPath(context, path)
+	setSelectedPath(context, path)
 }
 
 const move = (

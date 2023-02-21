@@ -2,7 +2,7 @@ import { Context } from "../context/context"
 import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
 
-type DisplayOperator = "EQUALS" | "NOT_EQUALS" | undefined
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "INCLUDES" | undefined
 
 // If there is a record in context, only test against that record
 // If there is no record in context, test against all records in the wire.
@@ -11,7 +11,7 @@ type FieldValueCondition = {
 	wire?: string
 	field: string
 	operator: DisplayOperator
-	value: string
+	value: string | string[]
 }
 
 type ParamIsSetCondition = {
