@@ -19,8 +19,10 @@ const defaultSignalProps = (): component.ComponentProperty[] => [
 
 const getSignalProperties = (signal: signalApi.SignalDefinition) => {
 	const registry = signalApi.getSignals()
-	const descriptor =
-		registry[signal?.signal] || signalApi.ComponentSignalDescriptor
+	const descriptor = registry[signal?.signal]
+	// TODO: WHAT IS NOT WORKING HERE???
+	// const descriptor =
+	// 	registry[signal?.signal] || signalApi.ComponentSignalDescriptor
 	return [
 		...defaultSignalProps(),
 		...(descriptor.properties ? descriptor.properties(signal) : []),

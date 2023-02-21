@@ -1,6 +1,7 @@
 import { DisplayCondition } from "./display"
 import { MetadataType } from "../metadataexports"
 import { DefinitionList } from "../definition/definition"
+import { RegularWireDefinition, WireConditionState } from "../wireexports"
 
 type BaseProperty = {
 	name: string
@@ -13,8 +14,18 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type ParamProperty = {
+	type: "PARAM"
+} & BaseProperty
+
 type ComponentIdProperty = {
 	type: "COMPONENT_ID"
+} & BaseProperty
+
+type BotProperty = {
+	type: "BOT"
+	namespace?: string
+	botType: "LISTENER"
 } & BaseProperty
 
 type NumberProperty = {
@@ -42,12 +53,27 @@ type MultiMetadataProperty = {
 	groupingValue?: string
 } & BaseProperty
 
+type NamespaceProperty = {
+	type: "NAMESPACE"
+} & BaseProperty
+
 type CheckboxProperty = {
 	type: "CHECKBOX"
 } & BaseProperty
 
+type ConditionProperty = {
+	type: "CONDITION"
+	wire: string
+	filter?: (def: WireConditionState) => boolean
+} & BaseProperty
+
 type WireProperty = {
 	type: "WIRE"
+	filter?: (def: RegularWireDefinition) => boolean
+} & BaseProperty
+
+type WiresProperty = {
+	type: "WIRES"
 } & BaseProperty
 
 type FieldProperty = {
@@ -83,13 +109,18 @@ type SelectOption = {
 	disabled?: boolean
 }
 type ComponentProperty =
+	| BotProperty
 	| TextProperty
 	| NumberProperty
 	| KeyProperty
 	| MetadataProperty
 	| MultiMetadataProperty
+	| NamespaceProperty
+	| ParamProperty
 	| SelectProperty
+	| ConditionProperty
 	| WireProperty
+	| WiresProperty
 	| FieldProperty
 	| FieldsProperty
 	| ComponentIdProperty
@@ -106,6 +137,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 })
 
 export {
+	BotProperty,
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,

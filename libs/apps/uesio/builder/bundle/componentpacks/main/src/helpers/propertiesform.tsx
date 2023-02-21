@@ -1,4 +1,4 @@
-import { component, context, definition, wire } from "@uesio/ui"
+import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
@@ -156,7 +156,7 @@ const getSelectListMetadata = (def: component.SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: component.WireProperty
+	def: component.ComponentProperty
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -169,6 +169,52 @@ const getWireSelectListMetadata = (
 		),
 		"No wire selected"
 	)
+
+const getNamespaceSelectListMetadata = (
+	context: context.Context,
+	def: component.ComponentProperty
+) => {
+	const [namespaces] = api.builder.useAvailableNamespaces(context)
+	return getSelectListMetadataFromOptions(
+		def.name,
+		namespaces?.map(
+			(ns) =>
+				({
+					value: ns,
+					label: ns,
+				} as wire.SelectOption)
+		) || [],
+		"Select a namespace"
+	)
+}
+
+const getBotSelectListMetadata = (
+	context: context.Context,
+	def: component.BotProperty
+) => {
+	if (!def.namespace) return null
+
+	const [metadata] = api.builder.useMetadataList(
+		context,
+		"BOT",
+		namespace,
+		botType
+	)
+
+	return (
+		<SelectProp
+			{...props}
+			label="Bot"
+			options={Object.keys(metadata || {}).map((key) => {
+				const label = key.split(namespace + ".")[1] || key
+				return {
+					value: key,
+					label,
+				}
+			})}
+		/>
+	)
+}
 
 const getWireFieldFromPropertyDef = (
 	def: component.ComponentProperty,
@@ -204,12 +250,27 @@ const getWireFieldFromPropertyDef = (
 				required: true,
 				type: "TEXT" as const,
 			}
+		case "BOT":
+			return {
+				label: label || name,
+				type: "SELECT" as const,
+				required: false
+				selectlist: getBotSelectListMetadata(context, def),
+			}
 		case "WIRE":
+		case "WIRES":
+			return {
+				label: label || name,
+				required: required || false,
+				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
+				selectlist: getWireSelectListMetadata(context, def),
+			}
+		case "NAMESPACE":
 			return {
 				label: label || name,
 				required: required || false,
 				type: "SELECT" as const,
-				selectlist: getWireSelectListMetadata(context, def),
+				selectlist: getNamespaceSelectListMetadata(context, def),
 			}
 		case "FIELDS":
 			wireId = currentValue[def.wireField] as string
