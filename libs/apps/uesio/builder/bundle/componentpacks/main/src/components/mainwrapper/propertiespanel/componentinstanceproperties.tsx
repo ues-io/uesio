@@ -1,4 +1,4 @@
-import { component, definition, signal as signalApi } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 import PropertiesWrapper, { Tab } from "./propertieswrapper"
 import {
 	getComponentDef,
@@ -7,6 +7,7 @@ import {
 	useBuilderState,
 	ComponentDef,
 } from "../../../api/stateapi"
+import { getSignalProperties } from "../../../api/signalsapi"
 
 import { useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
@@ -49,9 +50,6 @@ function getSections(componentDef?: ComponentDef) {
 	}
 	return sections
 }
-
-const getSignalProperties = (signal: signalApi.SignalDefinition) =>
-	signalApi.getSignal(signal.signal)
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props

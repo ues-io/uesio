@@ -1,4 +1,4 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, component, wire, signal as signalApi } from "@uesio/ui"
 import CloneKeyAction from "../../actions/clonekeyaction"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"
@@ -9,14 +9,18 @@ import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
 
-type ItemPropertiesGetter = (
-	item: wire.WireRecord
+export type PropertiesGetter = (
+	item: wire.PlainWireRecord
 ) => component.ComponentProperty[]
+
+export type PropertiesListOrGetter =
+	| component.ComponentProperty[]
+	| PropertiesGetter
 
 type Props = {
 	displayTemplate: string
 	parentPath: FullPath
-	itemProperties?: component.ComponentProperty[] | ItemPropertiesGetter
+	itemProperties?: PropertiesListOrGetter
 	itemPropertiesPanelTitle?: string
 } & definition.UtilityComponent
 
@@ -60,7 +64,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 							context={context}
 							properties={
 								typeof itemProperties === "function"
-									? itemProperties(record)
+									? itemProperties(record.source)
 									: itemProperties
 							}
 						/>

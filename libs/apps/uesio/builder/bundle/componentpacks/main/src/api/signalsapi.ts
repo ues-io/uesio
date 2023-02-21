@@ -1,4 +1,4 @@
-import { collection, signal as signalApi, component } from "@uesio/ui"
+import { collection, signal as signalApi, component, wire } from "@uesio/ui"
 
 const defaultSignalProps = (): component.ComponentProperty[] => [
 	{
@@ -17,15 +17,17 @@ const defaultSignalProps = (): component.ComponentProperty[] => [
 	},
 ]
 
-const getSignalProperties = (signal: signalApi.SignalDefinition) => {
-	const registry = signalApi.getSignals()
-	const descriptor = registry[signal?.signal]
+const getSignalProperties = (signalPlainWireRecord: wire.PlainWireRecord) => {
+	const signalDefinition = signalPlainWireRecord as signalApi.SignalDefinition
+	const descriptor = signalApi.getSignal(signalDefinition.signal)
 	// TODO: WHAT IS NOT WORKING HERE???
 	// const descriptor =
-	// 	registry[signal?.signal] || signalApi.ComponentSignalDescriptor
+	// 	descriptor || signalApi.ComponentSignalDescriptor
 	return [
 		...defaultSignalProps(),
-		...(descriptor.properties ? descriptor.properties(signal) : []),
+		...(descriptor.properties
+			? descriptor.properties(signalDefinition)
+			: []),
 	]
 }
 
