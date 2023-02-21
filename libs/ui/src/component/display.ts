@@ -80,6 +80,14 @@ type WireIsNotLoading = {
 	type: "wireIsNotLoading"
 	wire: string
 }
+type WireIsFullyLoaded = {
+	type: "wireIsFullyLoaded"
+	wire: string
+}
+type WireIsNotFullyLoaded = {
+	type: "wireIsNotFullyLoaded"
+	wire: string
+}
 type WireHasNoRecords = {
 	type: "wireHasNoRecords"
 	wire: string
@@ -113,6 +121,8 @@ type DisplayCondition =
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
+	| WireIsNotFullyLoaded
+	| WireIsFullyLoaded
 
 type ItemContext<T> = {
 	item: T
@@ -206,6 +216,24 @@ function should(condition: DisplayCondition, context: Context) {
 			: context
 		const hasRecords = !!ctx.getWire()?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
+	}
+
+	if (
+		condition.type === "wireIsFullyLoaded" ||
+		condition.type === "wireIsNotFullyLoaded"
+	) {
+		const ctx = condition.wire
+			? context.addWireFrame({
+					wire: condition.wire,
+			  })
+			: context
+		const isFullyLoaded = !!ctx.getWire()?.isFullyLoaded()
+
+		console.log({ isFullyLoaded })
+
+		return condition.type === "wireIsNotFullyLoaded"
+			? !isFullyLoaded
+			: isFullyLoaded
 	}
 
 	const compareToValue =

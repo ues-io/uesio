@@ -35,6 +35,7 @@ const getBaseWireDefInfo = (wireDef: WireDefinition) => ({
 	defaults: wireDef.defaults,
 	events: wireDef.events,
 	fields: getFieldsRequest(wireDef.fields) || [],
+	more: true,
 })
 
 const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
