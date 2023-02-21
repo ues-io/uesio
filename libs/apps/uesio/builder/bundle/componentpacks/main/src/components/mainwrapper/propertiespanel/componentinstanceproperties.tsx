@@ -10,6 +10,7 @@ import {
 
 import { useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
+import ListProperty from "../../../helpers/listproperty"
 import {
 	DISPLAY_SECTION,
 	HOME_SECTION,
@@ -141,26 +142,32 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 		case "SIGNALS": {
 			selectedSectionId = getSectionId(selectedSection) || "signals"
 			content = (
-				<PropertiesForm
-					id={path.addLocal(selectedSectionId).combine()}
-					context={context}
-					properties={[
-						{
-							name: selectedSectionId,
-							components: [
-								{
-									"uesio/builder.proplistitem": {
-										displayTemplate: "${signal}",
-										popperProperties: signalProperties,
-										propertyName: selectedSectionId,
-										parentPath: path,
-									},
-								},
-							],
-							type: "LIST",
-						},
-					]}
+				<ListProperty
 					path={path}
+					itemProperties={signalProperties}
+					itemPropertiesPanelTitle={"Signal Properties"}
+					propertyName={selectedSectionId}
+					context={context}
+					addLabel={"New Signal"}
+					itemDisplayTemplate={"${signal}"}
+					addAction={() => {
+						// set(
+						// 	context,
+						// 	path.addLocal(selectedSectionId).addLocal()
+						// 	path.addLocal(
+						// 		"newwire" + (Math.floor(Math.random() * 60) + 1)
+						// 	),
+						// 	{
+						// 		fields: null,
+						// 		batchsize: 200,
+						// 	},
+						// 	true
+						// )
+						// valueAPI.add(signalsPath, {
+						// 	signal: "NEW_SIGNAL",
+						// })
+						console.log("ADD NEW SIGNAL here")
+					}}
 				/>
 			)
 			break

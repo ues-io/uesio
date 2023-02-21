@@ -8,23 +8,22 @@ import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
+import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
 
-type PropListItemDefinition = {
-	propertyName: string
+type Props = {
 	displayTemplate: string
 	parentPath: FullPath
-	popperProperties?: ComponentProperty[]
-}
+	itemProperties?: ComponentProperty[]
+	itemPropertiesPanelTitle?: string
+} & definition.UtilityComponent
 
-const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
+const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 	const {
 		context,
-		definition: {
-			parentPath,
-			propertyName,
-			displayTemplate,
-			popperProperties,
-		},
+		parentPath,
+		displayTemplate,
+		itemProperties,
+		itemPropertiesPanelTitle,
 	} = props
 
 	const record = context.getRecord()
@@ -35,32 +34,32 @@ const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 	if (!viewDefId || !record) return null
 
 	const selectedPath = useSelectedPath(context)
-	const listPath = parentPath.addLocal(propertyName)
-	const listItemPath = listPath.addLocal(`${index}`)
+	const listItemPath = parentPath.addLocal(`${index}`)
 
 	return (
 		<PropNodeTag
 			onClick={() => setSelectedPath(context, listItemPath)}
-			selected={selectedPath.startsWith(listItemPath)}
+			selected={selectedPath === listItemPath}
 			context={context}
 			popperChildren={
-				popperProperties && (
-					<PropertiesForm
-						path={listItemPath}
+				itemProperties && (
+					<PropertiesWrapper
 						context={context}
-						properties={popperProperties}
-					/>
+						// className={props.className}
+						path={listItemPath}
+						title={itemPropertiesPanelTitle || "Properties"}
+					>
+						<PropertiesForm
+							id={listItemPath.combine()}
+							path={listItemPath}
+							context={context}
+							properties={itemProperties}
+						/>
+					</PropertiesWrapper>
 				)
 			}
 		>
-			<div className="tagroot">
-				{context.merge(displayTemplate)}
-				{/* <NamespaceLabel
-					metadatainfo={nsInfo}
-					context={context}
-					metadatakey={collection}
-				/> */}
-			</div>
+			<div className="tagroot">{context.merge(displayTemplate)}</div>
 			<IOExpandPanel
 				context={context}
 				expanded={listItemPath.equals(selectedPath)}
@@ -75,4 +74,4 @@ const PropListItem: definition.UC<PropListItemDefinition> = (props) => {
 	)
 }
 
-export default PropListItem
+export default ListPropertyItem
