@@ -19,10 +19,9 @@ const defaultSignalProps = (): component.ComponentProperty[] => [
 
 const getSignalProperties = (signalPlainWireRecord: wire.PlainWireRecord) => {
 	const signalDefinition = signalPlainWireRecord as signalApi.SignalDefinition
-	const descriptor = signalApi.getSignal(signalDefinition.signal)
-	// TODO: WHAT IS NOT WORKING HERE???
-	// const descriptor =
-	// 	descriptor || signalApi.ComponentSignalDescriptor
+	const descriptor =
+		signalApi.getSignal(signalDefinition.signal) ||
+		signalApi.getComponentSignalDefinition()
 	return [
 		...defaultSignalProps(),
 		...(descriptor.properties

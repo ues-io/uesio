@@ -1,6 +1,6 @@
 import { Context, injectDynamicContext, newContext } from "../context/context"
 import { SignalDefinition, SignalDescriptor } from "../definition/signal"
-import componentSignal from "../bands/component/signals"
+import { getComponentSignalDefinition } from "../bands/component/signals"
 
 import collectionSignals from "../bands/collection/signals"
 import botSignals from "../bands/bot/signals"
@@ -25,7 +25,7 @@ const registry: Record<string, SignalDescriptor> = {
 }
 
 const run = (signal: SignalDefinition, context: Context) => {
-	const descriptor = registry[signal.signal] || componentSignal
+	const descriptor = registry[signal.signal] || getComponentSignalDefinition()
 	return descriptor.dispatcher(
 		signal,
 		injectDynamicContext(context, signal?.["uesio.context"])

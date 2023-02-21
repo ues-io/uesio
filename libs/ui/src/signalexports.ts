@@ -1,16 +1,19 @@
 import {
 	SignalDefinition,
 	ComponentSignalDescriptor,
-	ComponentSignal,
 	SignalDescriptor,
 } from "./definition/signal"
 
-import { getSignal, getSignals } from "./hooks/signalapi"
+import {
+	getSignal,
+	getSignals,
+	getComponentSignalDefinition,
+} from "./hooks/signalapi"
 
 export {
 	getSignals,
 	getSignal,
-	ComponentSignal,
+	getComponentSignalDefinition,
 	ComponentSignalDescriptor,
 	SignalDefinition,
 	SignalDescriptor,

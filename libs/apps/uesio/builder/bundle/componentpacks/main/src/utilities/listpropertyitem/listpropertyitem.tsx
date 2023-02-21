@@ -1,4 +1,4 @@
-import { definition, component, wire, signal as signalApi } from "@uesio/ui"
+import { definition, component, wire } from "@uesio/ui"
 import CloneKeyAction from "../../actions/clonekeyaction"
 import DeleteAction from "../../actions/deleteaction"
 import MoveActions from "../../actions/moveactions"

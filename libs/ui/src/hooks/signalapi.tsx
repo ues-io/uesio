@@ -1,9 +1,9 @@
 import {
-	ComponentSignal,
 	ComponentSignalDescriptor,
 	SignalDefinition,
 	SignalDescriptor,
 } from "../definition/signal"
+import { getComponentSignalDefinition } from "../bands/component/signals"
 import { Context } from "../context/context"
 import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
@@ -36,12 +36,12 @@ const getSignals = (): Record<string, SignalDescriptor> => ({
 const getSignal = (signalType: string) => registry[signalType]
 
 export {
+	getComponentSignalDefinition,
 	getSignal,
 	getSignals,
 	getHandler,
 	useRegisterHotKey,
 	runMany,
 	run,
-	ComponentSignal,
 	ComponentSignalDescriptor,
 }

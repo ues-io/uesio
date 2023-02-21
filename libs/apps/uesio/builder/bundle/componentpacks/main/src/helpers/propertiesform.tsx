@@ -192,20 +192,22 @@ const getBotSelectListMetadata = (
 	context: context.Context,
 	def: component.BotProperty
 ) => {
-	if (!def.namespace)
-		return getSelectListMetadataFromOptions(def.name, [], "Loading Bots...")
+	let { namespace } = def
+	if (!namespace && def.name && def.name.includes(".")) {
+		namespace = def.name.split(".")[0]
+	}
 
 	const [metadata] = api.builder.useMetadataList(
 		context,
 		"BOT",
-		def.namespace,
+		namespace || "",
 		def.botType
 	)
 
 	return getSelectListMetadataFromOptions(
 		def.name,
 		Object.keys(metadata || {}).map((key) => {
-			const label = key.split(def.namespace + ".")[1] || key
+			const label = key.split(namespace + ".")[1] || key
 			return {
 				value: key,
 				label,

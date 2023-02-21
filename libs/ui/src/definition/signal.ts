@@ -1,6 +1,5 @@
 import { Context, ContextOptions } from "../context/context"
 import { ComponentProperty } from "../component/componentproperty"
-import { ComponentSignal } from "../bands/component/signals"
 import { Definition } from "./definition"
 import { PlainComponentState } from "../bands/component/types"
 import { Draft } from "@reduxjs/toolkit"
@@ -45,9 +44,4 @@ type SignalDefinition = {
 	}
 }
 
-export {
-	SignalDefinition,
-	SignalDescriptor,
-	ComponentSignal,
-	ComponentSignalDescriptor,
-}
+export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }
