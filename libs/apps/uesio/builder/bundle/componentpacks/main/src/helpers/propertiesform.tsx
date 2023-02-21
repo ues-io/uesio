@@ -192,27 +192,26 @@ const getBotSelectListMetadata = (
 	context: context.Context,
 	def: component.BotProperty
 ) => {
-	if (!def.namespace) return null
+	if (!def.namespace)
+		return getSelectListMetadataFromOptions(def.name, [], "Loading Bots...")
 
 	const [metadata] = api.builder.useMetadataList(
 		context,
 		"BOT",
-		namespace,
-		botType
+		def.namespace,
+		def.botType
 	)
 
-	return (
-		<SelectProp
-			{...props}
-			label="Bot"
-			options={Object.keys(metadata || {}).map((key) => {
-				const label = key.split(namespace + ".")[1] || key
-				return {
-					value: key,
-					label,
-				}
-			})}
-		/>
+	return getSelectListMetadataFromOptions(
+		def.name,
+		Object.keys(metadata || {}).map((key) => {
+			const label = key.split(def.namespace + ".")[1] || key
+			return {
+				value: key,
+				label,
+			}
+		}),
+		"Select Bot"
 	)
 }
 
@@ -254,7 +253,7 @@ const getWireFieldFromPropertyDef = (
 			return {
 				label: label || name,
 				type: "SELECT" as const,
-				required: false
+				required: false,
 				selectlist: getBotSelectListMetadata(context, def),
 			}
 		case "WIRE":

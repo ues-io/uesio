@@ -5,6 +5,7 @@ import * as path from "./component/path"
 import * as registry from "./component/registry"
 import { Component, getUtility } from "./component/component"
 import {
+	BotProperty,
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,
@@ -46,5 +47,6 @@ export {
 	SelectOption,
 	SelectProperty,
 	WireProperty,
+	BotProperty,
 	getStyleVariantProperty,
 }
