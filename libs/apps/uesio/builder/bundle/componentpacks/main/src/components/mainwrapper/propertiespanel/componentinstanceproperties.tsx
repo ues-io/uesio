@@ -10,7 +10,6 @@ import {
 
 import { useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
-import ListProperty from "../../../helpers/listproperty"
 import {
 	DISPLAY_SECTION,
 	HOME_SECTION,
@@ -66,6 +65,8 @@ const signalProperties = [
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
+
+	const ListProperty = component.getUtility("uesio/builder.listproperty")
 
 	const selectedPath = useSelectedPath(context)
 

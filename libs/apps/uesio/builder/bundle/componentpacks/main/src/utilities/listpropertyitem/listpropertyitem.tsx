@@ -35,11 +35,12 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 
 	const selectedPath = useSelectedPath(context)
 	const listItemPath = parentPath.addLocal(`${index}`)
+	const selected = selectedPath && selectedPath.equals(listItemPath)
 
 	return (
 		<PropNodeTag
 			onClick={() => setSelectedPath(context, listItemPath)}
-			selected={selectedPath === listItemPath}
+			selected={selected}
 			context={context}
 			popperChildren={
 				itemProperties && (
@@ -60,10 +61,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 			}
 		>
 			<div className="tagroot">{context.merge(displayTemplate)}</div>
-			<IOExpandPanel
-				context={context}
-				expanded={listItemPath.equals(selectedPath)}
-			>
+			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />
 					<MoveActions context={context} path={listItemPath} />
