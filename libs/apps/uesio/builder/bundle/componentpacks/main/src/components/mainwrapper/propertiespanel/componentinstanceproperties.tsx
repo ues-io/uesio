@@ -9,7 +9,7 @@ import {
 } from "../../../api/stateapi"
 import { getSignalProperties } from "../../../api/signalsapi"
 
-import { useDefinition } from "../../../api/defapi"
+import { add, get, useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
 import {
 	DISPLAY_SECTION,
@@ -142,22 +142,13 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					addLabel={"New Signal"}
 					itemDisplayTemplate={"${signal}"}
 					addAction={() => {
-						// set(
-						// 	context,
-						// 	path.addLocal(selectedSectionId).addLocal()
-						// 	path.addLocal(
-						// 		"newwire" + (Math.floor(Math.random() * 60) + 1)
-						// 	),
-						// 	{
-						// 		fields: null,
-						// 		batchsize: 200,
-						// 	},
-						// 	true
-						// )
-						// valueAPI.add(signalsPath, {
-						// 	signal: "NEW_SIGNAL",
-						// })
-						console.log("ADD NEW SIGNAL here")
+						const listPath = path.addLocal(selectedSectionId)
+						const listLength = (
+							get(context, listPath) as definition.DefinitionList
+						).length
+						add(context, listPath.addLocal(`${listLength}`), {
+							signal: "",
+						})
 					}}
 				/>
 			)

@@ -1,4 +1,4 @@
-import { collection, signal as signalApi, component, wire } from "@uesio/ui"
+import { collection, signal as signalApi, wire } from "@uesio/ui"
 
 const allSignals = Object.entries(signalApi.getSignals()).map(
 	([signal, signalDescriptor]) => ({
@@ -9,7 +9,7 @@ const allSignals = Object.entries(signalApi.getSignals()).map(
 )
 allSignals.sort((a, b) => a.label.localeCompare(b.label))
 
-const defaultSignalProps = (): component.ComponentProperty[] => [
+const defaultSignalProps = [
 	{
 		name: "signal",
 		label: "Signal",
@@ -24,7 +24,7 @@ const getSignalProperties = (signalPlainWireRecord: wire.PlainWireRecord) => {
 		signalApi.getSignal(signalDefinition.signal) ||
 		signalApi.getComponentSignalDefinition()
 	return [
-		...defaultSignalProps(),
+		...defaultSignalProps,
 		...(descriptor.properties
 			? descriptor.properties(signalDefinition)
 			: []),

@@ -39,9 +39,16 @@ const signals: Record<string, SignalDescriptor> = {
 		description: "Add Notification",
 		properties: () => [
 			{
-				type: "TEXT",
+				type: "SELECT",
 				name: "severity",
 				label: "Severity",
+				options: [
+					{ value: "", label: "" },
+					{ value: "success", label: "SUCCESS" },
+					{ value: "info", label: "INFO" },
+					{ value: "warn", label: "WARN" },
+					{ value: "error", label: "ERROR" },
+				],
 			},
 			{
 				type: "TEXT",
