@@ -56,6 +56,7 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 	case "collection":
 		// Do some extra stuff
 		op.Collection = &Collection{}
+		op.HasMoreBatches = true
 		return dec.String(&op.CollectionName)
 	case "name":
 		return dec.String(&op.WireName)

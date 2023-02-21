@@ -11,7 +11,7 @@ const loadAllOp = async (context: Context, wires?: string[]) => {
 	// Get the wires that still need to be loaded
 	const loadWires = wires?.filter((wireName) => {
 		const wire = selectWire(getCurrentState(), viewId, wireName)
-		return wire?.more || wire?.batchnumber === 0
+		return wire?.more
 	})
 
 	if (!loadWires || loadWires.length === 0) return context
