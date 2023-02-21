@@ -70,6 +70,10 @@ type MapProperty = {
 	components: definition.DefinitionList
 } & BaseProperty
 
+type ParamsProperty = {
+	type: "PARAMS"
+} & BaseProperty
+
 type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
@@ -88,6 +92,7 @@ type ComponentProperty =
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
+	| ParamsProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
