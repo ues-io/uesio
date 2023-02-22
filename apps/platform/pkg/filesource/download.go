@@ -51,3 +51,26 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	return content, &userFile, nil
 
 }
+
+func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+
+	_, fs, err := fileadapt.GetFileSourceAndCollection(userFile.FileCollectionID, session)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	conn, err := fileadapt.GetFileConnection(fs.GetKey(), session)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	content, err := conn.Download(userFile.Path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	usage.RegisterEvent("DOWNLOAD", "FILESOURCE", fs.GetKey(), 0, session)
+	usage.RegisterEvent("DOWNLOAD_BYTES", "FILESOURCE", fs.GetKey(), userFile.ContentLength, session)
+
+	return content, userFile, nil
+}
