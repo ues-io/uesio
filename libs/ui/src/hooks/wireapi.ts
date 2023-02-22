@@ -39,6 +39,7 @@ const useDynamicWire = (
 	wireDef: WireDefinition | null,
 	context: Context
 ) => {
+	const wire = useWire(wireName, context)
 	// This Hook handles wireName changes --- there's a lot more work to do here.
 	useEffect(() => {
 		if (!wireDef || !wireName) return
@@ -49,9 +50,7 @@ const useDynamicWire = (
 		return () => {
 			remove(wireName, context)
 		}
-	}, [wireName])
-
-	const wire = useWire(wireName, context)
+	}, [wireName, !!wireDef])
 
 	// This Hook runs if any change is made to the wire definition,
 	// but we don't need to update as much state, so this logic is split out
