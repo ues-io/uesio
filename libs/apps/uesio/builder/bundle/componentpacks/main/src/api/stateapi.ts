@@ -1,6 +1,7 @@
 import { api, component, context as ctx, definition, metadata } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
+import { SignalDescriptor } from "./signalsapi"
 
 type ComponentDef = {
 	name: string
@@ -12,6 +13,7 @@ type ComponentDef = {
 	properties?: component.ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
+	signals?: Record<string, SignalDescriptor>
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
