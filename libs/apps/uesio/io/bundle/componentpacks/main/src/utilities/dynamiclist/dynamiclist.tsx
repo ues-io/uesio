@@ -11,7 +11,7 @@ interface FormProps extends definition.UtilityProps {
 	wireRef?: MutableRefObject<wire.Wire | undefined>
 }
 
-const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
+const DynamicList: definition.UtilityComponent<FormProps> = (props) => {
 	const {
 		context,
 		content,
@@ -84,4 +84,4 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	)
 }
 
-export default DynamicForm
+export default DynamicList

@@ -105,7 +105,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 	const { context, params, setOpen, onSubmit } = props
 
 	const Dialog = component.getUtility("uesio/io.dialog")
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const DynamicList = component.getUtility("uesio/io.dynamiclist")
 	const Group = component.getUtility("uesio/io.group")
 	const Button = component.getUtility("uesio/io.button")
 
@@ -122,7 +122,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 				onClose={() => setOpen(false)}
 				title="Set Preview Parameters"
 			>
-				<DynamicForm
+				<DynamicList
 					id="previewform"
 					fields={getWireFieldsFromParams(params)}
 					context={context}

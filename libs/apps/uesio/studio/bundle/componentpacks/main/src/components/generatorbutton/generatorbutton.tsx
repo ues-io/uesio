@@ -53,7 +53,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	const [genNamespace, genName] = component.path.parseKey(generator)
 
 	const Dialog = component.getUtility("uesio/io.dialog")
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const DynamicList = component.getUtility("uesio/io.dynamiclist")
 	const Group = component.getUtility("uesio/io.group")
 	const Button = component.getUtility("uesio/io.button")
 
@@ -95,7 +95,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 				onClose={() => setOpen(false)}
 				title="Set Generator Parameters"
 			>
-				<DynamicForm
+				<DynamicList
 					context={context}
 					content={params.map((def) =>
 						getLayoutFieldFromParamDef(def)

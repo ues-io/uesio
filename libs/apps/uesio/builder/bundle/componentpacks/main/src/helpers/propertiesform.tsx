@@ -347,7 +347,7 @@ type SetterFunction = (a: wire.FieldValue) => void
 const NoOp = function () {}
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const DynamicList = component.getUtility("uesio/io.dynamiclist")
 	const { properties, path, context, id, content } = props
 
 	const setters = new Map()
@@ -396,7 +396,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	})
 
 	return (
-		<DynamicForm
+		<DynamicList
 			id={id}
 			path={path.localPath}
 			fields={getWireFieldsFromProperties(

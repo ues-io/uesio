@@ -1,0 +1,3 @@
+name: dynamiclist
+pack: main
+entrypoint: components/dynamiclist/dynamiclist

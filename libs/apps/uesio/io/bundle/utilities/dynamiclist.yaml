@@ -1,0 +1,3 @@
+name: dynamiclist
+pack: main
+entrypoint: utilities/dynamiclist/dynamiclist
