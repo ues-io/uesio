@@ -1,6 +1,6 @@
 import { Context, ContextOptions } from "../context/context"
+import { ComponentProperty } from "../component/componentproperty"
 import { Definition } from "./definition"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
 import { Draft } from "@reduxjs/toolkit"
 import { Platform } from "../platform/platform"
@@ -21,13 +21,13 @@ type ComponentSignalDispatcher<T> = (
 type SignalDescriptor = {
 	label: string
 	description: string
-	properties: (signal: SignalDefinition) => PropDescriptor[]
+	properties: (signal: SignalDefinition) => ComponentProperty[]
 	dispatcher: SignalDispatcher
 }
 
 type ComponentSignalDescriptor<T = PlainComponentState> = {
 	label?: string
-	properties?: (signal: SignalDefinition) => PropDescriptor[]
+	properties?: (signal: SignalDefinition) => ComponentProperty[]
 	dispatcher: ComponentSignalDispatcher<T>
 	target?: string
 }

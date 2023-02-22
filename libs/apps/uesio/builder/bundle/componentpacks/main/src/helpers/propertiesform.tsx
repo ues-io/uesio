@@ -1,22 +1,16 @@
-import { component, context, definition, wire } from "@uesio/ui"
+import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
-import {
-	ComponentProperty,
-	SelectProperty,
-	SelectOption,
-	WireProperty,
-} from "../api/componentproperty"
 
 type Props = {
-	properties?: ComponentProperty[]
+	properties?: component.ComponentProperty[]
 	content?: definition.DefinitionList
 	path: FullPath
 }
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
-	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
+	if (!wireDef || !wireDef.fields) return [] as component.SelectOption[]
 
 	const getFields = (
 		key: string,
@@ -38,11 +32,11 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
-		.map((el) => ({ value: el, label: el } as SelectOption))
+		.map((el) => ({ value: el, label: el } as component.SelectOption))
 }
 
 const getFormFieldFromProperty = (
-	property: ComponentProperty,
+	property: component.ComponentProperty,
 	context: context.Context,
 	path: FullPath
 ) => {
@@ -84,14 +78,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
-		case "MAP": {
+		case "MAP":
+		case "LIST": {
 			return {
 				"uesio/io.field": {
 					fieldId: property.name,
 					wrapperVariant: "uesio/io.minimal",
 					displayAs: "DECK",
 					labelPosition: "none",
-					map: {
+					[type.toLowerCase()]: {
 						components: property.components,
 					},
 				},
@@ -133,7 +128,7 @@ const getFormFieldFromProperty = (
 }
 
 const getFormFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
+	properties: component.ComponentProperty[] | undefined,
 	context: context.Context,
 	path: FullPath
 ) => {
@@ -145,7 +140,7 @@ const getFormFieldsFromProperties = (
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
-	options: SelectOption[],
+	options: component.SelectOption[],
 	blankOptionLabel?: string
 ) =>
 	({
@@ -154,11 +149,11 @@ const getSelectListMetadataFromOptions = (
 		options,
 	} as wire.SelectListMetadata)
 
-const getSelectListMetadata = (def: SelectProperty) =>
+const getSelectListMetadata = (def: component.SelectProperty) =>
 	getSelectListMetadataFromOptions(
 		def.name,
 		def.options.map(
-			(o: SelectOption) =>
+			(o: component.SelectOption) =>
 				({
 					...o,
 				} as wire.SelectOption)
@@ -168,7 +163,7 @@ const getSelectListMetadata = (def: SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: WireProperty
+	def: component.ComponentProperty
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -182,8 +177,55 @@ const getWireSelectListMetadata = (
 		"No wire selected"
 	)
 
+const getNamespaceSelectListMetadata = (
+	context: context.Context,
+	def: component.ComponentProperty
+) => {
+	const [namespaces] = api.builder.useAvailableNamespaces(context)
+	return getSelectListMetadataFromOptions(
+		def.name,
+		namespaces?.map(
+			(ns) =>
+				({
+					value: ns,
+					label: ns,
+				} as wire.SelectOption)
+		) || [],
+		"Select a namespace"
+	)
+}
+
+const getBotSelectListMetadata = (
+	context: context.Context,
+	def: component.BotProperty
+) => {
+	let { namespace } = def
+	if (!namespace && def.name && def.name.includes(".")) {
+		namespace = def.name.split(".")[0]
+	}
+
+	const [metadata] = api.builder.useMetadataList(
+		context,
+		"BOT",
+		namespace || "",
+		def.botType
+	)
+
+	return getSelectListMetadataFromOptions(
+		def.name,
+		Object.keys(metadata || {}).map((key) => {
+			const label = key.split(namespace + ".")[1] || key
+			return {
+				value: key,
+				label,
+			}
+		}),
+		"Select Bot"
+	)
+}
+
 const getWireFieldFromPropertyDef = (
-	def: ComponentProperty,
+	def: component.ComponentProperty,
 	context: context.Context,
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
@@ -216,12 +258,27 @@ const getWireFieldFromPropertyDef = (
 				required: true,
 				type: "TEXT" as const,
 			}
+		case "BOT":
+			return {
+				label: label || name,
+				type: "SELECT" as const,
+				required: false,
+				selectlist: getBotSelectListMetadata(context, def),
+			}
 		case "WIRE":
+		case "WIRES":
+			return {
+				label: label || name,
+				required: required || false,
+				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
+				selectlist: getWireSelectListMetadata(context, def),
+			}
+		case "NAMESPACE":
 			return {
 				label: label || name,
 				required: required || false,
 				type: "SELECT" as const,
-				selectlist: getWireSelectListMetadata(context, def),
+				selectlist: getNamespaceSelectListMetadata(context, def),
 			}
 		case "FIELDS":
 			wireId = currentValue[def.wireField] as string
@@ -245,6 +302,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "MAP" as const,
 			}
+		case "LIST":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "LIST" as const,
+			}
 		default:
 			return {
 				label: label || name,
@@ -255,7 +318,7 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getWireFieldsFromProperties = (
-	properties: ComponentProperty[] | undefined,
+	properties: component.ComponentProperty[] | undefined,
 	context: context.Context,
 	initialValue: wire.PlainWireRecord
 ) => {
@@ -287,6 +350,9 @@ const getGrouping = (
 
 type SetterFunction = (a: wire.FieldValue) => void
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const NoOp = function () {}
+
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
 	const { properties, path, context, id, content } = props
@@ -307,13 +373,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			}
 			setter = (value: string) => changeKey(context, path, value)
 		} else if (type === "MAP") {
-			setter = () => {
-				/* No setter */
-			}
+			setter = NoOp
 			value = get(context, path.addLocal(name)) as Record<
 				string,
 				wire.PlainWireRecord
 			>
+		} else if (type === "LIST") {
+			setter = NoOp
+			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
 		} else if (type === "FIELDS") {
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))

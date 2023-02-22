@@ -1,5 +1,4 @@
-import { definition, api, metadata, context as ctx, component } from "@uesio/ui"
-import { ComponentProperty } from "./componentproperty"
+import { api, component, context as ctx, definition, metadata } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 
@@ -10,7 +9,7 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
-	properties?: ComponentProperty[]
+	properties?: component.ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
 }
