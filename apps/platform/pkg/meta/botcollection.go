@@ -43,7 +43,7 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 		if partLength != 3 {
 			return nil
 		}
-		return NewBaseBot(strings.ToUpper(botType), "none", namespace, parts[1])
+		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
 	}
 
 	if botType == "beforesave" || botType == "aftersave" {
