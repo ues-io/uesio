@@ -75,7 +75,7 @@ func exportFiles(create retrieve.WriterCreator, spec *meta.JobSpec, session *ses
 		if err != nil {
 			return err
 		}
-		file, err := create(fmt.Sprintf("files/%s/%s/%s", userFile.ID, userFile.Type, userFile.Path))
+		file, err := create(fmt.Sprintf("files/%s/%s", userFile.ID, userFile.Path))
 		if err != nil {
 			return err
 		}
