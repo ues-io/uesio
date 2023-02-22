@@ -26,8 +26,9 @@ func (vc *ViewCollection) NewItem() Item {
 	return &View{}
 }
 
-func (vc *ViewCollection) AddItem(item Item) {
+func (vc *ViewCollection) AddItem(item Item) error {
 	*vc = append(*vc, item.(*View))
+	return nil
 }
 
 func (vc *ViewCollection) GetItemFromPath(path, namespace string) BundleableItem {

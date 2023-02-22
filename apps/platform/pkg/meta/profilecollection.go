@@ -26,8 +26,9 @@ func (pc *ProfileCollection) NewItem() Item {
 	return &Profile{}
 }
 
-func (pc *ProfileCollection) AddItem(item Item) {
+func (pc *ProfileCollection) AddItem(item Item) error {
 	*pc = append(*pc, item.(*Profile))
+	return nil
 }
 
 func (pc *ProfileCollection) GetItemFromPath(path, namespace string) BundleableItem {

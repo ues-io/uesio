@@ -21,8 +21,9 @@ func (sc *SiteCollection) NewItem() Item {
 	return &Site{}
 }
 
-func (sc *SiteCollection) AddItem(item Item) {
+func (sc *SiteCollection) AddItem(item Item) error {
 	*sc = append(*sc, item.(*Site))
+	return nil
 }
 
 func (sc *SiteCollection) Loop(iter GroupIterator) error {

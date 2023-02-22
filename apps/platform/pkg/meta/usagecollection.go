@@ -21,8 +21,9 @@ func (lpic *UsageCollection) NewItem() Item {
 	return &Usage{}
 }
 
-func (lpic *UsageCollection) AddItem(item Item) {
+func (lpic *UsageCollection) AddItem(item Item) error {
 	*lpic = append(*lpic, item.(*Usage))
+	return nil
 }
 
 func (lpic *UsageCollection) Loop(iter GroupIterator) error {

@@ -21,8 +21,9 @@ func (bjc *BulkJobCollection) NewItem() Item {
 	return &BulkJob{}
 }
 
-func (bjc *BulkJobCollection) AddItem(item Item) {
+func (bjc *BulkJobCollection) AddItem(item Item) error {
 	*bjc = append(*bjc, item.(*BulkJob))
+	return nil
 }
 
 func (bjc *BulkJobCollection) Loop(iter GroupIterator) error {

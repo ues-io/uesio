@@ -29,8 +29,9 @@ func (bc *BotCollection) NewItem() Item {
 	return &Bot{}
 }
 
-func (bc *BotCollection) AddItem(item Item) {
+func (bc *BotCollection) AddItem(item Item) error {
 	*bc = append(*bc, item.(*Bot))
+	return nil
 }
 
 func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem {

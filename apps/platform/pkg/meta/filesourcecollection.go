@@ -26,8 +26,9 @@ func (fsc *FileSourceCollection) NewItem() Item {
 	return &FileSource{}
 }
 
-func (fsc *FileSourceCollection) AddItem(item Item) {
+func (fsc *FileSourceCollection) AddItem(item Item) error {
 	*fsc = append(*fsc, item.(*FileSource))
+	return nil
 }
 
 func (fsc *FileSourceCollection) GetItemFromPath(path, namespace string) BundleableItem {

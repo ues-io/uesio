@@ -38,8 +38,9 @@ func (ffc *FeatureFlagCollection) NewItem() Item {
 	return &FeatureFlag{}
 }
 
-func (ffc *FeatureFlagCollection) AddItem(item Item) {
+func (ffc *FeatureFlagCollection) AddItem(item Item) error {
 	*ffc = append(*ffc, item.(*FeatureFlag))
+	return nil
 }
 
 func (ffc *FeatureFlagCollection) GetItemFromPath(path, namespace string) BundleableItem {
