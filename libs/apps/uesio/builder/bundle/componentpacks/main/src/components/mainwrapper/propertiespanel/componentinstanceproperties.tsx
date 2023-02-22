@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component, definition, wire } from "@uesio/ui"
 import PropertiesWrapper, { Tab } from "./propertieswrapper"
 import {
 	getComponentDef,
@@ -135,7 +135,9 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			content = (
 				<ListProperty
 					path={path}
-					itemProperties={getSignalProperties}
+					itemProperties={(record: wire.PlainWireRecord) =>
+						getSignalProperties(context, record)
+					}
 					itemPropertiesPanelTitle={"Signal Properties"}
 					propertyName={selectedSectionId}
 					context={context}

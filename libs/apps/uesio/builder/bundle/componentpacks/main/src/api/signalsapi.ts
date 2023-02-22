@@ -7,6 +7,7 @@ import userSignals from "../signals/user"
 import routeSignals from "../signals/route"
 import wireSignals from "../signals/wire"
 import { ComponentProperty } from "../properties/componentproperty"
+import { getComponentDef } from "./stateapi"
 
 const signalDefinitionRegistry: Record<string, SignalDescriptor> = {
 	...collectionSignals,
@@ -60,9 +61,38 @@ const defaultSignalProps = [
 	},
 ]
 
-const getSignalProperties = (signalPlainWireRecord: wire.PlainWireRecord) => {
+const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
+
+const getSignalProperties = (
+	signalPlainWireRecord: wire.PlainWireRecord,
+	context: context.Context
+) => {
 	const signalDefinition = signalPlainWireRecord as SignalDefinition
-	const descriptor = signalDefinitionRegistry[signalDefinition.signal] || {}
+	let descriptor = signalDefinitionRegistry[signalDefinition.signal]
+	// Load Component-specific signal definitions dynamically from Component definition
+	if (
+		!descriptor &&
+		signalDefinition.signal &&
+		signalDefinition.signal.startsWith(COMPONENT_SIGNAL_PREFIX)
+	) {
+		const cmpSignalParts = signalDefinition.signal
+			.substring(COMPONENT_SIGNAL_PREFIX.length)
+			.split("/")
+		if (cmpSignalParts.length === 3) {
+			const cmpSignalName = cmpSignalParts.pop() as string
+			const componentDef = getComponentDef(
+				context,
+				cmpSignalParts.join("/")
+			)
+			if (
+				componentDef &&
+				componentDef.signals &&
+				componentDef.signals[cmpSignalName]
+			) {
+				descriptor = componentDef.signals[cmpSignalName]
+			}
+		}
+	}
 	return [
 		...defaultSignalProps,
 		...(descriptor.properties
