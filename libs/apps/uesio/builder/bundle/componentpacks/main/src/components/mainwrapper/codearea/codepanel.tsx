@@ -194,6 +194,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	return (
 		<ScrollPanel
+			variant="uesio/builder.mainsection"
 			header={
 				<TitleBar
 					variant="uesio/io.primary"
