@@ -295,6 +295,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "MAP" as const,
 			}
+		case "PARAMS":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "TEXT" as const,
+			}
 		case "LIST":
 			return {
 				label: label || name,

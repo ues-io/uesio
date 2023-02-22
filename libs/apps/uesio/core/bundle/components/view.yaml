@@ -1,1 +1,13 @@
 name: view
+title: View
+description: A collection of wires, components and panels that represent a user interface.
+category: LAYOUT
+discoverable: true
+properties:
+  - name: view
+    type: METADATA
+    label: View
+    metadataType: VIEW
+  - name: params
+    type: PARAMS
+    label: Params

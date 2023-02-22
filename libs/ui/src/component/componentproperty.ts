@@ -103,6 +103,10 @@ type ListProperty = {
 	components: DefinitionList
 } & BaseProperty
 
+type ParamsProperty = {
+	type: "PARAMS"
+} & BaseProperty
+
 type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
@@ -126,6 +130,7 @@ type ComponentProperty =
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
+	| ParamsProperty
 	| ListProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
