@@ -13,6 +13,28 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type WriterCreator func(fileName string) (io.WriteCloser, error)
+
+func NewWriterCreator(creator func(string) (io.Writer, error)) WriterCreator {
+	return func(path string) (io.WriteCloser, error) {
+		w, err := creator(path)
+		if err != nil {
+			return nil, err
+		}
+		return NopWriterCloser(w), nil
+	}
+}
+
+func NopWriterCloser(w io.Writer) io.WriteCloser {
+	return nopWriterCloser{w}
+}
+
+type nopWriterCloser struct {
+	io.Writer
+}
+
+func (nopWriterCloser) Close() error { return nil }
+
 func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 	workspace := session.GetWorkspace()
 	if workspace == nil {

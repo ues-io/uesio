@@ -1,9 +1,13 @@
 package bulk
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -11,6 +15,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -109,8 +114,11 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
+	tenantID := strings.ReplaceAll(session.GetTenantID(), "/", "_")
+	fileName := fmt.Sprintf("uesio_export_%s_%s.zip", tenantID, time.Now().Format(time.RFC3339))
+
 	details := &fileadapt.FileDetails{
-		Name:         generateFileName(spec.Collection),
+		Name:         fileName,
 		CollectionID: "uesio/core.bulkbatch",
 		RecordID:     batch.ID,
 		FieldID:      "uesio/core.result",
@@ -121,9 +129,31 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
+	buf := new(bytes.Buffer)
+	zipwriter := zip.NewWriter(buf)
+
+	csvwriter, err := zipwriter.Create(fmt.Sprintf("%s.csv", strings.ReplaceAll(spec.Collection, "/", "_")))
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.Copy(csvwriter, data)
+	if err != nil {
+		return nil, err
+	}
+
+	zipfilecreate := retrieve.NewWriterCreator(zipwriter.Create)
+
+	err = exportFiles(zipfilecreate, spec, session)
+	if err != nil {
+		return nil, err
+	}
+
+	zipwriter.Close()
+
 	_, err = filesource.Upload([]filesource.FileUploadOp{
 		{
-			Data:    data,
+			Data:    buf,
 			Details: details,
 		},
 	}, nil, session)
