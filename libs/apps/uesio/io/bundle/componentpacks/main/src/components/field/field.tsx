@@ -96,16 +96,12 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
 			return state
 		},
-		label: "Upload File",
-		properties: () => [],
 	},
 	CANCEL_FILE: {
 		dispatcher: (state, signal, context, platform, id) => {
 			api.event.publish(CANCEL_FILE_EVENT, { target: id })
 			return state
 		},
-		label: "Cancel File",
-		properties: () => [],
 	},
 }
 

@@ -10,3 +10,10 @@ variants:
   - uesio/io.listfield:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.customselectfield:uesio/io.default
+signals:
+  UPLOAD_FILE:
+    label: Upload File
+    properties: []
+  CANCEL_FILE:
+    label: Cancel File
+    properties: []
