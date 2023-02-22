@@ -21,8 +21,9 @@ func (lc *InvoiceCollection) NewItem() Item {
 	return &Invoice{}
 }
 
-func (lc *InvoiceCollection) AddItem(item Item) {
+func (lc *InvoiceCollection) AddItem(item Item) error {
 	*lc = append(*lc, item.(*Invoice))
+	return nil
 }
 
 func (lc *InvoiceCollection) Loop(iter GroupIterator) error {

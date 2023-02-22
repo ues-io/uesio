@@ -21,8 +21,9 @@ func (bbc *BulkBatchCollection) NewItem() Item {
 	return &BulkBatch{}
 }
 
-func (bbc *BulkBatchCollection) AddItem(item Item) {
+func (bbc *BulkBatchCollection) AddItem(item Item) error {
 	*bbc = append(*bbc, item.(*BulkBatch))
+	return nil
 }
 
 func (bbc *BulkBatchCollection) Loop(iter GroupIterator) error {

@@ -26,8 +26,9 @@ func (pc *PermissionSetCollection) NewItem() Item {
 	return &PermissionSet{}
 }
 
-func (pc *PermissionSetCollection) AddItem(item Item) {
+func (pc *PermissionSetCollection) AddItem(item Item) error {
 	*pc = append(*pc, item.(*PermissionSet))
+	return nil
 }
 
 func (pc *PermissionSetCollection) GetItemFromPath(path, namespace string) BundleableItem {

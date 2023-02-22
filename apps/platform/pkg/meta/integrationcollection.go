@@ -26,8 +26,9 @@ func (ic *IntegrationCollection) NewItem() Item {
 	return &Integration{}
 }
 
-func (ic *IntegrationCollection) AddItem(item Item) {
+func (ic *IntegrationCollection) AddItem(item Item) error {
 	*ic = append(*ic, item.(*Integration))
+	return nil
 }
 
 func (ic *IntegrationCollection) GetItemFromPath(path, namespace string) BundleableItem {
