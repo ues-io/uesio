@@ -1,6 +1,10 @@
 name: field
+title: Field
+description: An input control, such as a text box, select, etc.
+link: "https://docs.ues.io/"
 pack: main
 entrypoint: components/field/field
+defaultDefinition: {}
 variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
@@ -10,6 +14,43 @@ variants:
   - uesio/io.listfield:uesio/io.default
   - uesio/io.selectfield:uesio/io.default
   - uesio/io.customselectfield:uesio/io.default
+properties:
+  - name: label
+    type: TEXT
+    label: Label
+  - name: labelPosition
+    type: SELECT
+    label: Label Position
+    options:
+      - label: None
+        value: none
+      - label: Top
+        value: top
+      - label: Left
+        value: left
+  - name: displayAs
+    type: SELECT
+    label: Display as
+    options:
+      - label: MARKDOWN
+        value: MARKDOWN
+      - label: PASSWORD
+        value: PASSWORD
+      - label: RADIO
+        value: RADIO
+      - label: TOGGLE
+        value: TOGGLE
+      - label: TEXT
+        value: TEXT
+      - label: IMAGE
+        value: IMAGE
+      - label: VIDEO
+        value: VIDEO
+      - label: PREVIEW
+        value: PREVIEW
+  - name: id
+    type: TEXT
+    label: ID
 signals:
   UPLOAD_FILE:
     label: Upload File
