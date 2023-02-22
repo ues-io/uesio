@@ -6,7 +6,7 @@ entrypoint: components/deck/deck
 category: DATA
 discoverable: true
 defaultDefinition:
-  uesio.id:
+  mode: READ
 properties:
   - name: uesio.id
     label: Deck Id

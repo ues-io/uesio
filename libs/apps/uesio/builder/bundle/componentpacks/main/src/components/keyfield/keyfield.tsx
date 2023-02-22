@@ -31,8 +31,6 @@ const KeyField: definition.UC<KeyFieldDefinition> = (props) => {
 
 	const label = props.definition.label || fieldMetadata.getLabel()
 
-	if (value === undefined) return null
-
 	return (
 		<ConstrainedInput
 			value={value}
