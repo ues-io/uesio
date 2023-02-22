@@ -57,39 +57,12 @@ func exportCollection(create retrieve.WriterCreator, spec *meta.JobSpec, session
 		return errors.New("Cannot process that file type: " + spec.FileType)
 	}
 
-	err = loadData(&adapt.LoadOp{
+	return loadData(&adapt.LoadOp{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,
 		Fields:         fields,
 		Query:          true,
 	}, session)
-	if err != nil {
-		return err
-	}
 
-	// Now export any files associated with this collection
-
-	/*
-		// Check to see if we found any file fields
-		fileIDs := collection.GetFileFieldIDs()
-
-		if len(fileIDs) > 0 {
-			for _, fileID := range fileIDs {
-				filedata, filemetadata, err := filesource.Download(fileID, session)
-				if err != nil {
-					return err
-				}
-				file, err := create(filemetadata.GetRelativePath())
-				if err != nil {
-					return err
-				}
-				_, err = io.Copy(file, filedata)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	*/
-	return nil
 }
