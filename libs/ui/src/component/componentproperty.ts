@@ -1,18 +1,31 @@
-import { definition, metadata, component } from "@uesio/ui"
+import { DisplayCondition } from "./display"
+import { MetadataType } from "../metadataexports"
+import { DefinitionList } from "../definition/definition"
+import { RegularWireDefinition, WireConditionState } from "../wireexports"
 
 type BaseProperty = {
 	name: string
 	label?: string
 	required?: boolean
 	type: string
-	displayConditions?: component.DisplayCondition[]
+	displayConditions?: DisplayCondition[]
 }
 type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type ParamProperty = {
+	type: "PARAM"
+} & BaseProperty
+
 type ComponentIdProperty = {
 	type: "COMPONENT_ID"
+} & BaseProperty
+
+type BotProperty = {
+	type: "BOT"
+	namespace?: string
+	botType: "LISTENER"
 } & BaseProperty
 
 type NumberProperty = {
@@ -28,24 +41,39 @@ type KeyProperty = {
 
 type MetadataProperty = {
 	type: "METADATA"
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
 
 type MultiMetadataProperty = {
 	type: "MULTI_METADATA"
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	groupingPath?: string
 	groupingValue?: string
+} & BaseProperty
+
+type NamespaceProperty = {
+	type: "NAMESPACE"
 } & BaseProperty
 
 type CheckboxProperty = {
 	type: "CHECKBOX"
 } & BaseProperty
 
+type ConditionProperty = {
+	type: "CONDITION"
+	wire: string
+	filter?: (def: WireConditionState) => boolean
+} & BaseProperty
+
 type WireProperty = {
 	type: "WIRE"
+	filter?: (def: RegularWireDefinition) => boolean
+} & BaseProperty
+
+type WiresProperty = {
+	type: "WIRES"
 } & BaseProperty
 
 type FieldProperty = {
@@ -67,7 +95,12 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
-	components: definition.DefinitionList
+	components: DefinitionList
+} & BaseProperty
+
+type ListProperty = {
+	type: "LIST"
+	components: DefinitionList
 } & BaseProperty
 
 type ParamsProperty = {
@@ -80,19 +113,25 @@ type SelectOption = {
 	disabled?: boolean
 }
 type ComponentProperty =
+	| BotProperty
 	| TextProperty
 	| NumberProperty
 	| KeyProperty
 	| MetadataProperty
 	| MultiMetadataProperty
+	| NamespaceProperty
+	| ParamProperty
 	| SelectProperty
+	| ConditionProperty
 	| WireProperty
+	| WiresProperty
 	| FieldProperty
 	| FieldsProperty
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
 	| ParamsProperty
+	| ListProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -103,6 +142,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 })
 
 export {
+	BotProperty,
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,

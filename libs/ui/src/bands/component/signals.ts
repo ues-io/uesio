@@ -13,7 +13,7 @@ interface ComponentSignal extends SignalDefinition {
 	target?: string
 }
 
-export default {
+const getComponentSignalDefinition = () => ({
 	dispatcher: (signal: ComponentSignal, context: Context) => {
 		const { target: signalTarget, signal: signalName } = signal
 		const [band, owner, component, type] = signalName.split("/")
@@ -70,4 +70,6 @@ export default {
 
 		return context
 	},
-}
+})
+
+export { getComponentSignalDefinition }

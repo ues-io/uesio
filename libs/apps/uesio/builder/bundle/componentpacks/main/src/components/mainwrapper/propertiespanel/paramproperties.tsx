@@ -1,8 +1,7 @@
-import { definition } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath } from "../../../api/stateapi"
-import { ComponentProperty } from "../../../api/componentproperty"
 
 const paramProperties = [
 	{
@@ -34,7 +33,7 @@ const paramProperties = [
 		metadataType: "COLLECTION",
 		displayConditions: [{ field: "type", operator: "EQ", value: "RECORD" }],
 	},
-] as ComponentProperty[]
+] as component.ComponentProperty[]
 
 const ParamProperties: definition.UtilityComponent = (props) => {
 	const { context } = props

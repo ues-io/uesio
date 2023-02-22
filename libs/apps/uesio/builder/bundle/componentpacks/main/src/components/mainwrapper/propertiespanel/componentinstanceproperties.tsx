@@ -7,8 +7,9 @@ import {
 	useBuilderState,
 	ComponentDef,
 } from "../../../api/stateapi"
+import { getSignalProperties } from "../../../api/signalsapi"
 
-import { useDefinition } from "../../../api/defapi"
+import { add, get, useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
 import {
 	DISPLAY_SECTION,
@@ -24,7 +25,6 @@ import {
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
-import { getStyleVariantProperty } from "../../../api/componentproperty"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -54,6 +54,8 @@ function getSections(componentDef?: ComponentDef) {
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 
+	const ListProperty = component.getUtility("uesio/builder.listproperty")
+
 	const selectedPath = useSelectedPath(context)
 
 	const selectedDef = useDefinition(selectedPath)
@@ -78,7 +80,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const [selectedTab, setSelectedTab] = useBuilderState<string>(
 		context,
 		"selectedpropertiestab",
-		sections[0].id || sections[0].label
+		getSectionId(sections[0])
 	)
 
 	if (!componentDef) return null
@@ -87,12 +89,17 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	// useDefinition(selectedPath) as definition.DefinitionMap
 
 	let content: ReactNode = null
+	const selectedSection =
+		sections.find((section) => selectedTab === getSectionId(section)) ||
+		sections[0]
+	let selectedSectionId: string
 
-	switch (selectedTab) {
-		case "uesio.home": {
+	switch (selectedSection?.type) {
+		case "HOME": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.home"
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab).combine()}
+					id={path.addLocal(selectedSectionId).combine()}
 					context={context}
 					properties={componentDef.properties}
 					path={path}
@@ -100,18 +107,22 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 			break
 		}
-		case "uesio.display": {
+		case "DISPLAY": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.display"
 			content = <>DISPLAY</>
 			break
 		}
-		case "uesio.styles": {
+		case "STYLES": {
+			selectedSectionId = getSectionId(selectedSection) || "uesio.styles"
 			content = (
 				<PropertiesForm
-					id={path.addLocal(selectedTab).combine()}
+					id={path.addLocal(selectedSectionId).combine()}
 					context={context}
 					properties={[
 						// Style Variant
-						getStyleVariantProperty(componentType as string),
+						component.getStyleVariantProperty(
+							componentType as string
+						),
 						// Custom Styles
 					]}
 					path={path}
@@ -119,8 +130,28 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 			break
 		}
-		case "uesio.signals": {
-			content = <>SIGNALS</>
+		case "SIGNALS": {
+			selectedSectionId = getSectionId(selectedSection) || "signals"
+			content = (
+				<ListProperty
+					path={path}
+					itemProperties={getSignalProperties}
+					itemPropertiesPanelTitle={"Signal Properties"}
+					propertyName={selectedSectionId}
+					context={context}
+					addLabel={"New Signal"}
+					itemDisplayTemplate={"${signal}"}
+					addAction={() => {
+						const listPath = path.addLocal(selectedSectionId)
+						const listLength = (
+							get(context, listPath) as definition.DefinitionList
+						).length
+						add(context, listPath.addLocal(`${listLength}`), {
+							signal: "",
+						})
+					}}
+				/>
+			)
 			break
 		}
 		default:
@@ -142,7 +173,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			)
 	}
 
-	function getSectionForTab(section: PropertiesPanelSection): Tab {
+	function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 		return {
 			id: getSectionId(section),
 			label: getSectionLabel(section),
@@ -159,7 +190,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			onUnselect={() => setSelectedPath(context)}
 			selectedTab={selectedTab}
 			setSelectedTab={setSelectedTab}
-			tabs={sections.map(getSectionForTab)}
+			tabs={sections.map(getPropertyTabForSection)}
 		>
 			{content}
 		</PropertiesWrapper>
