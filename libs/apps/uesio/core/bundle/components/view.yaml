@@ -14,7 +14,7 @@ properties:
 signals:
   SET_PARAM:
     label: "Set Param"
-		properties: []
+    properties: []
   SET_PARAMS:
     label: "Set Params"
-		properties: []
+    properties: []

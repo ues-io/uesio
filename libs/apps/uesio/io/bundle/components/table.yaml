@@ -53,9 +53,6 @@ signals:
   SET_EDIT_MODE:
     label: Set Edit Mode
     properties: []
-  SET_EDIT_MODE:
-    label: Set Edit Mode
-    properties: []
   NEXT_PAGE:
     label: Next Page
     properties: []
