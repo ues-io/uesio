@@ -8,14 +8,13 @@ import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
+import { ComponentProperty } from "../../properties/componentproperty"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
-) => component.ComponentProperty[]
+) => ComponentProperty[]
 
-export type PropertiesListOrGetter =
-	| component.ComponentProperty[]
-	| PropertiesGetter
+export type PropertiesListOrGetter = ComponentProperty[] | PropertiesGetter
 
 type Props = {
 	displayTemplate: string

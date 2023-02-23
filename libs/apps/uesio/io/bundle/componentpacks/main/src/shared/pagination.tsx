@@ -10,8 +10,6 @@ const nextPage: signal.ComponentSignalDescriptor<PaginationState> = {
 		const currentPage = state.pagination ?? 0
 		state.pagination = currentPage + 1
 	},
-	label: "Next Page",
-	properties: () => [],
 }
 
 const prevPage: signal.ComponentSignalDescriptor<PaginationState> = {
@@ -19,8 +17,6 @@ const prevPage: signal.ComponentSignalDescriptor<PaginationState> = {
 		const currentPage = state.pagination ?? 0
 		state.pagination = currentPage - 1
 	},
-	label: "Previous Page",
-	properties: () => [],
 }
 
 const usePagination = (

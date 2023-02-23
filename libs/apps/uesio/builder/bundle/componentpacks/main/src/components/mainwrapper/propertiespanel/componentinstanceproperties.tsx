@@ -1,4 +1,4 @@
-import { component, definition } from "@uesio/ui"
+import { component, definition, wire } from "@uesio/ui"
 import PropertiesWrapper, { Tab } from "./propertieswrapper"
 import {
 	getComponentDef,
@@ -25,6 +25,7 @@ import {
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
+import { getStyleVariantProperty } from "../../../properties/componentproperty"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -120,9 +121,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					context={context}
 					properties={[
 						// Style Variant
-						component.getStyleVariantProperty(
-							componentType as string
-						),
+						getStyleVariantProperty(componentType as string),
 						// Custom Styles
 					]}
 					path={path}
@@ -135,7 +134,9 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			content = (
 				<ListProperty
 					path={path}
-					itemProperties={getSignalProperties}
+					itemProperties={(record: wire.PlainWireRecord) =>
+						getSignalProperties(record, context)
+					}
 					itemPropertiesPanelTitle={"Signal Properties"}
 					propertyName={selectedSectionId}
 					context={context}

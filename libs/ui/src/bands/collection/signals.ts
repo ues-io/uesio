@@ -14,15 +14,6 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${COLLECTION_BAND}/CREATE_JOB`]: {
 		dispatcher: (signal: CreateJobSignal, context: Context) =>
 			createJob(context.mergeString(signal.collection), context),
-		label: "Create Export Job",
-		description: "Create Export Job for a collection",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "collection",
-				label: "collection",
-			},
-		],
 	},
 }
 

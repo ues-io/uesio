@@ -36,6 +36,7 @@ type Component struct {
 	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
 	DefaultDefinition yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
 	Sections          yaml.Node `yaml:"sections" json:"uesio/studio.sections"`
+	Signals           yaml.Node `yaml:"signals" json:"uesio/studio.signals"`
 }
 
 type ComponentWrapper Component
@@ -59,6 +60,9 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	}
 	if c.DefaultDefinition.Content != nil {
 		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(&c.DefaultDefinition))
+	}
+	if c.Signals.Content != nil {
+		enc.AddObjectKey("signals", (*YAMLDefinition)(&c.Signals))
 	}
 }
 

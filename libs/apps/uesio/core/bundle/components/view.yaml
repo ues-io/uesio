@@ -11,3 +11,10 @@ properties:
   - name: params
     type: PARAMS
     label: Params
+signals:
+  SET_PARAM:
+    label: "Set Param"
+    properties: []
+  SET_PARAMS:
+    label: "Set Params"
+    properties: []

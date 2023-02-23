@@ -1,5 +1,5 @@
 name: tabs
-label: Tabs
+title: Tabs
 description: Organized view content in to tabbed sections
 pack: main
 entrypoint: components/tabs/tabs
