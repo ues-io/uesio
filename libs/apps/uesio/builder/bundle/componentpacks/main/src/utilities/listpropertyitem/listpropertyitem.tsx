@@ -75,9 +75,9 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 			}
 		>
 			<div className="tagroot">
-				{typeof displayTemplate === "string"
-					? context.merge(displayTemplate)
-					: displayTemplate(record.source)}
+				{typeof displayTemplate === "function"
+					? displayTemplate(record.source)
+					: context.merge(displayTemplate)}
 			</div>
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>

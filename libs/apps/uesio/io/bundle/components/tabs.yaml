@@ -8,5 +8,17 @@ discoverable: true
 sections:
   - label: Tabs
     id: tabs
-    viewDefinition:
-      # TODO: Custom component for defining list of Tab definitions?
+    type: LIST
+    items:
+      addLabel: Add Tab
+      displayTemplate: "${label}"
+      title: Tab Properties
+      defaultDefinition:
+        label: New Tab
+      properties:
+        - name: id
+          type: TEXT
+          label: Tab Id
+        - name: label
+          type: TEXT
+          label: Tab Label

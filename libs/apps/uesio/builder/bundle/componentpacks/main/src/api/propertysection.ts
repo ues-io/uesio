@@ -1,4 +1,13 @@
 import { definition } from "@uesio/ui"
+import { ComponentProperty } from "../properties/componentproperty"
+
+interface ListPropertyItemsDefinition {
+	properties: ComponentProperty[]
+	addLabel: string
+	displayTemplate: string
+	title?: string
+	defaultDefinition?: definition.DefinitionMap
+}
 
 type PropertyPanelSectionType =
 	| "HOME"
@@ -6,6 +15,7 @@ type PropertyPanelSectionType =
 	| "STYLES"
 	| "SIGNALS"
 	| "CUSTOM"
+	| "LIST"
 
 interface BaseSection {
 	id?: string
@@ -27,6 +37,14 @@ interface CustomSection extends BaseSection {
 	icon?: string
 	viewDefinition: definition.DefinitionList
 	type?: "CUSTOM"
+}
+
+interface CustomListSection extends BaseSection {
+	label: string
+	id?: string
+	icon?: string
+	type: "LIST"
+	items: ListPropertyItemsDefinition
 }
 
 interface DisplaySection extends BaseSection {
@@ -53,6 +71,7 @@ type PropertiesPanelSection =
 	| CustomSection
 	| DisplaySection
 	| StylesSection
+	| CustomListSection
 
 const HOME_SECTION: HomeSection = {
 	id: "uesio.home",
@@ -131,8 +150,10 @@ export {
 	getSectionIcon,
 	StylesSection,
 	CustomSection,
+	CustomListSection,
 	HomeSection,
 	DisplaySection,
 	SignalsSection,
 	PropertiesPanelSection,
+	ListPropertyItemsDefinition,
 }
