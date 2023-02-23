@@ -1,4 +1,5 @@
 import { api, component, context as ctx, definition, metadata } from "@uesio/ui"
+import { ComponentProperty } from "../properties/componentproperty"
 import { combinePath, FullPath, parseFullPath } from "./path"
 import { PropertiesPanelSection } from "./propertysection"
 import { SignalDescriptor } from "./signalsapi"
@@ -10,7 +11,7 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
-	properties?: component.ComponentProperty[]
+	properties?: ComponentProperty[]
 	sections?: PropertiesPanelSection[]
 	defaultDefinition?: definition.DefinitionMap
 	signals?: Record<string, SignalDescriptor>

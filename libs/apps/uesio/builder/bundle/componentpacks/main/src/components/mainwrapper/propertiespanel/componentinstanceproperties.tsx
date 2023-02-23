@@ -25,6 +25,7 @@ import {
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
+import { getStyleVariantProperty } from "../../../properties/componentproperty"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -120,9 +121,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					context={context}
 					properties={[
 						// Style Variant
-						component.getStyleVariantProperty(
-							componentType as string
-						),
+						getStyleVariantProperty(componentType as string),
 						// Custom Styles
 					]}
 					path={path}
@@ -136,7 +135,7 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 				<ListProperty
 					path={path}
 					itemProperties={(record: wire.PlainWireRecord) =>
-						getSignalProperties(context, record)
+						getSignalProperties(record, context)
 					}
 					itemPropertiesPanelTitle={"Signal Properties"}
 					propertyName={selectedSectionId}

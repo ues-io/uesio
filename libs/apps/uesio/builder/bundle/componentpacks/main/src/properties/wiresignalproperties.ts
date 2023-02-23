@@ -1,78 +1,79 @@
-import { metadata, signal as signalApi, wire } from "@uesio/ui"
+import { metadata, wire } from "@uesio/ui"
+import { SignalDefinition, SignalDescriptor } from "../api/signalsapi"
 import { ComponentProperty } from "./componentproperty"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
 
-export interface CreateRecordSignal extends signalApi.SignalDefinition {
+export interface CreateRecordSignal extends SignalDefinition {
 	wire: string
 	prepend?: boolean
 }
 
-export interface UpdateRecordSignal extends signalApi.SignalDefinition {
+export interface UpdateRecordSignal extends SignalDefinition {
 	wire: string
 	field: string
 	value: string
 	record: string
 }
 
-export interface CancelWireSignal extends signalApi.SignalDefinition {
+export interface CancelWireSignal extends SignalDefinition {
 	wire: string
 }
 
-export interface EmptyWireSignal extends signalApi.SignalDefinition {
+export interface EmptyWireSignal extends SignalDefinition {
 	wire: string
 }
 
-export interface ResetWireSignal extends signalApi.SignalDefinition {
+export interface ResetWireSignal extends SignalDefinition {
 	wire: string
 }
 
-export interface ToggleConditionSignal extends signalApi.SignalDefinition {
-	wire: string
-	conditionId: string
-}
-
-export interface RemoveConditionSignal extends signalApi.SignalDefinition {
+export interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
 	conditionId: string
 }
 
-export interface SetConditionSignal extends signalApi.SignalDefinition {
+export interface RemoveConditionSignal extends SignalDefinition {
+	wire: string
+	conditionId: string
+}
+
+export interface SetConditionSignal extends SignalDefinition {
 	wire: string
 	condition: wire.WireConditionState
 }
-export interface SetConditionValueSignal extends signalApi.SignalDefinition {
+export interface SetConditionValueSignal extends SignalDefinition {
 	wire: string
 	value: string | number | boolean
 	conditionId: string
 }
-export interface SetOrderSignal extends signalApi.SignalDefinition {
+export interface SetOrderSignal extends SignalDefinition {
 	wire: string
 	order: { field: metadata.MetadataKey; desc: boolean }[]
 }
-export interface AddOrderSignal extends signalApi.SignalDefinition {
+export interface AddOrderSignal extends SignalDefinition {
 	wire: string
 	field: metadata.MetadataKey
 	desc: boolean
 }
-export interface RemoveOrderSignal extends signalApi.SignalDefinition {
+export interface RemoveOrderSignal extends SignalDefinition {
 	wire: string
 	fields: metadata.MetadataKey[]
 }
 
-export interface LoadWiresSignal extends signalApi.SignalDefinition {
+export interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
-export interface InitializeWiresSignal extends signalApi.SignalDefinition {
+export interface InitializeWiresSignal extends SignalDefinition {
 	wireDefs: string[]
 }
 
-export interface SaveWiresSignal extends signalApi.SignalDefinition {
+export interface SaveWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
 
-export interface SearchWireSignal extends signalApi.SignalDefinition {
+export interface SearchWireSignal extends SignalDefinition {
 	wire: string
 	search: string
 	searchFields?: string[]
@@ -100,7 +101,7 @@ const getWireAndConditionsDescriptor = (wire: string) => [
 ]
 
 // Metadata for all of the signals in the band
-const signals: Record<string, signalApi.SignalDescriptor> = {
+const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle delete status",
 		description: "Toggle the delete status of a wire",
