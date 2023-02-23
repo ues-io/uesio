@@ -110,6 +110,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "PARAMS": {
+			return {
+				"uesio/builder.paramsfield": {
+					...baseFieldDef,
+					wrapperVariant: "uesio/builder.propfield",
+					labelPosition: "none",
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
@@ -299,7 +308,7 @@ const getWireFieldFromPropertyDef = (
 			return {
 				label: label || name,
 				required: required || false,
-				type: "TEXT" as const,
+				type: "MAP" as const,
 			}
 		case "LIST":
 			return {
