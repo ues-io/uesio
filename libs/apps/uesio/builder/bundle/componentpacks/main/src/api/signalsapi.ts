@@ -22,12 +22,18 @@ const signalDefinitionRegistry: Record<string, SignalDescriptor> = {
 type SignalDescriptor = {
 	label: string
 	description: string
-	properties: (signal: SignalDefinition) => ComponentProperty[]
+	properties: (
+		signal: SignalDefinition,
+		context: context.Context
+	) => ComponentProperty[]
 }
 
 type ComponentSignalDescriptor = {
 	label?: string
-	properties?: (signal: SignalDefinition) => ComponentProperty[]
+	properties?: (
+		signal: SignalDefinition,
+		context: context.Context
+	) => ComponentProperty[]
 	target?: string
 }
 
@@ -96,7 +102,7 @@ const getSignalProperties = (
 	return [
 		...defaultSignalProps,
 		...(descriptor && descriptor.properties
-			? descriptor.properties(signalDefinition)
+			? descriptor.properties(signalDefinition, context)
 			: []),
 	]
 }

@@ -107,6 +107,7 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "WIRES":
 		case "FIELDS": {
 			return {
 				"uesio/io.field": {
@@ -162,7 +163,8 @@ const getSelectListMetadata = (def: SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: ComponentProperty
+	def: ComponentProperty,
+	addBlankOption?: boolean
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -173,7 +175,7 @@ const getWireSelectListMetadata = (
 					label: wireId,
 				} as wire.SelectOption)
 		),
-		"No wire selected"
+		addBlankOption ? "No wire selected" : undefined
 	)
 
 const getNamespaceSelectListMetadata = (
@@ -270,7 +272,11 @@ const getWireFieldFromPropertyDef = (
 				label: label || name,
 				required: required || false,
 				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
-				selectlist: getWireSelectListMetadata(context, def),
+				selectlist: getWireSelectListMetadata(
+					context,
+					def,
+					type === "WIRE"
+				),
 			}
 		case "NAMESPACE":
 			return {
@@ -387,6 +393,10 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			setter = NoOp
 			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
 		} else if (type === "FIELDS" || type === "WIRES") {
+			// Values are stored as a list in the YAML,
+			// but we are rendering these using the Multiselect control,
+			// which works with a Record<string, boolean> where the keys are values which
+			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))
 			value = get(context, path.addLocal(name)) as string[]
