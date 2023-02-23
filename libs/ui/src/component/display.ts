@@ -34,6 +34,7 @@ type ParamValueCondition = {
 type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
+	wire?: string
 }
 
 type RecordIsNewCondition = {
@@ -47,6 +48,7 @@ type RecordIsNotNewCondition = {
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
+	wire?: string
 }
 
 type CollectionContextCondition = {
