@@ -85,6 +85,12 @@ const getFormFieldFromProperty = (
 			}
 		}
 		case "MAP":
+			return {
+				"uesio/builder.mapproperty": {
+					property,
+					path,
+				},
+			}
 		case "LIST": {
 			return {
 				"uesio/io.field": {
@@ -438,5 +444,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		/>
 	)
 }
+
+export { getFormFieldFromProperty }
 
 export default PropertiesForm
