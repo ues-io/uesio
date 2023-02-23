@@ -1,27 +1,57 @@
-import { definition } from "@uesio/ui"
+import { component, definition } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
-import { setSelectedPath, useSelectedPath } from "../../../api/stateapi"
+import PropertiesForm from "../../../helpers/propertiesform"
+import { useSelectedPath } from "../../../api/stateapi"
 
-import { useDefinition } from "../../../api/defapi"
+const paramProperties = [
+	{
+		name: "name",
+		label: "Name",
+		required: true,
+		type: "KEY",
+	},
+	{
+		name: "required",
+		label: "Required",
+		required: true,
+		type: "CHECKBOX",
+	},
+	{
+		name: "type",
+		label: "Parameter Type",
+		required: true,
+		type: "SELECT",
+		options: [
+			{ value: "RECORD", label: "Record ID" },
+			{ value: "TEXT", label: "Text" },
+		],
+	},
+	{
+		name: "collection",
+		label: "Collection",
+		type: "METADATA",
+		metadataType: "COLLECTION",
+		displayConditions: [{ field: "type", operator: "EQ", value: "RECORD" }],
+	},
+] as component.ComponentProperty[]
 
 const ParamProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
-
-	const selectedPath = useSelectedPath(context)
-
-	const selectedDef = useDefinition(selectedPath)
-
-	console.log(selectedDef)
+	const path = useSelectedPath(context)
 
 	return (
 		<PropertiesWrapper
 			context={props.context}
 			className={props.className}
-			path={selectedPath}
-			title={"param"}
-			onUnselect={() => setSelectedPath(context)}
+			path={path}
+			title={"Param Properties"}
 		>
-			<div>Param Properties</div>
+			<PropertiesForm
+				id={path.combine()}
+				context={context}
+				properties={paramProperties}
+				path={path}
+			/>
 		</PropertiesWrapper>
 	)
 }

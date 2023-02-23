@@ -28,8 +28,9 @@ func (fc *FileCollection) NewItem() Item {
 	return &File{}
 }
 
-func (fc *FileCollection) AddItem(item Item) {
+func (fc *FileCollection) AddItem(item Item) error {
 	*fc = append(*fc, item.(*File))
+	return nil
 }
 
 func (fc *FileCollection) GetItemFromPath(path, namespace string) BundleableItem {

@@ -26,8 +26,9 @@ func (uatc *UserAccessTokenCollection) NewItem() Item {
 	return &UserAccessToken{}
 }
 
-func (uatc *UserAccessTokenCollection) AddItem(item Item) {
+func (uatc *UserAccessTokenCollection) AddItem(item Item) error {
 	*uatc = append(*uatc, item.(*UserAccessToken))
+	return nil
 }
 
 func (uatc *UserAccessTokenCollection) GetItemFromPath(path, namespace string) BundleableItem {

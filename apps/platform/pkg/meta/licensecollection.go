@@ -21,8 +21,9 @@ func (lc *LicenseCollection) NewItem() Item {
 	return &License{}
 }
 
-func (lc *LicenseCollection) AddItem(item Item) {
+func (lc *LicenseCollection) AddItem(item Item) error {
 	*lc = append(*lc, item.(*License))
+	return nil
 }
 
 func (lc *LicenseCollection) Loop(iter GroupIterator) error {

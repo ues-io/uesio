@@ -26,8 +26,9 @@ func (cc *ComponentCollection) NewItem() Item {
 	return &Component{}
 }
 
-func (cc *ComponentCollection) AddItem(item Item) {
+func (cc *ComponentCollection) AddItem(item Item) error {
 	*cc = append(*cc, item.(*Component))
+	return nil
 }
 
 func (cc *ComponentCollection) GetItemFromPath(path, namespace string) BundleableItem {

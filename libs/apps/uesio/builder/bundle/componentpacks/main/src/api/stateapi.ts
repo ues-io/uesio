@@ -1,81 +1,6 @@
-import { definition, api, metadata, context as ctx } from "@uesio/ui"
+import { api, component, context as ctx, definition, metadata } from "@uesio/ui"
 import { combinePath, FullPath, parseFullPath } from "./path"
-
-type BaseProperty = {
-	name: string
-	label?: string
-	required?: boolean
-	type: string
-	defaultValue?: string
-}
-
-type TextProperty = {
-	type: "TEXT"
-} & BaseProperty
-
-type ComponentIdProperty = {
-	type: "COMPONENT_ID"
-} & BaseProperty
-
-type NumberProperty = {
-	type: "NUMBER"
-	min?: number
-	max?: number
-	step?: number
-	defaultValue?: number
-} & BaseProperty
-
-type KeyProperty = {
-	type: "KEY"
-} & BaseProperty
-
-type MetadataProperty = {
-	type: "METADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
-} & BaseProperty
-
-type MultiMetadataProperty = {
-	type: "MULTI_METADATA"
-	metadataType: metadata.MetadataType
-	groupingPath?: string
-	groupingValue?: string
-} & BaseProperty
-
-type CheckboxProperty = {
-	type: "CHECKBOX"
-	defaultValue?: boolean
-} & BaseProperty
-
-type WireProperty = {
-	type: "WIRE"
-} & BaseProperty
-
-type SelectProperty = {
-	type: "SELECT"
-	options: SelectOption[]
-	required?: boolean
-	defaultValue?: string | number | boolean
-	blankOptionLabel?: string
-} & BaseProperty
-
-type SelectOption = {
-	value: string // TODO This should be able to be a boolean or number as well
-	label: string
-	disabled?: boolean
-}
-
-type ComponentProperty =
-	| TextProperty
-	| NumberProperty
-	| KeyProperty
-	| MetadataProperty
-	| MultiMetadataProperty
-	| SelectProperty
-	| WireProperty
-	| ComponentIdProperty
-	| CheckboxProperty
+import { PropertiesPanelSection } from "./propertysection"
 
 type ComponentDef = {
 	name: string
@@ -84,8 +9,9 @@ type ComponentDef = {
 	description: string
 	category: string
 	discoverable: boolean
-	properties: ComponentProperty[]
-	propertiesPanelView: definition.DefinitionList
+	properties?: component.ComponentProperty[]
+	sections?: PropertiesPanelSection[]
+	defaultDefinition?: definition.DefinitionMap
 }
 
 const getBuilderComponentId = (context: ctx.Context, id: string) =>
@@ -163,6 +89,28 @@ const getSelectedViewPath = (context: ctx.Context) => {
 }
 
 const setSelectedPath = (context: ctx.Context, path?: FullPath) => {
+	// If the selected path is a panel, make sure it's opened
+	if (path) {
+		const pathArray = component.path.toPath(path.localPath)
+		const isPanel = path.itemType === "viewdef" && pathArray[0] === "panels"
+		if (isPanel) {
+			const panelId = pathArray[1]
+			api.signal.run(
+				{
+					signal: "panel/CLOSE_ALL",
+				},
+				context
+			)
+			api.signal.run(
+				{
+					signal: "panel/OPEN",
+					panel: panelId,
+				},
+				context
+			)
+		}
+	}
+
 	setBuilderState<string>(context, "selected", combinePath(path))
 }
 
@@ -210,8 +158,4 @@ export {
 	useSelectedViewPath,
 	getSelectedViewPath,
 	ComponentDef,
-	ComponentProperty,
-	SelectOption,
-	SelectProperty,
-	WireProperty,
 }

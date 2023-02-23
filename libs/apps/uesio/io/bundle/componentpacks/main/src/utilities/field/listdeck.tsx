@@ -13,15 +13,13 @@ const ListFieldDeck: FunctionComponent<ListFieldDeckUtilityProps> = (props) => {
 	const value = props.value as wire.PlainWireRecord[]
 	return (
 		<>
-			{value.map((record, i) => (
+			{value?.map((record, index) => (
 				<component.Slot
-					key={i}
+					key={index}
 					definition={props.options}
 					listName="components"
 					path={props.path}
-					context={props.context.addRecordDataFrame({
-						recordData: record,
-					})}
+					context={props.context.addRecordDataFrame(record, index)}
 				/>
 			))}
 		</>

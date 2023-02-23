@@ -5,6 +5,14 @@ import * as path from "./component/path"
 import * as registry from "./component/registry"
 import { Component, getUtility } from "./component/component"
 import {
+	BotProperty,
+	ComponentProperty,
+	SelectOption,
+	SelectProperty,
+	WireProperty,
+	getStyleVariantProperty,
+} from "./component/componentproperty"
+import {
 	shouldHaveClass,
 	useShould,
 	useShouldFilter,
@@ -35,4 +43,10 @@ export {
 	useContextFilter,
 	ItemContext,
 	DisplayCondition,
+	ComponentProperty,
+	SelectOption,
+	SelectProperty,
+	WireProperty,
+	BotProperty,
+	getStyleVariantProperty,
 }

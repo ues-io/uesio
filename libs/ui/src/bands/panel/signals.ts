@@ -1,6 +1,6 @@
 import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import operations from "./operations"
+import { open, close, toggle, closeAll } from "./operations"
 
 // The key for the entire band
 const PANEL_BAND = "panel"
@@ -13,7 +13,7 @@ interface ToggleSignal extends SignalDefinition {
 const signals: Record<string, SignalDescriptor> = {
 	[`${PANEL_BAND}/TOGGLE`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.toggle(context, signal.panel),
+			toggle(context, signal.panel),
 		label: "Toggle",
 		description: "Toggle panel status",
 		properties: () => [
@@ -26,7 +26,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${PANEL_BAND}/OPEN`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.open(context, signal.panel),
+			open(context, signal.panel),
 		label: "Open",
 		description: "Open panel",
 		properties: () => [
@@ -39,7 +39,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${PANEL_BAND}/CLOSE`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.close(context, signal.panel),
+			close(context, signal.panel),
 		label: "Close",
 		description: "Close panel",
 		properties: () => [
@@ -49,6 +49,13 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Panel",
 			},
 		],
+	},
+	[`${PANEL_BAND}/CLOSE_ALL`]: {
+		dispatcher: (signal: ToggleSignal, context: Context) =>
+			closeAll(context),
+		label: "Close all",
+		description: "Close all panels",
+		properties: () => [],
 	},
 }
 

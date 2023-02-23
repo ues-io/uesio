@@ -32,9 +32,10 @@ type Component struct {
 	Utilities      []string `yaml:"utilities,omitempty" json:"uesio/studio.utilities"`
 
 	// Builder Properties
-	Discoverable        bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
-	Properties          yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
-	PropertiesPanelView yaml.Node `yaml:"propertiesPanelView" json:"uesio/studio.propertiespanelview"`
+	Discoverable      bool      `yaml:"discoverable,omitempty" json:"uesio/studio.discoverable"`
+	Properties        yaml.Node `yaml:"properties" json:"uesio/studio.properties"`
+	DefaultDefinition yaml.Node `yaml:"defaultDefinition" json:"uesio/studio.defaultdefinition"`
+	Sections          yaml.Node `yaml:"sections" json:"uesio/studio.sections"`
 }
 
 type ComponentWrapper Component
@@ -53,8 +54,11 @@ func (c *Component) MarshalJSONObject(enc *gojay.Encoder) {
 	if c.Properties.Content != nil {
 		enc.AddArrayKey("properties", (*YAMLDefinition)(&c.Properties))
 	}
-	if c.PropertiesPanelView.Content != nil {
-		enc.AddArrayKey("propertiesPanelView", (*YAMLDefinition)(&c.PropertiesPanelView))
+	if c.Sections.Content != nil {
+		enc.AddArrayKey("sections", (*YAMLDefinition)(&c.Sections))
+	}
+	if c.DefaultDefinition.Content != nil {
+		enc.AddObjectKey("defaultDefinition", (*YAMLDefinition)(&c.DefaultDefinition))
 	}
 }
 

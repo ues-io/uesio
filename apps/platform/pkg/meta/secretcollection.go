@@ -26,8 +26,9 @@ func (sc *SecretCollection) NewItem() Item {
 	return &Secret{}
 }
 
-func (sc *SecretCollection) AddItem(item Item) {
+func (sc *SecretCollection) AddItem(item Item) error {
 	*sc = append(*sc, item.(*Secret))
+	return nil
 }
 
 func (sc *SecretCollection) GetItemFromPath(path, namespace string) BundleableItem {

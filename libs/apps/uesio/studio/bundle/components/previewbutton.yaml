@@ -3,8 +3,15 @@ pack: main
 entrypoint: components/previewbutton/previewbutton
 utilities:
   - uesio/io.button
-  - uesio/io.form
   - uesio/io.dialog
 variants:
   - uesio/io.button:uesio/io.secondary
   - uesio/io.button:uesio/io.primary
+  - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.field:uesio/io.default
+  - uesio/io.fieldlabel:uesio/io.default
+  - uesio/io.fieldwrapper:uesio/io.default
+  - uesio/io.tile:uesio/io.default
+  - uesio/io.titlebar:uesio/io.infotag
+  - uesio/io.titlebar:uesio/io.dialog
+  - uesio/io.listfield:uesio/io.default

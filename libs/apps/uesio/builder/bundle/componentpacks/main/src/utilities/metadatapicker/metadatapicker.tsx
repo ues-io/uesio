@@ -50,6 +50,10 @@ const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 		/>
 	)
 
+	const selectedItems = items
+		? items.filter((item: metadata.MetadataInfo) => item.key === value)
+		: []
+
 	return (
 		<FieldWrapper
 			labelPosition={labelPosition}
@@ -63,7 +67,7 @@ const MetadataPicker: definition.UtilityComponent<MetadataPickerProps> = (
 				itemRenderer={renderer}
 				variant={variant}
 				context={context}
-				isSelected={(item: metadata.MetadataInfo) => item.key === value}
+				selectedItems={selectedItems}
 				onSelect={(item: metadata.MetadataInfo) => setValue(item.key)}
 				onUnSelect={() => setValue("")}
 				searchFilter={(item: metadata.MetadataInfo, search: string) =>

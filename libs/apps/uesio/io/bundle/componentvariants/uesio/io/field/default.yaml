@@ -9,6 +9,8 @@ definition:
       width: "100%"
       backgroundColor: white
       padding: 10px
+      fontSize: 10pt
+      color: "#444"
       border: "1px solid #00000044"
       "&:focus":
         outline: none

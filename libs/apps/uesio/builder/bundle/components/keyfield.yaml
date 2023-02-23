@@ -1,0 +1,8 @@
+name: keyfield
+pack: main
+entrypoint: components/keyfield/keyfield
+utilities:
+  - uesio/io.textfield
+  - uesio/io.iconbutton
+  - uesio/io.fieldwrapper
+  - uesio/builder.constrainedinput

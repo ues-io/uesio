@@ -94,6 +94,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 
 	return (
 		<ScrollPanel
+			variant="uesio/builder.mainsection"
 			header={
 				<>
 					<TitleBar
@@ -150,3 +151,5 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 PropertiesWrapper.displayName = "PropertiesWrapper"
 
 export default PropertiesWrapper
+
+export { Tab }

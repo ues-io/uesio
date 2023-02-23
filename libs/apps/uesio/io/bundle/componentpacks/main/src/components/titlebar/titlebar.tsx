@@ -27,30 +27,4 @@ const TitleBar: definition.UC<TitleBarDefinition> = (props) => {
 	)
 }
 
-/*
-const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Title Bar",
-	description: "A section description with a main title and subtitle.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({ title: "New Title" }),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-		{
-			name: "subtitle",
-			type: "TEXT",
-			label: "Subtitle",
-		},
-	],
-	sections: [],
-	actions: [],
-	traits: ["uesio.standalone"],
-	type: "component",
-	category: "CONTENT",
-}
-*/
-
 export default TitleBar

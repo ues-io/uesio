@@ -29,8 +29,9 @@ func (bc *BotCollection) NewItem() Item {
 	return &Bot{}
 }
 
-func (bc *BotCollection) AddItem(item Item) {
+func (bc *BotCollection) AddItem(item Item) error {
 	*bc = append(*bc, item.(*Bot))
+	return nil
 }
 
 func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem {
@@ -43,7 +44,7 @@ func (bc *BotCollection) GetItemFromPath(path, namespace string) BundleableItem 
 		if partLength != 3 {
 			return nil
 		}
-		return NewBaseBot(strings.ToUpper(botType), "none", namespace, parts[1])
+		return NewBaseBot(strings.ToUpper(botType), "", namespace, parts[1])
 	}
 
 	if botType == "beforesave" || botType == "aftersave" {

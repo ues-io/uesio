@@ -55,13 +55,14 @@ type ViewDefinition = {
 const View: UC<ViewDefinition> = (props) => {
 	const { path, context, definition } = props
 	const { params, view: viewDefId } = definition
-	const uesioId = definition["uesio.id"]
-	const viewId = makeViewId(viewDefId, path ? uesioId || path : "$root")
+	// Backwards compatibility for definition.id
+	// TODO: Remove when all instances of this are fixed
+	const uesioId = definition["uesio.id"] || definition.id || path || "$root"
+	const viewId = makeViewId(viewDefId, uesioId)
 
 	const isSubView = !!path
 
 	const viewDef = useViewDef(viewDefId)
-
 	const [paramState] = componentApi.useState<Record<string, string>>(
 		componentApi.getComponentId(uesioId, "uesio/core.view", path, context),
 		context.mergeStringMap(params)
@@ -95,37 +96,6 @@ const View: UC<ViewDefinition> = (props) => {
 }
 
 View.signals = signals
-
-/*
-const ViewPropertyDefinition: BuildPropertiesDefinition = {
-	title: "View",
-	description:
-		"A collection of wires, components and panels that represent a user interface.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		view: "",
-	}),
-	properties: [
-		{
-			name: "view",
-			type: "METADATA",
-			metadataType: "VIEW",
-			label: "View",
-		},
-		{
-			name: "params",
-			type: "PARAMS",
-			label: "Params",
-		},
-	],
-	sections: [],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-	category: "LAYOUT",
-}
-*/
-
 View.displayName = "View"
 
 export default View

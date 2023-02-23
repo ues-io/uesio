@@ -26,8 +26,9 @@ func (slc *SelectListCollection) NewItem() Item {
 	return &SelectList{}
 }
 
-func (slc *SelectListCollection) AddItem(item Item) {
+func (slc *SelectListCollection) AddItem(item Item) error {
 	*slc = append(*slc, item.(*SelectList))
+	return nil
 }
 
 func (slc *SelectListCollection) GetItemFromPath(path, namespace string) BundleableItem {

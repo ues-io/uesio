@@ -26,8 +26,9 @@ func (cvc *ConfigValueCollection) NewItem() Item {
 	return &ConfigValue{}
 }
 
-func (cvc *ConfigValueCollection) AddItem(item Item) {
+func (cvc *ConfigValueCollection) AddItem(item Item) error {
 	*cvc = append(*cvc, item.(*ConfigValue))
+	return nil
 }
 
 func (cvc *ConfigValueCollection) GetItemFromPath(path, namespace string) BundleableItem {

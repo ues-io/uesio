@@ -1,29 +1,26 @@
 import { api, wire, definition } from "@uesio/ui"
-import { useEffect } from "react"
-
-import Form from "../form/form"
+import { MutableRefObject, useEffect } from "react"
+import List from "../../components/list/list"
 
 interface FormProps extends definition.UtilityProps {
 	path: string
-	submitLabel?: string
-	onSubmit?: (record: wire.WireRecord) => void
 	fields: Record<string, wire.ViewOnlyField>
 	content: definition.DefinitionList
 	onUpdate?: (field: string, value: wire.FieldValue) => void
 	initialValue?: wire.PlainWireRecord
+	wireRef?: MutableRefObject<wire.Wire | undefined>
 }
 
 const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	const {
 		context,
-		onSubmit,
-		submitLabel,
 		content,
 		id,
 		fields,
 		path,
 		onUpdate,
 		initialValue,
+		wireRef,
 	} = props
 
 	const wire = api.wire.useDynamicWire(
@@ -37,6 +34,10 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 		},
 		context
 	)
+
+	// Set the passed in ref to the wire, so our
+	// parent component can use this wire.
+	if (wireRef) wireRef.current = wire
 
 	const currentValueString = JSON.stringify(initialValue)
 
@@ -63,12 +64,18 @@ const DynamicForm: definition.UtilityComponent<FormProps> = (props) => {
 	if (!wire) return null
 
 	return (
-		<Form
-			key={id}
-			content={content}
+		<List
 			path={path}
-			onSubmit={onSubmit}
-			submitLabel={submitLabel}
+			definition={{
+				mode: "EDIT",
+				components:
+					content ||
+					wire.getFields().map((field) => ({
+						"uesio/io.field": {
+							fieldId: field.id,
+						},
+					})),
+			}}
 			context={context.addWireFrame({
 				view: wire.getViewId(),
 				wire: wire.getId(),

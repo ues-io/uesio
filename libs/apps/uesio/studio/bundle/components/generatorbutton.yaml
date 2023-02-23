@@ -5,7 +5,6 @@ utilities:
   - uesio/builder.metadatapicker
   - uesio/builder.multimetadatapicker
   - uesio/io.button
-  - uesio/io.form
   - uesio/io.dialog
 variants:
   - uesio/io.button:uesio/io.secondary

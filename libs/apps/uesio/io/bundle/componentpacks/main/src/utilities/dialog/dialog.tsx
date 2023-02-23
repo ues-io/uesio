@@ -35,6 +35,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 			height={height}
 			width={width}
 			onClose={onClose}
+			initialFocus={1}
 		>
 			<Grid className={classes.root} context={context}>
 				<TitleBar

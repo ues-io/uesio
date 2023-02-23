@@ -29,25 +29,37 @@ const getFieldsRequest = (
 	})
 }
 
-const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
-	conditions: wireDef.conditions,
-	collection: wireDef.collection,
-	order: wireDef.order,
+const getBaseWireDefInfo = (wireDef: WireDefinition) => ({
 	query: !wireDef.init || wireDef.init.query || false,
 	create: wireDef.init ? wireDef.init.create || false : false,
 	defaults: wireDef.defaults,
 	events: wireDef.events,
-	batchsize: wireDef.batchsize,
-	requirewriteaccess: wireDef.requirewriteaccess,
 	fields: getFieldsRequest(wireDef.fields) || [],
 })
 
-const initViewOnlyWire = (
-	viewId: string,
-	wirename: string,
+const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
+	...getBaseWireDefInfo(wireDef),
+	conditions: wireDef.conditions,
+	collection: wireDef.collection,
+	order: wireDef.order,
+	batchsize: wireDef.batchsize,
+	requirewriteaccess: wireDef.requirewriteaccess,
+	viewOnly: false,
+})
+
+const getViewOnlyWireDefInfo = (
 	wireDef: ViewOnlyWireDefinition,
-	metadata: PlainCollectionMap
-): PlainWire => {
+	metadata: PlainCollection
+) => ({
+	...getBaseWireDefInfo(wireDef),
+	collection: getMetadataFullName(metadata),
+	viewOnly: true,
+})
+
+const getViewOnlyMetadata = (
+	wirename: string,
+	wireDef: ViewOnlyWireDefinition
+) => {
 	const viewOnlyNamespace = "uesio/viewonly"
 	const fieldMetadata: FieldMetadataMap = {
 		"uesio/core.id": {
@@ -75,7 +87,7 @@ const initViewOnlyWire = (
 			selectlist: fieldDef.selectlist,
 		}
 	})
-	const viewOnlyMetadata: PlainCollection = {
+	return {
 		name: wirename,
 		nameField: "uesio/core.id",
 		accessible: true,
@@ -84,43 +96,44 @@ const initViewOnlyWire = (
 		fields: fieldMetadata,
 		namespace: viewOnlyNamespace,
 		updateable: true,
-	}
-
-	const collectionFullname = `${viewOnlyNamespace}.${wirename}`
-
-	metadata[collectionFullname] = viewOnlyMetadata
-
-	return {
-		view: viewId || "",
-		query: !wireDef.init || wireDef.init.query || false,
-		conditions: [],
-		name: wirename,
-		order: [],
-		batchid: "",
-		batchnumber: 0,
-		data: {},
-		original: {},
-		changes: {},
-		deletes: {},
-		collection: collectionFullname,
-		viewOnly: true,
-		fields: getFieldsRequest(wireDef.fields) || [],
-		create: wireDef.init ? wireDef.init.create || false : false,
-		defaults: wireDef.defaults,
-		events: wireDef.events,
-	}
+	} as PlainCollection
 }
 
 const initExistingWire = (
 	existingWire: PlainWire,
-	wireDef: RegularWireDefinition
-) => ({
-	...existingWire,
+	wireDef: WireDefinition,
+	collections: PlainCollectionMap
+) => {
+	if (wireDef.viewOnly) {
+		const collection = getViewOnlyMetadata(existingWire.name, wireDef)
+		collections[getMetadataFullName(collection)] = collection
+		return {
+			...existingWire,
+			...getViewOnlyWireDefInfo(wireDef, collection),
+		}
+	}
+	return {
+		...existingWire,
+		changes: {},
+		original: { ...existingWire.data },
+		deletes: {},
+		...getWireDefInfo(wireDef),
+	}
+}
+
+const getNewPlainWireBase = (viewId: string, wirename: string) => ({
+	view: viewId || "",
+	name: wirename,
+	batchid: "",
+	batchnumber: 0,
+	data: {},
 	changes: {},
-	original: { ...existingWire.data },
+	original: {},
 	deletes: {},
-	...(wireDef && getWireDefInfo(wireDef)),
 })
+
+const getMetadataFullName = (metadata: PlainCollection) =>
+	`${metadata.namespace}.${metadata.name}`
 
 const initWire = (
 	viewId: string,
@@ -129,19 +142,16 @@ const initWire = (
 	collections: PlainCollectionMap
 ) => {
 	if (wireDef.viewOnly) {
-		return initViewOnlyWire(viewId, wirename, wireDef, collections)
+		const collection = getViewOnlyMetadata(wirename, wireDef)
+		collections[getMetadataFullName(collection)] = collection
+		return {
+			...getNewPlainWireBase(viewId, wirename),
+			...getViewOnlyWireDefInfo(wireDef, collection),
+		}
 	}
 
 	return {
-		view: viewId || "",
-		name: wirename,
-		batchid: "",
-		batchnumber: 0,
-		data: {},
-		changes: {},
-		original: {},
-		deletes: {},
-		viewOnly: false,
+		...getNewPlainWireBase(viewId, wirename),
 		...getWireDefInfo(wireDef),
 	}
 }

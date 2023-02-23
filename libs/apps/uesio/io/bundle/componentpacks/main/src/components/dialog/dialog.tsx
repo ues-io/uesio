@@ -47,36 +47,4 @@ const Dialog: definition.UC<DialogDefinition> = (props) => {
 		</IODialog>
 	)
 }
-
-/*
-const DialogPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Dialog",
-	defaultDefinition: () => ({
-		title: "New Dialog",
-	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-		{
-			name: "width",
-			type: "TEXT",
-			label: "Width",
-		},
-		{
-			name: "height",
-			type: "TEXT",
-			label: "Height",
-		},
-	],
-	sections: [],
-	actions: [],
-	traits: ["uesio.panel"],
-	classes: ["root"],
-	type: "component",
-}
-*/
-
 export default Dialog

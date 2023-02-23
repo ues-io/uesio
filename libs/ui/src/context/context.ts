@@ -32,7 +32,6 @@ const ERROR = "ERROR",
 	FIELD_MODE = "FIELD_MODE",
 	WIRE = "WIRE",
 	RECORD_DATA = "RECORD_DATA",
-	SLOT = "SLOT",
 	SIGNAL_OUTPUT = "SIGNAL_OUTPUT"
 
 type FieldMode = "READ" | "EDIT"
@@ -60,16 +59,13 @@ interface RecordContext {
 
 interface RecordDataContext {
 	recordData: PlainWireRecord // A way to store arbitrary record data in context
+	index?: number // the record's zero-indexed position within its parent array/collection
 }
 
 interface ViewContext {
 	view: string
 	viewDef: string
 	params?: Record<string, string>
-}
-
-interface SlotContext {
-	slot: MetadataKey
 }
 
 interface RouteContext {
@@ -119,10 +115,6 @@ interface ViewContextFrame extends ViewContext {
 	type: typeof VIEW
 }
 
-interface SlotContextFrame extends SlotContext {
-	type: typeof SLOT
-}
-
 interface RecordContextFrame extends RecordContext {
 	type: typeof RECORD
 	// We will throw an error if view is not available at time of construction
@@ -167,7 +159,6 @@ type ContextFrame =
 	| WireContextFrame
 	| ErrorContextFrame
 	| FieldModeContextFrame
-	| SlotContextFrame
 	| SignalOutputContextFrame
 
 // Type Guards for fully-resolved Context FRAMES (with "type" property appended)
@@ -191,9 +182,6 @@ const isSignalOutputContextFrame = (
 	frame: ContextFrame
 ): frame is SignalOutputContextFrame => frame.type === SIGNAL_OUTPUT
 
-const isSlotContextFrame = (frame: ContextFrame): frame is SlotContextFrame =>
-	frame.type === SLOT
-
 const providesRecordContext = (
 	frame: ContextFrame
 ): frame is RecordContextFrame | RecordDataContextFrame =>
@@ -202,6 +190,9 @@ const providesRecordContext = (
 const isFieldModeContextFrame = (
 	frame: ContextFrame
 ): frame is FieldModeContextFrame => frame.type === FIELD_MODE
+const isRecordDataContextFrame = (
+	frame: ContextFrame
+): frame is RecordDataContextFrame => frame.type === RECORD_DATA
 const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
 	frame.type === VIEW
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
@@ -285,12 +276,14 @@ class Context {
 		const ctx = new Context(stack ? stack : this.stack)
 		ctx.workspace = this.workspace
 		ctx.siteadmin = this.siteadmin
+		ctx.slot = this.slot
 		return ctx
 	}
 
 	stack: ContextFrame[]
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
+	slot?: MetadataKey
 
 	getRecordId = () => this.getRecord()?.getId()
 
@@ -308,6 +301,15 @@ class Context {
 			times - 1
 		)
 	}
+
+	getRecordDataIndex = (wireRecord?: WireRecord) =>
+		this.stack
+			.filter(isRecordDataContextFrame)
+			.find(
+				(frame) =>
+					wireRecord === undefined ||
+					frame.recordData === wireRecord.source
+			)?.index
 
 	getRecord = (wireId?: string) => {
 		const recordFrame = this.stack
@@ -361,7 +363,7 @@ class Context {
 
 	getThemeId = () => this.stack.find(isThemeContextFrame)?.theme
 
-	getCustomSlot = () => this.stack.find(isSlotContextFrame)?.slot
+	getCustomSlot = () => this.slot
 
 	getComponentVariant = (
 		componentType: MetadataKey,
@@ -405,6 +407,12 @@ class Context {
 	deleteSiteAdmin = () => {
 		const newContext = this.clone()
 		delete newContext.siteadmin
+		return newContext
+	}
+
+	deleteCustomSlot = () => {
+		const newContext = this.clone()
+		delete newContext.slot
 		return newContext
 	}
 
@@ -463,11 +471,11 @@ class Context {
 			record: recordContext.record,
 		})
 
-	// addRecordDataFrame provides a single-argument method, vs an argument method, since this is the common usage
-	addRecordDataFrame = (recordData: PlainWireRecord) =>
+	addRecordDataFrame = (recordData: PlainWireRecord, index?: number) =>
 		this.#addFrame({
 			type: RECORD_DATA,
 			recordData,
+			index,
 		})
 
 	addRouteFrame = (routeContext: RouteContext) =>
@@ -480,12 +488,6 @@ class Context {
 		this.#addFrame({
 			type: THEME,
 			theme,
-		})
-
-	addSlotFrame = (slot: MetadataKey) =>
-		this.#addFrame({
-			type: SLOT,
-			slot,
 		})
 
 	addSignalOutputFrame = (label: string, data: object) =>
@@ -504,6 +506,12 @@ class Context {
 	setWorkspace = (workspace: WorkspaceState) => {
 		const newContext = this.clone()
 		newContext.workspace = workspace
+		return newContext
+	}
+
+	setCustomSlot = (slot: MetadataKey) => {
+		const newContext = this.clone()
+		newContext.slot = slot
 		return newContext
 	}
 

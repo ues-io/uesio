@@ -1,7 +1,4 @@
-import componentSignal from "../bands/component/signals"
-
 import { Context } from "../context/context"
-import { SignalDefinition } from "../definition/signal"
 import {
 	cloneDefinition as cloneDef,
 	setDefinition as setDef,
@@ -35,9 +32,6 @@ import { add } from "../bands/notification"
 import { nanoid } from "@reduxjs/toolkit"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
-import { registry } from "../signals/signals"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { addBlankSelectOption } from "../bands/field/utils"
 import { makeComponentId } from "./componentapi"
 
 const useHasChanges = () =>
@@ -224,14 +218,6 @@ const useAvailableNamespaces = (
 		[metadataType]
 	)
 
-const getSignalProperties = (signal: SignalDefinition) => {
-	const descriptor = registry[signal?.signal] || componentSignal
-	return [
-		...defaultSignalProps(),
-		...(descriptor.properties ? descriptor.properties(signal) : []),
-	]
-}
-
 const getBuilderDeps = async (context: Context) => {
 	const workspace = context.getWorkspace()
 	if (!workspace || !workspace.wrapper) return
@@ -256,24 +242,6 @@ const getBuilderDeps = async (context: Context) => {
 	return
 }
 
-const defaultSignalProps = (): PropDescriptor[] => {
-	const signalIds = Object.keys(registry)
-	return [
-		{
-			name: "signal",
-			label: "Signal",
-			type: "SELECT",
-			options: addBlankSelectOption(
-				signalIds.map((signal) => ({
-					value: signal,
-					label: registry[signal].label || signal,
-					title: registry[signal].description || signal,
-				}))
-			),
-		},
-	]
-}
-
 export {
 	useHasChanges,
 	save,
@@ -290,7 +258,6 @@ export {
 	useDefinition,
 	useMetadataList,
 	useAvailableNamespaces,
-	getSignalProperties,
 	getBuilderDeps,
 	getDefinitionAtPath,
 }

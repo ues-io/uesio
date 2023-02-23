@@ -4,6 +4,7 @@ import DateField from "../../utilities/field/date"
 import EmailField from "../../utilities/field/email"
 import MarkDownField from "../../utilities/markdownfield/markdownfield"
 import MultiCheckField from "../../utilities/field/multicheck"
+import MultiSelectField from "../../utilities/field/multiselect"
 import NumberField from "../../utilities/field/number"
 import RadioButtons from "../../utilities/field/radiobuttons"
 import ReferenceField from "../../utilities/field/reference"
@@ -19,6 +20,8 @@ import ListField from "../../utilities/field/list"
 import ReferenceGroupField from "../../utilities/field/referencegroup"
 import { ReactNode } from "react"
 import FileField from "../../utilities/field/file"
+import MapField from "../../utilities/mapfield/mapfield"
+import MapFieldDeck from "../../utilities/field/mapdeck"
 
 type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
@@ -34,6 +37,10 @@ type ReferenceFieldOptions = {
 }
 
 type ListFieldOptions = {
+	components?: definition.DefinitionList
+}
+
+type MapFieldOptions = {
 	components?: definition.DefinitionList
 }
 
@@ -59,6 +66,7 @@ type FieldDefinition = {
 	displayAs?: string
 	reference?: ReferenceFieldOptions
 	list?: ListFieldOptions
+	map?: MapFieldOptions
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
@@ -109,6 +117,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		displayAs,
 		reference,
 		list,
+		map,
 		user,
 		number,
 		longtext,
@@ -150,6 +159,8 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 	}
 
 	let content: ReactNode
+	let selectOptions: collection.SelectOption[]
+	let multiSelectProps
 
 	switch (fieldMetadata.getType()) {
 		case "DATE":
@@ -181,7 +192,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 			content = <EmailField {...common} />
 			break
 		case "SELECT": {
-			const selectOptions = fieldMetadata.getSelectOptions()
+			selectOptions = fieldMetadata.getSelectOptions()
 			content =
 				displayAs === "RADIO" ? (
 					<RadioButtons {...common} options={selectOptions} />
@@ -191,12 +202,30 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 			break
 		}
 		case "MULTISELECT":
-			content = (
-				<MultiCheckField
-					{...common}
-					options={fieldMetadata.getSelectOptions()}
-				/>
-			)
+			multiSelectProps = {
+				...common,
+				options: fieldMetadata.getSelectOptions(),
+				// Storage of Multiselect values in DB is a Map[string]boolean containing the values which are selected,
+				// but the renderers expect a simple array of selected values, so we need to convert to/from that format
+				setValue: (values: wire.PlainFieldValue[]) => {
+					// Set the false/true value, then filter out the false values before setting
+					common.setValue(
+						values.reduce(
+							(acc, val) => ({ ...acc, [val as string]: true }),
+							{}
+						)
+					)
+				},
+				value: common.value
+					? Object.keys(common.value as Record<string, boolean>)
+					: [],
+			}
+			content =
+				displayAs === "SELECT" ? (
+					<MultiSelectField {...multiSelectProps} />
+				) : (
+					<MultiCheckField {...multiSelectProps} />
+				)
 			break
 		case "CHECKBOX":
 			content =
@@ -227,6 +256,35 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 						{...common}
 						subFields={fieldMetadata.source.subfields}
 						subType={fieldMetadata.source.subtype}
+					/>
+				)
+			break
+		case "MAP":
+			content =
+				displayAs === "DECK" ? (
+					<MapFieldDeck {...common} options={map} />
+				) : (
+					<MapField
+						{...common}
+						keyField={{
+							name: "key",
+							label: "Label",
+							type: "TEXT",
+							namespace: "",
+							accessible: true,
+							createable: false,
+							updateable: false,
+						}}
+						valueField={{
+							name: "value",
+							label: "Value",
+							type: fieldMetadata.source
+								.subtype as collection.FieldType,
+							namespace: "",
+							accessible: true,
+							createable: false,
+							updateable: false,
+						}}
 					/>
 				)
 			break
@@ -342,6 +400,7 @@ export {
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,
+	MapFieldOptions,
 	ReferenceFieldOptions,
 	ReferenceGroupFieldOptions,
 	UserFieldOptions,

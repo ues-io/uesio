@@ -1,6 +1,12 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
-import { FloatingOverlay } from "@floating-ui/react"
+import {
+	FloatingFocusManager,
+	FloatingOverlay,
+	useDismiss,
+	useFloating,
+	useInteractions,
+} from "@floating-ui/react"
 
 const minPagePadding = "40px"
 
@@ -8,6 +14,7 @@ interface DialogPlainUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
+	initialFocus?: number
 }
 
 const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
@@ -47,17 +54,47 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 		props
 	)
 
+	const floating = useFloating({
+		open: true,
+		onOpenChange: (open) => {
+			if (!open && props.onClose) props.onClose()
+		},
+	})
+
+	const dismiss = useDismiss(floating.context, {
+		outsidePress: false,
+		referencePress: true,
+		bubbles: false,
+	})
+
+	const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
+
 	return (
 		<FloatingOverlay
 			className={classes.blocker}
 			lockScroll
-			onClick={props.onClose}
 			style={{ position: "absolute" }}
+			ref={floating.refs.setReference}
+			{...getReferenceProps()}
 		>
-			<div className={classes.root} onClick={(e) => e.stopPropagation()}>
-				<div className={classes.inner}>{props.children}</div>
-				<div className={classes.spacer} />
-			</div>
+			<FloatingFocusManager
+				context={floating.context}
+				initialFocus={props.initialFocus}
+				closeOnFocusOut={false}
+			>
+				<div
+					className={classes.root}
+					ref={floating.refs.setFloating}
+					{...getFloatingProps({
+						onPointerDown(e) {
+							e.stopPropagation()
+						},
+					})}
+				>
+					<div className={classes.inner}>{props.children}</div>
+					<div className={classes.spacer} />
+				</div>
+			</FloatingFocusManager>
 		</FloatingOverlay>
 	)
 }

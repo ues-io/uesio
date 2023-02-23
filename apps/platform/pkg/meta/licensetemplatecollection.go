@@ -21,8 +21,9 @@ func (ltc *LicenseTemplateCollection) NewItem() Item {
 	return &LicenseTemplate{}
 }
 
-func (ltc *LicenseTemplateCollection) AddItem(item Item) {
+func (ltc *LicenseTemplateCollection) AddItem(item Item) error {
 	*ltc = append(*ltc, item.(*LicenseTemplate))
+	return nil
 }
 
 func (ltc *LicenseTemplateCollection) Loop(iter GroupIterator) error {
