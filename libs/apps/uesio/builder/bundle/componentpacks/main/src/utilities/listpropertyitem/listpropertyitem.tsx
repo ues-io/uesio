@@ -14,10 +14,13 @@ export type PropertiesGetter = (
 	item: wire.PlainWireRecord
 ) => ComponentProperty[]
 
+type ItemDisplayFunction = (item: wire.PlainWireRecord) => string
+
+export type ItemDisplayTemplate = string | ItemDisplayFunction
 export type PropertiesListOrGetter = ComponentProperty[] | PropertiesGetter
 
 type Props = {
-	displayTemplate: string
+	displayTemplate: ItemDisplayTemplate
 	parentPath: FullPath
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesPanelTitle?: string
@@ -71,7 +74,11 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 				)
 			}
 		>
-			<div className="tagroot">{context.merge(displayTemplate)}</div>
+			<div className="tagroot">
+				{typeof displayTemplate === "string"
+					? context.merge(displayTemplate)
+					: displayTemplate(record.source)}
+			</div>
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />
