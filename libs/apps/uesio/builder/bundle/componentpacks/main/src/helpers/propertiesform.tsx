@@ -86,7 +86,7 @@ const getFormFieldFromProperty = (
 		}
 		case "MAP":
 			return {
-				"uesio/builder.property": {
+				"uesio/builder.mapproperty": {
 					property,
 					path,
 				},
