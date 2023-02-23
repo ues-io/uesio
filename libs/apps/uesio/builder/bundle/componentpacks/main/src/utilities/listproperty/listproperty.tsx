@@ -1,16 +1,19 @@
 import { definition, wire, component } from "@uesio/ui"
 import { FullPath } from "../../api/path"
-import { get } from "../../api/defapi"
-import { PropertiesListOrGetter } from "../listpropertyitem/listpropertyitem"
+import { add, get } from "../../api/defapi"
+import {
+	ItemDisplayTemplate,
+	PropertiesListOrGetter,
+} from "../listpropertyitem/listpropertyitem"
 
 type Props = {
 	path: FullPath
 	addLabel: string
 	propertyName: string
-	itemDisplayTemplate: string
+	itemDisplayTemplate: ItemDisplayTemplate
 	itemPropertiesPanelTitle: string
-	addAction: () => void
 	itemProperties?: PropertiesListOrGetter
+	newItemState: () => wire.PlainWireRecord
 } & definition.UtilityProps
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
@@ -21,7 +24,7 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 		path,
 		addLabel,
 		context,
-		addAction,
+		newItemState,
 		propertyName,
 	} = props
 
@@ -56,7 +59,18 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 							/>
 						}
 						label={addLabel}
-						onClick={addAction}
+						onClick={() => {
+							const listItems = get(
+								context,
+								listPropertyPath
+							) as definition.DefinitionList
+							const listLength = listItems?.length || 0
+							add(
+								context,
+								listPropertyPath.addLocal(`${listLength}`),
+								newItemState?.() || {}
+							)
+						}}
 					/>
 				}
 			/>
