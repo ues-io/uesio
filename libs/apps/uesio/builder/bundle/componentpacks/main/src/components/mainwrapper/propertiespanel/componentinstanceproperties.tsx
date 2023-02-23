@@ -23,7 +23,6 @@ import {
 	getSectionIcon,
 	getSectionId,
 	getSectionLabel,
-	ListPropertyItemsDefinition,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
 import { getStyleVariantProperty } from "../../../properties/componentproperty"
@@ -95,7 +94,6 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 		sections.find((section) => selectedTab === getSectionId(section)) ||
 		sections[0]
 	let selectedSectionId: string
-	let sectionItemsDef: ListPropertyItemsDefinition
 
 	switch (selectedSection?.type) {
 		case "HOME": {
@@ -147,30 +145,6 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					newItemState={() => ({
 						signal: "",
 					})}
-				/>
-			)
-			break
-		}
-		case "LIST": {
-			selectedSectionId = getSectionId(selectedSection)
-			sectionItemsDef = selectedSection.items
-			content = (
-				<ListProperty
-					path={path}
-					itemProperties={() => sectionItemsDef?.properties}
-					itemPropertiesPanelTitle={
-						sectionItemsDef?.title || "Item Properties"
-					}
-					propertyName={selectedSectionId}
-					context={context}
-					addLabel={
-						sectionItemsDef?.addLabel ||
-						`New ${selectedSection.label}`
-					}
-					itemDisplayTemplate={sectionItemsDef?.displayTemplate}
-					newItemState={() =>
-						sectionItemsDef?.defaultDefinition || {}
-					}
 				/>
 			)
 			break

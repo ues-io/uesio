@@ -76,6 +76,42 @@ const getFormFieldFromProperty = (
 				},
 			}
 		case "LIST": {
+			/*
+
+
+		interface ListPropertyItemsDefinition {
+			properties: ComponentProperty[]
+			addLabel: string
+			displayTemplate: string
+			title?: string
+			defaultDefinition?: definition.DefinitionMap
+		}
+
+		case "LIST": {
+			itemsDef = property.items as ListPropertyItemsDefinition
+			content = (
+				<ListProperty
+					path={path}
+					itemProperties={() => itemsDef?.properties}
+					itemPropertiesPanelTitle={
+						itemsDef?.title || "Item Properties"
+					}
+					propertyName={selectedSectionId}
+					context={context}
+					addLabel={
+						itemsDef?.addLabel ||
+						`New ${selectedSection.label}`
+					}
+					itemDisplayTemplate={itemsDef?.displayTemplate}
+					newItemState={() =>
+						itemsDef?.defaultDefinition || {}
+					}
+				/>
+			)
+			break
+		}
+			*/
+
 			return {
 				"uesio/io.field": {
 					fieldId: property.name,

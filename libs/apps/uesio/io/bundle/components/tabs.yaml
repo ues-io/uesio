@@ -5,9 +5,8 @@ pack: main
 entrypoint: components/tabs/tabs
 category: LAYOUT
 discoverable: true
-sections:
-  - label: Tabs
-    id: tabs
+properties:
+  - name: tabs
     type: LIST
     items:
       addLabel: Add Tab
@@ -22,3 +21,10 @@ sections:
         - name: label
           type: TEXT
           label: Tab Label
+sections:
+  - label: Tabs
+    id: tabs
+    type: CUSTOM
+    viewDefinition:
+      - uesio/builder.property:
+        propertyId: tabs
