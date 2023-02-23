@@ -9,7 +9,7 @@ import {
 } from "../../../api/stateapi"
 import { getSignalProperties } from "../../../api/signalsapi"
 
-import { add, get, useDefinition } from "../../../api/defapi"
+import { useDefinition } from "../../../api/defapi"
 import PropertiesForm from "../../../helpers/propertiesform"
 import {
 	DISPLAY_SECTION,
@@ -142,15 +142,9 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 					context={context}
 					addLabel={"New Signal"}
 					itemDisplayTemplate={"${signal}"}
-					addAction={() => {
-						const listPath = path.addLocal(selectedSectionId)
-						const listLength = (
-							get(context, listPath) as definition.DefinitionList
-						).length
-						add(context, listPath.addLocal(`${listLength}`), {
-							signal: "",
-						})
-					}}
+					newItemState={() => ({
+						signal: "",
+					})}
 				/>
 			)
 			break
