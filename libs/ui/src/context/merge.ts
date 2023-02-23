@@ -7,6 +7,7 @@ import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import { get } from "lodash"
+import { FieldValue } from "uesio/bots"
 
 type MergeType =
 	| "Record"
@@ -27,6 +28,20 @@ type MergeType =
 	| "ComponentOutput"
 
 type MergeHandler = (expression: string, context: Context) => string
+const isStringable = (value: FieldValue) => {
+	const valueType = typeof value
+
+	switch (valueType) {
+		case "string":
+			return true
+		case "boolean":
+			return true
+		case "number":
+			return true
+		default:
+			return false
+	}
+}
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (fullExpression, context) => {
@@ -42,10 +57,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 			expression = expressionParts[1]
 		}
 		const value = record?.getFieldValue(expression)
-		const returnTypes = ["boolean", "string", "number"]
-		const valueType = typeof value
 
-		return returnTypes.includes(valueType) ? `${value}` : ""
+		return value && isStringable(value) ? `${value}` : ""
 	},
 	Sum: (fullExpression, context) => {
 		const expressionParts = fullExpression.split(":")
