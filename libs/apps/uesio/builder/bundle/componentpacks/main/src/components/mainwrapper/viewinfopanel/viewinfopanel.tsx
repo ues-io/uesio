@@ -46,6 +46,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 
 	return (
 		<ScrollPanel
+			variant="uesio/builder.mainsection"
 			header={
 				<TabLabels
 					variant="uesio/builder.mainsection"
