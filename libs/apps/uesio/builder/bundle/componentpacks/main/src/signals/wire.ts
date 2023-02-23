@@ -43,7 +43,7 @@ const getWireAndConditionsDescriptor = (wire: string) => [
 	getConditionIdsDescriptor(wire),
 ]
 
-// "Signal Handlers" for all of the signals in the band
+// Metadata for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle delete status",

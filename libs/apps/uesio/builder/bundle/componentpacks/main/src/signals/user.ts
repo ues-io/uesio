@@ -3,7 +3,7 @@ import { SignalDescriptor } from "../api/signalsapi"
 // The key for the entire band
 const USER_BAND = "user"
 
-// "Signal Handlers" for all of the signals in the band
+// Metadata for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/SIGNUP`]: {
 		label: "Signup",

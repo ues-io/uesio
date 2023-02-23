@@ -3,7 +3,7 @@ import { SignalDescriptor } from "../api/signalsapi"
 // The key for the entire band
 const ROUTE_BAND = "route"
 
-// "Signal Handlers" for all of the signals in the band
+// Metadata for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		label: "Redirect",

@@ -3,7 +3,7 @@ import { SignalDescriptor } from "../api/signalsapi"
 // The key for the entire band
 const CONTEXT_BAND = "context"
 
-// "Signal Handlers" for all of the signals in the band
+// Metadata for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${CONTEXT_BAND}/CLEAR`]: {
 		label: "Clear",
