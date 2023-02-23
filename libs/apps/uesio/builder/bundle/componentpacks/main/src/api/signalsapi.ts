@@ -95,7 +95,7 @@ const getSignalProperties = (
 	}
 	return [
 		...defaultSignalProps,
-		...(descriptor.properties
+		...(descriptor && descriptor.properties
 			? descriptor.properties(signalDefinition)
 			: []),
 	]

@@ -386,7 +386,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		} else if (type === "LIST") {
 			setter = NoOp
 			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
-		} else if (type === "FIELDS") {
+		} else if (type === "FIELDS" || type === "WIRES") {
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))
 			value = get(context, path.addLocal(name)) as string[]
