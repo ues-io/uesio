@@ -92,7 +92,7 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
-	tag: definition.DefinitionList
+	content: definition.DefinitionList
 	defaultDefinition: definition.DefinitionMap
 	defaultKey: string
 } & BaseProperty

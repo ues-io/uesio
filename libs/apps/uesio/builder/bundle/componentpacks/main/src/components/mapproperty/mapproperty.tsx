@@ -80,7 +80,7 @@ const MapProperty: definition.UC<Definition> = (props) => {
 						>
 							<component.Slot
 								definition={property}
-								listName="tag"
+								listName="content"
 								path={itemPath.combine()}
 								context={context.addRecordDataFrame({
 									key,

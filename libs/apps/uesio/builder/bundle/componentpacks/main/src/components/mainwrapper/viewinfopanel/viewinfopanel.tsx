@@ -19,7 +19,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 
 	const wireProperty: ComponentProperty = {
 		name: "wires",
-		tag: [
+		content: [
 			{
 				"uesio/builder.wiretag": {},
 			},
@@ -34,7 +34,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 
 	const panelsProperty: ComponentProperty = {
 		name: "panels",
-		tag: [
+		content: [
 			{
 				"uesio/io.text": {
 					element: "div",
@@ -54,7 +54,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 
 	const paramsProperty: ComponentProperty = {
 		name: "params",
-		tag: [
+		content: [
 			{
 				"uesio/io.text": {
 					element: "div",
