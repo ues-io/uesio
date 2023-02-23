@@ -175,11 +175,7 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
 		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
-	if !op.LoadAll {
-		loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
-	} else {
-		println("TRUE")
-	}
+	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
 	if op.BatchNumber != 0 {
 		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
@@ -216,11 +212,9 @@ func (c *Connection) Load(op *adapt.LoadOp, session *sess.Session) error {
 	formulaPopulations := adapt.GetFormulaFunction(formulaFields)
 
 	for rows.Next() {
-		if !op.LoadAll {
-			if op.BatchSize == index {
-				op.HasMoreBatches = true
-				break
-			}
+		if op.BatchSize == index {
+			op.HasMoreBatches = true
+			break
 		}
 
 		item = op.Collection.NewItem()
