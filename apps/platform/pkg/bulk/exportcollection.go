@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -57,12 +58,18 @@ func exportCollection(create retrieve.WriterCreator, spec *meta.JobSpec, session
 		return errors.New("Cannot process that file type: " + spec.FileType)
 	}
 
-	return loadData(&adapt.LoadOp{
+	_, err = datasource.Load([]*adapt.LoadOp{{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     collection,
 		Fields:         fields,
 		Query:          true,
-	}, session)
+		LoadAll:        true,
+	}}, session, nil)
+	if err != nil {
+		return err
+	}
+
+	return err
 
 }

@@ -43,23 +43,6 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 	bs.op.AddError(adapt.NewSaveError("", "", message))
 }
 
-func loadData(op *adapt.LoadOp, session *sess.Session, connection adapt.Connection) error {
-
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session, &datasource.LoadOptions{
-		Connections: datasource.GetConnectionMap(connection),
-		Metadata:    datasource.GetConnectionMetadata(connection),
-	})
-	if err != nil {
-		return err
-	}
-
-	if !op.HasMoreBatches {
-		return nil
-	}
-
-	return loadData(op, session, connection)
-}
-
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 
 	collection := &adapt.Collection{}
@@ -72,9 +55,13 @@ func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Conditions:     request.Conditions,
 		Order:          request.Order,
 		Query:          true,
+		LoadAll:        true,
 	}
 
-	err := loadData(op, bs.session, bs.connection)
+	_, err := datasource.Load([]*adapt.LoadOp{op}, bs.session, &datasource.LoadOptions{
+		Connections: datasource.GetConnectionMap(bs.connection),
+		Metadata:    datasource.GetConnectionMetadata(bs.connection),
+	})
 	if err != nil {
 		return nil, err
 	}

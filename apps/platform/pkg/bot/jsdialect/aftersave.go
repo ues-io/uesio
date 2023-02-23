@@ -60,9 +60,13 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Conditions:     request.Conditions,
 		Order:          request.Order,
 		Query:          true,
+		LoadAll:        true,
 	}
 
-	err := loadData(op, bs.session, bs.connection)
+	_, err := datasource.Load([]*adapt.LoadOp{op}, bs.session, &datasource.LoadOptions{
+		Connections: datasource.GetConnectionMap(bs.connection),
+		Metadata:    datasource.GetConnectionMetadata(bs.connection),
+	})
 	if err != nil {
 		return nil, err
 	}
