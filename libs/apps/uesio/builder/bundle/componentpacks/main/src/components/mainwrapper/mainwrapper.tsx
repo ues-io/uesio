@@ -17,7 +17,7 @@ const MainWrapper: definition.UC = (props) => {
 			root: {
 				height: "100vh",
 				gridTemplateColumns: `auto 1fr auto`,
-				gridTemplateRows: "1fr 1fr",
+				gridTemplateRows: "minmax(0, 1fr) minmax(0, 1fr)",
 				...styles.getBackgroundStyles(
 					{
 						image: "uesio/core.whitesplash",
