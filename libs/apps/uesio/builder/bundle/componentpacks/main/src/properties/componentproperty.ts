@@ -92,7 +92,9 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
-	components: definition.DefinitionList
+	content: definition.DefinitionList
+	defaultDefinition: definition.DefinitionMap
+	defaultKey: string
 } & BaseProperty
 
 type ListProperty = {
@@ -144,5 +146,6 @@ export {
 	SelectOption,
 	SelectProperty,
 	WireProperty,
+	MapProperty,
 	getStyleVariantProperty,
 }
