@@ -8,12 +8,12 @@ discoverable: true
 defaultDefinition:
   mode: READ
 properties:
-  - label: Deck Id
-    type: COMPONENT_ID
   - name: wire
     label: Wire
     type: WIRE
     required: true
+  - label: Deck Id
+    type: COMPONENT_ID
   - name: mode
     label: Display Mode
     type: SELECT

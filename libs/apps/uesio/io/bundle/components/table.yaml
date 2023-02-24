@@ -14,12 +14,12 @@ variants:
 category: DATA
 discoverable: true
 properties:
-  - label: Table Id
-    type: COMPONENT_ID
   - name: wire
     label: Wire
     type: WIRE
     required: true
+  - label: Table Id
+    type: COMPONENT_ID
   - name: mode
     label: Display Mode
     type: SELECT

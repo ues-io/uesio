@@ -237,7 +237,7 @@ const getWireFieldFromPropertyDef = (
 			}
 		case "COMPONENT_ID":
 			return {
-				label: "Uesio ID",
+				label: "Component Id",
 				required: required || false,
 				type: "TEXT" as const,
 			}
