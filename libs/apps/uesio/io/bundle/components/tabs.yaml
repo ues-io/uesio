@@ -27,4 +27,4 @@ sections:
     type: CUSTOM
     viewDefinition:
       - uesio/builder.property:
-        propertyId: tabs
+          propertyId: tabs

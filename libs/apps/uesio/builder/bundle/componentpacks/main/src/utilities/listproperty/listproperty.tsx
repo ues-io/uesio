@@ -1,6 +1,5 @@
 import { definition, wire, component } from "@uesio/ui"
 import { FullPath } from "../../api/path"
-import { add, get } from "../../api/defapi"
 import {
 	ItemDisplayTemplate,
 	PropertiesListOrGetter,
@@ -13,7 +12,8 @@ type Props = {
 	itemDisplayTemplate: ItemDisplayTemplate
 	itemPropertiesPanelTitle: string
 	itemProperties?: PropertiesListOrGetter
-	newItemState: () => wire.PlainWireRecord
+	items: definition.DefinitionMap[]
+	addAction: () => void
 } & definition.UtilityProps
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
@@ -24,8 +24,8 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 		path,
 		addLabel,
 		context,
-		newItemState,
-		propertyName,
+		addAction,
+		items,
 	} = props
 
 	const TitleBar = component.getUtility("uesio/io.titlebar")
@@ -34,12 +34,6 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 	const ListPropertyItem = component.getUtility(
 		"uesio/builder.listpropertyitem"
 	)
-
-	const listPropertyPath = path.addLocal(propertyName)
-	const childItems = get(
-		context,
-		listPropertyPath
-	) as definition.DefinitionMap[]
 
 	return (
 		<>
@@ -59,29 +53,18 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 							/>
 						}
 						label={addLabel}
-						onClick={() => {
-							const listItems = get(
-								context,
-								listPropertyPath
-							) as definition.DefinitionList
-							const listLength = listItems?.length || 0
-							add(
-								context,
-								listPropertyPath.addLocal(`${listLength}`),
-								newItemState?.() || {}
-							)
-						}}
+						onClick={addAction}
 					/>
 				}
 			/>
-			{childItems?.map((item: definition.DefinitionMap, index) => (
+			{items?.map((item: definition.DefinitionMap, index) => (
 				<ListPropertyItem
 					key={index}
 					context={context.addRecordDataFrame(
 						item as wire.PlainWireRecord,
 						index
 					)}
-					parentPath={listPropertyPath}
+					parentPath={path}
 					displayTemplate={itemDisplayTemplate}
 					itemProperties={itemProperties}
 					itemPropertiesPanelTitle={itemPropertiesPanelTitle}

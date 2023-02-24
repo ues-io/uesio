@@ -98,9 +98,18 @@ type MapProperty = {
 	defaultKey: string
 } & BaseProperty
 
+interface ListPropertyItemsDefinition {
+	properties: ComponentProperty[]
+	addLabel: string
+	displayTemplate: string
+	title?: string
+	defaultDefinition?: definition.DefinitionMap
+}
+
 type ListProperty = {
 	type: "LIST"
-	components: definition.DefinitionList
+	components?: definition.DefinitionList
+	items?: ListPropertyItemsDefinition
 } & BaseProperty
 
 type ParamsProperty = {
@@ -143,10 +152,12 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 
 export {
 	BotProperty,
+	ListPropertyItemsDefinition,
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,
 	WireProperty,
 	MapProperty,
+	ListProperty,
 	getStyleVariantProperty,
 }
