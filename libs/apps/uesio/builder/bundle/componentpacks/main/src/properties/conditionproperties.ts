@@ -162,8 +162,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "operator",
 				operator: "IN",
-				values: ["IN", "NOT IN"],
 				type: "fieldValue",
+				values: ["IN", "NOT IN"],
 			},
 		],
 	},

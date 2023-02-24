@@ -54,25 +54,4 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 	)
 }
 
-/*
-const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Tile",
-	description: "A clickable tag representing a record.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({}),
-	properties: [],
-	sections: [
-		{
-			title: "Signals",
-			type: "SIGNALS",
-		},
-	],
-	actions: [],
-	traits: ["uesio.standalone"],
-	type: "component",
-	classes: ["root", "content", "avatar"],
-	category: "CONTENT",
-}
-*/
-
 export default Tile

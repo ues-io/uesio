@@ -84,11 +84,11 @@ const isCustomSection = (s: PropertiesPanelSection): s is CustomSection =>
 const getSectionId = (s: PropertiesPanelSection): string => {
 	switch (s.type) {
 		case "HOME":
-			return HOME_SECTION.id
+			return HOME_SECTION.id || "uesio.home"
 		case "STYLES":
-			return STYLES_SECTION.id
+			return STYLES_SECTION.id || "uesio.styles"
 		case "DISPLAY":
-			return DISPLAY_SECTION.id
+			return DISPLAY_SECTION.id || "uesio.display"
 		case "SIGNALS":
 			return s.id || "signals"
 		default:
