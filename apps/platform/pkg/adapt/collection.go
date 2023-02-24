@@ -65,8 +65,9 @@ func (c *Collection) NewItem() meta.Item {
 	return &Item{}
 }
 
-func (c *Collection) AddItem(item meta.Item) {
+func (c *Collection) AddItem(item meta.Item) error {
 	*c = append(*c, item.(*Item))
+	return nil
 }
 
 func (c *Collection) Loop(iter meta.GroupIterator) error {

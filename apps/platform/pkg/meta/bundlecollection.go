@@ -21,8 +21,9 @@ func (bc *BundleCollection) NewItem() Item {
 	return &Bundle{}
 }
 
-func (bc *BundleCollection) AddItem(item Item) {
+func (bc *BundleCollection) AddItem(item Item) error {
 	*bc = append(*bc, item.(*Bundle))
+	return nil
 }
 
 func (bc *BundleCollection) Loop(iter GroupIterator) error {

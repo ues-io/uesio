@@ -21,8 +21,9 @@ func (lmc *LoginMethodCollection) NewItem() Item {
 	return &LoginMethod{}
 }
 
-func (lmc *LoginMethodCollection) AddItem(item Item) {
+func (lmc *LoginMethodCollection) AddItem(item Item) error {
 	*lmc = append(*lmc, item.(*LoginMethod))
+	return nil
 }
 
 func (lmc *LoginMethodCollection) Loop(iter GroupIterator) error {

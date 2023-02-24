@@ -26,8 +26,9 @@ func (dsc *DataSourceCollection) NewItem() Item {
 	return &DataSource{}
 }
 
-func (dsc *DataSourceCollection) AddItem(item Item) {
+func (dsc *DataSourceCollection) AddItem(item Item) error {
 	*dsc = append(*dsc, item.(*DataSource))
+	return nil
 }
 
 func (dsc *DataSourceCollection) GetItemFromPath(path, namespace string) BundleableItem {

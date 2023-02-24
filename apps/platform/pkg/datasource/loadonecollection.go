@@ -13,8 +13,9 @@ func (c *LoadOneCollection) NewItem() meta.Item {
 	return c.Item
 }
 
-func (c *LoadOneCollection) AddItem(item meta.Item) {
+func (c *LoadOneCollection) AddItem(item meta.Item) error {
 	c.Length++
+	return nil
 }
 
 func (c *LoadOneCollection) Loop(iter meta.GroupIterator) error {

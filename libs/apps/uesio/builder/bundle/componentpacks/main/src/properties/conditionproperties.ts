@@ -1,6 +1,6 @@
-import { component } from "@uesio/ui"
+import { ComponentProperty } from "./componentproperty"
 
-export const ConditionProperties: component.ComponentProperty[] = [
+export const ConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",
 		type: "SELECT",

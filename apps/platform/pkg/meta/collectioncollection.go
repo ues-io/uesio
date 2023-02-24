@@ -34,8 +34,9 @@ func (cc *CollectionCollection) NewItem() Item {
 	return &Collection{}
 }
 
-func (cc *CollectionCollection) AddItem(item Item) {
+func (cc *CollectionCollection) AddItem(item Item) error {
 	*cc = append(*cc, item.(*Collection))
+	return nil
 }
 
 func (cc *CollectionCollection) Loop(iter GroupIterator) error {

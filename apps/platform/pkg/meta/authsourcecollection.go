@@ -26,8 +26,9 @@ func (asc *AuthSourceCollection) NewItem() Item {
 	return &AuthSource{}
 }
 
-func (asc *AuthSourceCollection) AddItem(item Item) {
+func (asc *AuthSourceCollection) AddItem(item Item) error {
 	*asc = append(*asc, item.(*AuthSource))
+	return nil
 }
 
 func (asc *AuthSourceCollection) GetItemFromPath(path, namespace string) BundleableItem {

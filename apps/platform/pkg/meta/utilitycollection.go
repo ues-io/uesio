@@ -26,8 +26,9 @@ func (uc *UtilityCollection) NewItem() Item {
 	return &Utility{}
 }
 
-func (uc *UtilityCollection) AddItem(item Item) {
+func (uc *UtilityCollection) AddItem(item Item) error {
 	*uc = append(*uc, item.(*Utility))
+	return nil
 }
 
 func (uc *UtilityCollection) GetItemFromPath(path, namespace string) BundleableItem {

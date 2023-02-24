@@ -1,73 +1,134 @@
-import { definition, component } from "@uesio/ui"
-import WiresPanel from "./wires/wirespanel"
-import PanelsPanel from "./panels/panelspanel"
-import ParamsPanel from "./params/paramspanel"
-import ComponentsPanel from "./components/componentspanel"
-import WiresActions from "./wires/wiresactions"
-import PanelsActions from "./panels/panelsactions"
-import ParamsActions from "./params/paramsactions"
-import { useBuilderState } from "../../../api/stateapi"
-import { ReactNode } from "react"
+import { definition, api } from "@uesio/ui"
+
+import PropertiesForm from "../../../helpers/propertiesform"
+import { FullPath } from "../../../api/path"
+import { ComponentProperty } from "../../../properties/componentproperty"
+import { getComponentDef } from "../../../api/stateapi"
+
+const defaultPanelComponentType = "uesio/io.dialog"
 
 const ViewInfoPanel: definition.UtilityComponent = (props) => {
-	const TabLabels = component.getUtility("uesio/io.tablabels")
-	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const { context } = props
 
-	const [selectedTab, setSelectedTab] = useBuilderState<string>(
-		context,
-		"viewinfopanel",
-		"components"
-	)
+	const viewDefId = context.getViewDefId() || ""
+	const viewDef = api.view.useViewDef(viewDefId)
+	if (!viewDefId || !viewDef || !viewDef.wires) return null
+	const path = new FullPath("viewdef", viewDefId)
 
-	let content: ReactNode = null
-	let actions: ReactNode = null
-
-	switch (selectedTab) {
-		case "components": {
-			content = <ComponentsPanel context={context} />
-			break
-		}
-		case "wires": {
-			content = <WiresPanel context={context} />
-			actions = <WiresActions context={context} />
-			break
-		}
-		case "panels": {
-			content = <PanelsPanel context={context} />
-			actions = <PanelsActions context={context} />
-			break
-		}
-		case "params": {
-			content = <ParamsPanel context={context} />
-			actions = <ParamsActions context={context} />
-		}
-	}
+	const properties: ComponentProperty[] = [
+		{
+			name: "wires",
+			content: [
+				{
+					"uesio/builder.wiretag": {},
+				},
+			],
+			defaultDefinition: {
+				fields: null,
+				batchsize: 200,
+			},
+			defaultKey: "wire",
+			type: "MAP",
+		},
+		{
+			name: "panels",
+			content: [
+				{
+					"uesio/io.text": {
+						element: "div",
+						text: "${key}",
+					},
+				},
+			],
+			defaultDefinition: {
+				"uesio.type": defaultPanelComponentType,
+				components: [],
+				...getComponentDef(context, defaultPanelComponentType)
+					?.defaultDefinition,
+			},
+			defaultKey: "panel",
+			type: "MAP",
+		},
+		{
+			name: "params",
+			content: [
+				{
+					"uesio/io.text": {
+						element: "div",
+						text: "${key}",
+					},
+				},
+			],
+			defaultDefinition: {
+				type: "RECORD",
+				required: true,
+			},
+			defaultKey: "param",
+			type: "MAP",
+		},
+	]
 
 	return (
-		<ScrollPanel
-			header={
-				<TabLabels
-					variant="uesio/builder.mainsection"
-					selectedTab={selectedTab}
-					setSelectedTab={setSelectedTab}
-					tabs={[
-						{ id: "components", label: "Components" },
-						{ id: "wires", label: "Wires" },
-						{ id: "panels", label: "Panels" },
-						{ id: "params", label: "Params" },
-					]}
-					context={context}
-				/>
-			}
-			footer={actions}
-			context={context}
-			className={props.className}
-		>
-			<component.ErrorBoundary definition={{}} path="" context={context}>
-				{content}
-			</component.ErrorBoundary>
-		</ScrollPanel>
+		<div className={props.className}>
+			<PropertiesForm
+				id="propertiespanel"
+				context={context}
+				properties={properties}
+				content={[
+					{
+						"uesio/io.tabs": {
+							labelsVariant: "uesio/builder.mainsection",
+							panelVariant: "uesio/builder.mainsection",
+							tabs: [
+								{
+									id: "components",
+									label: "Components",
+									components: [
+										{
+											"uesio/builder.componentspanel": {},
+										},
+									],
+								},
+								{
+									id: "wires",
+									label: "Wires",
+									components: [
+										{
+											"uesio/builder.property": {
+												propertyId: "wires",
+											},
+										},
+									],
+								},
+								{
+									id: "panels",
+									label: "Panels",
+									components: [
+										{
+											"uesio/builder.property": {
+												propertyId: "panels",
+											},
+										},
+									],
+								},
+								{
+									id: "params",
+									label: "Params",
+									components: [
+										{
+											"uesio/builder.property": {
+												propertyId: "params",
+											},
+										},
+									],
+								},
+							],
+						},
+					},
+				]}
+				path={path}
+			/>
+		</div>
 	)
 }
 

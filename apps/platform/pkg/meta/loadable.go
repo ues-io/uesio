@@ -6,7 +6,7 @@ type Group interface {
 	Loop(iter GroupIterator) error
 	Len() int
 	NewItem() Item
-	AddItem(Item)
+	AddItem(Item) error
 }
 
 type Gettable interface {

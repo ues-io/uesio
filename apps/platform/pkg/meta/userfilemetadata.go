@@ -39,10 +39,14 @@ func (ufm *UserFileMetadata) Len() int {
 
 func (ufm *UserFileMetadata) GetFullPath(tenantID string) string {
 	tenantPath := strings.ReplaceAll(tenantID, ":", "/")
+	return fmt.Sprintf("files/%s/%s", tenantPath, ufm.GetRelativePath())
+}
+
+func (ufm *UserFileMetadata) GetRelativePath() string {
 	collectionPath := strings.ReplaceAll(ufm.CollectionID, ".", "/")
 	fieldPath := strings.ReplaceAll(ufm.FieldID, ".", "/")
 	if ufm.FieldID != "" {
-		return fmt.Sprintf("files/%s/%s/%s/field/%s/%s", tenantPath, collectionPath, ufm.RecordID, fieldPath, ufm.Path)
+		return fmt.Sprintf("%s/%s/field/%s/%s", collectionPath, ufm.RecordID, fieldPath, ufm.Path)
 	}
-	return fmt.Sprintf("files/%s/%s/%s/attachment/%s", tenantPath, collectionPath, ufm.RecordID, ufm.Path)
+	return fmt.Sprintf("%s/%s/attachment/%s", collectionPath, ufm.RecordID, ufm.Path)
 }

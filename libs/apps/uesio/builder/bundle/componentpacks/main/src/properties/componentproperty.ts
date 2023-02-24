@@ -1,14 +1,11 @@
-import { DisplayCondition } from "./display"
-import { MetadataType } from "../metadataexports"
-import { DefinitionList } from "../definition/definition"
-import { RegularWireDefinition, WireConditionState } from "../wireexports"
+import { component, definition, metadata, wire } from "@uesio/ui"
 
 type BaseProperty = {
 	name: string
 	label?: string
 	required?: boolean
 	type: string
-	displayConditions?: DisplayCondition[]
+	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {
 	type: "TEXT"
@@ -41,14 +38,14 @@ type KeyProperty = {
 
 type MetadataProperty = {
 	type: "METADATA"
-	metadataType: MetadataType
+	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
 
 type MultiMetadataProperty = {
 	type: "MULTI_METADATA"
-	metadataType: MetadataType
+	metadataType: metadata.MetadataType
 	groupingPath?: string
 	groupingValue?: string
 } & BaseProperty
@@ -64,12 +61,12 @@ type CheckboxProperty = {
 type ConditionProperty = {
 	type: "CONDITION"
 	wire: string
-	filter?: (def: WireConditionState) => boolean
+	filter?: (def: wire.WireConditionState) => boolean
 } & BaseProperty
 
 type WireProperty = {
 	type: "WIRE"
-	filter?: (def: RegularWireDefinition) => boolean
+	filter?: (def: wire.RegularWireDefinition) => boolean
 } & BaseProperty
 
 type WiresProperty = {
@@ -95,12 +92,18 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
-	components: DefinitionList
+	content: definition.DefinitionList
+	defaultDefinition: definition.DefinitionMap
+	defaultKey: string
 } & BaseProperty
 
 type ListProperty = {
 	type: "LIST"
-	components: DefinitionList
+	components: definition.DefinitionList
+} & BaseProperty
+
+type ParamsProperty = {
+	type: "PARAMS"
 } & BaseProperty
 
 type SelectOption = {
@@ -126,6 +129,7 @@ type ComponentProperty =
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
+	| ParamsProperty
 	| ListProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
@@ -142,5 +146,6 @@ export {
 	SelectOption,
 	SelectProperty,
 	WireProperty,
+	MapProperty,
 	getStyleVariantProperty,
 }

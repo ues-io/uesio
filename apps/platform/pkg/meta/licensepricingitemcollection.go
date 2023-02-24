@@ -21,8 +21,9 @@ func (lpic *LicensePricingItemCollection) NewItem() Item {
 	return &LicensePricingItem{}
 }
 
-func (lpic *LicensePricingItemCollection) AddItem(item Item) {
+func (lpic *LicensePricingItemCollection) AddItem(item Item) error {
 	*lpic = append(*lpic, item.(*LicensePricingItem))
+	return nil
 }
 
 func (lpic *LicensePricingItemCollection) Loop(iter GroupIterator) error {

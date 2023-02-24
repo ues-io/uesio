@@ -8,17 +8,19 @@ import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
+import { ComponentProperty } from "../../properties/componentproperty"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
-) => component.ComponentProperty[]
+) => ComponentProperty[]
 
-export type PropertiesListOrGetter =
-	| component.ComponentProperty[]
-	| PropertiesGetter
+type ItemDisplayFunction = (item: wire.PlainWireRecord) => string
+
+export type ItemDisplayTemplate = string | ItemDisplayFunction
+export type PropertiesListOrGetter = ComponentProperty[] | PropertiesGetter
 
 type Props = {
-	displayTemplate: string
+	displayTemplate: ItemDisplayTemplate
 	parentPath: FullPath
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesPanelTitle?: string
@@ -72,7 +74,11 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 				)
 			}
 		>
-			<div className="tagroot">{context.merge(displayTemplate)}</div>
+			<div className="tagroot">
+				{typeof displayTemplate === "string"
+					? context.merge(displayTemplate)
+					: displayTemplate(record.source)}
+			</div>
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />

@@ -100,7 +100,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return get(
 			frame.data,
 			propertyPath.substring(0, propertyPath.length - 1)
-		)
+		) as string
 	},
 	User: (expression, context) => {
 		const user = context.getUser()
