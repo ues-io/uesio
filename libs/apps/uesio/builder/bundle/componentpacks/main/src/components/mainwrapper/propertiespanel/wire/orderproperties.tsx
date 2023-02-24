@@ -26,7 +26,7 @@ const getOrderProperties = (): ComponentProperty[] => [
 	},
 ]
 
-const OrderProperties: definition.UtilityComponent = (props) => {
+const OrderProperties: definition.UC = (props) => {
 	const { context } = props
 	const ListProperty = component.getUtility("uesio/builder.listproperty")
 

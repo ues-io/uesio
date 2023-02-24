@@ -1,17 +1,10 @@
-import { definition, component, wire } from "@uesio/ui"
+import { definition, wire } from "@uesio/ui"
 import PropertiesWrapper from "../propertieswrapper"
-import {
-	setSelectedPath,
-	useBuilderState,
-	useSelectedPath,
-} from "../../../../api/stateapi"
+import { setSelectedPath, useSelectedPath } from "../../../../api/stateapi"
 
+import PropertiesForm from "../../../../helpers/propertiesform"
+import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
-import WireHome from "./wirehome"
-import { ReactNode } from "react"
-import ConditionsProperties from "./conditionsproperties"
-import FieldsProperties from "./fieldsproperties"
-import OrderProperties from "./orderproperties"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -24,30 +17,26 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	// This forces a rerender if the definition changes
 	useDefinition(wirePath) as wire.WireDefinition
 
-	const [selectedTab, setSelectedTab] = useBuilderState<string>(
-		context,
-		"wireselectedtab",
-		""
-	)
-
-	let content: ReactNode = null
-
-	switch (selectedTab) {
-		case "fields": {
-			content = <FieldsProperties context={context} />
-			break
-		}
-		case "conditions": {
-			content = <ConditionsProperties context={context} />
-			break
-		}
-		case "order": {
-			content = <OrderProperties context={context} />
-			break
-		}
-		default:
-			content = <WireHome context={context} />
-	}
+	const properties: ComponentProperty[] = [
+		{
+			name: "wirename",
+			label: "Wire Name",
+			required: true,
+			type: "KEY",
+		},
+		{
+			name: "collection",
+			label: "Collection",
+			required: true,
+			type: "METADATA",
+			metadataType: "COLLECTION",
+		},
+		{
+			name: "batchsize",
+			label: "Batch Size",
+			type: "NUMBER",
+		},
+	]
 
 	return (
 		<PropertiesWrapper
@@ -56,18 +45,74 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			path={selectedPath}
 			title={wireName || ""}
 			onUnselect={() => setSelectedPath(context)}
-			selectedTab={selectedTab}
-			setSelectedTab={setSelectedTab}
-			tabs={[
-				{ id: "", label: "", icon: "home" },
-				{ id: "fields", label: "Fields" },
-				{ id: "conditions", label: "Conditions" },
-				{ id: "order", label: "Order" },
-			]}
 		>
-			<component.ErrorBoundary definition={{}} path="" context={context}>
-				{content}
-			</component.ErrorBoundary>
+			<PropertiesForm
+				context={context}
+				id="wireproperties"
+				properties={properties}
+				content={[
+					{
+						"uesio/io.tabs": {
+							labelsVariant: "uesio/builder.mainsection",
+							panelVariant: "uesio/io.default",
+							tabs: [
+								{
+									id: "",
+									label: "",
+									icon: "home",
+									components: [
+										{
+											"uesio/builder.property": {
+												propertyId: "wirename",
+											},
+										},
+										{
+											"uesio/builder.property": {
+												propertyId: "collection",
+											},
+										},
+										{
+											"uesio/builder.property": {
+												propertyId: "batchsize",
+											},
+										},
+									],
+								},
+								{
+									id: "fields",
+									label: "Fields",
+									components: [
+										{
+											"uesio/builder.fieldsproperties":
+												{},
+										},
+									],
+								},
+								{
+									id: "conditions",
+									label: "Conditions",
+									components: [
+										{
+											"uesio/builder.conditionsproperties":
+												{},
+										},
+									],
+								},
+								{
+									id: "order",
+									label: "Order",
+									components: [
+										{
+											"uesio/builder.orderproperties": {},
+										},
+									],
+								},
+							],
+						},
+					},
+				]}
+				path={wirePath}
+			/>
 		</PropertiesWrapper>
 	)
 }

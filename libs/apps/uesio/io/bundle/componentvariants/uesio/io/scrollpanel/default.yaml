@@ -1,0 +1,12 @@
+name: default
+label: default
+definition:
+  uesio.styles:
+    root:
+      display: "flex"
+      flexDirection: "column"
+      height: "100%"
+    inner:
+      overflowY: "auto"
+      flex: 1
+public: true

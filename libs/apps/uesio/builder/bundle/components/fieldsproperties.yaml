@@ -1,0 +1,3 @@
+name: fieldsproperties
+pack: main
+entrypoint: components/mainwrapper/propertiespanel/wire/fieldsproperties

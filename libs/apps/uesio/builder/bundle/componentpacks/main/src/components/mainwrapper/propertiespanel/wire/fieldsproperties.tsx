@@ -6,7 +6,7 @@ import BuildActionsArea from "../../../../helpers/buildactionsarea"
 import FieldPropTag from "./fieldproptag"
 import FieldPicker from "./fieldpicker"
 
-const FieldsProperties: definition.UtilityComponent = (props) => {
+const FieldsProperties: definition.UC = (props) => {
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 	const Icon = component.getUtility("uesio/io.icon")
 	const Button = component.getUtility("uesio/io.button")
@@ -23,7 +23,7 @@ const FieldsProperties: definition.UtilityComponent = (props) => {
 	const wireDef = get(context, wirePath) as wire.RegularWireDefinition
 
 	return (
-		<div ref={anchorEl} style={{ display: "grid", height: "100%" }}>
+		<>
 			{showPopper && anchorEl && (
 				<Popper
 					referenceEl={anchorEl.current}
@@ -43,6 +43,7 @@ const FieldsProperties: definition.UtilityComponent = (props) => {
 				</Popper>
 			)}
 			<ScrollPanel
+				ref={anchorEl}
 				variant="uesio/builder.mainsection"
 				context={context}
 				footer={
@@ -77,7 +78,7 @@ const FieldsProperties: definition.UtilityComponent = (props) => {
 					/>
 				))}
 			</ScrollPanel>
-		</div>
+		</>
 	)
 }
 
