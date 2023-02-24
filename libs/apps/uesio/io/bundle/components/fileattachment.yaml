@@ -6,3 +6,10 @@ variants:
   - uesio/io.codefield:uesio/io.default
   - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.default
+signals:
+  UPLOAD_FILE:
+    label: Upload File
+    properties: []
+  CANCEL_FILE:
+    label: Cancel File
+    properties: []

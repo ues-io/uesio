@@ -1,5 +1,5 @@
 import { definition, component, metadata, wire, styles } from "@uesio/ui"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useEffect, useState } from "react"
 
 interface ConstrainedInputProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
@@ -20,6 +20,10 @@ const ConstrainedInput: FunctionComponent<ConstrainedInputProps> = (props) => {
 		setValue,
 		label,
 	} = props
+
+	useEffect(() => {
+		setKeyValue(value)
+	}, [value])
 
 	const [inEditMode, setEditMode] = useState<boolean>(false)
 	const [keyValue, setKeyValue] = useState<wire.FieldValue>(value)

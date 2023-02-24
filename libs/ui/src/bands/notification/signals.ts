@@ -35,47 +35,12 @@ const signals: Record<string, SignalDescriptor> = {
 			)
 			return context
 		},
-		label: "Add Notification",
-		description: "Add Notification",
-		properties: () => [
-			{
-				type: "SELECT",
-				name: "severity",
-				label: "Severity",
-				options: [
-					{ value: "", label: "" },
-					{ value: "success", label: "SUCCESS" },
-					{ value: "info", label: "INFO" },
-					{ value: "warn", label: "WARN" },
-					{ value: "error", label: "ERROR" },
-				],
-			},
-			{
-				type: "TEXT",
-				name: "text",
-				label: "Text",
-			},
-			{
-				type: "TEXT",
-				name: "details",
-				label: "Details",
-			},
-		],
 	},
 	[`${NOTIFICATION_BAND}/REMOVE`]: {
 		dispatcher: (signal: RemoveNotificationSignal, context: Context) => {
 			dispatch(removeNotification(signal.id))
 			return context
 		},
-		label: "Remove Notification",
-		description: "Removes Notification",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "id",
-				label: "Id",
-			},
-		],
 	},
 }
 

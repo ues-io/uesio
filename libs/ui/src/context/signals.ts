@@ -28,15 +28,6 @@ const signals: Record<string, SignalDescriptor> = {
 			}
 			return context
 		},
-		label: "Clear",
-		description: "Context clear",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "type",
-				label: "Type",
-			},
-		],
 	},
 	[`${CONTEXT_BAND}/SET`]: {
 		dispatcher: (signal: SetContextSignal, context: Context) => {
@@ -56,15 +47,6 @@ const signals: Record<string, SignalDescriptor> = {
 			}
 			return context
 		},
-		label: "Set",
-		description: "Context set",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "type",
-				label: "Type",
-			},
-		],
 	},
 }
 

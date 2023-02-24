@@ -34,6 +34,7 @@ type ParamValueCondition = {
 type HasNoValueCondition = {
 	type: "hasNoValue"
 	value: unknown
+	wire?: string
 }
 
 type RecordIsNewCondition = {
@@ -47,6 +48,7 @@ type RecordIsNotNewCondition = {
 type HasValueCondition = {
 	type: "hasValue"
 	value: unknown
+	wire?: string
 }
 
 type CollectionContextCondition = {
@@ -141,57 +143,37 @@ function should(condition: DisplayCondition, context: Context) {
 		return collection?.getFullName() === condition.collection
 	}
 
-	if (condition.type === "paramIsSet") {
+	if (condition.type === "paramIsSet")
 		return !!context.getParam(condition.param)
-	}
 
-	if (condition.type === "paramIsNotSet") {
+	if (condition.type === "paramIsNotSet")
 		return !context.getParam(condition.param)
-	}
 
-	if (condition.type === "fieldMode") {
+	if (condition.type === "fieldMode")
 		return condition.mode === context.getFieldMode()
-	}
 
-	if (condition.type === "featureFlag") {
+	if (condition.type === "featureFlag")
 		return !!context.getFeatureFlag(condition.name)?.value
-	}
 
-	if (condition.type === "recordIsNew") {
-		return !!context.getRecord()?.isNew()
-	}
+	if (condition.type === "recordIsNew") return !!context.getRecord()?.isNew()
 
-	if (condition.type === "recordIsNotNew") {
+	if (condition.type === "recordIsNotNew")
 		return !context.getRecord()?.isNew()
-	}
 
-	if (condition.type === "hasProfile") {
+	if (condition.type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
-	}
 
-	if (
-		condition.type === "wireHasChanges" ||
-		condition.type === "wireHasNoChanges"
-	) {
-		const ctx = condition.wire
-			? context.addWireFrame({
-					wire: condition.wire,
-			  })
-			: context
-		const hasChanges = !!ctx.getWire()?.getChanges().length
-		return condition.type === "wireHasNoChanges" ? !hasChanges : hasChanges
-	}
+	if (condition.type === "wireHasChanges")
+		return !!context.getWire(condition.wire)?.getChanges().length
+	if (condition.type === "wireHasNoChanges")
+		return !context.getWire(condition.wire)?.getChanges().length
 
 	if (
 		condition.type === "wireIsLoading" ||
 		condition.type === "wireIsNotLoading"
 	) {
-		const ctx = condition.wire
-			? context.addWireFrame({
-					wire: condition.wire,
-			  })
-			: context
-		const isLoading = !!ctx.getWire()?.isLoading()
+		const wire = context.getWire(condition.wire)
+		const isLoading = !!wire?.isLoading()
 		return condition.type === "wireIsNotLoading" ? !isLoading : isLoading
 	}
 
@@ -199,12 +181,8 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireHasRecords" ||
 		condition.type === "wireHasNoRecords"
 	) {
-		const ctx = condition.wire
-			? context.addWireFrame({
-					wire: condition.wire,
-			  })
-			: context
-		const hasRecords = !!ctx.getWire()?.getData().length
+		const wire = context.getWire(condition.wire)
+		const hasRecords = !!wire?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
 	}
 

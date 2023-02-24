@@ -28,8 +28,6 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			const value = context.mergeString(signal.value)
 			state[signal.param] = value
 		},
-		label: "Set Param",
-		properties: () => [],
 	},
 	SET_PARAMS: {
 		dispatcher: (
@@ -42,8 +40,6 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 				state[key] = params[key]
 			})
 		},
-		label: "Set Params",
-		properties: () => [],
 	},
 }
 

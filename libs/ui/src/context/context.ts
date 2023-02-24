@@ -96,7 +96,7 @@ interface SignalOutputContext {
 
 interface ComponentContext {
 	componentType: string
-	data: object
+	data: Record<string, unknown>
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -521,7 +521,10 @@ class Context {
 			...viewContext,
 		})
 
-	addComponentFrame = (componentType: string, data: object) =>
+	addComponentFrame = (
+		componentType: string,
+		data: Record<string, unknown>
+	) =>
 		this.#addFrame({
 			type: COMPONENT,
 			componentType,
