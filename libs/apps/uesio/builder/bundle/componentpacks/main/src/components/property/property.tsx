@@ -115,6 +115,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "PARAMS": {
+			return {
+				"uesio/builder.paramsfield": {
+					...baseFieldDef,
+					wrapperVariant: "uesio/builder.propfield",
+					labelPosition: "none",
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
