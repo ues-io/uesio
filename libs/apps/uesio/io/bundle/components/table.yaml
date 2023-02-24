@@ -18,10 +18,8 @@ properties:
     label: Wire
     type: WIRE
     required: true
-  - name: uesio/core.id
-    label: Table Id
+  - label: Table Id
     type: COMPONENT_ID
-    required: true
   - name: mode
     label: Display Mode
     type: SELECT
