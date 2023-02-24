@@ -56,7 +56,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "wire",
 		type: "WIRE",
-		label: "wire",
+		label: "Wire",
 		displayConditions: [
 			{
 				field: "type",
@@ -66,13 +66,11 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			},
 		],
 	},
-
 	{
 		name: "field",
-		type: "METADATA",
-		metadataType: "FIELD",
+		type: "FIELD",
+		wireField: "wire",
 		label: "Field",
-		groupingPath: "../../collection",
 		displayConditions: [
 			{
 				field: "type",
@@ -98,6 +96,10 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				label: "NOT_EQUALS",
 				value: "NOT_EQUALS",
+			},
+			{
+				label: "INCLUDES",
+				value: "INCLUDES",
 			},
 		],
 		displayConditions: [
@@ -144,7 +146,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "EQUALS",
-				value: ["collectionContext"],
+				value: "collectionContext",
 				type: "fieldValue",
 			},
 		],
@@ -157,7 +159,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "EQUALS",
-				value: ["featureFlag"],
+				value: "featureFlag",
 				type: "fieldValue",
 			},
 		],
@@ -184,7 +186,7 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 			{
 				field: "type",
 				operator: "EQUALS",
-				value: ["fieldMode"],
+				value: "fieldMode",
 				type: "fieldValue",
 			},
 		],

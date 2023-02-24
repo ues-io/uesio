@@ -133,6 +133,8 @@ type ItemContext<T> = {
 
 function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	if (
+		op &&
+		op.includes("EQUALS") &&
 		a &&
 		b &&
 		Object.prototype.toString.call(a) +
@@ -143,7 +145,17 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 			"You're comparing objects in a display condition, this is probably an error"
 		)
 
-	return op === "NOT_EQUALS" ? a !== b : a === b
+	switch (op) {
+		case "NOT_EQUALS":
+			return a !== b
+		case "INCLUDES":
+			if (Array.isArray(a)) {
+				return a.includes(b)
+			}
+			throw "Invalid condition source value for operator INCLUDES: must be an Array"
+		default:
+			return a === b
+	}
 }
 
 function should(condition: DisplayCondition, context: Context) {
