@@ -193,6 +193,12 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
+	if (condition.type === "paramValue")
+		return compare(
+			context.getParam(condition.param),
+			compareToValue,
+			condition.operator
+		)
 
 	if (!condition.type || condition.type === "fieldValue") {
 		const record = context.getRecord(condition.wire)
