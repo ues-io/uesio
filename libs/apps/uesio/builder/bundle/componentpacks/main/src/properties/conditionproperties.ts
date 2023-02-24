@@ -5,18 +5,18 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",
 		type: "SELECT",
-		label: "Type",
+		label: "Value Source",
 		options: [
 			{
 				label: "Select an option",
 				value: "",
 			},
 			{
-				label: "Field equals",
+				label: "Wire field value",
 				value: "fieldValue",
 			},
 			{
-				label: "Param is set",
+				label: "View Param is set",
 				value: "paramIsSet",
 			},
 			{
@@ -60,8 +60,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		displayConditions: [
 			{
 				field: "type",
-				operator: "INCLUDES",
-				value: ["fieldValue", "wireHasChanges", "wireHasNoChanges"],
+				operator: "IN",
+				values: ["fieldValue", "wireHasChanges", "wireHasNoChanges"],
 				type: "fieldValue",
 			},
 		],
@@ -98,15 +98,20 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 				value: "NOT_EQUALS",
 			},
 			{
-				label: "INCLUDES",
-				value: "INCLUDES",
+				label: "IN",
+				value: "IN",
+			},
+			{
+				label: "NOT IN",
+				value: "NOT IN",
 			},
 		],
+
 		displayConditions: [
 			{
 				field: "type",
-				operator: "INCLUDES",
-				value: ["fieldValue", "paramValue"],
+				operator: "IN",
+				values: ["fieldValue", "paramValue"],
 				type: "fieldValue",
 			},
 		],
@@ -118,8 +123,8 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		displayConditions: [
 			{
 				field: "type",
-				operator: "INCLUDES",
-				value: ["paramValue", "paramIsSet"],
+				operator: "IN",
+				values: ["paramValue", "paramIsSet"],
 				type: "fieldValue",
 			},
 		],
@@ -131,8 +136,33 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 		displayConditions: [
 			{
 				field: "type",
-				operator: "INCLUDES",
-				value: ["paramValue", "fieldValue", "hasNoValue", "hasValue"],
+				operator: "IN",
+				values: ["paramValue", "fieldValue", "hasNoValue", "hasValue"],
+				type: "fieldValue",
+			},
+			{
+				field: "operator",
+				operator: "NOT IN",
+				values: ["IN", "NOT IN"],
+				type: "fieldValue",
+			},
+		],
+	},
+	{
+		name: "values",
+		type: "LIST",
+		label: "Values",
+		displayConditions: [
+			{
+				field: "type",
+				operator: "EQUALS",
+				type: "fieldValue",
+				value: "fieldValue",
+			},
+			{
+				field: "operator",
+				operator: "IN",
+				values: ["IN", "NOT IN"],
 				type: "fieldValue",
 			},
 		],
@@ -193,6 +223,34 @@ export const DisplayConditionProperties: ComponentProperty[] = [
 	},
 ]
 
+const getShortOperator = (operator: component.DisplayOperator) =>
+	({
+		EQUALS: "=",
+		NOT_EQUALS: "!=",
+		IN: "in",
+		"NOT IN": "not in",
+	}[operator || "EQUALS"])
+
 export const getDisplayConditionLabel = (
 	condition: component.DisplayCondition
-): string => condition.type || "New Condition"
+): string => {
+	if (!condition.type) return "New Condition"
+	let details = ""
+	switch (condition.type) {
+		case "fieldValue":
+			details =
+				(condition.field || "[No Field]") +
+				" " +
+				getShortOperator(condition.operator) +
+				" "
+			if (condition.value) details += condition.value
+			else if (condition.values)
+				details += condition.values.length + " values"
+			else details += " [No Value]"
+			break
+		case "fieldMode":
+			details = condition.mode || "[No mode]"
+			break
+	}
+	return `${condition.type}${details ? ": " + details : ""}`
+}

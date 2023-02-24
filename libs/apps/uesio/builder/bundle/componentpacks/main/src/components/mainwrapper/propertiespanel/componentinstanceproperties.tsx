@@ -147,12 +147,8 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			]
 			break
 		}
-		default:
-			content = sections
-				.filter(isCustomSection)
-				.find(
-					(section: CustomSection) => section.id === selectedTab
-				)?.viewDefinition
+		case "CUSTOM":
+			content = selectedSection?.viewDefinition
 	}
 
 	function getPropertyTabForSection(section: PropertiesPanelSection): Tab {

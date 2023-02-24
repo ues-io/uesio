@@ -1,18 +1,35 @@
 import { Context } from "../context/context"
 import { BaseDefinition } from "../definition/definition"
 import { wire as wireApi } from "../api/api"
+import { WireRecord } from "../wireexports"
 
-type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "INCLUDES" | undefined
+type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> &
+	{
+		[K in Keys]-?: Required<Pick<T, K>> &
+			Partial<Record<Exclude<Keys, K>, undefined>>
+	}[Keys]
+
+type DisplayOperator = "EQUALS" | "NOT_EQUALS" | "IN" | "NOT IN" | undefined
 
 // If there is a record in context, only test against that record
 // If there is no record in context, test against all records in the wire.
-type FieldValueCondition = {
+
+interface FieldValueConditionBase {
 	type: "fieldValue" | undefined
 	wire?: string
 	field: string
 	operator: DisplayOperator
-	value: string | string[]
+	value?: string
+	values?: string[]
 }
+
+type FieldValueCondition = RequireOnlyOne<
+	FieldValueConditionBase,
+	"value" | "values"
+>
 
 type ParamIsSetCondition = {
 	type: "paramIsSet"
@@ -148,11 +165,12 @@ function compare(a: unknown, b: unknown, op: DisplayOperator) {
 	switch (op) {
 		case "NOT_EQUALS":
 			return a !== b
-		case "INCLUDES":
+		case "IN":
+		case "NOT IN":
 			if (Array.isArray(a)) {
-				return a.includes(b)
+				return a.includes(b) === (op === "IN")
 			}
-			throw "Invalid condition source value for operator INCLUDES: must be an Array"
+			return false
 		default:
 			return a === b
 	}
@@ -221,7 +239,8 @@ function should(condition: DisplayCondition, context: Context) {
 	const compareToValue =
 		typeof condition.value === "string"
 			? context.mergeString(condition.value as string)
-			: condition.value || ""
+			: condition.value ||
+			  (condition.type === "fieldValue" ? condition.values : "")
 
 	if (condition.type === "hasNoValue") return !compareToValue
 	if (condition.type === "hasValue") return !!compareToValue
@@ -234,12 +253,13 @@ function should(condition: DisplayCondition, context: Context) {
 
 	if (!condition.type || condition.type === "fieldValue") {
 		const record = context.getRecord(condition.wire)
-		if (record)
-			return compare(
+		const comparator = (r: WireRecord) =>
+			compare(
 				compareToValue,
-				record.getFieldValue(condition.field) || "",
+				condition.field ? r.getFieldValue(condition.field) || "" : "",
 				condition.operator
 			)
+		if (record) return comparator(record)
 
 		// If we have no record in context, test against all records in the wire.
 		const wire = context.getWire(condition.wire)
@@ -247,19 +267,14 @@ function should(condition: DisplayCondition, context: Context) {
 		const records = wire.getData()
 
 		// If there are no records, not_equal applies
-		if (!records.length) return condition.operator === "NOT_EQUALS"
+		if (!records.length) return condition.operator?.includes("NOT")
 
 		// When we check for false condition, we want to check every record.
-		const arrayMethod =
-			condition.operator === "NOT_EQUALS" ? "every" : "some"
+		const arrayMethod = condition.operator?.includes("NOT")
+			? "every"
+			: "some"
 
-		return records[arrayMethod]((r) =>
-			compare(
-				compareToValue,
-				r.getFieldValue(condition.field) || "",
-				condition.operator
-			)
-		)
+		return records[arrayMethod](comparator)
 	}
 
 	console.warn(`Unknown display condition type: ${condition.type}`)
@@ -359,5 +374,6 @@ export {
 	useContextFilter,
 	shouldHaveClass,
 	DisplayCondition,
+	DisplayOperator,
 	ItemContext,
 }

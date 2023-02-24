@@ -11,6 +11,7 @@ import {
 	useContextFilter,
 	ItemContext,
 	DisplayCondition,
+	DisplayOperator,
 } from "./component/display"
 import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
@@ -35,4 +36,5 @@ export {
 	useContextFilter,
 	ItemContext,
 	DisplayCondition,
+	DisplayOperator,
 }
