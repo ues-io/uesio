@@ -200,10 +200,10 @@ function should(condition: DisplayCondition, context: Context) {
 		condition.type === "wireHasLoadedAllRecords" ||
 		condition.type === "wireHasMoreRecordsToLoad"
 	) {
-		const isFullyLoaded = !!context.getWire(condition.wire)?.hasAllRecords()
+		const hasAllRecords = !!context.getWire(condition.wire)?.hasAllRecords()
 		return condition.type === "wireHasMoreRecordsToLoad"
-			? !isFullyLoaded
-			: isFullyLoaded
+			? !hasAllRecords
+			: hasAllRecords
 	}
 
 	const compareToValue =
