@@ -25,8 +25,9 @@ func (cc *ConfigStoreValueCollection) NewItem() Item {
 	return &ConfigStoreValue{}
 }
 
-func (cc *ConfigStoreValueCollection) AddItem(item Item) {
+func (cc *ConfigStoreValueCollection) AddItem(item Item) error {
 	*cc = append(*cc, item.(*ConfigStoreValue))
+	return nil
 }
 
 func (cc *ConfigStoreValueCollection) Loop(iter GroupIterator) error {

@@ -21,8 +21,9 @@ func (uc *UserCollection) NewItem() Item {
 	return &User{}
 }
 
-func (uc *UserCollection) AddItem(item Item) {
+func (uc *UserCollection) AddItem(item Item) error {
 	*uc = append(*uc, item.(*User))
+	return nil
 }
 
 func (uc *UserCollection) Loop(iter GroupIterator) error {

@@ -12,10 +12,10 @@ import {
 	setDropPath,
 	setSelectedPath,
 	useSelectedPath,
-} from "../../../../api/stateapi"
-import NamespaceLabel from "../../../../utilities/namespacelabel/namespacelabel"
-import PropNodeTag from "../../../../utilities/propnodetag/propnodetag"
-import { FullPath } from "../../../../api/path"
+} from "../../../api/stateapi"
+import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
+import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
+import { FullPath } from "../../../api/path"
 
 const getUtility = component.getUtility
 
@@ -222,7 +222,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 	)
 }
 
-const ComponentsPanel: definition.UtilityComponent = (props) => {
+const ComponentsPanel: definition.UC = (props) => {
 	const { context } = props
 	const classes = styles.useUtilityStyles(
 		{

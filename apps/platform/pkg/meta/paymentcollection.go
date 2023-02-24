@@ -21,8 +21,9 @@ func (lc *PaymentCollection) NewItem() Item {
 	return &Payment{}
 }
 
-func (lc *PaymentCollection) AddItem(item Item) {
+func (lc *PaymentCollection) AddItem(item Item) error {
 	*lc = append(*lc, item.(*Payment))
+	return nil
 }
 
 func (lc *PaymentCollection) Loop(iter GroupIterator) error {

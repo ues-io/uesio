@@ -1,5 +1,4 @@
 import { Context } from "../../context/context"
-import { ComponentProperty } from "../../component/componentproperty"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
@@ -26,7 +25,6 @@ import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
-import { RegularWireDefinition } from "../../definition/wire"
 
 import { WireConditionState } from "./conditions/conditions"
 import { MetadataKey } from "../builder/types"
@@ -108,60 +106,21 @@ interface SearchWireSignal extends SignalDefinition {
 	searchFields?: string[]
 }
 
-const getWiresWith = (key: "conditions" | "order") =>
-	({
-		name: "wire",
-		type: "WIRE",
-		filter: (def: RegularWireDefinition) => def && !!def[key]?.length,
-		label: "Wire",
-	} as ComponentProperty)
-
-const getConditionIdsDescriptor = (wire: string): ComponentProperty => ({
-	name: "conditionId",
-	type: "CONDITION",
-	filter: (def: WireConditionState) => !!def.id,
-	wire,
-	label: "condition",
-})
-
-const getWireAndConditionsDescriptor = (wire: string) => [
-	getWiresWith("conditions"),
-	getConditionIdsDescriptor(wire),
-]
-
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
-		label: "Toggle delete status",
-		description: "Toggle the delete status of a wire",
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			toggleDeleteOp(context),
-		properties: () => [],
 	},
 	[`${WIRE_BAND}/MARK_FOR_DELETE`]: {
-		label: "Mark For Delete",
-		description: "Mark for delete",
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			markForDeleteOp(context),
-		properties: () => [],
 	},
 	[`${WIRE_BAND}/UNMARK_FOR_DELETE`]: {
-		label: "Unmark For Delete",
-		description: "Unmark for delete",
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			unMarkForDeleteOp(context),
-		properties: () => [],
 	},
 	[`${WIRE_BAND}/CREATE_RECORD`]: {
-		label: "Create Record",
-		description: "Creates a new record on a wire",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-		],
 		dispatcher: (signal: CreateRecordSignal, context: Context) => {
 			const newContext = createRecordOp(
 				context,
@@ -182,26 +141,6 @@ const signals: Record<string, SignalDescriptor> = {
 		},
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
-		label: "Update Record",
-		description: "update record",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-			{
-				name: "field",
-				type: "FIELD",
-				label: "Field",
-				wireField: "wire",
-			},
-			{
-				name: "value",
-				type: "TEXT",
-				label: "Value",
-			},
-		],
 		dispatcher: (signal: UpdateRecordSignal, context: Context) => {
 			const record = context.getRecord(signal.wire)
 			if (!record) return context
@@ -214,65 +153,18 @@ const signals: Record<string, SignalDescriptor> = {
 		},
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
-		label: "Cancel Wire Changes",
-		description: "Cancel all wire changes",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-		],
 		dispatcher: (signal: CancelWireSignal, context: Context) =>
 			cancelWireOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/EMPTY`]: {
-		label: "Empty Wire",
-		description: "Empty wire",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-		],
 		dispatcher: (signal: EmptyWireSignal, context: Context) =>
 			emptyWireOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/RESET`]: {
-		label: "Reset Wire",
-		description: "Reset wire",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-		],
 		dispatcher: (signal: ResetWireSignal, context: Context) =>
 			resetWireOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/SEARCH`]: {
-		label: "Search Wire",
-		description: "Search wire",
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-			{
-				name: "searchFields",
-				type: "FIELDS",
-				label: "Search Fields",
-				wireField: "wire",
-			},
-			{
-				name: "search",
-				type: "TEXT",
-				label: "Search",
-			},
-		],
 		dispatcher: (signal: SearchWireSignal, context: Context) =>
 			searchWireOp(
 				context,
@@ -282,18 +174,11 @@ const signals: Record<string, SignalDescriptor> = {
 			),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
-		label: "Toggle Wire Condition",
-		description: "Toggle wire condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
 			toggleConditionOp(context, signal.wire, signal.conditionId),
-		properties: (signal: ToggleConditionSignal): ComponentProperty[] => [
-			...getWireAndConditionsDescriptor(<string>signal.wire),
-		],
 	},
 
 	[`${WIRE_BAND}/SET_CONDITION_VALUE`]: {
-		label: "Set Wire Condition value",
-		description: "Set the value of the wire condition",
 		dispatcher: (signal: SetConditionValueSignal, context: Context) =>
 			setConditionValueOp(
 				context,
@@ -301,103 +186,28 @@ const signals: Record<string, SignalDescriptor> = {
 				signal.conditionId,
 				context.merge(signal.value)
 			),
-		properties: (signal: SetConditionValueSignal): ComponentProperty[] => [
-			...getWireAndConditionsDescriptor(<string>signal.wire),
-			{
-				name: "value",
-				type: "TEXT",
-				label: "value",
-			},
-		],
 	},
 	[`${WIRE_BAND}/SET_CONDITION`]: {
-		label: "Set Wire Condition",
-		description: "Set wire condition",
 		dispatcher: (signal: SetConditionSignal, context: Context) =>
 			setConditionOp(context, signal.wire, signal.condition),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-		],
 	},
 	[`${WIRE_BAND}/REMOVE_CONDITION`]: {
-		label: "Remove Wire Condition",
-		description: "Remove wire condition",
 		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
 			removeConditionOp(context, signal.wire, signal.conditionId),
-		properties: (signal: RemoveConditionSignal): ComponentProperty[] => [
-			...getWireAndConditionsDescriptor(<string>signal.wire),
-		],
 	},
 	[`${WIRE_BAND}/SET_ORDER`]: {
-		label: "Set Wire Order",
-		description: "Removes previous order and sets the new one",
 		dispatcher: (signal: SetOrderSignal, context: Context) =>
 			setOrderOp(context, signal.wire, signal.order),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-			{
-				name: "field",
-				type: "FIELD",
-				label: "Field",
-				wireField: "wire",
-			},
-			{
-				name: "desc",
-				type: "CHECKBOX",
-				label: "Descending",
-			},
-		],
 	},
 	[`${WIRE_BAND}/ADD_ORDER`]: {
-		label: "Add Wire Order",
-		description: "appends new order to the wire",
 		dispatcher: (signal: AddOrderSignal, context: Context) =>
 			addOrderOp(context, signal.wire, signal.field, signal.desc),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wire",
-				type: "WIRE",
-				label: "Wire",
-			},
-			{
-				name: "field",
-				type: "FIELD",
-				label: "Field",
-				wireField: "wire",
-			},
-			{
-				name: "desc",
-				type: "CHECKBOX",
-				label: "Descending",
-			},
-		],
 	},
 	[`${WIRE_BAND}/REMOVE_ORDER`]: {
-		label: "Remove Wire Order",
-		description: "Remove wire order",
 		dispatcher: (signal: RemoveOrderSignal, context: Context) =>
 			removeOrderOp(context, signal.wire, signal.fields),
-		properties: (): ComponentProperty[] => [
-			getWiresWith("order"),
-			{
-				name: "fields",
-				type: "FIELD",
-				label: "Field",
-				wireField: "wire",
-			},
-		],
 	},
 	[`${WIRE_BAND}/INIT`]: {
-		label: "Init Wire(s)",
-		description: "Init wire(s)",
 		dispatcher: (signal: InitializeWiresSignal, context: Context) =>
 			initWiresOp(
 				context,
@@ -405,65 +215,22 @@ const signals: Record<string, SignalDescriptor> = {
 					signal.wireDefs.map((wirename) => [wirename, undefined])
 				)
 			),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wires",
-				type: "WIRES",
-				label: "Wires",
-			},
-		],
 	},
 	[`${WIRE_BAND}/LOAD`]: {
-		label: "Load Wire(s)",
-		description: "Load wire(s)",
 		dispatcher: (signal: LoadWiresSignal, context: Context) =>
 			loadWiresOp(context, signal.wires, true),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wires",
-				type: "WIRES",
-				label: "Wires",
-			},
-		],
 	},
 	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
-		label: "Load Next Batch",
-		description: "Load next batch",
 		dispatcher: (signal: LoadWiresSignal, context: Context) =>
 			loadNextBatchOp(context, signal.wires),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wires",
-				type: "WIRES",
-				label: "Wires",
-			},
-		],
 	},
 	[`${WIRE_BAND}/LOAD_ALL`]: {
-		label: "Load All",
-		description: "Load all",
 		dispatcher: (signal: LoadWiresSignal, context: Context) =>
 			loadAllOp(context, signal.wires),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wires",
-				type: "WIRES",
-				label: "Wires",
-			},
-		],
 	},
 	[`${WIRE_BAND}/SAVE`]: {
-		label: "Save Wire(s)",
-		description: "Save wire(s)",
 		dispatcher: (signal: SaveWiresSignal, context: Context) =>
 			saveWiresOp(context, signal.wires),
-		properties: (): ComponentProperty[] => [
-			{
-				name: "wires",
-				type: "WIRES",
-				label: "Wires",
-			},
-		],
 	},
 }
 

@@ -42,22 +42,6 @@ const signals: Record<string, SignalDescriptor> = {
 				return context.addErrorFrame([message])
 			}
 		},
-		label: "Call Bot",
-		description: "Call a Bot",
-		properties: (signal: CallSignal) => [
-			{
-				type: "NAMESPACE",
-				name: "namespace",
-				label: "Namespace",
-			},
-			{
-				type: "BOT",
-				namespace: signal.namespace,
-				botType: "LISTENER",
-				name: "bot",
-				label: "Bot",
-			},
-		],
 	},
 }
 export default signals

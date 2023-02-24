@@ -21,8 +21,9 @@ func (wc *WorkspaceCollection) NewItem() Item {
 	return &Workspace{}
 }
 
-func (wc *WorkspaceCollection) AddItem(item Item) {
+func (wc *WorkspaceCollection) AddItem(item Item) error {
 	*wc = append(*wc, item.(*Workspace))
+	return nil
 }
 
 func (wc *WorkspaceCollection) Loop(iter GroupIterator) error {

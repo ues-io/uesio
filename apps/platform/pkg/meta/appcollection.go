@@ -21,8 +21,9 @@ func (ac *AppCollection) NewItem() Item {
 	return &App{}
 }
 
-func (ac *AppCollection) AddItem(item Item) {
+func (ac *AppCollection) AddItem(item Item) error {
 	*ac = append(*ac, item.(*App))
+	return nil
 }
 
 func (ac *AppCollection) Loop(iter GroupIterator) error {

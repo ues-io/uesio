@@ -28,8 +28,9 @@ func (cpc *ComponentPackCollection) NewItem() Item {
 	return &ComponentPack{}
 }
 
-func (cpc *ComponentPackCollection) AddItem(item Item) {
+func (cpc *ComponentPackCollection) AddItem(item Item) error {
 	*cpc = append(*cpc, item.(*ComponentPack))
+	return nil
 }
 
 func (cpc *ComponentPackCollection) GetItemFromPath(path, namespace string) BundleableItem {

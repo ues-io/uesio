@@ -26,8 +26,9 @@ func (cc *CredentialCollection) NewItem() Item {
 	return &Credential{}
 }
 
-func (cc *CredentialCollection) AddItem(item Item) {
+func (cc *CredentialCollection) AddItem(item Item) error {
 	*cc = append(*cc, item.(*Credential))
+	return nil
 }
 
 func (cc *CredentialCollection) GetItemFromPath(path, namespace string) BundleableItem {

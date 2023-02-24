@@ -2,15 +2,21 @@ import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
+import {
+	BotProperty,
+	ComponentProperty,
+	SelectOption,
+	SelectProperty,
+} from "../properties/componentproperty"
 
 type Props = {
-	properties?: component.ComponentProperty[]
+	properties?: ComponentProperty[]
 	content?: definition.DefinitionList
 	path: FullPath
 }
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
-	if (!wireDef || !wireDef.fields) return [] as component.SelectOption[]
+	if (!wireDef || !wireDef.fields) return [] as SelectOption[]
 
 	const getFields = (
 		key: string,
@@ -32,108 +38,25 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 
 	return Object.entries(wireDef.fields)
 		.flatMap(([key, value]) => getFields(key, value))
-		.map((el) => ({ value: el, label: el } as component.SelectOption))
-}
-
-const getFormFieldFromProperty = (
-	property: component.ComponentProperty,
-	context: context.Context,
-	path: FullPath
-) => {
-	const { name, type, displayConditions } = property
-	const baseFieldDef = {
-		fieldId: name,
-		"uesio.variant": "uesio/builder.propfield",
-		"uesio.display": displayConditions,
-		labelPosition: "left",
-	}
-	switch (type) {
-		case "METADATA":
-		case "MULTI_METADATA":
-			return {
-				[`uesio/builder.${
-					type === "METADATA" ? "" : "multi"
-				}metadatafield`]: {
-					...baseFieldDef,
-					metadataType: property.metadataType,
-					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
-						path,
-						context,
-						property.groupingPath,
-						property.groupingValue
-					),
-				},
-			}
-		case "NUMBER": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-					number: {
-						step: property.step,
-						max: property.max,
-						min: property.min,
-					},
-				},
-			}
-		}
-		case "MAP":
-		case "LIST": {
-			return {
-				"uesio/io.field": {
-					fieldId: property.name,
-					wrapperVariant: "uesio/io.minimal",
-					displayAs: "DECK",
-					labelPosition: "none",
-					[type.toLowerCase()]: {
-						components: property.components,
-					},
-				},
-			}
-		}
-		case "COMPONENT_ID":
-		case "KEY": {
-			return {
-				"uesio/builder.keyfield": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		case "FIELDS": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					displayAs: "SELECT",
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		default:
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-	}
+		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
 const getFormFieldsFromProperties = (
-	properties: component.ComponentProperty[] | undefined,
-	context: context.Context,
+	properties: ComponentProperty[] | undefined,
 	path: FullPath
 ) => {
 	if (!properties) return []
-	return properties.map((prop) =>
-		getFormFieldFromProperty(prop, context, path)
-	)
+	return properties.map((prop) => ({
+		"uesio/builder.property": {
+			propertyId: prop.name,
+			path,
+		},
+	}))
 }
 
 const getSelectListMetadataFromOptions = (
 	propertyName: string,
-	options: component.SelectOption[],
+	options: SelectOption[],
 	blankOptionLabel?: string
 ) =>
 	({
@@ -142,11 +65,11 @@ const getSelectListMetadataFromOptions = (
 		options,
 	} as wire.SelectListMetadata)
 
-const getSelectListMetadata = (def: component.SelectProperty) =>
+const getSelectListMetadata = (def: SelectProperty) =>
 	getSelectListMetadataFromOptions(
 		def.name,
 		def.options.map(
-			(o: component.SelectOption) =>
+			(o: SelectOption) =>
 				({
 					...o,
 				} as wire.SelectOption)
@@ -156,7 +79,8 @@ const getSelectListMetadata = (def: component.SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: component.ComponentProperty
+	def: ComponentProperty,
+	addBlankOption?: boolean
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -167,12 +91,12 @@ const getWireSelectListMetadata = (
 					label: wireId,
 				} as wire.SelectOption)
 		),
-		"No wire selected"
+		addBlankOption ? "No wire selected" : undefined
 	)
 
 const getNamespaceSelectListMetadata = (
 	context: context.Context,
-	def: component.ComponentProperty
+	def: ComponentProperty
 ) => {
 	const [namespaces] = api.builder.useAvailableNamespaces(context)
 	return getSelectListMetadataFromOptions(
@@ -190,7 +114,7 @@ const getNamespaceSelectListMetadata = (
 
 const getBotSelectListMetadata = (
 	context: context.Context,
-	def: component.BotProperty
+	def: BotProperty
 ) => {
 	let { namespace } = def
 	if (!namespace && def.name && def.name.includes(".")) {
@@ -218,7 +142,7 @@ const getBotSelectListMetadata = (
 }
 
 const getWireFieldFromPropertyDef = (
-	def: component.ComponentProperty,
+	def: ComponentProperty,
 	context: context.Context,
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
@@ -264,7 +188,11 @@ const getWireFieldFromPropertyDef = (
 				label: label || name,
 				required: required || false,
 				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
-				selectlist: getWireSelectListMetadata(context, def),
+				selectlist: getWireSelectListMetadata(
+					context,
+					def,
+					type === "WIRE"
+				),
 			}
 		case "NAMESPACE":
 			return {
@@ -295,11 +223,23 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "MAP" as const,
 			}
+		case "PARAMS":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "MAP" as const,
+			}
 		case "LIST":
 			return {
 				label: label || name,
 				required: required || false,
 				type: "LIST" as const,
+			}
+		case "COMPONENT_ID":
+			return {
+				label: "Component Id",
+				required: required || false,
+				type: "TEXT" as const,
 			}
 		default:
 			return {
@@ -311,34 +251,17 @@ const getWireFieldFromPropertyDef = (
 }
 
 const getWireFieldsFromProperties = (
-	properties: component.ComponentProperty[] | undefined,
+	properties: ComponentProperty[] | undefined,
 	context: context.Context,
 	initialValue: wire.PlainWireRecord
 ) => {
 	if (!properties) return {}
 	return Object.fromEntries(
 		properties.map((def) => [
-			def.name,
+			def.type === "COMPONENT_ID" ? "uesio.id" : def.name,
 			getWireFieldFromPropertyDef(def, context, initialValue),
 		])
 	)
-}
-
-const getGrouping = (
-	path: FullPath,
-	context: context.Context,
-	groupingPath?: string,
-	groupingValue?: string
-): string | undefined => {
-	if (groupingValue) return groupingValue
-	if (!groupingPath) return undefined
-
-	const parsePath = component.path.parseRelativePath(
-		groupingPath,
-		path.localPath || ""
-	)
-
-	return get(context, path.setLocal(parsePath)) as string
 }
 
 type SetterFunction = (a: wire.FieldValue) => void
@@ -354,7 +277,8 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const initialValue: wire.PlainWireRecord = {}
 
 	properties?.forEach((property) => {
-		const { name, type } = property
+		const { type } = property
+		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
 		let setter: SetterFunction
 		let value: wire.FieldValue
 		if (type === "KEY") {
@@ -374,7 +298,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		} else if (type === "LIST") {
 			setter = NoOp
 			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
-		} else if (type === "FIELDS") {
+		} else if (type === "FIELDS" || type === "WIRES") {
+			// Values are stored as a list in the YAML,
+			// but we are rendering these using the Multiselect control,
+			// which works with a Record<string, boolean> where the keys are values which
+			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))
 			value = get(context, path.addLocal(name)) as string[]
@@ -404,11 +332,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				context,
 				initialValue
 			)}
-			content={
-				content ||
-				getFormFieldsFromProperties(properties, context, path)
-			}
-			context={context}
+			content={content || getFormFieldsFromProperties(properties, path)}
+			context={context.addComponentFrame("uesio/builder.propertiesform", {
+				properties,
+				path,
+			})}
 			onUpdate={(field: string, value: string) => {
 				setters.get(field)(value)
 			}}

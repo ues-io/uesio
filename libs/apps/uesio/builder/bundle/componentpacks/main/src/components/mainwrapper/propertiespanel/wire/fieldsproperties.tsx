@@ -43,6 +43,7 @@ const FieldsProperties: definition.UtilityComponent = (props) => {
 				</Popper>
 			)}
 			<ScrollPanel
+				variant="uesio/builder.mainsection"
 				context={context}
 				footer={
 					<BuildActionsArea justify="space-around" context={context}>

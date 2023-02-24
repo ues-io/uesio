@@ -28,8 +28,6 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 			const value = context.mergeString(signal.value)
 			state[signal.param] = value
 		},
-		label: "Set Param",
-		properties: () => [],
 	},
 	SET_PARAMS: {
 		dispatcher: (
@@ -42,8 +40,6 @@ const signals: Record<string, ComponentSignalDescriptor> = {
 				state[key] = params[key]
 			})
 		},
-		label: "Set Params",
-		properties: () => [],
 	},
 }
 
@@ -96,37 +92,6 @@ const View: UC<ViewDefinition> = (props) => {
 }
 
 View.signals = signals
-
-/*
-const ViewPropertyDefinition: BuildPropertiesDefinition = {
-	title: "View",
-	description:
-		"A collection of wires, components and panels that represent a user interface.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		view: "",
-	}),
-	properties: [
-		{
-			name: "view",
-			type: "METADATA",
-			metadataType: "VIEW",
-			label: "View",
-		},
-		{
-			name: "params",
-			type: "PARAMS",
-			label: "Params",
-		},
-	],
-	sections: [],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-	category: "LAYOUT",
-}
-*/
-
 View.displayName = "View"
 
 export default View
