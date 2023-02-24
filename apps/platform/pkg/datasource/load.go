@@ -384,13 +384,15 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 }
 
 func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
-	if op.LoadAll {
-		for {
-			err := connection.Load(op, session)
-			if !op.HasMoreBatches || err != nil {
-				return err
-			}
-		}
+
+	err := connection.Load(op, session)
+	if err != nil {
+		return err
 	}
-	return connection.Load(op, session)
+
+	if !op.LoadAll || !op.HasMoreBatches {
+		return nil
+	}
+
+	return loadData(op, connection, session)
 }
