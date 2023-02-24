@@ -46,6 +46,7 @@ class Wire {
 			: []
 
 	isLoading = () => this.source?.isLoading
+	hasAllRecords = () => !this.source?.more
 
 	getErrors = () => this.source?.errors
 

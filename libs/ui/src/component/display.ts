@@ -82,6 +82,14 @@ type WireIsNotLoading = {
 	type: "wireIsNotLoading"
 	wire: string
 }
+type WireHasLoadedAllRecords = {
+	type: "wireHasLoadedAllRecords"
+	wire: string
+}
+type WireHasMoreRecordsToLoad = {
+	type: "wireHasMoreRecordsToLoad"
+	wire: string
+}
 type WireHasNoRecords = {
 	type: "wireHasNoRecords"
 	wire: string
@@ -115,6 +123,8 @@ type DisplayCondition =
 	| WireIsNotLoading
 	| WireHasNoRecords
 	| WireHasRecords
+	| WireHasLoadedAllRecords
+	| WireHasMoreRecordsToLoad
 
 type ItemContext<T> = {
 	item: T
@@ -184,6 +194,16 @@ function should(condition: DisplayCondition, context: Context) {
 		const wire = context.getWire(condition.wire)
 		const hasRecords = !!wire?.getData().length
 		return condition.type === "wireHasNoRecords" ? !hasRecords : hasRecords
+	}
+
+	if (
+		condition.type === "wireHasLoadedAllRecords" ||
+		condition.type === "wireHasMoreRecordsToLoad"
+	) {
+		const hasAllRecords = !!context.getWire(condition.wire)?.hasAllRecords()
+		return condition.type === "wireHasMoreRecordsToLoad"
+			? !hasAllRecords
+			: hasAllRecords
 	}
 
 	const compareToValue =
