@@ -41,107 +41,17 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
-const getFormFieldFromProperty = (
-	property: ComponentProperty,
-	context: context.Context,
-	path: FullPath
-) => {
-	const { name, type, displayConditions } = property
-	const baseFieldDef = {
-		fieldId: name,
-		"uesio.variant": "uesio/builder.propfield",
-		"uesio.display": displayConditions,
-		labelPosition: "left",
-	}
-	switch (type) {
-		case "METADATA":
-		case "MULTI_METADATA":
-			return {
-				[`uesio/builder.${
-					type === "METADATA" ? "" : "multi"
-				}metadatafield`]: {
-					...baseFieldDef,
-					metadataType: property.metadataType,
-					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
-						path,
-						context,
-						property.groupingPath,
-						property.groupingValue
-					),
-				},
-			}
-		case "NUMBER": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-					number: {
-						step: property.step,
-						max: property.max,
-						min: property.min,
-					},
-				},
-			}
-		}
-		case "MAP":
-			return {
-				"uesio/builder.mapproperty": {
-					property,
-					path,
-				},
-			}
-		case "LIST": {
-			return {
-				"uesio/io.field": {
-					fieldId: property.name,
-					wrapperVariant: "uesio/io.minimal",
-					displayAs: "DECK",
-					labelPosition: "none",
-					[type.toLowerCase()]: {
-						components: property.components,
-					},
-				},
-			}
-		}
-		case "COMPONENT_ID":
-		case "KEY": {
-			return {
-				"uesio/builder.keyfield": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		case "WIRES":
-		case "FIELDS": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					displayAs: "SELECT",
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		default:
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-	}
-}
-
 const getFormFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
-	context: context.Context,
 	path: FullPath
 ) => {
 	if (!properties) return []
-	return properties.map((prop) =>
-		getFormFieldFromProperty(prop, context, path)
-	)
+	return properties.map((prop) => ({
+		"uesio/builder.property": {
+			propertyId: prop.name,
+			path,
+		},
+	}))
 }
 
 const getSelectListMetadataFromOptions = (
@@ -348,23 +258,6 @@ const getWireFieldsFromProperties = (
 	)
 }
 
-const getGrouping = (
-	path: FullPath,
-	context: context.Context,
-	groupingPath?: string,
-	groupingValue?: string
-): string | undefined => {
-	if (groupingValue) return groupingValue
-	if (!groupingPath) return undefined
-
-	const parsePath = component.path.parseRelativePath(
-		groupingPath,
-		path.localPath || ""
-	)
-
-	return get(context, path.setLocal(parsePath)) as string
-}
-
 type SetterFunction = (a: wire.FieldValue) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -432,11 +325,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				context,
 				initialValue
 			)}
-			content={
-				content ||
-				getFormFieldsFromProperties(properties, context, path)
-			}
-			context={context}
+			content={content || getFormFieldsFromProperties(properties, path)}
+			context={context.addComponentFrame("uesio/builder.propertiesform", {
+				properties,
+				path,
+			})}
 			onUpdate={(field: string, value: string) => {
 				setters.get(field)(value)
 			}}
@@ -444,7 +337,5 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		/>
 	)
 }
-
-export { getFormFieldFromProperty }
 
 export default PropertiesForm

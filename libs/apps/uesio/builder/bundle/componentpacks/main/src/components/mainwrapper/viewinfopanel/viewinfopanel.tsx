@@ -1,8 +1,6 @@
 import { definition, api } from "@uesio/ui"
 
-import PropertiesForm, {
-	getFormFieldFromProperty,
-} from "../../../helpers/propertiesform"
+import PropertiesForm from "../../../helpers/propertiesform"
 import { FullPath } from "../../../api/path"
 import { ComponentProperty } from "../../../properties/componentproperty"
 import { getComponentDef } from "../../../api/stateapi"
@@ -17,65 +15,65 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 	if (!viewDefId || !viewDef || !viewDef.wires) return null
 	const path = new FullPath("viewdef", viewDefId)
 
-	const wireProperty: ComponentProperty = {
-		name: "wires",
-		content: [
-			{
-				"uesio/builder.wiretag": {},
-			},
-		],
-		defaultDefinition: {
-			fields: null,
-			batchsize: 200,
-		},
-		defaultKey: "wire",
-		type: "MAP",
-	}
-
-	const panelsProperty: ComponentProperty = {
-		name: "panels",
-		content: [
-			{
-				"uesio/io.text": {
-					element: "div",
-					text: "${key}",
+	const properties: ComponentProperty[] = [
+		{
+			name: "wires",
+			content: [
+				{
+					"uesio/builder.wiretag": {},
 				},
+			],
+			defaultDefinition: {
+				fields: null,
+				batchsize: 200,
 			},
-		],
-		defaultDefinition: {
-			"uesio.type": defaultPanelComponentType,
-			components: [],
-			...getComponentDef(context, defaultPanelComponentType)
-				?.defaultDefinition,
+			defaultKey: "wire",
+			type: "MAP",
 		},
-		defaultKey: "panel",
-		type: "MAP",
-	}
-
-	const paramsProperty: ComponentProperty = {
-		name: "params",
-		content: [
-			{
-				"uesio/io.text": {
-					element: "div",
-					text: "${key}",
+		{
+			name: "panels",
+			content: [
+				{
+					"uesio/io.text": {
+						element: "div",
+						text: "${key}",
+					},
 				},
+			],
+			defaultDefinition: {
+				"uesio.type": defaultPanelComponentType,
+				components: [],
+				...getComponentDef(context, defaultPanelComponentType)
+					?.defaultDefinition,
 			},
-		],
-		defaultDefinition: {
-			type: "RECORD",
-			required: true,
+			defaultKey: "panel",
+			type: "MAP",
 		},
-		defaultKey: "param",
-		type: "MAP",
-	}
+		{
+			name: "params",
+			content: [
+				{
+					"uesio/io.text": {
+						element: "div",
+						text: "${key}",
+					},
+				},
+			],
+			defaultDefinition: {
+				type: "RECORD",
+				required: true,
+			},
+			defaultKey: "param",
+			type: "MAP",
+		},
+	]
 
 	return (
 		<div className={props.className}>
 			<PropertiesForm
 				id="propertiespanel"
 				context={context}
-				properties={[wireProperty, panelsProperty, paramsProperty]}
+				properties={properties}
 				content={[
 					{
 						"uesio/io.tabs": {
@@ -95,33 +93,33 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 									id: "wires",
 									label: "Wires",
 									components: [
-										getFormFieldFromProperty(
-											wireProperty,
-											context,
-											path
-										),
+										{
+											"uesio/builder.property": {
+												propertyId: "wires",
+											},
+										},
 									],
 								},
 								{
 									id: "panels",
 									label: "Panels",
 									components: [
-										getFormFieldFromProperty(
-											panelsProperty,
-											context,
-											path
-										),
+										{
+											"uesio/builder.property": {
+												propertyId: "panels",
+											},
+										},
 									],
 								},
 								{
 									id: "params",
 									label: "Params",
 									components: [
-										getFormFieldFromProperty(
-											paramsProperty,
-											context,
-											path
-										),
+										{
+											"uesio/builder.property": {
+												propertyId: "params",
+											},
+										},
 									],
 								},
 							],
