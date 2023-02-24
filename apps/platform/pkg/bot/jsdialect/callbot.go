@@ -41,9 +41,10 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 		Conditions:     request.Conditions,
 		Order:          request.Order,
 		Query:          true,
+		LoadAll:        true,
 	}
 
-	err := loadData(op, bs.Session, nil)
+	_, err := datasource.Load([]*adapt.LoadOp{op}, bs.Session, nil)
 	if err != nil {
 		return nil, err
 	}

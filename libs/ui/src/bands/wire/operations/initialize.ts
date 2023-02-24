@@ -45,6 +45,7 @@ const getWireDefInfo = (wireDef: RegularWireDefinition) => ({
 	batchsize: wireDef.batchsize,
 	requirewriteaccess: wireDef.requirewriteaccess,
 	viewOnly: false,
+	loadAll: wireDef.loadAll,
 })
 
 const getViewOnlyWireDefInfo = (

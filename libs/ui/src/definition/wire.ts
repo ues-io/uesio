@@ -57,6 +57,7 @@ type RegularWireDefinition = WireDefinitionBase & {
 	batchsize?: number
 	conditions?: WireConditionState[]
 	requirewriteaccess?: boolean
+	loadAll?: boolean
 }
 
 type WireDefinition = ViewOnlyWireDefinition | RegularWireDefinition

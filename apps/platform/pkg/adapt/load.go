@@ -24,6 +24,7 @@ type LoadOp struct {
 	RequireWriteAccess bool                   `json:"-"`
 	Params             map[string]string      `json:"-"`
 	Preloaded          bool                   `json:"preloaded"`
+	LoadAll            bool                   `json:"loadAll"`
 }
 
 func (op *LoadOp) GetBytes() ([]byte, error) {
@@ -112,6 +113,7 @@ func (op *LoadOp) UnmarshalYAML(node *yaml.Node) error {
 	op.Fields = fields
 	op.Conditions = conditions
 	op.Order = order
+	op.LoadAll = meta.GetNodeValueAsBool(node, "loadAll", false)
 	return nil
 
 }

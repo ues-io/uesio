@@ -371,13 +371,28 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 				continue
 			}
 
-			err = connection.Load(op, session)
+			err = loadData(op, connection, session)
 			if err != nil {
 				return nil, err
 			}
+
 			usage.RegisterEvent("LOAD", "COLLECTION", collectionMetadata.GetFullName(), 0, session)
 			usage.RegisterEvent("LOAD", "DATASOURCE", dsKey, 0, session)
 		}
 	}
 	return metadataResponse, nil
+}
+
+func loadData(op *adapt.LoadOp, connection adapt.Connection, session *sess.Session) error {
+
+	err := connection.Load(op, session)
+	if err != nil {
+		return err
+	}
+
+	if !op.LoadAll || !op.HasMoreBatches {
+		return nil
+	}
+
+	return loadData(op, connection, session)
 }

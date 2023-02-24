@@ -16,20 +16,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func loadData(op *adapt.LoadOp, session *sess.Session) error {
-
-	_, err := datasource.Load([]*adapt.LoadOp{op}, session, nil)
-	if err != nil {
-		return err
-	}
-
-	if !op.HasMoreBatches {
-		return nil
-	}
-
-	return loadData(op, session)
-}
-
 func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
