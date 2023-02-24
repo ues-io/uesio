@@ -1,0 +1,3 @@
+name: listproperty
+pack: main
+entrypoint: components/listproperty/listproperty
