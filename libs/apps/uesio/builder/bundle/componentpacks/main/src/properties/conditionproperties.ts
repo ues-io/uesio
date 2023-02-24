@@ -1,6 +1,7 @@
+import { component } from "@uesio/ui"
 import { ComponentProperty } from "./componentproperty"
 
-export const ConditionProperties: ComponentProperty[] = [
+export const DisplayConditionProperties: ComponentProperty[] = [
 	{
 		name: "type",
 		type: "SELECT",
@@ -190,4 +191,6 @@ export const ConditionProperties: ComponentProperty[] = [
 	},
 ]
 
-export default ConditionProperties
+export const getDisplayConditionLabel = (
+	condition: component.DisplayCondition
+): string => condition.type || "New Condition"

@@ -98,10 +98,16 @@ type MapProperty = {
 	defaultKey: string
 } & BaseProperty
 
+type ComponentPropertiesGetter = (
+	record: wire.PlainWireRecord
+) => ComponentProperty[]
+
+type DisplayTemplateGetter = (record: wire.PlainWireRecord) => string
+
 interface ListPropertyItemsDefinition {
-	properties: ComponentProperty[]
+	properties: ComponentProperty[] | ComponentPropertiesGetter
 	addLabel: string
-	displayTemplate: string
+	displayTemplate: string | DisplayTemplateGetter
 	title?: string
 	defaultDefinition?: definition.DefinitionMap
 }
