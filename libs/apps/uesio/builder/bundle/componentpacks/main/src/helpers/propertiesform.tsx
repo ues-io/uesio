@@ -202,6 +202,7 @@ const getWireFieldFromPropertyDef = (
 				selectlist: getNamespaceSelectListMetadata(context, def),
 			}
 		case "FIELDS":
+		case "FIELD":
 			wireId = currentValue[def.wireField] as string
 			wireDefinition = wireId
 				? getWireDefinition(context, wireId)
@@ -209,7 +210,7 @@ const getWireFieldFromPropertyDef = (
 			return {
 				label: label || name,
 				required: required || false,
-				type: "MULTISELECT" as const,
+				type: `${type === "FIELDS" ? "MULTI" : ""}SELECT` as const,
 				selectlist: getSelectListMetadataFromOptions(
 					name,
 					wireDefinition !== undefined

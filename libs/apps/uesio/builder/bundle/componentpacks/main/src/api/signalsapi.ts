@@ -65,14 +65,14 @@ const defaultSignalProps = [
 		type: "SELECT",
 		options: collection.addBlankSelectOption(allSignals),
 	},
-]
+] as ComponentProperty[]
 
 const COMPONENT_SIGNAL_PREFIX = "COMPONENT/"
 
 const getSignalProperties = (
 	signalPlainWireRecord: wire.PlainWireRecord,
 	context: context.Context
-) => {
+): ComponentProperty[] => {
 	const signalDefinition = signalPlainWireRecord as SignalDefinition
 	let descriptor = signalDefinitionRegistry[signalDefinition.signal]
 	// Load Component-specific signal definitions dynamically from Component definition

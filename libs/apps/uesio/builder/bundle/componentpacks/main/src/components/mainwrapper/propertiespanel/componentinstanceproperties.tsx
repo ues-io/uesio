@@ -18,14 +18,19 @@ import {
 	STYLES_SECTION,
 	isStylesSection,
 	isDisplaySection,
-	CustomSection,
-	isCustomSection,
 	getSectionIcon,
 	getSectionId,
 	getSectionLabel,
 } from "../../../api/propertysection"
 import { ReactNode } from "react"
-import { getStyleVariantProperty } from "../../../properties/componentproperty"
+import {
+	ComponentProperty,
+	getStyleVariantProperty,
+} from "../../../properties/componentproperty"
+import {
+	DisplayConditionProperties,
+	getDisplayConditionLabel,
+} from "../../../properties/conditionproperties"
 
 function getSections(componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
@@ -54,8 +59,6 @@ function getSections(componentDef?: ComponentDef) {
 
 const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
-
-	const ListProperty = component.getUtility("uesio/builder.listproperty")
 
 	const selectedPath = useSelectedPath(context)
 
@@ -93,79 +96,57 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const selectedSection =
 		sections.find((section) => selectedTab === getSectionId(section)) ||
 		sections[0]
-	let selectedSectionId: string
+	const selectedSectionId = getSectionId(selectedSection)
+	let properties = componentDef.properties || ([] as ComponentProperty[])
 
 	switch (selectedSection?.type) {
-		case "HOME": {
-			selectedSectionId = getSectionId(selectedSection) || "uesio.home"
-			content = (
-				<PropertiesForm
-					id={path.addLocal(selectedSectionId).combine()}
-					context={context}
-					properties={componentDef.properties}
-					path={path}
-				/>
-			)
-			break
-		}
 		case "DISPLAY": {
-			selectedSectionId = getSectionId(selectedSection) || "uesio.display"
-			content = <>DISPLAY</>
+			properties = [
+				{
+					name: selectedSectionId,
+					type: "LIST",
+					items: {
+						properties: DisplayConditionProperties,
+						displayTemplate: (record: wire.PlainWireRecord) =>
+							getDisplayConditionLabel(
+								record as component.DisplayCondition
+							),
+						addLabel: "New Condition",
+						title: "Condition Properties",
+						defaultDefinition: {
+							type: "fieldValue",
+							operator: "EQUALS",
+						},
+					},
+				},
+			]
 			break
 		}
 		case "STYLES": {
-			selectedSectionId = getSectionId(selectedSection) || "uesio.styles"
-			content = (
-				<PropertiesForm
-					id={path.addLocal(selectedSectionId).combine()}
-					context={context}
-					properties={[
-						// Style Variant
-						getStyleVariantProperty(componentType as string),
-						// Custom Styles
-					]}
-					path={path}
-				/>
-			)
+			properties = [getStyleVariantProperty(componentType as string)]
 			break
 		}
 		case "SIGNALS": {
-			selectedSectionId = getSectionId(selectedSection) || "signals"
-			content = (
-				<ListProperty
-					path={path}
-					itemProperties={(record: wire.PlainWireRecord) =>
-						getSignalProperties(record, context)
-					}
-					itemPropertiesPanelTitle={"Signal Properties"}
-					propertyName={selectedSectionId}
-					context={context}
-					addLabel={"New Signal"}
-					itemDisplayTemplate={"${signal}"}
-					newItemState={() => ({
-						signal: "",
-					})}
-				/>
-			)
+			properties = [
+				{
+					name: selectedSectionId,
+					type: "LIST",
+					items: {
+						properties: (record: wire.PlainWireRecord) =>
+							getSignalProperties(record, context),
+						displayTemplate: "${signal}",
+						addLabel: "New Signal",
+						title: "Signal Properties",
+						defaultDefinition: {
+							signal: "",
+						},
+					},
+				},
+			]
 			break
 		}
-		default:
-			content = (
-				<PropertiesForm
-					id={path.combine()}
-					context={context}
-					properties={componentDef.properties}
-					content={
-						sections
-							.filter(isCustomSection)
-							.find(
-								(section: CustomSection) =>
-									section.id === selectedTab
-							)?.viewDefinition
-					}
-					path={path}
-				/>
-			)
+		case "CUSTOM":
+			content = selectedSection?.viewDefinition
 	}
 
 	function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
@@ -187,7 +168,14 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 			setSelectedTab={setSelectedTab}
 			tabs={sections.map(getPropertyTabForSection)}
 		>
-			{content}
+			<PropertiesForm
+				id={path.addLocal(selectedSectionId).combine()}
+				context={context}
+				properties={properties}
+				path={path}
+			>
+				{content}
+			</PropertiesForm>
 		</PropertiesWrapper>
 	)
 }

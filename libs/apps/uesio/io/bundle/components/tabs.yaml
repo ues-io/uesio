@@ -5,8 +5,26 @@ pack: main
 entrypoint: components/tabs/tabs
 category: LAYOUT
 discoverable: true
+properties:
+  - name: tabs
+    type: LIST
+    items:
+      addLabel: Add Tab
+      displayTemplate: "${label}"
+      title: Tab Properties
+      defaultDefinition:
+        label: New Tab
+      properties:
+        - name: id
+          type: TEXT
+          label: Tab Id
+        - name: label
+          type: TEXT
+          label: Tab Label
 sections:
   - label: Tabs
     id: tabs
+    type: CUSTOM
     viewDefinition:
-      # TODO: Custom component for defining list of Tab definitions?
+      - uesio/builder.property:
+          propertyId: tabs
