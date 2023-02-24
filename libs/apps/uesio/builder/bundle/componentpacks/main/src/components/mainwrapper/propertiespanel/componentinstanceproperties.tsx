@@ -18,8 +18,6 @@ import {
 	STYLES_SECTION,
 	isStylesSection,
 	isDisplaySection,
-	CustomSection,
-	isCustomSection,
 	getSectionIcon,
 	getSectionId,
 	getSectionLabel,
