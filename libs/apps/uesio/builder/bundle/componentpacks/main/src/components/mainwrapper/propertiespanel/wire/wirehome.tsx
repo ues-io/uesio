@@ -1,6 +1,7 @@
-import { component, definition } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import { useSelectedPath } from "../../../../api/stateapi"
 import PropertiesForm from "../../../../helpers/propertiesform"
+import { ComponentProperty } from "../../../../properties/componentproperty"
 
 const wireHomeProperties = [
 	{
@@ -21,7 +22,7 @@ const wireHomeProperties = [
 		label: "Batch Size",
 		type: "NUMBER",
 	},
-] as component.ComponentProperty[]
+] as ComponentProperty[]
 
 const WireHome: definition.UtilityComponent = (props) => {
 	const { context } = props

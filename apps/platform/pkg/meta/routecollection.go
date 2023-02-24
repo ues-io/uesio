@@ -26,8 +26,9 @@ func (rc *RouteCollection) NewItem() Item {
 	return &Route{}
 }
 
-func (rc *RouteCollection) AddItem(item Item) {
+func (rc *RouteCollection) AddItem(item Item) error {
 	*rc = append(*rc, item.(*Route))
+	return nil
 }
 
 func (rc *RouteCollection) GetItemFromPath(path, namespace string) BundleableItem {

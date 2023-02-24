@@ -15,8 +15,8 @@ func (c *CollectionMap) NewItem() meta.Item {
 	return nil
 }
 
-func (c *CollectionMap) AddItem(item meta.Item) {
-
+func (c *CollectionMap) AddItem(item meta.Item) error {
+	return nil
 }
 
 func (c *CollectionMap) Loop(iter meta.GroupIterator) error {

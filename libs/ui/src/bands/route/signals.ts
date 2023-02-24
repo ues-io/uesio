@@ -27,15 +27,6 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
 			operations.redirect(context, signal.path, signal.newtab),
-		label: "Redirect",
-		description: "Route redirect",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "path",
-				label: "Path",
-			},
-		],
 	},
 	[`${ROUTE_BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) => {
@@ -50,9 +41,6 @@ const signals: Record<string, SignalDescriptor> = {
 				`/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`
 			)
 		},
-		label: "Redirect to View Config",
-		description: "Redirect to View Config",
-		properties: () => [],
 	},
 	[`${ROUTE_BAND}/RELOAD`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) => {
@@ -63,38 +51,10 @@ const signals: Record<string, SignalDescriptor> = {
 				path: routeState.path,
 			})
 		},
-		label: "Reload",
-		description: "Reload route",
-		properties: () => [],
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
 			operations.navigate(context, signal),
-		label: "Navigate",
-		description: "Navigate",
-		properties: () => [
-			{
-				type: "TEXT",
-				name: "path",
-				label: "Path",
-			},
-			{
-				type: "NAMESPACE",
-				name: "namespace",
-				label: "Namespace",
-			},
-			{
-				type: "METADATA",
-				name: "collection",
-				metadataType: "COLLECTION",
-				label: "Collection",
-			},
-			{
-				type: "TEXT",
-				name: "id",
-				label: "Record ID",
-			},
-		],
 	},
 }
 

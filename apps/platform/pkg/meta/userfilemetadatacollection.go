@@ -21,8 +21,9 @@ func (ufmc *UserFileMetadataCollection) NewItem() Item {
 	return &UserFileMetadata{}
 }
 
-func (ufmc *UserFileMetadataCollection) AddItem(item Item) {
+func (ufmc *UserFileMetadataCollection) AddItem(item Item) error {
 	*ufmc = append(*ufmc, item.(*UserFileMetadata))
+	return nil
 }
 
 func (ufmc *UserFileMetadataCollection) Loop(iter GroupIterator) error {

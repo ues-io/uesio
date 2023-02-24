@@ -34,7 +34,7 @@ func DownloadAttachment(recordID string, path string, session *sess.Session) (io
 		return nil, nil, err
 	}
 
-	return download(userFile, session)
+	return DownloadItem(userFile, session)
 }
 
 func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
@@ -56,10 +56,10 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 		return nil, nil, err
 	}
 
-	return download(userFile, session)
+	return DownloadItem(userFile, session)
 }
 
-func download(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
 
 	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {

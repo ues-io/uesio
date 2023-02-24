@@ -94,6 +94,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 
 	return (
 		<ScrollPanel
+			variant="uesio/builder.mainsection"
 			header={
 				<>
 					<TitleBar

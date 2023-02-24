@@ -1,8 +1,9 @@
-import { definition, component, context } from "@uesio/ui"
+import { definition, context } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath, getComponentDef } from "../../../api/stateapi"
 import { get } from "../../../api/defapi"
+import { ComponentProperty } from "../../../properties/componentproperty"
 const panelComponentTypeProp = "uesio.type"
 const defaultPanelComponentType = "uesio/io.dialog"
 
@@ -14,7 +15,7 @@ const panelProperties = [
 		type: "SELECT",
 		options: [{ value: defaultPanelComponentType, label: "Dialog" }],
 	},
-] as component.ComponentProperty[]
+] as ComponentProperty[]
 
 const getPanelComponentProperties = (
 	context: context.Context,

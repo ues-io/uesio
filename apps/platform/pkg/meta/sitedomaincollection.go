@@ -21,8 +21,9 @@ func (sdc *SiteDomainCollection) NewItem() Item {
 	return &SiteDomain{}
 }
 
-func (sdc *SiteDomainCollection) AddItem(item Item) {
+func (sdc *SiteDomainCollection) AddItem(item Item) error {
 	*sdc = append(*sdc, item.(*SiteDomain))
+	return nil
 }
 
 func (sdc *SiteDomainCollection) Loop(iter GroupIterator) error {

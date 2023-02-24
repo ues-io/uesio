@@ -21,8 +21,9 @@ func (sc *SecretStoreValueCollection) NewItem() Item {
 	return &SecretStoreValue{}
 }
 
-func (sc *SecretStoreValueCollection) AddItem(item Item) {
+func (sc *SecretStoreValueCollection) AddItem(item Item) error {
 	*sc = append(*sc, item.(*SecretStoreValue))
+	return nil
 }
 
 func (sc *SecretStoreValueCollection) Loop(iter GroupIterator) error {
