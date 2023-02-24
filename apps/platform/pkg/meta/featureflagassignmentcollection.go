@@ -21,8 +21,9 @@ func (ffac *FeatureFlagAssignmentCollection) NewItem() Item {
 	return &FeatureFlagAssignment{}
 }
 
-func (ffsc *FeatureFlagAssignmentCollection) AddItem(item Item) {
+func (ffsc *FeatureFlagAssignmentCollection) AddItem(item Item) error {
 	*ffsc = append(*ffsc, item.(*FeatureFlagAssignment))
+	return nil
 }
 
 func (ffac *FeatureFlagAssignmentCollection) Loop(iter GroupIterator) error {

@@ -1,13 +1,13 @@
-import { component, context, definition, wire } from "@uesio/ui"
+import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
 import {
+	BotProperty,
 	ComponentProperty,
-	SelectProperty,
 	SelectOption,
-	WireProperty,
-} from "../api/componentproperty"
+	SelectProperty,
+} from "../properties/componentproperty"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -41,99 +41,17 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
-const getFormFieldFromProperty = (
-	property: ComponentProperty,
-	context: context.Context,
-	path: FullPath
-) => {
-	const { name, type, displayConditions } = property
-	const baseFieldDef = {
-		fieldId: name,
-		"uesio.variant": "uesio/builder.propfield",
-		"uesio.display": displayConditions,
-		labelPosition: "left",
-	}
-	switch (type) {
-		case "METADATA":
-		case "MULTI_METADATA":
-			return {
-				[`uesio/builder.${
-					type === "METADATA" ? "" : "multi"
-				}metadatafield`]: {
-					...baseFieldDef,
-					metadataType: property.metadataType,
-					fieldWrapperVariant: "uesio/builder.propfield",
-					grouping: getGrouping(
-						path,
-						context,
-						property.groupingPath,
-						property.groupingValue
-					),
-				},
-			}
-		case "NUMBER": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-					number: {
-						step: property.step,
-						max: property.max,
-						min: property.min,
-					},
-				},
-			}
-		}
-		case "MAP": {
-			return {
-				"uesio/io.field": {
-					fieldId: property.name,
-					wrapperVariant: "uesio/io.minimal",
-					displayAs: "DECK",
-					labelPosition: "none",
-					map: {
-						components: property.components,
-					},
-				},
-			}
-		}
-		case "COMPONENT_ID":
-		case "KEY": {
-			return {
-				"uesio/builder.keyfield": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		case "FIELDS": {
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					displayAs: "SELECT",
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-		}
-		default:
-			return {
-				"uesio/io.field": {
-					...baseFieldDef,
-					wrapperVariant: "uesio/builder.propfield",
-				},
-			}
-	}
-}
-
 const getFormFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
-	context: context.Context,
 	path: FullPath
 ) => {
 	if (!properties) return []
-	return properties.map((prop) =>
-		getFormFieldFromProperty(prop, context, path)
-	)
+	return properties.map((prop) => ({
+		"uesio/builder.property": {
+			propertyId: prop.name,
+			path,
+		},
+	}))
 }
 
 const getSelectListMetadataFromOptions = (
@@ -161,7 +79,8 @@ const getSelectListMetadata = (def: SelectProperty) =>
 
 const getWireSelectListMetadata = (
 	context: context.Context,
-	def: WireProperty
+	def: ComponentProperty,
+	addBlankOption?: boolean
 ) =>
 	getSelectListMetadataFromOptions(
 		def.name,
@@ -172,8 +91,55 @@ const getWireSelectListMetadata = (
 					label: wireId,
 				} as wire.SelectOption)
 		),
-		"No wire selected"
+		addBlankOption ? "No wire selected" : undefined
 	)
+
+const getNamespaceSelectListMetadata = (
+	context: context.Context,
+	def: ComponentProperty
+) => {
+	const [namespaces] = api.builder.useAvailableNamespaces(context)
+	return getSelectListMetadataFromOptions(
+		def.name,
+		namespaces?.map(
+			(ns) =>
+				({
+					value: ns,
+					label: ns,
+				} as wire.SelectOption)
+		) || [],
+		"Select a namespace"
+	)
+}
+
+const getBotSelectListMetadata = (
+	context: context.Context,
+	def: BotProperty
+) => {
+	let { namespace } = def
+	if (!namespace && def.name && def.name.includes(".")) {
+		namespace = def.name.split(".")[0]
+	}
+
+	const [metadata] = api.builder.useMetadataList(
+		context,
+		"BOT",
+		namespace || "",
+		def.botType
+	)
+
+	return getSelectListMetadataFromOptions(
+		def.name,
+		Object.keys(metadata || {}).map((key) => {
+			const label = key.split(namespace + ".")[1] || key
+			return {
+				value: key,
+				label,
+			}
+		}),
+		"Select Bot"
+	)
+}
 
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty,
@@ -209,12 +175,31 @@ const getWireFieldFromPropertyDef = (
 				required: true,
 				type: "TEXT" as const,
 			}
+		case "BOT":
+			return {
+				label: label || name,
+				type: "SELECT" as const,
+				required: false,
+				selectlist: getBotSelectListMetadata(context, def),
+			}
 		case "WIRE":
+		case "WIRES":
+			return {
+				label: label || name,
+				required: required || false,
+				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
+				selectlist: getWireSelectListMetadata(
+					context,
+					def,
+					type === "WIRE"
+				),
+			}
+		case "NAMESPACE":
 			return {
 				label: label || name,
 				required: required || false,
 				type: "SELECT" as const,
-				selectlist: getWireSelectListMetadata(context, def),
+				selectlist: getNamespaceSelectListMetadata(context, def),
 			}
 		case "FIELDS":
 			wireId = currentValue[def.wireField] as string
@@ -237,6 +222,18 @@ const getWireFieldFromPropertyDef = (
 				label: label || name,
 				required: required || false,
 				type: "MAP" as const,
+			}
+		case "PARAMS":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "TEXT" as const,
+			}
+		case "LIST":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "LIST" as const,
 			}
 		default:
 			return {
@@ -261,24 +258,10 @@ const getWireFieldsFromProperties = (
 	)
 }
 
-const getGrouping = (
-	path: FullPath,
-	context: context.Context,
-	groupingPath?: string,
-	groupingValue?: string
-): string | undefined => {
-	if (groupingValue) return groupingValue
-	if (!groupingPath) return undefined
-
-	const parsePath = component.path.parseRelativePath(
-		groupingPath,
-		path.localPath || ""
-	)
-
-	return get(context, path.setLocal(parsePath)) as string
-}
-
 type SetterFunction = (a: wire.FieldValue) => void
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const NoOp = function () {}
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
@@ -300,14 +283,19 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 			}
 			setter = (value: string) => changeKey(context, path, value)
 		} else if (type === "MAP") {
-			setter = () => {
-				/* No setter */
-			}
+			setter = NoOp
 			value = get(context, path.addLocal(name)) as Record<
 				string,
 				wire.PlainWireRecord
 			>
-		} else if (type === "FIELDS") {
+		} else if (type === "LIST") {
+			setter = NoOp
+			value = get(context, path.addLocal(name)) as wire.PlainWireRecord[]
+		} else if (type === "FIELDS" || type === "WIRES") {
+			// Values are stored as a list in the YAML,
+			// but we are rendering these using the Multiselect control,
+			// which works with a Record<string, boolean> where the keys are values which
+			// should be present in the YAML list
 			setter = (value: Record<string, boolean>) =>
 				set(context, path.addLocal(name), Object.keys(value))
 			value = get(context, path.addLocal(name)) as string[]
@@ -337,11 +325,11 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				context,
 				initialValue
 			)}
-			content={
-				content ||
-				getFormFieldsFromProperties(properties, context, path)
-			}
-			context={context}
+			content={content || getFormFieldsFromProperties(properties, path)}
+			context={context.addComponentFrame("uesio/builder.propertiesform", {
+				properties,
+				path,
+			})}
 			onUpdate={(field: string, value: string) => {
 				setters.get(field)(value)
 			}}

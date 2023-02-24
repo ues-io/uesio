@@ -29,8 +29,9 @@ func (cvc *ComponentVariantCollection) NewItem() Item {
 	return &ComponentVariant{}
 }
 
-func (cvc *ComponentVariantCollection) AddItem(item Item) {
+func (cvc *ComponentVariantCollection) AddItem(item Item) error {
 	*cvc = append(*cvc, item.(*ComponentVariant))
+	return nil
 }
 
 func (cvc *ComponentVariantCollection) GetItemFromPath(path, namespace string) BundleableItem {

@@ -1,7 +1,7 @@
 import { definition } from "@uesio/ui"
 import { useSelectedPath } from "../../../../api/stateapi"
-import { ComponentProperty } from "../../../../api/componentproperty"
 import PropertiesForm from "../../../../helpers/propertiesform"
+import { ComponentProperty } from "../../../../properties/componentproperty"
 
 const wireHomeProperties = [
 	{

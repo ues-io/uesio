@@ -2,15 +2,17 @@ package file
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"fmt"
 	"io"
 	"mime"
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"gopkg.in/yaml.v3"
@@ -56,6 +58,8 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 	}
 
 	defer stream.Close()
+
+	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
 
 	seeker, ok := stream.(io.ReadSeekCloser)
 	if ok {

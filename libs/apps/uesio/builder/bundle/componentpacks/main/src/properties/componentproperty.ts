@@ -1,4 +1,4 @@
-import { definition, metadata, component } from "@uesio/ui"
+import { component, definition, metadata, wire } from "@uesio/ui"
 
 type BaseProperty = {
 	name: string
@@ -11,8 +11,18 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type ParamProperty = {
+	type: "PARAM"
+} & BaseProperty
+
 type ComponentIdProperty = {
 	type: "COMPONENT_ID"
+} & BaseProperty
+
+type BotProperty = {
+	type: "BOT"
+	namespace?: string
+	botType: "LISTENER"
 } & BaseProperty
 
 type NumberProperty = {
@@ -40,12 +50,27 @@ type MultiMetadataProperty = {
 	groupingValue?: string
 } & BaseProperty
 
+type NamespaceProperty = {
+	type: "NAMESPACE"
+} & BaseProperty
+
 type CheckboxProperty = {
 	type: "CHECKBOX"
 } & BaseProperty
 
+type ConditionProperty = {
+	type: "CONDITION"
+	wire: string
+	filter?: (def: wire.WireConditionState) => boolean
+} & BaseProperty
+
 type WireProperty = {
 	type: "WIRE"
+	filter?: (def: wire.RegularWireDefinition) => boolean
+} & BaseProperty
+
+type WiresProperty = {
+	type: "WIRES"
 } & BaseProperty
 
 type FieldProperty = {
@@ -67,7 +92,18 @@ type SelectProperty = {
 
 type MapProperty = {
 	type: "MAP"
+	content: definition.DefinitionList
+	defaultDefinition: definition.DefinitionMap
+	defaultKey: string
+} & BaseProperty
+
+type ListProperty = {
+	type: "LIST"
 	components: definition.DefinitionList
+} & BaseProperty
+
+type ParamsProperty = {
+	type: "PARAMS"
 } & BaseProperty
 
 type SelectOption = {
@@ -76,18 +112,25 @@ type SelectOption = {
 	disabled?: boolean
 }
 type ComponentProperty =
+	| BotProperty
 	| TextProperty
 	| NumberProperty
 	| KeyProperty
 	| MetadataProperty
 	| MultiMetadataProperty
+	| NamespaceProperty
+	| ParamProperty
 	| SelectProperty
+	| ConditionProperty
 	| WireProperty
+	| WiresProperty
 	| FieldProperty
 	| FieldsProperty
 	| ComponentIdProperty
 	| CheckboxProperty
 	| MapProperty
+	| ParamsProperty
+	| ListProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -98,9 +141,11 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 })
 
 export {
+	BotProperty,
 	ComponentProperty,
 	SelectOption,
 	SelectProperty,
 	WireProperty,
+	MapProperty,
 	getStyleVariantProperty,
 }

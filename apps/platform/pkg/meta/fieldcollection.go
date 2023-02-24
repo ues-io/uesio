@@ -29,8 +29,9 @@ func (fc *FieldCollection) NewItem() Item {
 	return &Field{}
 }
 
-func (fc *FieldCollection) AddItem(item Item) {
+func (fc *FieldCollection) AddItem(item Item) error {
 	*fc = append(*fc, item.(*Field))
+	return nil
 }
 
 func (fc *FieldCollection) GetItemFromPath(path, namespace string) BundleableItem {

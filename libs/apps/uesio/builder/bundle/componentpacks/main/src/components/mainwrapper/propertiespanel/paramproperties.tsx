@@ -2,7 +2,7 @@ import { definition } from "@uesio/ui"
 import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath } from "../../../api/stateapi"
-import { ComponentProperty } from "../../../api/componentproperty"
+import { ComponentProperty } from "../../../properties/componentproperty"
 
 const paramProperties = [
 	{

@@ -45,8 +45,9 @@ func (tc *TranslationCollection) NewItem() Item {
 	return &Translation{}
 }
 
-func (tc *TranslationCollection) AddItem(item Item) {
+func (tc *TranslationCollection) AddItem(item Item) error {
 	*tc = append(*tc, item.(*Translation))
+	return nil
 }
 
 func (tc *TranslationCollection) GetItemFromPath(path, namespace string) BundleableItem {

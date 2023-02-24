@@ -26,8 +26,9 @@ func (lc *LabelCollection) NewItem() Item {
 	return &Label{}
 }
 
-func (lc *LabelCollection) AddItem(item Item) {
+func (lc *LabelCollection) AddItem(item Item) error {
 	*lc = append(*lc, item.(*Label))
+	return nil
 }
 
 func (lc *LabelCollection) GetItemFromPath(path, namespace string) BundleableItem {

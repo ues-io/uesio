@@ -26,8 +26,9 @@ func (smc *SignupMethodCollection) NewItem() Item {
 	return &SignupMethod{}
 }
 
-func (smc *SignupMethodCollection) AddItem(item Item) {
+func (smc *SignupMethodCollection) AddItem(item Item) error {
 	*smc = append(*smc, item.(*SignupMethod))
+	return nil
 }
 
 func (smc *SignupMethodCollection) GetItemFromPath(path, namespace string) BundleableItem {

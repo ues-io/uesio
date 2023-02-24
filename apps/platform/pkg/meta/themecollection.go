@@ -26,8 +26,9 @@ func (tc *ThemeCollection) NewItem() Item {
 	return &Theme{}
 }
 
-func (tc *ThemeCollection) AddItem(item Item) {
+func (tc *ThemeCollection) AddItem(item Item) error {
 	*tc = append(*tc, item.(*Theme))
+	return nil
 }
 
 func (tc *ThemeCollection) GetItemFromPath(path, namespace string) BundleableItem {

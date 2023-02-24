@@ -1,4 +1,4 @@
-import { component, styles, api, definition } from "@uesio/ui"
+import { component, api, metadata, definition } from "@uesio/ui"
 import TabLabels from "../../utilities/tablabels/tablabels"
 
 type TabDefinition = {
@@ -10,21 +10,13 @@ type TabDefinition = {
 type TabsDefinition = {
 	tabs?: TabDefinition[]
 	footer?: definition.DefinitionList
+	panelVariant?: metadata.MetadataKey
+	labelsVariant?: metadata.MetadataKey
 }
 
 const Tabs: definition.UC<TabsDefinition> = (props) => {
 	const { definition, context, path } = props
-	const classes = styles.useStyles(
-		{
-			root: {},
-			content: {},
-			tabLabels: {},
-			tab: {},
-			tabSelected: {},
-			footer: {},
-		},
-		props
-	)
+	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
 
 	const componentId = api.component.getComponentIdFromProps(props)
 
@@ -38,28 +30,19 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 	const selectedTab = tabs[selectedIndex]
 
 	return (
-		<div className={classes.root}>
-			<TabLabels
-				classes={{
-					root: classes.tabLabels,
-					tab: classes.tab,
-					tabSelected: classes.tabSelected,
-				}}
-				selectedTab={selectedTab?.id}
-				setSelectedTab={setSelectedTab}
-				tabs={tabs}
-				context={context}
-			/>
-			<div className={classes.content}>
-				<component.Slot
-					definition={selectedTab}
-					listName="components"
-					path={`${path}["tabs"]["${selectedIndex}"]`}
+		<ScrollPanel
+			context={context}
+			variant={definition.panelVariant}
+			header={
+				<TabLabels
+					variant={definition.labelsVariant}
+					selectedTab={selectedTab?.id}
+					setSelectedTab={setSelectedTab}
+					tabs={tabs}
 					context={context}
-					label={selectedTab?.label}
 				/>
-			</div>
-			<div className={classes.footer}>
+			}
+			footer={
 				<component.Slot
 					definition={definition}
 					listName="footer"
@@ -67,8 +50,16 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 					label="footer"
 					context={context}
 				/>
-			</div>
-		</div>
+			}
+		>
+			<component.Slot
+				definition={selectedTab}
+				listName="components"
+				path={`${path}["tabs"]["${selectedIndex}"]`}
+				context={context}
+				label={selectedTab?.label}
+			/>
+		</ScrollPanel>
 	)
 }
 

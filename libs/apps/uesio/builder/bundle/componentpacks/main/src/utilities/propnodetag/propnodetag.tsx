@@ -31,8 +31,11 @@ const PropNodeTag: FC<Props> = (props) => {
 			{selected && popperChildren && (
 				<Popper
 					referenceEl={anchorEl}
+					matchHeight
+					offset={6}
 					context={context}
 					placement="right-start"
+					autoPlacement={["right-start"]}
 					useFirstRelativeParent
 					styles={{
 						popper: {

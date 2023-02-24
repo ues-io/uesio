@@ -59,6 +59,7 @@ interface RecordContext {
 
 interface RecordDataContext {
 	recordData: PlainWireRecord // A way to store arbitrary record data in context
+	index?: number // the record's zero-indexed position within its parent array/collection
 }
 
 interface ViewContext {
@@ -95,7 +96,7 @@ interface SignalOutputContext {
 
 interface ComponentContext {
 	componentType: string
-	data: object
+	data: Record<string, unknown>
 }
 
 interface ComponentContextFrame extends ComponentContext {
@@ -189,6 +190,9 @@ const providesRecordContext = (
 const isFieldModeContextFrame = (
 	frame: ContextFrame
 ): frame is FieldModeContextFrame => frame.type === FIELD_MODE
+const isRecordDataContextFrame = (
+	frame: ContextFrame
+): frame is RecordDataContextFrame => frame.type === RECORD_DATA
 const isViewContextFrame = (frame: ContextFrame): frame is ViewContextFrame =>
 	frame.type === VIEW
 const isRouteContextFrame = (frame: ContextFrame): frame is RouteContextFrame =>
@@ -297,6 +301,15 @@ class Context {
 			times - 1
 		)
 	}
+
+	getRecordDataIndex = (wireRecord?: WireRecord) =>
+		this.stack
+			.filter(isRecordDataContextFrame)
+			.find(
+				(frame) =>
+					wireRecord === undefined ||
+					frame.recordData === wireRecord.source
+			)?.index
 
 	getRecord = (wireId?: string) => {
 		const recordFrame = this.stack
@@ -458,11 +471,11 @@ class Context {
 			record: recordContext.record,
 		})
 
-	// addRecordDataFrame provides a single-argument method, vs an argument method, since this is the common usage
-	addRecordDataFrame = (recordData: PlainWireRecord) =>
+	addRecordDataFrame = (recordData: PlainWireRecord, index?: number) =>
 		this.#addFrame({
 			type: RECORD_DATA,
 			recordData,
+			index,
 		})
 
 	addRouteFrame = (routeContext: RouteContext) =>
@@ -508,7 +521,10 @@ class Context {
 			...viewContext,
 		})
 
-	addComponentFrame = (componentType: string, data: object) =>
+	addComponentFrame = (
+		componentType: string,
+		data: Record<string, unknown>
+	) =>
 		this.#addFrame({
 			type: COMPONENT,
 			componentType,

@@ -96,16 +96,12 @@ const fileTextSignals: Record<string, signal.ComponentSignalDescriptor> = {
 			api.event.publish(UPLOAD_FILE_EVENT, { target: id })
 			return state
 		},
-		label: "Upload File",
-		properties: () => [],
 	},
 	CANCEL_FILE: {
 		dispatcher: (state, signal, context, platform, id) => {
 			api.event.publish(CANCEL_FILE_EVENT, { target: id })
 			return state
 		},
-		label: "Cancel File",
-		properties: () => [],
 	},
 }
 
@@ -307,89 +303,6 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		</FieldWrapper>
 	)
 }
-
-/*
-const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Field",
-	description: "Just a Field",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({}),
-	properties: [
-		{
-			name: "label",
-			type: "TEXT",
-			label: "Label",
-		},
-		{
-			name: "labelPosition",
-			type: "SELECT",
-			label: "Label Position",
-			options: [
-				{
-					label: "None",
-					value: "none",
-				},
-				{
-					label: "Top",
-					value: "top",
-				},
-				{
-					label: "Left",
-					value: "left",
-				},
-			],
-		},
-		{
-			name: "displayAs",
-			type: "SELECT",
-			label: "Display as",
-			options: [
-				{
-					label: "MARKDOWN",
-					value: "MARKDOWN",
-				},
-				{
-					label: "PASSWORD",
-					value: "PASSWORD",
-				},
-				{
-					label: "RADIO",
-					value: "RADIO",
-				},
-				{
-					label: "TOGGLE",
-					value: "TOGGLE",
-				},
-				{
-					label: "TEXT",
-					value: "TEXT",
-				},
-				{
-					label: "IMAGE",
-					value: "IMAGE",
-				},
-				{
-					label: "VIDEO",
-					value: "VIDEO",
-				},
-				{
-					label: "PREVIEW",
-					value: "PREVIEW",
-				},
-			],
-		},
-		{
-			name: "id",
-			type: "TEXT",
-			label: "ID",
-		},
-	],
-	sections: [],
-	actions: [],
-	type: "component",
-	classes: ["root"],
-}
-*/
 
 Field.signals = fileTextSignals
 
