@@ -16,6 +16,7 @@ type ParamProperty = {
 } & BaseProperty
 
 type ComponentIdProperty = {
+	name: "uesio.id"
 	type: "COMPONENT_ID"
 } & BaseProperty
 

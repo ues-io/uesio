@@ -235,6 +235,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "LIST" as const,
 			}
+		case "COMPONENT_ID":
+			return {
+				label: "Uesio ID",
+				required: required || false,
+				type: "TEXT" as const,
+			}
 		default:
 			return {
 				label: label || name,
@@ -252,7 +258,7 @@ const getWireFieldsFromProperties = (
 	if (!properties) return {}
 	return Object.fromEntries(
 		properties.map((def) => [
-			def.name,
+			def.type === "COMPONENT_ID" ? "uesio.id" : def.name,
 			getWireFieldFromPropertyDef(def, context, initialValue),
 		])
 	)
@@ -271,7 +277,8 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const initialValue: wire.PlainWireRecord = {}
 
 	properties?.forEach((property) => {
-		const { name, type } = property
+		const { type } = property
+		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
 		let setter: SetterFunction
 		let value: wire.FieldValue
 		if (type === "KEY") {

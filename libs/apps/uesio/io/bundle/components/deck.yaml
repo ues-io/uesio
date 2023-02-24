@@ -8,10 +8,8 @@ discoverable: true
 defaultDefinition:
   mode: READ
 properties:
-  - name: uesio.id
-    label: Deck Id
+  - label: Deck Id
     type: COMPONENT_ID
-    required: true
   - name: wire
     label: Wire
     type: WIRE

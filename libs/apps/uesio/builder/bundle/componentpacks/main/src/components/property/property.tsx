@@ -88,7 +88,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
-		case "COMPONENT_ID":
+		case "COMPONENT_ID": {
+			return {
+				"uesio/builder.keyfield": {
+					...baseFieldDef,
+					fieldId: "uesio.id",
+					wrapperVariant: "uesio/builder.propfield",
+				},
+			}
+		}
 		case "KEY": {
 			return {
 				"uesio/builder.keyfield": {
