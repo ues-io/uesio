@@ -1,6 +1,6 @@
 import { definition } from "@uesio/ui"
 
-const ConditionsProperties: definition.UtilityComponent = (props) => {
+const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
 	console.log(context)
 	return <>Conditions</>

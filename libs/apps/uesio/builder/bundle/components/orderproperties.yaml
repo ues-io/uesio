@@ -1,0 +1,3 @@
+name: orderproperties
+pack: main
+entrypoint: components/mainwrapper/propertiespanel/wire/orderproperties
