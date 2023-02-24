@@ -6,18 +6,15 @@ import ConditionsSection from "./conditionssection"
 import ConditionalDisplaySection from "./displayconditions/displaysection"
 import StylesSection from "./stylessection"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import OrderSection from "./ordersection"
 
 const SECTION_TO_COMPONENT: {
 	[key: string]: ComponentType<SectionRendererProps>
 } = {
 	CONDITIONS: ConditionsSection,
-	// SIGNALS: SignalsSection,
 	PROPLIST: PropListSection,
 	PROPLISTS: PropListsSection,
 	STYLES: StylesSection,
 	CONDITIONALDISPLAY: ConditionalDisplaySection,
-	ORDER: OrderSection,
 }
 
 const BuildSection: FunctionComponent<SectionRendererProps> = (props) => {
