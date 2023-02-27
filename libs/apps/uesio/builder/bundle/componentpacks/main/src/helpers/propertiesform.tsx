@@ -5,14 +5,33 @@ import { FullPath } from "../api/path"
 import {
 	BotProperty,
 	ComponentProperty,
+	getStyleVariantProperty,
 	SelectOption,
 	SelectProperty,
 } from "../properties/componentproperty"
+import PropertiesWrapper, {
+	Tab,
+} from "../components/mainwrapper/propertiespanel/propertieswrapper"
+import {
+	getSectionIcon,
+	getSectionId,
+	getSectionLabel,
+	PropertiesPanelSection,
+} from "../api/propertysection"
+import { setSelectedPath, useSelectedPath } from "../api/stateapi"
+import {
+	DisplayConditionProperties,
+	getDisplayConditionLabel,
+} from "../properties/conditionproperties"
+import { getSignalProperties } from "../api/signalsapi"
+import { ReactNode, useState } from "react"
 
 type Props = {
 	properties?: ComponentProperty[]
 	content?: definition.DefinitionList
 	path: FullPath
+	title?: string
+	sections?: PropertiesPanelSection[]
 }
 
 const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
@@ -270,12 +289,13 @@ type SetterFunction = (a: wire.FieldValue) => void
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
 
-const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
-	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { properties, path, context, id, content } = props
-
+const parseProperties = (
+	properties: ComponentProperty[],
+	context: context.Context,
+	path: FullPath
+) => {
 	const setters = new Map()
-	const initialValue: wire.PlainWireRecord = {}
+	const initialValue: wire.PlainWireRecord = {} as wire.PlainWireRecord
 
 	properties?.forEach((property) => {
 		const { type } = property
@@ -324,25 +344,137 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		initialValue[name] = value
 	})
 
+	return {
+		setters,
+		initialValue: initialValue as wire.PlainWireRecord,
+	}
+}
+
+function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
+	return {
+		id: getSectionId(section),
+		label: getSectionLabel(section),
+		icon: getSectionIcon(section),
+	}
+}
+
+const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
+	const DynamicForm = component.getUtility("uesio/io.dynamicform")
+	const { properties, path, context, id, content, sections, title } = props
+	const selectedPath = useSelectedPath(context)
+
+	let useContent: ReactNode = content
+
+	const [selectedTab, setSelectedTab] = useState<string>(
+		sections ? getSectionId(sections[0]) : ""
+	)
+
+	let useProperties = properties
+	let usePath = selectedPath
+
+	if (sections && sections.length) {
+		const selectedSection =
+			sections.find((section) => selectedTab === getSectionId(section)) ||
+			sections[0]
+		const selectedSectionId = getSectionId(selectedSection)
+
+		switch (selectedSection?.type) {
+			case "DISPLAY": {
+				usePath = usePath.addLocal(selectedSectionId)
+				useProperties = [
+					{
+						name: selectedSectionId,
+						type: "LIST",
+						items: {
+							properties: DisplayConditionProperties,
+							displayTemplate: (record: wire.PlainWireRecord) =>
+								getDisplayConditionLabel(
+									record as component.DisplayCondition
+								),
+							addLabel: "New Condition",
+							title: "Condition Properties",
+							defaultDefinition: {
+								type: "fieldValue",
+								operator: "EQUALS",
+							},
+						},
+					},
+				]
+				break
+			}
+			case "STYLES": {
+				useProperties = [
+					getStyleVariantProperty(selectedSection.componentType),
+				]
+				break
+			}
+			case "SIGNALS": {
+				usePath = usePath.addLocal(selectedSectionId)
+				useProperties = [
+					{
+						name: selectedSectionId,
+						type: "LIST",
+						items: {
+							properties: (record: wire.PlainWireRecord) =>
+								getSignalProperties(record, context),
+							displayTemplate: "${signal}",
+							addLabel: "New Signal",
+							title: "Signal Properties",
+							defaultDefinition: {
+								signal: "",
+							},
+						},
+					},
+				]
+				break
+			}
+			case "CUSTOM":
+				useContent = selectedSection?.viewDefinition
+		}
+	}
+
+	const { setters, initialValue } = parseProperties(
+		properties || [],
+		context,
+		usePath
+	)
+
 	return (
-		<DynamicForm
-			id={id}
-			path={path.localPath}
-			fields={getWireFieldsFromProperties(
-				properties,
-				context,
-				initialValue
-			)}
-			content={content || getFormFieldsFromProperties(properties, path)}
-			context={context.addComponentFrame("uesio/builder.propertiesform", {
-				properties,
-				path,
-			})}
-			onUpdate={(field: string, value: string) => {
-				setters.get(field)(value)
-			}}
-			initialValue={initialValue}
-		/>
+		<PropertiesWrapper
+			context={props.context}
+			className={props.className}
+			path={usePath}
+			title={title}
+			onUnselect={() => setSelectedPath(context)}
+			selectedTab={selectedTab}
+			setSelectedTab={setSelectedTab}
+			tabs={sections?.map(getPropertyTabForSection)}
+		>
+			<DynamicForm
+				id={id}
+				path={usePath.localPath}
+				fields={getWireFieldsFromProperties(
+					properties,
+					context,
+					initialValue
+				)}
+				content={
+					useContent ||
+					getFormFieldsFromProperties(useProperties, usePath)
+				}
+				context={context.addComponentFrame(
+					"uesio/builder.propertiesform",
+					{
+						properties,
+						path,
+					}
+				)}
+				onUpdate={(field: string, value: string) => {
+					setters.get(field)(value)
+				}}
+				initialValue={initialValue}
+			/>
+		</PropertiesWrapper>
 	)
 }
 
