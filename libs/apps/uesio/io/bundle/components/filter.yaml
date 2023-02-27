@@ -1,7 +1,33 @@
 name: filter
+title: Filter
+description: Just a Filter
 pack: main
 entrypoint: components/filter/filter
 variants:
   - uesio/io.selectfield:uesio/io.filter
   - uesio/io.fieldlabel:uesio/io.default
   - uesio/io.fieldwrapper:uesio/io.default
+category: INTERACTION
+discoverable: true
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: fieldId
+    type: FIELD
+    label: Field
+    wireField: wire
+  - name: displayAs
+    type: SELECT
+    label: Display as
+    displayConditions:
+      - field: fieldId
+        value: DATE
+        operator: EQUALS
+        type: fieldMetadata
+    options:
+      - label: MONTH
+        value: MONTH
+      - label: WEEK
+        value: WEEK
