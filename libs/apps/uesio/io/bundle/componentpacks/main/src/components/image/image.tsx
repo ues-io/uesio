@@ -39,7 +39,10 @@ const Image: definition.UC<ImageDefinition> = (props) => {
 				className={classes.inner}
 				src={
 					definition.file
-						? api.file.getURLFromFullName(context, definition.file)
+						? api.file.getURLFromFullName(
+								context,
+								context.mergeString(definition.file)
+						  )
 						: context.mergeString(definition.src)
 				}
 				loading={definition.loading}
