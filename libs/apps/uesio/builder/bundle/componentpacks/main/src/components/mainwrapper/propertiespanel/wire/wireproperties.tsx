@@ -43,64 +43,42 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			context={context}
 			id="wireproperties"
 			properties={properties}
-			content={[
+			sections={[
 				{
-					"uesio/io.tabs": {
-						labelsVariant: "uesio/builder.mainsection",
-						panelVariant: "uesio/io.default",
-						tabs: [
-							{
-								id: "",
-								label: "",
-								icon: "home",
-								components: [
-									{
-										"uesio/builder.property": {
-											propertyId: "wirename",
-										},
-									},
-									{
-										"uesio/builder.property": {
-											propertyId: "collection",
-										},
-									},
-									{
-										"uesio/builder.property": {
-											propertyId: "batchsize",
-										},
-									},
-								],
-							},
-							{
-								id: "fields",
-								label: "Fields",
-								components: [
-									{
-										"uesio/builder.fieldsproperties": {},
-									},
-								],
-							},
-							{
-								id: "conditions",
-								label: "Conditions",
-								components: [
-									{
-										"uesio/builder.conditionsproperties":
-											{},
-									},
-								],
-							},
-							{
-								id: "order",
-								label: "Order",
-								components: [
-									{
-										"uesio/builder.orderproperties": {},
-									},
-								],
-							},
-						],
-					},
+					id: "uesio.home",
+					label: "",
+					icon: "home",
+					type: "HOME",
+				},
+				{
+					id: "fields",
+					label: "Fields",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.fieldsproperties": {},
+						},
+					],
+				},
+				{
+					id: "conditions",
+					label: "Conditions",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.conditionsproperties": {},
+						},
+					],
+				},
+				{
+					id: "order",
+					label: "Order",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.orderproperties": {},
+						},
+					],
 				},
 			]}
 			path={wirePath}
