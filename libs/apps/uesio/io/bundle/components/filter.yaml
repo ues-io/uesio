@@ -22,9 +22,9 @@ properties:
     type: SELECT
     label: Display as
     options:
-      - label: MONTH
+      - label: Month
         value: MONTH
-      - label: WEEK
+      - label: Week
         value: WEEK
   - name: label
     type: TEXT
