@@ -3,6 +3,8 @@ import { FieldMetadataMap } from "../../src/bands/field/types"
 import { PlainCollection } from "../../src/bands/collection/types"
 
 const COLLECTION_NAME = "exoplanet"
+const COLLECTION_LABEL = "Exoplanet"
+const COLLECTION_LABEL_PLURAL = "Exoplanets"
 const NS = "ben/planets"
 const wireId = "exoplanets"
 const viewId = "allplanets"
@@ -37,4 +39,6 @@ export const getCollection = (): PlainCollection => ({
 	deleteable: true,
 	nameField: `${NS}.name`,
 	fields: getFields(),
+	label: COLLECTION_LABEL,
+	pluralLabel: COLLECTION_LABEL_PLURAL,
 })

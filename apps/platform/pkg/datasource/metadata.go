@@ -30,6 +30,8 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		RecordChallengeTokens: e.RecordChallengeTokens,
 		TableName:             e.TableName,
 		Public:                e.Public,
+		Label:                 e.Label,
+		PluralLabel:           e.PluralLabel,
 	}
 }
 

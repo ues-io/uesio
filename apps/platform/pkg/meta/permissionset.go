@@ -19,10 +19,10 @@ func NewBasePermissionSet(namespace, name string) *PermissionSet {
 }
 
 type CollectionPermission struct {
-	Read   bool `yaml:"read" json:"uesio/studio.read"`
-	Create bool `yaml:"create" json:"uesio/studio.create"`
-	Edit   bool `yaml:"edit" json:"uesio/studio.edit"`
-	Delete bool `yaml:"delete" json:"uesio/studio.delete"`
+	Read   bool `yaml:"read" json:"read"`
+	Create bool `yaml:"create" json:"create"`
+	Edit   bool `yaml:"edit" json:"edit"`
+	Delete bool `yaml:"delete" json:"delete"`
 }
 
 type CollectionPermissionMap map[string]CollectionPermission

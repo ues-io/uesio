@@ -1,11 +1,6 @@
 import { api, component, signal, definition, context } from "@uesio/ui"
 
-import {
-	setEditMode,
-	setReadMode,
-	toggleMode,
-	useMode,
-} from "../../shared/mode"
+import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
 
 type ListDefinition = {
 	id?: string
@@ -25,7 +20,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 	const wire = api.wire.useWire(definition.wire, context)
 
 	const componentId = api.component.getComponentIdFromProps(props)
-	const [mode] = useMode(componentId, definition.mode)
+	const [mode] = api.component.useMode(componentId, definition.mode)
 
 	if (!wire || !mode) return null
 

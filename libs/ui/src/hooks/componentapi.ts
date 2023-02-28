@@ -9,6 +9,7 @@ import { ComponentVariant } from "../definition/componentvariant"
 import { useAsync } from "./useasync"
 import {
 	Context,
+	FieldMode,
 	hasViewContext,
 	isRecordContextFrame,
 } from "../context/context"
@@ -133,11 +134,15 @@ const getVariantId = selectId as (variant: ComponentVariant) => MetadataKey
 
 const useAllVariants = useComponentVariants
 
+const useMode = (id: string, initialMode: FieldMode | undefined) =>
+	useStateSlice<FieldMode>("mode", id, initialMode || "READ")
+
 export {
 	getComponentId,
 	getComponentIdFromProps,
 	makeComponentId,
 	useAsync,
+	useMode,
 	useState,
 	setState,
 	useStateSlice,

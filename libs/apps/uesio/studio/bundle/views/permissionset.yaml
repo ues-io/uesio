@@ -130,6 +130,8 @@ definition:
                                       signals:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -142,6 +144,8 @@ definition:
                                             - permissionsets
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -153,6 +157,8 @@ definition:
                                           wire: permissionsets
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
+                                        - signal: component/uesio/io.table/TOGGLE_MODE
+                                          target: collectionPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.delete}
@@ -255,10 +261,24 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - uesio/studio.permissionpicker:
+                                  - uesio/studio.multipermissionpicker:
+                                      uesio.id: collectionPerms
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
                                       fieldId: uesio/studio.collectionrefs
                                       wireName: collections
+                                      permissionFields:
+                                        - name: read
+                                          label: Read
+                                          type: CHECKBOX
+                                        - name: create
+                                          label: Create
+                                          type: CHECKBOX
+                                        - name: edit
+                                          label: Edit
+                                          type: CHECKBOX
+                                        - name: delete
+                                          label: Delete
+                                          type: CHECKBOX
