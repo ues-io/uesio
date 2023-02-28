@@ -1,5 +1,4 @@
 import { definition } from "@uesio/ui"
-import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath } from "../../../api/stateapi"
 import { ComponentProperty } from "../../../properties/componentproperty"
@@ -41,19 +40,13 @@ const ParamProperties: definition.UtilityComponent = (props) => {
 	const path = useSelectedPath(context)
 
 	return (
-		<PropertiesWrapper
-			context={props.context}
-			className={props.className}
-			path={path}
+		<PropertiesForm
 			title={"Param Properties"}
-		>
-			<PropertiesForm
-				id={path.combine()}
-				context={context}
-				properties={paramProperties}
-				path={path}
-			/>
-		</PropertiesWrapper>
+			id={path.combine()}
+			context={context}
+			properties={paramProperties}
+			path={path}
+		/>
 	)
 }
 

@@ -40,6 +40,7 @@ interface StylesSection extends BaseSection {
 	id: "uesio.styles"
 	label: "Styles"
 	type: "STYLES"
+	componentType: string
 }
 
 interface SignalsSection extends BaseSection {
@@ -61,12 +62,19 @@ const HOME_SECTION: HomeSection = {
 	icon: "home",
 	type: "HOME",
 }
-const STYLES_SECTION: StylesSection = {
-	id: "uesio.styles",
-	label: "Styles",
-	type: "STYLES",
+
+const STYLES_LABEL = "Styles"
+const STYLES_TYPE = "STYLES"
+const STYLES_ID = "uesio.styles"
+
+const getStylesSection = (componentType: string): StylesSection => ({
+	id: STYLES_ID,
+	label: STYLES_LABEL,
+	type: STYLES_TYPE,
 	icon: "",
-}
+	componentType,
+})
+
 const DISPLAY_SECTION: DisplaySection = {
 	id: "uesio.display",
 	label: "Display",
@@ -84,11 +92,11 @@ const isCustomSection = (s: PropertiesPanelSection): s is CustomSection =>
 const getSectionId = (s: PropertiesPanelSection): string => {
 	switch (s.type) {
 		case "HOME":
-			return HOME_SECTION.id || "uesio.home"
+			return s.id || "uesio.home"
 		case "STYLES":
-			return STYLES_SECTION.id || "uesio.styles"
+			return s.id || "uesio.styles"
 		case "DISPLAY":
-			return DISPLAY_SECTION.id || "uesio.display"
+			return s.id || "uesio.display"
 		case "SIGNALS":
 			return s.id || "signals"
 		default:
@@ -101,7 +109,7 @@ const getSectionLabel = (s: PropertiesPanelSection): string => {
 		case "HOME":
 			return HOME_SECTION.label
 		case "STYLES":
-			return STYLES_SECTION.label
+			return STYLES_LABEL
 		case "DISPLAY":
 			return DISPLAY_SECTION.label
 		case "SIGNALS":
@@ -120,9 +128,10 @@ const getSectionIcon = (s: PropertiesPanelSection): string => {
 	}
 }
 
+const getHomeSection = () => HOME_SECTION
+
 export {
 	HOME_SECTION,
-	STYLES_SECTION,
 	DISPLAY_SECTION,
 	isCustomSection,
 	isStylesSection,
@@ -130,6 +139,8 @@ export {
 	getSectionId,
 	getSectionLabel,
 	getSectionIcon,
+	getStylesSection,
+	getHomeSection,
 	StylesSection,
 	CustomSection,
 	HomeSection,
