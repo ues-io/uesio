@@ -255,7 +255,7 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - uesio/studio.permissionpicker:
+                                  - uesio/studio.collectionpermissionpicker:
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}

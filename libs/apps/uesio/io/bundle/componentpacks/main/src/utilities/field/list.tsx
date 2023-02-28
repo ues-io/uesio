@@ -11,6 +11,7 @@ import Grid from "../grid/grid"
 import FieldLabel from "../fieldlabel/fieldlabel"
 import IconButton from "../iconbutton/iconbutton"
 import TextField from "./text"
+import CheckboxField from "./checkbox"
 
 interface ListFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
@@ -20,6 +21,7 @@ interface ListFieldUtilityProps extends definition.UtilityProps {
 	subType?: string
 	autoAdd?: boolean
 	noAdd?: boolean
+	noDelete?: boolean
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
 }
@@ -32,6 +34,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		context,
 		autoAdd,
 		noAdd,
+		noDelete,
 		fieldVariant,
 		labelVariant,
 	} = props
@@ -136,7 +139,27 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 							Object.keys(subFields).map((subfieldId, i) => {
 								const subfield = subFields[subfieldId]
 								const subfieldValue = getValue(item, subfield)
-								return (
+
+								return subfield.type === "CHECKBOX" ? (
+									<CheckboxField
+										key={i}
+										value={subfieldValue}
+										mode={mode}
+										context={context}
+										variant={fieldVariant}
+										setValue={(
+											newFieldValue: wire.FieldValue
+										) =>
+											setValue(
+												getNewValue(
+													newFieldValue,
+													subfield,
+													index
+												)
+											)
+										}
+									/>
+								) : (
 									<TextField
 										key={i}
 										value={subfieldValue}
@@ -157,7 +180,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 									/>
 								)
 							})}
-						{editMode && (
+						{editMode && !noDelete && (
 							<IconButton
 								label="delete"
 								icon="delete"

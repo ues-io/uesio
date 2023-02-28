@@ -1,0 +1,7 @@
+name: collectionpermissionpicker
+pack: main
+entrypoint: components/collectionpermissionpicker/collectionpermissionpicker
+utilities:
+  - uesio/io.checkboxfield
+  - uesio/io.togglefield
+  - uesio/io.titlebar
