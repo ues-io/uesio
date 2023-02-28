@@ -4,7 +4,7 @@ import {
 	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
-import { SaveResponseBatch } from "../../load/saveresponse"
+import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
@@ -137,6 +137,29 @@ const getWiresFromDefinitonOrContext = (
 	return [wire]
 }
 
+const addErrorState = (
+	currentErrors: Record<string, SaveError[]> | undefined = {},
+	message: string,
+	recordId?: string,
+	fieldId?: string
+) => {
+	const recordFieldKey = `${recordId}:${fieldId}`
+	const newErrorItem = {
+		recordid: recordId,
+		fieldid: fieldId,
+		message,
+	}
+
+	const currentFieldErrors = currentErrors[recordFieldKey]
+
+	if (!currentFieldErrors) {
+		currentErrors[recordFieldKey] = []
+	}
+
+	currentErrors[recordFieldKey].push(newErrorItem)
+	return currentErrors
+}
+
 const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
@@ -146,27 +169,12 @@ const wireSlice = createSlice({
 		removeOne: wireAdapter.removeOne,
 		addError: createEntityReducer<AddErrorPayload, PlainWire>(
 			(state, { recordId, fieldId, message }) => {
-				const recordFieldKey = `${recordId}:${fieldId}`
-				const newErrorItem = {
-					recordid: recordId,
-					fieldid: fieldId,
+				state.errors = addErrorState(
+					state.errors,
 					message,
-				}
-
-				let errors = state.errors
-
-				if (!errors) {
-					errors = {}
-					state.errors = errors
-				}
-
-				const currentFieldErrors = errors[recordFieldKey]
-
-				if (!currentFieldErrors) {
-					errors[recordFieldKey] = []
-				}
-
-				errors[recordFieldKey].push(newErrorItem)
+					recordId,
+					fieldId
+				)
 			}
 		),
 		removeError: createEntityReducer<RemoveErrorPayload, PlainWire>(
@@ -456,6 +464,7 @@ export {
 	useWires,
 	selectWire,
 	getFullWireId,
+	addErrorState,
 	getWireParts,
 	WireLoadAction,
 	selectors,
