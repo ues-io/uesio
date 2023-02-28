@@ -4,6 +4,7 @@ import { useSelectedPath } from "../../../../api/stateapi"
 import PropertiesForm from "../../../../helpers/propertiesform"
 import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
+import { getHomeSection } from "../../../../api/propertysection"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -44,12 +45,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			id="wireproperties"
 			properties={properties}
 			sections={[
-				{
-					id: "uesio.home",
-					label: "",
-					icon: "home",
-					type: "HOME",
-				},
+				getHomeSection(),
 				{
 					id: "fields",
 					label: "Fields",

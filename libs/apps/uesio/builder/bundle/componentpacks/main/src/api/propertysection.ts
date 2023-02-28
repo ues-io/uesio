@@ -128,6 +128,8 @@ const getSectionIcon = (s: PropertiesPanelSection): string => {
 	}
 }
 
+const getHomeSection = () => HOME_SECTION
+
 export {
 	HOME_SECTION,
 	DISPLAY_SECTION,
@@ -138,6 +140,7 @@ export {
 	getSectionLabel,
 	getSectionIcon,
 	getStylesSection,
+	getHomeSection,
 	StylesSection,
 	CustomSection,
 	HomeSection,

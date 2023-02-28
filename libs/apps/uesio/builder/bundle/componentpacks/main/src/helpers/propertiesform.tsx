@@ -18,7 +18,7 @@ import {
 	getSectionLabel,
 	PropertiesPanelSection,
 } from "../api/propertysection"
-import { setSelectedPath, useSelectedPath } from "../api/stateapi"
+import { setSelectedPath } from "../api/stateapi"
 import {
 	DisplayConditionProperties,
 	getDisplayConditionLabel,
@@ -405,7 +405,6 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				break
 			}
 			case "SIGNALS": {
-				path = path.addLocal(selectedSectionId)
 				properties = [
 					{
 						name: selectedSectionId,
