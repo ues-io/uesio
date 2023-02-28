@@ -18,6 +18,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	useDefinition(wirePath) as wire.WireDefinition
 
 	const properties: ComponentProperty[] = [
+		// Wire Home properties
 		{
 			name: "wirename",
 			label: "Wire Name",
@@ -35,6 +36,38 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			name: "batchsize",
 			label: "Batch Size",
 			type: "NUMBER",
+		},
+		// Order section properties
+		{
+			name: "order",
+			type: "LIST",
+			items: {
+				title: "Order By",
+				addLabel: "New Ordering",
+				displayTemplate: (order: { desc: boolean; field: string }) => {
+					if (order.field) {
+						return `${order.field} | ${
+							order.desc ? "Descending" : "Ascending"
+						}`
+					}
+					return "NEW_VALUE"
+				},
+				defaultDefinition: { desc: false },
+				properties: [
+					{
+						name: "field",
+						type: "METADATA",
+						metadataType: "FIELD",
+						label: "Field",
+						groupingPath: "../collection",
+					},
+					{
+						name: "desc",
+						type: "CHECKBOX",
+						label: "Descending",
+					},
+				],
+			},
 		},
 	]
 
@@ -72,7 +105,9 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					type: "CUSTOM",
 					viewDefinition: [
 						{
-							"uesio/builder.orderproperties": {},
+							"uesio/builder.property": {
+								propertyId: "order",
+							},
 						},
 					],
 				},

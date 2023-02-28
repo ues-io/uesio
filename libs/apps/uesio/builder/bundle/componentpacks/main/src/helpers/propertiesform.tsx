@@ -360,14 +360,13 @@ function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { context, id, sections, title } = props
-	// const selectedPath = useSelectedPath(context)
+	const { context, id, path, sections, title } = props
 
 	const [selectedTab, setSelectedTab] = useState<string>(
 		sections ? getSectionId(sections[0]) : ""
 	)
 
-	let { content, properties, path } = props
+	let { content, properties } = props
 
 	if (sections && sections.length) {
 		const selectedSection =
@@ -454,7 +453,18 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					initialValue
 				)}
 				content={
-					content || getFormFieldsFromProperties(properties, path)
+					content ||
+					// For "automatic form fields", we will exclude any LIST properties,
+					// with the assumption being that these must be displayed in their own category
+					// via a viewDefinition with uesio/builder.property {} nodes.
+					// Maybe there's a more elegant way to "select" which properties we want to display.
+					getFormFieldsFromProperties(
+						properties?.filter(
+							// TODO: Exclude "MAP" as well???
+							(property) => property.type !== "LIST"
+						),
+						path
+					)
 				}
 				context={context.addComponentFrame(
 					"uesio/builder.propertiesform",
