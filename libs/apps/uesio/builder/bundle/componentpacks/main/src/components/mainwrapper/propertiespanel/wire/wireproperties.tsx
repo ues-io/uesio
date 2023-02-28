@@ -1,10 +1,10 @@
 import { definition, wire } from "@uesio/ui"
-import PropertiesWrapper from "../propertieswrapper"
-import { setSelectedPath, useSelectedPath } from "../../../../api/stateapi"
+import { useSelectedPath } from "../../../../api/stateapi"
 
 import PropertiesForm from "../../../../helpers/propertiesform"
 import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
+import { getHomeSection } from "../../../../api/propertysection"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -18,6 +18,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 	useDefinition(wirePath) as wire.WireDefinition
 
 	const properties: ComponentProperty[] = [
+		// Wire Home properties
 		{
 			name: "wirename",
 			label: "Wire Name",
@@ -36,84 +37,83 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			label: "Batch Size",
 			type: "NUMBER",
 		},
+		// Order section properties
+		{
+			name: "order",
+			type: "LIST",
+			items: {
+				title: "Order By",
+				addLabel: "New Ordering",
+				displayTemplate: (order: { desc: boolean; field: string }) => {
+					if (order.field) {
+						return `${order.field} | ${
+							order.desc ? "Descending" : "Ascending"
+						}`
+					}
+					return "NEW_VALUE"
+				},
+				defaultDefinition: { desc: false },
+				properties: [
+					{
+						name: "field",
+						type: "METADATA",
+						metadataType: "FIELD",
+						label: "Field",
+						groupingPath: "../collection",
+					},
+					{
+						name: "desc",
+						type: "CHECKBOX",
+						label: "Descending",
+					},
+				],
+			},
+		},
 	]
 
 	return (
-		<PropertiesWrapper
-			context={props.context}
-			className={props.className}
-			path={selectedPath}
+		<PropertiesForm
 			title={wireName || ""}
-			onUnselect={() => setSelectedPath(context)}
-		>
-			<PropertiesForm
-				context={context}
-				id="wireproperties"
-				properties={properties}
-				content={[
-					{
-						"uesio/io.tabs": {
-							labelsVariant: "uesio/builder.mainsection",
-							panelVariant: "uesio/io.default",
-							tabs: [
-								{
-									id: "",
-									label: "",
-									icon: "home",
-									components: [
-										{
-											"uesio/builder.property": {
-												propertyId: "wirename",
-											},
-										},
-										{
-											"uesio/builder.property": {
-												propertyId: "collection",
-											},
-										},
-										{
-											"uesio/builder.property": {
-												propertyId: "batchsize",
-											},
-										},
-									],
-								},
-								{
-									id: "fields",
-									label: "Fields",
-									components: [
-										{
-											"uesio/builder.fieldsproperties":
-												{},
-										},
-									],
-								},
-								{
-									id: "conditions",
-									label: "Conditions",
-									components: [
-										{
-											"uesio/builder.conditionsproperties":
-												{},
-										},
-									],
-								},
-								{
-									id: "order",
-									label: "Order",
-									components: [
-										{
-											"uesio/builder.orderproperties": {},
-										},
-									],
-								},
-							],
+			context={context}
+			id="wireproperties"
+			properties={properties}
+			sections={[
+				getHomeSection(),
+				{
+					id: "fields",
+					label: "Fields",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.fieldsproperties": {},
 						},
-					},
-				]}
-				path={wirePath}
-			/>
-		</PropertiesWrapper>
+					],
+				},
+				{
+					id: "conditions",
+					label: "Conditions",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.conditionsproperties": {},
+						},
+					],
+				},
+				{
+					id: "order",
+					label: "Order",
+					type: "CUSTOM",
+					viewDefinition: [
+						{
+							"uesio/builder.property": {
+								propertyId: "order",
+							},
+						},
+					],
+				},
+			]}
+			path={wirePath}
+		/>
 	)
 }
 
