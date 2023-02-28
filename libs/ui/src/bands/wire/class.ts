@@ -50,6 +50,10 @@ class Wire {
 
 	getErrors = () => this.source?.errors
 
+	getErrorArray = () =>
+		this.source?.errors &&
+		Object.values(this.source.errors).flatMap((errgroup) => errgroup)
+
 	getViewId = () => this.source?.view
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 

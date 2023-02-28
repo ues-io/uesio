@@ -5,6 +5,7 @@ import {
 	useInteractions,
 	arrow,
 	offset,
+	shift,
 	useHover,
 	Placement,
 	FloatingPortal,
@@ -25,6 +26,7 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 			onOpenChange: setOpen,
 			placement: props.placement,
 			middleware: [
+				shift(),
 				offset(props.offset || 0),
 				arrow({
 					element: arrowRef,

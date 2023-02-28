@@ -6,6 +6,7 @@ import {
 	load,
 	addLookupWires,
 	setIsLoading,
+	addErrorState,
 } from ".."
 import { dispatch } from "../../../store/store"
 import createrecord from "./createrecord"
@@ -42,7 +43,12 @@ export default async (
 		(wire) => wire.preloaded || wire.viewOnly
 	)
 
-	const toLoadWithLookups = addLookupWires(toLoad, context)
+	const [invalidWires, validToLoad] = partition(
+		toLoad,
+		(wire) => !wire.collection
+	)
+
+	const toLoadWithLookups = addLookupWires(validToLoad, context)
 
 	const loadRequests = getWireRequest(
 		toLoadWithLookups,
@@ -69,13 +75,22 @@ export default async (
 		isLoading: false,
 	}))
 
+	const invalidWiresResults = invalidWires.map((wire) => ({
+		...wire,
+		error: addErrorState(wire.errors, "Invalid Wire Definition"),
+		isLoading: false,
+	}))
+
 	const preloadedResults = preloaded.map((wire) => ({
 		...wire,
 		preloaded: false,
 		isLoading: false,
 	}))
 
-	const allResults = loadedResults.concat(preloadedResults)
+	const allResults = loadedResults.concat(
+		preloadedResults,
+		invalidWiresResults
+	)
 
 	batch(() => {
 		dispatch(load([allResults, response.collections]))

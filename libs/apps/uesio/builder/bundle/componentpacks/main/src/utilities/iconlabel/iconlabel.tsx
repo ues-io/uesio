@@ -6,6 +6,7 @@ interface T extends definition.UtilityProps {
 	color: string
 	text: string
 	tooltip?: string
+	fill?: boolean
 }
 
 const IconLabel: FC<T> = (props) => {
@@ -13,11 +14,14 @@ const IconLabel: FC<T> = (props) => {
 	const Tooltip = component.getUtility("uesio/io.tooltip")
 	const { icon, color, text, tooltip, context } = props
 
+	const fill = props.fill === undefined ? true : props.fill
+
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
 			icon: {
 				...(!icon && { visibility: "hidden" }),
+				fontVariationSettings: "'FILL' " + (fill ? "1" : "0"),
 			},
 			title: {},
 		},
