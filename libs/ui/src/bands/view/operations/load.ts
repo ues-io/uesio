@@ -51,6 +51,8 @@ const useLoadWires = (
 
 			const viewId = context.getViewId()
 
+			// Only initialize wires that don't already exist in our redux store.
+			// This filters out our pre-loaded wires so they aren't initialized twice.
 			const wiresToInit = Object.fromEntries(
 				wireNames.flatMap((wirename) => {
 					const wireDef = wires[wirename]
@@ -73,6 +75,10 @@ const useLoadWires = (
 	useEffect(() => {
 		;(async () => {
 			if (!wires || !prevWires) return
+
+			// This filters out any wires whose definition did not change since the
+			// last time this hook was run. That way we only re-initialize and load
+			// wires that need it.
 			const changedWires = Object.entries(wires).flatMap(
 				([wirename, wire]) => {
 					const prev = prevWires[wirename]
@@ -84,9 +90,7 @@ const useLoadWires = (
 			)
 			if (!changedWires.length) return
 			const wiresToInit = Object.fromEntries(
-				changedWires.flatMap((wirename) => [
-					[wirename, wires[wirename]],
-				])
+				changedWires.map((wirename) => [wirename, wires[wirename]])
 			)
 			initializeWiresOp(context, wiresToInit)
 			await loadWiresOp(context, changedWires)
