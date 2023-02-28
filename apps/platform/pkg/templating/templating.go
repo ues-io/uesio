@@ -18,8 +18,8 @@ func ValidKeyFunc(m map[string]interface{}, key string) (interface{}, error) {
 	return val, nil
 }
 
-func ForceErrorFunc(m map[string]interface{}, key string) (interface{}, error) {
-	return nil, errors.New("This template function is not allowed")
+func ForceErrorFunc(m interface{}, key string) (interface{}, error) {
+	return nil, errors.New("This template function is not allowed: " + key)
 }
 
 func NewTemplateWithValidKeysOnly(templateString string) (*template.Template, error) {
