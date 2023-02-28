@@ -24,7 +24,7 @@ import {
 	getDisplayConditionLabel,
 } from "../properties/conditionproperties"
 import { getSignalProperties } from "../api/signalsapi"
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 
 type Props = {
 	properties?: ComponentProperty[]
@@ -360,17 +360,14 @@ function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
 
 const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
-	const { properties, path, context, id, content, sections, title } = props
-	const selectedPath = useSelectedPath(context)
-
-	let useContent: ReactNode = content
+	const { context, id, sections, title } = props
+	// const selectedPath = useSelectedPath(context)
 
 	const [selectedTab, setSelectedTab] = useState<string>(
 		sections ? getSectionId(sections[0]) : ""
 	)
 
-	let useProperties = properties
-	let usePath = selectedPath
+	let { content, properties, path } = props
 
 	if (sections && sections.length) {
 		const selectedSection =
@@ -380,8 +377,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 
 		switch (selectedSection?.type) {
 			case "DISPLAY": {
-				usePath = usePath.addLocal(selectedSectionId)
-				useProperties = [
+				properties = [
 					{
 						name: selectedSectionId,
 						type: "LIST",
@@ -403,14 +399,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				break
 			}
 			case "STYLES": {
-				useProperties = [
+				properties = [
 					getStyleVariantProperty(selectedSection.componentType),
 				]
 				break
 			}
 			case "SIGNALS": {
-				usePath = usePath.addLocal(selectedSectionId)
-				useProperties = [
+				path = path.addLocal(selectedSectionId)
+				properties = [
 					{
 						name: selectedSectionId,
 						type: "LIST",
@@ -429,21 +425,21 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				break
 			}
 			case "CUSTOM":
-				useContent = selectedSection?.viewDefinition
+				content = selectedSection?.viewDefinition
 		}
 	}
 
 	const { setters, initialValue } = parseProperties(
 		properties || [],
 		context,
-		usePath
+		path
 	)
 
 	return (
 		<PropertiesWrapper
 			context={props.context}
 			className={props.className}
-			path={usePath}
+			path={path}
 			title={title}
 			onUnselect={() => setSelectedPath(context)}
 			selectedTab={selectedTab}
@@ -452,15 +448,14 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		>
 			<DynamicForm
 				id={id}
-				path={usePath.localPath}
+				path={path}
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,
 					initialValue
 				)}
 				content={
-					useContent ||
-					getFormFieldsFromProperties(useProperties, usePath)
+					content || getFormFieldsFromProperties(properties, path)
 				}
 				context={context.addComponentFrame(
 					"uesio/builder.propertiesform",
