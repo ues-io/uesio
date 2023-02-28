@@ -160,6 +160,41 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	return nil
 }
 
+func getSubParams(viewDef *yaml.Node, parentParamValues map[string]string, session *sess.Session) (map[string]string, error) {
+
+	subParams := map[string]string{}
+	// Process the params
+	for i, prop := range viewDef.Content {
+
+		if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
+
+			if len(viewDef.Content) > i {
+				valueNode := viewDef.Content[i+1]
+				paramsNodes, err := meta.GetMapNodes(valueNode)
+				if err != nil {
+					return nil, err
+				}
+				for _, param := range paramsNodes {
+					template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+					if err != nil {
+						return nil, err
+					}
+
+					mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+						Session:     session,
+						ParamValues: parentParamValues,
+					})
+					if err != nil {
+						return nil, err
+					}
+					subParams[param.Key] = mergedValue
+				}
+			}
+		}
+	}
+	return subParams, nil
+}
+
 func processView(key string, viewInstanceID string, deps *PreloadMetadata, params map[string]string, session *sess.Session) error {
 
 	view, err := loadViewDef(key, session)
@@ -197,42 +232,18 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 			continue
 		}
 
-		subParams := map[string]string{}
-
 		viewID := meta.GetNodeValueAsString(viewCompDef, "uesio.id")
 		// Backwards compatibility until we can get Morandi/TimeTracker migrated to using "uesio.id" consistently
 		if viewID == "" {
 			viewID = meta.GetNodeValueAsString(viewCompDef, "id")
 		}
 
-		// Process the params
-		for i, prop := range viewCompDef.Content {
-
-			if prop.Kind == yaml.ScalarNode && prop.Value == "params" {
-
-				if len(viewCompDef.Content) > i {
-					valueNode := viewCompDef.Content[i+1]
-					paramsNodes, err := meta.GetMapNodes(valueNode)
-					if err != nil {
-						return err
-					}
-					for _, param := range paramsNodes {
-						template, err := templating.NewWithFuncs(param.Node.Value, templating.ForceErrorFunc, merge.ServerMergeFuncs)
-						if err != nil {
-							return err
-						}
-
-						mergedValue, err := templating.Execute(template, merge.ServerMergeData{
-							Session:     session,
-							ParamValues: params,
-						})
-						if err != nil {
-							return err
-						}
-						subParams[param.Key] = mergedValue
-					}
-				}
-			}
+		subParams, err := getSubParams(viewCompDef, params, session)
+		if err != nil {
+			// If we get an error processing a subview, don't panic,
+			// just set the viewID to blank so that we don't server-side
+			// process its wires.
+			viewID = ""
 		}
 
 		err = processView(viewKey, viewID, deps, subParams, session)

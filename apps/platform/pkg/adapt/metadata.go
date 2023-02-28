@@ -46,6 +46,8 @@ type CollectionMetadata struct {
 	TableName             string                                 `json:"-"`
 	Public                bool                                   `json:"public"`
 	HasAllFields          bool                                   `json:"hasAllFields"`
+	Label                 string                                 `json:"label"`
+	PluralLabel           string                                 `json:"pluralLabel"`
 }
 
 func (cm *CollectionMetadata) IsWriteProtected() bool {

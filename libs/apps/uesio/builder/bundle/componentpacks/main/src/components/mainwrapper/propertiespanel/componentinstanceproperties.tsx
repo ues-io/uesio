@@ -1,44 +1,27 @@
-import { component, definition, wire } from "@uesio/ui"
-import PropertiesWrapper, { Tab } from "./propertieswrapper"
-import {
-	getComponentDef,
-	setSelectedPath,
-	useSelectedPath,
-	useBuilderState,
-	ComponentDef,
-} from "../../../api/stateapi"
-import { getSignalProperties } from "../../../api/signalsapi"
-
+import { component, definition } from "@uesio/ui"
 import { useDefinition } from "../../../api/defapi"
-import PropertiesForm from "../../../helpers/propertiesform"
 import {
 	DISPLAY_SECTION,
+	getStylesSection,
 	HOME_SECTION,
-	PropertiesPanelSection,
-	STYLES_SECTION,
-	isStylesSection,
 	isDisplaySection,
-	getSectionIcon,
-	getSectionId,
-	getSectionLabel,
+	isStylesSection,
+	PropertiesPanelSection,
 } from "../../../api/propertysection"
-import { ReactNode } from "react"
 import {
-	ComponentProperty,
-	getStyleVariantProperty,
-} from "../../../properties/componentproperty"
-import {
-	DisplayConditionProperties,
-	getDisplayConditionLabel,
-} from "../../../properties/conditionproperties"
+	ComponentDef,
+	getComponentDef,
+	useSelectedPath,
+} from "../../../api/stateapi"
+import PropertiesForm from "../../../helpers/propertiesform"
 
-function getSections(componentDef?: ComponentDef) {
+function getSections(componentType: string, componentDef?: ComponentDef) {
 	let sections = componentDef?.sections
 	if (sections && sections.length) {
 		// Make sure that the Styles and Display sections are present, regardless
 		const standardSections = []
 		if (!sections.find(isStylesSection)) {
-			standardSections.push(STYLES_SECTION)
+			standardSections.push(getStylesSection(componentType))
 		}
 		if (!sections.find(isDisplaySection)) {
 			standardSections.push(DISPLAY_SECTION)
@@ -50,7 +33,7 @@ function getSections(componentDef?: ComponentDef) {
 		// Use our default sections
 		sections = [
 			HOME_SECTION,
-			STYLES_SECTION,
+			getStylesSection(componentType),
 			DISPLAY_SECTION,
 		] as PropertiesPanelSection[]
 	}
@@ -79,104 +62,19 @@ const ComponentInstanceProperties: definition.UtilityComponent = (props) => {
 	const [componentType] = path.pop()
 	const componentDef = getComponentDef(context, componentType)
 
-	const sections = getSections(componentDef)
-
-	const [selectedTab, setSelectedTab] = useBuilderState<string>(
-		context,
-		"selectedpropertiestab",
-		getSectionId(sections[0])
-	)
-
 	if (!componentDef) return null
 
 	// This forces a rerender if the definition changes
 	// useDefinition(selectedPath) as definition.DefinitionMap
 
-	let content: ReactNode = null
-	const selectedSection =
-		sections.find((section) => selectedTab === getSectionId(section)) ||
-		sections[0]
-	const selectedSectionId = getSectionId(selectedSection)
-	let properties = componentDef.properties || ([] as ComponentProperty[])
-
-	switch (selectedSection?.type) {
-		case "DISPLAY": {
-			properties = [
-				{
-					name: selectedSectionId,
-					type: "LIST",
-					items: {
-						properties: DisplayConditionProperties,
-						displayTemplate: (record: wire.PlainWireRecord) =>
-							getDisplayConditionLabel(
-								record as component.DisplayCondition
-							),
-						addLabel: "New Condition",
-						title: "Condition Properties",
-						defaultDefinition: {
-							type: "fieldValue",
-							operator: "EQUALS",
-						},
-					},
-				},
-			]
-			break
-		}
-		case "STYLES": {
-			properties = [getStyleVariantProperty(componentType as string)]
-			break
-		}
-		case "SIGNALS": {
-			properties = [
-				{
-					name: selectedSectionId,
-					type: "LIST",
-					items: {
-						properties: (record: wire.PlainWireRecord) =>
-							getSignalProperties(record, context),
-						displayTemplate: "${signal}",
-						addLabel: "New Signal",
-						title: "Signal Properties",
-						defaultDefinition: {
-							signal: "",
-						},
-					},
-				},
-			]
-			break
-		}
-		case "CUSTOM":
-			content = selectedSection?.viewDefinition
-	}
-
-	function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
-		return {
-			id: getSectionId(section),
-			label: getSectionLabel(section),
-			icon: getSectionIcon(section),
-		}
-	}
-
 	return (
-		<PropertiesWrapper
-			context={props.context}
-			className={props.className}
-			path={selectedPath}
+		<PropertiesForm
+			context={context}
+			properties={componentDef.properties}
+			sections={getSections(componentType as string, componentDef)}
 			title={componentDef.title || componentDef.name}
-			onUnselect={() => setSelectedPath(context)}
-			selectedTab={selectedTab}
-			setSelectedTab={setSelectedTab}
-			tabs={sections.map(getPropertyTabForSection)}
-		>
-			<PropertiesForm
-				id={path.addLocal(selectedSectionId).combine()}
-				context={context}
-				properties={properties}
-				path={path}
-			>
-				{content}
-			</PropertiesForm>
-		</PropertiesWrapper>
+			path={path}
+		/>
 	)
 }
 

@@ -27,6 +27,8 @@ class Collection {
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
 	getFullName = () => this.getNamespace() + "." + this.getId()
+	getLabel = () => this.source.label
+	getPluralLabel = () => this.source.pluralLabel
 
 	// Accepts a single field
 	getFieldMetadata = (fieldName: string) => {

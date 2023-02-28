@@ -7,7 +7,6 @@ import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
-import PropertiesWrapper from "../../components/mainwrapper/propertiespanel/propertieswrapper"
 import { ComponentProperty } from "../../properties/componentproperty"
 
 export type PropertiesGetter = (
@@ -53,24 +52,17 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 			context={context}
 			popperChildren={
 				itemProperties && (
-					<PropertiesWrapper
-						context={context}
-						// className={props.className}
+					<PropertiesForm
+						id={listItemPath.combine()}
 						path={listItemPath}
+						context={context}
 						title={itemPropertiesPanelTitle || "Properties"}
-						onUnselect={() => setSelectedPath(context, parentPath)}
-					>
-						<PropertiesForm
-							id={listItemPath.combine()}
-							path={listItemPath}
-							context={context}
-							properties={
-								typeof itemProperties === "function"
-									? itemProperties(record.source)
-									: itemProperties
-							}
-						/>
-					</PropertiesWrapper>
+						properties={
+							typeof itemProperties === "function"
+								? itemProperties(record.source)
+								: itemProperties
+						}
+					/>
 				)
 			}
 		>

@@ -1,5 +1,4 @@
 import { definition, context } from "@uesio/ui"
-import PropertiesWrapper from "./propertieswrapper"
 import PropertiesForm from "../../../helpers/propertiesform"
 import { useSelectedPath, getComponentDef } from "../../../api/stateapi"
 import { get } from "../../../api/defapi"
@@ -26,27 +25,21 @@ const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const path = useSelectedPath(context)
 	return (
-		<PropertiesWrapper
-			context={props.context}
-			className={props.className}
-			path={path}
+		<PropertiesForm
 			title={"Panel Properties"}
-		>
-			<PropertiesForm
-				id={path.combine()}
-				context={context}
-				properties={panelProperties.concat(
-					getPanelComponentProperties(
+			id={path.combine()}
+			context={context}
+			properties={panelProperties.concat(
+				getPanelComponentProperties(
+					context,
+					get(
 						context,
-						get(
-							context,
-							path.addLocal(panelComponentTypeProp)
-						) as string
-					)
-				)}
-				path={path}
-			/>
-		</PropertiesWrapper>
+						path.addLocal(panelComponentTypeProp)
+					) as string
+				)
+			)}
+			path={path}
+		/>
 	)
 }
 

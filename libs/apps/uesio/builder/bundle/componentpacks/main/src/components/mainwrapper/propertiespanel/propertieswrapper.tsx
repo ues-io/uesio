@@ -10,7 +10,7 @@ type Tab = {
 }
 
 type Props = {
-	title: string
+	title?: string
 	path: FullPath
 	tabs?: Tab[]
 	selectedTab?: string
@@ -97,25 +97,27 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 			variant="uesio/builder.mainsection"
 			header={
 				<>
-					<TitleBar
-						title={title}
-						variant="uesio/io.primary"
-						subtitlenode={subtitlenode}
-						actions={
-							props.path && (
-								<IconButton
-									variant="uesio/builder.buildtitle"
-									context={context}
-									icon="close"
-									onClick={(e: MouseEvent) => {
-										e.stopPropagation()
-										props.onUnselect?.()
-									}}
-								/>
-							)
-						}
-						context={context}
-					/>
+					{title ? (
+						<TitleBar
+							title={title}
+							variant="uesio/io.primary"
+							subtitlenode={subtitlenode}
+							actions={
+								props.path && (
+									<IconButton
+										variant="uesio/builder.buildtitle"
+										context={context}
+										icon="close"
+										onClick={(e: MouseEvent) => {
+											e.stopPropagation()
+											props.onUnselect?.()
+										}}
+									/>
+								)
+							}
+							context={context}
+						/>
+					) : null}
 					{tabs && !!tabs.length && (
 						<TabLabels
 							variant="uesio/builder.mainsection"
