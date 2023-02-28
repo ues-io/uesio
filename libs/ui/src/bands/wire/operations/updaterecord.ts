@@ -28,6 +28,7 @@ export default async (
 		recordId: record.id,
 		field: path[0],
 		value,
+		record,
 	})
 
 	// Now run change events

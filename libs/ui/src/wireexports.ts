@@ -11,6 +11,7 @@ import {
 import Wire from "./bands/wire/class"
 import {
 	FieldMetadata,
+	FieldType,
 	SelectOption,
 	SelectListMetadata,
 } from "./bands/field/types"
@@ -44,6 +45,7 @@ export {
 	Wire,
 	FieldValue,
 	FieldMetadata,
+	FieldType,
 	SelectListMetadata,
 	SelectOption,
 	WireDefinition,

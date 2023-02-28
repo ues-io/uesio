@@ -9,12 +9,7 @@ import {
 } from "@uesio/ui"
 import omit from "lodash/omit"
 import partition from "lodash/partition"
-import {
-	setEditMode,
-	setReadMode,
-	toggleMode,
-	useMode,
-} from "../../shared/mode"
+import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
 import {
 	nextPage,
 	paginate,
@@ -76,7 +71,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const { path, context, definition } = props
 	const wire = api.wire.useWire(definition.wire, context)
 	const componentId = api.component.getComponentIdFromProps(props)
-	const [mode] = useMode(componentId, definition.mode)
+	const [mode] = api.component.useMode(componentId, definition.mode)
 
 	// If we got a wire from the definition, add it to context
 	let newContext = context

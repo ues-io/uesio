@@ -1,0 +1,11 @@
+name: multipermissionpicker
+pack: main
+entrypoint: components/multipermissionpicker/multipermissionpicker
+utilities:
+  - uesio/io.dynamictable
+  - uesio/io.table
+  - uesio/io.titlebar
+variants:
+  - uesio/io.table:uesio/io.default
+  - uesio/io.field:uesio/io.table
+  - uesio/io.fieldwrapper:uesio/io.table
