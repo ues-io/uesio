@@ -21,13 +21,24 @@ properties:
   - name: displayAs
     type: SELECT
     label: Display as
-    displayConditions:
-      - field: fieldId
-        value: DATE
-        operator: EQUALS
-        type: fieldMetadata
     options:
       - label: MONTH
         value: MONTH
       - label: WEEK
         value: WEEK
+  - name: label
+    type: TEXT
+    label: Label
+  - name: labelPosition
+    type: SELECT
+    label: Label Position
+    options:
+      - label: None
+        value: none
+      - label: Top
+        value: top
+      - label: Left
+        value: left
+  - name: conditionId
+    type: TEXT
+    label: Condition ID
