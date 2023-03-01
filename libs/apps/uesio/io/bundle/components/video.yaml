@@ -32,3 +32,15 @@ properties:
   - name: autoplay
     type: CHECKBOX
     label: Auto play
+sections:
+  - type: HOME
+    properties:
+      - file
+      - src
+      - height
+      - width
+      - muted
+      - loop
+      - autoplay
+  - type: STYLES
+  - type: DISPLAY

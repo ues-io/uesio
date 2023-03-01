@@ -78,7 +78,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 			id="wireproperties"
 			properties={properties}
 			sections={[
-				getHomeSection(),
+				getHomeSection(["wirename", "collection", "batchsize"]),
 				{
 					id: "fields",
 					label: "Fields",
@@ -103,13 +103,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					id: "order",
 					label: "Order",
 					type: "CUSTOM",
-					viewDefinition: [
-						{
-							"uesio/builder.property": {
-								propertyId: "order",
-							},
-						},
-					],
+					properties: ["order"],
 				},
 			]}
 			path={wirePath}

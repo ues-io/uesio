@@ -35,3 +35,11 @@ properties:
     type: METADATA
     label: File
     metadataType: FILE
+sections:
+  - type: HOME
+    properties:
+      - label
+      - language
+      - file
+  - type: STYLES
+  - type: DISPLAY

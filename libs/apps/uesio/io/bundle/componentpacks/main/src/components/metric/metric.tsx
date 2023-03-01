@@ -36,27 +36,4 @@ const MetricComponent: definition.UC<MetricDefinition> = (props) => {
 	)
 }
 
-/*
-const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Metric",
-	description: "A metric box",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		text: "New metric",
-	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-	],
-	sections: [],
-	actions: [],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-	category: "VISUALIZATION",
-}
-*/
 export default MetricComponent

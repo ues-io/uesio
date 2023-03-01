@@ -54,28 +54,4 @@ const MetricGroupComponent: definition.UC<MetricGroupDefinition> = (props) => {
 	)
 }
 
-/*
-const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Metric Group",
-	description: "Visualized data with numbers.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		text: "New metric group",
-	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-	],
-	sections: [],
-	actions: [],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-	category: "VISUALIZATION",
-}
-*/
-
 export default MetricGroupComponent

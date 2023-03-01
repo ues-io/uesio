@@ -5,3 +5,6 @@ category: LAYOUT
 pack: main
 entrypoint: components/box/box
 discoverable: true
+sections:
+  - type: STYLES
+  - type: DISPLAY

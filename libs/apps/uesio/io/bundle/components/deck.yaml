@@ -12,7 +12,8 @@ properties:
     label: Wire
     type: WIRE
     required: true
-  - label: Deck Id
+  - name: uesio.id
+    label: Deck Id
     type: COMPONENT_ID
   - name: mode
     label: Display Mode
@@ -23,3 +24,11 @@ properties:
         label: Read
       - value: EDIT
         label: Edit
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+  - type: STYLES
+  - type: DISPLAY

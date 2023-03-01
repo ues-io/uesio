@@ -64,28 +64,4 @@ const ChartComponent: definition.UC<LineChartDefinition> = (props) => {
 	)
 }
 
-/*
-const PropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Line Chart",
-	description: "Visualized data with lines.",
-	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({
-		text: "New chart",
-	}),
-	properties: [
-		{
-			name: "title",
-			type: "TEXT",
-			label: "Title",
-		},
-	],
-	sections: [],
-	actions: [],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-	category: "VISUALIZATION",
-}
-*/
-
 export default ChartComponent

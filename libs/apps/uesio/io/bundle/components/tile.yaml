@@ -11,3 +11,5 @@ variants:
   - uesio/io.text:uesio/io.iconoutline
 sections:
   - type: SIGNALS
+  - type: STYLES
+  - type: DISPLAY

@@ -1,13 +1,6 @@
 import { component, definition } from "@uesio/ui"
 import { useDefinition } from "../../../api/defapi"
-import {
-	DISPLAY_SECTION,
-	getStylesSection,
-	HOME_SECTION,
-	isDisplaySection,
-	isStylesSection,
-	PropertiesPanelSection,
-} from "../../../api/propertysection"
+import { isStylesSection } from "../../../api/propertysection"
 import {
 	ComponentDef,
 	getComponentDef,
@@ -16,26 +9,18 @@ import {
 import PropertiesForm from "../../../helpers/propertiesform"
 
 function getSections(componentType: string, componentDef?: ComponentDef) {
-	let sections = componentDef?.sections
+	const sections = componentDef?.sections
 	if (sections && sections.length) {
-		// Make sure that the Styles and Display sections are present, regardless
-		const standardSections = []
-		if (!sections.find(isStylesSection)) {
-			standardSections.push(getStylesSection(componentType))
-		}
-		if (!sections.find(isDisplaySection)) {
-			standardSections.push(DISPLAY_SECTION)
-		}
-		if (standardSections.length) {
-			sections = sections.concat(standardSections)
-		}
-	} else {
-		// Use our default sections
-		sections = [
-			HOME_SECTION,
-			getStylesSection(componentType),
-			DISPLAY_SECTION,
-		] as PropertiesPanelSection[]
+		// The Styles section needs to have the Component Type merged in to be valid
+		return sections.map((section) => {
+			if (isStylesSection(section)) {
+				return {
+					...section,
+					componentType,
+				}
+			}
+			return section
+		})
 	}
 	return sections
 }

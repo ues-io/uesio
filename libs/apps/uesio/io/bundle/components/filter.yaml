@@ -1,6 +1,6 @@
 name: filter
 title: Filter
-description: Just a Filter
+description: Applies conditions to a wire
 pack: main
 entrypoint: components/filter/filter
 variants:
@@ -42,3 +42,14 @@ properties:
   - name: conditionId
     type: TEXT
     label: Condition ID
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - fieldId
+      - displayAs
+      - label
+      - labelPosition
+      - conditionId
+  - type: STYLES
+  - type: DISPLAY

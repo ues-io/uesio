@@ -14,3 +14,10 @@ properties:
   - name: subtitle
     label: Subtitle
     type: TEXT
+sections:
+  - type: HOME
+    properties:
+      - title
+      - subtitle
+  - type: STYLES
+  - type: DISPLAY
