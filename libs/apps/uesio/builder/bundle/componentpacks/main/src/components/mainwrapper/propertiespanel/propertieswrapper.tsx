@@ -55,8 +55,8 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 				marginRight: "3px",
 				borderRadius: "3px",
 			},
-			noTabsTitle: {
-				paddingBottom: 0,
+			tabsTitle: {
+				paddingBottom: tabs ? "2px" : "8px",
 			},
 		},
 		props
@@ -119,7 +119,7 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 								)
 							}
 							classes={{
-								...(tabs && { content: classes.noTabsTitle }),
+								content: classes.tabsTitle,
 							}}
 							context={context}
 						/>
