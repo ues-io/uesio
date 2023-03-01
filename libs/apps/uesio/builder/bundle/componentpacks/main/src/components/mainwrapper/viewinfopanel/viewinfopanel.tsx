@@ -74,56 +74,32 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 				id="propertiespanel"
 				context={context}
 				properties={properties}
-				content={[
+				sections={[
 					{
-						"uesio/io.tabs": {
-							labelsVariant: "uesio/builder.mainsection",
-							panelVariant: "uesio/builder.mainsection",
-							tabs: [
-								{
-									id: "components",
-									label: "Components",
-									components: [
-										{
-											"uesio/builder.componentspanel": {},
-										},
-									],
-								},
-								{
-									id: "wires",
-									label: "Wires",
-									components: [
-										{
-											"uesio/builder.property": {
-												propertyId: "wires",
-											},
-										},
-									],
-								},
-								{
-									id: "panels",
-									label: "Panels",
-									components: [
-										{
-											"uesio/builder.property": {
-												propertyId: "panels",
-											},
-										},
-									],
-								},
-								{
-									id: "params",
-									label: "Params",
-									components: [
-										{
-											"uesio/builder.property": {
-												propertyId: "params",
-											},
-										},
-									],
-								},
-							],
-						},
+						id: "components",
+						label: "Components",
+						type: "CUSTOM",
+						viewDefinition: [
+							{ "uesio/builder.componentspanel": {} },
+						],
+					},
+					{
+						id: "wires",
+						label: "Wires",
+						type: "CUSTOM",
+						properties: ["wires"],
+					},
+					{
+						id: "panels",
+						label: "Panels",
+						type: "CUSTOM",
+						properties: ["panels"],
+					},
+					{
+						id: "params",
+						label: "Params",
+						type: "CUSTOM",
+						properties: ["params"],
 					},
 				]}
 				path={path}
