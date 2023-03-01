@@ -48,7 +48,10 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 
 	return (
 		<PropNodeTag
-			onClick={() => setSelectedPath(context, listItemPath)}
+			onClick={(e: MouseEvent) => {
+				e.stopPropagation()
+				setSelectedPath(context, listItemPath)
+			}}
 			selected={selected}
 			context={context}
 			popperChildren={

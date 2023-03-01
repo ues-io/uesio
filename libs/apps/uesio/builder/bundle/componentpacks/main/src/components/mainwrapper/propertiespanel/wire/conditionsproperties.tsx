@@ -4,8 +4,6 @@ import { useSelectedPath } from "../../../../api/stateapi"
 import { ComponentProperty } from "../../../../properties/componentproperty"
 
 function getConditionTitle(condition: wire.WireConditionState): string {
-	console.log({ condition })
-
 	if (condition.type === "GROUP" && !condition.valueSource) {
 		return `GROUP ${condition.conjunction}`
 	}
@@ -353,10 +351,9 @@ const ConditionsProperties: definition.UC = (props) => {
 									conditionOnGroup: wire.WireConditionState,
 									secindex
 								) => {
-									const conditionOnGroupPath =
-										conditionsPath.addLocal(
-											index.toString()
-										)
+									const conditionOnGroupPath = conditionsPath
+										.addLocal(index.toString())
+										.addLocal(propertyName)
 
 									return (
 										<ListPropertyItem
