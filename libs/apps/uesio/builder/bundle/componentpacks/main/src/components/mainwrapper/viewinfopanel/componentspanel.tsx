@@ -224,6 +224,7 @@ const ComponentTag: FC<ComponentTagProps> = (props) => {
 }
 
 const ComponentsPanel: definition.UC = (props) => {
+	const ScrollPanel = getUtility("uesio/io.scrollpanel")
 	const { context } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -290,12 +291,16 @@ const ComponentsPanel: definition.UC = (props) => {
 	) => selectedPath.equals(new FullPath(itemtype, itemname))
 
 	return (
-		<>
-			<SearchArea
-				searchTerm={searchTerm}
-				context={context}
-				setSearchTerm={setSearchTerm}
-			/>
+		<ScrollPanel
+			header={
+				<SearchArea
+					searchTerm={searchTerm}
+					context={context}
+					setSearchTerm={setSearchTerm}
+				/>
+			}
+			context={context}
+		>
 			<div
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
@@ -312,7 +317,7 @@ const ComponentsPanel: definition.UC = (props) => {
 					/>
 				))}
 			</div>
-		</>
+		</ScrollPanel>
 	)
 }
 ComponentsPanel.displayName = "ComponentsPanel"
