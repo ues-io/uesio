@@ -32,6 +32,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		displayTemplate,
 		itemProperties,
 		itemPropertiesPanelTitle,
+		children,
 	} = props
 
 	const record = context.getRecord()
@@ -71,6 +72,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 					? displayTemplate(record.source)
 					: context.merge(displayTemplate)}
 			</div>
+			{children}
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />
