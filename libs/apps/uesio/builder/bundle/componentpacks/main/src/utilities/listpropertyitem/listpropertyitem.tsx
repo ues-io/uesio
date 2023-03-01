@@ -8,6 +8,7 @@ import BuildActionsArea from "../../helpers/buildactionsarea"
 import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import { ComponentProperty } from "../../properties/componentproperty"
+import { PropertiesPanelSection } from "../../api/propertysection"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
@@ -23,6 +24,7 @@ type Props = {
 	parentPath: FullPath
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesPanelTitle?: string
+	itemPropertiesSections?: PropertiesPanelSection[]
 } & definition.UtilityComponent
 
 const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
@@ -32,6 +34,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		displayTemplate,
 		itemProperties,
 		itemPropertiesPanelTitle,
+		itemPropertiesSections,
 	} = props
 
 	const record = context.getRecord()
@@ -62,6 +65,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 								? itemProperties(record.source)
 								: itemProperties
 						}
+						sections={itemPropertiesSections}
 					/>
 				)
 			}

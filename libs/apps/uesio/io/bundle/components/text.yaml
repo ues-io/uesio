@@ -60,3 +60,10 @@ properties:
         label: "justify"
       - value: "match-parent"
         label: "match-parent"
+sections:
+  - type: HOME
+    properties:
+      - text
+      - icon
+  - type: STYLES
+  - type: DISPLAY

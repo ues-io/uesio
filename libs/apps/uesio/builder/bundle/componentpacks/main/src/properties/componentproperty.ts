@@ -1,4 +1,5 @@
 import { component, definition, metadata, wire } from "@uesio/ui"
+import { PropertiesPanelSection } from "../api/propertysection"
 
 type BaseProperty = {
 	name: string
@@ -110,6 +111,7 @@ interface ListPropertyItemsDefinition {
 	displayTemplate: string | DisplayTemplateGetter
 	title?: string
 	defaultDefinition?: definition.DefinitionMap
+	sections?: PropertiesPanelSection[]
 }
 
 type ListProperty = {

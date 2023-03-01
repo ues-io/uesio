@@ -37,3 +37,11 @@ properties:
         value: space-evenly
       - label: End
         value: end
+sections:
+  - type: HOME
+    properties:
+      - columnGap
+      - alignItems
+      - justifyContent
+  - type: STYLES
+  - type: DISPLAY

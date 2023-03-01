@@ -11,6 +11,13 @@ properties:
   - name: params
     type: PARAMS
     label: Params
+sections:
+  - type: HOME
+    properties:
+      - view
+      - params
+  - type: STYLES
+  - type: DISPLAY
 signals:
   SET_PARAM:
     label: "Set Param"

@@ -423,7 +423,16 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 				break
 			}
 			case "CUSTOM":
-				content = selectedSection?.viewDefinition
+			case "HOME":
+				if (selectedSection?.type === "CUSTOM") {
+					content = selectedSection?.viewDefinition
+				}
+				if (properties && selectedSection?.properties?.length) {
+					properties = properties.filter((property) =>
+						selectedSection?.properties?.includes(property.name)
+					)
+				}
+				break
 		}
 	}
 
@@ -453,18 +462,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 					initialValue
 				)}
 				content={
-					content ||
-					// For "automatic form fields", we will exclude any LIST properties,
-					// with the assumption being that these must be displayed in their own category
-					// via a viewDefinition with uesio/builder.property {} nodes.
-					// Maybe there's a more elegant way to "select" which properties we want to display.
-					getFormFieldsFromProperties(
-						properties?.filter(
-							// TODO: Exclude "MAP" as well???
-							(property) => property.type !== "LIST"
-						),
-						path
-					)
+					content || getFormFieldsFromProperties(properties, path)
 				}
 				context={context.addComponentFrame(
 					"uesio/builder.propertiesform",

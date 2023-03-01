@@ -21,10 +21,25 @@ properties:
         - name: label
           type: TEXT
           label: Tab Label
+      sections:
+        - type: HOME
+          properties:
+            - id
+            - label
+        # TODO: improve Tab component to have these features,
+        # then uncomment these sections :)
+        # - type: SIGNALS
+        #   name: onfirstload
+        #   label: 1st Load Signals
+        # - type: SIGNALS
+        #   name: onselect
+        #   label: On-select Signals
+        # - type: DISPLAY
 sections:
   - label: Tabs
     id: tabs
     type: CUSTOM
-    viewDefinition:
-      - uesio/builder.property:
-          propertyId: tabs
+    properties:
+      - tabs
+  - type: STYLES
+  - type: DISPLAY
