@@ -1,4 +1,4 @@
-import { FC, DragEvent } from "react"
+import { FC, DragEvent, useState } from "react"
 import { definition, component, api, styles, metadata } from "@uesio/ui"
 
 import groupBy from "lodash/groupBy"
@@ -16,6 +16,7 @@ import {
 import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
+import SearchArea from "../../../helpers/searcharea"
 
 const getUtility = component.getUtility
 
@@ -233,9 +234,15 @@ const ComponentsPanel: definition.UC = (props) => {
 		},
 		props
 	)
+	const [searchTerm, setSearchTerm] = useState("")
+	const searchTermLC = searchTerm?.toLowerCase()
 	const components = pickBy(
 		getComponentDefs(context),
-		(component) => component.discoverable
+		(component) =>
+			component.discoverable &&
+			(component.name?.toLowerCase().includes(searchTermLC) ||
+				component.description?.toLowerCase().includes(searchTermLC) ||
+				component.category?.toLowerCase().includes(searchTermLC))
 	)
 
 	const selectedPath = useSelectedPath(context)
@@ -283,22 +290,29 @@ const ComponentsPanel: definition.UC = (props) => {
 	) => selectedPath.equals(new FullPath(itemtype, itemname))
 
 	return (
-		<div
-			onDragStart={onDragStart}
-			onDragEnd={onDragEnd}
-			className={classes.root}
-		>
-			{categoryOrder.map((category) => (
-				<CategoryBlock
-					key={category}
-					variants={variantsByComponent}
-					components={componentsByCategory[category]}
-					category={category}
-					isSelected={isComponentSelected}
-					context={context}
-				/>
-			))}
-		</div>
+		<>
+			<SearchArea
+				searchTerm={searchTerm}
+				context={context}
+				setSearchTerm={setSearchTerm}
+			/>
+			<div
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+				className={classes.root}
+			>
+				{categoryOrder.map((category) => (
+					<CategoryBlock
+						key={category}
+						variants={variantsByComponent}
+						components={componentsByCategory[category]}
+						category={category}
+						isSelected={isComponentSelected}
+						context={context}
+					/>
+				))}
+			</div>
+		</>
 	)
 }
 ComponentsPanel.displayName = "ComponentsPanel"
