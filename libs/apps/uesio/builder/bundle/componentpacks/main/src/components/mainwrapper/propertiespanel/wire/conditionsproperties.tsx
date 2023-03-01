@@ -1,7 +1,7 @@
 import { definition, component, wire } from "@uesio/ui"
 import { add, get } from "../../../../api/defapi"
+import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
-import { ComponentProperty } from "../../../../properties/componentproperty"
 
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
@@ -60,7 +60,7 @@ const ConditionsProperties: definition.UC = (props) => {
 
 	const items = get(context, conditionsPath) as wire.WireConditionState[]
 
-	const properties: ComponentProperty[] = [
+	const getProperties = (parentPath: FullPath) => [
 		{
 			name: "id",
 			type: "TEXT",
@@ -71,7 +71,7 @@ const ConditionsProperties: definition.UC = (props) => {
 			type: "METADATA",
 			metadataType: "FIELD",
 			label: "Field",
-			groupingPath: "../collection",
+			groupingPath: `${"../".repeat(parentPath.size() - 3)}../collection`,
 			displayConditions: [
 				{
 					operator: "NOT_EQUALS",
@@ -313,10 +313,28 @@ const ConditionsProperties: definition.UC = (props) => {
 							}
 							label={"Add Condition"}
 							onClick={() => {
+								let targetPath = conditionsPath
+								let conditionsArray = items
+								// If the selected path is a Group, add the condition to the group
+								if (
+									(
+										get(
+											context,
+											selectedPath
+										) as wire.WireConditionState
+									)?.type === "GROUP"
+								) {
+									targetPath =
+										selectedPath.addLocal("conditions")
+									conditionsArray = get(
+										context,
+										targetPath
+									) as wire.WireConditionState[]
+								}
 								add(
 									context,
-									conditionsPath.addLocal(
-										`${items?.length || 0}`
+									targetPath.addLocal(
+										`${conditionsArray?.length || 0}`
 									),
 									defaultConditionDef
 								)
@@ -340,7 +358,7 @@ const ConditionsProperties: definition.UC = (props) => {
 						)}
 						parentPath={conditionsPath}
 						displayTemplate={getConditionTitle(item)}
-						itemProperties={properties}
+						itemProperties={getProperties(conditionsPath)}
 						itemPropertiesPanelTitle={
 							isGroup ? "Group Condition" : "Condition"
 						}
@@ -366,7 +384,9 @@ const ConditionsProperties: definition.UC = (props) => {
 											displayTemplate={getConditionTitle(
 												conditionOnGroup
 											)}
-											itemProperties={properties}
+											itemProperties={getProperties(
+												conditionOnGroupPath
+											)}
 											itemPropertiesPanelTitle={
 												isGroup
 													? "Group Condition"
