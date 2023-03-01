@@ -55,6 +55,9 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 				marginRight: "3px",
 				borderRadius: "3px",
 			},
+			noTabsTitle: {
+				paddingBottom: 0,
+			},
 		},
 		props
 	)
@@ -115,17 +118,15 @@ const PropertiesWrapper: definition.UtilityComponent<Props> = (props) => {
 									/>
 								)
 							}
+							classes={{
+								...(tabs && { content: classes.noTabsTitle }),
+							}}
 							context={context}
 						/>
 					) : null}
 					{tabs && !!tabs.length && (
 						<TabLabels
 							variant="uesio/builder.mainsection"
-							styles={{
-								root: {
-									paddingTop: "2px",
-								},
-							}}
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={tabs}
