@@ -6,3 +6,28 @@ pack: main
 entrypoint: components/metric/metric
 variants:
   - uesio/io.metric:uesio/io.default
+defaultDefinition:
+  title: New metric
+  value: 100
+  unit: "%"
+discoverable: true
+properties:
+  - name: title
+    type: TEXT
+    label: Title
+  - name: value
+    type: TEXT
+    label: Value
+    required: true
+  - name: unit
+    type: TEXT
+    label: Unit
+sections:
+  - type: HOME
+    properties:
+      - title
+      - value
+      - unit
+  - type: SIGNALS
+  - type: STYLES
+  - type: DISPLAY

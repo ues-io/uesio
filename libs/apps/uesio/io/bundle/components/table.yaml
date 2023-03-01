@@ -18,7 +18,8 @@ properties:
     label: Wire
     type: WIRE
     required: true
-  - label: Table Id
+  - name: uesio.id
+    label: Table Id
     type: COMPONENT_ID
   - name: mode
     label: Display Mode
@@ -37,6 +38,11 @@ properties:
     step: 5
 sections:
   - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+      - pagesize
   - label: Fields
     id: fields
     viewDefinition:

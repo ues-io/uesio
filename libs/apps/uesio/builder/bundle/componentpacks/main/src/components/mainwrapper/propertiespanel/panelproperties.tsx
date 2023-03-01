@@ -24,20 +24,18 @@ const getPanelComponentProperties = (
 const PanelProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
 	const path = useSelectedPath(context)
+	const properties = panelProperties.concat(
+		getPanelComponentProperties(
+			context,
+			get(context, path.addLocal(panelComponentTypeProp)) as string
+		)
+	)
 	return (
 		<PropertiesForm
 			title={"Panel Properties"}
 			id={path.combine()}
 			context={context}
-			properties={panelProperties.concat(
-				getPanelComponentProperties(
-					context,
-					get(
-						context,
-						path.addLocal(panelComponentTypeProp)
-					) as string
-				)
-			)}
+			properties={properties}
 			path={path}
 		/>
 	)

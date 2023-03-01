@@ -12,3 +12,10 @@ properties:
   - name: image
     type: TEXT
     label: Image
+sections:
+  - type: HOME
+    properties:
+      - text
+      - image
+  - type: STYLES
+  - type: DISPLAY

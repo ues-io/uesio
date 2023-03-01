@@ -40,3 +40,14 @@ properties:
         label: "Lazy"
       - value: "eager"
         label: "Eager"
+sections:
+  - type: HOME
+    properties:
+      - file
+      - url
+      - height
+      - alt
+      - align
+      - loading
+  - type: STYLES
+  - type: DISPLAY

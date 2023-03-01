@@ -6,7 +6,6 @@ type PropertyPanelSectionType =
 	| "STYLES"
 	| "SIGNALS"
 	| "CUSTOM"
-	| "LIST"
 
 interface BaseSection {
 	id?: string
@@ -20,13 +19,15 @@ interface HomeSection extends BaseSection {
 	label: ""
 	icon: "home"
 	type: "HOME"
+	properties: string[]
 }
 
 interface CustomSection extends BaseSection {
 	label: string
 	id?: string
 	icon?: string
-	viewDefinition: definition.DefinitionList
+	viewDefinition?: definition.DefinitionList
+	properties?: string[]
 	type?: "CUSTOM"
 }
 
@@ -56,12 +57,10 @@ type PropertiesPanelSection =
 	| DisplaySection
 	| StylesSection
 
-const HOME_SECTION: HomeSection = {
-	id: "uesio.home",
-	label: "",
-	icon: "home",
-	type: "HOME",
-}
+const HOME_LABEL = ""
+const HOME_TYPE = "HOME"
+const HOME_ID = "uesio.home"
+const HOME_ICON = "home"
 
 const STYLES_LABEL = "Styles"
 const STYLES_TYPE = "STYLES"
@@ -83,7 +82,7 @@ const DISPLAY_SECTION: DisplaySection = {
 }
 
 const isStylesSection = (s: PropertiesPanelSection): s is StylesSection =>
-	s.type === "STYLES"
+	s.type === STYLES_TYPE
 const isDisplaySection = (s: PropertiesPanelSection): s is DisplaySection =>
 	s.type === "DISPLAY"
 const isCustomSection = (s: PropertiesPanelSection): s is CustomSection =>
@@ -91,9 +90,9 @@ const isCustomSection = (s: PropertiesPanelSection): s is CustomSection =>
 
 const getSectionId = (s: PropertiesPanelSection): string => {
 	switch (s.type) {
-		case "HOME":
-			return s.id || "uesio.home"
-		case "STYLES":
+		case HOME_TYPE:
+			return s.id || HOME_ID
+		case STYLES_TYPE:
 			return s.id || "uesio.styles"
 		case "DISPLAY":
 			return s.id || "uesio.display"
@@ -106,9 +105,9 @@ const getSectionId = (s: PropertiesPanelSection): string => {
 
 const getSectionLabel = (s: PropertiesPanelSection): string => {
 	switch (s.type) {
-		case "HOME":
-			return HOME_SECTION.label
-		case "STYLES":
+		case HOME_TYPE:
+			return HOME_LABEL
+		case STYLES_TYPE:
 			return STYLES_LABEL
 		case "DISPLAY":
 			return DISPLAY_SECTION.label
@@ -121,17 +120,23 @@ const getSectionLabel = (s: PropertiesPanelSection): string => {
 
 const getSectionIcon = (s: PropertiesPanelSection): string => {
 	switch (s.type) {
-		case "HOME":
-			return HOME_SECTION.icon
+		case HOME_TYPE:
+			return HOME_ICON
 		default:
 			return s.icon || ""
 	}
 }
 
-const getHomeSection = () => HOME_SECTION
+const getHomeSection = (propertyIds: string[]) =>
+	({
+		id: HOME_ID,
+		label: HOME_LABEL,
+		type: HOME_TYPE,
+		icon: HOME_ICON,
+		properties: propertyIds,
+	} as HomeSection)
 
 export {
-	HOME_SECTION,
 	DISPLAY_SECTION,
 	isCustomSection,
 	isStylesSection,

@@ -28,6 +28,7 @@ const ListProperty: definition.UC<Definition> = (props) => {
 	return (
 		<ListPropertyUtility
 			itemProperties={itemsDefinition?.properties}
+			itemPropertiesSections={itemsDefinition?.sections}
 			itemPropertiesPanelTitle={itemsDefinition?.title}
 			itemDisplayTemplate={itemsDefinition?.displayTemplate}
 			addLabel={itemsDefinition?.addLabel}

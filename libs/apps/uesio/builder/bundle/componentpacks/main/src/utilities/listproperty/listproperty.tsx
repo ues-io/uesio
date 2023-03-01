@@ -1,5 +1,6 @@
 import { definition, wire, component } from "@uesio/ui"
 import { FullPath } from "../../api/path"
+import { PropertiesPanelSection } from "../../api/propertysection"
 import {
 	ItemDisplayTemplate,
 	PropertiesListOrGetter,
@@ -12,6 +13,7 @@ type Props = {
 	itemDisplayTemplate: ItemDisplayTemplate
 	itemPropertiesPanelTitle: string
 	itemProperties?: PropertiesListOrGetter
+	itemPropertiesSections?: PropertiesPanelSection[]
 	items: definition.DefinitionMap[]
 	addAction: () => void
 } & definition.UtilityProps
@@ -19,6 +21,7 @@ type Props = {
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
 	const {
 		itemProperties,
+		itemPropertiesSections,
 		itemPropertiesPanelTitle,
 		itemDisplayTemplate,
 		path,
@@ -67,6 +70,7 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 					parentPath={path}
 					displayTemplate={itemDisplayTemplate}
 					itemProperties={itemProperties}
+					itemPropertiesSections={itemPropertiesSections}
 					itemPropertiesPanelTitle={itemPropertiesPanelTitle}
 				/>
 			))}
