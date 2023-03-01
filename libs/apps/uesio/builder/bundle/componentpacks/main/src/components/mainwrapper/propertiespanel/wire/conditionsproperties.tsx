@@ -62,6 +62,11 @@ const ConditionsProperties: definition.UC = (props) => {
 
 	const properties: ComponentProperty[] = [
 		{
+			name: "id",
+			type: "TEXT",
+			label: "Condition Id",
+		},
+		{
 			name: "field",
 			type: "METADATA",
 			metadataType: "FIELD",
@@ -75,11 +80,6 @@ const ConditionsProperties: definition.UC = (props) => {
 					type: "fieldValue",
 				},
 			],
-		},
-		{
-			name: "uesio.id", //same format here?
-			type: "COMPONENT_ID", //TO-DO what shall we do here?
-			label: "Condition Id", //label gets ingnored
 		},
 		{
 			name: "operator",
