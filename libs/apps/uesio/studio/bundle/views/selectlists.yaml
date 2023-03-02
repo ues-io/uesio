@@ -79,17 +79,21 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Select List
+                                hotkey: "meta+n"
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newSelectlist
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
+                      - uesio/io.searchbox:
+                          wire: selectlists
+                          searchfields:
+                            - uesio/studio.name
                       - uesio/io.deck:
                           uesio.id: selectlistsDeck
                           wire: selectlists
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

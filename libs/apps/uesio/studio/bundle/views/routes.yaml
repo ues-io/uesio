@@ -86,17 +86,22 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Route
+                                hotkey: "meta+n"
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newRoute
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
+                      - uesio/io.searchbox:
+                          wire: routes
+                          searchfields:
+                            - uesio/studio.name
+                            - uesio/studio.path
                       - uesio/io.deck:
                           uesio.id: routesDeck
                           wire: routes
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

@@ -74,6 +74,7 @@ definition:
                                 components:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
+                                      hotkey: "meta+p"
                                       text: $Label{uesio/io.preview}
                                       uesio.display:
                                         - type: fieldMode
@@ -93,6 +94,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
+                                      hotkey: "meta+s"
                                       uesio.display:
                                         - type: fieldMode
                                           mode: EDIT
