@@ -13,7 +13,7 @@ properties:
     type: METADATA
     label: File
     metadataType: FILE
-  - name: url
+  - name: src
     type: TEXT
     label: URL
   - name: height
@@ -44,7 +44,7 @@ sections:
   - type: HOME
     properties:
       - file
-      - url
+      - src
       - height
       - alt
       - align
