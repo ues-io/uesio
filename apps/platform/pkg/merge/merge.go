@@ -2,14 +2,15 @@ package merge
 
 import (
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"regexp"
 )
 
 type ServerMergeData struct {
 	Session     *sess.Session
-	WireData    map[string]*adapt.LoadOp
+	WireData    map[string]meta.Group
 	ParamValues map[string]string
 }
 
@@ -53,14 +54,33 @@ var ServerMergeFuncs = map[string]interface{}{
 			return nil, errors.New("$Record{} merge referenced wire " + wireName + ", which was not loaded.")
 		}
 
-		wireDataBytes, err := wireData.GetBytes()
-		if err != nil {
-			return nil, errors.New("Unable to get data for wire: " + wireName)
+		if wireData.Len() < 1 {
+			return nil, errors.New("$Record{} merge referenced wire " + wireName + " which did not return any records.")
 		}
 
-		wireData.
+		var targetValue string
 
-		return "foo", nil
+		err := wireData.Loop(func(item meta.Item, index string) error {
+			fmt.Println("index is " + index)
+			if index == "0" {
+				fmt.Println("---INDEX 0")
+				fieldValue, err := item.GetField(fieldName)
+				if err != nil {
+					return err
+				}
+				stringValue, isString := fieldValue.(string)
+				if !isString {
+					return errors.New("could not get Record merge value")
+				}
+				targetValue = stringValue
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return targetValue, nil
 	},
 }
 

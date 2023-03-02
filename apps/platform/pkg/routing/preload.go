@@ -1,8 +1,6 @@
 package routing
 
 import (
-	"encoding/json"
-
 	"github.com/francoispqt/gojay"
 )
 
@@ -34,31 +32,31 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 }
 
 type MetadataMergeData struct {
-	IDs      []string                   `json:"ids"`
-	Entities map[string]json.RawMessage `json:"entities"`
+	IDs      []string               `json:"ids"`
+	Entities map[string]interface{} `json:"entities"`
 }
 
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
-		Entities: map[string]json.RawMessage{},
+		Entities: map[string]interface{}{},
 	}
 }
 
 func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
 	id := dep.GetKey()
-	parsedbytes, err := dep.GetBytes()
-	if err != nil {
-		return err
-	}
-	return mmd.AddItem(id, parsedbytes)
+	//parsedbytes, err := dep.GetBytes()
+	//if err != nil {
+	//	return err
+	//}
+	return mmd.AddItem(id, dep)
 }
 
-func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
+func (mmd *MetadataMergeData) AddItem(id string, entity interface{}) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
 		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = content
+		mmd.Entities[id] = entity
 	}
 	return nil
 }

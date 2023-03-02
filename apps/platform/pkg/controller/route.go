@@ -40,16 +40,14 @@ func CollectionRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &routing.RouteMergeData{
-		View:         route.ViewRef,
-		Params:       route.Params,
-		Namespace:    route.Namespace,
-		Theme:        route.ThemeRef,
-		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
-		Dependencies: depsCache,
-		Title:        route.Title,
-	})
+	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
+	// TODO: Display Internal Server Error page???
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		return
+	}
+
+	file.RespondJSON(w, r, routingMergeData)
 
 }
 
@@ -85,16 +83,14 @@ func Route(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file.RespondJSON(w, r, &routing.RouteMergeData{
-		View:         route.ViewRef,
-		Params:       route.Params,
-		Namespace:    route.Namespace,
-		Theme:        route.ThemeRef,
-		Path:         route.Path,
-		Workspace:    GetWorkspaceMergeData(workspace),
-		Dependencies: depsCache,
-		Title:        route.Title,
-	})
+	routingMergeData, err := GetRoutingMergeData(route, workspace, depsCache, session)
+	// TODO: Display Internal Server Error page???
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		return
+	}
+
+	file.RespondJSON(w, r, routingMergeData)
 
 }
 
