@@ -60,14 +60,13 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 	defer stream.Close()
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
+	if fileRequest.TreatAsImmutable() {
+		w.Header().Set("Cache-Control", CACHE_FOR_1_YEAR)
+	}
 
 	seeker, ok := stream.(io.ReadSeekCloser)
 	if ok {
-		if fileRequest.TreatAsImmutable() {
-			w.Header().Set("Cache-Control", CACHE_FOR_1_YEAR)
-		}
 		http.ServeContent(w, r, fileRequest.Path, fileRequest.LastModified, seeker)
-
 		return
 	}
 
