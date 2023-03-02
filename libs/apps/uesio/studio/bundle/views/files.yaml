@@ -84,17 +84,21 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New File
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "meta+n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newFile
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
+                      - uesio/io.searchbox:
+                          wire: files
+                          searchfields:
+                            - uesio/studio.name
                       - uesio/io.deck:
                           uesio.id: filesDeck
                           wire: files
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item

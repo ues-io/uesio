@@ -86,6 +86,10 @@ definition:
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
+                      - uesio/io.searchbox:
+                          wire: labels
+                          searchfields:
+                            - uesio/studio.name
                       - uesio/io.deck:
                           uesio.id: labelsDeck
                           wire: labels
