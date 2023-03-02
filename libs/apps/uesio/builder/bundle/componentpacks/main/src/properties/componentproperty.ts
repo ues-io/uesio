@@ -6,6 +6,7 @@ type BaseProperty = {
 	label?: string
 	required?: boolean
 	type: string
+	placeholder?: string
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {

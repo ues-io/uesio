@@ -70,7 +70,7 @@ type FieldDefinition = {
 	user?: UserFieldOptions
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
-	placeholder: string
+	placeholder?: string
 	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
 

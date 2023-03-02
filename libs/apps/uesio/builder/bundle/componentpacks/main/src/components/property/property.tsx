@@ -135,6 +135,7 @@ const getFormFieldFromProperty = (
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
+					placeholder: property.placeholder,
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}
