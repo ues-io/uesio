@@ -47,12 +47,6 @@ const ConditionsProperties: definition.UC = (props) => {
 		"uesio/builder.listpropertyitem"
 	)
 
-	// FOR STAND-UP
-	// const viewDefId = context.getViewDefId() || ""
-	// const record = context.getRecord()
-	// if (!viewDefId || !record) return null
-	//const items = record.getFieldValue(propertyName) as wire.PlainWireRecord[]
-
 	const propertyName = "conditions"
 	const selectedPath = useSelectedPath(context)
 	const wirePath = selectedPath.trimToSize(2)
@@ -169,7 +163,7 @@ const ConditionsProperties: definition.UC = (props) => {
 		},
 		{
 			name: "value",
-			type: "TEXT", //TO-DO This should render as the type of the selected field
+			type: "TEXT",
 			label: "Value",
 			displayConditions: [
 				{
@@ -388,9 +382,7 @@ const ConditionsProperties: definition.UC = (props) => {
 												conditionOnGroupPath
 											)}
 											itemPropertiesPanelTitle={
-												isGroup
-													? "Group Condition"
-													: "Condition"
+												"Condition"
 											}
 										/>
 									)
