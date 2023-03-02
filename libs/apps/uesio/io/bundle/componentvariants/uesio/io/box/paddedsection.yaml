@@ -1,11 +1,8 @@
 name: paddedsection
 label: Section with Padding
+extends: uesio/io.section
 definition:
   uesio.styles:
     root:
-      backgroundColor: white
-      margin: 40px
-      borderRadius: 8px
-      boxShadow: rgb(0 0 0 / 3%) 0px 0px 4px
       padding: 40px
 public: true
