@@ -35,11 +35,28 @@ properties:
         #   name: onselect
         #   label: On-select Signals
         # - type: DISPLAY
+  - name: panelVariant
+    label: Panel Variant
+    type: METADATA
+    metadataType: COMPONENTVARIANT
+    groupingValue: "uesio/io.tabs"
+
+  - name: labelsVariant
+    label: Labels Variant
+    type: METADATA
+    metadataType: COMPONENTVARIANT
+    groupingValue: "uesio/io.tabs"
+
 sections:
   - label: Tabs
     id: tabs
     type: CUSTOM
     properties:
       - tabs
-  - type: STYLES
+  - label: Styles
+    id: styles
+    type: CUSTOM
+    properties:
+      - panelVariant
+      - labelsVariant
   - type: DISPLAY
