@@ -8,10 +8,6 @@ category: CONTENT
 variants:
   - uesio/io.fieldlabel:uesio/io.default
 properties:
-  - name: label
-    type: TEXT
-    label: Label
-    required: true
   - name: language
     type: SELECT
     label: Language
