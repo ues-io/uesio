@@ -26,15 +26,14 @@ const Tabs: definition.UC<TabsDefinition> = (props) => {
 	const foundIndex = tabs.findIndex((tab) => tab.id === selectedTabId)
 	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
 	const selectedTab = tabs[selectedIndex]
-	const tabsPrefix = "uesio/io.tabs:"
 
 	return (
 		<ScrollPanel
 			context={context}
-			variant={tabsPrefix + definition.panelVariant}
+			variant={definition.panelVariant}
 			header={
 				<TabLabels
-					variant={tabsPrefix + definition.labelsVariant}
+					variant={definition.labelsVariant}
 					selectedTab={selectedTab?.id}
 					setSelectedTab={setSelectedTab}
 					tabs={tabs}
