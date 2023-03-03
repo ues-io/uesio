@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/evanw/esbuild/pkg/api"
@@ -49,7 +50,11 @@ func PackUI(options *PackOptions) error {
 		Format:            api.FormatESModule,
 		LogLevel:          api.LogLevelDebug,
 		Metafile:          true,
-		Sourcemap:         api.SourceMapLinked,
+		Sourcemap:         api.SourceMapNone,
+	}
+
+	if os.Getenv("UESIO_DEV") == "true" {
+		buildOptions.Sourcemap = api.SourceMapLinked
 	}
 
 	if options.Watch {

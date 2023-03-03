@@ -50,7 +50,11 @@ func Pack(options *PackOptions) error {
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
-		Sourcemap:         api.SourceMapLinked,
+		Sourcemap:         api.SourceMapNone,
+	}
+
+	if os.Getenv("UESIO_DEV") == "true" {
+		buildOptions.Sourcemap = api.SourceMapLinked
 	}
 
 	if options.Watch {
