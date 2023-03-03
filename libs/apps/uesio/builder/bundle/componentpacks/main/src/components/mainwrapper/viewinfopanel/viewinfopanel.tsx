@@ -12,7 +12,7 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 
 	const viewDefId = context.getViewDefId() || ""
 	const viewDef = api.view.useViewDef(viewDefId)
-	if (!viewDefId || !viewDef || !viewDef.wires) return null
+	if (!viewDefId || !viewDef) return null
 	const path = new FullPath("viewdef", viewDefId)
 
 	const properties: ComponentProperty[] = [
