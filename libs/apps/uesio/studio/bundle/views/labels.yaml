@@ -84,7 +84,7 @@ definition:
                                   - signal: panel/TOGGLE
                                     panel: newlabel
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
                       - uesio/io.searchbox:
                           wire: labels
@@ -93,7 +93,6 @@ definition:
                       - uesio/io.deck:
                           uesio.id: labelsDeck
                           wire: labels
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
