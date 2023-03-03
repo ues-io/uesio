@@ -108,7 +108,9 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 	for _, key := range from.MapKeys() {
 		fieldName, err := getFieldName(structType, key.String())
 		if err != nil {
-			return err
+			// If we can't find this field in our struct, don't panic!
+			// Just continue. We are ok with extra data
+			continue
 		}
 		err = setFieldReflect(to.FieldByName(fieldName), from.MapIndex(key).Elem())
 		if err != nil {
