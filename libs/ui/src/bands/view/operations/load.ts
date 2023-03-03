@@ -35,6 +35,9 @@ const useLoadWires = (
 
 	if (!viewDef) throw new Error("Could not get View Def")
 
+	const route = context.getRoute()
+	if (!route) throw new Error("No Route in Context for View Load")
+
 	const params = context.getParams()
 	const wires = viewDef.wires
 	const events = viewDef.events
@@ -70,7 +73,7 @@ const useLoadWires = (
 			}
 			await runEvents(events, context)
 		})()
-	}, [viewDefId, JSON.stringify(params)])
+	}, [route.path, viewDefId, JSON.stringify(params)])
 
 	useEffect(() => {
 		;(async () => {
