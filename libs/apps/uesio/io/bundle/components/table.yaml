@@ -45,8 +45,11 @@ sections:
       - pagesize
   - label: Fields
     id: fields
+    type: CUSTOM
     viewDefinition:
     # TODO: Custom component for Table Fields / sub-components
+  - type: STYLES
+  - type: DISPLAY
 signals:
   TOGGLE_MODE:
     label: Toggle Mode

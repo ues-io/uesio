@@ -34,6 +34,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		displayTemplate,
 		itemProperties,
 		itemPropertiesPanelTitle,
+		children,
 		itemPropertiesSections,
 	} = props
 
@@ -50,7 +51,10 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 
 	return (
 		<PropNodeTag
-			onClick={() => setSelectedPath(context, listItemPath)}
+			onClick={(e: MouseEvent) => {
+				e.stopPropagation()
+				setSelectedPath(context, listItemPath)
+			}}
 			selected={selected}
 			context={context}
 			popperChildren={
@@ -75,6 +79,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 					? displayTemplate(record.source)
 					: context.merge(displayTemplate)}
 			</div>
+			{children}
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />

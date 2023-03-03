@@ -5,6 +5,9 @@ category: CONTENT
 pack: main
 entrypoint: components/avatar/avatar
 discoverable: true
+defaultDefinition:
+  text: $User{initials}
+  image: $User{picture}
 properties:
   - name: text
     type: TEXT
