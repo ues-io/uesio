@@ -77,6 +77,8 @@ func (op *LoadOp) UnmarshalJSONObject(dec *gojay.Decoder, key string) error {
 		return decodeEmbed(dec, &op.Params)
 	case "batchnumber":
 		return dec.Int(&op.BatchNumber)
+	case "loadAll":
+		return dec.Bool(&op.LoadAll)
 	}
 
 	return nil
