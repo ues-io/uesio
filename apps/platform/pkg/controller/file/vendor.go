@@ -13,5 +13,5 @@ func Vendor(currentWorkingDirectory, routePrefix string, cache bool) http.Handle
 	if cache {
 		handler = middleware.With1YearCache(handler)
 	}
-	return handler
+	return middleware.WithSourceMapIfNeeded(handler)
 }

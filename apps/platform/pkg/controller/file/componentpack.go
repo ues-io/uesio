@@ -44,6 +44,8 @@ func ServeComponentPackFile(w http.ResponseWriter, r *http.Request) {
 		modTime = componentPack.UpdatedAt
 	}
 
+	middleware.AddSourceMapHeaderIfNecessary(w, r)
+
 	respondFile(w, r, &FileRequest{
 		Path:         "pack.js",
 		LastModified: time.Unix(modTime, 0),

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/config"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
@@ -308,6 +309,8 @@ func serve(cmd *cobra.Command, args []string) {
 	// to prevent the annoying "Allow incoming connections" firewall warning on Mac OS
 	host := os.Getenv("HOST")
 	serveAddr := host + ":" + port
+
+	config.SetDevMode(os.Getenv("UESIO_DEV") == "true")
 
 	// Universal middlewares
 	r.Use(middleware.GZip())

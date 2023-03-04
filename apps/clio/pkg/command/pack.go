@@ -50,7 +50,7 @@ func Pack(options *PackOptions) error {
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
 		MinifySyntax:      true,
-		Sourcemap:         api.SourceMapLinked,
+		Sourcemap:         api.SourceMapExternal,
 	}
 
 	if options.Watch {

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/config"
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
@@ -101,12 +102,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	devMode := false
-	val, _ := os.LookupEnv("UESIO_DEV")
-	if val == "true" {
-		devMode = true
-	}
-
 	routeTitle := route.Title
 	if routeTitle == "" {
 		routeTitle = "Uesio"
@@ -130,7 +125,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Domain:    site.Domain,
 			Version:   site.Bundle.GetVersionString(),
 		},
-		DevMode:          devMode,
+		DevMode:          config.InDevMode(),
 		PreloadMetadata:  preload,
 		StaticAssetsPath: file.GetAssetsPath(),
 	}
