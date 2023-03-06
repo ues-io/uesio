@@ -31,10 +31,19 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		context
 	)
 
-	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
+	const componentId = api.component.getComponentIdFromProps(props)
+	if (definition?.signals?.length) {
+		api.signal.useRegisterHotKey(
+			definition.hotkey,
+			definition.signals,
+			context,
+			componentId
+		)
+	}
+
 	return (
 		<IOButton
-			id={api.component.getComponentIdFromProps(props)}
+			id={componentId}
 			variant={definition["uesio.variant"]}
 			classes={classes}
 			label={definition.text}
@@ -56,4 +65,5 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		/>
 	)
 }
+
 export default Button
