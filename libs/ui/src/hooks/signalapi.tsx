@@ -7,6 +7,17 @@ import { getComponentSignalDefinition } from "../bands/component/signals"
 import { Context } from "../context/context"
 import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
+import { PathNavigateSignal } from "../bands/route/signals"
+
+const getNavigateLink = (
+	signals: SignalDefinition[] | undefined,
+	context: Context
+) => {
+	if (!signals || signals.length !== 1) return undefined
+	const signal = signals[0] as PathNavigateSignal
+	if (signal.signal !== "route/NAVIGATE" || !signal.path) return undefined
+	return context.mergeString(signal.path)
+}
 
 // Returns a handler function for running a list of signals
 const getHandler = (
@@ -36,6 +47,7 @@ const getSignals = (): Record<string, SignalDescriptor> => ({
 const getSignal = (signalType: string) => registry[signalType]
 
 export {
+	getNavigateLink,
 	getComponentSignalDefinition,
 	getSignal,
 	getSignals,

@@ -25,14 +25,18 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		definition
 	)
 
+	const handler = api.signal.getHandler(definition.signals, context)
+	const navLink = api.signal.getNavigateLink(definition.signals, context)
+
 	return (
 		<IOTile
 			id={api.component.getComponentIdFromProps(props)}
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
-			onClick={api.signal.getHandler(definition.signals, context)}
+			onClick={handler}
 			isSelected={isSelected}
+			link={navLink}
 			avatar={
 				definition.avatar && (
 					<component.Slot

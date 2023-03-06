@@ -26,6 +26,9 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		definition
 	)
 
+	const handler = api.signal.getHandler(definition.signals, context)
+	const navLink = api.signal.getNavigateLink(definition.signals, context)
+
 	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
 	return (
 		<IOButton
@@ -33,7 +36,8 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			variant={definition["uesio.variant"]}
 			classes={classes}
 			label={definition.text}
-			onClick={api.signal.getHandler(definition.signals, context)}
+			link={navLink}
+			onClick={handler}
 			context={context}
 			isSelected={isSelected}
 			icon={

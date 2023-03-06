@@ -7,5 +7,6 @@ definition:
       backgroundColor: inherit
       fontSize: 10pt
       "&:focus":
+      textAlign: center
 
 public: true
