@@ -14,3 +14,31 @@ signals:
   SET_EDIT_MODE:
     label: Set Edit Mode
     properties: []
+discoverable: true
+defaultDefinition:
+  mode: READ
+properties:
+  - name: wire
+    label: Wire
+    type: WIRE
+    required: true
+  - name: uesio.id
+    label: Deck Id
+    type: COMPONENT_ID
+  - name: mode
+    label: Display Mode
+    type: SELECT
+    required: true
+    options:
+      - value: READ
+        label: Read
+      - value: EDIT
+        label: Edit
+sections:
+  - type: HOME
+    properties:
+      - wire
+      - uesio.id
+      - mode
+  - type: STYLES
+  - type: DISPLAY

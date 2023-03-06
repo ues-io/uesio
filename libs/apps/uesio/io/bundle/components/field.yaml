@@ -32,6 +32,8 @@ properties:
     type: SELECT
     label: Display as
     options:
+      - label: "--None Selected--"
+        value: ""
       - label: MARKDOWN
         value: MARKDOWN
       - label: PASSWORD
