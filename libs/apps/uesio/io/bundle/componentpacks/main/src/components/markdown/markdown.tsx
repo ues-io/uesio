@@ -17,14 +17,16 @@ const MarkDown: definition.UC<MarkDownDefinition> = (props) => {
 		props
 	)
 
-	const fileContent = api.file.useFile(context, definition.file)
-
 	return (
 		<MarkDownField
 			classes={classes}
 			variant={definition["uesio.variant"]}
 			context={context}
-			value={fileContent || ""}
+			value={
+				definition.file
+					? api.file.useFile(context, definition.file)
+					: context.merge(definition.markdown)
+			}
 			mode={"READ"}
 		/>
 	)

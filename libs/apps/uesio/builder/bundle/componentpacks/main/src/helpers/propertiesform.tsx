@@ -261,6 +261,12 @@ const getWireFieldFromPropertyDef = (
 				required: required || false,
 				type: "TEXT" as const,
 			}
+		case "TEXT_AREA":
+			return {
+				label: label || name,
+				required: required || false,
+				type: "LONGTEXT" as const,
+			}
 		default:
 			return {
 				label: label || name,

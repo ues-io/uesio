@@ -12,6 +12,10 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type TextAreaProperty = {
+	type: "TEXT_AREA"
+} & BaseProperty
+
 type ParamProperty = {
 	type: "PARAM"
 } & BaseProperty
@@ -149,6 +153,7 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| TextAreaProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
