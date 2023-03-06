@@ -87,6 +87,12 @@ type FieldPropertyBase = {
 	wireName?: string
 } & BaseProperty
 
+type FieldMetadataProperty = {
+	type: "FIELD_METADATA"
+	field: string
+	metadataProperty: "displayType" // TODO: Add more properties here, e.g. referenceType, etc.
+} & BaseProperty
+
 type FieldProperty = {
 	type: "FIELD"
 } & FieldPropertyBase
@@ -141,7 +147,14 @@ type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
 	disabled?: boolean
+	metadata?: SelectOptionMetadata
 }
+// Extra metadata for special circumstances, such as FIELD properties
+// where we want to store the display type of the field
+type SelectOptionMetadata = {
+	displayType?: string
+}
+
 type ComponentProperty =
 	| BotProperty
 	| TextProperty
@@ -155,6 +168,7 @@ type ComponentProperty =
 	| ConditionProperty
 	| WireProperty
 	| WiresProperty
+	| FieldMetadataProperty
 	| FieldProperty
 	| FieldsProperty
 	| ComponentIdProperty
@@ -178,6 +192,7 @@ export type {
 	ListPropertyItemsDefinition,
 	ComponentProperty,
 	SelectOption,
+	SelectOptionMetadata,
 	SelectProperty,
 	WireProperty,
 	MapProperty,

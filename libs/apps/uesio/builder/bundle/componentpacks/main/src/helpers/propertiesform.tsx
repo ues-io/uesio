@@ -1,11 +1,16 @@
 import { api, component, context, definition, wire } from "@uesio/ui"
 import { get, set, changeKey } from "../api/defapi"
-import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
+import {
+	getAvailableWireIds,
+	getFieldMetadata,
+	getWireDefinition,
+} from "../api/wireapi"
 import { FullPath } from "../api/path"
 import {
 	ComponentProperty,
 	getStyleVariantProperty,
 	SelectOption,
+	SelectOptionMetadata,
 	SelectProperty,
 } from "../properties/componentproperty"
 import PropertiesWrapper, {
@@ -221,7 +226,6 @@ const getWireFieldFromPropertyDef = (
 					),
 				}
 			)
-
 		case "NAMESPACE":
 			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getNamespaceSelectListMetadata(context, def),
@@ -299,7 +303,7 @@ const getWireFieldsFromProperties = (
 	)
 }
 
-type SetterFunction = (a: wire.FieldValue) => void
+type SetterFunction = (a: wire.FieldValue, b: SelectOptionMetadata) => void
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const NoOp = function () {}
@@ -317,6 +321,7 @@ const parseProperties = (
 		const name = type === "COMPONENT_ID" ? "uesio.id" : property.name
 		let setter: SetterFunction
 		let value: wire.FieldValue
+		let fieldId: string
 		if (type === "KEY") {
 			const [key] = path.pop()
 			if (key) {
@@ -325,6 +330,15 @@ const parseProperties = (
 				value = get(context, path) as string
 			}
 			setter = (value: string) => changeKey(context, path, value)
+		} else if (type === "FIELD_METADATA") {
+			fieldId = get(context, path.addLocal(property.field)) as string
+			if (fieldId) {
+				value = get(
+					context,
+					path.addLocal(property.field).addLocal(fieldId)
+				) as string
+			}
+			setter = NoOp
 		} else if (type === "MAP") {
 			setter = NoOp
 			value = get(context, path.addLocal(name)) as Record<
@@ -351,6 +365,31 @@ const parseProperties = (
 					{}
 				)
 			}
+		} else if (type === "FIELD") {
+			setter = (
+				value: string,
+				additionalMetadata: SelectOptionMetadata
+			) => {
+				set(context, path.addLocal(name), value)
+				// Also populate the display type using selected metadata
+				set(
+					context,
+					path.addLocal(getDisplayTypeFieldName(name)),
+					additionalMetadata?.displayType
+				)
+			}
+			value = get(context, path.addLocal(name)) as string
+			const wireId = property.wireField
+				? (get(context, path.addLocal(property.wireField)) as string)
+				: property.wireName
+			if (wireId) {
+				// Also populate the initial value of the display type field
+				const fieldMetadata = getFieldMetadata(context, wireId, name)
+				if (fieldMetadata) {
+					initialValue[getDisplayTypeFieldName(name)] =
+						fieldMetadata.getType()
+				}
+			}
 		} else {
 			setter = (value: string) => set(context, path.addLocal(name), value)
 			value = get(context, path.addLocal(name)) as string
@@ -363,6 +402,10 @@ const parseProperties = (
 		setters,
 		initialValue: initialValue as wire.PlainWireRecord,
 	}
+}
+
+function getDisplayTypeFieldName(name: string): string {
+	return name + "__displayType"
 }
 
 function getPropertyTabForSection(section: PropertiesPanelSection): Tab {
