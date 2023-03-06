@@ -21,6 +21,10 @@ properties:
   - name: fieldId
     type: FIELD
     label: Field Id
+  - name: fieldDisplayType
+    type: FIELD_METADATA
+    field: fieldId
+    metadataProperty: displayType
   - name: label
     type: TEXT
     label: Label
@@ -56,6 +60,16 @@ properties:
         value: VIDEO
       - label: PREVIEW
         value: PREVIEW
+  - name: id
+    type: TEXT
+    label: ID
+  - name: displayTemplate
+    type: TEXT
+    label: Display Template
+    displayConditions:
+      - type: fieldValue
+        field: fieldDisplayType
+        value: REFERENCE
 signals:
   UPLOAD_FILE:
     label: Upload File
