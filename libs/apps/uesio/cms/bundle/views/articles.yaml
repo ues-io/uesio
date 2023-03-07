@@ -7,6 +7,8 @@ definition:
       collection: uesio/cms.article
       fields:
         uesio/cms.name:
+        uesio/cms.slug:
+        uesio/cms.description:
         uesio/cms.content:
   # Components determine the layout and composition of your view
   components:
@@ -46,7 +48,7 @@ definition:
         components:
           - uesio/io.table:
               rowactions:
-                - text: View
+                - text: Edit
                   signals:
                     - signal: route/NAVIGATE
                       collection: uesio/cms.article
@@ -57,6 +59,8 @@ definition:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
                 - field: uesio/cms.name
+                - field: uesio/cms.slug
+                - field: uesio/cms.description
               uesio.id: table1
               mode: EDIT
               wire: articles
