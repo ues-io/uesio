@@ -1,0 +1,10 @@
+name: iconprop
+pack: main
+entrypoint: components/iconprop/iconprop
+utilities:
+  - uesio/io.textfield
+  - uesio/io.popper
+  - uesio/io.iconbutton
+  - uesio/io.titlebar
+  - uesio/io.fieldwrapper
+  - uesio/io.scrollpanel
