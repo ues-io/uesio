@@ -1,4 +1,4 @@
-import { definition, context, api, collection } from "@uesio/ui"
+import { definition, context, api, collection, signal } from "@uesio/ui"
 import File from "../../utilities/file/file"
 import FileImage from "../../utilities/fileimage/fileimage"
 import FilePreview from "../../utilities/filepreview/filepreview"
@@ -9,14 +9,26 @@ import { fileTextSignals, UserFileMetadata } from "../field/field"
 type FileDefinition = {
 	id?: string
 	displayAs?: string
+	accept?: string
 	mode?: context.FieldMode
 	// An array of URIs which contain ambient type definitions to load in this code field
 	typeDefinitionFileURIs?: string[]
+	// Signals to run after a file is uploaded
+	onUploadSignals?: signal.SignalDefinition[]
+	// Signals to run after a file is deleted
+	onDeleteSignals?: signal.SignalDefinition[]
 }
 
 const FileAttachment: definition.UC<FileDefinition> = (props) => {
 	const { context, definition, path } = props
-	const { displayAs, mode, typeDefinitionFileURIs } = definition
+	const {
+		accept,
+		displayAs,
+		mode,
+		typeDefinitionFileURIs,
+		onUploadSignals,
+		onDeleteSignals,
+	} = definition
 	const id = api.component.getComponentIdFromProps(props)
 
 	const record = context.getRecord()
@@ -45,12 +57,35 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 		const recordId = userFile?.["uesio/core.recordid"]
 		const collectionId = userFile?.["uesio/core.collectionid"]
 		if (!recordId || !collectionId) return
-		await api.file.uploadFile(context, file, collectionId, recordId)
+		const uploadResult = await api.file.uploadFile(
+			context,
+			file,
+			collectionId,
+			recordId
+		)
+		if (onUploadSignals) {
+			await api.signal.getHandler(
+				onUploadSignals,
+				context.addComponentFrame(props.componentType as string, {
+					file: uploadResult,
+				})
+			)?.()
+		}
+		return uploadResult
 	}
 
 	const onDelete = async () => {
 		if (!userFileId) return
-		await api.file.deleteFile(context, userFileId)
+		const deleteResult = await api.file.deleteFile(context, userFileId)
+		if (onDeleteSignals) {
+			await api.signal.getHandler(
+				onDeleteSignals,
+				context.addComponentFrame(props.componentType as string, {
+					deleteResult,
+				})
+			)?.()
+		}
+		return deleteResult
 	}
 
 	// Right now this only works if a file record is in context
@@ -74,13 +109,13 @@ const FileAttachment: definition.UC<FileDefinition> = (props) => {
 				/>
 			)
 		case "IMAGE":
-			return <FileImage {...common} />
+			return <FileImage accept={accept} {...common} />
 		case "VIDEO":
-			return <FileVideo {...common} />
+			return <FileVideo accept={accept} {...common} />
 		case "PREVIEW":
-			return <FilePreview {...common} />
+			return <FilePreview accept={accept} {...common} />
 		default:
-			return <File {...common} />
+			return <File accept={accept} {...common} />
 	}
 }
 

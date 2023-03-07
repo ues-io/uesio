@@ -9,46 +9,51 @@ import (
 )
 
 func runUserFileBeforeSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	ids := []string{}
+	// If a user file is being deleted, we want to delete the underlying file blob data as well
+	// using the configured file storage adapter
+	userFileIdsBeingDeleted := []string{}
+	// If a user file is being attached to a Studio file, we need to delete all other
 	for i := range request.Deletes {
-		ids = append(ids, request.Deletes[i].IDValue)
+		userFileIdsBeingDeleted = append(userFileIdsBeingDeleted, request.Deletes[i].IDValue)
 	}
 
-	if len(ids) == 0 {
-		return nil
-	}
-	// Load all the userfile records
-	ufmc := meta.UserFileMetadataCollection{}
-	err := datasource.PlatformLoad(&ufmc, &datasource.PlatformLoadOptions{
-		Conditions: []adapt.LoadRequestCondition{
-			{
-				Field:    adapt.ID_FIELD,
-				Value:    ids,
-				Operator: "IN",
+	// Perform related blob file deletions, if necessary
+	if len(userFileIdsBeingDeleted) > 0 {
+		// Load all the userfile records
+		ufmc := meta.UserFileMetadataCollection{}
+		err := datasource.PlatformLoad(&ufmc, &datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    adapt.ID_FIELD,
+					Value:    userFileIdsBeingDeleted,
+					Operator: "IN",
+				},
 			},
-		},
-		Connection: connection,
-	}, session)
-	if err != nil {
-		return err
-	}
-
-	tenantID := session.GetTenantID()
-
-	for i := range ufmc {
-		ufm := ufmc[i]
-
-		conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
+			Connection: connection,
+		}, session)
 		if err != nil {
 			return err
 		}
 
-		fullPath := ufm.GetFullPath(tenantID)
+		tenantID := session.GetTenantID()
 
-		err = conn.Delete(fullPath)
-		if err != nil {
-			return err
+		for i := range ufmc {
+			ufm := ufmc[i]
+
+			conn, err := fileadapt.GetFileConnection(ufm.FileSourceID, session)
+			if err != nil {
+				return err
+			}
+
+			fullPath := ufm.GetFullPath(tenantID)
+
+			err = conn.Delete(fullPath)
+			if err != nil {
+				return err
+			}
 		}
 	}
+
 	return nil
+
 }

@@ -158,3 +158,15 @@ definition:
                                   - uesio/io.fileattachment:
                                       displayAs: PREVIEW
                                       mode: EDIT
+                                      onUploadSignals:
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - workspaces
+                                            - files
+                                            - attachments
+                                      onDeleteSignals:
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - workspaces
+                                            - files
+                                            - attachments

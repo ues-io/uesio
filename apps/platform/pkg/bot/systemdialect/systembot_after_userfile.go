@@ -3,23 +3,29 @@ package systemdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/cache"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+const (
+	userCollectionId       = "uesio/core.user"
+	studioFileCollectionId = "uesio/studio.file"
+)
+
 func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
-	// Whenever a user file is updated,
-	// if the file is the User's profile, we need to invalidate the User cache in Redis
+	// TASKS:
+	// 1. Whenever a user file is updated,  if the file is the User's profile,
+	// we need to invalidate the User cache in Redis
+	// 2. If a new user file corresponding to a STUDIO file (static file) is inserted,
+	// we need to transfer the Path property to the studio file as well
 
 	appFullName := session.GetSite().GetAppFullName()
 
 	userKeysToDelete := []string{}
+	studioFileUpdates := adapt.Collection{}
 
 	for _, insert := range request.Inserts {
 		relatedCollection, err := insert.GetField("uesio/core.collectionid")
-		if err != nil {
-			continue
-		}
-		relatedField, err := insert.GetField("uesio/core.fieldid")
 		if err != nil {
 			continue
 		}
@@ -27,9 +33,28 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 		if err != nil {
 			continue
 		}
-		if (relatedCollection == "uesio/core.user") &&
-			(relatedField == "uesio/core.picture") {
-			userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
+		if relatedCollection == userCollectionId {
+			relatedField, err := insert.GetField("uesio/core.fieldid")
+			if err != nil {
+				continue
+			}
+			if relatedField == "uesio/core.picture" {
+				userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
+			}
+		} else if relatedCollection == studioFileCollectionId {
+			pathField, err := insert.GetField("uesio/core.path")
+			if err != nil || pathField == "" {
+				continue
+			}
+			if pathString, ok := pathField.(string); ok {
+				studioFileUpdates = append(studioFileUpdates, &adapt.Item{
+					"uesio/studio.path": pathString,
+					"uesio/core.id":     relatedRecord.(string),
+				})
+			} else {
+				continue
+			}
+
 		}
 	}
 
@@ -51,5 +76,21 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 			userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
 		}
 	}
-	return cache.DeleteKeys(userKeysToDelete)
+	// Continue on even if there are failures here, maybe in the future we can schedule an update to clean up bad keys
+	// if Redis is temporarily down?
+	err := cache.DeleteKeys(userKeysToDelete)
+
+	// If the related collection is uesio/studio.file,
+	// we need to set the file path on the related record as well
+	if len(studioFileUpdates) > 0 {
+		err = datasource.SaveWithOptions([]datasource.SaveRequest{
+			{
+				Collection: studioFileCollectionId,
+				Wire:       "StudioFiles",
+				Changes:    &studioFileUpdates,
+			},
+		}, session, datasource.GetConnectionSaveOptions(connection))
+	}
+
+	return err
 }
