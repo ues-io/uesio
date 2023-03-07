@@ -14,7 +14,7 @@ properties:
     type: TEXT
     label: Text
   - name: icon
-    type: TEXT
+    type: ICON
     label: Icon
 sections:
   - type: HOME

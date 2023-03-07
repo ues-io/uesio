@@ -124,6 +124,10 @@ type ParamsProperty = {
 	type: "PARAMS"
 } & BaseProperty
 
+type IconProperty = {
+	type: "ICON"
+} & BaseProperty
+
 type SelectOption = {
 	value: string // TODO This should be able to be a boolean or number as well
 	label: string
@@ -149,6 +153,7 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| IconProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	name: "uesio.variant",
@@ -167,5 +172,6 @@ export {
 	WireProperty,
 	MapProperty,
 	ListProperty,
+	IconProperty,
 	getStyleVariantProperty,
 }

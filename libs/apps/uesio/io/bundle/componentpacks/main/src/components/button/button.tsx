@@ -50,41 +50,4 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		/>
 	)
 }
-
-// Old unmigrated definition
-/*
-defaultDefinition: () => ({
-		text: "New Button",
-	}),
-	properties: [
-		{
-			name: "text",
-			type: "TEXT",
-			label: "Text",
-		},
-		{
-			name: "icon",
-			type: "ICON",
-			label: "Icon",
-		},
-	],
-	sections: [
-		{
-			title: "Signals",
-			type: "SIGNALS",
-		},
-	],
-	actions: [
-		{
-			label: "Run Signals",
-			type: "RUN_SIGNALS",
-			slot: "signals",
-		},
-	],
-	traits: ["uesio.standalone"],
-	classes: ["root"],
-	type: "component",
-
-*/
-
 export default Button
