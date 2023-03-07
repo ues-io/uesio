@@ -50,6 +50,9 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 				id={id}
 				className={className}
 				onClick={(e) => {
+					// Allow the default behavior if the meta key is active
+					const isMeta = e.getModifierState("Meta")
+					if (isMeta) return
 					e.preventDefault()
 					onClick()
 				}}

@@ -6,7 +6,7 @@ import {
 	PathNavigateRequest,
 } from "../../platform/platform"
 import { getCurrentState } from "../../store/store"
-import operations from "./operations"
+import { navigate, redirect } from "./operations"
 
 // The key for the entire band
 const ROUTE_BAND = "route"
@@ -26,7 +26,7 @@ type NavigateSignal = PathNavigateSignal | CollectionNavigateSignal
 const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
-			operations.redirect(context, signal.path, signal.newtab),
+			redirect(context, signal.path, signal.newtab),
 	},
 	[`${ROUTE_BAND}/REDIRECT_TO_VIEW_CONFIG`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) => {
@@ -36,7 +36,7 @@ const signals: Record<string, SignalDescriptor> = {
 				throw new Error("Not in a Workspace Context")
 			}
 			const [, viewName] = parseKey(route.view)
-			return operations.redirect(
+			return redirect(
 				context,
 				`/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`
 			)
@@ -46,7 +46,7 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: SignalDefinition, context: Context) => {
 			const routeState = getCurrentState().route
 			if (!routeState) return context
-			return operations.navigate(context, {
+			return navigate(context, {
 				namespace: routeState.namespace,
 				path: routeState.path,
 			})
@@ -54,7 +54,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
-			operations.navigate(context, signal),
+			navigate(context, signal),
 	},
 }
 

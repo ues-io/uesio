@@ -8,6 +8,7 @@ import { Context } from "../context/context"
 import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
 import { PathNavigateSignal } from "../bands/route/signals"
+import { getRouteUrlPrefix } from "../bands/route/operations"
 
 const getNavigateLink = (
 	signals: SignalDefinition[] | undefined,
@@ -16,7 +17,8 @@ const getNavigateLink = (
 	if (!signals || signals.length !== 1) return undefined
 	const signal = signals[0] as PathNavigateSignal
 	if (signal.signal !== "route/NAVIGATE" || !signal.path) return undefined
-	return context.mergeString(signal.path)
+	const prefix = getRouteUrlPrefix(context, signal.namespace)
+	return `${prefix}/${context.mergeString(signal.path)}`
 }
 
 // Returns a handler function for running a list of signals
