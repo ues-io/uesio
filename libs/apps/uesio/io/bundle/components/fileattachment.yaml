@@ -4,7 +4,6 @@ title: File Attachment
 description: Displays a file attached to a record, and allows file to be updated/deleted
 category: DATA
 entrypoint: components/fileattachment/fileattachment
-discoverable: true
 variants:
   - uesio/io.field:uesio/io.default
   - uesio/io.codefield:uesio/io.default

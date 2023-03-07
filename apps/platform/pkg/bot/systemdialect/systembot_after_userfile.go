@@ -76,7 +76,7 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 			userKeysToDelete = append(userKeysToDelete, cache.GetUserKey(relatedRecord.(string), appFullName))
 		}
 	}
-	// Ignore failures here - maybe in the future we can schedule an update to clean up bad keys
+	// Continue on even if there are failures here, maybe in the future we can schedule an update to clean up bad keys
 	// if Redis is temporarily down?
 	err := cache.DeleteKeys(userKeysToDelete)
 
@@ -88,9 +88,6 @@ func runUserFileAfterSaveBot(request *adapt.SaveOp, connection adapt.Connection,
 				Collection: studioFileCollectionId,
 				Wire:       "StudioFiles",
 				Changes:    &studioFileUpdates,
-				Options: &adapt.SaveOptions{
-					Upsert: false,
-				},
 			},
 		}, session, datasource.GetConnectionSaveOptions(connection))
 	}
