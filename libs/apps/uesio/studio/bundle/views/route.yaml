@@ -166,10 +166,8 @@ definition:
                           uesio.variant: uesio/io.main
                           title: Search Engine Optimization
                       - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
+                          uesio.variant: uesio/io.paddedsection
                           components:
                             - uesio/io.field:
+                                label: " "
                                 fieldId: uesio/studio.tags

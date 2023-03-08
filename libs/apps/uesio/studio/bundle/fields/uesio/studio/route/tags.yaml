@@ -6,11 +6,11 @@ subfields:
   - name: type
     label: Type
     type: SELECT
-    selectList: uesio/studio.metatype
+    selectList: uesio/studio.tagtype
   - name: location
     label: Location
     type: SELECT
-    selectList: uesio/studio.metalocation
+    selectList: uesio/studio.taglocation
   - name: name
     label: Name
     type: SELECT

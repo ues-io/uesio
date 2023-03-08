@@ -404,9 +404,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	// Get the metadata list
 	namespaces := session.GetContextNamespaces()
 	appNames := []string{}
-	for _, ns := range namespaces {
-		appNames = append(appNames, ns)
-	}
+	appNames = append(appNames, namespaces...)
 
 	appData, err := datasource.GetAppData(appNames)
 	if err != nil {

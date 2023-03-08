@@ -23,7 +23,7 @@ type RouteMergeData struct {
 	Theme        string              `json:"theme"`
 	Title        string              `json:"title"`
 	Dependencies *PreloadMetadata    `json:"dependencies"`
-	Tags         []meta.Tag
+	Tags         []meta.Tag          `json:"tags"`
 }
 
 type UserPictureMergeData struct {

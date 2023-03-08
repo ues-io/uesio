@@ -46,7 +46,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return fmt.Errorf("Tried to add blank collection")
+		return fmt.Errorf("tried to add blank collection")
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}
@@ -125,7 +125,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		if adapt.IsReference(fieldMetadata.Type) {
 
-			// If we only have one field and it's the id field, skip getting metadata
+			// If we only have one field, and it's the id field, skip getting metadata
 			if len(collection[fieldKey]) == 1 {
 				_, ok := collection[fieldKey][adapt.ID_FIELD]
 				if ok {
@@ -143,18 +143,18 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 				}
 			}
 
-			for fieldKey, subsubFields := range collection[fieldKey] {
+			for fieldKey, nestedSubFields := range collection[fieldKey] {
 				// Optimization for if we already have the field metadata
-				// NOTE: We can't do this optimization if we have subsubFields
-				// There could be subsubFields that we haven't loaded yet.
+				// NOTE: We can't do this optimization if we have nestedSubFields
+				// There could be nestedSubFields that we haven't loaded yet.
 				if refCollection != nil {
 					_, err := refCollection.GetField(fieldKey)
-					hasEmptySubSubFields := subsubFields == nil || len(subsubFields) == 0
+					hasEmptySubSubFields := nestedSubFields == nil || len(nestedSubFields) == 0
 					if err == nil && hasEmptySubSubFields {
 						continue
 					}
 				}
-				err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &subsubFields)
+				err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &nestedSubFields)
 				if err != nil {
 					return err
 				}
@@ -185,14 +185,14 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 				return err
 			}
 
-			for fieldKey, subsubFields := range collection[fieldKey] {
+			for fieldKey, nestedSubFields := range collection[fieldKey] {
 				if refCollection != nil {
 					_, err := refCollection.GetField(fieldKey)
 					if err == nil {
 						continue
 					}
 				}
-				err := additionalRequests.AddField(referenceGroupMetadata.Collection, fieldKey, &subsubFields)
+				err := additionalRequests.AddField(referenceGroupMetadata.Collection, fieldKey, &nestedSubFields)
 				if err != nil {
 					return err
 				}
@@ -206,7 +206,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if fieldMetadata.Type == "MAP" {
+		if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" {
 			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
 			if err != nil {
 				return err
@@ -247,7 +247,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			metadata.HasAllFields = true
 		} else {
 			addBuiltinFields(metadata, collection)
-			// Automagially add the id field and the name field whether they were requested or not.
+			// Automagically add the id field and the name field whether they were requested or not.
 			fieldsToLoad := []string{adapt.ID_FIELD, metadata.NameField}
 			for fieldKey := range collection {
 				fieldsToLoad = append(fieldsToLoad, fieldKey)

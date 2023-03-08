@@ -1,4 +1,4 @@
-name: metalocation
+name: taglocation
 options:
   - label: head
     value: head
