@@ -1,0 +1,14 @@
+name: metatags
+options:
+  - label: description
+    value: description
+  - label: keywords
+    value: keywords
+  - label: author
+    value: author
+  - label: copyright
+    value: copyright
+  - label: subject
+    value: subject
+  - label: language
+    value: language

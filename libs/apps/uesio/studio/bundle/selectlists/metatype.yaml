@@ -1,0 +1,4 @@
+name: metatype
+options:
+  - label: meta
+    value: meta
