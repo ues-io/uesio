@@ -13,10 +13,13 @@ interface MapFieldUtilityProps extends definition.UtilityProps {
 	noAdd?: boolean
 	fieldVariant?: metadata.MetadataKey
 	labelVariant?: metadata.MetadataKey
+	path: string
+	fieldId: string
 }
 
 const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 	const {
+		fieldId,
 		mode,
 		context,
 		keys,
@@ -27,6 +30,7 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 		noAdd,
 		fieldVariant,
 		labelVariant,
+		path,
 	} = props
 
 	const value = props.value as Record<string, wire.FieldValue>
@@ -44,6 +48,8 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 
 	return (
 		<ListField
+			fieldId={fieldId}
+			path={path}
 			value={listValue}
 			autoAdd={autoAdd}
 			noAdd={noAdd}

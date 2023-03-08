@@ -1,6 +1,9 @@
 import { FunctionComponent } from "react"
 import { wire, definition, context, component } from "@uesio/ui"
-import { ListFieldOptions } from "../../components/field/field"
+
+export type ListFieldOptions = {
+	components?: definition.DefinitionList
+}
 
 interface ListFieldDeckUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode

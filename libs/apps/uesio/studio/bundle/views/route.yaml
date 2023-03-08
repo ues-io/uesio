@@ -165,6 +165,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Search Engine Optimization
+                          subtitle: Route <meta> tags
                       - uesio/io.box:
                           uesio.variant: uesio/io.paddedsection
                           components:

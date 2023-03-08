@@ -1,6 +1,10 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
-import { LongTextFieldOptions } from "../../components/field/field"
+
+export type LongTextFieldOptions = {
+	cols?: number
+	rows?: number
+}
 
 interface TextAreaFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
