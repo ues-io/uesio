@@ -56,7 +56,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	pathTemplate, err := routematch.Route.GetPathTemplate()
 	if err != nil {
-		return nil, errors.New("No Path Template For Route Found")
+		return nil, errors.New("no Path Template found for route")
 	}
 
 	pathTemplate = strings.Replace(pathTemplate, prefix, "", 1)
@@ -66,10 +66,6 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 			meta.Copy(route, item)
 			break
 		}
-	}
-
-	if route == nil {
-		return nil, errors.New("No Route Found in Cache")
 	}
 
 	processedParams := map[string]string{}
@@ -99,6 +95,25 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 	// Add the routematch params
 	for k, v := range routematch.Vars {
 		processedParams[k] = v
+	}
+
+	//merge meta tags
+	for index, tag := range route.Tags {
+		template, err := templating.NewWithFuncs(tag.Content, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+		if err != nil {
+			return nil, err
+		}
+
+		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+			Session:     session,
+			ParamValues: processedParams,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		tag.Content = mergedValue
+		route.Tags[index] = tag
 	}
 
 	route.Path = path

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 type LoginResponse struct {
@@ -22,6 +23,7 @@ type RouteMergeData struct {
 	Theme        string              `json:"theme"`
 	Title        string              `json:"title"`
 	Dependencies *PreloadMetadata    `json:"dependencies"`
+	Tags         []meta.Tag          `json:"tags"`
 }
 
 type UserPictureMergeData struct {

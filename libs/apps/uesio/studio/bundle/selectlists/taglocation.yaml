@@ -1,0 +1,6 @@
+name: taglocation
+options:
+  - label: head
+    value: head
+  - label: body
+    value: body

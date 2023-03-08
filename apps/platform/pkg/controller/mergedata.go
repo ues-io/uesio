@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 	// because we trust both the template and the merge data
 	"text/template"
 
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -121,6 +121,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 			Workspace: GetWorkspaceMergeData(workspace),
 			Theme:     route.ThemeRef,
 			Title:     routeTitle,
+			Tags:      route.Tags,
 		},
 		User: GetUserMergeData(session),
 		Site: &routing.SiteMergeData{
