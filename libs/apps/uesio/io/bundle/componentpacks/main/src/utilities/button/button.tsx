@@ -1,10 +1,10 @@
-import { FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, MouseEvent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
 
 interface ButtonUtilityProps extends definition.UtilityProps {
-	onClick?: () => void
+	onClick?: (e: MouseEvent) => void
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode
@@ -12,22 +12,20 @@ interface ButtonUtilityProps extends definition.UtilityProps {
 	tooltip?: string
 	tooltipPlacement?: Placement
 	tooltipOffset?: number
+	link?: string
 }
 
 const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				fontFamily: "inherit",
-				border: "none",
+				all: "unset",
 				cursor: "pointer",
 				display: "inline-grid",
 				gridAutoFlow: "column",
 				columnGap: "8px",
 				alignItems: "center",
 				background: "none",
-				color: "inherit",
-				fontSize: "inherit",
 			},
 			label: {},
 			selected: {},
@@ -49,11 +47,15 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 		context,
 		tooltipPlacement,
 		tooltipOffset,
+		link,
 	} = props
 
+	const Tag = link ? "a" : "button"
+
 	const button = (
-		<button
+		<Tag
 			id={id}
+			href={link}
 			disabled={disabled}
 			onClick={onClick}
 			className={styles.cx(
@@ -66,7 +68,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			{label && (
 				<span className={classes.label}>{context.merge(label)}</span>
 			)}
-		</button>
+		</Tag>
 	)
 
 	return tooltip && !disabled ? (

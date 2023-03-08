@@ -16,14 +16,19 @@ const redirect = (context: Context, path: string, newTab?: boolean) => {
 	return context
 }
 
-const getRouteUrlPrefix = (context: Context, namespace: string) => {
+const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	const workspace = context.getWorkspace()
 	if (workspace && workspace.app && workspace.name) {
+		if (!namespace) namespace = workspace.app
 		return `/workspace/${workspace.app}/${workspace.name}/app/${namespace}/`
 	}
+
 	const site = context.getSite()
-	if (site && site.app && site.app !== namespace) {
-		return `/site/app/${namespace}/`
+	if (site && site.app) {
+		if (!namespace) namespace = site.app
+		if (site.app !== namespace) {
+			return `/site/app/${namespace}/`
+		}
 	}
 	return "/"
 }
@@ -75,7 +80,4 @@ const navigate = async (
 	return context
 }
 
-export default {
-	redirect,
-	navigate,
-}
+export { getRouteUrlPrefix, redirect, navigate }

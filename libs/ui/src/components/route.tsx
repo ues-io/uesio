@@ -5,7 +5,7 @@ import Progress from "./progress"
 import View from "./view"
 import { useSite } from "../bands/site"
 import { Context } from "../context/context"
-import routeOps from "../bands/route/operations"
+import { navigate, redirect } from "../bands/route/operations"
 import NotificationArea from "./notificationarea"
 import { Component } from "../component/component"
 import PanelArea from "./panelarea"
@@ -57,11 +57,11 @@ const Route: UtilityComponent = (props) => {
 			if (!path || !namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
-				routeOps.redirect(new Context(), document.location.pathname)
+				redirect(new Context(), document.location.pathname)
 				return
 			}
 
-			routeOps.navigate(
+			navigate(
 				new Context().setWorkspace(workspace),
 				{
 					path,

@@ -63,7 +63,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						styles={{
 							root: {
 								backgroundColor: "white",
-								width: "100%",
+								minWidth: "unset",
 								display: "block",
 							},
 							label: {

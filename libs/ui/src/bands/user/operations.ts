@@ -3,14 +3,14 @@ import { dispatch } from "../../store/store"
 import { set as setUser } from "."
 import wireAddError from "../wire/operations/adderror"
 import wireRemoveError from "../wire/operations/removeerror"
-import routeOps from "../../bands/route/operations"
+import { navigate, redirect } from "../../bands/route/operations"
 import { getErrorString } from "../utils"
 import { LoginResponse, platform } from "../../platform/platform"
 type Payload = Record<string, string> | undefined
 async function responseRedirect(response: LoginResponse, context: Context) {
 	return "redirectPath" in response
-		? routeOps.redirect(context, response.redirectPath)
-		: routeOps.navigate(
+		? redirect(context, response.redirectPath)
+		: navigate(
 				// Always run the logout action in the base route context.
 				context.getRouteContext(),
 				{

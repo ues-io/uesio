@@ -6,9 +6,13 @@ definition:
       padding: 10px 20px
       color: "#444"
       alignItems: center
+      "&:focus":
+        backgroundColor: "#eee"
     selected:
       backgroundColor: $Theme{color.primary}
       color: white
+      "&:focus":
+        backgroundColor: "black"
     content:
       verticalAlign: middle
       fontSize: 10pt
