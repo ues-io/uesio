@@ -1,8 +1,14 @@
 import { FunctionComponent } from "react"
 import { wire, definition, context, component } from "@uesio/ui"
 
+type SubFieldOption = {
+	fieldId: string
+}
+
 export type ListFieldOptions = {
 	components?: definition.DefinitionList
+	subFields?: SubFieldOption[]
+	defaultDefinition?: definition.DefinitionMap
 }
 
 interface ListFieldDeckUtilityProps extends definition.UtilityProps {
