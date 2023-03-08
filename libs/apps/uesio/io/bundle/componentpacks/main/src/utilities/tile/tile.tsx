@@ -18,6 +18,8 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 		{
 			root: {
 				all: "unset",
+				userSelect: "none",
+				"-webkitUserDrag": "element",
 				display: "flex",
 				...(onClick && {
 					cursor: "pointer",

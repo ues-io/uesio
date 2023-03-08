@@ -16,9 +16,18 @@ const getNavigateLink = (
 ) => {
 	if (!signals || signals.length !== 1) return undefined
 	const signal = signals[0] as PathNavigateSignal
-	if (signal.signal !== "route/NAVIGATE" || !signal.path) return undefined
-	const prefix = getRouteUrlPrefix(context, signal.namespace)
-	return `${prefix}/${context.mergeString(signal.path)}`
+	if (!signal.path) return undefined
+
+	if (signal.signal === "route/NAVIGATE") {
+		const prefix = getRouteUrlPrefix(context, signal.namespace)
+		return `${prefix}/${context.mergeString(signal.path)}`
+	}
+
+	if (signal.signal === "route/REDIRECT") {
+		return context.mergeString(signal.path)
+	}
+
+	return undefined
 }
 
 // Returns a handler function for running a list of signals
