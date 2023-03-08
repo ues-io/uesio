@@ -25,8 +25,10 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		definition
 	)
 
-	const handler = api.signal.getHandler(definition.signals, context)
-	const navLink = api.signal.getNavigateLink(definition.signals, context)
+	const [link, handler] = api.signal.getLinkHandler(
+		definition.signals,
+		context
+	)
 
 	return (
 		<IOTile
@@ -36,7 +38,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}
-			link={navLink}
+			link={link}
 			avatar={
 				definition.avatar && (
 					<component.Slot

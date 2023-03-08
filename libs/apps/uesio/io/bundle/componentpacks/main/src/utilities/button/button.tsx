@@ -1,10 +1,10 @@
-import { FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, MouseEvent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 import Tooltip from "../tooltip/tooltip"
 import { Placement } from "@floating-ui/react"
 
 interface ButtonUtilityProps extends definition.UtilityProps {
-	onClick?: () => void
+	onClick?: (e: MouseEvent) => void
 	label?: string
 	isSelected?: boolean
 	icon?: ReactNode

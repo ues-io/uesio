@@ -1,9 +1,15 @@
-import { ForwardedRef, forwardRef, HTMLAttributes, ReactNode } from "react"
+import {
+	ForwardedRef,
+	forwardRef,
+	HTMLAttributes,
+	ReactNode,
+	MouseEvent,
+} from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface TileUtilityProps extends definition.UtilityProps {
 	avatar?: ReactNode
-	onClick?: () => void
+	onClick?: (e: MouseEvent) => void
 	isSelected?: boolean
 	rootAttributes?: HTMLAttributes<
 		HTMLDivElement | HTMLAnchorElement | HTMLButtonElement
@@ -51,13 +57,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 				ref={ref as ForwardedRef<HTMLAnchorElement>}
 				id={id}
 				className={className}
-				onClick={(e) => {
-					// Allow the default behavior if the meta key is active
-					const isMeta = e.getModifierState("Meta")
-					if (isMeta) return
-					e.preventDefault()
-					onClick()
-				}}
+				onClick={onClick}
 			>
 				{avatarNode}
 				{childrenNode}
