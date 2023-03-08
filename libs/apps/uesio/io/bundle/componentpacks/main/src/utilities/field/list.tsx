@@ -39,7 +39,6 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		fieldVariant,
 		labelVariant,
 		path,
-		options,
 	} = props
 	const value = props.value as (wire.PlainWireRecord | wire.FieldValue)[]
 	const setValue = props.setValue as (
@@ -95,11 +94,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	if (!subFields) return null
 
 	// Determine the set of fields to display, prioritizing view-level subfields
-	let subFieldDefinitions = options?.subFields?.map((field) => field.fieldId)
-	if (!subFieldDefinitions && subFields) {
-		subFieldDefinitions = Object.keys(subFields)
-		subFieldDefinitions.sort((a: string, b: string) => a.localeCompare(b))
-	}
+	const subFieldDefinitions = subFields ? Object.keys(subFields) : undefined
 
 	return (
 		<div className={classes.root}>
