@@ -69,8 +69,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		props
 	)
 
-	const getDefaultValue = () =>
-		isText ? "" : (options?.defaultDefinition as wire.FieldValue) || {}
+	const getDefaultValue = () => (isText ? "" : {})
 
 	const getNewValue = (
 		newFieldValue: wire.FieldValue,
