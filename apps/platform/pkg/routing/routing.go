@@ -101,6 +101,25 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 		processedParams[k] = v
 	}
 
+	//merge meta tags
+	for index, tag := range route.Tags {
+		template, err := templating.NewWithFuncs(tag.Content, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+		if err != nil {
+			return nil, err
+		}
+
+		mergedValue, err := templating.Execute(template, merge.ServerMergeData{
+			Session:     session,
+			ParamValues: nil,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		tag.Content = mergedValue
+		route.Tags[index] = tag
+	}
+
 	route.Path = path
 	route.Params = processedParams
 
