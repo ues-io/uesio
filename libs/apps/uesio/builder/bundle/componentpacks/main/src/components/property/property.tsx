@@ -143,10 +143,19 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "ICON": {
+			return {
+				"uesio/builder.iconprop": {
+					path,
+					property,
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
 					...baseFieldDef,
+					placeholder: property.placeholder,
 					wrapperVariant: "uesio/builder.propfield",
 				},
 			}

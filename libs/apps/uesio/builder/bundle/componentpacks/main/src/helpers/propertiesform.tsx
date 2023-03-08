@@ -160,119 +160,92 @@ const getBotSelectListMetadata = (
 	)
 }
 
+const getBaseWireFieldDef = (
+	ComponentProperty: ComponentProperty,
+	type: wire.FieldType,
+	additional?: object
+) => {
+	const { name, label, required } = ComponentProperty
+	return {
+		label: label || name,
+		required: required || false,
+		type,
+		...additional,
+	}
+}
+
 const getWireFieldFromPropertyDef = (
 	def: ComponentProperty,
 	context: context.Context,
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
-	const { name, type, label, required } = def
+	const { name, type } = def
 	let wireId: string
 	let wireDefinition: wire.WireDefinition | undefined
 	switch (type) {
 		case "SELECT":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "SELECT" as const,
+			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getSelectListMetadata(def),
-			}
-		case "NUMBER":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "NUMBER" as const,
-			}
-		case "CHECKBOX":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "CHECKBOX" as const,
-			}
+			})
 		case "KEY":
-			return {
-				label: label || name,
-				required: true,
-				type: "TEXT" as const,
-			}
+			return getBaseWireFieldDef(def, "TEXT")
 		case "BOT":
-			return {
-				label: label || name,
-				type: "SELECT" as const,
-				required: false,
+			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getBotSelectListMetadata(context, def),
-			}
+			})
 		case "WIRE":
 		case "WIRES":
-			return {
-				label: label || name,
-				required: required || false,
-				type: `${type === "WIRES" ? "MULTI" : ""}SELECT` as const,
-				selectlist: getWireSelectListMetadata(
-					context,
-					def,
-					type === "WIRE"
-				),
-			}
+			return getBaseWireFieldDef(
+				def,
+				`${type === "WIRES" ? "MULTI" : ""}SELECT`,
+				{
+					selectlist: getWireSelectListMetadata(
+						context,
+						def,
+						type === "WIRE"
+					),
+				}
+			)
+
 		case "NAMESPACE":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "SELECT" as const,
+			return getBaseWireFieldDef(def, "SELECT", {
 				selectlist: getNamespaceSelectListMetadata(context, def),
-			}
+			})
 		case "FIELDS":
 		case "FIELD":
 			wireId = currentValue[def.wireField] as string
 			wireDefinition = wireId
 				? getWireDefinition(context, wireId)
 				: undefined
-			return {
-				label: label || name,
-				required: required || false,
-				type: `${type === "FIELDS" ? "MULTI" : ""}SELECT` as const,
-				selectlist: getSelectListMetadataFromOptions(
-					name,
-					wireDefinition !== undefined
-						? getWireFieldSelectOptions(wireDefinition)
-						: []
-				),
-			}
+			return getBaseWireFieldDef(
+				def,
+				`${type === "FIELDS" ? "MULTI" : ""}SELECT`,
+				{
+					selectlist: getSelectListMetadataFromOptions(
+						name,
+						wireDefinition !== undefined
+							? getWireFieldSelectOptions(wireDefinition)
+							: []
+					),
+				}
+			)
 		case "MAP":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "MAP" as const,
-			}
 		case "PARAMS":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "MAP" as const,
-			}
+			return getBaseWireFieldDef(def, "MAP")
 		case "LIST":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "LIST" as const,
-			}
+			return getBaseWireFieldDef(def, "LIST")
 		case "COMPONENT_ID":
-			return {
+			return getBaseWireFieldDef(def, "TEXT", {
 				label: "Component Id",
-				required: required || false,
-				type: "TEXT" as const,
-			}
+			})
 		case "TEXT_AREA":
-			return {
-				label: label || name,
-				required: required || false,
-				type: "LONGTEXT" as const,
-			}
+			return getBaseWireFieldDef(def, "LONGTEXT")
+		case "NUMBER":
+			return getBaseWireFieldDef(def, "NUMBER")
+		case "CHECKBOX":
+			return getBaseWireFieldDef(def, "CHECKBOX")
 		default:
-			return {
-				label: label || name,
-				required: required || false,
-				type: "TEXT" as const,
-			}
+			return getBaseWireFieldDef(def, "TEXT")
 	}
 }
 

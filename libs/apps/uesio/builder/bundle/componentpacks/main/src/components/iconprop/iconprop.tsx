@@ -1,19 +1,28 @@
 import { ChangeEvent, useState } from "react"
+import { component, styles, materialIcons, definition } from "@uesio/ui"
+import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
+import { FullPath } from "../../api/path"
+import { IconProperty } from "../../properties/componentproperty"
 
-import { component, styles, materialIcons, builder } from "@uesio/ui"
-import { useSelectedPath } from "../../api/stateapi"
+type Definition = {
+	property: IconProperty
+	path: FullPath
+}
 
-const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
+const IconProp: definition.UC<Definition> = (props) => {
+	const { context, definition } = props
+	const { path, property } = definition
+
 	const TextField = component.getUtility("uesio/io.textfield")
 	const Popper = component.getUtility("uesio/io.popper")
 	const IconButton = component.getUtility("uesio/io.iconbutton")
 	const TitleBar = component.getUtility("uesio/io.titlebar")
 	const FieldWrapper = component.getUtility("uesio/io.fieldwrapper")
 	const ScrollPanel = component.getUtility("uesio/io.scrollpanel")
-	const { descriptor, path, context } = props
 
+	const iconPropPath = path.addLocal(property.name)
 	const selectedPath = useSelectedPath(context)
-	const selected = selectedPath.localPath === path
+	const selected = iconPropPath.equals(selectedPath)
 
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
@@ -34,9 +43,11 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 				display: "grid",
 				overflow: "auto",
 				maxHeight: "350px",
+				minWidth: "350px",
 				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
 				padding: "16px",
 				rowGap: "14px",
+				background: "white",
 			},
 			search: {
 				marginBottom: "2px",
@@ -63,41 +74,36 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 	)
 
 	const viewDefId = context.getViewDefId()
-	if (!viewDefId || !path) return null
+	const record = context.getRecord()
+	if (!viewDefId || !record) return null
+
+	const icon = record.getFieldValue(property.name)
 
 	return (
 		<div ref={setAnchorEl}>
 			<FieldWrapper
 				labelPosition="left"
-				label={descriptor.label}
+				label={property?.label}
 				context={context}
 				variant="uesio/builder.propfield"
 			>
 				<div className={classes.iconfield}>
 					<TextField
-						value={/*valueAPI.get(path)*/ ""}
-						label={descriptor.label}
-						setValue={
-							(/*value: string*/) => {
-								//valueAPI.set(path, value)
-							}
-						}
+						value={icon || ""}
+						label={property?.label}
+						setValue={(value: string) => {
+							record.update(property.name, value, context)
+						}}
 						context={context}
-						variant="uesio/io.field:uesio/builder.propfield"
+						variant="uesio/builder.propfield"
 					/>
 					<IconButton
 						className={classes.iconpreview}
-						icon={/*valueAPI.get(path) || */ ""}
+						icon={icon || "add"}
 						context={context}
-						/*
 						onClick={() => {
-							api.builder.setSelectedNode(
-								"viewdef",
-								viewDefId,
-								path
-							)
+							setSelectedPath(context, iconPropPath)
 						}}
-						*/
 					/>
 				</div>
 			</FieldWrapper>
@@ -106,7 +112,15 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 				<Popper
 					referenceEl={anchorEl}
 					context={context}
-					placement="right"
+					offset={6}
+					placement="right-start"
+					autoPlacement={["right-start"]}
+					useFirstRelativeParent
+					styles={{
+						popper: {
+							width: "350px",
+						},
+					}}
 				>
 					<ScrollPanel
 						header={
@@ -116,16 +130,14 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 									variant="uesio/io.primary"
 									subtitle={"Material Icons"}
 									actions={
-										props.path && (
-											<IconButton
-												context={context}
-												variant="uesio/builder.buildtitle"
-												icon="close"
-												onClick={() => {
-													//api.builder.unSelectNode()
-												}}
-											/>
-										)
+										<IconButton
+											context={context}
+											variant="uesio/builder.buildtitle"
+											icon="close"
+											onClick={() =>
+												setSelectedPath(context, path)
+											}
+										/>
 									}
 									context={context}
 								/>
@@ -147,7 +159,11 @@ const IconProp: builder.PropComponent<builder.IconProp> = (props) => {
 									icon={iconName}
 									context={context}
 									onClick={(): void => {
-										//valueAPI.set(path, iconName)
+										record.update(
+											property.name,
+											iconName,
+											context
+										)
 									}}
 								/>
 							))}
