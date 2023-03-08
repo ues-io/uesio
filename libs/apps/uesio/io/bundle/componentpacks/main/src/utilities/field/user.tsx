@@ -1,10 +1,13 @@
 import { FunctionComponent } from "react"
 import { definition, context as ctx, collection, wire, api } from "@uesio/ui"
-import { UserFieldOptions } from "../../components/field/field"
 import ReferenceField from "./reference"
 import Tile from "../tile/tile"
 import Avatar from "../avatar/avatar"
 import TitleBar from "../titlebar/titlebar"
+
+export type UserFieldOptions = {
+	subtitle?: string
+}
 
 interface UserFieldProps extends definition.UtilityProps {
 	path: string

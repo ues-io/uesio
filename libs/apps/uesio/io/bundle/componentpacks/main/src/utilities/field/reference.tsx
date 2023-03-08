@@ -8,9 +8,16 @@ import {
 } from "@uesio/ui"
 import debounce from "lodash/debounce"
 import { useState } from "react"
-import { ReferenceFieldOptions } from "../../components/field/field"
 import CustomSelect from "../customselect/customselect"
 import ReadOnlyField from "./readonly"
+
+export type ReferenceFieldOptions = {
+	searchFields?: string[]
+	returnFields?: string[]
+	components?: definition.DefinitionList
+	template?: string
+	requirewriteaccess?: boolean
+}
 
 interface ReferenceFieldProps {
 	path: string
