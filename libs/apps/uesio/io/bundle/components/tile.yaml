@@ -9,7 +9,14 @@ discoverable: true
 variants:
   - uesio/io.text:uesio/io.icon
   - uesio/io.text:uesio/io.iconoutline
+properties:
+  - type: COMPONENT_ID
+    name: uesio.id
+    label: Component Id
 sections:
+  - type: HOME
+    properties:
+      - uesio.id
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
