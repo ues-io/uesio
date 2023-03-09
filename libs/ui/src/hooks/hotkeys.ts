@@ -6,7 +6,7 @@ const useHotKeyCallback = (
 	enabled?: boolean,
 	dependencies?: unknown[]
 ) => {
-	// This may not be the best function to determine this, but it works for now.
+	// Prevent single-character hotkeys from being triggered when typing in a form field
 	const isTypeable = keycode?.length === 1
 	return useHotkeys(
 		keycode || "",

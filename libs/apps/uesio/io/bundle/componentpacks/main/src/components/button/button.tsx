@@ -32,6 +32,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 	)
 
 	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
+
 	return (
 		<IOButton
 			id={api.component.getComponentIdFromProps(props)}
@@ -56,4 +57,5 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		/>
 	)
 }
+
 export default Button

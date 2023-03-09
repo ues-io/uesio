@@ -85,9 +85,10 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
+                                uesio.id: create-route
                                 text: Create a New Route
-                                hotkey: "meta+n"
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newRoute

@@ -72,6 +72,7 @@ definition:
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
+                                      hotkey: "meta+p"
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}

@@ -16,11 +16,20 @@ properties:
   - name: icon
     type: ICON
     label: Icon
+  - name: hotkey
+    type: TEXT
+    placeholder: meta+s
+    label: Hotkeys
+  - name: uesio.id
+    type: COMPONENT_ID
+    label: Button Id
 sections:
   - type: HOME
     properties:
       - text
       - icon
+      - hotkey
+      - uesio.id
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY
