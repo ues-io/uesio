@@ -84,7 +84,8 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
-	return deps.ComponentVariant.AddItem(variantDep)
+	deps.ComponentVariant.AddItem(variantDep)
+	return nil
 
 }
 
@@ -108,7 +109,8 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 	pack := meta.NewBaseComponentPack(namespace, utility.Pack)
 
-	return deps.ComponentPack.AddItem(pack)
+	deps.ComponentPack.AddItem(pack)
+	return nil
 
 }
 
@@ -119,10 +121,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	}
 	pack := meta.NewBaseComponentPack(component.Namespace, component.Pack)
 
-	err := deps.ComponentPack.AddItem(pack)
-	if err != nil {
-		return err
-	}
+	deps.ComponentPack.AddItem(pack)
 
 	for _, key := range component.ConfigValues {
 
@@ -135,11 +134,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 			return err
 		}
 		configvalue.Value = value
-		err = deps.ConfigValue.AddItem(configvalue)
-		if err != nil {
-			return err
-		}
-
+		deps.ConfigValue.AddItem(configvalue)
 	}
 
 	for _, key := range component.Variants {
@@ -150,7 +145,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	}
 
 	for _, key := range component.Utilities {
-		err = getDepsForUtilityComponent(key, deps, session)
+		err := getDepsForUtilityComponent(key, deps, session)
 		if err != nil {
 			return err
 		}
@@ -201,10 +196,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		return err
 	}
 
-	err = deps.ViewDef.AddItem(view)
-	if err != nil {
-		return err
-	}
+	deps.ViewDef.AddItem(view)
 
 	depMap, err := GetViewDependencies(view, session)
 	if err != nil {
@@ -281,17 +273,11 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 
 		for _, collection := range metadata.Collections {
-			err = deps.Collection.AddItem(collection)
-			if err != nil {
-				return err
-			}
+			deps.Collection.AddItem(collection)
 		}
 
 		for _, op := range ops {
-			err = deps.Wire.AddItem(op)
-			if err != nil {
-				return err
-			}
+			deps.Wire.AddItem(op)
 		}
 	}
 
@@ -306,10 +292,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = deps.ViewDef.AddItem(view)
-	if err != nil {
-		return err
-	}
+	deps.ViewDef.AddItem(view)
 
 	viewYamlBytes, err := yaml.Marshal(view.Definition)
 	if err != nil {
@@ -363,10 +346,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
 
 	for i := range variants {
-		err := deps.ComponentVariant.AddItem(variants[i])
-		if err != nil {
-			return err
-		}
+		deps.ComponentVariant.AddItem(variants[i])
 	}
 
 	for key, value := range labels {
@@ -376,10 +356,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 			return err
 		}
 		label.Value = value
-		err = deps.Label.AddItem(label)
-		if err != nil {
-			return err
-		}
+		deps.Label.AddItem(label)
 	}
 
 	// Load in the studio theme.
@@ -393,10 +370,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = deps.Theme.AddItem(theme)
-	if err != nil {
-		return err
-	}
+	deps.Theme.AddItem(theme)
 
 	// Get the metadata list
 	namespaces := session.GetContextNamespaces()
@@ -428,10 +402,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = deps.Theme.AddItem(theme)
-	if err != nil {
-		return nil, err
-	}
+	deps.Theme.AddItem(theme)
 
 	err = processView(route.ViewRef, "$root", deps, route.Params, session)
 	if err != nil {
@@ -454,17 +425,11 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 			return nil, err
 		}
 		label.Value = value
-		err = deps.Label.AddItem(label)
-		if err != nil {
-			return nil, err
-		}
+		deps.Label.AddItem(label)
 	}
 
 	for _, flag := range *featureflags {
-		err = deps.FeatureFlag.AddItem(flag)
-		if err != nil {
-			return nil, err
-		}
+		deps.FeatureFlag.AddItem(flag)
 	}
 
 	workspace := session.GetWorkspace()

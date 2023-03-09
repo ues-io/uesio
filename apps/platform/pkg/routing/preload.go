@@ -63,9 +63,8 @@ func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{}
 }
 
-func (mmd *MetadataMergeData) AddItem(dep Depable) error {
+func (mmd *MetadataMergeData) AddItem(dep Depable) {
 	*mmd = append(*mmd, dep)
-	return nil
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
