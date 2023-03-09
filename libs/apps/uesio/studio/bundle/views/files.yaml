@@ -85,7 +85,7 @@ definition:
                             - uesio/io.button:
                                 text: Create a New File
                                 uesio.variant: uesio/io.primary
-                                hotkey: "meta+n"
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newFile

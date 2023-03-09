@@ -79,7 +79,7 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Select List
-                                hotkey: "meta+n"
+                                hotkey: "n"
                                 uesio.variant: uesio/io.secondary
                                 signals:
                                   - signal: panel/TOGGLE

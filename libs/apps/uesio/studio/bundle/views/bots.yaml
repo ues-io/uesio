@@ -84,7 +84,7 @@ definition:
                             - uesio/io.button:
                                 text: Create a New Bot
                                 uesio.variant: uesio/io.primary
-                                hotkey: "meta+n"
+                                hotkey: "n"
                                 signals:
                                   - signal: wire/RESET
                                     wire: newbot
