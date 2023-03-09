@@ -88,6 +88,12 @@ declare module "uesio/bots" {
 
 	interface AfterSaveBotApi extends BeforeSaveBotApi {
 		save: (collectionName: string, records: Record[]) => void
+		notify: (
+			source: string,
+			subject: string,
+			body: string,
+			target: string
+		) => void
 	}
 
 	interface ListenerBotApi {

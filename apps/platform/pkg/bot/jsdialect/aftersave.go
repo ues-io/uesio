@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/notify"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -46,6 +47,16 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 	}
 	err := datasource.SaveWithOptions(requests, as.session, datasource.GetConnectionSaveOptions(as.connection))
 	return datasource.HandleSaveRequestErrors(requests, err)
+}
+
+func (as *AfterSaveAPI) Notify(source, subject, body, target string) error {
+	adapter, err := notify.GetNotificationConnection(source, as.session)
+	if err != nil {
+		return err
+	}
+
+	return adapter.Send(subject, body, target)
+
 }
 
 func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {

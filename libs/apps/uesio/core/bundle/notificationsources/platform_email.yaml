@@ -1,0 +1,4 @@
+name: platform_email
+type: ${uesio/core.platform_notificationsource_type}
+credentials: ${uesio/core.platform_notificationsource_credentials}
+public: true
