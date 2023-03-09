@@ -13,19 +13,6 @@ definition:
       "&:focus":
         outline: none
         background: "#ddd"
-    menu:
-      backgroundColor: "white"
-      fontSize: "10pt"
-      border: "1px solid #ccc"
-      borderRadius: "4px"
-      overflow: "hidden"
-      boxShadow: "0 0 4px #00000033"
-    menuitem:
-      cursor: "pointer"
-      padding: 7px 16px 7px 10px
-      fontSize: 10pt
-    highlighted:
-      backgroundColor: "#eee"
     notfound:
       textTransform: "capitalize"
       color: "#777"
@@ -46,13 +33,4 @@ definition:
       alignItems: center
       gap: 2px
       padding: 2px 4px
-    searchbox:
-      minWidth: "200px"
-      borderRadius: "4px"
-      margin: "6px"
-      padding: "6px"
-      border: "1px solid #00000044"
-      "::placeholder":
-        fontSize: "9pt"
-        color: "#999"
 public: true
