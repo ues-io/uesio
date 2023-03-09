@@ -62,7 +62,6 @@
     "chai": "^4.3.6",
     "chart.js": "^3.9.1",
     "cypress": "^12.3.0",
-    "downshift": "^6.1.12",
     "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
