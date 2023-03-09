@@ -35,7 +35,7 @@ func (op *LoadOp) GetBytes() ([]byte, error) {
 	return json.Marshal(op)
 }
 
-func (op *LoadOp) UnGetBytes(data []byte) error {
+func (op *LoadOp) UnmarshalJSON(data []byte) error {
 	return gojay.UnmarshalJSONObject(data, op)
 }
 

@@ -12,7 +12,7 @@ import (
 
 type Collection []*Item
 
-func (c *Collection) UnGetBytes(data []byte) error {
+func (c *Collection) UnmarshalJSON(data []byte) error {
 	err := gojay.UnmarshalJSONObject(data, c)
 	if err != nil {
 		return gojay.UnmarshalJSONArray(data, c)

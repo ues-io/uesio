@@ -34,7 +34,7 @@ func (c *CollectionMap) Len() int {
 	return len(c.Data)
 }
 
-func (c *CollectionMap) UnGetBytes(b []byte) error {
+func (c *CollectionMap) UnmarshalJSON(b []byte) error {
 	err := json.Unmarshal(b, &c.Data)
 	if err != nil {
 		return err
