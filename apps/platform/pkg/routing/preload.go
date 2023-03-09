@@ -39,7 +39,7 @@ type MetadataMergeData struct {
 
 func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 
-	ids := make([]string, len(mmd.IDs))
+	ids := make([]string, 0)
 	entityData := map[string]json.RawMessage{}
 
 	for _, id := range mmd.IDs {
@@ -47,7 +47,7 @@ func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 	}
 	for k, v := range mmd.Entities {
 		rawData, err := v.GetBytes()
-		if err != nil {
+		if err == nil {
 			entityData[k] = rawData
 		}
 	}
