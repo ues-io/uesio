@@ -31,13 +31,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		context
 	)
 
-	if (definition?.signals?.length) {
-		api.signal.useRegisterHotKey(
-			definition.hotkey,
-			definition.signals,
-			context
-		)
-	}
+	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
 
 	return (
 		<IOButton

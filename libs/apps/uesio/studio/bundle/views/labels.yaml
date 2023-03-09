@@ -79,7 +79,8 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: Create a New Label
-                                uesio.variant: uesio/io.secondary
+                                uesio.variant: uesio/io.primary
+                                hotkey: "n"
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newlabel
