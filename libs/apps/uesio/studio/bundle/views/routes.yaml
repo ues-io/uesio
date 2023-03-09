@@ -85,7 +85,7 @@ definition:
                       - uesio/io.group:
                           components:
                             - uesio/io.button:
-                                # uesio.id:
+                                uesio.id: create-route
                                 text: Create a New Route
                                 hotkey: "n"
                                 uesio.variant: uesio/io.primary
