@@ -60,7 +60,20 @@ const navigate = async (
 			"",
 			prefix + routeResponse.path
 		)
+		// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 		document.title = routeResponse.title || "Uesio"
+		if (routeResponse.tags?.length) {
+			routeResponse.tags.forEach((tag) => {
+				if (tag.location === "head" && tag.type === "meta") {
+					let metaTag = document.head.querySelector(`meta[name=${tag.name}]`)
+					if (!metaTag) {
+						metaTag = document.createElement("meta");
+						document.getElementsByTagName("head")[0].appendChild(metaTag);
+					}
+					metaTag.setAttribute("content", tag.content)
+				}
+			})
+		}
 	}
 
 	const newPacks = getPackUrlsForDeps(deps, context)

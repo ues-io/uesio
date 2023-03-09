@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"encoding/json"
 	"github.com/francoispqt/gojay"
 )
 
@@ -32,27 +33,31 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 }
 
 type MetadataMergeData struct {
-	IDs      []string               `json:"ids"`
-	Entities map[string]interface{} `json:"entities"`
+	IDs      []string           `json:"ids"`
+	Entities map[string]Depable `json:"entities"`
+}
+
+func (mmd *MetadataMergeData) MarshallJSON() ([]byte, error) {
+	return json.Marshal(mmd)
 }
 
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
-		Entities: map[string]interface{}{},
+		Entities: map[string]Depable{},
 	}
 }
 
 func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
 	id := dep.GetKey()
-	//parsedbytes, err := dep.GetBytes()
+	//parsedbytes, err := dep.MarshallJSON()
 	//if err != nil {
 	//	return err
 	//}
 	return mmd.AddItem(id, dep)
 }
 
-func (mmd *MetadataMergeData) AddItem(id string, entity interface{}) error {
+func (mmd *MetadataMergeData) AddItem(id string, entity Depable) error {
 	_, ok := mmd.Entities[id]
 	if !ok {
 		mmd.IDs = append(mmd.IDs, id)
@@ -92,9 +97,9 @@ type PreloadMetadata struct {
 }
 
 type MetadataTextItem struct {
-	Content      string
-	Key          string
-	MetadataType string
+	Content      string `json:"content,omitempty"`
+	Key          string `json:"key,omitempty"`
+	MetadataType string `json:"metadatatype,omitempty"`
 }
 
 func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
@@ -103,11 +108,19 @@ func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("metadatatype", mti.MetadataType)
 }
 
+func (mti *MetadataTextItem) MarshallJSON() ([]byte, error) {
+	return gojay.MarshalJSONObject(mti)
+}
+
+func (mti *MetadataTextItem) GetKey() string {
+	return mti.Key
+}
+
 func (mti *MetadataTextItem) IsNil() bool {
 	return mti == nil
 }
 
 type Depable interface {
 	GetKey() string
-	GetBytes() ([]byte, error)
+	MarshallJSON() ([]byte, error)
 }

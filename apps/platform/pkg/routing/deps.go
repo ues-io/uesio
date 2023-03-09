@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -317,15 +316,12 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	bytes, err := gojay.MarshalJSONObject(&MetadataTextItem{
+	viewYaml := &MetadataTextItem{
 		Content:      string(viewYamlBytes),
 		Key:          view.GetKey(),
 		MetadataType: "viewdef",
-	})
-	if err != nil {
-		return err
 	}
-	deps.MetadataText.AddItem("viewdef:"+view.GetKey(), bytes)
+	deps.MetadataText.AddItem("viewdef:"+view.GetKey(), viewYaml)
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -353,7 +349,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 			return err
 		}
 
-		componentYamlBytes, err := component.GetBytes()
+		componentYamlBytes, err := component.MarshallJSON()
 		if err != nil {
 			return err
 		}

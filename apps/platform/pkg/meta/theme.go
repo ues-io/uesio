@@ -15,7 +15,7 @@ type Theme struct {
 
 type ThemeWrapper Theme
 
-func (t *Theme) GetBytes() ([]byte, error) {
+func (t *Theme) MarshallJSON() ([]byte, error) {
 	return gojay.MarshalJSONObject(t)
 }
 

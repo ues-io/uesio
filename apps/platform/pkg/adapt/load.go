@@ -27,7 +27,7 @@ type LoadOp struct {
 	LoadAll            bool                   `json:"loadAll"`
 }
 
-func (op *LoadOp) GetBytes() ([]byte, error) {
+func (op *LoadOp) MarshallJSON() ([]byte, error) {
 	bytes, err := json.Marshal(op)
 	if err != nil {
 		return nil, err
