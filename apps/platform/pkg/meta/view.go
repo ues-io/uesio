@@ -15,7 +15,7 @@ type View struct {
 
 type ViewWrapper View
 
-func (v *View) MarshallJSON() ([]byte, error) {
+func (v *View) MarshalJSON() ([]byte, error) {
 	return gojay.MarshalJSONObject(v)
 }
 

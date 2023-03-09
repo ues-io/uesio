@@ -58,7 +58,7 @@ func (cm *CollectionMetadata) IsReadProtected() bool {
 	return cm.Access == "protected"
 }
 
-func (cm *CollectionMetadata) MarshallJSON() ([]byte, error) {
+func (cm *CollectionMetadata) MarshalJSON() ([]byte, error) {
 	bytes, err := json.Marshal(cm)
 	if err != nil {
 		return nil, err

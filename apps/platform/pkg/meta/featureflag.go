@@ -16,7 +16,7 @@ type FeatureFlag struct {
 
 type FeatureFlagWrapper FeatureFlag
 
-func (ff *FeatureFlag) MarshallJSON() ([]byte, error) {
+func (ff *FeatureFlag) MarshalJSON() ([]byte, error) {
 	return gojay.MarshalJSONObject(ff)
 }
 

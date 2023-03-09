@@ -349,7 +349,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 			return err
 		}
 
-		componentYamlBytes, err := component.MarshallJSON()
+		componentYamlBytes, err := component.MarshalJSON()
 		if err != nil {
 			return err
 		}

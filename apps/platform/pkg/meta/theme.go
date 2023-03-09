@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/francoispqt/gojay"
 	"gopkg.in/yaml.v3"
@@ -15,7 +16,8 @@ type Theme struct {
 
 type ThemeWrapper Theme
 
-func (t *Theme) MarshallJSON() ([]byte, error) {
+func (t *Theme) MarshalJSON() ([]byte, error) {
+	fmt.Println("Theme Marshall JSON was invoked!")
 	return gojay.MarshalJSONObject(t)
 }
 

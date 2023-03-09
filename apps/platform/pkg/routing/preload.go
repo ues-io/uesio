@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"encoding/json"
 	"github.com/francoispqt/gojay"
 )
 
@@ -37,10 +36,6 @@ type MetadataMergeData struct {
 	Entities map[string]Depable `json:"entities"`
 }
 
-func (mmd *MetadataMergeData) MarshallJSON() ([]byte, error) {
-	return json.Marshal(mmd)
-}
-
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
@@ -50,7 +45,7 @@ func NewItem() *MetadataMergeData {
 
 func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
 	id := dep.GetKey()
-	//parsedbytes, err := dep.MarshallJSON()
+	//parsedbytes, err := dep.MarshalJSON()
 	//if err != nil {
 	//	return err
 	//}
@@ -108,7 +103,7 @@ func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("metadatatype", mti.MetadataType)
 }
 
-func (mti *MetadataTextItem) MarshallJSON() ([]byte, error) {
+func (mti *MetadataTextItem) MarshalJSON() ([]byte, error) {
 	return gojay.MarshalJSONObject(mti)
 }
 
@@ -122,5 +117,5 @@ func (mti *MetadataTextItem) IsNil() bool {
 
 type Depable interface {
 	GetKey() string
-	MarshallJSON() ([]byte, error)
+	MarshalJSON() ([]byte, error)
 }
