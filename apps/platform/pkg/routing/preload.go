@@ -33,33 +33,38 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 	}
 }
 
-type MetadataMergeData struct {
-	IDs      []string                   `json:"ids"`
-	Entities map[string]json.RawMessage `json:"entities"`
+type MetadataMergeData []Depable
+
+func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
+
+	ids := make([]string, 0)
+	entityData := map[string]json.RawMessage{}
+
+	for _, dep := range *mmd {
+		key := dep.GetKey()
+		ids = append(ids, key)
+		rawData, err := dep.GetBytes()
+		if err == nil {
+			entityData[key] = rawData
+		}
+	}
+
+	return json.Marshal(&struct {
+		IDs      []string                   `json:"ids"`
+		Entities map[string]json.RawMessage `json:"entities"`
+	}{
+		ids,
+		entityData,
+	})
+
 }
 
 func NewItem() *MetadataMergeData {
-	return &MetadataMergeData{
-		IDs:      []string{},
-		Entities: map[string]json.RawMessage{},
-	}
+	return &MetadataMergeData{}
 }
 
-func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
-	id := dep.GetKey()
-	parsedbytes, err := dep.GetBytes()
-	if err != nil {
-		return err
-	}
-	return mmd.AddItem(id, parsedbytes)
-}
-
-func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
-	_, ok := mmd.Entities[id]
-	if !ok {
-		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = content
-	}
+func (mmd *MetadataMergeData) AddItem(dep Depable) error {
+	*mmd = append(*mmd, dep)
 	return nil
 }
 
@@ -103,6 +108,14 @@ func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("content", mti.Content)
 	enc.AddStringKey("key", mti.Key)
 	enc.AddStringKey("metadatatype", mti.MetadataType)
+}
+
+func (mti *MetadataTextItem) GetBytes() ([]byte, error) {
+	return gojay.MarshalJSONObject(mti)
+}
+
+func (mti *MetadataTextItem) GetKey() string {
+	return mti.Key
 }
 
 func (mti *MetadataTextItem) IsNil() bool {

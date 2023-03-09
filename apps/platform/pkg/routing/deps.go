@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/francoispqt/gojay"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -85,7 +84,7 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
-	return deps.ComponentVariant.AddItemDep(variantDep)
+	return deps.ComponentVariant.AddItem(variantDep)
 
 }
 
@@ -109,7 +108,7 @@ func getDepsForUtilityComponent(key string, deps *PreloadMetadata, session *sess
 
 	pack := meta.NewBaseComponentPack(namespace, utility.Pack)
 
-	return deps.ComponentPack.AddItemDep(pack)
+	return deps.ComponentPack.AddItem(pack)
 
 }
 
@@ -120,7 +119,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 	}
 	pack := meta.NewBaseComponentPack(component.Namespace, component.Pack)
 
-	err := deps.ComponentPack.AddItemDep(pack)
+	err := deps.ComponentPack.AddItem(pack)
 	if err != nil {
 		return err
 	}
@@ -136,7 +135,7 @@ func getDepsForComponent(component *meta.Component, deps *PreloadMetadata, sessi
 			return err
 		}
 		configvalue.Value = value
-		err = deps.ConfigValue.AddItemDep(configvalue)
+		err = deps.ConfigValue.AddItem(configvalue)
 		if err != nil {
 			return err
 		}
@@ -202,7 +201,7 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		return err
 	}
 
-	err = deps.ViewDef.AddItemDep(view)
+	err = deps.ViewDef.AddItem(view)
 	if err != nil {
 		return err
 	}
@@ -282,14 +281,14 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		}
 
 		for _, collection := range metadata.Collections {
-			err = deps.Collection.AddItemDep(collection)
+			err = deps.Collection.AddItem(collection)
 			if err != nil {
 				return err
 			}
 		}
 
 		for _, op := range ops {
-			err = deps.Wire.AddItemDep(op)
+			err = deps.Wire.AddItem(op)
 			if err != nil {
 				return err
 			}
@@ -307,7 +306,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = deps.ViewDef.AddItemDep(view)
+	err = deps.ViewDef.AddItem(view)
 	if err != nil {
 		return err
 	}
@@ -317,15 +316,13 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	bytes, err := gojay.MarshalJSONObject(&MetadataTextItem{
+	viewYaml := &MetadataTextItem{
 		Content:      string(viewYamlBytes),
-		Key:          view.GetKey(),
+		Key:          "viewdef:" + view.GetKey(),
 		MetadataType: "viewdef",
-	})
-	if err != nil {
-		return err
 	}
-	deps.MetadataText.AddItem("viewdef:"+view.GetKey(), bytes)
+
+	deps.MetadataText.AddItem(viewYaml)
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -366,7 +363,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
 
 	for i := range variants {
-		err := deps.ComponentVariant.AddItemDep(variants[i])
+		err := deps.ComponentVariant.AddItem(variants[i])
 		if err != nil {
 			return err
 		}
@@ -379,7 +376,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 			return err
 		}
 		label.Value = value
-		err = deps.Label.AddItemDep(label)
+		err = deps.Label.AddItem(label)
 		if err != nil {
 			return err
 		}
@@ -396,7 +393,7 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 		return err
 	}
 
-	err = deps.Theme.AddItemDep(theme)
+	err = deps.Theme.AddItem(theme)
 	if err != nil {
 		return err
 	}
@@ -431,7 +428,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 		return nil, err
 	}
 
-	err = deps.Theme.AddItemDep(theme)
+	err = deps.Theme.AddItem(theme)
 	if err != nil {
 		return nil, err
 	}
@@ -457,14 +454,14 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 			return nil, err
 		}
 		label.Value = value
-		err = deps.Label.AddItemDep(label)
+		err = deps.Label.AddItem(label)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	for _, flag := range *featureflags {
-		err = deps.FeatureFlag.AddItemDep(flag)
+		err = deps.FeatureFlag.AddItem(flag)
 		if err != nil {
 			return nil, err
 		}
@@ -477,7 +474,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	if workspace != nil {
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
-		deps.ComponentPack.AddItemDep(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME))
+		deps.ComponentPack.AddItem(meta.NewBaseComponentPack(DEFAULT_BUILDER_PACK_NAMESPACE, DEFAULT_BUILDER_PACK_NAME))
 	}
 
 	return deps, nil
