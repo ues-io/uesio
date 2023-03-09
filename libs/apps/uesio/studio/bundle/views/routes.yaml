@@ -87,7 +87,7 @@ definition:
                             - uesio/io.button:
                                 # uesio.id:
                                 text: Create a New Route
-                                hotkey: "meta+n"
+                                hotkey: "n"
                                 uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: panel/TOGGLE

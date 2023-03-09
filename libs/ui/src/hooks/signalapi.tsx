@@ -63,19 +63,12 @@ const getHandler = (
 const useRegisterHotKey = (
 	keycode: string | undefined,
 	signals: SignalDefinition[] | undefined,
-	context: Context,
-	parentComponentId: string
+	context: Context
 ) =>
-	useHotKeyCallback(
-		keycode,
-		(event) => {
-			event.preventDefault()
-			getHandler(signals, context)?.()
-		},
-		undefined,
-		undefined,
-		parentComponentId
-	)
+	useHotKeyCallback(keycode, (event) => {
+		event.preventDefault()
+		getHandler(signals, context)?.()
+	})
 
 // Returns a map of all SignalDescriptors from the registry
 const getSignals = (): Record<string, SignalDescriptor> => ({

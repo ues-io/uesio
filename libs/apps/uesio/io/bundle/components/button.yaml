@@ -16,11 +16,16 @@ properties:
   - name: icon
     type: ICON
     label: Icon
+  - name: hotkey
+    type: TEXT
+    placeholder: meta+s
+    label: Hotkeys
 sections:
   - type: HOME
     properties:
       - text
       - icon
+      - hotkey
   - type: SIGNALS
   - type: STYLES
   - type: DISPLAY

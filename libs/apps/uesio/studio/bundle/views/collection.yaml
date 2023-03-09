@@ -205,7 +205,7 @@ definition:
                                       uesio.variant: "uesio/io.primary"
                                       uesio.id: "new-field"
                                       text: "New Field"
-                                      hotkey: "meta+n"
+                                      hotkey: "n"
                                       signals:
                                         - signal: wire/EMPTY
                                           wire: newfield
