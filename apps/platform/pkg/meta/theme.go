@@ -16,7 +16,7 @@ type Theme struct {
 
 type ThemeWrapper Theme
 
-func (t *Theme) MarshalJSON() ([]byte, error) {
+func (t *Theme) GetBytes() ([]byte, error) {
 	fmt.Println("Theme Marshall JSON was invoked!")
 	return gojay.MarshalJSONObject(t)
 }

@@ -15,7 +15,7 @@ type Label struct {
 
 type LabelWrapper Label
 
-func (l *Label) MarshalJSON() ([]byte, error) {
+func (l *Label) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(l)
 }
 

@@ -18,7 +18,7 @@ type ConfigValue struct {
 
 type ConfigValueWrapper ConfigValue
 
-func (cv *ConfigValue) MarshalJSON() ([]byte, error) {
+func (cv *ConfigValue) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cv)
 }
 

@@ -27,7 +27,7 @@ type ComponentPack struct {
 
 type ComponentPackWrapper ComponentPack
 
-func (cp *ComponentPack) MarshalJSON() ([]byte, error) {
+func (cp *ComponentPack) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(cp)
 }
 

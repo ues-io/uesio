@@ -24,7 +24,7 @@ type SaveRequest struct {
 	Options    *adapt.SaveOptions `json:"options"`
 }
 
-func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
+func (sr *SaveRequest) UnGetBytes(b []byte) error {
 	data := make(map[string]json.RawMessage)
 	err := json.Unmarshal(b, &data)
 	if err != nil {

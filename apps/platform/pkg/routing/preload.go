@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"encoding/json"
 	"github.com/francoispqt/gojay"
 )
 
@@ -36,6 +37,31 @@ type MetadataMergeData struct {
 	Entities map[string]Depable `json:"entities"`
 }
 
+func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
+
+	ids := make([]string, len(mmd.IDs))
+	entityData := map[string]json.RawMessage{}
+
+	for _, id := range mmd.IDs {
+		ids = append(ids, id)
+	}
+	for k, v := range mmd.Entities {
+		rawData, err := v.GetBytes()
+		if err != nil {
+			entityData[k] = rawData
+		}
+	}
+
+	return json.Marshal(&struct {
+		IDs      []string                   `json:"ids"`
+		Entities map[string]json.RawMessage `json:"entities"`
+	}{
+		ids,
+		entityData,
+	})
+
+}
+
 func NewItem() *MetadataMergeData {
 	return &MetadataMergeData{
 		IDs:      []string{},
@@ -45,7 +71,7 @@ func NewItem() *MetadataMergeData {
 
 func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
 	id := dep.GetKey()
-	//parsedbytes, err := dep.MarshalJSON()
+	//parsedbytes, err := dep.GetBytes()
 	//if err != nil {
 	//	return err
 	//}
@@ -103,7 +129,7 @@ func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
 	enc.AddStringKey("metadatatype", mti.MetadataType)
 }
 
-func (mti *MetadataTextItem) MarshalJSON() ([]byte, error) {
+func (mti *MetadataTextItem) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(mti)
 }
 
@@ -117,5 +143,5 @@ func (mti *MetadataTextItem) IsNil() bool {
 
 type Depable interface {
 	GetKey() string
-	MarshalJSON() ([]byte, error)
+	GetBytes() ([]byte, error)
 }

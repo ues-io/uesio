@@ -41,7 +41,7 @@ type Component struct {
 
 type ComponentWrapper Component
 
-func (c *Component) MarshalJSON() ([]byte, error) {
+func (c *Component) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(c)
 }
 

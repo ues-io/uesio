@@ -27,19 +27,15 @@ type LoadOp struct {
 	LoadAll            bool                   `json:"loadAll"`
 }
 
-func (op *LoadOp) MarshalJSON() ([]byte, error) {
-	bytes, err := json.Marshal(op)
-	if err != nil {
-		return nil, err
-	}
-	return bytes, nil
-}
-
 func (op *LoadOp) GetKey() string {
 	return op.View + ":" + op.WireName
 }
 
-func (op *LoadOp) UnmarshalJSON(data []byte) error {
+func (op *LoadOp) GetBytes() ([]byte, error) {
+	return json.Marshal(op)
+}
+
+func (op *LoadOp) UnGetBytes(data []byte) error {
 	return gojay.UnmarshalJSONObject(data, op)
 }
 

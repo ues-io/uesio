@@ -40,7 +40,7 @@ type ComponentVariant struct {
 
 type ComponentVariantWrapper ComponentVariant
 
-func (c *ComponentVariant) MarshalJSON() ([]byte, error) {
+func (c *ComponentVariant) GetBytes() ([]byte, error) {
 	return gojay.MarshalJSONObject(c)
 }
 
