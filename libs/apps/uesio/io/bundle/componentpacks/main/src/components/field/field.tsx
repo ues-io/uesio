@@ -98,13 +98,12 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
-	const classes = styles.useUtilityStyles(
+	const classes = styles.useStyles(
 		{
 			input: {},
 			readonly: {},
 		},
-		props,
-		"uesio/io.field"
+		props
 	)
 
 	const readonly = mode === "READ"

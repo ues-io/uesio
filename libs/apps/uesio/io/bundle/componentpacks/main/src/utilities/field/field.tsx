@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, ReactElement } from "react"
 import { collection, definition, metadata, context, wire } from "@uesio/ui"
 
 import CheckboxField from "../../utilities/field/checkbox"
@@ -91,7 +91,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 
 	let selectOptions: collection.SelectOption[]
 	let multiSelectProps
-	let content: ReactNode
+	let content: ReactElement
 
 	switch (fieldMetadata.getType()) {
 		case "DATE":
@@ -237,7 +237,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			content = <TextField {...common} />
 	}
 
-	return <>{content}</>
+	return content
 }
 
 export default Field
