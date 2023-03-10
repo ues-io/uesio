@@ -1,9 +1,13 @@
 package main
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/bot"
 	"mime"
 	"os"
+
+	"github.com/thecloudmasters/uesio/pkg/bot"
+	"github.com/thecloudmasters/uesio/pkg/notify"
+	"github.com/thecloudmasters/uesio/pkg/notify/localnotify"
+	"github.com/thecloudmasters/uesio/pkg/notify/ses"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -79,6 +83,10 @@ func init() {
 
 	// Integration Types
 	integ.RegisterConfigStore("web", &web.WebIntegration{})
+
+	// Notification Types
+	notify.RegisterNotificationAdapter("local", &localnotify.NotificationAdapter{})
+	notify.RegisterNotificationAdapter("ses", &ses.NotificationAdapter{})
 }
 
 func main() {
