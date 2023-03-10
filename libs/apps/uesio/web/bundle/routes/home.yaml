@@ -1,3 +1,9 @@
 name: home
 path: home
 view: uesio/web.home
+title: Uesio
+tags:
+  - type: meta
+    location: head
+    name: description
+    content: The platform for platforms - ues.io makes building, running, and selling web apps easier for developers and possible for everyone else.

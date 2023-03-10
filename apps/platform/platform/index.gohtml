@@ -8,7 +8,7 @@
             {{- if .Route.Tags -}}
                 {{- range .Route.Tags }}
                     {{- if and (eq .Location "head") (eq .Type "meta") -}}
-        <meta name="{{.Name}}" content="{{.Content}}"/>
+        <meta name="{{.Name}}" content="{{.Content}}" data-uesio="true"/>
                     {{- end -}}
                 {{- end -}}
             {{- end -}}

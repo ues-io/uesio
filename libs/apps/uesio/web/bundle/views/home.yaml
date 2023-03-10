@@ -25,7 +25,7 @@ definition:
                                 text: Create apps faster and easier.
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: ues.io makes bulding, running, and selling web apps easier for developers and possible for everyone else.
+                                text: ues.io makes building, running, and selling web apps easier for developers and possible for everyone else.
     - uesio/io.grid:
         uesio.variant: uesio/web.mainlayout
         uesio.styles:

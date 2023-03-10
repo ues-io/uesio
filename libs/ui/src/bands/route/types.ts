@@ -38,6 +38,13 @@ type Dependencies = {
 	collection?: EntityState<PlainCollection>
 }
 
+type RouteTag = {
+	location: string
+	type: string
+	name: string
+	content: string
+}
+
 type RouteState = {
 	view: string
 	params?: Record<string, string>
@@ -48,6 +55,7 @@ type RouteState = {
 	title: string
 	isLoading?: boolean
 	dependencies?: Dependencies
+	tags: RouteTag[]
 } | null
 
-export { RouteState, WorkspaceState, SiteAdminState, Dependencies }
+export { RouteState, RouteTag, WorkspaceState, SiteAdminState, Dependencies }

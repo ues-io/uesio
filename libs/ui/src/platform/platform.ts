@@ -4,7 +4,7 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataType, METADATA } from "../bands/builder/types"
-import { Dependencies, RouteState } from "../bands/route/types"
+import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
@@ -58,6 +58,7 @@ type PathNavigateRequest = {
 	namespace: string
 	path: string
 	title?: string
+	tags?: RouteTag[]
 }
 
 type CollectionNavigateRequest = {

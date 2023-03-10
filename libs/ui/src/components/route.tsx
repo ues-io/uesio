@@ -52,7 +52,7 @@ const Route: UtilityComponent = (props) => {
 
 	useEffect(() => {
 		window.onpopstate = (event: PopStateEvent) => {
-			const { path, workspace, namespace, title } = event.state
+			const { path, workspace, namespace, title, tags } = event.state
 
 			if (!path || !namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
@@ -67,6 +67,7 @@ const Route: UtilityComponent = (props) => {
 					path,
 					namespace,
 					title,
+					tags,
 				},
 				true
 			)
