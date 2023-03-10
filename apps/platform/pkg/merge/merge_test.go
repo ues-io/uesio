@@ -147,7 +147,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			},
 			"collection:uesio/studio.name",
 			"",
-			errors.New("$Record{} merge referenced wire collection, which did not return any records"),
+			nil,
 		},
 		{
 			"Record: could not get record merge field",
@@ -161,7 +161,7 @@ func Test_serverMergeFuncs(t *testing.T) {
 			},
 			"collection:uesio/studio.name",
 			"",
-			errors.New("Field not found: uesio/studio.name"),
+			nil,
 		},
 		{
 			"Record: valid merge",

@@ -2,3 +2,4 @@ name: translation
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/translations/{translationname}
 view: uesio/studio.translation
 theme: uesio/studio.default
+title: "Translation: $Param{translationname}"

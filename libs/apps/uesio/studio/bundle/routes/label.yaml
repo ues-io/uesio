@@ -2,3 +2,4 @@ name: label
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/labels/{labelname}
 view: uesio/studio.label
 theme: uesio/studio.default
+title: "Label: $Param{labelname}"

@@ -2,3 +2,4 @@ name: login
 path: login
 view: uesio/core.login
 theme: uesio/studio.default
+title: Uesio - Login

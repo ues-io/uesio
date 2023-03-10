@@ -2,4 +2,4 @@ name: collectiondata
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/data/{namespace:\w*\/\w*}/{collectionname}
 view: uesio/studio.collectiondata
 theme: uesio/studio.default
-title: Manage Collection Data
+title: "Collection Data: $Param{collectionname}"
