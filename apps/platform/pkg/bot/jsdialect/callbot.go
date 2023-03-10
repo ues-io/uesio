@@ -54,8 +54,8 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 
 }
 
-func (bs *CallBotAPI) SendMessage(subject, body, from, to string) error {
-	adapter, err := notify.GetNotificationConnection(bs.Session)
+func (bs *CallBotAPI) SendMessage(notificationSource, subject, body, from, to string) error {
+	adapter, err := notify.GetNotificationConnection(notificationSource, bs.Session)
 	if err != nil {
 		return err
 	}
@@ -63,8 +63,8 @@ func (bs *CallBotAPI) SendMessage(subject, body, from, to string) error {
 	return adapter.SendMessage(subject, body, from, to)
 }
 
-func (bs *CallBotAPI) SendEmail(subject, body, from string, to, cc, bcc []string) error {
-	adapter, err := notify.GetNotificationConnection(bs.Session)
+func (bs *CallBotAPI) SendEmail(notificationSource, subject, body, from string, to, cc, bcc []string) error {
+	adapter, err := notify.GetNotificationConnection(notificationSource, bs.Session)
 	if err != nil {
 		return err
 	}

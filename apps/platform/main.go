@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bot"
 	"github.com/thecloudmasters/uesio/pkg/notify"
 	"github.com/thecloudmasters/uesio/pkg/notify/localnotify"
+	"github.com/thecloudmasters/uesio/pkg/notify/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/notify/ses"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -87,6 +88,7 @@ func init() {
 	// Notification Types
 	notify.RegisterNotificationAdapter("local", &localnotify.NotificationAdapter{})
 	notify.RegisterNotificationAdapter("ses", &ses.NotificationAdapter{})
+	notify.RegisterNotificationAdapter("sendgrid", &sendgrid.NotificationAdapter{})
 }
 
 func main() {

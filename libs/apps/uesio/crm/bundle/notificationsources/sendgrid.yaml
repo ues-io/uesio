@@ -1,0 +1,4 @@
+name: sendgrid
+type: sendgrid
+credentials: uesio/crm.sendgrid
+public: true

@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/notify"
 )
 
 type NotificationAdapter struct {
 }
 
-func (a *NotificationAdapter) GetNotificationConnection(credentials *adapt.Credentials) (notify.NotificationConnection, error) {
+func (a *NotificationAdapter) GetNotificationConnection(credentials *adapt.Credentials, ns *meta.NotificationSource) (notify.NotificationConnection, error) {
 	return &Connection{
 		credentials: credentials,
 	}, nil

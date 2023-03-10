@@ -12,7 +12,7 @@ import (
 )
 
 type NotificationAdapter interface {
-	GetNotificationConnection(*adapt.Credentials) (NotificationConnection, error)
+	GetNotificationConnection(*adapt.Credentials, *meta.NotificationSource) (NotificationConnection, error)
 }
 
 type NotificationConnection interface {
@@ -38,9 +38,12 @@ func RegisterNotificationAdapter(name string, adapter NotificationAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetNotificationConnection(session *sess.Session) (NotificationConnection, error) {
+func GetNotificationConnection(notificationSourceKey string, session *sess.Session) (NotificationConnection, error) {
 	// For now, we hardcode the notification source to be the built-in one.
-	ns, err := meta.NewNotificationSource("uesio/core.platform")
+	if notificationSourceKey == "" {
+		notificationSourceKey = "uesio/core.platform"
+	}
+	ns, err := meta.NewNotificationSource(notificationSourceKey)
 	if err != nil {
 		return nil, err
 	}
@@ -58,5 +61,5 @@ func GetNotificationConnection(session *sess.Session) (NotificationConnection, e
 		return nil, err
 	}
 
-	return notificationAdapter.GetNotificationConnection(credentials)
+	return notificationAdapter.GetNotificationConnection(credentials, ns)
 }

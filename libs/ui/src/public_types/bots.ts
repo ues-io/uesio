@@ -89,12 +89,14 @@ declare module "uesio/bots" {
 	interface AfterSaveBotApi extends BeforeSaveBotApi {
 		save: (collectionName: string, records: Record[]) => void
 		sendMessage: (
+			notificationSource: string,
 			subject: string,
 			body: string,
 			from: string,
 			to: string
 		) => void
 		sendEmail: (
+			notificationSource: string,
 			subject: string,
 			body: string,
 			from: string,
@@ -110,12 +112,14 @@ declare module "uesio/bots" {
 		params: BotParamsApi
 		save: (collectionName: string, records: Record[]) => void
 		sendMessage: (
+			notificationSource: string,
 			subject: string,
 			body: string,
 			from: string,
 			to: string
 		) => void
 		sendEmail: (
+			notificationSource: string,
 			subject: string,
 			body: string,
 			from: string,

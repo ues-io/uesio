@@ -171,6 +171,7 @@ collections:
   uesio/studio.filesource: true
   uesio/studio.integration: true
   uesio/studio.label: true
+  uesio/studio.notificationsource: true
   uesio/studio.permissionset: true
   uesio/studio.profile: true
   uesio/studio.route: true

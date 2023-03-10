@@ -49,8 +49,8 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func (as *AfterSaveAPI) SendMessage(subject, body, from, to string) error {
-	adapter, err := notify.GetNotificationConnection(as.session)
+func (as *AfterSaveAPI) SendMessage(notificationSource, subject, body, from, to string) error {
+	adapter, err := notify.GetNotificationConnection(notificationSource, as.session)
 	if err != nil {
 		return err
 	}
@@ -58,8 +58,8 @@ func (as *AfterSaveAPI) SendMessage(subject, body, from, to string) error {
 	return adapter.SendMessage(subject, body, from, to)
 }
 
-func (as *AfterSaveAPI) SendEmail(subject, body, from string, to, cc, bcc []string) error {
-	adapter, err := notify.GetNotificationConnection(as.session)
+func (as *AfterSaveAPI) SendEmail(notificationSource, subject, body, from string, to, cc, bcc []string) error {
+	adapter, err := notify.GetNotificationConnection(notificationSource, as.session)
 	if err != nil {
 		return err
 	}
