@@ -68,27 +68,27 @@ var ServerMergeFuncs = map[string]interface{}{
 		}
 
 		if wireData.Len() < 1 {
-			return nil, errors.New("$Record{} merge referenced wire " + wireName + ", which did not return any records")
+			return "", nil
 		}
 
-		var targetValue string
+		targetValue := ""
 
 		err := wireData.Loop(func(item meta.Item, index string) error {
 			if index == "0" {
 				fieldValue, err := item.GetField(fieldName)
 				if err != nil {
-					return err
+					return nil
 				}
 				stringValue, isString := fieldValue.(string)
 				if !isString {
-					return errors.New(fmt.Sprintf("field %s not found on Record", fieldName))
+					return nil
 				}
 				targetValue = stringValue
 			}
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return nil, nil
 		}
 
 		return targetValue, nil
