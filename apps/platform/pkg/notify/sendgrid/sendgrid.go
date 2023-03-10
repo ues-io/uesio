@@ -61,7 +61,7 @@ func (c *Connection) SendEmail(subject, body, from string, to, cc, bcc []string)
 	message.SetFrom(mail.NewEmail(from, from))
 	client := sendgrid.NewSendClient(apikey)
 	response, err := client.Send(message)
-	if err != nil {
+	if err != nil || response.StatusCode != 202 {
 		fmt.Println(response.StatusCode)
 		fmt.Println(response.Body)
 		fmt.Println(response.Headers)
