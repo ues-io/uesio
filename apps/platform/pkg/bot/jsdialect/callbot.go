@@ -3,6 +3,7 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/notify"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -51,4 +52,22 @@ func (bs *CallBotAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 
 	return collection, nil
 
+}
+
+func (bs *CallBotAPI) SendMessage(subject, body, from, to string) error {
+	adapter, err := notify.GetNotificationConnection(bs.Session)
+	if err != nil {
+		return err
+	}
+
+	return adapter.SendMessage(subject, body, from, to)
+}
+
+func (bs *CallBotAPI) SendEmail(subject, body, from string, to, cc, bcc []string) error {
+	adapter, err := notify.GetNotificationConnection(bs.Session)
+	if err != nil {
+		return err
+	}
+
+	return adapter.SendEmail(subject, body, from, to, cc, bcc)
 }

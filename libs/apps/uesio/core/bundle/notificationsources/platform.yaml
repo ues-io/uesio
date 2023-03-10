@@ -1,4 +1,4 @@
-name: platform_email
+name: platform
 type: ${uesio/core.platform_notificationsource_type}
 credentials: ${uesio/core.platform_notificationsource_credentials}
 public: true

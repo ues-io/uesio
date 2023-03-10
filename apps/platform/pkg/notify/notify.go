@@ -16,7 +16,8 @@ type NotificationAdapter interface {
 }
 
 type NotificationConnection interface {
-	Send(subject, body, target string) error
+	SendMessage(subject, body, from, to string) error
+	SendEmail(subject, body, from string, to, cc, bcc []string) error
 }
 
 var adapterMap = map[string]NotificationAdapter{}
@@ -37,8 +38,9 @@ func RegisterNotificationAdapter(name string, adapter NotificationAdapter) {
 	adapterMap[name] = adapter
 }
 
-func GetNotificationConnection(notificationSourceID string, session *sess.Session) (NotificationConnection, error) {
-	ns, err := meta.NewNotificationSource(notificationSourceID)
+func GetNotificationConnection(session *sess.Session) (NotificationConnection, error) {
+	// For now, we hardcode the notification source to be the built-in one.
+	ns, err := meta.NewNotificationSource("uesio/core.platform")
 	if err != nil {
 		return nil, err
 	}

@@ -49,14 +49,22 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 	return datasource.HandleSaveRequestErrors(requests, err)
 }
 
-func (as *AfterSaveAPI) Notify(source, subject, body, target string) error {
-	adapter, err := notify.GetNotificationConnection(source, as.session)
+func (as *AfterSaveAPI) SendMessage(subject, body, from, to string) error {
+	adapter, err := notify.GetNotificationConnection(as.session)
 	if err != nil {
 		return err
 	}
 
-	return adapter.Send(subject, body, target)
+	return adapter.SendMessage(subject, body, from, to)
+}
 
+func (as *AfterSaveAPI) SendEmail(subject, body, from string, to, cc, bcc []string) error {
+	adapter, err := notify.GetNotificationConnection(as.session)
+	if err != nil {
+		return err
+	}
+
+	return adapter.SendEmail(subject, body, from, to, cc, bcc)
 }
 
 func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {

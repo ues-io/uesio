@@ -1,5 +1,4 @@
 name: type
-type: SELECT
-selectList: uesio/studio.datasourcetypes
+type: TEXT
 label: Type
 required: true
