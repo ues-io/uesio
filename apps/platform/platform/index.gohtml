@@ -37,8 +37,8 @@
     {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
-            {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                {{- $packURL := getPackURL . $workspace $site -}}
+            {{- range .PreloadMetadata.ComponentPack -}}
+                {{- $packURL := getPackURL .GetKey $workspace $site -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
                 {{- end -}}
