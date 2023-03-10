@@ -13,19 +13,11 @@ interface CallSignal extends SignalDefinition {
 	namespace?: string
 }
 
-const BOT_TYPE_PREFIX = "listener:"
-
 const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher: async (signalInvocation: CallSignal, context: Context) => {
 			const { bot, params } = signalInvocation
-			// Previously, BOT was a special type of property, so the value would be "<namespace>.<name>",
-			// but now we use a regular METADATA property, so the value will be "<groupingValue>:<namespace>.<name>",
-			// so this check is to support both cases
-			const botKey = bot?.startsWith(BOT_TYPE_PREFIX)
-				? bot.substring(BOT_TYPE_PREFIX.length)
-				: bot
-			const [namespace, name] = parseKey(botKey)
+			const [namespace, name] = parseKey(bot)
 			const mergedParams = context.mergeStringMap(params)
 
 			try {
