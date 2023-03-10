@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	//_ "net/http/pprof"
@@ -33,14 +33,21 @@ func getFullItemParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
 
+func getFullItemOrTextParam(paramName string) string {
+	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
+}
+
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var itemParam = fmt.Sprintf("%s/{name}", nsParam)
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = nsParam + fmt.Sprintf("/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}")
-var groupingParam = getFullItemParam("grouping")
+var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}"
+
+// Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
+// so the regex here needs to support both
+var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
 var (
