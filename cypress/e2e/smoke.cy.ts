@@ -17,6 +17,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 		it("creates collection and fields", () => {
 			cy.visitRoute(workspaceBasePath)
 			cy.get('[id*=":uesio/io.tile:collections"]').click()
+			cy.title().should("eq", "Collections")
 			cy.url().should("contain", `${workspaceBasePath}/collections`)
 			cy.getByIdFragment("button", "new-collection").should("be.visible")
 			// Test the hotkey for creating a new collection
@@ -31,6 +32,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 				"contain",
 				`${workspaceBasePath}/collections/${username}/${appName}/animal`
 			)
+			cy.title().should("eq", "Collection: animal")
 			cy.getByIdFragment("table", "fields").scrollIntoView()
 			// Create a CHECKBOX field
 			cy.hotkey("n")

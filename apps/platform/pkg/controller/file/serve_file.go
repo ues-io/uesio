@@ -18,7 +18,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const CACHE_FOR_1_YEAR = "private, no-transform, max-age=31536000, s-maxage=31536000"
+const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
 
 func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 	w.Header().Set("content-type", "text/json")
@@ -61,7 +61,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
 	if fileRequest.TreatAsImmutable() {
-		w.Header().Set("Cache-Control", CACHE_FOR_1_YEAR)
+		w.Header().Set("Cache-Control", CacheFor1Year)
 	}
 
 	seeker, ok := stream.(io.ReadSeekCloser)

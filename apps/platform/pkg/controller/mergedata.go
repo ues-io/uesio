@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,9 +13,11 @@ import (
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/controller/file"
+	"github.com/thecloudmasters/uesio/pkg/merge"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 var indexTemplate, cssTemplate *template.Template
@@ -95,6 +98,78 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *routing.WorkspaceMergeDat
 	}
 }
 
+func MergeRouteData(mergeableText string, mergeData *merge.ServerMergeData) (string, error) {
+
+	// No need to merge if no merge syntax
+	if !strings.Contains(mergeableText, "{") {
+		return mergeableText, nil
+	}
+
+	template, err := templating.NewWithFuncs(mergeableText, templating.ForceErrorFunc, merge.ServerMergeFuncs)
+	if err != nil {
+		return "", err
+	}
+
+	return templating.Execute(template, mergeData)
+}
+
+func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata *routing.PreloadMetadata, session *sess.Session) (*routing.RouteMergeData, error) {
+
+	// Prepare wire data for server merge data
+	wireData := map[string]meta.Group{}
+	for _, entity := range *metadata.Wire {
+		wire := entity.(*adapt.LoadOp)
+		wireData[wire.WireName] = wire.Collection
+	}
+
+	serverMergeData := &merge.ServerMergeData{
+		Session:     session,
+		ParamValues: route.Params,
+		WireData:    wireData,
+	}
+
+	// Default if no text
+	routeTitle := route.Title
+	if routeTitle == "" {
+		routeTitle = "Uesio"
+	}
+
+	mergedRouteTitle, err := MergeRouteData(routeTitle, serverMergeData)
+	if err != nil {
+		return nil, err
+	}
+
+	var mergedRouteTags []meta.Tag
+
+	if len(route.Tags) > 0 {
+		for _, tag := range route.Tags {
+			mergedContent, err := MergeRouteData(tag.Content, serverMergeData)
+			if err == nil {
+				mergedRouteTags = append(mergedRouteTags, meta.Tag{
+					Type:     tag.Type,
+					Location: tag.Location,
+					Name:     tag.Name,
+					Content:  mergedContent,
+				})
+			} else {
+				return nil, err
+			}
+		}
+	}
+
+	return &routing.RouteMergeData{
+		View:         route.ViewRef,
+		Params:       route.Params,
+		Namespace:    route.Namespace,
+		Path:         route.Path,
+		Workspace:    GetWorkspaceMergeData(workspace),
+		Theme:        route.ThemeRef,
+		Dependencies: metadata,
+		Title:        mergedRouteTitle,
+		Tags:         mergedRouteTags,
+	}, err
+}
+
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
@@ -107,23 +182,16 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		devMode = true
 	}
 
-	routeTitle := route.Title
-	if routeTitle == "" {
-		routeTitle = "Uesio"
+	routingMergeData, err := GetRoutingMergeData(route, workspace, preload, session)
+	if err != nil {
+		msg := "Error getting route merge data: " + err.Error()
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
 	}
 
 	mergeData := routing.MergeData{
-		Route: &routing.RouteMergeData{
-			View:      route.ViewRef,
-			Params:    route.Params,
-			Namespace: route.Namespace,
-			Path:      route.Path,
-			Workspace: GetWorkspaceMergeData(workspace),
-			Theme:     route.ThemeRef,
-			Title:     routeTitle,
-			Tags:      route.Tags,
-		},
-		User: GetUserMergeData(session),
+		Route: routingMergeData,
+		User:  GetUserMergeData(session),
 		Site: &routing.SiteMergeData{
 			Name:      site.Name,
 			App:       site.GetAppFullName(),
@@ -136,7 +204,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 		StaticAssetsPath: file.GetAssetsPath(),
 	}
 
-	err := indexTemplate.Execute(w, mergeData)
+	err = indexTemplate.Execute(w, mergeData)
 	if err != nil {
 		msg := "Error Merging Template: " + err.Error()
 		http.Error(w, msg, http.StatusInternalServerError)
