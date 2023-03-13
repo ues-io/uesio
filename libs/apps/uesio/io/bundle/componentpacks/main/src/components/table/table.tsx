@@ -7,7 +7,7 @@ import {
 	definition,
 	context,
 } from "@uesio/ui"
-import { CSSInterpolation } from "@emotion/css"
+
 import omit from "lodash/omit"
 import partition from "lodash/partition"
 import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
@@ -56,6 +56,7 @@ type ColumnDefinition = {
 	longtext?: LongTextFieldOptions
 	label: string
 	components: definition.DefinitionList
+	width: string
 } & definition.BaseDefinition
 
 type RecordContext = component.ItemContext<wire.WireRecord>
@@ -295,21 +296,14 @@ const Table: definition.UC<TableDefinition> = (props) => {
 
 	const ColGroup = (
 		<colgroup>
-			{columnsToDisplay.map((c, i) => {
-				const styleDef = c["uesio.styles"] as
-					| Record<string, CSSInterpolation>
-					| undefined
-				return (
-					<col
-						key={i}
-						className={
-							styleDef
-								? styles.useUtilityStyles(styleDef, props).root
-								: ""
-						}
-					/>
-				)
-			})}
+			{columnsToDisplay.map(({ width }, i) => (
+				<col
+					key={i}
+					style={{
+						width,
+					}}
+				/>
+			))}
 		</colgroup>
 	)
 

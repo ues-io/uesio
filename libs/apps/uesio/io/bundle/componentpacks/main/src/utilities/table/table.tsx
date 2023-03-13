@@ -17,7 +17,7 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rowNumberFunc?: (index: number) => string
 	defaultActionFunc?: (row: R) => void
 	rowActionsFunc?: (row: R) => ReactNode
-	ColGroup: ReactNode
+	ColGroup?: ReactNode
 }
 
 const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
