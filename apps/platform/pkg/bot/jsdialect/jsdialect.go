@@ -30,8 +30,8 @@ const DefaultBeforeSaveBotBody = `function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
-	bot.deletes.get().forEach(function (recordId) {
-
+	bot.deletes.get().forEach(function (change) {
+		const recordId = change.getOld("uesio/core.id");
 	});
 }`
 
@@ -39,8 +39,8 @@ const DefaultAfterSaveBotBody = `function %s(bot) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
-	bot.deletes.get().forEach(function (recordId) {
-
+	bot.deletes.get().forEach(function (change) {
+		const recordId = change.getOld("uesio/core.id");
 	});
 }`
 
