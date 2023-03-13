@@ -1,9 +1,10 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, wire } from "@uesio/ui"
-
+import { Properties } from "csstype"
 export type LongTextFieldOptions = {
 	cols?: number
 	rows?: number
+	resize?: Properties["resize"]
 }
 
 interface TextAreaFieldProps extends definition.UtilityProps {
@@ -21,7 +22,8 @@ const TextAreaField: FunctionComponent<TextAreaFieldProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			input: {
-				resize: "none", // would be nicer to have this on implementation level
+				fontFamily: "inherit",
+				resize: options?.resize || "none",
 			},
 			readonly: {},
 		},

@@ -33,6 +33,7 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 			},
 			input: {
 				resize: "none",
+				fontFamily: "inherit",
 			},
 			readonly: {},
 			markdown: {},
