@@ -8,6 +8,7 @@ type SiteState = {
 	domain: string
 	subdomain: string
 	version: string
+	title?: string
 }
 
 const siteSlice = createSlice({

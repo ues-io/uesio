@@ -47,6 +47,19 @@ var ServerMergeFuncs = map[string]interface{}{
 		}
 		return nil, nil
 	},
+	"Site": func(m ServerMergeData, key string) (interface{}, error) {
+		siteInfo := m.Session.GetContextSite()
+		if siteInfo == nil {
+			return nil, nil
+		}
+		switch key {
+		case "title":
+			return siteInfo.Title, nil
+		case "name":
+			return siteInfo.Name, nil
+		}
+		return nil, nil
+	},
 	"Record": func(m ServerMergeData, key string) (interface{}, error) {
 
 		// Parse the key to support the following Record data merge scenarios

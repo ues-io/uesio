@@ -117,9 +117,11 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 
 	// Prepare wire data for server merge data
 	wireData := map[string]meta.Group{}
-	for _, entity := range *metadata.Wire {
-		wire := entity.(*adapt.LoadOp)
-		wireData[wire.WireName] = wire.Collection
+	if metadata != nil && metadata.Wire != nil {
+		for _, entity := range *metadata.Wire {
+			wire := entity.(*adapt.LoadOp)
+			wireData[wire.WireName] = wire.Collection
+		}
 	}
 
 	serverMergeData := &merge.ServerMergeData{
@@ -170,6 +172,17 @@ func GetRoutingMergeData(route *meta.Route, workspace *meta.Workspace, metadata 
 	}, err
 }
 
+func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
+	return &routing.SiteMergeData{
+		Name:      site.Name,
+		App:       site.GetAppFullName(),
+		Subdomain: site.Subdomain,
+		Domain:    site.Domain,
+		Version:   site.Bundle.GetVersionString(),
+		Title:     site.Title,
+	}
+}
+
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *routing.PreloadMetadata, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
 
@@ -190,15 +203,9 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, preload *rou
 	}
 
 	mergeData := routing.MergeData{
-		Route: routingMergeData,
-		User:  GetUserMergeData(session),
-		Site: &routing.SiteMergeData{
-			Name:      site.Name,
-			App:       site.GetAppFullName(),
-			Subdomain: site.Subdomain,
-			Domain:    site.Domain,
-			Version:   site.Bundle.GetVersionString(),
-		},
+		Route:            routingMergeData,
+		User:             GetUserMergeData(session),
+		Site:             GetSiteMergeData(site),
 		DevMode:          devMode,
 		PreloadMetadata:  preload,
 		StaticAssetsPath: file.GetAssetsPath(),

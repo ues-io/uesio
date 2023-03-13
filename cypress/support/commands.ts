@@ -134,6 +134,7 @@ function createApp(appName: string) {
 
 const login = () => {
 	cy.visitRoute("login")
+	cy.title().should("eq", "Uesio - Login")
 	if (useMockLogin) {
 		cy.clickButton("uesio/core.loginmock:mock-login-uesio")
 	} else {

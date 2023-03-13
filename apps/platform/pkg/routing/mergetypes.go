@@ -48,6 +48,7 @@ type SiteMergeData struct {
 	Version   string `json:"version"`
 	Domain    string `json:"domain"`
 	Subdomain string `json:"subdomain"`
+	Title     string `json:"title"`
 }
 
 type WorkspaceMergeData struct {

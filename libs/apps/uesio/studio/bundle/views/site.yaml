@@ -20,6 +20,7 @@ definition:
         uesio/core.id:
         uesio/studio.name:
         uesio/studio.bundle:
+        uesio/studio.title:
         uesio/studio.app:
           fields:
             uesio/core.id:
@@ -96,6 +97,8 @@ definition:
                                       fieldId: uesio/studio.name
                                   - uesio/io.field:
                                       fieldId: uesio/studio.bundle
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.title
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -172,6 +175,8 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
+              - uesio/io.field:
+                  fieldId: uesio/studio.title
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
