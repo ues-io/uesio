@@ -7,6 +7,7 @@ import {
 	definition,
 	context,
 } from "@uesio/ui"
+import { CSSInterpolation } from "@emotion/css"
 import omit from "lodash/omit"
 import partition from "lodash/partition"
 import { setEditMode, setReadMode, toggleMode } from "../../shared/mode"
@@ -292,6 +293,26 @@ const Table: definition.UC<TableDefinition> = (props) => {
 	const isDeletedFunc = (recordContext: RecordContext) =>
 		recordContext.item.isDeleted()
 
+	const ColGroup = (
+		<colgroup>
+			{columnsToDisplay.map((c, i) => {
+				const styleDef = c["uesio.styles"] as
+					| Record<string, CSSInterpolation>
+					| undefined
+				return (
+					<col
+						key={i}
+						className={
+							styleDef
+								? styles.useUtilityStyles(styleDef, props).root
+								: ""
+						}
+					/>
+				)
+			})}
+		</colgroup>
+	)
+
 	return (
 		<>
 			<IOTable
@@ -310,6 +331,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 				rowActionsFunc={rowActionsFunc}
 				columnHeaderFunc={columnHeaderFunc}
 				columnMenuFunc={columnMenuFunc}
+				ColGroup={ColGroup}
 				cellFunc={cellFunc}
 				isDeletedFunc={isDeletedFunc}
 				isSelectedFunc={isSelectedFunc}
