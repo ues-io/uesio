@@ -8,15 +8,17 @@ type DeletesAPI struct {
 	op *adapt.SaveOp
 }
 
-func (c *DeletesAPI) Get() []*DeleteAPI {
-	deleteAPIs := []*DeleteAPI{}
+func (d *DeletesAPI) Get() []string {
+	ids := []string{}
 
-	_ = c.op.LoopDeletes(func(delete *adapt.ChangeItem) error {
-		deleteAPIs = append(deleteAPIs, &DeleteAPI{
-			delete: delete,
-		})
-		return nil
-	})
+	for _, delete := range d.op.Deletes {
 
-	return deleteAPIs
+		idValue, err := delete.FieldChanges.GetField(adapt.ID_FIELD)
+		if err != nil {
+			continue
+		}
+		ids = append(ids, idValue.(string))
+	}
+
+	return ids
 }
