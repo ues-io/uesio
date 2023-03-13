@@ -2,6 +2,8 @@ package tsdialect
 
 import (
 	"fmt"
+	"io/ioutil"
+
 	esbuild "github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -10,7 +12,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/retrieve"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"io/ioutil"
 )
 
 func Logger(message string) {
@@ -34,8 +35,8 @@ function %s(bot: BeforeSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
-	bot.deletes.get().forEach(function (recordId) {
-
+	bot.deletes.get().forEach(function (deleteApi) {
+		const recordId = change.getOld("uesio/core.id")
 	});
 }`
 
@@ -45,8 +46,8 @@ function %s(bot: AfterSaveBotApi) {
 	bot.inserts.get().forEach(function (change) {
 		const recordId = change.get("uesio/core.id");
 	});
-	bot.deletes.get().forEach(function (recordId) {
-
+	bot.deletes.get().forEach(function (change) {
+		const recordId = change.getOld("uesio/core.id")
 	});
 }`
 

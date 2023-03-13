@@ -59,6 +59,9 @@ declare module "uesio/bots" {
 		order?: LoadOrder[]
 	}
 
+	interface DeleteApi {
+		getOld: (field: string) => FieldValue
+	}
 	interface ChangeApi {
 		get: (field: string) => FieldValue
 		getOld: (field: string) => FieldValue
@@ -75,7 +78,7 @@ declare module "uesio/bots" {
 	}
 
 	interface DeletesApi {
-		get: () => string[]
+		get: () => DeleteApi[]
 	}
 
 	interface BeforeSaveBotApi {
