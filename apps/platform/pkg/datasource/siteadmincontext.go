@@ -103,6 +103,9 @@ func querySite(value, field string, connection adapt.Connection) (*meta.Site, er
 					ID: "uesio/studio.name",
 				},
 				{
+					ID: "uesio/studio.title",
+				},
+				{
 					ID: "uesio/studio.app",
 					Fields: []adapt.LoadRequestField{
 						{

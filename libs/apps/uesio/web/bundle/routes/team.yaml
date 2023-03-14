@@ -1,4 +1,4 @@
 name: team
 path: team
 view: uesio/web.team
-title: Uesio - Team
+title: $Site{title} - Team

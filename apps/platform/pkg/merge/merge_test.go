@@ -116,6 +116,37 @@ func Test_serverMergeFuncs(t *testing.T) {
 			nil,
 			nil,
 		},
+		// $Site merges
+		{
+			"Site: valid site field",
+			"Site",
+			ServerMergeData{
+				Session: sess.New(&meta.User{
+					FirstName: "Luigi",
+					LastName:  "Vampa",
+				}, &meta.Site{
+					Title: "Acme Inc",
+				}),
+			},
+			"title",
+			"Acme Inc",
+			nil,
+		},
+		{
+			"Site: invalid field",
+			"Site",
+			ServerMergeData{
+				Session: sess.New(&meta.User{
+					FirstName: "Luigi",
+					LastName:  "Vampa",
+				}, &meta.Site{
+					Name: "acme",
+				}),
+			},
+			"foo",
+			nil,
+			nil,
+		},
 		// $Record merges
 		{
 			"Record: no wireName provided",

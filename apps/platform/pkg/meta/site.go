@@ -8,6 +8,7 @@ type Site struct {
 	bundleDef   *BundleDef `json:"-"`
 	Domain      string
 	Subdomain   string
+	Title       string         `json:"uesio/studio.title"`
 	Permissions *PermissionSet `json:"-"`
 }
 
