@@ -31,6 +31,7 @@ type FieldDefinition = {
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	placeholder?: string
+	readonly?: boolean
 	wrapperVariant: metadata.MetadataKey
 } & definition.BaseDefinition
 
@@ -77,6 +78,7 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		user,
 		number,
 		longtext,
+		readonly,
 	} = definition
 
 	const componentId = api.component.getComponentIdFromProps(props)
@@ -106,11 +108,9 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 		props
 	)
 
-	const readonly = mode === "READ"
-
 	const common = {
 		classes,
-		readonly,
+		readonly: readonly === true || mode === "READ",
 		path,
 		context,
 		mode,

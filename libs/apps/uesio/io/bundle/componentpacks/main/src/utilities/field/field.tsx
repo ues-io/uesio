@@ -35,6 +35,7 @@ interface FieldProps extends definition.UtilityProps {
 	value: wire.FieldValue
 	mode: context.FieldMode
 	placeholder?: string
+	readonly?: boolean
 	variant?: metadata.MetadataKey
 	fieldMetadata: collection.Field
 	fieldId: string
@@ -61,6 +62,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		longtext,
 		context,
 		displayAs,
+		readonly,
 		setValue,
 		mode,
 		placeholder,
@@ -83,6 +85,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		fieldId,
 		id,
 		record,
+		readonly,
 		setValue,
 		variant,
 		value,

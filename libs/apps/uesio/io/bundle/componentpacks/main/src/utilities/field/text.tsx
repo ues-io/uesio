@@ -5,15 +5,23 @@ interface TextFieldProps extends definition.UtilityProps {
 	setValue?: (value: wire.FieldValue) => void
 	value: wire.FieldValue
 	mode?: context.FieldMode
+	readonly?: boolean
 	placeholder?: string
 	password?: boolean
 	focusOnRender?: boolean
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, mode, placeholder, password, id, focusOnRender } = props
+	const {
+		setValue,
+		mode,
+		placeholder,
+		password,
+		readonly,
+		id,
+		focusOnRender,
+	} = props
 	const value = props.value as string
-	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
 			input: {
@@ -32,7 +40,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 			value={value || ""}
 			placeholder={placeholder}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
-			disabled={readonly}
+			disabled={readonly || mode === "READ"}
 			onChange={(event) => setValue?.(event.target.value)}
 			ref={(input: HTMLInputElement) => focusOnRender && input?.focus()}
 		/>
