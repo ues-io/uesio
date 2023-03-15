@@ -50,6 +50,7 @@ type WireEvent<T = WireEventType> =
 	| {
 			type: Exclude<T, "onChange">
 			signals?: SignalDefinition[]
+			conditions?: DisplayCondition[]
 	  }
 
 type WireDefinitionBase = {

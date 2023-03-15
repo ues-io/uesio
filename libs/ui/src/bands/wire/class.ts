@@ -193,10 +193,13 @@ class Wire {
 			.filter((event) => {
 				// Is it the event we want?
 				if (event.type !== type) return false
-				// Is it a changeEvent? if so we need to do more checks
-				if (event.type !== "onChange") return true
-				// Does the changed field match the defined field?
-				if (field && !event.fields?.includes(field)) return false
+				// Is it a changeEvent? if so we need check if we care about the changed field
+				if (
+					event.type === "onChange" &&
+					field &&
+					!event.fields?.includes(field)
+				)
+					return false
 				return shouldAll(event.conditions, context)
 			})
 			.forEach((event) => {
