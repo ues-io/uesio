@@ -5,7 +5,10 @@ import PropertiesForm from "../../../../helpers/propertiesform"
 import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
 import { getHomeSection } from "../../../../api/propertysection"
-import { DisplayConditionProperties } from "../../../../properties/conditionproperties"
+import {
+	DisplayConditionProperties,
+	getDisplayConditionLabel,
+} from "../../../../properties/conditionproperties"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -83,7 +86,9 @@ const WireProperties: definition.UtilityComponent = (props) => {
 				}) => {
 					if (event.type) {
 						return `${event.type}${
-							event.fields ? ` | ${event.fields.join(", ")}` : ""
+							event.fields?.length
+								? ` | ${event.fields.join(", ")}`
+								: ""
 						}`
 					}
 					return "[No Type]"
@@ -105,6 +110,10 @@ const WireProperties: definition.UtilityComponent = (props) => {
 							{
 								value: "onSaveSuccess",
 								label: "Wire saved (successfully)",
+							},
+							{
+								value: "onSaveError",
+								label: "Wire saved (with errors)",
 							},
 							{
 								value: "onCancel",
@@ -132,18 +141,10 @@ const WireProperties: definition.UtilityComponent = (props) => {
 						items: {
 							title: "Condition",
 							addLabel: "Add Condition",
-							displayTemplate: (condition: {
-								field: string
-								value: string
-								operator: string
-							}) => {
-								if (condition.field) {
-									return `${condition.field} ${
-										condition.operator || "[No Operator]"
-									} ${condition.value || "[No Value]"}`
-								}
-								return "[No Condition]"
-							},
+							displayTemplate: (record: wire.PlainWireRecord) =>
+								getDisplayConditionLabel(
+									record as component.DisplayCondition
+								),
 							defaultDefinition: { operator: "EQUALS" },
 							properties: DisplayConditionProperties,
 						},
@@ -159,7 +160,7 @@ const WireProperties: definition.UtilityComponent = (props) => {
 				sections: [
 					{
 						type: "CUSTOM",
-						id: "wireevensthome",
+						id: "wireeventhome",
 						label: "",
 						icon: "home",
 						properties: ["type", "fields"],
