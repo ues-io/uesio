@@ -98,9 +98,10 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 		url := fmt.Sprintf("task/%v?include_subtasks=false", valueID)
 		ldata := &Task{}
 		err = webIntegration.RunAction("get", &web.GetActionOptions{
-			URL:   url,
-			Cache: true,
-		}, nil, ldata)
+			URL:          url,
+			Cache:        true,
+			ResponseData: ldata,
+		})
 		if err != nil {
 			return err
 		}
@@ -111,9 +112,10 @@ func TaskLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess.Se
 
 		url := fmt.Sprintf("list/%v/task?archived=false&page=0&subtasks=false", valueID)
 		err = webIntegration.RunAction("get", &web.GetActionOptions{
-			URL:   url,
-			Cache: true,
-		}, nil, data)
+			URL:          url,
+			Cache:        true,
+			ResponseData: data,
+		})
 		if err != nil {
 			return err
 		}

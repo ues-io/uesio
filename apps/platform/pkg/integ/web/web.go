@@ -16,8 +16,9 @@ import (
 )
 
 type GetActionOptions struct {
-	URL   string
-	Cache bool
+	URL          string
+	Cache        bool
+	ResponseData interface{}
 }
 
 type WebIntegration struct {
@@ -37,18 +38,18 @@ type WebIntegrationConnection struct {
 	credentials *adapt.Credentials
 }
 
-func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions, requestPayload, responseData interface{}) error {
+func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) error {
 
 	switch actionName {
 	case "get":
-		return wic.Get(requestOptions, requestPayload, responseData)
+		return wic.Get(requestOptions)
 	}
 
 	return errors.New("Invalid Action Name for Web Integration")
 
 }
 
-func (wic *WebIntegrationConnection) Get(requestOptions, requestPayload, responseData interface{}) error {
+func (wic *WebIntegrationConnection) Get(requestOptions interface{}) error {
 	options, ok := requestOptions.(*GetActionOptions)
 	if !ok {
 		return errors.New("Invalid options provided to web integration")
@@ -59,7 +60,7 @@ func (wic *WebIntegrationConnection) Get(requestOptions, requestPayload, respons
 	if options.Cache {
 		cachedResponse, gotCache := localcache.GetCacheEntry("web-request", fullURL)
 		if gotCache {
-			return json.Unmarshal(cachedResponse.([]byte), responseData)
+			return json.Unmarshal(cachedResponse.([]byte), options.ResponseData)
 		}
 	}
 
@@ -97,11 +98,11 @@ func (wic *WebIntegrationConnection) Get(requestOptions, requestPayload, respons
 	}
 
 	if options.Cache {
-		err := json.NewDecoder(resp.Body).Decode(responseData)
+		err := json.NewDecoder(resp.Body).Decode(options.ResponseData)
 		if err != nil {
 			return err
 		}
-		dataToCache, err := json.Marshal(responseData)
+		dataToCache, err := json.Marshal(options.ResponseData)
 		if err != nil {
 			return err
 		}
@@ -109,5 +110,5 @@ func (wic *WebIntegrationConnection) Get(requestOptions, requestPayload, respons
 		return nil
 	}
 
-	return json.NewDecoder(resp.Body).Decode(responseData)
+	return json.NewDecoder(resp.Body).Decode(options.ResponseData)
 }

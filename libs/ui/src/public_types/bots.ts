@@ -91,20 +91,12 @@ declare module "uesio/bots" {
 
 	interface AfterSaveBotApi extends BeforeSaveBotApi {
 		save: (collectionName: string, records: Record[]) => void
-		sendMessage: (
-			subject: string,
-			body: string,
-			from: string,
-			to: string
+		runIntegrationAction: (
+			integration: string,
+			action: string,
+			options: unknown
 		) => void
-		sendEmail: (
-			subject: string,
-			body: string,
-			from: string,
-			to: string[],
-			cc: string[],
-			bcc: string[]
-		) => void
+		getConfigValue: (configValueKey: string) => string
 	}
 
 	interface ListenerBotApi {
@@ -112,20 +104,12 @@ declare module "uesio/bots" {
 		load: (loadRequest: LoadRequest) => Record[]
 		params: BotParamsApi
 		save: (collectionName: string, records: Record[]) => void
-		sendMessage: (
-			subject: string,
-			body: string,
-			from: string,
-			to: string
+		runIntegrationAction: (
+			integration: string,
+			action: string,
+			options: unknown
 		) => void
-		sendEmail: (
-			subject: string,
-			body: string,
-			from: string,
-			to: string[],
-			cc: string[],
-			bcc: string[]
-		) => void
+		getConfigValue: (configValueKey: string) => string
 	}
 
 	export type {

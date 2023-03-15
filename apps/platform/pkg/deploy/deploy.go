@@ -42,6 +42,7 @@ var ORDERED_ITEMS = [...]string{
 	"useraccesstokens",
 	"signupmethods",
 	"secrets",
+	"configvalues",
 	"credentials",
 	"integrations",
 }
