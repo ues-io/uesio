@@ -49,7 +49,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 
 	const selectedPath = useSelectedPath(context)
 	const listItemPath = parentPath.addLocal(`${index}`)
-	const selected = selectedPath && selectedPath.equals(listItemPath)
+	const selected = selectedPath && selectedPath.startsWith(listItemPath)
 
 	return (
 		<PropNodeTag
