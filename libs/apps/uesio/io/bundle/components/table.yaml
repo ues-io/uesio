@@ -44,11 +44,11 @@ sections:
       - uesio.id
       - mode
       - pagesize
-  - label: Fields
-    id: fields
-    type: CUSTOM
+  - type: CUSTOM
+    label: Columns
+    id: columns
     viewDefinition:
-    # TODO: Custom component for Table Fields / sub-components
+      - uesio/builder.tablecolumns: {}
   - type: STYLES
   - type: DISPLAY
 signals:
