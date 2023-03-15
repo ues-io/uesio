@@ -94,6 +94,10 @@ export default async (context: Context, wires?: string[]) => {
 	}
 
 	const errors = response.wires.flatMap(getErrorStrings)
+	// Run wire events
 
+	wiresToSave.forEach((w) =>
+		context.getWire(w.name)?.handleEvent("onSaveSuccess", context)
+	)
 	return errors.length > 0 ? context.addErrorFrame(errors) : context
 }

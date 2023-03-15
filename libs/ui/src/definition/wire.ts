@@ -7,6 +7,7 @@ import {
 import { SignalDefinition } from "./signal"
 import { WireConditionState } from "../bands/wire/conditions/conditions"
 import { MetadataKey } from "../bands/builder/types"
+import { DisplayCondition } from "../componentexports"
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
 }
@@ -30,9 +31,26 @@ type OnChangeEvent = {
 	signals: SignalDefinition[]
 }
 
-type WireEvents = {
-	onChange: OnChangeEvent[]
-}
+// Todo: add all wire signal types
+type WireEventType = "onLoadSuccess" | "onSaveSuccess" | "onChange" | "onCancel"
+
+type WireEvents =
+	| {
+			onChange: OnChangeEvent[]
+	  }
+	| WireEvent[]
+
+type WireEvent<T = WireEventType> =
+	| {
+			type: "onChange"
+			fields?: string[]
+			conditions?: DisplayCondition[]
+			signals?: SignalDefinition[]
+	  }
+	| {
+			type: Exclude<T, "onChange">
+			signals?: SignalDefinition[]
+	  }
 
 type WireDefinitionBase = {
 	defaults?: WireDefault[]
@@ -41,7 +59,7 @@ type WireDefinitionBase = {
 		create?: boolean
 	}
 	viewOnly?: boolean
-	events?: WireEvents
+	events?: WireEvent
 }
 
 type ViewOnlyWireDefinition = WireDefinitionBase & {
@@ -78,6 +96,8 @@ export {
 	WireDefinition,
 	WireDefinitionMap,
 	WireEvents,
+	WireEvent,
+	WireEventType,
 	WireFieldDefinition,
 	WireFieldDefinitionMap,
 	RegularWireDefinition,

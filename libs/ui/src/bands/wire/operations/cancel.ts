@@ -5,5 +5,9 @@ import { cancel, getFullWireId, getWiresFromDefinitonOrContext } from ".."
 export default (context: Context, wirename: string) => {
 	const wire = getWiresFromDefinitonOrContext(wirename, context)[0]
 	dispatch(cancel({ entity: getFullWireId(wire.view, wire.name) }))
+
+	// Run wire events
+	context.getWire(wire.name)?.handleEvent("onCancel", context)
+
 	return context
 }
