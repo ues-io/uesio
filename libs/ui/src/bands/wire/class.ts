@@ -22,7 +22,6 @@ import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "@reduxjs/toolkit"
-import { isArray } from "lodash"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -176,13 +175,12 @@ class Wire {
 		if (!events) return
 
 		// Backwards support
-		if (!isArray(events)) {
+		if (!Array.isArray(events)) {
 			if (!field || !context) return
 			const changeEvents = events.onChange
 
 			if (changeEvents) {
 				for (const changeEvent of changeEvents) {
-					console.log("running!")
 					if (changeEvent.field !== field) continue
 					runManyThrottled(changeEvent.signals, context)
 				}
@@ -191,20 +189,19 @@ class Wire {
 		}
 
 		// Todo: filter out events that can cause an infinite loop
-		const filteredEvents = events.filter((event) => {
-			// Is it the event we want?
-			if (event.type !== type) return false
-			// Is it a changeEvent? if so we need to do more checks
-			if (event.type !== "onChange") return true
-			// Does the changed field match the defined field?
-			if (field && !event.fields?.includes(field)) return false
-
-			//
-			return shouldAll(event.conditions, context)
-		})
-		for (const event of filteredEvents) {
-			runManyThrottled(event?.signals || [], context)
-		}
+		events
+			.filter((event) => {
+				// Is it the event we want?
+				if (event.type !== type) return false
+				// Is it a changeEvent? if so we need to do more checks
+				if (event.type !== "onChange") return true
+				// Does the changed field match the defined field?
+				if (field && !event.fields?.includes(field)) return false
+				return shouldAll(event.conditions, context)
+			})
+			.forEach((event) => {
+				runManyThrottled(event?.signals || [], context)
+			})
 	}
 }
 
