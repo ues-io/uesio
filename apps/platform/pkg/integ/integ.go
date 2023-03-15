@@ -1,6 +1,7 @@
 package integ
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -15,7 +16,7 @@ type IntegrationType interface {
 }
 
 type IntegrationConnection interface {
-	RunAction(actionName string, requestOptions, requestPayload, responseData interface{}) error
+	RunAction(actionName string, requestOptions interface{}) error
 }
 
 var integrationTypeMap = map[string]IntegrationType{}
@@ -52,4 +53,17 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 	}
 
 	return integrationType.GetIntegrationConnection(integration, session, credentials)
+}
+
+func HyrdateOptions(optionsInput interface{}, optionsOutput interface{}) error {
+
+	// This isn't the prettiest thing in the world, but it works for getting
+	// Arbitrary map[string]interface{} data into a struct.
+	jsonbody, err := json.Marshal(optionsInput)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(jsonbody, &optionsOutput)
+
 }

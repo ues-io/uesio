@@ -59,9 +59,10 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 	}
 
 	err = webIntegration.RunAction("get", &web.GetActionOptions{
-		URL:   url,
-		Cache: true,
-	}, nil, data)
+		URL:          url,
+		Cache:        true,
+		ResponseData: data,
+	})
 	if err != nil {
 		return err
 	}
