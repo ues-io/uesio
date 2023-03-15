@@ -3,19 +3,19 @@ package integ
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 type IntegrationType interface {
-	Exec(options *IntegrationOptions, requestData, responseData interface{}, integration *meta.Integration, session *sess.Session) error
+	GetIntegrationConnection(*meta.Integration, *sess.Session, *adapt.Credentials) (IntegrationConnection, error)
 }
 
-type IntegrationOptions struct {
-	URL   string
-	Verb  string
-	Cache bool
+type IntegrationConnection interface {
+	RunAction(actionName string, requestOptions, requestPayload, responseData interface{}) error
 }
 
 var integrationTypeMap = map[string]IntegrationType{}
@@ -32,22 +32,24 @@ func RegisterConfigStore(name string, integrationType IntegrationType) {
 	integrationTypeMap[name] = integrationType
 }
 
-func Exec(options *IntegrationOptions, requestData, responseData interface{}, integration *meta.Integration, session *sess.Session) error {
-	integrationType, err := GetIntegrationType(integration.Type)
+func GetIntegration(integrationID string, session *sess.Session) (IntegrationConnection, error) {
+	integration, err := meta.NewIntegration(integrationID)
 	if err != nil {
-		return err
-	}
-	return integrationType.Exec(options, requestData, responseData, integration, session)
-}
-
-func ExecByKey(options *IntegrationOptions, requestData, responseData interface{}, key string, session *sess.Session) error {
-	integration, err := meta.NewIntegration(key)
-	if err != nil {
-		return err
+		return nil, err
 	}
 	err = bundle.Load(integration, session, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return Exec(options, requestData, responseData, integration, session)
+
+	integrationType, err := GetIntegrationType(integration.Type)
+	if err != nil {
+		return nil, err
+	}
+	credentials, err := creds.GetCredentials(integration.Credentials, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return integrationType.GetIntegrationConnection(integration, session, credentials)
 }

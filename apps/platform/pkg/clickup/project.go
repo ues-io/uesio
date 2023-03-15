@@ -6,6 +6,7 @@ import (
 	"github.com/teris-io/shortid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -52,10 +53,15 @@ func ProjectLoadBot(op *adapt.LoadOp, connection adapt.Connection, session *sess
 
 	data := &ProjectResponse{}
 
-	err = integ.ExecByKey(&integ.IntegrationOptions{
+	webIntegration, err := integ.GetIntegration("tcm/timetracker.clickup", session)
+	if err != nil {
+		return err
+	}
+
+	err = webIntegration.RunAction("get", &web.GetActionOptions{
 		URL:   url,
 		Cache: true,
-	}, nil, data, "tcm/timetracker.clickup", session)
+	}, nil, data)
 	if err != nil {
 		return err
 	}
