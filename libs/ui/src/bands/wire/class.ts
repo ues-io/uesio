@@ -1,7 +1,7 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
 import { dispatch } from "../../store/store"
-import { runManyThrottled } from "../../signals/signals"
+import { runMany } from "../../signals/signals"
 import { shouldAll } from "../../componentexports"
 import { WireEventType } from "../../definition/wire"
 import {
@@ -182,7 +182,7 @@ class Wire {
 			if (changeEvents) {
 				for (const changeEvent of changeEvents) {
 					if (changeEvent.field !== field) continue
-					runManyThrottled(changeEvent.signals, context)
+					runMany(changeEvent.signals, context)
 				}
 			}
 			return
@@ -200,7 +200,7 @@ class Wire {
 				return shouldAll(event.conditions, context)
 			})
 			.forEach((event) => {
-				runManyThrottled(event?.signals || [], context)
+				runMany(event?.signals || [], context)
 			})
 	}
 }
