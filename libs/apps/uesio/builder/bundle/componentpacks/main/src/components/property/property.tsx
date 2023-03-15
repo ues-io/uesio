@@ -30,12 +30,13 @@ const getFormFieldFromProperty = (
 	context: context.Context,
 	path: FullPath
 ) => {
-	const { name, type, displayConditions } = property
+	const { name, type, displayConditions, readonly } = property
 	const baseFieldDef = {
 		fieldId: name,
 		"uesio.variant": "uesio/builder.propfield",
 		"uesio.display": displayConditions,
 		labelPosition: "left",
+		readonly,
 	}
 	switch (type) {
 		case "METADATA":

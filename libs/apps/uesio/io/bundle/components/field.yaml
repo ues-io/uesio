@@ -16,6 +16,9 @@ variants:
   - uesio/io.customselectfield:uesio/io.default
   - uesio/io.menu:uesio/io.default
 properties:
+  - name: fieldId
+    type: TEXT
+    label: Field Id
   - name: label
     type: TEXT
     label: Label
@@ -51,9 +54,6 @@ properties:
         value: VIDEO
       - label: PREVIEW
         value: PREVIEW
-  - name: id
-    type: TEXT
-    label: ID
 signals:
   UPLOAD_FILE:
     label: Upload File
