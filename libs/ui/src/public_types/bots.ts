@@ -96,6 +96,7 @@ declare module "uesio/bots" {
 			action: string,
 			options: unknown
 		) => void
+		getConfigValue: (configValueKey: string) => string
 	}
 
 	interface ListenerBotApi {

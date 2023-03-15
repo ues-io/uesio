@@ -55,7 +55,7 @@ func GetIntegration(integrationID string, session *sess.Session) (IntegrationCon
 	return integrationType.GetIntegrationConnection(integration, session, credentials)
 }
 
-func HyrdateOptions(optionsInput interface{}, optionsOutput interface{}) error {
+func HydrateOptions(optionsInput interface{}, optionsOutput interface{}) error {
 
 	// This isn't the prettiest thing in the world, but it works for getting
 	// Arbitrary map[string]interface{} data into a struct.

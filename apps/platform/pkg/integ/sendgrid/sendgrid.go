@@ -52,7 +52,7 @@ func (sgic *SendGridIntegrationConnection) RunAction(actionName string, requestO
 func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{}) error {
 
 	options := &SendEmailOptions{}
-	err := integ.HyrdateOptions(requestOptions, options)
+	err := integ.HydrateOptions(requestOptions, options)
 	if err != nil {
 		return err
 	}
