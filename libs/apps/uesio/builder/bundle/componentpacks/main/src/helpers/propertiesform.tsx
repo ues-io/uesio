@@ -194,7 +194,8 @@ const getWireFieldFromPropertyDef = (
 						name,
 						wireDefinition !== undefined
 							? getWireFieldSelectOptions(wireDefinition)
-							: []
+							: [],
+						type === "FIELDS" ? undefined : ""
 					),
 				}
 			)
