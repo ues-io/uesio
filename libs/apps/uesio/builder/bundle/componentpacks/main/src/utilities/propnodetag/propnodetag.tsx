@@ -37,11 +37,6 @@ const PropNodeTag: FC<Props> = (props) => {
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					useFirstRelativeParent
-					styles={{
-						popper: {
-							width: "350px",
-						},
-					}}
 				>
 					{popperChildren}
 				</Popper>
