@@ -212,10 +212,13 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 				UniqueKey: namespace,
 			},
 		},
-		LoginRoute:    by.LoginRoute,
-		HomeRoute:     by.HomeRoute,
-		PublicProfile: by.PublicProfile,
-		DefaultTheme:  by.DefaultTheme,
+		AppSettings: meta.AppSettings{
+			LoginRoute:    by.LoginRoute,
+			HomeRoute:     by.HomeRoute,
+			PublicProfile: by.PublicProfile,
+			DefaultTheme:  by.DefaultTheme,
+			Favicon:       by.Favicon,
+		},
 	}
 
 	// We set the valid fields here because it's an update and we don't want
@@ -227,6 +230,7 @@ func Deploy(body io.ReadCloser, session *sess.Session) error {
 			"uesio/studio.homeroute":     true,
 			"uesio/studio.publicprofile": true,
 			"uesio/studio.defaulttheme":  true,
+			"uesio/studio.favicon":       true,
 			"uesio/studio.app":           true,
 		},
 	})
