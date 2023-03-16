@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -82,7 +81,6 @@ func serve(cmd *cobra.Command, args []string) {
 
 	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.HandleFunc("/favicon.ico", file.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -125,6 +123,8 @@ func serve(cmd *cobra.Command, args []string) {
 		middleware.Authenticate,
 		middleware.LogRequestHandler,
 	)
+
+	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
 
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"

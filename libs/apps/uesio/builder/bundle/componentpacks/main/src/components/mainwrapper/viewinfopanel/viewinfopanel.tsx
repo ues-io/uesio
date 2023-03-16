@@ -69,42 +69,39 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 	]
 
 	return (
-		<div className={props.className}>
-			<PropertiesForm
-				id="propertiespanel"
-				context={context}
-				properties={properties}
-				sections={[
-					{
-						id: "components",
-						label: "Components",
-						type: "CUSTOM",
-						viewDefinition: [
-							{ "uesio/builder.componentspanel": {} },
-						],
-					},
-					{
-						id: "wires",
-						label: "Wires",
-						type: "CUSTOM",
-						properties: ["wires"],
-					},
-					{
-						id: "panels",
-						label: "Panels",
-						type: "CUSTOM",
-						properties: ["panels"],
-					},
-					{
-						id: "params",
-						label: "Params",
-						type: "CUSTOM",
-						properties: ["params"],
-					},
-				]}
-				path={path}
-			/>
-		</div>
+		<PropertiesForm
+			id="propertiespanel"
+			context={context}
+			properties={properties}
+			className={props.className}
+			sections={[
+				{
+					id: "components",
+					label: "Components",
+					type: "CUSTOM",
+					viewDefinition: [{ "uesio/builder.componentspanel": {} }],
+				},
+				{
+					id: "wires",
+					label: "Wires",
+					type: "CUSTOM",
+					properties: ["wires"],
+				},
+				{
+					id: "panels",
+					label: "Panels",
+					type: "CUSTOM",
+					properties: ["panels"],
+				},
+				{
+					id: "params",
+					label: "Params",
+					type: "CUSTOM",
+					properties: ["params"],
+				},
+			]}
+			path={path}
+		/>
 	)
 }
 

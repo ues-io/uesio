@@ -83,15 +83,9 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 
 }
 
-func ServeFile(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-	resourceVersion := vars["version"]
+func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-
-	file := meta.NewBaseFile(namespace, name)
 
 	err := bundle.Load(file, session, nil)
 	if err != nil {
@@ -110,8 +104,18 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	respondFile(w, r, &FileRequest{
 		Path:         file.Path,
 		LastModified: time.Unix(file.UpdatedAt, 0),
-		Namespace:    namespace,
-		Version:      resourceVersion,
+		Namespace:    file.Namespace,
+		Version:      version,
 	}, stream)
+}
 
+func ServeFile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	namespace := vars["namespace"]
+	name := vars["name"]
+	resourceVersion := vars["version"]
+
+	file := meta.NewBaseFile(namespace, name)
+
+	ServeFileContent(file, resourceVersion, w, r)
 }

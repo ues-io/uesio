@@ -1,15 +1,12 @@
 package meta
 
 type Workspace struct {
-	BuiltIn       `yaml:",inline"`
-	Name          string         `json:"uesio/studio.name"`
-	LoginRoute    string         `json:"uesio/studio.loginroute"`
-	HomeRoute     string         `json:"uesio/studio.homeroute"`
-	DefaultTheme  string         `json:"uesio/studio.defaulttheme"`
-	PublicProfile string         `json:"uesio/studio.publicprofile"`
-	App           *App           `json:"uesio/studio.app"`
-	Permissions   *PermissionSet `json:"-"`
-	bundleDef     *BundleDef
+	BuiltIn     `yaml:",inline"`
+	Name        string `json:"uesio/studio.name"`
+	AppSettings `yaml:",inline"`
+	App         *App           `json:"uesio/studio.app"`
+	Permissions *PermissionSet `json:"-"`
+	bundleDef   *BundleDef
 }
 
 func (w *Workspace) GetAppFullName() string {

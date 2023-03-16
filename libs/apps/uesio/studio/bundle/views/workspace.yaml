@@ -15,6 +15,7 @@ definition:
         uesio/studio.loginroute:
         uesio/studio.publicprofile:
         uesio/studio.defaulttheme:
+        uesio/studio.favicon:
       conditions:
         - field: uesio/core.uniquekey
           value: $Param{app}:$Param{workspacename}
@@ -112,6 +113,10 @@ definition:
                                             fieldId: uesio/studio.defaulttheme
                                             metadataType: "THEME"
                                             label: "Default Theme"
+                                        - uesio/builder.metadatafield:
+                                            fieldId: uesio/studio.favicon
+                                            metadataType: "FILE"
+                                            label: "Favicon"
                             - uesio/io.box:
                                 uesio.variant: uesio/io.section
                                 components:
@@ -247,6 +252,10 @@ definition:
                   fieldId: uesio/studio.defaulttheme
                   metadataType: "THEME"
                   label: "Default Theme"
+              - uesio/builder.metadatafield:
+                  fieldId: uesio/studio.favicon
+                  metadataType: "FILE"
+                  label: "Favicon"
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary

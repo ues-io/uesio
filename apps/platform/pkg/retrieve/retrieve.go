@@ -63,7 +63,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 		}
 		err = bs.GetAllItems(group, namespace, version, nil, session, nil)
 		if err != nil {
-			return err
+			return errors.New("Failed to retrieve items of type: " + metadataType + ": " + err.Error())
 		}
 
 		err = group.Loop(func(item meta.Item, _ string) error {
@@ -72,7 +72,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 			f, err := create(filepath.Join(metadataType, path))
 			if err != nil {
-				return err
+				return errors.New("Failed to create " + metadataType + " file: " + path + ": " + err.Error())
 			}
 			defer f.Close()
 
@@ -80,7 +80,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 			encoder.SetIndent(2)
 			err = encoder.Encode(item)
 			if err != nil {
-				return err
+				return errors.New("Failed to encode metadata item of type " + metadataType + " into YAML: " + path + ": " + err.Error())
 			}
 
 			attachableItem, isAttachable := item.(meta.AttachableItem)
@@ -120,7 +120,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 
 	f, err := create("bundle.yaml")
 	if err != nil {
-		return err
+		return errors.New("Failed to create bundle.yaml file: " + err.Error())
 	}
 	defer f.Close()
 
@@ -128,7 +128,7 @@ func RetrieveBundle(create WriterCreator, namespace, version string, bs bundlest
 	encoder.SetIndent(2)
 	err = encoder.Encode(by)
 	if err != nil {
-		return err
+		return errors.New("Failed to encode bundle.yaml file into YAML: " + err.Error())
 	}
 
 	return nil

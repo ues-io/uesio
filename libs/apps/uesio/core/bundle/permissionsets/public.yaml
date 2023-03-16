@@ -18,6 +18,7 @@ routes:
   uesio/core.signuplanding: true
 files:
   uesio/core.logo: true
+  uesio/core.favicon: true
   uesio/core.logowhite: true
   uesio/core.logosmall: true
   uesio/core.splash: true

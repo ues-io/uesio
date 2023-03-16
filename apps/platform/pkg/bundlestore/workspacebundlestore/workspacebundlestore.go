@@ -292,6 +292,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.HomeRoute = workspace.HomeRoute
 	by.LoginRoute = workspace.LoginRoute
 	by.DefaultTheme = workspace.DefaultTheme
+	by.Favicon = workspace.Favicon
 
 	licenseMap, err := licensing.GetLicenses(namespace, connection)
 	if err != nil {
