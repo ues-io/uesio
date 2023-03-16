@@ -31,6 +31,8 @@ const widthProperty = {
 	label: "Column Width",
 }
 
+const TABLE_TYPE = "uesio/io.table"
+
 const TableColumns: definition.UC = (props) => {
 	const { context } = props
 
@@ -39,15 +41,20 @@ const TableColumns: definition.UC = (props) => {
 	)
 
 	let selectedPath = useSelectedPath(context)
-	let localPath, tempPath
+	let localPath
+	let tempPath = selectedPath
 	// This is a bit of a hack to ensure we're always rendering the TABLE's path, not a nested path
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		;[localPath, tempPath] = selectedPath.pop()
-		if (localPath === "uesio/io.table") {
+		[localPath, tempPath] = tempPath.pop()
+		if (localPath === TABLE_TYPE) {
+			selectedPath = tempPath.addLocal(TABLE_TYPE)
 			break
-		} else {
-			selectedPath = tempPath
+		}
+		// If we get to where we have no localPath, add the component type to the original path
+		if (!localPath) {
+			selectedPath = selectedPath.addLocal(TABLE_TYPE)
+			break
 		}
 	}
 
@@ -116,8 +123,6 @@ const TableColumns: definition.UC = (props) => {
 
 	const columns = get(context, columnsPath) as definition.DefinitionMap[]
 
-	const defaultColumnDef = {}
-
 	return (
 		<ListPropertyUtility
 			context={context}
@@ -129,7 +134,7 @@ const TableColumns: definition.UC = (props) => {
 						add(
 							context,
 							columnsPath.addLocal(`${columns?.length || 0}`),
-							defaultColumnDef
+							{}
 						)
 					},
 				},
