@@ -151,7 +151,11 @@ func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, e
 }
 
 func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
-	return reflecttool.SetField(item, fieldName, value)
+	err := reflecttool.SetField(item, fieldName, value)
+	if err != nil {
+		err = errors.New("Failed to set field: " + fieldName + " on item: " + item.GetCollectionName())
+	}
+	return nil
 }
 
 func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
