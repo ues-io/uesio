@@ -1,3 +1,5 @@
 name: definition
 type: LONGTEXT
 label: Definition
+validate:
+  type: YAML
