@@ -47,7 +47,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 						size({
 							apply({ rects, elements }) {
 								Object.assign(elements.floating.style, {
-									"max-height": `${rects.reference.height}px`,
+									height: `${rects.reference.height}px`,
 								})
 							},
 						}),
@@ -82,8 +82,6 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 					visibility: middlewareData.hide?.referenceHidden
 						? "hidden"
 						: "visible",
-					display: "flex",
-					flexDirection: "column",
 				}}
 				className={classes.popper}
 			>
