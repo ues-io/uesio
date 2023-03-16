@@ -29,7 +29,11 @@ const types = {
 
 const Alert: FunctionComponent<AlertProps> = (props) => {
 	const { text, severity, context, details } = props
-	const { color, icon } = types[severity || "error"]
+	let alertType = types[severity || "error"]
+	if (!alertType) {
+		alertType = types.error
+	}
+	const { color, icon } = alertType
 
 	const classes = styles.useUtilityStyles(
 		{

@@ -46,7 +46,7 @@ const TableColumns: definition.UC = (props) => {
 	// This is a bit of a hack to ensure we're always rendering the TABLE's path, not a nested path
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		[localPath, tempPath] = tempPath.pop()
+		;[localPath, tempPath] = tempPath.pop()
 		if (localPath === TABLE_TYPE) {
 			selectedPath = tempPath.addLocal(TABLE_TYPE)
 			break
