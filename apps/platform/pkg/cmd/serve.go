@@ -124,6 +124,8 @@ func serve(cmd *cobra.Command, args []string) {
 		middleware.LogRequestHandler,
 	)
 
+	// SEO Routes
+	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
 	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
 
 	// Userfile routes for site and workspace context

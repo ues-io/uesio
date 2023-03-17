@@ -21,6 +21,7 @@ definition:
         uesio/studio.name:
         uesio/studio.bundle:
         uesio/studio.title:
+        uesio/studio.enable_seo:
         uesio/studio.app:
           fields:
             uesio/core.id:
@@ -99,6 +100,8 @@ definition:
                                       fieldId: uesio/studio.bundle
                                   - uesio/io.field:
                                       fieldId: uesio/studio.title
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.enable_seo
                 - uesio/io.box:
                     uesio.variant: uesio/io.section
                     components:
@@ -177,6 +180,8 @@ definition:
                   fieldId: uesio/studio.bundle
               - uesio/io.field:
                   fieldId: uesio/studio.title
+              - uesio/io.field:
+                  fieldId: uesio/studio.enable_seo
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
