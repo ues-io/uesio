@@ -104,14 +104,14 @@ const initExistingWire = (
 	existingWire: PlainWire,
 	wireDef: WireDefinition,
 	collections: PlainCollectionMap
-) => {
+): PlainWire => {
 	if (wireDef.viewOnly) {
 		const collection = getViewOnlyMetadata(existingWire.name, wireDef)
 		collections[getMetadataFullName(collection)] = collection
 		return {
 			...existingWire,
 			...getViewOnlyWireDefInfo(wireDef, collection),
-		}
+		} as PlainWire
 	}
 	return {
 		...existingWire,
@@ -119,19 +119,20 @@ const initExistingWire = (
 		original: { ...existingWire.data },
 		deletes: {},
 		...getWireDefInfo(wireDef),
-	}
+	} as PlainWire
 }
 
-const getNewPlainWireBase = (viewId: string, wirename: string) => ({
-	view: viewId || "",
-	name: wirename,
-	batchid: "",
-	batchnumber: 0,
-	data: {},
-	changes: {},
-	original: {},
-	deletes: {},
-})
+const getNewPlainWireBase = (viewId: string, wirename: string) =>
+	({
+		view: viewId || "",
+		name: wirename,
+		batchid: "",
+		batchnumber: 0,
+		data: {},
+		changes: {},
+		original: {},
+		deletes: {},
+	} as PlainWire)
 
 const getMetadataFullName = (metadata: PlainCollection) =>
 	`${metadata.namespace}.${metadata.name}`
@@ -141,20 +142,20 @@ const initWire = (
 	wirename: string,
 	wireDef: WireDefinition,
 	collections: PlainCollectionMap
-) => {
+): PlainWire => {
 	if (wireDef.viewOnly) {
 		const collection = getViewOnlyMetadata(wirename, wireDef)
 		collections[getMetadataFullName(collection)] = collection
 		return {
 			...getNewPlainWireBase(viewId, wirename),
 			...getViewOnlyWireDefInfo(wireDef, collection),
-		}
+		} as PlainWire
 	}
 
 	return {
 		...getNewPlainWireBase(viewId, wirename),
 		...getWireDefInfo(wireDef),
-	}
+	} as PlainWire
 }
 
 export { initExistingWire }

@@ -1,4 +1,4 @@
 name: privacy
 path: privacy
 view: uesio/web.privacy
-title: Uesio - Privacy Policy
+title: $Site{title} - Privacy Policy

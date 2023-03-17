@@ -9,22 +9,24 @@ import PropertiesForm from "../../helpers/propertiesform"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 import { ComponentProperty } from "../../properties/componentproperty"
 import { PropertiesPanelSection } from "../../api/propertysection"
+import { ReactNode } from "react"
 
 export type PropertiesGetter = (
 	item: wire.PlainWireRecord
 ) => ComponentProperty[]
 
-type ItemDisplayFunction = (item: wire.PlainWireRecord) => string
+type ItemStringGetter = (item: wire.PlainWireRecord) => string
 
-export type ItemDisplayTemplate = string | ItemDisplayFunction
+export type StringOrItemPropertyGetter = string | ItemStringGetter
 export type PropertiesListOrGetter = ComponentProperty[] | PropertiesGetter
 
 type Props = {
-	displayTemplate: ItemDisplayTemplate
+	displayTemplate: StringOrItemPropertyGetter
 	parentPath: FullPath
 	itemProperties?: PropertiesListOrGetter
-	itemPropertiesPanelTitle?: string
+	itemPropertiesPanelTitle?: StringOrItemPropertyGetter
 	itemPropertiesSections?: PropertiesPanelSection[]
+	itemChildren?: (item: wire.PlainWireRecord, index: number) => ReactNode
 } & definition.UtilityComponent
 
 const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
@@ -34,8 +36,8 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 		displayTemplate,
 		itemProperties,
 		itemPropertiesPanelTitle,
-		children,
 		itemPropertiesSections,
+		itemChildren,
 	} = props
 
 	const record = context.getRecord()
@@ -47,7 +49,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 
 	const selectedPath = useSelectedPath(context)
 	const listItemPath = parentPath.addLocal(`${index}`)
-	const selected = selectedPath && selectedPath.equals(listItemPath)
+	const selected = selectedPath && selectedPath.startsWith(listItemPath)
 
 	return (
 		<PropNodeTag
@@ -63,7 +65,11 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 						id={listItemPath.combine()}
 						path={listItemPath}
 						context={context}
-						title={itemPropertiesPanelTitle || "Properties"}
+						title={
+							(typeof itemPropertiesPanelTitle === "function"
+								? itemPropertiesPanelTitle(record.source)
+								: itemPropertiesPanelTitle) || "Properties"
+						}
 						properties={
 							typeof itemProperties === "function"
 								? itemProperties(record.source)
@@ -79,7 +85,7 @@ const ListPropertyItem: definition.UtilityComponent<Props> = (props) => {
 					? displayTemplate(record.source)
 					: context.merge(displayTemplate)}
 			</div>
-			{children}
+			{itemChildren?.(record.source, index as number)}
 			<IOExpandPanel context={context} expanded={selected}>
 				<BuildActionsArea context={context}>
 					<DeleteAction context={context} path={listItemPath} />

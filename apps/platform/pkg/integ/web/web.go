@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -15,32 +15,63 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-type WebIntegration struct{}
+type GetActionOptions struct {
+	URL          string
+	Cache        bool
+	ResponseData interface{}
+}
 
-func (wi *WebIntegration) Exec(options *integ.IntegrationOptions, requestData, responseData interface{}, integration *meta.Integration, session *sess.Session) error {
+type WebIntegration struct {
+}
 
-	fullURL := fmt.Sprintf("%s/%s", integration.BaseURL, options.URL)
+func (wi *WebIntegration) GetIntegrationConnection(integration *meta.Integration, session *sess.Session, credentials *adapt.Credentials) (integ.IntegrationConnection, error) {
+	return &WebIntegrationConnection{
+		session:     session,
+		integration: integration,
+		credentials: credentials,
+	}, nil
+}
+
+type WebIntegrationConnection struct {
+	session     *sess.Session
+	integration *meta.Integration
+	credentials *adapt.Credentials
+}
+
+func (wic *WebIntegrationConnection) RunAction(actionName string, requestOptions interface{}) error {
+
+	switch actionName {
+	case "get":
+		return wic.Get(requestOptions)
+	}
+
+	return errors.New("Invalid Action Name for Web Integration")
+
+}
+
+func (wic *WebIntegrationConnection) Get(requestOptions interface{}) error {
+	options, ok := requestOptions.(*GetActionOptions)
+	if !ok {
+		return errors.New("Invalid options provided to web integration")
+	}
+
+	fullURL := fmt.Sprintf("%s/%s", wic.integration.BaseURL, options.URL)
 
 	if options.Cache {
 		cachedResponse, gotCache := localcache.GetCacheEntry("web-request", fullURL)
 		if gotCache {
-			return json.Unmarshal(cachedResponse.([]byte), responseData)
+			return json.Unmarshal(cachedResponse.([]byte), options.ResponseData)
 		}
 	}
 
-	credentials, err := creds.GetCredentials(integration.Credentials, session)
-	if err != nil {
-		return err
-	}
-
-	credsInterfaceMap := credentials.GetInterfaceMap()
+	credsInterfaceMap := wic.credentials.GetInterfaceMap()
 
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return err
 	}
 
-	for header, value := range integration.Headers {
+	for header, value := range wic.integration.Headers {
 		template, err := templating.NewTemplateWithValidKeysOnly(value)
 		if err != nil {
 			return err
@@ -67,11 +98,11 @@ func (wi *WebIntegration) Exec(options *integ.IntegrationOptions, requestData, r
 	}
 
 	if options.Cache {
-		err := json.NewDecoder(resp.Body).Decode(responseData)
+		err := json.NewDecoder(resp.Body).Decode(options.ResponseData)
 		if err != nil {
 			return err
 		}
-		dataToCache, err := json.Marshal(responseData)
+		dataToCache, err := json.Marshal(options.ResponseData)
 		if err != nil {
 			return err
 		}
@@ -79,5 +110,5 @@ func (wi *WebIntegration) Exec(options *integ.IntegrationOptions, requestData, r
 		return nil
 	}
 
-	return json.NewDecoder(resp.Body).Decode(responseData)
+	return json.NewDecoder(resp.Body).Decode(options.ResponseData)
 }

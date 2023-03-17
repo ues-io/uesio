@@ -1,0 +1,5 @@
+name: tablecolumns
+pack: main
+entrypoint: components/mainwrapper/propertiespanel/tablecolumns
+utilities:
+  - uesio/builder.listproperty

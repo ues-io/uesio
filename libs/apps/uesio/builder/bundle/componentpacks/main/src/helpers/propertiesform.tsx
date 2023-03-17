@@ -150,7 +150,7 @@ const getWireFieldFromPropertyDef = (
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
 	const { name, type } = def
-	let wireId: string
+	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	switch (type) {
 		case "SELECT":
@@ -179,10 +179,13 @@ const getWireFieldFromPropertyDef = (
 			})
 		case "FIELDS":
 		case "FIELD":
-			wireId = currentValue[def.wireField] as string
-			wireDefinition = wireId
-				? getWireDefinition(context, wireId)
-				: undefined
+			wireId = def.wireField
+				? (currentValue[def.wireField] as string)
+				: def.wireName
+			wireDefinition =
+				wireId === undefined
+					? undefined
+					: getWireDefinition(context, wireId)
 			return getBaseWireFieldDef(
 				def,
 				`${type === "FIELDS" ? "MULTI" : ""}SELECT`,
@@ -191,7 +194,8 @@ const getWireFieldFromPropertyDef = (
 						name,
 						wireDefinition !== undefined
 							? getWireFieldSelectOptions(wireDefinition)
-							: []
+							: [],
+						type === "FIELDS" ? undefined : ""
 					),
 				}
 			)
@@ -398,7 +402,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		>
 			<DynamicForm
 				id={id}
-				path={path}
+				path={path?.combine()}
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,

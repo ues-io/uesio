@@ -1,6 +1,9 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
 import { dispatch } from "../../store/store"
+import { runMany } from "../../signals/signals"
+import { shouldAll } from "../../componentexports"
+import { WireEventType } from "../../definition/wire"
 import {
 	setRecord,
 	createRecord,
@@ -164,6 +167,45 @@ class Wire {
 	load = (context: Context) => loadWireOp(context, [this.getId()], true)
 
 	getEvents = () => this.source.events
+
+	handleEvent(type: WireEventType, context: Context): void
+	handleEvent(type: "onChange", context: Context, field: string): void
+	handleEvent(type: string, context: Context, field?: string): void {
+		const events = this.getEvents()
+		if (!events) return
+
+		// Backwards support
+		if (!Array.isArray(events)) {
+			if (!field || !context) return
+			const changeEvents = events.onChange
+
+			if (changeEvents) {
+				for (const changeEvent of changeEvents) {
+					if (changeEvent.field !== field) continue
+					runMany(changeEvent.signals, context)
+				}
+			}
+			return
+		}
+
+		// Todo: filter out events that can cause an infinite loop
+		events
+			.filter((event) => {
+				// Is it the event we want?
+				if (event.type !== type) return false
+				// Is it a changeEvent? if so we need check if we care about the changed field
+				if (
+					event.type === "onChange" &&
+					field &&
+					!event.fields?.includes(field)
+				)
+					return false
+				return shouldAll(event.conditions, context)
+			})
+			.forEach((event) => {
+				runMany(event?.signals || [], context)
+			})
+	}
 }
 
 export default Wire

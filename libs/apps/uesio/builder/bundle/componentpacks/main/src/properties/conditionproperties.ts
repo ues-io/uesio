@@ -251,6 +251,11 @@ export const getDisplayConditionLabel = (
 		case "fieldMode":
 			details = condition.mode || "[No mode]"
 			break
+		case "paramValue":
+			details = `${condition.param || "No Param"} = ${
+				condition.value || "[No Value]"
+			}`
+			break
 	}
 	return `${condition.type}${details ? ": " + details : ""}`
 }

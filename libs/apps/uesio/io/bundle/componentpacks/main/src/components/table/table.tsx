@@ -54,6 +54,7 @@ type ColumnDefinition = {
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	label: string
+	width?: string
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 

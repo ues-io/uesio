@@ -370,6 +370,7 @@ function shouldHaveClass(
 
 export {
 	useShould,
+	shouldAll,
 	useShouldFilter,
 	useContextFilter,
 	shouldHaveClass,

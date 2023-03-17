@@ -3,6 +3,12 @@ import { add, get } from "../../../../api/defapi"
 import { FullPath } from "../../../../api/path"
 import { useSelectedPath } from "../../../../api/stateapi"
 
+function getConditionPropertiesPanelTitle(
+	condition: wire.WireConditionState
+): string {
+	return `${condition.type === "GROUP" ? "Group " : ""} Condition Properties`
+}
+
 function getConditionTitle(condition: wire.WireConditionState): string {
 	if (condition.type === "GROUP" && !condition.valueSource) {
 		return `GROUP ${condition.conjunction}`
@@ -40,9 +46,9 @@ function getConditionTitle(condition: wire.WireConditionState): string {
 
 const ConditionsProperties: definition.UC = (props) => {
 	const { context } = props
-	const TitleBar = component.getUtility("uesio/io.titlebar")
-	const Button = component.getUtility("uesio/io.button")
-	const Icon = component.getUtility("uesio/io.icon")
+	const ListPropertyUtility = component.getUtility(
+		"uesio/builder.listproperty"
+	)
 	const ListPropertyItem = component.getUtility(
 		"uesio/builder.listpropertyitem"
 	)
@@ -268,130 +274,96 @@ const ConditionsProperties: definition.UC = (props) => {
 
 	return (
 		<>
-			<TitleBar
-				variant="uesio/builder.propsubsection"
-				title={""}
+			<ListPropertyUtility
 				context={context}
-				actions={
-					<>
-						<Button
-							context={context}
-							variant="uesio/builder.actionbutton"
-							icon={
-								<Icon
-									context={context}
-									icon="add"
-									variant="uesio/builder.actionicon"
-								/>
-							}
-							label={"Add Group"}
-							onClick={() => {
-								add(
-									context,
-									conditionsPath.addLocal(
-										`${items?.length || 0}`
-									),
-									defaultConditionGroupDef
-								)
-							}}
-						/>
-						<Button
-							context={context}
-							variant="uesio/builder.actionbutton"
-							icon={
-								<Icon
-									context={context}
-									icon="add"
-									variant="uesio/builder.actionicon"
-								/>
-							}
-							label={"Add Condition"}
-							onClick={() => {
-								let targetPath = conditionsPath
-								let conditionsArray = items
-								// If the selected path is a Group, add the condition to the group
-								if (
-									(
-										get(
-											context,
-											selectedPath
-										) as wire.WireConditionState
-									)?.type === "GROUP"
-								) {
-									targetPath =
-										selectedPath.addLocal("conditions")
-									conditionsArray = get(
-										context,
-										targetPath
-									) as wire.WireConditionState[]
-								}
-								add(
-									context,
-									targetPath.addLocal(
-										`${conditionsArray?.length || 0}`
-									),
-									defaultConditionDef
-								)
-							}}
-						/>
-					</>
-				}
-			/>
-
-			{items?.map((item: wire.WireConditionState, index) => {
-				const isGroup = item.type === "GROUP"
-				const groupConditions =
-					isGroup && !item.valueSource ? item.conditions : null
-
-				return (
-					<ListPropertyItem
-						key={index}
-						context={context.addRecordDataFrame(
-							item as wire.PlainWireRecord,
-							index
-						)}
-						parentPath={conditionsPath}
-						displayTemplate={getConditionTitle(item)}
-						itemProperties={getProperties(conditionsPath)}
-						itemPropertiesPanelTitle={
-							isGroup ? "Group Condition" : "Condition"
-						}
-						children={
-							!!groupConditions &&
-							groupConditions.map(
-								(
-									conditionOnGroup: wire.WireConditionState,
-									secindex
-								) => {
-									const conditionOnGroupPath = conditionsPath
-										.addLocal(index.toString())
-										.addLocal(propertyName)
-
-									return (
-										<ListPropertyItem
-											key={index + "." + secindex}
-											context={context.addRecordDataFrame(
-												conditionOnGroup as wire.PlainWireRecord,
-												secindex
-											)}
-											parentPath={conditionOnGroupPath}
-											displayTemplate={getConditionTitle(
-												conditionOnGroup
-											)}
-											itemProperties={getProperties(
-												conditionOnGroupPath
-											)}
-											itemPropertiesPanelTitle={
-												"Condition"
-											}
-										/>
-									)
-								}
+				path={conditionsPath}
+				actions={[
+					{
+						label: "Add Group",
+						action: () => {
+							add(
+								context,
+								conditionsPath.addLocal(
+									`${items?.length || 0}`
+								),
+								defaultConditionGroupDef
 							)
-						}
-					/>
-				)
-			})}
+						},
+					},
+					{
+						label: "Add Condition",
+						action: () => {
+							let targetPath = conditionsPath
+							let conditionsArray = items
+							// If the selected path is a Group, add the condition to the group
+							if (
+								(
+									get(
+										context,
+										selectedPath
+									) as wire.WireConditionState
+								)?.type === "GROUP"
+							) {
+								targetPath = selectedPath.addLocal("conditions")
+								conditionsArray = get(
+									context,
+									targetPath
+								) as wire.WireConditionState[]
+							}
+							add(
+								context,
+								targetPath.addLocal(
+									`${conditionsArray?.length || 0}`
+								),
+								defaultConditionDef
+							)
+						},
+					},
+				]}
+				items={items}
+				itemProperties={getProperties(conditionsPath)}
+				itemDisplayTemplate={getConditionTitle}
+				itemPropertiesPanelTitle={getConditionPropertiesPanelTitle}
+				itemChildren={(
+					item: wire.WireConditionState,
+					index: number
+				) => {
+					const isGroup = item.type === "GROUP"
+					const groupConditions =
+						isGroup && !item.valueSource ? item.conditions : null
+					return (
+						!!groupConditions &&
+						groupConditions.map(
+							(
+								conditionOnGroup: wire.WireConditionState,
+								secindex
+							) => {
+								const conditionOnGroupPath = conditionsPath
+									.addLocal(index.toString())
+									.addLocal(propertyName)
+
+								return (
+									<ListPropertyItem
+										key={index + "." + secindex}
+										context={context.addRecordDataFrame(
+											conditionOnGroup as wire.PlainWireRecord,
+											secindex
+										)}
+										parentPath={conditionOnGroupPath}
+										displayTemplate={getConditionTitle(
+											conditionOnGroup
+										)}
+										itemProperties={getProperties(
+											conditionOnGroupPath
+										)}
+										itemPropertiesPanelTitle="Condition Properties"
+									/>
+								)
+							}
+						)
+					)
+				}}
+			/>
 		</>
 	)
 }

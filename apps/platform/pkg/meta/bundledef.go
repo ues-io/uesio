@@ -5,14 +5,19 @@ type BundleDefDep struct {
 	Dependencies BundleDefDependencyMap `yaml:"dependencies,omitempty"`
 }
 
+type AppSettings struct {
+	LoginRoute    string `yaml:"loginRoute,omitempty" json:"uesio/studio.loginroute"`
+	HomeRoute     string `yaml:"homeRoute,omitempty" json:"uesio/studio.homeroute"`
+	DefaultTheme  string `yaml:"defaultTheme,omitempty" json:"uesio/studio.defaulttheme"`
+	PublicProfile string `yaml:"publicProfile,omitempty" json:"uesio/studio.publicprofile"`
+	Favicon       string `yaml:"favicon,omitempty" json:"uesio/studio.favicon"`
+}
+
 type BundleDef struct {
-	Name          string                 `yaml:"name"`
-	LoginRoute    string                 `yaml:"loginRoute,omitempty"`
-	HomeRoute     string                 `yaml:"homeRoute,omitempty"`
-	DefaultTheme  string                 `yaml:"defaultTheme,omitempty"`
-	PublicProfile string                 `yaml:"publicProfile,omitempty"`
-	Dependencies  BundleDefDependencyMap `yaml:"dependencies,omitempty"`
-	Licenses      map[string]*License    `yaml:"-"`
+	Name         string `yaml:"name"`
+	AppSettings  `yaml:",inline"`
+	Dependencies BundleDefDependencyMap `yaml:"dependencies,omitempty"`
+	Licenses     map[string]*License    `yaml:"-"`
 }
 
 type BundleDefDependencyMap map[string]BundleDefDep

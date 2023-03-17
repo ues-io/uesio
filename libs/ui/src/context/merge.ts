@@ -7,6 +7,7 @@ import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
 import { get } from "lodash"
+import { SiteState } from "../bands/site"
 
 type MergeType =
 	| "Record"
@@ -161,11 +162,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Site: (expression, context) => {
 		const site = context.getSite()
-		if (!site) return ""
-		if (expression === "domain") {
-			return site.domain
-		}
-		return ""
+		return site?.[expression as keyof SiteState] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {

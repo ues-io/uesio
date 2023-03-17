@@ -42,8 +42,6 @@ const IconProp: definition.UC<Definition> = (props) => {
 			icons: {
 				display: "grid",
 				overflow: "auto",
-				maxHeight: "350px",
-				minWidth: "350px",
 				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
 				padding: "16px",
 				rowGap: "14px",
@@ -111,18 +109,15 @@ const IconProp: definition.UC<Definition> = (props) => {
 			{selected && anchorEl && (
 				<Popper
 					referenceEl={anchorEl}
+					matchHeight
 					context={context}
 					offset={6}
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					useFirstRelativeParent
-					styles={{
-						popper: {
-							width: "350px",
-						},
-					}}
 				>
 					<ScrollPanel
+						variant="uesio/builder.mainsection"
 						header={
 							<>
 								<TitleBar

@@ -7,6 +7,7 @@ import { Component, getUtility } from "./component/component"
 import {
 	shouldHaveClass,
 	useShould,
+	shouldAll,
 	useShouldFilter,
 	useContextFilter,
 	ItemContext,
@@ -32,6 +33,7 @@ export {
 	NotificationArea,
 	shouldHaveClass,
 	useShould,
+	shouldAll,
 	useShouldFilter,
 	useContextFilter,
 	ItemContext,

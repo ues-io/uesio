@@ -17,7 +17,7 @@ const signals: Record<string, SignalDescriptor> = {
 					{ value: "", label: "" },
 					{ value: "success", label: "SUCCESS" },
 					{ value: "info", label: "INFO" },
-					{ value: "warn", label: "WARN" },
+					{ value: "warning", label: "WARN" },
 					{ value: "error", label: "ERROR" },
 				],
 			},

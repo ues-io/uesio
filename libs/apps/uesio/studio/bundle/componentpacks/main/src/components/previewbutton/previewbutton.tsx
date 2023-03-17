@@ -11,10 +11,7 @@ import {
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 
-const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
-	const viewDef =
-		record.getFieldValue<string>("uesio/studio.definition") || ""
-	const yamlDoc = util.yaml.parse(viewDef)
+const getParamDefs = (yamlDoc: definition.YamlDoc): param.ParamDefinition[] => {
 	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
 	const paramObj = params?.toJSON() || {}
 
@@ -151,9 +148,19 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	if (!workspaceContext) throw new Error("No Workspace Context Provided")
 
 	const viewName = record.getFieldValue<string>("uesio/studio.name")
+	const viewDef =
+		record.getFieldValue<string>("uesio/studio.definition") || ""
 
-	const params = getParamDefs(record)
-	const hasParams = Object.keys(params).length
+	let hasParams = false
+	let params: param.ParamDefinition[] = []
+	let yamlDoc
+	try {
+		yamlDoc = util.yaml.parse(viewDef)
+		params = getParamDefs(yamlDoc)
+		hasParams = Object.keys(params).length > 0
+	} catch (err) {
+		hasParams = false
+	}
 
 	const appName = workspaceContext.app
 	const workspaceName = workspaceContext.name
