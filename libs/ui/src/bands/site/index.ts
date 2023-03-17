@@ -9,6 +9,7 @@ type SiteState = {
 	subdomain: string
 	version: string
 	title?: string
+	enableSEO?: boolean
 }
 
 const siteSlice = createSlice({

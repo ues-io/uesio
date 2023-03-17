@@ -49,6 +49,7 @@ type SiteMergeData struct {
 	Domain    string `json:"domain"`
 	Subdomain string `json:"subdomain"`
 	Title     string `json:"title"`
+	EnableSEO bool   `json:"enableSEO"`
 }
 
 type WorkspaceMergeData struct {

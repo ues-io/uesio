@@ -63,6 +63,8 @@ const navigate = async (
 		)
 	}
 
+	const site = context.getSite()
+
 	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
 	document.title = routeResponse.title || "Uesio"
 	// Remove any existing route-injected meta tags
@@ -70,7 +72,7 @@ const navigate = async (
 		.querySelectorAll("meta[data-uesio]")
 		.forEach((elem) => elem.remove())
 	// Add any meta tags defined by the route
-	if (routeResponse.tags?.length) {
+	if (site && site.enableSEO && routeResponse.tags?.length) {
 		const headEl = document.getElementsByTagName("head")[0]
 		routeResponse.tags.forEach((tag) => {
 			if (tag.location === "head" && tag.type === "meta") {

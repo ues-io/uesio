@@ -61,8 +61,13 @@ const Route: UtilityComponent = (props) => {
 				return
 			}
 
+			let navigateContext = new Context()
+			if (workspace)
+				navigateContext = navigateContext.setWorkspace(workspace)
+			if (site) navigateContext = navigateContext.setSite(site)
+
 			navigate(
-				new Context().setWorkspace(workspace),
+				navigateContext,
 				{
 					path,
 					namespace,
@@ -81,7 +86,6 @@ const Route: UtilityComponent = (props) => {
 	const viewId = route.view
 
 	let routeContext = props.context.addRouteFrame({
-		site,
 		route,
 		viewDef: viewId,
 		theme,
@@ -90,6 +94,10 @@ const Route: UtilityComponent = (props) => {
 
 	if (workspace) {
 		routeContext = routeContext.setWorkspace(workspace)
+	}
+
+	if (site) {
+		routeContext = routeContext.setSite(site)
 	}
 
 	const routeContextWithSlot = workspace?.slotwrapper
