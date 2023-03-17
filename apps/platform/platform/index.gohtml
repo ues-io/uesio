@@ -4,13 +4,18 @@
         <title>{{ .Route.Title }}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no" />
-        {{- if and (.Route) (.Site.EnableSEO) -}}
+        {{- if .Route -}}
             {{- if .Route.Tags -}}
                 {{- range .Route.Tags }}
                     {{- if and (eq .Location "head") (eq .Type "meta") -}}
         <meta name="{{.Name}}" content="{{.Content}}" data-uesio="true"/>
                     {{- end -}}
                 {{- end -}}
+            {{- end -}}
+        {{- end }}
+        {{- if .Site -}}
+            {{- if (eq .Site.EnableSEO false) -}}
+        <meta name="robots" content="none"/>
             {{- end -}}
         {{- end }}
         <style>
