@@ -162,7 +162,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Site: (expression, context) => {
 		const site = context.getSite()
-		return site?.[expression as keyof Omit<SiteState, "enableSEO">] || ""
+		return site?.[expression as keyof SiteState] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {
