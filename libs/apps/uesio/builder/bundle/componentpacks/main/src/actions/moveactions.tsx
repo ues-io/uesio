@@ -5,8 +5,7 @@ import ActionButton from "../helpers/actionbutton"
 
 const getArrayMoveParams = (
 	context: context.Context,
-	path: FullPath,
-	selectKey?: string
+	path: FullPath
 ): [boolean, boolean, () => void, () => void] => {
 	const index = component.path.getIndexFromPath(path.localPath)
 	const indexPath = component.path.getIndexPath(path.localPath)
@@ -20,12 +19,7 @@ const getArrayMoveParams = (
 	const enableForward = !!(index !== null && size && index < size - 1)
 
 	const moveToIndex = (index: number) => {
-		move(
-			context,
-			path,
-			path.setLocal(`${parentPath}["${index}"]`),
-			selectKey
-		)
+		move(context, path, path.setLocal(`${parentPath}["${index}"]`))
 	}
 
 	return [
@@ -79,7 +73,7 @@ const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 	)
 	const paramGetter = isArrayMove ? getArrayMoveParams : getMapMoveParams
 	const [enableBackward, enableForward, onClickBackward, onClickForward] =
-		paramGetter(context, path, undefined)
+		paramGetter(context, path)
 	return (
 		<>
 			<ActionButton

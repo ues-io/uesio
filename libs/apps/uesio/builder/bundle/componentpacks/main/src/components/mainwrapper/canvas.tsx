@@ -34,9 +34,9 @@ const handleDrop = (
 			break
 		}
 		case "viewdef": {
-			const [key, parent] = drag.pop()
+			const [, parent] = drag.pop()
 			batch(() => {
-				move(context, parent, drop, key)
+				move(context, parent, drop)
 				setDropPath(context)
 				setDragPath(context)
 			})

@@ -69,7 +69,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const selectedPath = useSelectedViewPath(context)
 
-	const fullYaml = useContent(selectedPath)
+	const fullYaml = useContent(context, selectedPath) || ""
 
 	const yamlDoc = util.yaml.parse(fullYaml)
 
@@ -235,7 +235,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				setValue={
 					((newValue): void => {
 						const selectedPath = getSelectedViewPath(context)
-						setContent(selectedPath, newValue || "")
+						setContent(context, selectedPath, newValue || "")
 					}) as EditorProps["onChange"]
 				}
 				onMount={onMount}

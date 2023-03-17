@@ -41,10 +41,22 @@ const useBuilderExternalState = <T extends definition.Definition>(
 	id: string
 ) => api.component.useExternalState<T>(getBuilderComponentId(context, id))
 
+const useBuilderExternalStates = (context: ctx.Context, id: string) =>
+	api.component.useExternalStates(getBuilderComponentId(context, id))
+
+const useBuilderExternalStatesCount = (context: ctx.Context, id: string) =>
+	api.component.useExternalStatesCount(getBuilderComponentId(context, id))
+
 const getBuilderExternalState = <T extends definition.Definition>(
 	context: ctx.Context,
 	id: string
 ) => api.component.getExternalState<T>(getBuilderComponentId(context, id))
+
+const getBuilderExternalStates = (context: ctx.Context, id: string) =>
+	api.component.getExternalStates(getBuilderComponentId(context, id))
+
+const removeBuilderState = (context: ctx.Context, id: string) =>
+	api.component.removeState(getBuilderComponentId(context, id))
 
 const setBuilderState = <T extends definition.Definition>(
 	context: ctx.Context,
@@ -155,6 +167,13 @@ export {
 	getComponentDefs,
 	getComponentDef,
 	useBuilderState,
+	useBuilderExternalState,
+	useBuilderExternalStates,
+	useBuilderExternalStatesCount,
+	getBuilderExternalState,
+	getBuilderExternalStates,
+	setBuilderState,
+	removeBuilderState,
 	useSelectedPath,
 	getSelectedPath,
 	setSelectedPath,

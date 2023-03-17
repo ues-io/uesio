@@ -1,157 +1,19 @@
 import { Context } from "../context/context"
-import {
-	cloneDefinition as cloneDef,
-	setDefinition as setDef,
-	addDefinition as addDef,
-	removeDefinition as removeDef,
-	changeDefinitionKey as changeDefKey,
-	moveDefinition as moveDef,
-	setDefinitionContent as setDefContent,
-	cloneKeyDefinition as cloneKeyDef,
-} from "../bands/builder"
-import { save, cancel } from "../bands/builder/operations"
-import { dispatch, RootState, getCurrentState } from "../store/store"
+import { RootState, getCurrentState } from "../store/store"
 import * as api from "../api/api"
 
 import { MetadataType } from "../bands/builder/types"
-import {
-	fromPath,
-	getFullPathParts,
-	getKeyAtPath,
-	toPath,
-} from "../component/path"
+import { getFullPathParts } from "../component/path"
 import { Definition } from "../definition/definition"
 import { batch, useSelector } from "react-redux"
 
 import { selectors as viewSelectors } from "../bands/viewdef"
-import { selectors as metadataTextSelectors } from "../bands/metadatatext"
 import get from "lodash/get"
 import { platform } from "../platform/platform"
 import usePlatformFunc from "./useplatformfunc"
-import { add } from "../bands/notification"
-import { nanoid } from "@reduxjs/toolkit"
 import { dispatchRouteDeps, getPackUrlsForDeps } from "../bands/route/utils"
 import { loadScripts } from "./usescripts"
 import { makeComponentId } from "./componentapi"
-
-const useHasChanges = () =>
-	useSelector(({ metadatatext }: RootState) => {
-		const entities = metadatatext?.entities
-		if (entities) {
-			for (const defKey of Object.keys(entities)) {
-				const entity = entities[defKey]
-				if (
-					entity &&
-					entity.original &&
-					entity.content !== entity.original
-				) {
-					return true
-				}
-			}
-		}
-		return false
-	})
-
-const cloneDefinition = (path: string) => dispatch(cloneDef({ path }))
-
-const cloneKeyDefinition = (path: string) => {
-	const newKey =
-		(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
-	dispatch(cloneKeyDef({ path, newKey }))
-}
-
-const setDefinition = (
-	path: string,
-	definition: Definition,
-	autoSelect?: boolean
-) => dispatch(setDef({ path, definition, autoSelect }))
-
-const addDefinition = (
-	path: string,
-	definition: Definition,
-	index?: number,
-	type?: string
-) => {
-	dispatch(
-		addDef({
-			path,
-			definition,
-			index,
-			type,
-		})
-	)
-}
-
-const removeDefinition = (path: string) => {
-	dispatch(
-		removeDef({
-			path,
-		})
-	)
-}
-
-const changeDefinitionKey = (path: string, key: string) => {
-	const pathArray = toPath(path)
-	pathArray.splice(-1, 1, key)
-	const definition = getDefinitionFromFullPath(
-		getCurrentState(),
-		fromPath(pathArray)
-	)
-
-	if (definition) {
-		dispatch(
-			add({
-				id: nanoid(),
-				severity: "error",
-				text: `"${key}" already exists.`,
-			})
-		)
-		return
-	}
-	dispatch(
-		changeDefKey({
-			path,
-			key,
-		})
-	)
-}
-
-const moveDefinition = (
-	fromPath: string,
-	toPath: string,
-	selectKey?: string
-) => {
-	dispatch(
-		moveDef({
-			fromPath,
-			toPath,
-			selectKey,
-		})
-	)
-}
-
-const setDefinitionContent = (
-	metadataType: string,
-	metadataItem: string,
-	content: string
-) => {
-	dispatch(
-		setDefContent({
-			metadataType,
-			metadataItem,
-			content,
-		})
-	)
-}
-
-const useDefinitionContent = (metadataType: string, metadataItem: string) =>
-	useSelector(
-		(state: RootState) =>
-			metadataTextSelectors.selectById(
-				state,
-				`${metadataType}:${metadataItem}`
-			)?.content
-	)
 
 const useDefinition = (
 	metadataType: string,
@@ -243,18 +105,6 @@ const getBuilderDeps = async (context: Context) => {
 }
 
 export {
-	useHasChanges,
-	save,
-	cancel,
-	cloneDefinition,
-	cloneKeyDefinition,
-	setDefinition,
-	addDefinition,
-	removeDefinition,
-	changeDefinitionKey,
-	moveDefinition,
-	setDefinitionContent,
-	useDefinitionContent,
 	useDefinition,
 	useMetadataList,
 	useAvailableNamespaces,

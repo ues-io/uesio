@@ -2,8 +2,6 @@ package routing
 
 import (
 	"encoding/json"
-
-	"github.com/francoispqt/gojay"
 )
 
 type ComponentMergeData struct {
@@ -77,7 +75,6 @@ func NewPreloadMetadata() *PreloadMetadata {
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
 		FeatureFlag:      NewItem(),
-		MetadataText:     NewItem(),
 		Wire:             NewItem(),
 		Collection:       NewItem(),
 	}
@@ -91,34 +88,9 @@ type PreloadMetadata struct {
 	ConfigValue      *MetadataMergeData   `json:"configvalue,omitempty"`
 	Label            *MetadataMergeData   `json:"label,omitempty"`
 	FeatureFlag      *MetadataMergeData   `json:"featureflag,omitempty"`
-	MetadataText     *MetadataMergeData   `json:"metadatatext,omitempty"`
 	Wire             *MetadataMergeData   `json:"wire,omitempty"`
 	Collection       *MetadataMergeData   `json:"collection,omitempty"`
 	Component        *ComponentsMergeData `json:"component,omitempty"`
-}
-
-type MetadataTextItem struct {
-	Content      string
-	Key          string
-	MetadataType string
-}
-
-func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddStringKey("content", mti.Content)
-	enc.AddStringKey("key", mti.Key)
-	enc.AddStringKey("metadatatype", mti.MetadataType)
-}
-
-func (mti *MetadataTextItem) GetBytes() ([]byte, error) {
-	return gojay.MarshalJSONObject(mti)
-}
-
-func (mti *MetadataTextItem) GetKey() string {
-	return mti.Key
-}
-
-func (mti *MetadataTextItem) IsNil() bool {
-	return mti == nil
 }
 
 type Depable interface {
