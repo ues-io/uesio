@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
+	"github.com/thecloudmasters/clio/pkg/config/host"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 )
@@ -28,12 +30,15 @@ var mockHandler = &LoginMethodHandler{
 	Label: "Mock login",
 	Handler: func() (map[string]string, error) {
 		var username string
-		err := survey.AskOne(&survey.Select{
-			Message: "Select a user.",
-			Options: MockUserNames,
-		}, &username)
-		if err != nil {
-			return nil, err
+		username = os.Getenv("UESIO_MOCK_USER")
+		if username == "" {
+			err := survey.AskOne(&survey.Select{
+				Message: "Select a user.",
+				Options: MockUserNames,
+			}, &username)
+			if err != nil {
+				return nil, err
+			}
 		}
 		return map[string]string{
 			"token": "{\"subject\":\"" + username + "\"}",
@@ -47,22 +52,30 @@ var platformHandler = &LoginMethodHandler{
 	Handler: func() (map[string]string, error) {
 		var username string
 		var password string
-		err := survey.AskOne(&survey.Input{
-			Message: "Username",
-		}, &username)
-		if err != nil {
-			return nil, err
+		username = os.Getenv("UESIO_USERNAME")
+		password = os.Getenv("UESIO_PASSWORD")
+
+		if username == "" {
+			usernameErr := survey.AskOne(&survey.Input{
+				Message: "Username",
+			}, &username)
+			if usernameErr != nil {
+				return nil, usernameErr
+			}
 		}
-		err = survey.AskOne(&survey.Password{
-			Message: "Password",
-		}, &password)
-		if err != nil {
-			return nil, err
+		if password == "" {
+			pwErr := survey.AskOne(&survey.Password{
+				Message: "Password",
+			}, &password)
+			if pwErr != nil {
+				return nil, pwErr
+			}
 		}
 		return map[string]string{
 			"username": username,
 			"password": password,
 		}, nil
+
 	},
 }
 
@@ -76,9 +89,9 @@ func getHandlerOptions() []string {
 	return options
 }
 
-func getHandlerByLabel(label string) *LoginMethodHandler {
+func getHandlerByKey(key string) *LoginMethodHandler {
 	for _, handler := range loginHandlers {
-		if handler.Label == label {
+		if handler.Key == key {
 			return handler
 		}
 	}
@@ -86,17 +99,18 @@ func getHandlerByLabel(label string) *LoginMethodHandler {
 }
 
 func getLoginPayload() (string, map[string]string, error) {
-	var answer string
-
-	err := survey.AskOne(&survey.Select{
-		Message: "Select a login method.",
-		Options: getHandlerOptions(),
-	}, &answer)
+	var loginMethod string
+	host, err := host.GetHost()
 	if err != nil {
 		return "", nil, err
 	}
+	if host == "https://studio.uesio-dev.com:3000" {
+		loginMethod = "uesio/core.mock"
+	} else {
+		loginMethod = "uesio/core.platform"
+	}
 
-	handler := getHandlerByLabel(answer)
+	handler := getHandlerByKey(loginMethod)
 
 	if handler == nil {
 		return "", nil, errors.New("Invalid Login Method")
