@@ -89,6 +89,8 @@ definition:
                             - uesio/io.button:
                                 text: Create a New View
                                 uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.id: new-view
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newView
@@ -166,9 +168,11 @@ definition:
             components:
               - uesio/io.field:
                   fieldId: uesio/studio.name
+                  uesio.id: new-view-name
       actions:
         - uesio/io.button:
             uesio.variant: uesio/io.primary
+            uesio.id: save-new-view
             text: "Save"
             signals:
               - signal: wire/SAVE
