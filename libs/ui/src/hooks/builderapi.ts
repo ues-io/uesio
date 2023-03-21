@@ -3,7 +3,6 @@ import { RootState, getCurrentState } from "../store/store"
 import * as api from "../api/api"
 
 import { MetadataType } from "../bands/builder/types"
-import { getFullPathParts } from "../component/path"
 import { Definition } from "../definition/definition"
 import { batch, useSelector } from "react-redux"
 
@@ -23,11 +22,6 @@ const useDefinition = (
 	useSelector((state: RootState) =>
 		getDefinition(state, metadataType, metadataItem, localPath)
 	)
-
-const getDefinitionFromFullPath = (state: RootState, fullPath: string) => {
-	const [metadataType, metadataItem, localPath] = getFullPathParts(fullPath)
-	return getDefinition(state, metadataType, metadataItem, localPath)
-}
 
 const getDefinition = (
 	state: RootState,
@@ -51,8 +45,11 @@ const getDefinition = (
 	}
 }
 
-const getDefinitionAtPath = (path: string) =>
-	getDefinitionFromFullPath(getCurrentState(), path)
+const getDefinitionAtPath = (
+	metadataType: string,
+	metadataItem: string,
+	localPath: string
+) => getDefinition(getCurrentState(), metadataType, metadataItem, localPath)
 
 const useMetadataList = (
 	context: Context,

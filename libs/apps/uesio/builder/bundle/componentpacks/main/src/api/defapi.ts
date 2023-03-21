@@ -52,7 +52,11 @@ const setMetadataValue = (
 }
 
 const get = (context: ctx.Context, path: FullPath) =>
-	api.builder.getDefinitionAtPath(path.pathCombine())
+	api.builder.getDefinitionAtPath(
+		path.itemType,
+		path.itemName,
+		path.localPath
+	)
 
 const set = (
 	context: ctx.Context,

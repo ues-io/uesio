@@ -1,5 +1,4 @@
 import toPath from "lodash/toPath"
-import { MetadataKey } from "../bands/builder/types"
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
@@ -57,13 +56,6 @@ const getAncestorPath = (path: string, n: number): string => {
 }
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
-
-const getFullPathParts = (path: string): [string, MetadataKey, string] => {
-	const pathArray = toPath(path)
-	const metadataType = pathArray.shift() || ""
-	const metadataItem = (pathArray.shift() || "") as MetadataKey
-	return [metadataType, metadataItem, fromPath(pathArray)]
-}
 
 const makeFullPath = (
 	metadataType: string,
@@ -126,7 +118,6 @@ export {
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
-	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,
 	isComponentIndex,
