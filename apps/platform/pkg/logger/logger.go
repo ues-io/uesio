@@ -45,6 +45,10 @@ func init() {
 	log.SetFlags(0)
 }
 
+func Info(message string) {
+	Log(message, INFO)
+}
+
 // LogWithTrace function
 func LogWithTrace(r *http.Request, message, severity string) {
 
