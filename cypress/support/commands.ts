@@ -77,7 +77,16 @@ Cypress.Commands.add(
 
 // Gets a button element whose id contains a given string
 Cypress.Commands.add("clickButton", (idFragment: string) => {
-	cy.get(idContainsSelector("button", idFragment)).click()
+	const buttonSelector = idContainsSelector("button", idFragment)
+	const anchorSelector = idContainsSelector("a", idFragment)
+	cy.get(`${buttonSelector},${anchorSelector}`).click()
+})
+
+// Checks a component state
+Cypress.Commands.add("getComponentState", (componentId: string) => {
+	cy.window()
+		.its("uesio.api.component")
+		.invoke("getExternalState", componentId)
 })
 
 // Enters a global hotkey
@@ -106,6 +115,7 @@ declare global {
 			getByIdFragment(elementType: string, id: string): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
+			getComponentState(componentId: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
 				selectElementIdFragment: string,

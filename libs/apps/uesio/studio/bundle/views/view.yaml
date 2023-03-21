@@ -80,6 +80,7 @@ definition:
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: "Build"
+                                      uesio.id: build-view
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
