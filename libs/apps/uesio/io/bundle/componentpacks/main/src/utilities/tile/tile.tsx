@@ -10,6 +10,7 @@ import { definition, styles } from "@uesio/ui"
 interface TileUtilityProps extends definition.UtilityProps {
 	avatar?: ReactNode
 	onClick?: (e: MouseEvent) => void
+	onDoubleClick?: (e: MouseEvent) => void
 	isSelected?: boolean
 	rootAttributes?: HTMLAttributes<
 		HTMLDivElement | HTMLAnchorElement | HTMLButtonElement
@@ -18,8 +19,16 @@ interface TileUtilityProps extends definition.UtilityProps {
 }
 
 const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
-	const { avatar, children, onClick, id, isSelected, rootAttributes, link } =
-		props
+	const {
+		avatar,
+		children,
+		onClick,
+		onDoubleClick,
+		id,
+		isSelected,
+		rootAttributes,
+		link,
+	} = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -73,6 +82,7 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 			id={id}
 			className={className}
 			onClick={onClick}
+			onDoubleClick={onDoubleClick}
 		>
 			{avatarNode}
 			{childrenNode}

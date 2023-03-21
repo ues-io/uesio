@@ -40,6 +40,10 @@ func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
 
 	for _, dep := range *mmd {
 		key := dep.GetKey()
+		_, ok := entityData[key]
+		if ok {
+			continue
+		}
 		ids = append(ids, key)
 		rawData, err := dep.GetBytes()
 		if err == nil {

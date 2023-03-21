@@ -65,6 +65,11 @@ Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
 	cy.get(idContainsSelector("input", idFragment)).type(value)
 })
 
+// Clears an input element whose id contains a given string
+Cypress.Commands.add("clearInput", (idFragment: string) => {
+	cy.get(idContainsSelector("input", idFragment)).clear()
+})
+
 // Changes the value of a <select>
 Cypress.Commands.add(
 	"changeSelectValue",
@@ -114,6 +119,7 @@ declare global {
 			visitRoute(route: string): Chainable<void>
 			getByIdFragment(elementType: string, id: string): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
+			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>

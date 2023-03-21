@@ -5,7 +5,7 @@ import { cancel, save, useHasChanges } from "../api/defapi"
 const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 	const Group = component.getUtility("uesio/io.group")
-	const { context } = props
+	const { context, id } = props
 
 	const hasChanges = useHasChanges(context)
 
@@ -43,6 +43,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					<Button
 						context={context}
 						label="Save Changes"
+						id={`${id}:save-builder-changes`}
 						disabled={!hasChanges}
 						variant="uesio/builder.primarytoolbar"
 						onClick={() => {
@@ -51,6 +52,7 @@ const TopActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					/>
 					<Button
 						context={context}
+						id={`${id}:cancel-builder-changes`}
 						label="Cancel"
 						disabled={!hasChanges}
 						variant="uesio/builder.secondarytoolbar"

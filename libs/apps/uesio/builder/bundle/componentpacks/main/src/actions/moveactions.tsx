@@ -67,7 +67,11 @@ type Props = {
 	path: FullPath
 }
 
-const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
+const MoveActions: definition.UtilityComponent<Props> = ({
+	path,
+	context,
+	id,
+}) => {
 	const isArrayMove = component.path.isNumberIndex(
 		component.path.getKeyAtPath(path.localPath)
 	)
@@ -80,6 +84,7 @@ const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 				title="Move Backward"
 				onClick={onClickBackward}
 				icon="arrow_upward"
+				id={`${id}:move-backward`}
 				disabled={!enableBackward}
 				context={context}
 			/>
@@ -87,6 +92,7 @@ const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 				title="Move Forward"
 				onClick={onClickForward}
 				icon="arrow_downward"
+				id={`${id}:move-forward`}
 				disabled={!enableForward}
 				context={context}
 			/>

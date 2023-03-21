@@ -7,11 +7,16 @@ type Props = {
 	path: FullPath
 }
 
-const CloneAction: definition.UtilityComponent<Props> = ({ path, context }) => (
+const CloneAction: definition.UtilityComponent<Props> = ({
+	path,
+	context,
+	id,
+}) => (
 	<ActionButton
 		title="Clone"
 		onClick={() => clone(context, path)}
 		icon="content_copy"
+		id={`${id}:clone-selected`}
 		context={context}
 	/>
 )

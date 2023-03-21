@@ -42,7 +42,7 @@ const setMetadataValue = (
 	if (original === undefined) {
 		setBuilderState(context, originalMetadataId, current)
 	}
-	if (original && current === original) {
+	if (original && newTextValue === original) {
 		removeBuilderState(context, originalMetadataId)
 	}
 	setBuilderState(context, metadataId, newTextValue)
@@ -106,7 +106,8 @@ const remove = (context: ctx.Context, path: FullPath) => {
 const add = (
 	context: ctx.Context,
 	path: FullPath,
-	definition: definition.Definition
+	definition: definition.Definition,
+	autoSelect?: boolean
 ) => {
 	const [index, parent] = path.popIndex()
 
@@ -123,7 +124,10 @@ const add = (
 	)
 
 	setMetadataValue(context, path, yamlDoc)
-	setSelectedPath(context, path)
+
+	if (autoSelect) {
+		setSelectedPath(context, path)
+	}
 }
 
 const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {

@@ -234,7 +234,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDrop={onDrop}
 			className={classes.root}
 		>
-			<TopActions context={context} />
+			<TopActions id="topactions" context={context} />
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
