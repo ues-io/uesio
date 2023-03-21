@@ -137,6 +137,9 @@ const useAllVariants = useComponentVariants
 const useMode = (id: string, initialMode: FieldMode | undefined) =>
 	useStateSlice<FieldMode>("mode", id, initialMode || "READ")
 
+const useDisabled = (id: string, disabled: boolean | undefined) =>
+	useStateSlice<boolean>("disabled", id, disabled || false)
+
 export {
 	getComponentId,
 	getComponentIdFromProps,
@@ -150,4 +153,5 @@ export {
 	getExternalState,
 	getVariantId,
 	useAllVariants,
+	useDisabled,
 }

@@ -1,12 +1,19 @@
 import { api, styles, component, signal, definition } from "@uesio/ui"
 import { default as IOButton } from "../../utilities/button/button"
 import Icon from "../../utilities/icon/icon"
+import { disable, enable } from "../../shared/disabled"
 
 type ButtonDefinition = {
 	text?: string
 	icon?: string
 	signals?: signal.SignalDefinition[]
 	hotkey?: string
+	disabled?: boolean
+}
+
+const signals: Record<string, signal.ComponentSignalDescriptor> = {
+	ENABLE: enable,
+	DISABLE: disable,
 }
 
 const Button: definition.UC<ButtonDefinition> = (props) => {
@@ -33,6 +40,12 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 
 	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
 
+	const componentId = api.component.getComponentIdFromProps(props)
+	const [disabled] = api.component.useDisabled(
+		componentId,
+		definition.disabled
+	)
+
 	return (
 		<IOButton
 			id={api.component.getComponentIdFromProps(props)}
@@ -40,6 +53,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			classes={classes}
 			label={definition.text}
 			link={link}
+			disabled={disabled}
 			onClick={handler}
 			context={context}
 			isSelected={isSelected}
@@ -58,4 +72,5 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 	)
 }
 
+Button.signals = signals
 export default Button
