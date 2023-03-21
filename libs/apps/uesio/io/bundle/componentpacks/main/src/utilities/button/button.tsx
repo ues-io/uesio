@@ -57,7 +57,11 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			id={id}
 			href={link}
 			disabled={disabled}
-			onClick={onClick}
+			onClick={(e) => {
+				if (e?.detail === 1 && onClick) {
+					onClick(e)
+				}
+			}}
 			className={styles.cx(
 				classes.root,
 				disabled && classes.disabled,
