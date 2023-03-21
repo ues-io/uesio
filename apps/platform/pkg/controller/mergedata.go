@@ -180,6 +180,7 @@ func GetSiteMergeData(site *meta.Site) *routing.SiteMergeData {
 		Domain:    site.Domain,
 		Version:   site.Bundle.GetVersionString(),
 		Title:     site.Title,
+		EnableSEO: site.EnableSEO,
 	}
 }
 

@@ -13,6 +13,11 @@
                 {{- end -}}
             {{- end -}}
         {{- end }}
+        {{- if .Site -}}
+            {{- if (eq .Site.EnableSEO false) -}}
+        <meta name="robots" content="none"/>
+            {{- end -}}
+        {{- end }}
         <style>
             {{template "fonts" .}}
         </style>
