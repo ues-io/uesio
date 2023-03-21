@@ -8,6 +8,24 @@ type Definition = {
 	path: FullPath
 }
 
+const parseRelativePath = (relativePath: string, basePath: string) => {
+	// Clean strings starting with './', we don't need that
+	const niceString = relativePath.startsWith("./")
+		? relativePath.replace("./", "")
+		: relativePath
+	// get the N levels up the tree
+	const arr = niceString.split("../")
+
+	const startingPath = component.path.getAncestorPath(basePath, arr.length)
+	const endingPath = arr
+		.pop()
+		?.split("/")
+		.map((el) => `["${el}"]`)
+		.join("")
+
+	return startingPath + endingPath
+}
+
 const getGrouping = (
 	path: FullPath,
 	context: context.Context,
@@ -17,10 +35,7 @@ const getGrouping = (
 	if (groupingValue) return groupingValue
 	if (!groupingPath) return undefined
 
-	const parsePath = component.path.parseRelativePath(
-		groupingPath,
-		path.localPath || ""
-	)
+	const parsePath = parseRelativePath(groupingPath, path.localPath || "")
 
 	return get(context, path.setLocal(parsePath)) as string
 }

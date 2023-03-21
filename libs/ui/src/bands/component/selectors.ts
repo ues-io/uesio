@@ -36,18 +36,10 @@ const selectTarget = (state: RootState, target: string) => {
 
 const selectTargetCount = (state: RootState, target: string) => {
 	const entities = selectors.selectEntities(state)
-	let count = 0
-	if (!entities) return count
-
-	Object.keys(entities).forEach((key) => {
-		if (key.startsWith(target)) {
-			const componentState = entities[key]
-			if (componentState) {
-				count++
-			}
-		}
-	})
-	return count
+	if (!entities) return 0
+	return Object.keys(entities).filter(
+		(k) => k.startsWith(target) && entities[k]
+	).length
 }
 
 export {
