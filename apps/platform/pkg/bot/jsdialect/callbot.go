@@ -1,8 +1,6 @@
 package jsdialect
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -61,7 +59,6 @@ func (bs *CallBotAPI) RunIntegrationAction(integrationID string, action string, 
 
 	integration, err := integ.GetIntegration(integrationID, bs.Session)
 	if err != nil {
-		fmt.Printf("runnig integration error %v", err)
 		return nil
 	}
 
