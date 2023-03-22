@@ -225,6 +225,4 @@ const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 	)
 }
 
-export { TableUtilityProps }
-
 export default Table

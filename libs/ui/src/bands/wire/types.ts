@@ -37,4 +37,4 @@ type PlainWire = {
 	isLoading?: boolean
 }
 
-export { PlainWire, OrderState }
+export type { PlainWire, OrderState }

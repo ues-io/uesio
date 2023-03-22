@@ -26,4 +26,4 @@ type ViewDefinition = {
 	params?: Record<string, ParamDefinition>
 }
 
-export { PlainViewDef, PlainViewDefMap, ViewDefinition, ViewEventsDef }
+export type { PlainViewDef, PlainViewDefMap, ViewDefinition, ViewEventsDef }

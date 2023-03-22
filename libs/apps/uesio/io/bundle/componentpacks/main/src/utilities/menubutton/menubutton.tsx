@@ -37,6 +37,6 @@ const MenuButton: FunctionComponent<MenuButtonUtilityProps<unknown>> = (
 	)
 }
 
-export { MenuButtonUtilityProps }
+export type { MenuButtonUtilityProps }
 
 export default MenuButton

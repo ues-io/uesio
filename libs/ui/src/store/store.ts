@@ -80,4 +80,5 @@ const dispatch = (action: Parameters<typeof store.dispatch>[0]) =>
 
 const getCurrentState = () => store.getState()
 
-export { create, RootState, InitialState, dispatch, getCurrentState }
+export type { RootState, InitialState }
+export { create, dispatch, getCurrentState }

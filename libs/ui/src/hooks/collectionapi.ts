@@ -40,10 +40,4 @@ const getCollection = (collectionName: string) => {
 const createJob = platform.createJob
 const importData = platform.importData
 
-export {
-	useCollection,
-	getCollection,
-	createJob,
-	importData,
-	UseCollectionOptions,
-}
+export { useCollection, getCollection, createJob, importData }

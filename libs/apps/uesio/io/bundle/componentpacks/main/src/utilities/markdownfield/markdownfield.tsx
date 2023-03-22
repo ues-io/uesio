@@ -95,6 +95,4 @@ const MarkDownField: FunctionComponent<MarkDownFieldProps> = (props) => {
 	)
 }
 
-export { MarkDownFieldProps }
-
 export default MarkDownField

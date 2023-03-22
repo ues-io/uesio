@@ -146,6 +146,9 @@ export {
 	getSectionIcon,
 	getStylesSection,
 	getHomeSection,
+}
+
+export type {
 	StylesSection,
 	CustomSection,
 	HomeSection,

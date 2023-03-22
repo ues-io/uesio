@@ -172,4 +172,5 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 }
 
-export { handlers, MergeType }
+export { handlers }
+export type { MergeType }

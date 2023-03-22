@@ -123,6 +123,4 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	)
 }
 
-export { PaginatorUtilityProps }
-
 export default Paginator

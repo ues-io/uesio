@@ -6,11 +6,11 @@ import { set } from "../../api/defapi"
 import { FullPath } from "../../api/path"
 import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import BuildActionsArea from "../../helpers/buildactionsarea"
-import { MapProperty } from "../../properties/componentproperty"
+import { MapProperty as MP } from "../../properties/componentproperty"
 import PropNodeTag from "../../utilities/propnodetag/propnodetag"
 
 type Definition = {
-	property: MapProperty
+	property: MP
 	path: FullPath
 }
 

@@ -205,5 +205,4 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	)
 }
 
-export { ListFieldUtilityProps }
 export default ListField

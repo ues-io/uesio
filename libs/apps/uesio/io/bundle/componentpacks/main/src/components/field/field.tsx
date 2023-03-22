@@ -149,10 +149,9 @@ const Field: definition.UC<FieldDefinition> = (props) => {
 
 Field.signals = fileTextSignals
 
-export {
-	fileTextSignals,
-	UPLOAD_FILE_EVENT,
-	CANCEL_FILE_EVENT,
+export { fileTextSignals, UPLOAD_FILE_EVENT, CANCEL_FILE_EVENT }
+
+export type {
 	UserFileMetadata,
 	LabelPosition,
 	ListFieldOptions,

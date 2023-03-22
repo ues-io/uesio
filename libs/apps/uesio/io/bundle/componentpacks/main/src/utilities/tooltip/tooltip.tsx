@@ -118,5 +118,5 @@ const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 		</>
 	)
 }
-export { TooltipUtilityProps }
+
 export default Tooltip

@@ -167,7 +167,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	groupingValue: componentType || "",
 })
 
-export {
+export type {
 	BotProperty,
 	ListPropertyItemsDefinition,
 	ComponentProperty,
@@ -177,5 +177,6 @@ export {
 	MapProperty,
 	ListProperty,
 	IconProperty,
-	getStyleVariantProperty,
 }
+
+export { getStyleVariantProperty }

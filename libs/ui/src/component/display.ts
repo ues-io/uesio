@@ -378,7 +378,6 @@ export {
 	useShouldFilter,
 	useContextFilter,
 	shouldHaveClass,
-	DisplayCondition,
-	DisplayOperator,
-	ItemContext,
 }
+
+export type { DisplayCondition, DisplayOperator, ItemContext }

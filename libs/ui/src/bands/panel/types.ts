@@ -1,8 +1,6 @@
 import { ContextFrame } from "../../context/context"
 
-interface PanelState {
+export interface PanelState {
 	id: string
 	context: ContextFrame[]
 }
-
-export { PanelState }
