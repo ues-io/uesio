@@ -289,18 +289,21 @@ function mergeStyles<K extends string>(
 	)
 }
 
-export {
-	defaultTheme,
-	useStyleProperty,
-	getBackgroundStyles,
-	getMarginStyles,
-	getFloatStyles,
+export type {
 	BackgroundDefinition,
 	ResponsiveDefinition,
 	MarginDefinition,
 	FloatDefinition,
 	CSSProperties,
 	ThemeState,
+}
+
+export {
+	defaultTheme,
+	useStyleProperty,
+	getBackgroundStyles,
+	getMarginStyles,
+	getFloatStyles,
 	getSpacing,
 	getColor,
 	getResponsiveStyles,

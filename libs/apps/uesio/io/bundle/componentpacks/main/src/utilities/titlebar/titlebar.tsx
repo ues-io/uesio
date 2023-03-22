@@ -63,6 +63,4 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	)
 }
 
-export { TitleBarUtilityProps }
-
 export default TitleBar

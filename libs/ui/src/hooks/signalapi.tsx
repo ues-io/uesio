@@ -102,5 +102,6 @@ export {
 	useRegisterHotKey,
 	runMany,
 	run,
-	ComponentSignalDescriptor,
 }
+
+export type { ComponentSignalDescriptor }

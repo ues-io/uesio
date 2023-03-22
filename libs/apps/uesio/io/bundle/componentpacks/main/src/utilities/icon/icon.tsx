@@ -35,5 +35,4 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	return <span className={classes.root}>{props.icon}</span>
 }
 
-export { IconUtilityProps }
 export default Icon

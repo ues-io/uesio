@@ -466,11 +466,12 @@ export {
 	getFullWireId,
 	addErrorState,
 	getWireParts,
-	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
 	addLookupWires,
 }
+
+export type { WireLoadAction }
 
 export const {
 	markForDelete,

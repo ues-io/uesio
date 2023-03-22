@@ -562,8 +562,9 @@ const platform = {
 
 type Platform = typeof platform
 
-export {
-	platform,
+export { platform }
+
+export type {
 	Platform,
 	BotResponse,
 	BotParams,

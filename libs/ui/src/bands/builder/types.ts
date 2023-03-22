@@ -31,4 +31,5 @@ type MetadataListResponse = {
 	metadata: Record<string, boolean>
 }
 
-export { MetadataListResponse, MetadataType, METADATA, MetadataKey }
+export type { MetadataListResponse, MetadataType, MetadataKey }
+export { METADATA }

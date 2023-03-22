@@ -90,5 +90,4 @@ const Tile = forwardRef<HTMLDivElement, TileUtilityProps>((props, ref) => {
 	)
 })
 
-export { TileUtilityProps }
 export default Tile

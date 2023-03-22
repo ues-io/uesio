@@ -66,6 +66,5 @@ const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 		</DialogPlain>
 	)
 }
-export { DialogUtilityProps }
 
 export default Dialog

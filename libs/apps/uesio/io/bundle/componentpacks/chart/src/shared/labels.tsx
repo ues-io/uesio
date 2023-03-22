@@ -286,4 +286,5 @@ const getLabelsForSeries = (
 	}
 }
 
-export { getCategoryFunc, getLabels, LabelsDefinition }
+export { getCategoryFunc, getLabels }
+export type { LabelsDefinition }
