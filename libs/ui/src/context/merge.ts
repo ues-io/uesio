@@ -6,7 +6,7 @@ import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
-import { get } from "lodash"
+import get from "lodash/get"
 import { SiteState } from "../bands/site"
 
 type MergeType =

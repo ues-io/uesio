@@ -250,6 +250,17 @@ const platform = {
 		)
 		return respondJSON(response)
 	},
+	getViewParams: async (
+		context: Context,
+		namespace: string,
+		name: string
+	): Promise<ParamDefinition[]> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(
+			`${prefix}/views/params/${namespace}/${name}`
+		)
+		return respondJSON(response)
+	},
 	getFileURL: (context: Context, namespace: string, name: string) => {
 		const siteBundleVersion = getSiteBundleVersion(context)
 		const prefix = getPrefix(context)

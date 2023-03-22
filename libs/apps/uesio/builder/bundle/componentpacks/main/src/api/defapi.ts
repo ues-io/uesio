@@ -4,10 +4,17 @@ import {
 	context as ctx,
 	component,
 	collection,
-	util,
 	platform,
 	wire,
 } from "@uesio/ui"
+import {
+	addNodeAtPath,
+	getNodeAtPath,
+	getParentPathArray,
+	parse,
+	removeNodeAtPath,
+	setNodeAtPath,
+} from "../yaml/yamlutils"
 import { FullPath } from "./path"
 import {
 	getBuilderExternalState,
@@ -20,6 +27,7 @@ import {
 	useBuilderExternalState,
 	useBuilderExternalStatesCount,
 } from "./stateapi"
+import yaml from "yaml"
 
 const moveInArray = (arr: unknown[], fromIndex: number, toIndex: number) =>
 	arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
@@ -32,12 +40,13 @@ const getMetadataValue = (context: ctx.Context, path: FullPath) => {
 const setMetadataValue = (
 	context: ctx.Context,
 	path: FullPath,
-	yamlDoc: util.yaml.lib.Document.Parsed<util.yaml.lib.ParsedNode>
+	yamlDoc: yaml.Document.Parsed<yaml.ParsedNode>,
+	text?: string // Optionally send the text so we can save a toString call
 ) => {
 	const metadataId = getMetadataId(path)
 	const originalMetadataId = `original:${metadataId}`
 	const original = getBuilderState<string>(context, originalMetadataId)
-	const newTextValue = yamlDoc.toString()
+	const newTextValue = text || yamlDoc.toString()
 	const current = getMetadataValue(context, path)
 	if (original === undefined) {
 		setBuilderState(context, originalMetadataId, current)
@@ -66,9 +75,9 @@ const set = (
 ) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
-	const yamlDoc = util.yaml.parse(current)
+	const yamlDoc = parse(current)
 	const pathArray = component.path.toPath(path.localPath)
-	const parentPath = component.path.getParentPathArray(pathArray)
+	const parentPath = getParentPathArray(pathArray)
 	const parentNode = yamlDoc.getIn(parentPath)
 	// if the parent is "null" or "undefined", the yaml library won't set our pair in the object.
 	const newNodeSrc = parentNode
@@ -76,7 +85,7 @@ const set = (
 		: { [`${component.path.toPath(path.localPath).pop()}`]: definition }
 	const pathToUpdate = parentNode ? pathArray : parentPath
 	const newNode = yamlDoc.createNode(newNodeSrc)
-	util.yaml.setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
+	setNodeAtPath(pathToUpdate, yamlDoc.contents, newNode)
 
 	setMetadataValue(context, path, yamlDoc)
 
@@ -90,8 +99,8 @@ const remove = (context: ctx.Context, path: FullPath) => {
 	if (!current) return
 
 	const pathArray = component.path.toPath(path.localPath)
-	const yamlDoc = util.yaml.parse(current)
-	util.yaml.removeNodeAtPath(pathArray, yamlDoc.contents)
+	const yamlDoc = parse(current)
+	removeNodeAtPath(pathArray, yamlDoc.contents)
 
 	setMetadataValue(context, path, yamlDoc)
 
@@ -118,9 +127,9 @@ const add = (
 	const current = getMetadataValue(context, path)
 	if (!current) return
 
-	const yamlDoc = util.yaml.parse(current)
+	const yamlDoc = parse(current)
 	const newNode = yamlDoc.createNode(definition)
-	util.yaml.addNodeAtPath(
+	addNodeAtPath(
 		component.path.toPath(parent.localPath),
 		yamlDoc.contents,
 		newNode,
@@ -141,20 +150,16 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 	const toCurrent = getMetadataValue(context, toPath)
 	if (!toCurrent) return
 
-	const yamlDoc = util.yaml.parse(toCurrent)
+	const yamlDoc = parse(toCurrent)
 	// First get the content of the from item
-	const fromNode = util.yaml.getNodeAtPath(
-		fromPath.localPath,
-		yamlDoc.contents
-	)
+	const fromNode = getNodeAtPath(fromPath.localPath, yamlDoc.contents)
 	const fromParentPath = component.path.getParentPath(fromPath.localPath)
-	const fromParent = util.yaml.getNodeAtPath(fromParentPath, yamlDoc.contents)
+	const fromParent = getNodeAtPath(fromParentPath, yamlDoc.contents)
 	const toParentPath = component.path.getParentPath(toPath.localPath)
 	const clonedNode = fromNode?.clone()
-	if (!util.yaml.lib.isCollection(clonedNode)) return
-	const isArrayMove = util.yaml.lib.isSeq(fromParent)
-	const isMapMove =
-		util.yaml.lib.isMap(fromParent) && fromParentPath === toParentPath
+	if (!yaml.isCollection(clonedNode)) return
+	const isArrayMove = yaml.isSeq(fromParent)
+	const isMapMove = yaml.isMap(fromParent) && fromParentPath === toParentPath
 
 	if (isArrayMove) {
 		const index = component.path.getIndexFromPath(toPath.localPath) || 0
@@ -165,12 +170,7 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 			moveInArray(fromParent.items, fromIndex, index)
 		} else {
 			// Set that content at the to item
-			util.yaml.addNodeAtPath(
-				toParentPath,
-				yamlDoc.contents,
-				clonedNode,
-				index
-			)
+			addNodeAtPath(toParentPath, yamlDoc.contents, clonedNode, index)
 
 			// Loop over the items of the from parent
 			fromParent.items.forEach((item, index) => {
@@ -184,10 +184,10 @@ const move = (context: ctx.Context, fromPath: FullPath, toPath: FullPath) => {
 		const fromKey = component.path.getKeyAtPath(fromPath.localPath)
 		const toKey = component.path.getKeyAtPath(toPath.localPath)
 		const fromIndex = fromParent.items.findIndex(
-			(item) => (item.key as util.yaml.lib.Scalar).value === fromKey
+			(item) => (item.key as yaml.Scalar).value === fromKey
 		)
 		const toIndex = fromParent.items.findIndex(
-			(item) => (item.key as util.yaml.lib.Scalar).value === toKey
+			(item) => (item.key as yaml.Scalar).value === toKey
 		)
 		const temp = fromParent.items[fromIndex]
 		fromParent.items[fromIndex] = fromParent.items[toIndex]
@@ -203,12 +203,12 @@ const clone = (context: ctx.Context, path: FullPath) => {
 	const current = getMetadataValue(context, path)
 	if (!current) return
 
-	const yamlDoc = util.yaml.parse(current)
+	const yamlDoc = parse(current)
 	const parentPath = component.path.getParentPath(path.localPath)
 	const index = component.path.getIndexFromPath(path.localPath)
 	if (!index && index !== 0) return
-	const parentNode = util.yaml.getNodeAtPath(parentPath, yamlDoc.contents)
-	if (!util.yaml.lib.isSeq(parentNode)) return
+	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+	if (!yaml.isSeq(parentNode)) return
 	const items = parentNode.items
 	items.splice(index, 0, items[index])
 
@@ -223,11 +223,11 @@ const cloneKey = (context: ctx.Context, path: FullPath) => {
 		(component.path.getKeyAtPath(path.localPath) || "") +
 		(Math.floor(Math.random() * 60) + 1)
 
-	const yamlDoc = util.yaml.parse(current)
+	const yamlDoc = parse(current)
 	const parentPath = component.path.getParentPath(path.localPath)
-	const cloneNode = util.yaml.getNodeAtPath(path.localPath, yamlDoc.contents)
-	const parentNode = util.yaml.getNodeAtPath(parentPath, yamlDoc.contents)
-	if (!util.yaml.lib.isMap(parentNode)) return
+	const cloneNode = getNodeAtPath(path.localPath, yamlDoc.contents)
+	const parentNode = getNodeAtPath(parentPath, yamlDoc.contents)
+	if (!yaml.isMap(parentNode)) return
 	parentNode.setIn([newKey], cloneNode)
 
 	setMetadataValue(context, path, yamlDoc)
@@ -242,7 +242,7 @@ const changeKey = (context: ctx.Context, path: FullPath, key: string) => {
 	// Stop if old and new key are equal
 	if (component.path.getKeyAtPath(path.localPath) === key) return
 	// create a new document so components using useYaml will rerender
-	const yamlDoc = util.yaml.parse(current)
+	const yamlDoc = parse(current)
 	// make a copy so we can place with a new key and delete the old node
 	const newNode = yamlDoc.getIn(pathArray)
 	// replace the old with the new key
@@ -279,7 +279,7 @@ const useContent = (context: ctx.Context, path: FullPath) =>
 	useBuilderExternalState<string>(context, getMetadataId(path))
 
 const setContent = (context: ctx.Context, path: FullPath, value: string) => {
-	setMetadataValue(context, path, util.yaml.parse(value))
+	setMetadataValue(context, path, parse(value), value)
 }
 
 const useHasChanges = (context: ctx.Context) => {

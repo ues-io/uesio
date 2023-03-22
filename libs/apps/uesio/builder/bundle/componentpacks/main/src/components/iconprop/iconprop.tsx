@@ -1,8 +1,9 @@
 import { ChangeEvent, useState } from "react"
-import { component, styles, materialIcons, definition } from "@uesio/ui"
+import { component, styles, definition } from "@uesio/ui"
 import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 import { IconProperty } from "../../properties/componentproperty"
+import { materialIcons } from "../../icons/materialicons"
 
 type Definition = {
 	property: IconProperty

@@ -29,7 +29,6 @@ func Pack(options *PackOptions) error {
 		"react":        "React",
 		"react-dom":    "ReactDOM",
 		"@uesio/ui":    "uesio",
-		"yaml":         "yaml",
 		"@emotion/css": "emotion",
 	}
 
