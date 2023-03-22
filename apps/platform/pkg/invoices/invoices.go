@@ -1,11 +1,7 @@
-package cmd
+package invoices
 
 import (
 	"errors"
-	"strings"
-	"time"
-
-	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -14,32 +10,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 	"github.com/thecloudmasters/uesio/pkg/translate"
+	"strings"
+	"time"
 )
-
-func init() {
-
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "invoices",
-		Short: "uesio invoices",
-		Run:   invoices,
-	})
-
-}
-
-func invoices(cmd *cobra.Command, args []string) {
-
-	logger.Log("Running uesio worker", logger.INFO)
-
-	err := InvoicingJob()
-	if err != nil {
-		logger.Log("Invoicing Job failed reason: "+err.Error(), logger.ERROR)
-	}
-
-}
 
 func InvoicingJob() error {
 
-	logger.Log("Invoicing Job Running", logger.INFO)
+	logger.Info("Starting Invoicing job...")
 
 	session, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
@@ -58,6 +35,8 @@ func InvoicingJob() error {
 			return err
 		}
 	}
+
+	logger.Info("Invoicing job successfully completed.")
 
 	return nil
 

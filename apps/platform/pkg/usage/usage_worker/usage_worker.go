@@ -1,58 +1,49 @@
-package cmd
+package usage_worker
 
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/gomodule/redigo/redis"
-	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/cache"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
+	"strconv"
+	"strings"
 )
 
-func init() {
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "usage",
-		Short: "uesio usage",
-		Run:   usage,
-	})
-}
+const MAX_USAGE_PER_RUN = 1000
 
-func usage(cmd *cobra.Command, args []string) {
+func UsageWorker() error {
 
-	logger.Log("Running uesio worker", logger.INFO)
-
-	for {
-		err := UsageJob()
-		if err != nil {
-			logger.Log("Usage Job failed reason: "+err.Error(), logger.ERROR)
-		}
-		time.Sleep(1 * time.Second)
-	}
-
-}
-
-func UsageJob() error {
-
-	logger.Log("Usage Job Running", logger.INFO)
+	logger.Log("Running usage worker job", logger.INFO)
 
 	conn := cache.GetRedisConn()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+			logger.LogError(err)
+		}
+	}(conn)
 
-	keys, err := redis.Strings(conn.Do("SMEMBERS", "USAGE_KEYS"))
+	session, err := auth.GetStudioSystemSession(nil)
 	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		return errors.New("Unable to obtain a system session to use for usage events job: " + err.Error())
+	}
+
+	// SPOP gets and removes up to N random members from a set.
+	// If these keys are NOT successfully processed, we will need to add them back to the set
+	// in order to ensure that a subsequent job processes them.
+	keys, err := redis.Strings(conn.Do("SPOP", usage_common.RedisKeysSetName, MAX_USAGE_PER_RUN))
+	if err != nil {
+		return fmt.Errorf("Error getting usage set members: " + err.Error())
 	}
 
 	if len(keys) == 0 {
-		logger.Log("Job completed, nothing to process", logger.INFO)
+		logger.Log("Job completed, no usage events to process", logger.INFO)
 		return nil
 	}
 
@@ -60,24 +51,19 @@ func UsageJob() error {
 
 	values, err := redis.Strings(conn.Do("MGET", keyArgs...))
 	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-	}
-
-	_, err = conn.Do("DEL", keyArgs...)
-	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
-	}
-
-	_, err = conn.Do("DEL", "USAGE_KEYS")
-	if err != nil {
-		return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+		return fmt.Errorf("Error fetching usage keys: " + err.Error())
 	}
 
 	changes := meta.UsageCollection{}
 	for i, key := range keys {
+		// Make sure the value was actually there
+		if key == "nil" {
+			continue
+		}
 		keyParts := strings.Split(key, ":")
 		if len(keyParts) != 9 {
-			return fmt.Errorf("Error Getting Usage Event: " + err.Error())
+			logger.LogError(errors.New("Usage key did not match expected pattern: " + key))
+			continue
 		}
 
 		tenantType := keyParts[1]
@@ -114,11 +100,6 @@ func UsageJob() error {
 
 	if len(changes) > 0 {
 
-		session, err := auth.GetStudioSystemSession(nil)
-		if err != nil {
-			return err
-		}
-
 		requests := []datasource.SaveRequest{
 			{
 				Collection: "uesio/studio.usage",
@@ -130,10 +111,20 @@ func UsageJob() error {
 
 		err = datasource.SaveWithOptions(requests, session, nil)
 		if err != nil {
+			// Restore the usage keys which we failed to process back to the set
+			_, err = conn.Do("SADD", redis.Args{}.Add(usage_common.RedisKeysSetName).AddFlat(keys))
 			return errors.New("Failed to update usage events: " + err.Error())
+		} else {
+			logger.Log(fmt.Sprintf("Successfully processed %d usage events", len(changes)), logger.INFO)
 		}
 	}
 
-	logger.Log("Job completed, no issues found", logger.INFO)
+	// Now that we've successfully saved, delete the keys
+	_, err = conn.Do("DEL", keyArgs...)
+	if err != nil {
+		return fmt.Errorf("Error deleting usage keys: " + err.Error())
+	}
+
+	logger.Log("Usage job completed, no issues found", logger.INFO)
 	return nil
 }
