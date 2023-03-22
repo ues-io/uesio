@@ -5,8 +5,7 @@ import ActionButton from "../helpers/actionbutton"
 
 const getArrayMoveParams = (
 	context: context.Context,
-	path: FullPath,
-	selectKey?: string
+	path: FullPath
 ): [boolean, boolean, () => void, () => void] => {
 	const index = component.path.getIndexFromPath(path.localPath)
 	const indexPath = component.path.getIndexPath(path.localPath)
@@ -20,12 +19,7 @@ const getArrayMoveParams = (
 	const enableForward = !!(index !== null && size && index < size - 1)
 
 	const moveToIndex = (index: number) => {
-		move(
-			context,
-			path,
-			path.setLocal(`${parentPath}["${index}"]`),
-			selectKey
-		)
+		move(context, path, path.setLocal(`${parentPath}["${index}"]`))
 	}
 
 	return [
@@ -73,19 +67,24 @@ type Props = {
 	path: FullPath
 }
 
-const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
+const MoveActions: definition.UtilityComponent<Props> = ({
+	path,
+	context,
+	id,
+}) => {
 	const isArrayMove = component.path.isNumberIndex(
 		component.path.getKeyAtPath(path.localPath)
 	)
 	const paramGetter = isArrayMove ? getArrayMoveParams : getMapMoveParams
 	const [enableBackward, enableForward, onClickBackward, onClickForward] =
-		paramGetter(context, path, undefined)
+		paramGetter(context, path)
 	return (
 		<>
 			<ActionButton
 				title="Move Backward"
 				onClick={onClickBackward}
 				icon="arrow_upward"
+				id={`${id}:move-backward`}
 				disabled={!enableBackward}
 				context={context}
 			/>
@@ -93,6 +92,7 @@ const MoveActions: definition.UtilityComponent<Props> = ({ path, context }) => {
 				title="Move Forward"
 				onClick={onClickForward}
 				icon="arrow_downward"
+				id={`${id}:move-forward`}
 				disabled={!enableForward}
 				context={context}
 			/>

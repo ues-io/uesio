@@ -1,7 +1,6 @@
 import View from "./components/view"
 
 // For use in exports as the uesio api
-import * as builder from "./buildmode/buildpropdefinition"
 import * as collection from "./collectionexports"
 import * as component from "./componentexports"
 import * as context from "./context/context"
@@ -27,7 +26,6 @@ register("uesio/core.view", View)
 
 export {
 	api,
-	builder,
 	collection,
 	component,
 	context,

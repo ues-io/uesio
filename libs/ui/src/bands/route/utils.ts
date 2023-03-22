@@ -3,9 +3,8 @@ import { Dependencies } from "./types"
 import { setMany as setComponentVariant } from "../componentvariant"
 import { setMany as setConfigValue } from "../configvalue"
 import { setMany as setLabel } from "../label"
-import { setMany as setViewDef } from "../viewdef"
+import { upsertMany as setViewDef } from "../viewdef"
 import { setMany as setTheme } from "../theme"
-import { setMany as setMetadataText } from "../metadatatext"
 import { setMany as setFeatureFlag } from "../featureflag"
 import { setMany as setComponent } from "../component"
 import { initAll as initWire } from "../wire"
@@ -17,7 +16,6 @@ import { LabelState } from "../../definition/label"
 import { Context } from "../../context/context"
 import { parseKey } from "../../component/path"
 import { ThemeState } from "../../definition/theme"
-import { MetadataState } from "../metadata/types"
 import { FeatureFlagState } from "../../definition/featureflag"
 import { initExistingWire } from "../wire/operations/initialize"
 import { EntityState } from "@reduxjs/toolkit"
@@ -76,9 +74,6 @@ const dispatchRouteDeps = (deps: Dependencies | undefined) => {
 
 	const components = deps.component?.entities as Dep<ComponentState>
 	if (components) dispatch(setComponent(components))
-
-	const metadatatext = deps.metadatatext?.entities as Dep<MetadataState>
-	if (metadatatext) dispatch(setMetadataText(metadatatext))
 
 	const wires = deps.wire
 	if (wires && viewdefs) {

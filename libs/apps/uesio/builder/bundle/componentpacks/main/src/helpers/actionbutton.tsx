@@ -11,10 +11,11 @@ interface Props extends definition.UtilityProps {
 
 const ActionButton: FunctionComponent<Props> = (props) => {
 	const IconButton = component.getUtility("uesio/io.iconbutton")
-	const { title, onClick, icon, disabled, context, className } = props
+	const { title, onClick, icon, disabled, context, className, id } = props
 
 	return (
 		<IconButton
+			id={id}
 			onClick={onClick}
 			size="small"
 			disabled={disabled}

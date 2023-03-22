@@ -34,9 +34,9 @@ const handleDrop = (
 			break
 		}
 		case "viewdef": {
-			const [key, parent] = drag.pop()
+			const [, parent] = drag.pop()
 			batch(() => {
-				move(context, parent, drop, key)
+				move(context, parent, drop)
 				setDropPath(context)
 				setDragPath(context)
 			})
@@ -234,7 +234,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDrop={onDrop}
 			className={classes.root}
 		>
-			<TopActions context={context} />
+			<TopActions id="topactions" context={context} />
 			<div className={classes.scrollwrapper}>
 				<div className={classes.outerwrapper}>
 					<div className={classes.contentwrapper}>
