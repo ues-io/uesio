@@ -1,0 +1,15 @@
+name: default
+label: Default
+definition:
+  uesio.styles:
+    tab:
+      padding: 6px 10px
+      borderRadius: 8px
+      fontSize: 9pt
+      color: "#666"
+      marginRight: 8px
+    tabSelected:
+      backgroundColor: "#222"
+      color: white
+      fontWeight: bold
+public: true
