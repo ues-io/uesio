@@ -51,6 +51,11 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "id",
 				label: "Record ID",
 			},
+			{
+				type: "CHECKBOX",
+				name: "newWindow",
+				label: "Open in a new window",
+			},
 		],
 	},
 }

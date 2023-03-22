@@ -59,12 +59,14 @@ type PathNavigateRequest = {
 	path: string
 	title?: string
 	tags?: RouteTag[]
+	newWindow?: boolean
 }
 
 type CollectionNavigateRequest = {
 	collection: string
 	viewtype?: string
 	recordid?: string
+	newWindow?: boolean
 }
 
 type MetadataInfo = {

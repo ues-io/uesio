@@ -47,9 +47,9 @@ const navigate = async (
 	if (!routeResponse) return context
 
 	const deps = routeResponse.dependencies
-
 	if (!noPushState) {
 		const prefix = getRouteUrlPrefix(context, routeResponse.namespace)
+		if (request.newWindow) return window.open(prefix + routeResponse.path)
 		window.history.pushState(
 			{
 				namespace: routeResponse.namespace,
