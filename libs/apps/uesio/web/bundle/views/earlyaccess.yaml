@@ -2,17 +2,32 @@ name: earlyaccess
 definition:
   # Wires are how we pull in data
   wires:
-    newlead:
+    leads:
       collection: uesio/crm.lead
       fields:
         uesio/crm.firstname:
         uesio/crm.lastname:
-        uesio/crm.title:
         uesio/crm.email:
-        uesio/crm.phone:
-        uesio/crm.account:
+    newlead:
+      viewOnly: true
+      fields:
+        firstname:
+          label: First name
+          type: TEXT
+          required: true
+        lastname:
+          label: Last name
+          type: TEXT
+          required: true
+        role:
+          label: Job role
+          type: TEXT
+          required: true
+        email:
+          label: email
+          type: TEXT
+
       init:
-        query: false
         create: true
   # Components are how we describe the layout of our view
   components:
@@ -80,19 +95,17 @@ definition:
                                           padding: 40px
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.firstname
+                                            uesio.variant: uesio/web.field
+                                            fieldId: firstname
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.lastname
+                                            uesio.variant: uesio/web.field
+                                            fieldId: lastname
                                         - uesio/io.field:
-                                            label: Job Title
-                                            fieldId: uesio/crm.title
+                                            uesio.variant: uesio/web.field
+                                            fieldId: email
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.email
-                                        - uesio/io.field:
-                                            fieldId: uesio/crm.phone
-                                        - uesio/io.field:
-                                            label: Company
-                                            fieldId: uesio/crm.account
+                                            uesio.variant: uesio/web.field
+                                            fieldId: role
                                         - uesio/io.group:
                                             uesio.styles:
                                               root:
@@ -102,10 +115,20 @@ definition:
                                                   uesio.variant: uesio/web.calltoaction
                                                   text: Register
                                                   signals:
-                                                    - signal: wire/SAVE
-                                                      wires:
-                                                        - newlead
-                                                    - signal: route/NAVIGATE
-                                                      path: "earlyaccessthanks"
+                                                    - bot: uesio/web.addlead
+                                                      signal: bot/CALL
+                                                      params:
+                                                        firstname: ${firstname}
+                                                        lastname: ${lastname}
+                                                        email: ${email}
+                                                        rol: ${role}
+                                                    # - signal: route/NAVIGATE
+                                                    #   path: "earlyaccessthanks"
+    - uesio/io.table:
+        wire: leads
+        columns:
+          - field: uesio/crm.firstname
+          - field: uesio/crm.lastname
+          - field: uesio/crm.email
     - uesio/core.view:
         view: uesio/web.footer
