@@ -9,7 +9,7 @@ import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
 import { PathNavigateSignal } from "../bands/route/signals"
 import { getRouteUrlPrefix } from "../bands/route/operations"
-import { MouseEvent, useState } from "react"
+import { MouseEvent, useEffect, useRef } from "react"
 
 const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
 
@@ -35,23 +35,29 @@ const getNavigateLink = (
 
 const useLinkHandler = (
 	signals: SignalDefinition[] | undefined,
-	context: Context
+	context: Context,
+	setPendingState?: (isPending: boolean) => void
 ) => {
-	const [isRunning, setIsRunning] = useState<boolean>(false)
+	const isMounted = useRef<boolean>(true)
+	useEffect(
+		() => () => {
+			isMounted.current = false
+		},
+		[]
+	)
 
 	const link = getNavigateLink(signals, context)
 	if (!signals) return [undefined, undefined] as const
 	return [
-		isRunning,
 		link,
 		async (e: MouseEvent) => {
 			// Allow the default behavior if the meta key is active
 			const isMeta = e.getModifierState("Meta")
 			if (isMeta) return
 			e.preventDefault()
-			setIsRunning(true)
+			setPendingState?.(true)
 			await runMany(signals, context)
-			setIsRunning(false)
+			isMounted.current && setPendingState?.(false)
 		},
 	] as const
 }
