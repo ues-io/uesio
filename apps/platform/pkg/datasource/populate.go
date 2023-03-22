@@ -77,6 +77,11 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 
 	populations := []validationFunc{}
 	for _, field := range op.Metadata.Fields {
+
+		if !session.GetContextPermissions().HasFieldEditPermission(field.GetFullName()) {
+			return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field.GetFullName())
+		}
+
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().Unix()

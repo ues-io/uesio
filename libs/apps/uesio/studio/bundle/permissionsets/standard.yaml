@@ -198,5 +198,9 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
+fields:
+  uesio/studio.definition:
+    read: true
+    edit: false
 modifyallrecords: false
 viewallrecords: false
