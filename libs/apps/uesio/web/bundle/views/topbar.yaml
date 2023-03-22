@@ -32,7 +32,7 @@ definition:
                                 file: uesio/web.logo
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: ""
+                                    path: home
                       - uesio/io.griditem:
                       - uesio/io.griditem:
                           components:

@@ -122,8 +122,8 @@ definition:
                                                         lastname: ${lastname}
                                                         email: ${email}
                                                         rol: ${role}
-                                                    # - signal: route/NAVIGATE
-                                                    #   path: "earlyaccessthanks"
+                                                    - signal: route/NAVIGATE
+                                                      path: "earlyaccessthanks"
     - uesio/io.table:
         wire: leads
         columns:
