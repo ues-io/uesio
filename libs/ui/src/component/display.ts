@@ -204,9 +204,15 @@ function should(condition: DisplayCondition, context: Context) {
 		return context.getUser()?.profile === condition.profile
 
 	if (condition.type === "wireHasChanges")
-		return !!context.getWire(condition.wire)?.getChanges().length
+		return (
+			!!context.getWire(condition.wire)?.getChanges().length ||
+			!!context.getWire(condition.wire)?.getDeletes().length
+		)
 	if (condition.type === "wireHasNoChanges")
-		return !context.getWire(condition.wire)?.getChanges().length
+		return (
+			!context.getWire(condition.wire)?.getChanges().length ||
+			!context.getWire(condition.wire)?.getDeletes().length
+		)
 
 	if (
 		condition.type === "wireIsLoading" ||
