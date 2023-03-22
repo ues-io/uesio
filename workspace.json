@@ -341,17 +341,10 @@
 						"cwd": "apps/platform"
 					}
 				},
-				"usage": {
+				"worker": {
 					"builder": "@nrwl/workspace:run-commands",
 					"options": {
-						"command": "../../dist/platform/uesio usage",
-						"cwd": "apps/platform"
-					}
-				},
-				"invoices": {
-					"builder": "@nrwl/workspace:run-commands",
-					"options": {
-						"command": "../../dist/platform/uesio invoices",
+						"command": "../../dist/platform/uesio worker",
 						"cwd": "apps/platform"
 					}
 				},

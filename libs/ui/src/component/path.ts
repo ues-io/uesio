@@ -1,5 +1,4 @@
 import toPath from "lodash/toPath"
-import { MetadataKey } from "../bands/builder/types"
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
@@ -58,19 +57,6 @@ const getAncestorPath = (path: string, n: number): string => {
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
-const getFullPathParts = (path: string): [string, MetadataKey, string] => {
-	const pathArray = toPath(path)
-	const metadataType = pathArray.shift() || ""
-	const metadataItem = (pathArray.shift() || "") as MetadataKey
-	return [metadataType, metadataItem, fromPath(pathArray)]
-}
-
-const makeFullPath = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => `["${metadataType}"]["${metadataItem}"]${path}`
-
 const isNumberIndex = (index: string | null | undefined) =>
 	index && /^\d+$/.test(index)
 
@@ -95,24 +81,6 @@ const getIndexFromPath = (path: string) => {
 	return indexString ? parseInt(indexString, 10) : null
 }
 
-const parseRelativePath = (relativePath: string, basePath: string) => {
-	// Clean strings starting with './', we don't need that
-	const niceString = relativePath.startsWith("./")
-		? relativePath.replace("./", "")
-		: relativePath
-	// get the N levels up the tree
-	const arr = niceString.split("../")
-
-	const startingPath = getAncestorPath(basePath, arr.length)
-	const endingPath = arr
-		.pop()
-		?.split("/")
-		.map((el) => `["${el}"]`)
-		.join("")
-
-	return startingPath + endingPath
-}
-
 export {
 	parseKey,
 	parseVariantKey,
@@ -126,9 +94,6 @@ export {
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
-	getFullPathParts,
-	makeFullPath,
 	isNumberIndex,
 	isComponentIndex,
-	parseRelativePath,
 }

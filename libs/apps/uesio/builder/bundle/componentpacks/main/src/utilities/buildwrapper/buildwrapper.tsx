@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles, component, api } from "@uesio/ui"
 import BuildActionsArea from "../../helpers/buildactionsarea"
 import PlaceHolder from "../placeholder/placeholder"
 import {
@@ -114,6 +114,8 @@ const BuildWrapper: definition.UC = (props) => {
 		},
 		props
 	)
+
+	const componentId = api.component.getComponentIdFromProps(props)
 	return (
 		<>
 			{addBeforePlaceholder && (
@@ -167,9 +169,21 @@ const BuildWrapper: definition.UC = (props) => {
 								root: classes.popperInner,
 							}}
 						>
-							<DeleteAction context={context} path={parent} />
-							<MoveActions context={context} path={parent} />
-							<CloneAction context={context} path={parent} />
+							<DeleteAction
+								id={componentId}
+								context={context}
+								path={parent}
+							/>
+							<MoveActions
+								id={componentId}
+								context={context}
+								path={parent}
+							/>
+							<CloneAction
+								id={componentId}
+								context={context}
+								path={parent}
+							/>
 						</BuildActionsArea>
 					</Popper>
 				)}

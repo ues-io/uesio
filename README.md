@@ -237,7 +237,7 @@ docker compose up -d
 npm run nx -- seed platform
 ```
 
-# <a id="dependencies"></a>Run the application locally
+# <a id="dependencies"></a>Run the (web) application locally
 
 To run the app locally:
 
@@ -257,6 +257,24 @@ open https://uesio-dev.com:3000
 
 ```
 npm run in-docker-force-build
+```
+
+## Worker jobs
+
+There are a number of worker jobs which Uesio runs in production, to handle things such as usage event aggregation, daily invoice generation, and potentially other future use cases (such as scheduled bots).
+
+To run the worker process, use `npm run nx -- worker platform` (Or `nx worker platform` if you have nx installed globally):
+
+```
+> nx run platform:worker
+
+{"message":"Running Uesio worker process","severity":"INFO"}
+{"message":"Scheduling job Invoices with schedule: @daily","severity":"INFO"}
+{"message":"Scheduling job Usage with schedule: * * * * *","severity":"INFO"}
+{"message":"Finished loading all jobs, starting scheduler now...","severity":"INFO"}
+{"message":"Cron job Invoices (1) next run will be at: Mar 22 00:00:00","severity":"INFO"}
+{"message":"Cron job Usage (2) next run will be at: Mar 21 20:09:00","severity":"INFO"}
+
 ```
 
 # <a id="environment-variables"></a> (Optional) Environment Variables

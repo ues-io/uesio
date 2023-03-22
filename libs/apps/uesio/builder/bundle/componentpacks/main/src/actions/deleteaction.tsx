@@ -10,11 +10,13 @@ type Props = {
 const DeleteAction: definition.UtilityComponent<Props> = ({
 	path,
 	context,
+	id,
 }) => (
 	<ActionButton
 		title="Delete"
 		onClick={() => remove(context, path)}
 		icon="delete"
+		id={`${id}:delete-selected`}
 		context={context}
 	/>
 )
