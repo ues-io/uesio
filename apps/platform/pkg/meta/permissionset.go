@@ -19,10 +19,11 @@ func NewBasePermissionSet(namespace, name string) *PermissionSet {
 }
 
 type CollectionPermission struct {
-	Read   bool `yaml:"read" json:"read"`
-	Create bool `yaml:"create" json:"create"`
-	Edit   bool `yaml:"edit" json:"edit"`
-	Delete bool `yaml:"delete" json:"delete"`
+	Read       bool               `yaml:"read" json:"read"`
+	Create     bool               `yaml:"create" json:"create"`
+	Edit       bool               `yaml:"edit" json:"edit"`
+	Delete     bool               `yaml:"delete" json:"delete"`
+	FieldsRefs FieldPermissionMap `yaml:"fields" json:"uesio/studio.fieldrefs"`
 }
 
 type CollectionPermissionMap map[string]CollectionPermission
@@ -79,7 +80,6 @@ type PermissionSet struct {
 	CollectionRefs      CollectionPermissionMap `yaml:"collections" json:"uesio/studio.collectionrefs"`
 	RouteRefs           map[string]bool         `yaml:"routes" json:"uesio/studio.routerefs"`
 	FileRefs            map[string]bool         `yaml:"files" json:"uesio/studio.filerefs"`
-	FieldsRefs          FieldPermissionMap      `yaml:"fields" json:"uesio/studio.fieldrefs"`
 	AllowAllCollections bool                    `yaml:"allowallcollections" json:"uesio/studio.allowallcollections"`
 	AllowAllViews       bool                    `yaml:"allowallviews" json:"uesio/studio.allowallviews"`
 	AllowAllRoutes      bool                    `yaml:"allowallroutes" json:"uesio/studio.allowallroutes"`
@@ -185,24 +185,24 @@ func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
 	}
 }
 
-func (ps *PermissionSet) HasFieldReadPermission(key string) bool {
+func (ps *PermissionSet) HasFieldReadPermission(collectionKey string, key string) bool {
 	if ps.ViewAllRecords {
 		return true
 	}
-	if fieldPermission, ok := ps.FieldsRefs[key]; !ok {
-		return true //TO-do if the field is not present what we do?
+	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
+		return true //TO-DO
 	} else {
 		return fieldPermission.Read
 	}
 
 }
 
-func (ps *PermissionSet) HasFieldEditPermission(key string) bool {
+func (ps *PermissionSet) HasFieldEditPermission(collectionKey string, key string) bool {
 	if ps.ModifyAllRecords {
 		return true
 	}
-	if fieldPermission, ok := ps.FieldsRefs[key]; !ok {
-		return true //TO-do if the field is not present what we do?
+	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
+		return true //TO-DO
 	} else {
 		return fieldPermission.Edit
 	}
@@ -247,7 +247,7 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
 	collectionPerms := CollectionPermissionMap{}
-	fieldPerms := FieldPermissionMap{}
+	//fieldPerms := FieldPermissionMap{}
 	allowAllViews := false
 	allowAllRoutes := false
 	allowAllFiles := false
@@ -287,15 +287,6 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 				collectionPerms[key] = existingVal
 			}
 		}
-		for key, value := range permissionSet.FieldsRefs {
-			if existingVal, ok := fieldPerms[key]; !ok {
-				fieldPerms[key] = value
-			} else {
-				existingVal.Edit = existingVal.Edit || value.Edit
-				existingVal.Read = existingVal.Read || value.Read
-				fieldPerms[key] = existingVal
-			}
-		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true
 		}
@@ -322,7 +313,6 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		RouteRefs:           routePerms,
 		FileRefs:            filePerms,
 		CollectionRefs:      collectionPerms,
-		FieldsRefs:          fieldPerms,
 		AllowAllViews:       allowAllViews,
 		AllowAllRoutes:      allowAllRoutes,
 		AllowAllFiles:       allowAllFiles,

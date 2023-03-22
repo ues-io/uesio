@@ -70,6 +70,8 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 
 func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
+	collectionKey := op.Metadata.GetFullName()
+
 	autonumberStart, err := getAutonumber(op.InsertCount, connection, op.Metadata, session)
 	if err != nil {
 		return err
@@ -78,7 +80,7 @@ func Populate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 	populations := []validationFunc{}
 	for _, field := range op.Metadata.Fields {
 
-		if !session.GetContextPermissions().HasFieldEditPermission(field.GetFullName()) {
+		if !session.GetContextPermissions().HasFieldEditPermission(collectionKey, field.GetFullName()) {
 			return fmt.Errorf("Profile %s does not have edit access to the %s field.", session.GetProfile(), field.GetFullName())
 		}
 

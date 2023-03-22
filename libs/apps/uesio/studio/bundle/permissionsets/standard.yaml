@@ -180,7 +180,15 @@ collections:
   uesio/studio.site: true
   uesio/studio.teammember: true
   uesio/studio.team: true
-  uesio/studio.theme: true
+  uesio/studio.theme:
+    read: true
+    create: true
+    edit: true
+    delete: true
+    fields:
+      uesio/studio.definition:
+        read: true
+        edit: false
   uesio/studio.translation: true
   uesio/studio.utility: true
   uesio/studio.view: true
@@ -198,9 +206,5 @@ collections:
   uesio/studio.invoice: true
   uesio/studio.invoicelineitem: true
   uesio/studio.payment: true
-fields:
-  uesio/studio.definition:
-    read: true
-    edit: false
 modifyallrecords: false
 viewallrecords: false
