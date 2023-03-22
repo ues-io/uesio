@@ -18,7 +18,6 @@ import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
 import * as panel from "./panelexports"
 import * as param from "./paramexports"
-import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
 // Register with the component registry so that it's not an explicit dependency
@@ -42,5 +41,4 @@ export {
 	styles,
 	util,
 	wire,
-	materialIcons,
 }

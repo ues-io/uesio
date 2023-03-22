@@ -1,6 +1,5 @@
 import toPath from "lodash/toPath"
 import yaml, { Node } from "yaml"
-import { getParentPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
 const parse = (str: string) => yaml.parseDocument(str)
@@ -113,6 +112,8 @@ const getCommonAncestorPath = (
 	return getCommonPath(startPathArray, endPathArray)
 }
 
+const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
+
 const fixFlow = (
 	pathArray: string[],
 	node: yaml.YAMLMap<unknown, unknown> | yaml.YAMLSeq<unknown>
@@ -179,6 +180,7 @@ export {
 	removeNodeAtPath,
 	getCommonAncestorPath,
 	getPathFromPathArray,
+	getParentPathArray,
 	parse,
 	newDoc,
 	yaml as lib,
