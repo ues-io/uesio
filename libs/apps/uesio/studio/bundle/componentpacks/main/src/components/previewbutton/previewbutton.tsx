@@ -198,6 +198,7 @@ const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	return (
 		<>
 			<Button
+				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				variant="uesio/io.secondary"
 				label={label}
