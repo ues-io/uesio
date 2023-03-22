@@ -9,7 +9,7 @@ import { run, runMany, registry } from "../signals/signals"
 import { useHotKeyCallback } from "./hotkeys"
 import { PathNavigateSignal } from "../bands/route/signals"
 import { getRouteUrlPrefix } from "../bands/route/operations"
-import { MouseEvent } from "react"
+import { MouseEvent, useState } from "react"
 
 const urlJoin = (...args: string[]) => args.join("/").replace(/[/]+/g, "/")
 
@@ -33,20 +33,25 @@ const getNavigateLink = (
 	return undefined
 }
 
-const getLinkHandler = (
+const useLinkHandler = (
 	signals: SignalDefinition[] | undefined,
 	context: Context
 ) => {
+	const [isRunning, setIsRunning] = useState<boolean>(false)
+
 	const link = getNavigateLink(signals, context)
 	if (!signals) return [undefined, undefined] as const
 	return [
+		isRunning,
 		link,
-		(e: MouseEvent) => {
+		async (e: MouseEvent) => {
 			// Allow the default behavior if the meta key is active
 			const isMeta = e.getModifierState("Meta")
 			if (isMeta) return
 			e.preventDefault()
-			runMany(signals, context)
+			setIsRunning(true)
+			await runMany(signals, context)
+			setIsRunning(false)
 		},
 	] as const
 }
@@ -83,7 +88,7 @@ const getSignals = (): Record<string, SignalDescriptor> => ({
 const getSignal = (signalType: string) => registry[signalType]
 
 export {
-	getLinkHandler,
+	useLinkHandler,
 	getComponentSignalDefinition,
 	getSignal,
 	getSignals,

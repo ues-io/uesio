@@ -26,7 +26,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		definition
 	)
 
-	const [link, handler] = api.signal.getLinkHandler(
+	const [isRunning, link, handler] = api.signal.useLinkHandler(
 		definition.signals,
 		context
 	)
@@ -38,6 +38,7 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 			id={api.component.getComponentIdFromProps(props)}
 			variant={definition["uesio.variant"]}
 			classes={classes}
+			disabled={isRunning}
 			label={definition.text}
 			link={link}
 			onClick={handler}
