@@ -25,7 +25,6 @@ function addlead(bot: AfterSaveBotApi) {
 	// }
 
 	// Save the lead in our leads collection
-	log(JSON.stringify(values))
 	bot.save("uesio/crm.lead", [values])
 
 	// Send an email to the user
