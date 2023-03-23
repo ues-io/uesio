@@ -73,7 +73,6 @@ const ViewInfoPanel: definition.UtilityComponent = (props) => {
 			id="propertiespanel"
 			context={context}
 			properties={properties}
-			className={props.className}
 			sections={[
 				{
 					id: "components",
