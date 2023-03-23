@@ -1,4 +1,4 @@
-name: permissionset
+name: permissionsetcollection
 definition:
   # Wires are how we pull in data
   wires:
@@ -39,51 +39,20 @@ definition:
         - field: uesio/studio.name
           valueSource: PARAM
           param: permissionsetname
-    routes:
-      collection: uesio/studio.route
+    fields:
+      collection: uesio/studio.field
       fields:
         uesio/core.id:
         uesio/studio.name:
-        uesio/studio.path:
-        uesio/studio.view:
-        uesio/studio.theme:
+        uesio/studio.collection:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio/core.id
-    collections:
-      collection: uesio/studio.collection
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-    views:
-      collection: uesio/studio.view
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-        uesio/studio.definition:
-        uesio/studio.workspace:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
-    files:
-      collection: uesio/studio.file
-      fields:
-        uesio/core.id:
-        uesio/studio.name:
-      conditions:
-        - field: uesio/studio.workspace
-          valueSource: LOOKUP
-          lookupWire: workspaces
-          lookupField: uesio/core.id
+        - field: uesio/studio.collection
+          valueSource: PARAM
+          param: collectionid
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -100,6 +69,8 @@ definition:
                       itemType: permissionsets
                       itemIcon: rule
                       itemName: $Param{permissionsetname}
+                      subItemType: collections
+                      subItemName: $Param{collectionid}
           - uesio/io.griditem:
               uesio.variant: uesio/studio.leftbar
               components:
@@ -120,6 +91,7 @@ definition:
                       - uesio/io.titlebar:
                           uesio.variant: uesio/io.main
                           title: Permission Set - ${uesio/studio.name}
+                          subtitle: $Param{collectionid}
                           actions:
                             - uesio/io.group:
                                 components:
@@ -133,7 +105,7 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
                                         - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: collectionPerms-table
+                                          target: fieldPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: $Label{uesio/io.save}
@@ -147,7 +119,7 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
                                         - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: collectionPerms-table
+                                          target: fieldPerms-table
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.secondary
                                       text: $Label{uesio/io.cancel}
@@ -160,17 +132,7 @@ definition:
                                         - signal: component/uesio/io.list/TOGGLE_MODE
                                           target: permissionsetsDeck
                                         - signal: component/uesio/io.table/TOGGLE_MODE
-                                          target: collectionPerms-table
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: $Label{uesio/io.delete}
-                                      signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - permissionsets
-                                        - signal: route/NAVIGATE
-                                          path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets
+                                          target: fieldPerms-table
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           uesio.styles:
@@ -184,83 +146,13 @@ definition:
                                   lg: 1fr 1fr 1fr 1fr
                                 columnGap: 10px
                                 items:
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.allowallfiles
-                                      displayAs: "TOGGLE"
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.allowallroutes
-                                      displayAs: "TOGGLE"
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.allowallviews
-                                      displayAs: "TOGGLE"
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.allowallcollections
-                                      displayAs: "TOGGLE"
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.viewallrecords
-                                      displayAs: "TOGGLE"
-                                  - uesio/io.field:
-                                      fieldId: uesio/studio.modifyallrecords
-                                      displayAs: "TOGGLE"
+                                  - uesio/io.text:
+                                      text: "A summary of the object here"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
                           components:
                             - uesio/io.titlebar:
-                                title: Files
-                                uesio.variant: uesio/io.section
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
-                                components:
-                                  - uesio/studio.permissionpicker:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                      fieldId: uesio/studio.filerefs
-                                      wireName: files
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: Routes
-                                uesio.variant: uesio/io.section
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
-                                components:
-                                  - uesio/studio.permissionpicker:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                      fieldId: uesio/studio.routerefs
-                                      wireName: routes
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: Views
-                                uesio.variant: uesio/io.section
-                            - uesio/io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
-                                components:
-                                  - uesio/studio.permissionpicker:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{app}
-                                      fieldId: uesio/studio.viewrefs
-                                      wireName: views
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
-                          components:
-                            - uesio/io.titlebar:
-                                title: Collections
+                                title: Fields
                                 uesio.variant: uesio/io.section
                             - uesio/io.box:
                                 uesio.styles:
@@ -268,28 +160,17 @@ definition:
                                     padding: 40px
                                 components:
                                   - uesio/studio.multipermissionpicker:
-                                      uesio.id: collectionPerms
+                                      uesio.id: fieldPerms
                                       uesio.context:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      fieldId: uesio/studio.collectionrefs
-                                      wireName: collections
-                                      rowactions:
-                                        - text: Fields
-                                          signals:
-                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
-                                              signal: route/NAVIGATE
+                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->uesio/studio.fieldrefs
+                                      wireName: fields
                                       permissionFields:
                                         - name: read
                                           label: Read
                                           type: CHECKBOX
-                                        - name: create
-                                          label: Create
-                                          type: CHECKBOX
                                         - name: edit
                                           label: Edit
-                                          type: CHECKBOX
-                                        - name: delete
-                                          label: Delete
                                           type: CHECKBOX
