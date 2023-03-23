@@ -190,7 +190,7 @@ func (ps *PermissionSet) HasFieldReadPermission(collectionKey string, key string
 		return true
 	}
 	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
-		return true //TO-DO
+		return true
 	} else {
 		return fieldPermission.Read
 	}
@@ -202,7 +202,7 @@ func (ps *PermissionSet) HasFieldEditPermission(collectionKey string, key string
 		return true
 	}
 	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
-		return true //TO-DO
+		return true
 	} else {
 		return fieldPermission.Edit
 	}
@@ -247,7 +247,6 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
 	collectionPerms := CollectionPermissionMap{}
-	//fieldPerms := FieldPermissionMap{}
 	allowAllViews := false
 	allowAllRoutes := false
 	allowAllFiles := false
