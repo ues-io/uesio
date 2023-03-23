@@ -135,21 +135,6 @@ definition:
                                           target: fieldPerms-table
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
-                          uesio.styles:
-                            root:
-                              padding: 40px
-                          components:
-                            - uesio/io.grid:
-                                templateColumns:
-                                  xs: 1fr
-                                  md: 1fr 1fr
-                                  lg: 1fr 1fr 1fr 1fr
-                                columnGap: 10px
-                                items:
-                                  - uesio/io.text:
-                                      text: "A summary of the object here"
-                      - uesio/io.box:
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.titlebar:
                                 title: Fields

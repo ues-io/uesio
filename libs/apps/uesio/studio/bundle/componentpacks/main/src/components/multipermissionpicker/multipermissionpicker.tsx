@@ -1,4 +1,4 @@
-import { definition, api, component, wire } from "@uesio/ui"
+import { definition, api, component, wire, signal } from "@uesio/ui"
 import omit from "lodash/omit"
 
 type PermissionFieldDefinition = wire.FieldMetadata
@@ -7,6 +7,13 @@ type MultiPermissionPickerDefinition = {
 	fieldId: string
 	wireName: string
 	permissionFields: PermissionFieldDefinition[]
+	rowactions?: RowAction[]
+}
+
+type RowAction = {
+	text: string
+	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
 }
 
 const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
@@ -16,7 +23,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	const {
 		context,
 		path,
-		definition: { wireName, permissionFields },
+		definition: { wireName, permissionFields, rowactions },
 	} = props
 	const fieldId = context.mergeString(props.definition.fieldId)
 	const uesioId =
@@ -108,7 +115,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 	return (
 		<DynamicTable
 			id={dynamicTableId}
-			context={context}
+			context={context.deleteWorkspace()}
 			path={path}
 			mode={mode}
 			fields={permissionFields.reduce(
@@ -126,6 +133,7 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			)}
 			initialValues={getInitialValues()}
 			onUpdate={handlePermUpdate}
+			rowactions={rowactions}
 		/>
 	)
 }
