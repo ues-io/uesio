@@ -19,7 +19,7 @@ func fileExists(path string) bool {
 	return err == nil
 }
 
-func CreateEntryFiles() ([]string, error) {
+func CreateEntryFiles() (map[string]string, error) {
 	sbs := &localbundlestore.LocalBundleStore{}
 
 	def, err := sbs.GetBundleDef("", "", nil, nil)
@@ -42,7 +42,7 @@ func CreateEntryFiles() ([]string, error) {
 		return nil, err
 	}
 
-	entryPoints := []string{}
+	entryPointsMap := map[string]string{}
 
 	packMap := map[string]PackData{}
 
@@ -127,10 +127,10 @@ func CreateEntryFiles() ([]string, error) {
 			return nil, err
 		}
 
-		entryPoints = append(entryPoints, runtimeFileName)
+		entryPointsMap[packName] = runtimeFileName
 
 	}
 
-	return entryPoints, nil
+	return entryPointsMap, nil
 
 }

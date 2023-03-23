@@ -25,7 +25,7 @@ const Tile: definition.UC<TileDefinition> = (props) => {
 		definition
 	)
 
-	const [, link, handler] = api.signal.useLinkHandler(
+	const [link, handler] = api.signal.useLinkHandler(
 		definition.signals,
 		context
 	)

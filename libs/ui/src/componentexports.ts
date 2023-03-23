@@ -18,17 +18,23 @@ import { ComponentVariant } from "./definition/componentvariant"
 import PanelArea from "./components/panelarea"
 import ErrorBoundary from "./components/errorboundary"
 
+export type {
+	SlotUtilityProps,
+	ComponentVariant,
+	ItemContext,
+	DisplayCondition,
+	DisplayOperator,
+}
+
 export {
 	Slot,
 	ErrorBoundary,
-	SlotUtilityProps,
 	getSlotProps,
 	View,
 	path,
 	registry,
 	getUtility,
 	Component,
-	ComponentVariant,
 	PanelArea,
 	NotificationArea,
 	shouldHaveClass,
@@ -36,7 +42,4 @@ export {
 	shouldAll,
 	useShouldFilter,
 	useContextFilter,
-	ItemContext,
-	DisplayCondition,
-	DisplayOperator,
 }

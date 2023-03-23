@@ -97,7 +97,7 @@ type WireOrderDescription = {
 	desc: boolean
 }
 
-export {
+export type {
 	WireDefault,
 	WireDefinition,
 	WireDefinitionMap,

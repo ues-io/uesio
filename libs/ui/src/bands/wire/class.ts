@@ -48,6 +48,11 @@ class Wire {
 			? Object.keys(this.source.changes).map((id) => this.getRecord(id))
 			: []
 
+	getDeletes = () =>
+		this.source?.deletes
+			? Object.keys(this.source.deletes).map((id) => this.getRecord(id))
+			: []
+
 	isLoading = () => this.source?.isLoading
 	hasAllRecords = () => !this.source?.more
 

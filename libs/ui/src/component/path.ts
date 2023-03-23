@@ -39,8 +39,6 @@ const fromPath = (pathArray: string[]) => {
 // Removes the last item from a path
 const getParentPath = (path: string) => getAncestorPath(path, 1)
 
-const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
-
 // Removes the last 2 items from a path
 const getGrandParentPath = (path: string) => getAncestorPath(path, 2)
 
@@ -88,7 +86,6 @@ export {
 	fromPath,
 	toPath,
 	getParentPath,
-	getParentPathArray,
 	getGrandParentPath,
 	getAncestorPath,
 	getKeyAtPath,

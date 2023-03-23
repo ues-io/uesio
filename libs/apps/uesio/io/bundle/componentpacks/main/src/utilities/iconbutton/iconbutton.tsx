@@ -43,6 +43,4 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 	)
 }
 
-export { IconButtonUtilityProps }
-
 export default IconButton

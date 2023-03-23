@@ -56,4 +56,10 @@ type RouteState = {
 	tags: RouteTag[]
 } | null
 
-export { RouteState, RouteTag, WorkspaceState, SiteAdminState, Dependencies }
+export type {
+	RouteState,
+	RouteTag,
+	WorkspaceState,
+	SiteAdminState,
+	Dependencies,
+}

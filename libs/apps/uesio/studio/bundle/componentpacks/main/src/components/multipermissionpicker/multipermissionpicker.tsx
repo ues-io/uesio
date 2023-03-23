@@ -1,5 +1,5 @@
 import { definition, api, component, wire } from "@uesio/ui"
-import { omit } from "lodash"
+import omit from "lodash/omit"
 
 type PermissionFieldDefinition = wire.FieldMetadata
 

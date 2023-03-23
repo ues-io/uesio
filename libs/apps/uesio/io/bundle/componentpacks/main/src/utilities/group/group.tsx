@@ -29,6 +29,4 @@ const Group: FunctionComponent<GroupUtilityProps> = (props) => {
 	)
 }
 
-export { GroupUtilityProps }
-
 export default Group

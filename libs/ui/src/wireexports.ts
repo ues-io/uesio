@@ -32,7 +32,7 @@ import { LoadResponseBatch } from "./load/loadresponse"
 import { LoadRequestField } from "./load/loadrequest"
 import { PlainWire } from "./bands/wire/types"
 
-export {
+export type {
 	SaveResponse,
 	SaveError,
 	SaveResponseBatch,

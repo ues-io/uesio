@@ -66,7 +66,7 @@ type ValueConditionState = ConditionBase & {
 	value: FieldValue
 }
 
-export {
+export type {
 	WireConditionState,
 	LookupConditionState,
 	ParamConditionState,

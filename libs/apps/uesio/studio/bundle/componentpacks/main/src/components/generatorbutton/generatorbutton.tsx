@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { api, param, definition, component, wire } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 import {
@@ -9,10 +9,6 @@ import {
 type GeneratorButtonDefinition = {
 	generator: string
 	label: string
-}
-
-interface ButtonProps extends definition.BaseProps {
-	definition: GeneratorButtonDefinition
 }
 
 interface FormProps {
@@ -117,7 +113,7 @@ const GeneratorForm: definition.UtilityComponent<FormProps> = (props) => {
 	)
 }
 
-const GeneratorButton: FunctionComponent<ButtonProps> = (props) => {
+const GeneratorButton: definition.UC<GeneratorButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
 
 	const { context, definition } = props

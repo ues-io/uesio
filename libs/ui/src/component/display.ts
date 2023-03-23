@@ -203,10 +203,14 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "hasProfile")
 		return context.getUser()?.profile === condition.profile
 
-	if (condition.type === "wireHasChanges")
-		return !!context.getWire(condition.wire)?.getChanges().length
-	if (condition.type === "wireHasNoChanges")
-		return !context.getWire(condition.wire)?.getChanges().length
+	if (condition.type === "wireHasChanges") {
+		const wire = context.getWire(condition.wire)
+		return !!wire?.getChanges().length || !!wire?.getDeletes().length
+	}
+	if (condition.type === "wireHasNoChanges") {
+		const wire = context.getWire(condition.wire)
+		return !wire?.getChanges().length || !wire?.getDeletes().length
+	}
 
 	if (
 		condition.type === "wireIsLoading" ||
@@ -374,7 +378,6 @@ export {
 	useShouldFilter,
 	useContextFilter,
 	shouldHaveClass,
-	DisplayCondition,
-	DisplayOperator,
-	ItemContext,
 }
+
+export type { DisplayCondition, DisplayOperator, ItemContext }

@@ -155,4 +155,4 @@ PropertiesWrapper.displayName = "PropertiesWrapper"
 
 export default PropertiesWrapper
 
-export { Tab }
+export type { Tab }

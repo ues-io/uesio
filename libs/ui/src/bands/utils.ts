@@ -23,4 +23,5 @@ const getErrorString = (error: unknown) => {
 	return error + ""
 }
 
-export { createEntityReducer, EntityPayload, getErrorString, initEntity }
+export type { EntityPayload }
+export { createEntityReducer, getErrorString, initEntity }

@@ -179,5 +179,6 @@ export {
 	setSelectedPath,
 	useSelectedViewPath,
 	getSelectedViewPath,
-	ComponentDef,
 }
+
+export type { ComponentDef }

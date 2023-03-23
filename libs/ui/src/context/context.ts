@@ -624,13 +624,13 @@ class Context {
 }
 
 export {
-	Context,
-	ContextFrame,
-	FieldMode,
-	ContextOptions,
 	getWire,
 	injectDynamicContext,
 	hasViewContext,
 	isRecordContextFrame,
 	newContext,
 }
+
+export { Context }
+
+export type { ContextFrame, FieldMode, ContextOptions }

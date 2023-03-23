@@ -107,9 +107,6 @@ const getSignalProperties = (
 	]
 }
 
-export {
-	getSignalProperties,
-	SignalDefinition,
-	SignalDescriptor,
-	ComponentSignalDescriptor,
-}
+export { getSignalProperties }
+
+export type { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

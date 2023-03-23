@@ -85,6 +85,4 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 	)
 }
 
-export { ButtonUtilityProps }
-
 export default Button

@@ -78,5 +78,4 @@ const MapField: FunctionComponent<MapFieldUtilityProps> = (props) => {
 	)
 }
 
-export { MapFieldUtilityProps }
 export default MapField

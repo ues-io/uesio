@@ -83,4 +83,5 @@ const getDefaultRecord = (
 	return defaultRecord
 }
 
-export { LookupDefault, ValueDefault, WireDefault, getDefaultRecord }
+export type { LookupDefault, ValueDefault, WireDefault }
+export { getDefaultRecord }

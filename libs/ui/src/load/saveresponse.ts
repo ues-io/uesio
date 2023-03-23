@@ -21,4 +21,4 @@ type SaveResponseBatch = {
 	wires: SaveResponse[]
 }
 
-export { SaveResponse, SaveResponseBatch, SaveError }
+export type { SaveResponse, SaveResponseBatch, SaveError }

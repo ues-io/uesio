@@ -164,6 +164,9 @@ func serve(cmd *cobra.Command, args []string) {
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 
+	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)
+	wr.HandleFunc(viewParamPath, controller.GetViewParams).Methods(http.MethodGet)
+
 	//
 	// File (actual metadata, not userfiles) routes for site and workspace context
 
