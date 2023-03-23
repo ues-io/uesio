@@ -28,14 +28,32 @@ function addlead(bot: AfterSaveBotApi) {
 	bot.save("uesio/crm.lead", [values])
 
 	// Send an email to the user
-	const from = bot.getConfigValue("uesio/web.sales_email")
-	const templateId = bot.getConfigValue(
+	const salesEmail = bot.getConfigValue("uesio/web.sales_email")
+	const templateIdUser = bot.getConfigValue(
 		"uesio/web.email_template_leadresponse"
 	)
+	const templateIdSales = bot.getConfigValue(
+		"uesio/web.email_template_lead_added_sales"
+	)
+
+	// Email to user
 	bot.runIntegrationAction("uesio/web.sendgrid", "sendEmail", {
-		subject: "uesio beta access",
 		to: [values["uesio/crm.email"]],
-		from,
-		templateId,
+		from: salesEmail,
+		templateId: templateIdUser,
+	})
+
+	// Email to us
+	bot.runIntegrationAction("uesio/web.sendgrid", "sendEmail", {
+		to: [salesEmail],
+		from: salesEmail,
+		templateId: templateIdSales,
+		dynamicTemplateData: {
+			firstname: values["uesio/crm.firstname"],
+			lastname: values["uesio/crm.lastname"],
+			email: values["uesio/crm.email"],
+			role: values["uesio/web.role"],
+			account: values["uesio/crm.account"],
+		},
 	})
 }
