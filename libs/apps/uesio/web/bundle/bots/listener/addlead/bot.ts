@@ -1,33 +1,32 @@
 import { AfterSaveBotApi } from "uesio/bots"
 function addlead(bot: AfterSaveBotApi) {
-	const fields = ["firstname", "lastname", "email", "role"]
+	const fields = [
+		"uesio/crm.firstname",
+		"uesio/crm.lastname",
+		"uesio/crm.email",
+		"uesio/crm.account",
+	]
 
 	const values = fields.reduce(
-		(prev, key) => ({ ...prev, [key]: bot.params.get(key) }),
+		(prev, key) => ({ ...prev, [key]: bot.params.get(key).toLowerCase() }),
 		{}
 	)
 
-	// TODO: callbots can't throw errors yet. Uncomment when they can
+	// // TODO: callbots can't throw errors yet. Uncomment when they can
 	// const labels = {
-	// 	firstname: "first name",
-	// 	lastname: "last name",
-	// 	email: "email",
-	// 	role: "role",
+	// 	"uesio/crm.firstname": "first name",
+	// 	"uesio/crm.lastname": "last name",
+	// 	"uesio/crm.email": "email",
+	// 	"uesio/web.role": "role",
+	// 	"uesio/crm.account": "company",
 	// }
-	// for (const f of values) {
-	// 	if (!values[f]) bot.addError(`missing ${labels[f]}`)
+	// for (const key in values) {
+	// 	if (!values[key]) bot.addError(`missing ${labels[f]}`)
 	// }
 
 	// Save the lead in our leads collection
-	const savedata = fields.reduce(
-		(prev, key) => ({
-			...prev,
-			[`uesio/${key === "role" ? "web" : "crm"}.${key}`]:
-				bot.params.get(key),
-		}),
-		{}
-	)
-	bot.save("uesio/crm.lead", [savedata])
+	log(JSON.stringify(values))
+	bot.save("uesio/crm.lead", [values])
 
 	// Send an email to the user
 	const from = bot.getConfigValue("uesio/web.sales_email")
@@ -36,7 +35,7 @@ function addlead(bot: AfterSaveBotApi) {
 	)
 	bot.runIntegrationAction("uesio/web.sendgrid", "sendEmail", {
 		subject: "uesio beta access",
-		to: [values.email],
+		to: [values["uesio/crm.email"]],
 		from,
 		templateId,
 	})

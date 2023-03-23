@@ -2,12 +2,6 @@ name: earlyaccess
 definition:
   # Wires are how we pull in data
   wires:
-    leads:
-      collection: uesio/crm.lead
-      fields:
-        uesio/crm.firstname:
-        uesio/crm.lastname:
-        uesio/crm.email:
     newlead:
       viewOnly: true
       fields:
@@ -19,12 +13,11 @@ definition:
           label: Last name
           type: TEXT
           required: true
-        role:
-          label: Job role
-          type: TEXT
-          required: true
         email:
           label: email
+          type: TEXT
+        account:
+          label: company
           type: TEXT
 
       init:
@@ -105,7 +98,7 @@ definition:
                                             fieldId: email
                                         - uesio/io.field:
                                             uesio.variant: uesio/web.field
-                                            fieldId: role
+                                            fieldId: account
                                         - uesio/io.group:
                                             uesio.styles:
                                               root:
@@ -118,17 +111,13 @@ definition:
                                                     - bot: uesio/web.addlead
                                                       signal: bot/CALL
                                                       params:
-                                                        firstname: ${firstname}
-                                                        lastname: ${lastname}
-                                                        email: ${email}
-                                                        rol: ${role}
+                                                        uesio/crm.firstname: ${firstname}
+                                                        uesio/crm.lastname: ${lastname}
+                                                        uesio/crm.email: ${email}
+                                                        uesio/crm.account: ${account}
+                                                        uesio/web.role: ${role}
                                                     - signal: route/NAVIGATE
                                                       path: "earlyaccessthanks"
-    - uesio/io.table:
-        wire: leads
-        columns:
-          - field: uesio/crm.firstname
-          - field: uesio/crm.lastname
-          - field: uesio/crm.email
+
     - uesio/core.view:
         view: uesio/web.footer

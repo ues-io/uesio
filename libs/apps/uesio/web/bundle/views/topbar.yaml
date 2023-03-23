@@ -45,6 +45,12 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
+                                            uesio.variant: uesio/web.borderless
+                                            text: Stay updated
+                                            signals:
+                                              - signal: route/NAVIGATE
+                                                path: earlyaccess
+                                        - uesio/io.button:
                                             uesio.variant: uesio/web.calltoaction
                                             text: Login
                                             signals:
