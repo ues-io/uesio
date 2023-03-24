@@ -276,7 +276,7 @@ definition:
                                       fieldId: uesio/studio.collectionrefs
                                       wireName: collections
                                       rowactions:
-                                        - text: Fields
+                                        - text: Details
                                           signals:
                                             - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
                                               signal: route/NAVIGATE
@@ -293,3 +293,6 @@ definition:
                                         - name: delete
                                           label: Delete
                                           type: CHECKBOX
+                                        - name: fields
+                                          label: Fields
+                                          type: MAP

@@ -11,6 +11,7 @@ interface DynamicTableProps extends definition.UtilityProps {
 	fields: Record<string, wire.ViewOnlyField>
 	rowactions?: RowAction[]
 	initialValues: Record<string, wire.PlainWireRecord>
+	columns?: definition.DefinitionList
 	mode?: context.FieldMode
 	onUpdate?: (
 		field: string,
@@ -29,6 +30,7 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 		id,
 		fields,
 		rowactions,
+		columns,
 		path,
 		onUpdate,
 		initialValues,
@@ -91,10 +93,12 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 			path={path}
 			definition={{
 				wire: dynamicWireName,
-				columns: Object.entries(fields).map(([fieldId, fieldDef]) => ({
-					field: fieldId,
-					...fieldDef,
-				})),
+				columns:
+					columns ||
+					Object.entries(fields).map(([fieldId, fieldDef]) => ({
+						field: fieldId,
+						...fieldDef,
+					})),
 				mode,
 				"uesio.id": id,
 				"uesio.variant": "uesio/io.default",

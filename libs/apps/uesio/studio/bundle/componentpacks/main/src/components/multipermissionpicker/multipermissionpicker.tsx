@@ -60,27 +60,27 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			string,
 			boolean
 		>
-		// backwards compatibility --- perms may be a single boolean, so apply this boolean value to all fields
-		const defaultValue =
-			typeof existingPerms === "boolean" ? existingPerms : false
+
 		const itemPerms = {} as Record<string, wire.PlainFieldValue>
 		// ensure all perm fields are set with a default
-		permissionFields.forEach(({ name }) => {
-			const existingPermValue =
-				typeof existingPerms === "object"
-					? existingPerms[name]
-					: undefined
-			itemPerms[name] =
-				typeof existingPermValue === "boolean"
-					? existingPermValue
-					: defaultValue
+		permissionFields.forEach(({ name, type }) => {
+			if (type === "CHECKBOX") {
+				// backwards compatibility --- perms may be a single boolean, so apply this boolean value to all fields
+				const defaultValue =
+					typeof existingPerms === "boolean" ? existingPerms : false
+				const existingPermValue =
+					typeof existingPerms === "object"
+						? existingPerms[name]
+						: undefined
+				itemPerms[name] =
+					typeof existingPermValue === "boolean"
+						? existingPermValue
+						: defaultValue
+				return
+			}
+			itemPerms[name] = existingPerms[name]
 		})
 		itemPerms[ID_FIELD] = recordId
-
-		//if we already have fields don't override them
-		if (existingPerms && "fields" in existingPerms) {
-			itemPerms.fields = existingPerms.fields
-		}
 
 		return itemPerms
 	}
@@ -105,18 +105,22 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 		} as wire.PlainWireRecord)
 	}
 
-	const getItemName = (record: wire.WireRecord) =>
-		workspaceContext.app + "." + record.getFieldValue(nameNameField)
+	const getInitialValues = itemsData.reduce((acc, record) => {
+		const itemName =
+			workspaceContext.app + "." + record.getFieldValue(nameNameField)
+		return {
+			...acc,
+			[itemName]: getPermRecord(itemName),
+		}
+	}, {})
 
-	const getInitialValues = () =>
-		itemsData.reduce((acc, record) => {
-			const itemName = getItemName(record)
-			const itemPerms = getPermRecord(itemName)
-			return {
-				...acc,
-				[itemName]: itemPerms,
-			}
-		}, {})
+	const tableFields = [
+		{
+			name: ID_FIELD,
+			type: "TEXT",
+			label: collection.getLabel(),
+		},
+	].concat(permissionFields)
 
 	return (
 		<DynamicTable
@@ -124,20 +128,16 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 			context={context.deleteWorkspace()}
 			path={path}
 			mode={mode}
-			fields={permissionFields.reduce(
-				(acc, field) => ({
-					...acc,
-					[field.name]: field,
-				}),
-				{
-					[ID_FIELD]: {
-						name: ID_FIELD,
-						type: "TEXT",
-						label: collection.getLabel(),
-					},
-				}
-			)}
-			initialValues={getInitialValues()}
+			fields={tableFields.reduce((acc, field) => ({
+				...acc,
+				[field.name]: field,
+			}))}
+			columns={tableFields
+				.filter((field) => field.type !== "MAP")
+				.map((field) => ({
+					field: field.name,
+				}))}
+			initialValues={getInitialValues}
 			onUpdate={handlePermUpdate}
 			rowactions={rowactions}
 		/>
