@@ -53,6 +53,8 @@ definition:
         - field: uesio/studio.collection
           valueSource: PARAM
           param: collectionid
+      order:
+        - field: uesio/studio.name
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
@@ -150,7 +152,7 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->uesio/studio.fieldrefs
+                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->fields
                                       wireName: fields
                                       permissionFields:
                                         - name: read

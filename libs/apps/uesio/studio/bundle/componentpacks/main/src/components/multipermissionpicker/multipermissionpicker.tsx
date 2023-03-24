@@ -76,6 +76,12 @@ const MultiPermissionPicker: definition.UC<MultiPermissionPickerDefinition> = (
 					: defaultValue
 		})
 		itemPerms[ID_FIELD] = recordId
+
+		//if we already have fields don't override them
+		if (existingPerms && "fields" in existingPerms) {
+			itemPerms.fields = existingPerms.fields
+		}
+
 		return itemPerms
 	}
 
