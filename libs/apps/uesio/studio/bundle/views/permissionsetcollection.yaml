@@ -53,6 +53,8 @@ definition:
         - field: uesio/studio.collection
           valueSource: PARAM
           param: collectionid
+      order:
+        - field: uesio/studio.name
   # Components are how we describe the layout of our view
   components:
     - uesio/io.grid:
