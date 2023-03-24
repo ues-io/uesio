@@ -155,6 +155,11 @@ func getMetadataForLoad(
 	}
 
 	for _, requestField := range op.Fields {
+
+		if !session.GetContextPermissions().HasFieldReadPermission(collectionKey, requestField.ID) {
+			return fmt.Errorf("Profile %s does not have read access to the %s field.", session.GetProfile(), requestField.ID)
+		}
+
 		subFields := getSubFields(requestField.Fields)
 		err := collections.AddField(collectionKey, requestField.ID, subFields)
 		if err != nil {
@@ -280,7 +285,7 @@ func Load(ops []*adapt.LoadOp, session *sess.Session, options *LoadOptions) (*ad
 
 	// Loop over the ops and batch per data source
 	for _, op := range ops {
-		if !session.GetContextPermissions().HasReadPermission(op.CollectionName) {
+		if !session.GetContextPermissions().HasCollectionReadPermission(op.CollectionName) {
 			return nil, fmt.Errorf("Profile %s does not have read access to the %s collection.", session.GetProfile(), op.CollectionName)
 		}
 		// Verify that the id field is present
