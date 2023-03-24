@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -132,10 +133,10 @@ func getLoginRoute(session *sess.Session) (*meta.Route, error) {
 	return loginRoute, nil
 }
 
-func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error) {
+func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error, redirect bool) {
 	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
 	// If our profile is the public profile, redirect to the login route
-	if session.IsPublicProfile() {
+	if redirect && session.IsPublicProfile() {
 		loginRoute, err := getLoginRoute(session)
 		if err == nil {
 			requestedPath := r.URL.Path
@@ -150,36 +151,20 @@ func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Se
 		}
 	}
 
-	route := getNotFoundRoute(path)
-	depsCache, _ := routing.GetMetadataDeps(route, session)
-
-	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, route, depsCache, false, session)
-}
-
-func HandleErrorRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error) {
-	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
-	// If our profile is the public profile, redirect to the login route
-	if session.IsPublicProfile() {
-		loginRoute, err := getLoginRoute(session)
-		if err == nil {
-			requestedPath := r.URL.Path
-			redirectPath := "/" + loginRoute.Path
-			if redirectPath != requestedPath {
-				if requestedPath != "" && requestedPath != "/" {
-					redirectPath = redirectPath + "?r=" + requestedPath
-				}
-				http.Redirect(w, r, redirectPath, 302)
-				return
-			}
-		}
+	var route *meta.Route
+	if redirect {
+		route = getNotFoundRoute(path)
+	} else {
+		route = getErrorRoute(path, err.Error())
 	}
 
-	route := getErrorRoute(path, err.Error())
-	depsCache, _ := routing.GetMetadataDeps(route, session)
+	// We can upgrade to the site session so we can be sure to have access to the
+	// the not found route.
+	adminSession := sess.GetAnonSession(session.GetSite())
+	depsCache, _ := routing.GetMetadataDeps(route, adminSession)
 
 	// If we're logged in, but still no route, return the uesio.notfound view
-	ExecuteIndexTemplate(w, route, depsCache, false, session)
+	ExecuteIndexTemplate(w, route, depsCache, false, adminSession)
 }
 
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
@@ -192,13 +177,13 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, namespace, path, prefix, session)
 	if err != nil {
-		HandleMissingRoute(w, r, session, path, err)
+		HandleErrorRoute(w, r, session, path, err, true)
 		return
 	}
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		HandleMissingRoute(w, r, session, path, err)
+		HandleErrorRoute(w, r, session, path, err, false)
 		return
 	}
 
@@ -214,13 +199,13 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 
 	route, err := routing.GetRouteFromPath(r, site.GetAppFullName(), path, "/", session)
 	if err != nil {
-		HandleMissingRoute(w, r, session, path, err)
+		HandleErrorRoute(w, r, session, path, err, true)
 		return
 	}
 
 	depsCache, err := routing.GetMetadataDeps(route, session)
 	if err != nil {
-		HandleMissingRoute(w, r, session, path, err)
+		HandleErrorRoute(w, r, session, path, err, false)
 		return
 	}
 

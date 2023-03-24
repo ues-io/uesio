@@ -6,10 +6,10 @@ import {
 	getSelectedViewPath,
 	setSelectedPath,
 	useSelectedViewPath,
-} from "../../../api/stateapi"
-import { setContent, useContent } from "../../../api/defapi"
+} from "../../api/stateapi"
+import { setContent, useContent } from "../../api/defapi"
 import yaml from "yaml"
-import { getNodeAtOffset, getNodeAtPath, parse } from "../../../yaml/yamlutils"
+import { getNodeAtOffset, getNodeAtPath, parse } from "../../yaml/yamlutils"
 
 const ANIMATION_DURATION = 3000
 
