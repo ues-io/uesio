@@ -150,7 +150,7 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->uesio/studio.fieldrefs
+                                      fieldId: uesio/studio.collectionrefs->$Param{collectionid}->fields
                                       wireName: fields
                                       permissionFields:
                                         - name: read

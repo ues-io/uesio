@@ -23,7 +23,7 @@ type CollectionPermission struct {
 	Create     bool               `yaml:"create" json:"create"`
 	Edit       bool               `yaml:"edit" json:"edit"`
 	Delete     bool               `yaml:"delete" json:"delete"`
-	FieldsRefs FieldPermissionMap `yaml:"fields" json:"uesio/studio.fieldrefs"`
+	FieldsRefs FieldPermissionMap `yaml:"fields" json:"fields"`
 }
 
 type CollectionPermissionMap map[string]CollectionPermission
@@ -186,9 +186,6 @@ func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
 }
 
 func (ps *PermissionSet) HasFieldReadPermission(collectionKey string, key string) bool {
-	if ps.ViewAllRecords {
-		return true
-	}
 	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
 		return true
 	} else {
@@ -198,9 +195,6 @@ func (ps *PermissionSet) HasFieldReadPermission(collectionKey string, key string
 }
 
 func (ps *PermissionSet) HasFieldEditPermission(collectionKey string, key string) bool {
-	if ps.ModifyAllRecords {
-		return true
-	}
 	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
 		return true
 	} else {
