@@ -126,8 +126,8 @@ definition:
                                                         uesio/crm.email: ${email}
                                                         uesio/crm.account: ${account}
                                                         uesio/web.role: ${role}
-                                                    # - signal: route/NAVIGATE
-                                                    #   path: "earlyaccessthanks"
+                                                    - signal: route/NAVIGATE
+                                                      path: "earlyaccessthanks"
 
     - uesio/core.view:
         view: uesio/web.footer
