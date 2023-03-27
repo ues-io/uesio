@@ -1,4 +1,4 @@
-name: from_email
+name: email-template-lead-created-internal
 managedBy: site
 store: platform
 public: true

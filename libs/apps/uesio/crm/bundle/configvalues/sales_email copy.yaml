@@ -1,3 +1,4 @@
-name: sendgridkey
+name: sales_email
 managedBy: site
 store: platform
+public: true

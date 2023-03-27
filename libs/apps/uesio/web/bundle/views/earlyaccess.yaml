@@ -46,10 +46,10 @@ definition:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Register for early access. It's free.
+                                text: Stay in the loop ues.io
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: Stay in the loop with ues.io. Join our private beta and become one of the first to change the industry.
+                                text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
@@ -59,22 +59,32 @@ definition:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: App building is free.
+                                            text: No-code app builder extendable with code
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: We only charge for data usage and page loads on published sites.
+                                            text: Easily get under the covers while building and edit your code live
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: Add as many users as you want at no cost. Don't pay for dormant users.
+                                            text: Reuse your software
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: No advance payments
+                                            text: Build, bundle and combine your apps and then publish as a new single application
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: Usage-based pricing
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: Build as much as you want and only pay for usage, not users
                       - uesio/io.griditem:
                           components:
                             - uesio/io.list:
