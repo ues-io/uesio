@@ -10,7 +10,6 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/call"
 	"github.com/thecloudmasters/clio/pkg/config"
-	"github.com/thecloudmasters/clio/pkg/config/host"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/routing"
 )
@@ -30,7 +29,7 @@ var mockHandler = &LoginMethodHandler{
 	Label: "Mock login",
 	Handler: func() (map[string]string, error) {
 		var username string
-		username = os.Getenv("UESIO_MOCK_USER")
+		username = os.Getenv("UESIO_CLI_USERNAME")
 		if username == "" {
 			err := survey.AskOne(&survey.Select{
 				Message: "Select a user.",
@@ -50,10 +49,8 @@ var platformHandler = &LoginMethodHandler{
 	Key:   "uesio/core.platform",
 	Label: "Sign in with username",
 	Handler: func() (map[string]string, error) {
-		var username string
-		var password string
-		username = os.Getenv("UESIO_USERNAME")
-		password = os.Getenv("UESIO_PASSWORD")
+		username := os.Getenv("UESIO_CLI_USERNAME")
+		password := os.Getenv("UESIO_CLI_PASSWORD")
 
 		if username == "" {
 			usernameErr := survey.AskOne(&survey.Input{
@@ -97,20 +94,30 @@ func getHandlerByKey(key string) *LoginMethodHandler {
 	}
 	return nil
 }
+func getHandlerByLabel(label string) *LoginMethodHandler {
+	for _, handler := range loginHandlers {
+		if handler.Label == label {
+			return handler
+		}
+	}
+	return nil
+}
 
 func getLoginPayload() (string, map[string]string, error) {
-	var loginMethod string
-	host, err := host.GetHost()
-	if err != nil {
-		return "", nil, err
-	}
-	if host == "https://studio.uesio-dev.com:3000" {
-		loginMethod = "uesio/core.mock"
-	} else {
-		loginMethod = "uesio/core.platform"
-	}
+	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
+	var handler *LoginHandler
+	fmt.Printf("Hello %s", loginMethod)
+	if loginMethod == "" {
+		err := survey.AskOne(&survey.Select{
+			Message: "Select a login method.",
+			Options: getHandlerOptions(),
+		}, &loginMethod)
+		handler = getHandlerByLabel(loginMethod)
 
-	handler := getHandlerByKey(loginMethod)
+		if err != nil {
+			return "", nil, err
+		}
+	}
 
 	if handler == nil {
 		return "", nil, errors.New("Invalid Login Method")
