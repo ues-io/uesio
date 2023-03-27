@@ -3,6 +3,7 @@ loginRoute: uesio/core.login
 homeRoute: uesio/web.home
 defaultTheme: uesio/crm.default
 publicProfile: uesio/web.public
+favicon: uesio/core.favicon
 dependencies:
   uesio/crm:
     version: v0.0.1

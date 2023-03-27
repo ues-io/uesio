@@ -1,0 +1,7 @@
+name: borderless
+label: Borderless
+extends: uesio/web.calltoaction
+definition:
+  uesio.styles:
+    root:
+      border: none
