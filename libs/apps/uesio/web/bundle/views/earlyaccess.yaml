@@ -14,10 +14,10 @@ definition:
           type: TEXT
           required: true
         email:
-          label: email
+          label: Email
           type: TEXT
         account:
-          label: company
+          label: Company
           type: TEXT
 
       init:
