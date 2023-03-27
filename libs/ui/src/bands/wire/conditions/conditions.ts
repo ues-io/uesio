@@ -47,14 +47,14 @@ type SearchConditionState = ConditionBase & {
 }
 
 type ParamConditionState = ConditionBase & {
-	type: undefined
+	type?: undefined
 	field: string
 	valueSource: typeof PARAM
 	param: string
 }
 
 type LookupConditionState = ConditionBase & {
-	type: undefined
+	type?: undefined
 	field: string
 	valueSource: typeof LOOKUP
 	lookupWire: string
@@ -62,7 +62,7 @@ type LookupConditionState = ConditionBase & {
 }
 
 type ValueConditionState = ConditionBase & {
-	type: undefined
+	type?: undefined
 	field: string
 	valueSource: typeof VALUE | undefined
 	value: PlainFieldValue
