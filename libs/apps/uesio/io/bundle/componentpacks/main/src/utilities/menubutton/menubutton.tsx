@@ -1,12 +1,13 @@
-import { FunctionComponent, useState, ReactNode } from "react"
-import { definition, styles } from "@uesio/ui"
-import { useSelect } from "downshift"
+import { FunctionComponent, ReactNode } from "react"
+import { definition } from "@uesio/ui"
+
+import Menu from "../menu/menu"
 import IconButton from "../iconbutton/iconbutton"
-import Popper from "../popper/popper"
 
 interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
 	itemRenderer: (item: I) => ReactNode
-	onSelect?: (item: I) => void
+	onSelect: (item: I) => void
+	getItemKey: (item: I) => string
 	icon?: string
 	fill?: boolean
 	items: I[]
@@ -15,85 +16,27 @@ interface MenuButtonUtilityProps<I> extends definition.UtilityProps {
 const MenuButton: FunctionComponent<MenuButtonUtilityProps<unknown>> = (
 	props
 ) => {
-	const { context, icon, fill, items, itemRenderer, onSelect } = props
-
-	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-
-	const classes = styles.useUtilityStyles(
-		{
-			menu: {
-				backgroundColor: "white",
-				border: "1px solid #ddd",
-				borderRadius: "6px",
-				listStyleType: "none",
-				padding: "0px",
-				"&.hidden": {
-					visibility: "hidden",
-				},
-			},
-			menuitem: {
-				padding: "8px",
-				fontSize: "10pt",
-				"&.highlighted": {
-					backgroundColor: "#f0f0f0",
-					cursor: "pointer",
-				},
-			},
-		},
+	const { context, icon, fill, items, itemRenderer, onSelect, getItemKey } =
 		props
-	)
-
-	const {
-		isOpen,
-		getToggleButtonProps,
-		getMenuProps,
-		highlightedIndex,
-		getItemProps,
-	} = useSelect({
-		items,
-		onSelectedItemChange: ({ selectedItem: newSelectedItem }) =>
-			onSelect?.(newSelectedItem),
-	})
 
 	return (
-		<div ref={setAnchorEl}>
-			<div {...getToggleButtonProps()}>
-				<IconButton
-					className={props.className}
-					context={context}
-					icon={icon}
-					fill={fill}
-				/>
-			</div>
-			<Popper
-				referenceEl={anchorEl}
-				context={props.context}
-				placement={"bottom-start"}
-				offset={-12}
-			>
-				<ul
-					className={styles.cx(classes.menu, !isOpen && "hidden")}
-					{...getMenuProps()}
-				>
-					{isOpen &&
-						items.map((item, index) => (
-							<li
-								className={styles.cx(
-									classes.menuitem,
-									highlightedIndex === index && "highlighted"
-								)}
-								{...getItemProps({ item, index })}
-								key={index}
-							>
-								{itemRenderer(item)}
-							</li>
-						))}
-				</ul>
-			</Popper>
-		</div>
+		<Menu
+			context={context}
+			onSelect={onSelect}
+			itemRenderer={itemRenderer}
+			items={items}
+			getItemKey={getItemKey}
+		>
+			<IconButton
+				className={props.className}
+				context={context}
+				icon={icon}
+				fill={fill}
+			/>
+		</Menu>
 	)
 }
 
-export { MenuButtonUtilityProps }
+export type { MenuButtonUtilityProps }
 
 export default MenuButton

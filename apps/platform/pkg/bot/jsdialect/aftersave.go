@@ -2,7 +2,9 @@ package jsdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -73,4 +75,19 @@ func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
 
 	return collection, nil
 
+}
+
+func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
+
+	integration, err := integ.GetIntegration(integrationID, bs.session)
+	if err != nil {
+		return err
+	}
+
+	return integration.RunAction(action, options)
+
+}
+
+func (bs *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {
+	return configstore.GetValueFromKey(configValueKey, bs.session)
 }

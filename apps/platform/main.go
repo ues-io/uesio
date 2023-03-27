@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/bot"
 	"mime"
 	"os"
+
+	"github.com/thecloudmasters/uesio/pkg/bot"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
@@ -29,6 +30,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
 	"github.com/thecloudmasters/uesio/pkg/integ"
+	"github.com/thecloudmasters/uesio/pkg/integ/sendgrid"
 	"github.com/thecloudmasters/uesio/pkg/integ/web"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
@@ -79,6 +81,8 @@ func init() {
 
 	// Integration Types
 	integ.RegisterConfigStore("web", &web.WebIntegration{})
+	integ.RegisterConfigStore("sendgrid", &sendgrid.SendGridIntegration{})
+
 }
 
 func main() {

@@ -4,6 +4,7 @@ import { component, styles, definition } from "@uesio/ui"
 type Props = {
 	selected?: boolean
 	onClick?: (e: MouseEvent) => void
+	onDoubleClick?: (e: MouseEvent) => void
 	draggable?: string
 	popperChildren?: ReactNode
 } & definition.UtilityProps
@@ -11,8 +12,15 @@ type Props = {
 const PropNodeTag: FC<Props> = (props) => {
 	const Tile = component.getUtility("uesio/io.tile")
 	const Popper = component.getUtility("uesio/io.popper")
-	const { onClick, draggable, selected, context, popperChildren, variant } =
-		props
+	const {
+		onClick,
+		onDoubleClick,
+		draggable,
+		selected,
+		context,
+		popperChildren,
+		variant,
+	} = props
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
 	return (
@@ -25,6 +33,7 @@ const PropNodeTag: FC<Props> = (props) => {
 			variant={variant || "uesio/builder.propnodetag"}
 			context={context}
 			onClick={onClick}
+			onDoubleClick={onDoubleClick}
 			isSelected={selected}
 			className={styles.cx(selected && "selected")}
 		>
@@ -37,11 +46,6 @@ const PropNodeTag: FC<Props> = (props) => {
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					useFirstRelativeParent
-					styles={{
-						popper: {
-							width: "350px",
-						},
-					}}
 				>
 					{popperChildren}
 				</Popper>

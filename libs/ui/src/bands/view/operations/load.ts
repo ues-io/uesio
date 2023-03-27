@@ -44,6 +44,7 @@ const useLoadWires = (
 
 	// Keeps track of the value of wires from the previous render
 	const prevWires = usePrevious(wires)
+	const prevRoute = usePrevious(route.path)
 
 	useEffect(() => {
 		;(async () => {
@@ -78,6 +79,7 @@ const useLoadWires = (
 	useEffect(() => {
 		;(async () => {
 			if (!wires || !prevWires) return
+			if (prevRoute !== route.path) return
 
 			// This filters out any wires whose definition did not change since the
 			// last time this hook was run. That way we only re-initialize and load

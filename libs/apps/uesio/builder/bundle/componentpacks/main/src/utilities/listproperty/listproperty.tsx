@@ -1,21 +1,28 @@
 import { definition, wire, component } from "@uesio/ui"
+import { ReactNode } from "react"
 import { FullPath } from "../../api/path"
 import { PropertiesPanelSection } from "../../api/propertysection"
 import {
-	ItemDisplayTemplate,
+	StringOrItemPropertyGetter,
 	PropertiesListOrGetter,
 } from "../listpropertyitem/listpropertyitem"
 
+interface ListAction {
+	label: string
+	icon?: string
+	action: () => void
+}
+
 type Props = {
 	path: FullPath
-	addLabel: string
 	propertyName: string
-	itemDisplayTemplate: ItemDisplayTemplate
-	itemPropertiesPanelTitle: string
+	itemDisplayTemplate: StringOrItemPropertyGetter
+	itemPropertiesPanelTitle: StringOrItemPropertyGetter
 	itemProperties?: PropertiesListOrGetter
 	itemPropertiesSections?: PropertiesPanelSection[]
+	itemChildren?: (item: wire.PlainWireRecord, index: number) => ReactNode
 	items: definition.DefinitionMap[]
-	addAction: () => void
+	actions: ListAction[]
 } & definition.UtilityProps
 
 const ListProperty: definition.UtilityComponent<Props> = (props) => {
@@ -24,10 +31,10 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 		itemPropertiesSections,
 		itemPropertiesPanelTitle,
 		itemDisplayTemplate,
+		itemChildren,
 		path,
-		addLabel,
+		actions,
 		context,
-		addAction,
 		items,
 	} = props
 
@@ -44,21 +51,25 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 				variant="uesio/builder.propsubsection"
 				title={""}
 				context={context}
-				actions={
-					<Button
-						context={context}
-						variant="uesio/builder.actionbutton"
-						icon={
-							<Icon
-								context={context}
-								icon="add"
-								variant="uesio/builder.actionicon"
-							/>
-						}
-						label={addLabel}
-						onClick={addAction}
-					/>
-				}
+				actions={actions?.map((actionDef) => {
+					const { label, action, icon } = actionDef
+					return (
+						<Button
+							context={context}
+							key={label}
+							variant="uesio/builder.actionbutton"
+							icon={
+								<Icon
+									context={context}
+									icon={icon || "add"}
+									variant="uesio/builder.actionicon"
+								/>
+							}
+							label={label}
+							onClick={action}
+						/>
+					)
+				})}
 			/>
 			{items?.map((item: definition.DefinitionMap, index) => (
 				<ListPropertyItem
@@ -72,6 +83,7 @@ const ListProperty: definition.UtilityComponent<Props> = (props) => {
 					itemProperties={itemProperties}
 					itemPropertiesSections={itemPropertiesSections}
 					itemPropertiesPanelTitle={itemPropertiesPanelTitle}
+					itemChildren={itemChildren}
 				/>
 			))}
 		</>

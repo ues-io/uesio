@@ -56,7 +56,7 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 
 	pathTemplate, err := routematch.Route.GetPathTemplate()
 	if err != nil {
-		return nil, errors.New("No Path Template For Route Found")
+		return nil, errors.New("no Path Template found for route")
 	}
 
 	pathTemplate = strings.Replace(pathTemplate, prefix, "", 1)
@@ -66,10 +66,6 @@ func GetRouteFromPath(r *http.Request, namespace, path, prefix string, session *
 			meta.Copy(route, item)
 			break
 		}
-	}
-
-	if route == nil {
-		return nil, errors.New("No Route Found in Cache")
 	}
 
 	processedParams := map[string]string{}

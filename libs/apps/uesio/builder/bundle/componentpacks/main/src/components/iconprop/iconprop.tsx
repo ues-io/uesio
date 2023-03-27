@@ -1,8 +1,9 @@
 import { ChangeEvent, useState } from "react"
-import { component, styles, materialIcons, definition } from "@uesio/ui"
+import { component, styles, definition } from "@uesio/ui"
 import { setSelectedPath, useSelectedPath } from "../../api/stateapi"
 import { FullPath } from "../../api/path"
 import { IconProperty } from "../../properties/componentproperty"
+import { materialIcons } from "../../icons/materialicons"
 
 type Definition = {
 	property: IconProperty
@@ -42,8 +43,6 @@ const IconProp: definition.UC<Definition> = (props) => {
 			icons: {
 				display: "grid",
 				overflow: "auto",
-				maxHeight: "350px",
-				minWidth: "350px",
 				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
 				padding: "16px",
 				rowGap: "14px",
@@ -111,18 +110,15 @@ const IconProp: definition.UC<Definition> = (props) => {
 			{selected && anchorEl && (
 				<Popper
 					referenceEl={anchorEl}
+					matchHeight
 					context={context}
 					offset={6}
 					placement="right-start"
 					autoPlacement={["right-start"]}
 					useFirstRelativeParent
-					styles={{
-						popper: {
-							width: "350px",
-						},
-					}}
 				>
 					<ScrollPanel
+						variant="uesio/builder.mainsection"
 						header={
 							<>
 								<TitleBar

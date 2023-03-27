@@ -16,14 +16,19 @@ const redirect = (context: Context, path: string, newTab?: boolean) => {
 	return context
 }
 
-const getRouteUrlPrefix = (context: Context, namespace: string) => {
+const getRouteUrlPrefix = (context: Context, namespace: string | undefined) => {
 	const workspace = context.getWorkspace()
 	if (workspace && workspace.app && workspace.name) {
+		if (!namespace) namespace = workspace.app
 		return `/workspace/${workspace.app}/${workspace.name}/app/${namespace}/`
 	}
+
 	const site = context.getSite()
-	if (site && site.app && site.app !== namespace) {
-		return `/site/app/${namespace}/`
+	if (site && site.app) {
+		if (!namespace) namespace = site.app
+		if (site.app !== namespace) {
+			return `/site/app/${namespace}/`
+		}
 	}
 	return "/"
 }
@@ -50,12 +55,31 @@ const navigate = async (
 				namespace: routeResponse.namespace,
 				path: routeResponse.path,
 				title: routeResponse.title,
+				tags: routeResponse.tags,
 				workspace,
 			},
 			"",
 			prefix + routeResponse.path
 		)
-		document.title = routeResponse.title || "Uesio"
+	}
+
+	// Route title and tags should be pre-merged by the server, so we just need to go synchronize them
+	document.title = routeResponse.title || "Uesio"
+	// Remove any existing route-injected meta tags
+	document
+		.querySelectorAll("meta[data-uesio]")
+		.forEach((elem) => elem.remove())
+	// Add any meta tags defined by the route
+	if (routeResponse.tags?.length) {
+		const headEl = document.getElementsByTagName("head")[0]
+		routeResponse.tags.forEach((tag) => {
+			if (tag.location === "head" && tag.type === "meta") {
+				const metaTag = document.createElement("meta")
+				headEl.appendChild(metaTag)
+				metaTag.setAttribute("content", tag.content)
+				metaTag.setAttribute("data-uesio", "true")
+			}
+		})
 	}
 
 	const newPacks = getPackUrlsForDeps(deps, context)
@@ -75,7 +99,4 @@ const navigate = async (
 	return context
 }
 
-export default {
-	redirect,
-	navigate,
-}
+export { getRouteUrlPrefix, redirect, navigate }

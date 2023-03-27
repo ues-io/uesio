@@ -10,9 +10,6 @@ definition:
       color: "#444"
     selecteditemwrapper:
       fontSize: 9pt
-    menuitem:
-      padding: 6px 14px 6px 8px
-      fontSize: 9pt
     notfound:
       fontSize: 9pt
       padding: "4px 2px"

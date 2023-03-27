@@ -1,3 +1,4 @@
 name: contact
 path: contact
 view: uesio/web.contact
+title: $Site{title} - Contact Us

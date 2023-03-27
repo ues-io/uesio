@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/controller"
+	"github.com/thecloudmasters/uesio/pkg/controller/file"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	//_ "net/http/pprof"
@@ -33,14 +32,21 @@ func getFullItemParam(paramName string) string {
 	return fmt.Sprintf("{%s:\\w+\\/\\w+\\.\\w+}", paramName)
 }
 
+func getFullItemOrTextParam(paramName string) string {
+	return fmt.Sprintf("{%s:(?:\\w+\\/\\w+\\.)?\\w+}", paramName)
+}
+
 var appParam = getNSParam("app")
 var nsParam = getNSParam("namespace")
 var itemParam = fmt.Sprintf("%s/{name}", nsParam)
 
 // Version will either be a Uesio bundle version string, e.g. v1.2.3,
 // Or an 8-character short Git sha, e.g. abcd1234
-var versionedItemParam = nsParam + fmt.Sprintf("/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}")
-var groupingParam = getFullItemParam("grouping")
+var versionedItemParam = nsParam + "/{version:(?:v[0-9]+\\.[0-9]+\\.[0-9]+)|(?:[a-z0-9]{8,})}/{name}"
+
+// Grouping values can either be full Uesio items (e.g. <user>/<app>.<name>) or simple values, e.g. "LISTENER",
+// so the regex here needs to support both
+var groupingParam = getFullItemOrTextParam("grouping")
 var collectionParam = getFullItemParam("collectionname")
 
 var (
@@ -75,7 +81,6 @@ func serve(cmd *cobra.Command, args []string) {
 
 	r.Handle(fontsPrefix+"/{filename:.*}", controller.Fonts(cwd, fontsPrefix, cacheStaticAssets)).Methods(http.MethodGet)
 	r.Handle(staticPrefix+"/{filename:.*}", file.Vendor(cwd, staticPrefix, cacheStaticAssets)).Methods(http.MethodGet)
-	r.HandleFunc("/favicon.ico", file.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods(http.MethodGet)
 	r.HandleFunc("/health", controller.Health).Methods(http.MethodGet)
 
 	// The workspace router
@@ -119,6 +124,10 @@ func serve(cmd *cobra.Command, args []string) {
 		middleware.LogRequestHandler,
 	)
 
+	// SEO Routes
+	lr.HandleFunc("/robots.txt", controller.Robots).Methods(http.MethodGet)
+	lr.HandleFunc("/favicon.ico", controller.Favicon).Methods(http.MethodGet)
+
 	// Userfile routes for site and workspace context
 	userfileUploadPath := "/userfiles/upload"
 	sr.HandleFunc(userfileUploadPath, file.UploadUserFile).Methods(http.MethodPost)
@@ -154,6 +163,9 @@ func serve(cmd *cobra.Command, args []string) {
 	botParamPath := fmt.Sprintf("/bots/params/{type}/%s", itemParam)
 	sr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
 	wr.HandleFunc(botParamPath, controller.GetBotParams).Methods(http.MethodGet)
+
+	viewParamPath := fmt.Sprintf("/views/params/%s", itemParam)
+	wr.HandleFunc(viewParamPath, controller.GetViewParams).Methods(http.MethodGet)
 
 	//
 	// File (actual metadata, not userfiles) routes for site and workspace context

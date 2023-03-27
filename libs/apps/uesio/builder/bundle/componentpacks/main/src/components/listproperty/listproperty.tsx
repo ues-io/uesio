@@ -1,10 +1,10 @@
 import { definition, component, wire } from "@uesio/ui"
 import { add } from "../../api/defapi"
 import { FullPath } from "../../api/path"
-import { ListProperty } from "../../properties/componentproperty"
+import { ListProperty as LP } from "../../properties/componentproperty"
 
 type Definition = {
-	property: ListProperty
+	property: LP
 	path: FullPath
 }
 
@@ -24,6 +24,18 @@ const ListProperty: definition.UC<Definition> = (props) => {
 
 	const listPropertyPath = path.addLocal(property.name)
 	const items = record.getFieldValue(property.name) as wire.PlainWireRecord[]
+	const actions = [
+		{
+			label: itemsDefinition?.addLabel || "Add",
+			action: () => {
+				add(
+					context,
+					listPropertyPath.addLocal(`${items?.length || 0}`),
+					itemsDefinition?.defaultDefinition || {}
+				)
+			},
+		},
+	]
 
 	return (
 		<ListPropertyUtility
@@ -31,17 +43,10 @@ const ListProperty: definition.UC<Definition> = (props) => {
 			itemPropertiesSections={itemsDefinition?.sections}
 			itemPropertiesPanelTitle={itemsDefinition?.title}
 			itemDisplayTemplate={itemsDefinition?.displayTemplate}
-			addLabel={itemsDefinition?.addLabel}
+			actions={actions}
 			path={listPropertyPath}
 			items={items}
 			context={context}
-			addAction={() => {
-				add(
-					context,
-					listPropertyPath.addLocal(`${items?.length || 0}`),
-					itemsDefinition?.defaultDefinition || {}
-				)
-			}}
 		/>
 	)
 }

@@ -65,6 +65,11 @@ Cypress.Commands.add("typeInInput", (idFragment: string, value: string) => {
 	cy.get(idContainsSelector("input", idFragment)).type(value)
 })
 
+// Clears an input element whose id contains a given string
+Cypress.Commands.add("clearInput", (idFragment: string) => {
+	cy.get(idContainsSelector("input", idFragment)).clear()
+})
+
 // Changes the value of a <select>
 Cypress.Commands.add(
 	"changeSelectValue",
@@ -77,7 +82,16 @@ Cypress.Commands.add(
 
 // Gets a button element whose id contains a given string
 Cypress.Commands.add("clickButton", (idFragment: string) => {
-	cy.get(idContainsSelector("button", idFragment)).click()
+	const buttonSelector = idContainsSelector("button", idFragment)
+	const anchorSelector = idContainsSelector("a", idFragment)
+	cy.get(`${buttonSelector},${anchorSelector}`).click()
+})
+
+// Checks a component state
+Cypress.Commands.add("getComponentState", (componentId: string) => {
+	cy.window()
+		.its("uesio.api.component")
+		.invoke("getExternalState", componentId)
 })
 
 // Enters a global hotkey
@@ -105,7 +119,9 @@ declare global {
 			visitRoute(route: string): Chainable<void>
 			getByIdFragment(elementType: string, id: string): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
+			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
+			getComponentState(componentId: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
 				selectElementIdFragment: string,
@@ -134,6 +150,7 @@ function createApp(appName: string) {
 
 const login = () => {
 	cy.visitRoute("login")
+	cy.title().should("eq", "Uesio - Login")
 	if (useMockLogin) {
 		cy.clickButton("uesio/core.loginmock:mock-login-uesio")
 	} else {

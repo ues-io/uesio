@@ -70,7 +70,6 @@ interface ViewContext {
 
 interface RouteContext {
 	route: RouteState
-	site: SiteState
 	theme: string
 	view: string
 	viewDef: string
@@ -276,11 +275,13 @@ class Context {
 		const ctx = new Context(stack ? stack : this.stack)
 		ctx.workspace = this.workspace
 		ctx.siteadmin = this.siteadmin
+		ctx.site = this.site
 		ctx.slot = this.slot
 		return ctx
 	}
 
 	stack: ContextFrame[]
+	site?: SiteState
 	workspace?: WorkspaceState
 	siteadmin?: SiteAdminState
 	slot?: MetadataKey
@@ -429,8 +430,7 @@ class Context {
 		return undefined
 	}
 
-	getSite = () =>
-		this.stack.filter(isRouteContextFrame).find((f) => f.site)?.site
+	getSite = () => this.site
 
 	getWireId = () => this.stack.filter(hasWireContext).find(providesWire)?.wire
 
@@ -506,6 +506,12 @@ class Context {
 	setWorkspace = (workspace: WorkspaceState) => {
 		const newContext = this.clone()
 		newContext.workspace = workspace
+		return newContext
+	}
+
+	setSite = (site: SiteState) => {
+		const newContext = this.clone()
+		newContext.site = site
 		return newContext
 	}
 
@@ -618,13 +624,13 @@ class Context {
 }
 
 export {
-	Context,
-	ContextFrame,
-	FieldMode,
-	ContextOptions,
 	getWire,
 	injectDynamicContext,
 	hasViewContext,
 	isRecordContextFrame,
 	newContext,
 }
+
+export { Context }
+
+export type { ContextFrame, FieldMode, ContextOptions }

@@ -3,7 +3,6 @@ import { get, set, changeKey } from "../api/defapi"
 import { getAvailableWireIds, getWireDefinition } from "../api/wireapi"
 import { FullPath } from "../api/path"
 import {
-	BotProperty,
 	ComponentProperty,
 	getStyleVariantProperty,
 	SelectOption,
@@ -131,35 +130,6 @@ const getNamespaceSelectListMetadata = (
 	)
 }
 
-const getBotSelectListMetadata = (
-	context: context.Context,
-	def: BotProperty
-) => {
-	let { namespace } = def
-	if (!namespace && def.name && def.name.includes(".")) {
-		namespace = def.name.split(".")[0]
-	}
-
-	const [metadata] = api.builder.useMetadataList(
-		context,
-		"BOT",
-		namespace || "",
-		def.botType
-	)
-
-	return getSelectListMetadataFromOptions(
-		def.name,
-		Object.keys(metadata || {}).map((key) => {
-			const label = key.split(namespace + ".")[1] || key
-			return {
-				value: key,
-				label,
-			}
-		}),
-		"Select Bot"
-	)
-}
-
 const getBaseWireFieldDef = (
 	ComponentProperty: ComponentProperty,
 	type: wire.FieldType,
@@ -180,7 +150,7 @@ const getWireFieldFromPropertyDef = (
 	currentValue: wire.PlainWireRecord
 ): wire.ViewOnlyField => {
 	const { name, type } = def
-	let wireId: string
+	let wireId: string | undefined
 	let wireDefinition: wire.WireDefinition | undefined
 	switch (type) {
 		case "SELECT":
@@ -189,10 +159,6 @@ const getWireFieldFromPropertyDef = (
 			})
 		case "KEY":
 			return getBaseWireFieldDef(def, "TEXT")
-		case "BOT":
-			return getBaseWireFieldDef(def, "SELECT", {
-				selectlist: getBotSelectListMetadata(context, def),
-			})
 		case "WIRE":
 		case "WIRES":
 			return getBaseWireFieldDef(
@@ -213,10 +179,13 @@ const getWireFieldFromPropertyDef = (
 			})
 		case "FIELDS":
 		case "FIELD":
-			wireId = currentValue[def.wireField] as string
-			wireDefinition = wireId
-				? getWireDefinition(context, wireId)
-				: undefined
+			wireId = def.wireField
+				? (currentValue[def.wireField] as string)
+				: def.wireName
+			wireDefinition =
+				wireId === undefined
+					? undefined
+					: getWireDefinition(context, wireId)
 			return getBaseWireFieldDef(
 				def,
 				`${type === "FIELDS" ? "MULTI" : ""}SELECT`,
@@ -225,7 +194,8 @@ const getWireFieldFromPropertyDef = (
 						name,
 						wireDefinition !== undefined
 							? getWireFieldSelectOptions(wireDefinition)
-							: []
+							: [],
+						type === "FIELDS" ? undefined : ""
 					),
 				}
 			)
@@ -434,7 +404,7 @@ const PropertiesForm: definition.UtilityComponent<Props> = (props) => {
 		>
 			<DynamicForm
 				id={id}
-				path={path}
+				path={path?.combine()}
 				fields={getWireFieldsFromProperties(
 					properties,
 					context,

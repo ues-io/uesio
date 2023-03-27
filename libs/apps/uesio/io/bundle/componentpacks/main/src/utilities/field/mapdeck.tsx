@@ -1,12 +1,15 @@
 import { FunctionComponent } from "react"
 import { wire, definition, context, component } from "@uesio/ui"
-import { ListFieldOptions } from "../../components/field/field"
+
+export type MapFieldOptions = {
+	components?: definition.DefinitionList
+}
 
 interface MapFieldDeckUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	value: wire.FieldValue
 	path: string
-	options?: ListFieldOptions
+	options?: MapFieldOptions
 }
 
 const MapFieldDeck: FunctionComponent<MapFieldDeckUtilityProps> = (props) => {

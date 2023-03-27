@@ -18,7 +18,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const CACHE_FOR_1_YEAR = "private, no-transform, max-age=31536000, s-maxage=31536000"
+const CacheFor1Year = "private, no-transform, max-age=31536000, s-maxage=31536000"
 
 func RespondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
 	w.Header().Set("content-type", "text/json")
@@ -61,7 +61,7 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("; filename=\"%s\"", fileRequest.Path))
 	if fileRequest.TreatAsImmutable() {
-		w.Header().Set("Cache-Control", CACHE_FOR_1_YEAR)
+		w.Header().Set("Cache-Control", CacheFor1Year)
 	}
 
 	seeker, ok := stream.(io.ReadSeekCloser)
@@ -83,15 +83,9 @@ func respondFile(w http.ResponseWriter, r *http.Request, fileRequest *FileReques
 
 }
 
-func ServeFile(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	namespace := vars["namespace"]
-	name := vars["name"]
-	resourceVersion := vars["version"]
+func ServeFileContent(file *meta.File, version string, w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
-
-	file := meta.NewBaseFile(namespace, name)
 
 	err := bundle.Load(file, session, nil)
 	if err != nil {
@@ -110,8 +104,18 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	respondFile(w, r, &FileRequest{
 		Path:         file.Path,
 		LastModified: time.Unix(file.UpdatedAt, 0),
-		Namespace:    namespace,
-		Version:      resourceVersion,
+		Namespace:    file.Namespace,
+		Version:      version,
 	}, stream)
+}
 
+func ServeFile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	namespace := vars["namespace"]
+	name := vars["name"]
+	resourceVersion := vars["version"]
+
+	file := meta.NewBaseFile(namespace, name)
+
+	ServeFileContent(file, resourceVersion, w, r)
 }

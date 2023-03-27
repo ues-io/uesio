@@ -1,3 +1,3 @@
 import { NotificationSeverity } from "./bands/notification/types"
 
-export { NotificationSeverity }
+export type { NotificationSeverity }

@@ -99,6 +99,4 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	)
 }
 
-export { DialogPlainUtilityProps }
-
 export default DialogPlain

@@ -4,7 +4,7 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataType, METADATA } from "../bands/builder/types"
-import { Dependencies, RouteState } from "../bands/route/types"
+import { Dependencies, RouteState, RouteTag } from "../bands/route/types"
 import { Spec } from "../definition/definition"
 import { parseKey } from "../component/path"
 import { PlainWireRecord } from "../bands/wirerecord/types"
@@ -58,6 +58,7 @@ type PathNavigateRequest = {
 	namespace: string
 	path: string
 	title?: string
+	tags?: RouteTag[]
 }
 
 type CollectionNavigateRequest = {
@@ -246,6 +247,17 @@ const platform = {
 		const prefix = getPrefix(context)
 		const response = await fetch(
 			`${prefix}/bots/params/${type}/${namespace}/${name}`
+		)
+		return respondJSON(response)
+	},
+	getViewParams: async (
+		context: Context,
+		namespace: string,
+		name: string
+	): Promise<ParamDefinition[]> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(
+			`${prefix}/views/params/${namespace}/${name}`
 		)
 		return respondJSON(response)
 	},
@@ -550,8 +562,9 @@ const platform = {
 
 type Platform = typeof platform
 
-export {
-	platform,
+export { platform }
+
+export type {
 	Platform,
 	BotResponse,
 	BotParams,

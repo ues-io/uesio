@@ -6,7 +6,8 @@ import { ID_FIELD, UPDATED_AT_FIELD } from "../collectionexports"
 import { Context } from "./context"
 import { getStaticAssetsPath } from "../hooks/platformapi"
 import { UserState } from "../bands/user/types"
-import { get } from "lodash"
+import get from "lodash/get"
+import { SiteState } from "../bands/site"
 
 type MergeType =
 	| "Record"
@@ -161,11 +162,7 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 	Site: (expression, context) => {
 		const site = context.getSite()
-		if (!site) return ""
-		if (expression === "domain") {
-			return site.domain
-		}
-		return ""
+		return site?.[expression as keyof SiteState] || ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {
@@ -175,4 +172,5 @@ const handlers: Record<MergeType, MergeHandler> = {
 	},
 }
 
-export { handlers, MergeType }
+export { handlers }
+export type { MergeType }

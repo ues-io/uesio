@@ -7,8 +7,12 @@ import {
 	component,
 	context,
 } from "@uesio/ui"
-import { ReferenceGroupFieldOptions } from "../../components/field/field"
 import TextField from "./text"
+
+export type ReferenceGroupFieldOptions = {
+	components?: definition.DefinitionList
+	template?: string
+}
 
 interface ReferenceGroupFieldProps extends definition.UtilityProps {
 	path: string

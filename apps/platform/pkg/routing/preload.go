@@ -2,8 +2,6 @@ package routing
 
 import (
 	"encoding/json"
-
-	"github.com/francoispqt/gojay"
 )
 
 type ComponentMergeData struct {
@@ -33,34 +31,42 @@ func (cmd *ComponentsMergeData) AddItem(componentID string, state interface{}) {
 	}
 }
 
-type MetadataMergeData struct {
-	IDs      []string                   `json:"ids"`
-	Entities map[string]json.RawMessage `json:"entities"`
+type MetadataMergeData []Depable
+
+func (mmd *MetadataMergeData) MarshalJSON() ([]byte, error) {
+
+	ids := make([]string, 0)
+	entityData := map[string]json.RawMessage{}
+
+	for _, dep := range *mmd {
+		key := dep.GetKey()
+		_, ok := entityData[key]
+		if ok {
+			continue
+		}
+		ids = append(ids, key)
+		rawData, err := dep.GetBytes()
+		if err == nil {
+			entityData[key] = rawData
+		}
+	}
+
+	return json.Marshal(&struct {
+		IDs      []string                   `json:"ids"`
+		Entities map[string]json.RawMessage `json:"entities"`
+	}{
+		ids,
+		entityData,
+	})
+
 }
 
 func NewItem() *MetadataMergeData {
-	return &MetadataMergeData{
-		IDs:      []string{},
-		Entities: map[string]json.RawMessage{},
-	}
+	return &MetadataMergeData{}
 }
 
-func (mmd *MetadataMergeData) AddItemDep(dep Depable) error {
-	id := dep.GetKey()
-	parsedbytes, err := dep.GetBytes()
-	if err != nil {
-		return err
-	}
-	return mmd.AddItem(id, parsedbytes)
-}
-
-func (mmd *MetadataMergeData) AddItem(id string, content []byte) error {
-	_, ok := mmd.Entities[id]
-	if !ok {
-		mmd.IDs = append(mmd.IDs, id)
-		mmd.Entities[id] = content
-	}
-	return nil
+func (mmd *MetadataMergeData) AddItem(dep Depable) {
+	*mmd = append(*mmd, dep)
 }
 
 func NewPreloadMetadata() *PreloadMetadata {
@@ -73,7 +79,6 @@ func NewPreloadMetadata() *PreloadMetadata {
 		ConfigValue:      NewItem(),
 		Label:            NewItem(),
 		FeatureFlag:      NewItem(),
-		MetadataText:     NewItem(),
 		Wire:             NewItem(),
 		Collection:       NewItem(),
 	}
@@ -87,26 +92,9 @@ type PreloadMetadata struct {
 	ConfigValue      *MetadataMergeData   `json:"configvalue,omitempty"`
 	Label            *MetadataMergeData   `json:"label,omitempty"`
 	FeatureFlag      *MetadataMergeData   `json:"featureflag,omitempty"`
-	MetadataText     *MetadataMergeData   `json:"metadatatext,omitempty"`
 	Wire             *MetadataMergeData   `json:"wire,omitempty"`
 	Collection       *MetadataMergeData   `json:"collection,omitempty"`
 	Component        *ComponentsMergeData `json:"component,omitempty"`
-}
-
-type MetadataTextItem struct {
-	Content      string
-	Key          string
-	MetadataType string
-}
-
-func (mti *MetadataTextItem) MarshalJSONObject(enc *gojay.Encoder) {
-	enc.AddStringKey("content", mti.Content)
-	enc.AddStringKey("key", mti.Key)
-	enc.AddStringKey("metadatatype", mti.MetadataType)
-}
-
-func (mti *MetadataTextItem) IsNil() bool {
-	return mti == nil
 }
 
 type Depable interface {

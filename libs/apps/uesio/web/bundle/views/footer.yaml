@@ -15,7 +15,7 @@ definition:
               area: main
               components:
                 - uesio/io.grid:
-                    templateColumns: 0fr 1fr 0fr
+                    templateColumns: 0fr 1fr 3fr 1fr 1fr 1fr 1fr
                     uesio.styles:
                       root:
                         alignItems: center
@@ -32,47 +32,52 @@ definition:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.footertext
-                                text: ©2022
+                                text: ©2023
                                 element: div
                                 uesio.styles:
                                   root:
                                     paddingBottom: 5px
-                      # - uesio/io.text:
-                      #     uesio.variant: uesio/web.footertext
-                      #     text: The Cloud Masters LLC Switzerland - All rights reserved
-                      #     element: div
-                      # - uesio/io.griditem:
-                      #     components:
-                      #       - uesio/io.group:
-                      #           columnGap: 14px
-                      #           components:
-                      #             - uesio/io.button:
-                      #                 uesio.variant: uesio/web.footerlink
-                      #                 text: Who we are
-                      #                 signals:
-                      #                   - signal: "route/REDIRECT"
-                      #                     path: "https://www.thecloudmasters.com"
-                      #             - uesio/io.button:
-                      #                 uesio.variant: uesio/web.footerlink
-                      #                 text: The team
-                      #                 signals:
-                      #                   - signal: route/NAVIGATE
-                      #                     path: team
-                      #             - uesio/io.button:
-                      #                 uesio.variant: uesio/web.footerlink
-                      #                 text: Contact us
-                      #                 signals:
-                      #                   - signal: route/NAVIGATE
-                      #                     path: contact
-                      #             - uesio/io.button:
-                      #                 uesio.variant: uesio/web.footerlink
-                      #                 text: Privacy policy
-                      #                 signals:
-                      #                   - signal: route/NAVIGATE
-                      #                     path: privacy
-                      #             - uesio/io.button:
-                      #                 uesio.variant: uesio/web.footerlink
-                      #                 text: Terms of use
-                      #                 signals:
-                      #                   - signal: route/NAVIGATE
-                      #                     path: terms
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.text:
+                                uesio.variant: uesio/web.footertext
+                                text: The Cloud Masters LLC Switzerland - All rights reserved
+                                element: div
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.footerlink
+                                text: Who we are
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://www.thecloudmasters.com"
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.footerlink
+                                text: The team
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: team
+                            # - uesio/io.button:
+                            #     uesio.variant: uesio/web.footerlink
+                            #     text: Contact us
+                            #     signals:
+                            #       - signal: route/NAVIGATE
+                            #         path: contact
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.button:
+                              uesio.variant: uesio/web.footerlink
+                              text: Privacy policy
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: privacy
+                      - uesio/io.griditem:
+                          components:
+                            - uesio/io.button:
+                                uesio.variant: uesio/web.footerlink
+                                text: Terms of use
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: terms

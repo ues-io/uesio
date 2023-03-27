@@ -9,7 +9,6 @@ import { PlainViewDef } from "../../definition/viewdef"
 import { MetadataKey } from "../builder/types"
 import { PlainCollection } from "../collection/types"
 import { ComponentState } from "../component/types"
-import { MetadataState } from "../metadata/types"
 import { PlainWire } from "../wire/types"
 
 type WorkspaceState = {
@@ -33,9 +32,15 @@ type Dependencies = {
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
 	label?: EntityState<LabelState>
-	metadatatext?: EntityState<MetadataState>
 	wire?: EntityState<PlainWire>
 	collection?: EntityState<PlainCollection>
+}
+
+type RouteTag = {
+	location: string
+	type: string
+	name: string
+	content: string
 }
 
 type RouteState = {
@@ -48,6 +53,13 @@ type RouteState = {
 	title: string
 	isLoading?: boolean
 	dependencies?: Dependencies
+	tags: RouteTag[]
 } | null
 
-export { RouteState, WorkspaceState, SiteAdminState, Dependencies }
+export type {
+	RouteState,
+	RouteTag,
+	WorkspaceState,
+	SiteAdminState,
+	Dependencies,
+}

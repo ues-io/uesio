@@ -3,7 +3,12 @@ import { definition, styles } from "@uesio/ui"
 import { cx } from "@emotion/css"
 import CheckboxField from "../field/checkbox"
 
-interface TableUtilityProps<R, C> extends definition.UtilityProps {
+interface TableColumn {
+	width?: string
+}
+
+interface TableUtilityProps<R, C extends TableColumn>
+	extends definition.UtilityProps {
 	rows: R[]
 	columns: C[]
 	isDeletedFunc?: (row: R) => boolean
@@ -19,7 +24,7 @@ interface TableUtilityProps<R, C> extends definition.UtilityProps {
 	rowActionsFunc?: (row: R) => ReactNode
 }
 
-const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
+const Table: FunctionComponent<TableUtilityProps<unknown, TableColumn>> = (
 	props
 ) => {
 	const {
@@ -156,7 +161,11 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 							</th>
 						)}
 						{columns?.map((column, index) => (
-							<th key={index} className={classes.headerCell}>
+							<th
+								key={index}
+								className={classes.headerCell}
+								style={{ width: column?.width }}
+							>
 								<div className={classes.headerCellInner}>
 									{columnHeaderFunc(column)}
 									{columnMenuFunc && columnMenuFunc(column)}
@@ -215,7 +224,5 @@ const Table: FunctionComponent<TableUtilityProps<unknown, unknown>> = (
 		</div>
 	)
 }
-
-export { TableUtilityProps }
 
 export default Table

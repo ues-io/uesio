@@ -101,6 +101,11 @@ export default async (
 		})
 	})
 
+	// Run wire events
+	wires.forEach((w) =>
+		context.getWire(w.name)?.handleEvent("onLoadSuccess", context)
+	)
+
 	return context
 }
 

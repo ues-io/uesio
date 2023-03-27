@@ -73,7 +73,7 @@ func getMetadataList(metadatatype, namespace, grouping string, session *sess.Ses
 		ns := bundleable.GetNamespace()
 		// Strip off the grouping part of the key
 		if grouping != "" {
-			key = strings.TrimPrefix(key, grouping+":")
+			key = strings.TrimPrefix(key, strings.ToLower(grouping)+":")
 		}
 
 		appInfo, ok := appData[ns]

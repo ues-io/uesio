@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"gopkg.in/yaml.v3"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -95,6 +96,25 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
+func validateYaml(field *adapt.FieldMetadata) validationFunc {
+	return func(change *adapt.ChangeItem) *adapt.SaveError {
+		val, err := change.FieldChanges.GetField(field.GetFullName())
+		if err != nil {
+			return nil
+		}
+		node := &yaml.Node{}
+		stringVal, isString := val.(string)
+		if !isString {
+			return nil
+		}
+		err = yaml.Unmarshal([]byte(stringVal), node)
+		if err != nil {
+			return adapt.NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not valid YAML: "+err.Error())
+		}
+		return nil
+	}
+}
+
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
 	return func(change *adapt.ChangeItem) *adapt.SaveError {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
@@ -141,6 +161,9 @@ func Validate(op *adapt.SaveOp, connection adapt.Connection, session *sess.Sessi
 		}
 		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
 			validations = append(validations, validateMetadata(field))
+		}
+		if validationMetadata != nil && validationMetadata.Type == "YAML" {
+			validations = append(validations, validateYaml(field))
 		}
 		if !field.Updateable && field.GetFullName() != adapt.ID_FIELD {
 			validations = append(validations, preventUpdate(field))

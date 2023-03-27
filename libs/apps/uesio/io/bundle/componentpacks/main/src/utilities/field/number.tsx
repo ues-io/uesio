@@ -1,6 +1,11 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection, wire } from "@uesio/ui"
-import { NumberFieldOptions } from "../../components/field/field"
+
+export type NumberFieldOptions = {
+	step?: number
+	max?: number
+	min?: number
+}
 
 interface NumberFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void

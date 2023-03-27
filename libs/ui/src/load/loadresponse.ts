@@ -6,4 +6,4 @@ type LoadResponseBatch = {
 	collections: PlainCollectionMap
 }
 
-export { LoadResponseBatch }
+export type { LoadResponseBatch }

@@ -4,6 +4,20 @@
         <title>{{ .Route.Title }}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no" />
+        {{- if .Route -}}
+            {{- if .Route.Tags -}}
+                {{- range .Route.Tags }}
+                    {{- if and (eq .Location "head") (eq .Type "meta") -}}
+        <meta name="{{.Name}}" content="{{.Content}}" data-uesio="true"/>
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end }}
+        {{- if .Site -}}
+            {{- if (eq .Site.EnableSEO false) -}}
+        <meta name="robots" content="none"/>
+            {{- end -}}
+        {{- end }}
         <style>
             {{template "fonts" .}}
         </style>
@@ -28,8 +42,8 @@
     {{$site := .Site -}}
     {{- if .PreloadMetadata -}}
         {{- if .PreloadMetadata.ComponentPack -}}
-            {{- range .PreloadMetadata.ComponentPack.IDs -}}
-                {{- $packURL := getPackURL . $workspace $site -}}
+            {{- range .PreloadMetadata.ComponentPack -}}
+                {{- $packURL := getPackURL .GetKey $workspace $site -}}
                 {{- if $packURL -}}
                 <script src="{{$packURL}}" type="module"></script>
                 {{- end -}}

@@ -1,10 +1,14 @@
-import { definition, wire } from "@uesio/ui"
+import { component, definition, wire } from "@uesio/ui"
 import { useSelectedPath } from "../../../../api/stateapi"
 
 import PropertiesForm from "../../../../helpers/propertiesform"
 import { ComponentProperty } from "../../../../properties/componentproperty"
 import { useDefinition } from "../../../../api/defapi"
 import { getHomeSection } from "../../../../api/propertysection"
+import {
+	DisplayConditionProperties,
+	getDisplayConditionLabel,
+} from "../../../../properties/conditionproperties"
 
 const WireProperties: definition.UtilityComponent = (props) => {
 	const { context } = props
@@ -69,6 +73,108 @@ const WireProperties: definition.UtilityComponent = (props) => {
 				],
 			},
 		},
+		// Events section properties
+		{
+			name: "events",
+			type: "LIST",
+			items: {
+				title: "Wire Event Handlers",
+				addLabel: "New Wire Event Handler",
+				displayTemplate: (event: {
+					type: string
+					fields?: string[]
+				}) => {
+					if (event.type) {
+						return `${event.type}${
+							event.fields?.length
+								? ` | ${event.fields.join(", ")}`
+								: ""
+						}`
+					}
+					return "[No Type]"
+				},
+				defaultDefinition: { type: "onChange" },
+				properties: [
+					{
+						name: "type",
+						type: "SELECT",
+						options: [
+							{
+								value: "onChange",
+								label: "Wire Field(s) changed",
+							},
+							{
+								value: "onLoadSuccess",
+								label: "Wire loaded (successfully)",
+							},
+							{
+								value: "onSaveSuccess",
+								label: "Wire saved (successfully)",
+							},
+							{
+								value: "onSaveError",
+								label: "Wire saved (with errors)",
+							},
+							{
+								value: "onCancel",
+								label: "Wire changes cancelled",
+							},
+						],
+						label: "Event Type",
+					},
+					{
+						name: "fields",
+						type: "FIELDS",
+						wireName,
+						label: "Fields",
+						displayConditions: [
+							{
+								field: "type",
+								value: "onChange",
+								operator: "EQUALS",
+							},
+						] as component.DisplayCondition[],
+					},
+					{
+						name: "conditions",
+						type: "LIST",
+						items: {
+							title: "Condition",
+							addLabel: "Add Condition",
+							displayTemplate: (record: wire.PlainWireRecord) =>
+								getDisplayConditionLabel(
+									record as component.DisplayCondition
+								),
+							defaultDefinition: { operator: "EQUALS" },
+							properties: DisplayConditionProperties,
+						},
+						displayConditions: [
+							{
+								field: "type",
+								value: "onChange",
+								operator: "EQUALS",
+							},
+						] as component.DisplayCondition[],
+					},
+				],
+				sections: [
+					{
+						type: "CUSTOM",
+						id: "wireeventhome",
+						label: "",
+						icon: "home",
+						properties: ["type", "fields"],
+					},
+					{ type: "SIGNALS" },
+					{
+						type: "CUSTOM",
+						id: "wireeventconditions",
+						properties: ["conditions"],
+						label: "Conditions",
+					},
+				],
+			},
+		},
 	]
 
 	return (
@@ -104,6 +210,12 @@ const WireProperties: definition.UtilityComponent = (props) => {
 					label: "Order",
 					type: "CUSTOM",
 					properties: ["order"],
+				},
+				{
+					id: "events",
+					label: "Events",
+					type: "CUSTOM",
+					properties: ["events"],
 				},
 			]}
 			path={wirePath}

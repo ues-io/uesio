@@ -1,6 +1,6 @@
 import { FieldMetadataMap } from "../field/types"
 
-type PlainCollection = {
+export type PlainCollection = {
 	name: string
 	namespace: string
 	nameField: string
@@ -14,7 +14,7 @@ type PlainCollection = {
 	pluralLabel: string
 }
 
-type PlainCollectionMap = {
+export type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
@@ -22,10 +22,4 @@ const ID_FIELD = "uesio/core.id"
 const UNIQUE_KEY_FIELD = "uesio/core.uniquekey"
 const UPDATED_AT_FIELD = "uesio/core.updatedat"
 
-export {
-	PlainCollectionMap,
-	PlainCollection,
-	ID_FIELD,
-	UNIQUE_KEY_FIELD,
-	UPDATED_AT_FIELD,
-}
+export { ID_FIELD, UNIQUE_KEY_FIELD, UPDATED_AT_FIELD }

@@ -2,4 +2,4 @@ name: view
 path: app/{app:\w*\/\w*}/workspace/{workspacename}/views/{viewname}
 view: uesio/studio.view
 theme: uesio/studio.default
-title: View Details
+title: "View: $Record{views:uesio/studio.name}"

@@ -11,6 +11,7 @@ variants:
   - uesio/io.fieldwrapper:uesio/io.table
   - uesio/io.field:uesio/io.table
   - uesio/io.customselectfield:uesio/io.default
+  - uesio/io.menu:uesio/io.default
 category: DATA
 discoverable: true
 properties:
@@ -43,11 +44,11 @@ sections:
       - uesio.id
       - mode
       - pagesize
-  - label: Fields
-    id: fields
-    type: CUSTOM
+  - type: CUSTOM
+    label: Columns
+    id: columns
     viewDefinition:
-    # TODO: Custom component for Table Fields / sub-components
+      - uesio/builder.tablecolumns: {}
   - type: STYLES
   - type: DISPLAY
 signals:

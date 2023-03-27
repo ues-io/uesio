@@ -1,4 +1,5 @@
 import { api, styles, component, signal, definition } from "@uesio/ui"
+import { useState } from "react"
 import { default as IOButton } from "../../utilities/button/button"
 import Icon from "../../utilities/icon/icon"
 
@@ -26,14 +27,25 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		definition
 	)
 
+	const [isPending, setPending] = useState<boolean>(false)
+
+	const [link, handler] = api.signal.useLinkHandler(
+		definition.signals,
+		context,
+		setPending
+	)
+
 	api.signal.useRegisterHotKey(definition.hotkey, definition.signals, context)
+
 	return (
 		<IOButton
 			id={api.component.getComponentIdFromProps(props)}
 			variant={definition["uesio.variant"]}
 			classes={classes}
+			disabled={isPending}
 			label={definition.text}
-			onClick={api.signal.getHandler(definition.signals, context)}
+			link={link}
+			onClick={handler}
 			context={context}
 			isSelected={isSelected}
 			icon={
@@ -50,4 +62,5 @@ const Button: definition.UC<ButtonDefinition> = (props) => {
 		/>
 	)
 }
+
 export default Button

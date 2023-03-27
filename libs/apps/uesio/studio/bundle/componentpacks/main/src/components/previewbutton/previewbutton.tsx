@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import {
 	hooks,
 	api,
@@ -7,24 +7,15 @@ import {
 	wire,
 	param,
 	definition,
-	util,
+	platform,
 } from "@uesio/ui"
 import { FloatingPortal } from "@floating-ui/react"
 
-const getParamDefs = (record: wire.WireRecord): param.ParamDefinition[] => {
-	const viewDef =
-		record.getFieldValue<string>("uesio/studio.definition") || ""
-	const yamlDoc = util.yaml.parse(viewDef)
-	const params = util.yaml.getNodeAtPath(["params"], yamlDoc.contents)
-	const paramObj = params?.toJSON() || {}
-
-	return Object.keys(paramObj).map((key) => {
-		const value = paramObj[key]
-		return {
-			...value,
-			name: key,
-		}
-	})
+type PreviewButtonDefinition = {
+	view: string
+	label: string
+	buildMode: boolean
+	hotkey: string
 }
 
 const getValueForParam = (
@@ -98,11 +89,12 @@ const getWireFieldsFromParams = (
 interface FormProps {
 	setOpen: (value: boolean) => void
 	onSubmit: (wire: wire.Wire | undefined) => void
-	params: param.ParamDefinition[]
+	params: param.ParamDefinition[] | undefined
+	label: string
 }
 
 const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
-	const { context, params, setOpen, onSubmit } = props
+	const { context, params, setOpen, onSubmit, label } = props
 
 	const Dialog = component.getUtility("uesio/io.dialog")
 	const DynamicForm = component.getUtility("uesio/io.dynamicform")
@@ -132,7 +124,7 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 					<Button
 						context={context}
 						variant="uesio/io.primary"
-						label="Generate"
+						label={label}
 						onClick={() => onSubmit(wireRef.current)}
 					/>
 				</Group>
@@ -141,9 +133,10 @@ const PreviewForm: definition.UtilityComponent<FormProps> = (props) => {
 	)
 }
 
-const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
+const PreviewButton: definition.UC<PreviewButtonDefinition> = (props) => {
 	const Button = component.getUtility("uesio/io.button")
-	const { context } = props
+	const { context, definition } = props
+	const { label, view, hotkey, buildMode } = definition
 
 	const record = context.getRecord()
 	if (!record) throw new Error("No Record Context Provided")
@@ -152,30 +145,49 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const viewName = record.getFieldValue<string>("uesio/studio.name")
 
-	const params = getParamDefs(record)
-	const hasParams = Object.keys(params).length
-
 	const appName = workspaceContext.app
 	const workspaceName = workspaceContext.name
 
 	const [open, setOpen] = useState<boolean>(false)
+	const [params, setParams] = useState<param.ParamDefinition[]>()
 
-	const togglePreview = () => (hasParams ? setOpen(true) : previewHandler())
+	const togglePreview = async () => {
+		const [viewNamespace, viewName] = component.path.parseKey(
+			context.mergeString(view)
+		)
+		const result = await platform.platform.getViewParams(
+			context,
+			viewNamespace,
+			viewName
+		)
+		if (result.length) {
+			setOpen(true)
+			setParams(result)
+		} else {
+			previewHandler()
+		}
+	}
 
-	hooks.useHotKeyCallback("meta+p", () => {
-		togglePreview()
-	})
+	hooks.useHotKeyCallback(
+		hotkey,
+		() => {
+			togglePreview()
+		},
+		!!hotkey
+	)
 
 	const previewHandler = (wire?: wire.Wire) => {
 		const record = wire?.getFirstRecord()
 		const urlParams =
-			hasParams && record
+			params?.length && record
 				? new URLSearchParams(getParamValues(params, record))
 				: undefined
+
+		const mode = buildMode ? "edit" : "preview"
 		api.signal.run(
 			{
 				signal: "route/REDIRECT",
-				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/preview${
+				path: `/workspace/${appName}/${workspaceName}/views/${appName}/${viewName}/${mode}${
 					urlParams ? `?${urlParams}` : ""
 				}`,
 			},
@@ -186,9 +198,10 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 	return (
 		<>
 			<Button
+				id={api.component.getComponentIdFromProps(props)}
 				context={context}
 				variant="uesio/io.secondary"
-				label="Preview"
+				label={label}
 				onClick={togglePreview}
 			/>
 			{open && (
@@ -197,6 +210,7 @@ const PreviewButton: FunctionComponent<definition.BaseProps> = (props) => {
 					onSubmit={previewHandler}
 					setOpen={setOpen}
 					context={context}
+					label={label}
 				/>
 			)}
 		</>

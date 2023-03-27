@@ -1,3 +1,3 @@
 import { ParamDefinition } from "./definition/param"
 
-export { ParamDefinition }
+export type { ParamDefinition }

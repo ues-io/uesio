@@ -59,6 +59,9 @@ declare module "uesio/bots" {
 		order?: LoadOrder[]
 	}
 
+	interface DeleteApi {
+		getOld: (field: string) => FieldValue
+	}
 	interface ChangeApi {
 		get: (field: string) => FieldValue
 		getOld: (field: string) => FieldValue
@@ -75,7 +78,7 @@ declare module "uesio/bots" {
 	}
 
 	interface DeletesApi {
-		get: () => string[]
+		get: () => DeleteApi[]
 	}
 
 	interface BeforeSaveBotApi {
@@ -88,6 +91,12 @@ declare module "uesio/bots" {
 
 	interface AfterSaveBotApi extends BeforeSaveBotApi {
 		save: (collectionName: string, records: Record[]) => void
+		runIntegrationAction: (
+			integration: string,
+			action: string,
+			options: unknown
+		) => void
+		getConfigValue: (configValueKey: string) => string
 	}
 
 	interface ListenerBotApi {
@@ -95,6 +104,12 @@ declare module "uesio/bots" {
 		load: (loadRequest: LoadRequest) => Record[]
 		params: BotParamsApi
 		save: (collectionName: string, records: Record[]) => void
+		runIntegrationAction: (
+			integration: string,
+			action: string,
+			options: unknown
+		) => void
+		getConfigValue: (configValueKey: string) => string
 	}
 
 	export type {

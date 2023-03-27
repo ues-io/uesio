@@ -25,10 +25,12 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 		onClick,
 		disabled,
 		variant,
+		id,
 	} = props
 
 	return (
 		<Button
+			id={id}
 			onClick={onClick}
 			context={context}
 			tooltip={label}
@@ -40,7 +42,5 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 		/>
 	)
 }
-
-export { IconButtonUtilityProps }
 
 export default IconButton

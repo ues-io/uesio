@@ -25,6 +25,7 @@ definition:
         uesio/studio.title:
         uesio/studio.collection:
         uesio/studio.viewtype:
+        uesio/studio.tags:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -161,3 +162,13 @@ definition:
                                       label: "Collection"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.viewtype
+                      - uesio/io.titlebar:
+                          uesio.variant: uesio/io.main
+                          title: Search Engine Optimization
+                          subtitle: Route <meta> tags
+                      - uesio/io.box:
+                          uesio.variant: uesio/io.paddedsection
+                          components:
+                            - uesio/io.field:
+                                label: " "
+                                fieldId: uesio/studio.tags

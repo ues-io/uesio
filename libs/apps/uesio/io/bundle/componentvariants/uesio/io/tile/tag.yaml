@@ -11,6 +11,9 @@ definition:
       fontSize: 10pt
       alignItems: center
       maxWidth: 180px
+      "&:focus":
+        backgroundColor: "white"
+        outline: "1px solid #aaa"
     content:
       width: 100%
       text-overflow: ellipsis

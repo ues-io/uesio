@@ -7,6 +7,7 @@ type BaseProperty = {
 	required?: boolean
 	type: string
 	placeholder?: string
+	readonly?: boolean
 	displayConditions?: component.DisplayCondition[]
 }
 type TextProperty = {
@@ -80,15 +81,17 @@ type WiresProperty = {
 	type: "WIRES"
 } & BaseProperty
 
-type FieldProperty = {
-	type: "FIELD"
-	wireField: string
+type FieldPropertyBase = {
+	wireField?: string
+	wireName?: string
 } & BaseProperty
 
+type FieldProperty = {
+	type: "FIELD"
+} & FieldPropertyBase
 type FieldsProperty = {
 	type: "FIELDS"
-	wireField: string
-} & BaseProperty
+} & FieldPropertyBase
 
 type SelectProperty = {
 	type: "SELECT"
@@ -169,7 +172,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	groupingValue: componentType || "",
 })
 
-export {
+export type {
 	BotProperty,
 	ListPropertyItemsDefinition,
 	ComponentProperty,
@@ -179,5 +182,6 @@ export {
 	MapProperty,
 	ListProperty,
 	IconProperty,
-	getStyleVariantProperty,
 }
+
+export { getStyleVariantProperty }

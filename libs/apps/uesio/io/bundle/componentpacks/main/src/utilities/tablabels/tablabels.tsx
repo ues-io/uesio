@@ -61,6 +61,4 @@ const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	)
 }
 
-export { TabsUtilityProps }
-
 export default TabLabels

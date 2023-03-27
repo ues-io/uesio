@@ -54,6 +54,7 @@ type ColumnDefinition = {
 	number?: NumberFieldOptions
 	longtext?: LongTextFieldOptions
 	label: string
+	width?: string
 	components: definition.DefinitionList
 } & definition.BaseDefinition
 
@@ -195,6 +196,7 @@ const Table: definition.UC<TableDefinition> = (props) => {
 						onSelect={(item: ColumnDefinition) =>
 							console.log(item.label)
 						}
+						getItemKey={(item: ColumnDefinition) => item.label}
 						fill={false}
 						context={context}
 					/>
