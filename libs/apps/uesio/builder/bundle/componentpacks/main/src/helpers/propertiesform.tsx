@@ -208,6 +208,8 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "TEXT", {
 				label: "Component Id",
 			})
+		case "TEXT_AREA":
+			return getBaseWireFieldDef(def, "LONGTEXT")
 		case "NUMBER":
 			return getBaseWireFieldDef(def, "NUMBER")
 		case "CHECKBOX":
