@@ -218,12 +218,8 @@ definition:
                   uesio.id: "site-bundle-version"
                   reference:
                     conditions:
-                      # - field: uesio/studio.app
-                      #   valueSource: LOOKUP
-                      #   lookupWire: apps
-                      #   lookupField: uesio/core.id
                       - field: uesio/studio.app
-                        value: "347557c1-59a7-47eb-8f10-211d378e2f56"
+                        value: ${uesio/studio.app->uesio/core.id}
       actions:
         - uesio/io.button:
             uesio.variant: "uesio/io.primary"
