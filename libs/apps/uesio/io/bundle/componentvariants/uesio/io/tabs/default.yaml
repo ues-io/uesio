@@ -1,0 +1,6 @@
+name: default
+label: Default
+definition:
+  labelsVariant: uesio/io.default
+  panelVariant: uesio/io.default
+public: true

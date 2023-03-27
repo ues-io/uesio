@@ -57,5 +57,6 @@ const Slot: FunctionComponent<SlotUtilityProps> = (props) => {
 
 Slot.displayName = "Slot"
 
-export { SlotUtilityProps, getSlotProps }
+export type { SlotUtilityProps }
+export { getSlotProps }
 export default Slot

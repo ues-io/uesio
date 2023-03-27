@@ -14,9 +14,6 @@ class FullPath {
 
 	combine = () => [this.itemType, this.itemName, this.localPath].join(":")
 
-	pathCombine = () =>
-		`["${this.itemType}"]["${this.itemName}"]${this.localPath}`
-
 	equals = (path: FullPath) =>
 		this.itemType === path.itemType &&
 		this.itemName === path.itemName &&

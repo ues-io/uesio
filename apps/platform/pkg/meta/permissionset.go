@@ -19,13 +19,21 @@ func NewBasePermissionSet(namespace, name string) *PermissionSet {
 }
 
 type CollectionPermission struct {
-	Read   bool `yaml:"read" json:"read"`
-	Create bool `yaml:"create" json:"create"`
-	Edit   bool `yaml:"edit" json:"edit"`
-	Delete bool `yaml:"delete" json:"delete"`
+	Read       bool               `yaml:"read" json:"read"`
+	Create     bool               `yaml:"create" json:"create"`
+	Edit       bool               `yaml:"edit" json:"edit"`
+	Delete     bool               `yaml:"delete" json:"delete"`
+	FieldsRefs FieldPermissionMap `yaml:"fields" json:"fields"`
 }
 
 type CollectionPermissionMap map[string]CollectionPermission
+
+type FieldPermission struct {
+	Read bool `yaml:"read" json:"read"`
+	Edit bool `yaml:"edit" json:"edit"`
+}
+
+type FieldPermissionMap map[string]FieldPermission
 
 func (cpm *CollectionPermissionMap) UnmarshalYAML(node *yaml.Node) error {
 
@@ -166,7 +174,7 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	return true
 }
 
-func (ps *PermissionSet) HasReadPermission(key string) bool {
+func (ps *PermissionSet) HasCollectionReadPermission(key string) bool {
 	if ps.AllowAllCollections {
 		return true
 	}
@@ -174,6 +182,23 @@ func (ps *PermissionSet) HasReadPermission(key string) bool {
 		return false
 	} else {
 		return collectionPermission.Read
+	}
+}
+
+func (ps *PermissionSet) HasFieldReadPermission(collectionKey string, key string) bool {
+	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
+		return true
+	} else {
+		return fieldPermission.Read
+	}
+
+}
+
+func (ps *PermissionSet) HasFieldEditPermission(collectionKey string, key string) bool {
+	if fieldPermission, ok := ps.CollectionRefs[collectionKey].FieldsRefs[key]; !ok {
+		return true
+	} else {
+		return fieldPermission.Edit
 	}
 }
 

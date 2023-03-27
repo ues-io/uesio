@@ -69,7 +69,7 @@ type FieldMetadata = {
 	number?: NumberMetadata
 }
 
-export {
+export type {
 	FieldMetadata,
 	FieldMetadataMap,
 	SelectOption,

@@ -4,5 +4,5 @@ uniqueKey:
   - uesio/studio.collection
   - uesio/studio.name
 nameField: uesio/studio.name
-label: feature flag
-pluralLabel: feature flags
+label: field
+pluralLabel: fields

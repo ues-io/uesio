@@ -21,4 +21,4 @@ type ThemeState = {
 	}
 }
 
-export { Palette, ThemeState }
+export type { Palette, ThemeState }

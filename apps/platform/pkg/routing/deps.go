@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -294,18 +295,17 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 	deps.ViewDef.AddItem(view)
 
-	viewYamlBytes, err := yaml.Marshal(view.Definition)
+	var viewBytes bytes.Buffer
+	encoder := yaml.NewEncoder(&viewBytes)
+	encoder.SetIndent(2)
+	err = encoder.Encode(view.Definition)
 	if err != nil {
 		return err
 	}
 
-	viewYaml := &MetadataTextItem{
-		Content:      string(viewYamlBytes),
-		Key:          "viewdef:" + view.GetKey(),
-		MetadataType: "viewdef",
-	}
+	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
-	deps.MetadataText.AddItem(viewYaml)
+	deps.Component.AddItem(fmt.Sprintf("%s:metadata:viewdef:%s", builderComponentID, view.GetKey()), viewBytes.String())
 
 	var variants meta.ComponentVariantCollection
 	err = bundle.LoadAllFromAny(&variants, nil, session, nil)
@@ -340,8 +340,6 @@ func GetBuilderDependencies(viewNamespace, viewName string, deps *PreloadMetadat
 
 		componentDefs[component.GetKey()] = componentYamlBytes
 	}
-
-	builderComponentID := getBuilderComponentID(viewNamespace + "." + viewName)
 
 	deps.Component.AddItem(fmt.Sprintf("%s:componentdefs", builderComponentID), componentDefs)
 

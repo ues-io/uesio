@@ -122,13 +122,16 @@ jobs:
           echo "SHORT_SHA=$(cat ./short_sha.txt)" >> $GITHUB_ENV
       - name: Update Docker container image tag for dev
         env:
-          taskDefPath: ./aws/dev/ecs/task_definitions/uesio_web.json
+          appTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_web.json
+          workerTaskDefPath: ./aws/dev/ecs/task_definitions/uesio_worker.json
         run: |
           echo "Docker image SHA updated to $SHORT_SHA"
-          jq --arg img "$NEW_IMAGE" '.containerDefinitions[0].image = $img' $taskDefPath > tmp.json
-          mv tmp.json $taskDefPath
+          jq --arg img "$NEW_IMAGE" '.containerDefinitions[0].image = $img' $appTaskDefPath > tmp1.json
+          jq --arg img "$NEW_IMAGE" '.containerDefinitions[0].image = $img' $workerTaskDefPath > tmp2.json
+          mv tmp1.json $appTaskDefPath
+          mv tmp2.json $workerTaskDefPath
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add $taskDefPath
+          git add $appTaskDefPath $workerTaskDefPath
           git commit -m "ci: Auto-update dev image to $SHORT_SHA"
           git push

@@ -1,13 +1,16 @@
-import { definition, component, hooks, api, styles } from "@uesio/ui"
+import { definition, hooks, component, api, styles } from "@uesio/ui"
 import Canvas from "./canvas"
+import { useBuilderState, useBuildMode } from "../../api/stateapi"
+import BuildArea from "./buildarea"
+import CodePanel from "./codepanel"
+import AdjustableWidthArea from "../../utilities/adjustablewidtharea/adjustablewidtharea"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import ViewInfoPanel from "./viewinfopanel/viewinfopanel"
-import CodeArea from "./codearea/codearea"
-import { useBuildMode } from "../../api/stateapi"
 
 const MainWrapper: definition.UC = (props) => {
 	const { context } = props
 	const Grid = component.getUtility("uesio/io.grid")
+
 	const [buildMode, setBuildMode] = useBuildMode(context)
 
 	const builderContext = context.addThemeFrame("uesio/studio.default")
@@ -16,35 +19,10 @@ const MainWrapper: definition.UC = (props) => {
 		{
 			root: {
 				height: "100vh",
-				gridTemplateColumns: `auto 1fr auto`,
-				gridTemplateRows: "minmax(0, 1fr) minmax(0, 1fr)",
-				...styles.getBackgroundStyles(
-					{
-						image: "uesio/core.whitesplash",
-					},
-					builderContext
-				),
-				padding: "6px",
-				rowGap: "6px",
 			},
-			propertiespanel: {
-				gridRow: 1,
-				gridColumn: 1,
-			},
-			viewinfopanel: {
-				gridRow: 2,
-				gridColumn: 1,
-				width: "300px",
-			},
-			canvas: {
-				gridRow: "1 / 3",
-				gridColumn: "2",
-			},
-			codearea: {
-				gridRow: "1 / 3",
-				gridColumn: 3,
-				position: "relative",
-				display: "grid",
+			configarea: {
+				gridAutoRows: "1fr",
+				gap: "6px",
 			},
 		},
 		props
@@ -65,27 +43,32 @@ const MainWrapper: definition.UC = (props) => {
 		api.signal.run({ signal: "route/REDIRECT_TO_VIEW_CONFIG" }, context)
 	})
 
+	const [showCode] = useBuilderState<boolean>(props.context, "codepanel")
+
 	if (!buildMode) {
 		return <>{props.children}</>
 	}
 
 	return (
-		<Grid context={context} className={classes.root}>
-			<PropertiesPanel
-				context={builderContext}
-				className={classes.propertiespanel}
-			/>
-			<ViewInfoPanel
-				context={builderContext}
-				className={classes.viewinfopanel}
-			/>
-			<Canvas
-				className={classes.canvas}
-				context={context}
-				children={props.children}
-			/>
-			<CodeArea className={classes.codearea} context={builderContext} />
-		</Grid>
+		<BuildArea
+			className={classes.root}
+			config={
+				<Grid context={context} className={classes.configarea}>
+					<PropertiesPanel context={builderContext} />
+					<ViewInfoPanel context={builderContext} />
+				</Grid>
+			}
+			code={
+				showCode && (
+					<AdjustableWidthArea context={context}>
+						<CodePanel context={builderContext} />
+					</AdjustableWidthArea>
+				)
+			}
+			context={context}
+		>
+			<Canvas context={context} children={props.children} />
+		</BuildArea>
 	)
 }
 

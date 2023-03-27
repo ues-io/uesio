@@ -17,6 +17,7 @@ import NamespaceLabel from "../../../utilities/namespacelabel/namespacelabel"
 import PropNodeTag from "../../../utilities/propnodetag/propnodetag"
 import { FullPath } from "../../../api/path"
 import SearchArea from "../../../helpers/searcharea"
+import { add } from "../../../api/defapi"
 
 const getUtility = component.getUtility
 
@@ -76,15 +77,15 @@ const VariantsBlock: FC<VariantsBlockProps> = (props) => {
 }
 
 type ComponentBlockProps = {
-	component: ComponentDef
+	componentDef: ComponentDef
 	variants: component.ComponentVariant[]
 	isSelected: (itemtype: string, itemname: metadata.MetadataKey) => boolean
 } & definition.UtilityProps
 
 const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 	const IOExpandPanel = getUtility("uesio/io.expandpanel")
-	const { context, component, variants, isSelected } = props
-	const { namespace, name } = component
+	const { context, componentDef, variants, isSelected } = props
+	const { namespace, name } = componentDef
 	if (!namespace) throw new Error("Invalid Property Definition")
 	const fullName = `${namespace}.${name}` as metadata.MetadataKey
 
@@ -101,13 +102,28 @@ const ComponentBlock: FC<ComponentBlockProps> = (props) => {
 		<PropNodeTag
 			context={context}
 			key={fullName}
-			onClick={() => {
+			onClick={(e) => {
+				// Only run once on a double-click
+				if (e.detail > 1) return
 				setSelectedPath(context, new FullPath("component", fullName))
+			}}
+			onDoubleClick={() => {
+				add(
+					context,
+					new FullPath(
+						"viewdef",
+						context.getViewDefId(),
+						component.path.fromPath(["components", "0"])
+					),
+					{
+						[fullName]: componentDef.defaultDefinition || {},
+					}
+				)
 			}}
 			draggable={`component:${fullName}`}
 			selected={isSelected("component", fullName)}
 		>
-			<ComponentTag component={component} context={context} />
+			<ComponentTag component={componentDef} context={context} />
 			<IOExpandPanel
 				context={context}
 				expanded={isSelected("component", fullName)}
@@ -161,7 +177,7 @@ const CategoryBlock: FC<CategoryBlockProps> = (props) => {
 					<ComponentBlock
 						key={fullName}
 						variants={variants[fullName]}
-						component={component}
+						componentDef={component}
 						context={context}
 						isSelected={isSelected}
 					/>

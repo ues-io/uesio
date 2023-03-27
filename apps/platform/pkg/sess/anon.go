@@ -13,6 +13,8 @@ func GetAnonSession(site *meta.Site) *Session {
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllCollections: true,
 		ViewAllRecords:      true,
+		AllowAllRoutes:      true,
+		AllowAllViews:       true,
 	})
 
 	return session

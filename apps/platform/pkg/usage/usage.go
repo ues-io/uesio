@@ -2,6 +2,7 @@ package usage
 
 import (
 	"fmt"
+	"github.com/thecloudmasters/uesio/pkg/usage/usage_common"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/cache"
@@ -12,7 +13,7 @@ func registerInternal(key string, size int64) error {
 	conn := cache.GetRedisConn()
 	defer conn.Close()
 
-	conn.Send("SADD", "USAGE_KEYS", key)
+	conn.Send("SADD", usage_common.RedisKeysSetName, key)
 
 	if size != 0 {
 		conn.Send("INCRBY", key, size)

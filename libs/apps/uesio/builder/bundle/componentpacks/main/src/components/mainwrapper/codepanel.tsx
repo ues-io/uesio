@@ -1,29 +1,28 @@
 import { useEffect, useRef } from "react"
-import { definition, component, api, styles, util } from "@uesio/ui"
+import { definition, component, api, styles } from "@uesio/ui"
 import type { EditorProps } from "@monaco-editor/react"
 import type monaco from "monaco-editor"
 import {
 	getSelectedViewPath,
 	setSelectedPath,
 	useSelectedViewPath,
-} from "../../../api/stateapi"
-import { setContent, useContent } from "../../../api/defapi"
+} from "../../api/stateapi"
+import { setContent, useContent } from "../../api/defapi"
+import yaml from "yaml"
+import { getNodeAtOffset, getNodeAtPath, parse } from "../../yaml/yamlutils"
 
 const ANIMATION_DURATION = 3000
 
-const getNodeLines = (
-	node: util.yaml.lib.Node,
-	model: monaco.editor.ITextModel
-) => {
+const getNodeLines = (node: yaml.Node, model: monaco.editor.ITextModel) => {
 	const range = node.range
 	if (!range || !range.length) return []
 	let startLine = model.getPositionAt(range[0]).lineNumber
 	let endLine = model.getPositionAt(range[1]).lineNumber
-	if (util.yaml.lib.isMap(node)) {
+	if (yaml.isMap(node)) {
 		startLine--
 	}
 
-	if (util.yaml.lib.isScalar(node) && endLine === startLine) {
+	if (yaml.isScalar(node) && endLine === startLine) {
 		endLine++
 	}
 	return [startLine, endLine]
@@ -69,9 +68,9 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	const selectedPath = useSelectedViewPath(context)
 
-	const fullYaml = useContent(selectedPath)
+	const fullYaml = useContent(context, selectedPath) || ""
 
-	const yamlDoc = util.yaml.parse(fullYaml)
+	const yamlDoc = parse(fullYaml)
 
 	const ast = useRef<definition.YamlDoc | undefined>(yamlDoc)
 	ast.current = yamlDoc
@@ -87,7 +86,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 
 	useEffect(() => {
 		if (e && m && ast.current && ast.current.contents) {
-			const node = util.yaml.getNodeAtPath(
+			const node = getNodeAtPath(
 				selectedPath.localPath,
 				ast.current.contents
 			)
@@ -152,7 +151,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				column: startColumn,
 			})
 
-			const [relevantNode, nodePath] = util.yaml.getNodeAtOffset(
+			const [relevantNode, nodePath] = getNodeAtOffset(
 				offset,
 				ast.current.contents,
 				"",
@@ -235,7 +234,7 @@ const CodePanel: definition.UtilityComponent = (props) => {
 				setValue={
 					((newValue): void => {
 						const selectedPath = getSelectedViewPath(context)
-						setContent(selectedPath, newValue || "")
+						setContent(context, selectedPath, newValue || "")
 					}) as EditorProps["onChange"]
 				}
 				onMount={onMount}

@@ -45,7 +45,7 @@ const List: definition.UC<ListDefinition> = (props) => {
 	)
 }
 
-export { ListDefinition }
+export type { ListDefinition }
 
 List.signals = signals
 export default List

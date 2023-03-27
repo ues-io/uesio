@@ -29,5 +29,4 @@ const ListFieldDeck: FunctionComponent<ListFieldDeckUtilityProps> = (props) => {
 	)
 }
 
-export { ListFieldDeckUtilityProps }
 export default ListFieldDeck

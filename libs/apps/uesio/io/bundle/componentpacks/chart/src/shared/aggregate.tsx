@@ -62,4 +62,6 @@ const aggregate = (
 	return [datasets, categories] as const
 }
 
-export { aggregate, SeriesDefinition }
+export { aggregate }
+
+export type { SeriesDefinition }

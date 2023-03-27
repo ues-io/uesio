@@ -49,6 +49,6 @@ const Text: definition.UtilityComponent<TextProps> = (props) => {
 	return <Tag className={classes.root}>{mergedText}</Tag>
 }
 
-export { AcceptedElements, AlignValues }
+export type { AcceptedElements }
 
 export default Text

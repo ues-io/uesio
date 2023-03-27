@@ -20,6 +20,7 @@
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"useUnknownInCatchVariables": true,
+		"isolatedModules": true,
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["libs/ui/src/index.ts"]

@@ -1,10 +1,10 @@
 import { definition, component, wire } from "@uesio/ui"
 import { add } from "../../api/defapi"
 import { FullPath } from "../../api/path"
-import { ListProperty } from "../../properties/componentproperty"
+import { ListProperty as LP } from "../../properties/componentproperty"
 
 type Definition = {
-	property: ListProperty
+	property: LP
 	path: FullPath
 }
 

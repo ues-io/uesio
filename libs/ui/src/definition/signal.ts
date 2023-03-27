@@ -38,4 +38,4 @@ type SignalDefinition = {
 	}
 }
 
-export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }
+export type { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }
