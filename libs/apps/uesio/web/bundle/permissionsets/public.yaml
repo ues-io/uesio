@@ -20,7 +20,6 @@ routes:
   uesio/web.home: true
   uesio/web.preview: true
   uesio/web.privacy: true
-  uesio/web.team: true
   uesio/web.terms: true
 files:
   uesio/web.abel: true

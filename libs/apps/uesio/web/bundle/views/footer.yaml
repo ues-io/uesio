@@ -51,20 +51,20 @@ definition:
                                 signals:
                                   - signal: "route/REDIRECT"
                                     path: "https://www.thecloudmasters.com"
-                      - uesio/io.griditem:
-                          components:
-                            - uesio/io.button:
-                                uesio.variant: uesio/web.footerlink
-                                text: The team
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: team
-                            # - uesio/io.button:
-                            #     uesio.variant: uesio/web.footerlink
-                            #     text: Contact us
-                            #     signals:
-                            #       - signal: route/NAVIGATE
-                            #         path: contact
+                      # - uesio/io.griditem:
+                      #     components:
+                      #       - uesio/io.button:
+                      #           uesio.variant: uesio/web.footerlink
+                      #           text: The team
+                      #           signals:
+                      #             - signal: route/NAVIGATE
+                      #               path: team
+                      # - uesio/io.button:
+                      #     uesio.variant: uesio/web.footerlink
+                      #     text: Contact us
+                      #     signals:
+                      #       - signal: route/NAVIGATE
+                      #         path: contact
                       - uesio/io.griditem:
                           components:
                             - uesio/io.button:
