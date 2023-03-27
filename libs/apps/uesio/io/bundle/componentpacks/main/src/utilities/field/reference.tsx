@@ -6,6 +6,7 @@ import {
 	context,
 	component,
 } from "@uesio/ui"
+
 import debounce from "lodash/debounce"
 import { useState } from "react"
 import CustomSelect from "../customselect/customselect"
@@ -17,6 +18,7 @@ export type ReferenceFieldOptions = {
 	components?: definition.DefinitionList
 	template?: string
 	requirewriteaccess?: boolean
+	conditions?: wire.WireConditionState[]
 }
 
 interface ReferenceFieldProps {
@@ -84,6 +86,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (!wire) return
 		const searchFields = options?.searchFields || [nameField]
 		const returnFields = options?.returnFields || [nameField]
+
 		const result = await api.platform.loadData(context, {
 			wires: [
 				{
@@ -96,15 +99,26 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 					fields: returnFields.map((fieldName) => ({
 						id: fieldName,
 					})),
-					conditions: [
-						{
-							type: "SEARCH",
-							value: search,
-							valueSource: "VALUE",
-							active: true,
-							fields: searchFields,
-						},
-					],
+					conditions: options?.conditions
+						? [
+								...options.conditions,
+								{
+									type: "SEARCH",
+									value: search,
+									valueSource: "VALUE",
+									active: true,
+									fields: searchFields,
+								},
+						  ]
+						: [
+								{
+									type: "SEARCH",
+									value: search,
+									valueSource: "VALUE",
+									active: true,
+									fields: searchFields,
+								},
+						  ],
 					requirewriteaccess: options?.requirewriteaccess,
 				},
 			],
