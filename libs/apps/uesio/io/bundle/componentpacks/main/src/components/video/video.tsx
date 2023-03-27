@@ -8,6 +8,7 @@ type VideoDefinition = {
 	width?: string
 	muted?: boolean
 	autoplay?: boolean
+	playsinline?: boolean
 	loop?: boolean
 	signals?: signal.SignalDefinition[]
 }
@@ -45,6 +46,7 @@ const Video: definition.UC<VideoDefinition> = (props) => {
 				width={definition.width}
 				autoPlay={definition.autoplay || false}
 				muted={definition.muted || false}
+				playsInline={definition.playsinline || false}
 			>
 				<source
 					src={
