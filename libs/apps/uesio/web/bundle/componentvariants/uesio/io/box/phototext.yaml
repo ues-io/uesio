@@ -1,8 +1,0 @@
-name: phototext
-label: Photo Text Box
-definition:
-  uesio.styles:
-    root:
-      padding: 15px 15px 20px 15px
-      borderRadius: 18px
-      marginBottom: 10px
