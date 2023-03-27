@@ -11,7 +11,8 @@ definition:
     - uesio/io.text:
         uesio.styles:
           root:
-            fontSize: 16pt
+            fontSize: 18pt
+            marginRight: 6px
         uesio.variant: uesio/io.icon
         color: green
         text: check

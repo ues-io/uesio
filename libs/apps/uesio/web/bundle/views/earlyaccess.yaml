@@ -3,16 +3,24 @@ definition:
   # Wires are how we pull in data
   wires:
     newlead:
-      collection: uesio/crm.lead
+      viewOnly: true
       fields:
-        uesio/crm.firstname:
-        uesio/crm.lastname:
-        uesio/crm.title:
-        uesio/crm.email:
-        uesio/crm.phone:
-        uesio/crm.account:
+        firstname:
+          label: First name
+          type: TEXT
+          required: true
+        lastname:
+          label: Last name
+          type: TEXT
+          required: true
+        email:
+          label: Email
+          type: TEXT
+        account:
+          label: Company
+          type: TEXT
+
       init:
-        query: false
         create: true
   # Components are how we describe the layout of our view
   components:
@@ -38,10 +46,10 @@ definition:
                           components:
                             - uesio/io.text:
                                 uesio.variant: uesio/web.callout
-                                text: Register for early access. It's free.
+                                text: Stay in the loop ues.io
                             - uesio/io.text:
                                 uesio.variant: uesio/web.calloutsub
-                                text: Stay in the loop with ues.io. Join our private beta and become one of the first to change the industry.
+                                text: Join our private beta launch Q3 2023 and become one of the first to build Rome in a day.
                             - uesio/io.box:
                                 uesio.styles:
                                   root:
@@ -51,22 +59,32 @@ definition:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: App building is free.
+                                            text: No-code app builder extendable with code
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: We only charge for data usage and page loads on published sites.
+                                            text: Easily get under the covers while building and edit your code live
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: Add as many users as you want at no cost. Don't pay for dormant users.
+                                            text: Reuse your software
                                   - uesio/io.tile:
                                       uesio.variant: uesio/web.checkitem
                                       content:
                                         - uesio/io.text:
-                                            text: No advance payments
+                                            text: Build, bundle and combine your apps and then publish as a new single application
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: Usage-based pricing
+                                  - uesio/io.tile:
+                                      uesio.variant: uesio/web.checkitem
+                                      content:
+                                        - uesio/io.text:
+                                            text: Build as much as you want and only pay for usage, not users
                       - uesio/io.griditem:
                           components:
                             - uesio/io.list:
@@ -80,19 +98,17 @@ definition:
                                           padding: 40px
                                       components:
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.firstname
+                                            uesio.variant: uesio/web.field
+                                            fieldId: firstname
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.lastname
+                                            uesio.variant: uesio/web.field
+                                            fieldId: lastname
                                         - uesio/io.field:
-                                            label: Job Title
-                                            fieldId: uesio/crm.title
+                                            uesio.variant: uesio/web.field
+                                            fieldId: email
                                         - uesio/io.field:
-                                            fieldId: uesio/crm.email
-                                        - uesio/io.field:
-                                            fieldId: uesio/crm.phone
-                                        - uesio/io.field:
-                                            label: Company
-                                            fieldId: uesio/crm.account
+                                            uesio.variant: uesio/web.field
+                                            fieldId: account
                                         - uesio/io.group:
                                             uesio.styles:
                                               root:
@@ -102,10 +118,16 @@ definition:
                                                   uesio.variant: uesio/web.calltoaction
                                                   text: Register
                                                   signals:
-                                                    - signal: wire/SAVE
-                                                      wires:
-                                                        - newlead
+                                                    - bot: uesio/web.addlead
+                                                      signal: bot/CALL
+                                                      params:
+                                                        uesio/crm.firstname: ${firstname}
+                                                        uesio/crm.lastname: ${lastname}
+                                                        uesio/crm.email: ${email}
+                                                        uesio/crm.account: ${account}
+                                                        uesio/web.role: ${role}
                                                     - signal: route/NAVIGATE
                                                       path: "earlyaccessthanks"
+
     - uesio/core.view:
         view: uesio/web.footer

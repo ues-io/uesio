@@ -1,4 +1,5 @@
 name: default
+public: true
 definition:
   variantOverrides:
   palette:

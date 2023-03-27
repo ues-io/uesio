@@ -32,7 +32,7 @@ definition:
                                 file: uesio/web.logo
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: ""
+                                    path: home
                       - uesio/io.griditem:
                       - uesio/io.griditem:
                           components:
@@ -45,32 +45,14 @@ definition:
                                   - uesio/io.group:
                                       components:
                                         - uesio/io.button:
+                                            uesio.variant: uesio/web.borderless
+                                            text: Stay updated
+                                            signals:
+                                              - signal: route/NAVIGATE
+                                                path: earlyaccess
+                                        - uesio/io.button:
                                             uesio.variant: uesio/web.calltoaction
                                             text: Login
                                             signals:
                                               - signal: "route/REDIRECT"
                                                 path: "https://studio.$Site{domain}"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.secondary
-                                  #           text: Blog
-                                  #           signals:
-                                  #             - signal: "route/NAVIGATE"
-                                  #               path: "blog"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.secondary
-                                  #           text: Docs
-                                  #           signals:
-                                  #             - signal: "route/REDIRECT"
-                                  #               path: "https://docs.$Site{domain}"
-                                  # - uesio/io.group:
-                                  #     components:
-                                  #       - uesio/io.button:
-                                  #           uesio.variant: uesio/web.calltoaction
-                                  #           text: Early Access
-                                  #           signals:
-                                  #             - signal: "route/NAVIGATE"
-                                  #               path: "earlyaccess"
