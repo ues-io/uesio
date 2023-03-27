@@ -26,7 +26,6 @@ type MergeType =
 	| "StaticFile"
 	| "SignalOutput"
 	| "ComponentOutput"
-	| "Route"
 
 type MergeHandler = (expression: string, context: Context) => string
 
@@ -164,13 +163,6 @@ const handlers: Record<MergeType, MergeHandler> = {
 	Site: (expression, context) => {
 		const site = context.getSite()
 		return site?.[expression as keyof SiteState] || ""
-	},
-	Route: (expression, context) => {
-		const route = context.getRoute()
-		if (expression === "path") {
-			return route?.path || ""
-		}
-		return ""
 	},
 	StaticFile: (expression) => getStaticAssetsPath() + "/static" + expression,
 	Label: (expression, context) => {
