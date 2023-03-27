@@ -1,7 +1,0 @@
-name: pitchbox
-label: Pitch Box
-definition:
-  uesio.styles:
-    root:
-      margin: 0 160px
-      position: relative

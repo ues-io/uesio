@@ -1,8 +1,7 @@
 name: borderless
 label: Borderless
+extends: uesio/web.calltoaction
 definition:
   uesio.styles:
     root:
-      color: rgb(45,39,245)
-      position: relative
-      whiteSpace: nowrap
+      border: none
