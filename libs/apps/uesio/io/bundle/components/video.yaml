@@ -10,6 +10,7 @@ defaultDefinition:
   loop: false
   autoplay: true
   controls: true
+  playsinline: true
 properties:
   - name: file
     type: METADATA
@@ -36,6 +37,9 @@ properties:
   - name: controls
     type: CHECKBOX
     label: Controls
+  - name: playsinline
+    type: CHECKBOX
+    label: Plays Inline
 sections:
   - type: HOME
     properties:
@@ -47,5 +51,6 @@ sections:
       - loop
       - autoplay
       - controls
+      - playsinline
   - type: STYLES
   - type: DISPLAY
