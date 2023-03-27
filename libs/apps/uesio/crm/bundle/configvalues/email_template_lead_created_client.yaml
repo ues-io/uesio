@@ -1,4 +1,4 @@
-name: email-template-lead-created-client
+name: email_template_lead_created_client
 managedBy: site
 store: platform
 public: true

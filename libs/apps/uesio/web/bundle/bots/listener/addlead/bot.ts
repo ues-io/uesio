@@ -30,10 +30,10 @@ function addlead(bot: ListenerBotApi) {
 	// Send an email to the user
 	const salesEmail = bot.getConfigValue("uesio/crm.sales_email")
 	const templateIdUser = bot.getConfigValue(
-		"email-template-lead-created-client"
+		"uesio/crm.email_template_lead_created_client"
 	)
 	const templateIdSales = bot.getConfigValue(
-		"email-template-lead-created-internal"
+		"uesio/crm.email_template_lead_created_internal"
 	)
 
 	// Email to user
