@@ -1,3 +1,24 @@
 name: markdown
 pack: main
 entrypoint: components/markdown/markdown
+title: MarkDown
+description: Display formatted markdown text.
+category: CONTENT
+discoverable: true
+defaultDefinition:
+  markdown: markdown Goes Here
+properties:
+  - name: file
+    type: METADATA
+    label: File
+    metadataType: FILE
+  - name: markdown
+    type: TEXT_AREA
+    label: Markdown
+sections:
+  - type: HOME
+    properties:
+      - file
+      - markdown
+  - type: STYLES
+  - type: DISPLAY

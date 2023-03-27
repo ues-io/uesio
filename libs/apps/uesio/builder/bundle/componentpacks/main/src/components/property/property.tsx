@@ -148,6 +148,18 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "TEXT_AREA": {
+			return {
+				"uesio/io.field": {
+					...baseFieldDef,
+					wrapperVariant: "uesio/builder.propfield",
+					labelPosition: "top",
+					longtext: {
+						rows: 10,
+					},
+				},
+			}
+		}
 		case "ICON": {
 			return {
 				"uesio/builder.iconprop": {

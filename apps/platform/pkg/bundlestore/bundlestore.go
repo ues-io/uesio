@@ -20,6 +20,7 @@ var systemBundles = map[string]bool{
 	"uesio/docs":    true,
 	"uesio/web":     true,
 	"uesio/cms":     true,
+	"uesio/crm":     true,
 	"uesio/builder": true,
 }
 

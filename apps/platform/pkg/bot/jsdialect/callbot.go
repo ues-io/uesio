@@ -59,7 +59,7 @@ func (bs *CallBotAPI) RunIntegrationAction(integrationID string, action string, 
 
 	integration, err := integ.GetIntegration(integrationID, bs.Session)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return integration.RunAction(action, options)
