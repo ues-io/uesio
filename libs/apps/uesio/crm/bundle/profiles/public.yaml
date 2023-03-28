@@ -1,4 +1,5 @@
 name: public
+public: true
 permissionSets:
   - uesio/crm.public
   - uesio/core.public

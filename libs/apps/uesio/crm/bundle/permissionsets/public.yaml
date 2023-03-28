@@ -1,9 +1,44 @@
 name: public
 named: {}
 views: {}
+public: true
+collections:
+  uesio/crm.account:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/crm.contact:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/crm.lead:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/crm.opportunity:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
+  uesio/core.userfile:
+    read: true
+    create: false
+    edit: false
+    delete: false
+    fields: {}
 routes:
   uesio/crm.login: true
 files: {}
+allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+modifyallrecords: false
+viewallrecords: false
