@@ -13,6 +13,21 @@ type Site struct {
 	Permissions *PermissionSet `json:"-"`
 }
 
+func (s *Site) Clone() *Site {
+	return &Site{
+		BuiltIn:     s.BuiltIn,
+		Name:        s.Name,
+		Bundle:      s.Bundle,
+		App:         s.App,
+		bundleDef:   s.bundleDef,
+		Domain:      s.Domain,
+		Subdomain:   s.Subdomain,
+		Title:       s.Title,
+		EnableSEO:   s.EnableSEO,
+		Permissions: nil, // Intentionally not cloning permissions
+	}
+}
+
 func (s *Site) GetFullName() string {
 	return s.Name + ":" + s.GetAppFullName()
 }
