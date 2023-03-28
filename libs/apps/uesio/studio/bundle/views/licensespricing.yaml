@@ -257,6 +257,8 @@ definition:
               - signal: wire/LOAD
                 wires:
                   - licensetemplate
+              - signal: wire/RESET
+                wire: newlicensepricingtemplate
               - signal: "panel/TOGGLE"
                 panel: "newLicenseTemplate"
         - uesio/io.button:
