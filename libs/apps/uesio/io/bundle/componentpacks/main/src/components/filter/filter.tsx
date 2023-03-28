@@ -3,6 +3,7 @@ import FieldWrapper from "../../utilities/fieldwrapper/fieldwrapper"
 import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
+import NumberFilter from "../../utilities/numberfilter/numberfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -32,6 +33,8 @@ const getFilterContent = (
 	const type = fieldMetadata.getType()
 
 	switch (type) {
+		case "NUMBER":
+			return <NumberFilter {...common} />
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "DATE": {

@@ -22,6 +22,8 @@ properties:
     type: SELECT
     label: Display as
     options:
+      - value: ""
+        label: "--None Selected--"
       - label: Month
         value: MONTH
       - label: Week
