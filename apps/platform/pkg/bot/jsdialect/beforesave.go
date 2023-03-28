@@ -2,7 +2,6 @@ package jsdialect
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -44,28 +43,5 @@ func (bs *BeforeSaveAPI) AddError(message string) {
 }
 
 func (bs *BeforeSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
-
-	collection := &adapt.Collection{}
-
-	op := &adapt.LoadOp{
-		CollectionName: request.Collection,
-		Collection:     collection,
-		WireName:       "apibeforesave",
-		Fields:         request.Fields,
-		Conditions:     request.Conditions,
-		Order:          request.Order,
-		Query:          true,
-		LoadAll:        true,
-	}
-
-	_, err := datasource.Load([]*adapt.LoadOp{op}, bs.session, &datasource.LoadOptions{
-		Connections: datasource.GetConnectionMap(bs.connection),
-		Metadata:    datasource.GetConnectionMetadata(bs.connection),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return collection, nil
-
+	return botLoad(request, bs.session, bs.connection)
 }

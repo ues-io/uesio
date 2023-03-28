@@ -127,6 +127,10 @@ func (b *JSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 		Params: &ParamsAPI{
 			Params: params,
 		},
+		AsAdmin: AdminCallBotAPI{
+			Session:    session,
+			Connection: connection,
+		},
 		Connection: connection,
 		Results:    map[string]interface{}{},
 	}

@@ -25,26 +25,26 @@ function addlead(bot: ListenerBotApi) {
 	}
 
 	// Save the lead in our leads collection
-	bot.save("uesio/crm.lead", [values])
+	bot.asAdmin.save("uesio/crm.lead", [values])
 
 	// Send an email to the user
-	const salesEmail = bot.getConfigValue("uesio/crm.sales_email")
-	const templateIdUser = bot.getConfigValue(
+	const salesEmail = bot.asAdmin.getConfigValue("uesio/crm.sales_email")
+	const templateIdUser = bot.asAdmin.getConfigValue(
 		"uesio/crm.email_template_lead_created_client"
 	)
-	const templateIdSales = bot.getConfigValue(
+	const templateIdSales = bot.asAdmin.getConfigValue(
 		"uesio/crm.email_template_lead_created_internal"
 	)
 
 	// Email to user
-	bot.runIntegrationAction("uesio/crm.sendgrid", "sendEmail", {
+	bot.asAdmin.runIntegrationAction("uesio/crm.sendgrid", "sendEmail", {
 		to: [values["uesio/crm.email"]],
 		from: salesEmail,
 		templateId: templateIdUser,
 	})
 
 	// Email to us
-	bot.runIntegrationAction("uesio/crm.sendgrid", "sendEmail", {
+	bot.asAdmin.runIntegrationAction("uesio/crm.sendgrid", "sendEmail", {
 		to: [salesEmail],
 		from: salesEmail,
 		templateId: templateIdSales,
