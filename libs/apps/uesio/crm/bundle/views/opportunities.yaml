@@ -98,7 +98,7 @@ definition:
                 - field: uesio/crm.close_date
                 - field: uesio/crm.expected_revenue
                 - field: uesio/crm.amount
-              id: opportunitiesTable
+              uesio.id: opportunitiesTable
               mode: EDIT
               wire: opportunities
   wires:

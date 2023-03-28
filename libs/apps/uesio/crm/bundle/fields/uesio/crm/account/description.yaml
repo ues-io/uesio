@@ -2,4 +2,3 @@ name: description
 type: TEXT
 label: Description
 required: true
-validate: {}

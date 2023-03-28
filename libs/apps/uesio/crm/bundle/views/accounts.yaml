@@ -58,7 +58,7 @@ definition:
                 - field: uesio/crm.no_of_employees
                 - field: uesio/core.createdat
                 - field: uesio/core.updatedat
-              id: accountsTable
+              uesio.id: accountsTable
               mode: EDIT
               wire: accounts
   wires:
