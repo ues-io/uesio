@@ -28,6 +28,8 @@ properties:
         value: MONTH
       - label: Week
         value: WEEK
+      - label: Toggle
+        value: TOGGLE
   - name: label
     type: TEXT
     label: Label

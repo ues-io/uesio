@@ -4,6 +4,7 @@ import MonthFilter from "../../utilities/monthfilter/monthfilter"
 import SelectFilter from "../../utilities/selectfilter/selectfilter"
 import WeekFilter from "../../utilities/weekfilter/weekfilter"
 import NumberFilter from "../../utilities/numberfilter/numberfilter"
+import CheckboxFilter from "../../utilities/checkboxfilter/checkboxfilter"
 import { LabelPosition } from "../field/field"
 
 type FilterDefinition = {
@@ -32,9 +33,14 @@ const getFilterContent = (
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 
+	console.log("FILTER")
+
 	switch (type) {
 		case "NUMBER":
 			return <NumberFilter {...common} />
+		case "CHECKBOX":
+			console.log("LOL1")
+			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
 		case "DATE": {
