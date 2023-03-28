@@ -209,7 +209,7 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 	if (condition.type === "wireHasNoChanges") {
 		const wire = context.getWire(condition.wire)
-		return !wire?.getChanges().length || !wire?.getDeletes().length
+		return !wire?.getChanges().length && !wire?.getDeletes().length
 	}
 
 	if (
