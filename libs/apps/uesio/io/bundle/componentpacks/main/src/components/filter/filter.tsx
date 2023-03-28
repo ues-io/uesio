@@ -33,13 +33,10 @@ const getFilterContent = (
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 
-	console.log("FILTER")
-
 	switch (type) {
 		case "NUMBER":
 			return <NumberFilter {...common} />
 		case "CHECKBOX":
-			console.log("LOL1")
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
 			return <SelectFilter {...common} />
