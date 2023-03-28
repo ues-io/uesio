@@ -10,7 +10,7 @@ definition:
             overflow: auto
         components:
           - uesio/io.list:
-              uesio.id: contactList
+              id: contactList
               wire: contacts
               mode: READ
               components:
@@ -87,7 +87,7 @@ definition:
                                       fieldId: uesio/core.createdat
                             - uesio/io.deck:
                                 wire: comments
-                                uesio.id: commentslist
+                                id: commentslist
                                 mode: READ
                                 components:
                                   - uesio/io.tile:
@@ -158,7 +158,7 @@ definition:
       height: 500px
       components:
         - uesio/io.list:
-            uesio.id: newcommentlist
+            id: newcommentlist
             wire: newcomment
             mode: EDIT
             components:

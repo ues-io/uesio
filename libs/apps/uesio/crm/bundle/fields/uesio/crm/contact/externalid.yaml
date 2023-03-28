@@ -1,4 +1,7 @@
 name: externalid
-type: TEXT
+type: AUTONUMBER
 label: External ID
-createOnly: true
+readOnly: true
+autonumber:
+  prefix: CON
+  leadingZeros: 5

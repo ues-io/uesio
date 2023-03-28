@@ -1,6 +1,8 @@
 name: accounts
 path: accounts
-view: uesio/crm.accounts
-theme: uesio/crm.default
-collection: uesio/crm.account
 viewtype: list
+view: uesio/crm.accounts
+collection: uesio/crm.account
+theme: uesio/crm.default
+title: ""
+tags: []

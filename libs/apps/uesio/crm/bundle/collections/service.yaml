@@ -1,5 +1,5 @@
 name: service
-nameField: uesio/crm.name
+public: true
 label: service
 pluralLabel: services
-public: true
+nameField: uesio/crm.name

@@ -2,6 +2,4 @@ name: description
 type: TEXT
 label: Description
 required: true
-validate:
-  type: REGEX
-  regex: p([a-z ]+)ch
+validate: {}

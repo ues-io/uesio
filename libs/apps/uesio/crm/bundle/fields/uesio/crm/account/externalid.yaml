@@ -1,4 +1,6 @@
 name: externalid
-type: TEXT
+type: AUTONUMBER
 label: External ID
-createOnly: true
+autonumber:
+  prefix: ACC
+  leadingZeros: 5
