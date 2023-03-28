@@ -28,8 +28,7 @@ var mockHandler = &LoginMethodHandler{
 	Key:   "uesio/core.mock",
 	Label: "Mock login",
 	Handler: func() (map[string]string, error) {
-		var username string
-		username = os.Getenv("UESIO_CLI_USERNAME")
+		username := os.Getenv("UESIO_CLI_USERNAME")
 		if username == "" {
 			err := survey.AskOne(&survey.Select{
 				Message: "Select a user.",
@@ -105,18 +104,18 @@ func getHandlerByLabel(label string) *LoginMethodHandler {
 
 func getLoginPayload() (string, map[string]string, error) {
 	loginMethod := os.Getenv("UESIO_CLI_LOGIN_METHOD")
-	var handler *LoginHandler
-	fmt.Printf("Hello %s", loginMethod)
+	var handler *LoginMethodHandler
 	if loginMethod == "" {
 		err := survey.AskOne(&survey.Select{
 			Message: "Select a login method.",
 			Options: getHandlerOptions(),
 		}, &loginMethod)
-		handler = getHandlerByLabel(loginMethod)
-
 		if err != nil {
 			return "", nil, err
 		}
+		handler = getHandlerByLabel(loginMethod)
+	} else {
+		handler = getHandlerByKey(loginMethod)
 	}
 
 	if handler == nil {
