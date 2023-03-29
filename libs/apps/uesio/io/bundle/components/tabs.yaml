@@ -5,6 +5,13 @@ pack: main
 entrypoint: components/tabs/tabs
 category: LAYOUT
 discoverable: true
+defaultDefinition:
+  uesio.variant: uesio/io.default
+  tabs:
+    - id: tab1
+      label: One
+    - id: tab2
+      label: Two
 properties:
   - name: tabs
     type: LIST
