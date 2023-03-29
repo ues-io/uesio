@@ -288,6 +288,7 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// Auth Routes
 	sa.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
+	sr.HandleFunc("/auth/"+itemParam+"/createlogin", controller.CreateLogin).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/login", controller.Login).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup", controller.Signup).Methods("POST")
 	sr.HandleFunc("/auth/"+itemParam+"/signup/confirm", controller.ConfirmSignUp).Methods("POST")
