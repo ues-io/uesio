@@ -34,6 +34,12 @@ func Pack(options *PackOptions) error {
 		return err
 	}
 
+	// If there are no component packs in the bundle, there's nothing to do,
+	// since there's no custom JS to compile with ESBuild
+	if len(entryPoints) == 0 {
+		return nil
+	}
+
 	for packName, entryPoint := range entryPoints {
 
 		buildOptions := &api.BuildOptions{
@@ -72,8 +78,9 @@ func Pack(options *PackOptions) error {
 	fmt.Println(fmt.Sprintf("Done Packing All: %v", time.Since(start)))
 
 	// Returning from pack() exits immediately in Go.
-	// Block forever so we keep watching and don't exit.
+	// Block forever so that we keep watching and don't exit.
 	if options.Watch {
+		fmt.Println("Watching for changes... (Ctrl-C to exit)")
 		<-make(chan bool)
 	}
 	return nil
