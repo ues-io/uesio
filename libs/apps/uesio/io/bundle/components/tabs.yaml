@@ -5,6 +5,10 @@ pack: main
 entrypoint: components/tabs/tabs
 category: LAYOUT
 discoverable: true
+slots:
+  - name: components
+    path: "tabs[*]"
+  - name: footer
 defaultDefinition:
   uesio.variant: uesio/io.default
   tabs:

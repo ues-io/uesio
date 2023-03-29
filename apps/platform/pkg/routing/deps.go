@@ -440,8 +440,7 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 
 	workspace := session.GetWorkspace()
 
-	// If we're in workspace mode, make sure we have the builder pack so we can include the
-	// buildwrapper
+	// In workspace mode, make sure we have the builder pack so that we can include the buildwrapper
 	if workspace != nil {
 		builderComponentID := getBuilderComponentID(route.ViewRef)
 		deps.Component.AddItem(fmt.Sprintf("%s:buildmode", builderComponentID), false)
@@ -449,6 +448,22 @@ func GetMetadataDeps(route *meta.Route, session *sess.Session) (*PreloadMetadata
 	}
 
 	return deps, nil
+}
+
+func parseSlotChildren(slot *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
+	// The contents should be in the next sibling to the prop node
+	slotChildren := slot.Content
+	if len(slotChildren) > 0 {
+		for _, childNode := range slotChildren {
+			if isComponentLike(childNode) {
+				err := getComponentAreaDeps(childNode, depMap, session)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Session) error {
@@ -461,10 +476,13 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
 
-			_, err := depMap.AddComponent(compName, session)
+			compDef, err := depMap.AddComponent(compName, session)
 			if err != nil {
 				return err
 			}
+
+			// Load a pre-parsed slot traversal map
+			slotsMap := compDef.GetSlotTraversalMap()
 
 			for i, prop := range comp.Content[1].Content {
 				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
@@ -480,54 +498,27 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 						}
 					}
 				}
-				// A special case that should be removed at some point in
-				// favor of defining where slots are in the component definition
-				if compName == "uesio/io.table" && prop.Value == "columns" {
-					if len(comp.Content[1].Content) > i {
-						columnsNode := comp.Content[1].Content[i+1]
-						for j := range columnsNode.Content {
-							columnNode := columnsNode.Content[j]
-							for k, prop := range columnNode.Content {
-								if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
-									err := getComponentAreaDeps(columnNode.Content[k+1], depMap, session)
+				// if this node is one of our slots, we need to traverse the slot's children to load component deps
+				if slotNode, isPresent := slotsMap[prop.Value]; isPresent {
+					// If this is a terminal slot, get the children and fetch deps for each child
+					if slotNode.Type == meta.TerminalNode {
+						// The contents should be in the next sibling to the prop node
+						if err := parseSlotChildren(comp.Content[1].Content[i+1], depMap, session); err != nil {
+							return err
+						}
+					} else if slotNode.Type == meta.ArrayNode {
+						// We need to traverse all child items and parse them
+						arrayNode := comp.Content[1].Content[i+1]
+						for j := range arrayNode.Content {
+							childItem := arrayNode.Content[j]
+							for k, prop := range childItem.Content {
+								if prop.Kind == yaml.ScalarNode && prop.Value == slotNode.Name {
+									err := getComponentAreaDeps(childItem.Content[k+1], depMap, session)
 									if err != nil {
 										return err
 									}
 								}
 							}
-						}
-					}
-				}
-				// A special case that should be removed at some point in
-				// favor of defining where slots are in the component definition
-				if compName == "uesio/io.field" && prop.Value == "list" {
-					if len(comp.Content[1].Content) > i {
-						listNode := comp.Content[1].Content[i+1]
-						for k, prop := range listNode.Content {
-							if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
-								err := getComponentAreaDeps(listNode.Content[k+1], depMap, session)
-								if err != nil {
-									return err
-								}
-							}
-						}
-					}
-				}
-				// A special case that should be removed at some point in
-				// favor of defining where slots are in the component definition
-				if compName == "uesio/io.tabs" && prop.Value == "tabs" {
-					if len(comp.Content[1].Content) > i {
-						tabsNode := comp.Content[1].Content[i+1]
-						for _, tab := range tabsNode.Content {
-							for l, prop := range tab.Content {
-								if prop.Kind == yaml.ScalarNode && prop.Value == "components" {
-									err := getComponentAreaDeps(tab.Content[l+1], depMap, session)
-									if err != nil {
-										return err
-									}
-								}
-							}
-
 						}
 					}
 				}

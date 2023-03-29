@@ -14,6 +14,17 @@ variants:
   - uesio/io.menu:uesio/io.default
 category: DATA
 discoverable: true
+slots:
+  - name: components
+    path: columns[*]
+    providesContexts:
+      - type: WIRE
+        property: wire
+      - type: RECORD
+      - type: FIELD_MODE
+        property: mode
+  - name: header
+  - name: footer
 properties:
   - name: wire
     label: Wire

@@ -1,3 +1,14 @@
 name: griditem
 pack: main
 entrypoint: components/griditem/griditem
+title: Grid Item
+description: Defines a component-containing area within a CSS Grid, whose layout is controlled by the parent grid.
+slots:
+  - name: components
+properties:
+  - name: column
+    type: TEXT
+    label: Column
+  - name: area
+    type: TEXT
+    label: Area
