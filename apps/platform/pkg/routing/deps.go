@@ -85,6 +85,14 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
+	for _, key := range variantDep.Variants {
+		variantDep, err := loadVariant(key, session)
+		if err != nil {
+			return err
+		}
+		deps.ComponentVariant.AddItem(variantDep)
+	}
+
 	deps.ComponentVariant.AddItem(variantDep)
 	return nil
 
@@ -209,6 +217,12 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		if err != nil {
 			return err
 		}
+		// for _, key := range component.Variants {
+		// 	err := addVariantDep(deps, key, session)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// }
 	}
 
 	for _, component := range depMap.Components {
