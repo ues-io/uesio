@@ -7,12 +7,13 @@ interface NumberFilterProps extends definition.UtilityProps {
 	wire: wire.Wire
 	fieldMetadata: collection.Field
 	conditionId: string | undefined
+	operator?: string
 }
 
 const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
-	const { wire, fieldMetadata, context } = props
+	const { wire, operator, fieldMetadata, context } = props
 
-	const conditionId = props.conditionId || props.path || ""
+	const conditionId = props.conditionId || props.path + operator
 	const wireId = wire.getId()
 
 	const condition = (wire.getCondition(conditionId) || {
@@ -36,6 +37,7 @@ const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
 								...condition,
 								value,
 								active: !!value,
+								operator,
 							},
 						},
 						{
@@ -46,6 +48,7 @@ const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
 					context
 				)
 			}}
+			placeholder={operator}
 		/>
 	)
 }

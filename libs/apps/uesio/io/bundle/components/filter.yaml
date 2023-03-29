@@ -18,6 +18,9 @@ properties:
     type: FIELD
     label: Field
     wireField: wire
+  - name: isRange
+    type: CHECKBOX
+    label: Range
   - name: displayAs
     type: SELECT
     label: Display as
@@ -51,6 +54,7 @@ sections:
     properties:
       - wire
       - fieldId
+      - isRange
       - displayAs
       - label
       - labelPosition

@@ -15,6 +15,7 @@ type FilterDefinition = {
 	displayAs?: string
 	wrapperVariant: metadata.MetadataKey
 	conditionId?: string
+	isRange?: boolean
 }
 
 type CommonProps = {
@@ -28,14 +29,21 @@ const getFilterContent = (
 	common: CommonProps,
 	definition: FilterDefinition
 ) => {
-	const { displayAs } = definition
+	const { displayAs, isRange } = definition
 
 	const fieldMetadata = common.fieldMetadata
 	const type = fieldMetadata.getType()
 
 	switch (type) {
 		case "NUMBER":
-			return <NumberFilter {...common} />
+			return isRange ? (
+				<>
+					<NumberFilter {...common} operator={"GTE"} />
+					<NumberFilter {...common} operator={"LTE"} />
+				</>
+			) : (
+				<NumberFilter {...common} />
+			)
 		case "CHECKBOX":
 			return <CheckboxFilter {...common} displayAs={displayAs} />
 		case "SELECT":
