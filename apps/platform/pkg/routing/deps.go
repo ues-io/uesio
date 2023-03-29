@@ -217,12 +217,6 @@ func processView(key string, viewInstanceID string, deps *PreloadMetadata, param
 		if err != nil {
 			return err
 		}
-		// for _, key := range component.Variants {
-		// 	err := addVariantDep(deps, key, session)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// }
 	}
 
 	for _, component := range depMap.Components {
