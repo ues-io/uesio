@@ -55,6 +55,13 @@ jobs:
           REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
+          # These exports need to run every time
+          export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
+          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
+          mkdir artifacts
+          echo "$IMAGE_TAG" > ./artifacts/new_image.txt
+          echo "$GITSHA" > ./artifacts/short_sha.txt
+
           # Skip build if image already exists
           image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
 
@@ -70,11 +77,6 @@ jobs:
           npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
           npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-          export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
-          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
-          mkdir artifacts
-          echo "$IMAGE_TAG" > ./artifacts/new_image.txt
-          echo "$GITSHA" > ./artifacts/short_sha.txt
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
           docker push $IMAGE_TAG
       - name: Upload image id
@@ -87,8 +89,7 @@ jobs:
         run: |
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
       - name: Run End-to-End tests against app image in Docker
-        run: |
-          bash ./run-e2e-tests.sh
+        run: bash ./run-e2e-tests.sh
   update-dev-branch:
     name: Update Dev environment to latest image
     if: github.ref_name == 'master'

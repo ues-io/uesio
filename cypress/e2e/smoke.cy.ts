@@ -102,6 +102,7 @@ describe("Uesio Sanity Smoke Tests", () => {
 
 	after(() => {
 		cy.visitRoute(getAppBasePath(appName))
+		cy.getByIdFragment("button", "delete-app", 8000).should("be.visible")
 		cy.clickButton("delete-app")
 		cy.clickButton("confirm-delete-app")
 	})
