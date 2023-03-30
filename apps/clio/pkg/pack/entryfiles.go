@@ -46,7 +46,7 @@ func CreateEntryFiles() (map[string]string, error) {
 
 	packMap := map[string]PackData{}
 
-	// Coalate components by pack
+	// Collate components by pack
 	for _, component := range *components {
 		pack := component.Pack
 		if pack == "" {
