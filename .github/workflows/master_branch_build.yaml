@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - skip-build-if-docker-image-exists
     secrets:
       GH_PAT:
         required: true
