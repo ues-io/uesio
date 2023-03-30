@@ -181,6 +181,11 @@ const ConditionsProperties: definition.UC = (props) => {
 			],
 		},
 		{
+			name: "active",
+			type: "CHECKBOX",
+			label: "Active on Page Load",
+		},
+		{
 			name: "lookupWire",
 			type: "WIRE",
 			label: "Lookup Wire",

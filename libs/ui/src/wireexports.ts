@@ -26,6 +26,7 @@ import {
 	ParamConditionState,
 	ValueConditionState,
 	WireConditionState,
+	isValueCondition,
 } from "./bands/wire/conditions/conditions"
 import { SaveResponse, SaveResponseBatch, SaveError } from "./load/saveresponse"
 import { LoadResponseBatch } from "./load/loadresponse"
@@ -60,3 +61,5 @@ export type {
 	ViewOnlyField,
 	ViewOnlyWireDefinition,
 }
+
+export { isValueCondition }

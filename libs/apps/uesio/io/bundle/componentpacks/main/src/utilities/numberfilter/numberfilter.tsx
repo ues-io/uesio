@@ -6,19 +6,12 @@ interface NumberFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
 }
 
 const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
-	const { wire, fieldMetadata, context } = props
-
-	const conditionId = props.conditionId || props.path || ""
+	const { wire, fieldMetadata, context, condition } = props
 	const wireId = wire.getId()
-
-	const condition = (wire.getCondition(conditionId) || {
-		id: conditionId,
-		field: fieldMetadata.getId(),
-	}) as wire.ValueConditionState
 
 	return (
 		<NumberField

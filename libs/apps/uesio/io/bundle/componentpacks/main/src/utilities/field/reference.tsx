@@ -31,6 +31,8 @@ interface ReferenceFieldProps {
 	placeholder?: string
 }
 
+const isValueCondition = wire.isValueCondition
+
 const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	props
 ) => {
@@ -91,13 +93,7 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		const conditions: wire.WireConditionState[] = (
 			options?.conditions || []
 		).map((condition) => {
-			const isValueCondition =
-				!!condition &&
-				!condition.type &&
-				(condition.valueSource === "VALUE" || !condition.valueSource) &&
-				condition.value
-
-			if (!isValueCondition) return condition
+			if (!isValueCondition(condition)) return condition
 
 			return {
 				...condition,
