@@ -84,12 +84,12 @@ func (c *Connection) Upload(fileData io.Reader, path string) error {
 	return nil
 }
 
-func (c *Connection) Download(path string) (time.Time, io.ReadCloser, error) {
+func (c *Connection) Download(path string) (time.Time, io.ReadSeeker, error) {
 	fullPath := filepath.Join(c.bucket, path)
 	outFile, err := os.Open(fullPath)
 	if err != nil {
 		fmt.Println("Error Reading File: " + err.Error())
-		return time.Time{}, io.NopCloser(strings.NewReader("")), nil
+		return time.Time{}, strings.NewReader(""), nil
 	}
 	fileInfo, err := outFile.Stat()
 	if err != nil {

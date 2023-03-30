@@ -174,7 +174,7 @@ func Load(item meta.BundleableItem, session *sess.Session, connection adapt.Conn
 	return bs.GetItem(item, version, session, connection)
 }
 
-func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+func GetItemAttachment(item meta.AttachableItem, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
 		return time.Time{}, nil, err

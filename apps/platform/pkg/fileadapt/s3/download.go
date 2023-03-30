@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/ioutil"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -13,14 +12,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func (c *Connection) Download(path string) (time.Time, io.ReadCloser, error) {
+func (c *Connection) Download(path string) (time.Time, io.ReadSeeker, error) {
 	return c.DownloadWithDownloader(&s3.GetObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(path),
 	})
 }
 
-func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (time.Time, io.ReadCloser, error) {
+func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (time.Time, io.ReadSeeker, error) {
 	ctx := context.Background()
 	downloader := manager.NewDownloader(c.client)
 	head, err := c.client.HeadObject(ctx, &s3.HeadObjectInput{
@@ -41,15 +40,5 @@ func (c *Connection) DownloadWithDownloader(input *s3.GetObjectInput) (time.Time
 		return time.Time{}, nil, errors.New("failed to retrieve Object")
 	}
 
-	return *head.LastModified, ioutil.NopCloser(bytes.NewBuffer(buf)), nil
-}
-
-func (c *Connection) DownloadWithGetObject(input *s3.GetObjectInput) (time.Time, io.ReadCloser, error) {
-	ctx := context.Background()
-	result, err := c.client.GetObject(ctx, input)
-	if err != nil {
-		return time.Time{}, nil, errors.New("failed to retrieve Object")
-	}
-
-	return *result.LastModified, result.Body, nil
+	return *head.LastModified, bytes.NewReader(buf), nil
 }
