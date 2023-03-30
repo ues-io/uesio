@@ -28,8 +28,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - name: NPM dependencies
-        run: npm ci
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -67,6 +65,7 @@ jobs:
               echo "Image does not exist, building and pushing"
           fi
 
+          # npm ci
           # npm run prettier-check
           # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           # npm run build-all
