@@ -58,12 +58,14 @@ jobs:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
           # Skip build if image already exists
-          aws ecr describe-images --registry-id $REGISTRY_ID --repository-name uesio --image-ids imageTag=$FULL_SHA
-           # > /dev/null
-          # if [[ $? = 0 ]]; then
-          #     echo "Docker image already exists, skipping build and docker push"
-          #     exit 0
-          # fi
+          image_exists=$(bash ./scripts/ecr-image-exists.sh $REGISTRY_ID uesio $FULL_SHA)
+
+          if [[ "$image_exists" == "yes" ]]; then
+              echo "Docker image already exists, skipping build and docker push"
+              exit 0
+          else
+              echo "Image does not exist, building and pushing"
+          fi
 
           # npm run prettier-check
           # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
