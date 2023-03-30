@@ -65,11 +65,11 @@ jobs:
               echo "Image does not exist, building and pushing"
           fi
 
-          # npm ci
-          # npm run prettier-check
-          # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          # npm run build-all
-          # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm ci
+          npm run prettier-check
+          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm run build-all
+          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
