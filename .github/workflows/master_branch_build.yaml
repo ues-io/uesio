@@ -6,6 +6,8 @@ on:
     secrets:
       GH_PAT:
         required: true
+      AWS_ACCOUNT_ID_DEV:
+        required: true
 
 jobs:
   build:
@@ -64,10 +66,11 @@ jobs:
             ${{ runner.os }}-go-
       - name: Build, test, and docker push to ECR
         shell: bash
-        if: true
+        env:
+          REGISTRY_ID: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
         run: |
           # Skip build if image already exists
-          if $(aws ecr describe-images --registry-id ${{ steps.login-ecr.outputs.registry }} --repository-name uesio --image-ids imageTag=${{ github.sha }}); then
+          if $(aws ecr describe-images --registry-id $REGISTRY_ID --repository-name uesio --image-ids imageTag=$FULL_SHA); then
             echo "Docker image already exists, skipping build and docker push"
             exit 0
           fi
