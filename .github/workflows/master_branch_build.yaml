@@ -12,7 +12,6 @@ jobs:
     env:
       FULL_SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
-    if: github.repository == 'octo-org/octo-repo-prod'
     strategy:
       matrix:
         node-version: [16.x]
