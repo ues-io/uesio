@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     env:
-      IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
       FULL_SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
     if: github.repository == 'octo-org/octo-repo-prod'
@@ -80,6 +79,7 @@ jobs:
           # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
+          echo "IMAGE_TAG=`echo ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}`" >> $GITHUB_ENV
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
