@@ -85,6 +85,14 @@ func addVariantDep(deps *PreloadMetadata, key string, session *sess.Session) err
 		}
 	}
 
+	for _, key := range variantDep.Variants {
+		variantDep, err := loadVariant(key, session)
+		if err != nil {
+			return err
+		}
+		deps.ComponentVariant.AddItem(variantDep)
+	}
+
 	deps.ComponentVariant.AddItem(variantDep)
 	return nil
 
