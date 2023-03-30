@@ -40,30 +40,30 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      # - name: Restore NPM cache ~/.npm
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.node-version }}-node-
-      # - name: Install npm Dependencies
-      #   run: npm ci
-      # - name: Cache ./node_modules/.cache for nx usage
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ./node_modules/.cache
-      #     key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
-      #       ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
-      # - name: Cache Go modules
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/go/pkg/mod
-      #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-go-
+      - name: Restore NPM cache ~/.npm
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-node-
+      - name: Install npm Dependencies
+        run: npm ci
+      - name: Cache ./node_modules/.cache for nx usage
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules/.cache
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
+            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Build, test, and docker push to ECR
         shell: bash
         env:
@@ -78,7 +78,7 @@ jobs:
 
           # npm run prettier-check
           # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          #npm run build-all
+          npm run build-all
           # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
@@ -86,7 +86,7 @@ jobs:
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
-          #docker push $IMAGE_TAG
+          docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
         if: false
