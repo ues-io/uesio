@@ -64,7 +64,7 @@ definition:
             uesio/crm.name: null
             uesio/core.id: null
         uesio/crm.assistant_phone: null
-        uesio/crm.contact_owner:
+        uesio/core.owner:
           fields:
             uesio/core.id: null
             uesio/core.username: null
@@ -321,7 +321,7 @@ definition:
                               - uesio/io.field:
                                   fieldId: uesio/crm.salutation
                               - uesio/io.field:
-                                  fieldId: uesio/crm.contact_owner
+                                  fieldId: uesio/core.user
                             columnGap: 8px
               - id: address
                 label: Address

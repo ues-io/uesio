@@ -1,5 +1,5 @@
 name: contacts
-type: REFERENCE
+type: REFERENCEGROUP
 label: Contacts
 reference:
   collection: uesio/crm.contact

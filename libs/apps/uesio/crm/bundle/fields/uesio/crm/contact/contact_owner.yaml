@@ -1,5 +1,0 @@
-name: contact_owner
-type: REFERENCE
-label: Contact Owner
-reference:
-  collection: uesio/core.user
