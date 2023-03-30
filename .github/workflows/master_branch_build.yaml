@@ -44,19 +44,17 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-
-      - name: Install npm Dependencies
-        run: npm ci
+            ${{ runner.os }}-${{ matrix.node-version }}-npm-
       - name: Cache ./node_modules/.cache for nx usage
         uses: actions/cache@v2
         with:
           path: ./node_modules/.cache
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}-${{ github.ref }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-${{ hashFiles('./*.json') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-${{ hashFiles('./*.json') }}
-            ${{ runner.os }}-${{ matrix.node-version }}-node-cache-
+            ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-${{ hashFiles('./*.json') }}
+            ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-
       - name: Cache Go modules
         uses: actions/cache@v2
         with:
@@ -75,7 +73,7 @@ jobs:
             echo "Docker image already exists, skipping build and docker push"
             exit 0
           fi
-
+          npm ci
           # npm run prettier-check
           # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
