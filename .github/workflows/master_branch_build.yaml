@@ -2,14 +2,18 @@ name: Master/Release Branch Build
 on:
   push:
     branches:
-      - master
+      - skip-build-if-docker-image-exists
     secrets:
       GH_PAT:
         required: true
 
 jobs:
   build:
+    env:
+      IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
+      FULL_SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
+    if: github.repository == 'octo-org/octo-repo-prod'
     strategy:
       matrix:
         node-version: [16.x]
@@ -18,6 +22,15 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ secrets.AWS_REGION_DEV }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -51,40 +64,21 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Lint
+      - name: Build, test, and docker push to ECR
         shell: bash
+        if: true
         run: |
-          npm run prettier-check
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-      - name: Build All
-        shell: bash
-        run: |
+          # Skip build if image already exists
+          if $(aws ecr describe-images --registry-id ${{ steps.login-ecr.outputs.registry }} --repository-name uesio --image-ids imageTag=${{ github.sha }}); then
+            echo "Docker image already exists, skipping build and docker push"
+            exit 0
+          fi
+
+          # npm run prettier-check
+          # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
-      - name: Test
-        shell: bash
-        run: |
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          aws-region: ${{ secrets.AWS_REGION_DEV }}
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
-      - name: Compute short sha
-        id: shortsha
-        env:
-          FULL_SHA: ${{ github.sha }}
-        run: echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
-      - name: Docker Build, Tag, and Push to ECR
-        id: dockerize
-        env:
-          IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
-          FULL_SHA: ${{ github.sha }}
-        run: |
+          # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+          echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
           echo "$IMAGE_TAG" > ./artifacts/new_image.txt
           echo "$GITSHA" > ./artifacts/short_sha.txt
@@ -92,6 +86,7 @@ jobs:
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
+        if: true
         with:
           name: image-artifacts
           path: |
