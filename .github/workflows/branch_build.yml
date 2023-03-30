@@ -3,6 +3,7 @@ on:
     push:
         branches-ignore:
             - "master"
+            - "skip-build-if-docker-image-exists"
 
 jobs:
     build-and-test:
