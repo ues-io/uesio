@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         go-version: [~1.19]
     steps:
       - uses: actions/checkout@v2
@@ -41,21 +41,10 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - name: Restore NPM cache ~/.npm
-        uses: actions/cache@v2
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-${{ matrix.node-version }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-npm-
-      - name: Cache ./node_modules/.cache for nx usage
-        uses: actions/cache@v2
-        with:
-          path: ./node_modules/.cache
-          key: ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-${{ hashFiles('./*.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-${{ hashFiles('./*.json') }}
-            ${{ runner.os }}-${{ matrix.node-version }}-node-modules-cache-
+          node-version: ${{ matrix.node-version }}
       - name: Cache Go modules
         uses: actions/cache@v2
         with:
