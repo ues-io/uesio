@@ -2,6 +2,7 @@ name: Master/Release Branch Build
 on:
   push:
     branches:
+      - master
       - skip-build-if-docker-image-exists
     secrets:
       GH_PAT:
@@ -69,15 +70,17 @@ jobs:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
           # Skip build if image already exists
-          if $(aws ecr describe-images --registry-id $REGISTRY_ID --repository-name uesio --image-ids imageTag=$FULL_SHA); then
-            echo "Docker image already exists, skipping build and docker push"
-            exit 0
+          aws ecr describe-images --registry-id $REGISTRY_ID --repository-name uesio --image-ids imageTag=$FULL_SHA > /dev/null 2>&1
+          if [[ $? = 0 ]]; then
+              echo "Docker image already exists, skipping build and docker push"
+              exit 0
           fi
+
           npm ci
-          # npm run prettier-check
-          # npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm run prettier-check
+          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
           npm run build-all
-          # npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
+          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
           mkdir artifacts
@@ -87,7 +90,6 @@ jobs:
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3
-        if: false
         with:
           name: image-artifacts
           path: |
@@ -96,7 +98,6 @@ jobs:
         run: |
           sudo echo "127.0.0.1 studio.uesio-dev.com" | sudo tee -a /etc/hosts
       - name: Run End-to-End tests against app image in Docker
-        if: false
         run: |
           bash ./run-e2e-tests.sh
   update-dev-branch:
