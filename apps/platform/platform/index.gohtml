@@ -22,6 +22,7 @@
             {{template "fonts" .}}
         </style>
         {{- if .DevMode -}}
+        <script src="{{ .StaticAssetsPath }}/static/vendor/tailwind.min.js"></script>
         <script src="{{ .StaticAssetsPath }}/static/vendor/react.development.js"></script>
         <script src="{{ .StaticAssetsPath }}/static/vendor/react-dom.development.js"></script>
         {{- else -}}

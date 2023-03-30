@@ -12,6 +12,7 @@ export type BaseDefinition = {
 	id?: string
 	"uesio.id"?: string
 	"uesio.styles"?: DefinitionMap
+	"uesio.styleTokens"?: Record<string, string[]>
 	"uesio.variant"?: MetadataKey
 	"uesio.display"?: DisplayCondition[]
 	"uesio.classes"?: DisplayCondition[]
@@ -64,6 +65,7 @@ export interface UtilityProps {
 	id?: string
 	variant?: MetadataKey
 	styles?: Record<string, CSSInterpolation>
+	styleTokens?: Record<string, string[]>
 	classes?: Record<string, string>
 	className?: string
 	context: Context
