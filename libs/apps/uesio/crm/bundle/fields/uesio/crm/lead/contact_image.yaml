@@ -1,0 +1,5 @@
+name: contact_image
+type: FILE
+label: Contact Image
+file:
+  accept: IMAGE

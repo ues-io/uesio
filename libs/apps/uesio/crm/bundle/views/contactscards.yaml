@@ -1,4 +1,4 @@
-name: contacts
+name: contactscards
 definition:
   # Wires connect to data in collections
   wires:
@@ -64,7 +64,7 @@ definition:
             uesio/crm.name: null
             uesio/core.id: null
         uesio/crm.assistant_phone: null
-        uesio/core.owner:
+        uesio/core.user:
           fields:
             uesio/core.id: null
             uesio/core.username: null
@@ -93,25 +93,24 @@ definition:
           field: uesio/core.updatedat
   # Components determine the layout and composition of your view
   components:
-    - uesio/core.view:
-        view: uesio/crm.topbar
-    - uesio/io.titlebar:
-        title: Contacts
-        actions:
-          - uesio/io.button:
-              text: New Contact
-              uesio.variant: uesio/io.primary
-              signals:
-                - signal: wire/EMPTY
-                  wire: newcontact
-                - signal: panel/OPEN
-                  panel: newContact
-                - signal: wire/CREATE_RECORD
-                  wire: newcontact
-              icon: create
-        uesio.variant: uesio/io.secondary
     - uesio/io.box:
         components:
+          - uesio/io.group:
+              columnGap: 10px
+              components:
+                - uesio/io.button:
+                    text: New Contact
+                    uesio.variant: uesio/io.primary
+                    signals:
+                      - signal: wire/EMPTY
+                        wire: newcontact
+                      - signal: panel/OPEN
+                        panel: newContact
+                      - signal: wire/CREATE_RECORD
+                        wire: newcontact
+                    icon: create
+              alignItems: center
+              justifyContent: end
           - uesio/io.deck:
               wire: contacts
               components:

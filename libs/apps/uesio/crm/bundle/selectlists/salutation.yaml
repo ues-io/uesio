@@ -1,13 +1,18 @@
 name: salutation
+public: true
 options:
   - label: Sir
     value: Sir
+    disabled: false
   - label: Madam
     value: Madam
+    disabled: false
   - label: Mr
     value: Mr
+    disabled: false
   - label: Mrs
     value: Mrs
+    disabled: false
   - label: Miss
     value: Miss
-public: true
+    disabled: false

@@ -1,5 +1,5 @@
 name: product
-nameField: uesio/crm.name
+public: true
 label: product
 pluralLabel: products
-public: true
+nameField: uesio/crm.name

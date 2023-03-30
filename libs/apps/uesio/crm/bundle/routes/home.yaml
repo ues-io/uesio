@@ -2,3 +2,5 @@ name: home
 path: home
 view: uesio/crm.home
 theme: uesio/crm.default
+title: ""
+tags: []

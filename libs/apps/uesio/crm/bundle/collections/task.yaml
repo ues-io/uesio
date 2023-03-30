@@ -1,5 +1,5 @@
 name: task
-nameField: uesio/crm.name
+public: true
 label: task
 pluralLabel: tasks
-public: true
+nameField: uesio/crm.name

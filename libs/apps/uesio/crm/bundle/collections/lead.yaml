@@ -1,5 +1,5 @@
 name: lead
-nameField: uesio/crm.lastname
+public: true
 label: lead
 pluralLabel: leads
-public: true
+nameField: uesio/crm.lastname

@@ -6,7 +6,7 @@ definition:
           root:
             alignItems: center
             height: 60px
-            backgroundColor: "#222"
+            backgroundColor: green
         templateColumns: 58px 0fr 1fr 0fr
         items:
           - uesio/io.griditem:
@@ -29,7 +29,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -38,7 +38,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - collection: uesio/crm.contact
@@ -47,7 +47,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -56,7 +56,7 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           signals:
                             - signal: "route/NAVIGATE"
@@ -65,13 +65,13 @@ definition:
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
                       - uesio/io.button:
                           text: Products
                           uesio.variant: uesio/io.nav
                           uesio.styles:
                             root:
-                              color: "#EEE"
+                              color: white
           - uesio/io.griditem:
               uesio.styles:
                 root:
