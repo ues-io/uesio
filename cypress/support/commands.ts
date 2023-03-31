@@ -55,8 +55,8 @@ Cypress.Commands.add("login", () => {
 // Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
 	"getByIdFragment",
-	(elementType: string, idFragment: string) => {
-		cy.get(idContainsSelector(elementType, idFragment))
+	(elementType: string, idFragment: string, timeout?: number) => {
+		cy.get(idContainsSelector(elementType, idFragment), { timeout })
 	}
 )
 
@@ -117,7 +117,11 @@ declare global {
 			): Chainable<void>
 			login(): Chainable<void>
 			visitRoute(route: string): Chainable<void>
-			getByIdFragment(elementType: string, id: string): Chainable<void>
+			getByIdFragment(
+				elementType: string,
+				id: string,
+				timeout?: number
+			): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
 			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>

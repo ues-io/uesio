@@ -187,7 +187,7 @@ describe("Uesio Builder Tests", () => {
 
 	after(() => {
 		cy.visitRoute(getAppBasePath(appName))
-		cy.clickButton("delete-app")
+		cy.getByIdFragment("button", "delete-app", 8000).should("be.visible")
 		cy.clickButton("confirm-delete-app")
 	})
 })
