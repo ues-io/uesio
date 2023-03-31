@@ -59,6 +59,40 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		.map((el) => ({ value: el, label: el } as SelectOption))
 }
 
+const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
+	if (!wireDef || wireDef.viewOnly || !wireDef.conditions)
+		return [] as SelectOption[]
+
+	const getConditions = (
+		value: wire.WireConditionState
+	): string | undefined => {
+		console.log({ value })
+
+		// if  (value.type === "GROUP") {
+		// 	return getConditions(value.conditions)
+		// }
+
+		// if (
+		// 	!value ||
+		// 	(typeof value === "object" && Object.keys(value).length === 0)
+		// ) {
+		// 	console.log("LOL")
+		return value.id
+		//}
+		// return Object.entries(value)
+		// 	.map(([key2, value2]) => [`${key}->${key2}`, value2])
+		// 	.flatMap(([key, value]) => getConditions(key, value))
+	}
+
+	const test = wireDef.conditions
+		.flatMap((value) => getConditions(value))
+		.map((el) => ({ value: el, label: el } as SelectOption))
+
+	console.log({ test })
+
+	return test
+}
+
 const getFormFieldsFromProperties = (
 	properties: ComponentProperty[] | undefined,
 	path: FullPath
@@ -214,6 +248,25 @@ const getWireFieldFromPropertyDef = (
 			return getBaseWireFieldDef(def, "NUMBER")
 		case "CHECKBOX":
 			return getBaseWireFieldDef(def, "CHECKBOX")
+		case "CONDITION":
+			console.log({ def })
+
+			wireId = def.wireField
+				? (currentValue[def.wireField] as string)
+				: def.wire
+			wireDefinition =
+				wireId === undefined
+					? undefined
+					: getWireDefinition(context, wireId)
+			return getBaseWireFieldDef(def, `SELECT`, {
+				selectlist: getSelectListMetadataFromOptions(
+					name,
+					wireDefinition !== undefined
+						? getWireConditionSelectOptions(wireDefinition)
+						: [],
+					""
+				),
+			})
 		default:
 			return getBaseWireFieldDef(def, "TEXT")
 	}

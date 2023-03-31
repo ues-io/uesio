@@ -168,6 +168,15 @@ const getFormFieldFromProperty = (
 				},
 			}
 		}
+		case "CONDITION": {
+			return {
+				"uesio/io.field": {
+					...baseFieldDef,
+					displayAs: "SELECT",
+					wrapperVariant: "uesio/builder.propfield",
+				},
+			}
+		}
 		default:
 			return {
 				"uesio/io.field": {
