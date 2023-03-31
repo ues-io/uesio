@@ -1,11 +1,12 @@
 /// <reference types="cypress" />
 
-import { getAppBasePath, getWorkspaceBasePath } from "../support/paths"
+import { deleteApp, getUniqueAppName } from "../support/testdata"
+import { getWorkspaceBasePath } from "../support/paths"
 
 describe("Uesio Sanity Smoke Tests", () => {
 	const username = Cypress.env("automation_username")
 
-	const appName = "e2e" + new Date().getTime()
+	const appName = getUniqueAppName()
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
 
@@ -101,8 +102,6 @@ describe("Uesio Sanity Smoke Tests", () => {
 	})
 
 	after(() => {
-		cy.visitRoute(getAppBasePath(appName))
-		cy.clickButton("delete-app")
-		cy.clickButton("confirm-delete-app")
+		deleteApp(appName)
 	})
 })

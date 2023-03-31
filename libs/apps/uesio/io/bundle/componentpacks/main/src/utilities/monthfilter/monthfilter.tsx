@@ -4,7 +4,7 @@ interface MonthFilterProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
 }
 
 const getMonthYearDateKey = (year: number, month: number) =>
@@ -26,16 +26,8 @@ const parseDateConditionValue = (value: wire.FieldValue) => {
 }
 
 const MonthFilter: definition.UtilityComponent<MonthFilterProps> = (props) => {
-	const { wire, fieldMetadata, context } = props
-
-	const conditionId = props.conditionId || props.path || ""
+	const { wire, context, condition } = props
 	const wireId = wire.getId()
-
-	const condition = (wire.getCondition(conditionId) || {
-		id: conditionId,
-		field: fieldMetadata.getId(),
-		operator: "IN",
-	}) as wire.ValueConditionState
 
 	const classes = styles.useUtilityStyles(
 		{

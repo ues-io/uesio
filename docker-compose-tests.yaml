@@ -18,7 +18,7 @@ services:
       retries: 4
       start_period: 10s
   app:
-    image: "$GITSHA"
+    image: "$APP_IMAGE"
     depends_on:
       db:
         condition: service_healthy

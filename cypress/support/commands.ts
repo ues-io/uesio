@@ -55,8 +55,8 @@ Cypress.Commands.add("login", () => {
 // Gets an element of a given type whose id contains a given string
 Cypress.Commands.add(
 	"getByIdFragment",
-	(elementType: string, idFragment: string) => {
-		cy.get(idContainsSelector(elementType, idFragment))
+	(elementType: string, idFragment: string, timeout?: number) => {
+		cy.get(idContainsSelector(elementType, idFragment), { timeout })
 	}
 )
 
@@ -80,12 +80,28 @@ Cypress.Commands.add(
 	}
 )
 
-// Gets a button element whose id contains a given string
+// Clicks on a button element whose id contains a given string
 Cypress.Commands.add("clickButton", (idFragment: string) => {
 	const buttonSelector = idContainsSelector("button", idFragment)
 	const anchorSelector = idContainsSelector("a", idFragment)
 	cy.get(`${buttonSelector},${anchorSelector}`).click()
 })
+
+// Checks if a given button exists in the DOM, and clicks on it if is found
+Cypress.Commands.add("clickButtonIfExists", (idFragment: string) => {
+	const buttonSelector = idContainsSelector("button", idFragment)
+	const anchorSelector = idContainsSelector("a", idFragment)
+	const selector = `${buttonSelector},${anchorSelector}`
+	clickIfExists(selector)
+})
+
+function clickIfExists(selector: string) {
+	cy.get("body").then((body) => {
+		if (body.find(selector).length > 0) {
+			cy.get(selector).click()
+		}
+	})
+}
 
 // Checks a component state
 Cypress.Commands.add("getComponentState", (componentId: string) => {
@@ -117,10 +133,15 @@ declare global {
 			): Chainable<void>
 			login(): Chainable<void>
 			visitRoute(route: string): Chainable<void>
-			getByIdFragment(elementType: string, id: string): Chainable<void>
+			getByIdFragment(
+				elementType: string,
+				id: string,
+				timeout?: number
+			): Chainable<void>
 			typeInInput(inputIdFragment: string, value: string): Chainable<void>
 			clearInput(inputIdFragment: string): Chainable<void>
 			clickButton(idFragment: string): Chainable<void>
+			clickButtonIfExists(idFragment: string): Chainable<void>
 			getComponentState(componentId: string): Chainable<void>
 			hotkey(hotkey: string): Chainable<void>
 			changeSelectValue(
