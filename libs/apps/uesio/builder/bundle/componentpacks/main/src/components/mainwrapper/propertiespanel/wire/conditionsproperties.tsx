@@ -183,7 +183,7 @@ const ConditionsProperties: definition.UC = (props) => {
 		{
 			name: "active",
 			type: "CHECKBOX",
-			label: "Active on Page Load",
+			label: "Active by default",
 		},
 		{
 			name: "lookupWire",
@@ -269,12 +269,13 @@ const ConditionsProperties: definition.UC = (props) => {
 		},
 	]
 
-	const defaultConditionDef = {}
+	const defaultConditionDef = { active: true }
 
 	const defaultConditionGroupDef = {
 		type: "GROUP",
 		conjunction: "AND",
 		conditions: [defaultConditionDef],
+		active: true,
 	}
 
 	return (
