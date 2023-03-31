@@ -1,0 +1,57 @@
+name: dependencies
+definition:
+  # Wires are how we pull in data
+  wires:
+    animals:
+      collection: uesio/tests.animal
+      fields:
+        uesio/core.id:
+        uesio/tests.species:
+        uesio/tests.genus:
+        uesio/tests.total_population:
+      order:
+        - field: uesio/tests.genus
+          desc: false
+        - field: uesio/tests.species
+          desc: false
+  # Components are how we describe the layout of our view
+  components:
+    - uesio/io.grid:
+        # uesio.variant: uesio/studio.mainlayout
+        items:
+          - uesio/io.griditem:
+              # uesio.variant: uesio/studio.topbar
+              components:
+                - uesio/io.tabs:
+                  uesio.variant: uesio/io.default
+                  tabs:
+                    - id: tab1
+                      label: One
+                      components:
+                        - uesio/io.barchart:
+                            title: "Animals by Species"
+                            series:
+                              - label: Animals
+                                name: animals
+                                wire: animals
+                                valueField: uesio/tests.total_population
+                                categoryField: uesio/tests.genus
+                            labels:
+                              source: WIRE
+                    - id: tab2
+                      label: Two
+          - uesio/io.griditem:
+              # uesio.variant: uesio/studio.leftbar
+              components:
+                - uesio/io.titlebar:
+                    uesio.variant: uesio/io.nav
+                    title: This is a title
+                    actions:
+                      - uesio/io.button:
+                          icon: notify
+                          uesio.id: notify-btn
+                          signals:
+                            - signal: notification/ADD
+                              severity: INFO
+                              details: Hello world!
+  panels:

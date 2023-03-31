@@ -302,6 +302,9 @@ func serve(cmd *cobra.Command, args []string) {
 	// Experimental REST api route
 	sr.HandleFunc("/rest/"+itemParam, controller.Rest).Methods("GET")
 
+	// REST API routes
+	sr.HandleFunc("/api/v1/collection/"+itemParam, controller.DeleteRecordApi).Methods("DELETE")
+
 	// Add Invalid Routes to all subrouters to give 404s
 	invalidPath := "/{invalidroute:.*}"
 	sr.HandleFunc(invalidPath, http.NotFound).Methods(http.MethodGet, http.MethodPost)

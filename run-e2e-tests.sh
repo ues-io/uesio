@@ -25,7 +25,7 @@ if [[ -z "${GITSHA}" ]]; then
 fi
 
 # Spin up dependencies and the app, and run migrations againt the DB
-docker compose -f docker-compose-tests.yaml down
+docker compose -f docker-compose-tests.yaml down --volumes
 docker compose -f docker-compose-tests.yaml up -d
 # TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
