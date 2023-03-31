@@ -4,9 +4,11 @@ type VideoDefinition = {
 	file?: string
 	src?: string
 	height?: string
+	controls?: boolean
 	width?: string
 	muted?: boolean
 	autoplay?: boolean
+	playsinline?: boolean
 	loop?: boolean
 	signals?: signal.SignalDefinition[]
 }
@@ -40,9 +42,11 @@ const Video: definition.UC<VideoDefinition> = (props) => {
 			<video
 				loop={definition.loop || false}
 				height={definition.height}
+				controls={definition.controls || true}
 				width={definition.width}
 				autoPlay={definition.autoplay || false}
 				muted={definition.muted || false}
+				playsInline={definition.playsinline || false}
 			>
 				<source
 					src={

@@ -20,5 +20,5 @@ const siteSlice = createSlice({
 const useSite = () => useSelector((state: RootState) => state.site)
 
 export default siteSlice.reducer
-
-export { useSite, SiteState }
+export type { SiteState }
+export { useSite }

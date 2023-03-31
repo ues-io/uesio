@@ -22,9 +22,9 @@
 	},
 	{
 		"uesio/core.user": {
-			"uesio/core.uniquekey": "gregg"
+			"uesio/core.uniquekey": "baxter"
 		},
-		"uesio/core.federation_id": "gregg",
+		"uesio/core.federation_id": "baxter",
 		"uesio/core.auth_source": "uesio/core.mock"
 	},
 	{

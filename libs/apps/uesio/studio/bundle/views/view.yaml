@@ -69,6 +69,9 @@ definition:
                             - uesio/io.group:
                                 components:
                                   - uesio/studio.previewbutton:
+                                      view: $Param{app}.${uesio/studio.name}
+                                      label: Preview
+                                      uesio.id: preview-view
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
@@ -77,16 +80,19 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{app}
-                                  - uesio/io.button:
-                                      uesio.variant: uesio/io.secondary
-                                      text: "Build"
+                                  - uesio/studio.previewbutton:
+                                      view: $Param{app}.${uesio/studio.name}
+                                      label: "Build"
+                                      uesio.id: build-view
                                       uesio.display:
                                         - type: wireHasNoChanges
                                           wire: views
                                       hotkey: "meta+b"
-                                      signals:
-                                        - signal: "route/REDIRECT"
-                                          path: "/workspace/$Param{app}/$Param{workspacename}/views/$Param{app}/${uesio/studio.name}/edit"
+                                      buildMode: true
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{app}
                                   - uesio/io.button:
                                       uesio.variant: uesio/io.primary
                                       text: "Save"

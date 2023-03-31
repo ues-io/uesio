@@ -60,6 +60,6 @@ const Grid: definition.UC<GridDefinition> = (props) => {
 
 Grid.displayName = "Grid"
 
-export { GridDefinition }
+export type { GridDefinition }
 
 export default Grid

@@ -3,8 +3,6 @@ package jsdialect
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/integ"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -39,53 +37,15 @@ func (as *AfterSaveAPI) AddError(message string) {
 }
 
 func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
-	requests := []datasource.SaveRequest{
-		{
-			Collection: collection,
-			Wire:       "apiaftersave",
-			Changes:    &changes,
-		},
-	}
-	err := datasource.SaveWithOptions(requests, as.session, datasource.GetConnectionSaveOptions(as.connection))
-	return datasource.HandleSaveRequestErrors(requests, err)
+	return botSave(collection, changes, as.session, as.connection)
 }
 
 func (bs *AfterSaveAPI) Load(request BotLoadOp) (*adapt.Collection, error) {
-
-	collection := &adapt.Collection{}
-
-	op := &adapt.LoadOp{
-		CollectionName: request.Collection,
-		Collection:     collection,
-		WireName:       "apibeforesave",
-		Fields:         request.Fields,
-		Conditions:     request.Conditions,
-		Order:          request.Order,
-		Query:          true,
-		LoadAll:        true,
-	}
-
-	_, err := datasource.Load([]*adapt.LoadOp{op}, bs.session, &datasource.LoadOptions{
-		Connections: datasource.GetConnectionMap(bs.connection),
-		Metadata:    datasource.GetConnectionMetadata(bs.connection),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return collection, nil
-
+	return botLoad(request, bs.session, bs.connection)
 }
 
 func (bs *AfterSaveAPI) RunIntegrationAction(integrationID string, action string, options interface{}) error {
-
-	integration, err := integ.GetIntegration(integrationID, bs.session)
-	if err != nil {
-		return err
-	}
-
-	return integration.RunAction(action, options)
-
+	return runIntegrationAction(integrationID, action, options, bs.session)
 }
 
 func (bs *AfterSaveAPI) GetConfigValue(configValueKey string) (string, error) {

@@ -1,7 +1,7 @@
 name: account
+public: true
+label: account
+pluralLabel: accounts
 uniqueKey:
   - uesio/crm.externalid
 nameField: uesio/crm.name
-label: account
-pluralLabel: accounts
-public: true

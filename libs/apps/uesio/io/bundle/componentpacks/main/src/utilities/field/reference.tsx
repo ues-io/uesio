@@ -6,6 +6,7 @@ import {
 	context,
 	component,
 } from "@uesio/ui"
+
 import debounce from "lodash/debounce"
 import { useState } from "react"
 import CustomSelect from "../customselect/customselect"
@@ -17,6 +18,7 @@ export type ReferenceFieldOptions = {
 	components?: definition.DefinitionList
 	template?: string
 	requirewriteaccess?: boolean
+	conditions?: wire.WireConditionState[]
 }
 
 interface ReferenceFieldProps {
@@ -28,6 +30,8 @@ interface ReferenceFieldProps {
 	options?: ReferenceFieldOptions
 	placeholder?: string
 }
+
+const isValueCondition = wire.isValueCondition
 
 const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 	props
@@ -84,6 +88,21 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 		if (!wire) return
 		const searchFields = options?.searchFields || [nameField]
 		const returnFields = options?.returnFields || [nameField]
+
+		// Loop over the conditions and merge their values
+		const conditions: wire.WireConditionState[] = (
+			options?.conditions || []
+		).map((condition) => {
+			if (!isValueCondition(condition)) return condition
+
+			return {
+				...condition,
+				value: condition.value
+					? context.merge(condition.value)
+					: condition.value,
+			}
+		})
+
 		const result = await api.platform.loadData(context, {
 			wires: [
 				{
@@ -97,10 +116,10 @@ const ReferenceField: definition.UtilityComponent<ReferenceFieldProps> = (
 						id: fieldName,
 					})),
 					conditions: [
+						...conditions,
 						{
 							type: "SEARCH",
 							value: search,
-							valueSource: "VALUE",
 							active: true,
 							fields: searchFields,
 						},

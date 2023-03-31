@@ -1,0 +1,3 @@
+name: numberfilter
+pack: main
+entrypoint: utilities/numberfilter/numberfilter

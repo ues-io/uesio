@@ -11,6 +11,7 @@ views:
   uesio/crm.opportunities: true
   uesio/crm.opportunity_details: true
   uesio/crm.topbar: true
+collections: {}
 routes:
   uesio/crm.account_details: true
   uesio/crm.accounts: true
@@ -23,11 +24,13 @@ routes:
   uesio/crm.opportunities: true
   uesio/crm.opportunity_details: true
 files:
-  uesio/crm.logo: true
   uesio/crm.growthgraph: true
   uesio/crm.leadratinggraph: true
   uesio/crm.leadstatus: true
+  uesio/crm.logo: true
 allowallcollections: true
 allowallviews: true
 allowallroutes: false
 allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

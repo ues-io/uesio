@@ -1,5 +1,5 @@
 name: comment
-nameField: uesio/crm.name
+public: true
 label: comment
 pluralLabel: comments
-public: true
+nameField: uesio/crm.name

@@ -14,6 +14,10 @@ type TextProperty = {
 	type: "TEXT"
 } & BaseProperty
 
+type TextAreaProperty = {
+	type: "TEXT_AREA"
+} & BaseProperty
+
 type ParamProperty = {
 	type: "PARAM"
 } & BaseProperty
@@ -157,6 +161,7 @@ type ComponentProperty =
 	| MapProperty
 	| ParamsProperty
 	| ListProperty
+	| TextAreaProperty
 	| IconProperty
 
 const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
@@ -167,7 +172,7 @@ const getStyleVariantProperty = (componentType: string): ComponentProperty => ({
 	groupingValue: componentType || "",
 })
 
-export {
+export type {
 	BotProperty,
 	ListPropertyItemsDefinition,
 	ComponentProperty,
@@ -177,5 +182,6 @@ export {
 	MapProperty,
 	ListProperty,
 	IconProperty,
-	getStyleVariantProperty,
 }
+
+export { getStyleVariantProperty }

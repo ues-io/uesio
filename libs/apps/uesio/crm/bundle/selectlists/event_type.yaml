@@ -1,0 +1,12 @@
+name: event_type
+options:
+  - label: Meeting
+    value: Meeting
+    disabled: false
+  - label: Exhibition
+    value: Exhibition
+    disabled: false
+  - label: Online
+    value: Online
+    disabled: false
+blank_option_label: None Selected

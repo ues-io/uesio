@@ -10,11 +10,6 @@ import {
 	getComponentSignalDefinition,
 } from "./hooks/signalapi"
 
-export {
-	getSignals,
-	getSignal,
-	getComponentSignalDefinition,
-	ComponentSignalDescriptor,
-	SignalDefinition,
-	SignalDescriptor,
-}
+export { getSignals, getSignal, getComponentSignalDefinition }
+
+export type { ComponentSignalDescriptor, SignalDefinition, SignalDescriptor }

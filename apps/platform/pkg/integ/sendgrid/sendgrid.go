@@ -13,12 +13,14 @@ import (
 )
 
 type SendEmailOptions struct {
-	To        []string `json:"to"`
-	CC        []string `json:"cc"`
-	BCC       []string `json:"bcc"`
-	Subject   string   `json:"subject"`
-	PlainBody string   `json:"plainBody"`
-	From      string   `json:"from"`
+	To                  []string               `json:"to"`
+	CC                  []string               `json:"cc"`
+	BCC                 []string               `json:"bcc"`
+	Subject             string                 `json:"subject"`
+	PlainBody           string                 `json:"plainBody"`
+	From                string                 `json:"from"`
+	TemplateId          string                 `json:"templateId"`
+	DynamicTemplateData map[string]interface{} `json:"dynamicTemplateData"`
 }
 
 type SendGridIntegration struct {
@@ -83,8 +85,16 @@ func (sgic *SendGridIntegrationConnection) SendEmail(requestOptions interface{})
 	p.AddTos(toUsers...)
 	p.AddCCs(ccUsers...)
 	p.AddBCCs(bccUsers...)
+
+	if options.TemplateId != "" {
+		message.SetTemplateID(options.TemplateId)
+		p.DynamicTemplateData = options.DynamicTemplateData
+	}
+
 	message.AddPersonalizations(p)
-	message.AddContent(mail.NewContent("text/plain", options.PlainBody))
+	if options.PlainBody != "" {
+		message.AddContent(mail.NewContent("text/plain", options.PlainBody))
+	}
 	message.SetFrom(mail.NewEmail(options.From, options.From))
 	client := sendgrid.NewSendClient(apikey)
 	response, err := client.Send(message)

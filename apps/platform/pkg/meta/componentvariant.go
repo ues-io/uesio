@@ -36,6 +36,7 @@ type ComponentVariant struct {
 	Extends        string    `yaml:"extends,omitempty" json:"uesio/studio.extends"`
 	Label          string    `yaml:"label" json:"uesio/studio.label"`
 	Definition     yaml.Node `yaml:"definition" json:"uesio/studio.definition"`
+	Variants       []string  `yaml:"variants,omitempty" json:"uesio/studio.variants"`
 }
 
 type ComponentVariantWrapper ComponentVariant

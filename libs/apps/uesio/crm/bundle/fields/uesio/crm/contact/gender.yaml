@@ -1,5 +1,4 @@
 name: gender
 type: SELECT
 label: Gender
-lanuageLabel: uesio/crm.gender
 selectList: uesio/crm.gender

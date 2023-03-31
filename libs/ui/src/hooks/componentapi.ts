@@ -1,8 +1,14 @@
 import { dispatch, getCurrentState } from "../store/store"
 import { PlainComponentState } from "../bands/component/types"
-import { selectState, useComponentState } from "../bands/component/selectors"
+import {
+	selectState,
+	selectTarget,
+	useComponentState,
+	useComponentStates,
+	useComponentStatesCount,
+} from "../bands/component/selectors"
 import { selectId, useComponentVariants } from "../bands/componentvariant"
-import { set as setComponent } from "../bands/component"
+import { removeOne, set as setComponent } from "../bands/component"
 import { BaseProps, Definition } from "../definition/definition"
 import { useEffect } from "react"
 import { ComponentVariant } from "../definition/componentvariant"
@@ -126,9 +132,20 @@ const getExternalState = <T extends PlainComponentState>(
 	componentId: string
 ): T | undefined => selectState<T>(getCurrentState(), componentId)
 
+const getExternalStates = (target: string) =>
+	selectTarget(getCurrentState(), target)
+
 const useExternalState = <T extends PlainComponentState>(
 	componentId: string
 ): T | undefined => useComponentState<T>(componentId)
+
+const useExternalStates = (componentId: string) =>
+	useComponentStates(componentId)
+
+const useExternalStatesCount = (componentId: string) =>
+	useComponentStatesCount(componentId)
+
+const removeState = (componentId: string) => dispatch(removeOne(componentId))
 
 const getVariantId = selectId as (variant: ComponentVariant) => MetadataKey
 
@@ -147,7 +164,11 @@ export {
 	setState,
 	useStateSlice,
 	useExternalState,
+	useExternalStates,
+	useExternalStatesCount,
 	getExternalState,
+	getExternalStates,
+	removeState,
 	getVariantId,
 	useAllVariants,
 }

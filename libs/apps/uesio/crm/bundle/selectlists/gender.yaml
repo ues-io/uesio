@@ -1,9 +1,12 @@
 name: gender
+public: true
 options:
   - label: Male
     value: MALE
+    disabled: false
   - label: Female
     value: FEMALE
+    disabled: false
   - label: Other
     value: OTHER
-public: true
+    disabled: false

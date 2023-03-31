@@ -70,6 +70,7 @@ type BotParamResponse struct {
 	Default      string                      `json:"default"`
 	Choices      []string                    `json:"choices"`
 	Conditions   []BotParamConditionResponse `json:"conditions"`
+	Collection   string                      `json:"collection"`
 }
 
 type BotParams []BotParam

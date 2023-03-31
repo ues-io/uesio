@@ -1,9 +1,13 @@
 name: public
 named: {}
 views: {}
+collections: {}
 routes:
   uesio/crm.login: true
 files: {}
+allowallcollections: false
 allowallviews: false
 allowallroutes: false
 allowallfiles: false
+modifyallrecords: false
+viewallrecords: false

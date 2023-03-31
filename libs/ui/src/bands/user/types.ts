@@ -13,4 +13,4 @@ type UserPictureState = {
 	updatedat: number
 }
 
-export { UserState, UserPictureState }
+export type { UserState, UserPictureState }

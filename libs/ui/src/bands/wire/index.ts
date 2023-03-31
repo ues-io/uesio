@@ -8,7 +8,11 @@ import { SaveError, SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload, initEntity } from "../utils"
-import { FieldValue, PlainWireRecord } from "../wirerecord/types"
+import {
+	FieldValue,
+	PlainFieldValue,
+	PlainWireRecord,
+} from "../wirerecord/types"
 import { PlainWire } from "./types"
 import set from "lodash/set"
 import get from "lodash/get"
@@ -16,6 +20,7 @@ import { RootState } from "../../store/store"
 import { Context, getWire } from "../../context/context"
 import { useSelector } from "react-redux"
 import { MetadataKey } from "../builder/types"
+import { isValueCondition } from "./conditions/conditions"
 
 type DeletePayload = {
 	recordId: string
@@ -271,8 +276,8 @@ const wireSlice = createSlice({
 			const condition = state.conditions.find(
 				(existingCondition) => existingCondition.id === id
 			)
-			if (condition?.valueSource === "VALUE") {
-				condition.value = value
+			if (isValueCondition(condition)) {
+				condition.value = value as PlainFieldValue
 			}
 		}),
 		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
@@ -466,11 +471,12 @@ export {
 	getFullWireId,
 	addErrorState,
 	getWireParts,
-	WireLoadAction,
 	selectors,
 	getWiresFromDefinitonOrContext,
 	addLookupWires,
 }
+
+export type { WireLoadAction }
 
 export const {
 	markForDelete,

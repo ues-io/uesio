@@ -29,7 +29,7 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join(namespace, version, "bundle")
 }
 
-func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+func getStream(namespace string, version string, objectname string, filename string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
 	filePath := filepath.Join(getBasePath(namespace, version), objectname, filename)
 
 	conn, err := getPlatformFileConnection(session)
@@ -68,7 +68,6 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	if err != nil {
 		return err
 	}
-	defer stream.Close()
 
 	item.SetModified(modTime)
 	err = bundlestore.DecodeYAML(item, stream)
@@ -134,7 +133,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 }
 
-func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+func (b *PlatformBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
 	return getStream(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path), session)
 }
 
@@ -182,7 +181,6 @@ func (b *PlatformBundleStore) GetBundleDef(namespace, version string, session *s
 	if err != nil {
 		return nil, err
 	}
-	defer stream.Close()
 
 	licenseMap, err := licensing.GetLicenses(namespace, connection)
 	if err != nil {

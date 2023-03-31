@@ -29,6 +29,8 @@ definition:
         uesio/studio.routerefs:
         uesio/studio.viewrefs:
         uesio/studio.collectionrefs:
+        uesio/studio.viewallrecords:
+        uesio/studio.modifyallrecords:
       conditions:
         - field: uesio/studio.workspace
           valueSource: LOOKUP
@@ -183,8 +185,6 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - uesio/io.field:
-                                      fieldId: uesio/studio.name
-                                  - uesio/io.field:
                                       fieldId: uesio/studio.allowallfiles
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
@@ -195,6 +195,12 @@ definition:
                                       displayAs: "TOGGLE"
                                   - uesio/io.field:
                                       fieldId: uesio/studio.allowallcollections
+                                      displayAs: "TOGGLE"
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.viewallrecords
+                                      displayAs: "TOGGLE"
+                                  - uesio/io.field:
+                                      fieldId: uesio/studio.modifyallrecords
                                       displayAs: "TOGGLE"
                       - uesio/io.box:
                           uesio.variant: uesio/io.section
@@ -269,6 +275,11 @@ definition:
                                           app: $Param{app}
                                       fieldId: uesio/studio.collectionrefs
                                       wireName: collections
+                                      rowactions:
+                                        - text: Details
+                                          signals:
+                                            - path: app/$Param{app}/workspace/$Param{workspacename}/permissionsets/$Param{permissionsetname}/collection/${uesio/core.id}
+                                              signal: route/NAVIGATE
                                       permissionFields:
                                         - name: read
                                           label: Read
@@ -282,3 +293,6 @@ definition:
                                         - name: delete
                                           label: Delete
                                           type: CHECKBOX
+                                        - name: fields
+                                          label: Fields
+                                          type: MAP

@@ -14,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/routing"
 )
 
-var MockUserNames = []string{"ben", "abel", "wessel", "gregg", "zach", "uesio"}
+var MockUserNames = []string{"ben", "abel", "wessel", "baxter", "zach", "uesio"}
 
 type LoginHandler func() (map[string]string, error)
 

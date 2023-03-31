@@ -9,6 +9,8 @@ defaultDefinition:
   muted: false
   loop: false
   autoplay: true
+  controls: true
+  playsinline: true
 properties:
   - name: file
     type: METADATA
@@ -32,6 +34,12 @@ properties:
   - name: autoplay
     type: CHECKBOX
     label: Auto play
+  - name: controls
+    type: CHECKBOX
+    label: Controls
+  - name: playsinline
+    type: CHECKBOX
+    label: Plays Inline
 sections:
   - type: HOME
     properties:
@@ -42,5 +50,7 @@ sections:
       - muted
       - loop
       - autoplay
+      - controls
+      - playsinline
   - type: STYLES
   - type: DISPLAY

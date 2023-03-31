@@ -1,10 +1,8 @@
 import { Definition } from "../../definition/definition"
 
-type PlainComponentState = Definition
+export type PlainComponentState = Definition
 
-type ComponentState = {
+export type ComponentState = {
 	id: string
 	state: PlainComponentState
 }
-
-export { ComponentState, PlainComponentState }

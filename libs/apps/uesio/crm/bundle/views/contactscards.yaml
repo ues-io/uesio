@@ -1,0 +1,594 @@
+name: contactscards
+definition:
+  # Wires connect to data in collections
+  wires:
+    contacts:
+      collection: uesio/crm.contact
+      fields:
+        uesio/crm.firstname: null
+        uesio/crm.externalid: null
+        uesio/crm.lastname: null
+        uesio/crm.image: null
+        uesio/crm.title: null
+        uesio/crm.department: null
+        uesio/crm.email: null
+        uesio/crm.phone_business: null
+        uesio/crm.phone_mobile: null
+        uesio/crm.assistant_name: null
+        uesio/crm.assistant_phone: null
+        uesio/crm.email_opt_out: null
+        uesio/crm.mailing_city: null
+        uesio/crm.reports_to: null
+        uesio/crm.salutation: null
+        uesio/core.createdat: null
+        uesio/core.createdby: null
+        uesio/core.id: null
+        uesio/core.owner: null
+        uesio/core.updatedat: null
+        uesio/core.updatedby: null
+        uesio/crm.account:
+          fields:
+            uesio/crm.name: null
+      order:
+        - desc: false
+          field: uesio/crm.firstname
+      batchsize: null
+    newcontact:
+      collection: uesio/crm.contact
+      fields:
+        uesio/crm.firstname: null
+        uesio/crm.lastname: null
+        uesio/crm.email: null
+        uesio/crm.phone_business: null
+        uesio/crm.phone_mobile: null
+        uesio/crm.image: null
+        uesio/core.id: null
+        uesio/crm.assistant_name: null
+        uesio/crm.birthdate: null
+        uesio/crm.department: null
+        uesio/crm.description: null
+        uesio/crm.email_opt_out: null
+        uesio/crm.externalid: null
+        uesio/crm.gender: null
+        uesio/crm.lead_source: null
+        uesio/crm.mailing_city: null
+        uesio/crm.mailing_country: null
+        uesio/crm.mailing_state: null
+        uesio/crm.mailing_street: null
+        uesio/crm.mailing_zip: null
+        uesio/crm.reports_to: null
+        uesio/crm.salutation: null
+        uesio/crm.title: null
+        uesio/crm.account:
+          fields:
+            uesio/crm.name: null
+            uesio/core.id: null
+        uesio/crm.assistant_phone: null
+        uesio/core.user:
+          fields:
+            uesio/core.id: null
+            uesio/core.username: null
+      batchsize: 1
+      conditions:
+        - operator: EQ
+          field: uesio/core.id
+          valueSource: VALUE
+          id: id
+    contactsmod:
+      collection: uesio/crm.contact
+      fields:
+        uesio/crm.account: null
+        uesio/crm.firstname: null
+        uesio/crm.externalid: null
+        uesio/crm.lastname: null
+        uesio/crm.image: null
+        uesio/crm.title: null
+        uesio/crm.department: null
+        uesio/crm.email: null
+        uesio/crm.phone_business: null
+        uesio/crm.phone_mobile: null
+        uesio/core.updatedat: null
+      order:
+        - desc: true
+          field: uesio/core.updatedat
+  # Components determine the layout and composition of your view
+  components:
+    - uesio/io.box:
+        components:
+          - uesio/io.group:
+              columnGap: 10px
+              components:
+                - uesio/io.button:
+                    text: New Contact
+                    uesio.variant: uesio/io.primary
+                    signals:
+                      - signal: wire/EMPTY
+                        wire: newcontact
+                      - signal: panel/OPEN
+                        panel: newContact
+                      - signal: wire/CREATE_RECORD
+                        wire: newcontact
+                    icon: create
+              alignItems: center
+              justifyContent: end
+          - uesio/io.deck:
+              wire: contacts
+              components:
+                - uesio/io.box:
+                    components:
+                      - uesio/io.grid:
+                          templateColumns: 120px 240px
+                          items:
+                            - uesio/io.box:
+                                components:
+                                  - uesio/io.field:
+                                      fieldId: uesio/crm.image
+                                      displayAs: PREVIEW
+                                      uesio.styles:
+                                        root:
+                                          height: 200px
+                                      labelPosition: none
+                                    label: null
+                                    labelPosition: none
+                                uesio.styles:
+                                  root:
+                                    boxShadow: "0 0 6px #00000033"
+                                    padding: 4px
+                            - uesio/io.grid:
+                                templateColumns: 1fr
+                                templateRows: 1fr 1fr
+                                items:
+                                  - uesio/io.text:
+                                      text: ${uesio/crm.firstname}
+                                      element: div
+                                      uesio.variant: ""
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 22pt
+                                          fontWeight: bold
+                                      align: center
+                                  - uesio/io.text:
+                                      text: ${uesio/crm.lastname}
+                                      element: div
+                                      align: center
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 14pt
+                                          opacity: "0.5"
+                                          marginTop: -8px
+                                  - uesio/io.text:
+                                      text: ${uesio/crm.account->uesio/crm.name}
+                                      align: center
+                                      element: div
+                                      uesio.styles:
+                                        root:
+                                          marginTop: -20px
+                                          fontSize: 12px
+                                  - uesio/io.grid:
+                                      templateColumns: 1fr 1fr
+                                      templateRows: 1fr  1fr
+                                      items:
+                                        - uesio/io.text:
+                                            text: ${uesio/crm.email}
+                                            element: div
+                                            align: center
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 8pt
+                                                opacity: "0.5"
+                                        - uesio/io.text:
+                                            text: ${uesio/crm.externalid}
+                                            element: div
+                                            align: center
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 8pt
+                                                opacity: "0.5"
+                                        - uesio/io.text:
+                                            text: "T: ${uesio/crm.phone_business}"
+                                            element: div
+                                            align: center
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 8pt
+                                                opacity: "0.5"
+                                        - uesio/io.text:
+                                            text: "M: ${uesio/crm.phone_mobile}"
+                                            element: div
+                                            align: center
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 8pt
+                                                opacity: "0.5"
+                                        - uesio/io.box:
+                                            components: []
+                                        - uesio/io.box:
+                                            components:
+                                              - uesio/io.group:
+                                                  columnGap: 10px
+                                                  justifyContent: end
+                                                  components:
+                                                    - uesio/io.button:
+                                                        text: ""
+                                                        icon: delete
+                                                        signals:
+                                                          - signal: wire/SET_CONDITION_VALUE
+                                                            wire: newcontact
+                                                            conditionId: id
+                                                            value: ${uesio/core.id}
+                                                          - signal: wire/LOAD
+                                                            wires:
+                                                              - newcontact
+                                                          - signal: panel/OPEN
+                                                            wires:
+                                                              - contacts
+                                                            panel: delete
+                                                        uesio.styles:
+                                                          root:
+                                                            color: red
+                                                    - uesio/io.button:
+                                                        text: ""
+                                                        icon: email
+                                                    - uesio/io.button:
+                                                        text: ""
+                                                        icon: edit
+                                                        signals:
+                                                          - signal: wire/SET_CONDITION_VALUE
+                                                            wire: newcontact
+                                                            conditionId: id
+                                                            value: ${uesio/core.id}
+                                                          - signal: wire/LOAD
+                                                            wires:
+                                                              - newcontact
+                                                          - signal: panel/OPEN
+                                                            panel: newContact
+                                                  alignItems: end
+                                                  uesio.styles:
+                                                    root:
+                                                      marginRight: -8px
+                                                      marginBottom: -68px
+                                            uesio.styles:
+                                              root:
+                                                paddingTop: 12px
+                                      columnGap: 1px
+                                      rowGap: 8px
+                                      uesio.styles:
+                                        root: {}
+                                columnGap: 1px
+                                rowGap: 4px
+                                uesio.styles:
+                                  root:
+                                    padding: 22px
+                          templateRows: 1fr
+                          uesio.styles:
+                            root:
+                              alignItems: center
+                    uesio.styles:
+                      root:
+                        border: "1px solid #ccc"
+                        boxShadow: "0 0 6px #00000033"
+                        padding: 15px
+                        margin: 12px
+              uesio.styles:
+                root:
+                  gridTemplateColumns: repeat(auto-fit, minmax(380px, 1fr))
+                  display: grid
+                  gridTemplateRows: repeat(auto-fit, 1fr)
+              id: contactDeck
+              mode: READ
+        uesio.styles:
+          root:
+            paddingRight: 40px
+            paddingLeft: 40px
+  panels:
+    newContact:
+      uesio.type: uesio/io.dialog
+      components:
+        - uesio/io.tabs:
+            tabs:
+              - id: basic
+                label: Basic Info
+                components:
+                  - uesio/io.deck:
+                      wire: newcontact
+                      mode: EDIT
+                      components:
+                        - uesio/io.grid:
+                            templateColumns: 1fr 1fr
+                            templateRows: 1fr 1fr 1fr
+                            items:
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.externalid
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.firstname
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.lastname
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.phone_mobile
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.phone_business
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.home_phone
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.email
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.birthdate
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.email_opt_out
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.gender
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.salutation
+                              - uesio/io.field:
+                                  fieldId: uesio/core.user
+                            columnGap: 8px
+              - id: address
+                label: Address
+                components:
+                  - uesio/io.deck:
+                      wire: newcontact
+                      mode: EDIT
+                      components:
+                        - uesio/io.grid:
+                            templateColumns: 1fr 1fr
+                            templateRows: 1fr 1fr 1fr
+                            items:
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.mailing_street
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.mailing_city
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.mailing_country
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.mailing_state
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.mailing_zip
+                            columnGap: 8px
+              - id: company
+                label: Company
+                components:
+                  - uesio/io.deck:
+                      wire: newcontact
+                      mode: EDIT
+                      components:
+                        - uesio/io.grid:
+                            templateColumns: 1fr 1fr
+                            templateRows: 1fr 1fr 1fr
+                            items:
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.account
+                                  label: Company Name
+                                  labelPosition: top
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.department
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.title
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.phone_business
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.assistant_name
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.assistant_phone
+                              - uesio/io.field:
+                                  fieldId: uesio/crm.lead_source
+                            columnGap: 8px
+              - id: tasks
+                label: Tasks
+              - id: events
+                label: Events
+              - id: history
+                label: History
+            footer:
+              - uesio/io.group:
+                  columnGap: 10px
+                  justifyContent: end
+                  components:
+                    - uesio/io.button:
+                        text: Edit Pic
+                        uesio.variant: uesio/io.primary
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - newcontact
+                          - signal: panel/CLOSE
+                            panel: newContact
+                          - signal: panel/OPEN
+                            panel: addPic
+                        icon: add_a_photo
+                    - uesio/io.button:
+                        text: Save
+                        uesio.variant: uesio/io.primary
+                        signals:
+                          - signal: panel/CLOSE
+                            panel: newContact
+                          - signal: wire/SAVE
+                            wires:
+                              - newcontact
+                          - signal: wire/LOAD
+                            wires:
+                              - contacts
+                        icon: save
+                    - uesio/io.button:
+                        text: Save & New
+                        uesio.variant: uesio/io.primary
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - newcontact
+                          - signal: wire/EMPTY
+                            wire: newcontact
+                          - signal: wire/CREATE_RECORD
+                            wire: newcontact
+                        icon: save
+                    - uesio/io.button:
+                        text: Cancel
+                        uesio.variant: uesio/io.secondary
+                        signals:
+                          - signal: panel/CLOSE
+                            panel: newContact
+                          - signal: wire/CANCEL
+                            wires:
+                              - newcontact
+                            wire: newcontact
+                          - signal: wire/EMPTY
+                            wires:
+                              - contacts
+                            wire: newcontact
+                        icon: cancel
+                  alignItems: center
+                  uesio.styles:
+                    root:
+                      paddingTop: 12px
+            uesio.styles:
+              root: {}
+              content:
+                padding: 18px
+              tabLabels: {}
+              tab:
+                fontSize: 12pt
+                color: grey
+                borderBottom: 1px solid black
+                padding: 8px
+              tabSelected:
+                color: black
+      title: Edit Contact
+      width: 80vh
+      height: auto
+    addPic:
+      uesio.type: uesio/io.dialog
+      components:
+        - uesio/io.group:
+            columnGap: 10px
+            components:
+              - uesio/io.box:
+                  components:
+                    - uesio/io.deck:
+                        wire: newcontact
+                        components:
+                          - uesio/io.text:
+                              text: ${uesio/crm.firstname} ${uesio/crm.lastname}
+                              element: h2
+                              align: center
+                          - uesio/io.box:
+                              components:
+                                - uesio/io.grid:
+                                    templateColumns: 1fr
+                                    items:
+                                      - uesio/io.box:
+                                          components:
+                                            - uesio/io.field:
+                                                fieldId: uesio/crm.image
+                                                displayAs: PREVIEW
+                                                uesio.styles:
+                                                  root:
+                                                    height: 200px
+                                                labelPosition: none
+                                              label: null
+                                              labelPosition: none
+                                          uesio.styles:
+                                            root:
+                                              boxShadow: "0 0 6px #00000033"
+                                              padding: 4px
+                                    templateRows: ""
+                                    uesio.styles:
+                                      root:
+                                        alignItems: center
+                        mode: EDIT
+                        uesio.styles:
+                          root:
+                            gridTemplateColumns: 1fr
+                    - uesio/io.group:
+                        columnGap: 10px
+                        components:
+                          - uesio/io.button:
+                              text: Done
+                              signals:
+                                - signal: panel/CLOSE
+                                  panel: addPic
+                                - signal: panel/OPEN
+                                  panel: newContact
+                                - signal: wire/LOAD
+                                  wires:
+                                    - contacts
+                              uesio.variant: uesio/io.secondary
+                              icon: check
+                          - uesio/io.button:
+                              text: Exit
+                              signals:
+                                - signal: panel/CLOSE
+                                  panel: addPic
+                                - signal: wire/LOAD
+                                  wires:
+                                    - contacts
+                              uesio.variant: uesio/io.secondary
+                              icon: exit_to_app
+                        alignItems: center
+                        justifyContent: center
+                        uesio.styles:
+                          root:
+                            padding: 12px
+                            marginTop: 18px
+                  uesio.styles:
+                    root: {}
+            alignItems: center
+            justifyContent: center
+      width: 1fr
+      height: 1fr
+    delete:
+      uesio.type: uesio/io.dialog
+      components:
+        - uesio/io.text:
+            text: DELETE?
+            element: h2
+            align: center
+            color: red
+        - uesio/io.deck:
+            wire: newcontact
+            components:
+              - uesio/io.text:
+                  text: ${uesio/crm.firstname} ${uesio/crm.lastname}
+                  element: h2
+                  align: center
+              - uesio/io.group:
+                  columnGap: 10px
+                  components:
+                    - uesio/io.button:
+                        text: Delete
+                        signals:
+                          - signal: wire/MARK_FOR_DELETE
+                            wires:
+                              - newcontact
+                          - signal: wire/SAVE
+                            wires:
+                              - newcontact
+                          - signal: wire/LOAD
+                            wires:
+                              - contacts
+                          - signal: panel/CLOSE
+                            panel: delete
+                        uesio.variant: uesio/io.primary
+                        icon: delete
+                        uesio.styles:
+                          root:
+                            backgroundColor: red
+                    - uesio/io.button:
+                        text: Cancel
+                        signals:
+                          - signal: wire/UNMARK_FOR_DELETE
+                            wires:
+                              - newcontact
+                          - signal: panel/CLOSE
+                            panel: delete
+                        uesio.variant: uesio/io.secondary
+                        icon: cancel
+                  alignItems: center
+                  justifyContent: center
+                  uesio.styles:
+                    root:
+                      paddingTop: 20px
+            uesio.styles:
+              root:
+                paddingBottom: 80px
+      title: ""
+      width: 380px
+      height: 320px

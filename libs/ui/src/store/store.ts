@@ -3,7 +3,6 @@ import { configureStore, EntityState } from "@reduxjs/toolkit"
 import collection from "../bands/collection"
 import route from "../bands/route"
 import user from "../bands/user"
-import builder from "../bands/builder"
 import component from "../bands/component"
 import wire from "../bands/wire"
 import site, { SiteState } from "../bands/site"
@@ -15,7 +14,6 @@ import componentvariant from "../bands/componentvariant"
 import configvalue from "../bands/configvalue"
 import featureflag from "../bands/featureflag"
 import notification from "../bands/notification"
-import metadatatext from "../bands/metadatatext"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { PlainViewDef } from "../definition/viewdef"
@@ -24,7 +22,6 @@ import { ComponentVariant } from "../definition/componentvariant"
 import { LabelState } from "../definition/label"
 import { ConfigValueState } from "../definition/configvalue"
 import { FeatureFlagState } from "../definition/featureflag"
-import { MetadataState } from "../bands/metadata/types"
 import { PlainWire } from "../bands/wire/types"
 import { PlainCollection } from "../bands/collection/types"
 import { attachDefToWires } from "../bands/route/utils"
@@ -39,7 +36,6 @@ type InitialState = {
 	label?: EntityState<LabelState>
 	configvalue?: EntityState<ConfigValueState>
 	featureflag?: EntityState<FeatureFlagState>
-	metadatatext?: EntityState<MetadataState>
 	wire?: EntityState<PlainWire>
 	collection?: EntityState<PlainCollection>
 }
@@ -59,7 +55,6 @@ const create = (initialState: InitialState) => {
 			component,
 			route,
 			user,
-			builder,
 			theme,
 			panel,
 			notification,
@@ -69,7 +64,6 @@ const create = (initialState: InitialState) => {
 			componentvariant,
 			configvalue,
 			featureflag,
-			metadatatext,
 			site,
 		},
 		devTools: true,
@@ -86,4 +80,5 @@ const dispatch = (action: Parameters<typeof store.dispatch>[0]) =>
 
 const getCurrentState = () => store.getState()
 
-export { create, RootState, InitialState, dispatch, getCurrentState }
+export type { RootState, InitialState }
+export { create, dispatch, getCurrentState }

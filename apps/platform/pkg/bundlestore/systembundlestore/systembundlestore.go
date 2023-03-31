@@ -154,7 +154,7 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 	return nil
 }
 
-func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadCloser, error) {
+func (b *SystemBundleStore) GetItemAttachment(item meta.AttachableItem, version string, path string, session *sess.Session) (time.Time, io.ReadSeeker, error) {
 	file, err := getFile(item.GetNamespace(), version, item.GetBundleFolderName(), filepath.Join(item.GetBasePath(), path))
 	if err != nil {
 		return time.Time{}, nil, err

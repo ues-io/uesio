@@ -14,4 +14,4 @@ type SaveRequestBatch = {
 	wires: SaveRequest[]
 }
 
-export { SaveRequest, SaveRequestBatch }
+export type { SaveRequest, SaveRequestBatch }

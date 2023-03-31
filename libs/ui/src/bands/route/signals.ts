@@ -58,6 +58,6 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 }
 
-export { PathNavigateSignal }
+export type { PathNavigateSignal }
 
 export default signals

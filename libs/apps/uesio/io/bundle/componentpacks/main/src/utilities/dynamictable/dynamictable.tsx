@@ -1,10 +1,17 @@
-import { api, component, context, wire, definition } from "@uesio/ui"
+import { api, component, context, wire, definition, signal } from "@uesio/ui"
 import { MutableRefObject, useEffect } from "react"
 
+type RowAction = {
+	text: string
+	signals: signal.SignalDefinition[]
+	type?: "DEFAULT"
+}
 interface DynamicTableProps extends definition.UtilityProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
+	rowactions?: RowAction[]
 	initialValues: Record<string, wire.PlainWireRecord>
+	columns?: definition.DefinitionList
 	mode?: context.FieldMode
 	onUpdate?: (
 		field: string,
@@ -22,6 +29,8 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 		context,
 		id,
 		fields,
+		rowactions,
+		columns,
 		path,
 		onUpdate,
 		initialValues,
@@ -84,13 +93,16 @@ const DynamicTable: definition.UtilityComponent<DynamicTableProps> = (
 			path={path}
 			definition={{
 				wire: dynamicWireName,
-				columns: Object.entries(fields).map(([fieldId, fieldDef]) => ({
-					field: fieldId,
-					...fieldDef,
-				})),
+				columns:
+					columns ||
+					Object.entries(fields).map(([fieldId, fieldDef]) => ({
+						field: fieldId,
+						...fieldDef,
+					})),
 				mode,
 				"uesio.id": id,
 				"uesio.variant": "uesio/io.default",
+				rowactions,
 			}}
 			context={context}
 		/>

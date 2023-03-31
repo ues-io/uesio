@@ -178,6 +178,10 @@ definition:
                   fieldId: uesio/studio.name
               - uesio/io.field:
                   fieldId: uesio/studio.bundle
+                  reference:
+                    conditions:
+                      - field: uesio/studio.app
+                        value: ${uesio/studio.app->uesio/core.id}
               - uesio/io.field:
                   fieldId: uesio/studio.title
               - uesio/io.field:

@@ -11,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/usage"
 )
 
-func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+func DownloadAttachment(recordID string, path string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -37,7 +37,7 @@ func DownloadAttachment(recordID string, path string, session *sess.Session) (io
 	return DownloadItem(userFile, session)
 }
 
-func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+func Download(userFileID string, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
 
 	userFile := &meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
@@ -59,7 +59,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	return DownloadItem(userFile, session)
 }
 
-func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
+func DownloadItem(userFile *meta.UserFileMetadata, session *sess.Session) (io.ReadSeeker, *meta.UserFileMetadata, error) {
 
 	conn, err := fileadapt.GetFileConnection(userFile.FileSourceID, session)
 	if err != nil {

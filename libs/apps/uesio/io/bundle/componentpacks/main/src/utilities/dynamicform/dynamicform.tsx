@@ -5,7 +5,7 @@ import List from "../../components/list/list"
 interface FormProps extends definition.UtilityProps {
 	path: string
 	fields: Record<string, wire.ViewOnlyField>
-	content: definition.DefinitionList
+	content?: definition.DefinitionList
 	onUpdate?: (field: string, value: wire.FieldValue) => void
 	initialValue?: wire.PlainWireRecord
 	wireRef?: MutableRefObject<wire.Wire | undefined>

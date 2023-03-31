@@ -15,11 +15,12 @@ else
 fi
 
 # Ensure that we have a Uesio docker image to run
-# In CI, we should have the image built already, but locally, not necessarily
+# In CI, we should have the image built already, but locally we may not
 if [[ -z "${GITSHA}" ]]; then
     export GITSHA=$(git rev-parse --short HEAD)
     if [[ "$(docker images -q $GITSHA 2> /dev/null)" == "" ]]; then
         docker build --tag "$GITSHA" -f ./apps/platform/Dockerfile .
+        export APP_IMAGE="$GITSHA"
     fi
 fi
 
@@ -28,7 +29,7 @@ docker compose -f docker-compose-tests.yaml down
 docker compose -f docker-compose-tests.yaml up -d
 # TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
-sleep 10;
+sleep 5;
 # Run e2e tests with cypress
 export UESIO_APP_URL="https://studio.uesio-dev.com:3009"
 export UESIO_DEV=true

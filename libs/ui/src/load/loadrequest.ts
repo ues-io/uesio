@@ -25,4 +25,4 @@ type LoadRequestBatch = {
 	wires: LoadRequest[]
 }
 
-export { LoadRequest, LoadRequestField, LoadRequestBatch }
+export type { LoadRequest, LoadRequestField, LoadRequestBatch }

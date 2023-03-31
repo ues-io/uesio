@@ -1,9 +1,12 @@
 name: rating
-options:
-  - label: High
-    value: high
-  - label: Medium
-    value: medium
-  - label: Low
-    value: low
 public: true
+options:
+  - label: Hot
+    value: Hot
+    disabled: false
+  - label: Warm
+    value: Warm
+    disabled: false
+  - label: Cold
+    value: Cold
+    disabled: false

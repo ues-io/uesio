@@ -108,6 +108,10 @@ func (b *TSDialect) CallBot(bot *meta.Bot, params map[string]interface{}, connec
 		Params: &jsdialect.ParamsAPI{
 			Params: params,
 		},
+		AsAdmin: jsdialect.AdminCallBotAPI{
+			Session:    session,
+			Connection: connection,
+		},
 		Connection: connection,
 		Results:    map[string]interface{}{},
 	}
