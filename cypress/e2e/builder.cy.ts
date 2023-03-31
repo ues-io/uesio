@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import { getAppBasePath, getWorkspaceBasePath } from "../support/paths"
+import { deleteApp, getUniqueAppName } from "../support/testdata"
+import { getWorkspaceBasePath } from "../support/paths"
 
 const initialPageDef = `# Wires connect to data in collections
 wires: {}
@@ -73,7 +74,7 @@ components:
 describe("Uesio Builder Tests", () => {
 	const username = Cypress.env("automation_username")
 
-	const appName = "e2e" + new Date().getTime()
+	const appName = getUniqueAppName()
 	const workspaceName = "test"
 	const workspaceBasePath = getWorkspaceBasePath(appName, workspaceName)
 
@@ -186,8 +187,6 @@ describe("Uesio Builder Tests", () => {
 	})
 
 	after(() => {
-		cy.visitRoute(getAppBasePath(appName))
-		cy.getByIdFragment("button", "delete-app", 8000).should("be.visible")
-		cy.clickButton("confirm-delete-app")
+		deleteApp(appName)
 	})
 })
