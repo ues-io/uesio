@@ -2,16 +2,27 @@ package host
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thecloudmasters/clio/pkg/config"
 )
 
-var validHosts = []string{
+var validHostsDevMode = []string{
 	"https://studio.uesio-dev.com:3000",
 	"https://studio.ues.io",
 	"https://studio.ues-dev.io",
-	"https://studio.ues-uat.io",
+}
+var validHostsRegular = []string{
+	"https://studio.ues.io",
+}
+
+func GetValidHosts() []string {
+	if os.Getenv("UESIO_DEV") == "true" {
+		return validHostsDevMode
+	} else {
+		return validHostsRegular
+	}
 }
 
 func GetHostURL(url string) (string, error) {
@@ -42,7 +53,16 @@ func GetHostPrompt() (string, error) {
 }
 
 func SetHostPrompt() (string, error) {
-	host := ""
+	host := os.Getenv("UESIO_CLI_HOST")
+	if host != "" {
+		return host, SetHost(host)
+	}
+	validHosts := GetValidHosts()
+	// If we are not in dev mode
+	if len(validHosts) == 1 {
+		host = validHosts[0]
+		return host, SetHost(host)
+	}
 	err := survey.AskOne(&survey.Select{
 		Message: "Select a host.",
 		Options: validHosts,
