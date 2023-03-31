@@ -29,7 +29,7 @@ docker compose -f docker-compose-tests.yaml down
 docker compose -f docker-compose-tests.yaml up -d
 # TODO: Wait for app to start to be available rather than sleeping...
 echo "Waiting for Uesio app to start..."
-sleep 10;
+sleep 5;
 # Run e2e tests with cypress
 export UESIO_APP_URL="https://studio.uesio-dev.com:3009"
 export UESIO_DEV=true
