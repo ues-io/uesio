@@ -69,6 +69,7 @@ jobs:
               echo "Docker image already exists, skipping build and docker push"
               docker pull $IMAGE_TAG
               echo "APP_IMAGE=`echo ${IMAGE_TAG}`" >> $GITHUB_ENV
+              npm i cypress typescript
               exit 0
           else
               echo "Image does not exist, building and pushing"
