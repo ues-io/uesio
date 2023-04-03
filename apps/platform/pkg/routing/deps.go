@@ -502,8 +502,7 @@ func getComponentAreaDeps(node *yaml.Node, depMap *ViewDepMap, session *sess.Ses
 				if slotNode, isPresent := slotsMap[prop.Value]; isPresent {
 					// If this is a terminal slot, get the children and fetch deps for each child
 					if slotNode.Type == meta.TerminalNode {
-						// The contents should be in the next sibling to the prop node
-						if err := parseSlotChildren(comp.Content[1].Content[i+1], depMap, session); err != nil {
+						if err := getComponentAreaDeps(comp.Content[1].Content[i+1], depMap, session); err != nil {
 							return err
 						}
 					} else if slotNode.Type == meta.ArrayNode {

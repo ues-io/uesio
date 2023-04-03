@@ -1,0 +1,4 @@
+name: dependencies
+path: dependencies
+view: uesio/tests.dependencies
+title: Tests loading of component dependencies for a view
