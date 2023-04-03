@@ -95,6 +95,8 @@ definition:
                                 fieldId: uesio/crm.mailing_country
                             - uesio/io.field:
                                 fieldId: uesio/crm.mailing_state_province
+                            - uesio/io.field:
+                                fieldId: uesio/crm.status
                     templateRows: 1fr
                 - uesio/io.grid:
                     templateColumns: "200px 200px 200px 200px 200px "
@@ -138,6 +140,11 @@ definition:
                                     uesio.styles:
                                       root:
                                         padding: 10px
+                                - uesio/io.text:
+                                    text: TASKS
+                                    element: div
+                                    align: left
+                                    uesio.variant: uesio/io.smalltitle
                                 - uesio/io.table:
                                     wire: tasks
                                     columns:
@@ -163,6 +170,11 @@ definition:
                                     uesio.styles:
                                       root:
                                         padding: 20px
+                                - uesio/io.text:
+                                    text: EVENTS
+                                    element: div
+                                    align: left
+                                    uesio.variant: uesio/io.smalltitle
                                 - uesio/io.table:
                                     wire: events
                                     mode: EDIT
