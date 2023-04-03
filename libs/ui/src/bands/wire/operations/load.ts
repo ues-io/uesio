@@ -32,6 +32,7 @@ const getWireRequest = (
 			name,
 			order,
 			query,
+			requirewriteaccess,
 			view,
 		}) => ({
 			batchid,
@@ -45,6 +46,7 @@ const getWireRequest = (
 			order,
 			params: context.getParams(),
 			query: forceQuery ? true : query,
+			requirewriteaccess,
 			view,
 		})
 	)
