@@ -12,9 +12,8 @@ export UESIO_CLI_HOST="https://studio.uesio-dev.com:3000"
 # Deploy the sample app using Uesio
 cd libs/apps/uesio/tests
 
-../../../../dist/clio/clio logout
-
 echo "Logging in to Studio as uesio user..."
+../../../../dist/clio/clio logout
 ../../../../dist/clio/clio sethost
 ../../../../dist/clio/clio login
 echo "Configuring workspace..."

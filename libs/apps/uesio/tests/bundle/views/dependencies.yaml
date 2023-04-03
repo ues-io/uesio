@@ -23,23 +23,23 @@ definition:
               # uesio.variant: uesio/studio.topbar
               components:
                 - uesio/io.tabs:
-                  uesio.variant: uesio/io.default
-                  tabs:
-                    - id: tab1
-                      label: One
-                      components:
-                        - uesio/io.barchart:
-                            title: "Animals by Species"
-                            series:
-                              - label: Animals
-                                name: animals
-                                wire: animals
-                                valueField: uesio/tests.total_population
-                                categoryField: uesio/tests.genus
-                            labels:
-                              source: WIRE
-                    - id: tab2
-                      label: Two
+                    uesio.variant: uesio/io.default
+                    tabs:
+                      - id: tab1
+                        label: One
+                        components:
+                          - uesio/io.barchart:
+                              title: "Animals by Species"
+                              series:
+                                - label: Animals
+                                  name: animals
+                                  wire: animals
+                                  valueField: uesio/tests.total_population
+                                  categoryField: uesio/tests.genus
+                              labels:
+                                source: DATA
+                      - id: tab2
+                        label: Two
           - uesio/io.griditem:
               # uesio.variant: uesio/studio.leftbar
               components:
@@ -48,8 +48,9 @@ definition:
                     title: This is a title
                     actions:
                       - uesio/io.button:
-                          icon: notify
-                          uesio.id: notify-btn
+                          icon: send
+                          uesio.id: send-btn
+                          text: Say Hello
                           signals:
                             - signal: notification/ADD
                               severity: INFO

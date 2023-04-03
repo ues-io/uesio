@@ -9,6 +9,10 @@ HTTP 200
 session_id: cookie "sessid"
 user_id: jsonpath "$.user.id"
 
+# Delete the dev workspace if it already exists for tests app
+DELETE https://studio.uesio-dev.com:3000/site/api/v1/collection/uesio/studio/workspace?uesio/studio.name=eq.dev
+HTTP 204
+
 # Delete the tests app if it already exists
 DELETE https://studio.uesio-dev.com:3000/site/api/v1/collection/uesio/studio/app?uesio/studio.name=eq.tests
 HTTP 204
