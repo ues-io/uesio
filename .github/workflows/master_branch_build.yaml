@@ -66,6 +66,9 @@ jobs:
 
           if [[ "$image_exists" == "yes" ]]; then
               echo "Docker image already exists, skipping build and docker push"
+              docker pull $IMAGE_TAG
+              echo "APP_IMAGE=`echo ${IMAGE_TAG}`" >> $GITHUB_ENV
+              npm i cypress typescript
               exit 0
           else
               echo "Image does not exist, building and pushing"
@@ -77,6 +80,7 @@ jobs:
           npm run build-all
           npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
           docker build -t $IMAGE_TAG -t $GITSHA -f ./apps/platform/Dockerfile --build-arg GITSHA .
+          echo "APP_IMAGE=`echo ${GITSHA}`" >> $GITHUB_ENV
           docker push $IMAGE_TAG
       - name: Upload image id
         uses: actions/upload-artifact@v3

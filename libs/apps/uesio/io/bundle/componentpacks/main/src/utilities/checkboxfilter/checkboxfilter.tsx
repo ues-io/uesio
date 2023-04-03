@@ -7,19 +7,13 @@ interface CheckboxFilterProps extends definition.UtilityProps {
 	path: string
 	wire: wire.Wire
 	fieldMetadata: collection.Field
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
 	displayAs?: string
 }
 
 const CheckboxFilter: FunctionComponent<CheckboxFilterProps> = (props) => {
-	const { wire, fieldMetadata, context, displayAs } = props
-	const conditionId = props.conditionId || props.path || ""
+	const { wire, fieldMetadata, context, displayAs, condition } = props
 	const wireId = wire.getId()
-
-	const condition = (wire.getCondition(conditionId) || {
-		id: conditionId,
-		field: fieldMetadata.getId(),
-	}) as wire.ValueConditionState
 
 	return displayAs === "TOGGLE" ? (
 		<ToggleField

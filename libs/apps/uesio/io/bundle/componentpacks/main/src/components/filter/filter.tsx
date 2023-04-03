@@ -21,8 +21,10 @@ type CommonProps = {
 	path: string
 	fieldMetadata: collection.Field
 	wire: wire.Wire
-	conditionId: string | undefined
+	condition: wire.ValueConditionState
 } & definition.UtilityProps
+
+const isValueCondition = wire.isValueCondition
 
 const getFilterContent = (
 	common: CommonProps,
@@ -50,6 +52,25 @@ const getFilterContent = (
 	}
 }
 
+const getDefaultCondition = (path: string, fieldMetadata: collection.Field) => {
+	const type = fieldMetadata.getType()
+
+	switch (type) {
+		case "DATE": {
+			return {
+				id: path,
+				operator: "IN",
+				field: fieldMetadata.getId(),
+			}
+		}
+		default:
+			return {
+				id: path,
+				field: fieldMetadata.getId(),
+			}
+	}
+}
+
 const Filter: definition.UC<FilterDefinition> = (props) => {
 	const { context, definition, path } = props
 	const { fieldId, conditionId } = definition
@@ -57,10 +78,17 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 	if (!wire) return null
 
 	const collection = wire.getCollection()
+	const existingCondition =
+		wire.getCondition(conditionId || path) || undefined
 
-	const fieldMetadata = collection.getField(fieldId)
+	const fieldMetadata = collection.getField(
+		isValueCondition(existingCondition) ? existingCondition.field : fieldId
+	)
 
 	if (!fieldMetadata) return null
+
+	const condition = (existingCondition ||
+		getDefaultCondition(path, fieldMetadata)) as wire.ValueConditionState
 
 	const label = definition.label || fieldMetadata.getLabel()
 
@@ -69,7 +97,7 @@ const Filter: definition.UC<FilterDefinition> = (props) => {
 		context,
 		fieldMetadata,
 		wire,
-		conditionId,
+		condition,
 		variant:
 			definition["uesio.variant"] || "uesio/io.field:uesio/io.default",
 	}
