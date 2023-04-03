@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-
 	"github.com/thecloudmasters/clio/pkg/localbundlestore"
 )
 
