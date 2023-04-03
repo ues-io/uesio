@@ -60,37 +60,27 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 }
 
 const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
-	if (!wireDef || wireDef.viewOnly || !wireDef.conditions)
-		return [] as SelectOption[]
+	const conditions: Array<SelectOption> = []
 
-	const getConditions = (
-		value: wire.WireConditionState
-	): string | undefined => {
-		console.log({ value })
+	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
 
-		// if  (value.type === "GROUP") {
-		// 	return getConditions(value.conditions)
-		// }
+	for (const condition of wireDef.conditions) {
+		if (condition && condition.id) {
+			conditions.push({ value: condition.id, label: condition.id })
+		}
 
-		// if (
-		// 	!value ||
-		// 	(typeof value === "object" && Object.keys(value).length === 0)
-		// ) {
-		// 	console.log("LOL")
-		return value.id
-		//}
-		// return Object.entries(value)
-		// 	.map(([key2, value2]) => [`${key}->${key2}`, value2])
-		// 	.flatMap(([key, value]) => getConditions(key, value))
+		if (condition.type === "GROUP") {
+			for (const subCondition of condition.conditions) {
+				if (subCondition && subCondition.id) {
+					conditions.push({
+						value: subCondition && subCondition.id,
+						label: subCondition && subCondition.id,
+					})
+				}
+			}
+		}
 	}
-
-	const test = wireDef.conditions
-		.flatMap((value) => getConditions(value))
-		.map((el) => ({ value: el, label: el } as SelectOption))
-
-	console.log({ test })
-
-	return test
+	return conditions
 }
 
 const getFormFieldsFromProperties = (
