@@ -1,5 +1,4 @@
 function onchange(bot) {
-    return
 	bot.inserts.get().forEach(function (change) {
 		var name = change.get("uesio/crm.name")
 		if (!name) {
