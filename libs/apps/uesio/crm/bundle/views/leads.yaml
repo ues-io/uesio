@@ -15,6 +15,10 @@ definition:
                         wire: new_lead
                       - signal: wire/CREATE_RECORD
                         wire: new_lead
+                      - signal: wire/UPDATE_RECORD
+                        wire: new_lead
+                        field: uesio/crm.status
+                        value: OPEN
                       - signal: panel/OPEN
                         panel: newlead
                     text: New
@@ -50,7 +54,8 @@ definition:
                         wire: leads
     - uesio/io.box:
         components:
-          - uesio/io.box:
+          - uesio/io.group:
+              columnGap: 10px
               components:
                 - uesio/io.searchbox:
                     wire: leads
@@ -61,9 +66,20 @@ definition:
                     uesio.styles:
                       root:
                         paddingLeft: 40px
-              uesio.variant: ""
+                    searchfields:
+                      - uesio/crm.firstname
+                      - uesio/crm.lastname
+                      - uesio/crm.account
+                      - uesio/core.owner
+                - uesio/io.filter:
+                    wire: leads
+                    fieldId: uesio/crm.status
+                    labelPosition: top
+                    label: " "
+              alignItems: center
+              justifyContent: start
           - uesio/io.grid:
-              templateColumns: auto auto
+              templateColumns: auto
               templateRows: 1fr
               items:
                 - uesio/io.box:
@@ -86,20 +102,6 @@ definition:
                               signals:
                                 - signal: wire/TOGGLE_DELETE_STATUS
                           columns:
-                            - components:
-                                - uesio/io.box:
-                                    components:
-                                      - uesio/io.field:
-                                          fieldId: uesio/crm.contact_image
-                                          displayAs: PREVIEW
-                                          label: " "
-                                          labelPoistion: none
-                                    uesio.styles:
-                                      root:
-                                        minWidth: 50px
-                                        maxWidth: 80px
-                                        padding: 8px
-                                        borderRadius: 12px
                             - field: uesio/crm.firstname
                             - field: uesio/crm.lastname
                             - field: uesio/crm.account
@@ -120,32 +122,43 @@ definition:
                             root:
                               backgroundColor: white
                     uesio.variant: ""
-                - uesio/io.box:
-                    components:
+              columnGap: 1px
+              rowGap: 8px
+          - uesio/io.box:
+              components:
+                - uesio/io.grid:
+                    items:
                       - uesio/io.text:
-                          text: Recently Updated
+                          text: RECENT
                           element: div
                           align: left
-                          uesio.variant: uesio/io.smalltitle
                       - uesio/io.table:
-                          id: NewId
-                          mode: READ
-                          wire: recent
+                          rowactions:
+                            - text: View
+                              signals:
+                                - path: lead/${uesio/core.id}
+                                  signal: route/NAVIGATE
                           columns:
                             - field: uesio/crm.account
                               label: Lead
+                              width: 320px
                             - field: uesio/core.updatedat
                               label: Updated
+                              width: 180px
+                          id: leadsTable
+                          mode: READ
+                          wire: recent
+                          uesio.variant: uesio/io.default
+                          pagesize: 5
                           uesio.styles:
                             root:
                               backgroundColor: white
-                    uesio.styles:
-                      root:
-                        paddingTop: 20px
-                    uesio.variant: ""
-              columnGap: 1px
-              rowGap: 8px
-          - uesio/io.grid: {}
+                    templateColumns: auto
+                    templateRows: auto auto
+              uesio.styles:
+                root:
+                  padding: 20px
+                  maxWidth: 550px
           - uesio/io.box:
               uesio.variant: ""
               components:
@@ -154,18 +167,22 @@ definition:
                     element: div
                     uesio.variant: uesio/io.smalltitle
                 - uesio/io.table:
-                    id: closedleadstable
-                    mode: READ
+                    rowactions:
+                      - text: View
+                        signals:
+                          - path: lead/${uesio/core.id}
+                            signal: route/NAVIGATE
+                    wire: closedleads
+                    pagesize: 5
                     columns:
                       - field: uesio/crm.firstname
                       - field: uesio/crm.lastname
+                      - field: uesio/crm.account
                       - field: uesio/crm.converted_to_contact
                       - field: uesio/crm.converted_to_account
                       - field: uesio/crm.converted_opportunity
                       - field: uesio/crm.converted_date
                       - field: uesio/crm.status
-                    wire: closedleads
-                    uesio.variant: uesio/io.default
               uesio.styles:
                 root:
                   padding: 20px
@@ -219,8 +236,11 @@ definition:
         uesio/crm.converted_to_contact: null
       collection: uesio/crm.lead
       conditions:
-        - field: uesio/crm.status
-          value: CLOSED
+        - active: true
+          field: uesio/crm.status
+          operator: NOT_EQ
+          valueSource: VALUE
+          value: OPEN
     recent:
       type: ""
       fields:
@@ -233,6 +253,7 @@ definition:
         - desc: true
           field: uesio/core.updatedat
       batchsize: 5
+      conditions: []
     accounts:
       collection: uesio/crm.account
       fields:

@@ -1,3 +1,4 @@
 name: addlead
+collection: uesio/crm.lead
 type: AFTERSAVE
 dialect: TYPESCRIPT

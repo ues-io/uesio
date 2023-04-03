@@ -1,4 +1,0 @@
-name: public
-permissionSets:
-  - uesio/crm.public
-  - uesio/core.public
