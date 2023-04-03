@@ -47,7 +47,6 @@ properties:
     type: CONDITION
     label: Condition ID
     wireField: wire
-    wire: LOL
 sections:
   - type: HOME
     properties:
