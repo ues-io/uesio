@@ -1,6 +1,7 @@
 import { AfterSaveBotApi } from "uesio/bots"
 
 function addlead(bot: AfterSaveBotApi) {
+    return
 	bot.inserts.get().forEach(function (change) {
 		const fromEmail = bot.getConfigValue("uesio/crm.from_email")
 		const salesEmail = bot.getConfigValue("uesio/crm.sales_email")

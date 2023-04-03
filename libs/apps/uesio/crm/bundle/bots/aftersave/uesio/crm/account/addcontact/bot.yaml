@@ -1,3 +1,4 @@
 name: addcontact
+collection: uesio/crm.account
 type: AFTERSAVE
 dialect: JAVASCRIPT
