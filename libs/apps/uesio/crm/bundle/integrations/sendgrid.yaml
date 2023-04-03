@@ -1,4 +1,6 @@
 name: sendgrid
+public: true
 type: sendgrid
 credentials: uesio/crm.sendgrid
-public: true
+headers: {}
+baseUrl: ""
