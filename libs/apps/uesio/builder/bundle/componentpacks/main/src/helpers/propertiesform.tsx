@@ -239,8 +239,6 @@ const getWireFieldFromPropertyDef = (
 		case "CHECKBOX":
 			return getBaseWireFieldDef(def, "CHECKBOX")
 		case "CONDITION":
-			console.log({ def })
-
 			wireId = def.wireField
 				? (currentValue[def.wireField] as string)
 				: def.wire
