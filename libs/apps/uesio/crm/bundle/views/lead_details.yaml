@@ -1,4 +1,5 @@
 name: lead_details
+public: true
 definition:
   components:
     - uesio/core.view:

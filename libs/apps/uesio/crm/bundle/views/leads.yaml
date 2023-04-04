@@ -1,4 +1,5 @@
 name: leads
+public: true
 definition:
   components:
     - uesio/core.view:
