@@ -14,10 +14,6 @@ jobs:
     env:
       FULL_SHA: ${{ github.sha }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-        go-version: [~1.19]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,7 +21,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.15.0
           cache: "npm"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -36,18 +32,11 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1.6.0
-      - name: Use Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
+      - name: Use Go
+        uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Cache Go modules
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          go-version: 1.19
+          cache-dependency-path: apps/*/go.sum
       - name: Build, test, and docker push to ECR
         shell: bash
         env:
