@@ -38,7 +38,7 @@
   },
   "files": [],
   "devDependencies": {
-    "@emotion/css": "^11.10.0",
+    "@emotion/css": "^11.10.6",
     "@floating-ui/react": "^0.19.2",
     "@monaco-editor/react": "^4.4.6",
     "@nrwl/cli": "14.7.13",
