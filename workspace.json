@@ -436,12 +436,11 @@
 					"options": {
 						"commands": [
 							"mkdir -p dist/vendor",
-							"npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} curl -o dist/vendor/react.development.js {}",
-							"npm run --silent get-module-version --modulename=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} curl -o dist/vendor/react.production.min.js {}",
-							"npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} curl -o dist/vendor/react-dom.development.js {}",
-							"npm run --silent get-module-version --modulename=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.production.min.js\" | xargs -I{} curl -o dist/vendor/react-dom.production.min.js {}",
-							"npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js\" | xargs -I{} curl -o dist/vendor/emotion-css.umd.min.js {}",
-							"npm run --silent get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js.map\" | xargs -I{} curl -o dist/vendor/emotion-css.umd.min.js.map {}",
+							"cp node_modules/react/umd/react.development.js dist/vendor/",
+							"cp node_modules/react/umd/react.production.min.js dist/vendor/",
+							"cp node_modules/react-dom/umd/react-dom.development.js dist/vendor/",
+							"cp node_modules/react-dom/umd/react-dom.production.min.js dist/vendor/",
+							"cp node_modules/@emotion/css/dist/emotion-css.umd.* dist/vendor/",
 							"mkdir -p dist/vendor/monaco-editor/min/vs",
 							"mkdir -p dist/vendor/monaco-editor/min-maps",
 							"cp -r node_modules/monaco-editor/min/vs dist/vendor/monaco-editor/min",
