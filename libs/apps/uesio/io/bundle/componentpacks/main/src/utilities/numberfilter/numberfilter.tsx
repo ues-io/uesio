@@ -28,7 +28,7 @@ const NumberFilter: FunctionComponent<NumberFilterProps> = (props) => {
 							condition: {
 								...condition,
 								value,
-								active: !!value,
+								active: value !== undefined,
 							},
 						},
 						{
