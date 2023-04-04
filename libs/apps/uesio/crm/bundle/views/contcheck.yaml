@@ -1,4 +1,5 @@
 name: contcheck
+public: true
 definition:
   # Wires connect to data in collections
   wires:

@@ -70,6 +70,10 @@ const signals: Record<string, SignalDescriptor> = {
 				label: "Wire",
 			},
 		],
+		outputs: [
+			{ name: "record", type: "RECORD" },
+			{ name: "recordId", type: "TEXT" },
+		],
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
 		label: "Update Record",

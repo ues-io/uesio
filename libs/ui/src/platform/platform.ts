@@ -557,7 +557,27 @@ const platform = {
 		)
 		return respondVoid(response)
 	},
+	autocomplete: async (
+		context: Context,
+		request: AutocompleteRequest
+	): Promise<AutocompleteResponse> => {
+		const prefix = getPrefix(context)
+		const response = await postJSON(`${prefix}/ai/complete`, request)
+		return respondJSON(response)
+	},
 	getStaticAssetsPath,
+}
+
+type AutocompleteRequest = {
+	input: string
+	format: string
+	model: string
+	maxResults?: number
+}
+
+type AutocompleteResponse = {
+	choices?: string[]
+	error?: string
 }
 
 type Platform = typeof platform
@@ -566,6 +586,8 @@ export { platform }
 
 export type {
 	Platform,
+	AutocompleteRequest,
+	AutocompleteResponse,
 	BotResponse,
 	BotParams,
 	ConfigValueResponse,

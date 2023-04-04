@@ -107,17 +107,23 @@ definition:
                           components:
                             - uesio/io.button:
                                 text: "Add a User"
-                                uesio.variant: uesio/io.secondary
+                                hotkey: "n"
+                                uesio.variant: uesio/io.primary
                                 signals:
                                   - signal: "panel/TOGGLE"
                                     panel: "newUser"
                 - uesio/io.box:
-                    uesio.variant: uesio/io.section
+                    uesio.variant: uesio/io.paddedsection
                     components:
+                      - uesio/io.searchbox:
+                          wire: users
+                          searchfields:
+                            - uesio/studio.firstname
+                            - uesio/studio.lastname
+                            - uesio/studio.username
                       - uesio/io.deck:
                           uesio.id: userslist
                           wire: users
-                          uesio.variant: uesio/io.section
                           components:
                             - uesio/io.tile:
                                 uesio.variant: uesio/io.item
@@ -144,7 +150,7 @@ definition:
       uesio.type: uesio/io.dialog
       title: Add a User
       width: 400px
-      height: 500px
+      height: 600px
       components:
         - uesio/io.list:
             uesio.id: newuserlist
