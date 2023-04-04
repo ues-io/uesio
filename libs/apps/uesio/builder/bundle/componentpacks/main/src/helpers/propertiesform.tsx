@@ -65,16 +65,20 @@ const getWireConditionSelectOptions = (wireDef: wire.WireDefinition) => {
 	if (!wireDef || wireDef.viewOnly || !wireDef.conditions) return conditions
 
 	for (const condition of wireDef.conditions) {
-		if (condition && condition.id) {
+		if (!condition) continue
+
+		if (condition?.id) {
 			conditions.push({ value: condition.id, label: condition.id })
 		}
 
-		if (condition.type === "GROUP") {
+		if (condition.type === "GROUP" && condition.conditions?.length) {
 			for (const subCondition of condition.conditions) {
-				if (subCondition && subCondition.id) {
+				if (!subCondition) continue
+
+				if (subCondition?.id) {
 					conditions.push({
-						value: subCondition && subCondition.id,
-						label: subCondition && subCondition.id,
+						value: subCondition.id,
+						label: `${condition.id} -> ${subCondition.id}`,
 					})
 				}
 			}
