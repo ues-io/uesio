@@ -44,8 +44,9 @@ properties:
       - label: Left
         value: left
   - name: conditionId
-    type: TEXT
+    type: CONDITION
     label: Condition ID
+    wireField: wire
 sections:
   - type: HOME
     properties:

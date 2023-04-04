@@ -68,7 +68,8 @@ type CheckboxProperty = {
 
 type ConditionProperty = {
 	type: "CONDITION"
-	wire: string
+	wire?: string
+	wireField?: string
 	filter?: (def: wire.WireConditionState) => boolean
 } & BaseProperty
 
