@@ -19,11 +19,10 @@ var featureFlagStoreMap = map[string]FeatureFlagStore{}
 func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagCollection, error) {
 	featureFlags := meta.FeatureFlagCollection{}
 
-	// TODO: This feels like a hack, but in order to properly fetch feature flags in both View Builder and Studio,
-	// we need to ensure that the "workspace" property is NOT set in the session when doing LoadAllFromAny,
-	// but we need to restore workspace afterwards.
-	workspace := session.GetWorkspace()
-	session.AddWorkspaceContext(nil)
+	// Feature Flags are never associated with Workspaces, so we need to remove workspace context before querying,
+	// otherwise we will always get zero flags
+	session = session.RemoveWorkspaceContext()
+
 	err := bundle.LoadAllFromAny(&featureFlags, nil, session, nil)
 	if err != nil {
 		return nil, err
@@ -47,7 +46,6 @@ func GetFeatureFlags(session *sess.Session, user string) (*meta.FeatureFlagColle
 		ff.Value = value
 		ff.User = user
 	}
-	session.AddWorkspaceContext(workspace)
 	return &featureFlags, nil
 }
 
