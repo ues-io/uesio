@@ -142,7 +142,14 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/UPDATE_RECORD`]: {
 		dispatcher: (signal: UpdateRecordSignal, context: Context) => {
-			const record = context.getRecord(signal.wire)
+			let record = context.getRecord(signal.wire)
+			// If there's no context record for this wire, use the first record on the wire
+			if (!record && signal.wire) {
+				const wire = context.getWire(signal.wire)
+				if (wire) {
+					record = wire.getFirstRecord()
+				}
+			}
 			if (!record) return context
 			return updateRecordOp(
 				context,

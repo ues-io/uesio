@@ -45,9 +45,19 @@ const getWireFieldSelectOptions = (wireDef: wire.WireDefinition) => {
 		// If it's either an empty object or undefined, just return the key.
 		if (
 			!value ||
-			(typeof value === "object" && Object.keys(value).length === 0)
+			(typeof value === "object" && Object.keys(value).length === 0) ||
+			typeof value === "string"
 		) {
 			return key
+		}
+		if (wireDef.viewOnly) {
+			const viewOnlyField = value as wire.ViewOnlyField
+			if (
+				viewOnlyField?.type !== "MAP" &&
+				viewOnlyField?.type !== "LIST"
+			) {
+				return key
+			}
 		}
 		return Object.entries(value)
 			.map(([key2, value2]) => [`${key}->${key2}`, value2])
@@ -83,10 +93,21 @@ const getSelectListMetadataFromOptions = (
 		options,
 	} as wire.SelectListMetadata)
 
-const getSelectListMetadata = (def: SelectProperty) =>
+const resolveOptions = (
+	def: SelectProperty,
+	currentValue: wire.PlainWireRecord
+): SelectOption[] => {
+	const { options } = def
+	return typeof options === "function" ? options(currentValue) : options
+}
+
+const getSelectListMetadata = (
+	def: SelectProperty,
+	currentValue: wire.PlainWireRecord
+) =>
 	getSelectListMetadataFromOptions(
 		def.name,
-		def.options.map(
+		resolveOptions(def, currentValue).map(
 			(o: SelectOption) =>
 				({
 					...o,
@@ -155,7 +176,7 @@ const getWireFieldFromPropertyDef = (
 	switch (type) {
 		case "SELECT":
 			return getBaseWireFieldDef(def, "SELECT", {
-				selectlist: getSelectListMetadata(def),
+				selectlist: getSelectListMetadata(def, currentValue),
 			})
 		case "KEY":
 			return getBaseWireFieldDef(def, "TEXT")
