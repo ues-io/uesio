@@ -12,6 +12,10 @@ else
     bash ./create.sh
     echo "SSL Certificate and private key created!"
     cd ../../../
+    # Update CA certificates so that CLI and Curl will not complain when connecting
+    # to our local Uesio instance with self-signed certificate
+    sudo cp apps/platform/ssl/certificate.crt /usr/local/share/ca-certificates/
+    sudo update-ca-certificates
 fi
 
 # Ensure that we have a Uesio docker image to run

@@ -45,9 +45,6 @@ jobs:
           IMAGE_TAG: ${{ steps.login-ecr.outputs.registry }}/uesio:${{ github.sha }}
         run: |
 
-          cat /usr/share/local/ca-certificates
-          exit 0
-
           # These exports need to run every time
           export GITSHA=$(echo ${FULL_SHA} | cut -c1-8)
           echo "GITSHA=`echo ${FULL_SHA} | cut -c1-8`" >> $GITHUB_ENV
