@@ -5,6 +5,10 @@ title: Grid
 description: Layout areas of your page using low-level CSS grid functionality.
 category: LAYOUT
 discoverable: true
+slots:
+  - name: items
+    accepts:
+      - uesio/io.griditem
 properties:
   - name: templateColumns
     type: TEXT
@@ -18,6 +22,12 @@ properties:
   - name: rowGap
     type: TEXT
     label: Row Gap
+  - name: items
+    type: LIST
+    items:
+      addLabel: Add Grid Item
+      defaultDefinition:
+        components: []
 sections:
   - type: HOME
     properties:
@@ -25,5 +35,10 @@ sections:
       - columnGap
       - templateRows
       - rowGap
+  - type: CUSTOM
+    id: items
+    label: Items
+    properties:
+      - items
   - type: STYLES
   - type: DISPLAY

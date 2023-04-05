@@ -3,6 +3,9 @@ pack: main
 entrypoint: components/dialog/dialog
 variants:
   - uesio/io.titlebar:uesio/io.dialog
+slots:
+  - name: actions
+  - name: components
 defaultDefinition:
   width: "60%"
   height: "60%"

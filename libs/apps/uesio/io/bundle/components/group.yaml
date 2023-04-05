@@ -5,6 +5,8 @@ category: LAYOUT
 pack: main
 entrypoint: components/group/group
 discoverable: true
+slots:
+  - name: components
 defaultDefinition:
   columnGap: 10px
 properties:
